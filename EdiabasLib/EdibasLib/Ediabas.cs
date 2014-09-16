@@ -1557,6 +1557,7 @@ namespace EdiabasLib
         private Dictionary<string, bool> resultsRequestDict = new Dictionary<string, bool>();
         private List<Dictionary<string, ResultData>> resultSets = new List<Dictionary<string, ResultData>>();
         private Dictionary<string, string> configDict = new Dictionary<string, string>();
+        private Dictionary<string, string> groupMappingDict = new Dictionary<string, string>();
         private Dictionary<string, byte[]> sharedDataDict = new Dictionary<string, byte[]>();
         private string sgdbFileName = string.Empty;
         private string fileSearchDir = string.Empty;
@@ -1596,6 +1597,14 @@ namespace EdiabasLib
             get
             {
                 return configDict;
+            }
+        }
+
+        public Dictionary<string, string> GroupMappingDict
+        {
+            get
+            {
+                return groupMappingDict;
             }
         }
 
@@ -2329,14 +2338,20 @@ namespace EdiabasLib
         public void ResolveSgdbFile(string fileName)
         {
             SgdbFileName = Path.GetFileName(fileName);
-            if (String.Compare(Path.GetExtension(fileName), ".GRP", StringComparison.OrdinalIgnoreCase) == 0)
+            if (String.Compare(Path.GetExtension(fileName), ".grp", StringComparison.OrdinalIgnoreCase) == 0)
             {       // group file
-                string variantName = ExecuteIdentJob();
-                if (variantName.Length == 0)
+                string key = SgdbFileName.ToLower(culture);
+                string variantName = string.Empty;
+                if (!groupMappingDict.TryGetValue(key, out variantName))
                 {
-                    throw new ArgumentOutOfRangeException("variantName", "ResolveSgdbFile: No variant found");
+                    variantName = ExecuteIdentJob().ToLower(culture);
+                    if (variantName.Length == 0)
+                    {
+                        throw new ArgumentOutOfRangeException("variantName", "ResolveSgdbFile: No variant found");
+                    }
+                    groupMappingDict.Add(key, variantName);
                 }
-                SgdbFileName = variantName.ToLower(culture) + ".prg";
+                SgdbFileName = variantName + ".prg";
             }
         }
 
