@@ -1,0 +1,479 @@
+"DeployProject"
+{
+"VSVersion" = "3:701"
+"ProjectType" = "8:{AB322303-2255-48EF-A496-5904EB18DA55}"
+"IsWebType" = "8:FALSE"
+"ProjectName" = "8:ToolsSetup"
+"LanguageId" = "3:1031"
+"CodePage" = "3:1252"
+"SccProjectName" = "8:"
+"SccLocalPath" = "8:"
+"SccAuxPath" = "8:"
+"SccProvider" = "8:"
+    "Hierarchy"
+    {
+        "Entry"
+        {
+        "MsmKey" = "8:_25664E1ADEBD42E09AA225C77B181DF7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4B901D62DCEB4DA69A42EDBF37223E9B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7A5C508F07A5477B9993C73A40AFD60B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9C81FEEB5CEA4EA88757EE8AAE05EAE9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A7736B51BABB4EACB47CCD4CADD877EA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C96FAE8A39464CE29EFC02FE0CAC40F2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CA49F63EF5534E6CAE643346BF2365CF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CE0BB6FC35B44026934F90A91E47FF0F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D0F89C998E064791AC65DBC17ADADB03"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E60618AC18D1439993387A563A8C2897"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+    }
+    "Configurations"
+    {
+        "Debug"
+        {
+        "DisplayName" = "8:Debug"
+        "IsDebugOnly" = "11:TRUE"
+        "IsReleaseOnly" = "11:FALSE"
+        "OutputFilename" = "8:Debug\\ToolsSetup.cab"
+        "PackageFileSize" = "3:-2147483648"
+        "CabType" = "3:1"
+        "SignOutput" = "11:FALSE"
+        "CertificateHash" = "8:"
+        "TimeStampServer" = "8:"
+        }
+        "Release"
+        {
+        "DisplayName" = "8:Release"
+        "IsDebugOnly" = "11:FALSE"
+        "IsReleaseOnly" = "11:TRUE"
+        "OutputFilename" = "8:Release\\ToolsSetup.cab"
+        "PackageFileSize" = "3:-2147483648"
+        "CabType" = "3:1"
+        "SignOutput" = "11:FALSE"
+        "CertificateHash" = "8:"
+        "TimeStampServer" = "8:"
+        }
+    }
+    "Deployable"
+    {
+        "File"
+        {
+            "{BA458234-9B71-4F46-8107-E91156377184}:_25664E1ADEBD42E09AA225C77B181DF7"
+            {
+            "SourcePath" = "8:..\\..\\CoreCon\\armv4i\\eDbgTL.dll"
+            "TargetName" = "8:eDbgTL.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_425AFFA1757048B5A5900A0FC9B4E24B"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_4B901D62DCEB4DA69A42EDBF37223E9B"
+            {
+            "SourcePath" = "8:..\\..\\CoreCon\\armv4i\\CMAccept.exe"
+            "TargetName" = "8:CMAccept.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_425AFFA1757048B5A5900A0FC9B4E24B"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_7A5C508F07A5477B9993C73A40AFD60B"
+            {
+            "SourcePath" = "8:..\\..\\CoreCon\\armv4i\\DeviceDMA.dll"
+            "TargetName" = "8:DeviceDMA.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_425AFFA1757048B5A5900A0FC9B4E24B"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_A7736B51BABB4EACB47CCD4CADD877EA"
+            {
+            "SourcePath" = "8:..\\..\\CoreCon\\armv4i\\emulatorstub.exe"
+            "TargetName" = "8:emulatorstub.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_425AFFA1757048B5A5900A0FC9B4E24B"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_C96FAE8A39464CE29EFC02FE0CAC40F2"
+            {
+            "SourcePath" = "8:..\\..\\CoreCon\\armv4i\\clientshutdown.exe"
+            "TargetName" = "8:clientshutdown.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_425AFFA1757048B5A5900A0FC9B4E24B"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_CA49F63EF5534E6CAE643346BF2365CF"
+            {
+            "SourcePath" = "8:..\\..\\CoreCon\\armv4i\\TcpConnectionA.dll"
+            "TargetName" = "8:TcpConnectionA.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_425AFFA1757048B5A5900A0FC9B4E24B"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_CE0BB6FC35B44026934F90A91E47FF0F"
+            {
+            "SourcePath" = "8:..\\..\\CoreCon\\armv4i\\ConmanClient2.exe"
+            "TargetName" = "8:ConmanClient2.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_425AFFA1757048B5A5900A0FC9B4E24B"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_E60618AC18D1439993387A563A8C2897"
+            {
+            "SourcePath" = "8:..\\..\\CoreCon\\armv4i\\DeviceAgentTransport.dll"
+            "TargetName" = "8:DeviceAgentTransport.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_425AFFA1757048B5A5900A0FC9B4E24B"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+        }
+        "Folder"
+        {
+            "{27CA7284-31D3-408F-812A-1EF9ACCDB822}:_62797BF9F31F4DDFB5F3765873F36281"
+            {
+            "Name" = "8:UM"
+            "Condition" = "8:"
+            "Property" = "8:CUSTOMFOLDER1"
+                "Folders"
+                {
+                    "{5943FCFD-5B64-4EE4-96C9-4618EC95352A}:_26179A99D26C49B1913E1CA52E56E17D"
+                    {
+                    "Name" = "8:Windows"
+                    "Condition" = "8:"
+                    "Property" = "8:_B5B39E4E7E3C43369D532A1501522565"
+                        "Folders"
+                        {
+                            "{5943FCFD-5B64-4EE4-96C9-4618EC95352A}:_28D04E80E93C4956AEFB964001D5C853"
+                            {
+                            "Name" = "8:Desktop"
+                            "Condition" = "8:"
+                            "Property" = "8:_0F8774FEA9A64EF1854CB5E2B307EF9F"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{5943FCFD-5B64-4EE4-96C9-4618EC95352A}:_9A23F9377016407DB7A32CAC283EBC33"
+                            {
+                            "Name" = "8:StartUp"
+                            "Condition" = "8:"
+                            "Property" = "8:_30A272AEF0C54827AECF4DE70BF16C2C"
+                                "Folders"
+                                {
+                                }
+                            }
+                        }
+                    }
+                    "{5943FCFD-5B64-4EE4-96C9-4618EC95352A}:_45EF81DD28004ED99374D2C9EF2153BD"
+                    {
+                    "Name" = "8:Program Files"
+                    "Condition" = "8:"
+                    "Property" = "8:_99D9047A36564764B3AC9D4BC04117B5"
+                        "Folders"
+                        {
+                            "{5943FCFD-5B64-4EE4-96C9-4618EC95352A}:_425AFFA1757048B5A5900A0FC9B4E24B"
+                            {
+                            "Name" = "8:CoreCon"
+                            "Condition" = "8:"
+                            "Property" = "8:_1DEECBAB312A440FB2315B8E7A8ACE67"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{5943FCFD-5B64-4EE4-96C9-4618EC95352A}:_BE2A048982C14CE499F76D678FDBC5FB"
+                            {
+                            "Name" = "8:ToolsSetup"
+                            "Condition" = "8:"
+                            "Property" = "8:_80FEC0B8954941D8A1192C051C7FDBDC"
+                                "Folders"
+                                {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            "{D5B00AC1-E6C3-4CC5-90FF-8E0F53D9E5E0}:_6C4EE6F241264B709B1A265B719C8292"
+            {
+            "DefaultLocation" = "8:%InstallDir%"
+            "Name" = "8:#1920"
+            "Condition" = "8:"
+            "Property" = "8:%InstallDir%"
+                "Folders"
+                {
+                }
+            }
+        }
+        "Product"
+        {
+        "Name" = "8:Microsoft Visual Studio"
+        "ProductName" = "8:ToolsSetup"
+        "Manufacturer" = "8:Ulrich Holeschak"
+        "OSVersionMin" = "8:4.0"
+        "OSVersionMax" = "8:6.99"
+        "NoUninstall" = "11:FALSE"
+        "Compress" = "11:FALSE"
+        "CESetupDLL" = "8:_D0F89C998E064791AC65DBC17ADADB03"
+        }
+        "ProjectOutput"
+        {
+            "{605BE39E-5046-48BD-AEC0-63C3A46626D5}:_9C81FEEB5CEA4EA88757EE8AAE05EAE9"
+            {
+            "SourcePath" = "8:..\\ToolsSetupUnload\\Release\\ToolsSetupUnload.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_BE2A048982C14CE499F76D678FDBC5FB"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:0"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{D7E4E115-ED71-4497-826D-F238477EDAE3}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{605BE39E-5046-48BD-AEC0-63C3A46626D5}:_D0F89C998E064791AC65DBC17ADADB03"
+            {
+            "SourcePath" = "8:..\\ToolsSetupSetupDll\\Release\\ToolsSetupSetupDll.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_BE2A048982C14CE499F76D678FDBC5FB"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:0"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{C5DA890F-F26B-4CC8-9E99-6870AD56A2A1}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+        }
+        "Registry"
+        {
+            "HKLM"
+            {
+                "Keys"
+                {
+                    "{B1EBC968-6B66-4532-A885-748B79AF4477}:_DB8C9AB01DE540E59B24EFA609852946"
+                    {
+                    "Name" = "8:System"
+                    "Condition" = "8:"
+                        "Keys"
+                        {
+                        }
+                        "Values"
+                        {
+                            "{C3684F64-58E2-4092-8E3C-D7483080DE5A}:_65439EDCCA37455EBDC7334716DF9C84"
+                            {
+                            "Name" = "8:CoreConOverrideSecurity"
+                            "Condition" = "8:"
+                            "ValueTypes" = "3:3"
+                            "Value" = "3:1"
+                            }
+                        }
+                    }
+                }
+            }
+            "HKCU"
+            {
+                "Keys"
+                {
+                }
+            }
+            "HKCR"
+            {
+                "Keys"
+                {
+                }
+            }
+            "HKU"
+            {
+                "Keys"
+                {
+                }
+            }
+            "HKPU"
+            {
+                "Keys"
+                {
+                }
+            }
+        }
+        "Shortcut"
+        {
+            "{971D45E9-E38C-49AC-B36E-4C5BEA533350}:_3A8FEBDF88EA4F46A26844343D699769"
+            {
+            "Name" = "8:ConmanClient2"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "Target" = "8:_CE0BB6FC35B44026934F90A91E47FF0F"
+            "Folder" = "8:_9A23F9377016407DB7A32CAC283EBC33"
+            "WorkingFolder" = "8:_425AFFA1757048B5A5900A0FC9B4E24B"
+            }
+            "{971D45E9-E38C-49AC-B36E-4C5BEA533350}:_76EEBB3F517E4B35B624C934790BDF6C"
+            {
+            "Name" = "8:ToolsSetupUnload"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "Target" = "8:_9C81FEEB5CEA4EA88757EE8AAE05EAE9"
+            "Folder" = "8:_9A23F9377016407DB7A32CAC283EBC33"
+            "WorkingFolder" = "8:_BE2A048982C14CE499F76D678FDBC5FB"
+            }
+            "{971D45E9-E38C-49AC-B36E-4C5BEA533350}:_ECFDB76A2A2B40268C4137865EFFBC7A"
+            {
+            "Name" = "8:ConmanClient2"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "Target" = "8:_CE0BB6FC35B44026934F90A91E47FF0F"
+            "Folder" = "8:_28D04E80E93C4956AEFB964001D5C853"
+            "WorkingFolder" = "8:_425AFFA1757048B5A5900A0FC9B4E24B"
+            }
+        }
+    }
+}
