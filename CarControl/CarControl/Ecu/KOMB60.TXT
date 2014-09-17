@@ -1,0 +1,74 @@
+0x9311	OHC-Counter unplausibel
+0x9312	Energiesparmode aktiv
+0x9313	TEMPERATURFUEHLER_LCD
+0x9314	Kurzschluss Kombitaster
+0x9315	GWSZ_FEHLER_CAS_ODER_KOMBI
+0x9316	GWSZ_FEHLER_EEPROM
+0x9317	EEPROM: Fehler Codierdaten BMW
+0x9319	HEBELGEBER1
+0x931A	HEBELGEBER2
+0x931B	AUSSENTEMPERATURSENSOR
+0x931C	KURZSCHUSS_DISPLAYHEIZUNG
+0x931D	BORDNETZSPANNUNG, UEBERSPANNUNG ODER UNTERSPANNUNG
+0x931E	EEPROM: Fehler Codierdaten Lieferant
+0xA3A8	CAN_NO ID
+0xA3A9	CAN_ID_1EE_ERROR_Ausfall_Botschaft_LSS
+0xA3AA	CAN_ID_1D2_ERROR_Botschaft_Getriebedaten
+0xA3AB	CAN_ID_190_ERROR_Ausfall_Botschaft_Anzeige_ACC
+0xA3AC	CAN_ID_1A6_ERROR_Ausfall_Botschaft_Wegstrecke
+0xA3AD	CAN_ID_1D0_ERROR_Ausfall_Botschaft_Motordaten
+0xA3AE	CAN_ID_0AA_ERROR_Ausfall_Botschaft_Drehzahl_Leerlauf
+0xA3AF	CAN_ID_200_ERROR_Ausfall_Botschaft_Regelgeschw_Stufentempomat
+0xA3B0	CAN_ID_202_ERROR_Ausfall_Botschaft_Dimmung
+0xA3B1	CAN_ID_1F6_ERROR_Ausfall_Botschaft_Blinken
+0xA3B2	CAN_ID_130_ERROR_Ausfall_Botschaft_Klemmenstatus
+0xA3B3	CAN_ID_0BE_ERROR_Ausfall_Botschaft_ARS_Alive_Zaehler_oder_SFY
+0xA3B4	CAN_ID_21A_ERROR_Ausfall_Botschaft_Lampenzustand
+0xA3B6	CAN_ID_5C0_ERROR_Ausfall_Botschaft_CAS_Antwort_RDA_DATEN_fehlen
+0xA3B8	ID_Ausfall 326h Daempferprogramm
+0xA3B9	CAN_ID_19E_ERROR_Ausfall_Botschaft_Status_DSC
+0xA3BB	CAN_ID_2FC_ERROR_Ausfall_Botschaft_ZV_Klappenzustand
+0xA3BC	NO_ANSWER_TO_REQUEST (580h+60h)
+0xA3BD	CAN_ID_0C0_ERROR_Ausfall_Botschaft_Alive_Zentrales_Gateway
+0xA3BE	CAS_AUSFALL_NETZWERKMANAGMENT
+0xA3C0	AHM_AUSFALL_NETZWERKMANAGMENT
+0xA3C1	LM_AUSFALL_NETZWERKMANAGMENT
+0xA3C3	RDC_AUSFALL_NETZWERKMANAGMENT
+0xA3C4	ID_Ausfall oder Alive ACC
+0xA3C5	ID_Ausfall oder Alive SFY
+0xA3C6	Konsistenzfehler Getriebeposition
+0xA3C7	Luftfeder_AUSFALL_NETZWERKMANAGMENT
+0xA548	ID_Ausfall 1FCh AFS
+0xA549	ID_Ausfall 315h Fahrzeugmodus
+0xA54A	Checksummenfehler Antwort CAS auf CAN-Anfrage ID 394h
+0xA54D	ID_Ausfall oder Alive EKP
+0xA54E	ID_Ausfall oder Alive Sitzlehnenverriegelung Fahrer
+0xA54F	ID_Ausfall oder Alive Sitzlehnenverriegelung Beifahrer
+0xA550	ID_Ausfall 1A0h Geschwindigkeit
+0xA553	CBS-EEPROM-Lesefehler
+0xA554	Alive Telefon
+0xA555	Sitzbelegung Gurtkontakte
+0xA556	Ausfall HDC-Anzeige
+0xA557	Debuginfo Kombi
+0xA559	Klemme30g_f_Abschaltung
+0xA55A	ID_Ausfall oder Alive TLC
+0xA55B	ID_Ausfall oder Alive Airbag
+0xA55C	WD Anzeige Abschaltung
+0xA55D	Fehler Anzeige Getriebeposition
+0xA55E	WD Fehler
+0xA560	ID_Ausfall Anzeige shift indicator
+0xA561	CAN-Init Debuginfo Kombi
+0xA565	ID_Ausfall Anzeige Motordaten
+0xA569	Konsistenzfehler Getriebeposition unentprellt
+0xE104	CAN LOW ERROR
+0xE105	CAN HIGH ERROR
+0xE106	GROUND SHIFT ERROR
+0xE107	CAN BUS OFF
+0xE13C	CAN Fehlerwert_erhalten
+0xE13D	CAN unplausibles_Signal
+0xE13E	CAN Telegramm_Timeout
+0xE13F	CAN Fehler_Empfang_NM-Botschaft
+0xE140	CAN Fehler_von_KI_gesendet
+0xE141	CAN unplausibles_Signal_gesendet
+0xE142	CAN Telegramm_Timeout_senden
+0xE143	CAN Fehler_Senden_NM-Botschaft

@@ -1,0 +1,4 @@
+0xA2CB	Fehler Hat switch
+0xA2CC	Energiesparmode aktiv
+0xE2C4	Fehler CAN physical error
+0xE2C7	Fehler CAN logical error

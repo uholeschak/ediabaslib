@@ -1,0 +1,34 @@
+0x9e28	Fehlerort: SG intern
+0x9e29	Fehlerort: Funktionsanzeige
+0x9e2a	Fehlerort: Taster
+0x9e2b	Fehlerort: Wandlerfehler HL
+0x9e2c	Fehlerort: Wandlerfehler HR
+0x9e2d	Fehlerort: Wandlerfehler HML
+0x9e2e	Fehlerort: Wandlerfehler HMR
+0x9e2f	Fehlerort: Wandlerfehler VL
+0x9e30	Fehlerort: Wandlerfehler VR
+0x9e31	Fehlerort: Wandlerfehler VML
+0x9e32	Fehlerort: Wandlerfehler VMR
+0x9e33	Fehlerort: Wandlerleitungen HL
+0x9e34	Fehlerort: Wandlerleitungen HR
+0x9e35	Fehlerort: Wandlerleitungen HML
+0x9e36	Fehlerort: Wandlerleitungen HMR
+0x9e37	Fehlerort: Wandlerleitungen VL
+0x9e38	Fehlerort: Wandlerleitungen VR
+0x9e39	Fehlerort: Wandlerleitungen VML
+0x9e3a	Fehlerort: Wandlerleitungen VMR
+0x9e3b	Fehlerort: Wandler Versorgung
+0x9e40	Fehlerort: Wandlerfehler HSL
+0x9e41	Fehlerort: Wandlerfehler HSR
+0x9e42	Fehlerort: Wandlerfehler VSL
+0x9e43	Fehlerort: Wandlerfehler VSR
+0x9e44	Fehlerort: Wandlerleitungen HSL
+0x9e45	Fehlerort: Wandlerleitungen HSR
+0x9e46	Fehlerort: Wandlerleitungen VSL
+0x9e47	Fehlerort: Wandlerleitungen VSR
+0x9e50	Fehlerort: Lautsprecher hinten
+0x9e51	Fehlerort: Lautsprecher vorne
+0xe204	Fehlerort: CAN-Low, Physikalischer Busfehler
+0xe205	Fehlerort: CAN-High, Physikalischer Busfehler
+0xe206	Fehlerort: CAN-Groundshift, Physikalischer Busfehler
+0xe207	Fehlerort: CAN-Controller, Bus off

@@ -1,0 +1,9 @@
+OpenNETCF_Net_Source/
+OpenNETCF_Source/
+bin/
+obj/
+SDF/
+*.user
+*.suo
+*.bat
+*.ncb

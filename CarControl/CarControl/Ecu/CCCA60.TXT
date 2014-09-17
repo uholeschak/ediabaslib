@@ -1,0 +1,43 @@
+0xA048	Kein Zusaetzliches Memory verfuegbar
+0xA04A	Root Zertifikat im Browser ist ungueltig
+0xA04B	Das angeforderte Security Level ist beim WAP Gateway nicht verfuegbar
+0xA04C	Das OU-Feld des geladenen WAP Zertifikat ist ungueltig
+0xA04D	Das aktuelle Netz wird nicht unterstuetzt
+0xA04E	Gyro Ausgaben ausserhalb der Spezifikation
+0xA04F	Kein Tacho Signal waehrend GPS Bewegung erkennt
+0xA050	Zu grosse Tachodaten
+0xA051	Rueckwertsgang Signal in Widerspruch zu GPS
+0xA052	Grosse oder haeufige Positionsspruenge (obsolete)
+0xA053	Oszillatorwerte ausserhalb Grosse der Spezifikation
+0xA054	Offener GPS-Antennenanschluss
+0xA055	Kurzschluss des GPS-Antennenanschluss
+0xA056	Keine Verbindung zu GPS DSP
+0xA057	RealTimeClock inkonsistent mit GPS-Zeit
+0xA058	Gyro Fehler bei Selbsttest
+0xA059	Gyro AD-Wandler Fehler bei Selbsttest
+0xA05A	Gyro gibt permanent 3.3 V
+0xA05B	Generischer Gyro Fehler
+0xA05C	Nicht spezifizierter Gyro Fehler
+0xA05D	Nicht spezifizierter Tacho Fehler
+0xA05E	Unbekanntes Soft Event
+0xA05F	Illegale hardware-Interrupts
+0xA060	HIP: RAM-Fehler bei Selbsttest
+0xA061	HIP: Checksum Fehler bei ROM test
+0xA062	Keine UART-Verbindung zum HIP Modul
+0xA063	HIP: interner SW-Fehler
+0xA064	HIP: Fehler bei der Freigabe einer Semaphore
+0xA065	HIP: Fehler beim Loeschen einer Message Queue
+0xA066	HIP: Fehler beim Loeschen einer Task
+0xA067	HIP: Fehler beim Suspendieren einer Task
+0xA6E8	HIP: Fehler beim Resume einer Task
+0xA6E9	HIP: Fehler beim Erstellen einer Semaphore
+0xA6EA	HIP: Fehler beim Verbinden zu einer IO-Zelle
+0xA6EB	HIP: Fehler beim Erstellen einer Task
+0xA6EC	HIP: Fehler beim Speicher allocieren
+0xA6ED	HIP: eine Message Queue ist voll
+0xA6EE	HIP: Fehler beim Oeffnen des seriellen Ports
+0xA6EF	HIP: COCOM event, kein recovery
+0xA6F0	HIP: Fehler in Navigations library
+0xA6F1	HIP: Serieller Port nicht gefunden
+0xA6F2	HIP: Fehler beim Zugriff auf den seriellen Port
+0xA6F3	Coding data CRC Fehler

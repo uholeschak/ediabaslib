@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="axisModeConveyor" xml:space="preserve">
+    <value>Band</value>
+  </data>
+  <data name="axisModeGarage" xml:space="preserve">
+    <value>Werkstatt</value>
+  </data>
+  <data name="axisModeNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="axisModeTransport" xml:space="preserve">
+    <value>Transport</value>
+  </data>
+  <data name="batteryStatus" xml:space="preserve">
+    <value>Akku</value>
+  </data>
+  <data name="buttonModeConnect" xml:space="preserve">
+    <value>Verbinden</value>
+  </data>
+  <data name="buttonModeDisconnect" xml:space="preserve">
+    <value>Trennen</value>
+  </data>
+  <data name="cccNavDirEast" xml:space="preserve">
+    <value>Ost</value>
+  </data>
+  <data name="cccNavDirNorth" xml:space="preserve">
+    <value>Nord</value>
+  </data>
+  <data name="cccNavDirSouth" xml:space="preserve">
+    <value>Süd</value>
+  </data>
+  <data name="cccNavDirWest" xml:space="preserve">
+    <value>West</value>
+  </data>
+  <data name="cccNavGpsPos2D" xml:space="preserve">
+    <value>2D Positionierung</value>
+  </data>
+  <data name="cccNavGpsPos3D" xml:space="preserve">
+    <value>3D Positionierung</value>
+  </data>
+  <data name="cccNavGpsPosSearch" xml:space="preserve">
+    <value>Suchen</value>
+  </data>
+  <data name="cccNavGpsPosTrack" xml:space="preserve">
+    <value>Tracking</value>
+  </data>
+  <data name="errorClassBelowThreshold" xml:space="preserve">
+    <value>Wert unterhalb Schwelle</value>
+  </data>
+  <data name="errorClassInvalidValue" xml:space="preserve">
+    <value>Unplausibles Signal</value>
+  </data>
+  <data name="errorClassNoSymptom" xml:space="preserve">
+    <value>Kein Fehlersymptom</value>
+  </data>
+  <data name="errorClassNoValue" xml:space="preserve">
+    <value>Kein Signal</value>
+  </data>
+  <data name="errorClassOverThreshold" xml:space="preserve">
+    <value>Wert oberhalb Schwelle</value>
+  </data>
+  <data name="errorClassUnknown" xml:space="preserve">
+    <value>Fehler unbekannt</value>
+  </data>
+  <data name="errorNameACSM" xml:space="preserve">
+    <value>ACSM Crash-Sicherheits-Modul</value>
+  </data>
+  <data name="errorNameAHM" xml:space="preserve">
+    <value>AHM Anhängermodul</value>
+  </data>
+  <data name="errorNameCAS" xml:space="preserve">
+    <value>CAS Car Access System</value>
+  </data>
+  <data name="errorNameCCCA" xml:space="preserve">
+    <value>CCC-A Anwendungen</value>
+  </data>
+  <data name="errorNameCCCANT" xml:space="preserve">
+    <value>CCC-ANT Antennentuner</value>
+  </data>
+  <data name="errorNameCCCASK" xml:space="preserve">
+    <value>CCC-ASK Audiosystem-Kontroller</value>
+  </data>
+  <data name="errorNameCCCBO" xml:space="preserve">
+    <value>CCC-BO Bedienoberfläche</value>
+  </data>
+  <data name="errorNameCCCGW" xml:space="preserve">
+    <value>CCC-GW Gateway</value>
+  </data>
+  <data name="errorNameCDC" xml:space="preserve">
+    <value>CDC CD-Wechsler</value>
+  </data>
+  <data name="errorNameCID" xml:space="preserve">
+    <value>CID Central Information Display</value>
+  </data>
+  <data name="errorNameCON" xml:space="preserve">
+    <value>CON Controller</value>
+  </data>
+  <data name="errorNameDDE" xml:space="preserve">
+    <value>DDE Diesel Elektronik</value>
+  </data>
+  <data name="errorNameDSC" xml:space="preserve">
+    <value>DSC Dynamische Stabilitätskontrolle</value>
+  </data>
+  <data name="errorNameEHC" xml:space="preserve">
+    <value>EHC Höhenstands Control</value>
+  </data>
+  <data name="errorNameEKPS" xml:space="preserve">
+    <value>EKPS Kraftstoffpumpensteuerung</value>
+  </data>
+  <data name="errorNameIHK" xml:space="preserve">
+    <value>IHK Integrierte Heiz-Klima-Automatik</value>
+  </data>
+  <data name="errorNameKBM" xml:space="preserve">
+    <value>KBM Karosserie-Basismodul</value>
+  </data>
+  <data name="errorNameKGM" xml:space="preserve">
+    <value>KGM Karosserie-Gateway-Modul</value>
+  </data>
+  <data name="errorNameKOMBI" xml:space="preserve">
+    <value>KOMBI Instrumentenkombination</value>
+  </data>
+  <data name="errorNameLM" xml:space="preserve">
+    <value>LM Lichtmodul</value>
+  </data>
+  <data name="errorNamePDC" xml:space="preserve">
+    <value>PDC Park-Distance-Control</value>
+  </data>
+  <data name="errorNameRLS" xml:space="preserve">
+    <value>RLS Regen-Fahrlicht-Sensor</value>
+  </data>
+  <data name="errorNameSZL" xml:space="preserve">
+    <value>SZL Schaltzentrum Lenksäule</value>
+  </data>
+  <data name="errorNameSZM" xml:space="preserve">
+    <value>SZM Schaltzentrum Mittelkonsole</value>
+  </data>
+  <data name="errorNameTCU" xml:space="preserve">
+    <value>TCU Telematic Control Unit</value>
+  </data>
+  <data name="errorNoError" xml:space="preserve">
+    <value>Keine Fehler vorhanden</value>
+  </data>
+  <data name="errorNoResponse" xml:space="preserve">
+    <value>Keine Antwort</value>
+  </data>
+  <data name="errorPresentNever" xml:space="preserve">
+    <value>Fehler nie aufgetreten</value>
+  </data>
+  <data name="errorPresentNotNow" xml:space="preserve">
+    <value>Fehler nicht vorhanden</value>
+  </data>
+  <data name="errorPresentNow" xml:space="preserve">
+    <value>Fehler vorhanden</value>
+  </data>
+  <data name="errorWarningActive" xml:space="preserve">
+    <value>Warnlampe</value>
+  </data>
+  <data name="storeLog" xml:space="preserve">
+    <value>Log speichern</value>
+  </data>
+</root>

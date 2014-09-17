@@ -1,0 +1,13 @@
+0xA508	Antennen-SV. Fehler in der Antennen-Stromversorgung
+0xDAC4	Das externe RAM hat den Selbsttest nicht bestanden.
+0xDAC5	Der Audio_Tuner hat den Selbsttest nicht bestanden.
+0xDAC6	Der CDSP Chip hat den Selbsttest nicht bestanden.
+0xDAC7	Der Data_Tuner hat den Selbsttest nicht bestanden.
+0xDAC8	Das EEPROM hat den Selbsttest nicht bestanden.
+0xDAC9	Die interne Versorgung mit 8.5V hat den Selbsttest nicht bestanden.
+0xDACA	Ein Watchdog-Reset ist aufgetreten (HW- oder SW-Fehler).
+0xDACE	Error_Light_Not_Off.
+0xDAD0	Ringbruchdiagnose wurde durchgefuehrt (Error_Ring_Diagnose).
+0xDAD1	Lange und/oder haeufige Unlocks (Error_Unlock_Long).
+0xDAD2	Die Diversity ist nicht angeschlossen.
+0xDAD3	Fehler in der Verbindung Diversity zu den Antennen.

@@ -1,0 +1,44 @@
+0xE544	K_CAN_Leitungsfehler
+0xE545	K_CAN_Leitungsfehler
+0xE546	GroundShift
+0xE547	CAN_Controller
+0xE57C	Fehlerwert_erhalten
+0xE57D	Unplausibles_Signal
+0xE57E	Telegramm_Timeout_beim_Emfang
+0xE57F	Fehler_beim_Empfang_NM_Botschaft - nur für Entwicklung relevant
+0xE580	Fehlerwert_gesendet
+0xE581	Unplausibles_Signal1
+0xE582	Telegramm_Timeout_beim_Senden
+0xE583	Fehler_beim_Senden_NM_Botschaft - nur für Entwicklung relevant
+0x9DE8	AHM SG_FEHLER
+0x9DE9	AHM Energiesparmode aktiv
+0x9DEA	AHM dauerkurzschlussgeschaedigt
+0x9DEB	AHM Reserve_DTC_29
+0x9DEC	AHM Reserve_DTC_28
+0x9DED	AHM Reserve_DTC_27
+0x9DEE	AHM Reserve_DTC_26
+0x9DEF	AHM Reserve_DTC_25
+0x9DF0	AHM Reserve_DTC_24
+0x9DF1	AHM Reserve_DTC_23
+0x9DF2	AHM Reserve_DTC_22
+0x9DF3	AHM Reserve_DTC_21
+0x9DF4	AHM Reserve_DTC_20
+0x9DF5	AHM Reserve_DTC_19
+0x9DF6	AHM Reserve_DTC_18
+0x9DF7	AHM Eingang Bremslicht Hardware
+0x9DF8	AHM Eingangssignal von AHV-SG fehlt
+0x9DF9	AHM Eingangssignal Blinklicht fehlt
+0x9DFA	AHM Versorgung_KL_30_2
+0x9DFB	AHM Versorgung_KL_30_1
+0x9DFC	AHM Reserve_DTC_12
+0x9DFD	AHM Reserve_DTC_11
+0x9DFE	AHM Reserve_DTC_10
+0x9DFF	AHM Reserve_DTC_09
+0x9E00	AHM Reserve_DTC_08
+0x9E01	AHM Reserve_DTC_07
+0x9E02	AHM Reserve_DTC_06
+0x9E03	AHM Reserve_DTC_05
+0x9E04	AHM Reserve_DTC_04
+0x9E05	AHM Reserve_DTC_03
+0x9E06	AHM Reserve_DTC_02
+0x9E07	AHM Reserve_DTC_01

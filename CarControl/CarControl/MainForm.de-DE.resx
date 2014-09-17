@@ -1,0 +1,381 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="$this.Text" xml:space="preserve">
+    <value>BMW Steuerung</value>
+  </data>
+  <data name="buttonClose.Text" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="buttonConnect.Text" xml:space="preserve">
+    <value>Verbinden</value>
+  </data>
+  <data name="buttonPowerOff.Text" xml:space="preserve">
+    <value>Ausschalten</value>
+  </data>
+  <data name="buttonStoreLog.Text" xml:space="preserve">
+    <value>Log speichern</value>
+  </data>
+  <data name="checkBoxCccNavAlmanach.Text" xml:space="preserve">
+    <value>Almanach Status OK</value>
+  </data>
+  <data name="checkBoxConnected.Text" xml:space="preserve">
+    <value>Verbunden</value>
+  </data>
+  <data name="checkBoxHipDriver.Text" xml:space="preserve">
+    <value>HIP Treiber OK</value>
+  </data>
+  <data name="checkBoxLogFile.Text" xml:space="preserve">
+    <value>Logfile erzeugen</value>
+  </data>
+  <data name="checkBoxMotorPartFilterRequest.Text" xml:space="preserve">
+    <value>Partikelfilter Anforderung Regen.</value>
+  </data>
+  <data name="checkBoxMotorPartFilterStatus.Text" xml:space="preserve">
+    <value>Partikelfilter Regeneration</value>
+  </data>
+  <data name="checkBoxMotorPartFilterUnblock.Text" xml:space="preserve">
+    <value>Partikelfilter Freigabe Regen.</value>
+  </data>
+  <data name="checkBoxOilPressSwt.Text" xml:space="preserve">
+    <value>Öldruckschalter</value>
+  </data>
+  <data name="groupBoxControl.Text" xml:space="preserve">
+    <value>Steuerung</value>
+  </data>
+  <data name="groupBoxStatus.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="labelAxisBatteryVoltage.Text" xml:space="preserve">
+    <value>Batteriespannung [V]:</value>
+  </data>
+  <data name="labelAxisLeft.Text" xml:space="preserve">
+    <value>Achse links:</value>
+  </data>
+  <data name="labelAxisMode.Text" xml:space="preserve">
+    <value>Achsenmodus:</value>
+  </data>
+  <data name="labelAxisRight.Text" xml:space="preserve">
+    <value>Achse rechts:</value>
+  </data>
+  <data name="labelCccNavGearRate.Text" xml:space="preserve">
+    <value>Gear Rate [V]:</value>
+  </data>
+  <data name="labelCccNavGpsDateTime.Text" xml:space="preserve">
+    <value>GPS Datum/Zeit:</value>
+  </data>
+  <data name="labelCccNavPosHeight.Text" xml:space="preserve">
+    <value>Position Höhe NN [m]:</value>
+  </data>
+  <data name="labelCccNavPosLat.Text" xml:space="preserve">
+    <value>Position Breite:</value>
+  </data>
+  <data name="labelCccNavPosLong.Text" xml:space="preserve">
+    <value>Position Länge:</value>
+  </data>
+  <data name="labelCccNavPosType.Text" xml:space="preserve">
+    <value>GPS Status:</value>
+  </data>
+  <data name="labelCccNavResHorz.Text" xml:space="preserve">
+    <value>GPS horizonale Auflösung [m]:</value>
+  </data>
+  <data name="labelCccNavResPos.Text" xml:space="preserve">
+    <value>GPS Position Auflösung [m]:</value>
+  </data>
+  <data name="labelCccNavResVert.Text" xml:space="preserve">
+    <value>GPS vertikale Auflösung [m]:</value>
+  </data>
+  <data name="labelCccNavSpeed.Text" xml:space="preserve">
+    <value>Geschwindigkeit [km/h]:</value>
+  </data>
+  <data name="labelErrorCount.Text" xml:space="preserve">
+    <value>Fehlerzähler:</value>
+  </data>
+  <data name="labelIdleSpeedControlOff.Text" xml:space="preserve">
+    <value>Leerlaufregler ausgeschaltet</value>
+  </data>
+  <data name="labelIdleSpeedControlOn.Text" xml:space="preserve">
+    <value>Leerlaufregler eingeschaltet</value>
+  </data>
+  <data name="labelIhkHeatExSetpoint.Text" xml:space="preserve">
+    <value>Wärmetauschersollwert [°C]:</value>
+  </data>
+  <data name="labelIhkHeatExTemp.Text" xml:space="preserve">
+    <value>Wärmetauschertemperatur [°C]:</value>
+  </data>
+  <data name="labelIhkInTemp.Text" xml:space="preserve">
+    <value>Innentemperatur [°C]:</value>
+  </data>
+  <data name="labelIhkInTempDelay.Text" xml:space="preserve">
+    <value>Innentemperatur verzögert [°C]:</value>
+  </data>
+  <data name="labelIhkOutTemp.Text" xml:space="preserve">
+    <value>Außentemperatur [°C]:</value>
+  </data>
+  <data name="labelIhkSetpoint.Text" xml:space="preserve">
+    <value>Sollwert [°C]:</value>
+  </data>
+  <data name="labelMotorAirMass.Text" xml:space="preserve">
+    <value>Luftmasse [kg/h]:</value>
+  </data>
+  <data name="labelMotorAirMassAct.Text" xml:space="preserve">
+    <value>Luftmasse ist [mg/Hub]:</value>
+  </data>
+  <data name="labelMotorAirMassSet.Text" xml:space="preserve">
+    <value>Luftmasse soll [mg/Hub]:</value>
+  </data>
+  <data name="labelMotorAmbientPress.Text" xml:space="preserve">
+    <value>Umgebungsdruck [mbar]:</value>
+  </data>
+  <data name="labelMotorAmbientTemp.Text" xml:space="preserve">
+    <value>Umgebungstemperatur [°C]:</value>
+  </data>
+  <data name="labelMotorBatteryVoltage.Text" xml:space="preserve">
+    <value>Batteriespannung [V]:</value>
+  </data>
+  <data name="labelMotorBoostPressAct.Text" xml:space="preserve">
+    <value>Ladedruck ist [mbar]:</value>
+  </data>
+  <data name="labelMotorBoostPressSet.Text" xml:space="preserve">
+    <value>Ladedruck soll [mbar]:</value>
+  </data>
+  <data name="labelMotorExhaustBackPressure.Text" xml:space="preserve">
+    <value>Abgasgegendruck [mbar]:</value>
+  </data>
+  <data name="labelMotorFuelTemp.Text" xml:space="preserve">
+    <value>Treibstofftemperatur [°C]:</value>
+  </data>
+  <data name="labelMotorIntakeAirTemp.Text" xml:space="preserve">
+    <value>Ansauglufttemp. [°C]:</value>
+  </data>
+  <data name="labelMotorPartFilterDistSinceRegen.Text" xml:space="preserve">
+    <value>Partikelfilter Strecke seit Regen. [km]:</value>
+  </data>
+  <data name="labelMotorQuantCorrCylinder1.Text" xml:space="preserve">
+    <value>Mengenkorrektur Zylinder 1 [mg/Hub]:</value>
+  </data>
+  <data name="labelMotorQuantCorrCylinder2.Text" xml:space="preserve">
+    <value>Mengenkorrektur Zylinder 2 [mg/Hub]:</value>
+  </data>
+  <data name="labelMotorQuantCorrCylinder3.Text" xml:space="preserve">
+    <value>Mengenkorrektur Zylinder 3 [mg/Hub]:</value>
+  </data>
+  <data name="labelMotorQuantCorrCylinder4.Text" xml:space="preserve">
+    <value>Mengenkorrektur Zylinder 4 [mg/Hub]:</value>
+  </data>
+  <data name="labelMotorRailPressAct.Text" xml:space="preserve">
+    <value>Raildruck ist [bar]:</value>
+  </data>
+  <data name="labelMotorRailPressSet.Text" xml:space="preserve">
+    <value>Raildruck soll [bar]:</value>
+  </data>
+  <data name="labelMotorRpmCylinder1.Text" xml:space="preserve">
+    <value>Drehzahl Zylinder 1 [1/min]:</value>
+  </data>
+  <data name="labelMotorRpmCylinder2.Text" xml:space="preserve">
+    <value>Drehzahl Zylinder 2 [1/min]:</value>
+  </data>
+  <data name="labelMotorRpmCylinder3.Text" xml:space="preserve">
+    <value>Drehzahl Zylinder 3 [1/min]:</value>
+  </data>
+  <data name="labelMotorRpmCylinder4.Text" xml:space="preserve">
+    <value>Drehzahl Zylinder 4 [1/min]:</value>
+  </data>
+  <data name="labelMotorTemp.Text" xml:space="preserve">
+    <value>Motortemperatur  [°C]:</value>
+  </data>
+  <data name="labelMotorTempBeforeCat.Text" xml:space="preserve">
+    <value>Temp. vor Katalysator [°C]:</value>
+  </data>
+  <data name="labelMotorTempBeforeFilter.Text" xml:space="preserve">
+    <value>Temp. vor Partikelfilter [°C]:</value>
+  </data>
+  <data name="labelOutputState.Text" xml:space="preserve">
+    <value>Zustand Ausgänge:</value>
+  </data>
+  <data name="labelPmBatCap.Text" xml:space="preserve">
+    <value>Batteriekapazität [Ah]:</value>
+  </data>
+  <data name="labelPmCalEvents.Text" xml:space="preserve">
+    <value>Kalibierereignisse:</value>
+  </data>
+  <data name="labelPmSeasonTemp.Text" xml:space="preserve">
+    <value>Saison Temperatur [°C]:</value>
+  </data>
+  <data name="labelPmSocFit.Text" xml:space="preserve">
+    <value>Ladezustand (SoC Fit) [%]:</value>
+  </data>
+  <data name="labelPmSocPercent.Text" xml:space="preserve">
+    <value>Ladezustand (SoC) [%]:</value>
+  </data>
+  <data name="labelPmSocPercentD1.Text" xml:space="preserve">
+    <value>Tag 1:</value>
+  </data>
+  <data name="labelPmSocQ.Text" xml:space="preserve">
+    <value>Ladezustand (SoC) [Ah]:</value>
+  </data>
+  <data name="labelPmSocQD1.Text" xml:space="preserve">
+    <value>Tag 1:</value>
+  </data>
+  <data name="labelPmSoh.Text" xml:space="preserve">
+    <value>Gesundheitszustand (SoH) [+/-50]:</value>
+  </data>
+  <data name="labelPmStartCap.Text" xml:space="preserve">
+    <value>Startfähigkeit [%]:</value>
+  </data>
+  <data name="labelPmStartCapD1.Text" xml:space="preserve">
+    <value>Tag 1:</value>
+  </data>
+  <data name="labelSpeed.Text" xml:space="preserve">
+    <value>Geschwindigkeit [km/h]:</value>
+  </data>
+  <data name="pushButtonDown.Text" xml:space="preserve">
+    <value>Abwärts</value>
+  </data>
+  <data name="pushButtonUp.Text" xml:space="preserve">
+    <value>Aufwärts</value>
+  </data>
+  <data name="pushButtonWlan.Text" xml:space="preserve">
+    <value>WLAN ein</value>
+  </data>
+  <data name="tabPageAxis.Text" xml:space="preserve">
+    <value>Achse</value>
+  </data>
+  <data name="tabPageCccNav.Text" xml:space="preserve">
+    <value>GPS</value>
+  </data>
+  <data name="tabPageErrors.Text" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="tabPageIhk.Text" xml:space="preserve">
+    <value>Klima</value>
+  </data>
+  <data name="tabPageMotor.Text" xml:space="preserve">
+    <value>Motor</value>
+  </data>
+  <data name="tabPageMotorRotIrregular.Text" xml:space="preserve">
+    <value>Drehungsgleichförmig.</value>
+  </data>
+  <data name="tabPageMotorUnevenRunning.Text" xml:space="preserve">
+    <value>Laufunruhe</value>
+  </data>
+  <data name="tabPagePm.Text" xml:space="preserve">
+    <value>Energiemanagement</value>
+  </data>
+</root>

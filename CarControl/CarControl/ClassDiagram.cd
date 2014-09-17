@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CarControl.CommThread" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EgUREAAQRKAC6gEgCRMpMIIQEoiIIxgAAAgRAAAAAAE=</HashCode>
+      <FileName>CommThread.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarControl.GroupBox" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAACABIAAAQgCAAAACAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>GroupBox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarControl.MainForm" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAQxkQACOvQFhAgmIxCIAAICAggAgBKA2BQhQACZAAY=</HashCode>
+      <FileName>MainForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarControl.Program" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarControl.PushButton" Collapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAQAAACABIAAEQgCAAAACgAAAAAAAIAAAAAAABAo=</HashCode>
+      <FileName>PushButton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarControl.WinAPI" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>kLBHmCT4VprGAnmG9SDQA/sLEcSSPgMCkwcEUL21PjY=</HashCode>
+      <FileName>WinAPI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ftdi.Ftd2xx" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AMRgIA5QJ0EgBJEEABAAhAcoABGGACagBG2AAoRYIkI=</HashCode>
+      <FileName>Ftd2xx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarControl.Properties.Resources" Collapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarControl.Resources.strings" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAECEAAAABMAAAQQACAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>

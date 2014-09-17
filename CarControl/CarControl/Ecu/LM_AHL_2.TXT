@@ -1,0 +1,105 @@
+0x9CA8	interner Fehler LM-II
+0x9CA9	Klemme 30A Anschluss fehlerhaft
+0x9CAA	Klemme 30B Anschluss fehlerhaft
+0x9CAB	eine Klemme 15 fehlt
+0x9CAC	Bremslichtschalter defekt
+0x9CAD	LWR-Poti defekt
+0x9CAE	Bedienteilfehler
+0x9CAF	Lichtschalterstellung 1 defekt
+0x9CB0	Lichtschalterstellung 2 defekt
+0x9CB1	Dimmer-Poti defekt
+0x9CB2	Sensor Hoehenstand vorne defekt
+0x9CB3	Sensor Hoehenstand hinten defekt
+0x9CB4	Energiesparmode aktiv
+0x9CB5	Unkonsistenz: Softwareversion und Codierindex
+0x9CB6	LWR-Spulenabriss
+0x9CB7	LWR-Treiberfehler
+0x9CB8	Kurzschlussfehler
+0x9CB9	Batterie tiefentladen
+0x9CBA	Tiefentladungsschutz der Batterie: Abschaltung Standlicht
+0x9CBB	Tiefentladungsschutz der Batterie: Abschaltung Parklicht
+0x9CBC	Kommunikation mit StepperMoterBox links gestoert
+0x9CBD	Kommunikation mit StepperMoterBox rechts gestoert
+0x9CBE	Achtung: Elektronik am linken Scheinwerfer (SMC) meldet Fehler
+0x9CBF	Achtung: Elektronik am rechten Scheinwerfer (SMC) meldet Fehler
+0x9CC0	Vergleich Fahrgestellnummer ALC mit SMC links unterschiedlich
+0x9CC1	Vergleich Fahrgestellnummer ALC mit SMC rechts unterschiedlich
+0x9CC2	Hardwareleitung zu SZL fehlt
+0x9CC3	RLS: LinPhysicalBusError
+0x9CC4	RLS: LinProtocolError
+0x9CC5	RLS: NoResponse
+0x9CC6	Alive-Signal vom ALC-System fehlt
+0x9CC7	Tagfahrlichtsperre aktiv
+0x9cc8	LED-Hauptlicht-Modul (LHM) links: Fehler Steuergeräteintern
+0x9cc9	LED-Hauptlicht-Modul (LHM) rechts: Fehler Steuergeräteintern
+0x9cca	LED-Hauptlicht-Modul (LHM) links: Defekt LED Abblendlicht
+0x9ccb	LED-Hauptlicht-Modul (LHM) rechts: Defekt LED Abblendlicht
+0x9ccc	LED-Hauptlicht-Modul (LHM) links: Defekt LED Fernlicht
+0x9ccd	LED-Hauptlicht-Modul (LHM) rechts: Defekt LED Fernlicht
+0x9cce	LED-Hauptlicht-Modul (LHM) links: Fehler Hardwarekodierung LED-Binnings
+0x9ccf	LED-Hauptlicht-Modul (LHM) rechts: Fehler Hardwarekodierung LED-Binnings
+0x9cd0	LED-Hauptlicht-Modul (LHM) links: Kommunikationsfehler Thermomanagement
+0x9cd1	LED-Hauptlicht-Modul (LHM) rechts: Kommunikationsfehler Thermomanagement
+0x9cd2	LED-Hauptlicht-Modul (LHM) links: Übertemperatur Scheinwerfer links
+0x9cd3	LED-Hauptlicht-Modul (LHM) rechts: Übertemperatur Scheinwerfer rechts
+0x9cd4	LED-Hauptlicht-Modul (LHM) links: Defekt Lüfter 1
+0x9cd5	LED-Hauptlicht-Modul (LHM) rechts: Defekt Lüfter 1
+0x9cd6	LED-Hauptlicht-Modul (LHM) links: Defekt Lüfter 2
+0x9cd7	LED-Hauptlicht-Modul (LHM) rechts: Defekt Lüfter 2
+0x9cd8	LED-Hauptlicht-Modul (LHM) links: Defekt Temperatursensor
+0x9cd9	LED-Hauptlicht-Modul (LHM) rechts: Defekt Temperatursensor
+0x9cda	LED-Hauptlicht-Modul (LHM) links: Unterspannung LHM links
+0x9cdb	LED-Hauptlicht-Modul (LHM) rechts: Unterspannung LHM rechts
+0x9cdc	LED-Hauptlicht-Modul (LHM) links: Fehler Kl. 30b am LHM links
+0x9cdd	LED-Hauptlicht-Modul (LHM) rechts: Fehler Kl. 30b am LHM rechts
+0x9cde	Timeout LINStatusbotschaft LED-Hauptlicht-Modul (LHM) links
+0x9cdf	Timeout LINStatusbotschaft LED-Hauptlicht-Modul (LHM) rechts
+0x9ce0	LED-Hauptlicht-Modul (LHM) links: Überspannung LHM links
+0x9ce1	LED-Hauptlicht-Modul (LHM) links: Überspannung LHM rechts
+0x9ce2	TMS links meldet Fehler
+0x9ce3	TMS rechts meldet Fehler
+0xA8A8	Fernlicht bzw. Abbiegelicht links defekt
+0xA8A9	Fernlicht bzw. Abbiegelicht rechts defekt
+0xA8AA	Abblendlicht links defekt
+0xA8AB	Abblendlicht rechts defekt
+0xA8AC	E60-Xenon bis 03/07 und E60-Halogen ab 03/07, E65, RR01: Begrenzungslicht links defekt; E60-Halogen bis 03/07: Begrenzungslicht links aussen defekt; E63, E64 ab 09/07, RR02: Zusatzfahrtrichtungsanzeiger links defekt
+0xA8AD	E60-Xenon bis 03/07 und E60-Halogen ab 03/07, E65, RR01: Begrenzungslicht rechts defekt; E60-Halogen bis 03/07: Begrenzungslicht rechts aussen defekt; E63, E64 ab 09/07, RR02: Zusatzfahrtrichtungsanzeiger rechts defekt
+0xA8AE	Nebelscheinwerfer links defekt; RR02: Umschaltung Frontleuchtenkombination links defekt
+0xA8AF	Nebelscheinwerfer rechts defekt; RR02: Umschaltung Frontleuchtenkombination rechts defekt
+0xA8B0	Fahrtrichtungsanzeiger links vorne 1 defekt
+0xA8B1	Fahrtrichtungsanzeiger rechts vorne 1 defekt
+0xA8B2	Fahrtrichtungsanzeiger links hinten defekt
+0xA8B3	Fahrtrichtungsanzeiger rechts hinten defekt
+0xA8B4	Seitenmarkierungslicht defekt
+0xA8B5	Bremslicht links defekt
+0xA8B6	Bremslicht rechts defekt
+0xA8B7	Bremslicht mitte defekt
+0xA8B8	Schlusslicht/Bremslicht links defekt
+0xA8B9	Schlusslicht/Bremslicht rechts defekt
+0xA8BA	E65, RR: Schlusslicht links defekt; E60-Halogen bis 03/07: Begrenzungslicht links innen defekt; E61 ab 03/07: Schlusslicht links innen defekt; E63/E64 ab 09/07: Spannungsversorgung Blinker vorne links
+0xA8BB	E65, RR: Schlusslicht rechts defekt; E60-Halogen bis 03/07: Begrenzungslicht rechts innen defekt; E61 ab 03/07: Schlusslicht rechts innen defekt; E63/E64 ab 09/07: Spannungsversorgung Blinker vorne rechts
+0xA8BC	Kennzeichenlicht links defekt
+0xA8BD	Kennzeichenlicht rechts defekt
+0xA8BE	Nicht US, CDN: Nebelschlusslicht links defekt; US, CDN: Break-Force-Display links defekt
+0xA8BF	Nicht US, CDN: Nebelschlusslicht rechts defekt; US, CDN: Break-Force-Display rechts defekt
+0xA8C0	Rueckfahrlicht links defekt
+0xA8C1	Rueckfahrlicht rechts defekt
+0xA8C2	E63/E64 bis 09/07, E65: Fahrtrichtungsanzeiger links vorne 2 defekt; E60/E61 ab 03/07: Bremslicht links innen defekt; RR US: Fahrtrichtungsanzeiger links hinten 2 defekt
+0xA8C3	E63/E64 bis 09/07, E65: Fahrtrichtungsanzeiger rechts vorne 2 defekt; E60/E61 ab 03/07: Bremslicht rechts innen defekt; RR US: Fahrtrichtungsanzeiger rechts hinten 2 defekt
+0xA8C4	Tagfahrlicht links defekt; RR02: Begrenzungslicht links defekt
+0xA8C5	Tagfahrlicht rechts defekt; RR02: Begrenzungslicht rechts defekt
+0xA8C6	Klemme 58g defekt
+0xA8C7	Bi-Xenonklappe defekt
+0xE504	Bus Leitungsfehler K-CAN
+0xE507	Bus Kommunikationsfehler K-CAN
+0xE50B	Bus Kommunikationsfehler PT-CAN
+0xE514	Telegramm Lenkwinkel Timeout
+0xE515	Telegramm Status-AHM Timeout
+0xE516	Telegramm Bedienung Lenkstock Timeout
+0xE517	Telegramm Status DSC Timeout
+0xE518	Telegramm Status Fahrlicht Timeout
+0xE519	Telegramm Geschwindigkeit Timeout
+0xE51A	Telegramm Gierrate Timeout
+0xE51B	Telegramm Klemmenstatus Timeout
+0xE51C	Telegramm Fernlichtassistent Timeout
+0xE51D	Telegramm Lenkwinkel Timeout PT-CAN

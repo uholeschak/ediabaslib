@@ -1,0 +1,58 @@
+0x9C48	Motor Frischluft/Umluft links
+0x9C49	Motor Frischluft/Umluft rechts
+0x9C4A	Motor Entfrostung
+0x9C4B	Motor Belüftung links
+0x9C4C	Motor Belüftung rechts
+0x9C4D	Motor Kaltluft
+0x9C4E	Motor Fussraum links
+0x9C4F	Motor Fussraum rechts
+0x9C50	Motor Belüftung Fond
+0x9C53	PTC-Zuheizer
+0x9C54	AUC-Sensor
+0x9C55	Beschlagsensor
+0x9C56	Standheiz-LED
+0x9C57	Geblaese-Endstufe
+0x9C58	Poti links
+0x9C59	Poti rechts
+0x9C5A	Poti mitte
+0x9C5B	Innentemperaturfühler
+0x9C5C	Verdampfertemperaturfühler
+0x9C5D	Fühler Wärmetauscher rechts
+0x9C5F	Drucksensor
+0x9C60	Monitor Drucksensor-Versorgung
+0x9C61	Fühler Wärmetauscher links
+0x9C62	Schichtung Fondpoti
+0x9C63	Solarsensor rechts
+0x9C64	Belüftungstemperaturfühler
+0x9C65	Solarsensor links
+0x9C66	Monitor Versorgung Beschlagsensor
+0x9C67	Monitor Versorgung Fondpoti
+0x9C68	Monitor Versorgung Solarsensoren
+0x9C69	Monitor Versorgung Kompressorkupplung BASIS
+0x9C6A	Kompressorkupplung
+0x9C6B	Zusatzwasserpumpe
+0x9C6C	Spritzdüsenheizung
+0x9C6D	Wasserventil links
+0x9C6E	Wasserventil rechts
+0x9C6F	KMV-Sperrventil
+0x9C70	Heckscheibenheizung
+0x9C71	Monitor LIN-Versorgung
+0x9C72	Innenfuehlergeblaese
+0x9C73	Checksumme EEPROM
+0x9CA7	Energiesparmode aktiv
+0xE704	K-Can physikalischer Busfehler
+0xE706	LIN-Busfehler
+0xE707	CAN-Controller, Bus Off
+0xE714	Botschaft(KCAN: Powermanagement Batteriespannung, 3BE)
+0xE715	Botschaft(KCAN: Kilometerstand/Reichweite, 330)
+0xE716	Botschaft(KCAN: Powermanagement Verbrauchersteuerung, 3B3)
+0xE717	Botschaft(KCAN: Relativzeit, 328)
+0xE718	Botschaft(KCAN: Wärmestrom Motor, 1B6)
+0xE719	Botschaft(KCAN: Motordaten, 1D0)
+0xE71A	Botschaft(KCAN: Klemmenstatus, 130)
+0xE71B	Botschaft(KCAN: Aussentemperatur, 2CA)
+0xE71C	Botschaft(KCAN: Geschwindigkeit, 1A0)
+0xE71D	Botschaft(KCAN: Status Klima SH/ZH Zusatzwasserpumpe, 2EC)
+0xE71E	Botschaft(KCAN: Drehmoment 3, AA)
+0xE71F	Botschaft(KCAN: Dimmung, 202)
+0xE720	Botschaft(KCAN: Status Solarsensor, 3D3)

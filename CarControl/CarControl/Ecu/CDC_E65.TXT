@@ -1,0 +1,9 @@
+0x9D28	Fehler Wechsler Mechanik CD laden
+0x9D29	Fehler Wechsler Mechanik CD entladen
+0x9D2A	Fehler Wechsler Mechanik Elevator
+0x9D2B	Fehler Magazin Auswurf
+0xD80E	Obwohl Shutdown(Execute) geschickt wurde ging das Licht nicht aus. (Error_Light_Not_Off).
+0xD810	Ringbruchdiagnose wurde durchgefuehrt (Error_Ring_Diagnose).
+0xD811	Lange und/oder haeufige Unlocks (Error_Unlock_Long).
+0xD812	Ein Device hat sich wegen Uebertemperatur abgeschaltet (Error_Temp_Shutdown).
+0xD813	MOST Audio Channel Error

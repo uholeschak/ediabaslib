@@ -1,0 +1,26 @@
+0x5F8E	Sensor hinten links
+0x5F8F	Sensor hinten rechts
+0x5F90	ECU Spannungsversorgung
+0x5F92	Sensorspannungsversorgung hinten links
+0x5F93	Sensorspannungsversorgung hinten rechts
+0x5F94	Magnetventil hinten links
+0x5F95	Magnetventil hinten rechts
+0x5F96	Ablass Ventil
+0x5F97	Kompressor-Relais
+0x5F98	Regelzeit einseitig heben hinten links
+0x5F99	Regelzeit einseitig heben hinten rechts
+0x5F9A	Regelzeit heben
+0x5F9B	Regelzeit senken
+0x5F9C	Sensoraktivitaet hinten links
+0x5F9D	Sensoraktivitaet hinten rechts
+0x5FB0	Steuergeraet interner Fehler
+0x5FB1	Checksummenfehler EEPromspeicher
+0x5FB2	Checksummenfehler Flashspeicher
+0x5FB3	Checksummenfehler RAMspeicher
+0x5FB4	Energiesparmode aktiv
+0xD704	K-CAN Transceiver LOW
+0xD707	K-CAN Controller BUS Off
+0xD710	K-CAN Botschaft(STAT_ZV_KLAPPEN,2FCh)
+0xD711	K-CAN Botschaft(ENGINE_1,1D0h)
+0xD712	K-CAN Botschaft(GESCHWINDIGKEIT,1A0h)
+0xD713	K-CAN Botschaft(KLEMMENSTATUS,130h)

@@ -1,0 +1,8 @@
+LIBRARY	"CarControlSetupDll"
+
+EXPORTS
+
+Install_Init
+Install_Exit
+Uninstall_Init
+Uninstall_Exit

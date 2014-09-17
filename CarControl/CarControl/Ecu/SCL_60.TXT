@@ -1,0 +1,64 @@
+0x94C1	Codierdaten CRC Fehler
+0x94EC	Multifunktionslenkrad (MFL) Analogport Links Kurzschluß
+0x94ED	Multifunktionslenkrad (MFL)  Analogport Rechts Kurzschluß
+0x94EE	Multifunktionslenkrad (MFL)  Schalter Links unplausibel
+0x94EF	Multifunktionslenkrad (MFL)  Schalter  Rechts unplausibel
+0x94F0	Lenkradheizung (LHZ)  Heizmatte unterbrochen
+0x94F1	Lenkradheizung (LHZ) Heizmatte Kurzschluß nach Masse
+0x94F3	Lenkradheizung (LHZ) Fehler Regelung
+0x94F4	Lenkradheizung (LHZ) Temperatur-Fühler unterbrochen
+0x94F5	Lenksäulenverstellung (LSV)  Analogport Kurzschluß nach Masse
+0x94F6	Lenksäulenverstellung (LSV)  Analogport Kurzschluß nach Plus
+0x94F7	Lenksäulenverstellung (LSV)  Unplausibel
+0x94F8	Hupe Fehler Hochtöner
+0x94F9	Hupe Fehler Tieftöner
+0x9501	Lenkwinkelsensor: Sensor nicht abgeglichen
+0x950B	Energiesparmode aktiv
+0x951A	System Unterspannung
+0x951B	System Ueberspannung
+0x951D	Fahrtrichtungsabblendlichtschalter (FAS) Schalter unplausibel
+0x951E	Fahrtrichtungsabblendlichtschalter (FAS) Schalter Hängt
+0x951F	Multifunktionslenkrad (MFL) Schalter Links Hängt
+0x9520	Multifunktionslenkrad (MFL)  Schalter Rechts Hängt
+0x9521	Schaltwippen (SMG) Schalter Hängt
+0xA848	Tempomatschalter  (FGR/ACC)  Hängt
+0xA849	Tempomatschalter  (FGR/ACC) Horizontal unplausibel
+0xA84A	Tempomatschalter  (FGR/ACC) Vertikal Unplausibel
+0xA84B	Tempomatschalter  (ACC) ACC-Rändel / Axial Tippen unplausibel
+0xA84C	Tempomatschalter  (FGR/ACC) Analogport Kurzschluß Masse
+0xA84D	Tempomatschalter  (FGR/ACC) Analogport Kurzschluß Plus
+0xA84E	FGR redundanter Analogport Kurzschluß nach Masse
+0xA84F	Tempomatschalter  (FGR/ACC) redundanter Analogport Kurzschluß nach Plus
+0xA850	Scheibenwischerschalter (SWS) Hängt
+0xA851	Scheibenwischerschalter (SWS) unplausibel
+0xA852	Scheibenwischerschalter (SWS) Analogport Kurzschluß nach Masse
+0xA853	Scheibenwischerschalter (SWS)  Analogport Kurzschluß nach Plus
+0xA854	Scheibenwischerschalter (SWS)  Intervall-Rändel unplausibel
+0xA855	Lenkradheizung (LHZ) Schalter hängt
+0xA856	Lenksäulenverstellung (LSV) Schalter hängt
+0xA857	Hupe Schalter Hängt
+0xA858	Codierdatenblock des Synthetischen Lenkwinkel ist inkompatibel zur Variante
+0xA859	Softwareindex des Sub ist inkompatibel
+0xA85A	Softwareindex des Eprom ist inkompatibel
+0xA85B	Softwareindex des Main ist inkompatibel
+0xA85C	PT-Wecken Kurzschluss
+0xA85D	Lenkwinkelsensor defekt
+0xA85E	Fahrgestellnummer unplausibel
+0xA85F	PowerOn nach Kl30F-Abschaltung
+0xC987	PT-CAN SZL keine Botschaften Bus-Off
+0xC98B	F-CAN SZL keine Botschaften Bus-Off
+0xC994	F-CAN SZL Radgeschwindigkeit, Kommunikation mit DSC, Timeout
+0xC995	F-CAN SZL Radgeschwindigkeit Plausibilitaet, Kommunikation mit DSC, Radgeschwindigkeit > 320 km/h
+0xC996	F-CAN SZL Radgeschwindigkeit Plausibilitaet, Kommunikation mit DSC, Radgeschwindigkeit < -320 km/h
+0xC998	F-CAN SZL Radtoleranzabgleich Plausibilitaet, Kommunikation mit DSC, Radtoleranzabgleich < -5%
+0xC99A	F-CAN SZL Radtoleranzabgleich Plausibilitaet, Kommunikation mit DSC, Radtoleranzabgleich > 5%
+0xC99B	F-CAN SZL Sync, keine Kommunikation mit DSC, Timeout...
+0xC99C	FCAN Botschaft: Exchange AFS DSC-Timeout
+0xC9A4	PTCAN Botschaft: Außentemperatur/Relativzeit-Timeout
+0xC9A5	PTCAN Botschaft: Bedienung Sonderfunktion-Timeout
+0xC9A6	PTCAN Botschaft: Kilometerstand Timeout
+0xC9A7	PTCAN Botschaft: Dimmung-Timeout
+0xC9A8	PTCAN Botschaft: Powermanagement Verbrauchersteuerung-Timeout
+0xC9A9	PT-CAN SZL, Klemmenstatus, keine Kommunikation mit CAS, Timeout
+0xC9AA	PT-CAN Botschaft: Radtoleranzabgleich-Timeout
+0xC9AB	PT-CAN Botschaft: Nachlaufzeit Klemme 30 fehlergesteuert-Timeout

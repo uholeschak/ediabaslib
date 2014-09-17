@@ -1,0 +1,23 @@
+0x9FE0	Lenksaeulenmodul: Hall Sensor defekt / Umschaltmotor defekt
+0x9FE1	Lenksaeulenmodul: Motor defekt
+0x9FE2	Lenksaeulenmodul: Positionsdaten Checksumme ungueltig (nicht E60-Mue)
+0x9FE3	Lenksaeulenmodul: Parameter Checksumme ungueltig (nicht E60-Mue)
+0x9FE4	E60/Sonnenrollo: Motor defekt
+0x9FE5	E60/Sonnenrollo: Parameter Checksumme ungueltig
+0x9FE6	E63/Sitzheizung: MOS Fahrerseite defekt
+0x9FE7	E63/Sitzheizung: CTN Fahrerseite defekt
+0x9FE8	E63/Sitzheizung: Parameter Checksumme ungueltig
+0x9FE9	Energiesparmode aktiv (nicht E60-Mue)
+0x9FEA	Beleuchtungsteuerung: Dimmung Parameter Checksumme ungueltig
+0x9FEB	E60/MFS: Taste haengt (nicht E60-Mue)
+0x9FEC	Lenksaeulenmodul: Umschaltmotor defekt
+0x9FED	Lenksaeulenmodul: Positionsdaten initialisiert (nicht E60-Mue)
+0x9FEE	E63/Sitzheizung: MOS Beifahrerseite defekt
+0x9FEF	E63/Sitzheizung: CTN Beifahrerseite defekt
+0x9FF0	E60-Mue: LIN Kommunikation gestoert
+0x9FF1	E60-Mue: LIN Kommunikation gestoert (Tastenblock links)
+0x9FF2	E60-Mue: LIN Kommunikation gestoert (Tastenblock rechts)
+0x9FF3	E60-Mue: LIN Taste haengt an Tastenblock links
+0x9FF4	E60-Mue: LIN Taste haengt an Tastenblock rechts
+0xE244	CAN-Low, Physikalischer Busfehler
+0xE247	Controller, Bus off 

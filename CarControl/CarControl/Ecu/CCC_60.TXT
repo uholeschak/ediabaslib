@@ -1,0 +1,32 @@
+0xE1CC	Ein Device hat eine Monitor Nachricht nicht bekommen oder beantwortet (Error_Monitoring).
+0xE1CD	Gesamtring konnte nicht aufgestartet werden (Error_WakeUp_Failed).
+0xE1CE	Obwohl Shutdown(Execute) geschickt wurde ging das Licht nicht aus. (Error_Light_Not_Off).
+0xE1CF	Die zentrale Registry ist fehlerhaft (Error_Registry_New).
+0xE1D0	Ringbruchdiagnose wurde durchgefuehrt (Error_Ring_Diagnose).
+0xE1D1	Lange und/oder haeufige Unlocks (Error_Unlock_Long).
+0xE1D2	Shutdown wegen Uebertemperatur (Error_Tempshutdown).
+0xA3CE	CD Services nicht Verfuegbar
+0xA3CF	CD Laufwerk steht im Reset
+0xA3D0	CD Laufwerk Kommunikationsfehler
+0xA3D1	Keine Verbindung zwischen Companion Chip und CAN-Transceiver
+0xA3D2	Keine Verbindung zwischen Companion Chip und I/O-Expander
+0xA3D3	Keine Verbindung zwischen Companion Chip und MOST
+0xA3D4	Keine CAN Verbindung zum Tuner
+0xA3D5	Keine CAN Verbindung zum ASK
+0xA3D6	Keine CAN Verbindung zum LVDS
+0xA3D7	Keine UART Verbindung zum Nav
+0xA3D8	Keine CAN Verbindung zum hinteren LVDS
+0xA3D9	DVD Services nicht Verfuegbar
+0xA3DA	DVD Laufwerk steht im Reset
+0xA3DB	DVD Laufwerk Kommunikationsfehler
+0xA3DC	Ungueltige FIB Checksumme
+0xA3DD	Keine Verbindung I2S Speech Out - DSP (ASK) -Speech In
+0xA3DE	Video In defect (obsolete)
+0xA3DF	Abweichung zwischen SH4-Clock und RealTime-Clock
+0xA3E0	Abweichung zwischen PCI-Clock und RealTime-Clock
+0xA3E1	Defekte im SDRAM
+0xA3E2	Defekte im externen SDRAM
+0xA3E3	Defekte im NAND-Flash
+0xA3E4	FlashFileSystem konnte nicht gestartet werden
+0xA3E5	Keine IPC-Verbindung zum Gateway
+0xA3E6	Coding data CRC Fehler

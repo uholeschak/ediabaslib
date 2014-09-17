@@ -1,0 +1,9 @@
+0xA128	Hardwarefehler Regensensor A128
+0xA129	keine optische Initialisierung möglich A129
+0xA12A	Übertemperatur A12A
+0xA12B	Überspannung A12B
+0xA12D	Hardwarefehler Lichtsensor A12D
+0xA12E	Kalibrierungsfehler Lichtsensor A12E
+0xA12F	Plausibilität Lichtsensor A12F
+0xA130	Plausibilität Solarsensor A130
+0xA131	Hardwarefehler Beschlagssensor A131

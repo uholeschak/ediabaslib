@@ -1,0 +1,779 @@
+0x3E90	3E90 Kurbelwellengeber, Signal
+0x3E91	3E91 Kurbelwellengeber, Signal
+0x3EB0	3EB0 Drehzahlberechnung
+0x3EC0	3EC0 Nockenwellengeber, Signal
+0x3EC1	3EC1 Nockenwellengeber, Signal
+0x3EC7	3EC7 Ueberwachung Master/Slave
+0x3EDC	3EDC Variantencodierung
+0x3EDD	3EDD Variantencodierung
+0x3EE0	3EE0 Kuehlmitteltemperatursensor, Signal
+0x3EE1	3EE1 Kuehlmitteltemperatursensor, Signal
+0x3EE2	3EE2 Kuehlmitteltemperatursensor, Signal
+0x3EE3	3EE3 Kuehlmitteltemperatursensor, Signal
+0x3EEA	3EEA Powermanagement Ruhestrom (Layer_PMRUHVERL)
+0x3EEB	3EEB Powermanagement Ruhestrom (Layer_PMRUHVERL)
+0x3EEC	3EEC Powermanagement Ruhestrom (Layer_PMRUHVERL)
+0x3EED	3EED Powermanagement Ruhestrom (Layer_PMRUHVERL)
+0x3EF3	3EF3 Kuehlmitteltemperatursensor, Plausibilitaet
+0x3EFA	3EFA Thermischer Oelniveausensor (Layer_TOENS)
+0x3EFB	3EFB Thermischer Oelniveausensor (Layer_TOENS)
+0x3EFC	3EFC Thermischer Oelniveausensor (Layer_TOENS)
+0x3EFD	3EFD Thermischer Oelniveausensor (Layer_TOENS)
+0x3F00	3F00 Ladedruckfuehler, Signal
+0x3F01	3F01 Ladedruckfuehler, Signal
+0x3F02	3F02 Ladedruckfuehler, Signal
+0x3F03	3F03 Ladedruckfuehler, Signal
+0x3F05	3F05 MIL OFF
+0x3F0A	3F0A CAN Bus C
+0x3F0B	3F0B CAN Bus C
+0x3F0C	3F0C CAN Bus C
+0x3F0D	3F0D CAN Bus C
+0x3F10	3F10 Fahrpedalmodul Potentiometer 1, Signal
+0x3F11	3F11 Fahrpedalmodul Potentiometer 1, Signal
+0x3F13	3F13 Fahrpedalmodul Potentiometer 1, Signal
+0x3F15	3F15 MIL On
+0x3F1A	3F1A Layer_MANHYDR
+0x3F1B	3F1B Layer_MANHYDR
+0x3F1C	3F1C Layer_MANHYDR
+0x3F1D	3F1D Layer_MANHYDR
+0x3F20	3F20 Fahrpedalmodul Potentiometer 2, Signal
+0x3F21	3F21 Fahrpedalmodul Potentiometer 2, Signal
+0x3F23	3F23 Fahrpedalmodul Potentiometer 2, Signal
+0x3F25	3F25 Ladeluftschlauch-Ueberwachung
+0x3F2A	3F2A Layer_MANLUFT
+0x3F2B	3F2B Layer_MANLUFT
+0x3F2C	3F2C Layer_MANLUFT
+0x3F2D	3F2D Layer_MANLUFT
+0x3F30	3F30 Raildrucksensor, Signal
+0x3F31	3F31 Raildrucksensor, Signal
+0x3F35	3F35 Ladeluftschlauch-Ueberwachung im Leerlauf
+0x3F40	3F40 Raildrucksensor Offset-Test
+0x3F41	3F41 Raildrucksensor Offset-Test
+0x3F50	3F50 Fahrgeschwindigkeitssignal
+0x3F51	3F51 Fahrgeschwindigkeitssignal
+0x3F52	3F52 Fahrgeschwindigkeitssignal
+0x3F53	3F53 Fahrgeschwindigkeitssignal
+0x3F57	3F57 Ladedrucksteller
+0x3F62	3F62 Fahrgeschwindigkeitssignal ueber CAN
+0x3F70	3F70 Ansauglufttemperatursensor, Signal
+0x3F71	3F71 Ansauglufttemperatursensor, Signal
+0x3F72	3F72 Ansauglufttemperatursensor, Signal
+0x3F77	3F77 Ladedrucksteller, Ansteuerung
+0x3F80	3F80 Umgebungstemperatursensor, Signal
+0x3F81	3F81 Umgebungstemperatursensor, Signal
+0x3F82	3F82 Umgebungstemperatursensor, Signal
+0x3F90	3F90 Oeldrucksensor, Signal
+0x3F91	3F91 Oeldrucksensor, Signal
+0x3F97	3F97 Ladedrucksteller, Versorgungsspannung
+0x3FA0	3FA0 Oeltemperatursensor
+0x3FA1	3FA1 Oeltemperatursensor
+0x3FA2	3FA2 Oeltemperatursensor
+0x3FA3	3FA3 Oeltemperatursensor
+0x3FC0	3FC0 Luftmassenmesser
+0x3FD0	3FD0 Luftmassenmesser
+0x3FE0	3FE0 Luftmassenmesser
+0x3FE1	3FE1 Luftmassenmesser
+0x3FF0	3FF0 Luftmassenmesser
+0x3FF1	3FF1 Luftmassenmesser
+0x4000	4000 Kraftstofftemperaturfuehler, Signal
+0x4001	4001 Kraftstofftemperaturfuehler, Signal
+0x4010	4010 Abgasgegendrucksensor vor Partikelfilter, Signal
+0x4011	4011 Abgasgegendrucksensor vor Partikelfilter, Signal
+0x4020	4020 Abgastemperatursensor vor Partikelfilter, Signal
+0x4021	4021 Abgastemperatursensor vor Partikelfilter, Signal
+0x4030	4030 Abgastemperatursensor vor Katalysator, Signal
+0x4031	4031 Abgastemperatursensor vor Katalysator, Signal
+0x4032	4032 Abgastemperatursensor vor Katalysator, Signal
+0x4060	4060 Umgebungsdrucksensor (im Steuergeraet verbaut), Signal
+0x4061	4061 Umgebungsdrucksensor (im Steuergeraet verbaut), Signal
+0x4062	4062 Umgebungsdrucksensor (im Steuergeraet verbaut), Signal
+0x4063	4063 Umgebungsdrucksensor (im Steuergeraet verbaut), Signal
+0x4072	4072 Kupplungsschalter, Signal
+0x4073	4073 Kupplungsschalter, Signal
+0x4082	4082 Bremslicht-/Bremstestschalter, Signale
+0x4083	4083 Bremslicht-/Bremstestschalter, Signale
+0x4093	4093 Info - Sicherheitsfall
+0x40A0	40A0 Generatorlastsignal
+0x40A1	40A1 Generatorlastsignal
+0x40B0	40B0 Fault path 1 for air condition pressure (nv)
+0x40B1	40B1 Fault path 1 for air condition pressure (nv)
+0x40B2	40B2 Fault path 1 for air condition pressure (nv)
+0x40B3	40B3 Fault path 1 for air condition pressure (nv)
+0x40C0	40C0 Fault path 2 for air condition pressure (nv)
+0x40C1	40C1 Fault path 2 for air condition pressure (nv)
+0x40D0	40D0 Fault path for analog air condition pressure (nv)
+0x40D1	40D1 Fault path for analog air condition pressure (nv)
+0x40E0	40E0 Generator
+0x410C	410C Drallklappensteller
+0x4112	4112 Fault path of air condition power stage (nv)
+0x4113	4113 Fault path of air condition power stage (nv)
+0x4120	4120 DDE-Hauptrelais
+0x4121	4121 DDE-Hauptrelais
+0x4130	4130 Drallklappensteller, Ansteuerung
+0x4141	4141 Drallklappensteller, Ansteuerung
+0x4152	4152 Drallklappensteller, Ansteuerung
+0x4153	4153 Drallklappensteller, Ansteuerung
+0x4155	4155 Abgasklappensteller, Ansteuerung
+0x4156	4156 Abgasklappensteller, Ansteuerung
+0x4157	4157 Abgasklappensteller, Ansteuerung
+0x4158	4158 Abgasklappensteller, Ansteuerung
+0x4160	4160 Relais Vorfoerderpumpe, Ansteuerung
+0x4161	4161 Relais Vorfoerderpumpe, Ansteuerung
+0x4162	4162 Relais Vorfoerderpumpe, Ansteuerung
+0x4163	4163 Relais Vorfoerderpumpe, Ansteuerung
+0x4165	4165 Partikelfiltersystem
+0x4166	4166 Partikelfiltersystem
+0x4175	4175 Abgastemperatursensor vor Partikelfilter, Signal
+0x4176	4176 Abgastemperatursensor vor Partikelfilter, Signal
+0x4178	4178 Abgastemperatursensor vor Partikelfilter, Signal
+0x4180	4180 Ladedrucksteller, Ansteuerung
+0x4185	4185 Abgastemperatursensor vor Kat, Signal
+0x4186	4186 Abgastemperatursensor vor Kat, Signal
+0x4188	4188 Abgastemperatursensor vor Kat, Signal
+0x4191	4191 Ladedrucksteller, Ansteuerung
+0x4195	4195 Drehmomentanforderung Klimaanlage
+0x419A	419A Umgebungsdrucksensor (im Steuergeraet verbaut)
+0x419B	419B Umgebungsdrucksensor (im Steuergeraet verbaut)
+0x41A2	41A2 Ladedrucksteller, Ansteuerung
+0x41A3	41A3 Ladedrucksteller, Ansteuerung
+0x41A6	41A6 Botschaft (CBS_RESET, 0x580)
+0x41A7	41A7 Botschaft (CBS_RESET, 0x580)
+0x41A8	41A8 Botschaft (CBS_RESET, 0x580)
+0x41AA	41AA Ladedruckfuehler
+0x41AB	41AB Ladedruckfuehler
+0x41B0	41B0 Abgasrueckfuehrsteller, Ansteuerung
+0x41B5	41B5 Fault path for Gearbox Temperature
+0x41BA	41BA Abgasgegendrucksensor
+0x41BB	41BB Abgasgegendrucksensor
+0x41C0	41C0 Abluftklappensteller, Ansteuerung
+0x41C1	41C1 Abluftklappensteller, Ansteuerung
+0x41C2	41C2 Abluftklappensteller, Ansteuerung
+0x41C3	41C3 Abluftklappensteller, Ansteuerung
+0x41CD	41CD Plausibilitaet Drucksensoren
+0x41D1	41D1 Abgasrueckfuehrsteller, Ansteuerung
+0x41D5	41D5 Lambdasonde, Signal Nernstspannung
+0x41D6	41D6 Lambdasonde, Signal Nernstspannung
+0x41D7	41D7 Lambdasonde, Signal Nernstspannung
+0x41D8	41D8 Lambdasonde, Signal Nernstspannung
+0x41DA	41DA Motorlager 2, Ansteuerung
+0x41DB	41DB Motorlager 2, Ansteuerung
+0x41DC	41DC Motorlager 2, Ansteuerung
+0x41DD	41DD Motorlager 2, Ansteuerung
+0x41E2	41E2 Abgasrueckfuehrsteller, Ansteuerung
+0x41E3	41E3 Abgasrueckfuehrsteller, Ansteuerung
+0x41E5	41E5 Lambdasonde, Signal Pumpstrom
+0x41E6	41E6 Lambdasonde, Signal Pumpstrom
+0x41E7	41E7 Lambdasonde, Signal Pumpstrom
+0x41E8	41E8 Lambdasonde, Signal Pumpstrom
+0x41ED	41ED Zyklische Authentisierung
+0x41F0	41F0 Elektroluefter, Ansteuerung
+0x41F1	41F1 Elektroluefter, Ansteuerung
+0x41F2	41F2 Elektroluefter, Ansteuerung
+0x41F3	41F3 Elektroluefter, Ansteuerung
+0x41F5	41F5 Lambdasonde, Signal virtuelle Masse
+0x41F6	41F6 Lambdasonde, Signal virtuelle Masse
+0x41F7	41F7 Lambdasonde, Signal virtuelle Masse
+0x41F8	41F8 Lambdasonde, Signal virtuelle Masse
+0x41FD	41FD Zyklische Authentisierung
+0x4203	4203 Gluehsteuergeraet
+0x4205	4205 Lambdasonde, Ansteuerung Heizung
+0x4206	4206 Lambdasonde, Ansteuerung Heizung
+0x4207	4207 Lambdasonde, Ansteuerung Heizung
+0x4208	4208 Lambdasonde, Ansteuerung Heizung
+0x420B	420B Abgasrueckfuehr-Regelung im Regenerationsbetrieb
+0x4211	4211 Gluehkerze Zylinder 1, Ansteuerung
+0x4212	4212 Gluehkerze Zylinder 1, Ansteuerung
+0x4213	4213 Gluehkerze Zylinder 1, Ansteuerung
+0x4217	4217 Lambdasonde
+0x421B	421B Abgasrueckfuehr-Regelung 2 im Regenerationsbetrieb
+0x4221	4221 Gluehkerze Zylinder 2, Ansteuerung
+0x4222	4222 Gluehkerze Zylinder 2, Ansteuerung
+0x4223	4223 Gluehkerze Zylinder 2, Ansteuerung
+0x4225	4225 Lambdasonde
+0x4226	4226 Lambdasonde
+0x422A	422A Abgasrueckfuehr-Regelung im Regenerationsbetrieb
+0x4231	4231 Gluehkerze Zylinder 3, Ansteuerung
+0x4232	4232 Gluehkerze Zylinder 3, Ansteuerung
+0x4233	4233 Gluehkerze Zylinder 3, Ansteuerung
+0x4235	4235 Steuergeraet intern 21
+0x4236	4236 Steuergeraet intern 21
+0x423A	423A Abgasrueckfuehr-Regelung 2 im Regenerationsbetrieb
+0x4241	4241 Gluehkerze Zylinder 4, Ansteuerung
+0x4242	4242 Gluehkerze Zylinder 4, Ansteuerung
+0x4243	4243 Gluehkerze Zylinder 4, Ansteuerung
+0x4245	4245 Steuergeraet intern 22
+0x4246	4246 Steuergeraet intern 22
+0x424D	424D transtion mode RgnNrm
+0x4251	4251 Gluehkerze Zylinder 5, Ansteuerung
+0x4252	4252 Gluehkerze Zylinder 5, Ansteuerung
+0x4253	4253 Gluehkerze Zylinder 5, Ansteuerung
+0x4258	4258 Steuergeraet intern 23
+0x425D	425D Fahrpedalmodul Potentiometer, Plausibilitaet
+0x4261	4261 Gluehkerze Zylinder 6, Ansteuerung
+0x4262	4262 Gluehkerze Zylinder 6, Ansteuerung
+0x4263	4263 Gluehkerze Zylinder 6, Ansteuerung
+0x4267	4267 Lambdasonde, Nebenschlusserkennung
+0x4271	4271 Gluehkerze Zylinder 7, Ansteuerung
+0x4272	4272 Gluehkerze Zylinder 7, Ansteuerung
+0x4273	4273 Gluehkerze Zylinder 7, Ansteuerung
+0x4275	4275 Lambdasonde, Heizung
+0x4276	4276 Lambdasonde, Heizung
+0x4281	4281 Gluehkerze Zylinder 8, Ansteuerung
+0x4282	4282 Gluehkerze Zylinder 8, Ansteuerung
+0x4283	4283 Gluehkerze Zylinder 8, Ansteuerung
+0x4287	4287 Lambdasonde
+0x4288	4288 Lambdasonde
+0x428B	428B Ladedruckregelung Niederdruckstufe, Regelabweichung
+0x4293	4293 Steuergeraet intern 16
+0x4296	4296 Lambdasonde
+0x4298	4298 Lambdasonde
+0x429A	429A Ladedruckregelung Niederdruckstufe, Regelabweichung
+0x42B1	42B1 Gluehrelais
+0x42B2	42B2 Gluehrelais
+0x42B5	42B5 Drehzahlueberwachung
+0x42C0	42C0 Oeldruck-Kontrollleuchte, Ansteuerung
+0x42C1	42C1 Oeldruck-Kontrollleuchte, Ansteuerung
+0x42C2	42C2 Oeldruck-Kontrollleuchte, Ansteuerung
+0x42C3	42C3 Oeldruck-Kontrollleuchte, Ansteuerung
+0x42C7	42C7 Ueberwachung ZMS Oszillation
+0x42D0	42D0 Power Stage fault status for MIL (nv)
+0x42D1	42D1 Power Stage fault status for MIL (nv)
+0x42D2	42D2 Power Stage fault status for MIL (nv)
+0x42D3	42D3 Power Stage fault status for MIL (nv)
+0x42E2	42E2 Umschaltung Raildruckregelung PCV
+0x42F2	42F2 Umschaltung Raildruckregelung MeUn
+0x4302	4302 Mengenregelventil, Ansteuerung
+0x4303	4303 Mengenregelventil, Ansteuerung
+0x4310	4310 Mengenregelventil, Ansteuerung
+0x4321	4321 Mengenregelventil, Ansteuerung
+0x4325	4325 Botschaft (DREHMOMENT_ANF_SSG, 0xBD)
+0x4326	4326 Botschaft (DREHMOMENT_ANF_SSG, 0xBD)
+0x4327	4327 Botschaft (DREHMOMENT_ANF_SSG, 0xBD)
+0x4328	4328 Botschaft (DREHMOMENT_ANF_SSG, 0xBD)
+0x4332	4332 Raildruckregelventil, Ansteuerung
+0x4333	4333 Raildruckregelventil, Ansteuerung
+0x4335	4335 Kuehlerjalousie (gesteuerte Niere), Ansteuerung
+0x4336	4336 Kuehlerjalousie (gesteuerte Niere), Ansteuerung
+0x4337	4337 Kuehlerjalousie (gesteuerte Niere), Ansteuerung
+0x4338	4338 Kuehlerjalousie (gesteuerte Niere), Ansteuerung
+0x4340	4340 Raildruckregelventil, Ansteuerung
+0x4351	4351 Raildruckregelventil, Ansteuerung
+0x4360	4360 Stromregelung fuer Raildruckregelventil
+0x4361	4361 Stromregelung fuer Raildruckregelventil
+0x4362	4362 Stromregelung fuer Raildruckregelventil
+0x437D	437D Drehmomentueberwachung DCC
+0x4382	4382 Raildruckregelventil Stellertest
+0x438A	438A Botschaft (ANF_RADMOM_PT, 0xBF)
+0x438B	438B Botschaft (ANF_RADMOM_PT, 0xBF)
+0x438C	438C Botschaft (ANF_RADMOM_PT, 0xBF)
+0x438D	438D Botschaft (ANF_RADMOM_PT, 0xBF)
+0x4390	4390 Ladelufttemperatursensor, Signal
+0x4391	4391 Ladelufttemperatursensor, Signal
+0x4392	4392 Ladelufttemperatursensor, Signal
+0x4397	4397 Mengenregelventil Stellertest
+0x439C	439C Ladedrucksteller, Fenster 4
+0x43A0	43A0 Anlasssperr-Relais, Ansteuerung
+0x43A1	43A1 Anlasssperr-Relais, Ansteuerung
+0x43A2	43A2 Anlasssperr-Relais, Ansteuerung
+0x43A3	43A3 Anlasssperr-Relais, Ansteuerung
+0x43B0	43B0 Power Stage fault status for System lamp (nv)
+0x43B1	43B1 Power Stage fault status for System lamp (nv)
+0x43B2	43B2 Power Stage fault status for System lamp (nv)
+0x43B3	43B3 Power Stage fault status for System lamp (nv)
+0x43C0	43C0 Drosselklappensteller, Ansteuerung
+0x43D1	43D1 Drosselklappensteller, Ansteuerung
+0x43E2	43E2 Drosselklappensteller, Ansteuerung
+0x43E3	43E3 Drosselklappensteller, Ansteuerung
+0x43EA	43EA Mengenmittelwertadaption
+0x43EB	43EB Mengenmittelwertadaption
+0x43ED	43ED Mengenmittelwertadaption
+0x43EF	43EF Vorfoerderdrucksensor, Offsetest
+0x43F0	43F0 Elektrischer Zuheizer, Ansteuerung
+0x43F1	43F1 Elektrischer Zuheizer, Ansteuerung
+0x43F2	43F2 Elektrischer Zuheizer, Ansteuerung
+0x43F3	43F3 Elektrischer Zuheizer, Ansteuerung
+0x43FD	43FD Lambdasonde
+0x43FF	43FF Kraftstofftemperatursensor, Plausibilitaet
+0x4403	4403 Steuergeraet intern 17
+0x440A	440A Lambdasonde
+0x440B	440B Lambdasonde
+0x4410	4410 Injektor Zylinder 1, Ansteuerung
+0x4411	4411 Injektor Zylinder 1, Ansteuerung
+0x4412	4412 Injektor Zylinder 1, Ansteuerung
+0x4413	4413 Injektor Zylinder 1, Ansteuerung
+0x441A	441A Injektor Zylinder 1, Ansteuerung
+0x441B	441B Injektor Zylinder 1, Ansteuerung
+0x441C	441C Injektor Zylinder 1, Ansteuerung
+0x441D	441D Injektor Zylinder 1, Ansteuerung
+0x4420	4420 Injektor Zylinder 2, Ansteuerung
+0x4421	4421 Injektor Zylinder 2, Ansteuerung
+0x4422	4422 Injektor Zylinder 2, Ansteuerung
+0x4423	4423 Injektor Zylinder 2, Ansteuerung
+0x442A	442A Injektor Zylinder 2, Ansteuerung
+0x442B	442B Injektor Zylinder 2, Ansteuerung
+0x442C	442C Injektor Zylinder 2, Ansteuerung
+0x442D	442D Injektor Zylinder 2, Ansteuerung
+0x4430	4430 Injektor Zylinder 3, Ansteuerung
+0x4431	4431 Injektor Zylinder 3, Ansteuerung
+0x4432	4432 Injektor Zylinder 3, Ansteuerung
+0x4433	4433 Injektor Zylinder 3, Ansteuerung
+0x443A	443A Injektor Zylinder 3, Ansteuerung
+0x443B	443B Injektor Zylinder 3, Ansteuerung
+0x443C	443C Injektor Zylinder 3, Ansteuerung
+0x443D	443D Injektor Zylinder 3, Ansteuerung
+0x4440	4440 Injektor Zylinder 4, Ansteuerung
+0x4441	4441 Injektor Zylinder 4, Ansteuerung
+0x4442	4442 Injektor Zylinder 4, Ansteuerung
+0x4443	4443 Injektor Zylinder 4, Ansteuerung
+0x4445	4445 Botschaft (DREHMOMENT_ANF_AFS, 0xB9)
+0x4446	4446 Botschaft (DREHMOMENT_ANF_AFS, 0xB9)
+0x4447	4447 Botschaft (DREHMOMENT_ANF_AFS, 0xB9)
+0x4448	4448 Botschaft (DREHMOMENT_ANF_AFS, 0xB9)
+0x444A	444A Injektor Zylinder 4, Ansteuerung
+0x444B	444B Injektor Zylinder 4, Ansteuerung
+0x444C	444C Injektor Zylinder 4, Ansteuerung
+0x444D	444D Injektor Zylinder 4, Ansteuerung
+0x4450	4450 Injektor Zylinder 5, Ansteuerung
+0x4451	4451 Injektor Zylinder 5, Ansteuerung
+0x4452	4452 Injektor Zylinder 5, Ansteuerung
+0x4453	4453 Injektor Zylinder 5, Ansteuerung
+0x4457	4457 Botschaft (LENKRADWINKEL, 0xC4)
+0x4458	4458 Botschaft (LENKRADWINKEL, 0xC4)
+0x445A	445A Injektor Zylinder 5, Ansteuerung
+0x445B	445B Injektor Zylinder 5, Ansteuerung
+0x445C	445C Injektor Zylinder 5, Ansteuerung
+0x445D	445D Injektor Zylinder 5, Ansteuerung
+0x4460	4460 Injektor Zylinder 6, Ansteuerung
+0x4461	4461 Injektor Zylinder 6, Ansteuerung
+0x4462	4462 Injektor Zylinder 6, Ansteuerung
+0x4463	4463 Injektor Zylinder 6, Ansteuerung
+0x446A	446A Injektor Zylinder 6, Ansteuerung
+0x446B	446B Injektor Zylinder 6, Ansteuerung
+0x446C	446C Injektor Zylinder 6, Ansteuerung
+0x446D	446D Injektor Zylinder 6, Ansteuerung
+0x4473	4473 Steuergeraet intern 18
+0x447A	447A Lambdasonde
+0x447B	447B Lambdasonde
+0x4480	4480 Steuergeraet intern 19
+0x448A	448A Lambdasonde
+0x448B	448B Lambdasonde
+0x4491	4491 Steuergeraet intern 20
+0x449A	449A Ladedrucksteller
+0x449B	449B Ladedrucksteller
+0x449D	449D Ladedrucksteller
+0x44A0	44A0 Injektoren Bank 1, Ansteuerung
+0x44A1	44A1 Injektoren Bank 1, Ansteuerung
+0x44A2	44A2 Injektoren Bank 1, Ansteuerung
+0x44A3	44A3 Injektoren Bank 1, Ansteuerung
+0x44A5	44A5 Nullmengenadaption Injektor Zylinder 1
+0x44A6	44A6 Nullmengenadaption Injektor Zylinder 1
+0x44A7	44A7 Nullmengenadaption Injektor Zylinder 1
+0x44A8	44A8 Nullmengenadaption Injektor Zylinder 1
+0x44AA	44AA Injektoren Bank 1, Ansteuerung
+0x44AB	44AB Injektoren Bank 1, Ansteuerung
+0x44AC	44AC Injektoren Bank 1, Ansteuerung
+0x44AD	44AD Injektoren Bank 1, Ansteuerung
+0x44B0	44B0 Injektoren Bank 2, Ansteuerung
+0x44B1	44B1 Injektoren Bank 2, Ansteuerung
+0x44B2	44B2 Injektoren Bank 2, Ansteuerung
+0x44B3	44B3 Injektoren Bank 2, Ansteuerung
+0x44B5	44B5 Nullmengenadaption Injektor Zylinder 2
+0x44B6	44B6 Nullmengenadaption Injektor Zylinder 2
+0x44B7	44B7 Nullmengenadaption Injektor Zylinder 2
+0x44B8	44B8 Nullmengenadaption Injektor Zylinder 2
+0x44BA	44BA Injektoren Bank 2, Ansteuerung
+0x44BB	44BB Injektoren Bank 2, Ansteuerung
+0x44BC	44BC Injektoren Bank 2, Ansteuerung
+0x44BD	44BD Injektoren Bank 2, Ansteuerung
+0x44C0	44C0 Anzahl gewuenschter Einspritzungen begrenzt
+0x44C1	44C1 Anzahl gewuenschter Einspritzungen begrenzt
+0x44C2	44C2 Anzahl gewuenschter Einspritzungen begrenzt
+0x44C5	44C5 Nullmengenadaption Injektor Zylinder 3
+0x44C6	44C6 Nullmengenadaption Injektor Zylinder 3
+0x44C7	44C7 Nullmengenadaption Injektor Zylinder 3
+0x44C8	44C8 Nullmengenadaption Injektor Zylinder 3
+0x44CC	44CC Ladedrucksteller
+0x44D5	44D5 Nullmengenadaption Injektor Zylinder 4
+0x44D6	44D6 Nullmengenadaption Injektor Zylinder 4
+0x44D7	44D7 Nullmengenadaption Injektor Zylinder 4
+0x44D8	44D8 Nullmengenadaption Injektor Zylinder 4
+0x44DC	44DC Ladedrucksteller
+0x44E5	44E5 Nullmengenadaption Injektor Zylinder 5
+0x44E6	44E6 Nullmengenadaption Injektor Zylinder 5
+0x44E7	44E7 Nullmengenadaption Injektor Zylinder 5
+0x44E8	44E8 Nullmengenadaption Injektor Zylinder 5
+0x44EC	44EC Ladedrucksteller, Ansteuerung
+0x44F5	44F5 Nullmengenadaption Injektor Zylinder 6
+0x44F6	44F6 Nullmengenadaption Injektor Zylinder 6
+0x44F7	44F7 Nullmengenadaption Injektor Zylinder 6
+0x44F8	44F8 Nullmengenadaption Injektor Zylinder 6
+0x44FC	44FC Ladedrucksteller
+0x4501	4501 Abgasrueckfuehr-Regelung, Regelabweichung
+0x4507	4507 Abgasrueckfuehr-Regelung, Regelabweichung
+0x450A	450A Abgastemperatur-Regelung vor Kat, Regelabweichung
+0x450B	450B Abgastemperatur-Regelung vor Kat, Regelabweichung
+0x451A	451A Abgastemperatur-Regelung vor Partikelfilter, Regelabweichung
+0x451B	451B Abgastemperatur-Regelung vor Partikelfilter, Regelabweichung
+0x4521	4521 Ladedruckregelung, Regelabweichung
+0x452A	452A Partikelfiltersystem
+0x4530	4530 Ladedruckregelung, Regelabweichung
+0x453B	453B Power Train CAN Bus
+0x453C	453C Power Train CAN Bus
+0x453D	453D Power Train CAN Bus
+0x455A	455A Stromregelung fuer Motorlager, Analogwerterfassung
+0x455B	455B Stromregelung fuer Motorlager, Analogwerterfassung
+0x4560	4560 Raildruck-Plausibilitaet mengengeregelt
+0x4567	4567 Botschaft (CODIERUNG_PM, 0x395)
+0x4568	4568 Botschaft (CODIERUNG_PM, 0x395)
+0x456A	456A Stromregelung fuer Motorlager 2, Analogwerterfassung
+0x456B	456B Stromregelung fuer Motorlager 2, Analogwerterfassung
+0x4570	4570 Raildruck-Plausibilitaet mengengeregelt
+0x4577	4577 Botschaft (CTR_CRASH_SWO_EKP, 0x135)
+0x4578	4578 Botschaft (CTR_CRASH_SWO_EKP, 0x135)
+0x457A	457A Abgastemperatur vor Kat, Plausibilitaet
+0x457D	457D Abgastemperatur vor Kat, Plausibilitaet
+0x4580	4580 Raildruck-Plausibilitaet mengengeregelt
+0x4587	4587 Kraftstofffilter
+0x458A	458A Abgastemperatur vor Kat waehrend Regeneration, Plausibilitaet
+0x4590	4590 Raildruck-Plausibilitaet mengengeregelt
+0x4597	4597 Botschaft (PRGG_CCTR, 0x331)
+0x4598	4598 Botschaft (PRGG_CCTR, 0x331)
+0x459A	459A Abgastemperatur vor Partikelfilter, Plausibilitaet
+0x459D	459D Abgastemperatur vor Partikelfilter, Plausibilitaet
+0x45A0	45A0 Raildruck-Plausibilitaet mengengeregelt
+0x45AA	45AA Abgastemperatur vor Partikelfilter waehrend Regeneration, Plausibilitaet
+0x45E3	45E3 Ueberwachung Master/Slave
+0x45F2	45F2 Ueberwachung Master/Slave
+0x45F3	45F3 Ueberwachung Master/Slave
+0x45F5	45F5 Botschaft (DREHMOMENT_ANF_ACC, 0xB7)
+0x45F6	45F6 Botschaft (DREHMOMENT_ANF_ACC, 0xB7)
+0x45F7	45F7 Botschaft (DREHMOMENT_ANF_ACC, 0xB7)
+0x45F8	45F8 Botschaft (DREHMOMENT_ANF_ACC, 0xB7)
+0x4600	4600 Raildruck-Plausibilitaet druckgeregelt
+0x4605	4605 Partikelfiltersystem
+0x4610	4610 Raildruck-Plausibilitaet druckgeregelt
+0x4618	4618 Umgebungsdrucksensor (im Steuergeraet verbaut)
+0x4620	4620 Raildruck-Plausibilitaet druckgeregelt
+0x4628	4628 Partikelfiltersystem
+0x4630	4630 Raildruck-Plausibilitaet druckgeregelt
+0x4637	4637 Botschaft (ParkConsumer, 0x?)
+0x4638	4638 Botschaft (ParkConsumer, 0x?)
+0x4640	4640 Raildruck-Plausibilitaet druckgeregelt
+0x4645	4645 Abgasrueckfuehrsteller
+0x4650	4650 Raildruck-Plausibilitaet druckgeregelt (nv)
+0x4656	4656 Steuergeraet intern 24
+0x4660	4660 Versorgungsspannung
+0x4661	4661 Versorgungsspannung
+0x4665	4665 Partikelfiltersystem
+0x4666	4666 Partikelfiltersystem
+0x4667	4667 Partikelfiltersystem
+0x4670	4670 Speisespannung 1
+0x4671	4671 Speisespannung 1
+0x4677	4677 Drosselklappensteller
+0x4680	4680 Speisespannung 2
+0x4681	4681 Speisespannung 2
+0x4687	4687 Drosselklappensteller
+0x4690	4690 Speisespannung 3
+0x4691	4691 Speisespannung 3
+0x4697	4697 Drosselklappensteller
+0x46A0	46A0 Steuergeraet intern 1
+0x46A1	46A1 Steuergeraet intern 1
+0x46A2	46A2 Steuergeraet intern 1
+0x46A3	46A3 Steuergeraet intern 1
+0x46A7	46A7 Drallklappensteller
+0x46B0	46B0 Steuergeraet intern 2
+0x46B1	46B1 Steuergeraet intern 2
+0x46B2	46B2 Steuergeraet intern 2
+0x46B3	46B3 Steuergeraet intern 2
+0x46B7	46B7 Drallklappensteller
+0x46C0	46C0 Steuergeraet intern 3
+0x46C1	46C1 Steuergeraet intern 3
+0x46C7	46C7 Drallklappensteller
+0x46D0	46D0 Steuergeraet intern 4
+0x46D1	46D1 Steuergeraet intern 4
+0x46D2	46D2 Steuergeraet intern 4
+0x46D3	46D3 Steuergeraet intern 4
+0x46D5	46D5 Verdichter-Bypassklappe, Ansteuerung
+0x46D6	46D6 Verdichter-Bypassklappe, Ansteuerung
+0x46D7	46D7 Verdichter-Bypassklappe, Ansteuerung
+0x46D8	46D8 Verdichter-Bypassklappe, Ansteuerung
+0x46E5	46E5 Wastegate-Ventil, Ansteuerung
+0x46EA	46EA Diagnosemodus Hochdrucktest
+0x46F6	46F6 Wastegate-Ventil, Ansteuerung
+0x4703	4703 Steuergeraet intern 7
+0x4707	4707 Wastegate-Ventil, Ansteuerung
+0x4708	4708 Wastegate-Ventil, Ansteuerung
+0x4711	4711 Steuergeraet intern 8
+0x4712	4712 Steuergeraet intern 8
+0x4713	4713 Steuergeraet intern 8
+0x4715	4715 Dummyfehler 1
+0x4716	4716 Dummyfehler 1
+0x4717	4717 Dummyfehler 1
+0x4718	4718 Dummyfehler 1
+0x471A	471A Motoroel, kritische Oelmasse
+0x471B	471B Motoroel, kritische Oelmasse
+0x4723	4723 Steuergeraet intern 9
+0x472B	472B Motoroel, kritische Oelviskositaet
+0x4730	4730 Mengenregelventil Stromregelung
+0x4731	4731 Mengenregelventil Stromregelung
+0x4732	4732 Mengenregelventil Stromregelung
+0x4740	4740 Steuergeraet intern 11
+0x4763	4763 Steuergeraet intern 13 (nv)
+0x4772	4772 Steuergeraet intern 14
+0x4773	4773 Steuergeraet intern 14
+0x4780	4780 Steuergeraet intern 15
+0x4781	4781 Steuergeraet intern 15
+0x4782	4782 Steuergeraet intern 15
+0x4783	4783 Steuergeraet intern 15
+0x4792	4792 Ueberwachung Master/Slave
+0x4793	4793 Ueberwachung Master/Slave
+0x47F7	47F7 Botschaft (STAT_SITZBELEGUNG_GURT, 0x2FA)
+0x47F8	47F8 Botschaft (STAT_SITZBELEGUNG_GURT, 0x2FA)
+0x4803	4803 Drehmomentueberwachung ACC
+0x480A	480A Partikelfiltersystem
+0x4810	4810 Drehmomenteingriff ACC
+0x481A	481A Partikelfiltersystem
+0x4820	4820 Klimaleistungsausgang, Ansteuerung
+0x4821	4821 Klimaleistungsausgang, Ansteuerung
+0x4822	4822 Klimaleistungsausgang, Ansteuerung
+0x4823	4823 Klimaleistungsausgang, Ansteuerung
+0x482A	482A Energiesparmode aktiv
+0x482B	482B Energiesparmode aktiv
+0x482C	482C Energiesparmode aktiv
+0x4830	4830 Ansauglufttemperatursensor
+0x4831	4831 Ansauglufttemperatursensor
+0x4832	4832 Ansauglufttemperatursensor
+0x483D	483D Drosselklappensteller
+0x4841	4841 Abgasrueckfuehr-Regelung 2, Regelabweichung
+0x484A	484A Fahrpedalmodul Potentiometer, Signal
+0x4850	4850 Abgasrueckfuehr-Regelung 2, Regelabweichung
+0x4857	4857 Drallklappensteller
+0x485A	485A AGR-Kuehler Bypassventil, Ansteuerung
+0x485B	485B AGR-Kuehler Bypassventil, Ansteuerung
+0x485C	485C AGR-Kuehler Bypassventil, Ansteuerung
+0x485D	485D AGR-Kuehler Bypassventil, Ansteuerung
+0x4863	4863 Fahrgeschwindigkeitsregelung
+0x4867	4867 Drallklappensteller
+0x486D	486D Steuergeraet
+0x4870	4870 Aussetzerkennung in mehreren Zylindern
+0x4877	4877 Drallklappensteller
+0x4880	4880 Aussetzerkennung Zylinder 1
+0x4887	4887 Drallklappensteller
+0x4890	4890 Aussetzerkennung Zylinder 2
+0x4896	4896 Drallklappensteller
+0x48A2	48A2 Botschaft (ASC1)
+0x48A3	48A3 Botschaft (ASC1)
+0x48A5	48A5 Botschaft (VEH_MOD, 0x315)
+0x48A6	48A6 Botschaft (VEH_MOD, 0x315)
+0x48A7	48A7 Botschaft (VEH_MOD, 0x315)
+0x48A8	48A8 Botschaft (VEH_MOD, 0x315)
+0x48B2	48B2 Botschaft (ASC2)
+0x48B3	48B3 Botschaft (ASC2)
+0x48C2	48C2 Botschaft (EGS1)
+0x48C3	48C3 Botschaft (EGS1)
+0x48D2	48D2 Botschaft (INSTR2)
+0x48D3	48D3 Botschaft (INSTR2)
+0x48E2	48E2 Botschaft (INSTR3)
+0x48E3	48E3 Botschaft (INSTR3)
+0x48F0	48F0 CAN Bus A
+0x48F1	48F1 CAN Bus A
+0x48F2	48F2 CAN Bus A
+0x48F3	48F3 CAN Bus A
+0x4900	4900 Momenteneingriff DSC (nv)
+0x4910	4910 CAN Bus B
+0x4911	4911 CAN Bus B
+0x4912	4912 CAN Bus B
+0x4913	4913 CAN Bus B
+0x4920	4920 Momenteneingriff Getriebe (nv)
+0x4930	4930 Aussetzerkennung Zylinder 3
+0x4940	4940 Aussetzerkennung Zylinder 4
+0x4950	4950 Aussetzerkennung Zylinder 5
+0x4960	4960 Aussetzerkennung Zylinder 6
+0x4991	4991 Botschaft (STAT_KOMBI, 0x1B4)
+0x4992	4992 Botschaft (STAT_KOMBI, 0x1B4)
+0x4993	4993 Botschaft (STAT_KOMBI, 0x1B4)
+0x49A2	49A2 Botschaft (A_TEMP_RELATIVZEIT, 0x310)
+0x49A3	49A3 Botschaft (A_TEMP_RELATIVZEIT, 0x310)
+0x49A7	49A7 Botschaft (RQ_STG_EFAN, 0x?)
+0x49A8	49A8 Botschaft (RQ_STG_EFAN, 0x?)
+0x49B7	49B7 Botschaft (STAT_EKP, 0x335)
+0x49B8	49B8 Botschaft (STAT_EKP, 0x335)
+0x49C5	49C5 Abgastemperatursensor vor Turbine, Signal
+0x49C6	49C6 Abgastemperatursensor vor Turbine, Signal
+0x49D7	49D7 Botschaft (ASC4)
+0x49D8	49D8 Botschaft (ASC4)
+0x49E7	49E7 Drosselklappensteller
+0x49F2	49F2 Botschaft (WHEEL_SPEED, 0xCE)
+0x49F3	49F3 Botschaft (WHEEL_SPEED, 0xCE)
+0x49F7	49F7 Drallklappensteller
+0x4A02	4A02 Klemme 15
+0x4A03	4A03 Klemme 15
+0x4A05	4A05 Generator (Layer_BSD)
+0x4A06	4A06 Generator (Layer_BSD)
+0x4A07	4A07 Generator (Layer_BSD)
+0x4A08	4A08 Generator (Layer_BSD)
+0x4A10	4A10 Bitserielle Datenschnittstelle BSD
+0x4A13	4A13 Bitserielle Datenschnittstelle BSD
+0x4A15	4A15 Generator (Layer_GEN)
+0x4A16	4A16 Generator (Layer_GEN)
+0x4A17	4A17 Generator (Layer_GEN)
+0x4A18	4A18 Generator (Layer_GEN)
+0x4A25	4A25 Intelligenter Batterie Sensor (Layer_DIBS1)
+0x4A26	4A26 Intelligenter Batterie Sensor (Layer_DIBS1)
+0x4A27	4A27 Intelligenter Batterie Sensor (Layer_DIBS1)
+0x4A28	4A28 Intelligenter Batterie Sensor (Layer_DIBS1)
+0x4A30	4A30 Multifunktionslenkrad, Signal
+0x4A31	4A31 Multifunktionslenkrad, Signal
+0x4A32	4A32 Multifunktionslenkrad, Signal
+0x4A33	4A33 Multifunktionslenkrad, Signal
+0x4A35	4A35 Intelligenter Batterie Sensor (Layer_DIBS2)
+0x4A36	4A36 Intelligenter Batterie Sensor (Layer_DIBS2)
+0x4A37	4A37 Intelligenter Batterie Sensor (Layer_DIBS2)
+0x4A38	4A38 Intelligenter Batterie Sensor (Layer_DIBS2)
+0x4A40	4A40 EWS Schnittstellenfehler
+0x4A41	4A41 EWS Schnittstellenfehler
+0x4A42	4A42 EWS Schnittstellenfehler
+0x4A43	4A43 EWS Schnittstellenfehler
+0x4A45	4A45 Intelligenter Batterie Sensor (Layer_DIBS3)
+0x4A46	4A46 Intelligenter Batterie Sensor (Layer_DIBS3)
+0x4A47	4A47 Intelligenter Batterie Sensor (Layer_DIBS3)
+0x4A48	4A48 Intelligenter Batterie Sensor (Layer_DIBS3)
+0x4A4A	4A4A Momentenreduktion Partikelfilter
+0x4A50	4A50 EWS EEPROM Wechselcodeablage fehlerhaft
+0x4A51	4A51 EWS EEPROM Wechselcodeablage fehlerhaft
+0x4A55	4A55 Powermanagement Batterie (Layer_PMBATT)
+0x4A56	4A56 Powermanagement Batterie (Layer_PMBATT)
+0x4A57	4A57 Powermanagement Batterie (Layer_PMBATT)
+0x4A58	4A58 Powermanagement Batterie (Layer_PMBATT)
+0x4A60	4A60 EWS Manipulation
+0x4A61	4A61 EWS Manipulation
+0x4A62	4A62 EWS Manipulation
+0x4A63	4A63 EWS Manipulation
+0x4A65	4A65 Powermanagement Bordnetz (Layer_PMBN)
+0x4A66	4A66 Powermanagement Bordnetz (Layer_PMBN)
+0x4A67	4A67 Powermanagement Bordnetz (Layer_PMBN)
+0x4A68	4A68 Powermanagement Bordnetz (Layer_PMBN)
+0x4A70	4A70 Kennfeld FMTC_trq2qBas_MAP falsch
+0x4A7D	4A7D Drehmomentueberwachung DCC
+0x4A80	4A80 Ladeluftschlauch-Ueberwachung
+0x4A8A	4A8A Dummyfehler (Layer_FltMngTst)
+0x4A8B	4A8B Dummyfehler (Layer_FltMngTst)
+0x4A8C	4A8C Dummyfehler (Layer_FltMngTst)
+0x4A8D	4A8D Dummyfehler (Layer_FltMngTst)
+0x4A92	4A92 Botschaft (ASC3)
+0x4A93	4A93 Botschaft (ASC3)
+0x4A97	4A97 Botschaft (CBS_RESET_2, 0x580)
+0x4A98	4A98 Botschaft (CBS_RESET_2, 0x580)
+0x4AA2	4AA2 Botschaft (EGS2)
+0x4AA3	4AA3 Botschaft (EGS2)
+0x4AA7	4AA7 Botschaft (STAT_ANHAENGER, 0x2E4)
+0x4AA8	4AA8 Botschaft (STAT_ANHAENGER, 0x2E4)
+0x4AB0	4AB0 Elektrischer Zuheizer
+0x4AB2	4AB2 Elektrischer Zuheizer
+0x4AB7	4AB7 Botschaft (UHRZEIT_DATUM, 0x2F8)
+0x4AB8	4AB8 Botschaft (UHRZEIT_DATUM, 0x2F8)
+0x4AC0	4AC0 Elektrischer Zuheizer 2 (nv)
+0x4AC2	4AC2 Elektrischer Zuheizer 2 (nv)
+0x4AC5	4AC5 Oelqualitaetssensor QLTCD
+0x4AC6	4AC6 Oelqualitaetssensor QLTCD
+0x4AC7	4AC7 Oelqualitaetssensor QLTCD
+0x4AC8	4AC8 Oelqualitaetssensor QLTCD
+0x4AD0	4AD0 Elektrischer Zuheizer 3 (nv)
+0x4AD2	4AD2 Elektrischer Zuheizer 3 (nv)
+0x4AD5	4AD5 Nullmengenadaption Injektor Zylinder 1
+0x4AD6	4AD6 Nullmengenadaption Injektor Zylinder 1
+0x4ADD	4ADD Diagnosemodus Hochlauftest
+0x4AE0	4AE0 E-Boxluefter, Ansteuerung
+0x4AE1	4AE1 E-Boxluefter, Ansteuerung
+0x4AE2	4AE2 E-Boxluefter, Ansteuerung
+0x4AE3	4AE3 E-Boxluefter, Ansteuerung
+0x4AE5	4AE5 Nullmengenadaption Injektor Zylinder 2
+0x4AE6	4AE6 Nullmengenadaption Injektor Zylinder 2
+0x4AEA	4AEA Diagnosemodus Einspritzabschaltung
+0x4AF0	4AF0 Steuergeraetetemperatursensor, Signal
+0x4AF1	4AF1 Steuergeraetetemperatursensor, Signal
+0x4AF5	4AF5 Nullmengenadaption Injektor Zylinder 3
+0x4AF6	4AF6 Nullmengenadaption Injektor Zylinder 3
+0x4B00	4B00 Steuergeraetetemperatur
+0x4B05	4B05 Nullmengenadaption Injektor Zylinder 4
+0x4B06	4B06 Nullmengenadaption Injektor Zylinder 4
+0x4B10	4B10 Laufruheregler
+0x4B11	4B11 Laufruheregler
+0x4B15	4B15 Nullmengenadaption Injektor Zylinder 5
+0x4B16	4B16 Nullmengenadaption Injektor Zylinder 5
+0x4B20	4B20 Elektroluefter
+0x4B22	4B22 Elektroluefter
+0x4B25	4B25 Nullmengenadaption Injektor Zylinder 6
+0x4B26	4B26 Nullmengenadaption Injektor Zylinder 6
+0x4B30	4B30 Elektroluefter 2 (nv)
+0x4B32	4B32 Elektroluefter 2 (nv)
+0x4B35	4B35 Oelqualitaetssensor (Layer_QLT)
+0x4B36	4B36 Oelqualitaetssensor (Layer_QLT)
+0x4B37	4B37 Oelqualitaetssensor (Layer_QLT)
+0x4B38	4B38 Oelqualitaetssensor (Layer_QLT)
+0x4B40	4B40 Elektroluefter 3 (nv)
+0x4B42	4B42 Elektroluefter 3 (nv)
+0x4B50	4B50 Mengenabgleich
+0x4B60	4B60 Mengendriftkompensation
+0x4B90	4B90 Raildruckueberwachung bei Motorstart
+0x4BA0	4BA0 Ansauglufttemperatursensor, Signal
+0x4BA1	4BA1 Ansauglufttemperatursensor, Signal
+0x4BB0	4BB0 Versorgungsspannung Luftmassenmesser
+0x4BB1	4BB1 Versorgungsspannung Luftmassenmesser
+0x4BB5	4BB5 Luftmassenmesser
+0x4BB6	4BB6 Luftmassenmesser
+0x4BB7	4BB7 Luftmassenmesser
+0x4BC0	4BC0 Luftmassenmesser
+0x4BC1	4BC1 Luftmassenmesser
+0x4BC2	4BC2 Luftmassenmesser
+0x4BC5	4BC5 Ansauglufttemperatursensor  (Referenzsignal fuer Luftmassenmesser)
+0x4BC6	4BC6 Ansauglufttemperatursensor  (Referenzsignal fuer Luftmassenmesser)
+0x4BC7	4BC7 Ansauglufttemperatursensor  (Referenzsignal fuer Luftmassenmesser)
+0x4BD2	4BD2 Drehmomentanforderung ARS
+0x4BD5	4BD5 Motorlager, Ansteuerung
+0x4BD6	4BD6 Motorlager, Ansteuerung
+0x4BD7	4BD7 Motorlager, Ansteuerung
+0x4BD8	4BD8 Motorlager, Ansteuerung
+0x4BE2	4BE2 Botschaft (GEARBX_DATA, 0xBA)
+0x4BE3	4BE3 Botschaft (GEARBX_DATA, 0xBA)
+0x4BE7	4BE7 Botschaft (GEARBX_DATA2, 0x1A2)
+0x4BE8	4BE8 Botschaft (GEARBX_DATA2, 0x1A2)
+0x4BF2	4BF2 Botschaft (HEAT_AC, 0x1B5)
+0x4BF3	4BF3 Botschaft (HEAT_AC, 0x1B5)
+0x4BF7	4BF7 Botschaft (MILEAGE_RANGE, 0x330)
+0x4BF8	4BF8 Botschaft (MILEAGE_RANGE, 0x330)
+0x4C00	4C00 Botschaft (OP_CRCTLACC, 0x194)
+0x4C01	4C01 Botschaft (OP_CRCTLACC, 0x194)
+0x4C02	4C02 Botschaft (OP_CRCTLACC, 0x194)
+0x4C03	4C03 Botschaft (OP_CRCTLACC, 0x194)
+0x4C06	4C06 Botschaft (STAT_ARS, 0x1AC)
+0x4C07	4C07 Botschaft (STAT_ARS, 0x1AC)
+0x4C08	4C08 Botschaft (STAT_ARS, 0x1AC)
+0x4C12	4C12 Botschaft (STAT_DSC, 0x19E)
+0x4C13	4C13 Botschaft (STAT_DSC, 0x19E)
+0x4C15	4C15 Botschaft (TERMINAL, 0x130)
+0x4C16	4C16 Botschaft (TERMINAL, 0x130)
+0x4C17	4C17 Botschaft (TERMINAL, 0x130)
+0x4C18	4C18 Botschaft (TERMINAL, 0x130)
+0x4C20	4C20 Botschaft (TORQUE_DSC, 0xB6)
+0x4C21	4C21 Botschaft (TORQUE_DSC, 0xB6)
+0x4C22	4C22 Botschaft (TORQUE_DSC, 0xB6)
+0x4C23	4C23 Botschaft (TORQUE_DSC, 0xB6)
+0x4C27	4C27 Botschaft (VELOCITY, 0x1A0)
+0x4C28	4C28 Botschaft (VELOCITY, 0x1A0)
+0x4CB2	4CB2 Botschaft (PWRMNG_LOADV, 0x334)
+0x4CB3	4CB3 Botschaft (PWRMNG_LOADV, 0x334)
+0x4CE0	4CE0 Partikelfiltersystem
+0x4CF3	4CF3 Abgasgegendrucksensor, Signal
+0x4D00	4D00 Abgasgegendrucksensor
+0x4D01	4D01 Abgasgegendrucksensor
+0x4D03	4D03 Abgasgegendrucksensor
+0x4D13	4D13 Partikelfiltersystem
+0x4D23	4D23 Partikelfiltersystem
+0x4D40	4D40 Partikelfiltersystem
+0x4D73	4D73 Partikelfiltersystem
+0x4DF0	4DF0 Botschaft (TORQUE_GEARBX, 0xB5)
+0x4DF1	4DF1 Botschaft (TORQUE_GEARBX, 0xB5)
+0x4DF2	4DF2 Botschaft (TORQUE_GEARBX, 0xB5)
+0x4DF3	4DF3 Botschaft (TORQUE_GEARBX, 0xB5)
+0xCD87	CD87 Power Train CAN Bus
