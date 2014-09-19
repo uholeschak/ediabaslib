@@ -588,6 +588,7 @@ namespace CarControl
                     textBoxIhkHeatExSetpoint.Text = string.Empty;
                 }
 
+#if false
                 if (errorsValid && _commThread.ErrorsValid)
                 {
                     string message1;
@@ -663,6 +664,80 @@ namespace CarControl
                     textBoxErrors1.Text = string.Empty;
                     textBoxErrors2.Text = string.Empty;
                 }
+#else
+                if (errorsValid)
+                {
+                    List<CommThread.EdiabasErrorReport> errorReportList = null;
+                    lock (CommThread.DataLock)
+                    {
+                        errorReportList = _commThread.EdiabasErrorReportList;
+                    }
+
+                    string message1 = string.Empty;
+                    string message2 = string.Empty;
+                    bool columnRight = false;
+
+                    foreach (CommThread.EdiabasErrorReport errorReport in errorReportList)
+                    {
+                        string message = string.Format("{0}: ",
+                            Resources.strings.ResourceManager.GetString(errorReport.DeviceName));
+                        if (errorReport.ErrorDict == null)
+                        {
+                            message += Resources.strings.ResourceManager.GetString("errorNoResponse");
+                        }
+                        else
+                        {
+                            message += "\r\n";
+                            message += FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
+                            message += ", ";
+                            message += FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
+                            string detailText = string.Empty;
+                            foreach (Dictionary<string, Ediabas.ResultData> errorDetail in errorReport.ErrorDetailSet)
+                            {
+                                string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
+                                if (kmText.Length > 0)
+                                {
+                                    if (detailText.Length > 0)
+                                    {
+                                        detailText += ", ";
+                                    }
+                                    detailText += kmText + "km";
+                                }
+                            }
+                            if (detailText.Length > 0)
+                            {
+                                message += "\r\n" + detailText;
+                            }
+                        }
+
+                        if (message.Length > 0)
+                        {
+                            message += "\r\n";
+
+                            if (!columnRight)
+                            {
+                                message1 += message;
+                            }
+                            else
+                            {
+                                message2 += message;
+                            }
+                            columnRight = !columnRight;
+                        }
+                    }
+                    if ((message1.Length == 0) && (message2.Length == 0))
+                    {
+                        message1 = Resources.strings.ResourceManager.GetString("errorNoError");
+                    }
+                    textBoxErrors1.Text = message1;
+                    textBoxErrors2.Text = message2;
+                }
+                else
+                {
+                    textBoxErrors1.Text = string.Empty;
+                    textBoxErrors2.Text = string.Empty;
+                }
+#endif
 
                 if (testValid)
                 {

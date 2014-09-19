@@ -294,12 +294,19 @@ namespace CarControl
             private string deviceName;
             private Dictionary<string, Ediabas.ResultData> errorDict;
             private List<Dictionary<string, Ediabas.ResultData>> errorDetailSet;
+            private string execptionText;
 
-            public EdiabasErrorReport(string deviceName, Dictionary<string, Ediabas.ResultData> errorDict, List<Dictionary<string, Ediabas.ResultData>> errorDetailSet)
+            public EdiabasErrorReport(string deviceName, Dictionary<string, Ediabas.ResultData> errorDict, List<Dictionary<string, Ediabas.ResultData>> errorDetailSet) :
+                this(deviceName, errorDict, errorDetailSet, string.Empty)
+            {
+            }
+
+            public EdiabasErrorReport(string deviceName, Dictionary<string, Ediabas.ResultData> errorDict, List<Dictionary<string, Ediabas.ResultData>> errorDetailSet, string execptionText)
             {
                 this.deviceName = deviceName;
                 this.errorDict = errorDict;
                 this.errorDetailSet = errorDetailSet;
+                this.execptionText = execptionText;
             }
 
             public string DeviceName
@@ -323,6 +330,14 @@ namespace CarControl
                 get
                 {
                     return errorDetailSet;
+                }
+            }
+
+            public string ExecptionText
+            {
+                get
+                {
+                    return execptionText;
                 }
             }
         }
@@ -1205,15 +1220,12 @@ namespace CarControl
                 catch (Exception ex)
                 {
                     string exText = Ediabas.GetExceptionText(ex);
-                    lock (CommThread.DataLock)
-                    {
-                        EdiabasErrorMessage = exText;
-                    }
+                    errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, null, null, exText));
                     continue;
                 }
 
                 ediabas.ArgString = string.Empty;
-                ediabas.ResultsRequests = "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT";
+                ediabas.ResultsRequests = "JOB_STATUS;F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT";
 
                 ediabas.TimeMeas = 0;
                 try
@@ -1222,32 +1234,53 @@ namespace CarControl
 
                     List<Dictionary<string, Ediabas.ResultData>> resultSets = new List<Dictionary<string, Ediabas.ResultData>>(ediabas.ResultSets);
 
-                    foreach (Dictionary<string, Ediabas.ResultData> resultDict in resultSets)
+                    bool jobOk = false;
+                    if (resultSets.Count > 0)
                     {
                         Ediabas.ResultData resultData;
-                        if (resultDict.TryGetValue("F_ORT_NR", out resultData))
+                        if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
                         {
-                            if (resultData.opData.GetType() == typeof(Int64))
+                            if (resultData.opData.GetType() == typeof(string))
                             {   // read details
-                                ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.opData);
-                                ediabas.ResultsRequests = "F_UW_KM";
-
-                                ediabas.ExecuteJob("FS_LESEN_DETAIL");
-
-                                errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, resultDict,
-                                    new List<Dictionary<string, Ediabas.ResultData>>(ediabas.ResultSets)));
+                                string jobStatus = (string)resultData.opData;
+                                if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    jobOk = true;
+                                }
                             }
                         }
+                    }
+
+                    if (jobOk)
+                    {
+                        foreach (Dictionary<string, Ediabas.ResultData> resultDict in resultSets)
+                        {
+                            Ediabas.ResultData resultData;
+                            if (resultDict.TryGetValue("F_ORT_NR", out resultData))
+                            {
+                                if (resultData.opData.GetType() == typeof(Int64))
+                                {   // read details
+                                    ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.opData);
+                                    ediabas.ResultsRequests = "F_UW_KM";
+
+                                    ediabas.ExecuteJob("FS_LESEN_DETAIL");
+
+                                    errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, resultDict,
+                                        new List<Dictionary<string, Ediabas.ResultData>>(ediabas.ResultSets)));
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, null, null));
                     }
                 }
                 catch (Exception ex)
                 {
                     ediabasInitReq = true;
                     string exText = Ediabas.GetExceptionText(ex);
-                    lock (CommThread.DataLock)
-                    {
-                        EdiabasErrorMessage = exText;
-                    }
+                    errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, null, null, exText));
                     continue;
                 }
                 Thread.Sleep(10);
@@ -1256,7 +1289,6 @@ namespace CarControl
             lock (CommThread.DataLock)
             {
                 EdiabasErrorReportList = errorReportList;
-                EdiabasErrorMessage = string.Empty;
             }
             Thread.Sleep(10);
             return true;
