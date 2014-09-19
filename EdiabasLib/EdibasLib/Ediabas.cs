@@ -2912,21 +2912,32 @@ namespace EdiabasLib
             {
                 return value;
             }
+            string numberLower = number.ToLower(culture);
             try
             {
-                if (number.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
+                if (numberLower.StartsWith("0x", StringComparison.Ordinal))
                 {   // hex
-                    value = Convert.ToUInt32(number.Substring(2, number.Length - 2), 16);
+                    if (numberLower.Length > 2)
+                    {
+                        Char firstChar = numberLower[2];
+                        if (Char.IsDigit(firstChar) || (firstChar >= 'a' && firstChar <= 'f'))
+                        {
+                            value = Convert.ToUInt32(number.Substring(2, number.Length - 2), 16);
+                        }
+                    }
                 }
-                else if (number.StartsWith("0y", StringComparison.InvariantCultureIgnoreCase))
+                else if (numberLower.StartsWith("0y", StringComparison.InvariantCultureIgnoreCase))
                 {   // binary
                     value = Convert.ToUInt32(number.Substring(2, number.Length - 2), 2);
                 }
                 else
                 {   // dec
-                    if (!Char.IsLetter(number[0]))
+                    if (!numberLower.StartsWith("--", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        value = Convert.ToUInt32(number, 10);
+                        if (!Char.IsLetter(numberLower[0]))
+                        {
+                            value = Convert.ToUInt32(number, 10);
+                        }
                     }
                 }
             }
