@@ -97,6 +97,11 @@ namespace CarControl
             get;
             private set;
         }
+        public List<EdiabasErrorReport> EdiabasErrorReportList
+        {
+            get;
+            private set;
+        }
         public string EdiabasErrorMessage
         {
             get;
@@ -201,17 +206,27 @@ namespace CarControl
 
         private class EdiabasTestJob
         {
+            private string sgdbFile;
             private string jobName;
             private string jobArgs;
             private string resultRequests;
             private string[] jobData;
 
-            public EdiabasTestJob(string jobName, string jobArgs, string resultRequests, string[] jobData)
+            public EdiabasTestJob(string sgdbFile, string jobName, string jobArgs, string resultRequests, string[] jobData)
             {
+                this.sgdbFile = sgdbFile;
                 this.jobName = jobName;
                 this.jobArgs = jobArgs;
                 this.resultRequests = resultRequests;
                 this.jobData = jobData;
+            }
+
+            public string SgdbFile
+            {
+                get
+                {
+                    return sgdbFile;
+                }
             }
 
             public string JobName
@@ -253,6 +268,65 @@ namespace CarControl
         private const int _retryNR = 2;             // number of neg response retries
         private const int _writeTimeout = 500;      // write timeout [ms]
 
+        private class EdiabasErrorRequest
+        {
+            private string deviceName;
+            private string sgdbFile;
+
+            public EdiabasErrorRequest(string deviceName, string sgdbFile)
+            {
+                this.deviceName = deviceName;
+                this.sgdbFile = sgdbFile;
+            }
+
+            public string DeviceName
+            {
+                get { return deviceName; }
+            }
+            public string SgdbFile
+            {
+                get { return sgdbFile; }
+            }
+        }
+
+        public class EdiabasErrorReport
+        {
+            private string deviceName;
+            private Dictionary<string, Ediabas.ResultData> errorDict;
+            private List<Dictionary<string, Ediabas.ResultData>> errorDetailSet;
+
+            public EdiabasErrorReport(string deviceName, Dictionary<string, Ediabas.ResultData> errorDict, List<Dictionary<string, Ediabas.ResultData>> errorDetailSet)
+            {
+                this.deviceName = deviceName;
+                this.errorDict = errorDict;
+                this.errorDetailSet = errorDetailSet;
+            }
+
+            public string DeviceName
+            {
+                get
+                {
+                    return deviceName;
+                }
+            }
+
+            public Dictionary<string, Ediabas.ResultData> ErrorDict
+            {
+                get
+                {
+                    return errorDict;
+                }
+            }
+
+            public List<Dictionary<string, Ediabas.ResultData>> ErrorDetailSet
+            {
+                get
+                {
+                    return errorDetailSet;
+                }
+            }
+        }
+
         public struct DeviceEntry
         {
             private byte deviceAddress;
@@ -279,6 +353,13 @@ namespace CarControl
                 get { return errorXml; }
             }
         }
+
+        static private readonly EdiabasErrorRequest[] EdiabasErrorRequestList =
+        {
+            new EdiabasErrorRequest("errorNameDDE", "d_motor.grp"),
+            new EdiabasErrorRequest("errorNameEHC", "d_ehc.grp"),
+            new EdiabasErrorRequest("errorNameIHK", "d_klima.grp"),
+        };
 
         static public readonly DeviceEntry[] ErrorDeviceList = {
             new DeviceEntry(0x40, "errorNameCAS", "CAS.TXT"),
@@ -397,7 +478,7 @@ namespace CarControl
 
         // for tests
         static private readonly EdiabasTestJob[] MotorJobList = {
-            new EdiabasTestJob("STATUS_MESSWERTBLOCK_LESEN",
+            new EdiabasTestJob("d_motor.grp", "STATUS_MESSWERTBLOCK_LESEN",
                 "IUBAT;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;ITKRS;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED",
                 string.Empty,
                 new string[] {
@@ -427,7 +508,7 @@ namespace CarControl
             };
 
         static private readonly EdiabasTestJob[] MotorPmJobList = {
-            new EdiabasTestJob("STATUS_SYSTEMCHECK_PM_INFO_2",
+            new EdiabasTestJob("d_motor.grp", "STATUS_SYSTEMCHECK_PM_INFO_2",
                 "STAT_BATTERIE_KAPAZITAET_WERT;STAT_KALIBRIER_EVENT_CNT_WERT;STAT_LADUNGSZUSTAND_AKTUELL_WERT;STAT_LADUNGSZUSTAND_VOR_1_TAG_WERT;STAT_Q_SOC_AKTUELL_WERT;STAT_Q_SOC_VOR_1_TAG_WERT;STAT_SOC_FIT_WERT;STAT_SOH_WERT;STAT_STARTFAEHIGKEITSGRENZE_AKTUELL_WERT;STAT_STARTFAEHIGKEITSGRENZE_VOR_1_TAG_WERT;STAT_TEMP_SAISON_WERT",
                 "STAT_BATTERIE_KAPAZITAET_WERT;STAT_KALIBRIER_EVENT_CNT_WERT;STAT_LADUNGSZUSTAND_AKTUELL_WERT;STAT_LADUNGSZUSTAND_VOR_1_TAG_WERT;STAT_Q_SOC_AKTUELL_WERT;STAT_Q_SOC_VOR_1_TAG_WERT;STAT_SOC_FIT_WERT;STAT_SOH_WERT;STAT_STARTFAEHIGKEITSGRENZE_AKTUELL_WERT;STAT_STARTFAEHIGKEITSGRENZE_VOR_1_TAG_WERT;STAT_TEMP_SAISON_WERT",
                 new string[] {
@@ -442,6 +523,49 @@ namespace CarControl
                     "STAT_STARTFAEHIGKEITSGRENZE_AKTUELL_WERT",
                     "STAT_STARTFAEHIGKEITSGRENZE_VOR_1_TAG_WERT",
                     "STAT_TEMP_SAISON_WERT",
+                }),
+            };
+
+        static private readonly EdiabasTestJob[] ErrorJobList = {
+            new EdiabasTestJob("d_motor.grp", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
+                new string[] {
+                    "F_ORT_TEXT",
+                    "F_READY_TEXT",
+                    "F_SYMPTOM_TEXT",
+                    "F_VORHANDEN_TEXT",
+                    "F_WARNUNG_TEXT",
+                }),
+            new EdiabasTestJob("d_motor.grp", "FS_LESEN_DETAIL", "0x4232", "F_UW_KM",
+                new string[] {
+                    "F_UW_KM",
+                }),
+            new EdiabasTestJob("d_ccc.grp", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
+                new string[] {
+                    "F_ORT_TEXT",
+                    "F_READY_TEXT",
+                    "F_SYMPTOM_TEXT",
+                    "F_VORHANDEN_TEXT",
+                    "F_WARNUNG_TEXT",
+                }),
+            new EdiabasTestJob("d_ehc.grp", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
+                new string[] {
+                    "F_ORT_TEXT",
+                    "F_READY_TEXT",
+                    "F_SYMPTOM_TEXT",
+                    "F_VORHANDEN_TEXT",
+                    "F_WARNUNG_TEXT",
+                }),
+            new EdiabasTestJob("d_ehc.grp", "FS_LESEN_DETAIL", "0x5FB4", "F_UW_KM",
+                new string[] {
+                    "F_UW_KM",
+                }),
+            new EdiabasTestJob("d_klima.grp", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
+                new string[] {
+                    "F_ORT_TEXT",
+                    "F_READY_TEXT",
+                    "F_SYMPTOM_TEXT",
+                    "F_VORHANDEN_TEXT",
+                    "F_WARNUNG_TEXT",
                 }),
             };
 
@@ -463,6 +587,7 @@ namespace CarControl
         private Ediabas ediabas;
         private bool ediabasInitReq;
         private bool ediabasJobAbort;
+        private string ediabasSgdbFile;
         private int ediabasUpdateCount;
         private int ediabasInternalStep;
         private Dictionary<string, Ediabas.ResultData> ediabasTempDict;
@@ -658,7 +783,8 @@ namespace CarControl
                                 break;
 
                             case SelectedDevice.DeviceErrors:
-                                result = CommErrors();
+                                //result = CommErrors();
+                                result = CommErrorsEdiabas(copyDevice);
                                 break;
 
                             case SelectedDevice.Test:
@@ -1050,6 +1176,92 @@ namespace CarControl
             return true;
         }
 
+        private bool CommErrorsEdiabas(SelectedDevice device)
+        {
+#pragma warning disable 219
+            bool firstRequestCall = false;
+#pragma warning restore 219
+            if (ediabasInitReq)
+            {
+                firstRequestCall = true;
+                ediabasJobAbort = false;
+
+                ediabasInitReq = false;
+            }
+
+            List<EdiabasErrorReport> errorReportList = new List<EdiabasErrorReport>();
+
+            foreach (EdiabasErrorRequest errorRequest in EdiabasErrorRequestList)
+            {
+                if (_stopThread)
+                {
+                    break;
+                }
+
+                try
+                {
+                    ediabas.ResolveSgdbFile(errorRequest.SgdbFile);
+                }
+                catch (Exception ex)
+                {
+                    string exText = Ediabas.GetExceptionText(ex);
+                    lock (CommThread.DataLock)
+                    {
+                        EdiabasErrorMessage = exText;
+                    }
+                    continue;
+                }
+
+                ediabas.ArgString = string.Empty;
+                ediabas.ResultsRequests = "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT";
+
+                ediabas.TimeMeas = 0;
+                try
+                {
+                    ediabas.ExecuteJob("FS_LESEN");
+
+                    List<Dictionary<string, Ediabas.ResultData>> resultSets = new List<Dictionary<string, Ediabas.ResultData>>(ediabas.ResultSets);
+
+                    foreach (Dictionary<string, Ediabas.ResultData> resultDict in resultSets)
+                    {
+                        Ediabas.ResultData resultData;
+                        if (resultDict.TryGetValue("F_ORT_NR", out resultData))
+                        {
+                            if (resultData.opData.GetType() == typeof(Int64))
+                            {   // read details
+                                ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.opData);
+                                ediabas.ResultsRequests = "F_UW_KM";
+
+                                ediabas.ExecuteJob("FS_LESEN_DETAIL");
+
+                                errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, resultDict,
+                                    new List<Dictionary<string, Ediabas.ResultData>>(ediabas.ResultSets)));
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ediabasInitReq = true;
+                    string exText = Ediabas.GetExceptionText(ex);
+                    lock (CommThread.DataLock)
+                    {
+                        EdiabasErrorMessage = exText;
+                    }
+                    continue;
+                }
+                Thread.Sleep(10);
+            }
+
+            lock (CommThread.DataLock)
+            {
+                EdiabasErrorReportList = errorReportList;
+                EdiabasErrorMessage = string.Empty;
+            }
+            Thread.Sleep(10);
+            return true;
+        }
+
         private bool CommEdiabas(SelectedDevice device, EdiabasJobs ediabasJobs)
         {
             bool firstRequestCall = false;
@@ -1144,21 +1356,7 @@ namespace CarControl
             {
                 firstRequestCall = true;
                 ediabasJobAbort = false;
-
-                try
-                {
-                    ediabas.ResolveSgdbFile("d_motor.grp");
-                }
-                catch (Exception ex)
-                {
-                    string exText = Ediabas.GetExceptionText(ex);
-                    lock (CommThread.DataLock)
-                    {
-                        TestResult = exText;
-                    }
-                    Thread.Sleep(1000);
-                    return false;
-                }
+                ediabasSgdbFile = string.Empty;
 
                 ediabasInitReq = false;
             }
@@ -1166,24 +1364,47 @@ namespace CarControl
             string resultText = string.Format("Update: {0}\r\n", ediabasUpdateCount++);
             ediabas.TimeMeas = 0;
             long timeDiff = 0;
-            foreach (EdiabasTestJob ediabasJob in MotorPmJobList)
+            foreach (EdiabasTestJob ediabasJob in ErrorJobList)
             {
                 if (_stopThread)
                 {
                     break;
                 }
 
+                if (string.Compare(ediabasSgdbFile, ediabasJob.SgdbFile, StringComparison.Ordinal) != 0)
+                {
+                    try
+                    {
+                        ediabas.ResolveSgdbFile(ediabasJob.SgdbFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        ediabasInitReq = true;
+                        string exText = Ediabas.GetExceptionText(ex);
+                        lock (CommThread.DataLock)
+                        {
+                            TestResult = exText;
+                        }
+                        Thread.Sleep(1000);
+                        return false;
+                    }
+                    ediabasSgdbFile = ediabasJob.SgdbFile;
+                }
+
                 string argString = ediabasJob.JobArgs;
-#if false
-                if (firstRequestCall)
+
+                if (string.Compare(ediabasJob.JobName, "STATUS_MESSWERTBLOCK_LESEN", StringComparison.Ordinal) == 0)
                 {
-                    argString = "JA;" + argString;
+                    if (firstRequestCall)
+                    {
+                        argString = "JA;" + argString;
+                    }
+                    else
+                    {
+                        argString = "NEIN;" + argString;
+                    }
                 }
-                else
-                {
-                    argString = "NEIN;" + argString;
-                }
-#endif
+
                 ediabas.ArgString = argString;
                 ediabas.ResultsRequests = ediabasJob.ResultRequests;
 
@@ -1197,42 +1418,50 @@ namespace CarControl
                     List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
                     if (resultSets.Count < 1)
                     {
-                        lineText += "-";
+                        lineText += "-\r\n";
                     }
                     else
                     {
-                        Dictionary<string, Ediabas.ResultData> resultDict = resultSets[0];
-                        foreach (string dataName in ediabasJob.JobData)
+                        foreach (Dictionary<string, Ediabas.ResultData> resultDict in resultSets)
                         {
-                            Ediabas.ResultData resultData;
-                            if (resultDict.TryGetValue(dataName, out resultData))
+                            string newLineText = string.Empty;
+                            foreach (string dataName in ediabasJob.JobData)
                             {
-                                string valueText = string.Empty;
-                                if (resultData.opData.GetType() == typeof(string))
+                                Ediabas.ResultData resultData;
+                                if (resultDict.TryGetValue(dataName, out resultData))
                                 {
-                                    valueText = (string)resultData.opData;
-                                }
-                                else if (resultData.opData.GetType() == typeof(Double))
-                                {
-                                    valueText = ((Double)resultData.opData).ToString();
-                                }
-                                else if (resultData.opData.GetType() == typeof(Int64))
-                                {
-                                    valueText = ((Int64)resultData.opData).ToString();
-                                }
-                                else if (resultData.opData.GetType() == typeof(byte[]))
-                                {
-                                    byte[] dataArray = (byte[])resultData.opData;
-                                    foreach (byte value in dataArray)
+                                    string valueText = string.Empty;
+                                    if (resultData.opData.GetType() == typeof(string))
                                     {
-                                        valueText += string.Format("{0:X02} ", value);
+                                        valueText = (string)resultData.opData;
                                     }
+                                    else if (resultData.opData.GetType() == typeof(Double))
+                                    {
+                                        valueText = ((Double)resultData.opData).ToString();
+                                    }
+                                    else if (resultData.opData.GetType() == typeof(Int64))
+                                    {
+                                        valueText = ((Int64)resultData.opData).ToString();
+                                    }
+                                    else if (resultData.opData.GetType() == typeof(byte[]))
+                                    {
+                                        byte[] dataArray = (byte[])resultData.opData;
+                                        foreach (byte value in dataArray)
+                                        {
+                                            valueText += string.Format("{0:X02} ", value);
+                                        }
+                                    }
+                                    newLineText += dataName + ": " + valueText + " ";
                                 }
-                                lineText += dataName + ": " + valueText + " ";
                             }
+                            if (newLineText.Length > 0)
+                            {
+                                newLineText += "\r\n";
+                            }
+                            lineText += newLineText;
                         }
                     }
-                    resultText += lineText + "\r\n";
+                    resultText += lineText;
                 }
                 catch (Exception ex)
                 {
@@ -1430,6 +1659,7 @@ namespace CarControl
             }
 
             EdiabasResultDict = null;
+            EdiabasErrorReportList = null;
             EdiabasErrorMessage = string.Empty;
             ErrorsValid = false;
             for (int j = 0; j < ErrorDetails.Length; j++)
@@ -1440,6 +1670,7 @@ namespace CarControl
 
             ediabasInitReq = true;
             ediabasJobAbort = deviceChange;
+            ediabasSgdbFile = string.Empty;
             ediabasUpdateCount = 0;
             ediabasInternalStep = 0;
             ediabasTempDict = null;
