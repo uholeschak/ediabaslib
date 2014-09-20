@@ -25,7 +25,7 @@ namespace EdiabasLib
         {
             get
             {
-                return "ODB";
+                return "OBD";
             }
         }
 
@@ -33,7 +33,7 @@ namespace EdiabasLib
         {
             get
             {
-                return 1;
+                return 209;
             }
         }
 

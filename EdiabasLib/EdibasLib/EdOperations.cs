@@ -844,6 +844,30 @@ namespace EdiabasLib
             }
         }
 
+        // BEST2: incProgressPos
+        private static void OpIincpos(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            EdValueType newValue = ediabas.infoProgressPos + arg0.GetValueData();
+            if (newValue > ediabas.infoProgressRange)
+            {
+                newValue = ediabas.infoProgressRange;
+            }
+            ediabas.infoProgressPos = newValue;
+        }
+
+        // BEST2: setProgressRange
+        private static void OpIrange(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            ediabas.infoProgressPos = 0;
+            ediabas.infoProgressRange = arg0.GetValueData();
+        }
+
+        // BEST2: updateInfo
+        private static void OpIupdate(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            ediabas.infoText = arg0.GetStringData();
+        }
+
         // jump above
         private static void OpJa(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
@@ -1191,6 +1215,16 @@ namespace EdiabasLib
             }
         }
 
+        private static void OpPushf(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            EdValueType value = ediabas.flags.ToValue();
+            for (int i = 0; i < sizeof(EdValueType); i++)
+            {
+                ediabas.stackList.Push((byte)value);
+                value >>= 8;
+            }
+        }
+
         private static void OpPop(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
@@ -1216,6 +1250,22 @@ namespace EdiabasLib
 
             arg0.SetRawData(value);
             ediabas.flags.UpdateFlags(value, length);
+        }
+
+        private static void OpPopf(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (ediabas.stackList.Count < sizeof(EdValueType))
+            {
+                throw new ArgumentOutOfRangeException("stackList", "OpPopf: Invalid stack count");
+            }
+
+            EdValueType value = 0;
+            for (int i = 0; i < sizeof(EdValueType); i++)
+            {
+                value <<= 8;
+                value |= ediabas.stackList.Pop();
+            }
+            ediabas.flags.FromValue(value);
         }
 
         private static void OpOr(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
@@ -1778,6 +1828,7 @@ namespace EdiabasLib
             }
             EdFloatType value = BitConverter.ToSingle(dataArray, 0);
             arg0.SetRawData(value);
+            ediabas.flags.UpdateFlags(value);
         }
 
         // BEST2: data_to_real (intel byte order)
@@ -1795,6 +1846,7 @@ namespace EdiabasLib
             }
             EdFloatType value = BitConverter.ToDouble(dataArray, 0);
             arg0.SetRawData(value);
+            ediabas.flags.UpdateFlags(value);
         }
 
         // BEST2: bcd2ascii
@@ -1810,6 +1862,23 @@ namespace EdiabasLib
             foreach (byte data in dataArray)
             {
                 result += ValueToBcd(data);
+            }
+            arg0.SetStringData(result);
+        }
+
+        // BEST2: hex2ascii
+        private static void OpY2hex(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpY2hex: Invalid type");
+            }
+
+            string result = string.Empty;
+            byte[] dataArray = arg1.GetArrayData();
+            foreach (byte data in dataArray)
+            {
+                result += string.Format("{0:X02}", data);
             }
             arg0.SetStringData(result);
         }
@@ -1966,7 +2035,9 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("edCommClass", "OpXvers: No communication class present");
             }
-            arg0.SetRawData((EdValueType)ediabas.edCommClass.InterfaceVersion);
+            EdValueType value = (EdValueType)ediabas.edCommClass.InterfaceVersion;
+            arg0.SetRawData(value);
+            ediabas.flags.UpdateFlags(value, sizeof(EdValueType));
         }
 
         // BEST2: wait
