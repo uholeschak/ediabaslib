@@ -2926,13 +2926,14 @@ namespace EdiabasLib
                         }
                     }
                 }
-                else if (numberLower.StartsWith("0y", StringComparison.InvariantCultureIgnoreCase))
+                else if (numberLower.StartsWith("0y", StringComparison.Ordinal))
                 {   // binary
                     value = Convert.ToUInt32(number.Substring(2, number.Length - 2), 2);
                 }
                 else
                 {   // dec
-                    if (!numberLower.StartsWith("--", StringComparison.InvariantCultureIgnoreCase))
+                    if ((string.Compare(numberLower, "-", StringComparison.Ordinal) != 0) &&
+                        (string.Compare(numberLower, "--", StringComparison.Ordinal) != 0))
                     {
                         if (!Char.IsLetter(numberLower[0]))
                         {
