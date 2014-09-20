@@ -104,6 +104,36 @@ namespace CarControl
         [DllImport("user32", EntryPoint = "ExitWindowsEx")]
         public static extern int W32ExitWindowsEx(ExitFlags flags, int reserved);
 
+        [DllImport("Coredll.dll", EntryPoint = "CreateFile", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr CeCreateFile(
+            string lpFileName,
+            uint dwDesiredAccess,
+            uint dwShareMode,
+            IntPtr lpSecurityAttributes,
+            uint dwCreationDisposition,
+            uint dwFlagsAndAttributes,
+            IntPtr hTemplateFile
+            );
+
+        [DllImport("kernel32.dll", EntryPoint = "CreateFile", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr W32CreateFile(
+            string lpFileName,
+            uint dwDesiredAccess,
+            uint dwShareMode,
+            IntPtr lpSecurityAttributes,
+            uint dwCreationDisposition,
+            uint dwFlagsAndAttributes,
+            IntPtr hTemplateFile
+            );
+
+        [DllImport("Coredll.dll", EntryPoint = "CloseHandle", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool CeCloseHandle(IntPtr hObject);
+
+        [DllImport("kernel32.dll", EntryPoint = "CloseHandle", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool W32CloseHandle(IntPtr hObject);
+
         [DllImport("coredll.dll", EntryPoint = "RegFlushKey")]
         public static extern int CeRegFlushKey(IntPtr hKey);
 
@@ -244,6 +274,19 @@ namespace CarControl
         public const UInt32 HKEY_CURRENT_USER = 0x80000001;
         public const UInt32 HKEY_LOCAL_MACHINE = 0x80000002;
         public const UInt32 HKEY_USERS = 0x80000003;
+
+        // CreateFile
+        public static IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
+
+        public const uint FILE_ATTRIBUTE_NORMAL = 0x80;
+        public const uint GENERIC_READ = 0x80000000;
+        public const uint GENERIC_WRITE = 0x40000000;
+        public const uint FILE_SHARE_READ = 1;
+        public const uint FILE_SHARE_WRITE = 2;
+        public const uint FILE_SHARE_DELETE = 4;
+        public const uint CREATE_NEW = 1;
+        public const uint CREATE_ALWAYS = 2;
+        public const uint OPEN_EXISTING = 3;
 
         [Flags]
         public enum ExitFlags
@@ -396,6 +439,33 @@ namespace CarControl
                 return CeExitWindowsEx(flags, reserved);
             }
             return W32ExitWindowsEx(flags, reserved);
+        }
+
+
+        public static IntPtr CreateFile(
+            string lpFileName,
+            uint dwDesiredAccess,
+            uint dwShareMode,
+            IntPtr lpSecurityAttributes,
+            uint dwCreationDisposition,
+            uint dwFlagsAndAttributes,
+            IntPtr hTemplateFile
+            )
+        {
+            if (Environment.OSVersion.Platform == PlatformID.WinCE)
+            {
+                return CeCreateFile(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
+            }
+            return W32CreateFile(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
+        }
+
+        public static bool CloseHandle(IntPtr hObject)
+        {
+            if (Environment.OSVersion.Platform == PlatformID.WinCE)
+            {
+                return CeCloseHandle(hObject);
+            }
+            return W32CloseHandle(hObject);
         }
 
         public static int RegFlushKey(IntPtr hKey)

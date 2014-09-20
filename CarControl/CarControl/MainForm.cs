@@ -65,6 +65,12 @@ namespace CarControl
 
             if (_powerOff)
             {
+                Process process = new Process();
+                process.StartInfo.FileName = "\\UM\\Program Files\\CoreCon\\clientshutdown.exe";
+                process.StartInfo.UseShellExecute = false;
+                process.Start();
+                process.WaitForExit();
+
                 int result = 0;
                 result |= WinAPI.RegFlushKey(new IntPtr(unchecked((int)WinAPI.HKEY_CLASSES_ROOT)));
                 result |= WinAPI.RegFlushKey(new IntPtr(unchecked((int)WinAPI.HKEY_CURRENT_USER)));
