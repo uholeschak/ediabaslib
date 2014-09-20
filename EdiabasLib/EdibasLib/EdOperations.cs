@@ -629,7 +629,7 @@ namespace EdiabasLib
             
             EdValueType result = (EdValueType)value;
             arg0.SetRawData(result);
-            ediabas.flags.UpdateFlags(result);
+            ediabas.flags.UpdateFlags(result, sizeof(EdValueType));
         }
 
         // BEST2: real_to_data (intel byte order)
@@ -637,7 +637,7 @@ namespace EdiabasLib
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
-                throw new ArgumentOutOfRangeException("arg0", "OpFlt2fix: Invalid type");
+                throw new ArgumentOutOfRangeException("arg0", "OpFlt2y4: Invalid type");
             }
 
             EdFloatType value = arg1.GetFloatData();
@@ -665,7 +665,7 @@ namespace EdiabasLib
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
-                throw new ArgumentOutOfRangeException("arg0", "OpFlt2fix: Invalid type");
+                throw new ArgumentOutOfRangeException("arg0", "OpFlt2y8: Invalid type");
             }
 
             EdFloatType value = arg1.GetFloatData();
@@ -1735,6 +1735,17 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(value, len);
         }
 
+        private static void OpTicks(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpTicks: Invalid type");
+            }
+            EdValueType value = (EdValueType)DateTime.Now.Ticks;
+            arg0.SetRawData(value);
+            ediabas.flags.UpdateFlags(value, sizeof(EdValueType));
+        }
+
         // BEST2: gettime
         private static void OpTime(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
@@ -1750,6 +1761,40 @@ namespace EdiabasLib
             resultArray[2] = (byte)saveNow.Second;
 
             arg0.SetArrayData(resultArray);
+        }
+
+        // BEST2: data_to_real (intel byte order)
+        private static void OpY42flt(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "Opy42flt: Invalid type");
+            }
+
+            byte[] dataArray = arg1.GetArrayData();
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(dataArray, 0, sizeof(Single));
+            }
+            EdFloatType value = BitConverter.ToSingle(dataArray, 0);
+            arg0.SetRawData(value);
+        }
+
+        // BEST2: data_to_real (intel byte order)
+        private static void OpY82flt(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpY82flt: Invalid type");
+            }
+
+            byte[] dataArray = arg1.GetArrayData();
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(dataArray, 0, sizeof(Double));
+            }
+            EdFloatType value = BitConverter.ToDouble(dataArray, 0);
+            arg0.SetRawData(value);
         }
 
         // BEST2: bcd2ascii
