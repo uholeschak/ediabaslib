@@ -123,43 +123,6 @@
     <None Include="DesignTimeAttributes.xmta" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Ecu\D60M47A0.TXT" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Ecu\EHC_E65.TXT" />
-    <EmbeddedResource Include="Ecu\PDC_65_2.TXT" />
-    <EmbeddedResource Include="Ecu\SZM_60.TXT" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Ecu\ANT_60.TXT" />
-    <EmbeddedResource Include="Ecu\ASK_60.TXT" />
-    <EmbeddedResource Include="Ecu\CCCA60.TXT" />
-    <EmbeddedResource Include="Ecu\CCCG60.TXT" />
-    <EmbeddedResource Include="Ecu\CCC_60.TXT" />
-    <EmbeddedResource Include="Ecu\CDC_E65.TXT" />
-    <EmbeddedResource Include="Ecu\CID_90.TXT" />
-    <EmbeddedResource Include="Ecu\TELE60_3.TXT" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Ecu\ACSM60.TXT" />
-    <EmbeddedResource Include="Ecu\AHM_E65.TXT" />
-    <EmbeddedResource Include="Ecu\CAS.TXT" />
-    <EmbeddedResource Include="Ecu\ECL60.TXT" />
-    <EmbeddedResource Include="Ecu\KBM_60.TXT" />
-    <EmbeddedResource Include="Ecu\SCL_60.TXT" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Ecu\IHKA60_2.TXT" />
-    <EmbeddedResource Include="Ecu\KGM_60.TXT" />
-    <EmbeddedResource Include="Ecu\KOMB60.TXT" />
-    <EmbeddedResource Include="Ecu\LM_AHL_2.TXT" />
-    <EmbeddedResource Include="Ecu\RLSS70.TXT" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Ecu\DXC8_P.TXT" />
-    <EmbeddedResource Include="Ecu\EKPM60_3.TXT" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\EdiabasLib\EdibasLibCe\EdibasLibCe.csproj">
       <Project>{15ABB909-DDB7-4E1A-9AC9-BB03221FC75A}</Project>
       <Name>EdibasLibCe</Name>

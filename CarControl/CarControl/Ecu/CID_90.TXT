@@ -1,8 +1,0 @@
-0xA468	Fehler im Videosignal
-0xA469	Elektronikausfall intern
-0xA46A	Uebertemperatur Abschaltung (kein Defekt)
-0xA46B	Ueberspannung erkannt
-0xA46C	Energiesparmode aktiv
-0xA46D	Funktionsstoerung CID durch Reset der Headunit
-0xE5C4	K-CAN Fehler
-0xE5C7	K-CAN Fehler, Bus fehlt

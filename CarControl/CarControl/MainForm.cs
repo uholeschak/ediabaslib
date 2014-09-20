@@ -594,83 +594,6 @@ namespace CarControl
                     textBoxIhkHeatExSetpoint.Text = string.Empty;
                 }
 
-#if false
-                if (errorsValid && _commThread.ErrorsValid)
-                {
-                    string message1;
-                    string message2;
-                    bool columnRight = false;
-                    int device;
-
-                    message1 = string.Empty;
-                    message2 = string.Empty;
-                    for (device = 0; device < _commThread.ErrorDetails.Length; device++)
-                    {
-                        lock (CommThread.DataLock)
-                        {
-                            int errorCount = _commThread.ErrorDetails[device].errorCount;
-                            string message = string.Format("{0}: ",
-                                Resources.strings.ResourceManager.GetString(CommThread.ErrorDeviceList[device].Name));
-                            if (errorCount < 0)
-                            {
-                                message += Resources.strings.ResourceManager.GetString("errorNoResponse");
-                            }
-                            else if (errorCount > 0)
-                            {
-                                for (int errorIdx = 0; errorIdx < errorCount; errorIdx++)
-                                {
-                                    int errorCode = _commThread.ErrorDetails[device].errorList[errorIdx].errorCode;
-                                    int errorType = _commThread.ErrorDetails[device].errorList[errorIdx].errorType;
-
-                                    message += string.Format("\r\n* {0:X04}-{1:X02} ", errorCode, errorType);
-                                    if (_commThread.ErrorDetails[device].errorList[errorIdx].errorCount >= 0)
-                                    {
-                                        message += string.Format("{0}x ", _commThread.ErrorDetails[device].errorList[errorIdx].errorCount);
-                                    }
-                                    if (_commThread.ErrorDetails[device].errorList[errorIdx].errorDistance1 >= 0)
-                                    {
-                                        message += string.Format("{0}km ", _commThread.ErrorDetails[device].errorList[errorIdx].errorDistance1);
-                                    }
-                                    if (_commThread.ErrorDetails[device].errorList[errorIdx].errorDistance2 >= 0)
-                                    {
-                                        message += string.Format("{0}km ", _commThread.ErrorDetails[device].errorList[errorIdx].errorDistance2);
-                                    }
-                                    message += GetErrorDescription(device, errorCode, errorType);
-                                }
-                            }
-                            else
-                            {
-                                message = string.Empty;
-                            }
-                            if (message.Length > 0)
-                            {
-                                message += "\r\n";
-
-                                if (!columnRight)
-                                {
-                                    message1 += message;
-                                }
-                                else
-                                {
-                                    message2 += message;
-                                }
-                                columnRight = !columnRight;
-                            }
-                        }
-                    }
-                    if ((message1.Length == 0) && (message2.Length == 0))
-                    {
-                        message1 = Resources.strings.ResourceManager.GetString("errorNoError");
-                    }
-                    textBoxErrors1.Text = message1;
-                    textBoxErrors2.Text = message2;
-                }
-                else
-                {
-                    textBoxErrors1.Text = string.Empty;
-                    textBoxErrors2.Text = string.Empty;
-                }
-#else
                 if (errorsValid)
                 {
                     List<CommThread.EdiabasErrorReport> errorReportList = null;
@@ -746,7 +669,6 @@ namespace CarControl
                     textBoxErrors1.Text = string.Empty;
                     textBoxErrors2.Text = string.Empty;
                 }
-#endif
 
                 if (testValid)
                 {
@@ -843,58 +765,6 @@ namespace CarControl
             return string.Empty;
         }
 
-        private string GetErrorDescriptionFromTxt(int deviceIndex, int errorCode)
-        {
-            string result = string.Empty;
-
-            string txtName = CommThread.ErrorDeviceList[deviceIndex].Xml;
-            if (txtName == null)
-            {
-                return result;
-            }
-
-            try
-            {
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                using (Stream stream = assembly.GetManifestResourceStream("CarControl.Ecu." + txtName))
-                {
-                    if (stream == null)
-                    {
-                        return result;
-                    }
-                    using (StreamReader streamReader = new StreamReader(stream))
-                    {
-                        string line;
-                        while ((line = streamReader.ReadLine()) != null)
-                        {
-                            string[] lineArray = line.Split(new char[] { '\t' });
-                            if (lineArray != null && lineArray.Length == 2)
-                            {
-                                try
-                                {
-                                    if (lineArray[0].StartsWith("0x"))
-                                    {
-                                        int value = Convert.ToInt32(lineArray[0].Substring(2), 16);
-                                        if (value == errorCode)
-                                        {
-                                            return lineArray[1];
-                                        }
-                                    }
-                                }
-                                catch
-                                {
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-            }
-            return result;
-        }
-
         private string GetErrorDescription(int deviceIndex, int errorCode, int errorType)
         {
             string result = string.Empty;
@@ -949,12 +819,6 @@ namespace CarControl
             }
             result = "\r\n- " + errorClass + ", " + errorPresent;
             if (errorWarning.Length > 0) result += ", " + errorWarning;
-
-            string description = GetErrorDescriptionFromTxt(deviceIndex, errorCode);
-            if (description.Length > 0)
-            {
-                result += "\r\n- " + description;
-            }
 
             return result;
         }

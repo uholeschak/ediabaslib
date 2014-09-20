@@ -47,23 +47,6 @@ namespace CarControl
             CccNavGpsPosType3D,
         }
 
-        public struct ErrorEntry
-        {
-            public int errorCode;
-            public int errorType;
-            public int errorCount;
-            public int errorDistance1;
-            public int errorDistance2;
-        }
-
-        public struct ErrorList
-        {
-            public int errorCount;
-            public ErrorEntry[] errorList;
-        }
-
-        public const int MaxErrorCount = 10;
-
         public const int AxisModeNormal = 0x00;
         public const int AxisModeConveyor = 0x02;
         public const int AxisModeTransport = 0x04;
@@ -108,16 +91,6 @@ namespace CarControl
             private set;
         }
 
-        public bool ErrorsValid
-        {
-            get;
-            private set;
-        }
-        public ErrorList[] ErrorDetails
-        {
-            get;
-            private set;
-        }
         public string TestResult
         {
             get;
@@ -342,33 +315,6 @@ namespace CarControl
             }
         }
 
-        public struct DeviceEntry
-        {
-            private byte deviceAddress;
-            private string deviceName;
-            private string errorXml;
-
-            public DeviceEntry(byte address, string name, string xml)
-            {
-                deviceAddress = address;
-                deviceName = name;
-                errorXml = xml;
-            }
-
-            public byte Address
-            {
-                get { return deviceAddress; }
-            }
-            public string Name
-            {
-                get { return deviceName; }
-            }
-            public string Xml
-            {
-                get { return errorXml; }
-            }
-        }
-
         static private readonly EdiabasErrorRequest[] EdiabasErrorRequestList =
         {
             new EdiabasErrorRequest("errorNameCAS", "d_cas.grp"),
@@ -397,34 +343,6 @@ namespace CarControl
             new EdiabasErrorRequest("errorNameSZM", "d_bzm.grp"),
             new EdiabasErrorRequest("errorNameTCU", "d_tel.grp"),
         };
-
-        static public readonly DeviceEntry[] ErrorDeviceList = {
-            new DeviceEntry(0x40, "errorNameCAS", "CAS.TXT"),
-            new DeviceEntry(0x12, "errorNameDDE", "D60M47A0.TXT"),
-            new DeviceEntry(0x17, "errorNameEKPS", "EKPM60_3.TXT"),
-            new DeviceEntry(0x38, "errorNameEHC", "EHC_E65.TXT"),
-            new DeviceEntry(0x29, "errorNameDSC", "DXC8_P.TXT"),
-            new DeviceEntry(0x01, "errorNameACSM", "ACSM60.TXT"),
-            new DeviceEntry(0x71, "errorNameAHM", "AHM_E65.TXT"),
-            new DeviceEntry(0x63, "errorNameCCCBO", "CCC_60.TXT"),
-            new DeviceEntry(0x62, "errorNameCCCGW", "CCCG60.TXT"),
-            new DeviceEntry(0xA0, "errorNameCCCA", "CCCA60.TXT"),
-            new DeviceEntry(0x47, "errorNameCCCANT", "ANT_60.TXT"),
-            new DeviceEntry(0x3F, "errorNameCCCASK", "ASK_60.TXT"),
-            new DeviceEntry(0x3C, "errorNameCDC", "CDC_E65.TXT"),
-            new DeviceEntry(0x73, "errorNameCID", "CID_90.TXT"),
-            new DeviceEntry(0x67, "errorNameCON", "ECL60.TXT"),
-            new DeviceEntry(0x78, "errorNameIHK", "IHKA60_2.TXT"),
-            new DeviceEntry(0x72, "errorNameKBM", "KBM_60.TXT"),
-            new DeviceEntry(0x00, "errorNameKGM", "KGM_60.TXT"),
-            new DeviceEntry(0x60, "errorNameKOMBI", "KOMB60.TXT"),
-            new DeviceEntry(0x70, "errorNameLM", "LM_AHL_2.TXT"),
-            new DeviceEntry(0x64, "errorNamePDC", "PDC_65_2.TXT"),
-            new DeviceEntry(0x45, "errorNameRLS", "RLSS70.TXT"),
-            new DeviceEntry(0x02, "errorNameSZL", "SCL_60.TXT"),
-            new DeviceEntry(0x65, "errorNameSZM", "SZM_60.TXT"),
-            new DeviceEntry(0x36, "errorNameTCU", "TELE60_3.TXT"),
-            };
 
         static private readonly EdiabasJobs EhcJobs = new EdiabasJobs("d_ehc.grp",
             new EdiabasJob[]
@@ -660,13 +578,6 @@ namespace CarControl
             }
 
             // public properties
-            ErrorDetails = new ErrorList[ErrorDeviceList.Length];
-            for (int i = 0; i < ErrorDetails.Length; i++)
-            {
-                ErrorDetails[i] = new ErrorList();
-                ErrorDetails[i].errorCount = 0;
-                ErrorDetails[i].errorList = new ErrorEntry[MaxErrorCount];
-            }
             TestResult = string.Empty;
 
             InitProperties();
@@ -820,7 +731,6 @@ namespace CarControl
                                 break;
 
                             case SelectedDevice.DeviceErrors:
-                                //result = CommErrors();
                                 result = CommErrorsEdiabas(copyDevice);
                                 break;
 
@@ -864,120 +774,6 @@ namespace CarControl
             }
             _threadRunning = false;
             DataUpdatedEvent();
-        }
-
-        private bool CommErrors()
-        {
-            int i;
-            bool result = true;
-
-            for (int device = 0; device < ErrorDeviceList.Length; device++)
-            {
-                if (!_stopThread /*&& result*/)
-                {
-                    i = 0;
-                    _sendObdData.address = ErrorDeviceList[device].Address;
-                    _sendObdData.data[i++] = 0x18;
-                    _sendObdData.data[i++] = 0x02;
-                    _sendObdData.data[i++] = 0xFF;
-                    _sendObdData.data[i++] = 0xFF;
-                    _sendObdData.length = (byte)i;
-                    if (!OBDTrans(_sendObdData, ref _receiveObdData))
-                    {
-                        ErrorDetails[device].errorCount = -1;
-                        result = false;
-                    }
-                    else
-                    {
-                        if (_receiveObdData.length >= 2 &&
-                            _receiveObdData.data[0] == 0x58)
-                        {
-                            lock (DataLock)
-                            {
-                                int errorCount = _receiveObdData.data[1];
-                                if (errorCount > MaxErrorCount) errorCount = MaxErrorCount;
-                                for (int j = 0; j < errorCount; j++)
-                                {
-                                    int errorCode = ((int)_receiveObdData.data[2 + (j * 3)] << 8) + _receiveObdData.data[3 + (j * 3)];
-                                    ErrorDetails[device].errorList[j].errorCode = errorCode;
-                                    ErrorDetails[device].errorList[j].errorType = _receiveObdData.data[4 + (j * 3)];
-                                    ErrorDetails[device].errorList[j].errorCount = -1;
-                                    ErrorDetails[device].errorList[j].errorDistance1 = -1;
-                                    ErrorDetails[device].errorList[j].errorDistance2 = -1;
-                                }
-                                for (int j = 0; j < errorCount; j++)
-                                {
-                                    i = 0;
-                                    _sendObdData.address = ErrorDeviceList[device].Address;
-                                    _sendObdData.data[i++] = 0x17;
-                                    _sendObdData.data[i++] = (byte)(ErrorDetails[device].errorList[j].errorCode >> 8);
-                                    _sendObdData.data[i++] = (byte)ErrorDetails[device].errorList[j].errorCode;
-                                    _sendObdData.length = (byte)i;
-                                    if (!OBDTrans(_sendObdData, ref _receiveObdData))
-                                    {
-                                        result = false;
-                                    }
-                                    else
-                                    {
-                                        switch (ErrorDeviceList[device].Address)
-                                        {
-                                            case 0x12:   // DDE
-                                                if (_receiveObdData.length < 34) break;
-                                                ErrorDetails[device].errorList[j].errorCount = _receiveObdData.data[8];
-                                                if ((_receiveObdData.data[5] & 0x02) != 0)
-                                                {
-                                                    ErrorDetails[device].errorList[j].errorDistance1 =
-                                                        (((int)_receiveObdData.data[10] << 8) + _receiveObdData.data[11]) << 3;
-                                                }
-                                                if ((_receiveObdData.data[5] & 0x04) != 0)
-                                                {
-                                                    ErrorDetails[device].errorList[j].errorDistance2 =
-                                                    (((int)_receiveObdData.data[22] << 8) + _receiveObdData.data[23]) << 3;
-                                                }
-                                                break;
-
-                                            case 0x38:   // EHC
-                                                if (_receiveObdData.length < 15) break;
-                                                ErrorDetails[device].errorList[j].errorCount = _receiveObdData.data[5];
-                                                ErrorDetails[device].errorList[j].errorDistance1 =
-                                                    (((int)_receiveObdData.data[7] << 8) + _receiveObdData.data[8]) << 3;
-                                                break;
-
-                                            case 0x64:   // PDC
-                                                if (_receiveObdData.length < 12) break;
-                                                ErrorDetails[device].errorList[j].errorCount = _receiveObdData.data[5];
-                                                ErrorDetails[device].errorList[j].errorDistance1 =
-                                                    (((int)_receiveObdData.data[6] << 8) + _receiveObdData.data[7]) << 3;
-                                                if (ErrorDetails[device].errorList[j].errorCount > 1)
-                                                {
-                                                    ErrorDetails[device].errorList[j].errorDistance2 =
-                                                    (((int)_receiveObdData.data[9] << 8) + _receiveObdData.data[10]) << 3;
-                                                }
-                                                break;
-
-                                            case 0x65:   // SZM
-                                                if (_receiveObdData.length < 9) break;
-                                                ErrorDetails[device].errorList[j].errorDistance1 =
-                                                    (((int)_receiveObdData.data[5] << 8) + _receiveObdData.data[6]) << 3;
-                                                ErrorDetails[device].errorList[j].errorDistance2 =
-                                                    (((int)_receiveObdData.data[7] << 8) + _receiveObdData.data[8]) << 3;
-                                                break;
-                                        }
-                                    }
-                                }
-                                ErrorDetails[device].errorCount = errorCount;
-                            }
-                        }
-                        else
-                        {
-                            ErrorDetails[device].errorCount = -1;
-                            result = false;
-                        }
-                    }
-                }
-            }
-            ErrorsValid = true;
-            return result;
         }
 
         private bool CommEhc(SelectedDevice device, EdiabasJobs ediabasJobs)
@@ -1715,11 +1511,6 @@ namespace CarControl
             EdiabasResultDict = null;
             EdiabasErrorReportList = null;
             EdiabasErrorMessage = string.Empty;
-            ErrorsValid = false;
-            for (int j = 0; j < ErrorDetails.Length; j++)
-            {
-                ErrorDetails[j].errorCount = 0;
-            }
             TestResult = string.Empty;
 
             ediabasInitReq = true;
