@@ -1097,8 +1097,8 @@ namespace EdiabasLib
             new OpCode(0x4B, "break", null),
             new OpCode(0x4C, "clrv", new OperationDelegate(OpClrv)),
             new OpCode(0x4D, "eerr", new OperationDelegate(OpEerr)),
-            new OpCode(0x4E, "popf", null),
-            new OpCode(0x4F, "pushf", null),
+            new OpCode(0x4E, "popf", new OperationDelegate(OpPopf)),
+            new OpCode(0x4F, "pushf", new OperationDelegate(OpPushf)),
             new OpCode(0x50, "atsp", new OperationDelegate(OpAtsp)),
             new OpCode(0x51, "swap", new OperationDelegate(OpSwap)),
             new OpCode(0x52, "setspc", new OperationDelegate(OpSetspc)),
@@ -1165,14 +1165,14 @@ namespace EdiabasLib
             new OpCode(0x8F, "strcmp", new OperationDelegate(OpStrcmp)),
             new OpCode(0x90, "strlen", new OperationDelegate(OpStrlen)),
             new OpCode(0x91, "y2bcd", new OperationDelegate(OpY2bcd)),
-            new OpCode(0x92, "y2hex", null),
+            new OpCode(0x92, "y2hex", new OperationDelegate(OpY2hex)),
             new OpCode(0x93, "shmset", new OperationDelegate(OpShmset)),
             new OpCode(0x94, "shmget", new OperationDelegate(OpShmget)),
             new OpCode(0x95, "ergsysi", new OperationDelegate(OpErgsysi)),
             new OpCode(0x96, "flt2fix", new OperationDelegate(OpFlt2fix)),
-            new OpCode(0x97, "iupdate", null),
-            new OpCode(0x98, "irange", null),
-            new OpCode(0x99, "iincpos", null),
+            new OpCode(0x97, "iupdate", new OperationDelegate(OpIupdate)),
+            new OpCode(0x98, "irange", new OperationDelegate(OpIrange)),
+            new OpCode(0x99, "iincpos", new OperationDelegate(OpIincpos)),
             new OpCode(0x9A, "tabseeku", new OperationDelegate(OpTabseeku)),
             new OpCode(0x9B, "flt2y4", new OperationDelegate(OpFlt2y4)),
             new OpCode(0x9C, "flt2y8", new OperationDelegate(OpFlt2y8)),
@@ -1340,6 +1340,25 @@ namespace EdiabasLib
                         throw new ArgumentOutOfRangeException("length", "Flags.SetCarry: Invalid length");
                 }
                 carry = (value & carryMask) != 0;
+            }
+
+            public EdValueType ToValue()
+            {
+                EdValueType value = 0;
+                value |= (EdValueType)(carry ? 0x01 : 0x00);
+                value |= (EdValueType)(zero ? 0x02 : 0x00);
+                value |= (EdValueType)(sign ? 0x04 : 0x00);
+                value |= (EdValueType)(overflow ? 0x08 : 0x00);
+
+                return value;
+            }
+
+            public void FromValue(EdValueType value)
+            {
+                carry = (value & 0x01) != 0;
+                zero = (value & 0x02) != 0;
+                sign = (value & 0x04) != 0;
+                overflow = (value & 0x08) != 0;
             }
 
             public bool carry;
@@ -1560,6 +1579,9 @@ namespace EdiabasLib
         private Dictionary<string, string> configDict = new Dictionary<string, string>();
         private Dictionary<string, string> groupMappingDict = new Dictionary<string, string>();
         private Dictionary<string, byte[]> sharedDataDict = new Dictionary<string, byte[]>();
+        private EdValueType infoProgressRange;
+        private EdValueType infoProgressPos;
+        private string infoText = string.Empty;
         private string sgdbFileName = string.Empty;
         private string fileSearchDir = string.Empty;
         private EdCommBase edCommClass;
@@ -1691,6 +1713,30 @@ namespace EdiabasLib
                         }
                     }
                 }
+            }
+        }
+
+        public EdValueType InfoProgressRange
+        {
+            get
+            {
+                return infoProgressRange;
+            }
+        }
+
+        public EdValueType InfoProgressPos
+        {
+            get
+            {
+                return infoProgressPos;
+            }
+        }
+
+        public string InfoText
+        {
+            get
+            {
+                return infoText;
             }
         }
 
@@ -2500,6 +2546,10 @@ namespace EdiabasLib
             resultDict.Clear();
             stackList.Clear();
             flags.Init();
+            infoProgressRange = 0;
+            infoProgressPos = 0;
+            infoText = string.Empty;
+
             pcCounter = jobAddress;
             CloseTableFs();
             jobEnd = false;
