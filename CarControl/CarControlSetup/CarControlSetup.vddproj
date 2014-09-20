@@ -14,13 +14,43 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_01DAD89A1AB44A7C8F946A9B4A55FF40"
+        "MsmKey" = "8:_015E51B97E0A4CCCBE4FF423FC5C310A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_09AC8BAFA6334E6AABF24A0B3243CD18"
+        "MsmKey" = "8:_02D21CB7BAF3480F86BFEEF09358EB63"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_06E72177475D4EDDA148BC631D94AACD"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_08FFFA39C5B24B8DB780CF0284BAF9BF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0FBB8D80D1C74DE0BD33C0CB6A84B578"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1285EAD452E14960B1FD0E11BD6C3F2B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1313841E17AB4A2892362EEFCAA92F73"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -74,7 +104,55 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_2D02836C4F864812B37ED2D624BC2899"
+        "MsmKey" = "8:_1B0441B1050145299EFD4791C017D478"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_213A583408F746778B03DBEF3E07F9D3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_25E8C680B60F415BB38FC5FBE623D413"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_270FAAEA62D348EAAD8A1A67B8B0BE60"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_279A83B39A65431FA57C397F854CFCDA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_280D72118D0245B5BC0D3396B7D9D233"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_29EC3271BAA2438FBB22E8EA2E2A2B73"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2C243DE20F87410DB94D46969E5E73BD"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2CA3249708C644278C6C62D8A0579629"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -164,7 +242,37 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_3F246C786CD848FBA7629F1477D5DE8B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_41AC495550F3470B8787390AB65F7F34"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_4576EDC9C92543B5B01560F8F8E70D73"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_491B034DAC0E488E95A565A6879EAAF2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_49352C4E4F424010B0F7EF93B3F95EB2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4B58BAE1E4484B329EBC0BC089D99FB8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -178,6 +286,18 @@
         {
         "MsmKey" = "8:_4C6ADD45E43DB65198856588E8219F63"
         "OwnerKey" = "8:_2F25C63A3EE7A5029DF351501DCB30D5"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_52648AC15C93440490AF55F4E5A13C48"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_54DF5AEE023240E4BFB81FE00FCBA66C"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -206,19 +326,25 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_604300FB35484690B130BE8B7378078A"
+        "MsmKey" = "8:_604E15DD721B4573B4726888301E5A4A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_6B78D4DA2F2A4D5293AE1FB6DB62E123"
+        "MsmKey" = "8:_60FCEEF057004E5A834FE8F17811F66A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_7467105E4942489FA29F2AE2CDDD3D26"
+        "MsmKey" = "8:_6BED24F1483749D49E837D8D4C0251FA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6C0874993B5841C68FBB4FF5DA4AF2D5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -248,13 +374,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_811ACAA4E93E4EE091F495A45EFFC9AC"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_83A2EF8FE3D64F81A0536E9DFF0FFD53"
+        "MsmKey" = "8:_84F8D01C59D34EB3B8626C9F6646D835"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -266,19 +386,31 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_8885729E49884387AEBAC7D34B616584"
+        "MsmKey" = "8:_897F9588A5314842BBB555B82692EC94"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_8BA1CB96180F416BA98E9775288F14AD"
+        "MsmKey" = "8:_8A3B8304942B48A9B5ACCF89F26AEF4B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_92BC33F49268479A89663FB883018AE6"
+        "MsmKey" = "8:_8F7C7750D2774593805DCDAD5F3FC399"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_955897C9588443639A201C65EA22622A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_95F8387304D046DB9FB097C6B285B3C9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -308,13 +440,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_9BC6CB6DC0954370833BDFFE72E28EE9"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9C69F3CEA2084E4FB5E03832C668F1F1"
+        "MsmKey" = "8:_9BEFF299B45641C09D7968ECC6446385"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -332,6 +458,60 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_A81C3EAF052F436A93FB4B1678DA9AAC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A9EACCB840104D3D933E5C14CE9C402B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_ABD2925B42DD49D596F4ABF51A4DD2AC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B20265CA58D841DEB0CBAACF5008E28C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B57F516F515D484698696254F5722020"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BE642084B2A04F4CBF23D7AADC23A60B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C762E07E2DB6485D9A0813D96CC059E4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C99428BD7CAA4F91ADAA73773AF395CA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CCEC01B5363C47C69D394048DC9837D6"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_CF4D02D76719E006071ABB4F19C6E582"
         "OwnerKey" = "8:_366D885FD7374971848A4E15EE488DA9"
         "MsmSig" = "8:_UNDEFINED"
@@ -344,8 +524,44 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D08656EBF8944D8BB97A0B840B328DD2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D191E2A80013441C92FE940F5FA646DA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D3DEDE8B5A224395B55BBE438B9C7597"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DA5B33AEF8E84A88B061E106C0092C4E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_DAEFE5305209D2EA61BFAC2AA5B27A66"
         "OwnerKey" = "8:_366D885FD7374971848A4E15EE488DA9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DEEC1239DA304840A9456CB95B8AE399"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E223FFF0B96E49CD8C210D1D61AABF17"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -368,6 +584,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_EAA9FEFC1BAD4360AC0C1AF615D93922"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EBF4F0F9AB2D44B18BBF95AD56DFE7B4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_EBF62514683F56F8C2FCA5F6A5708232"
         "OwnerKey" = "8:_DAEFE5305209D2EA61BFAC2AA5B27A66"
         "MsmSig" = "8:_UNDEFINED"
@@ -376,6 +604,18 @@
         {
         "MsmKey" = "8:_EBF62514683F56F8C2FCA5F6A5708232"
         "OwnerKey" = "8:_366D885FD7374971848A4E15EE488DA9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F3008864974847829D3AD3A9CB882EDF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F3CC21C89F0A48FBB80E74A42F0552EA"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -410,9 +650,63 @@
     {
         "File"
         {
-            "{BA458234-9B71-4F46-8107-E91156377184}:_01DAD89A1AB44A7C8F946A9B4A55FF40"
+            "{BA458234-9B71-4F46-8107-E91156377184}:_015E51B97E0A4CCCBE4FF423FC5C310A"
             {
-            "SourcePath" = "8:..\\..\\Data\\cas.prg"
+            "SourcePath" = "8:..\\..\\Ecu\\ask_60.prg"
+            "TargetName" = "8:ask_60.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_02D21CB7BAF3480F86BFEEF09358EB63"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\ehc_e65.prg"
+            "TargetName" = "8:ehc_e65.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_06E72177475D4EDDA148BC631D94AACD"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_ehc.grp"
+            "TargetName" = "8:d_ehc.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_08FFFA39C5B24B8DB780CF0284BAF9BF"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\cas.prg"
             "TargetName" = "8:cas.prg"
             "Tag" = "8:"
             "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
@@ -428,10 +722,46 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{BA458234-9B71-4F46-8107-E91156377184}:_09AC8BAFA6334E6AABF24A0B3243CD18"
+            "{BA458234-9B71-4F46-8107-E91156377184}:_0FBB8D80D1C74DE0BD33C0CB6A84B578"
             {
-            "SourcePath" = "8:..\\..\\Data\\tele60_3.prg"
-            "TargetName" = "8:tele60_3.prg"
+            "SourcePath" = "8:..\\..\\Ecu\\d_mostgw.grp"
+            "TargetName" = "8:d_mostgw.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_1285EAD452E14960B1FD0E11BD6C3F2B"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_mmi.grp"
+            "TargetName" = "8:d_mmi.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_1313841E17AB4A2892362EEFCAA92F73"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\kbm_60.prg"
+            "TargetName" = "8:kbm_60.prg"
             "Tag" = "8:"
             "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
             "Condition" = "8:"
@@ -474,10 +804,154 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{BA458234-9B71-4F46-8107-E91156377184}:_2D02836C4F864812B37ED2D624BC2899"
+            "{BA458234-9B71-4F46-8107-E91156377184}:_1B0441B1050145299EFD4791C017D478"
             {
-            "SourcePath" = "8:..\\..\\Data\\d_klima.grp"
-            "TargetName" = "8:d_klima.grp"
+            "SourcePath" = "8:..\\..\\Ecu\\ccca60.prg"
+            "TargetName" = "8:ccca60.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_213A583408F746778B03DBEF3E07F9D3"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\dxc8_p.prg"
+            "TargetName" = "8:dxc8_p.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_25E8C680B60F415BB38FC5FBE623D413"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_cdc.grp"
+            "TargetName" = "8:d_cdc.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_270FAAEA62D348EAAD8A1A67B8B0BE60"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\tele60_3.prg"
+            "TargetName" = "8:tele60_3.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_279A83B39A65431FA57C397F854CFCDA"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_kombi.grp"
+            "TargetName" = "8:d_kombi.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_280D72118D0245B5BC0D3396B7D9D233"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\szl_60.prg"
+            "TargetName" = "8:szl_60.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_29EC3271BAA2438FBB22E8EA2E2A2B73"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\ecl60.prg"
+            "TargetName" = "8:ecl60.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_2C243DE20F87410DB94D46969E5E73BD"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\cccg60.prg"
+            "TargetName" = "8:cccg60.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_2CA3249708C644278C6C62D8A0579629"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_rls.grp"
+            "TargetName" = "8:d_rls.grp"
             "Tag" = "8:"
             "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
             "Condition" = "8:"
@@ -495,7 +969,7 @@
             "{E4F2F62A-3940-4BF5-A031-F7FA98CAAFFA}:_2F25C63A3EE7A5029DF351501DCB30D5"
             {
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:EdibasLibCe, Version=1.0.5372.40499, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:EdibasLibCe, Version=1.0.5375.18587, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_2F25C63A3EE7A5029DF351501DCB30D5"
@@ -548,12 +1022,102 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_3F246C786CD848FBA7629F1477D5DE8B"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_motor.grp"
+            "TargetName" = "8:d_motor.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_41AC495550F3470B8787390AB65F7F34"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\ccc_60.prg"
+            "TargetName" = "8:ccc_60.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{BA458234-9B71-4F46-8107-E91156377184}:_4576EDC9C92543B5B01560F8F8E70D73"
             {
             "SourcePath" = "8:..\\..\\ARMv4D2XXDriver60\\ftdi_d2xx.dll"
             "TargetName" = "8:ftdi_d2xx.dll"
             "Tag" = "8:"
             "Folder" = "8:_B672CFEECA8649C690F3711D09867A35"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_491B034DAC0E488E95A565A6879EAAF2"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_ec.grp"
+            "TargetName" = "8:d_ec.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_49352C4E4F424010B0F7EF93B3F95EB2"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\ekpm60_3.prg"
+            "TargetName" = "8:ekpm60_3.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_4B58BAE1E4484B329EBC0BC089D99FB8"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_tel.grp"
+            "TargetName" = "8:d_tel.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
             "Condition" = "8:"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -592,6 +1156,42 @@
             "Register" = "3:0"
             "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_52648AC15C93440490AF55F4E5A13C48"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\rlss70.prg"
+            "TargetName" = "8:rlss70.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_54DF5AEE023240E4BFB81FE00FCBA66C"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_ekp.grp"
+            "TargetName" = "8:d_ekp.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{E4F2F62A-3940-4BF5-A031-F7FA98CAAFFA}:_54E2DEF119984B177E7168B94D534187"
@@ -650,10 +1250,10 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{BA458234-9B71-4F46-8107-E91156377184}:_604300FB35484690B130BE8B7378078A"
+            "{BA458234-9B71-4F46-8107-E91156377184}:_604E15DD721B4573B4726888301E5A4A"
             {
-            "SourcePath" = "8:..\\..\\Data\\ihka60_2.prg"
-            "TargetName" = "8:ihka60_2.prg"
+            "SourcePath" = "8:..\\..\\Ecu\\d_ahm.grp"
+            "TargetName" = "8:d_ahm.grp"
             "Tag" = "8:"
             "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
             "Condition" = "8:"
@@ -668,10 +1268,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{BA458234-9B71-4F46-8107-E91156377184}:_6B78D4DA2F2A4D5293AE1FB6DB62E123"
+            "{BA458234-9B71-4F46-8107-E91156377184}:_60FCEEF057004E5A834FE8F17811F66A"
             {
-            "SourcePath" = "8:..\\..\\Data\\d60m47a0.prg"
-            "TargetName" = "8:d60m47a0.prg"
+            "SourcePath" = "8:..\\..\\Ecu\\t_ausb.prg"
+            "TargetName" = "8:t_ausb.prg"
             "Tag" = "8:"
             "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
             "Condition" = "8:"
@@ -686,10 +1286,28 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{BA458234-9B71-4F46-8107-E91156377184}:_7467105E4942489FA29F2AE2CDDD3D26"
+            "{BA458234-9B71-4F46-8107-E91156377184}:_6BED24F1483749D49E837D8D4C0251FA"
             {
-            "SourcePath" = "8:..\\..\\Data\\ehc_e65.prg"
-            "TargetName" = "8:ehc_e65.prg"
+            "SourcePath" = "8:..\\..\\Ecu\\cdc_e65.prg"
+            "TargetName" = "8:cdc_e65.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_6C0874993B5841C68FBB4FF5DA4AF2D5"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_klima.grp"
+            "TargetName" = "8:d_klima.grp"
             "Tag" = "8:"
             "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
             "Condition" = "8:"
@@ -760,45 +1378,9 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{BA458234-9B71-4F46-8107-E91156377184}:_811ACAA4E93E4EE091F495A45EFFC9AC"
+            "{BA458234-9B71-4F46-8107-E91156377184}:_84F8D01C59D34EB3B8626C9F6646D835"
             {
-            "SourcePath" = "8:..\\..\\Data\\t_grtb.prg"
-            "TargetName" = "8:t_grtb.prg"
-            "Tag" = "8:"
-            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
-            "Condition" = "8:"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "Register" = "3:0"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{BA458234-9B71-4F46-8107-E91156377184}:_83A2EF8FE3D64F81A0536E9DFF0FFD53"
-            {
-            "SourcePath" = "8:..\\..\\Data\\ccca60.prg"
-            "TargetName" = "8:ccca60.prg"
-            "Tag" = "8:"
-            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
-            "Condition" = "8:"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "Register" = "3:0"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{BA458234-9B71-4F46-8107-E91156377184}:_8885729E49884387AEBAC7D34B616584"
-            {
-            "SourcePath" = "8:..\\..\\Data\\d_ccc.grp"
+            "SourcePath" = "8:..\\..\\Ecu\\d_ccc.grp"
             "TargetName" = "8:d_ccc.grp"
             "Tag" = "8:"
             "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
@@ -814,10 +1396,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{BA458234-9B71-4F46-8107-E91156377184}:_8BA1CB96180F416BA98E9775288F14AD"
+            "{BA458234-9B71-4F46-8107-E91156377184}:_897F9588A5314842BBB555B82692EC94"
             {
-            "SourcePath" = "8:..\\..\\Data\\t_ausb.prg"
-            "TargetName" = "8:t_ausb.prg"
+            "SourcePath" = "8:..\\..\\Ecu\\d_pdc.grp"
+            "TargetName" = "8:d_pdc.grp"
             "Tag" = "8:"
             "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
             "Condition" = "8:"
@@ -832,10 +1414,64 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{BA458234-9B71-4F46-8107-E91156377184}:_92BC33F49268479A89663FB883018AE6"
+            "{BA458234-9B71-4F46-8107-E91156377184}:_8A3B8304942B48A9B5ACCF89F26AEF4B"
             {
-            "SourcePath" = "8:..\\..\\Data\\d_motor.grp"
-            "TargetName" = "8:d_motor.grp"
+            "SourcePath" = "8:..\\..\\Ecu\\szm_60.prg"
+            "TargetName" = "8:szm_60.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_8F7C7750D2774593805DCDAD5F3FC399"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\acsm60.prg"
+            "TargetName" = "8:acsm60.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_955897C9588443639A201C65EA22622A"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d60m47a0.prg"
+            "TargetName" = "8:d60m47a0.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_95F8387304D046DB9FB097C6B285B3C9"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\ihka60_2.prg"
+            "TargetName" = "8:ihka60_2.prg"
             "Tag" = "8:"
             "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
             "Condition" = "8:"
@@ -878,28 +1514,10 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{BA458234-9B71-4F46-8107-E91156377184}:_9BC6CB6DC0954370833BDFFE72E28EE9"
+            "{BA458234-9B71-4F46-8107-E91156377184}:_9BEFF299B45641C09D7968ECC6446385"
             {
-            "SourcePath" = "8:..\\..\\Data\\d_ehc.grp"
-            "TargetName" = "8:d_ehc.grp"
-            "Tag" = "8:"
-            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
-            "Condition" = "8:"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "Register" = "3:0"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{BA458234-9B71-4F46-8107-E91156377184}:_9C69F3CEA2084E4FB5E03832C668F1F1"
-            {
-            "SourcePath" = "8:..\\..\\Data\\t_pcod.prg"
-            "TargetName" = "8:t_pcod.prg"
+            "SourcePath" = "8:..\\..\\Ecu\\ahm_e65.prg"
+            "TargetName" = "8:ahm_e65.prg"
             "Tag" = "8:"
             "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
             "Condition" = "8:"
@@ -920,6 +1538,168 @@
             "TargetName" = "8:FTD2XX.dll"
             "Tag" = "8:"
             "Folder" = "8:_B672CFEECA8649C690F3711D09867A35"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_A81C3EAF052F436A93FB4B1678DA9AAC"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\kgm_60.prg"
+            "TargetName" = "8:kgm_60.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_A9EACCB840104D3D933E5C14CE9C402B"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_anttu.grp"
+            "TargetName" = "8:d_anttu.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_ABD2925B42DD49D596F4ABF51A4DD2AC"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_szl.grp"
+            "TargetName" = "8:d_szl.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_B20265CA58D841DEB0CBAACF5008E28C"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_sim.grp"
+            "TargetName" = "8:d_sim.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_B57F516F515D484698696254F5722020"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_lm.grp"
+            "TargetName" = "8:d_lm.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_BE642084B2A04F4CBF23D7AADC23A60B"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\komb60.prg"
+            "TargetName" = "8:komb60.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_C762E07E2DB6485D9A0813D96CC059E4"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_dsc.grp"
+            "TargetName" = "8:d_dsc.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_C99428BD7CAA4F91ADAA73773AF395CA"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\ant_60.prg"
+            "TargetName" = "8:ant_60.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_CCEC01B5363C47C69D394048DC9837D6"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\t_pcod.prg"
+            "TargetName" = "8:t_pcod.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
             "Condition" = "8:"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -960,6 +1740,78 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_D08656EBF8944D8BB97A0B840B328DD2"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_cas.grp"
+            "TargetName" = "8:d_cas.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_D191E2A80013441C92FE940F5FA646DA"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_zgm.grp"
+            "TargetName" = "8:d_zgm.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_D3DEDE8B5A224395B55BBE438B9C7597"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\lm_ahl_2.prg"
+            "TargetName" = "8:lm_ahl_2.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_DA5B33AEF8E84A88B061E106C0092C4E"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_kbm.grp"
+            "TargetName" = "8:d_kbm.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{E4F2F62A-3940-4BF5-A031-F7FA98CAAFFA}:_DAEFE5305209D2EA61BFAC2AA5B27A66"
             {
             "AssemblyIsInGAC" = "11:FALSE"
@@ -986,6 +1838,42 @@
             "Register" = "3:0"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_DEEC1239DA304840A9456CB95B8AE399"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\pdc_65_2.prg"
+            "TargetName" = "8:pdc_65_2.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_E223FFF0B96E49CD8C210D1D61AABF17"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\cid_90.prg"
+            "TargetName" = "8:cid_90.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{E4F2F62A-3940-4BF5-A031-F7FA98CAAFFA}:_E522CCA20F442973322B72A45141D725"
@@ -1016,6 +1904,42 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_EAA9FEFC1BAD4360AC0C1AF615D93922"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_ask.grp"
+            "TargetName" = "8:d_ask.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_EBF4F0F9AB2D44B18BBF95AD56DFE7B4"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\t_grtb.prg"
+            "TargetName" = "8:t_grtb.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{E4F2F62A-3940-4BF5-A031-F7FA98CAAFFA}:_EBF62514683F56F8C2FCA5F6A5708232"
             {
             "AssemblyIsInGAC" = "11:FALSE"
@@ -1042,6 +1966,42 @@
             "Register" = "3:0"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_F3008864974847829D3AD3A9CB882EDF"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_cid.grp"
+            "TargetName" = "8:d_cid.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_F3CC21C89F0A48FBB80E74A42F0552EA"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\d_bzm.grp"
+            "TargetName" = "8:d_bzm.grp"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
         }

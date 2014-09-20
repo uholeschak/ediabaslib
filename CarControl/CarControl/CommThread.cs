@@ -371,9 +371,31 @@ namespace CarControl
 
         static private readonly EdiabasErrorRequest[] EdiabasErrorRequestList =
         {
+            new EdiabasErrorRequest("errorNameCAS", "d_cas.grp"),
             new EdiabasErrorRequest("errorNameDDE", "d_motor.grp"),
+            new EdiabasErrorRequest("errorNameEKPS", "d_ekp.grp"),
             new EdiabasErrorRequest("errorNameEHC", "d_ehc.grp"),
+            new EdiabasErrorRequest("errorNameDSC", "d_dsc.grp"),
+            new EdiabasErrorRequest("errorNameACSM", "d_sim.grp"),
+            new EdiabasErrorRequest("errorNameAHM", "d_ahm.grp"),
+            new EdiabasErrorRequest("errorNameCCCBO", "d_mmi.grp"),
+            new EdiabasErrorRequest("errorNameCCCGW", "d_mostgw.grp"),
+            new EdiabasErrorRequest("errorNameCCCA", "d_ccc.grp"),
+            new EdiabasErrorRequest("errorNameCCCANT", "d_anttu.grp"),
+            new EdiabasErrorRequest("errorNameCCCASK", "d_ask.grp"),
+            new EdiabasErrorRequest("errorNameCDC", "d_cdc.grp"),
+            new EdiabasErrorRequest("errorNameCID", "d_cid.grp"),
+            new EdiabasErrorRequest("errorNameCON", "d_ec.grp"),
             new EdiabasErrorRequest("errorNameIHK", "d_klima.grp"),
+            new EdiabasErrorRequest("errorNameKBM", "d_kbm.grp"),
+            new EdiabasErrorRequest("errorNameKGM", "d_zgm.grp"),
+            new EdiabasErrorRequest("errorNameKOMBI", "d_kombi.grp"),
+            new EdiabasErrorRequest("errorNameLM", "d_lm.grp"),
+            new EdiabasErrorRequest("errorNamePDC", "d_pdc.grp"),
+            new EdiabasErrorRequest("errorNameRLS", "rlss70.prg" /*"d_rls.grp"*/),
+            new EdiabasErrorRequest("errorNameSZL", "d_szl.grp"),
+            new EdiabasErrorRequest("errorNameSZM", "d_bzm.grp"),
+            new EdiabasErrorRequest("errorNameTCU", "d_tel.grp"),
         };
 
         static public readonly DeviceEntry[] ErrorDeviceList = {
@@ -1208,7 +1230,7 @@ namespace CarControl
 
             foreach (EdiabasErrorRequest errorRequest in EdiabasErrorRequestList)
             {
-                if (_stopThread)
+                if (_stopThread || ediabasJobAbort)
                 {
                     break;
                 }

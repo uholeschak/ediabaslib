@@ -683,57 +683,60 @@ namespace CarControl
                     string message2 = string.Empty;
                     bool columnRight = false;
 
-                    foreach (CommThread.EdiabasErrorReport errorReport in errorReportList)
+                    if (errorReportList != null)
                     {
-                        string message = string.Format("{0}: ",
-                            Resources.strings.ResourceManager.GetString(errorReport.DeviceName));
-                        if (errorReport.ErrorDict == null)
+                        foreach (CommThread.EdiabasErrorReport errorReport in errorReportList)
                         {
-                            message += Resources.strings.ResourceManager.GetString("errorNoResponse");
-                        }
-                        else
-                        {
-                            message += "\r\n";
-                            message += FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
-                            message += ", ";
-                            message += FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
-                            string detailText = string.Empty;
-                            foreach (Dictionary<string, Ediabas.ResultData> errorDetail in errorReport.ErrorDetailSet)
+                            string message = string.Format("{0}: ",
+                                Resources.strings.ResourceManager.GetString(errorReport.DeviceName));
+                            if (errorReport.ErrorDict == null)
                             {
-                                string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
-                                if (kmText.Length > 0)
-                                {
-                                    if (detailText.Length > 0)
-                                    {
-                                        detailText += ", ";
-                                    }
-                                    detailText += kmText + "km";
-                                }
-                            }
-                            if (detailText.Length > 0)
-                            {
-                                message += "\r\n" + detailText;
-                            }
-                        }
-
-                        if (message.Length > 0)
-                        {
-                            message += "\r\n";
-
-                            if (!columnRight)
-                            {
-                                message1 += message;
+                                message += Resources.strings.ResourceManager.GetString("errorNoResponse");
                             }
                             else
                             {
-                                message2 += message;
+                                message += "\r\n";
+                                message += FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
+                                message += ", ";
+                                message += FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
+                                string detailText = string.Empty;
+                                foreach (Dictionary<string, Ediabas.ResultData> errorDetail in errorReport.ErrorDetailSet)
+                                {
+                                    string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
+                                    if (kmText.Length > 0)
+                                    {
+                                        if (detailText.Length > 0)
+                                        {
+                                            detailText += ", ";
+                                        }
+                                        detailText += kmText + "km";
+                                    }
+                                }
+                                if (detailText.Length > 0)
+                                {
+                                    message += "\r\n" + detailText;
+                                }
                             }
-                            columnRight = !columnRight;
+
+                            if (message.Length > 0)
+                            {
+                                message += "\r\n";
+
+                                if (!columnRight)
+                                {
+                                    message1 += message;
+                                }
+                                else
+                                {
+                                    message2 += message;
+                                }
+                                columnRight = !columnRight;
+                            }
                         }
-                    }
-                    if ((message1.Length == 0) && (message2.Length == 0))
-                    {
-                        message1 = Resources.strings.ResourceManager.GetString("errorNoError");
+                        if ((message1.Length == 0) && (message2.Length == 0))
+                        {
+                            message1 = Resources.strings.ResourceManager.GetString("errorNoError");
+                        }
                     }
                     textBoxErrors1.Text = message1;
                     textBoxErrors2.Text = message2;
