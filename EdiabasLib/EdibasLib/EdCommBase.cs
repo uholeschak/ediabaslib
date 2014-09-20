@@ -14,6 +14,16 @@ namespace EdiabasLib
         public abstract bool InterfaceDisconnect();
         public abstract bool TransmitData(byte[] sendData, ref byte[] receiveData, ref int recLength);
 
+        public abstract string InterfaceType
+        {
+            get;
+        }
+
+        public abstract UInt32 InterfaceVersion
+        {
+            get;
+        }
+
         protected EdCommBase(Ediabas ediabas)
         {
             this.ediabas = ediabas;
