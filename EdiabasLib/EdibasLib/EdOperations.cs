@@ -41,6 +41,34 @@ namespace EdiabasLib
             ediabas.flags.overflow = false;
         }
 
+        // BEST2: atoy
+        private static void OpA2y(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpA2y: Invalid type");
+            }
+
+            List<byte> resultList = new List<byte>();
+            string stringData = arg1.GetStringData();
+            if (stringData.Length > 0)
+            {
+                string[] stringArray = stringData.Split(',');
+                foreach (string stringValue in stringArray)
+                {
+                    try
+                    {
+                        resultList.Add(Convert.ToByte(stringValue.Replace(" ", string.Empty), 16));
+                    }
+                    catch (Exception)
+                    {
+                        break;
+                    }
+                }
+            }
+            arg0.SetArrayData(resultList.ToArray());
+        }
+
         private static void OpAddc(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
@@ -274,6 +302,25 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags((EdValueType)diff, len);
             ediabas.flags.SetOverflow(val0, (EdValueType)(-val1), (EdValueType)diff, len);
             ediabas.flags.SetCarry(diff, len);
+        }
+
+        // BEST2: getdate
+        private static void OpDate(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpDate: Invalid type");
+            }
+            DateTime saveNow = DateTime.Now;
+            byte[] resultArray = new byte[5];
+
+            resultArray[0] = (byte)saveNow.Day;
+            resultArray[1] = (byte)saveNow.Month;
+            resultArray[2] = (byte)(saveNow.Year % 100);
+            resultArray[3] = (byte)CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(saveNow, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+            resultArray[4] = (byte)saveNow.DayOfWeek;
+
+            arg0.SetArrayData(resultArray);
         }
 
         private static void OpDivs(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
@@ -583,6 +630,51 @@ namespace EdiabasLib
             EdValueType result = (EdValueType)value;
             arg0.SetRawData(result);
             ediabas.flags.UpdateFlags(result);
+        }
+
+        // BEST2: real_to_data (intel byte order)
+        private static void OpFlt2y4(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpFlt2fix: Invalid type");
+            }
+
+            EdFloatType value = arg1.GetFloatData();
+
+            Single singleValue = 0;
+            try
+            {
+                singleValue = (Single)value;
+            }
+            catch (Exception)
+            {
+                ediabas.SetError(ErrorNumbers.BIP_0011);
+            }
+
+            byte[] resultArray = BitConverter.GetBytes(singleValue);
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(resultArray);
+            }
+            arg0.SetArrayData(resultArray);
+        }
+
+        // BEST2: real_to_data (intel byte order)
+        private static void OpFlt2y8(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpFlt2fix: Invalid type");
+            }
+
+            EdFloatType value = arg1.GetFloatData();
+            byte[] resultArray = BitConverter.GetBytes(value);
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(resultArray);
+            }
+            arg0.SetArrayData(resultArray);
         }
 
         // BEST2: realmul
@@ -1048,7 +1140,6 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(arg0.GetValueData(), arg0.GetDataLen());
         }
 
-        // real? fix?
         private static void OpParr(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
@@ -1336,6 +1427,18 @@ namespace EdiabasLib
             }
 
             arg0Data.SetArrayData(resultByteList.ToArray());
+        }
+
+        // BEST2: strrevers
+        private static void OpSrevrs(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpSpaste: Invalid type");
+            }
+            byte[] arrayData = arg0.GetArrayData();
+            Array.Reverse(arrayData);
+            arg0.SetArrayData(arrayData);
         }
 
         // BEST2: get_token (store token)
@@ -1632,6 +1735,23 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(value, len);
         }
 
+        // BEST2: gettime
+        private static void OpTime(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpTime: Invalid type");
+            }
+            DateTime saveNow = DateTime.Now;
+            byte[] resultArray = new byte[3];
+
+            resultArray[0] = (byte)saveNow.Hour;
+            resultArray[1] = (byte)saveNow.Minute;
+            resultArray[2] = (byte)saveNow.Second;
+
+            arg0.SetArrayData(resultArray);
+        }
+
         // BEST2: bcd2ascii
         private static void OpY2bcd(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
@@ -1774,6 +1894,34 @@ namespace EdiabasLib
         // BEST2: stop_frequent
         private static void OpXstopf(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
+        }
+
+        // BEST2: iftype
+        private static void OpXtype(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpXtype: Invalid type");
+            }
+            if (ediabas.edCommClass == null)
+            {
+                throw new ArgumentOutOfRangeException("edCommClass", "OpXtype: No communication class present");
+            }
+            arg0.SetStringData(ediabas.edCommClass.InterfaceType);
+        }
+
+        // BEST2: ifvers
+        private static void OpXvers(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpXvers: Invalid type");
+            }
+            if (ediabas.edCommClass == null)
+            {
+                throw new ArgumentOutOfRangeException("edCommClass", "OpXvers: No communication class present");
+            }
+            arg0.SetRawData((EdValueType)ediabas.edCommClass.InterfaceVersion);
         }
 
         // BEST2: wait

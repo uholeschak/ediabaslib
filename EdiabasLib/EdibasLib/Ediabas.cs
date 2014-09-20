@@ -559,6 +559,7 @@ namespace EdiabasLib
             BIP_0006 = 6,   // User File Fehler
             BIP_0009 = 9,   // Versionsfehler
             BIP_0010 = 10,  // Fehler bei Konstantenzugriff, Tabellenzugriffsfehler
+            BIP_0011 = 11,  // Fehler bei Flieskommaumwandlung
             IFH_0001 = 11,  // Fehler an Schnittstelle Host-Interface
             IFH_0002 = 12,  // Interface meldet sich nicht
             IFH_0003 = 13,  // Datenübertragung zum Interface gestört
@@ -1068,8 +1069,8 @@ namespace EdiabasLib
             new OpCode(0x2F, "xstate", null),
             new OpCode(0x30, "xboot", null),
             new OpCode(0x31, "xreset", null),
-            new OpCode(0x32, "xtype", null),
-            new OpCode(0x33, "xvers", null),
+            new OpCode(0x32, "xtype", new OperationDelegate(OpXtype)),
+            new OpCode(0x33, "xvers", new OperationDelegate(OpXvers)),
             new OpCode(0x34, "ergb", new OperationDelegate(OpErgb)),
             new OpCode(0x35, "ergw", new OperationDelegate(OpErgw)),
             new OpCode(0x36, "ergd", new OperationDelegate(OpErgd)),
@@ -1101,7 +1102,7 @@ namespace EdiabasLib
             new OpCode(0x50, "atsp", new OperationDelegate(OpAtsp)),
             new OpCode(0x51, "swap", new OperationDelegate(OpSwap)),
             new OpCode(0x52, "setspc", new OperationDelegate(OpSetspc)),
-            new OpCode(0x53, "srevrs", null),
+            new OpCode(0x53, "srevrs", new OperationDelegate(OpSrevrs)),
             new OpCode(0x54, "stoken", new OperationDelegate(OpStoken)),
             new OpCode(0x55, "parb", new OperationDelegate(OpParl)),
             new OpCode(0x56, "parw", new OperationDelegate(OpParl)),
@@ -1126,8 +1127,8 @@ namespace EdiabasLib
             new OpCode(0x69, "parr", new OperationDelegate(OpParr)),
             new OpCode(0x6A, "test", new OperationDelegate(OpTest)),
             new OpCode(0x6B, "wait", new OperationDelegate(OpWait)),
-            new OpCode(0x6C, "date", null),
-            new OpCode(0x6D, "time", null),
+            new OpCode(0x6C, "date", new OperationDelegate(OpDate)),
+            new OpCode(0x6D, "time", new OperationDelegate(OpTime)),
             new OpCode(0x6E, "xbatt", null),
             new OpCode(0x6F, "tosp", null),
             new OpCode(0x70, "xdownl", null),
@@ -1158,7 +1159,7 @@ namespace EdiabasLib
             new OpCode(0x89, "cfgig", new OperationDelegate(OpCfgig)),
             new OpCode(0x8A, "cfgsg", new OperationDelegate(OpCfgsg)),
             new OpCode(0x8B, "cfgis", null),
-            new OpCode(0x8C, "a2y", null),
+            new OpCode(0x8C, "a2y", new OperationDelegate(OpA2y)),
             new OpCode(0x8D, "xparraw", null),
             new OpCode(0x8E, "hex2y", new OperationDelegate(OpHex2y)),
             new OpCode(0x8F, "strcmp", new OperationDelegate(OpStrcmp)),
@@ -1173,8 +1174,8 @@ namespace EdiabasLib
             new OpCode(0x98, "irange", null),
             new OpCode(0x99, "iincpos", null),
             new OpCode(0x9A, "tabseeku", new OperationDelegate(OpTabseeku)),
-            new OpCode(0x9B, "flt2y4", null),
-            new OpCode(0x9C, "flt2y8", null),
+            new OpCode(0x9B, "flt2y4", new OperationDelegate(OpFlt2y4)),
+            new OpCode(0x9C, "flt2y8", new OperationDelegate(OpFlt2y8)),
             new OpCode(0x9D, "y42flt", null),
             new OpCode(0x9E, "y82flt", null),
             new OpCode(0x9F, "plink", null),
@@ -1987,6 +1988,10 @@ namespace EdiabasLib
             sgdbFs.Position = 0x88;
             sgdbFs.Read(buffer, 0, buffer.Length);
 
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(buffer, 0, 4);
+            }
             UInt32 jobListOffset = BitConverter.ToUInt32(buffer, 0);
             sgdbFs.Position = jobListOffset;
             int numJobs = readInt32(sgdbFs);
@@ -2002,6 +2007,10 @@ namespace EdiabasLib
                 byte[] jobBuffer = new byte[0x44];
                 readAndDecryptBytes(sgdbFs, jobBuffer, 0, jobBuffer.Length);
                 string jobNameString = encoding.GetString(jobBuffer, 0, 0x40).TrimEnd('\0');
+                if (!BitConverter.IsLittleEndian)
+                {
+                    Array.Reverse(jobBuffer, 0x40, 4);
+                }
                 UInt32 jobAddress = BitConverter.ToUInt32(jobBuffer, 0x40);
                 jobInfos.JobNameDict.Add(jobNameString.ToUpper(culture), (UInt32)i);
 #if false
@@ -2058,11 +2067,19 @@ namespace EdiabasLib
             fs.Position = 0x84;
             fs.Read(buffer, 0, buffer.Length);
 
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(buffer, 0, 4);
+            }
             UInt32 tableOffset = BitConverter.ToUInt32(buffer, 0);
             fs.Position = tableOffset;
 
             byte[] tableCountBuffer = new byte[4];
             readAndDecryptBytes(fs, tableCountBuffer, 0, tableCountBuffer.Length);
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(tableCountBuffer, 0, 4);
+            }
             int tableCount = BitConverter.ToInt32(tableCountBuffer, 0);
 
             TableInfos tableInfos = new TableInfos();
@@ -2088,8 +2105,20 @@ namespace EdiabasLib
             readAndDecryptBytes(fs, tableBuffer, 0, tableBuffer.Length);
             string name = encoding.GetString(tableBuffer, 0, 0x40).TrimEnd('\0');
 
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(tableBuffer, 0x40, 4);
+            }
             UInt32 tableColumnOffset = BitConverter.ToUInt32(tableBuffer, 0x40);
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(tableBuffer, 0x48, 4);
+            }
             UInt32 tableColumnCount = BitConverter.ToUInt32(tableBuffer, 0x48);
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(tableBuffer, 0x4C, 4);
+            }
             UInt32 tableRowCount = BitConverter.ToUInt32(tableBuffer, 0x4C);
 
             return new TableInfo(name, tableOffset, tableColumnOffset, tableColumnCount, tableRowCount);
@@ -2607,6 +2636,10 @@ namespace EdiabasLib
                     case OpAddrMode.Imm16:
                         {
                             readAndDecryptBytes(fs, opArgBuffer, 0, 2);
+                            if (!BitConverter.IsLittleEndian)
+                            {
+                                Array.Reverse(opArgBuffer, 0, 2);
+                            }
                             oper.Init(opAddrMode, (EdValueType)BitConverter.ToUInt16(opArgBuffer, 0));
                             // string.Format("#${0:X}.I", BitConverter.ToInt16(buffer, 0));
                             return;
@@ -2614,6 +2647,10 @@ namespace EdiabasLib
                     case OpAddrMode.Imm32:
                         {
                             readAndDecryptBytes(fs, opArgBuffer, 0, 4);
+                            if (!BitConverter.IsLittleEndian)
+                            {
+                                Array.Reverse(opArgBuffer, 0, 4);
+                            }
                             oper.Init(opAddrMode, (EdValueType)BitConverter.ToUInt32(opArgBuffer, 0));
                             // string.Format("#${0:X}.L", BitConverter.ToInt32(buffer, 0));
                             return;
@@ -2621,6 +2658,10 @@ namespace EdiabasLib
                     case OpAddrMode.ImmStr:
                         {
                             readAndDecryptBytes(fs, opArgBuffer, 0, 2);
+                            if (!BitConverter.IsLittleEndian)
+                            {
+                                Array.Reverse(opArgBuffer, 0, 2);
+                            }
                             short slen = BitConverter.ToInt16(opArgBuffer, 0);
                             byte[] buffer = new byte[slen];
                             readAndDecryptBytes(fs, buffer, 0, slen);
@@ -2631,6 +2672,10 @@ namespace EdiabasLib
                         {
                             readAndDecryptBytes(fs, opArgBuffer, 0, 3);
                             Register oaReg = GetRegister(opArgBuffer[0]);
+                            if (!BitConverter.IsLittleEndian)
+                            {
+                                Array.Reverse(opArgBuffer, 1, 2);
+                            }
                             EdValueType idx = BitConverter.ToUInt16(opArgBuffer, 1);
                             oper.Init(opAddrMode, oaReg, (EdValueType)idx);
                             // string.Format("{0}[#${1:X}]", oaReg.name, idx);
@@ -2650,6 +2695,10 @@ namespace EdiabasLib
                             readAndDecryptBytes(fs, opArgBuffer, 0, 4);
                             Register oaReg0 = GetRegister(opArgBuffer[0]);
                             Register oaReg1 = GetRegister(opArgBuffer[1]);
+                            if (!BitConverter.IsLittleEndian)
+                            {
+                                Array.Reverse(opArgBuffer, 2, 2);
+                            }
                             EdValueType inc = BitConverter.ToUInt16(opArgBuffer, 2);
                             oper.Init(opAddrMode, oaReg0, oaReg1, (EdValueType)inc);
                             // string.Format("{0}[{1},#${2:X}]", oaReg0.name, oaReg1.name, inc);
@@ -2659,7 +2708,15 @@ namespace EdiabasLib
                         {
                             readAndDecryptBytes(fs, opArgBuffer, 0, 5);
                             Register oaReg = GetRegister(opArgBuffer[0]);
+                            if (!BitConverter.IsLittleEndian)
+                            {
+                                Array.Reverse(opArgBuffer, 1, 2);
+                            }
                             EdValueType idx = BitConverter.ToUInt16(opArgBuffer, 1);
+                            if (!BitConverter.IsLittleEndian)
+                            {
+                                Array.Reverse(opArgBuffer, 3, 2);
+                            }
                             EdValueType len = BitConverter.ToUInt16(opArgBuffer, 3);
                             oper.Init(opAddrMode, oaReg, (EdValueType)idx, (EdValueType)len);
                             // string.Format("{0}[#${1:X}]#${2:X}", oaReg.name, idx, len);
@@ -2669,6 +2726,10 @@ namespace EdiabasLib
                         {
                             readAndDecryptBytes(fs, opArgBuffer, 0, 4);
                             Register oaReg = GetRegister(opArgBuffer[0]);
+                            if (!BitConverter.IsLittleEndian)
+                            {
+                                Array.Reverse(opArgBuffer, 1, 2);
+                            }
                             EdValueType idx = BitConverter.ToUInt16(opArgBuffer, 1);
                             Register oaLen = GetRegister(opArgBuffer[3]);
                             oper.Init(opAddrMode, oaReg, (EdValueType)idx, oaLen);
@@ -2680,6 +2741,10 @@ namespace EdiabasLib
                             readAndDecryptBytes(fs, opArgBuffer, 0, 4);
                             Register oaReg = GetRegister(opArgBuffer[0]);
                             Register oaIdx = GetRegister(opArgBuffer[1]);
+                            if (!BitConverter.IsLittleEndian)
+                            {
+                                Array.Reverse(opArgBuffer, 2, 2);
+                            }
                             EdValueType len = BitConverter.ToUInt16(opArgBuffer, 2);
                             oper.Init(opAddrMode, oaReg, oaIdx, (EdValueType)len);
                             // string.Format("{0}[{1}]#${2:X}", oaReg.name, oaIdx.name, len);
@@ -2893,6 +2958,10 @@ namespace EdiabasLib
         {
             byte[] buffer = new byte[4];
             fs.Read(buffer, 0, 4);
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(buffer);
+            }
             return BitConverter.ToInt32(buffer, 0);
         }
 

@@ -21,6 +21,22 @@ namespace EdiabasLib
         private InterfaceDisconnectDelegate interfaceDisconnectFunc = null;
         private TransmitDataDelegate transmitDataFunc = null;
 
+        public override string InterfaceType
+        {
+            get
+            {
+                return "ODB";
+            }
+        }
+
+        public override UInt32 InterfaceVersion
+        {
+            get
+            {
+                return 1;
+            }
+        }
+
         public EdCommBmwFast(Ediabas ediabas) : base(ediabas)
         {
         }
