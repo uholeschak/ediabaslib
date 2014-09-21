@@ -19,6 +19,7 @@ namespace EdiabasLib
         public delegate bool AbortJobDelegate();
 
         public static readonly int MAX_ARRAY_LENGTH = 1024;
+        public static readonly int MAX_FILES = 5;
 
         private class OpCode
         {
@@ -1108,19 +1109,19 @@ namespace EdiabasLib
             new OpCode(0x56, "parw", new OperationDelegate(OpParl)),
             new OpCode(0x57, "parl", new OperationDelegate(OpParl)),
             new OpCode(0x58, "pars", new OperationDelegate(OpPars)),
-            new OpCode(0x59, "fclose", null),
+            new OpCode(0x59, "fclose", new OperationDelegate(OpFclose)),
             new OpCode(0x5A, "jg", new OperationDelegate(OpJg), true),
             new OpCode(0x5B, "jge", new OperationDelegate(OpJge), true),
             new OpCode(0x5C, "jl", new OperationDelegate(OpJl), true),
             new OpCode(0x5D, "jle", new OperationDelegate(OpJle), true),
             new OpCode(0x5E, "ja", new OperationDelegate(OpJa), true),
             new OpCode(0x5F, "jbe", new OperationDelegate(OpJbe), true),
-            new OpCode(0x60, "fopen", null),
-            new OpCode(0x61, "fread", null),
-            new OpCode(0x62, "freadln", null),
-            new OpCode(0x63, "fseek", null),
-            new OpCode(0x64, "fseekln", null),
-            new OpCode(0x65, "ftell", null),
+            new OpCode(0x60, "fopen", new OperationDelegate(OpFopen)),
+            new OpCode(0x61, "fread", new OperationDelegate(OpFread)),
+            new OpCode(0x62, "freadln", new OperationDelegate(OpFreadln)),
+            new OpCode(0x63, "fseek", new OperationDelegate(OpFseek)),
+            new OpCode(0x64, "fseekln", new OperationDelegate(OpFseekln)),
+            new OpCode(0x65, "ftell", new OperationDelegate(OpFtell)),
             new OpCode(0x66, "ftellln", null),
             new OpCode(0x67, "a2fix", new OperationDelegate(OpA2fix)),
             new OpCode(0x68, "fix2flt", new OperationDelegate(OpFix2flt)),
@@ -1608,6 +1609,7 @@ namespace EdiabasLib
         private Stream tableFs = null;
         private Int32 tableIndex = -1;
         private Int32 tableRowIndex = -1;
+        private StreamReader[] userFilesArray = new StreamReader[MAX_FILES];
         private byte[] tableItemBuffer = new byte[1024];
         private string tokenSeparator = string.Empty;
         private EdValueType tokenIndex = 0;
@@ -1877,6 +1879,7 @@ namespace EdiabasLib
                     // Dispose managed resources.
                     CloseSgdbFs();
                     CloseTableFs();
+                    CloseAllUserFiles();
                     if (SwLog != null)
                     {
                         SwLog.Dispose();
@@ -1987,6 +1990,55 @@ namespace EdiabasLib
                 return tableInfosExt;
             }
             return tableInfos;
+        }
+
+        private StreamReader GetUserFile(int index)
+        {
+            if ((index < 0) || (index >= userFilesArray.Length))
+            {
+                return null;
+            }
+            return userFilesArray[index];
+        }
+
+        private bool CloseUserFile(int index)
+        {
+            if ((index < 0) || (index >= userFilesArray.Length))
+            {
+                return false;
+            }
+            if (userFilesArray[index] == null)
+            {
+                return true;
+            }
+            userFilesArray[index].Dispose();
+            userFilesArray[index] = null;
+            return true;
+        }
+
+        private int StoreUserFile(StreamReader fs)
+        {
+            for (int i = 0; i < userFilesArray.Length; i++)
+            {
+                if (userFilesArray[i] == null)
+                {
+                    userFilesArray[i] = fs;
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        private void CloseAllUserFiles()
+        {
+            for (int i = 0; i < userFilesArray.Length; i++)
+            {
+                if (userFilesArray[i] != null)
+                {
+                    userFilesArray[i].Dispose();
+                    userFilesArray[i] = null;
+                }
+            }
         }
 
         public void SetError(ErrorNumbers errorNumber)
@@ -2355,7 +2407,7 @@ namespace EdiabasLib
                 for (int i = 1; i < table.TableEntries.Length; i++)
                 {
                     string rowStr = GetTableString(fs, table.TableEntries[i][columnIndex]);
-                    EdValueType rowValue = StringToValue(rowStr);
+                    EdValueType rowValue = (EdValueType)StringToValue(rowStr);
                     if (!columnDict.ContainsKey(rowValue))
                     {
                         columnDict.Add(rowValue, (UInt32)(i - 1));
@@ -2552,6 +2604,7 @@ namespace EdiabasLib
 
             pcCounter = jobAddress;
             CloseTableFs();
+            CloseAllUserFiles();
             jobEnd = false;
 
             Operand arg0 = new Operand();
@@ -2622,6 +2675,10 @@ namespace EdiabasLib
                     LogString("executeJob Exception: " + GetExceptionText(ex));
                 }
                 throw new Exception("executeJob", ex);
+            }
+            finally
+            {
+                CloseAllUserFiles();
             }
         }
 
@@ -3024,9 +3081,9 @@ namespace EdiabasLib
             return scale * Math.Round(value / scale, (int) digits);
         }
 
-        private static EdValueType StringToValue(string number)
+        private static Int64 StringToValue(string number)
         {
-            EdValueType value = 0;
+            Int64 value = 0;
             if (number.Length == 0)
             {
                 return value;
@@ -3041,13 +3098,13 @@ namespace EdiabasLib
                         Char firstChar = numberLower[2];
                         if (Char.IsDigit(firstChar) || (firstChar >= 'a' && firstChar <= 'f'))
                         {
-                            value = Convert.ToUInt32(number.Substring(2, number.Length - 2), 16);
+                            value = Convert.ToInt64(number.Substring(2, number.Length - 2), 16);
                         }
                     }
                 }
                 else if (numberLower.StartsWith("0y", StringComparison.Ordinal))
                 {   // binary
-                    value = Convert.ToUInt32(number.Substring(2, number.Length - 2), 2);
+                    value = Convert.ToInt64(number.Substring(2, number.Length - 2), 2);
                 }
                 else
                 {   // dec
@@ -3056,7 +3113,7 @@ namespace EdiabasLib
                     {
                         if (!Char.IsLetter(numberLower[0]))
                         {
-                            value = Convert.ToUInt32(number, 10);
+                            value = Convert.ToInt64(number, 10);
                         }
                     }
                 }

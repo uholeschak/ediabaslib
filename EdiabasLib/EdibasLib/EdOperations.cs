@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading;
 using System.Globalization;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace EdiabasLib
 {
@@ -21,7 +22,7 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpA2fix: Invalid type");
             }
 
-            arg0.SetRawData(StringToValue(arg1.GetStringData()));
+            arg0.SetRawData((EdValueType)StringToValue(arg1.GetStringData()));
             ediabas.flags.UpdateFlags(arg0.GetValueData(), arg0.GetDataLen());
         }
 
@@ -253,7 +254,7 @@ namespace EdiabasLib
             {
                 value = string.Empty;
             }
-            arg0.SetRawData(StringToValue(value));
+            arg0.SetRawData((EdValueType)StringToValue(value));
             ediabas.flags.UpdateFlags(arg0.GetValueData(), arg0.GetDataLen());
         }
 
@@ -772,6 +773,220 @@ namespace EdiabasLib
             }
         }
 
+        // BEST2: fclose
+        private static void OpFclose(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            EdValueType handle = arg0.GetValueData(1);
+            if (!ediabas.CloseUserFile((int)handle))
+            {
+                ediabas.SetError(ErrorNumbers.BIP_0006);
+            }
+        }
+
+        // BEST2: fopen
+        private static void OpFopen(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpFopen: Invalid type");
+            }
+            int handle = -1;
+
+            string fileName = arg1.GetStringData();
+            if (!File.Exists(fileName))
+            {
+                ediabas.SetError(ErrorNumbers.BIP_0006);
+            }
+            else
+            {
+                try
+                {
+                    StreamReader fs = new StreamReader(MemoryStreamReader.OpenRead(fileName), Encoding.ASCII);
+                    handle = ediabas.StoreUserFile(fs);
+                    if (handle < 0)
+                    {
+                        fs.Dispose();
+                        ediabas.SetError(ErrorNumbers.BIP_0006);
+                    }
+                }
+                catch (Exception)
+                {
+                    ediabas.SetError(ErrorNumbers.BIP_0006);
+                }
+            }
+            arg0.SetRawData((EdValueType)handle);
+            ediabas.flags.UpdateFlags((EdValueType)handle, 1);
+        }
+
+        // BEST2: fread
+        private static void OpFread(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpFread: Invalid type");
+            }
+            int value = -1;
+
+            EdValueType handle = arg1.GetValueData(1);
+            StreamReader fs = ediabas.GetUserFile((int)handle);
+            if (fs == null)
+            {
+                ediabas.SetError(ErrorNumbers.BIP_0006);
+            }
+            else
+            {
+                try
+                {
+                    value = fs.Read();
+                }
+                catch (Exception)
+                {
+                    value = -1;
+                    ediabas.SetError(ErrorNumbers.BIP_0006);
+                }
+            }
+
+            if (value < 0)
+            {
+                value = 0;
+                ediabas.flags.carry = true;
+            }
+            else
+            {
+                ediabas.flags.carry = false;
+            }
+            arg0.SetRawData((EdValueType)value);
+        }
+
+        // BEST2: freadln
+        private static void OpFreadln(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpFreadln: Invalid type");
+            }
+            string lineString = null;
+
+            EdValueType handle = arg1.GetValueData(1);
+            StreamReader fs = ediabas.GetUserFile((int)handle);
+            if (fs == null)
+            {
+                ediabas.SetError(ErrorNumbers.BIP_0006);
+            }
+            else
+            {
+                try
+                {
+                    lineString = fs.ReadLine();
+                }
+                catch (Exception)
+                {
+                    lineString = null;
+                    ediabas.SetError(ErrorNumbers.BIP_0006);
+                }
+            }
+
+            if (lineString == null)
+            {
+                lineString = string.Empty;
+                ediabas.flags.carry = true;
+            }
+            else
+            {
+                ediabas.flags.carry = false;
+            }
+            arg0.SetStringData(lineString);
+        }
+
+        // BEST2: fseek
+        private static void OpFseek(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            EdValueType handle = arg0.GetValueData(1);
+            EdValueType position = arg1.GetValueData();
+            StreamReader fs = ediabas.GetUserFile((int)handle);
+            if (fs == null)
+            {
+                ediabas.SetError(ErrorNumbers.BIP_0006);
+            }
+            else
+            {
+                try
+                {
+                    fs.DiscardBufferedData();
+                    fs.BaseStream.Position = position;
+                }
+                catch (Exception)
+                {
+                    ediabas.SetError(ErrorNumbers.BIP_0006);
+                }
+            }
+        }
+
+        // BEST2: fseekln
+        private static void OpFseekln(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            EdValueType handle = arg0.GetValueData(1);
+            EdValueType line = arg1.GetValueData();
+            StreamReader fs = ediabas.GetUserFile((int)handle);
+            if (fs == null)
+            {
+                ediabas.SetError(ErrorNumbers.BIP_0006);
+            }
+            else
+            {
+                try
+                {
+                    fs.DiscardBufferedData();
+                    fs.BaseStream.Position = 0;
+                    for (int i = 0; i < line; i++)
+                    {
+                        if (fs.ReadLine() == null)
+                        {
+                            break;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    ediabas.SetError(ErrorNumbers.BIP_0006);
+                }
+            }
+        }
+
+        // BEST2: ftell
+        private static void OpFtell(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpFreadln: Invalid type");
+            }
+            Int32 position = 0;
+
+            EdValueType handle = arg1.GetValueData(1);
+            StreamReader fs = ediabas.GetUserFile((int)handle);
+            if (fs == null)
+            {
+                ediabas.SetError(ErrorNumbers.BIP_0006);
+            }
+            else
+            {
+                try
+                {
+                    position = (Int32)fs.GetType().InvokeMember("charPos",
+                    BindingFlags.DeclaredOnly |
+                    BindingFlags.Public | BindingFlags.NonPublic |
+                    BindingFlags.Instance | BindingFlags.GetField, null, fs, null);
+                }
+                catch (Exception)
+                {
+                    position = 0;
+                    ediabas.SetError(ErrorNumbers.BIP_0006);
+                }
+            }
+            arg0.SetRawData((EdValueType)position);
+            ediabas.flags.UpdateFlags((EdValueType)position, sizeof(EdValueType));
+        }
+
         // BEST2: generateRunError
         private static void OpGenerr(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
@@ -1146,7 +1361,7 @@ namespace EdiabasLib
             if (pos < ediabas.argList.Count)
             {
                 string argStr = ediabas.argList[(int)pos];
-                result = StringToValue(argStr);
+                result = (EdValueType)StringToValue(argStr);
                 ediabas.flags.zero = false;
             }
             arg0.SetRawData(result);
