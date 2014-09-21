@@ -161,7 +161,7 @@ namespace EdiabasLib
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
-                throw new ArgumentOutOfRangeException("arg0", "OpAsr: Invalid type");
+                throw new ArgumentOutOfRangeException("arg0", "OpAsl: Invalid type");
             }
             EdValueType len = GetArgsValueLength(arg0, arg1);
             EdValueType value = arg0.GetValueData(len);
@@ -204,13 +204,23 @@ namespace EdiabasLib
                 ediabas.flags.carry = false;
             }
 
-            EdValueType signMask = (EdValueType)(1 << (int)(len - 1));
-            if ((value & signMask) != 0)
+            switch (len)
             {
-                value |= ~arg0.GetValueMask(len);
-            }
+                case 1:
+                    value = (EdValueType)((SByte)value >> (int)shift);
+                    break;
 
-            value = value >> (int)shift;
+                case 2:
+                    value = (EdValueType)((Int16)value >> (int)shift);
+                    break;
+
+                case 4:
+                    value = (EdValueType)((Int32)value >> (int)shift);
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException("len", "OpAsr: Invalid length");
+            }
             arg0.SetRawData(value);
             ediabas.flags.UpdateFlags(value, len);
         }
@@ -524,14 +534,14 @@ namespace EdiabasLib
             EdFloatType val0 = arg0.GetFloatData();
             EdFloatType val1 = arg1.GetFloatData();
 
-            EdFloatType result;
+            EdFloatType result = 0;
             try
             {
                 result = val0 / val1;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception("OpFdiv div failure", ex);
+                ediabas.SetError(ErrorNumbers.BIP_0007);
             }
 
             arg0.SetRawData(result);
