@@ -59,7 +59,7 @@ namespace EdiabasLib
                 {
                     try
                     {
-                        resultList.Add(Convert.ToByte(stringValue.Replace(" ", string.Empty), 16));
+                        resultList.Add(Convert.ToByte(stringValue.Trim(), 16));
                     }
                     catch (Exception)
                     {
@@ -2026,6 +2026,36 @@ namespace EdiabasLib
             resultArray[2] = (byte)saveNow.Second;
 
             arg0.SetArrayData(resultArray);
+        }
+
+        // BEST2: uitoad
+        private static void OpUfix2dez(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpUfix2dez: Invalid type");
+            }
+
+            EdValueType value = arg1.GetValueData();
+            string result;
+            switch (arg1.GetDataLen())
+            {
+                case 1:
+                    result = string.Format("{0}", (Byte)value);
+                    break;
+
+                case 2:
+                    result = string.Format("{0}", (UInt16)value);
+                    break;
+
+                case 4:
+                    result = string.Format("{0}", (UInt32)value);
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException("arg0", "OpUfix2dez: Invalid length");
+            }
+            arg0.SetStringData(result);
         }
 
         // BEST2: data_to_real (intel byte order)

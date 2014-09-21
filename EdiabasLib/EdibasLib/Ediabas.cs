@@ -1191,7 +1191,7 @@ namespace EdiabasLib
             new OpCode(0xA8, "ppopy", null),
             new OpCode(0xA9, "pjtsr", null),
             new OpCode(0xAA, "tabsetex", new OperationDelegate(OpTabsetex)),
-            new OpCode(0xAB, "ufix2dez", null),
+            new OpCode(0xAB, "ufix2dez", new OperationDelegate(OpUfix2dez)),
             new OpCode(0xAC, "generr", new OperationDelegate(OpGenerr)),
             new OpCode(0xAD, "ticks", new OperationDelegate(OpTicks)),
             new OpCode(0xAE, "waitex", new OperationDelegate(OpWaitex)),
