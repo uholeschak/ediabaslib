@@ -167,7 +167,7 @@ namespace EdiabasLib
             EdValueType value = arg0.GetValueData(len);
             EdValueType shift = arg1.GetValueData(len);
 
-            long carryShift = arg0.GetDataLen() - 1 - shift;
+            long carryShift = (long)(len << 3) - shift;
             if (carryShift >= 0)
             {
                 EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
@@ -1336,7 +1336,7 @@ namespace EdiabasLib
             EdValueType value = arg0.GetValueData(len);
             EdValueType shift = arg1.GetValueData(len);
 
-            long carryShift = (long)len - 1 - shift;
+            long carryShift = (long)(len << 3) - shift;
             if (carryShift >= 0)
             {
                 EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
