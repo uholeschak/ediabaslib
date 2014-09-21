@@ -70,7 +70,7 @@ namespace EdiabasLib
                 string[] stringArray = stringData.Split(new char[] { ',', ';' });
                 foreach (string stringValue in stringArray)
                 {
-                    if (string.IsNullOrWhiteSpace(stringValue))
+                    if (string.IsNullOrEmpty(stringValue.Trim()))
                     {
                         for (int i = 0; i < stringValue.Length + 1; i++)
                         {
@@ -367,7 +367,7 @@ namespace EdiabasLib
             }
             EdValueType len = GetArgsValueLength(arg0, arg1);
 
-            EdValueType result;
+            EdValueType result = 0;
             try
             {
                 switch (len)
@@ -388,9 +388,9 @@ namespace EdiabasLib
                         throw new ArgumentOutOfRangeException("len", "OpDivs: Invalid length");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception("OpDivs div failure", ex);
+                ediabas.SetError(ErrorNumbers.BIP_0007);
             }
             arg0.SetRawData(result);
             ediabas.flags.UpdateFlags(result, len);
@@ -547,9 +547,18 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpFix2dez: Invalid type");
             }
 
-            EdValueType value = arg1.GetValueData();
+            EdValueType len;
+            if (arg1.GetDataType() != typeof(EdValueType))
+            {
+                len = 1;
+            }
+            else
+            {
+                len = arg1.GetDataLen();
+            }
+            EdValueType value = arg1.GetValueData(len);
             string result;
-            switch (arg1.GetDataLen())
+            switch (len)
             {
                 case 1:
                     result = string.Format("{0}", (SByte)value);
@@ -564,7 +573,7 @@ namespace EdiabasLib
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException("arg0", "OpFix2dez: Invalid length");
+                    throw new ArgumentOutOfRangeException("len", "OpFix2dez: Invalid length");
             }
             arg0.SetStringData(result);
         }
@@ -706,8 +715,8 @@ namespace EdiabasLib
             {
                 Array.Reverse(resultArray);
             }
-            Array.Copy(resultArray, 0, dataArrayDest, startIdx, resultArray.Length);
-            arg0Data.SetArrayData(dataArrayDest.ToArray());
+            Array.Copy(resultArray, 0, dataArrayDest, (int)startIdx, resultArray.Length);
+            arg0Data.SetArrayData(dataArrayDest);
         }
 
         // BEST2: real_to_data (intel byte order)
@@ -738,8 +747,8 @@ namespace EdiabasLib
             {
                 Array.Reverse(resultArray);
             }
-            Array.Copy(resultArray, 0, dataArrayDest, startIdx, resultArray.Length);
-            arg0Data.SetArrayData(dataArrayDest.ToArray());
+            Array.Copy(resultArray, 0, dataArrayDest, (int)startIdx, resultArray.Length);
+            arg0Data.SetArrayData(dataArrayDest);
         }
 
         // BEST2: realmul
@@ -1902,17 +1911,26 @@ namespace EdiabasLib
             ediabas.flags.SetCarry(diff, len);
         }
 
-        // nibble swap
+        // swap array
         private static void OpSwap(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpSwap: Invalid type");
             }
-            EdValueType value = arg0.GetValueData(1);
-            EdValueType result = ((value >> 4) & 0x0F) | ((value << 4) & 0xF0);
-            arg0.SetRawData(result);
-            ediabas.flags.UpdateFlags(result, 1);
+
+            Register arg0Data = (Register)arg0.opData1;
+            byte[] dataArrayDest = arg0Data.GetArrayData(true);
+            EdValueType startIdx = (EdValueType)arg0.opData2;
+            EdValueType dataLen = (EdValueType)arg0.opData3;
+
+            if (startIdx + dataLen > MAX_ARRAY_LENGTH)
+            {
+                throw new ArgumentOutOfRangeException("startIdx", "OpSwap: Invalid index");
+            }
+
+            Array.Reverse(dataArrayDest, (int)startIdx, (int)dataLen);
+            arg0Data.SetArrayData(dataArrayDest, true);
         }
 
         // BEST2: tabcolumns
@@ -1969,7 +1987,7 @@ namespace EdiabasLib
             {
                 arg0.SetRawData((EdValueType)0);
             }
-            EdValueType rows = ediabas.GetTableRows(ediabas.GetTableFs(), ediabas.tableIndex);
+            EdValueType rows = ediabas.GetTableRows(ediabas.GetTableFs(), ediabas.tableIndex) + 1;  // including header
             arg0.SetRawData(rows);
         }
 
@@ -2100,9 +2118,18 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpUfix2dez: Invalid type");
             }
 
-            EdValueType value = arg1.GetValueData();
+            EdValueType len;
+            if (arg1.GetDataType() != typeof(EdValueType))
+            {
+                len = 1;
+            }
+            else
+            {
+                len = arg1.GetDataLen();
+            }
+            EdValueType value = arg1.GetValueData(len);
             string result;
-            switch (arg1.GetDataLen())
+            switch (len)
             {
                 case 1:
                     result = string.Format("{0}", (Byte)value);
@@ -2117,7 +2144,7 @@ namespace EdiabasLib
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException("arg0", "OpUfix2dez: Invalid length");
+                    throw new ArgumentOutOfRangeException("len", "OpUfix2dez: Invalid length");
             }
             arg0.SetStringData(result);
         }
