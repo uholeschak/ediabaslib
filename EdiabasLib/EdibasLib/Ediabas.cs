@@ -558,6 +558,7 @@ namespace EdiabasLib
         {
             BIP_0002 = 2,   // IFH Aufruf fehlerhaft
             BIP_0006 = 6,   // User File Fehler
+            BIP_0007 = 7,   // Division by zero
             BIP_0009 = 9,   // Versionsfehler
             BIP_0010 = 10,  // Fehler bei Konstantenzugriff, Tabellenzugriffsfehler
             BIP_0011 = 11,  // Fehler bei Flieskommaumwandlung
@@ -646,14 +647,17 @@ namespace EdiabasLib
                 return result;
             }
 
-            public void SetData(byte[] value)
+            public void SetData(byte[] value, bool keepLength)
             {
                 if (value.Length > MAX_ARRAY_LENGTH)
                 {
                     throw new ArgumentOutOfRangeException("value.Length", "StringData.SetData: Invalid length");
                 }
                 Array.Copy(value, 0, data, 0, value.Length);
-                length = (EdValueType)value.Length;
+                if (!keepLength)
+                {
+                    length = (EdValueType)value.Length;
+                }
             }
 
             public EdValueType Length
@@ -916,11 +920,16 @@ namespace EdiabasLib
 
             public void SetArrayData(byte[] value)
             {
+                SetArrayData(value, false);
+            }
+
+            public void SetArrayData(byte[] value, bool keepLength)
+            {
                 if (type != RegisterType.RegS)
                 {
                     throw new ArgumentOutOfRangeException("type", "Register.SetArrayData: Invalid data type");
                 }
-                ediabas.stringRegisters[index].SetData(value);
+                ediabas.stringRegisters[index].SetData(value, keepLength);
             }
 
             public byte Opcode
