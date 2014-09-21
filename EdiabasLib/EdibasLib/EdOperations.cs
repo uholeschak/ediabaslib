@@ -54,14 +54,49 @@ namespace EdiabasLib
             string stringData = arg1.GetStringData();
             if (stringData.Length > 0)
             {
-                string[] stringArray = stringData.Split(',');
+                bool exitLoop = false;
+                string stringLower = stringData.ToLower(culture);
+                for (int i = 0; i < stringLower.Length; i++)
+                {
+                    char currentChar = stringLower[i];
+                    if (!(Char.IsDigit(currentChar) || (currentChar >= 'a' && currentChar <= 'f') ||
+                        (currentChar == ' ') || (currentChar == ';') || (currentChar == ',')))
+                    {
+                        stringData = stringData.Substring(0, i);
+                        break;
+                    }
+                }
+
+                string[] stringArray = stringData.Split(new char[] { ',', ';' });
                 foreach (string stringValue in stringArray)
                 {
-                    try
+                    if (string.IsNullOrWhiteSpace(stringValue))
                     {
-                        resultList.Add(Convert.ToByte(stringValue.Trim(), 16));
+                        for (int i = 0; i < stringValue.Length + 1; i++)
+                        {
+                            resultList.Add(0);
+                        }
                     }
-                    catch (Exception)
+                    else
+                    {
+                        string[] stringSubArray = stringValue.Trim().Split(' ');
+                        foreach (string stringSubValue in stringSubArray)
+                        {
+                            if (stringSubValue.Length > 0)
+                            {
+                                try
+                                {
+                                    resultList.Add(Convert.ToByte(stringSubValue, 16));
+                                }
+                                catch (Exception)
+                                {
+                                    exitLoop = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (exitLoop)
                     {
                         break;
                     }
@@ -641,8 +676,21 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpFlt2y4: Invalid type");
             }
 
-            EdFloatType value = arg1.GetFloatData();
+            Register arg0Data = (Register)arg0.opData1;
+            byte[] dataArrayDest = arg0Data.GetArrayData();
+            EdValueType startIdx = (EdValueType)arg0.opData2;
 
+            EdValueType dataLen = sizeof(Single);
+            if (startIdx + dataLen > MAX_ARRAY_LENGTH)
+            {
+                throw new ArgumentOutOfRangeException("startIdx", "OpFlt2y4: Invalid index");
+            }
+            if (dataArrayDest.Length < (startIdx + dataLen))
+            {
+                Array.Resize(ref dataArrayDest, (int)(startIdx + dataLen));
+            }
+
+            EdFloatType value = arg1.GetFloatData();
             Single singleValue = 0;
             try
             {
@@ -658,7 +706,8 @@ namespace EdiabasLib
             {
                 Array.Reverse(resultArray);
             }
-            arg0.SetArrayData(resultArray);
+            Array.Copy(resultArray, 0, dataArrayDest, startIdx, resultArray.Length);
+            arg0Data.SetArrayData(dataArrayDest.ToArray());
         }
 
         // BEST2: real_to_data (intel byte order)
@@ -669,13 +718,28 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpFlt2y8: Invalid type");
             }
 
+            Register arg0Data = (Register)arg0.opData1;
+            byte[] dataArrayDest = arg0Data.GetArrayData();
+            EdValueType startIdx = (EdValueType)arg0.opData2;
+
+            EdValueType dataLen = sizeof(Double);
+            if (startIdx + dataLen > MAX_ARRAY_LENGTH)
+            {
+                throw new ArgumentOutOfRangeException("startIdx", "OpFlt2y4: Invalid index");
+            }
+            if (dataArrayDest.Length < (startIdx + dataLen))
+            {
+                Array.Resize(ref dataArrayDest, (int)(startIdx + dataLen));
+            }
+
             EdFloatType value = arg1.GetFloatData();
             byte[] resultArray = BitConverter.GetBytes(value);
             if (!BitConverter.IsLittleEndian)
             {
                 Array.Reverse(resultArray);
             }
-            arg0.SetArrayData(resultArray);
+            Array.Copy(resultArray, 0, dataArrayDest, startIdx, resultArray.Length);
+            arg0Data.SetArrayData(dataArrayDest.ToArray());
         }
 
         // BEST2: realmul
