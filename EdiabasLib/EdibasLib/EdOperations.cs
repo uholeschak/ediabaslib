@@ -760,7 +760,7 @@ namespace EdiabasLib
             arg0.SetArrayData(result);
         }
 
-        // jump if result tag is existing
+        // jump if result tag is not existing
         private static void OpEtag(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.resultsRequestDict.Count > 0)
