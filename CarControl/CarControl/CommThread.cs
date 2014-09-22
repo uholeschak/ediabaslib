@@ -569,7 +569,6 @@ namespace CarControl
             edCommBwmFast.InterfaceDisconnectFunc = InterfaceDisconnect;
             edCommBwmFast.TransmitDataFunc = OBDTrans;
 
-            ediabas.ConfigDict.Add("SIMULATION", "0");
             ediabas.AbortJobFunc = AbortEdiabasJob;
             ediabas.FileSearchDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase), "Ecu");
             if (ediabas.FileSearchDir.StartsWith("\\Windows\\"))

@@ -557,6 +557,7 @@ namespace EdiabasLib
         public enum ErrorNumbers : uint
         {
             BIP_0002 = 2,   // IFH Aufruf fehlerhaft
+            BIP_0005 = 5,   // Stack underflow/overflow
             BIP_0006 = 6,   // User File Fehler
             BIP_0007 = 7,   // Division by zero
             BIP_0009 = 9,   // Versionsfehler
@@ -1626,14 +1627,6 @@ namespace EdiabasLib
         private bool jobEnd = false;
         private bool requestInit = true;
 
-        public Dictionary<string, string> ConfigDict
-        {
-            get
-            {
-                return configDict;
-            }
-        }
-
         public Dictionary<string, string> GroupMappingDict
         {
             get
@@ -1822,6 +1815,7 @@ namespace EdiabasLib
             {
                 CloseSgbdFs();
                 fileSearchDir = value;
+                SetConfigProperty("EcuPath", fileSearchDir.TrimEnd(Path.DirectorySeparatorChar));
             }
         }
 
@@ -1863,6 +1857,8 @@ namespace EdiabasLib
             {
                 arg.SetEdiabas(this);
             }
+            SetConfigProperty("Simulation", "0");
+            SetConfigProperty("UserErrorHandling", "0");
         }
 
         public void Dispose()
@@ -1903,6 +1899,37 @@ namespace EdiabasLib
 
                 // Note disposing has been done.
                 disposed = true;
+            }
+        }
+
+        public string GetConfigProperty(string name)
+        {
+            string key = name.ToUpper(culture);
+            string value;
+            if (!configDict.TryGetValue(key, out value))
+            {
+                value = string.Empty;
+            }
+            return value;
+        }
+
+        public void SetConfigProperty(string name, string value)
+        {
+            string key = name.ToUpper(culture);
+            if (configDict.ContainsKey(key))
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    configDict[key] = value;
+                }
+                else
+                {
+                    configDict.Remove(key);
+                }
+            }
+            else
+            {
+                configDict.Add(key, value);
             }
         }
 
@@ -2606,6 +2633,7 @@ namespace EdiabasLib
             resultSets.Clear();
             resultDict.Clear();
             stackList.Clear();
+            SetConfigProperty("BipEcuFile", Path.GetFileNameWithoutExtension(sgbdFileName));
             flags.Init();
             infoProgressRange = 0;
             infoProgressPos = 0;
@@ -2688,6 +2716,7 @@ namespace EdiabasLib
             finally
             {
                 CloseAllUserFiles();
+                SetConfigProperty("BipEcuFile", null);
             }
         }
 

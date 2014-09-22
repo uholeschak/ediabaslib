@@ -235,25 +235,28 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpAtsp: Invalid data type");
             }
+
+            EdValueType value = 0;
             EdValueType length = arg0.GetDataLen();
             EdValueType pos = arg1.GetValueData();
             if (ediabas.stackList.Count < length)
             {
-                throw new ArgumentOutOfRangeException("stackList", "OpAtsp: Invalid stack size");
+                ediabas.SetError(ErrorNumbers.BIP_0005);
             }
-
-            byte[] stackArray = ediabas.stackList.ToArray();
-
-            EdValueType value = 0;
-            long index = pos - length;
-            if (index < 0)
+            else
             {
-                throw new ArgumentOutOfRangeException("index", "OpAtsp: Invalid stack index");
-            }
-            for (int i = 0; i < length; i++)
-            {
-                value <<= 8;
-                value |= stackArray[index++];
+                byte[] stackArray = ediabas.stackList.ToArray();
+
+                long index = pos - length;
+                if (index < 0)
+                {
+                    throw new ArgumentOutOfRangeException("index", "OpAtsp: Invalid stack index");
+                }
+                for (int i = 0; i < length; i++)
+                {
+                    value <<= 8;
+                    value |= stackArray[index++];
+                }
             }
 
             arg0.SetRawData(value);
@@ -293,12 +296,7 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpCfgig: Invalid type");
             }
 
-            string key = arg1.GetStringData().ToUpper(culture);
-            string value;
-            if (!ediabas.ConfigDict.TryGetValue(key, out value))
-            {
-                value = string.Empty;
-            }
+            string value = ediabas.GetConfigProperty(arg1.GetStringData());
             arg0.SetRawData((EdValueType)StringToValue(value));
             ediabas.flags.UpdateFlags(arg0.GetValueData(), arg0.GetDataLen());
         }
@@ -311,12 +309,7 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpCfgsg: Invalid type");
             }
 
-            string key = arg1.GetStringData().ToUpper(culture);
-            string value;
-            if (!ediabas.ConfigDict.TryGetValue(key, out value))
-            {
-                value = string.Empty;
-            }
+            string value = ediabas.GetConfigProperty(arg1.GetStringData());
             arg0.SetStringData(value);
         }
 
@@ -978,7 +971,7 @@ namespace EdiabasLib
             {
                 ediabas.flags.carry = false;
             }
-            arg0.SetStringData(lineString);
+            arg0.SetArrayData(encoding.GetBytes(lineString));
         }
 
         // BEST2: fseek
@@ -1533,17 +1526,20 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpPop: Invalid data type");
             }
+
+            EdValueType value = 0;
             EdValueType length = arg0.GetDataLen();
             if (ediabas.stackList.Count < length)
             {
-                throw new ArgumentOutOfRangeException("stackList", "OpPop: Invalid stack count");
+                ediabas.SetError(ErrorNumbers.BIP_0005);
             }
-
-            EdValueType value = 0;
-            for (int i = 0; i < length; i++)
+            else
             {
-                value <<= 8;
-                value |= ediabas.stackList.Pop();
+                for (int i = 0; i < length; i++)
+                {
+                    value <<= 8;
+                    value |= ediabas.stackList.Pop();
+                }
             }
 
             arg0.SetRawData(value);
@@ -1552,16 +1548,18 @@ namespace EdiabasLib
 
         private static void OpPopf(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
+            EdValueType value = 0;
             if (ediabas.stackList.Count < sizeof(EdValueType))
             {
-                throw new ArgumentOutOfRangeException("stackList", "OpPopf: Invalid stack count");
+                ediabas.SetError(ErrorNumbers.BIP_0005);
             }
-
-            EdValueType value = 0;
-            for (int i = 0; i < sizeof(EdValueType); i++)
+            else
             {
-                value <<= 8;
-                value |= ediabas.stackList.Pop();
+                for (int i = 0; i < sizeof(EdValueType); i++)
+                {
+                    value <<= 8;
+                    value |= ediabas.stackList.Pop();
+                }
             }
             ediabas.flags.FromValue(value);
         }
