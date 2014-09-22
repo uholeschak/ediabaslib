@@ -877,7 +877,7 @@ namespace EdiabasLib
             {
                 try
                 {
-                    StreamReader fs = new StreamReader(MemoryStreamReader.OpenRead(fileName), Encoding.ASCII);
+                    Stream fs = MemoryStreamReader.OpenRead(fileName);
                     handle = ediabas.StoreUserFile(fs);
                     if (handle < 0)
                     {
@@ -904,7 +904,7 @@ namespace EdiabasLib
             int value = -1;
 
             EdValueType handle = arg1.GetValueData(1);
-            StreamReader fs = ediabas.GetUserFile((int)handle);
+            Stream fs = ediabas.GetUserFile((int)handle);
             if (fs == null)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0006);
@@ -913,7 +913,7 @@ namespace EdiabasLib
             {
                 try
                 {
-                    value = fs.Read();
+                    value = fs.ReadByte();
                 }
                 catch (Exception)
                 {
@@ -944,7 +944,7 @@ namespace EdiabasLib
             string lineString = null;
 
             EdValueType handle = arg1.GetValueData(1);
-            StreamReader fs = ediabas.GetUserFile((int)handle);
+            Stream fs = ediabas.GetUserFile((int)handle);
             if (fs == null)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0006);
@@ -953,7 +953,7 @@ namespace EdiabasLib
             {
                 try
                 {
-                    lineString = fs.ReadLine();
+                    lineString = ediabas.ReadFileLine(fs);
                 }
                 catch (Exception)
                 {
@@ -979,7 +979,7 @@ namespace EdiabasLib
         {
             EdValueType handle = arg0.GetValueData(1);
             EdValueType position = arg1.GetValueData();
-            StreamReader fs = ediabas.GetUserFile((int)handle);
+            Stream fs = ediabas.GetUserFile((int)handle);
             if (fs == null)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0006);
@@ -988,8 +988,7 @@ namespace EdiabasLib
             {
                 try
                 {
-                    fs.DiscardBufferedData();
-                    fs.BaseStream.Position = position;
+                    fs.Position = position;
                 }
                 catch (Exception)
                 {
@@ -1003,7 +1002,7 @@ namespace EdiabasLib
         {
             EdValueType handle = arg0.GetValueData(1);
             EdValueType line = arg1.GetValueData();
-            StreamReader fs = ediabas.GetUserFile((int)handle);
+            Stream fs = ediabas.GetUserFile((int)handle);
             if (fs == null)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0006);
@@ -1012,11 +1011,10 @@ namespace EdiabasLib
             {
                 try
                 {
-                    fs.DiscardBufferedData();
-                    fs.BaseStream.Position = 0;
+                    fs.Position = 0;
                     for (int i = 0; i < line; i++)
                     {
-                        if (fs.ReadLine() == null)
+                        if (ediabas.ReadFileLine(fs) == null)
                         {
                             break;
                         }
@@ -1039,7 +1037,7 @@ namespace EdiabasLib
             Int32 position = 0;
 
             EdValueType handle = arg1.GetValueData(1);
-            StreamReader fs = ediabas.GetUserFile((int)handle);
+            Stream fs = ediabas.GetUserFile((int)handle);
             if (fs == null)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0006);
@@ -1048,10 +1046,7 @@ namespace EdiabasLib
             {
                 try
                 {
-                    position = (Int32)fs.GetType().InvokeMember("charPos",
-                    BindingFlags.DeclaredOnly |
-                    BindingFlags.Public | BindingFlags.NonPublic |
-                    BindingFlags.Instance | BindingFlags.GetField, null, fs, null);
+                    position = (Int32)fs.Position;
                 }
                 catch (Exception)
                 {

@@ -1619,7 +1619,7 @@ namespace EdiabasLib
         private Stream tableFs = null;
         private Int32 tableIndex = -1;
         private Int32 tableRowIndex = -1;
-        private StreamReader[] userFilesArray = new StreamReader[MAX_FILES];
+        private Stream[] userFilesArray = new Stream[MAX_FILES];
         private byte[] tableItemBuffer = new byte[1024];
         private string tokenSeparator = string.Empty;
         private EdValueType tokenIndex = 0;
@@ -2028,13 +2028,58 @@ namespace EdiabasLib
             return tableInfos;
         }
 
-        private StreamReader GetUserFile(int index)
+        private int StoreUserFile(Stream fs)
+        {
+            for (int i = 0; i < userFilesArray.Length; i++)
+            {
+                if (userFilesArray[i] == null)
+                {
+                    userFilesArray[i] = fs;
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        private Stream GetUserFile(int index)
         {
             if ((index < 0) || (index >= userFilesArray.Length))
             {
                 return null;
             }
             return userFilesArray[index];
+        }
+
+        private string ReadFileLine(Stream fs)
+        {
+            StringBuilder stringBuilder = new StringBuilder(100);
+            int currByte = -1;
+            for (; ; )
+            {
+                currByte = fs.ReadByte();
+                if (currByte < 0)
+                {
+                    break;
+                }
+                if (currByte == '\r' || currByte == '\n')
+                {
+                    break;
+                }
+                stringBuilder.Append((Char)currByte);
+            }
+            if (stringBuilder.Length == 0)
+            {
+                return null;
+            }
+            if (currByte == '\r')
+            {
+                int nextByte = fs.ReadByte();
+                if (nextByte >= 0 && nextByte != '\n')
+                {
+                    fs.Position--;
+                }
+            }
+            return stringBuilder.ToString();
         }
 
         private bool CloseUserFile(int index)
@@ -2050,19 +2095,6 @@ namespace EdiabasLib
             userFilesArray[index].Dispose();
             userFilesArray[index] = null;
             return true;
-        }
-
-        private int StoreUserFile(StreamReader fs)
-        {
-            for (int i = 0; i < userFilesArray.Length; i++)
-            {
-                if (userFilesArray[i] == null)
-                {
-                    userFilesArray[i] = fs;
-                    return i;
-                }
-            }
-            return -1;
         }
 
         private void CloseAllUserFiles()

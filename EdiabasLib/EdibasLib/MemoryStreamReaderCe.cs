@@ -213,12 +213,13 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("Attempt to read before the start of the stream");
             }
+            int useCount = count;
             if (num2 > this.fileLength)
             {
-                throw new EndOfStreamException("Attempt to read past end of the stream");
+                useCount = (int)(this.fileLength - offset - this.filePos);
             }
-            Marshal.Copy(this.PosPtr, buffer, offset, count);
-            this.filePos += (long)count;
+            Marshal.Copy(this.PosPtr, buffer, offset, useCount);
+            this.filePos += (long)useCount;
             return count;
         }
 

@@ -12,6 +12,9 @@ namespace EdiabasLib
     {
         public MemoryStreamReader(string path)
         {
+            FileInfo fileInfo = new FileInfo(path);
+            this.fileLength = fileInfo.Length;
+
             mmFile = MemoryMappedFile.CreateFromFile(path);
             mmStream = mmFile.CreateViewStream(0, 0, MemoryMappedFileAccess.Read);
         }
@@ -25,7 +28,7 @@ namespace EdiabasLib
         {
             get
             {
-                return mmStream.CanRead;
+                return true;
             }
         }
 
@@ -33,7 +36,7 @@ namespace EdiabasLib
         {
             get
             {
-                return mmStream.CanSeek;
+                return true;
             }
         }
 
@@ -41,7 +44,7 @@ namespace EdiabasLib
         {
             get
             {
-                return mmStream.CanWrite;
+                return false;
             }
         }
 
@@ -49,7 +52,7 @@ namespace EdiabasLib
         {
             get
             {
-                return mmStream.Length;
+                return this.fileLength;
             }
         }
 
@@ -69,11 +72,11 @@ namespace EdiabasLib
         {
             get
             {
-                return mmStream.WriteTimeout;
+                throw new NotSupportedException();
             }
             set
             {
-                mmStream.WriteTimeout = value;
+                throw new NotSupportedException();
             }
         }
 
@@ -81,11 +84,11 @@ namespace EdiabasLib
         {
             get
             {
-                return mmStream.ReadTimeout;
+                throw new NotSupportedException();
             }
             set
             {
-                mmStream.ReadTimeout = value;
+                throw new NotSupportedException();
             }
         }
 
@@ -110,45 +113,82 @@ namespace EdiabasLib
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            return mmStream.Read(buffer, offset, count);
+            long num = mmStream.Position + (long)offset;
+            long num2 = mmStream.Position + (long)offset + (long)count;
+            if (num < 0L)
+            {
+                throw new ArgumentOutOfRangeException("Attempt to read before the start of the stream");
+            }
+            int useCount = count;
+            if (num2 > this.fileLength)
+            {
+                useCount = (int)(this.fileLength - offset - mmStream.Position);
+            }
+            return mmStream.Read(buffer, offset, useCount);
         }
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            return mmStream.Seek(offset, origin);
+            long newPos = 0;
+
+            switch (origin)
+            {
+                case SeekOrigin.Begin:
+                    newPos = offset;
+                    break;
+
+                case SeekOrigin.Current:
+                    newPos = mmStream.Position + offset;
+                    break;
+
+                case SeekOrigin.End:
+                    newPos = fileLength + offset;
+                    break;
+            }
+            if (newPos < 0)
+            {
+                throw new ArgumentOutOfRangeException("Attempt to seek before start of stream");
+            }
+            if (newPos >= fileLength)
+            {
+                throw new ArgumentOutOfRangeException("Attempt to seek after end of stream");
+            }
+            mmStream.Position = newPos;
+            return mmStream.Position;
         }
 
         public override void SetLength(long value)
         {
-            mmStream.SetLength(value);
+            throw new NotSupportedException();
         }
 
         public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
-            return mmStream.BeginRead(buffer, offset, count, callback, state);
+            throw new NotSupportedException();
         }
 
         public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
-            return mmStream.BeginWrite(buffer, offset, count, callback, state);
+            throw new NotSupportedException();
         }
 
         public override int EndRead(IAsyncResult asyncResult)
         {
-            return mmStream.EndRead(asyncResult);
+            throw new NotSupportedException();
         }
 
         public override void EndWrite(IAsyncResult asyncResult)
         {
-            mmStream.EndWrite(asyncResult);
+            throw new NotSupportedException();
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            mmStream.Write(buffer, offset, count);
+            throw new NotSupportedException();
         }
 
         private MemoryMappedFile mmFile = null;
         private MemoryMappedViewStream mmStream = null;
+        private long fileLength = 0;
     }
 }
