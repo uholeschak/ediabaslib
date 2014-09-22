@@ -1592,7 +1592,7 @@ namespace EdiabasLib
         private EdValueType infoProgressRange;
         private EdValueType infoProgressPos;
         private string infoText = string.Empty;
-        private string sgdbFileName = string.Empty;
+        private string sgbdFileName = string.Empty;
         private string fileSearchDir = string.Empty;
         private EdCommBase edCommClass;
         private static long timeMeas = 0;
@@ -1610,7 +1610,7 @@ namespace EdiabasLib
         private EdFloatType[] floatRegisters;
         private StringData[] stringRegisters;
         private Flags flags = new Flags();
-        private Stream sgdbFs = null;
+        private Stream sgbdFs = null;
         private EdValueType pcCounter = 0;
         private JobInfos jobInfos = null;
         private TableInfos tableInfos = null;
@@ -1799,16 +1799,16 @@ namespace EdiabasLib
             }
         }
 
-        public string SgdbFileName
+        public string SgbdFileName
         {
             get
             {
-                return sgdbFileName;
+                return sgbdFileName;
             }
             set
             {
-                CloseSgdbFs();
-                sgdbFileName = value;
+                CloseSgbdFs();
+                sgbdFileName = value;
             }
         }
 
@@ -1820,7 +1820,7 @@ namespace EdiabasLib
             }
             set
             {
-                CloseSgdbFs();
+                CloseSgbdFs();
                 fileSearchDir = value;
             }
         }
@@ -1886,7 +1886,7 @@ namespace EdiabasLib
                 if (disposing)
                 {
                     // Dispose managed resources.
-                    CloseSgdbFs();
+                    CloseSgbdFs();
                     CloseTableFs();
                     CloseAllUserFiles();
                     if (SwLog != null)
@@ -1928,40 +1928,40 @@ namespace EdiabasLib
             return text;
         }
 
-        private bool OpenSgdbFs()
+        private bool OpenSgbdFs()
         {
-            if (sgdbFs != null)
+            if (sgbdFs != null)
             {
                 return true;
             }
-            string fileName = Path.Combine(fileSearchDir, sgdbFileName);
+            string fileName = Path.Combine(fileSearchDir, sgbdFileName);
             if (!File.Exists(fileName))
             {
-                LogString("OpenSgdbFs file not found: " + fileName);
+                LogString("OpenSgbdFs file not found: " + fileName);
                 return false;
             }
             try
             {
-                sgdbFs = MemoryStreamReader.OpenRead(fileName);
+                sgbdFs = MemoryStreamReader.OpenRead(fileName);
             }
             catch (Exception ex)
             {
-                LogString("OpenSgdbFs exception: " + GetExceptionText(ex));
+                LogString("OpenSgbdFs exception: " + GetExceptionText(ex));
                 return false;
             }
             sharedDataDict.Clear();
             jobInfos = ReadAllJobs();
-            tableInfos = ReadAllTables(sgdbFs);
+            tableInfos = ReadAllTables(sgbdFs);
             requestInit = true;
             return true;
         }
 
-        private void CloseSgdbFs()
+        private void CloseSgbdFs()
         {
-            if (sgdbFs != null)
+            if (sgbdFs != null)
             {
-                sgdbFs.Dispose();
-                sgdbFs = null;
+                sgbdFs.Dispose();
+                sgbdFs = null;
             }
         }
 
@@ -1983,7 +1983,7 @@ namespace EdiabasLib
             {
                 return tableFs;
             }
-            return sgdbFs;
+            return sgbdFs;
         }
 
         private void SetTableFs(Stream fs)
@@ -2092,27 +2092,27 @@ namespace EdiabasLib
         public JobInfos ReadAllJobs()
         {
             byte[] buffer = new byte[4];
-            sgdbFs.Position = 0x88;
-            sgdbFs.Read(buffer, 0, buffer.Length);
+            sgbdFs.Position = 0x88;
+            sgbdFs.Read(buffer, 0, buffer.Length);
 
             if (!BitConverter.IsLittleEndian)
             {
                 Array.Reverse(buffer, 0, 4);
             }
             UInt32 jobListOffset = BitConverter.ToUInt32(buffer, 0);
-            sgdbFs.Position = jobListOffset;
-            int numJobs = readInt32(sgdbFs);
+            sgbdFs.Position = jobListOffset;
+            int numJobs = readInt32(sgbdFs);
 
             JobInfos jobInfos = new JobInfos();
             jobInfos.JobNameDict = new Dictionary<string, UInt32>();
             jobInfos.JobInfoArray = new JobInfo[numJobs];
 
-            UInt32 jobStart = (UInt32)sgdbFs.Position;
+            UInt32 jobStart = (UInt32)sgbdFs.Position;
             for (int i = 0; i < numJobs; ++i)
             {
-                sgdbFs.Position = jobStart;
+                sgbdFs.Position = jobStart;
                 byte[] jobBuffer = new byte[0x44];
-                readAndDecryptBytes(sgdbFs, jobBuffer, 0, jobBuffer.Length);
+                readAndDecryptBytes(sgbdFs, jobBuffer, 0, jobBuffer.Length);
                 string jobNameString = encoding.GetString(jobBuffer, 0, 0x40).TrimEnd('\0');
                 if (!BitConverter.IsLittleEndian)
                 {
@@ -2123,7 +2123,7 @@ namespace EdiabasLib
 #if false
                 //if (String.Compare(jobNameString, "STATUS_RAILDRUCK_IST", StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    sgdbFs.Position = jobAddress;
+                    sgbdFs.Position = jobAddress;
                     bool foundFirstEoj = false;
                     byte[] ocBuffer = new byte[2];
                     Operand arg0 = new Operand();
@@ -2131,7 +2131,7 @@ namespace EdiabasLib
                     long startTime = Stopwatch.GetTimestamp();
                     while (true)
                     {
-                        readAndDecryptBytes(sgdbFs, ocBuffer, 0, ocBuffer.Length);
+                        readAndDecryptBytes(sgbdFs, ocBuffer, 0, ocBuffer.Length);
 
                         byte opCodeVal = ocBuffer[0];
                         byte opAddrMode = ocBuffer[1];
@@ -2142,8 +2142,8 @@ namespace EdiabasLib
                         {
                             throw new ArgumentOutOfRangeException("opCodeVal", "ReadAllJobs: Opcode out of range");
                         }
-                        getOpArg(sgdbFs, opAddrMode0, ref arg0);
-                        getOpArg(sgdbFs, opAddrMode1, ref arg1);
+                        getOpArg(sgbdFs, opAddrMode0, ref arg0);
+                        getOpArg(sgbdFs, opAddrMode1, ref arg1);
 
                         if (opCodeVal == 0x1D)
                         {
@@ -2158,7 +2158,7 @@ namespace EdiabasLib
                     }
                     timeMeas += Stopwatch.GetTimestamp() - startTime;
                 }
-                UInt32 jobSize = (UInt32)(sgdbFs.Position - jobAddress);
+                UInt32 jobSize = (UInt32)(sgbdFs.Position - jobAddress);
                 jobInfos.JobInfoArray[i] = new JobInfo(jobAddress, jobSize);
 #else
                 jobInfos.JobInfoArray[i] = new JobInfo(jobAddress, 0);
@@ -2471,23 +2471,23 @@ namespace EdiabasLib
             return GetTableString(fs, table.TableEntries[rowIdx + 1][columnIndex]);
         }
 
-        public void ResolveSgdbFile(string fileName)
+        public void ResolveSgbdFile(string fileName)
         {
-            SgdbFileName = Path.GetFileName(fileName);
+            SgbdFileName = Path.GetFileName(fileName);
             if (String.Compare(Path.GetExtension(fileName), ".grp", StringComparison.OrdinalIgnoreCase) == 0)
             {       // group file
-                string key = SgdbFileName.ToLower(culture);
+                string key = SgbdFileName.ToLower(culture);
                 string variantName = string.Empty;
                 if (!groupMappingDict.TryGetValue(key, out variantName))
                 {
                     variantName = ExecuteIdentJob().ToLower(culture);
                     if (variantName.Length == 0)
                     {
-                        throw new ArgumentOutOfRangeException("variantName", "ResolveSgdbFile: No variant found");
+                        throw new ArgumentOutOfRangeException("variantName", "ResolveSgbdFile: No variant found");
                     }
                     groupMappingDict.Add(key, variantName);
                 }
-                SgdbFileName = variantName + ".prg";
+                SgbdFileName = variantName + ".prg";
             }
         }
 
@@ -2577,9 +2577,9 @@ namespace EdiabasLib
                 LogString(string.Format("executeJob: {0}", jobName));
             }
 
-            if (!OpenSgdbFs())
+            if (!OpenSgbdFs())
             {
-                throw new ArgumentOutOfRangeException("OpenSgdbFs", "executeJob: Open SGDB failed");
+                throw new ArgumentOutOfRangeException("OpenSgbdFs", "executeJob: Open SGBD failed");
             }
             JobInfo jobInfo = GetJobInfo(jobName);
             if (jobInfo == null)
@@ -2624,8 +2624,8 @@ namespace EdiabasLib
                 {
                     //long startTime = Stopwatch.GetTimestamp();
                     EdValueType pcCounterOld = pcCounter;
-                    sgdbFs.Position = pcCounter;
-                    readAndDecryptBytes(sgdbFs, buffer, 0, buffer.Length);
+                    sgbdFs.Position = pcCounter;
+                    readAndDecryptBytes(sgbdFs, buffer, 0, buffer.Length);
 
                     byte opCodeVal = buffer[0];
                     byte opAddrMode = buffer[1];
@@ -2637,9 +2637,9 @@ namespace EdiabasLib
                         throw new ArgumentOutOfRangeException("opCodeVal", "executeJob: Opcode out of range");
                     }
                     OpCode oc = ocList[opCodeVal];
-                    getOpArg(sgdbFs, opAddrMode0, ref arg0);
-                    getOpArg(sgdbFs, opAddrMode1, ref arg1);
-                    pcCounter = (EdValueType)sgdbFs.Position;
+                    getOpArg(sgbdFs, opAddrMode0, ref arg0);
+                    getOpArg(sgbdFs, opAddrMode1, ref arg1);
+                    pcCounter = (EdValueType)sgbdFs.Position;
 
                     //special near address arg0 opcode handling mainly for jumps
                     if (oc.arg0IsNearAddress && (opAddrMode0 == OpAddrMode.Imm32))
