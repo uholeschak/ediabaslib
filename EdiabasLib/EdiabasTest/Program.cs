@@ -85,7 +85,6 @@ namespace EdiabasTest
                     }
 
                     // entries must be uppercase!
-                    ediabas.ConfigDict.Add("SIMULATION", "0");
                     try
                     {
                         ediabas.ResolveSgbdFile(Path.GetFileName(sgdbFile));
