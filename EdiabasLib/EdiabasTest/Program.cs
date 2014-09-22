@@ -88,7 +88,7 @@ namespace EdiabasTest
                     ediabas.ConfigDict.Add("SIMULATION", "0");
                     try
                     {
-                        ediabas.ResolveSgdbFile(Path.GetFileName(sgdbFile));
+                        ediabas.ResolveSgbdFile(Path.GetFileName(sgdbFile));
                     }
                     catch (Exception ex)
                     {

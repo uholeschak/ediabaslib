@@ -151,20 +151,20 @@ namespace CarControl
 
         private class EdiabasJobs
         {
-            private string sgdbFile;
+            private string sgbdFile;
             private EdiabasJob[] jobArray;
 
-            public EdiabasJobs(string sgdbFile, EdiabasJob[] jobArray)
+            public EdiabasJobs(string sgbdFile, EdiabasJob[] jobArray)
             {
-                this.sgdbFile = sgdbFile;
+                this.sgbdFile = sgbdFile;
                 this.jobArray = jobArray;
             }
 
-            public string SgdbFile
+            public string SgbdFile
             {
                 get
                 {
-                    return sgdbFile;
+                    return sgbdFile;
                 }
             }
 
@@ -179,26 +179,26 @@ namespace CarControl
 
         private class EdiabasTestJob
         {
-            private string sgdbFile;
+            private string sgbdFile;
             private string jobName;
             private string jobArgs;
             private string resultRequests;
             private string[] jobData;
 
-            public EdiabasTestJob(string sgdbFile, string jobName, string jobArgs, string resultRequests, string[] jobData)
+            public EdiabasTestJob(string sgbdFile, string jobName, string jobArgs, string resultRequests, string[] jobData)
             {
-                this.sgdbFile = sgdbFile;
+                this.sgbdFile = sgbdFile;
                 this.jobName = jobName;
                 this.jobArgs = jobArgs;
                 this.resultRequests = resultRequests;
                 this.jobData = jobData;
             }
 
-            public string SgdbFile
+            public string SgbdFile
             {
                 get
                 {
-                    return sgdbFile;
+                    return sgbdFile;
                 }
             }
 
@@ -244,21 +244,21 @@ namespace CarControl
         private class EdiabasErrorRequest
         {
             private string deviceName;
-            private string sgdbFile;
+            private string sgbdFile;
 
-            public EdiabasErrorRequest(string deviceName, string sgdbFile)
+            public EdiabasErrorRequest(string deviceName, string sgbdFile)
             {
                 this.deviceName = deviceName;
-                this.sgdbFile = sgdbFile;
+                this.sgbdFile = sgbdFile;
             }
 
             public string DeviceName
             {
                 get { return deviceName; }
             }
-            public string SgdbFile
+            public string SgbdFile
             {
-                get { return sgdbFile; }
+                get { return sgbdFile; }
             }
         }
 
@@ -542,7 +542,7 @@ namespace CarControl
         private Ediabas ediabas;
         private bool ediabasInitReq;
         private bool ediabasJobAbort;
-        private string ediabasSgdbFile;
+        private string ediabasSgbdFile;
         private int ediabasUpdateCount;
         private int ediabasInternalStep;
         private Dictionary<string, Ediabas.ResultData> ediabasTempDict;
@@ -787,7 +787,7 @@ namespace CarControl
 
                 try
                 {
-                    ediabas.ResolveSgdbFile(ediabasJobs.SgdbFile);
+                    ediabas.ResolveSgbdFile(ediabasJobs.SgbdFile);
                 }
                 catch (Exception ex)
                 {
@@ -1033,7 +1033,7 @@ namespace CarControl
 
                 try
                 {
-                    ediabas.ResolveSgdbFile(errorRequest.SgdbFile);
+                    ediabas.ResolveSgbdFile(errorRequest.SgbdFile);
                 }
                 catch (Exception ex)
                 {
@@ -1122,7 +1122,7 @@ namespace CarControl
 
                 try
                 {
-                    ediabas.ResolveSgdbFile(ediabasJobs.SgdbFile);
+                    ediabas.ResolveSgbdFile(ediabasJobs.SgbdFile);
                 }
                 catch (Exception ex)
                 {
@@ -1206,7 +1206,7 @@ namespace CarControl
             {
                 firstRequestCall = true;
                 ediabasJobAbort = false;
-                ediabasSgdbFile = string.Empty;
+                ediabasSgbdFile = string.Empty;
 
                 ediabasInitReq = false;
             }
@@ -1221,11 +1221,11 @@ namespace CarControl
                     break;
                 }
 
-                if (string.Compare(ediabasSgdbFile, ediabasJob.SgdbFile, StringComparison.Ordinal) != 0)
+                if (string.Compare(ediabasSgbdFile, ediabasJob.SgbdFile, StringComparison.Ordinal) != 0)
                 {
                     try
                     {
-                        ediabas.ResolveSgdbFile(ediabasJob.SgdbFile);
+                        ediabas.ResolveSgbdFile(ediabasJob.SgbdFile);
                     }
                     catch (Exception ex)
                     {
@@ -1238,7 +1238,7 @@ namespace CarControl
                         Thread.Sleep(1000);
                         return false;
                     }
-                    ediabasSgdbFile = ediabasJob.SgdbFile;
+                    ediabasSgbdFile = ediabasJob.SgbdFile;
                 }
 
                 string argString = ediabasJob.JobArgs;
@@ -1515,7 +1515,7 @@ namespace CarControl
 
             ediabasInitReq = true;
             ediabasJobAbort = deviceChange;
-            ediabasSgdbFile = string.Empty;
+            ediabasSgbdFile = string.Empty;
             ediabasUpdateCount = 0;
             ediabasInternalStep = 0;
             ediabasTempDict = null;
