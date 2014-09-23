@@ -1132,7 +1132,7 @@ namespace EdiabasLib
             new OpCode(0x63, "fseek", new OperationDelegate(OpFseek)),
             new OpCode(0x64, "fseekln", new OperationDelegate(OpFseekln)),
             new OpCode(0x65, "ftell", new OperationDelegate(OpFtell)),
-            new OpCode(0x66, "ftellln", null),
+            new OpCode(0x66, "ftellln", new OperationDelegate(OpFtellln)),
             new OpCode(0x67, "a2fix", new OperationDelegate(OpA2fix)),
             new OpCode(0x68, "fix2flt", new OperationDelegate(OpFix2flt)),
             new OpCode(0x69, "parr", new OperationDelegate(OpParr)),
@@ -2067,7 +2067,7 @@ namespace EdiabasLib
                 }
                 stringBuilder.Append((Char)currByte);
             }
-            if (stringBuilder.Length == 0)
+            if (currByte < 0)
             {
                 return null;
             }
@@ -2080,6 +2080,39 @@ namespace EdiabasLib
                 }
             }
             return stringBuilder.ToString();
+        }
+
+        private long ReadFileLineLength(Stream fs)
+        {
+            StringBuilder stringBuilder = new StringBuilder(100);
+            int currByte = -1;
+            long lineLength = 0;
+            for (; ; )
+            {
+                currByte = fs.ReadByte();
+                if (currByte < 0)
+                {
+                    break;
+                }
+                if (currByte == '\r' || currByte == '\n')
+                {
+                    break;
+                }
+                lineLength++;
+            }
+            if (currByte < 0)
+            {
+                return -1;
+            }
+            if (currByte == '\r')
+            {
+                int nextByte = fs.ReadByte();
+                if (nextByte >= 0 && nextByte != '\n')
+                {
+                    fs.Position--;
+                }
+            }
+            return lineLength;
         }
 
         private bool CloseUserFile(int index)

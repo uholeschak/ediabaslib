@@ -1014,7 +1014,7 @@ namespace EdiabasLib
                     fs.Position = 0;
                     for (int i = 0; i < line; i++)
                     {
-                        if (ediabas.ReadFileLine(fs) == null)
+                        if (ediabas.ReadFileLineLength(fs) < 0)
                         {
                             break;
                         }
@@ -1032,7 +1032,7 @@ namespace EdiabasLib
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
-                throw new ArgumentOutOfRangeException("arg0", "OpFreadln: Invalid type");
+                throw new ArgumentOutOfRangeException("arg0", "OpFtell: Invalid type");
             }
             Int32 position = 0;
 
@@ -1056,6 +1056,56 @@ namespace EdiabasLib
             }
             arg0.SetRawData((EdValueType)position);
             ediabas.flags.UpdateFlags((EdValueType)position, sizeof(EdValueType));
+        }
+
+        // BEST2: ftellln
+        private static void OpFtellln(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpFtellln: Invalid type");
+            }
+            EdValueType line = 0;
+
+            EdValueType handle = arg1.GetValueData(1);
+            Stream fs = ediabas.GetUserFile((int)handle);
+            if (fs == null)
+            {
+                ediabas.SetError(ErrorNumbers.BIP_0006);
+            }
+            else
+            {
+                try
+                {
+                    long currentPos = fs.Position;
+                    fs.Position = 0;
+                    for (; ; )
+                    {
+                        if (ediabas.ReadFileLineLength(fs) < 0)
+                        {
+                            break;
+                        }
+                        if (fs.Position >= currentPos)
+                        {
+                            if (fs.Position == currentPos)
+                            {
+                                line++;
+                            }
+                            break;
+                        }
+                        line++;
+                    }
+
+                    fs.Position = currentPos;
+                }
+                catch (Exception)
+                {
+                    line = 0;
+                    ediabas.SetError(ErrorNumbers.BIP_0006);
+                }
+            }
+            arg0.SetRawData(line);
+            ediabas.flags.UpdateFlags(line, sizeof(EdValueType));
         }
 
         // BEST2: generateRunError
