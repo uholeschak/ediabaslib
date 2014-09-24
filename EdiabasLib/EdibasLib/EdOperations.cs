@@ -1279,7 +1279,7 @@ namespace EdiabasLib
         // jump minus
         private static void OpJmi(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            if (ediabas.flags.sign != ediabas.flags.overflow)
+            if (ediabas.flags.sign)
             {
                 ediabas.pcCounter = arg0.GetValueData();
             }

@@ -1303,7 +1303,7 @@ namespace EdiabasLib
                 {
                     overflow = false;
                 }
-                else if ((value1 & signMask) == (value2 & signMask))
+                else if ((value1 & signMask) == (result & signMask))
                 {
                     overflow = false;
                 }
