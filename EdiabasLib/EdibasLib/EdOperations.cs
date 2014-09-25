@@ -115,12 +115,12 @@ namespace EdiabasLib
             EdValueType len = GetArgsValueLength(arg0, arg1);
             EdValueType val0 = arg0.GetValueData(len);
             EdValueType val1 = arg1.GetValueData(len);
-
-            UInt64 sum = (UInt64)val0 + (UInt64)val1;
             if (ediabas.flags.carry)
             {
-                sum++;
+                val1++;
             }
+
+            UInt64 sum = (UInt64)val0 + (UInt64)val1;
             arg0.SetRawData((EdValueType)sum);
             ediabas.flags.UpdateFlags((EdValueType)sum, len);
             ediabas.flags.SetOverflow(val0, val1, (EdValueType)sum, len);
@@ -1952,12 +1952,12 @@ namespace EdiabasLib
             EdValueType len = GetArgsValueLength(arg0, arg1);
             EdValueType val0 = arg0.GetValueData(len);
             EdValueType val1 = arg1.GetValueData(len);
-
-            UInt64 diff = (UInt64)val0 - (UInt64)val1;
             if (ediabas.flags.carry)
             {
-                diff--;
+                val1++;
             }
+
+            UInt64 diff = (UInt64)val0 - (UInt64)val1;
             arg0.SetRawData((EdValueType)diff);
             ediabas.flags.UpdateFlags((EdValueType)diff, len);
             ediabas.flags.SetOverflow(val0, (EdValueType)(-val1), (EdValueType)diff, len);
