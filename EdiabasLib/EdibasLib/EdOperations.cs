@@ -1292,7 +1292,15 @@ namespace EdiabasLib
             EdValueType trapBit = EdValueType.MaxValue;
             if (arg1.AddrMode != OpAddrMode.None)
             {
-                trapBit = (EdValueType)(1 << (int)arg1.GetValueData());
+                EdValueType testBit = arg1.GetValueData();
+                if (testBit == 0)
+                {
+                    trapBit = 0;
+                }
+                else
+                {
+                    trapBit = (EdValueType)(1 << (int)testBit);
+                }
             }
             if ((ediabas.trapBits & trapBit) == 0)
             {
