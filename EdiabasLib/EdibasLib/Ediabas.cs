@@ -554,15 +554,17 @@ namespace EdiabasLib
             public Object opData3;
         }
 
+        public const uint ErrorNoMask = 0x1000;
+
         public enum ErrorNumbers : uint
         {
             BIP_0002 = 2,   // IFH Aufruf fehlerhaft
-            BIP_0005 = 5,   // Stack underflow/overflow
+            BIP_0005 = 5 | ErrorNoMask,   // Stack underflow/overflow
             BIP_0006 = 6,   // User File Fehler
-            BIP_0007 = 7,   // Division by zero
+            BIP_0007 = 7 | ErrorNoMask,   // Division by zero
             BIP_0009 = 9,   // Versionsfehler
             BIP_0010 = 10,  // Fehler bei Konstantenzugriff, Tabellenzugriffsfehler
-            BIP_0011 = 11,  // Fehler bei Flieskommaumwandlung
+            BIP_0011 = 11 | ErrorNoMask,  // Fehler bei Fliesskommaumwandlung
             IFH_0001 = 11,  // Fehler an Schnittstelle Host-Interface
             IFH_0002 = 12,  // Interface meldet sich nicht
             IFH_0003 = 13,  // Datenübertragung zum Interface gestört
@@ -2149,11 +2151,19 @@ namespace EdiabasLib
                 LogString(string.Format("SetError: {0}", errorNumber));
             }
 
-            trapBits |= (EdValueType)(1 << (int)errorNumber);
+            uint errorValue = (uint)errorNumber;
+            if ((errorValue & ErrorNoMask) == 0)
+            {
+                trapBits |= (EdValueType)(1 << (int)errorValue);
+            }
+            else
+            {
+                trapBits |= 0x0001;
+            }
             EdValueType activeErrors = trapBits & ~trapMask;
             if (activeErrors != 0)
             {
-                throw new Exception(string.Format("SetError: Error not masked: {0:X08}", activeErrors));
+                throw new Exception(string.Format("SetError: Error not masked: {0}", errorNumber));
             }
         }
 
