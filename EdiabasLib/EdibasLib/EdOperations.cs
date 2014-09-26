@@ -396,6 +396,7 @@ namespace EdiabasLib
                 ediabas.SetError(ErrorNumbers.BIP_0007);
             }
             arg0.SetRawData(result);
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(result, len);
         }
 
@@ -1338,7 +1339,15 @@ namespace EdiabasLib
             EdValueType trapBit = EdValueType.MaxValue;
             if (arg1.AddrMode != OpAddrMode.None)
             {
-                trapBit = (EdValueType)(1 << (int)arg1.GetValueData());
+                EdValueType testBit = arg1.GetValueData();
+                if (testBit == 0)
+                {
+                    trapBit = 0;
+                }
+                else
+                {
+                    trapBit = (EdValueType)(1 << (int)testBit);
+                }
             }
             if ((ediabas.trapBits & trapBit) != 0)
             {
@@ -1450,6 +1459,7 @@ namespace EdiabasLib
                 throw new Exception("OpMult mult failure", ex);
             }
             arg0.SetRawData(result);
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(result, len);
         }
 
