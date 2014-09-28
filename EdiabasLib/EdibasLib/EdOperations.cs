@@ -165,21 +165,43 @@ namespace EdiabasLib
             }
             EdValueType len = GetArgsValueLength(arg0, arg1);
             EdValueType value = arg0.GetValueData(len);
-            EdValueType shift = arg1.GetValueData(len);
-
-            long carryShift = (long)(len << 3) - shift;
-            if (carryShift >= 0)
+            Int32 shift = (Int32)arg1.GetValueData(len);
+            if (shift < 0)
             {
-                EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
-                ediabas.flags.carry = (value & carryMask) != 0;
+                // don't touch carry here!
             }
             else
             {
-                ediabas.flags.carry = false;
+                if (shift > len * 8)
+                {
+                    ediabas.flags.carry = false;
+                }
+                else
+                {
+                    long carryShift = (long)(len << 3) - shift;
+                    if (carryShift >= 0)
+                    {
+                        EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
+                        ediabas.flags.carry = (value & carryMask) != 0;
+                    }
+                    else
+                    {
+                        ediabas.flags.carry = false;
+                    }
+                }
+
+                if (shift >= len * 8)
+                {
+                    value = 0;
+                }
+                else
+                {
+                    value = value << shift;
+                }
             }
 
-            value = value << (int)shift;
             arg0.SetRawData(value);
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(value, len);
         }
 
@@ -191,37 +213,67 @@ namespace EdiabasLib
             }
             EdValueType len = GetArgsValueLength(arg0, arg1);
             EdValueType value = arg0.GetValueData(len);
-            EdValueType shift = arg1.GetValueData(len);
-
-            long carryShift = (long)shift - 1;
-            if (carryShift >= 0)
+            Int32 shift = (Int32)arg1.GetValueData(len);
+            if (shift < 0)
             {
-                EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
-                ediabas.flags.carry = (value & carryMask) != 0;
+                // don't touch carry here!
             }
             else
             {
-                ediabas.flags.carry = false;
+                if (shift > len * 8)
+                {
+                    ediabas.flags.carry = false;
+                }
+                else
+                {
+                    long carryShift = (long)shift - 1;
+                    if (carryShift >= 0)
+                    {
+                        EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
+                        ediabas.flags.carry = (value & carryMask) != 0;
+                    }
+                    else
+                    {
+                        ediabas.flags.carry = false;
+                    }
+                }
+
+                if (shift >= len * 8)
+                {
+                    EdValueType signMask = (EdValueType)(1 << (int)((len  * 8) - 1));
+                    if ((value & signMask) != 0)
+                    {
+                        value = 0xFFFFFFFF;
+                    }
+                    else
+                    {
+                        value = 0;
+                    }
+                }
+                else
+                {
+                    switch (len)
+                    {
+                        case 1:
+                            value = (EdValueType)((SByte)value >> (int)shift);
+                            break;
+
+                        case 2:
+                            value = (EdValueType)((Int16)value >> (int)shift);
+                            break;
+
+                        case 4:
+                            value = (EdValueType)((Int32)value >> (int)shift);
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException("len", "OpAsr: Invalid length");
+                    }
+                }
             }
 
-            switch (len)
-            {
-                case 1:
-                    value = (EdValueType)((SByte)value >> (int)shift);
-                    break;
-
-                case 2:
-                    value = (EdValueType)((Int16)value >> (int)shift);
-                    break;
-
-                case 4:
-                    value = (EdValueType)((Int32)value >> (int)shift);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException("len", "OpAsr: Invalid length");
-            }
             arg0.SetRawData(value);
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(value, len);
         }
 
@@ -1389,21 +1441,43 @@ namespace EdiabasLib
             }
             EdValueType len = GetArgsValueLength(arg0, arg1);
             EdValueType value = arg0.GetValueData(len);
-            EdValueType shift = arg1.GetValueData(len);
-
-            long carryShift = (long)(len << 3) - shift;
-            if (carryShift >= 0)
+            Int32 shift = (Int32)arg1.GetValueData(len);
+            if (shift < 0)
             {
-                EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
-                ediabas.flags.carry = (value & carryMask) != 0;
+                // don't touch carry here!
             }
             else
             {
-                ediabas.flags.carry = false;
+                if (shift > len * 8)
+                {
+                    ediabas.flags.carry = false;
+                }
+                else
+                {
+                    long carryShift = (long)(len << 3) - shift;
+                    if (carryShift >= 0)
+                    {
+                        EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
+                        ediabas.flags.carry = (value & carryMask) != 0;
+                    }
+                    else
+                    {
+                        ediabas.flags.carry = false;
+                    }
+                }
+
+                if (shift >= len * 8)
+                {
+                    value = 0;
+                }
+                else
+                {
+                    value = value << shift;
+                }
             }
 
-            value = value << (int)shift;
             arg0.SetRawData(value);
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(value, len);
         }
 
@@ -1415,21 +1489,43 @@ namespace EdiabasLib
             }
             EdValueType len = GetArgsValueLength(arg0, arg1);
             EdValueType value = arg0.GetValueData(len);
-            EdValueType shift = arg1.GetValueData(len);
-
-            long carryShift = (long) shift - 1;
-            if (carryShift >= 0)
+            Int32 shift = (Int32)arg1.GetValueData(len);
+            if (shift < 0)
             {
-                EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
-                ediabas.flags.carry = (value & carryMask) != 0;
+                // don't touch carry here!
             }
             else
             {
-                ediabas.flags.carry = false;
+                if (shift > len * 8)
+                {
+                    ediabas.flags.carry = false;
+                }
+                else
+                {
+                    long carryShift = (long)shift - 1;
+                    if (carryShift >= 0)
+                    {
+                        EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
+                        ediabas.flags.carry = (value & carryMask) != 0;
+                    }
+                    else
+                    {
+                        ediabas.flags.carry = false;
+                    }
+                }
+
+                if (shift >= len * 8)
+                {
+                    value = 0;
+                }
+                else
+                {
+                    value = value >> shift;
+                }
             }
 
-            value = value >> (int)shift;
             arg0.SetRawData(value);
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(value, len);
         }
 

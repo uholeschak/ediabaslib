@@ -155,7 +155,8 @@ namespace EdiabasTest
                                 }
                                 else if (resultData.opData.GetType() == typeof(Int64))
                                 {
-                                    resultText = string.Format("{0} 0x{0:X08}", ((Int64)resultData.opData), ((Int64)resultData.opData));
+                                    Int64 value = (Int64)resultData.opData;
+                                    resultText = string.Format("{0} 0x{1:X08}", value, (UInt32)value);
                                 }
                                 else if (resultData.opData.GetType() == typeof(byte[]))
                                 {
