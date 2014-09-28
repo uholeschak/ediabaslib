@@ -1595,6 +1595,9 @@ namespace EdiabasLib
 
             EdValueType result = 0;
             ediabas.flags.zero = true;
+            ediabas.flags.carry = false;
+            ediabas.flags.sign = false;
+            ediabas.flags.overflow = false;
             EdValueType pos = arg1.GetValueData();
             pos--;
             if (pos < ediabas.argList.Count)
@@ -1615,6 +1618,7 @@ namespace EdiabasLib
             }
 
             arg0.SetRawData((EdValueType) ediabas.argList.Count);
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(arg0.GetValueData(), arg0.GetDataLen());
         }
 
@@ -1627,16 +1631,16 @@ namespace EdiabasLib
 
             EdFloatType result = 0;
             ediabas.flags.zero = true;
+            ediabas.flags.carry = false;
+            ediabas.flags.sign = false;
+            ediabas.flags.overflow = false;
             EdValueType pos = arg1.GetValueData();
             pos--;
             if (pos < ediabas.argList.Count)
             {
                 string argStr = ediabas.argList[(int)pos];
                 result = StringToFloat(argStr);
-                if (Double.IsNaN(result))
-                {
-                    ediabas.SetError(ErrorNumbers.BIP_0011);
-                }
+                ediabas.flags.zero = false;
             }
             arg0.SetRawData(result);
         }
