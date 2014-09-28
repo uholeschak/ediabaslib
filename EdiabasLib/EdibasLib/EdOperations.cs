@@ -36,6 +36,10 @@ namespace EdiabasLib
 
             string valueStr = arg1.GetStringData();
             EdFloatType result = StringToFloat(valueStr);
+            if (Double.IsNaN(result))
+            {
+                ediabas.SetError(ErrorNumbers.BIP_0011);
+            }
 
             arg0.SetRawData(result);
         }
@@ -538,7 +542,7 @@ namespace EdiabasLib
             try
             {
                 result = val0 + val1;
-                if (Double.IsInfinity(result))
+                if (Double.IsInfinity(result) || Double.IsNaN(result))
                 {
                     ediabas.SetError(ErrorNumbers.BIP_0011);
                 }
@@ -556,21 +560,9 @@ namespace EdiabasLib
             EdFloatType val0 = arg0.GetFloatData();
             EdFloatType val1 = arg1.GetFloatData();
 
-            EdFloatType result = 0;
-            try
-            {
-                result = val0 - val1;
-                if (Double.IsInfinity(result))
-                {
-                    ediabas.SetError(ErrorNumbers.BIP_0011);
-                }
-            }
-            catch (Exception)
-            {
-                ediabas.SetError(ErrorNumbers.BIP_0011);
-            }
-            ediabas.flags.UpdateFlags(result);
-            ediabas.flags.SetOverflow(val0, -val1, result);
+            ediabas.flags.zero = val0 == val1;
+            ediabas.flags.sign = val0 < val1;
+            ediabas.flags.overflow = false;
         }
 
         // BEST2: realdiv
@@ -588,7 +580,7 @@ namespace EdiabasLib
             try
             {
                 result = val0 / val1;
-                if (Double.IsInfinity(result))
+                if (Double.IsInfinity(result) || Double.IsNaN(result))
                 {
                     ediabas.SetError(ErrorNumbers.BIP_0011);
                 }
@@ -827,7 +819,7 @@ namespace EdiabasLib
             try
             {
                 result = val0 * val1;
-                if (Double.IsInfinity(result))
+                if (Double.IsInfinity(result) || Double.IsNaN(result))
                 {
                     ediabas.SetError(ErrorNumbers.BIP_0011);
                 }
@@ -855,7 +847,7 @@ namespace EdiabasLib
             try
             {
                 result = val0 - val1;
-                if (Double.IsInfinity(result))
+                if (Double.IsInfinity(result) || Double.IsNaN(result))
                 {
                     ediabas.SetError(ErrorNumbers.BIP_0011);
                 }
@@ -1641,7 +1633,10 @@ namespace EdiabasLib
             {
                 string argStr = ediabas.argList[(int)pos];
                 result = StringToFloat(argStr);
-                ediabas.flags.zero = false;
+                if (Double.IsNaN(result))
+                {
+                    ediabas.SetError(ErrorNumbers.BIP_0011);
+                }
             }
             arg0.SetRawData(result);
         }

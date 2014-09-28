@@ -1274,12 +1274,6 @@ namespace EdiabasLib
                 sign = (value & signMask) != 0;
             }
 
-            public void UpdateFlags(EdFloatType value)
-            {
-                zero = value == 0;
-                sign = value < 0;
-            }
-
             public void SetOverflow(UInt32 value1, UInt32 value2, UInt32 result, EdValueType length)
             {
                 UInt64 signMask = 0;
@@ -1306,22 +1300,6 @@ namespace EdiabasLib
                     overflow = false;
                 }
                 else if ((value1 & signMask) == (result & signMask))
-                {
-                    overflow = false;
-                }
-                else
-                {
-                    overflow = true;
-                }
-            }
-
-            public void SetOverflow(EdFloatType value1, EdFloatType value2, EdFloatType result)
-            {
-                if ((value1 < 0) != (value2 < 0))
-                {
-                    overflow = false;
-                }
-                else if ((value1 < 0) == (result < 0))
                 {
                     overflow = false;
                 }
@@ -3249,7 +3227,7 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
-                result = 0;
+                result = Double.NaN;
             }
             return result;
         }
