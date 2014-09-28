@@ -154,6 +154,7 @@ namespace EdiabasLib
             EdValueType len = GetArgsValueLength(arg0, arg1);
             EdValueType value = arg0.GetValueData(len) & arg1.GetValueData(len);
             arg0.SetRawData(value);
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(value, len);
         }
 
@@ -1577,8 +1578,9 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpNot: Invalid type");
             }
-            EdValueType value = ~arg1.GetValueData();
+            EdValueType value = ~arg0.GetValueData();
             arg0.SetRawData(value);
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(arg0.GetValueData(), arg0.GetDataLen());
         }
 
@@ -1732,6 +1734,7 @@ namespace EdiabasLib
             EdValueType len = GetArgsValueLength(arg0, arg1);
             EdValueType value = arg0.GetValueData(len) | arg1.GetValueData(len);
             arg0.SetRawData(value);
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(value, len);
         }
 
@@ -2246,6 +2249,7 @@ namespace EdiabasLib
         {
             EdValueType len = GetArgsValueLength(arg0, arg1);
             EdValueType value = arg0.GetValueData(len) & arg1.GetValueData(len);
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(value, len);
         }
 
@@ -2444,6 +2448,7 @@ namespace EdiabasLib
             EdValueType len = GetArgsValueLength(arg0, arg1);
             EdValueType value = arg0.GetValueData(len) ^ arg1.GetValueData(len);
             arg0.SetRawData(value);
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(value, len);
         }
 
