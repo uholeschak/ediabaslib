@@ -558,29 +558,29 @@ namespace EdiabasLib
 
         public enum ErrorNumbers : uint
         {
-            BIP_0002 = 2,   // IFH Aufruf fehlerhaft
-            BIP_0005 = 5 | ErrorNoMask,   // Stack underflow/overflow
-            BIP_0006 = 6,   // User File Fehler
-            BIP_0007 = 7 | ErrorNoMask,   // Division by zero
-            BIP_0009 = 9,   // Versionsfehler
-            BIP_0010 = 10,  // Fehler bei Konstantenzugriff, Tabellenzugriffsfehler
-            BIP_0011 = 11 | ErrorNoMask,  // Fehler bei Fliesskommaumwandlung
-            IFH_0001 = 11,  // Fehler an Schnittstelle Host-Interface
-            IFH_0002 = 12,  // Interface meldet sich nicht
-            IFH_0003 = 13,  // Datenübertragung zum Interface gestört
-            IFH_0004 = 14,  // Kommando an Interface fehlerhaft
-            IFH_0005 = 15,  // Interface interner Fehler (Defekt)
-            IFH_0006 = 16,  // Interface nimmt Kommando nicht an
-            IFH_0007 = 17,  // Falsche Versorgungsspannung am D-Bus
-            IFH_0008 = 18,  // Fehler an Schnittstelle zum SG
-            IFH_0009 = 19,  // Steuergerät meldet sich nicht
-            IFH_0010 = 20,  // Datenübertragung Interface - SG gestört
-            IFH_0011 = 21,  // Unbekanntes Interface
-            IFH_0012 = 22,  // Datenpuffer Überlauf
-            IFH_0013 = 23,  // Funktion im Interface nicht vorhanden
-            IFH_0014 = 24,  // Konzept wird nicht unterstützt
-            IFH_0015 = 25,  // U-Batt wurde kurz unterbrochen
-            IFH_0019 = 29,  // Interface nicht initialisiert
+            BIP_0002 = 2,   // IFH call error
+            BIP_0005 = 5 | ErrorNoMask,   // stack underflow/overflow
+            BIP_0006 = 6,   // user file error
+            BIP_0007 = 7 | ErrorNoMask,   // division by zero
+            BIP_0009 = 9,   // version error
+            BIP_0010 = 10,  // constant Data Access Error
+            BIP_0011 = 11 | ErrorNoMask,  // floating point error
+            IFH_0001 = 11,  // error host interface
+            IFH_0002 = 12,  // interface not responding
+            IFH_0003 = 13,  // data transmission to interface disturbed
+            IFH_0004 = 14,  // command for interface invalid
+            IFH_0005 = 15,  // interface internal error
+            IFH_0006 = 16,  // command not accepted by interface
+            IFH_0007 = 17,  // invalid power supply at D-Bus
+            IFH_0008 = 18,  // error at interface to SG
+            IFH_0009 = 19,  // SG not responding
+            IFH_0010 = 20,  // data transmission interface SG disturbed
+            IFH_0011 = 21,  // unknown interface
+            IFH_0012 = 22,  // data buffer overflow
+            IFH_0013 = 23,  // function at interface not present
+            IFH_0014 = 24,  // concept not supported
+            IFH_0015 = 25,  // U-Batt interrupted
+            IFH_0019 = 29,  // interface not inintialized
         }
 
         public enum ResultType : byte
@@ -2710,6 +2710,7 @@ namespace EdiabasLib
             stackList.Clear();
             SetConfigProperty("BipEcuFile", Path.GetFileNameWithoutExtension(sgbdFileName));
             flags.Init();
+            trapMask = 0;
             infoProgressRange = 0;
             infoProgressPos = 0;
             infoText = string.Empty;

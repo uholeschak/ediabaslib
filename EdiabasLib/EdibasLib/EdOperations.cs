@@ -38,8 +38,6 @@ namespace EdiabasLib
             EdFloatType result = StringToFloat(valueStr);
 
             arg0.SetRawData(result);
-            ediabas.flags.UpdateFlags(result);
-            ediabas.flags.overflow = false;
         }
 
         // BEST2: atoy
@@ -332,7 +330,6 @@ namespace EdiabasLib
             else if (dataType == typeof(EdFloatType))
             {
                 arg0Data.SetFloatData(0);
-                ediabas.flags.UpdateFlags((EdFloatType) 0);
             }
             else
             {
@@ -537,19 +534,21 @@ namespace EdiabasLib
             EdFloatType val0 = arg0.GetFloatData();
             EdFloatType val1 = arg1.GetFloatData();
 
-            EdFloatType result;
+            EdFloatType result = 0;
             try
             {
                 result = val0 + val1;
+                if (Double.IsInfinity(result))
+                {
+                    ediabas.SetError(ErrorNumbers.BIP_0011);
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception("OpFadd add failure", ex);
+                ediabas.SetError(ErrorNumbers.BIP_0011);
             }
 
             arg0.SetRawData(result);
-            ediabas.flags.UpdateFlags(result);
-            ediabas.flags.SetOverflow(val0, val1, result);
         }
 
         private static void OpFcomp(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
@@ -557,14 +556,18 @@ namespace EdiabasLib
             EdFloatType val0 = arg0.GetFloatData();
             EdFloatType val1 = arg1.GetFloatData();
 
-            EdFloatType result;
+            EdFloatType result = 0;
             try
             {
                 result = val0 - val1;
+                if (Double.IsInfinity(result))
+                {
+                    ediabas.SetError(ErrorNumbers.BIP_0011);
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception("OpFcomp sub failure", ex);
+                ediabas.SetError(ErrorNumbers.BIP_0011);
             }
             ediabas.flags.UpdateFlags(result);
             ediabas.flags.SetOverflow(val0, -val1, result);
@@ -585,15 +588,17 @@ namespace EdiabasLib
             try
             {
                 result = val0 / val1;
+                if (Double.IsInfinity(result))
+                {
+                    ediabas.SetError(ErrorNumbers.BIP_0011);
+                }
             }
             catch (Exception)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0007);
+                ediabas.SetError(ErrorNumbers.BIP_0011);
             }
 
             arg0.SetRawData(result);
-            ediabas.flags.UpdateFlags(result);
-            ediabas.flags.overflow = false;
         }
 
         // BEST2: itoad
@@ -646,8 +651,6 @@ namespace EdiabasLib
             Int32 value = (Int32)arg1.GetValueData();
             EdFloatType result = (EdFloatType)value;
             arg0.SetRawData(result);
-            ediabas.flags.UpdateFlags(result);
-            ediabas.flags.overflow = false;
         }
 
         // BEST2: itoax
@@ -731,6 +734,7 @@ namespace EdiabasLib
             
             EdValueType result = (EdValueType)value;
             arg0.SetRawData(result);
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(result, sizeof(EdValueType));
         }
 
@@ -819,19 +823,21 @@ namespace EdiabasLib
             EdFloatType val0 = arg0.GetFloatData();
             EdFloatType val1 = arg1.GetFloatData();
 
-            EdFloatType result;
+            EdFloatType result = 0;
             try
             {
                 result = val0 * val1;
+                if (Double.IsInfinity(result))
+                {
+                    ediabas.SetError(ErrorNumbers.BIP_0011);
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception("OpFmul mul failure", ex);
+                ediabas.SetError(ErrorNumbers.BIP_0011);
             }
 
             arg0.SetRawData(result);
-            ediabas.flags.UpdateFlags(result);
-            ediabas.flags.overflow = false;
         }
 
         // BEST2: realsub
@@ -845,19 +851,21 @@ namespace EdiabasLib
             EdFloatType val0 = arg0.GetFloatData();
             EdFloatType val1 = arg1.GetFloatData();
 
-            EdFloatType result;
+            EdFloatType result = 0;
             try
             {
                 result = val0 - val1;
+                if (Double.IsInfinity(result))
+                {
+                    ediabas.SetError(ErrorNumbers.BIP_0011);
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception("OpFsub sub failure", ex);
+                ediabas.SetError(ErrorNumbers.BIP_0011);
             }
 
             arg0.SetRawData(result);
-            ediabas.flags.UpdateFlags(result);
-            ediabas.flags.SetOverflow(val0, -val1, result);
         }
 
         private static void OpEoj(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
@@ -1193,6 +1201,7 @@ namespace EdiabasLib
                 EdValueType len = GetArgsValueLength(arg0, arg1);
                 EdValueType value = arg1.GetValueData(len);
                 arg0.SetRawData(value);
+                ediabas.flags.overflow = false;
                 ediabas.flags.UpdateFlags(value, len);
             }
             else if (data0Type == typeof(byte[]))
@@ -1202,6 +1211,7 @@ namespace EdiabasLib
                     EdValueType len = GetArgsValueLength(arg0, arg1);
                     EdValueType value = arg1.GetValueData(len);
                     arg0.SetRawData(value);
+                    ediabas.flags.overflow = false;
                     ediabas.flags.UpdateFlags(value, 1);
                 }
                 else if (data1Type == typeof(byte[]))
@@ -1704,6 +1714,7 @@ namespace EdiabasLib
             }
 
             arg0.SetRawData(value);
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(value, length);
         }
 
@@ -1891,6 +1902,7 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpSlen: Invalid type");
             }
             arg0.SetRawData((EdValueType)arg1.GetDataLen());
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(arg0.GetValueData(), arg0.GetDataLen());
         }
 
@@ -2038,6 +2050,7 @@ namespace EdiabasLib
             EdValueType result = (EdValueType)arg1.GetStringData().Length;
 
             arg0.SetRawData(result);
+            ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(result, arg0.GetDataLen());
         }
 
@@ -2334,8 +2347,6 @@ namespace EdiabasLib
                 Array.Reverse(dataArray, 0, sizeof(Single));
             }
             EdFloatType value = BitConverter.ToSingle(dataArray, 0);
-            arg0.SetRawData(value);
-            ediabas.flags.UpdateFlags(value);
         }
 
         // BEST2: data_to_real (intel byte order)
@@ -2352,8 +2363,6 @@ namespace EdiabasLib
                 Array.Reverse(dataArray, 0, sizeof(Double));
             }
             EdFloatType value = BitConverter.ToDouble(dataArray, 0);
-            arg0.SetRawData(value);
-            ediabas.flags.UpdateFlags(value);
         }
 
         // BEST2: bcd2ascii
