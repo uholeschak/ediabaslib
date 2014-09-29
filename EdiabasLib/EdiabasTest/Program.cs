@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Globalization;
 using NDesk.Options;
 using EdiabasLib;
 
@@ -10,6 +11,8 @@ namespace EdiabasTest
 {
     class Program
     {
+        private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
+
         static int Main(string[] args)
         {
             string sgbdFile = null;
@@ -136,10 +139,10 @@ namespace EdiabasTest
                         List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
                         foreach (Dictionary<string, Ediabas.ResultData> resultDict in resultSets)
                         {
-                            Console.WriteLine(string.Format("DATASET: {0}", dataSet));
+                            Console.WriteLine(string.Format(culture, "DATASET: {0}", dataSet));
                             if (ediabas.SwLog != null)
                             {
-                                ediabas.SwLog.WriteLine(string.Format("DATASET: {0}", dataSet));
+                                ediabas.SwLog.WriteLine(string.Format(culture, "DATASET: {0}", dataSet));
                             }
                             foreach (string key in resultDict.Keys.OrderBy(x => x))
                             {
@@ -151,19 +154,34 @@ namespace EdiabasTest
                                 }
                                 else if (resultData.opData.GetType() == typeof(Double))
                                 {
-                                    resultText = ((Double)resultData.opData).ToString();
+                                    resultText = string.Format(culture, "{0}", (Double)resultData.opData);
                                 }
                                 else if (resultData.opData.GetType() == typeof(Int64))
                                 {
                                     Int64 value = (Int64)resultData.opData;
-                                    resultText = string.Format("{0} 0x{1:X08}", value, (UInt32)value);
+                                    switch (resultData.type)
+                                    {
+                                        case Ediabas.ResultType.TypeB:  // 8 bit
+                                        case Ediabas.ResultType.TypeC:  // 8 bit char
+                                            resultText = string.Format(culture, "{0} 0x{1:X02}", value, (UInt32)value);
+                                            break;
+
+                                        case Ediabas.ResultType.TypeW:  // 16 bit
+                                        case Ediabas.ResultType.TypeI:  // 16 bit signed
+                                            resultText = string.Format(culture, "{0} 0x{1:X04}", value, (UInt32)value);
+                                            break;
+
+                                        default:
+                                            resultText = string.Format(culture, "{0} 0x{1:X08}", value, (UInt32)value);
+                                            break;
+                                    }
                                 }
                                 else if (resultData.opData.GetType() == typeof(byte[]))
                                 {
                                     byte[] data = (byte[])resultData.opData;
                                     foreach (byte value in data)
                                     {
-                                        resultText += string.Format("{0:X02} ", value);
+                                        resultText += string.Format(culture, "{0:X02} ", value);
                                     }
                                 }
                                 Console.WriteLine(resultData.name + ": " + resultText);
