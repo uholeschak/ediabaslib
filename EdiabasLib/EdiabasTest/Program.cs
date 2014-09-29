@@ -12,7 +12,7 @@ namespace EdiabasTest
     {
         static int Main(string[] args)
         {
-            string sgdbFile = null;
+            string sgbdFile = null;
             string comPort = null;
             string logFile = null;
             List<string> jobNames = new List<string>();
@@ -20,8 +20,8 @@ namespace EdiabasTest
 
             var p = new OptionSet()
             {
-                { "s|sgdb=", "sgdb file.",
-                  v => sgdbFile = v },
+                { "s|sgbd=", "sgbd file.",
+                  v => sgbdFile = v },
                 { "p|port=", "COM port.",
                   v => comPort = v },
                 { "l|log=", "log file name.",
@@ -52,9 +52,9 @@ namespace EdiabasTest
                 return 0;
             }
 
-            if (sgdbFile == null)
+            if (sgbdFile == null)
             {
-                Console.WriteLine("No sgdb file specified");
+                Console.WriteLine("No sgbd file specified");
                 return 1;
             }
 
@@ -78,7 +78,7 @@ namespace EdiabasTest
                     edCommBwmFast.ComPort = comPort;
                     ediabas.EdCommClass = edCommBwmFast;
 
-                    ediabas.FileSearchDir = Path.GetDirectoryName(sgdbFile);
+                    ediabas.FileSearchDir = Path.GetDirectoryName(sgbdFile);
                     if (logFile != null)
                     {
                         ediabas.SwLog = new StreamWriter(logFile);
@@ -87,11 +87,11 @@ namespace EdiabasTest
                     // entries must be uppercase!
                     try
                     {
-                        ediabas.ResolveSgbdFile(Path.GetFileName(sgdbFile));
+                        ediabas.ResolveSgbdFile(Path.GetFileName(sgbdFile));
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("ResolveSgdbFile failed: " + Ediabas.GetExceptionText(ex));
+                        Console.WriteLine("ResolveSgbdFile failed: " + Ediabas.GetExceptionText(ex));
                         return 1;
                     }
 
