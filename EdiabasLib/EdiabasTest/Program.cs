@@ -12,11 +12,13 @@ namespace EdiabasTest
     class Program
     {
         private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
+        private static TextWriter outputWriter;
 
         static int Main(string[] args)
         {
             string sgbdFile = null;
             string comPort = null;
+            string outFile = null;
             string logFile = null;
             List<string> jobNames = new List<string>();
             bool show_help = false;
@@ -27,6 +29,8 @@ namespace EdiabasTest
                   v => sgbdFile = v },
                 { "p|port=", "COM port.",
                   v => comPort = v },
+                { "o|out=", "output file name.",
+                  v => outFile = v },
                 { "l|log=", "log file name.",
                   v => logFile = v },
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>.",
@@ -55,26 +59,35 @@ namespace EdiabasTest
                 return 0;
             }
 
-            if (sgbdFile == null)
+            if (outFile == null)
             {
-                Console.WriteLine("No sgbd file specified");
-                return 1;
+                outputWriter = Console.Out;
             }
-
-            if (comPort == null)
+            else
             {
-                Console.WriteLine("No COM port specified");
-                return 1;
-            }
-
-            if (jobNames.Count < 1)
-            {
-                Console.WriteLine("No jobs specified");
-                return 1;
+                outputWriter = new StreamWriter(File.OpenWrite(outFile), Encoding.Unicode);
             }
 
             try
             {
+                if (sgbdFile == null)
+                {
+                    outputWriter.WriteLine("No sgbd file specified");
+                    return 1;
+                }
+
+                if (comPort == null)
+                {
+                    outputWriter.WriteLine("No COM port specified");
+                    return 1;
+                }
+
+                if (jobNames.Count < 1)
+                {
+                    outputWriter.WriteLine("No jobs specified");
+                    return 1;
+                }
+
                 using (Ediabas ediabas = new Ediabas())
                 {
                     EdCommBmwFast edCommBwmFast = new EdCommBmwFast(ediabas);
@@ -94,7 +107,7 @@ namespace EdiabasTest
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("ResolveSgbdFile failed: " + Ediabas.GetExceptionText(ex));
+                        outputWriter.WriteLine("ResolveSgbdFile failed: " + Ediabas.GetExceptionText(ex));
                         return 1;
                     }
 
@@ -102,7 +115,7 @@ namespace EdiabasTest
                     {
                         if (jobString.Length == 0)
                         {
-                            Console.WriteLine("Empty job string");
+                            outputWriter.WriteLine("Empty job string");
                             return 1;
                         }
 
@@ -111,7 +124,7 @@ namespace EdiabasTest
                         string[] parts = jobString.Split('#');
                         if ((parts.Length < 1) || (parts[0].Length == 0))
                         {
-                            Console.WriteLine("Empty job name");
+                            outputWriter.WriteLine("Empty job name");
                             return 1;
                         }
                         string jobName = parts[0];
@@ -124,14 +137,14 @@ namespace EdiabasTest
                             ediabas.ResultsRequests = parts[2];
                         }
 
-                        Console.WriteLine("JOB: " + jobName);
+                        outputWriter.WriteLine("JOB: " + jobName);
                         try
                         {
                             ediabas.ExecuteJob(jobName);
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("Job execution failed: " + Ediabas.GetExceptionText(ex));
+                            outputWriter.WriteLine("Job execution failed: " + Ediabas.GetExceptionText(ex));
                             return 1;
                         }
 
@@ -139,7 +152,7 @@ namespace EdiabasTest
                         List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
                         foreach (Dictionary<string, Ediabas.ResultData> resultDict in resultSets)
                         {
-                            Console.WriteLine(string.Format(culture, "DATASET: {0}", dataSet));
+                            outputWriter.WriteLine(string.Format(culture, "DATASET: {0}", dataSet));
                             if (ediabas.SwLog != null)
                             {
                                 ediabas.SwLog.WriteLine(string.Format(culture, "DATASET: {0}", dataSet));
@@ -184,7 +197,7 @@ namespace EdiabasTest
                                         resultText += string.Format(culture, "{0:X02} ", value);
                                     }
                                 }
-                                Console.WriteLine(resultData.name + ": " + resultText);
+                                outputWriter.WriteLine(resultData.name + ": " + resultText);
                                 if (ediabas.SwLog != null)
                                 {
                                     ediabas.SwLog.WriteLine(resultData.name + ": " + resultText);
@@ -192,14 +205,18 @@ namespace EdiabasTest
                             }
                             dataSet++;
                         }
-                        Console.WriteLine();
+                        outputWriter.WriteLine();
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                outputWriter.WriteLine(ex.Message);
                 return 1;
+            }
+            finally
+            {
+                outputWriter.Close();
             }
 
             return 0;
