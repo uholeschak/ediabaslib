@@ -176,12 +176,12 @@ namespace EdiabasTest
                                     {
                                         case Ediabas.ResultType.TypeB:  // 8 bit
                                         case Ediabas.ResultType.TypeC:  // 8 bit char
-                                            resultText = string.Format(culture, "{0} 0x{1:X02}", value, (UInt32)value);
+                                            resultText = string.Format(culture, "{0} 0x{1:X02}", value, (Byte)value);
                                             break;
 
                                         case Ediabas.ResultType.TypeW:  // 16 bit
                                         case Ediabas.ResultType.TypeI:  // 16 bit signed
-                                            resultText = string.Format(culture, "{0} 0x{1:X04}", value, (UInt32)value);
+                                            resultText = string.Format(culture, "{0} 0x{1:X04}", value, (UInt16)value);
                                             break;
 
                                         default:

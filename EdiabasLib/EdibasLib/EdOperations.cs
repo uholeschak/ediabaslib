@@ -225,7 +225,15 @@ namespace EdiabasLib
             {
                 if (shift > len * 8)
                 {
-                    ediabas.flags.carry = false;
+                    EdValueType signMask = (EdValueType)(1 << (int)((len * 8) - 1));
+                    if ((value & signMask) != 0)
+                    {
+                        ediabas.flags.carry = true;
+                    }
+                    else
+                    {
+                        ediabas.flags.carry = false;
+                    }
                 }
                 else
                 {
@@ -364,7 +372,7 @@ namespace EdiabasLib
             }
 
             string value = ediabas.GetConfigProperty(arg1.GetStringData());
-            arg0.SetStringData(value);
+            arg0.SetArrayData(encoding.GetBytes(value));
         }
 
         // clear carry
@@ -560,6 +568,11 @@ namespace EdiabasLib
             EdFloatType val0 = arg0.GetFloatData();
             EdFloatType val1 = arg1.GetFloatData();
 
+            EdFloatType diff = val0 - val1;
+            if (Double.IsInfinity(diff) || Double.IsNaN(diff))
+            {
+                ediabas.flags.carry = true;
+            }
             ediabas.flags.zero = val0 == val1;
             ediabas.flags.sign = val0 < val1;
             ediabas.flags.overflow = false;
@@ -2346,6 +2359,7 @@ namespace EdiabasLib
                 Array.Reverse(dataArray, 0, sizeof(Single));
             }
             EdFloatType value = BitConverter.ToSingle(dataArray, 0);
+            arg0.SetRawData(value);
         }
 
         // BEST2: data_to_real (intel byte order)
@@ -2362,6 +2376,7 @@ namespace EdiabasLib
                 Array.Reverse(dataArray, 0, sizeof(Double));
             }
             EdFloatType value = BitConverter.ToDouble(dataArray, 0);
+            arg0.SetRawData(value);
         }
 
         // BEST2: bcd2ascii
