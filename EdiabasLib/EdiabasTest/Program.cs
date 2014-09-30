@@ -12,6 +12,7 @@ namespace EdiabasTest
     class Program
     {
         private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
+        private static Encoding encoding = Encoding.GetEncoding(1252);
         private static TextWriter outputWriter;
 
         static int Main(string[] args)
@@ -61,11 +62,12 @@ namespace EdiabasTest
 
             if (outFile == null)
             {
+                Console.OutputEncoding = encoding;
                 outputWriter = Console.Out;
             }
             else
             {
-                outputWriter = new StreamWriter(File.OpenWrite(outFile), Encoding.Unicode);
+                outputWriter = new StreamWriter(File.OpenWrite(outFile), encoding);
             }
 
             try
