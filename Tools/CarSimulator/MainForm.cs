@@ -161,6 +161,7 @@ namespace CarSimulator
             if (_commThread.ThreadRunning())
             {
                 _commThread.Moving = checkBoxMoving.Checked;
+                _commThread.VariableValues = checkBoxVariableValues.Checked;
             }
         }
 

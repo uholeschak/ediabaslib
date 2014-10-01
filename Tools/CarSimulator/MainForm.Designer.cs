@@ -33,6 +33,7 @@
             this.listPorts = new System.Windows.Forms.ListBox();
             this.timerUpdate = new System.Windows.Forms.Timer(this.components);
             this.checkBoxMoving = new System.Windows.Forms.CheckBox();
+            this.checkBoxVariableValues = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // buttonConnect
@@ -65,15 +66,26 @@
             this.checkBoxMoving.Name = "checkBoxMoving";
             this.checkBoxMoving.Size = new System.Drawing.Size(59, 17);
             this.checkBoxMoving.TabIndex = 2;
-            this.checkBoxMoving.Text = "Fahren";
+            this.checkBoxMoving.Text = "Driving";
             this.checkBoxMoving.UseVisualStyleBackColor = true;
             this.checkBoxMoving.CheckedChanged += new System.EventHandler(this.checkBoxMoving_CheckedChanged);
+            // 
+            // checkBoxVariableValues
+            // 
+            this.checkBoxVariableValues.AutoSize = true;
+            this.checkBoxVariableValues.Location = new System.Drawing.Point(97, 65);
+            this.checkBoxVariableValues.Name = "checkBoxVariableValues";
+            this.checkBoxVariableValues.Size = new System.Drawing.Size(98, 17);
+            this.checkBoxVariableValues.TabIndex = 3;
+            this.checkBoxVariableValues.Text = "Variable values";
+            this.checkBoxVariableValues.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(292, 266);
+            this.Controls.Add(this.checkBoxVariableValues);
             this.Controls.Add(this.checkBoxMoving);
             this.Controls.Add(this.listPorts);
             this.Controls.Add(this.buttonConnect);
@@ -91,6 +103,7 @@
         private System.Windows.Forms.ListBox listPorts;
         private System.Windows.Forms.Timer timerUpdate;
         private System.Windows.Forms.CheckBox checkBoxMoving;
+        private System.Windows.Forms.CheckBox checkBoxVariableValues;
 
     }
 }

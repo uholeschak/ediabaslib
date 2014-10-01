@@ -359,6 +359,12 @@ namespace CarSimulator
             set;
         }
 
+        public bool VariableValues
+        {
+            get;
+            set;
+        }
+
         public CommThread()
         {
             _stopThread = false;
@@ -631,13 +637,21 @@ namespace CarSimulator
                 }
                 _axisPosFilt = (_axisPosFilt * _filterConst) + ((double)_axisPosRaw * (1 - _filterConst));
             }
-            if (_batteryVoltage > 1200)
+
+            if (VariableValues)
             {
-                _batteryVoltage--;
+                if (_batteryVoltage > 1200)
+                {
+                    _batteryVoltage--;
+                }
+                else
+                {
+                    _batteryVoltage = 1500;
+                }
             }
             else
             {
-                _batteryVoltage = 1500;
+                _batteryVoltage = 1250;
             }
 
             if (Moving && _speed < 250)
@@ -2110,17 +2124,20 @@ namespace CarSimulator
             {   // CCC nav gps date/time
                 Array.Copy(_responseA022F127, _sendData, _responseA022F127.Length);
 
-                DateTime dateTime = DateTime.Now.ToUniversalTime();
-                // year (bcd), real coding seems to be different
-                _sendData[7] = IntToBcd(dateTime.Year / 100);
-                _sendData[8] = IntToBcd(dateTime.Year % 100);    // real code is 0xA4
+                if (VariableValues)
+                {
+                    DateTime dateTime = DateTime.Now.ToUniversalTime();
+                    // year (bcd), real coding seems to be different
+                    _sendData[7] = IntToBcd(dateTime.Year / 100);
+                    _sendData[8] = IntToBcd(dateTime.Year % 100);    // real code is 0xA4
 
-                _sendData[9] = IntToBcd(dateTime.Month);    // month
-                _sendData[10] = IntToBcd(dateTime.Day);     // day
-                // time (bcd)
-                _sendData[11] = IntToBcd(dateTime.Hour);    // hour
-                _sendData[12] = IntToBcd(dateTime.Minute);  // min
-                _sendData[13] = IntToBcd(dateTime.Second);  // sec
+                    _sendData[9] = IntToBcd(dateTime.Month);    // month
+                    _sendData[10] = IntToBcd(dateTime.Day);     // day
+                    // time (bcd)
+                    _sendData[11] = IntToBcd(dateTime.Hour);    // hour
+                    _sendData[12] = IntToBcd(dateTime.Minute);  // min
+                    _sendData[13] = IntToBcd(dateTime.Second);  // sec
+                }
 
                 OBDSend(_sendData);
             }
