@@ -68,7 +68,6 @@ namespace EdiabasCall
 
             if (outFile == null)
             {
-                Console.OutputEncoding = encoding;
                 outputWriter = Console.Out;
             }
             else
