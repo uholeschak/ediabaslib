@@ -1,0 +1,228 @@
+;**************************************************************
+;
+;
+; @(#)BEST2 RUNTIME LIB Version 2.14 (2006) Softing AG@(#)
+;
+;
+; each Library entry has the following Format
+;  functionname: parmater declaration
+;       opcode [[<nr of parameter>|CONSTANT ] [,<nr of parameter>|CONSTANT ]]]
+;  ;end
+;
+; each library function may use: L0,L1, F0,F1 and S1
+; each library function must push a long value on the stack
+; each non string Parameter is a long value
+;
+; parameter description:
+;  ##
+;  |^
+;  ||
+;  |+--> access:
+;  |       W = write access (variable)
+;  |       R = read access (variable)
+;  |       X = read access (constant value or variable)
+;  |       E = result access (constant value or variable)
+;  |
+;  +---> data type:
+;         V  = char, int or long
+;         A  = string
+;         F  = real
+;
+;***************************************************************
+
+;---------------------------------------------------------------
+calc_flags: 
+			pushf
+			clear		S1
+			move		S1,"czsvt"
+			clear		S2
+
+			popf
+			pushf
+			jnc			%nc
+			move		S1[#0],#'C'
+%nc:
+
+			popf
+			pushf
+			jnz			%nz
+			move		S1[#1],#'Z'
+%nz:
+
+			popf
+			pushf
+			jpl			%pl
+			move		S1[#2],#'S'
+%pl:
+
+			popf
+			pushf
+			jnv			%nv
+			move		S1[#3],#'V'
+%nv:
+
+			popf
+			pushf
+;jnt seems to be buggy
+			jt			%t
+			jump		%nt
+%t:
+			move		S1[#4],#'T'
+%nt:
+
+			clear		S3
+			move		S3,"jpl "
+			popf
+			pushf
+			jpl			%jpl
+			clear		S3
+%jpl:
+			strcat		S2,S3
+
+			clear		S3
+			move		S3,"jmi "
+			popf
+			pushf
+			jmi			%jmi
+			clear		S3
+%jmi:
+			strcat		S2,S3
+
+			clear		S3
+			move		S3,"jz "
+			popf
+			pushf
+			jz			%jz
+			clear		S3
+%jz:
+			strcat		S2,S3
+
+			clear		S3
+			move		S3,"jnz "
+			popf
+			pushf
+			jnz			%jnz
+			clear		S3
+%jnz:
+			strcat		S2,S3
+
+			clear		S3
+			move		S3,"jv "
+			popf
+			pushf
+			jv			%jv
+			clear		S3
+%jv:
+			strcat		S2,S3
+
+			clear		S3
+			move		S3,"jnv "
+			popf
+			pushf
+			jnv			%jnv
+			clear		S3
+%jnv:
+			strcat		S2,S3
+
+			clear		S3
+			move		S3,"jc "
+			popf
+			pushf
+			jc			%jc
+			clear		S3
+%jc:
+			strcat		S2,S3
+
+			clear		S3
+			move		S3,"jnc "
+			popf
+			pushf
+			jnc			%jnc
+			clear		S3
+%jnc:
+			strcat		S2,S3
+
+			clear		S3
+			move		S3,"jae "
+			popf
+			pushf
+			jae			%jae
+			clear		S3
+%jae:
+			strcat		S2,S3
+
+			clear		S3
+			move		S3,"jg "
+			popf
+			pushf
+			jg			%jg
+			clear		S3
+%jg:
+			strcat		S2,S3
+
+			clear		S3
+			move		S3,"jge "
+			popf
+			pushf
+			jge			%jge
+			clear		S3
+%jge:
+			strcat		S2,S3
+
+			clear		S3
+			move		S3,"jl "
+			popf
+			pushf
+			jl			%jl
+			clear		S3
+%jl:
+			strcat		S2,S3
+
+			clear		S3
+			move		S3,"jle "
+			popf
+			pushf
+			jle			%jle
+			clear		S3
+%jle:
+			strcat		S2,S3
+
+			clear		S3
+			move		S3,"ja "
+			popf
+			pushf
+			ja			%ja
+			clear		S3
+%ja:
+			strcat		S2,S3
+
+			clear		S3
+			move		S3,"jbe "
+			popf
+			pushf
+			jbe			%jbe
+			clear		S3
+%jbe:
+			strcat		S2,S3
+
+			popf
+			push		#1.L
+;end
+
+;---------------------------------------------------------------
+get_error_bit:
+			move	L0,#0
+%1:
+			comp	L0,#33
+			jz		%3
+			jt		%2,L0
+			adds	L0,#1
+			jump	%1
+%2:
+			push	L0
+			jump	%4
+%3:
+			push	#0.L
+%4:
+;end
+

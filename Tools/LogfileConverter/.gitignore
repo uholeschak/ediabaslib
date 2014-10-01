@@ -1,5 +1,5 @@
-bin/
-obj/
+/bin/
+/obj/
 *.bat
 *.suo
 *.user

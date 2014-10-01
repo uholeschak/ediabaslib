@@ -1,0 +1,818 @@
+;Test program for command execution test
+
+TBEG "KONZEPT_TABELLE"
+HEAD "NR", "KONZEPT_TEXT"
+LINE "0x10", "D-CAN"
+LINE "0x0F", "BMW-FAST"
+LINE "0x0D", "KWP2000*"
+LINE "0x0C", "KWP2000"
+LINE "0x06", "DS2"
+TEND
+
+INITIALISIERUNG#
+;    JOBNAME:INITIALISIERUNG
+;    JOBCOMMENT:Initialisierung und Kommunikationsparameter
+;    RESULT:DONE
+;    RESULTTYPE:int
+;    RESULTCOMMENT:1, wenn Okay
+;
+					ergi		"DONE",#$1.I
+					eoj
+					eoj
+
+TEST_SREG#
+;    JOBNAME:TEST_SREG
+;    JOBCOMMENT:Test sreg
+;    RESULT:dynamic
+;    RESULTTYPE:dynamic
+;    RESULTCOMMENT:Test results
+;
+					clear		S0
+					clear		S1
+					move 		S0,{$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B}
+					move 		S1,S0
+
+					move 		S0,S1
+					clear		S0
+					ergb		"CLEAR_B",S0[#$A]
+
+					clear		S0
+					move 		S0,S1
+					fix2hex		S0,#$12345678.L
+					ergy		"FIX2HEX4_Y",S0
+					ergs		"FIX2HEX4_S",S0
+
+					clear		S0
+					move 		S0,S1
+					fix2hex		S0,#$1234.I
+					ergy		"FIX2HEX2_Y",S0
+					ergs		"FIX2HEX2_S",S0
+
+					clear		S0
+					move 		S0,S1
+					fix2hex		S0,#$12.B
+					ergy		"FIX2HEX1_Y",S0
+					ergs		"FIX2HEX1_S",S0
+
+					clear		S0
+					move 		S0,S1
+					clear		S2
+					move		S2,{$12.B,$34.B,$56.B,$78.B}
+					fix2hex		S0,S2[#1]
+					ergy		"FIX2HEXS_Y",S0
+					ergs		"FIX2HEXS_S",S0
+
+					clear		S0
+					move 		S0,S1
+					fix2dez		S0,#-123456789.L
+					ergy		"FIX2DEZ4_Y",S0
+					ergs		"FIX2DEZ4_S",S0
+
+					clear		S0
+					move 		S0,S1
+					fix2dez		S0,#-12345.I
+					ergy		"FIX2DEZ2_Y",S0
+					ergs		"FIX2DEZ2_S",S0
+
+					clear		S0
+					move 		S0,S1
+					fix2dez		S0,#-12.B
+					ergy		"FIX2DEZ1_Y",S0
+					ergs		"FIX2DEZ1_S",S0
+
+					clear		S0
+					move 		S0,S1
+					clear		S2
+					move		S2,{$81.B,$82.B,$83.B,$84.B}
+					fix2dez		S0,S2[#1]
+					ergy		"FIX2DEZS_Y",S0
+					ergs		"FIX2DEZS_S",S0
+
+					clear		S0
+					move 		S0,S1
+					ufix2dez	S0,#-123456789.L
+					ergy		"UFIX2DEZ4_Y",S0
+					ergs		"UFIX2DEZ4_S",S0
+
+					clear		S0
+					move 		S0,S1
+					ufix2dez	S0,#-12345.I
+					ergy		"UFIX2DEZ2_Y",S0
+					ergs		"UFIX2DEZ2_S",S0
+
+					clear		S0
+					move 		S0,S1
+					ufix2dez	S0,#-12.B
+					ergy		"UFIX2DEZ1_Y",S0
+					ergs		"UFIX2DEZ1_S",S0
+
+					clear		S0
+					move 		S0,S1
+					clear		S2
+					move		S2,{$81.B,$82.B,$83.B,$84.B}
+					ufix2dez	S0,S2[#1]
+					ergy		"UFIX2DEZS_Y",S0
+					ergs		"UFIX2DEZS_S",S0
+
+					clear		S0
+					move 		S0,S1
+					y2bcd		S0,{$12.B,$34.B,$56.B,$A1.B,$1B.B}
+					ergy		"Y2BCD_Y",S0
+					ergs		"Y2BCD_S",S0
+
+					clear		S0
+					move 		S0,S1
+					y2hex		S0,{$12.B,$34.B,$56.B,$A1.B,$1B.B}
+					ergy		"Y2HEX_Y",S0
+					ergs		"Y2HEX_S",S0
+
+					tabset		"KONZEPT_TABELLE"
+					clear		S2
+					move		S2,"BMW-FAST"
+					tabseek		"KONZEPT_TEXT",S2
+					clear		S0
+					move 		S0,S1
+					tabget		S0,"NR"
+					ergy		"TABGET_Y",S0
+					ergs		"TABGET_S",S0
+					ergb		"TABGET_B",S0[#$A]
+					tabrows		L0
+					ergl		"TABROWS",L0
+					tabcols		L0
+					ergl		"TABCOLS",L0
+
+					clear		S0
+					move 		S0,S1
+					move		S0[#$2],"TEST"
+					ergy		"MOVE1",S0
+
+					clear		S0
+					move 		S0,S1
+					move		S0[#$2],#$1234.L
+					ergy		"MOVE2",S0
+
+					clear		S0
+					move 		S0,S1
+					move		S0[#$2],#$1234.B
+					ergy		"MOVE3",S0
+
+					clear		S0
+					move 		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					move		L0,S0[#$2]
+					ergl		"MOVE4",L0
+
+					clear		S0
+					move 		S0,S1
+					move 		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					clear		S2
+					move		S2,S0[#$2]#10
+					ergy		"MOVE5",S2
+
+					clear		S0
+					move 		S0,S1
+					strcat		S0,"TEST"
+					ergy		"STRCAT_Y",S0
+					ergs		"STRCAT_S",S0
+
+					clear		S0
+					move 		S0,S1
+					cfgsg		S0,"ECUPATH"
+					ergy		"CFGSG_ECUPATH_Y",S0
+					ergs		"CFGSG_ECUPATH_S",S0
+					clear		S0
+					cfgsg		S0,"EcuPath"
+					ergs		"CFGSG_ECUPATH",S0
+
+					clear		S0
+					cfgsg		S0,"BipEcuFile"
+					ergs		"CFGSG_ECUFILE",S0
+
+					cfgig		I0,"UserErrorHandling"
+					ergi		"CFGIG_USERERR",I0
+
+					gettmr		L0
+					ergl		"GETTMR",L0
+
+					clear		S0
+					move 		S0,S1
+					shmset		"","TEST"
+					shmget		S0,""
+					ergy		"SHMGET_Y",S0
+					ergs		"SHMGET_S",S0
+
+					clear		S0
+					move 		S0,S1
+					hex2y		S0,"1234"
+					ergy		"HEX2Y",S0
+
+					clear		S0
+					move 		S0,S1
+					setspc		" ",#$2.L
+					stoken		S0,"Dies ist ein Text"
+					ergs		"SETSPC1_S",S0
+					ergy		"SETSPC1_Y",S0
+
+					clear		S0
+					move 		S0,S1
+					setspc		" ",#$0.L
+					stoken		S0,"Dies ist ein Text"
+					ergs		"SETSPC2_S",S0
+					ergy		"SETSPC2_Y",S0
+
+					clear		S0
+					move 		S0,S1
+					setspc		" ",#$5.L
+					stoken		S0,"Dies ist ein Text"
+					ergs		"SETSPC3_S",S0
+					ergy		"SETSPC3_Y",S0
+
+					clear		S0
+					move 		S0,S1
+					a2flt		F0,"1235.6789"
+					setflt		#$5.L
+					flt2a		S0,F0
+					ergs		"FLT2A1_S",S0
+					ergy		"FLT2A1_Y",S0
+
+					clear		S0
+					move 		S0,S1
+					a2flt		F0,"1235.6789"
+					setflt		#$3.L
+					flt2a		S0,F0
+					ergs		"FLT2A2_S",S0
+					ergy		"FLT2A2_Y",S0
+
+					clear		S0
+					move 		S0,S1
+					a2flt		F0,"-1235.6789"
+					setflt		#$6.L
+					flt2a		S0,F0
+					ergs		"FLT2A3_S",S0
+					ergy		"FLT2A3_Y",S0
+
+					clear		S0
+					move 		S0,S1
+					a2y			S0," 12,   , 34  45,ab, CD; EF, E4 ,  "
+					ergy		"A2Y1",S0
+					move 		S0,S1
+					a2y			S0," 12,   , 34  45,ab, CD; EFX, E4 ,  "
+					ergy		"A2Y2",S0
+
+					clear		S0
+					move 		S0,S1
+					a2flt		F0,"-1235.6789"
+					flt2y4		S0[#0],F0
+					ergy		"FLT2Y4_Y",S0
+					y42flt		F1,S0[#0]
+					ergr		"Y42FLT_R",F1
+					move 		S0,S1
+					flt2y8		S0[#32],F0
+					ergy		"FLT2Y8_Y",S0
+					y82flt		F1,S0[#32]
+					ergr		"Y82FLT_R",F1
+
+					clear		S0
+					move		S0,S1
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					srevrs		S0
+					ergy		"SREVRS_Y",S0
+
+					clear		S0
+					move		S0,S1
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					swap		S0[#2]#4
+					ergy		"SWAP1_Y",S0
+
+					clear		S0
+					move		S0,S1
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					swap		S0[#14]#4
+					ergy		"SWAP2_Y",S0
+
+					ergs		"UPPERASE","Uppercase"
+					ergs		"uppercase","Lowercase"
+
+					eoj
+					eoj
+
+TEST_MATH#
+;    JOBNAME:TEST_MATH
+;    JOBCOMMENT:Test math
+;    RESULT:dynamic
+;    RESULTTYPE:dynamic
+;    RESULTCOMMENT:Test results
+;
+					clear		S0
+					clear		S1
+					move 		S0,{$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B}
+					move 		S1,S0
+
+					move		L0,#$1.L
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					adds		L0,S0[#$2]
+					ergl		"ADDS4",L0
+
+					move		L0,#$1.L
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					adds		I0,S0[#$2]
+					ergi		"ADDS2",I0
+
+					move		L0,#$1.L
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					adds		B0,S0[#$2]
+					ergb		"ADDS1",B0
+
+					clear		S0
+					move 		S0,S1
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					adds		S0[#$2],#$12.B
+					ergy		"ADDS_Y",S0
+
+					move		L0,#$1.L
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					addc		L0,S0[#$2]
+					ergl		"ADDC4",L0
+					move		L0,#$1.L
+					clrc
+					addc		L0,S0[#$2]
+					ergl		"ADDC4_C",L0
+
+					move		L0,#$1.L
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					addc		I0,S0[#$2]
+					ergi		"ADDC2",I0
+
+					move		L0,#$1.L
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					addc		B0,S0[#$2]
+					ergb		"ADDC1",B0
+
+					clear		S0
+					move 		S0,S1
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					addc		S0[#$2],#$12.B
+					ergy		"ADDC_Y",S0
+
+					move		L0,#$1.L
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					subb		L0,S0[#$2]
+					ergl		"SUBB4",L0
+
+					move		L0,#$1.L
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					subb		I0,S0[#$2]
+					ergi		"SUBB2",I0
+
+					move		L0,#$1.L
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					subb		B0,S0[#$2]
+					ergb		"SUBB1",B0
+
+					clear		S0
+					move 		S0,S1
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					subb		S0[#$2],#$12.B
+					ergy		"SUBB_Y",S0
+
+					move		L0,#$1.L
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					subc		L0,S0[#$2]
+					ergl		"SUBC4",L0
+					move		L0,#$1.L
+					clrc
+					subc		L0,S0[#$2]
+					ergl		"SUBC4_C",L0
+
+					move		L0,#$1.L
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					subc		I0,S0[#$2]
+					ergi		"SUBC2",I0
+
+					move		L0,#$1.L
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					subc		B0,S0[#$2]
+					ergb		"SUBC1",B0
+
+					clear		S0
+					move 		S0,S1
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					subc		S0[#$2],#$12.B
+					ergy		"SUBC_Y",S0
+
+					move		L0,#$2.L
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					mult		L0,S0[#$2]
+					ergl		"MULT4",L0
+
+					move		I0,#$2.I
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					mult		I0,S0[#$2]
+					ergi		"MULT2",I0
+
+					move		B0,#$2.B
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					mult		B0,S0[#$2]
+					ergb		"MULT1",B0
+
+					move		L0,#$12345678.L
+					clear		S0
+					move		S0,{$01.B,$02.B,$03.B,$04.B,$05.B,$06.B,$07.B}
+					divs		L0,S0[#$2]
+					ergl		"DIVS4",L0
+
+					move		I0,#$1234.I
+					clear		S0
+					move		S0,{$01.B,$02.B,$03.B,$04.B,$05.B,$06.B,$07.B}
+					divs		I0,S0[#$2]
+					ergi		"DIVS2",I0
+
+					move		B0,#$12.B
+					clear		S0
+					move		S0,{$01.B,$02.B,$03.B,$04.B,$05.B,$06.B,$07.B}
+					divs		B0,S0[#$2]
+					ergb		"DIVS1",B0
+
+					move		L0,#$82345678.L
+					setc
+					asl			L0,#4
+					ergl		"ASL4",L0
+					move		L0,#$82345678.L
+					clrc
+					asl			L0,#4
+					ergl		"ASL4_C",L0
+
+					move		I0,#$8234.I
+					setc
+					asl			I0,#4
+					ergi		"ASL2",I0
+
+					clear		S0
+					move		S0,{$12.B,$34.B,$86.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					asl			S0[#2],#4
+					ergy		"ASL1_Y",S0
+
+					move		L0,#$10000000.L
+					clrc
+					asl			L0,#4
+					jnc			asl4_nc
+					ergs		"ASL4_CARRY", "SET"
+asl4_nc:
+
+					move		I0,#$1000.I
+					clrc
+					asl			I0,#4
+					jnc			asl2_nc
+					ergs		"ASL2_CARRY", "SET"
+asl2_nc:
+
+					move		L0,#$82345678.L
+					setc
+					lsl			L0,#4
+					ergl		"LSL4",L0
+					move		L0,#$82345678.L
+					clrc
+					lsl			L0,#4
+					ergl		"LSL4_C",L0
+
+					move		I0,#$8234.I
+					setc
+					lsl			I0,#4
+					ergi		"LSL2",I0
+
+					clear		S0
+					move		S0,{$12.B,$34.B,$86.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					lsl			S0[#2],#4
+					ergy		"LSL1_Y",S0
+
+					move		L0,#$10000000.L
+					clrc
+					lsl			L0,#4
+					jnc			lsl4_nc
+					ergs		"LSL4_CARRY", "SET"
+lsl4_nc:
+
+					move		I0,#$1000.I
+					clrc
+					lsl			I0,#4
+					jnc			lsl2_nc
+					ergs		"LSL2_CARRY", "SET"
+lsl2_nc:
+
+					move		L0,#$82345678.L
+					setc
+					asr			L0,#4
+					ergl		"ASR4",L0
+					move		L0,#$82345678.L
+					clrc
+					asr			L0,#4
+					ergl		"ASR4_C",L0
+
+					move		I0,#$8234.I
+					setc
+					asr			I0,#4
+					ergi		"ASR2",I0
+
+					clear		S0
+					move		S0,{$12.B,$34.B,$86.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					asr			S0[#2],#4
+					ergy		"ASR1_Y",S0
+
+					move		L0,#$00000008.L
+					clrc
+					asr			L0,#4
+					jnc			asr_nc
+					ergs		"ASR4_CARRY", "SET"
+asr_nc:
+
+					move		L0,#$82345678.L
+					setc
+					lsr			L0,#4
+					ergl		"LSR4",L0
+					move		L0,#$82345678.L
+					clrc
+					lsr			L0,#4
+					ergl		"LSR4_C",L0
+
+					move		I0,#$8234.I
+					setc
+					lsr			I0,#4
+					ergi		"LSR2",I0
+
+					clear		S0
+					move		S0,{$12.B,$34.B,$86.B,$78.B,$9A.B,$BC.B,$DE.B}
+					setc
+					lsr			S0[#2],#4
+					ergy		"LSR1_Y",S0
+
+					move		L0,#$00000008.L
+					clrc
+					lsr			L0,#4
+					jnc			lsr_nc
+					ergs		"LSR4_CARRY", "SET"
+lsr_nc:
+
+					eoj
+					eoj
+
+TEST_PARY#
+;    JOBNAME:TEST_PARY
+;    JOBCOMMENT:Test pary
+;    ARG:TESTPAR
+;    ARGTYPE:string
+;    ARGCOMMENT:Test string
+;    RESULT:PARS_Y
+;    RESULTTYPE:binary
+;    RESULTCOMMENT:Test array
+;    RESULT:PARS_S
+;    RESULTTYPE:string
+;    RESULTCOMMENT:Test string
+;
+					clear		S0
+					move 		S0,{$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B}
+					move 		S1,S0
+					pars		S0,#$1
+					jnz			pars_ok
+					ergs		"ARG", "MISSING"
+pars_ok:
+					ergy		"PARS_Y",S0
+					ergs		"PARS_S",S0
+					eoj
+					eoj
+
+TEST_PARL#
+;    JOBNAME:TEST_PARL
+;    JOBCOMMENT:Test parl
+;    ARG:TESTPAR
+;    ARGTYPE:integer
+;    ARGCOMMENT:Test value
+;    RESULT:PARL
+;    RESULTTYPE:integer
+;    RESULTCOMMENT:Test value
+;
+					clear		S0
+					move 		S1,S0
+					parl		L0,#$1
+					jnz			parl_ok
+					ergs		"ARG", "MISSING"
+parl_ok:
+					ergl		"PARL",L0
+					eoj
+					eoj
+
+TEST_PARR#
+;    JOBNAME:TEST_PARR
+;    JOBCOMMENT:Test parr
+;    ARG:TESTPAR
+;    ARGTYPE:real
+;    ARGCOMMENT:Test real value
+;    RESULT:PARR
+;    RESULTTYPE:real
+;    RESULTCOMMENT:Test value
+;
+					clear		S0
+					move 		S1,S0
+					parr		F0,#$1
+					ergr		"PARR",F0
+					jnz			parr_ok
+					ergs		"ARG", "MISSING"
+parr_ok:
+					eoj
+					eoj
+
+TEST_FILES#
+;    JOBNAME:TEST_FILES
+;    JOBCOMMENT:Test parr
+;    RESULT:dynamic
+;    RESULTTYPE:dynamic
+;    RESULTCOMMENT:Test values
+;
+					clear		S0
+					cfgsg		S2,"EcuPath"
+
+					clear		S0
+					move		S0,S2
+					strcat		S0,"\\test_file1.txt"
+					fopen		B0,S0
+
+					clear		S0
+					move		S0,S2
+					strcat		S0,"\\test_file2.txt"
+					fopen		B1,S0
+
+					clear		S1
+					freadln		S1,B0
+					jnc			line1_ok
+					clear		S1
+					move		S1,"ERROR"
+line1_ok:
+					ergs		"F1_LINE1_S",S1
+					ergy		"F1_LINE1_Y",S1
+
+					clear		S1
+					freadln		S1,B1
+					jnc			f2line1_ok
+					clear		S1
+					move		S1,"ERROR"
+f2line1_ok:
+					ergs		"F2_LINE1_S",S1
+					ergy		"F2_LINE1_Y",S1
+
+					fseekln		B1,#$7
+					freadln		S1,B1
+					jnc			f2line8_ok
+					clear		S1
+					move		S1,"ERROR"
+f2line8_ok:
+					ergs		"F2_LINE8_S",S1
+					ergy		"F2_LINE8_Y",S1
+
+					ftellln		L4,B1
+					ergl		"F2_LINE9",L4
+
+					freadln		S1,B1
+					jnc			f2line9_ok
+					clear		S1
+					move		S1,"ERROR"
+f2line9_ok:
+					ergs		"F2_LINE9_S",S1
+					ergy		"F2_LINE9_Y",S1
+
+					ftellln		L4,B1
+					ergl		"F2_LINE10",L4
+
+					clear		S1
+					freadln		S1,B0
+					jnc			line2_ok
+					clear		S1
+					move		S1,"ERROR"
+line2_ok:
+					ergs		"F1_LINE2_S",S1
+					ergy		"F1_LINE2_Y",S1
+
+					ftell		L4,B0
+					ergl		"F1_POS3",L4
+
+					ftellln		L4,B0
+					ergl		"F1_LINE3",L4
+
+					clear		S1
+					freadln		S1,B0
+					jnc			line3_ok
+					clear		S1
+					move		S1,"ERROR"
+line3_ok:
+					ergs		"F1_LINE3_S",S1
+					ergy		"F1_LINE3_Y",S1
+
+					ftell		L4,B0
+					ergl		"F1_POS4",L4
+
+					ftellln		L4,B0
+					ergl		"F1_LINE4",L4
+
+					fclose		B1
+
+					fseekln		B0,#20
+					clear		S1
+					freadln		S1,B0
+					jnc			line21_ok
+					clear		S1
+					move		S1,"ERROR"
+line21_ok:
+					ergs		"F1_LINE21_S",S1
+					ergy		"F1_LINE21_Y",S1
+
+					fseekln		B0,#8
+					clear		S1
+					freadln		S1,B0
+					jnc			line9_ok
+					clear		S1
+					move		S1,"ERROR"
+line9_ok:
+					ergs		"F1_LINE9_S",S1
+					ergy		"F1_LINE9_Y",S1
+
+					ftell		L4,B0
+					ergl		"F1_POS10",L4
+
+; ediabas ftellln bug, changes file position at file end!
+;					ftellln		L4,B0
+;					ergl		"F1_LINE10",L4
+
+					clear		S1
+					freadln		S1,B0
+					jnc			line10_ok
+					clear		S1
+					move		S1,"ERROR"
+line10_ok:
+					ergs		"F1_LINE10_S",S1
+					ergy		"F1_LINE10_Y",S1
+
+					ftell		L4,B0
+					ergl		"F1_POS11",L4
+
+					ftellln		L4,B0
+					ergl		"F1_LINE11",L4
+
+					fseek		B0,#$2
+					ftellln		L4,B0
+					ergl		"F1_LINE1_PART",L4
+
+					clear		S1
+					freadln		S1,B0
+					jnc			pos2_ok
+					clear		S1
+					move		S1,"ERROR"
+pos2_ok:
+					ergs		"F1_LINE1_PART_S",S1
+					ergy		"F1_LINE1_PART_Y",S1
+
+					fseek		B0,#$4
+					clear		S1
+					move		S1[#1],#0
+					fread		S1[#0],B0
+					jnc			pos4_ok
+					clear		S1
+					move		S1,"ERROR"
+pos4_ok:
+					ergs		"F1_LINE1_CHAR",S1
+
+					fclose		B0
+; check if second close creates error
+					fclose		B0
+					eoj
+					eoj
