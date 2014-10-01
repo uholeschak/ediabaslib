@@ -17,6 +17,7 @@ namespace EdiabasLib
     {
         private delegate void OperationDelegate(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1);
         public delegate bool AbortJobDelegate();
+        public delegate void ProgressJobDelegate(Ediabas ediabas);
 
         public static readonly int MAX_ARRAY_LENGTH = 1024;
         public static readonly int MAX_FILES = 5;
@@ -1570,9 +1571,9 @@ namespace EdiabasLib
         private Dictionary<string, string> configDict = new Dictionary<string, string>();
         private Dictionary<string, string> groupMappingDict = new Dictionary<string, string>();
         private Dictionary<string, byte[]> sharedDataDict = new Dictionary<string, byte[]>();
-        private EdValueType infoProgressRange;
-        private EdValueType infoProgressPos;
-        private string infoText = string.Empty;
+        private long infoProgressRange;
+        private long infoProgressPos;
+        private string infoProgressText = string.Empty;
         private string sgbdFileName = string.Empty;
         private string fileSearchDir = string.Empty;
         private EdCommBase edCommClass;
@@ -1581,6 +1582,7 @@ namespace EdiabasLib
         private byte[] recBuffer = new byte[256];
         private byte[] opArgBuffer = new byte[5];
         private AbortJobDelegate abortJobFunc = null;
+        private ProgressJobDelegate progressJobFunc = null;
         private StreamWriter swLog = null;
         private EdValueType[] commParameter = new EdValueType[0];
         private EdValueType commRepeats = 0;
@@ -1700,27 +1702,23 @@ namespace EdiabasLib
             }
         }
 
-        public EdValueType InfoProgressRange
+        public int InfoProgressPercent
         {
             get
             {
-                return infoProgressRange;
+                if ((infoProgressPos < 0) || (infoProgressRange <= 0))
+                {
+                    return -1;
+                }
+                return (int)(infoProgressPos * 100 / infoProgressRange);
             }
         }
 
-        public EdValueType InfoProgressPos
+        public string InfoProgressText
         {
             get
             {
-                return infoProgressPos;
-            }
-        }
-
-        public string InfoText
-        {
-            get
-            {
-                return infoText;
+                return infoProgressText;
             }
         }
 
@@ -1733,6 +1731,18 @@ namespace EdiabasLib
             set
             {
                 abortJobFunc = value;
+            }
+        }
+
+        public ProgressJobDelegate ProgressJobFunc
+        {
+            get
+            {
+                return progressJobFunc;
+            }
+            set
+            {
+                progressJobFunc = value;
             }
         }
 
@@ -2175,6 +2185,14 @@ namespace EdiabasLib
                 return result;
             }
             return null;
+        }
+
+        private void JobProgressInform()
+        {
+            if (progressJobFunc != null)
+            {
+                progressJobFunc(this);
+            }
         }
 
         public JobInfos ReadAllJobs()
@@ -2716,9 +2734,9 @@ namespace EdiabasLib
             SetConfigProperty("BipEcuFile", Path.GetFileNameWithoutExtension(sgbdFileName));
             flags.Init();
             trapMask = 0;
-            infoProgressRange = 0;
-            infoProgressPos = 0;
-            infoText = string.Empty;
+            infoProgressRange = -1;
+            infoProgressPos = -1;
+            infoProgressText = string.Empty;
 
             pcCounter = jobAddress;
             CloseTableFs();

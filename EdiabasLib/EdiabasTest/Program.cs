@@ -97,6 +97,7 @@ namespace EdiabasTest
                     EdCommBmwFast edCommBwmFast = new EdCommBmwFast(ediabas);
                     edCommBwmFast.ComPort = comPort;
                     ediabas.EdCommClass = edCommBwmFast;
+                    ediabas.ProgressJobFunc = ProgressJobFunc;
 
                     ediabas.FileSearchDir = Path.GetDirectoryName(sgbdFile);
                     if (logFile != null)
@@ -224,6 +225,26 @@ namespace EdiabasTest
             }
 
             return 0;
+        }
+
+        static void ProgressJobFunc(Ediabas ediabas)
+        {
+            string jobInfo = ediabas.InfoProgressText;
+            int jobProgress = ediabas.InfoProgressPercent;
+
+            string message = string.Empty;
+            if (jobProgress >= 0)
+            {
+                message += string.Format("{0,3}% ", jobProgress);
+            }
+            if (jobInfo.Length > 0)
+            {
+                message += string.Format("'{0}'", jobInfo);
+            }
+            if (message.Length > 0)
+            {
+                outputWriter.WriteLine("Progress: " + message);
+            }
         }
 
         static void ShowHelp(OptionSet p)

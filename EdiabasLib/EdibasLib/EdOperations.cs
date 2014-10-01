@@ -1262,25 +1262,37 @@ namespace EdiabasLib
         // BEST2: incProgressPos
         private static void OpIincpos(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            EdValueType newValue = ediabas.infoProgressPos + arg0.GetValueData();
+            long incVal = arg0.GetValueData();
+            long newValue;
+            if (ediabas.infoProgressPos < 0)
+            {
+                newValue = incVal;
+            }
+            else
+            {
+                newValue = ediabas.infoProgressPos + incVal;
+            }
             if (newValue > ediabas.infoProgressRange)
             {
                 newValue = ediabas.infoProgressRange;
             }
             ediabas.infoProgressPos = newValue;
+            ediabas.JobProgressInform();
         }
 
         // BEST2: setProgressRange
         private static void OpIrange(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.infoProgressPos = 0;
+            ediabas.infoProgressPos = -1;
             ediabas.infoProgressRange = arg0.GetValueData();
+            ediabas.JobProgressInform();
         }
 
         // BEST2: updateInfo
         private static void OpIupdate(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.infoText = arg0.GetStringData();
+            ediabas.infoProgressText = arg0.GetStringData();
+            ediabas.JobProgressInform();
         }
 
         // jump above

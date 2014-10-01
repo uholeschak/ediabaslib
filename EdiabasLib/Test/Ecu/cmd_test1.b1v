@@ -827,3 +827,43 @@ pos4_ok:
 					fclose		B0
 					eoj
 					eoj
+
+TEST_PROGRESS_INFO#
+;    JOBNAME:TEST_PROGRESS_INFO
+;    JOBCOMMENT:Test progress info
+;
+					irange		#1000.L
+					iupdate		"PREPARE"
+
+					waitex		#100.L
+					iincpos		#0.L
+
+					waitex		#100.L
+					iincpos		#100.L
+
+					waitex		#100.L
+					iupdate		"STEP 1"
+
+					waitex		#100.L
+					iincpos		#400.L
+
+					waitex		#100.L
+					iupdate		"STEP 2"
+
+					waitex		#100.L
+					iincpos		#400.L
+
+					waitex		#100.L
+					iupdate		"STEP 3"
+
+					waitex		#100.L
+					iincpos		#400.L
+
+					waitex		#100.L
+					iupdate		"STEP 4"
+
+					waitex		#100.L
+					ergi		"DONE",#$1.I
+					eoj
+					eoj
+

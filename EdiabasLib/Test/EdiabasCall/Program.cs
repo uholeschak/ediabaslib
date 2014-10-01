@@ -24,6 +24,8 @@ namespace EdiabasCall
         private static Encoding encoding = Encoding.GetEncoding(1252);
         private static TextWriter outputWriter;
         private static uint apiHandle = 0;
+        private static string lastJobInfo = string.Empty;
+        private static int lastJobProgress = -1;
 
         static int Main(string[] args)
         {
@@ -140,8 +142,12 @@ namespace EdiabasCall
                     outputWriter.WriteLine("JOB: " + jobName);
 
                     API.apiJob(sgbdBaseFile, jobName, jobArgs, jobResults);
+
+                    lastJobInfo = string.Empty;
+                    lastJobProgress = -1;
                     while (API.apiState() == API.APIBUSY)
                     {
+                        PrintProgress();
                         Thread.Sleep(10);
                     }
                     if (API.apiState() == API.APIERROR)
@@ -150,6 +156,7 @@ namespace EdiabasCall
                         API.apiEnd();
                         return 1;
                     }
+                    PrintProgress();
                     PrintResults(true);
                 }
 
@@ -161,6 +168,30 @@ namespace EdiabasCall
             }
 
             return 0;
+        }
+
+        static void PrintProgress()
+        {
+            string jobInfo = string.Empty;
+            int jobProgress = API.apiJobInfo(out jobInfo);
+            if ((jobProgress != lastJobProgress) || (jobInfo != lastJobInfo))
+            {
+                string message = string.Empty;
+                if (jobProgress >= 0)
+                {
+                    message += string.Format("{0,3}% ", jobProgress);
+                }
+                if (jobInfo.Length > 0)
+                {
+                    message += string.Format("'{0}'", jobInfo);
+                }
+                if (message.Length > 0)
+                {
+                    outputWriter.WriteLine("Progress: " + message);
+                }
+            }
+            lastJobProgress = jobProgress;
+            lastJobInfo = jobInfo;
         }
 
         static void PrintResults(bool ignoreSet0)
