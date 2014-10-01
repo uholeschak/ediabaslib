@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO.Ports;
 using System.Threading;
+using System.Diagnostics;
 
 namespace EdiabasLib
 {
@@ -20,6 +21,7 @@ namespace EdiabasLib
         private InterfaceConnectDelegate interfaceConnectFunc = null;
         private InterfaceDisconnectDelegate interfaceDisconnectFunc = null;
         private TransmitDataDelegate transmitDataFunc = null;
+        private Stopwatch stopWatch = new Stopwatch();
 
         public override string InterfaceType
         {
@@ -165,7 +167,9 @@ namespace EdiabasLib
             try
             {
                 int recLen = 0;
-                for (int i = 0; i < timeout / 10; i++)
+                stopWatch.Reset();
+                stopWatch.Start();
+                for (; ; )
                 {
                     if (serialPort.BytesToRead >= length)
                     {
@@ -175,8 +179,13 @@ namespace EdiabasLib
                     {
                         break;
                     }
+                    if (stopWatch.ElapsedMilliseconds > timeout)
+                    {
+                        break;
+                    }
                     Thread.Sleep(10);
                 }
+                stopWatch.Stop();
                 if (logResponse)
                 {
                     ediabas.LogData(receiveData, recLen, "Rec ");
