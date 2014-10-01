@@ -20,6 +20,17 @@ INITIALISIERUNG#
 					eoj
 					eoj
 
+ENDE#
+;    JOBNAME:ENDE
+;    JOBCOMMENT:Schliessen des SGBD
+;    RESULT:DONE
+;    RESULTTYPE:int
+;    RESULTCOMMENT:1, wenn Okay
+;
+					xhangup
+					eoj
+					eoj
+
 TEST_SREG#
 ;    JOBNAME:TEST_SREG
 ;    JOBCOMMENT:Test sreg
