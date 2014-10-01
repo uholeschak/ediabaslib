@@ -1,4 +1,4 @@
-Debug/
-Release/
+/Debug/
+/Release/
 *.user
 *.aps
