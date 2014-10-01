@@ -478,7 +478,7 @@ namespace EdiabasLib
             EdValueType activeErrors = ediabas.trapBits & ~ediabas.trapMask;
             if (activeErrors != 0)
             {
-                throw new ArgumentOutOfRangeException("activeErrors", "OpEerr: Error not masked");
+                throw new ArgumentOutOfRangeException("activeErrors", string.Format("OpEerr: Error not masked: {0:X08}", activeErrors));
             }
         }
 
