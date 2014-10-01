@@ -1967,6 +1967,7 @@ namespace EdiabasLib
         {
             if (sgbdFs != null)
             {
+                ExecuteExitJob();
                 sgbdFs.Dispose();
                 sgbdFs = null;
             }
@@ -2609,6 +2610,25 @@ namespace EdiabasLib
                 LogString("executeInitJob failed");
             }
             throw new Exception("executeInitJob: Initialization failed");
+        }
+
+        public void ExecuteExitJob()
+        {
+            try
+            {
+                if (sgbdFs != null && GetJobInfo("ENDE") != null)
+                {
+                    ExecuteJob("ENDE");
+                }
+            }
+            catch (Exception ex)
+            {
+                if (swLog != null)
+                {
+                    LogString("ExecuteExitJob Exception: " + ex.Message);
+                }
+                throw new Exception("ExecuteExitJob", ex);
+            }
         }
 
         public string ExecuteIdentJob()
