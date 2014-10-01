@@ -539,6 +539,7 @@ namespace CarControl
         private OBDData _receiveObdData;
         private StreamWriter _swLog;
         private Stopwatch _logTimeWatch;
+        private Stopwatch commStopWatch;
         private Ediabas ediabas;
         private bool ediabasInitReq;
         private bool ediabasJobAbort;
@@ -561,6 +562,7 @@ namespace CarControl
             _receiveObdData = new OBDData();
             _swLog = null;
             _logTimeWatch = new Stopwatch();
+            commStopWatch = new Stopwatch();
             ediabas = new Ediabas();
 
             EdCommBmwFast edCommBwmFast = new EdCommBmwFast(ediabas);
@@ -1569,7 +1571,9 @@ namespace CarControl
                 try
                 {
                     int recLen = 0;
-                    for (int i = 0; i < timeout/10; i++)
+                    commStopWatch.Reset();
+                    commStopWatch.Start();
+                    for (; ; )
                     {
                         if (_serialPort.BytesToRead >= length)
                         {
@@ -1579,8 +1583,13 @@ namespace CarControl
                         {
                             break;
                         }
+                        if (commStopWatch.ElapsedMilliseconds > timeout)
+                        {
+                            break;
+                        }
                         Thread.Sleep(10);
                     }
+                    commStopWatch.Stop();
                     if (logResponse)
                     {
                         LogData(receiveData, recLen, "Rec ");
