@@ -18,6 +18,7 @@ namespace EdiabasLib
         private SerialPort serialPort = new SerialPort();
 
         private string comPort = string.Empty;
+        private const int echoTimeout = 100;
         private InterfaceConnectDelegate interfaceConnectFunc = null;
         private InterfaceDisconnectDelegate interfaceDisconnectFunc = null;
         private TransmitDataDelegate transmitDataFunc = null;
@@ -260,10 +261,10 @@ namespace EdiabasLib
                 return false;
             }
             // remove remote echo
-            if (!ReceiveData(receiveData, 0, sendLength, timeoutStd))
+            if (!ReceiveData(receiveData, 0, sendLength, echoTimeout))
             {
                 ediabas.LogString("*** No echo received");
-                ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, true);
+                ReceiveData(receiveData, 0, receiveData.Length, echoTimeout, true);
                 return false;
             }
             ediabas.LogData(receiveData, sendLength, "Echo");
