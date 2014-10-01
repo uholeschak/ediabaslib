@@ -20,6 +20,7 @@ namespace EdiabasTest
             string sgbdFile = null;
             string comPort = null;
             string outFile = null;
+            bool appendFile = false;
             string logFile = null;
             List<string> jobNames = new List<string>();
             bool show_help = false;
@@ -32,6 +33,8 @@ namespace EdiabasTest
                   v => comPort = v },
                 { "o|out=", "output file name.",
                   v => outFile = v },
+                { "a|append", "append output file.",
+                  v => appendFile = v != null },
                 { "l|log=", "log file name.",
                   v => logFile = v },
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>.",
@@ -67,7 +70,7 @@ namespace EdiabasTest
             }
             else
             {
-                outputWriter = new StreamWriter(File.OpenWrite(outFile), encoding);
+                outputWriter = new StreamWriter(outFile, appendFile, encoding);
             }
 
             try

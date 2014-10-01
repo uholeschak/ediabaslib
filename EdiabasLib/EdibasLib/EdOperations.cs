@@ -433,16 +433,21 @@ namespace EdiabasLib
             EdValueType len = GetArgsValueLength(arg0, arg1);
 
             EdValueType result = 0;
+            bool error = false;
             try
             {
                 switch (len)
                 {
                     case 1:
-                        result = (EdValueType)((SByte)arg0.GetValueData(len) / (SByte)arg1.GetValueData(len));
+                        // DIVS bug in ediabas!
+                        // result = (EdValueType)((SByte)arg0.GetValueData(len) / (SByte)arg1.GetValueData(len));
+                        result = (EdValueType)((Int32)arg0.GetValueData(len) / (Int32)arg1.GetValueData(len));
                         break;
 
                     case 2:
-                        result = (EdValueType)((Int16)arg0.GetValueData(len) / (Int16)arg1.GetValueData(len));
+                        // DIVS bug in ediabas!
+                        // result = (EdValueType)((Int16)arg0.GetValueData(len) / (Int16)arg1.GetValueData(len));
+                        result = (EdValueType)((Int32)arg0.GetValueData(len) / (Int32)arg1.GetValueData(len));
                         break;
 
                     case 4:
@@ -456,10 +461,15 @@ namespace EdiabasLib
             catch (Exception)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0007);
+                error = true;
             }
-            arg0.SetRawData(result);
             ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(result, len);
+            if (error)
+            {   // DIVS bug in ediabas!
+                result = arg0.GetValueData(len);
+            }
+            arg0.SetRawData(result);
         }
 
         // BEST2: make_error (execute)
@@ -1321,7 +1331,7 @@ namespace EdiabasLib
         // jump greater or equal
         private static void OpJge(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            if (ediabas.flags.sign == ediabas.flags.overflow)
+            if (ediabas.flags.zero || (ediabas.flags.sign == ediabas.flags.overflow))
             {
                 ediabas.pcCounter = arg0.GetValueData();
             }
@@ -1330,7 +1340,7 @@ namespace EdiabasLib
         // jump less
         private static void OpJl(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            if (ediabas.flags.sign != ediabas.flags.overflow)
+            if (!ediabas.flags.zero && (ediabas.flags.sign != ediabas.flags.overflow))
             {
                 ediabas.pcCounter = arg0.GetValueData();
             }
