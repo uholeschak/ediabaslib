@@ -1967,7 +1967,14 @@ namespace EdiabasLib
         {
             if (sgbdFs != null)
             {
-                ExecuteExitJob();
+                try
+                {
+                    ExecuteExitJob();
+                }
+                catch (Exception ex)
+                {
+                    LogString("CloseSgbdFs exception: " + GetExceptionText(ex));
+                }
                 sgbdFs.Dispose();
                 sgbdFs = null;
             }
