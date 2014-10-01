@@ -6,6 +6,7 @@ using System.IO;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
 using NDesk.Options;
 using Ediabas;
 
@@ -141,6 +142,7 @@ namespace EdiabasCall
                     API.apiJob(sgbdBaseFile, jobName, jobArgs, jobResults);
                     while (API.apiState() == API.APIBUSY)
                     {
+                        Thread.Sleep(10);
                     }
                     if (API.apiState() == API.APIERROR)
                     {
