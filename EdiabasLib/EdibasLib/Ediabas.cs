@@ -1361,10 +1361,20 @@ namespace EdiabasLib
 
         public class JobInfo
         {
-            public JobInfo(UInt32 jobOffset, UInt32 jobSize)
+            public JobInfo(string jobName, UInt32 jobOffset, UInt32 jobSize, UsesInfo usesInfo)
             {
+                this.jobName = jobName;
                 this.jobOffset = jobOffset;
                 this.jobSize = jobSize;
+                this.usesInfo = usesInfo;
+            }
+
+            public string JobName
+            {
+                get
+                {
+                    return jobName;
+                }
             }
 
             public UInt32 JobOffset
@@ -1383,8 +1393,18 @@ namespace EdiabasLib
                 }
             }
 
+            public UsesInfo UsesInfo
+            {
+                get
+                {
+                    return usesInfo;
+                }
+            }
+
+            private string jobName;
             private UInt32 jobOffset;
             private UInt32 jobSize;
+            private UsesInfo usesInfo;
         }
 
         public class JobInfos
@@ -1415,6 +1435,41 @@ namespace EdiabasLib
 
             private JobInfo[] jobInfoArray;
             private Dictionary<string, UInt32> jobNameDict;
+        }
+
+        public class UsesInfo
+        {
+            public UsesInfo(string name)
+            {
+                this.name = name;
+            }
+
+            public string Name
+            {
+                get
+                {
+                    return name;
+                }
+            }
+
+            private string name;
+        }
+
+        public class UsesInfos
+        {
+            public UsesInfo[] UsesInfoArray
+            {
+                get
+                {
+                    return usesInfoArray;
+                }
+                set
+                {
+                    usesInfoArray = value;
+                }
+            }
+
+            private UsesInfo[] usesInfoArray;
         }
 
         public class TableInfo
@@ -1562,6 +1617,10 @@ namespace EdiabasLib
         private static readonly byte[] byteArray0 = new byte[0];
         private static readonly byte[] byteArrayMaxZero = new byte[MAX_ARRAY_LENGTH];
 
+        private const string jobNameInit = "INITIALISIERUNG";
+        private const string jobNameExit = "ENDE";
+        private const string jobNameIdent = "IDENTIFIKATION";
+
         private bool disposed = false;
         private Stack<byte> stackList = new Stack<byte>();
         private List<string> argList = new List<string>();
@@ -1594,8 +1653,10 @@ namespace EdiabasLib
         private StringData[] stringRegisters;
         private Flags flags = new Flags();
         private Stream sgbdFs = null;
+        private Stream sgbdBaseFs = null;
         private EdValueType pcCounter = 0;
         private JobInfos jobInfos = null;
+        private UsesInfos usesInfos = null;
         private TableInfos tableInfos = null;
         private TableInfos tableInfosExt = null;
         private Stream tableFs = null;
@@ -1967,7 +2028,8 @@ namespace EdiabasLib
                 return false;
             }
             sharedDataDict.Clear();
-            jobInfos = ReadAllJobs();
+            usesInfos = ReadAllUses(sgbdFs);
+            jobInfos = ReadAllJobs(sgbdFs);
             tableInfos = ReadAllTables(sgbdFs);
             requestInit = true;
             return true;
@@ -1994,7 +2056,10 @@ namespace EdiabasLib
         {
             if (tableFs != null)
             {
-                tableFs.Dispose();
+                if (tableFs != sgbdBaseFs)
+                {
+                    tableFs.Dispose();
+                }
                 tableFs = null;
             }
             tableInfosExt = null;
@@ -2195,41 +2260,115 @@ namespace EdiabasLib
             }
         }
 
-        public JobInfos ReadAllJobs()
+        public UsesInfos ReadAllUses(Stream fs)
         {
             byte[] buffer = new byte[4];
-            sgbdFs.Position = 0x88;
-            sgbdFs.Read(buffer, 0, buffer.Length);
+            fs.Position = 0x7C;
+            fs.Read(buffer, 0, buffer.Length);
+
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(buffer, 0, 4);
+            }
+            UInt32 usesOffset = BitConverter.ToUInt32(buffer, 0);
+            fs.Position = usesOffset;
+            int usesCount = readInt32(fs);
+
+            UsesInfos usesInfosLocal = new UsesInfos();
+            usesInfosLocal.UsesInfoArray = new UsesInfo[usesCount];
+
+            byte[] usesBuffer = new byte[0x100];
+            for (int i = 0; i < usesCount; i++)
+            {
+                readAndDecryptBytes(fs, usesBuffer, 0, usesBuffer.Length);
+                string usesName = encoding.GetString(usesBuffer).TrimEnd('\0');
+                usesInfosLocal.UsesInfoArray[i] = new UsesInfo(usesName);
+            }
+
+            return usesInfosLocal;
+        }
+
+        public JobInfos ReadAllJobs(Stream fs)
+        {
+            List<JobInfo> jobListComplete = GetJobList(fs, null);
+
+            foreach (UsesInfo usesInfo in usesInfos.UsesInfoArray)
+            {
+                string fileName = Path.Combine(fileSearchDir, usesInfo.Name.ToLower(culture) + ".prg");
+                if (File.Exists(fileName))
+                {
+                    try
+                    {
+                        using (Stream tempFs = MemoryStreamReader.OpenRead(fileName))
+                        {
+                            List<JobInfo> jobListTemp = GetJobList(tempFs, usesInfo);
+                            jobListComplete.AddRange(jobListTemp);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogString("ReadAllJobs exception: " + GetExceptionText(ex));
+                    }
+                }
+            }
+
+            int numJobs = jobListComplete.Count;
+            JobInfos jobInfosLocal = new JobInfos();
+            jobInfosLocal.JobNameDict = new Dictionary<string, UInt32>();
+            jobInfosLocal.JobInfoArray = new JobInfo[numJobs];
+
+            EdValueType index = 0;
+            foreach (JobInfo jobInfo in jobListComplete)
+            {
+                string key = jobInfo.JobName.ToUpper(culture);
+                bool addJob = true;
+                if (jobInfo.UsesInfo != null)
+                {
+                    if ((string.Compare(key, jobNameInit, StringComparison.OrdinalIgnoreCase) == 0) ||
+                        (string.Compare(key, jobNameExit, StringComparison.OrdinalIgnoreCase) == 0))
+                    {
+                        addJob = false;
+                    }
+                }
+                if (addJob && !jobInfosLocal.JobNameDict.ContainsKey(key))
+                {
+                    jobInfosLocal.JobNameDict.Add(key, index);
+                }
+                jobInfosLocal.JobInfoArray[index] = jobInfo;
+                index++;
+            }
+
+            return jobInfosLocal;
+        }
+
+        public List<JobInfo> GetJobList(Stream fs, UsesInfo usesInfo)
+        {
+            byte[] buffer = new byte[4];
+            fs.Position = 0x88;
+            fs.Read(buffer, 0, buffer.Length);
 
             if (!BitConverter.IsLittleEndian)
             {
                 Array.Reverse(buffer, 0, 4);
             }
             UInt32 jobListOffset = BitConverter.ToUInt32(buffer, 0);
-            sgbdFs.Position = jobListOffset;
-            int numJobs = readInt32(sgbdFs);
+            fs.Position = jobListOffset;
+            int numJobs = readInt32(fs);
 
-            JobInfos jobInfos = new JobInfos();
-            jobInfos.JobNameDict = new Dictionary<string, UInt32>();
-            jobInfos.JobInfoArray = new JobInfo[numJobs];
+            List<JobInfo> jobList = new List<JobInfo>();
 
-            UInt32 jobStart = (UInt32)sgbdFs.Position;
-            for (int i = 0; i < numJobs; ++i)
+            byte[] jobBuffer = new byte[0x44];
+            UInt32 jobStart = (UInt32)fs.Position;
+            for (int i = 0; i < numJobs; i++)
             {
-                sgbdFs.Position = jobStart;
-                byte[] jobBuffer = new byte[0x44];
-                readAndDecryptBytes(sgbdFs, jobBuffer, 0, jobBuffer.Length);
+                fs.Position = jobStart;
+                readAndDecryptBytes(fs, jobBuffer, 0, jobBuffer.Length);
                 string jobNameString = encoding.GetString(jobBuffer, 0, 0x40).TrimEnd('\0');
-                if (!BitConverter.IsLittleEndian)
-                {
-                    Array.Reverse(jobBuffer, 0x40, 4);
-                }
                 UInt32 jobAddress = BitConverter.ToUInt32(jobBuffer, 0x40);
-                jobInfos.JobNameDict.Add(jobNameString.ToUpper(culture), (UInt32)i);
 #if false
                 //if (String.Compare(jobNameString, "STATUS_RAILDRUCK_IST", StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    sgbdFs.Position = jobAddress;
+                    fs.Position = jobAddress;
                     bool foundFirstEoj = false;
                     byte[] ocBuffer = new byte[2];
                     Operand arg0 = new Operand();
@@ -2237,7 +2376,7 @@ namespace EdiabasLib
                     long startTime = Stopwatch.GetTimestamp();
                     while (true)
                     {
-                        readAndDecryptBytes(sgbdFs, ocBuffer, 0, ocBuffer.Length);
+                        readAndDecryptBytes(fs, ocBuffer, 0, ocBuffer.Length);
 
                         byte opCodeVal = ocBuffer[0];
                         byte opAddrMode = ocBuffer[1];
@@ -2248,8 +2387,8 @@ namespace EdiabasLib
                         {
                             throw new ArgumentOutOfRangeException("opCodeVal", "ReadAllJobs: Opcode out of range");
                         }
-                        getOpArg(sgbdFs, opAddrMode0, ref arg0);
-                        getOpArg(sgbdFs, opAddrMode1, ref arg1);
+                        getOpArg(fs, opAddrMode0, ref arg0);
+                        getOpArg(fs, opAddrMode1, ref arg1);
 
                         if (opCodeVal == 0x1D)
                         {
@@ -2264,14 +2403,14 @@ namespace EdiabasLib
                     }
                     timeMeas += Stopwatch.GetTimestamp() - startTime;
                 }
-                UInt32 jobSize = (UInt32)(sgbdFs.Position - jobAddress);
-                jobInfos.JobInfoArray[i] = new JobInfo(jobAddress, jobSize);
+                UInt32 jobSize = (UInt32)(fs.Position - jobAddress);
+                jobInfosLocal.JobInfoArray[i] = new JobInfo(jobAddress, jobSize);
 #else
-                jobInfos.JobInfoArray[i] = new JobInfo(jobAddress, 0);
+                jobList.Add(new JobInfo(jobNameString, jobAddress, 0, usesInfo));
 #endif
                 jobStart += 0x44;
             }
-            return jobInfos;
+            return jobList;
         }
 
         public TableInfos ReadAllTables(Stream fs)
@@ -2295,19 +2434,19 @@ namespace EdiabasLib
             }
             int tableCount = BitConverter.ToInt32(tableCountBuffer, 0);
 
-            TableInfos tableInfos = new TableInfos();
-            tableInfos.TableNameDict = new Dictionary<string,UInt32>();
-            tableInfos.TableInfoArray = new TableInfo[tableCount];
+            TableInfos tableInfosLocal = new TableInfos();
+            tableInfosLocal.TableNameDict = new Dictionary<string,UInt32>();
+            tableInfosLocal.TableInfoArray = new TableInfo[tableCount];
 
             UInt32 tableStart = (UInt32)fs.Position;
             for (int i = 0; i < tableCount; ++i)
             {
                 TableInfo tableInfo = ReadTable(fs, tableStart);
-                tableInfos.TableInfoArray[i] = tableInfo;
-                tableInfos.TableNameDict.Add(tableInfo.Name.ToUpper(culture), (UInt32)i);
+                tableInfosLocal.TableInfoArray[i] = tableInfo;
+                tableInfosLocal.TableNameDict.Add(tableInfo.Name.ToUpper(culture), (UInt32)i);
                 tableStart += 0x50;
             }
-            return tableInfos;
+            return tableInfosLocal;
         }
 
         public TableInfo ReadTable(Stream fs, UInt32 tableOffset)
@@ -2389,12 +2528,12 @@ namespace EdiabasLib
 
         public Int32 GetTableIndex(Stream fs, string tableName)
         {
-            TableInfos tableInfos = GetTableInfos(fs);
+            TableInfos tableInfosLocal = GetTableInfos(fs);
 
             UInt32 tableIdx;
-            if (tableInfos.TableNameDict.TryGetValue(tableName.ToUpper(culture), out tableIdx))
+            if (tableInfosLocal.TableNameDict.TryGetValue(tableName.ToUpper(culture), out tableIdx))
             {
-                IndexTable(fs, tableInfos.TableInfoArray[tableIdx]);
+                IndexTable(fs, tableInfosLocal.TableInfoArray[tableIdx]);
                 return (Int32)tableIdx;
             }
 
@@ -2403,8 +2542,8 @@ namespace EdiabasLib
 
         public UInt32 GetTableColumns(Stream fs, Int32 tableIdx)
         {
-            TableInfos tableInfos = GetTableInfos(fs);
-            TableInfo[] tableArray = tableInfos.TableInfoArray;
+            TableInfos tableInfosLocal = GetTableInfos(fs);
+            TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
             if ((tableIdx < 0) || (tableIdx >= tableArray.Length))
             {
                 return 0;
@@ -2414,8 +2553,8 @@ namespace EdiabasLib
 
         public UInt32 GetTableRows(Stream fs, Int32 tableIdx)
         {
-            TableInfos tableInfos = GetTableInfos(fs);
-            TableInfo[] tableArray = tableInfos.TableInfoArray;
+            TableInfos tableInfosLocal = GetTableInfos(fs);
+            TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
             if ((tableIdx < 0) || (tableIdx >= tableArray.Length))
             {
                 return 0;
@@ -2426,8 +2565,8 @@ namespace EdiabasLib
         public Int32 GetTableLine(Stream fs, Int32 tableIdx, EdValueType line, out bool found)
         {
             found = false;
-            TableInfos tableInfos = GetTableInfos(fs);
-            TableInfo[] tableArray = tableInfos.TableInfoArray;
+            TableInfos tableInfosLocal = GetTableInfos(fs);
+            TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
             if ((tableIdx < 0) || (tableIdx >= tableArray.Length))
             {
                 return -1;
@@ -2444,8 +2583,8 @@ namespace EdiabasLib
         public Int32 SeekTable(Stream fs, Int32 tableIdx, string columnName, string valueName, out bool found)
         {
             found = false;
-            TableInfos tableInfos = GetTableInfos(fs);
-            TableInfo[] tableArray = tableInfos.TableInfoArray;
+            TableInfos tableInfosLocal = GetTableInfos(fs);
+            TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
             if ((tableIdx < 0) || (tableIdx >= tableArray.Length))
             {
                 return -1;
@@ -2495,8 +2634,8 @@ namespace EdiabasLib
         public Int32 SeekTable(Stream fs, Int32 tableIdx, string columnName, EdValueType value, out bool found)
         {
             found = false;
-            TableInfos tableInfos = GetTableInfos(fs);
-            TableInfo[] tableArray = tableInfos.TableInfoArray;
+            TableInfos tableInfosLocal = GetTableInfos(fs);
+            TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
             if ((tableIdx < 0) || (tableIdx >= tableArray.Length))
             {
                 return -1;
@@ -2556,8 +2695,8 @@ namespace EdiabasLib
 
         public string GetTableEntry(Stream fs, Int32 tableIdx, Int32 rowIdx, string columnName)
         {
-            TableInfos tableInfos = GetTableInfos(fs);
-            TableInfo[] tableArray = tableInfos.TableInfoArray;
+            TableInfos tableInfosLocal = GetTableInfos(fs);
+            TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
             if ((tableIdx < 0) || (tableIdx >= tableArray.Length))
             {
                 return null;
@@ -2601,7 +2740,7 @@ namespace EdiabasLib
         {
             try
             {
-                ExecuteJob("INITIALISIERUNG");
+                ExecuteJob(jobNameInit);
             }
             catch (Exception ex)
             {
@@ -2641,9 +2780,9 @@ namespace EdiabasLib
         {
             try
             {
-                if (sgbdFs != null && GetJobInfo("ENDE") != null)
+                if (sgbdFs != null && GetJobInfo(jobNameExit) != null)
                 {
-                    ExecuteJob("ENDE");
+                    ExecuteJob(jobNameExit);
                 }
             }
             catch (Exception ex)
@@ -2661,7 +2800,7 @@ namespace EdiabasLib
             resultDict.Clear();
             try
             {
-                ExecuteJob("IDENTIFIKATION");
+                ExecuteJob(jobNameIdent);
             }
             catch (Exception ex)
             {
@@ -2709,16 +2848,45 @@ namespace EdiabasLib
             JobInfo jobInfo = GetJobInfo(jobName);
             if (jobInfo == null)
             {
-                throw new ArgumentOutOfRangeException("jobName", "executeJob: Job not found");
+                throw new ArgumentOutOfRangeException("jobName", "executeJob: Job not found: " + jobName);
             }
-            ExecuteJob(jobInfo.JobOffset);
+
+            if (jobInfo.UsesInfo != null)
+            {
+                string fileName = Path.Combine(fileSearchDir, jobInfo.UsesInfo.Name.ToLower(culture) + ".prg");
+                if (!File.Exists(fileName))
+                {
+                    throw new ArgumentOutOfRangeException("fileName", "executeJob: SGBD not found: " + fileName);
+                }
+                try
+                {
+                    using (Stream tempFs = MemoryStreamReader.OpenRead(fileName))
+                    {
+                        sgbdBaseFs = tempFs;
+                        ExecuteJob(tempFs, jobInfo.JobOffset);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogString("executeJob base job exception: " + GetExceptionText(ex));
+                }
+                finally
+                {
+                    CloseTableFs();
+                    sgbdBaseFs = null;
+                }
+            }
+            else
+            {
+                ExecuteJob(sgbdFs, jobInfo.JobOffset);
+            }
             if (swLog != null)
             {
                 LogString("executeJob successfull");
             }
         }
 
-        public void ExecuteJob(UInt32 jobAddress)
+        public void ExecuteJob(Stream fs, UInt32 jobAddress)
         {
             if (requestInit)
             {
@@ -2751,8 +2919,8 @@ namespace EdiabasLib
                 {
                     //long startTime = Stopwatch.GetTimestamp();
                     EdValueType pcCounterOld = pcCounter;
-                    sgbdFs.Position = pcCounter;
-                    readAndDecryptBytes(sgbdFs, buffer, 0, buffer.Length);
+                    fs.Position = pcCounter;
+                    readAndDecryptBytes(fs, buffer, 0, buffer.Length);
 
                     byte opCodeVal = buffer[0];
                     byte opAddrMode = buffer[1];
@@ -2764,9 +2932,9 @@ namespace EdiabasLib
                         throw new ArgumentOutOfRangeException("opCodeVal", "executeJob: Opcode out of range");
                     }
                     OpCode oc = ocList[opCodeVal];
-                    getOpArg(sgbdFs, opAddrMode0, ref arg0);
-                    getOpArg(sgbdFs, opAddrMode1, ref arg1);
-                    pcCounter = (EdValueType)sgbdFs.Position;
+                    getOpArg(fs, opAddrMode0, ref arg0);
+                    getOpArg(fs, opAddrMode1, ref arg1);
+                    pcCounter = (EdValueType)fs.Position;
 
                     //special near address arg0 opcode handling mainly for jumps
                     if (oc.arg0IsNearAddress && (opAddrMode0 == OpAddrMode.Imm32))
