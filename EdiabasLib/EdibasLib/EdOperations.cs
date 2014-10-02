@@ -2246,6 +2246,10 @@ namespace EdiabasLib
         private static void OpTabset(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.CloseTableFs();
+            if (ediabas.sgbdBaseFs != null)
+            {
+                ediabas.SetTableFs(ediabas.sgbdBaseFs);
+            }
             Int32 tableAddr = ediabas.GetTableIndex(ediabas.GetTableFs(), arg0.GetStringData());
             if (tableAddr < 0)
             {

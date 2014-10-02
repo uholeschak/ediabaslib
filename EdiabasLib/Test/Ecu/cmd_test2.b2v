@@ -5,6 +5,7 @@ ecu     : EDIABAS BEST/2 test;
 origin  : uholeschak;
 revision: 1.0;
 author  : uholeschak;
+uses	: cmd_test1;
 comment : Internal tests EDIABAS BEST/2;
 ////////////////////////////////////////////////////////////////////////
 //                              J O B S
