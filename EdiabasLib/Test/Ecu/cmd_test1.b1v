@@ -16,6 +16,7 @@ INITIALISIERUNG#
 ;    RESULTTYPE:int
 ;    RESULTCOMMENT:1, wenn Okay
 ;
+					shmset		"ID","CMD_TEST1_INIT"
 					ergi		"DONE",#$1.I
 					eoj
 					eoj
@@ -27,7 +28,7 @@ ENDE#
 ;    RESULTTYPE:int
 ;    RESULTCOMMENT:1, wenn Okay
 ;
-					xhangup
+					shmset		"ID","CMD_TEST1_EXIT"
 					eoj
 					eoj
 
@@ -170,7 +171,8 @@ TEST_SREG#
 					clear		S0
 					move 		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
 					move		L0,S0[#$2]
-					ergl		"MOVE4",L0
+					ergl		"MOVE4_L",L0
+					ergd		"MOVE4_D",L0
 
 					clear		S0
 					move 		S0,S1
@@ -202,7 +204,8 @@ TEST_SREG#
 					ergi		"CFGIG_USERERR",I0
 
 					gettmr		L0
-					ergl		"GETTMR",L0
+					ergl		"GETTMR_L",L0
+					ergd		"GETTMR_D",L0
 
 					clear		S0
 					move 		S0,S1
@@ -305,6 +308,7 @@ TEST_SREG#
 
 					eoj
 					eoj
+
 
 TEST_MATH#
 ;    JOBNAME:TEST_MATH
