@@ -1,0 +1,133 @@
+;Base program for command execution test
+
+TBEG "TEST_TAB1"
+HEAD "VALUE", "NAME"
+LINE "0x12", "LINE1"
+LINE "0x22", "LINE2"
+LINE "0x32", "LINE3"
+LINE "0x42", "LINE4"
+LINE "0x52", "LINE5"
+TEND
+
+TBEG "TEST_TAB2"
+HEAD "VALUE", "NAME"
+LINE "0x13", "LINE1"
+LINE "0x23", "LINE2"
+LINE "0x33", "LINE3"
+LINE "0x43", "LINE4"
+LINE "0x53", "LINE5"
+LINE "0x63", "LINE6"
+TEND
+
+INITIALISIERUNG#
+;    JOBNAME:INITIALISIERUNG
+;    JOBCOMMENT:Initialisierung und Kommunikationsparameter
+;    RESULT:DONE
+;    RESULTTYPE:int
+;    RESULTCOMMENT:1, wenn Okay
+;
+					shmset		"ID","BASE2_INIT"
+					ergi		"DONE",#$1.I
+					eoj
+					eoj
+
+ENDE#
+;    JOBNAME:ENDE
+;    JOBCOMMENT:Schliessen des SGBD
+;    RESULT:DONE
+;    RESULTTYPE:int
+;    RESULTCOMMENT:1, wenn Okay
+;
+					shmset		"ID","BASE2_EXIT"
+					eoj
+					eoj
+
+TEST_SHMID#
+;    JOBNAME:TEST_SHMID
+;    JOBCOMMENT:Test shm
+;    RESULT:dynamic
+;    RESULTTYPE:dynamic
+;    RESULTCOMMENT:Test results
+;
+					shmget		S0,"ID"
+					ergs		"SHMID2", S0
+					eoj
+					eoj
+
+TEST_BASE2_TABLE1#
+;    JOBNAME:TEST_BASE2_TABLE1
+;    JOBCOMMENT:Test table
+;    RESULT:dynamic
+;    RESULTTYPE:dynamic
+;    RESULTCOMMENT:Test results
+;
+					shmset		"ID","BASE2_TABLE1"
+
+					tabset		"TEST_TAB1"
+					clear		S2
+					move		S2,"LINE3"
+					tabseek		"NAME",S2
+					clear		S0
+					move 		S0,S1
+					tabget		S0,"VALUE"
+					ergs		"TABGET3",S0
+					tabrows		L0
+					ergl		"TABROWS",L0
+					tabcols		L0
+					ergl		"TABCOLS",L0
+					
+					enewset
+					tabset		"TEST_TAB2"
+					clear		S2
+					move		S2,"LINE4"
+					tabseek		"NAME",S2
+					clear		S0
+					move 		S0,S1
+					tabget		S0,"VALUE"
+					ergs		"TABGET4",S0
+					tabrows		L0
+					ergl		"TABROWS",L0
+					tabcols		L0
+					ergl		"TABCOLS",L0
+					
+					eoj
+					eoj
+
+TEST_BASE2_TABLE2#
+;    JOBNAME:TEST_BASE2_TABLE2
+;    JOBCOMMENT:Test table
+;    RESULT:dynamic
+;    RESULTTYPE:dynamic
+;    RESULTCOMMENT:Test results
+;
+					shmset		"ID","BASE2_TABLE2"
+
+					tabsetex	"TEST_TAB1", "BASE1"
+					clear		S2
+					move		S2,"LINE3"
+					tabseek		"NAME",S2
+					clear		S0
+					move 		S0,S1
+					tabget		S0,"VALUE"
+					ergs		"TABGET3",S0
+					tabrows		L0
+					ergl		"TABROWS",L0
+					tabcols		L0
+					ergl		"TABCOLS",L0
+					
+					enewset
+					tabset		"TEST_TAB2"
+					clear		S2
+					move		S2,"LINE4"
+					tabseek		"NAME",S2
+					clear		S0
+					move 		S0,S1
+					tabget		S0,"VALUE"
+					ergs		"TABGET4",S0
+					tabrows		L0
+					ergl		"TABROWS",L0
+					tabcols		L0
+					ergl		"TABCOLS",L0
+					
+					eoj
+					eoj
