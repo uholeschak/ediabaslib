@@ -18,6 +18,7 @@ namespace EdiabasLib
         private delegate void OperationDelegate(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1);
         public delegate bool AbortJobDelegate();
         public delegate void ProgressJobDelegate(Ediabas ediabas);
+        public delegate void ErrorRaisedDelegate(ErrorCodes error);
 
         public static readonly int MAX_ARRAY_LENGTH = 1024;
         public static readonly int MAX_FILES = 5;
@@ -555,38 +556,357 @@ namespace EdiabasLib
             public Object opData3;
         }
 
-        public const uint ErrorNoMask = 0x1000;
-
-        public enum ErrorNumbers : uint
+        public enum ErrorCodes : uint
         {
-            BIP_0002 = 2,   // IFH call error
-            BIP_0005 = 5 | ErrorNoMask,   // stack underflow/overflow
-            BIP_0006 = 6,   // user file error
-            BIP_0007 = 7 | ErrorNoMask,   // division by zero
-            BIP_0009 = 9,   // version error
-            BIP_0010 = 10,  // constant Data Access Error
-            BIP_0011 = 11 | ErrorNoMask,  // floating point error
-            IFH_0001 = 11,  // UART ERROR
-            IFH_0002 = 12,  // NO RESPONSE FROM INTERFACE
-            IFH_0003 = 13,  // DATATRANSMISSION TO INTERFACE DISTURBED
-            IFH_0004 = 14,  // ERROR IN INTERFACE COMMAND
-            IFH_0005 = 15,  // INTERNAL INTERFACE ERROR
-            IFH_0006 = 16,  // COMMAND NOT ACCEPTED
-            IFH_0007 = 17,  // WRONG UBATT
-            IFH_0008 = 18,  // CONTROLUNIT CONNECTION ERROR
-            IFH_0009 = 19,  // NO RESPONSE FROM CONTROLUNIT
-            IFH_0010 = 20,  // DATATRANSMISSION TO CONTROLUNIT DISTURBED
-            IFH_0011 = 21,  // UNKNOWN INTERFACE
-            IFH_0012 = 22,  // BUFFER OVERFLOW
-            IFH_0013 = 23,  // COMMAND NOT IMPLEMETED
-            IFH_0014 = 24,  // CONCEPT NOT IMPLEMENTED
-            IFH_0015 = 25,  // UBATT ON/OFF ERROR
-            IFH_0016 = 26,  // IGNITION ON/OFF ERROR
-            IFH_0017 = 27,  // INTERFACE DEADLOCK ERROR
-            IFH_0018 = 28,  // INITIALIZATION ERROR
-            IFH_0019 = 29,  // DEVICE ACCESS ERROR
-            SYS_0002 = 30 | ErrorNoMask,  // ECU OBJECT FILE NOT FOUND
-
+            EDIABAS_ERR_NONE = 0,
+            EDIABAS_IFH_0000 = 10,
+            EDIABAS_IFH_0001 = 11,
+            EDIABAS_IFH_0002 = 12,
+            EDIABAS_IFH_0003 = 13,
+            EDIABAS_IFH_0004 = 14,
+            EDIABAS_IFH_0005 = 15,
+            EDIABAS_IFH_0006 = 16,
+            EDIABAS_IFH_0007 = 17,
+            EDIABAS_IFH_0008 = 18,
+            EDIABAS_IFH_0009 = 19,
+            EDIABAS_IFH_0010 = 20,
+            EDIABAS_IFH_0011 = 21,
+            EDIABAS_IFH_0012 = 22,
+            EDIABAS_IFH_0013 = 23,
+            EDIABAS_IFH_0014 = 24,
+            EDIABAS_IFH_0015 = 25,
+            EDIABAS_IFH_0016 = 26,
+            EDIABAS_IFH_0017 = 27,
+            EDIABAS_IFH_0018 = 28,
+            EDIABAS_IFH_0019 = 29,
+            EDIABAS_IFH_0020 = 30,
+            EDIABAS_IFH_0021 = 31,
+            EDIABAS_IFH_0022 = 32,
+            EDIABAS_IFH_0023 = 33,
+            EDIABAS_IFH_0024 = 34,
+            EDIABAS_IFH_0025 = 35,
+            EDIABAS_IFH_0026 = 36,
+            EDIABAS_IFH_0027 = 37,
+            EDIABAS_IFH_0028 = 38,
+            EDIABAS_IFH_0029 = 39,
+            EDIABAS_IFH_0030 = 40,
+            EDIABAS_IFH_0031 = 41,
+            EDIABAS_IFH_0032 = 42,
+            EDIABAS_IFH_0033 = 43,
+            EDIABAS_IFH_0034 = 44,
+            EDIABAS_IFH_0035 = 45,
+            EDIABAS_IFH_0036 = 46,
+            EDIABAS_IFH_0037 = 47,
+            EDIABAS_IFH_0038 = 48,
+            EDIABAS_IFH_0039 = 49,
+            EDIABAS_IFH_0040 = 50,
+            EDIABAS_IFH_0041 = 51,
+            EDIABAS_IFH_0042 = 52,
+            EDIABAS_IFH_0043 = 53,
+            EDIABAS_IFH_0044 = 54,
+            EDIABAS_IFH_0045 = 55,
+            EDIABAS_IFH_0046 = 56,
+            EDIABAS_IFH_0047 = 57,
+            EDIABAS_IFH_0048 = 58,
+            EDIABAS_IFH_0049 = 59,
+            EDIABAS_IFH_LAST = 59,
+            EDIABAS_BIP_0000 = 60,
+            EDIABAS_BIP_0001 = 61,
+            EDIABAS_BIP_0002 = 62,
+            EDIABAS_BIP_0003 = 63,
+            EDIABAS_BIP_0004 = 64,
+            EDIABAS_BIP_0005 = 65,
+            EDIABAS_BIP_0006 = 66,
+            EDIABAS_BIP_0007 = 67,
+            EDIABAS_BIP_0008 = 68,
+            EDIABAS_BIP_0009 = 69,
+            EDIABAS_BIP_0010 = 70,
+            EDIABAS_BIP_0011 = 71,
+            EDIABAS_BIP_0012 = 72,
+            EDIABAS_BIP_0013 = 73,
+            EDIABAS_BIP_0014 = 74,
+            EDIABAS_BIP_0015 = 75,
+            EDIABAS_BIP_0016 = 76,
+            EDIABAS_BIP_0017 = 77,
+            EDIABAS_BIP_0018 = 78,
+            EDIABAS_BIP_0019 = 79,
+            EDIABAS_BIP_0020 = 80,
+            EDIABAS_BIP_0021 = 81,
+            EDIABAS_BIP_0022 = 82,
+            EDIABAS_BIP_0023 = 83,
+            EDIABAS_BIP_0024 = 84,
+            EDIABAS_BIP_0025 = 85,
+            EDIABAS_BIP_0026 = 86,
+            EDIABAS_BIP_0027 = 87,
+            EDIABAS_BIP_0028 = 88,
+            EDIABAS_BIP_0029 = 89,
+            EDIABAS_BIP_LAST = 89,
+            EDIABAS_SYS_0000 = 90,
+            EDIABAS_SYS_0001 = 91,
+            EDIABAS_SYS_0002 = 92,
+            EDIABAS_SYS_0003 = 93,
+            EDIABAS_SYS_0004 = 94,
+            EDIABAS_SYS_0005 = 95,
+            EDIABAS_SYS_0006 = 96,
+            EDIABAS_SYS_0007 = 97,
+            EDIABAS_SYS_0008 = 98,
+            EDIABAS_SYS_0009 = 99,
+            EDIABAS_SYS_0010 = 100,
+            EDIABAS_SYS_0011 = 101,
+            EDIABAS_SYS_0012 = 102,
+            EDIABAS_SYS_0013 = 103,
+            EDIABAS_SYS_0014 = 104,
+            EDIABAS_SYS_0015 = 105,
+            EDIABAS_SYS_0016 = 106,
+            EDIABAS_SYS_0017 = 107,
+            EDIABAS_SYS_0018 = 108,
+            EDIABAS_SYS_0019 = 109,
+            EDIABAS_SYS_0020 = 110,
+            EDIABAS_SYS_0021 = 111,
+            EDIABAS_SYS_0022 = 112,
+            EDIABAS_SYS_0023 = 113,
+            EDIABAS_SYS_0024 = 114,
+            EDIABAS_SYS_0025 = 115,
+            EDIABAS_SYS_0026 = 116,
+            EDIABAS_SYS_0027 = 117,
+            EDIABAS_SYS_0028 = 118,
+            EDIABAS_SYS_0029 = 119,
+            EDIABAS_SYS_LAST = 119,
+            EDIABAS_API_0000 = 120,
+            EDIABAS_API_0001 = 121,
+            EDIABAS_API_0002 = 122,
+            EDIABAS_API_0003 = 123,
+            EDIABAS_API_0004 = 124,
+            EDIABAS_API_0005 = 125,
+            EDIABAS_API_0006 = 126,
+            EDIABAS_API_0007 = 127,
+            EDIABAS_API_0008 = 128,
+            EDIABAS_API_0009 = 129,
+            EDIABAS_API_0010 = 130,
+            EDIABAS_API_0011 = 131,
+            EDIABAS_API_0012 = 132,
+            EDIABAS_API_0013 = 133,
+            EDIABAS_API_0014 = 134,
+            EDIABAS_API_0015 = 135,
+            EDIABAS_API_0016 = 136,
+            EDIABAS_API_0017 = 137,
+            EDIABAS_API_0018 = 138,
+            EDIABAS_API_0019 = 139,
+            EDIABAS_API_0020 = 140,
+            EDIABAS_API_0021 = 141,
+            EDIABAS_API_0022 = 142,
+            EDIABAS_API_0023 = 143,
+            EDIABAS_API_0024 = 144,
+            EDIABAS_API_0025 = 145,
+            EDIABAS_API_0026 = 146,
+            EDIABAS_API_0027 = 147,
+            EDIABAS_API_0028 = 148,
+            EDIABAS_API_0029 = 149,
+            EDIABAS_API_LAST = 149,
+            EDIABAS_NET_0000 = 150,
+            EDIABAS_NET_0001 = 151,
+            EDIABAS_NET_0002 = 152,
+            EDIABAS_NET_0003 = 153,
+            EDIABAS_NET_0004 = 154,
+            EDIABAS_NET_0005 = 155,
+            EDIABAS_NET_0006 = 156,
+            EDIABAS_NET_0007 = 157,
+            EDIABAS_NET_0008 = 158,
+            EDIABAS_NET_0009 = 159,
+            EDIABAS_NET_0010 = 160,
+            EDIABAS_NET_0011 = 161,
+            EDIABAS_NET_0012 = 162,
+            EDIABAS_NET_0013 = 163,
+            EDIABAS_NET_0014 = 164,
+            EDIABAS_NET_0015 = 165,
+            EDIABAS_NET_0016 = 166,
+            EDIABAS_NET_0017 = 167,
+            EDIABAS_NET_0018 = 168,
+            EDIABAS_NET_0019 = 169,
+            EDIABAS_NET_0020 = 170,
+            EDIABAS_NET_0021 = 171,
+            EDIABAS_NET_0022 = 172,
+            EDIABAS_NET_0023 = 173,
+            EDIABAS_NET_0024 = 174,
+            EDIABAS_NET_0025 = 175,
+            EDIABAS_NET_0026 = 176,
+            EDIABAS_NET_0027 = 177,
+            EDIABAS_NET_0028 = 178,
+            EDIABAS_NET_0029 = 179,
+            EDIABAS_NET_0030 = 180,
+            EDIABAS_NET_0031 = 181,
+            EDIABAS_NET_0032 = 182,
+            EDIABAS_NET_0033 = 183,
+            EDIABAS_NET_0034 = 184,
+            EDIABAS_NET_0035 = 185,
+            EDIABAS_NET_0036 = 186,
+            EDIABAS_NET_0037 = 187,
+            EDIABAS_NET_0038 = 188,
+            EDIABAS_NET_0039 = 189,
+            EDIABAS_NET_0040 = 190,
+            EDIABAS_NET_0041 = 191,
+            EDIABAS_NET_0042 = 192,
+            EDIABAS_NET_0043 = 193,
+            EDIABAS_NET_0044 = 194,
+            EDIABAS_NET_0045 = 195,
+            EDIABAS_NET_0046 = 196,
+            EDIABAS_NET_0047 = 197,
+            EDIABAS_NET_0048 = 198,
+            EDIABAS_NET_0049 = 199,
+            EDIABAS_NET_LAST = 199,
+            EDIABAS_IFH_0050 = 200,
+            EDIABAS_IFH_0051 = 201,
+            EDIABAS_IFH_0052 = 202,
+            EDIABAS_IFH_0053 = 203,
+            EDIABAS_IFH_0054 = 204,
+            EDIABAS_IFH_0055 = 205,
+            EDIABAS_IFH_0056 = 206,
+            EDIABAS_IFH_0057 = 207,
+            EDIABAS_IFH_0058 = 208,
+            EDIABAS_IFH_0059 = 209,
+            EDIABAS_IFH_0060 = 210,
+            EDIABAS_IFH_0061 = 211,
+            EDIABAS_IFH_0062 = 212,
+            EDIABAS_IFH_0063 = 213,
+            EDIABAS_IFH_0064 = 214,
+            EDIABAS_IFH_0065 = 215,
+            EDIABAS_IFH_0066 = 216,
+            EDIABAS_IFH_0067 = 217,
+            EDIABAS_IFH_0068 = 218,
+            EDIABAS_IFH_0069 = 219,
+            EDIABAS_IFH_0070 = 220,
+            EDIABAS_IFH_0071 = 221,
+            EDIABAS_IFH_0072 = 222,
+            EDIABAS_IFH_0073 = 223,
+            EDIABAS_IFH_0074 = 224,
+            EDIABAS_IFH_0075 = 225,
+            EDIABAS_IFH_0076 = 226,
+            EDIABAS_IFH_0077 = 227,
+            EDIABAS_IFH_0078 = 228,
+            EDIABAS_IFH_0079 = 229,
+            EDIABAS_IFH_0080 = 230,
+            EDIABAS_IFH_0081 = 231,
+            EDIABAS_IFH_0082 = 232,
+            EDIABAS_IFH_0083 = 233,
+            EDIABAS_IFH_0084 = 234,
+            EDIABAS_IFH_0085 = 235,
+            EDIABAS_IFH_0086 = 236,
+            EDIABAS_IFH_0087 = 237,
+            EDIABAS_IFH_0088 = 238,
+            EDIABAS_IFH_0089 = 239,
+            EDIABAS_IFH_0090 = 240,
+            EDIABAS_IFH_0091 = 241,
+            EDIABAS_IFH_0092 = 242,
+            EDIABAS_IFH_0093 = 243,
+            EDIABAS_IFH_0094 = 244,
+            EDIABAS_IFH_0095 = 245,
+            EDIABAS_IFH_0096 = 246,
+            EDIABAS_IFH_0097 = 247,
+            EDIABAS_IFH_0098 = 248,
+            EDIABAS_IFH_0099 = 249,
+            EDIABAS_IFH_LAST2 = 249,
+            EDIABAS_RUN_0000 = 250,
+            EDIABAS_RUN_0001 = 251,
+            EDIABAS_RUN_0002 = 252,
+            EDIABAS_RUN_0003 = 253,
+            EDIABAS_RUN_0004 = 254,
+            EDIABAS_RUN_0005 = 255,
+            EDIABAS_RUN_0006 = 256,
+            EDIABAS_RUN_0007 = 257,
+            EDIABAS_RUN_0008 = 258,
+            EDIABAS_RUN_0009 = 259,
+            EDIABAS_RUN_0010 = 260,
+            EDIABAS_RUN_0011 = 261,
+            EDIABAS_RUN_0012 = 262,
+            EDIABAS_RUN_0013 = 263,
+            EDIABAS_RUN_0014 = 264,
+            EDIABAS_RUN_0015 = 265,
+            EDIABAS_RUN_0016 = 266,
+            EDIABAS_RUN_0017 = 267,
+            EDIABAS_RUN_0018 = 268,
+            EDIABAS_RUN_0019 = 269,
+            EDIABAS_RUN_0020 = 270,
+            EDIABAS_RUN_0021 = 271,
+            EDIABAS_RUN_0022 = 272,
+            EDIABAS_RUN_0023 = 273,
+            EDIABAS_RUN_0024 = 274,
+            EDIABAS_RUN_0025 = 275,
+            EDIABAS_RUN_0026 = 276,
+            EDIABAS_RUN_0027 = 277,
+            EDIABAS_RUN_0028 = 278,
+            EDIABAS_RUN_0029 = 279,
+            EDIABAS_RUN_0030 = 280,
+            EDIABAS_RUN_0031 = 281,
+            EDIABAS_RUN_0032 = 282,
+            EDIABAS_RUN_0033 = 283,
+            EDIABAS_RUN_0034 = 284,
+            EDIABAS_RUN_0035 = 285,
+            EDIABAS_RUN_0036 = 286,
+            EDIABAS_RUN_0037 = 287,
+            EDIABAS_RUN_0038 = 288,
+            EDIABAS_RUN_0039 = 289,
+            EDIABAS_RUN_0040 = 290,
+            EDIABAS_RUN_0041 = 291,
+            EDIABAS_RUN_0042 = 292,
+            EDIABAS_RUN_0043 = 293,
+            EDIABAS_RUN_0044 = 294,
+            EDIABAS_RUN_0045 = 295,
+            EDIABAS_RUN_0046 = 296,
+            EDIABAS_RUN_0047 = 297,
+            EDIABAS_RUN_0048 = 298,
+            EDIABAS_RUN_0049 = 299,
+            EDIABAS_RUN_0050 = 300,
+            EDIABAS_RUN_0051 = 301,
+            EDIABAS_RUN_0052 = 302,
+            EDIABAS_RUN_0053 = 303,
+            EDIABAS_RUN_0054 = 304,
+            EDIABAS_RUN_0055 = 305,
+            EDIABAS_RUN_0056 = 306,
+            EDIABAS_RUN_0057 = 307,
+            EDIABAS_RUN_0058 = 308,
+            EDIABAS_RUN_0059 = 309,
+            EDIABAS_RUN_0060 = 310,
+            EDIABAS_RUN_0061 = 311,
+            EDIABAS_RUN_0062 = 312,
+            EDIABAS_RUN_0063 = 313,
+            EDIABAS_RUN_0064 = 314,
+            EDIABAS_RUN_0065 = 315,
+            EDIABAS_RUN_0066 = 316,
+            EDIABAS_RUN_0067 = 317,
+            EDIABAS_RUN_0068 = 318,
+            EDIABAS_RUN_0069 = 319,
+            EDIABAS_RUN_0070 = 320,
+            EDIABAS_RUN_0071 = 321,
+            EDIABAS_RUN_0072 = 322,
+            EDIABAS_RUN_0073 = 323,
+            EDIABAS_RUN_0074 = 324,
+            EDIABAS_RUN_0075 = 325,
+            EDIABAS_RUN_0076 = 326,
+            EDIABAS_RUN_0077 = 327,
+            EDIABAS_RUN_0078 = 328,
+            EDIABAS_RUN_0079 = 329,
+            EDIABAS_RUN_0080 = 330,
+            EDIABAS_RUN_0081 = 331,
+            EDIABAS_RUN_0082 = 332,
+            EDIABAS_RUN_0083 = 333,
+            EDIABAS_RUN_0084 = 334,
+            EDIABAS_RUN_0085 = 335,
+            EDIABAS_RUN_0086 = 336,
+            EDIABAS_RUN_0087 = 337,
+            EDIABAS_RUN_0088 = 338,
+            EDIABAS_RUN_0089 = 339,
+            EDIABAS_RUN_0090 = 340,
+            EDIABAS_RUN_0091 = 341,
+            EDIABAS_RUN_0092 = 342,
+            EDIABAS_RUN_0093 = 343,
+            EDIABAS_RUN_0094 = 344,
+            EDIABAS_RUN_0095 = 345,
+            EDIABAS_RUN_0096 = 346,
+            EDIABAS_RUN_0097 = 347,
+            EDIABAS_RUN_0098 = 348,
+            EDIABAS_RUN_0099 = 349,
+            EDIABAS_RUN_LAST = 349,
+            EDIABAS_ERROR_LAST = 349,
         }
 
         public enum ResultType : byte
@@ -1113,7 +1433,7 @@ namespace EdiabasLib
             new OpCode(0x48, "jnt", new OperationDelegate(OpJnt), true),
             new OpCode(0x49, "addc", new OperationDelegate(OpAddc)),
             new OpCode(0x4A, "subc", new OperationDelegate(OpSubc)),
-            new OpCode(0x4B, "break", null),
+            new OpCode(0x4B, "break", new OperationDelegate(OpBreak)),
             new OpCode(0x4C, "clrv", new OperationDelegate(OpClrv)),
             new OpCode(0x4D, "eerr", new OperationDelegate(OpEerr)),
             new OpCode(0x4E, "popf", new OperationDelegate(OpPopf)),
@@ -1621,6 +1941,7 @@ namespace EdiabasLib
         private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
         private static readonly byte[] byteArray0 = new byte[0];
         private static readonly byte[] byteArrayMaxZero = new byte[MAX_ARRAY_LENGTH];
+        private static Dictionary<ErrorCodes, UInt32> trapBitDict;
 
         private const string jobNameInit = "INITIALISIERUNG";
         private const string jobNameExit = "ENDE";
@@ -1647,12 +1968,14 @@ namespace EdiabasLib
         private byte[] opArgBuffer = new byte[5];
         private AbortJobDelegate abortJobFunc = null;
         private ProgressJobDelegate progressJobFunc = null;
+        private ErrorRaisedDelegate errorRaisedFunc = null;
         private StreamWriter swLog = null;
         private EdValueType[] commParameter = new EdValueType[0];
         private EdValueType commRepeats = 0;
         private Int16[] commAnswerLen = new Int16[0];
-        private EdValueType trapMask = 0;
-        private EdValueType trapBits = 0;
+        private EdValueType errorTrapMask = 0;
+        private int errorTrapBitNr = -1;
+        private ErrorCodes errorCodeLast = ErrorCodes.EDIABAS_ERR_NONE;
         private byte[] byteRegisters;
         private EdFloatType[] floatRegisters;
         private StringData[] stringRegisters;
@@ -1812,6 +2135,18 @@ namespace EdiabasLib
             }
         }
 
+        public ErrorRaisedDelegate ErrorRaisedFunc
+        {
+            get
+            {
+                return errorRaisedFunc;
+            }
+            set
+            {
+                errorRaisedFunc = value;
+            }
+        }
+
         public EdValueType[] CommParameter
         {
             get
@@ -1899,8 +2234,41 @@ namespace EdiabasLib
             }
         }
 
+        public ErrorCodes ErrorCodeLast
+        {
+            get
+            {
+                return errorCodeLast;
+            }
+        }
+
         public Ediabas()
         {
+            if (trapBitDict == null)
+            {
+                trapBitDict = new Dictionary<ErrorCodes, UInt32>();
+                trapBitDict.Add(ErrorCodes.EDIABAS_BIP_0002, 2);
+                trapBitDict.Add(ErrorCodes.EDIABAS_BIP_0006, 6);
+                trapBitDict.Add(ErrorCodes.EDIABAS_BIP_0009, 9);
+                trapBitDict.Add(ErrorCodes.EDIABAS_BIP_0010, 10);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0001, 11);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0002, 12);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0003, 13);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0004, 14);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0005, 15);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0006, 16);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0007, 17);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0008, 18);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0009, 19);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0010, 20);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0011, 21);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0012, 22);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0013, 23);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0014, 24);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0015, 25);
+                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0016, 26);
+            }
+
             byteRegisters = new byte[32];
             floatRegisters = new EdFloatType[16];
             stringRegisters = new StringData[16];
@@ -2210,27 +2578,45 @@ namespace EdiabasLib
             }
         }
 
-        public void SetError(ErrorNumbers errorNumber)
+        public void SetError(ErrorCodes error)
         {
             if (swLog != null)
             {
-                LogString(string.Format("SetError: {0}", errorNumber));
+                LogString(string.Format("SetError: {0}", error));
             }
 
-            uint errorValue = (uint)errorNumber;
-            if ((errorValue & ErrorNoMask) == 0)
+            if (error != ErrorCodes.EDIABAS_ERR_NONE)
             {
-                trapBits |= (EdValueType)(1 << (int)errorValue);
+                EdValueType bitNumber;
+                if (trapBitDict.TryGetValue(error, out bitNumber))
+                {
+                    this.errorTrapBitNr = (int) bitNumber;
+                }
+                else
+                {
+                    this.errorTrapBitNr = 0;
+                }
+
+                EdValueType activeErrors = (EdValueType)((1 << (int)this.errorTrapBitNr) & ~this.errorTrapMask);
+                if (activeErrors != 0)
+                {
+                    RaiseError(error);
+                }
             }
             else
             {
-                trapBits |= 0x0001;
+                this.errorTrapBitNr = -1;
             }
-            EdValueType activeErrors = trapBits & ~trapMask;
-            if (activeErrors != 0)
+        }
+
+        public void RaiseError(ErrorCodes error)
+        {
+            this.errorCodeLast = error;
+            if (errorRaisedFunc != null)
             {
-                throw new Exception(string.Format("SetError: Error not masked: {0}", errorNumber));
+                errorRaisedFunc(error);
             }
+            throw new Exception(string.Format("Error occured: {0}", error));
         }
 
         private void SetResultData(ResultData resultData)
@@ -2909,7 +3295,9 @@ namespace EdiabasLib
             stackList.Clear();
             SetConfigProperty("BipEcuFile", Path.GetFileNameWithoutExtension(sgbdFileName));
             flags.Init();
-            trapMask = 0;
+            errorTrapBitNr = -1;
+            errorTrapMask = 0;
+            errorCodeLast = ErrorCodes.EDIABAS_ERR_NONE;
             infoProgressRange = -1;
             infoProgressPos = -1;
             infoProgressText = string.Empty;

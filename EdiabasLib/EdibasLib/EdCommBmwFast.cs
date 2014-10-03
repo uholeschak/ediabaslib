@@ -214,7 +214,7 @@ namespace EdiabasLib
             {
                 if (!serialPort.IsOpen)
                 {
-                    ediabas.SetError(Ediabas.ErrorNumbers.IFH_0019);
+                    ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0019);
                 }
             }
 

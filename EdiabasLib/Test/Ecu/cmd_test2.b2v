@@ -4577,3 +4577,141 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 
 }
+
+////////////////////////////////////////////////////////////////////////
+
+job(  name      : TEST_ERROR_FLAGS;
+      comment   : Test error flags;
+   ) 
+{
+#asm
+					clrt
+					move		L4,#0.L
+					settmr		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
+					clrc
+					sett		#5
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+#endasm
+
+#asm
+					enewset
+					clrc
+					sett		#6
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+#endasm
+
+#asm
+					enewset
+					clrc
+					sett		#31
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+#endasm
+
+#asm
+					enewset
+					clrc
+					sett		#255
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+#endasm
+
+#asm
+					enewset
+					clrt
+					clrc
+					sett		#256
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+#endasm
+
+#asm
+					enewset
+					clrt
+					clrc
+					sett		#0
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+#endasm
+
+
+
+#asm
+					enewset
+					clrt
+					clrc
+					eerr
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
+
+}
