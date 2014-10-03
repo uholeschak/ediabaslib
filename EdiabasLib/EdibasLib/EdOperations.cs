@@ -2637,11 +2637,14 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpXtype: Invalid type");
             }
-            if (ediabas.edCommClass == null)
+            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
             {
-                throw new ArgumentOutOfRangeException("edCommClass", "OpXtype: No communication class present");
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
-            arg0.SetStringData(ediabas.edCommClass.InterfaceType);
+            else
+            {
+                arg0.SetStringData(ediabas.edCommClass.InterfaceType);
+            }
         }
 
         // BEST2: ifvers
@@ -2651,13 +2654,15 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpXvers: Invalid type");
             }
-            if (ediabas.edCommClass == null)
+            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
             {
-                throw new ArgumentOutOfRangeException("edCommClass", "OpXvers: No communication class present");
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
-            EdValueType value = (EdValueType)ediabas.edCommClass.InterfaceVersion;
-            arg0.SetRawData(value);
-            ediabas.flags.UpdateFlags(value, sizeof(EdValueType));
+            else
+            {
+                EdValueType value = (EdValueType)ediabas.edCommClass.InterfaceVersion;
+                arg0.SetRawData(value);
+            }
         }
 
         // BEST2: wait

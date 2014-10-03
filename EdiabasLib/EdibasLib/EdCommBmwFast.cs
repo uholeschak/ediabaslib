@@ -40,6 +40,14 @@ namespace EdiabasLib
             }
         }
 
+        public override bool Connected
+        {
+            get
+            {
+                return serialPort.IsOpen;
+            }
+        }
+
         public EdCommBmwFast(Ediabas ediabas) : base(ediabas)
         {
         }

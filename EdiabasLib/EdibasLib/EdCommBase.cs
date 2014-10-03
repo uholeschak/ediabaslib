@@ -24,6 +24,11 @@ namespace EdiabasLib
             get;
         }
 
+        public abstract bool Connected
+        {
+            get;
+        }
+
         protected EdCommBase(Ediabas ediabas)
         {
             this.ediabas = ediabas;
