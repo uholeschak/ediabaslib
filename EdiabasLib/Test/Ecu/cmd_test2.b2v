@@ -691,7 +691,8 @@ job(  name      : TEST_ADDS_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergl		"VALUE_RES4", L4
+					ergl		"VALUE_RES4_L", L4
+					ergd		"VALUE_RES4_D", L4
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4735,7 +4736,8 @@ job(  name      : TEST_IFACE_FLAGS;
 					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
-					ergs		"XTYPE", S4
+					ergs		"XTYPE_S", S4
+					ergy		"XTYPE_Y", S4
 #endasm
 
 #asm
@@ -4768,7 +4770,8 @@ job(  name      : TEST_IFACE_FLAGS;
 					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
-					ergs		"XTYPE", S4
+					ergs		"XTYPE_S", S4
+					ergy		"XTYPE_Y", S4
 #endasm
 	get_error_bit();
 #asm
@@ -4794,6 +4797,30 @@ job(  name      : TEST_IFACE_FLAGS;
 #asm
 					ergl		"VALUE_ERROR", L0
 					clrt
+#endasm
+
+}
+
+////////////////////////////////////////////////////////////////////////
+
+job(  name      : TEST_ERGSYI_FLAGS;
+      comment   : Test ergsysi;
+   ) 
+{
+#asm
+
+					shmset		"ID","CMD_TEST2_ERGSYSI"
+					pars		S4, #1
+					parl		L4, #2
+					ergsysi		S4, I8
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"ERGSYSI_S", S4
+					ergi		"ERGSYSI_I", I8
 #endasm
 
 }
