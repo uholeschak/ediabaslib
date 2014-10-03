@@ -4715,3 +4715,85 @@ job(  name      : TEST_ERROR_FLAGS;
 #endasm
 
 }
+
+////////////////////////////////////////////////////////////////////////
+
+job(  name      : TEST_IFACE_FLAGS;
+      comment   : Test interface flags;
+   ) 
+{
+#asm
+					enewset
+					xconnect
+					clear		S4
+					move		S4, "DEFAULT"
+					clrc
+					xtype		S4
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"XTYPE", S4
+#endasm
+
+#asm
+					enewset
+					move		I8, #$AAAA
+					clrc
+					xvers		I8
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergi		"XVERS", I8
+
+#endasm
+
+#asm
+					enewset
+					move		L4, #$00000001
+					settmr		L4
+					xhangup
+					clear		S4
+					move		S4, "DEFAULT"
+					clrc
+					xtype		S4
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"XTYPE", S4
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
+
+#asm
+					enewset
+					move		I8, #$AAAA
+					clrc
+					xvers		I8
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergi		"XVERS", I8
+
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
+
+}
