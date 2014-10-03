@@ -76,6 +76,9 @@ namespace EdiabasLib
         private const uint FILE_ATTRIBUTE_NORMAL = 0x80;
         private const uint GENERIC_READ = 0x80000000;
         private const uint GENERIC_WRITE = 0x40000000;
+        private const uint FILE_SHARE_READ = 1;
+        private const uint FILE_SHARE_WRITE = 2;
+        private const uint FILE_SHARE_DELETE = 4;
         private const uint CREATE_NEW = 1;
         private const uint CREATE_ALWAYS = 2;
         private const uint OPEN_EXISTING = 3;
@@ -87,7 +90,7 @@ namespace EdiabasLib
             FileInfo fileInfo = new FileInfo(path);
             this.fileLength = fileInfo.Length;
 
-            fileHandle = MemoryStreamReader.CreateFile(path, GENERIC_READ, 0, IntPtr.Zero, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, IntPtr.Zero);
+            fileHandle = MemoryStreamReader.CreateFile(path, GENERIC_READ, FILE_SHARE_READ, IntPtr.Zero, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, IntPtr.Zero);
             if (fileHandle == INVALID_HANDLE_VALUE)
             {
                 throw new FileNotFoundException();
