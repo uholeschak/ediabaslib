@@ -8,6 +8,40 @@ author  : uholeschak;
 uses	: base1,base2;
 comment : Internal tests EDIABAS BEST/2;
 ////////////////////////////////////////////////////////////////////////
+//                        K O N S T A N T E N
+////////////////////////////////////////////////////////////////////////
+
+table TEST_TABLE_FIRST[3][]=
+{
+{"VALUE1", "VALUE2", "NAME" },
+{"0x14", "0x15", "LINE1" },
+{"0x24", "0x25", "LINE2" },
+{"0x34", "0x35", "LINE3" },
+{"0x44", "0x45", "LINE4" }
+};
+
+table TEST_TABLE[2][]=
+{
+{"VALUE", "NAME" },
+{"0x14",  "LINE1" },
+{"0x24",  "LINE2" },
+{"0x34",  "LINE3" },
+{"0x44",  "LINE4" },
+{"0x54",  "LINE5" },
+{"0x64",  "LINE6" }
+};
+
+table TEST_TABLE_LAST[3][]=
+{
+{"VALUE1", "VALUE2", "NAME" },
+{"0x14", "0x15", "LINE1" },
+{"0x24", "0x25", "LINE2" },
+{"0x34", "0x35", "LINE3" },
+{"0x44", "0x45", "LINE4" },
+{"0x54", "0x55", "LINE5" }
+};
+
+////////////////////////////////////////////////////////////////////////
 //                              J O B S
 ////////////////////////////////////////////////////////////////////////
 
@@ -4020,6 +4054,526 @@ job(  name      : TEST_PAR_FLAGS;
 					ergl		"PARN", L4
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
+#endasm
+
+}
+
+////////////////////////////////////////////////////////////////////////
+
+job(  name      : TEST_TABLE_FLAGS;
+      comment   : Test table flags;
+   ) 
+{
+#asm
+					clrt
+					move		L4,#$0401
+					settmr		L4
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabcols		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"COLS_INIT", L4
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabrows		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"ROWS_INIT", L4
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabset		"TEST_TABLE1"
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabcols		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"COLS_ERR", L4
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabrows		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"ROWS_ERR", L4
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabset		"TEST_TABLE"
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabcols		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"COLS_OK", L4
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabrows		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"ROWS_OK", L4
+#endasm
+
+
+
+#asm
+					enewset
+					clear		S2
+					move		S2,"LINE2"
+					clrc
+					tabseek		"NAME",S2
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabget		S4,"VALUE"
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"TABGET2", S4
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabget		S4,"VALUE1"
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"TABGET", S4
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
+
+
+
+#asm
+					enewset
+					clear		S2
+					move		S2,"LINE9"
+					clrc
+					tabseek		"NAME",S2
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabget		S4,"VALUE"
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"TABGET9", S4
+#endasm
+
+#asm
+					enewset
+					clear		S2
+					move		S2,"LINE3"
+					clrc
+					tabseek		"NAME1",S2
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabseeku	"VALUE",#$44.L
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabget		S4,"NAME"
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"TABGET44", S4
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabseeku	"VALUE",#$99.L
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabget		S4,"NAME"
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"TABGET99", S4
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabseeku	"VALUE1",#$99.L
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabline		#4.L
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabget		S4,"NAME"
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"TABGETL4", S4
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabline		#9.L
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabget		S4,"NAME"
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"TABGETL9", S4
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabsetex	"TEST_TAB1", "base3"
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabcols		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"COLS_ERREX1", L4
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabrows		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"ROWS_ERREX2", L4
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabsetex	"TEST_TAB11", "base1"
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabcols		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"COLS_ERREX2", L4
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabrows		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"ROWS_ERREX2", L4
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabsetex	"TEST_TAB1", "base1"
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabcols		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"COLS_OK", L4
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabrows		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"ROWS_OK", L4
+#endasm
+
+
+
+#asm
+					enewset
+					clear		S2
+					move		S2,"LINE2"
+					clrc
+					tabseek		"NAME",S2
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
+					clrc
+					tabget		S4,"VALUE"
+#endasm
+	calc_flags();
+#asm
+					ergs		"PARS", S0
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"TABGET2", S4
+#endasm
+
+
+
+#asm
+					clrt
+					move		L4,#$0000
+					settmr		L4
 #endasm
 
 }

@@ -566,22 +566,27 @@ namespace EdiabasLib
             BIP_0009 = 9,   // version error
             BIP_0010 = 10,  // constant Data Access Error
             BIP_0011 = 11 | ErrorNoMask,  // floating point error
-            IFH_0001 = 11,  // error host interface
-            IFH_0002 = 12,  // interface not responding
-            IFH_0003 = 13,  // data transmission to interface disturbed
-            IFH_0004 = 14,  // command for interface invalid
-            IFH_0005 = 15,  // interface internal error
-            IFH_0006 = 16,  // command not accepted by interface
-            IFH_0007 = 17,  // invalid power supply at D-Bus
-            IFH_0008 = 18,  // error at interface to SG
-            IFH_0009 = 19,  // SG not responding
-            IFH_0010 = 20,  // data transmission interface SG disturbed
-            IFH_0011 = 21,  // unknown interface
-            IFH_0012 = 22,  // data buffer overflow
-            IFH_0013 = 23,  // function at interface not present
-            IFH_0014 = 24,  // concept not supported
-            IFH_0015 = 25,  // U-Batt interrupted
-            IFH_0019 = 29,  // interface not inintialized
+            IFH_0001 = 11,  // UART ERROR
+            IFH_0002 = 12,  // NO RESPONSE FROM INTERFACE
+            IFH_0003 = 13,  // DATATRANSMISSION TO INTERFACE DISTURBED
+            IFH_0004 = 14,  // ERROR IN INTERFACE COMMAND
+            IFH_0005 = 15,  // INTERNAL INTERFACE ERROR
+            IFH_0006 = 16,  // COMMAND NOT ACCEPTED
+            IFH_0007 = 17,  // WRONG UBATT
+            IFH_0008 = 18,  // CONTROLUNIT CONNECTION ERROR
+            IFH_0009 = 19,  // NO RESPONSE FROM CONTROLUNIT
+            IFH_0010 = 20,  // DATATRANSMISSION TO CONTROLUNIT DISTURBED
+            IFH_0011 = 21,  // UNKNOWN INTERFACE
+            IFH_0012 = 22,  // BUFFER OVERFLOW
+            IFH_0013 = 23,  // COMMAND NOT IMPLEMETED
+            IFH_0014 = 24,  // CONCEPT NOT IMPLEMENTED
+            IFH_0015 = 25,  // UBATT ON/OFF ERROR
+            IFH_0016 = 26,  // IGNITION ON/OFF ERROR
+            IFH_0017 = 27,  // INTERFACE DEADLOCK ERROR
+            IFH_0018 = 28,  // INITIALIZATION ERROR
+            IFH_0019 = 29,  // DEVICE ACCESS ERROR
+            SYS_0002 = 30 | ErrorNoMask,  // ECU OBJECT FILE NOT FOUND
+
         }
 
         public enum ResultType : byte
@@ -2280,8 +2285,8 @@ namespace EdiabasLib
             byte[] usesBuffer = new byte[0x100];
             for (int i = 0; i < usesCount; i++)
             {
-                readAndDecryptBytes(fs, usesBuffer, 0, usesBuffer.Length);
-                string usesName = encoding.GetString(usesBuffer).TrimEnd('\0');
+                readAndDecryptBytes(fs, usesBuffer, 0, 0x100);
+                string usesName = encoding.GetString(usesBuffer, 0, 0x100).TrimEnd('\0');
                 usesInfosLocal.UsesInfoArray[i] = new UsesInfo(usesName);
             }
 
@@ -2526,18 +2531,20 @@ namespace EdiabasLib
             return encoding.GetString(tableItemBuffer, 0, l);
         }
 
-        public Int32 GetTableIndex(Stream fs, string tableName)
+        public Int32 GetTableIndex(Stream fs, string tableName, out bool found)
         {
+            found = false;
             TableInfos tableInfosLocal = GetTableInfos(fs);
 
             UInt32 tableIdx;
             if (tableInfosLocal.TableNameDict.TryGetValue(tableName.ToUpper(culture), out tableIdx))
             {
                 IndexTable(fs, tableInfosLocal.TableInfoArray[tableIdx]);
+                found = true;
                 return (Int32)tableIdx;
             }
 
-            return -1;
+            return tableInfosLocal.TableInfoArray.Count() - 1;
         }
 
         public UInt32 GetTableColumns(Stream fs, Int32 tableIdx)
@@ -2869,6 +2876,7 @@ namespace EdiabasLib
                 catch (Exception ex)
                 {
                     LogString("executeJob base job exception: " + GetExceptionText(ex));
+                    throw new Exception("executeJob base job exception", ex);
                 }
                 finally
                 {
@@ -2982,6 +2990,7 @@ namespace EdiabasLib
             }
             finally
             {
+                CloseTableFs();
                 CloseAllUserFiles();
                 SetConfigProperty("BipEcuFile", null);
             }

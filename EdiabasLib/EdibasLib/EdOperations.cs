@@ -485,8 +485,11 @@ namespace EdiabasLib
         // BEST2: new_set_of_results
         private static void OpEnewset(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.resultSets.Add(new Dictionary<string, ResultData>(ediabas.resultDict));
-            ediabas.resultDict.Clear();
+            if (ediabas.resultDict.Count > 0)
+            {
+                ediabas.resultSets.Add(new Dictionary<string, ResultData>(ediabas.resultDict));
+                ediabas.resultDict.Clear();
+            }
         }
 
         private static void OpErgb(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
@@ -2157,8 +2160,11 @@ namespace EdiabasLib
             {
                 arg0.SetRawData((EdValueType)0);
             }
-            EdValueType columns = ediabas.GetTableColumns(ediabas.GetTableFs(), ediabas.tableIndex);
-            arg0.SetRawData(columns);
+            else
+            {
+                EdValueType columns = ediabas.GetTableColumns(ediabas.GetTableFs(), ediabas.tableIndex);
+                arg0.SetRawData(columns);
+            }
         }
 
         // BEST2: tabget
@@ -2167,15 +2173,18 @@ namespace EdiabasLib
             if (ediabas.tableIndex < 0)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0010);
+                return;
             }
             if (ediabas.tableRowIndex < 0)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0010);
+                return;
             }
             string entry = ediabas.GetTableEntry(ediabas.GetTableFs(), ediabas.tableIndex, ediabas.tableRowIndex, arg1.GetStringData());
             if (entry == null)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0010);
+                return;
             }
             arg0.SetStringData(entry);
         }
@@ -2186,6 +2195,7 @@ namespace EdiabasLib
             if (ediabas.tableIndex < 0)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0010);
+                return;
             }
             bool found = false;
             Int32 rowIndex = ediabas.GetTableLine(ediabas.GetTableFs(), ediabas.tableIndex, arg0.GetValueData(), out found);
@@ -2204,8 +2214,11 @@ namespace EdiabasLib
             {
                 arg0.SetRawData((EdValueType)0);
             }
-            EdValueType rows = ediabas.GetTableRows(ediabas.GetTableFs(), ediabas.tableIndex) + 1;  // including header
-            arg0.SetRawData(rows);
+            else
+            {
+                EdValueType rows = ediabas.GetTableRows(ediabas.GetTableFs(), ediabas.tableIndex) + 1;  // including header
+                arg0.SetRawData(rows);
+            }
         }
 
         // BEST2: tabseek
@@ -2214,12 +2227,14 @@ namespace EdiabasLib
             if (ediabas.tableIndex < 0)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0010);
+                return;
             }
             bool found = false;
             Int32 rowIndex = ediabas.SeekTable(ediabas.GetTableFs(), ediabas.tableIndex, arg0.GetStringData(), arg1.GetStringData(), out found);
             if (rowIndex < 0)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0010);
+                return;
             }
             ediabas.tableRowIndex = rowIndex;
             ediabas.flags.zero = !found;
@@ -2231,12 +2246,14 @@ namespace EdiabasLib
             if (ediabas.tableIndex < 0)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0010);
+                return;
             }
             bool found = false;
             Int32 rowIndex = ediabas.SeekTable(ediabas.GetTableFs(), ediabas.tableIndex, arg0.GetStringData(), arg1.GetValueData(), out found);
             if (rowIndex < 0)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0010);
+                return;
             }
             ediabas.tableRowIndex = rowIndex;
             ediabas.flags.zero = !found;
@@ -2250,8 +2267,9 @@ namespace EdiabasLib
             {
                 ediabas.SetTableFs(ediabas.sgbdBaseFs);
             }
-            Int32 tableAddr = ediabas.GetTableIndex(ediabas.GetTableFs(), arg0.GetStringData());
-            if (tableAddr < 0)
+            bool found;
+            Int32 tableAddr = ediabas.GetTableIndex(ediabas.GetTableFs(), arg0.GetStringData(), out found);
+            if (!found)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0010);
             }
@@ -2262,7 +2280,6 @@ namespace EdiabasLib
         // BEST2: tabsetext
         private static void OpTabsetex(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.CloseTableFs();
             string baseFileName = arg1.GetStringData();
             if (baseFileName.Length > 0)
             {
@@ -2273,22 +2290,24 @@ namespace EdiabasLib
                 }
                 if (!File.Exists(fullFileName))
                 {
-                    ediabas.SetError(ErrorNumbers.BIP_0010);
+                    ediabas.SetError(ErrorNumbers.SYS_0002);
+                    return;
                 }
 
                 try
                 {
+                    ediabas.CloseTableFs();
                     Stream fs = MemoryStreamReader.OpenRead(fullFileName);
                     ediabas.SetTableFs(fs);
                 }
                 catch (Exception)
                 {
-                    ediabas.SetError(ErrorNumbers.BIP_0010);
+                    ediabas.SetError(ErrorNumbers.SYS_0002);
                 }
             }
-
-            Int32 tableAddr = ediabas.GetTableIndex(ediabas.GetTableFs(), arg0.GetStringData());
-            if (tableAddr < 0)
+            bool found = false;
+            Int32 tableAddr = ediabas.GetTableIndex(ediabas.GetTableFs(), arg0.GetStringData(), out found);
+            if (!found)
             {
                 ediabas.SetError(ErrorNumbers.BIP_0010);
             }
