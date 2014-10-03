@@ -5,7 +5,7 @@ ecu     : EDIABAS BEST/2 test;
 origin  : uholeschak;
 revision: 1.0;
 author  : uholeschak;
-uses	: cmd_test1;
+uses	: base1,base2;
 comment : Internal tests EDIABAS BEST/2;
 ////////////////////////////////////////////////////////////////////////
 //                              J O B S
@@ -30,7 +30,20 @@ job(  name      : INITIALISIERUNG;
         comment : Werte: 1 = Initialisierung erfolgreich durchgefuehrt;
    ) 
 {
+#asm
+					shmset		"ID","CMD_TEST2_INIT"
+#endasm
     DONE = 1;
+}
+
+////////////////////////////////////////////////////////////////////////
+job(  name      : ENDE;
+      comment   : Schliessen des SGBD;
+   ) 
+{
+#asm
+					shmset		"ID","CMD_TEST2_EXIT"
+#endasm
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -40,6 +53,8 @@ job(  name      : TEST_SUBB_FLAGS;
    ) 
 {
 #asm
+					shmset		"ID","CMD_TEST2_SUBB"
+
 					move		L4,#2
 					move		L5,#4
 					ergl		"VALUE1", L4
@@ -327,6 +342,8 @@ job(  name      : TEST_SUBC_FLAGS;
    ) 
 {
 #asm
+					shmset		"ID","CMD_TEST2_SUBC"
+
 					move		L4,#2
 					move		L5,#4
 					ergl		"VALUE1", L4
