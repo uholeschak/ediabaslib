@@ -15,7 +15,8 @@ namespace EdiabasLib
             FileInfo fileInfo = new FileInfo(path);
             this.fileLength = fileInfo.Length;
 
-            mmFile = MemoryMappedFile.CreateFromFile(path, FileMode.Open, null, 0, MemoryMappedFileAccess.Read);
+            FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.None);
+            mmFile = MemoryMappedFile.CreateFromFile(fs, null, 0, MemoryMappedFileAccess.Read, null, HandleInheritability.None, false);
             mmStream = mmFile.CreateViewStream(0, 0, MemoryMappedFileAccess.Read);
         }
 
