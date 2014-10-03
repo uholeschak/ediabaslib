@@ -14,6 +14,7 @@ namespace EdiabasTest
         private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
         private static Encoding encoding = Encoding.GetEncoding(1252);
         private static TextWriter outputWriter;
+        private static bool compareOutput = false;
 
         static int Main(string[] args)
         {
@@ -35,6 +36,8 @@ namespace EdiabasTest
                   v => outFile = v },
                 { "a|append", "append output file.",
                   v => appendFile = v != null },
+                { "c|compare", "compare output.",
+                  v => compareOutput = v != null },
                 { "l|log=", "log file name.",
                   v => logFile = v },
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>.",
@@ -98,6 +101,7 @@ namespace EdiabasTest
                     edCommBwmFast.ComPort = comPort;
                     ediabas.EdCommClass = edCommBwmFast;
                     ediabas.ProgressJobFunc = ProgressJobFunc;
+                    ediabas.ErrorRaisedFunc = ErrorRaisedFunc;
 
                     ediabas.FileSearchDir = Path.GetDirectoryName(sgbdFile);
                     if (logFile != null)
@@ -149,7 +153,10 @@ namespace EdiabasTest
                         }
                         catch (Exception ex)
                         {
-                            outputWriter.WriteLine("Job execution failed: " + Ediabas.GetExceptionText(ex));
+                            if (!compareOutput || ediabas.ErrorCodeLast == Ediabas.ErrorCodes.EDIABAS_ERR_NONE)
+                            {
+                                outputWriter.WriteLine("Job execution failed: " + Ediabas.GetExceptionText(ex));
+                            }
                             return 1;
                         }
 
@@ -244,6 +251,18 @@ namespace EdiabasTest
             if (message.Length > 0)
             {
                 outputWriter.WriteLine("Progress: " + message);
+            }
+        }
+
+        static void ErrorRaisedFunc(Ediabas.ErrorCodes error)
+        {
+            if (compareOutput)
+            {
+                outputWriter.WriteLine(string.Format("Error occured: 0x{0:X08}", (UInt32)error));
+            }
+            else
+            {
+                outputWriter.WriteLine(string.Format("Error occured: {0}", error));
             }
         }
 

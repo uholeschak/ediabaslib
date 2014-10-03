@@ -213,7 +213,7 @@ calc_flags:
 get_error_bit:
 			move	L0,#0
 %1:
-			comp	L0,#33
+			comp	L0,#256
 			jz		%3
 			jt		%2,L0
 			adds	L0,#1

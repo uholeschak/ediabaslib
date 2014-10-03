@@ -38,7 +38,7 @@ namespace EdiabasLib
             EdFloatType result = StringToFloat(valueStr);
             if (Double.IsNaN(result))
             {
-                ediabas.SetError(ErrorNumbers.BIP_0011);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0011);
             }
 
             arg0.SetRawData(result);
@@ -304,7 +304,7 @@ namespace EdiabasLib
             EdValueType pos = arg1.GetValueData();
             if (ediabas.stackList.Count < length)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0005);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0005);
             }
             else
             {
@@ -324,6 +324,12 @@ namespace EdiabasLib
 
             arg0.SetRawData(value);
             ediabas.flags.UpdateFlags(value, length);
+        }
+
+        // BEST2: userbreak
+        private static void OpBreak(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            ediabas.SetError(ErrorCodes.EDIABAS_BIP_0008);
         }
 
         private static void OpClear(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
@@ -384,7 +390,7 @@ namespace EdiabasLib
         // BEST2: clear_error
         private static void OpClrt(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.trapBits = 0;
+            ediabas.errorTrapBitNr = -1;
         }
 
         // clear overflow
@@ -460,7 +466,7 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0007);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0007);
                 error = true;
             }
             ediabas.flags.overflow = false;
@@ -475,10 +481,16 @@ namespace EdiabasLib
         // BEST2: make_error (execute)
         private static void OpEerr(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            EdValueType activeErrors = ediabas.trapBits & ~ediabas.trapMask;
-            if (activeErrors != 0)
+            if (ediabas.errorTrapBitNr >= 0)
             {
-                throw new ArgumentOutOfRangeException("activeErrors", string.Format("OpEerr: Error not masked: {0:X08}", activeErrors));
+                foreach (ErrorCodes key in Ediabas.trapBitDict.Keys)
+                {
+                    if (Ediabas.trapBitDict[key] == ediabas.errorTrapBitNr)
+                    {
+                        ediabas.RaiseError(key);
+                    }
+                }
+                ediabas.RaiseError(ErrorCodes.EDIABAS_BIP_0000);
             }
         }
 
@@ -565,12 +577,12 @@ namespace EdiabasLib
                 result = val0 + val1;
                 if (Double.IsInfinity(result) || Double.IsNaN(result))
                 {
-                    ediabas.SetError(ErrorNumbers.BIP_0011);
+                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0011);
                 }
             }
             catch (Exception)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0011);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0011);
             }
 
             arg0.SetRawData(result);
@@ -608,12 +620,12 @@ namespace EdiabasLib
                 result = val0 / val1;
                 if (Double.IsInfinity(result) || Double.IsNaN(result))
                 {
-                    ediabas.SetError(ErrorNumbers.BIP_0011);
+                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0011);
                 }
             }
             catch (Exception)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0011);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0011);
             }
 
             arg0.SetRawData(result);
@@ -786,7 +798,7 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0011);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0011);
             }
 
             byte[] resultArray = BitConverter.GetBytes(singleValue);
@@ -847,12 +859,12 @@ namespace EdiabasLib
                 result = val0 * val1;
                 if (Double.IsInfinity(result) || Double.IsNaN(result))
                 {
-                    ediabas.SetError(ErrorNumbers.BIP_0011);
+                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0011);
                 }
             }
             catch (Exception)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0011);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0011);
             }
 
             arg0.SetRawData(result);
@@ -875,12 +887,12 @@ namespace EdiabasLib
                 result = val0 - val1;
                 if (Double.IsInfinity(result) || Double.IsNaN(result))
                 {
-                    ediabas.SetError(ErrorNumbers.BIP_0011);
+                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0011);
                 }
             }
             catch (Exception)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0011);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0011);
             }
 
             arg0.SetRawData(result);
@@ -935,7 +947,7 @@ namespace EdiabasLib
             EdValueType handle = arg0.GetValueData(1);
             if (!ediabas.CloseUserFile((int)handle))
             {
-                ediabas.SetError(ErrorNumbers.BIP_0006);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
             }
         }
 
@@ -951,7 +963,7 @@ namespace EdiabasLib
             string fileName = arg1.GetStringData();
             if (!File.Exists(fileName))
             {
-                ediabas.SetError(ErrorNumbers.BIP_0006);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
             }
             else
             {
@@ -962,12 +974,12 @@ namespace EdiabasLib
                     if (handle < 0)
                     {
                         fs.Dispose();
-                        ediabas.SetError(ErrorNumbers.BIP_0006);
+                        ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
                     }
                 }
                 catch (Exception)
                 {
-                    ediabas.SetError(ErrorNumbers.BIP_0006);
+                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
                 }
             }
             arg0.SetRawData((EdValueType)handle);
@@ -987,7 +999,7 @@ namespace EdiabasLib
             Stream fs = ediabas.GetUserFile((int)handle);
             if (fs == null)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0006);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
             }
             else
             {
@@ -998,7 +1010,7 @@ namespace EdiabasLib
                 catch (Exception)
                 {
                     value = -1;
-                    ediabas.SetError(ErrorNumbers.BIP_0006);
+                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
                 }
             }
 
@@ -1027,7 +1039,7 @@ namespace EdiabasLib
             Stream fs = ediabas.GetUserFile((int)handle);
             if (fs == null)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0006);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
             }
             else
             {
@@ -1038,7 +1050,7 @@ namespace EdiabasLib
                 catch (Exception)
                 {
                     lineString = null;
-                    ediabas.SetError(ErrorNumbers.BIP_0006);
+                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
                 }
             }
 
@@ -1062,7 +1074,7 @@ namespace EdiabasLib
             Stream fs = ediabas.GetUserFile((int)handle);
             if (fs == null)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0006);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
             }
             else
             {
@@ -1072,7 +1084,7 @@ namespace EdiabasLib
                 }
                 catch (Exception)
                 {
-                    ediabas.SetError(ErrorNumbers.BIP_0006);
+                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
                 }
             }
         }
@@ -1085,7 +1097,7 @@ namespace EdiabasLib
             Stream fs = ediabas.GetUserFile((int)handle);
             if (fs == null)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0006);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
             }
             else
             {
@@ -1102,7 +1114,7 @@ namespace EdiabasLib
                 }
                 catch (Exception)
                 {
-                    ediabas.SetError(ErrorNumbers.BIP_0006);
+                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
                 }
             }
         }
@@ -1120,7 +1132,7 @@ namespace EdiabasLib
             Stream fs = ediabas.GetUserFile((int)handle);
             if (fs == null)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0006);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
             }
             else
             {
@@ -1131,7 +1143,7 @@ namespace EdiabasLib
                 catch (Exception)
                 {
                     position = 0;
-                    ediabas.SetError(ErrorNumbers.BIP_0006);
+                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
                 }
             }
             arg0.SetRawData((EdValueType)position);
@@ -1151,7 +1163,7 @@ namespace EdiabasLib
             Stream fs = ediabas.GetUserFile((int)handle);
             if (fs == null)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0006);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
             }
             else
             {
@@ -1181,7 +1193,7 @@ namespace EdiabasLib
                 catch (Exception)
                 {
                     line = 0;
-                    ediabas.SetError(ErrorNumbers.BIP_0006);
+                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0006);
                 }
             }
             arg0.SetRawData(line);
@@ -1191,8 +1203,15 @@ namespace EdiabasLib
         // BEST2: generateRunError
         private static void OpGenerr(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            EdValueType errNum = arg0.GetValueData();
-            throw new Exception(string.Format("OpGenerr: Runtime error: {0}", errNum));
+            ErrorCodes error = (ErrorCodes)arg0.GetValueData();
+            if ((error < ErrorCodes.EDIABAS_RUN_0000) || (error > ErrorCodes.EDIABAS_RUN_LAST))
+            {
+                ediabas.RaiseError(ErrorCodes.EDIABAS_BIP_0001);
+            }
+            else
+            {
+                ediabas.RaiseError(error);
+            }
         }
 
         // BEST2: get_trap_mask
@@ -1202,7 +1221,7 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpGettmr: Invalid type");
             }
-            arg0.SetRawData(ediabas.trapMask);
+            arg0.SetRawData(ediabas.errorTrapMask);
             ediabas.flags.UpdateFlags(arg0.GetValueData(), arg0.GetDataLen());
         }
 
@@ -1382,20 +1401,30 @@ namespace EdiabasLib
         // jump not trap
         private static void OpJnt(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            EdValueType trapBit = EdValueType.MaxValue;
+            bool errorDetected = false;
             if (arg1.AddrMode != OpAddrMode.None)
             {
-                EdValueType testBit = arg1.GetValueData();
-                if (testBit == 0)
+                EdValueType testBit = arg1.GetValueData(1);
+                if (testBit > 0)
                 {
-                    trapBit = 0;
-                }
-                else
-                {
-                    trapBit = (EdValueType)(1 << (int)testBit);
+                    if (ediabas.errorTrapBitNr == (int)testBit)
+                    {
+                        errorDetected = true;
+                    }
+                    if (ediabas.errorTrapBitNr == 0 && testBit == 32)
+                    {
+                        errorDetected = true;
+                    }
                 }
             }
-            if ((ediabas.trapBits & trapBit) == 0)
+            else
+            {
+                if (ediabas.errorTrapBitNr >= 0)
+                {
+                    errorDetected = true;
+                }
+            }
+            if (!errorDetected)
             {
                 ediabas.pcCounter = arg0.GetValueData();
             }
@@ -1437,20 +1466,30 @@ namespace EdiabasLib
         // jump trap
         private static void OpJt(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            EdValueType trapBit = EdValueType.MaxValue;
+            bool errorDetected = false;
             if (arg1.AddrMode != OpAddrMode.None)
             {
-                EdValueType testBit = arg1.GetValueData();
-                if (testBit == 0)
+                EdValueType testBit = arg1.GetValueData(1);
+                if (testBit > 0)
                 {
-                    trapBit = 0;
-                }
-                else
-                {
-                    trapBit = (EdValueType)(1 << (int)testBit);
+                    if (ediabas.errorTrapBitNr == (int)testBit)
+                    {
+                        errorDetected = true;
+                    }
+                    if (ediabas.errorTrapBitNr == 0 && testBit == 32)
+                    {
+                        errorDetected = true;
+                    }
                 }
             }
-            if ((ediabas.trapBits & trapBit) != 0)
+            else
+            {
+                if (ediabas.errorTrapBitNr >= 0)
+                {
+                    errorDetected = true;
+                }
+            }
+            if (errorDetected)
             {
                 ediabas.pcCounter = arg0.GetValueData();
             }
@@ -1739,7 +1778,7 @@ namespace EdiabasLib
             EdValueType length = arg0.GetDataLen();
             if (ediabas.stackList.Count < length)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0005);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0005);
             }
             else
             {
@@ -1760,7 +1799,7 @@ namespace EdiabasLib
             EdValueType value = 0;
             if (ediabas.stackList.Count < sizeof(EdValueType))
             {
-                ediabas.SetError(ErrorNumbers.BIP_0005);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0005);
             }
             else
             {
@@ -1886,13 +1925,18 @@ namespace EdiabasLib
         // BEST2: make_error
         private static void OpSett(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.trapBits |= (EdValueType)(1 << (int)arg0.GetValueData());
+            EdValueType error = arg0.GetValueData();
+            if (error == 0)
+            {
+                error = 0x100;
+            }
+            ediabas.errorTrapBitNr = (int)error;
         }
 
         // BEST2: set_trap_mask
         private static void OpSettmr(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.trapMask = arg0.GetValueData();
+            ediabas.errorTrapMask = arg0.GetValueData();
         }
 
         // BEST2: shdataget
@@ -2172,18 +2216,18 @@ namespace EdiabasLib
         {
             if (ediabas.tableIndex < 0)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0010);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
                 return;
             }
             if (ediabas.tableRowIndex < 0)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0010);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
                 return;
             }
             string entry = ediabas.GetTableEntry(ediabas.GetTableFs(), ediabas.tableIndex, ediabas.tableRowIndex, arg1.GetStringData());
             if (entry == null)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0010);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
                 return;
             }
             arg0.SetStringData(entry);
@@ -2194,14 +2238,14 @@ namespace EdiabasLib
         {
             if (ediabas.tableIndex < 0)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0010);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
                 return;
             }
             bool found = false;
             Int32 rowIndex = ediabas.GetTableLine(ediabas.GetTableFs(), ediabas.tableIndex, arg0.GetValueData(), out found);
             if (rowIndex < 0)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0010);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
             }
             ediabas.tableRowIndex = rowIndex;
             ediabas.flags.zero = !found;
@@ -2226,14 +2270,14 @@ namespace EdiabasLib
         {
             if (ediabas.tableIndex < 0)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0010);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
                 return;
             }
             bool found = false;
             Int32 rowIndex = ediabas.SeekTable(ediabas.GetTableFs(), ediabas.tableIndex, arg0.GetStringData(), arg1.GetStringData(), out found);
             if (rowIndex < 0)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0010);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
                 return;
             }
             ediabas.tableRowIndex = rowIndex;
@@ -2245,14 +2289,14 @@ namespace EdiabasLib
         {
             if (ediabas.tableIndex < 0)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0010);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
                 return;
             }
             bool found = false;
             Int32 rowIndex = ediabas.SeekTable(ediabas.GetTableFs(), ediabas.tableIndex, arg0.GetStringData(), arg1.GetValueData(), out found);
             if (rowIndex < 0)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0010);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
                 return;
             }
             ediabas.tableRowIndex = rowIndex;
@@ -2271,7 +2315,7 @@ namespace EdiabasLib
             Int32 tableAddr = ediabas.GetTableIndex(ediabas.GetTableFs(), arg0.GetStringData(), out found);
             if (!found)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0010);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
             }
             ediabas.tableIndex = tableAddr;
             ediabas.tableRowIndex = -1;
@@ -2290,7 +2334,7 @@ namespace EdiabasLib
                 }
                 if (!File.Exists(fullFileName))
                 {
-                    ediabas.SetError(ErrorNumbers.SYS_0002);
+                    ediabas.SetError(ErrorCodes.EDIABAS_SYS_0002);
                     return;
                 }
 
@@ -2302,14 +2346,14 @@ namespace EdiabasLib
                 }
                 catch (Exception)
                 {
-                    ediabas.SetError(ErrorNumbers.SYS_0002);
+                    ediabas.SetError(ErrorCodes.EDIABAS_SYS_0002);
                 }
             }
             bool found = false;
             Int32 tableAddr = ediabas.GetTableIndex(ediabas.GetTableFs(), arg0.GetStringData(), out found);
             if (!found)
             {
-                ediabas.SetError(ErrorNumbers.BIP_0010);
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
             }
             ediabas.tableIndex = tableAddr;
             ediabas.tableRowIndex = -1;

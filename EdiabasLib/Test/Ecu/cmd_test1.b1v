@@ -867,3 +867,67 @@ TEST_PROGRESS_INFO#
 					eoj
 					eoj
 
+
+TEST_RAISE_ERROR#
+;    JOBNAME:TEST_RAISE_ERROR
+;    JOBCOMMENT:Test raise specified error
+;    ARG:TRAPNUMBER
+;    ARGTYPE:integer
+;    ARGCOMMENT:Trap number
+;
+					clrt
+					move		L4,#$FFFFFFFF.L
+					settmr		L4
+
+					parl		L4,#1
+					sett		L4
+					eerr
+
+					eoj
+					eoj
+
+
+TEST_RAISE_BIP10#
+;    JOBNAME:TEST_RAISE_BIP10
+;    JOBCOMMENT:Test raise BIP10 error
+;
+					clrt
+					move		L4,#0.L
+					settmr		L4
+
+					tabset		"UNKOWN"
+
+					eoj
+					eoj
+
+
+TEST_RAISE_BREAK#
+;    JOBNAME:TEST_RAISE_BREAK
+;    JOBCOMMENT:Test raise break error
+;
+					clrt
+					move		L4,#0.L
+					settmr		L4
+
+					break
+
+					eoj
+					eoj
+
+TEST_RAISE_RUNTIMEERR#
+;    JOBNAME:TEST_RAISE_RUNTIMEERR
+;    JOBCOMMENT:Test raise runtime error
+;    ARG:ERRORNUMBER
+;    ARGTYPE:integer
+;    ARGCOMMENT:Error number
+;
+					clrt
+					move		L4,#0.L
+					settmr		L4
+
+					parl		L4,#1
+					generr		L4
+
+					eoj
+					eoj
+

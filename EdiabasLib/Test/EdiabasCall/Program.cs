@@ -23,6 +23,7 @@ namespace EdiabasCall
         private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
         private static Encoding encoding = Encoding.GetEncoding(1252);
         private static TextWriter outputWriter;
+        private static bool compareOutput = false;
         private static uint apiHandle = 0;
         private static string lastJobInfo = string.Empty;
         private static int lastJobProgress = -1;
@@ -43,6 +44,8 @@ namespace EdiabasCall
                   v => outFile = v },
                 { "a|append", "append output file.",
                   v => appendFile = v != null },
+                { "c|compare", "compare output.",
+                  v => compareOutput = v != null },
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>.",
                   v => jobNames.Add(v) },
                 { "h|help",  "show this message and exit", 
@@ -152,7 +155,14 @@ namespace EdiabasCall
                     }
                     if (API.apiState() == API.APIERROR)
                     {
-                        outputWriter.WriteLine(string.Format(culture, "Job {0} failed: {1}", jobName, API.apiErrorText()));
+                        if (compareOutput)
+                        {
+                            outputWriter.WriteLine(string.Format(culture, "Error occured: 0x{0:X08}", API.apiErrorCode()));
+                        }
+                        else
+                        {
+                            outputWriter.WriteLine(string.Format(culture, "Error occured: {0}", API.apiErrorText()));
+                        }
                         API.apiEnd();
                         return 1;
                     }
