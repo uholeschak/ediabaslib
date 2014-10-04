@@ -780,7 +780,8 @@ namespace EdiabasLib
             EdValueType dataLen = sizeof(Single);
             if (startIdx + dataLen > MAX_ARRAY_LENGTH)
             {
-                throw new ArgumentOutOfRangeException("startIdx", "OpFlt2y4: Invalid index");
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
+                return;
             }
             if (dataArrayDest.Length < (startIdx + dataLen))
             {
@@ -822,7 +823,8 @@ namespace EdiabasLib
             EdValueType dataLen = sizeof(Double);
             if (startIdx + dataLen > MAX_ARRAY_LENGTH)
             {
-                throw new ArgumentOutOfRangeException("startIdx", "OpFlt2y4: Invalid index");
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
+                return;
             }
             if (dataArrayDest.Length < (startIdx + dataLen))
             {
@@ -1854,9 +1856,9 @@ namespace EdiabasLib
             data2.CopyTo(resultArray, data1.Length);
             if (resultArray.Length > MAX_ARRAY_LENGTH)
             {
-                throw new ArgumentOutOfRangeException("length", "OpScat: Invalid result length");
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
+                return;
             }
-
             arg0.SetRawData(resultArray);
         }
 
@@ -2032,7 +2034,8 @@ namespace EdiabasLib
 
             if (startIdx >= MAX_ARRAY_LENGTH)
             {
-                throw new ArgumentOutOfRangeException("startIdx", "OpSpaste: Invalid index");
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
+                return;
             }
             if (startIdx < dataArrayDest.Length)
             {
@@ -2051,7 +2054,8 @@ namespace EdiabasLib
                 }
                 if (resultByteList.Count > MAX_ARRAY_LENGTH)
                 {
-                    throw new ArgumentOutOfRangeException("resultByteList", "OpSpaste: Invalid result length");
+                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
+                    return;
                 }
 
                 arg0Data.SetArrayData(resultByteList.ToArray());
@@ -2105,14 +2109,15 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpStrcat: Invalid type");
             }
 
+            EdValueType len1 = arg0.GetDataLen();
             string string1 = arg0.GetStringData();
             string string2 = arg1.GetStringData();
 
-            string resultString = string1 + string2;
-            if (resultString.Length > MAX_ARRAY_LENGTH)
+            if (len1 + string2.Length > MAX_ARRAY_LENGTH)
             {
-                resultString = resultString.Substring(0, MAX_ARRAY_LENGTH);
+                string2 = string2.Substring(0, (int)(MAX_ARRAY_LENGTH - len1));
             }
+            string resultString = string1 + string2;
             arg0.SetStringData(resultString);
         }
 
@@ -2218,9 +2223,9 @@ namespace EdiabasLib
 
             if (startIdx + dataLen > MAX_ARRAY_LENGTH)
             {
-                throw new ArgumentOutOfRangeException("startIdx", "OpSwap: Invalid index");
+                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
+                return;
             }
-
             Array.Reverse(dataArrayDest, (int)startIdx, (int)dataLen);
             arg0Data.SetArrayData(dataArrayDest, true);
         }

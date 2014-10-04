@@ -20,7 +20,7 @@ namespace EdiabasLib
         public delegate void ProgressJobDelegate(Ediabas ediabas);
         public delegate void ErrorRaisedDelegate(ErrorCodes error);
 
-        public static readonly int MAX_ARRAY_LENGTH = 1024;
+        public static readonly int MAX_ARRAY_LENGTH = 1023;
         public static readonly int MAX_FILES = 5;
 
         private class OpCode
@@ -46,28 +46,29 @@ namespace EdiabasLib
 
         private class Operand
         {
-            public Operand()
-                : this(OpAddrMode.None, null, null, null)
+            public Operand(Ediabas ediabas)
+                : this(ediabas, OpAddrMode.None, null, null, null)
             {
             }
 
-            public Operand(OpAddrMode opAddrMode)
-                : this(opAddrMode, null, null, null)
+            public Operand(Ediabas ediabas, OpAddrMode opAddrMode)
+                : this(ediabas, opAddrMode, null, null, null)
             {
             }
 
-            public Operand(OpAddrMode opAddrMode, Object opData1)
-                : this(opAddrMode, opData1, null, null)
+            public Operand(Ediabas ediabas, OpAddrMode opAddrMode, Object opData1)
+                : this(ediabas, opAddrMode, opData1, null, null)
             {
             }
 
-            public Operand(OpAddrMode opAddrMode, Object opData1, Object opData2)
-                : this(opAddrMode, opData1, opData2, null)
+            public Operand(Ediabas ediabas, OpAddrMode opAddrMode, Object opData1, Object opData2)
+                : this(ediabas, opAddrMode, opData1, opData2, null)
             {
             }
 
-            public Operand(OpAddrMode opAddrMode, Object opData1, Object opData2, Object opData3)
+            public Operand(Ediabas ediabas, OpAddrMode opAddrMode, Object opData1, Object opData2, Object opData3)
             {
+                this.ediabas = ediabas;
                 Init(opAddrMode, opData1, opData2, opData3);
             }
 
@@ -320,7 +321,8 @@ namespace EdiabasLib
                             EdValueType requiredLength = index + len;
                             if (requiredLength > MAX_ARRAY_LENGTH)
                             {
-                                throw new ArgumentOutOfRangeException("requiredLength", "Operand.GetRawData IdxXLenX: Index out of range");
+                                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
+                                return new byte[0];
                             }
                             if (dataArray.Length < requiredLength)
                             {
@@ -501,7 +503,8 @@ namespace EdiabasLib
                             EdValueType requiredLength = index + len;
                             if (requiredLength > MAX_ARRAY_LENGTH)
                             {
-                                throw new ArgumentOutOfRangeException("index", "Operand.SetRawData IdxX: Length out of range");
+                                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
+                                return;
                             }
                             if (dataArray.Length < requiredLength)
                             {
@@ -542,6 +545,7 @@ namespace EdiabasLib
                 SetArrayData(dataArray);
             }
 
+            private Ediabas ediabas;
             private OpAddrMode opAddrMode;
             public OpAddrMode AddrMode
             {
@@ -954,8 +958,9 @@ namespace EdiabasLib
 
         private class StringData
         {
-            public StringData()
+            public StringData(Ediabas ediabas)
             {
+                this.ediabas = ediabas;
                 this.length = 0;
                 this.data = new byte[MAX_ARRAY_LENGTH];
             }
@@ -980,7 +985,8 @@ namespace EdiabasLib
             {
                 if (value.Length > MAX_ARRAY_LENGTH)
                 {
-                    throw new ArgumentOutOfRangeException("value.Length", "StringData.SetData: Invalid length");
+                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
+                    return;
                 }
                 Array.Copy(value, 0, data, 0, value.Length);
                 if (!keepLength)
@@ -1001,6 +1007,7 @@ namespace EdiabasLib
                 }
             }
 
+            private Ediabas ediabas;
             private EdValueType length;
             private byte[] data;
         }
@@ -2275,7 +2282,7 @@ namespace EdiabasLib
 
             for (int i = 0; i < stringRegisters.Length; i++)
             {
-                stringRegisters[i] = new StringData();
+                stringRegisters[i] = new StringData(this);
             }
             foreach (Register arg in registerList)
             {
@@ -2762,8 +2769,8 @@ namespace EdiabasLib
                     fs.Position = jobAddress;
                     bool foundFirstEoj = false;
                     byte[] ocBuffer = new byte[2];
-                    Operand arg0 = new Operand();
-                    Operand arg1 = new Operand();
+                    Operand arg0 = new Operand(this);
+                    Operand arg1 = new Operand(this);
                     long startTime = Stopwatch.GetTimestamp();
                     while (true)
                     {
@@ -3307,8 +3314,8 @@ namespace EdiabasLib
             CloseAllUserFiles();
             jobEnd = false;
 
-            Operand arg0 = new Operand();
-            Operand arg1 = new Operand();
+            Operand arg0 = new Operand(this);
+            Operand arg1 = new Operand(this);
             try
             {
                 while (!jobEnd)
@@ -3365,7 +3372,10 @@ namespace EdiabasLib
                         throw new ArgumentOutOfRangeException(oc.pneumonic, "executeJob: Function not implemented");
                     }
                 }
-                resultSets.Add(new Dictionary<string, ResultData>(resultDict));
+                if (resultDict.Count > 0)
+                {
+                    resultSets.Add(new Dictionary<string, ResultData>(resultDict));
+                }
                 resultDict.Clear();
             }
             catch (Exception ex)
