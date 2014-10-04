@@ -2289,7 +2289,6 @@ namespace EdiabasLib
                 arg.SetEdiabas(this);
             }
             SetConfigProperty("Simulation", "0");
-            SetConfigProperty("UserErrorHandling", "0x7856");
         }
 
         public void Dispose()
