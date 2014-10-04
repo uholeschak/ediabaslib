@@ -1425,10 +1425,19 @@ namespace EdiabasLib
                         errorDetected = true;
                     }
                 }
+                else
+                {
+                    if (ediabas.errorTrapBitNr >= 0x40000000)
+                    {
+                        errorDetected = true;
+                    }
+                }
             }
             else
             {
-                if (ediabas.errorTrapBitNr >= 0)
+                // Ediabas bug, should be identical to OpJt
+                // incorrect behaviour if no argument is specified
+                if (ediabas.errorTrapBitNr >= 0x40000000)
                 {
                     errorDetected = true;
                 }
@@ -1486,6 +1495,13 @@ namespace EdiabasLib
                         errorDetected = true;
                     }
                     if (ediabas.errorTrapBitNr == 0 && testBit == 32)
+                    {
+                        errorDetected = true;
+                    }
+                }
+                else
+                {
+                    if (ediabas.errorTrapBitNr >= 0x40000000)
                     {
                         errorDetected = true;
                     }
@@ -1937,7 +1953,7 @@ namespace EdiabasLib
             EdValueType error = arg0.GetValueData();
             if (error == 0)
             {
-                error = 0x100;
+                error = 0x40000000;
             }
             ediabas.errorTrapBitNr = (int)error;
         }

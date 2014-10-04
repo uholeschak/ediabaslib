@@ -205,6 +205,24 @@ calc_flags:
 %jbe:
 			strcat		S2,S3
 
+			clear		S3
+			move		S3,"jt "
+			popf
+			pushf
+			jt			%jt
+			clear		S3
+%jt:
+			strcat		S2,S3
+
+			clear		S3
+			move		S3,"jnt "
+			popf
+			pushf
+			jnt			%jnt
+			clear		S3
+%jnt:
+			strcat		S2,S3
+
 			popf
 			push		#1.L
 ;end
@@ -222,7 +240,24 @@ get_error_bit:
 			push	L0
 			jump	%4
 %3:
-			push	#0.L
+			push	#-1
+%4:
+;end
+
+;---------------------------------------------------------------
+get_nerror_bit:
+			move	L0,#0
+%1:
+			comp	L0,#256
+			jz		%3
+			jnt		%2,L0
+			push	L0
+			jump	%4
+%2:
+			adds	L0,#1
+			jump	%1
+%3:
+			push	#-1
 %4:
 ;end
 
