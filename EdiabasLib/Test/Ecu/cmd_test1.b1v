@@ -413,6 +413,13 @@ strcat1:
 					spaste		S0[#3],S1
 					ergy		"SPASTE5",S0
 
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B,$A2.B,$A4.B,$A6.B}
+					scut		S0,#2
+					ergy		"SCUT1",S0
+					scut		S0,#20
+					ergy		"SCUT2",S0
+
 					ergs		"UPPERASE","Uppercase"
 					ergs		"uppercase","Lowercase"
 
