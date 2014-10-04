@@ -242,6 +242,7 @@ strcat1:
 					cfgsg		S0,"BipEcuFile"
 					ergs		"CFGSG_ECUFILE",S0
 
+					clear		I0
 					cfgig		I0,"UserErrorHandling"
 					ergi		"CFGIG_USERERR",I0
 
