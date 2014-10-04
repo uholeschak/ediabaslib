@@ -49,6 +49,13 @@ TEST_SREG#
 					ergb		"CLEAR_B",S0[#$A]
 
 					clear		S0
+					move		S0[#1000],#'A'
+					clear		S0
+					move		S0[#1020],#'A'
+					ergs		"CLEAR1_S",S0
+					ergy		"CLEAR1_Y",S0
+
+					clear		S0
 					move 		S0,S1
 					fix2hex		S0,#$12345678.L
 					ergy		"FIX2HEX4_Y",S0
@@ -184,8 +191,43 @@ TEST_SREG#
 					clear		S0
 					move 		S0,S1
 					strcat		S0,"TEST"
-					ergy		"STRCAT_Y",S0
-					ergs		"STRCAT_S",S0
+					ergy		"STRCAT1_Y",S0
+					ergs		"STRCAT1_S",S0
+
+					move		L0,#0
+					clear		S0
+strcat1:
+					strcat		S0,"X"
+					adds		L0,#1
+					comp		L0,#1020
+					jnz			strcat1
+					ergy		"STRCAT2A_Y",S0
+					ergs		"STRCAT2A_S",S0
+					strcat		S0,"TEST"
+					ergy		"STRCAT2B_Y",S0
+					ergs		"STRCAT2B_S",S0
+
+					clear		S0
+					strcat		S0,"TEST"
+					ergy		"STRCAT3_Y",S0
+					ergs		"STRCAT3_S",S0
+
+					clear		S0
+					move		S0[#1000],#'A'
+					ergy		"STRCAT4A_Y",S0
+					ergs		"STRCAT4A_S",S0
+					strcat		S0,"TEST"
+					ergy		"STRCAT4B_Y",S0
+					ergs		"STRCAT4B_S",S0
+
+					clear		S0
+					move		S0[#1020],#'A'
+					; ediabas bug: S0 contains still value at pos 1000!
+					;ergy		"STRCAT5A_Y",S0
+					;ergs		"STRCAT5A_S",S0
+					strcat		S0,"TEST"
+					ergy		"STRCAT5B_Y",S0
+					ergs		"STRCAT5B_S",S0
 
 					clear		S0
 					move 		S0,S1
@@ -221,24 +263,45 @@ TEST_SREG#
 
 					clear		S0
 					move 		S0,S1
-					setspc		" ",#$2.L
-					stoken		S0,"Dies ist ein Text"
+					setspc		" ",#2
+					stoken		S0,"Dies_ist ein Text"
 					ergs		"SETSPC1_S",S0
 					ergy		"SETSPC1_Y",S0
 
 					clear		S0
 					move 		S0,S1
-					setspc		" ",#$0.L
-					stoken		S0,"Dies ist ein Text"
+					setspc		" _",#2
+					stoken		S0,"Dies_ist ein Text"
 					ergs		"SETSPC2_S",S0
 					ergy		"SETSPC2_Y",S0
 
 					clear		S0
 					move 		S0,S1
-					setspc		" ",#$5.L
-					stoken		S0,"Dies ist ein Text"
+					setspc		" _",#3
+					stoken		S0,"Dies_ist ein Text"
 					ergs		"SETSPC3_S",S0
 					ergy		"SETSPC3_Y",S0
+
+					clear		S0
+					move 		S0,S1
+					setspc		" _",#0
+					stoken		S0,"Dies_ist ein Text"
+					ergs		"SETSPC4_S",S0
+					ergy		"SETSPC4_Y",S0
+
+					clear		S0
+					move 		S0,S1
+					setspc		" _",#5
+					stoken		S0,"Dies_ist ein Text"
+					ergs		"SETSPC5_S",S0
+					ergy		"SETSPC5_Y",S0
+
+					clear		S0
+					move 		S0,S1
+					setspc		"",#2.L
+					stoken		S0,"Dies_ist ein Text"
+					ergs		"SETSPC6_S",S0
+					ergy		"SETSPC6_Y",S0
 
 					clear		S0
 					move 		S0,S1
@@ -932,6 +995,21 @@ TEST_RAISE_ERROR#
 					parl		L4,#1
 					sett		L4
 					eerr
+
+					eoj
+					eoj
+
+
+TEST_RAISE_BIP1#
+;    JOBNAME:TEST_RAISE_BIP1
+;    JOBCOMMENT:Test raise BIP10 error
+;
+					clrt
+					move		L4,#0.L
+					settmr		L4
+
+					clear		S0
+					move		S0[#1023],#0
 
 					eoj
 					eoj
