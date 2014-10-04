@@ -4061,6 +4061,67 @@ job(  name      : TEST_PAR_FLAGS;
 
 ////////////////////////////////////////////////////////////////////////
 
+job(  name      : TEST_CLEAR_FLAGS;
+      comment   : Test move flags;
+   ) 
+{
+#asm
+					enewset
+					move		L5,#$7FFFFFFF
+					comp		L5,#-4
+					setc
+					clear		S0
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
+					move		L5,#$7FFFFFFF
+					comp		L5,#-4
+					setc
+					clear		L0
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
+					clear		S0
+					move		L5,#$7FFFFFFF
+					comp		L5,#-4
+					setc
+					move		S0,"TEST"
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
+					move		L5,#$7FFFFFFF
+					comp		L5,#-4
+					setc
+					move		L0,#-5
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+}
+
+////////////////////////////////////////////////////////////////////////
+
 job(  name      : TEST_TABLE_FLAGS;
       comment   : Test table flags;
    ) 
@@ -4080,7 +4141,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergl		"COLS_INIT", L4
@@ -4093,7 +4153,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergl		"ROWS_INIT", L4
@@ -4108,7 +4167,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4127,7 +4185,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergl		"COLS_ERR", L4
@@ -4140,7 +4197,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergl		"ROWS_ERR", L4
@@ -4155,7 +4211,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4169,7 +4224,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergl		"COLS_OK", L4
@@ -4182,7 +4236,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergl		"ROWS_OK", L4
@@ -4199,7 +4252,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4211,7 +4263,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergs		"TABGET2", S4
@@ -4224,7 +4275,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergs		"TABGET", S4
@@ -4246,7 +4296,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4258,7 +4307,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergs		"TABGET9", S4
@@ -4273,7 +4321,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4292,7 +4339,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4304,7 +4350,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergs		"TABGET44", S4
@@ -4319,7 +4364,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4331,7 +4375,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergs		"TABGET99", S4
@@ -4344,7 +4387,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4363,7 +4405,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4375,7 +4416,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergs		"TABGETL4", S4
@@ -4390,7 +4430,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4402,7 +4441,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergs		"TABGETL9", S4
@@ -4417,7 +4455,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4434,7 +4471,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergl		"COLS_ERREX1", L4
@@ -4447,7 +4483,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergl		"ROWS_ERREX2", L4
@@ -4462,7 +4497,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4479,7 +4513,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergl		"COLS_ERREX2", L4
@@ -4492,7 +4525,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergl		"ROWS_ERREX2", L4
@@ -4507,7 +4539,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4521,7 +4552,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergl		"COLS_OK", L4
@@ -4534,7 +4564,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergl		"ROWS_OK", L4
@@ -4551,7 +4580,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4563,7 +4591,6 @@ job(  name      : TEST_TABLE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergs		"TABGET2", S4
@@ -4592,7 +4619,6 @@ job(  name      : TEST_ERROR_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4604,7 +4630,6 @@ job(  name      : TEST_ERROR_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4620,7 +4645,6 @@ job(  name      : TEST_ERROR_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4636,7 +4660,6 @@ job(  name      : TEST_ERROR_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4652,7 +4675,6 @@ job(  name      : TEST_ERROR_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4669,7 +4691,6 @@ job(  name      : TEST_ERROR_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4686,7 +4707,6 @@ job(  name      : TEST_ERROR_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4705,7 +4725,6 @@ job(  name      : TEST_ERROR_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
@@ -4733,7 +4752,6 @@ job(  name      : TEST_IFACE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergs		"XTYPE_S", S4
@@ -4748,7 +4766,6 @@ job(  name      : TEST_IFACE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergi		"XVERS", I8
@@ -4767,7 +4784,6 @@ job(  name      : TEST_IFACE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergs		"XTYPE_S", S4
@@ -4787,7 +4803,6 @@ job(  name      : TEST_IFACE_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergi		"XVERS", I8
@@ -4803,12 +4818,142 @@ job(  name      : TEST_IFACE_FLAGS;
 
 ////////////////////////////////////////////////////////////////////////
 
+job(  name      : TEST_TIME_FLAGS;
+      comment   : Test time;
+   ) 
+{
+#asm
+					enewset
+					parl		L4, #1
+;					ergl		"TIME_H", L4
+					mult		L4, #3600
+					move		L5, L4
+
+					parl		L4, #2
+;					ergl		"TIME_M", L4
+					mult		L4, #60
+					adds		L5, L4
+
+					parl		L4, #3
+;					ergl		"TIME_S", L4
+					adds		L5, L4
+
+					time		S5
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+;					ergy		"TIME", S5
+
+					clear		L4
+					move		A0, S5[#0]
+					mult		L4, #3600
+					move		L6, L4
+
+					clear		L4
+					move		A0, S5[#1]
+					mult		L4, #60
+					adds		L6, L4
+
+					clear		L4
+					move		A0, S5[#2]
+					adds		L6, L4
+
+;					ergl		"TIME_1", L5
+;					ergl		"TIME_2", L6
+
+					clear		S4
+					move		S4, "OK"
+
+					subb		L6, L5
+					jpl			time_ok1
+					clear		S4
+					move		S4, "BELOW"
+time_ok1:
+					comp		L6, #5
+					jle			time_ok2
+					clear		S4
+					move		S4, "OVER"
+time_ok2:
+					ergs		"TIMESTAT", S4
+#endasm
+
+#asm
+					enewset
+					date		S4
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergy		"DATE", S4
+#endasm
+
+#asm
+					enewset
+					clear		S4
+					move		S4, "OK"
+					move		L5,#$7FFFFFFF
+					comp		L5,#-4
+					setc
+					ticks		L4
+					wait		#2
+					ticks		L5
+#endasm
+	calc_flags();
+#asm
+					subb		L5, L4
+					comp		L5, #2050
+					jle			wait_ok1
+					clear		S4
+					move		S4, "OVER"
+wait_ok1:
+					comp		L5, #1950
+					jge			wait_ok2
+					clear		S4
+					move		S4, "UNDER"
+wait_ok2:
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"TIMESTAT", S4
+#endasm
+
+#asm
+					enewset
+					clear		S4
+					move		S4, "OK"
+					ticks		L4
+					waitex		#500
+					ticks		L5
+#endasm
+	calc_flags();
+#asm
+					subb		L5, L4
+					comp		L5, #550
+					jle			waitex_ok1
+					clear		S4
+					move		S4, "OVER"
+waitex_ok1:
+					comp		L5, #450
+					jge			waitex_ok2
+					clear		S4
+					move		S4, "UNDER"
+waitex_ok2:
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"TIMESTAT", S4
+#endasm
+
+}
+
+////////////////////////////////////////////////////////////////////////
+
 job(  name      : TEST_ERGSYI_FLAGS;
       comment   : Test ergsysi;
    ) 
 {
 #asm
-
 					shmset		"ID","CMD_TEST2_ERGSYSI"
 					pars		S4, #1
 					parl		L4, #2
@@ -4816,7 +4961,6 @@ job(  name      : TEST_ERGSYI_FLAGS;
 #endasm
 	calc_flags();
 #asm
-					ergs		"PARS", S0
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergs		"ERGSYSI_S", S4
@@ -4824,3 +4968,4 @@ job(  name      : TEST_ERGSYI_FLAGS;
 #endasm
 
 }
+

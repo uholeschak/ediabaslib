@@ -352,8 +352,11 @@ namespace EdiabasLib
             else
             {
                 arg0Data.SetValueData(0);
-                ediabas.flags.UpdateFlags(arg0.GetValueData(), arg0.GetDataLen());
             }
+            ediabas.flags.carry = false;
+            ediabas.flags.zero = true;
+            ediabas.flags.sign = false;
+            ediabas.flags.overflow = false;
         }
 
         // BEST2: getCfgInt
@@ -1238,6 +1241,7 @@ namespace EdiabasLib
                 EdValueType len = GetArgsValueLength(arg0, arg1);
                 EdValueType value = arg1.GetValueData(len);
                 arg0.SetRawData(value);
+                ediabas.flags.carry = false;
                 ediabas.flags.overflow = false;
                 ediabas.flags.UpdateFlags(value, len);
             }
@@ -1248,6 +1252,7 @@ namespace EdiabasLib
                     EdValueType len = GetArgsValueLength(arg0, arg1);
                     EdValueType value = arg1.GetValueData(len);
                     arg0.SetRawData(value);
+                    ediabas.flags.carry = false;
                     ediabas.flags.overflow = false;
                     ediabas.flags.UpdateFlags(value, 1);
                 }
@@ -1269,6 +1274,10 @@ namespace EdiabasLib
                     {
                         arg0.SetRawData(arg1.GetRawData());
                     }
+                    ediabas.flags.carry = false;
+                    ediabas.flags.zero = false;
+                    ediabas.flags.sign = false;
+                    ediabas.flags.overflow = false;
                 }
                 else
                 {
@@ -2373,9 +2382,8 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpTicks: Invalid type");
             }
-            EdValueType value = (EdValueType)DateTime.Now.Ticks;
+            EdValueType value = (EdValueType)(DateTime.Now.Ticks / 10000);
             arg0.SetRawData(value);
-            ediabas.flags.UpdateFlags(value, sizeof(EdValueType));
         }
 
         // BEST2: gettime

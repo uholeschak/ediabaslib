@@ -3786,11 +3786,12 @@ namespace EdiabasLib
         private static Int64 StringToValue(string number)
         {
             Int64 value = 0;
-            if (number.Length == 0)
+            string numberLocal = number.TrimEnd();
+            if (numberLocal.Length == 0)
             {
                 return value;
             }
-            string numberLower = number.ToLower(culture);
+            string numberLower = numberLocal.ToLower(culture);
             try
             {
                 if (numberLower.StartsWith("0x", StringComparison.Ordinal))
@@ -3800,13 +3801,13 @@ namespace EdiabasLib
                         Char firstChar = numberLower[2];
                         if (Char.IsDigit(firstChar) || (firstChar >= 'a' && firstChar <= 'f'))
                         {
-                            value = Convert.ToInt64(number.Substring(2, number.Length - 2), 16);
+                            value = Convert.ToInt64(numberLocal.Substring(2, numberLocal.Length - 2), 16);
                         }
                     }
                 }
                 else if (numberLower.StartsWith("0y", StringComparison.Ordinal))
                 {   // binary
-                    value = Convert.ToInt64(number.Substring(2, number.Length - 2), 2);
+                    value = Convert.ToInt64(numberLocal.Substring(2, numberLocal.Length - 2), 2);
                 }
                 else
                 {   // dec
@@ -3815,7 +3816,7 @@ namespace EdiabasLib
                     {
                         if (!Char.IsLetter(numberLower[0]))
                         {
-                            value = Convert.ToInt64(number, 10);
+                            value = Convert.ToInt64(numberLocal.TrimStart(), 10);
                         }
                     }
                 }
