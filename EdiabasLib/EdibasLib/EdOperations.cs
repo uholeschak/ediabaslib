@@ -2008,39 +2008,54 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpSpaste: Invalid type");
             }
 
+            EdValueType startIdx;
+            switch (arg0.AddrMode)
+            {
+                case OpAddrMode.IdxImm:
+                    startIdx = (EdValueType)arg0.opData2;
+                    break;
+
+                case OpAddrMode.IdxReg:
+                    {
+                        Register arg0Data2 = (Register)arg0.opData2;
+                        startIdx = arg0Data2.GetValueData();
+                        break;
+                    }
+
+                default:
+                    throw new ArgumentOutOfRangeException("arg0.AddrMode", "OpSpaste: Invalid mode");
+            }
+
             Register arg0Data = (Register)arg0.opData1;
             byte[] dataArrayDest = arg0Data.GetArrayData();
-            EdValueType startIdx = (EdValueType)arg0.opData2;
             byte[] dataArraySource = arg1.GetArrayData();
 
             if (startIdx >= MAX_ARRAY_LENGTH)
             {
                 throw new ArgumentOutOfRangeException("startIdx", "OpSpaste: Invalid index");
             }
-            if (dataArrayDest.Length < (startIdx + 1))
+            if (startIdx < dataArrayDest.Length)
             {
-                Array.Resize(ref dataArrayDest, (int)(startIdx + 1));
-            }
+                List<byte> resultByteList = new List<byte>();
+                for (int i = 0; i < startIdx; i++)
+                {
+                    resultByteList.Add(dataArrayDest[i]);
+                }
+                for (int i = 0; i < dataArraySource.Length; i++)
+                {
+                    resultByteList.Add(dataArraySource[i]);
+                }
+                for (int i = (int)startIdx; i < dataArrayDest.Length; i++)
+                {
+                    resultByteList.Add(dataArrayDest[i]);
+                }
+                if (resultByteList.Count > MAX_ARRAY_LENGTH)
+                {
+                    throw new ArgumentOutOfRangeException("resultByteList", "OpSpaste: Invalid result length");
+                }
 
-            List<byte> resultByteList = new List<byte>();
-            for (int i = 0; i < startIdx; i++)
-            {
-                resultByteList.Add(dataArrayDest[i]);
+                arg0Data.SetArrayData(resultByteList.ToArray());
             }
-            for (int i = 0; i < dataArraySource.Length; i++)
-            {
-                resultByteList.Add(dataArraySource[i]);
-            }
-            for (int i = (int) startIdx; i < dataArrayDest.Length; i++)
-            {
-                resultByteList.Add(dataArrayDest[i]);
-            }
-            if (resultByteList.Count > MAX_ARRAY_LENGTH)
-            {
-                throw new ArgumentOutOfRangeException("resultByteList", "OpSpaste: Invalid result length");
-            }
-
-            arg0Data.SetArrayData(resultByteList.ToArray());
         }
 
         // BEST2: strrevers

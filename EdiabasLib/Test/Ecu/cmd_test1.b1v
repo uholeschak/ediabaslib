@@ -318,7 +318,36 @@ TEST_SREG#
 					clear		S0
 					move		S0,{$A2.B,$A4.B,$A6.B}
 					scat		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
-					ergy		"SCAT_Y",S0
+					ergy		"SCAT",S0
+
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B,$A2.B,$A4.B,$A6.B}
+					serase		S0[#3],#2
+					ergy		"SERASE1",S0
+					move		L0,#2
+					serase		S0[L0],#3
+					ergy		"SERASE2",S0
+					move		L0,#3
+					serase		S0[L0],#10
+					ergy		"SERASE3",S0
+
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B,$A2.B,$A4.B,$A6.B}
+					clear		S1
+					move		S1,{$C2.B,$C4.B,$C6.B}
+					move		L0,#2
+					spaste		S0[L0],S1
+					ergy		"SPASTE1",S0
+					move		L0,#12
+					spaste		S0[L0],S1
+					ergy		"SPASTE2",S0
+					spaste		S0[#16],S1
+					ergy		"SPASTE3",S0
+					spaste		S0[#15],S1
+					ergy		"SPASTE4",S0
+					clear		S0
+					spaste		S0[#3],S1
+					ergy		"SPASTE5",S0
 
 					ergs		"UPPERASE","Uppercase"
 					ergs		"uppercase","Lowercase"
