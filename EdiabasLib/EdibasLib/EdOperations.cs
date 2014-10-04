@@ -173,6 +173,10 @@ namespace EdiabasLib
             {
                 // don't touch carry here!
             }
+            else if (shift == 0)
+            {
+                ediabas.flags.carry = false;
+            }
             else
             {
                 if (shift > len * 8)
@@ -182,15 +186,8 @@ namespace EdiabasLib
                 else
                 {
                     long carryShift = (long)(len << 3) - shift;
-                    if (carryShift >= 0)
-                    {
-                        EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
-                        ediabas.flags.carry = (value & carryMask) != 0;
-                    }
-                    else
-                    {
-                        ediabas.flags.carry = false;
-                    }
+                    EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
+                    ediabas.flags.carry = (value & carryMask) != 0;
                 }
 
                 if (shift >= len * 8)
@@ -221,6 +218,10 @@ namespace EdiabasLib
             {
                 // don't touch carry here!
             }
+            else if (shift == 0)
+            {
+                ediabas.flags.carry = false;
+            }
             else
             {
                 if (shift > len * 8)
@@ -238,15 +239,8 @@ namespace EdiabasLib
                 else
                 {
                     long carryShift = (long)shift - 1;
-                    if (carryShift >= 0)
-                    {
-                        EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
-                        ediabas.flags.carry = (value & carryMask) != 0;
-                    }
-                    else
-                    {
-                        ediabas.flags.carry = false;
-                    }
+                    EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
+                    ediabas.flags.carry = (value & carryMask) != 0;
                 }
 
                 if (shift >= len * 8)
@@ -1551,6 +1545,10 @@ namespace EdiabasLib
             {
                 // don't touch carry here!
             }
+            else if (shift == 0)
+            {
+                ediabas.flags.carry = false;
+            }
             else
             {
                 if (shift > len * 8)
@@ -1560,15 +1558,8 @@ namespace EdiabasLib
                 else
                 {
                     long carryShift = (long)(len << 3) - shift;
-                    if (carryShift >= 0)
-                    {
-                        EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
-                        ediabas.flags.carry = (value & carryMask) != 0;
-                    }
-                    else
-                    {
-                        ediabas.flags.carry = false;
-                    }
+                    EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
+                    ediabas.flags.carry = (value & carryMask) != 0;
                 }
 
                 if (shift >= len * 8)
@@ -1599,6 +1590,10 @@ namespace EdiabasLib
             {
                 // don't touch carry here!
             }
+            else if (shift == 0)
+            {
+                ediabas.flags.carry = false;
+            }
             else
             {
                 if (shift > len * 8)
@@ -1608,15 +1603,8 @@ namespace EdiabasLib
                 else
                 {
                     long carryShift = (long)shift - 1;
-                    if (carryShift >= 0)
-                    {
-                        EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
-                        ediabas.flags.carry = (value & carryMask) != 0;
-                    }
-                    else
-                    {
-                        ediabas.flags.carry = false;
-                    }
+                    EdValueType carryMask = (EdValueType)(1 << (int)carryShift);
+                    ediabas.flags.carry = (value & carryMask) != 0;
                 }
 
                 if (shift >= len * 8)

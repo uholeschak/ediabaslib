@@ -2277,6 +2277,22 @@ job(  name      : TEST_LSL_FLAGS;
 					ergs		"JUMPS", S2
 #endasm
 
+#asm
+					enewset
+					move		L4,#$FFFFFFFF
+					move		L5,#0
+					ergl		"VALUE1", L4
+					ergl		"VALUE2", L5
+					clrc
+					lsl			L4,L5
+#endasm
+	calc_flags();
+#asm
+					ergl		"VALUE_RES4", L4
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
 
 
 #asm
@@ -2571,6 +2587,22 @@ job(  name      : TEST_ASL_FLAGS;
 					ergs		"JUMPS", S2
 #endasm
 
+#asm
+					enewset
+					move		L4,#$FFFFFFFF
+					move		L5,#0
+					ergl		"VALUE1", L4
+					ergl		"VALUE2", L5
+					clrc
+					asl			L4,L5
+#endasm
+	calc_flags();
+#asm
+					ergl		"VALUE_RES4", L4
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
 
 
 #asm
@@ -2853,6 +2885,22 @@ job(  name      : TEST_LSR_FLAGS;
 					enewset
 					move		L4,#$FFFFFFFF
 					move		L5,#-1
+					ergl		"VALUE1", L4
+					ergl		"VALUE2", L5
+					clrc
+					lsr			L4,L5
+#endasm
+	calc_flags();
+#asm
+					ergl		"VALUE_RES4", L4
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
+					move		L4,#$FFFFFFFF
+					move		L5,#0
 					ergl		"VALUE1", L4
 					ergl		"VALUE2", L5
 					clrc
@@ -3194,6 +3242,22 @@ job(  name      : TEST_ASR_FLAGS;
 					enewset
 					move		L4,#$FFFFFFFF
 					move		L5,#-1
+					ergl		"VALUE1", L4
+					ergl		"VALUE2", L5
+					clrc
+					asr			L4,L5
+#endasm
+	calc_flags();
+#asm
+					ergl		"VALUE_RES4", L4
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
+					move		L4,#$FFFFFFFF
+					move		L5,#0
 					ergl		"VALUE1", L4
 					ergl		"VALUE2", L5
 					clrc
