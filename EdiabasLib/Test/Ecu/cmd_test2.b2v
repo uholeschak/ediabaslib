@@ -4637,6 +4637,10 @@ job(  name      : TEST_ERROR_FLAGS;
 #asm
 					ergl		"VALUE_ERROR", L0
 #endasm
+	get_nerror_bit();
+#asm
+					ergl		"VALUE_NERROR", L0
+#endasm
 
 #asm
 					enewset
@@ -4651,6 +4655,10 @@ job(  name      : TEST_ERROR_FLAGS;
 	get_error_bit();
 #asm
 					ergl		"VALUE_ERROR", L0
+#endasm
+	get_nerror_bit();
+#asm
+					ergl		"VALUE_NERROR", L0
 #endasm
 
 #asm
@@ -4667,6 +4675,10 @@ job(  name      : TEST_ERROR_FLAGS;
 #asm
 					ergl		"VALUE_ERROR", L0
 #endasm
+	get_nerror_bit();
+#asm
+					ergl		"VALUE_NERROR", L0
+#endasm
 
 #asm
 					enewset
@@ -4681,6 +4693,10 @@ job(  name      : TEST_ERROR_FLAGS;
 	get_error_bit();
 #asm
 					ergl		"VALUE_ERROR", L0
+#endasm
+	get_nerror_bit();
+#asm
+					ergl		"VALUE_NERROR", L0
 #endasm
 
 #asm
@@ -4698,6 +4714,10 @@ job(  name      : TEST_ERROR_FLAGS;
 #asm
 					ergl		"VALUE_ERROR", L0
 #endasm
+	get_nerror_bit();
+#asm
+					ergl		"VALUE_NERROR", L0
+#endasm
 
 #asm
 					enewset
@@ -4713,6 +4733,10 @@ job(  name      : TEST_ERROR_FLAGS;
 	get_error_bit();
 #asm
 					ergl		"VALUE_ERROR", L0
+#endasm
+	get_nerror_bit();
+#asm
+					ergl		"VALUE_NERROR", L0
 #endasm
 
 
@@ -4732,6 +4756,10 @@ job(  name      : TEST_ERROR_FLAGS;
 #asm
 					ergl		"VALUE_ERROR", L0
 					clrt
+#endasm
+	get_nerror_bit();
+#asm
+					ergl		"VALUE_NERROR", L0
 #endasm
 
 }
