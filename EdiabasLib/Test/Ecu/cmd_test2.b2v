@@ -4672,6 +4672,43 @@ job(  name      : TEST_TABLE_FLAGS;
 
 ////////////////////////////////////////////////////////////////////////
 
+job(  name      : TEST_CFG_FLAGS;
+      comment   : Test cfg flags;
+   ) 
+{
+#asm
+					enewset
+					clear		S4
+					move		L5,#$7FFFFFFF
+					comp		L5,#-4
+					setc
+					cfgsg		S4, "BipEcuFile"
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"ECUFILE", S4
+#endasm
+
+#asm
+					enewset
+					clear		S4
+					move		L5,#$7FFFFFFF
+					comp		L5,#-4
+					setc
+					cfgsg		S4, "Dummy"
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"DUMMY", S4
+#endasm
+}
+
+////////////////////////////////////////////////////////////////////////
+
 job(  name      : TEST_ERROR_FLAGS;
       comment   : Test error flags;
    ) 
