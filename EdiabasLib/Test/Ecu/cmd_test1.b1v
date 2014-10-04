@@ -286,6 +286,18 @@ TEST_SREG#
 					ergr		"Y82FLT_R",F1
 
 					clear		S0
+					a2flt		F0," 1235.6789"
+					flt2y4		S0[#2],F0
+					ergy		"FLT2Y4_2Y",S0
+					y42flt		F1,S0[#2]
+					ergr		"Y42FLT_2R",F1
+					clear 		S0
+					flt2y8		S0[#2],F0
+					ergy		"FLT2Y8_2Y",S0
+					y82flt		F1,S0[#2]
+					ergr		"Y82FLT_2R",F1
+
+					clear		S0
 					move		S0,S1
 					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
 					srevrs		S0
@@ -302,6 +314,11 @@ TEST_SREG#
 					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
 					swap		S0[#14]#4
 					ergy		"SWAP2_Y",S0
+
+					clear		S0
+					move		S0,{$A2.B,$A4.B,$A6.B}
+					scat		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					ergy		"SCAT_Y",S0
 
 					ergs		"UPPERASE","Uppercase"
 					ergs		"uppercase","Lowercase"

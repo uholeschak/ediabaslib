@@ -340,7 +340,7 @@ namespace EdiabasLib
                 arg0Data.SetRawData(byteArray0);
             }
             else if (dataType == typeof(EdFloatType))
-            {
+            {   // not supported in ediabas
                 arg0Data.SetFloatData(0);
             }
             else
@@ -1854,7 +1854,7 @@ namespace EdiabasLib
             data2.CopyTo(resultArray, data1.Length);
             if (resultArray.Length > MAX_ARRAY_LENGTH)
             {
-                Array.Resize(ref resultArray, MAX_ARRAY_LENGTH);
+                throw new ArgumentOutOfRangeException("length", "OpScat: Invalid result length");
             }
 
             arg0.SetRawData(resultArray);
