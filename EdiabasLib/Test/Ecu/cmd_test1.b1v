@@ -1,7 +1,7 @@
 ;Test program for command execution test
 
-; arraysize seeem to be buggy, some commands fail when set!
-;#SSIZE 10000
+; arraysize seeems to be buggy, some commands fail when set!
+;#SSIZE 65536
 
 TBEG "KONZEPT_TABELLE"
 HEAD "NR", "KONZEPT_TEXT"
@@ -1020,7 +1020,7 @@ TEST_RAISE_BIP1#
 					settmr		L4
 
 					clear		S0
-					move		S0[#1023],#0
+					move		S0[#$FFFF],#0
 
 					eoj
 					eoj

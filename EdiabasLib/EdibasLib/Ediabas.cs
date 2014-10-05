@@ -20,7 +20,7 @@ namespace EdiabasLib
         public delegate void ProgressJobDelegate(Ediabas ediabas);
         public delegate void ErrorRaisedDelegate(ErrorCodes error);
 
-        public static readonly int MAX_ARRAY_LENGTH = 1024;
+        public static readonly int MAX_ARRAY_LENGTH = 65536;
         public static readonly int MAX_STRING_LENGTH = 1023;
         public static readonly int MAX_FILES = 5;
 
@@ -1699,11 +1699,12 @@ namespace EdiabasLib
 
         public class JobInfo
         {
-            public JobInfo(string jobName, UInt32 jobOffset, UInt32 jobSize, UsesInfo usesInfo)
+            public JobInfo(string jobName, UInt32 jobOffset, UInt32 jobSize, UInt32 arraySize, UsesInfo usesInfo)
             {
                 this.jobName = jobName;
                 this.jobOffset = jobOffset;
                 this.jobSize = jobSize;
+                this.arraySize = arraySize;
                 this.usesInfo = usesInfo;
             }
 
@@ -1731,6 +1732,14 @@ namespace EdiabasLib
                 }
             }
 
+            public UInt32 ArraySize
+            {
+                get
+                {
+                    return arraySize;
+                }
+            }
+
             public UsesInfo UsesInfo
             {
                 get
@@ -1742,6 +1751,7 @@ namespace EdiabasLib
             private string jobName;
             private UInt32 jobOffset;
             private UInt32 jobSize;
+            private UInt32 arraySize;
             private UsesInfo usesInfo;
         }
 
@@ -1983,7 +1993,7 @@ namespace EdiabasLib
         private ProgressJobDelegate progressJobFunc = null;
         private ErrorRaisedDelegate errorRaisedFunc = null;
         private StreamWriter swLog = null;
-        private EdValueType arraySize = 1024;
+        private EdValueType arrayMaxBufSize = 1024;
         private EdValueType[] commParameter = new EdValueType[0];
         private EdValueType commRepeats = 0;
         private Int16[] commAnswerLen = new Int16[0];
@@ -2165,7 +2175,7 @@ namespace EdiabasLib
         {
             get
             {
-                return arraySize - 1;
+                return arrayMaxBufSize - 1;
             }
         }
 
@@ -2756,6 +2766,19 @@ namespace EdiabasLib
         public List<JobInfo> GetJobList(Stream fs, UsesInfo usesInfo)
         {
             byte[] buffer = new byte[4];
+            fs.Position = 0x18;
+            fs.Read(buffer, 0, buffer.Length);
+
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(buffer, 0, 4);
+            }
+            UInt32 arraySize = BitConverter.ToUInt32(buffer, 0);
+            if (arraySize == 0)
+            {
+                arraySize = 1024;
+            }
+
             fs.Position = 0x88;
             fs.Read(buffer, 0, buffer.Length);
 
@@ -2818,7 +2841,7 @@ namespace EdiabasLib
                 UInt32 jobSize = (UInt32)(fs.Position - jobAddress);
                 jobInfosLocal.JobInfoArray[i] = new JobInfo(jobAddress, jobSize);
 #else
-                jobList.Add(new JobInfo(jobNameString, jobAddress, 0, usesInfo));
+                jobList.Add(new JobInfo(jobNameString, jobAddress, 0, arraySize, usesInfo));
 #endif
                 jobStart += 0x44;
             }
@@ -3277,7 +3300,7 @@ namespace EdiabasLib
                     using (Stream tempFs = MemoryStreamReader.OpenRead(fileName))
                     {
                         sgbdBaseFs = tempFs;
-                        ExecuteJob(tempFs, jobInfo.JobOffset);
+                        ExecuteJob(tempFs, jobInfo);
                     }
                 }
                 catch (Exception ex)
@@ -3293,7 +3316,7 @@ namespace EdiabasLib
             }
             else
             {
-                ExecuteJob(sgbdFs, jobInfo.JobOffset);
+                ExecuteJob(sgbdFs, jobInfo);
             }
             if (swLog != null)
             {
@@ -3301,7 +3324,7 @@ namespace EdiabasLib
             }
         }
 
-        public void ExecuteJob(Stream fs, UInt32 jobAddress)
+        public void ExecuteJob(Stream fs, JobInfo jobInfo)
         {
             if (requestInit)
             {
@@ -3324,7 +3347,8 @@ namespace EdiabasLib
             infoProgressPos = -1;
             infoProgressText = string.Empty;
 
-            pcCounter = jobAddress;
+            arrayMaxBufSize = jobInfo.ArraySize;
+            pcCounter = jobInfo.JobOffset;
             CloseTableFs();
             CloseAllUserFiles();
             jobEnd = false;
