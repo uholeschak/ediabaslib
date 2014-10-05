@@ -23,6 +23,8 @@ namespace EdiabasLib
         private InterfaceDisconnectDelegate interfaceDisconnectFunc = null;
         private TransmitDataDelegate transmitDataFunc = null;
         private Stopwatch stopWatch = new Stopwatch();
+        private byte[] sendBuffer = new byte[256];
+        private byte[] recBuffer = new byte[256];
 
         public override string InterfaceType
         {
@@ -105,14 +107,21 @@ namespace EdiabasLib
             return true;
         }
 
-        public override bool TransmitData(byte[] sendData, ref byte[] receiveData, ref int recLength)
+        public override bool TransmitData(byte[] sendData, out byte[] receiveData)
         {
-            recLength = 0;
-            if (!OBDTrans(sendData, ref receiveData))
+            receiveData = null;
+            if (sendData.Length > sendBuffer.Length)
             {
                 return false;
             }
-            recLength = TelLength(receiveData) + 1;
+            sendData.CopyTo(sendBuffer, 0);
+            if (!OBDTrans(sendBuffer, ref recBuffer))
+            {
+                return false;
+            }
+            int recLength = TelLength(recBuffer) + 1;
+            receiveData = new byte[recLength];
+            Array.Copy(recBuffer, receiveData, recLength);
             return true;
         }
 

@@ -13,7 +13,7 @@ namespace EdiabasLib
 
         public abstract bool InterfaceConnect();
         public abstract bool InterfaceDisconnect();
-        public abstract bool TransmitData(byte[] sendData, ref byte[] receiveData, ref int recLength);
+        public abstract bool TransmitData(byte[] sendData, out byte[] receiveData);
 
         public void NewCommunicationPars()
         {
