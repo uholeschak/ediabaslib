@@ -2645,6 +2645,11 @@ namespace EdiabasLib
         // BEST2: set_communication_pars
         private static void OpXsetpar(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
+            if (ediabas.edCommClass == null)
+            {
+                throw new ArgumentOutOfRangeException("edCommClass", "OpXsetpar: No communication class present");
+            }
+
             byte[] dataArray = arg0.GetArrayData();
             int length = dataArray.Length;
             if ((length & 0x03) != 0x00)
@@ -2665,6 +2670,7 @@ namespace EdiabasLib
                 parsArray[i] = value;
             }
             ediabas.commParameter = parsArray;
+            ediabas.edCommClass.NewCommunicationPars();
         }
 
         // BEST2: stop_frequent

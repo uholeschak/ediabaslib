@@ -9,10 +9,16 @@ namespace EdiabasLib
     {
         private bool disposed = false;
         protected Ediabas ediabas;
+        protected bool newCommPars = true;
 
         public abstract bool InterfaceConnect();
         public abstract bool InterfaceDisconnect();
         public abstract bool TransmitData(byte[] sendData, ref byte[] receiveData, ref int recLength);
+
+        public void NewCommunicationPars()
+        {
+            newCommPars = true;
+        }
 
         public abstract string InterfaceType
         {

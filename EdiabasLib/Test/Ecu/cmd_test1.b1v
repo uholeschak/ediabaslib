@@ -1,5 +1,8 @@
 ;Test program for command execution test
 
+; arraysize seeem to be buggy, some commands fail when set!
+;#SSIZE 10000
+
 TBEG "KONZEPT_TABELLE"
 HEAD "NR", "KONZEPT_TEXT"
 LINE "0x10", "D-CAN"
