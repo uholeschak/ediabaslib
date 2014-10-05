@@ -350,8 +350,8 @@ namespace EdiabasCall
                                         case API.APIFORMAT_BINARY:
                                             {
                                                 byte[] resultByteArray;
-                                                ushort resultLength;
-                                                if (API.apiResultBinary(out resultByteArray, out resultLength, resultName, set))
+                                                uint resultLength;
+                                                if (API.apiResultBinaryExt(out resultByteArray, out resultLength, API.APIMAXBINARYEXT, resultName, set))
                                                 {
                                                     for (int i = 0; i < resultLength; i++)
                                                     {
