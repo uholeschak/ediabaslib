@@ -235,25 +235,63 @@ namespace EdiabasLib
                 }
             }
 
-            if (ediabas.CommParameter.Length < 7)
+            if (ediabas.CommParameter.Length < 1)
             {
                 return false;
             }
-            if (ediabas.CommParameter[0] != 0x010F)
-            {   // not BMW-FAST
-                return false;
+            int baudrate;
+            int timeoutStd;
+            int timeoutNR;
+            int retryNR;
+            switch (ediabas.CommParameter[0])
+            {
+#if false
+                case 0x010D:    // KWP2000*
+                    if (ediabas.CommParameter.Length < 7)
+                    {
+                        return false;
+                    }
+                    if (ediabas.CommParameter.Length >= 34 && ediabas.CommParameter[33] != 1)
+                    {   // not checksum calculated by interface
+                        return false;
+                    }
+                    baudrate = (int)ediabas.CommParameter[1];
+                    timeoutStd = (int)ediabas.CommParameter[2];
+                    timeoutNR = (int)ediabas.CommParameter[7];
+                    retryNR = (int)ediabas.CommParameter[6];
+                    break;
+#endif
+                case 0x010F:    // BMW-FAST
+                    if (ediabas.CommParameter.Length < 7)
+                    {
+                        return false;
+                    }
+                    if (ediabas.CommParameter[1] != 115200)
+                    {   // not BMW-FAST baud rate
+                        return false;
+                    }
+                    if (ediabas.CommParameter.Length >= 8 && ediabas.CommParameter[7] != 1)
+                    {   // not checksum calculated by interface
+                        return false;
+                    }
+                    baudrate = (int)ediabas.CommParameter[1];
+                    timeoutStd = (int)ediabas.CommParameter[2];
+                    timeoutNR = (int)ediabas.CommParameter[6];
+                    retryNR = (int)ediabas.CommParameter[5];
+                    break;
+
+                default:
+                    return false;
             }
-            if (ediabas.CommParameter[1] != 115200)
-            {   // not BMW-FAST baud rate
-                return false;
+
+            if (serialPort.BaudRate != baudrate)
+            {
+                serialPort.BaudRate = baudrate;
             }
-            if (ediabas.CommParameter.Length >= 8 && ediabas.CommParameter[7] != 1)
-            {   // not checksum calculated by interface
-                return false;
-            }
+
             for (int i = 0; i < ediabas.CommRepeats + 1; i++)
             {
-                if (OBDTrans(sendData, ref receiveData, (int)ediabas.CommParameter[2], (int)ediabas.CommParameter[6], (int)ediabas.CommParameter[5]))
+                if (OBDTrans(sendData, ref receiveData, timeoutStd, timeoutNR, retryNR))
                 {
                     return true;
                 }
