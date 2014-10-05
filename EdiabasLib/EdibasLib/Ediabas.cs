@@ -256,11 +256,12 @@ namespace EdiabasLib
                             EdValueType requiredLength = index + 1;
                             if (requiredLength > MAX_ARRAY_LENGTH)
                             {
-                                throw new ArgumentOutOfRangeException("index", "Operand.GetRawData IdxX: Index out of range");
+                                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
+                                return Ediabas.byteArray0;
                             }
                             if (dataArray.Length < requiredLength)
                             {
-                                return new byte[0];
+                                return Ediabas.byteArray0;
                             }
 
                             byte[] resultArray = new byte[dataArray.Length - index];
@@ -322,13 +323,13 @@ namespace EdiabasLib
                             if (requiredLength > MAX_ARRAY_LENGTH)
                             {
                                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
-                                return new byte[0];
+                                return Ediabas.byteArray0;
                             }
                             if (dataArray.Length < requiredLength)
                             {
                                 if (dataArray.Length <= index)
                                 {
-                                    return new byte[0];
+                                    return Ediabas.byteArray0;
                                 }
                                 len = (EdValueType) (dataArray.Length - index);
                             }
