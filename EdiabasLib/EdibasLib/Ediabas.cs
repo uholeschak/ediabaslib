@@ -20,7 +20,6 @@ namespace EdiabasLib
         public delegate void ProgressJobDelegate(Ediabas ediabas);
         public delegate void ErrorRaisedDelegate(ErrorCodes error);
 
-        public static readonly int MAX_ARRAY_LENGTH = 65536;
         public static readonly int MAX_FILES = 5;
 
         private class OpCode
@@ -959,11 +958,19 @@ namespace EdiabasLib
 
         private class StringData
         {
-            public StringData(Ediabas ediabas)
+            public StringData(Ediabas ediabas, EdValueType length)
             {
                 this.ediabas = ediabas;
                 this.length = 0;
-                this.data = new byte[MAX_ARRAY_LENGTH];
+                this.data = new byte[length];
+            }
+
+            public void NewArrayLength(EdValueType length)
+            {
+                if (length > this.data.Length)
+                {
+                    this.data = new byte[length];
+                }
             }
 
             public byte[] GetData()
@@ -984,7 +991,7 @@ namespace EdiabasLib
 
             public void SetData(byte[] value, bool keepLength)
             {
-                if (value.Length > MAX_ARRAY_LENGTH)
+                if (value.Length > data.Length)
                 {
                     ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
                     return;
@@ -994,6 +1001,12 @@ namespace EdiabasLib
                 {
                     length = (EdValueType)value.Length;
                 }
+            }
+
+            public void ClearData()
+            {
+                Array.Clear(data, 0, data.Length);
+                length = 0;
             }
 
             public EdValueType Length
@@ -1267,6 +1280,15 @@ namespace EdiabasLib
                     throw new ArgumentOutOfRangeException("type", "Register.SetArrayData: Invalid data type");
                 }
                 ediabas.stringRegisters[index].SetData(value, keepLength);
+            }
+
+            public void ClearData()
+            {
+                if (type != RegisterType.RegS)
+                {
+                    throw new ArgumentOutOfRangeException("type", "Register.SetArrayData: Invalid data type");
+                }
+                ediabas.stringRegisters[index].ClearData();
             }
 
             public byte Opcode
@@ -1958,7 +1980,6 @@ namespace EdiabasLib
         private static readonly Encoding encoding = Encoding.GetEncoding(1252);
         private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
         private static readonly byte[] byteArray0 = new byte[0];
-        private static readonly byte[] byteArrayMaxZero = new byte[MAX_ARRAY_LENGTH];
         private static Dictionary<ErrorCodes, UInt32> trapBitDict;
 
         private const string jobNameInit = "INITIALISIERUNG";
@@ -1981,8 +2002,6 @@ namespace EdiabasLib
         private string fileSearchDir = string.Empty;
         private EdCommBase edCommClass;
         private static long timeMeas = 0;
-        private byte[] sendBuffer = new byte[MAX_ARRAY_LENGTH];
-        private byte[] recBuffer = new byte[MAX_ARRAY_LENGTH];
         private byte[] opArgBuffer = new byte[5];
         private AbortJobDelegate abortJobFunc = null;
         private ProgressJobDelegate progressJobFunc = null;
@@ -2174,6 +2193,22 @@ namespace EdiabasLib
             }
         }
 
+        private EdValueType ArrayMaxBufSize
+        {
+            get
+            {
+                return arrayMaxBufSize;
+            }
+            set
+            {
+                arrayMaxBufSize = value;
+                for (int i = 0; i < stringRegisters.Length; i++)
+                {
+                    stringRegisters[i].NewArrayLength(arrayMaxBufSize);
+                }
+            }
+        }
+
         public EdValueType[] CommParameter
         {
             get
@@ -2302,7 +2337,7 @@ namespace EdiabasLib
 
             for (int i = 0; i < stringRegisters.Length; i++)
             {
-                stringRegisters[i] = new StringData(this);
+                stringRegisters[i] = new StringData(this, ArrayMaxBufSize);
             }
             foreach (Register arg in registerList)
             {
@@ -3342,7 +3377,7 @@ namespace EdiabasLib
             infoProgressPos = -1;
             infoProgressText = string.Empty;
 
-            arrayMaxBufSize = jobInfo.ArraySize;
+            ArrayMaxBufSize = jobInfo.ArraySize;
             pcCounter = jobInfo.JobOffset;
             CloseTableFs();
             CloseAllUserFiles();

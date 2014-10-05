@@ -336,8 +336,7 @@ namespace EdiabasLib
             Type dataType = arg0Data.GetDataType();
             if (dataType == typeof(byte[]))
             {
-                arg0Data.SetRawData(byteArrayMaxZero);
-                arg0Data.SetRawData(byteArray0);
+                arg0Data.ClearData();
             }
             else if (dataType == typeof(EdFloatType))
             {   // not supported in ediabas
@@ -2627,16 +2626,13 @@ namespace EdiabasLib
 
             long startTime = Stopwatch.GetTimestamp();
             byte[] request = arg1.GetArrayData();
-            request.CopyTo(ediabas.sendBuffer, 0);
-            int recLength = 0;
-            if (!ediabas.edCommClass.TransmitData(ediabas.sendBuffer, ref ediabas.recBuffer, ref recLength))
+            byte[] response;
+            if (!ediabas.edCommClass.TransmitData(request, out response))
             {
                 arg0.SetRawData(byteArray0);
             }
             else
             {
-                byte[] response = new byte[recLength];
-                Array.Copy(ediabas.recBuffer, response, recLength);
                 arg0.SetRawData(response);
             }
             timeMeas += Stopwatch.GetTimestamp() - startTime;
