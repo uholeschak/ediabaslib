@@ -788,7 +788,7 @@ namespace EdiabasLib
             EdValueType startIdx = (EdValueType)arg0.opData2;
 
             EdValueType dataLen = sizeof(Single);
-            if (startIdx + dataLen > MAX_ARRAY_LENGTH)
+            if (startIdx + dataLen > ediabas.ArrayMaxSize)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
                 return;
@@ -831,7 +831,7 @@ namespace EdiabasLib
             EdValueType startIdx = (EdValueType)arg0.opData2;
 
             EdValueType dataLen = sizeof(Double);
-            if (startIdx + dataLen > MAX_ARRAY_LENGTH)
+            if (startIdx + dataLen > ediabas.ArrayMaxSize)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
                 return;
@@ -1864,7 +1864,7 @@ namespace EdiabasLib
             byte[] resultArray = new byte[data1.Length + data2.Length];
             data1.CopyTo(resultArray, 0);
             data2.CopyTo(resultArray, data1.Length);
-            if (resultArray.Length > MAX_ARRAY_LENGTH)
+            if (resultArray.Length > ediabas.ArrayMaxSize)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
                 return;
@@ -2042,7 +2042,7 @@ namespace EdiabasLib
             byte[] dataArrayDest = arg0Data.GetArrayData();
             byte[] dataArraySource = arg1.GetArrayData();
 
-            if (startIdx >= MAX_ARRAY_LENGTH)
+            if (startIdx >= ediabas.ArrayMaxSize)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
                 return;
@@ -2062,7 +2062,7 @@ namespace EdiabasLib
                 {
                     resultByteList.Add(dataArrayDest[i]);
                 }
-                if (resultByteList.Count > MAX_ARRAY_LENGTH)
+                if (resultByteList.Count > ediabas.ArrayMaxSize)
                 {
                     ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
                     return;
@@ -2123,9 +2123,9 @@ namespace EdiabasLib
             string string1 = arg0.GetStringData();
             string string2 = arg1.GetStringData();
 
-            if (len1 + string2.Length > MAX_ARRAY_LENGTH)
+            if (len1 + string2.Length > ediabas.ArrayMaxSize)
             {
-                string2 = string2.Substring(0, (int)(MAX_ARRAY_LENGTH - len1));
+                string2 = string2.Substring(0, (int)(ediabas.ArrayMaxSize - len1));
             }
             string resultString = string1 + string2;
             arg0.SetStringData(resultString);
@@ -2231,7 +2231,7 @@ namespace EdiabasLib
             EdValueType startIdx = (EdValueType)arg0.opData2;
             EdValueType dataLen = (EdValueType)arg0.opData3;
 
-            if (startIdx + dataLen > MAX_ARRAY_LENGTH)
+            if (startIdx + dataLen > ediabas.ArrayMaxSize)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
                 return;

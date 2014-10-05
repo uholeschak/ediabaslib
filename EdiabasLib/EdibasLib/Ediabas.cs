@@ -20,7 +20,7 @@ namespace EdiabasLib
         public delegate void ProgressJobDelegate(Ediabas ediabas);
         public delegate void ErrorRaisedDelegate(ErrorCodes error);
 
-        public static readonly int MAX_ARRAY_LENGTH = 1023;
+        public static readonly int MAX_ARRAY_LENGTH = 1024;
         public static readonly int MAX_FILES = 5;
 
         private class OpCode
@@ -254,7 +254,7 @@ namespace EdiabasLib
                             }
 
                             EdValueType requiredLength = index + 1;
-                            if (requiredLength > MAX_ARRAY_LENGTH)
+                            if (requiredLength > ediabas.ArrayMaxSize)
                             {
                                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
                                 return Ediabas.byteArray0;
@@ -320,7 +320,7 @@ namespace EdiabasLib
                             }
 
                             EdValueType requiredLength = index + len;
-                            if (requiredLength > MAX_ARRAY_LENGTH)
+                            if (requiredLength > ediabas.ArrayMaxSize)
                             {
                                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
                                 return Ediabas.byteArray0;
@@ -502,7 +502,7 @@ namespace EdiabasLib
                             }
 
                             EdValueType requiredLength = index + len;
-                            if (requiredLength > MAX_ARRAY_LENGTH)
+                            if (requiredLength > ediabas.ArrayMaxSize)
                             {
                                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
                                 return;
@@ -1971,13 +1971,14 @@ namespace EdiabasLib
         private string fileSearchDir = string.Empty;
         private EdCommBase edCommClass;
         private static long timeMeas = 0;
-        private byte[] sendBuffer = new byte[256];
-        private byte[] recBuffer = new byte[256];
+        private byte[] sendBuffer = new byte[MAX_ARRAY_LENGTH];
+        private byte[] recBuffer = new byte[MAX_ARRAY_LENGTH];
         private byte[] opArgBuffer = new byte[5];
         private AbortJobDelegate abortJobFunc = null;
         private ProgressJobDelegate progressJobFunc = null;
         private ErrorRaisedDelegate errorRaisedFunc = null;
         private StreamWriter swLog = null;
+        private EdValueType arraySize = 1024;
         private EdValueType[] commParameter = new EdValueType[0];
         private EdValueType commRepeats = 0;
         private Int16[] commAnswerLen = new Int16[0];
@@ -2152,6 +2153,14 @@ namespace EdiabasLib
             set
             {
                 errorRaisedFunc = value;
+            }
+        }
+
+        private EdValueType ArrayMaxSize
+        {
+            get
+            {
+                return arraySize - 1;
             }
         }
 
