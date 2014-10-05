@@ -2619,23 +2619,26 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpXsend: Invalid type");
             }
 
-            if (ediabas.edCommClass == null)
+            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
             {
-                throw new ArgumentOutOfRangeException("edCommClass", "OpXsend: No communication class present");
-            }
-
-            long startTime = Stopwatch.GetTimestamp();
-            byte[] request = arg1.GetArrayData();
-            byte[] response;
-            if (!ediabas.edCommClass.TransmitData(request, out response))
-            {
-                arg0.SetRawData(byteArray0);
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                arg0.SetRawData(response);
+                long startTime = Stopwatch.GetTimestamp();
+                byte[] request = arg1.GetArrayData();
+                byte[] response;
+                if (!ediabas.edCommClass.TransmitData(request, out response))
+                {
+                    ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0003);
+                    arg0.SetRawData(byteArray0);
+                }
+                else
+                {
+                    arg0.SetRawData(response);
+                }
+                timeMeas += Stopwatch.GetTimestamp() - startTime;
             }
-            timeMeas += Stopwatch.GetTimestamp() - startTime;
         }
 
         // BEST2: set_communication_pars
