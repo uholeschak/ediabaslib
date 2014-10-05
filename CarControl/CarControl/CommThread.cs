@@ -519,6 +519,7 @@ namespace CarControl
         private string _comPort;
         private SerialPort _serialPort;
         private IntPtr _handleFtdi;
+        private int _baudRateFtdi;
         private StreamWriter _swLog;
         private Stopwatch _logTimeWatch;
         private Stopwatch commStopWatch;
@@ -538,6 +539,7 @@ namespace CarControl
             _workerThread = null;
             _serialPort = new SerialPort();
             _handleFtdi = (IntPtr) 0;
+            _baudRateFtdi = 0;
             _swLog = null;
             _logTimeWatch = new Stopwatch();
             commStopWatch = new Stopwatch();
@@ -547,6 +549,7 @@ namespace CarControl
             ediabas.EdCommClass = edCommBwmFast;
             edCommBwmFast.InterfaceConnectFunc = InterfaceConnect;
             edCommBwmFast.InterfaceDisconnectFunc = InterfaceDisconnect;
+            edCommBwmFast.InterfaceSetBaudRateFunc = InterfaceSetBaudrate;
             edCommBwmFast.SendDataFunc = SendData;
             edCommBwmFast.ReceiveDataFunc = ReceiveData;
 
@@ -1344,6 +1347,7 @@ namespace CarControl
                     {
                         return false;
                     }
+                    _baudRateFtdi = (int)Ftd2xx.FT_BAUD_115200;
 
                     ftStatus = Ftd2xx.FT_SetDataCharacteristics(_handleFtdi, Ftd2xx.FT_BITS_8, Ftd2xx.FT_STOP_BITS_1, Ftd2xx.FT_PARITY_NONE);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
@@ -1431,6 +1435,7 @@ namespace CarControl
                 Ftd2xx.FT_Close(_handleFtdi);
                 _handleFtdi = (IntPtr) 0;
             }
+            _baudRateFtdi = 0;
             return true;
         }
 
@@ -1450,6 +1455,32 @@ namespace CarControl
 
         private bool InterfaceDisconnect()
         {
+            return true;
+        }
+
+        private bool InterfaceSetBaudrate(int baudRate)
+        {
+            if (_handleFtdi == (IntPtr)0)
+            {   // com port
+                if (_serialPort.BaudRate != baudRate)
+                {
+                    _serialPort.BaudRate = baudRate;
+                }
+            }
+            else
+            {
+                if (_baudRateFtdi != baudRate)
+                {
+                    Ftd2xx.FT_STATUS ftStatus;
+
+                    ftStatus = Ftd2xx.FT_SetBaudRate(_handleFtdi, (uint)baudRate);
+                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    {
+                        return false;
+                    }
+                    _baudRateFtdi = baudRate;
+                }
+            }
             return true;
         }
 
@@ -1489,6 +1520,10 @@ namespace CarControl
             {   // com port
                 _serialPort.DiscardInBuffer();
                 _serialPort.Write(sendData, 0, length);
+                while (_serialPort.BytesToWrite > 0)
+                {
+                    Thread.Sleep(10);
+                }
             }
             else
             {   // ftdi
@@ -1524,18 +1559,37 @@ namespace CarControl
             return true;
         }
 
-        private bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, bool logResponse)
+        private bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse)
         {
             if (_handleFtdi == (IntPtr)0)
             {   // com port
                 try
                 {
-                    int recLen = 0;
+                    // wait for first byte
+                    int lastBytesToRead = 0;
                     commStopWatch.Reset();
                     commStopWatch.Start();
                     for (; ; )
                     {
-                        if (_serialPort.BytesToRead >= length)
+                        lastBytesToRead = _serialPort.BytesToRead;
+                        if (lastBytesToRead > 0)
+                        {
+                            break;
+                        }
+                        if (commStopWatch.ElapsedMilliseconds > timeout)
+                        {
+                            commStopWatch.Stop();
+                            return false;
+                        }
+                        Thread.Sleep(10);
+                    }
+
+                    int recLen = 0;
+                    commStopWatch.Reset();
+                    for (; ; )
+                    {
+                        int bytesToRead = _serialPort.BytesToRead;
+                        if (bytesToRead >= length)
                         {
                             recLen = _serialPort.Read(receiveData, offset + recLen, length - recLen);
                         }
@@ -1543,9 +1597,17 @@ namespace CarControl
                         {
                             break;
                         }
-                        if (commStopWatch.ElapsedMilliseconds > timeout)
+                        if (lastBytesToRead != bytesToRead)
+                        {   // bytes received
+                            commStopWatch.Reset();
+                            lastBytesToRead = bytesToRead;
+                        }
+                        else
                         {
-                            break;
+                            if (commStopWatch.ElapsedMilliseconds > timeoutTelEnd)
+                            {
+                                break;
+                            }
                         }
                         Thread.Sleep(10);
                     }
@@ -1593,9 +1655,9 @@ namespace CarControl
             return true;
         }
 
-        private bool ReceiveData(byte[] receiveData, int offset, int length, int timeout)
+        private bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd)
         {
-            return ReceiveData(receiveData, offset, length, timeout, false);
+            return ReceiveData(receiveData, offset, length, timeout, timeoutTelEnd, false);
         }
 
         private void DataUpdatedEvent()

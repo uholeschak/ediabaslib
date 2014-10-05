@@ -12,8 +12,10 @@ namespace EdiabasLib
     {
         public delegate bool InterfaceConnectDelegate();
         public delegate bool InterfaceDisconnectDelegate();
+        public delegate bool InterfaceSetBaudRateDelegate(int baudRate);
         public delegate bool SendDataDelegate(byte[] sendData, int length);
-        public delegate bool ReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, bool logResponse);
+        public delegate bool ReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse);
+        private delegate bool TransmitDelegate(byte[] sendData, ref byte[] receiveData, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR);
 
         private bool disposed = false;
         private SerialPort serialPort = new SerialPort();
@@ -23,11 +25,12 @@ namespace EdiabasLib
         private const int echoTimeout = 100;
         private InterfaceConnectDelegate interfaceConnectFunc = null;
         private InterfaceDisconnectDelegate interfaceDisconnectFunc = null;
+        private InterfaceSetBaudRateDelegate interfaceSetBaudRateFunc = null;
         private SendDataDelegate sendDataFunc = null;
         private ReceiveDataDelegate receiveDataFunc = null;
         private Stopwatch stopWatch = new Stopwatch();
-        private byte[] sendBuffer = new byte[256];
-        private byte[] recBuffer = new byte[256];
+        private byte[] sendBuffer = new byte[260];
+        private byte[] recBuffer = new byte[260];
 
         public override string InterfaceType
         {
@@ -168,6 +171,18 @@ namespace EdiabasLib
             }
         }
 
+        public InterfaceSetBaudRateDelegate InterfaceSetBaudRateFunc
+        {
+            get
+            {
+                return interfaceSetBaudRateFunc;
+            }
+            set
+            {
+                interfaceSetBaudRateFunc = value;
+            }
+        }
+
         public SendDataDelegate SendDataFunc
         {
             get
@@ -200,23 +215,46 @@ namespace EdiabasLib
             }
             serialPort.DiscardInBuffer();
             serialPort.Write(sendData, 0, length);
+            while (serialPort.BytesToWrite > 0)
+            {
+                Thread.Sleep(10);
+            }
             return true;
         }
 
-        private bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, bool logResponse)
+        private bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse)
         {
             if (receiveDataFunc != null)
             {
-                return receiveDataFunc(receiveData, offset, length, timeout, logResponse);
+                return receiveDataFunc(receiveData, offset, length, timeout, timeoutTelEnd, logResponse);
             }
             try
             {
-                int recLen = 0;
+                // wait for first byte
+                int lastBytesToRead = 0;
                 stopWatch.Reset();
                 stopWatch.Start();
                 for (; ; )
                 {
-                    if (serialPort.BytesToRead >= length)
+                    lastBytesToRead = serialPort.BytesToRead;
+                    if (lastBytesToRead > 0)
+                    {
+                        break;
+                    }
+                    if (stopWatch.ElapsedMilliseconds > timeout)
+                    {
+                        stopWatch.Stop();
+                        return false;
+                    }
+                    Thread.Sleep(10);
+                }
+
+                int recLen = 0;
+                stopWatch.Reset();
+                for (; ; )
+                {
+                    int bytesToRead = serialPort.BytesToRead;
+                    if (bytesToRead >= length)
                     {
                         recLen = serialPort.Read(receiveData, offset + recLen, length - recLen);
                     }
@@ -224,9 +262,17 @@ namespace EdiabasLib
                     {
                         break;
                     }
-                    if (stopWatch.ElapsedMilliseconds > timeout)
+                    if (lastBytesToRead != bytesToRead)
+                    {   // bytes received
+                        stopWatch.Reset();
+                        lastBytesToRead = bytesToRead;
+                    }
+                    else
                     {
-                        break;
+                        if (stopWatch.ElapsedMilliseconds > timeoutTelEnd)
+                        {
+                            break;
+                        }
                     }
                     Thread.Sleep(10);
                 }
@@ -247,9 +293,9 @@ namespace EdiabasLib
             return true;
         }
 
-        private bool ReceiveData(byte[] receiveData, int offset, int length, int timeout)
+        private bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd)
         {
-            return ReceiveData(receiveData, offset, length, timeout, false);
+            return ReceiveData(receiveData, offset, length, timeout, timeoutTelEnd, false);
         }
 
         private bool OBDTrans(byte[] sendData, ref byte[] receiveData, out int receiveLength)
@@ -267,13 +313,14 @@ namespace EdiabasLib
             {
                 return false;
             }
-            int baudrate;
+            TransmitDelegate transmitFunc;
+            int baudRate;
             int timeoutStd;
+            int timeoutTelEnd;
             int timeoutNR;
             int retryNR;
             switch (ediabas.CommParameter[0])
             {
-#if false
                 case 0x010D:    // KWP2000*
                     if (ediabas.CommParameter.Length < 7)
                     {
@@ -283,12 +330,14 @@ namespace EdiabasLib
                     {   // not checksum calculated by interface
                         return false;
                     }
-                    baudrate = (int)ediabas.CommParameter[1];
+                    transmitFunc = TransKWP200S;
+                    baudRate = (int)ediabas.CommParameter[1];
                     timeoutStd = (int)ediabas.CommParameter[2];
+                    timeoutTelEnd = (int)ediabas.CommParameter[4];
                     timeoutNR = (int)ediabas.CommParameter[7];
                     retryNR = (int)ediabas.CommParameter[6];
                     break;
-#endif
+
                 case 0x010F:    // BMW-FAST
                     if (ediabas.CommParameter.Length < 7)
                     {
@@ -302,8 +351,10 @@ namespace EdiabasLib
                     {   // not checksum calculated by interface
                         return false;
                     }
-                    baudrate = (int)ediabas.CommParameter[1];
+                    transmitFunc = TransBmwFast;
+                    baudRate = (int)ediabas.CommParameter[1];
                     timeoutStd = (int)ediabas.CommParameter[2];
+                    timeoutTelEnd = (int)ediabas.CommParameter[4];
                     timeoutNR = (int)ediabas.CommParameter[6];
                     retryNR = (int)ediabas.CommParameter[5];
                     break;
@@ -312,14 +363,24 @@ namespace EdiabasLib
                     return false;
             }
 
-            if (serialPort.BaudRate != baudrate)
+            if (interfaceSetBaudRateFunc != null)
             {
-                serialPort.BaudRate = baudrate;
+                if (!interfaceSetBaudRateFunc(baudRate))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (serialPort.BaudRate != baudRate)
+                {
+                    serialPort.BaudRate = baudRate;
+                }
             }
 
             for (int i = 0; i < ediabas.CommRepeats + 1; i++)
             {
-                if (TransBmwFast(sendData, ref receiveData, timeoutStd, timeoutNR, retryNR))
+                if (transmitFunc(sendData, ref receiveData, timeoutStd, timeoutTelEnd, timeoutNR, retryNR))
                 {
                     receiveLength = TelLengthBmwFast(receiveData) + 1;
                     return true;
@@ -328,7 +389,7 @@ namespace EdiabasLib
             return false;
         }
 
-        private bool TransBmwFast(byte[] sendData, ref byte[] receiveData, int timeoutStd, int timeoutNR, int retryNR)
+        private bool TransBmwFast(byte[] sendData, ref byte[] receiveData, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR)
         {
             int sendLength = TelLengthBmwFast(sendData);
             sendData[sendLength] = CalcChecksum(sendData, sendLength);
@@ -340,10 +401,10 @@ namespace EdiabasLib
                 return false;
             }
             // remove remote echo
-            if (!ReceiveData(receiveData, 0, sendLength, echoTimeout))
+            if (!ReceiveData(receiveData, 0, sendLength, echoTimeout, timeoutTelEnd))
             {
                 ediabas.LogString("*** No echo received");
-                ReceiveData(receiveData, 0, receiveData.Length, echoTimeout, true);
+                ReceiveData(receiveData, 0, receiveData.Length, echoTimeout, timeoutTelEnd, true);
                 return false;
             }
             ediabas.LogData(receiveData, sendLength, "Echo");
@@ -352,7 +413,7 @@ namespace EdiabasLib
                 if (receiveData[i] != sendData[i])
                 {
                     ediabas.LogString("*** Echo incorrect");
-                    ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, true);
+                    ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, timeoutTelEnd, true);
                     return false;
                 }
             }
@@ -361,7 +422,7 @@ namespace EdiabasLib
             for (int retry = 0; retry <= retryNR; retry++)
             {
                 // header byte
-                if (!ReceiveData(receiveData, 0, 4, timeout))
+                if (!ReceiveData(receiveData, 0, 4, timeout, timeoutTelEnd))
                 {
                     ediabas.LogString("*** No header received");
                     return false;
@@ -370,12 +431,12 @@ namespace EdiabasLib
                 {
                     ediabas.LogData(receiveData, 4, "Head");
                     ediabas.LogString("*** Invalid header");
-                    ReceiveData(receiveData, 0, receiveData.Length, timeout, true);
+                    ReceiveData(receiveData, 0, receiveData.Length, timeout, timeoutTelEnd, true);
                     return false;
                 }
 
                 int recLength = TelLengthBmwFast(receiveData);
-                if (!ReceiveData(receiveData, 4, recLength - 3, timeout))
+                if (!ReceiveData(receiveData, 4, recLength - 3, timeoutTelEnd, timeoutTelEnd))
                 {
                     ediabas.LogString("*** No tail received");
                     return false;
@@ -384,14 +445,14 @@ namespace EdiabasLib
                 if (CalcChecksum(receiveData, recLength) != receiveData[recLength])
                 {
                     ediabas.LogString("*** Checksum incorrect");
-                    ReceiveData(receiveData, 0, receiveData.Length, timeout, true);
+                    ReceiveData(receiveData, 0, receiveData.Length, timeout, timeoutTelEnd, true);
                     return false;
                 }
                 if ((receiveData[1] != sendData[2]) ||
                     (receiveData[2] != sendData[1]))
                 {
                     ediabas.LogString("*** Address incorrect");
-                    ReceiveData(receiveData, 0, receiveData.Length, timeout, true);
+                    ReceiveData(receiveData, 0, receiveData.Length, timeout, timeoutTelEnd, true);
                     return false;
                 }
 
@@ -427,6 +488,88 @@ namespace EdiabasLib
             {
                 telLength += 3;
             }
+            return telLength;
+        }
+
+        private bool TransKWP200S(byte[] sendData, ref byte[] receiveData, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR)
+        {
+            int sendLength = TelLengthKWP200S(sendData);
+            sendData[sendLength] = CalcChecksum(sendData, sendLength);
+            sendLength++;
+            ediabas.LogData(sendData, sendLength, "Send");
+            if (!SendData(sendData, sendLength))
+            {
+                ediabas.LogString("*** Sending failed");
+                return false;
+            }
+            // remove remote echo
+            if (!ReceiveData(receiveData, 0, sendLength, echoTimeout, timeoutTelEnd))
+            {
+                ediabas.LogString("*** No echo received");
+                ReceiveData(receiveData, 0, receiveData.Length, echoTimeout, timeoutTelEnd, true);
+                return false;
+            }
+            ediabas.LogData(receiveData, sendLength, "Echo");
+            for (int i = 0; i < sendLength; i++)
+            {
+                if (receiveData[i] != sendData[i])
+                {
+                    ediabas.LogString("*** Echo incorrect");
+                    ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, timeoutTelEnd, true);
+                    return false;
+                }
+            }
+
+            int timeout = timeoutStd;
+            for (int retry = 0; retry <= retryNR; retry++)
+            {
+                // header byte
+                if (!ReceiveData(receiveData, 0, 4, timeout, timeoutTelEnd))
+                {
+                    ediabas.LogString("*** No header received");
+                    return false;
+                }
+
+                int recLength = TelLengthKWP200S(receiveData);
+                if (!ReceiveData(receiveData, 4, recLength - 3, timeoutTelEnd, timeoutTelEnd))
+                {
+                    ediabas.LogString("*** No tail received");
+                    return false;
+                }
+                ediabas.LogData(receiveData, recLength + 1, "Resp");
+                if (CalcChecksum(receiveData, recLength) != receiveData[recLength])
+                {
+                    ediabas.LogString("*** Checksum incorrect");
+                    ReceiveData(receiveData, 0, receiveData.Length, timeout, timeoutTelEnd, true);
+                    return false;
+                }
+                if ((receiveData[1] != sendData[2]) ||
+                    (receiveData[2] != sendData[1]))
+                {
+                    ediabas.LogString("*** Address incorrect");
+                    ReceiveData(receiveData, 0, receiveData.Length, timeout, timeoutTelEnd, true);
+                    return false;
+                }
+
+                int dataLen = receiveData[3];
+                int dataStart = 4;
+                if ((dataLen == 3) && (receiveData[dataStart] == 0x7F) && (receiveData[dataStart + 2] == 0x78))
+                {   // negative response 0x78
+                    ediabas.LogString("*** NR 0x78");
+                    timeout = timeoutNR;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return true;
+        }
+
+        // telegram length without checksum
+        private static int TelLengthKWP200S(byte[] dataBuffer)
+        {
+            int telLength = dataBuffer[3] + 4;
             return telLength;
         }
 
