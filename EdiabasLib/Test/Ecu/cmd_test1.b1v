@@ -1,7 +1,6 @@
 ;Test program for command execution test
 
-; arraysize seeems to be buggy, some commands fail when set!
-;#SSIZE 65536
+#SSIZE 2048
 
 TBEG "KONZEPT_TABELLE"
 HEAD "NR", "KONZEPT_TEXT"
@@ -193,7 +192,7 @@ TEST_SREG#
 
 					clear		S0
 					move 		S0,S1
-					strcat		S0,"TEST"
+					strcat		S0,"TEST1234"
 					ergy		"STRCAT1_Y",S0
 					ergs		"STRCAT1_S",S0
 
@@ -202,35 +201,39 @@ TEST_SREG#
 strcat1:
 					strcat		S0,"X"
 					adds		L0,#1
-					comp		L0,#1020
+					comp		L0,#2044
 					jnz			strcat1
 					ergy		"STRCAT2A_Y",S0
-					ergs		"STRCAT2A_S",S0
-					strcat		S0,"TEST"
+					; string too long
+					;ergs		"STRCAT2A_S",S0
+					strcat		S0,"TEST1234"
 					ergy		"STRCAT2B_Y",S0
-					ergs		"STRCAT2B_S",S0
+					; string too long
+					;ergs		"STRCAT2B_S",S0
 
 					clear		S0
-					strcat		S0,"TEST"
+					strcat		S0,"TEST1234"
 					ergy		"STRCAT3_Y",S0
-					ergs		"STRCAT3_S",S0
+					;ergs		"STRCAT3_S",S0
 
 					clear		S0
 					move		S0[#1000],#'A'
 					ergy		"STRCAT4A_Y",S0
 					ergs		"STRCAT4A_S",S0
-					strcat		S0,"TEST"
+					strcat		S0,"TEST1234"
 					ergy		"STRCAT4B_Y",S0
-					ergs		"STRCAT4B_S",S0
+					; string too long
+					;ergs		"STRCAT4B_S",S0
 
 					clear		S0
-					move		S0[#1020],#'A'
+					move		S0[#2044],#'A'
 					; ediabas bug: S0 contains still value at pos 1000!
 					;ergy		"STRCAT5A_Y",S0
 					;ergs		"STRCAT5A_S",S0
-					strcat		S0,"TEST"
+					strcat		S0,"TEST1234"
 					ergy		"STRCAT5B_Y",S0
-					ergs		"STRCAT5B_S",S0
+					; string too long
+					;ergs		"STRCAT5B_S",S0
 
 					clear		S0
 					move 		S0,S1
