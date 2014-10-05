@@ -11,8 +11,7 @@ comment : Internal tests EDIABAS BEST/2;
 //                        K O N S T A N T E N
 ////////////////////////////////////////////////////////////////////////
 
-// arraysize seeems to be buggy, some commands fail when set!
-//#pragma arraysize (65536)
+#pragma arraysize (2048)
 
 table TEST_TABLE_FIRST[3][]=
 {

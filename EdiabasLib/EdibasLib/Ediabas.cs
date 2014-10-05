@@ -21,7 +21,6 @@ namespace EdiabasLib
         public delegate void ErrorRaisedDelegate(ErrorCodes error);
 
         public static readonly int MAX_ARRAY_LENGTH = 65536;
-        public static readonly int MAX_STRING_LENGTH = 1023;
         public static readonly int MAX_FILES = 5;
 
         private class OpCode
@@ -537,10 +536,6 @@ namespace EdiabasLib
 
             public void SetStringData(string data)
             {
-                if (data.Length > MAX_STRING_LENGTH)
-                {
-                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
-                }
                 byte[] dataArray = encoding.GetBytes(data);
                 int length = dataArray.Length;
                 if (length > 0 && dataArray[length - 1] != 0)
