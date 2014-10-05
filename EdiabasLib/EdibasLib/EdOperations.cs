@@ -2123,9 +2123,9 @@ namespace EdiabasLib
             string string1 = arg0.GetStringData();
             string string2 = arg1.GetStringData();
 
-            if (len1 + string2.Length > ediabas.ArrayMaxSize)
+            if (len1 + string2.Length > MAX_STRING_LENGTH)
             {
-                string2 = string2.Substring(0, (int)(ediabas.ArrayMaxSize - len1));
+                string2 = string2.Substring(0, (int)(MAX_STRING_LENGTH - len1));
             }
             string resultString = string1 + string2;
             arg0.SetStringData(resultString);
