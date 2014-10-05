@@ -97,20 +97,6 @@ namespace CarControl
             private set;
         }
 
-        private class OBDData
-        {
-            public byte address;
-            public byte length;
-            public byte[] data;
-
-            public OBDData()
-            {
-                address = 0;
-                length = 0;
-                data = new byte[256];
-            }
-        }
-
         private class EdiabasJob
         {
             private string jobName;
@@ -533,10 +519,6 @@ namespace CarControl
         private string _comPort;
         private SerialPort _serialPort;
         private IntPtr _handleFtdi;
-        private byte[] _sendData;
-        private byte[] _receiveData;
-        private OBDData _sendObdData;
-        private OBDData _receiveObdData;
         private StreamWriter _swLog;
         private Stopwatch _logTimeWatch;
         private Stopwatch commStopWatch;
@@ -556,10 +538,6 @@ namespace CarControl
             _workerThread = null;
             _serialPort = new SerialPort();
             _handleFtdi = (IntPtr) 0;
-            _sendData = new byte[261];
-            _receiveData = new byte[261];
-            _sendObdData = new OBDData();
-            _receiveObdData = new OBDData();
             _swLog = null;
             _logTimeWatch = new Stopwatch();
             commStopWatch = new Stopwatch();
@@ -569,7 +547,8 @@ namespace CarControl
             ediabas.EdCommClass = edCommBwmFast;
             edCommBwmFast.InterfaceConnectFunc = InterfaceConnect;
             edCommBwmFast.InterfaceDisconnectFunc = InterfaceDisconnect;
-            edCommBwmFast.TransmitDataFunc = OBDTrans;
+            edCommBwmFast.SendDataFunc = SendData;
+            edCommBwmFast.ReceiveDataFunc = ReceiveData;
 
             ediabas.AbortJobFunc = AbortEdiabasJob;
             ediabas.FileSearchDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase), "Ecu");
@@ -740,27 +719,7 @@ namespace CarControl
                                 break;
                         }
 
-                        if (!result)
-                        {
-#if false
-                            {
-                                // for debugging of connection errors
-                                int i = 0;
-                                Thread.Sleep(500);
-                                _sendData[i++] = 0x84;
-                                _sendData[i++] = 0x12;
-                                _sendData[i++] = 0x34;
-                                _sendData[i++] = 0x56;
-                                _sendData[i++] = 0x78;
-                                _sendData[i++] = 0x9A;
-                                _sendData[i++] = 0xBC;
-                                _sendData[i++] = 0xDE;
-                                SendData(_sendData, i);
-                                Thread.Sleep(1000);
-                            }
-#endif
-                        }
-                        else
+                        if (result)
                         {
                             Connected = true;
                         }
@@ -1525,6 +1484,7 @@ namespace CarControl
 
         private bool SendData(byte[] sendData, int length)
         {
+            LogData(sendData, length, "Send");
             if (_handleFtdi == (IntPtr)0)
             {   // com port
                 _serialPort.DiscardInBuffer();
@@ -1592,8 +1552,9 @@ namespace CarControl
                     commStopWatch.Stop();
                     if (logResponse)
                     {
-                        LogData(receiveData, recLen, "Rec ");
+                        ediabas.LogData(receiveData, recLen, "Rec ");
                     }
+                    LogData(receiveData, recLen, "Rec ");
                     if (recLen < length)
                     {
                         return false;
@@ -1621,8 +1582,9 @@ namespace CarControl
                 }
                 if (logResponse)
                 {
-                    LogData(receiveData, (int) bytesRead, "Rec ");
+                    ediabas.LogData(receiveData, (int)bytesRead, "Rec ");
                 }
+                LogData(receiveData, (int)bytesRead, "Rec ");
                 if (bytesRead < length)
                 {
                     return false;
@@ -1634,194 +1596,6 @@ namespace CarControl
         private bool ReceiveData(byte[] receiveData, int offset, int length, int timeout)
         {
             return ReceiveData(receiveData, offset, length, timeout, false);
-        }
-
-        private bool OBDTrans(OBDData sendData, ref OBDData receiveData)
-        {
-            return OBDTrans(sendData, ref receiveData, _timeoutStd, _timeoutNR, 2);
-        }
-
-        private bool OBDTrans(OBDData sendData, ref OBDData receiveData, int timeoutStd, int timeoutNR, int retryNR)
-        {
-            int i = 0;
-
-            if (sendData.length > 0x3F)
-            {
-                _sendData[i++] = 0x80;
-            }
-            else
-            {
-                _sendData[i++] = (byte)(sendData.length | 0x80);
-            }
-            _sendData[i++] = sendData.address;
-            _sendData[i++] = _localAddr;
-            if (sendData.length > 0x3F)
-            {
-                _sendData[i++] = sendData.length;
-            }
-            Array.Copy(sendData.data, 0, _sendData, i, sendData.length);
-
-            if (!OBDTrans(_sendData, ref _receiveData, timeoutStd, timeoutNR, retryNR))
-            {
-                return false;
-            }
-
-            if ((_receiveData[0] & ~0x3F) != 0x80)
-            {
-                return false;
-            }
-
-            int recLength = _receiveData[0] & 0x3F;
-            if (recLength == 0)
-            {   // with length byte
-                receiveData.length = _receiveData[3];
-                i = 4;
-            }
-            else
-            {
-                receiveData.length = (byte)recLength;
-                i = 3;
-            }
-            receiveData.address = _receiveData[2];
-            Array.Copy(_receiveData, i, receiveData.data, 0, receiveData.length);
-
-            return true;
-        }
-
-        private bool OBDTrans(byte[] sendData, ref byte[] receiveData, int timeoutStd, int timeoutNR, int retryNR)
-        {
-            int sendLength = sendData[0] & 0x3F;
-            if (sendLength == 0)
-            {   // with length byte
-                sendLength = sendData[3] + 4;
-            }
-            else
-            {
-                sendLength += 3;
-            }
-            sendData[sendLength] = CalcChecksum(sendData, sendLength);
-            sendLength++;
-            LogData(sendData, sendLength, "Send");
-            if (!SendData(sendData, sendLength))
-            {
-                LogString("*** Sending failed");
-                return false;
-            }
-            // remove remote echo
-            if (!ReceiveData(receiveData, 0, sendLength, timeoutStd))
-            {
-                LogString("*** No echo received");
-#if DEBUG
-                Trace.WriteLine("No Echo");
-#endif
-                ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, true);
-                return false;
-            }
-            LogData(receiveData, sendLength, "Echo");
-            for (int i = 0; i < sendLength; i++)
-            {
-                if (receiveData[i] != sendData[i])
-                {
-                    LogString("*** Echo incorrect");
-#if DEBUG
-                    Trace.WriteLine("Echo incorrect");
-#endif
-                    ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, true);
-                    return false;
-                }
-            }
-
-            int timeout = timeoutStd;
-            for (int retry = 0; retry <= retryNR; retry++)
-            {
-                // header byte
-                if (!ReceiveData(receiveData, 0, 4, timeout))
-                {
-                    LogString("*** No header received");
-#if DEBUG
-                    Trace.WriteLine("No Head");
-#endif
-                    return false;
-                }
-                if ((receiveData[0] & 0xC0) != 0x80)
-                {
-                    LogData(receiveData, 4, "Head");
-                    LogString("*** Invalid header");
-#if DEBUG
-                    Trace.WriteLine("Bad Head");
-#endif
-                    ReceiveData(receiveData, 0, receiveData.Length, timeout, true);
-                    return false;
-                }
-                int recLength = receiveData[0] & 0x3F;
-                if (recLength == 0)
-                {   // with length byte
-                    recLength = receiveData[3] + 4;
-                }
-                else
-                {
-                    recLength += 3;
-                }
-                if (!ReceiveData(receiveData, 4, recLength - 3, timeout))
-                {
-                    LogString("*** No tail received");
-#if DEBUG
-                    Trace.WriteLine("No Tail");
-#endif
-                    return false;
-                }
-                LogData(receiveData, recLength + 1, "Resp");
-                if (CalcChecksum(receiveData, recLength) != receiveData[recLength])
-                {
-                    LogString("*** Checksum incorrect");
-#if DEBUG
-                    Trace.WriteLine("Bad Checksum");
-#endif
-                    ReceiveData(receiveData, 0, receiveData.Length, timeout, true);
-                    return false;
-                }
-                if ((receiveData[1] != sendData[2]) ||
-                    (receiveData[2] != sendData[1]))
-                {
-                    LogString("*** Address incorrect");
-#if DEBUG
-                    Trace.WriteLine("Bad Address");
-#endif
-                    ReceiveData(receiveData, 0, receiveData.Length, timeout, true);
-                    return false;
-                }
-
-                int dataLen = receiveData[0] & 0x3F;
-                int dataStart = 3;
-                if (dataLen == 0)
-                {   // with length byte
-                    dataLen = receiveData[3];
-                    dataStart++;
-                }
-                if ((dataLen == 3) && (receiveData[dataStart] == 0x7F) && (receiveData[dataStart + 2] == 0x78))
-                {   // negative response 0x78
-                    LogString("*** NR 0x78");
-#if DEBUG
-                    Trace.WriteLine("Neg response");
-#endif
-                    timeout = timeoutNR;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            return true;
-        }
-
-        private byte CalcChecksum(byte[] data, int length)
-        {
-            byte sum = 0;
-            for (int i = 0; i < length; i++)
-            {
-                sum += data[i];
-            }
-            return sum;
         }
 
         private void DataUpdatedEvent()
