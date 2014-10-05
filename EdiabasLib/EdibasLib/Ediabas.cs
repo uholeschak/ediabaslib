@@ -2338,7 +2338,7 @@ namespace EdiabasLib
             string value;
             if (!configDict.TryGetValue(key, out value))
             {
-                value = string.Empty;
+                return null;
             }
             return value;
         }
@@ -3300,6 +3300,7 @@ namespace EdiabasLib
             resultDict.Clear();
             stackList.Clear();
             SetConfigProperty("BipEcuFile", Path.GetFileNameWithoutExtension(sgbdFileName));
+            SetConfigProperty("BipDebugLevel", "0");
             flags.Init();
             errorTrapBitNr = -1;
             errorTrapMask = 0;

@@ -4679,6 +4679,7 @@ job(  name      : TEST_CFG_FLAGS;
 #asm
 					enewset
 					clear		S4
+					move		S4,"-"
 					move		L5,#$7FFFFFFF
 					comp		L5,#-4
 					setc
@@ -4694,6 +4695,7 @@ job(  name      : TEST_CFG_FLAGS;
 #asm
 					enewset
 					clear		S4
+					move		S4,"-"
 					move		L5,#$7FFFFFFF
 					comp		L5,#-4
 					setc
@@ -4703,8 +4705,39 @@ job(  name      : TEST_CFG_FLAGS;
 #asm
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
-					ergs		"DUMMY", S4
+					ergs		"DUMMY_S", S4
 #endasm
+
+#asm
+					enewset
+					move		I8,#$AAAA
+					move		L5,#$7FFFFFFF
+					comp		L5,#-4
+					setc
+					cfgig		I8, "BipDebugLevel"
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergi		"DEBUGLEVEL", I8
+#endasm
+
+#asm
+					enewset
+					move		I8,#$AAAA
+					move		L5,#$7FFFFFFF
+					comp		L5,#-4
+					setc
+					cfgig		I8, "Dummy"
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergi		"DUMMY_I", I8
+#endasm
+
 }
 
 ////////////////////////////////////////////////////////////////////////
