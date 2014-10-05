@@ -362,8 +362,10 @@ namespace EdiabasLib
             }
 
             string value = ediabas.GetConfigProperty(arg1.GetStringData());
-            arg0.SetRawData((EdValueType)StringToValue(value));
-            ediabas.flags.UpdateFlags(arg0.GetValueData(), arg0.GetDataLen());
+            if (value != null)
+            {
+                arg0.SetRawData((EdValueType)StringToValue(value));
+            }
         }
 
         // BEST2: getCfgString
@@ -375,7 +377,10 @@ namespace EdiabasLib
             }
 
             string value = ediabas.GetConfigProperty(arg1.GetStringData());
-            arg0.SetArrayData(encoding.GetBytes(value));
+            if (value != null)
+            {
+                arg0.SetArrayData(encoding.GetBytes(value));
+            }
         }
 
         // clear carry
@@ -422,7 +427,12 @@ namespace EdiabasLib
             resultArray[1] = (byte)saveNow.Month;
             resultArray[2] = (byte)(saveNow.Year % 100);
             resultArray[3] = (byte)CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(saveNow, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-            resultArray[4] = (byte)saveNow.DayOfWeek;
+            byte dayOfWeek = (byte)saveNow.DayOfWeek;
+            if (dayOfWeek == 0)
+            {   // sunday
+                dayOfWeek = 7;
+            }
+            resultArray[4] = dayOfWeek;
 
             arg0.SetArrayData(resultArray);
         }
