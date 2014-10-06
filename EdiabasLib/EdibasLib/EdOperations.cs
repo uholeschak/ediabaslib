@@ -2630,14 +2630,6 @@ namespace EdiabasLib
                 byte[] response;
                 if (!ediabas.edCommClass.TransmitData(request, out response))
                 {
-                    if (request.Length > 0)
-                    {
-                        ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0003);
-                    }
-                    else
-                    {
-                        ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0009);
-                    }
                     arg0.SetRawData(byteArray0);
                 }
                 else
