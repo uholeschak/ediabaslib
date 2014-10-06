@@ -15,7 +15,7 @@ namespace EdiabasLib
         public delegate bool InterfaceSetBaudRateDelegate(int baudRate);
         public delegate bool SendDataDelegate(byte[] sendData, int length);
         public delegate bool ReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse);
-        private delegate bool TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR);
+        private delegate Ediabas.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR);
 
         private bool disposed = false;
         private SerialPort serialPort = new SerialPort();
@@ -122,6 +122,7 @@ namespace EdiabasLib
             receiveData = null;
             if (sendData.Length > sendBuffer.Length)
             {
+                ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0031);
                 return false;
             }
             sendData.CopyTo(sendBuffer, 0);
@@ -306,11 +307,13 @@ namespace EdiabasLib
                 if (!serialPort.IsOpen)
                 {
                     ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0019);
+                    return false;
                 }
             }
 
             if (ediabas.CommParameter.Length < 1)
             {
+                ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                 return false;
             }
             TransmitDelegate transmitFunc;
@@ -324,10 +327,12 @@ namespace EdiabasLib
                 case 0x010D:    // KWP2000*
                     if (ediabas.CommParameter.Length < 7)
                     {
+                        ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                         return false;
                     }
                     if (ediabas.CommParameter.Length >= 34 && ediabas.CommParameter[33] != 1)
                     {   // not checksum calculated by interface
+                        ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                         return false;
                     }
                     transmitFunc = TransKWP200S;
@@ -341,14 +346,17 @@ namespace EdiabasLib
                 case 0x010F:    // BMW-FAST
                     if (ediabas.CommParameter.Length < 7)
                     {
+                        ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                         return false;
                     }
                     if (ediabas.CommParameter[1] != 115200)
                     {   // not BMW-FAST baud rate
+                        ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                         return false;
                     }
                     if (ediabas.CommParameter.Length >= 8 && ediabas.CommParameter[7] != 1)
                     {   // not checksum calculated by interface
+                        ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                         return false;
                     }
                     transmitFunc = TransBmwFast;
@@ -360,6 +368,7 @@ namespace EdiabasLib
                     break;
 
                 default:
+                    ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                     return false;
             }
 
@@ -367,6 +376,7 @@ namespace EdiabasLib
             {
                 if (!interfaceSetBaudRateFunc(baudRate))
                 {
+                    ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                     return false;
                 }
             }
@@ -378,18 +388,25 @@ namespace EdiabasLib
                 }
             }
 
+            Ediabas.ErrorCodes errorCode = Ediabas.ErrorCodes.EDIABAS_ERR_NONE;
             for (int i = 0; i < ediabas.CommRepeats + 1; i++)
             {
-                if (transmitFunc(sendData, sendDataLength, ref receiveData, timeoutStd, timeoutTelEnd, timeoutNR, retryNR))
+                errorCode = transmitFunc(sendData, sendDataLength, ref receiveData, timeoutStd, timeoutTelEnd, timeoutNR, retryNR);
+                if (errorCode == Ediabas.ErrorCodes.EDIABAS_ERR_NONE)
                 {
                     receiveLength = TelLengthBmwFast(receiveData) + 1;
                     return true;
                 }
+                if (errorCode == Ediabas.ErrorCodes.EDIABAS_IFH_0003)
+                {   // interface error
+                    break;
+                }
             }
+            ediabas.SetError(errorCode);
             return false;
         }
 
-        private bool TransBmwFast(byte[] sendData, int sendDataLength, ref byte[] receiveData, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR)
+        private Ediabas.ErrorCodes TransBmwFast(byte[] sendData, int sendDataLength, ref byte[] receiveData, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR)
         {
             bool broadcast = false;
             if ((sendData[0] & 0xC0) == 0xC0)
@@ -410,14 +427,14 @@ namespace EdiabasLib
                 if (!SendData(sendData, sendLength))
                 {
                     ediabas.LogString("*** Sending failed");
-                    return false;
+                    return Ediabas.ErrorCodes.EDIABAS_IFH_0003;
                 }
                 // remove remote echo
                 if (!ReceiveData(receiveData, 0, sendLength, echoTimeout, timeoutTelEnd))
                 {
                     ediabas.LogString("*** No echo received");
                     ReceiveData(receiveData, 0, receiveData.Length, echoTimeout, timeoutTelEnd, true);
-                    return false;
+                    return Ediabas.ErrorCodes.EDIABAS_IFH_0003;
                 }
                 ediabas.LogData(receiveData, sendLength, "Echo");
                 for (int i = 0; i < sendLength; i++)
@@ -426,7 +443,7 @@ namespace EdiabasLib
                     {
                         ediabas.LogString("*** Echo incorrect");
                         ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, timeoutTelEnd, true);
-                        return false;
+                        return Ediabas.ErrorCodes.EDIABAS_IFH_0003;
                     }
                 }
             }
@@ -438,28 +455,28 @@ namespace EdiabasLib
                 if (!ReceiveData(receiveData, 0, 4, timeout, timeoutTelEnd))
                 {
                     ediabas.LogString("*** No header received");
-                    return false;
+                    return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 if ((receiveData[0] & 0xC0) != 0x80)
                 {
                     ediabas.LogData(receiveData, 4, "Head");
                     ediabas.LogString("*** Invalid header");
                     ReceiveData(receiveData, 0, receiveData.Length, timeout, timeoutTelEnd, true);
-                    return false;
+                    return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
                 }
 
                 int recLength = TelLengthBmwFast(receiveData);
                 if (!ReceiveData(receiveData, 4, recLength - 3, timeoutTelEnd, timeoutTelEnd))
                 {
                     ediabas.LogString("*** No tail received");
-                    return false;
+                    return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 ediabas.LogData(receiveData, recLength + 1, "Resp");
                 if (CalcChecksum(receiveData, recLength) != receiveData[recLength])
                 {
                     ediabas.LogString("*** Checksum incorrect");
                     ReceiveData(receiveData, 0, receiveData.Length, timeout, timeoutTelEnd, true);
-                    return false;
+                    return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 if (!broadcast)
                 {
@@ -468,7 +485,7 @@ namespace EdiabasLib
                     {
                         ediabas.LogString("*** Address incorrect");
                         ReceiveData(receiveData, 0, receiveData.Length, timeout, timeoutTelEnd, true);
-                        return false;
+                        return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
                     }
                 }
 
@@ -489,7 +506,7 @@ namespace EdiabasLib
                     break;
                 }
             }
-            return true;
+            return Ediabas.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
         // telegram length without checksum
@@ -507,7 +524,7 @@ namespace EdiabasLib
             return telLength;
         }
 
-        private bool TransKWP200S(byte[] sendData, int sendDataLength, ref byte[] receiveData, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR)
+        private Ediabas.ErrorCodes TransKWP200S(byte[] sendData, int sendDataLength, ref byte[] receiveData, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR)
         {
             if (sendDataLength > 0)
             {
@@ -518,14 +535,14 @@ namespace EdiabasLib
                 if (!SendData(sendData, sendLength))
                 {
                     ediabas.LogString("*** Sending failed");
-                    return false;
+                    return Ediabas.ErrorCodes.EDIABAS_IFH_0003;
                 }
                 // remove remote echo
                 if (!ReceiveData(receiveData, 0, sendLength, echoTimeout, timeoutTelEnd))
                 {
                     ediabas.LogString("*** No echo received");
                     ReceiveData(receiveData, 0, receiveData.Length, echoTimeout, timeoutTelEnd, true);
-                    return false;
+                    return Ediabas.ErrorCodes.EDIABAS_IFH_0003;
                 }
                 ediabas.LogData(receiveData, sendLength, "Echo");
                 for (int i = 0; i < sendLength; i++)
@@ -534,7 +551,7 @@ namespace EdiabasLib
                     {
                         ediabas.LogString("*** Echo incorrect");
                         ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, timeoutTelEnd, true);
-                        return false;
+                        return Ediabas.ErrorCodes.EDIABAS_IFH_0003;
                     }
                 }
             }
@@ -546,21 +563,21 @@ namespace EdiabasLib
                 if (!ReceiveData(receiveData, 0, 4, timeout, timeoutTelEnd))
                 {
                     ediabas.LogString("*** No header received");
-                    return false;
+                    return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
                 }
 
                 int recLength = TelLengthKWP200S(receiveData);
                 if (!ReceiveData(receiveData, 4, recLength - 3, timeoutTelEnd, timeoutTelEnd))
                 {
                     ediabas.LogString("*** No tail received");
-                    return false;
+                    return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 ediabas.LogData(receiveData, recLength + 1, "Resp");
                 if (CalcChecksum(receiveData, recLength) != receiveData[recLength])
                 {
                     ediabas.LogString("*** Checksum incorrect");
                     ReceiveData(receiveData, 0, receiveData.Length, timeout, timeoutTelEnd, true);
-                    return false;
+                    return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
                 }
 
                 int dataLen = receiveData[3];
@@ -575,7 +592,7 @@ namespace EdiabasLib
                     break;
                 }
             }
-            return true;
+            return Ediabas.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
         // telegram length without checksum
