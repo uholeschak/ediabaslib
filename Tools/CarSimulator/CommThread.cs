@@ -35,6 +35,7 @@ namespace CarSimulator
         private bool            _threadRunning;
         private Thread          _workerThread;
         private string          _comPort;
+        private bool            _kwp2000;
         private List<ResponseEntry> _responseList;
         private SerialPort       _serialPort;
         private byte[]          _sendData;
@@ -371,8 +372,8 @@ namespace CarSimulator
             _threadRunning = false;
             _workerThread = null;
             _serialPort = new SerialPort();
-            _sendData = new byte[261];
-            _receiveData = new byte[261];
+            _sendData = new byte[260];
+            _receiveData = new byte[260];
             _receiveDataMotorBackup = new byte[_receiveData.Length];
             _noResponseCount = 0;
             for (int i = 0; i < _timeValveWrite.Length; i++)
@@ -392,13 +393,14 @@ namespace CarSimulator
             Moving = false;
         }
 
-        public bool StartThread(string comPort, List<ResponseEntry> responseList)
+        public bool StartThread(string comPort, bool kwp2000, List<ResponseEntry> responseList)
         {
             try
             {
                 StopThread();
                 _stopThread = false;
                 _comPort = comPort;
+                _kwp2000 = kwp2000;
                 _responseList = responseList;
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
@@ -461,7 +463,7 @@ namespace CarSimulator
             try
             {
                 _serialPort.PortName = _comPort;
-                _serialPort.BaudRate = 115200;
+                _serialPort.BaudRate = _kwp2000 ? 9600 : 115200;
                 _serialPort.DataBits = 8;
                 _serialPort.Parity = Parity.None;
                 _serialPort.StopBits = StopBits.One;
@@ -526,6 +528,59 @@ namespace CarSimulator
 
         private bool OBDSend(byte[] sendData)
         {
+            if (_kwp2000)
+            {
+                byte[] tempArray = new byte[260];
+                // convert to KWP2000*
+                int dataLength = sendData[0] & 0x3F;
+                if (dataLength == 0)
+                {   // with length byte
+                    dataLength = sendData[3];
+                    Array.Copy(sendData, 0, tempArray, 0, tempArray.Length);
+                    tempArray[0] = 0xB8;
+                }
+                else
+                {   // without length byte
+                    Array.Copy(sendData, 0, tempArray, 0, 3);
+                    Array.Copy(sendData, 3, tempArray, 4, dataLength);
+                    tempArray[0] = 0xB8;
+                    tempArray[3] = (byte)dataLength;
+                }
+                return SendKwp2000(tempArray);
+            }
+            return SendBmwfast(sendData);
+        }
+
+        private bool OBDReceive(byte[] receiveData)
+        {
+            if (_kwp2000)
+            {
+                if (!ReceiveKwp2000(receiveData))
+                {
+                    return false;
+                }
+                // convert to BMW-FAST
+                int dataLength = receiveData[3];
+                if (dataLength > 0x3F)
+                {   // with length byte
+                    receiveData[0] = 0x80;
+                    receiveData[dataLength + 4] = CalcChecksum(receiveData, dataLength + 4);
+                }
+                else
+                {   // without length byte
+                    byte[] tempArray = new byte[260];
+                    Array.Copy(receiveData, 4, tempArray, 0, dataLength);
+                    Array.Copy(tempArray, 0, receiveData, 3, dataLength);
+                    receiveData[0] = (byte)(0x80 | dataLength);
+                    receiveData[dataLength + 3] = CalcChecksum(receiveData, dataLength + 3);
+                }
+                return true;
+            }
+            return ReceiveBmwFast(receiveData);
+        }
+
+        private bool SendBmwfast(byte[] sendData)
+        {
             int sendLength = sendData[0] & 0x3F;
             if (sendLength == 0)
             {   // with length byte
@@ -544,7 +599,19 @@ namespace CarSimulator
             return true;
         }
 
-        private bool OBDReceive(byte[] receiveData)
+        private bool SendKwp2000(byte[] sendData)
+        {
+            int sendLength = sendData[3] + 4;
+            sendData[sendLength] = CalcChecksum(sendData, sendLength);
+            sendLength++;
+            if (!SendData(sendData, sendLength))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool ReceiveBmwFast(byte[] receiveData)
         {
             // header byte
             if (!ReceiveData(receiveData, 0, 4))
@@ -566,6 +633,27 @@ namespace CarSimulator
             {
                 recLength += 3;
             }
+            if (!ReceiveData(receiveData, 4, recLength - 3))
+            {
+                _serialPort.DiscardInBuffer();
+                return false;
+            }
+            if (CalcChecksum(receiveData, recLength) != receiveData[recLength])
+            {
+                _serialPort.DiscardInBuffer();
+                return false;
+            }
+            return true;
+        }
+
+        private bool ReceiveKwp2000(byte[] receiveData)
+        {
+            // header byte
+            if (!ReceiveData(receiveData, 0, 4))
+            {
+                return false;
+            }
+            int recLength = receiveData[3] + 4;
             if (!ReceiveData(receiveData, 4, recLength - 3))
             {
                 _serialPort.DiscardInBuffer();

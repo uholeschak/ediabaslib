@@ -176,7 +176,7 @@ namespace CarSimulator
                 if (listPorts.SelectedIndex < 0) return;
                 string selectedPort = listPorts.SelectedItem.ToString();
 
-                _commThread.StartThread(selectedPort, _responseList);
+                _commThread.StartThread(selectedPort, checkBoxKwp2000.Checked ,_responseList);
             }
 
             UpdateDisplay();

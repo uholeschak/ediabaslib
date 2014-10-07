@@ -34,6 +34,7 @@
             this.timerUpdate = new System.Windows.Forms.Timer(this.components);
             this.checkBoxMoving = new System.Windows.Forms.CheckBox();
             this.checkBoxVariableValues = new System.Windows.Forms.CheckBox();
+            this.checkBoxKwp2000 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // buttonConnect
@@ -80,11 +81,22 @@
             this.checkBoxVariableValues.Text = "Variable values";
             this.checkBoxVariableValues.UseVisualStyleBackColor = true;
             // 
+            // checkBoxKwp2000
+            // 
+            this.checkBoxKwp2000.AutoSize = true;
+            this.checkBoxKwp2000.Location = new System.Drawing.Point(12, 74);
+            this.checkBoxKwp2000.Name = "checkBoxKwp2000";
+            this.checkBoxKwp2000.Size = new System.Drawing.Size(79, 17);
+            this.checkBoxKwp2000.TabIndex = 4;
+            this.checkBoxKwp2000.Text = "KWP2000*";
+            this.checkBoxKwp2000.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(292, 266);
+            this.Controls.Add(this.checkBoxKwp2000);
             this.Controls.Add(this.checkBoxVariableValues);
             this.Controls.Add(this.checkBoxMoving);
             this.Controls.Add(this.listPorts);
@@ -104,6 +116,7 @@
         private System.Windows.Forms.Timer timerUpdate;
         private System.Windows.Forms.CheckBox checkBoxMoving;
         private System.Windows.Forms.CheckBox checkBoxVariableValues;
+        private System.Windows.Forms.CheckBox checkBoxKwp2000;
 
     }
 }
