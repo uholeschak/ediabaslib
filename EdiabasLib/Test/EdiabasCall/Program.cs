@@ -48,7 +48,7 @@ namespace EdiabasCall
                   v => compareOutput = v != null },
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>.",
                   v => jobNames.Add(v) },
-                { "h|help",  "show this message and exit", 
+                { "h|help",  "show this message and exit",
                   v => show_help = v != null },
             };
 
