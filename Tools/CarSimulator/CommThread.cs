@@ -546,7 +546,7 @@ namespace CarSimulator
                     tempArray[0] = 0xB8;
                     tempArray[3] = (byte)dataLength;
                 }
-                return SendKwp2000(tempArray);
+                return SendKwp2000S(tempArray);
             }
             return SendBmwfast(sendData);
         }
@@ -555,7 +555,7 @@ namespace CarSimulator
         {
             if (_kwp2000)
             {
-                if (!ReceiveKwp2000(receiveData))
+                if (!ReceiveKwp2000S(receiveData))
                 {
                     return false;
                 }
@@ -564,7 +564,7 @@ namespace CarSimulator
                 if (dataLength > 0x3F)
                 {   // with length byte
                     receiveData[0] = 0x80;
-                    receiveData[dataLength + 4] = CalcChecksum(receiveData, dataLength + 4);
+                    receiveData[dataLength + 4] = CalcChecksumBmwFast(receiveData, dataLength + 4);
                 }
                 else
                 {   // without length byte
@@ -572,7 +572,7 @@ namespace CarSimulator
                     Array.Copy(receiveData, 4, tempArray, 0, dataLength);
                     Array.Copy(tempArray, 0, receiveData, 3, dataLength);
                     receiveData[0] = (byte)(0x80 | dataLength);
-                    receiveData[dataLength + 3] = CalcChecksum(receiveData, dataLength + 3);
+                    receiveData[dataLength + 3] = CalcChecksumBmwFast(receiveData, dataLength + 3);
                 }
                 return true;
             }
@@ -590,19 +590,7 @@ namespace CarSimulator
             {
                 sendLength += 3;
             }
-            sendData[sendLength] = CalcChecksum(sendData, sendLength);
-            sendLength++;
-            if (!SendData(sendData, sendLength))
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private bool SendKwp2000(byte[] sendData)
-        {
-            int sendLength = sendData[3] + 4;
-            sendData[sendLength] = CalcChecksum(sendData, sendLength);
+            sendData[sendLength] = CalcChecksumBmwFast(sendData, sendLength);
             sendLength++;
             if (!SendData(sendData, sendLength))
             {
@@ -638,7 +626,7 @@ namespace CarSimulator
                 _serialPort.DiscardInBuffer();
                 return false;
             }
-            if (CalcChecksum(receiveData, recLength) != receiveData[recLength])
+            if (CalcChecksumBmwFast(receiveData, recLength) != receiveData[recLength])
             {
                 _serialPort.DiscardInBuffer();
                 return false;
@@ -646,7 +634,29 @@ namespace CarSimulator
             return true;
         }
 
-        private bool ReceiveKwp2000(byte[] receiveData)
+        private byte CalcChecksumBmwFast(byte[] data, int length)
+        {
+            byte sum = 0;
+            for (int i = 0; i < length; i++)
+            {
+                sum += data[i];
+            }
+            return sum;
+        }
+
+        private bool SendKwp2000S(byte[] sendData)
+        {
+            int sendLength = sendData[3] + 4;
+            sendData[sendLength] = CalcChecksumKwp2000S(sendData, sendLength);
+            sendLength++;
+            if (!SendData(sendData, sendLength))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool ReceiveKwp2000S(byte[] receiveData)
         {
             // header byte
             if (!ReceiveData(receiveData, 0, 4))
@@ -659,7 +669,7 @@ namespace CarSimulator
                 _serialPort.DiscardInBuffer();
                 return false;
             }
-            if (CalcChecksum(receiveData, recLength) != receiveData[recLength])
+            if (CalcChecksumKwp2000S(receiveData, recLength) != receiveData[recLength])
             {
                 _serialPort.DiscardInBuffer();
                 return false;
@@ -667,12 +677,12 @@ namespace CarSimulator
             return true;
         }
 
-        private byte CalcChecksum(byte[] data, int length)
+        private byte CalcChecksumKwp2000S(byte[] data, int length)
         {
             byte sum = 0;
             for (int i = 0; i < length; i++)
             {
-                sum += data[i];
+                sum ^= data[i];
             }
             return sum;
         }
