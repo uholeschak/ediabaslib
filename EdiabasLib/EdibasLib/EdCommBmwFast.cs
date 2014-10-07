@@ -335,7 +335,7 @@ namespace EdiabasLib
                         ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                         return false;
                     }
-                    transmitFunc = TransKWP200S;
+                    transmitFunc = TransKwp2000S;
                     baudRate = (int)ediabas.CommParameter[1];
                     timeoutStd = (int)ediabas.CommParameter[2];
                     timeoutTelEnd = (int)ediabas.CommParameter[4];
@@ -421,7 +421,7 @@ namespace EdiabasLib
             if (sendDataLength > 0)
             {
                 int sendLength = TelLengthBmwFast(sendData);
-                sendData[sendLength] = CalcChecksum(sendData, sendLength);
+                sendData[sendLength] = CalcChecksumBmwFast(sendData, sendLength);
                 sendLength++;
                 ediabas.LogData(sendData, sendLength, "Send");
                 if (!SendData(sendData, sendLength))
@@ -472,7 +472,7 @@ namespace EdiabasLib
                     return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 ediabas.LogData(receiveData, recLength + 1, "Resp");
-                if (CalcChecksum(receiveData, recLength) != receiveData[recLength])
+                if (CalcChecksumBmwFast(receiveData, recLength) != receiveData[recLength])
                 {
                     ediabas.LogString("*** Checksum incorrect");
                     ReceiveData(receiveData, 0, receiveData.Length, timeout, timeoutTelEnd, true);
@@ -525,13 +525,23 @@ namespace EdiabasLib
             return telLength;
         }
 
-        private Ediabas.ErrorCodes TransKWP200S(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR)
+        private static byte CalcChecksumBmwFast(byte[] data, int length)
+        {
+            byte sum = 0;
+            for (int i = 0; i < length; i++)
+            {
+                sum += data[i];
+            }
+            return sum;
+        }
+
+        private Ediabas.ErrorCodes TransKwp2000S(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR)
         {
             receiveLength = 0;
             if (sendDataLength > 0)
             {
-                int sendLength = TelLengthKWP200S(sendData);
-                sendData[sendLength] = CalcChecksum(sendData, sendLength);
+                int sendLength = TelLengthKwp2000S(sendData);
+                sendData[sendLength] = CalcChecksumKWP2000S(sendData, sendLength);
                 sendLength++;
                 ediabas.LogData(sendData, sendLength, "Send");
                 if (!SendData(sendData, sendLength))
@@ -568,14 +578,14 @@ namespace EdiabasLib
                     return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
                 }
 
-                int recLength = TelLengthKWP200S(receiveData);
+                int recLength = TelLengthKwp2000S(receiveData);
                 if (!ReceiveData(receiveData, 4, recLength - 3, timeoutTelEnd, timeoutTelEnd))
                 {
                     ediabas.LogString("*** No tail received");
                     return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 ediabas.LogData(receiveData, recLength + 1, "Resp");
-                if (CalcChecksum(receiveData, recLength) != receiveData[recLength])
+                if (CalcChecksumKWP2000S(receiveData, recLength) != receiveData[recLength])
                 {
                     ediabas.LogString("*** Checksum incorrect");
                     ReceiveData(receiveData, 0, receiveData.Length, timeout, timeoutTelEnd, true);
@@ -594,23 +604,23 @@ namespace EdiabasLib
                     break;
                 }
             }
-            receiveLength = TelLengthKWP200S(receiveData) + 1;
+            receiveLength = TelLengthKwp2000S(receiveData) + 1;
             return Ediabas.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
         // telegram length without checksum
-        private static int TelLengthKWP200S(byte[] dataBuffer)
+        private static int TelLengthKwp2000S(byte[] dataBuffer)
         {
             int telLength = dataBuffer[3] + 4;
             return telLength;
         }
 
-        private static byte CalcChecksum(byte[] data, int length)
+        private static byte CalcChecksumKWP2000S(byte[] data, int length)
         {
             byte sum = 0;
             for (int i = 0; i < length; i++)
             {
-                sum += data[i];
+                sum ^= data[i];
             }
             return sum;
         }
