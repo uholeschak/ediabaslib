@@ -465,7 +465,7 @@ namespace CarSimulator
                 _serialPort.PortName = _comPort;
                 _serialPort.BaudRate = _kwp2000 ? 9600 : 115200;
                 _serialPort.DataBits = 8;
-                _serialPort.Parity = Parity.None;
+                _serialPort.Parity = _kwp2000 ? Parity.Even : Parity.None;
                 _serialPort.StopBits = StopBits.One;
                 _serialPort.Handshake = Handshake.None;
                 _serialPort.ReadTimeout = 30;

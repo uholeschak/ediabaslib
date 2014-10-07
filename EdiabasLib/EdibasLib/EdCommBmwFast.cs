@@ -318,6 +318,7 @@ namespace EdiabasLib
             }
             TransmitDelegate transmitFunc;
             int baudRate;
+            Parity parity;
             int timeoutStd;
             int timeoutTelEnd;
             int timeoutNR;
@@ -337,6 +338,7 @@ namespace EdiabasLib
                     }
                     transmitFunc = TransKwp2000S;
                     baudRate = (int)ediabas.CommParameter[1];
+                    parity = Parity.Even;
                     timeoutStd = (int)ediabas.CommParameter[2];
                     timeoutTelEnd = (int)ediabas.CommParameter[4];
                     timeoutNR = (int)ediabas.CommParameter[7];
@@ -360,6 +362,7 @@ namespace EdiabasLib
                         return false;
                     }
                     transmitFunc = TransBmwFast;
+                    parity = Parity.None;
                     baudRate = (int)ediabas.CommParameter[1];
                     timeoutStd = (int)ediabas.CommParameter[2];
                     timeoutTelEnd = (int)ediabas.CommParameter[4];
@@ -385,6 +388,10 @@ namespace EdiabasLib
                 if (serialPort.BaudRate != baudRate)
                 {
                     serialPort.BaudRate = baudRate;
+                }
+                if (serialPort.Parity != parity)
+                {
+                    serialPort.Parity = parity;
                 }
             }
 
