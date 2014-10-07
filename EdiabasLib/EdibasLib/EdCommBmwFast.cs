@@ -15,7 +15,7 @@ namespace EdiabasLib
         public delegate bool InterfaceSetBaudRateDelegate(int baudRate);
         public delegate bool SendDataDelegate(byte[] sendData, int length);
         public delegate bool ReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse);
-        private delegate Ediabas.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR);
+        private delegate Ediabas.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR);
 
         private bool disposed = false;
         private SerialPort serialPort = new SerialPort();
@@ -391,10 +391,9 @@ namespace EdiabasLib
             Ediabas.ErrorCodes errorCode = Ediabas.ErrorCodes.EDIABAS_ERR_NONE;
             for (int i = 0; i < ediabas.CommRepeats + 1; i++)
             {
-                errorCode = transmitFunc(sendData, sendDataLength, ref receiveData, timeoutStd, timeoutTelEnd, timeoutNR, retryNR);
+                errorCode = transmitFunc(sendData, sendDataLength, ref receiveData, out receiveLength, timeoutStd, timeoutTelEnd, timeoutNR, retryNR);
                 if (errorCode == Ediabas.ErrorCodes.EDIABAS_ERR_NONE)
                 {
-                    receiveLength = TelLengthBmwFast(receiveData) + 1;
                     return true;
                 }
                 if (errorCode == Ediabas.ErrorCodes.EDIABAS_IFH_0003)
@@ -406,8 +405,9 @@ namespace EdiabasLib
             return false;
         }
 
-        private Ediabas.ErrorCodes TransBmwFast(byte[] sendData, int sendDataLength, ref byte[] receiveData, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR)
+        private Ediabas.ErrorCodes TransBmwFast(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR)
         {
+            receiveLength = 0;
             bool broadcast = false;
             if ((sendData[0] & 0xC0) == 0xC0)
             {
@@ -506,6 +506,7 @@ namespace EdiabasLib
                     break;
                 }
             }
+            receiveLength = TelLengthBmwFast(receiveData) + 1;
             return Ediabas.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
@@ -524,8 +525,9 @@ namespace EdiabasLib
             return telLength;
         }
 
-        private Ediabas.ErrorCodes TransKWP200S(byte[] sendData, int sendDataLength, ref byte[] receiveData, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR)
+        private Ediabas.ErrorCodes TransKWP200S(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR)
         {
+            receiveLength = 0;
             if (sendDataLength > 0)
             {
                 int sendLength = TelLengthKWP200S(sendData);
@@ -592,6 +594,7 @@ namespace EdiabasLib
                     break;
                 }
             }
+            receiveLength = TelLengthKWP200S(receiveData) + 1;
             return Ediabas.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
