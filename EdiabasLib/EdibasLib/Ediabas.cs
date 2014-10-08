@@ -3475,19 +3475,18 @@ namespace EdiabasLib
             }
         }
 
-        public void LogData(byte[] data, int length, string info)
+        public void LogData(byte[] data, int offset, int length, string info)
         {
             if (swLog == null) return;
             string logString = "";
 
             for (int i = 0; i < length; i++)
             {
-                logString += string.Format("{0:X02} ", data[i]);
+                logString += string.Format("{0:X02} ", data[offset + i]);
             }
             try
             {
-                swLog.Write(" (" + info + "): ");
-                swLog.WriteLine(logString);
+                swLog.WriteLine(" (" + info + "): " + logString);
             }
             catch (Exception)
             {
