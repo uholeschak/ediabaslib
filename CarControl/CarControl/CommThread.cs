@@ -221,10 +221,7 @@ namespace CarControl
             }
         }
 
-        private const byte _localAddr = 0xF1;       // local device address
-        private const int _timeoutStd = 1200;       // default read timeout [ms]
-        private const int _timeoutNR = 5000;        // neg response read timeout [ms]
-        private const int _retryNR = 2;             // number of neg response retries
+        private const int _readTimeoutMin = 500;    // min read timeout [ms]
         private const int _writeTimeout = 500;      // write timeout [ms]
 
         private class EdiabasErrorRequest
@@ -520,6 +517,7 @@ namespace CarControl
         private SerialPort _serialPort;
         private IntPtr _handleFtdi;
         private int _baudRateFtdi;
+        private Parity _parityFtdi;
         private StreamWriter _swLog;
         private Stopwatch _logTimeWatch;
         private Stopwatch commStopWatch;
@@ -540,6 +538,7 @@ namespace CarControl
             _serialPort = new SerialPort();
             _handleFtdi = (IntPtr) 0;
             _baudRateFtdi = 0;
+            _parityFtdi = Parity.None;
             _swLog = null;
             _logTimeWatch = new Stopwatch();
             commStopWatch = new Stopwatch();
@@ -549,7 +548,7 @@ namespace CarControl
             ediabas.EdCommClass = edCommBwmFast;
             edCommBwmFast.InterfaceConnectFunc = InterfaceConnect;
             edCommBwmFast.InterfaceDisconnectFunc = InterfaceDisconnect;
-            edCommBwmFast.InterfaceSetBaudRateFunc = InterfaceSetBaudrate;
+            edCommBwmFast.InterfaceSetConfigFunc = InterfaceSetConfig;
             edCommBwmFast.SendDataFunc = SendData;
             edCommBwmFast.ReceiveDataFunc = ReceiveData;
 
@@ -641,7 +640,6 @@ namespace CarControl
             {
                 try
                 {
-                    _swLog.Close();
                     _swLog.Dispose();
                 }
                 catch (Exception)
@@ -1354,8 +1352,9 @@ namespace CarControl
                     {
                         return false;
                     }
+                    _parityFtdi = Parity.None;
 
-                    ftStatus = Ftd2xx.FT_SetTimeouts(_handleFtdi, _timeoutStd, _writeTimeout);
+                    ftStatus = Ftd2xx.FT_SetTimeouts(_handleFtdi, 0, _writeTimeout);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
                         return false;
@@ -1436,6 +1435,7 @@ namespace CarControl
                 _handleFtdi = (IntPtr) 0;
             }
             _baudRateFtdi = 0;
+            _parityFtdi = Parity.None;
             return true;
         }
 
@@ -1458,7 +1458,7 @@ namespace CarControl
             return true;
         }
 
-        private bool InterfaceSetBaudrate(int baudRate)
+        private bool InterfaceSetConfig(int baudRate, Parity parity)
         {
             if (_handleFtdi == (IntPtr)0)
             {   // com port
@@ -1466,20 +1466,61 @@ namespace CarControl
                 {
                     _serialPort.BaudRate = baudRate;
                 }
+                if (_serialPort.Parity != parity)
+                {
+                    _serialPort.Parity = parity;
+                }
             }
             else
             {
                 if (_baudRateFtdi != baudRate)
                 {
-                    Ftd2xx.FT_STATUS ftStatus;
-
-                    ftStatus = Ftd2xx.FT_SetBaudRate(_handleFtdi, (uint)baudRate);
+                    Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_SetBaudRate(_handleFtdi, (uint)baudRate);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
                         return false;
                     }
                     _baudRateFtdi = baudRate;
                 }
+
+                if (_parityFtdi != parity)
+                {
+                    byte parityLocal;
+
+                    switch (parity)
+                    {
+                        case Parity.None:
+                            parityLocal = Ftd2xx.FT_PARITY_NONE;
+                            break;
+
+                        case Parity.Even:
+                            parityLocal = Ftd2xx.FT_PARITY_EVEN;
+                            break;
+
+                        case Parity.Odd:
+                            parityLocal = Ftd2xx.FT_PARITY_ODD;
+                            break;
+
+                        case Parity.Mark:
+                            parityLocal = Ftd2xx.FT_PARITY_MARK;
+                            break;
+
+                        case Parity.Space:
+                            parityLocal = Ftd2xx.FT_PARITY_SPACE;
+                            break;
+
+                        default:
+                            return false;
+                    }
+
+                    Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_SetDataCharacteristics(_handleFtdi, Ftd2xx.FT_BITS_8, Ftd2xx.FT_STOP_BITS_1, parityLocal);
+                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    {
+                        return false;
+                    }
+                    _parityFtdi = parity;
+                }
+
             }
             return true;
         }
@@ -1515,7 +1556,7 @@ namespace CarControl
 
         private bool SendData(byte[] sendData, int length)
         {
-            LogData(sendData, length, "Send");
+            LogData(sendData, 0, length, "Send");
             if (_handleFtdi == (IntPtr)0)
             {   // com port
                 _serialPort.DiscardInBuffer();
@@ -1561,6 +1602,14 @@ namespace CarControl
 
         private bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse)
         {
+            if (timeout < _readTimeoutMin)
+            {
+                timeout = _readTimeoutMin;
+            }
+            if (timeoutTelEnd < _readTimeoutMin)
+            {
+                timeoutTelEnd = _readTimeoutMin;
+            }
             if (_handleFtdi == (IntPtr)0)
             {   // com port
                 try
@@ -1579,6 +1628,7 @@ namespace CarControl
                         if (commStopWatch.ElapsedMilliseconds > timeout)
                         {
                             commStopWatch.Stop();
+                            LogString(string.Format("T*** {0}ms", timeout));
                             return false;
                         }
                         Thread.Sleep(10);
@@ -1586,12 +1636,13 @@ namespace CarControl
 
                     int recLen = 0;
                     commStopWatch.Reset();
+                    commStopWatch.Start();
                     for (; ; )
                     {
                         int bytesToRead = _serialPort.BytesToRead;
                         if (bytesToRead >= length)
                         {
-                            recLen = _serialPort.Read(receiveData, offset + recLen, length - recLen);
+                            recLen += _serialPort.Read(receiveData, offset + recLen, length - recLen);
                         }
                         if (recLen >= length)
                         {
@@ -1600,12 +1651,14 @@ namespace CarControl
                         if (lastBytesToRead != bytesToRead)
                         {   // bytes received
                             commStopWatch.Reset();
+                            commStopWatch.Start();
                             lastBytesToRead = bytesToRead;
                         }
                         else
                         {
                             if (commStopWatch.ElapsedMilliseconds > timeoutTelEnd)
                             {
+                                LogString(string.Format("Len {0} < {1} ({2}ms)", bytesToRead, length, timeoutTelEnd));
                                 break;
                             }
                         }
@@ -1614,25 +1667,28 @@ namespace CarControl
                     commStopWatch.Stop();
                     if (logResponse)
                     {
-                        ediabas.LogData(receiveData, recLen, "Rec ");
+                        ediabas.LogData(receiveData, offset, recLen, "Rec ");
                     }
-                    LogData(receiveData, recLen, "Rec ");
+                    LogData(receiveData, offset, recLen, "Rec ");
                     if (recLen < length)
                     {
+                        LogString("L***");
                         return false;
                     }
                 }
                 catch (Exception)
                 {
+                    LogString("E***");
                     return false;
                 }
             }
             else
             {   // ftdi
+#if true
                 Ftd2xx.FT_STATUS ftStatus;
                 uint bytesRead = 0;
 
-                ftStatus = Ftd2xx.FT_SetTimeouts(_handleFtdi, (uint) timeout, _writeTimeout);
+                ftStatus = Ftd2xx.FT_SetTimeouts(_handleFtdi, (uint)timeout, _writeTimeout);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
                     throw new IOException();
@@ -1644,13 +1700,102 @@ namespace CarControl
                 }
                 if (logResponse)
                 {
-                    ediabas.LogData(receiveData, (int)bytesRead, "Rec ");
+                    ediabas.LogData(receiveData, offset, (int)bytesRead, "Rec ");
                 }
-                LogData(receiveData, (int)bytesRead, "Rec ");
+                LogData(receiveData, offset, (int)bytesRead, "Rec ");
                 if (bytesRead < length)
                 {
+                    LogString("L***");
                     return false;
                 }
+#else
+                try
+                {
+                    Ftd2xx.FT_STATUS ftStatus;
+
+                    // wait for first byte
+                    uint lastBytesToRead = 0;
+                    commStopWatch.Reset();
+                    commStopWatch.Start();
+                    for (; ; )
+                    {
+                        ftStatus = Ftd2xx.FT_GetQueueStatus(_handleFtdi, out lastBytesToRead);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            throw new IOException();
+                        }
+                        if (lastBytesToRead > 0)
+                        {
+                            break;
+                        }
+                        if (commStopWatch.ElapsedMilliseconds > timeout)
+                        {
+                            commStopWatch.Stop();
+                            LogString(string.Format("T*** {0}ms {1}", timeout));
+                            return false;
+                        }
+                        Thread.Sleep(10);
+                    }
+
+                    int recLen = 0;
+                    commStopWatch.Reset();
+                    commStopWatch.Start();
+                    for (; ; )
+                    {
+                        uint bytesToRead;
+                        ftStatus = Ftd2xx.FT_GetQueueStatus(_handleFtdi, out bytesToRead);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            throw new IOException();
+                        }
+                        if (bytesToRead >= length)
+                        {
+                            uint bytesRead;
+                            ftStatus = Ftd2xx.FT_ReadWrapper(_handleFtdi, receiveData, length - recLen, offset + recLen, out bytesRead);
+                            if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                            {
+                                throw new IOException();
+                            }
+                            recLen += (int)bytesRead;
+                        }
+                        if (recLen >= length)
+                        {
+                            break;
+                        }
+                        if (lastBytesToRead != bytesToRead)
+                        {   // bytes received
+                            commStopWatch.Reset();
+                            commStopWatch.Start();
+                            lastBytesToRead = bytesToRead;
+                        }
+                        else
+                        {
+                            if (commStopWatch.ElapsedMilliseconds > timeoutTelEnd)
+                            {
+                                LogString(string.Format("Len {0} < {1} ({2}ms)", bytesToRead, length, timeoutTelEnd));
+                                break;
+                            }
+                        }
+                        Thread.Sleep(10);
+                    }
+                    commStopWatch.Stop();
+                    if (logResponse)
+                    {
+                        ediabas.LogData(receiveData, offset, recLen, "Rec ");
+                    }
+                    LogData(receiveData, offset, recLen, "Rec ");
+                    if (recLen < length)
+                    {
+                        LogString("L***");
+                        return false;
+                    }
+                }
+                catch (Exception)
+                {
+                    LogString("E***");
+                    return false;
+                }
+#endif
             }
             return true;
         }
@@ -1706,20 +1851,19 @@ namespace CarControl
             }
         }
 
-        private void LogData(byte[] data, int length, string info)
+        private void LogData(byte[] data, int offset, int length, string info)
         {
             if (_swLog == null) return;
             string logString = "";
 
             for (int i = 0; i < length; i++)
             {
-                logString += string.Format("{0:X02} ", data[i]);
+                logString += string.Format("{0:X02} ", data[offset + i]);
             }
             LogTimeStamp();
             try
             {
-                _swLog.Write(" (" + info + "): ");
-                _swLog.WriteLine(logString);
+                _swLog.WriteLine(" (" + info + "): " + logString);
             }
             catch (Exception)
             {

@@ -53,6 +53,7 @@ namespace CarSimulator
         private int             _compressorRunningTime;
         private int             _idleSpeedControl;
         private Stopwatch       _timeIdleSpeedControlWrite;
+        private Stopwatch       _receiveStopWatch;
 
         private const double    _filterConst = 0.95;
 
@@ -390,6 +391,7 @@ namespace CarSimulator
             _compressorRunningTime = 0;
             _idleSpeedControl = 0;
             _timeIdleSpeedControlWrite = new Stopwatch();
+            _receiveStopWatch = new Stopwatch();
             Moving = false;
         }
 
@@ -468,7 +470,7 @@ namespace CarSimulator
                 _serialPort.Parity = _kwp2000 ? Parity.Even : Parity.None;
                 _serialPort.StopBits = StopBits.One;
                 _serialPort.Handshake = Handshake.None;
-                _serialPort.ReadTimeout = 30;
+                _serialPort.ReadTimeout = 0;
                 _serialPort.Open();
             }
             catch (Exception)
@@ -498,26 +500,42 @@ namespace CarSimulator
         {
             try
             {
-#if false
-                int recLen = _serialPort.Read(receiveData, offset, length);
-                if (recLen < length) return false;
-#else
-                // due to bug in .NET framework timeout handling
-                // we have to read only one byte at a time
+                // wait for first byte
+                int interByteTimeout = _kwp2000 ? 10 : 30;
+                int lastBytesToRead = 0;
                 int recLen = 0;
-                for (;;)
+                _receiveStopWatch.Reset();
+                _receiveStopWatch.Start();
+                for (; ; )
                 {
-                    recLen += _serialPort.Read(receiveData, offset + recLen, 1);
+                    int bytesToRead = _serialPort.BytesToRead;
+                    if (bytesToRead >= length)
+                    {
+                        recLen = _serialPort.Read(receiveData, offset + recLen, length - recLen);
+                    }
                     if (recLen >= length)
                     {
                         break;
                     }
+                    if (lastBytesToRead != bytesToRead)
+                    {   // bytes received
+                        _receiveStopWatch.Reset();
+                        _receiveStopWatch.Start();
+                        lastBytesToRead = bytesToRead;
+                    }
+                    else
+                    {
+                        if (_receiveStopWatch.ElapsedMilliseconds > interByteTimeout)
+                        {
+                            break;
+                        }
+                    }
                 }
+                _receiveStopWatch.Stop();
                 if (recLen < length)
                 {
                     return false;
                 }
-#endif
             }
             catch (Exception)
             {
@@ -604,6 +622,7 @@ namespace CarSimulator
             // header byte
             if (!ReceiveData(receiveData, 0, 4))
             {
+                _serialPort.DiscardInBuffer();
                 return false;
             }
             if ((receiveData[0] & 0x80) != 0x80)
@@ -661,6 +680,7 @@ namespace CarSimulator
             // header byte
             if (!ReceiveData(receiveData, 0, 4))
             {
+                _serialPort.DiscardInBuffer();
                 return false;
             }
             int recLength = receiveData[3] + 4;

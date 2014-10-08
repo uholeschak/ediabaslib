@@ -12,7 +12,7 @@ namespace EdiabasLib
     {
         public delegate bool InterfaceConnectDelegate();
         public delegate bool InterfaceDisconnectDelegate();
-        public delegate bool InterfaceSetBaudRateDelegate(int baudRate);
+        public delegate bool InterfaceSetConfigDelegate(int baudRate, Parity parity);
         public delegate bool SendDataDelegate(byte[] sendData, int length);
         public delegate bool ReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse);
         private delegate Ediabas.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR);
@@ -25,7 +25,7 @@ namespace EdiabasLib
         private const int echoTimeout = 100;
         private InterfaceConnectDelegate interfaceConnectFunc = null;
         private InterfaceDisconnectDelegate interfaceDisconnectFunc = null;
-        private InterfaceSetBaudRateDelegate interfaceSetBaudRateFunc = null;
+        private InterfaceSetConfigDelegate interfaceSetConfigFunc = null;
         private SendDataDelegate sendDataFunc = null;
         private ReceiveDataDelegate receiveDataFunc = null;
         private Stopwatch stopWatch = new Stopwatch();
@@ -172,15 +172,15 @@ namespace EdiabasLib
             }
         }
 
-        public InterfaceSetBaudRateDelegate InterfaceSetBaudRateFunc
+        public InterfaceSetConfigDelegate InterfaceSetConfigFunc
         {
             get
             {
-                return interfaceSetBaudRateFunc;
+                return interfaceSetConfigFunc;
             }
             set
             {
-                interfaceSetBaudRateFunc = value;
+                interfaceSetConfigFunc = value;
             }
         }
 
@@ -252,12 +252,13 @@ namespace EdiabasLib
 
                 int recLen = 0;
                 stopWatch.Reset();
+                stopWatch.Start();
                 for (; ; )
                 {
                     int bytesToRead = serialPort.BytesToRead;
                     if (bytesToRead >= length)
                     {
-                        recLen = serialPort.Read(receiveData, offset + recLen, length - recLen);
+                        recLen += serialPort.Read(receiveData, offset + recLen, length - recLen);
                     }
                     if (recLen >= length)
                     {
@@ -266,6 +267,7 @@ namespace EdiabasLib
                     if (lastBytesToRead != bytesToRead)
                     {   // bytes received
                         stopWatch.Reset();
+                        stopWatch.Start();
                         lastBytesToRead = bytesToRead;
                     }
                     else
@@ -280,7 +282,7 @@ namespace EdiabasLib
                 stopWatch.Stop();
                 if (logResponse)
                 {
-                    ediabas.LogData(receiveData, recLen, "Rec ");
+                    ediabas.LogData(receiveData, offset, recLen, "Rec ");
                 }
                 if (recLen < length)
                 {
@@ -316,6 +318,7 @@ namespace EdiabasLib
                 ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                 return false;
             }
+
             TransmitDelegate transmitFunc;
             int baudRate;
             Parity parity;
@@ -375,9 +378,9 @@ namespace EdiabasLib
                     return false;
             }
 
-            if (interfaceSetBaudRateFunc != null)
+            if (interfaceSetConfigFunc != null)
             {
-                if (!interfaceSetBaudRateFunc(baudRate))
+                if (!interfaceSetConfigFunc(baudRate, parity))
                 {
                     ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                     return false;
@@ -430,7 +433,7 @@ namespace EdiabasLib
                 int sendLength = TelLengthBmwFast(sendData);
                 sendData[sendLength] = CalcChecksumBmwFast(sendData, sendLength);
                 sendLength++;
-                ediabas.LogData(sendData, sendLength, "Send");
+                ediabas.LogData(sendData, 0, sendLength, "Send");
                 if (!SendData(sendData, sendLength))
                 {
                     ediabas.LogString("*** Sending failed");
@@ -443,7 +446,7 @@ namespace EdiabasLib
                     ReceiveData(receiveData, 0, receiveData.Length, echoTimeout, timeoutTelEnd, true);
                     return Ediabas.ErrorCodes.EDIABAS_IFH_0003;
                 }
-                ediabas.LogData(receiveData, sendLength, "Echo");
+                ediabas.LogData(receiveData, 0, sendLength, "Echo");
                 for (int i = 0; i < sendLength; i++)
                 {
                     if (receiveData[i] != sendData[i])
@@ -466,7 +469,7 @@ namespace EdiabasLib
                 }
                 if ((receiveData[0] & 0xC0) != 0x80)
                 {
-                    ediabas.LogData(receiveData, 4, "Head");
+                    ediabas.LogData(receiveData, 0, 4, "Head");
                     ediabas.LogString("*** Invalid header");
                     ReceiveData(receiveData, 0, receiveData.Length, timeout, timeoutTelEnd, true);
                     return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
@@ -478,7 +481,7 @@ namespace EdiabasLib
                     ediabas.LogString("*** No tail received");
                     return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
                 }
-                ediabas.LogData(receiveData, recLength + 1, "Resp");
+                ediabas.LogData(receiveData, 0, recLength + 1, "Resp");
                 if (CalcChecksumBmwFast(receiveData, recLength) != receiveData[recLength])
                 {
                     ediabas.LogString("*** Checksum incorrect");
@@ -550,7 +553,7 @@ namespace EdiabasLib
                 int sendLength = TelLengthKwp2000S(sendData);
                 sendData[sendLength] = CalcChecksumKWP2000S(sendData, sendLength);
                 sendLength++;
-                ediabas.LogData(sendData, sendLength, "Send");
+                ediabas.LogData(sendData, 0, sendLength, "Send");
                 if (!SendData(sendData, sendLength))
                 {
                     ediabas.LogString("*** Sending failed");
@@ -563,7 +566,7 @@ namespace EdiabasLib
                     ReceiveData(receiveData, 0, receiveData.Length, echoTimeout, timeoutTelEnd, true);
                     return Ediabas.ErrorCodes.EDIABAS_IFH_0003;
                 }
-                ediabas.LogData(receiveData, sendLength, "Echo");
+                ediabas.LogData(receiveData, 0, sendLength, "Echo");
                 for (int i = 0; i < sendLength; i++)
                 {
                     if (receiveData[i] != sendData[i])
@@ -591,7 +594,7 @@ namespace EdiabasLib
                     ediabas.LogString("*** No tail received");
                     return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
                 }
-                ediabas.LogData(receiveData, recLength + 1, "Resp");
+                ediabas.LogData(receiveData, 0, recLength + 1, "Resp");
                 if (CalcChecksumKWP2000S(receiveData, recLength) != receiveData[recLength])
                 {
                     ediabas.LogString("*** Checksum incorrect");
