@@ -419,7 +419,7 @@ namespace EdiabasLib
         {
             receiveLength = 0;
             bool broadcast = false;
-            if ((sendData[0] & 0xC0) == 0xC0)
+            if (sendData[1] == 0xEF)
             {
                 broadcast = true;
             }
@@ -548,6 +548,16 @@ namespace EdiabasLib
         private Ediabas.ErrorCodes TransKwp2000S(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR)
         {
             receiveLength = 0;
+            bool broadcast = false;
+            if (sendData[1] == 0xEF)
+            {
+                broadcast = true;
+            }
+            if (sendDataLength == 0)
+            {
+                broadcast = true;
+            }
+
             if (sendDataLength > 0)
             {
                 int sendLength = TelLengthKwp2000S(sendData);
@@ -600,6 +610,16 @@ namespace EdiabasLib
                     ediabas.LogString("*** Checksum incorrect");
                     ReceiveData(receiveData, 0, receiveData.Length, timeout, timeoutTelEnd, true);
                     return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
+                }
+                if (!broadcast)
+                {
+                    if ((receiveData[1] != sendData[2]) ||
+                        (receiveData[2] != sendData[1]))
+                    {
+                        ediabas.LogString("*** Address incorrect");
+                        ReceiveData(receiveData, 0, receiveData.Length, timeout, timeoutTelEnd, true);
+                        return Ediabas.ErrorCodes.EDIABAS_IFH_0009;
+                    }
                 }
 
                 int dataLen = receiveData[3];
