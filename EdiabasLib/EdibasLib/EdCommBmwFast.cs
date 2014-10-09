@@ -373,6 +373,21 @@ namespace EdiabasLib
                     retryNR = (int)ediabas.CommParameter[5];
                     break;
 
+                case 0x0110:    // D-CAN
+                    if (ediabas.CommParameter.Length < 30)
+                    {
+                        ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
+                        return false;
+                    }
+                    transmitFunc = TransBmwFast;
+                    parity = Parity.None;
+                    baudRate = 115200;
+                    timeoutStd = (int)ediabas.CommParameter[7];
+                    timeoutTelEnd = 10;
+                    timeoutNR = (int)ediabas.CommParameter[9];
+                    retryNR = (int)ediabas.CommParameter[10];
+                    break;
+
                 default:
                     ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                     return false;
