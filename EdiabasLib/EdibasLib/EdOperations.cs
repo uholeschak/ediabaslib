@@ -2611,6 +2611,20 @@ namespace EdiabasLib
             ediabas.commRepeats = arg0.GetValueData();
         }
 
+        // BEST2: ifreset
+        private static void OpXreset(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
+            else
+            {
+                ediabas.commParameter = new EdValueType[0];
+                ediabas.edCommClass.NewCommunicationPars();
+            }
+        }
+
         // BEST2: send_and_receive
         private static void OpXsend(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
@@ -2643,37 +2657,43 @@ namespace EdiabasLib
         // BEST2: set_communication_pars
         private static void OpXsetpar(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            if (ediabas.edCommClass == null)
+            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
             {
-                throw new ArgumentOutOfRangeException("edCommClass", "OpXsetpar: No communication class present");
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
+            else
+            {
+                byte[] dataArray = arg0.GetArrayData();
+                int length = dataArray.Length;
+                if ((length & 0x03) != 0x00)
+                {
+                    throw new ArgumentOutOfRangeException("length", "OpXsetpar: Invalid data length");
+                }
 
-            byte[] dataArray = arg0.GetArrayData();
-            int length = dataArray.Length;
-            if ((length & 0x03) != 0x00)
-            {
-                throw new ArgumentOutOfRangeException("length", "OpXsetpar: Invalid data length");
+                length >>= 2;
+                EdValueType[] parsArray = new EdValueType[length];
+                for (int i = 0; i < length; i++)
+                {
+                    int offset = i << 2;
+                    EdValueType value =
+                        dataArray[offset + 0] |
+                        (((EdValueType)dataArray[offset + 1]) << 8) |
+                        (((EdValueType)dataArray[offset + 2]) << 16) |
+                        (((EdValueType)dataArray[offset + 3]) << 24);
+                    parsArray[i] = value;
+                }
+                ediabas.commParameter = parsArray;
+                ediabas.edCommClass.NewCommunicationPars();
             }
-
-            length >>= 2;
-            EdValueType[] parsArray = new EdValueType[length];
-            for (int i = 0; i < length; i++)
-            {
-                int offset = i << 2;
-                EdValueType value =
-                    dataArray[offset + 0] |
-                    (((EdValueType) dataArray[offset + 1]) << 8) |
-                    (((EdValueType)dataArray[offset + 2]) << 16) |
-                    (((EdValueType)dataArray[offset + 3]) << 24);
-                parsArray[i] = value;
-            }
-            ediabas.commParameter = parsArray;
-            ediabas.edCommClass.NewCommunicationPars();
         }
 
         // BEST2: stop_frequent
         private static void OpXstopf(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
+            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
         }
 
         // BEST2: iftype
