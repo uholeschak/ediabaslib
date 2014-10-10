@@ -3186,7 +3186,8 @@ namespace EdiabasLib
         public void ResolveSgbdFile(string fileName)
         {
             SgbdFileName = Path.GetFileName(fileName);
-            if (String.Compare(Path.GetExtension(fileName), ".grp", StringComparison.OrdinalIgnoreCase) == 0)
+            UInt32 fileType = GetFileType(Path.Combine(fileSearchDir, fileName));
+            if (fileType == 0)
             {       // group file
                 string key = SgbdFileName.ToLower(culture);
                 string variantName = string.Empty;
@@ -3201,6 +3202,37 @@ namespace EdiabasLib
                 }
                 SgbdFileName = variantName + ".prg";
             }
+        }
+
+        public UInt32 GetFileType(string fileName)
+        {
+            UInt32 fileType = 0;
+            if (!File.Exists(fileName))
+            {
+                LogString("GetFileType file not found: " + fileName);
+                throw new ArgumentOutOfRangeException(fileName, "GetFileType: File not found");
+            }
+            try
+            {
+                using (Stream tempFs = MemoryStreamReader.OpenRead(fileName))
+                {
+                    byte[] buffer = new byte[4];
+                    tempFs.Position = 0x10;
+                    tempFs.Read(buffer, 0, buffer.Length);
+
+                    if (!BitConverter.IsLittleEndian)
+                    {
+                        Array.Reverse(buffer, 0, 4);
+                    }
+                    fileType = BitConverter.ToUInt32(buffer, 0);
+                }
+            }
+            catch (Exception)
+            {
+                LogString("GetFileType file not found: " + fileName);
+                throw new ArgumentOutOfRangeException(fileName, "GetFileType: Unable to read file");
+            }
+            return fileType;
         }
 
         public void ExecuteInitJob()
