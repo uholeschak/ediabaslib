@@ -501,6 +501,7 @@ namespace CarSimulator
             try
             {
                 // wait for first byte
+                // for stable switching we always need 10ms, but then are problems with win CE client
                 int interByteTimeout = _kwp2000 ? 10 : 30;
                 int lastBytesToRead = 0;
                 int recLen = 0;
