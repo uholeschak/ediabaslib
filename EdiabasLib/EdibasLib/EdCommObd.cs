@@ -29,6 +29,7 @@ namespace EdiabasLib
         private SendDataDelegate sendDataFunc = null;
         private ReceiveDataDelegate receiveDataFunc = null;
         private Stopwatch stopWatch = new Stopwatch();
+        private byte[] keyBytes = new byte[0];
         private byte[] sendBuffer = new byte[260];
         private byte[] recBuffer = new byte[260];
 
@@ -45,6 +46,14 @@ namespace EdiabasLib
             get
             {
                 return 209;
+            }
+        }
+
+        public override byte[] KeyBytes
+        {
+            get
+            {
+                return keyBytes;
             }
         }
 
