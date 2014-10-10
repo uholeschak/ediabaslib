@@ -544,7 +544,7 @@ namespace CarControl
             commStopWatch = new Stopwatch();
             ediabas = new Ediabas();
 
-            EdCommBmwFast edCommBwmFast = new EdCommBmwFast(ediabas);
+            EdCommObd edCommBwmFast = new EdCommObd(ediabas);
             ediabas.EdCommClass = edCommBwmFast;
             edCommBwmFast.InterfaceConnectFunc = InterfaceConnect;
             edCommBwmFast.InterfaceDisconnectFunc = InterfaceDisconnect;
