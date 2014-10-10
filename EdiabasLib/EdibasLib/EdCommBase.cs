@@ -30,6 +30,11 @@ namespace EdiabasLib
             get;
         }
 
+        public abstract byte[] KeyBytes
+        {
+            get;
+        }
+
         public abstract bool Connected
         {
             get;

@@ -2605,6 +2605,23 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(value, len);
         }
 
+        // BEST2: recv_keybytes
+        private static void OpXkeyb(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpXor: Invalid type");
+            }
+            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
+            else
+            {
+                arg0.SetRawData(ediabas.edCommClass.KeyBytes);
+            }
+        }
+
         // BEST2: set_repeat_counter
         private static void OpXreps(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
