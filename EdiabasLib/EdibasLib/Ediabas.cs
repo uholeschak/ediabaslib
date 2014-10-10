@@ -1437,7 +1437,7 @@ namespace EdiabasLib
             new OpCode(0x2E, "xkeyb", null),
             new OpCode(0x2F, "xstate", null),
             new OpCode(0x30, "xboot", null),
-            new OpCode(0x31, "xreset", null),
+            new OpCode(0x31, "xreset", new OperationDelegate(OpXreset)),
             new OpCode(0x32, "xtype", new OperationDelegate(OpXtype)),
             new OpCode(0x33, "xvers", new OperationDelegate(OpXvers)),
             new OpCode(0x34, "ergb", new OperationDelegate(OpErgb)),
