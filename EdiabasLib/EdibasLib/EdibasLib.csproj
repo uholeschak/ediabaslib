@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EdCommBase.cs" />
-    <Compile Include="EdCommBmwFast.cs" />
+    <Compile Include="EdCommObd.cs" />
     <Compile Include="Ediabas.cs" />
     <Compile Include="EdOperations.cs" />
     <Compile Include="MemoryStreamReader.cs" />

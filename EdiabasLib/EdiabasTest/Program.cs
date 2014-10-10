@@ -97,7 +97,7 @@ namespace EdiabasTest
 
                 using (Ediabas ediabas = new Ediabas())
                 {
-                    EdCommBmwFast edCommBwmFast = new EdCommBmwFast(ediabas);
+                    EdCommObd edCommBwmFast = new EdCommObd(ediabas);
                     edCommBwmFast.ComPort = comPort;
                     ediabas.EdCommClass = edCommBwmFast;
                     ediabas.ProgressJobFunc = ProgressJobFunc;

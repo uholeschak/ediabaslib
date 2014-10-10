@@ -57,8 +57,8 @@
     <Compile Include="..\EdibasLib\EdCommBase.cs">
       <Link>EdCommBase.cs</Link>
     </Compile>
-    <Compile Include="..\EdibasLib\EdCommBmwFast.cs">
-      <Link>EdCommBmwFast.cs</Link>
+    <Compile Include="..\EdibasLib\EdCommObd.cs">
+      <Link>EdCommObd.cs</Link>
     </Compile>
     <Compile Include="..\EdibasLib\Ediabas.cs">
       <Link>Ediabas.cs</Link>

@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace EdiabasLib
 {
-    public class EdCommBmwFast : EdCommBase
+    public class EdCommObd : EdCommBase
     {
         public delegate bool InterfaceConnectDelegate();
         public delegate bool InterfaceDisconnectDelegate();
@@ -56,11 +56,11 @@ namespace EdiabasLib
             }
         }
 
-        public EdCommBmwFast(Ediabas ediabas) : base(ediabas)
+        public EdCommObd(Ediabas ediabas) : base(ediabas)
         {
         }
 
-        ~EdCommBmwFast()
+        ~EdCommObd()
         {
             Dispose(false);
         }
