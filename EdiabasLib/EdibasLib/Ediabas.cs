@@ -1527,7 +1527,7 @@ namespace EdiabasLib
             new OpCode(0x88, "setflt", new OperationDelegate(OpSetflt)),
             new OpCode(0x89, "cfgig", new OperationDelegate(OpCfgig)),
             new OpCode(0x8A, "cfgsg", new OperationDelegate(OpCfgsg)),
-            new OpCode(0x8B, "cfgis", null),
+            new OpCode(0x8B, "cfgis", new OperationDelegate(OpCfgis)),
             new OpCode(0x8C, "a2y", new OperationDelegate(OpA2y)),
             new OpCode(0x8D, "xparraw", null),
             new OpCode(0x8E, "hex2y", new OperationDelegate(OpHex2y)),
@@ -3401,6 +3401,7 @@ namespace EdiabasLib
             stackList.Clear();
             SetConfigProperty("BipEcuFile", Path.GetFileNameWithoutExtension(sgbdFileName));
             SetConfigProperty("BipDebugLevel", "0");
+            SetConfigProperty("IfhTrace", "0");
             flags.Init();
             errorTrapBitNr = -1;
             errorTrapMask = 0;

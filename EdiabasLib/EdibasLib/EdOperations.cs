@@ -367,6 +367,12 @@ namespace EdiabasLib
             }
         }
 
+        private static void OpCfgis(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            string valueString = string.Format("{0}", arg1.GetValueData());
+            ediabas.SetConfigProperty(arg0.GetStringData(), valueString);
+        }
+
         // BEST2: getCfgString
         private static void OpCfgsg(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
