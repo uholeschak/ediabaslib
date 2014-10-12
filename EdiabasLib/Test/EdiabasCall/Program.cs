@@ -46,7 +46,7 @@ namespace EdiabasCall
                   v => appendFile = v != null },
                 { "c|compare", "compare output.",
                   v => compareOutput = v != null },
-                { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>.",
+                { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>.\nFor binary job parameters perpend the hex string with| (e.g. |A3C2)",
                   v => jobNames.Add(v) },
                 { "h|help",  "show this message and exit",
                   v => show_help = v != null },
@@ -133,10 +133,19 @@ namespace EdiabasCall
                     }
                     string jobName = parts[0];
                     string jobArgs = string.Empty;
+                    byte[] jobArgsData = null;
                     string jobResults = string.Empty;
                     if (parts.Length >= 2)
                     {
-                        jobArgs = parts[1];
+                        string argString = parts[1];
+                        if (argString.Length > 0 && argString[0] == '|')
+                        {   // binary data
+                            jobArgsData = HexToByteArray(argString.Substring(1));
+                        }
+                        else
+                        {
+                            jobArgs = argString;
+                        }
                     }
                     if (parts.Length >= 3)
                     {
@@ -144,7 +153,14 @@ namespace EdiabasCall
                     }
                     outputWriter.WriteLine("JOB: " + jobName);
 
-                    API.apiJob(sgbdBaseFile, jobName, jobArgs, jobResults);
+                    if (jobArgsData != null)
+                    {
+                        API.apiJobData(sgbdBaseFile, jobName, jobArgsData, jobArgsData.Length, jobResults);
+                    }
+                    else
+                    {
+                        API.apiJob(sgbdBaseFile, jobName, jobArgs, jobResults);
+                    }
 
                     lastJobInfo = string.Empty;
                     lastJobProgress = -1;
@@ -379,6 +395,24 @@ namespace EdiabasCall
                 }
                 outputWriter.WriteLine();
             }
+        }
+
+        static byte[] HexToByteArray(string valueStr)
+        {
+            byte[] result;
+            try
+            {
+                result = Enumerable.Range(0, valueStr.Length)
+                 .Where(x => x % 2 == 0)
+                 .Select(x => Convert.ToByte(valueStr.Substring(x, 2), 16))
+                 .ToArray();
+            }
+            catch (Exception)
+            {
+                result = new byte[0];
+            }
+
+            return result;
         }
 
         static void ShowHelp(OptionSet p)

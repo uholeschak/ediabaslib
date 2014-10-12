@@ -1515,7 +1515,7 @@ namespace EdiabasLib
             new OpCode(0x7C, "tabseek", new OperationDelegate(OpTabseek)),
             new OpCode(0x7D, "tabget", new OperationDelegate(OpTabget)),
             new OpCode(0x7E, "strcat", new OperationDelegate(OpStrcat)),
-            new OpCode(0x7F, "pary", new OperationDelegate(OpPars)),
+            new OpCode(0x7F, "pary", new OperationDelegate(OpPary)),
             new OpCode(0x80, "parn", new OperationDelegate(OpParn)),
             new OpCode(0x81, "ergc", new OperationDelegate(OpErgc)),
             new OpCode(0x82, "ergl", new OperationDelegate(OpErgl)),
@@ -1988,7 +1988,7 @@ namespace EdiabasLib
 
         private bool disposed = false;
         private Stack<byte> stackList = new Stack<byte>();
-        private List<string> argList = new List<string>();
+        private List<byte[]> argList = new List<byte[]>();
         private Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
         private Dictionary<string, bool> resultsRequestDict = new Dictionary<string, bool>();
         private List<Dictionary<string, ResultData>> resultSets = new List<Dictionary<string, ResultData>>();
@@ -2044,7 +2044,7 @@ namespace EdiabasLib
             }
         }
 
-        public List<string> ArgList
+        public List<byte[]> ArgList
         {
             get
             {
@@ -2057,13 +2057,13 @@ namespace EdiabasLib
             get
             {
                 string result = string.Empty;
-                foreach (string arg in ArgList)
+                foreach (byte[] arg in ArgList)
                 {
                     if (result.Length > 0)
                     {
                         result += ";";
                     }
-                    result += arg;
+                    result += encoding.GetString(arg);
                 }
                 return result;
             }
@@ -2075,9 +2075,27 @@ namespace EdiabasLib
                     string[] words = value.Split(';');
                     foreach (string word in words)
                     {
-                        argList.Add(word);
+                        argList.Add(encoding.GetBytes(word));
                     }
                 }
+            }
+        }
+
+        public byte[] ArgBinary
+        {
+            get
+            {
+                byte[] result = byteArray0;
+                if (ArgList.Count > 0)
+                {
+                    result = ArgList[0];
+                }
+                return result;
+            }
+            set
+            {
+                argList.Clear();
+                argList.Add(value);
             }
         }
 
@@ -3951,6 +3969,24 @@ namespace EdiabasLib
             {
                 result = Double.NaN;
             }
+            return result;
+        }
+
+        public static byte[] HexToByteArray(string valueStr)
+        {
+            byte[] result;
+            try
+            {
+                result = Enumerable.Range(0, valueStr.Length)
+                 .Where(x => x % 2 == 0)
+                 .Select(x => Convert.ToByte(valueStr.Substring(x, 2), 16))
+                 .ToArray();
+            }
+            catch (Exception)
+            {
+                result = byteArray0;
+            }
+
             return result;
         }
 

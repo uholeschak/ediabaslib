@@ -746,12 +746,11 @@ TEST_PARY#
 					clear		S0
 					move 		S0,{$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B,$FF.B}
 					move 		S1,S0
-					pars		S0,#$1
+					pary		S0
 					jnz			pars_ok
 					ergs		"ARG", "MISSING"
 pars_ok:
-					ergy		"PARS_Y",S0
-					ergs		"PARS_S",S0
+					ergy		"PARY",S0
 					eoj
 					eoj
 
