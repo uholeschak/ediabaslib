@@ -2659,11 +2659,7 @@ namespace EdiabasLib
                 long startTime = Stopwatch.GetTimestamp();
                 byte[] request = arg1.GetArrayData();
                 byte[] response;
-                if (!ediabas.edCommClass.TransmitData(request, out response))
-                {
-                    arg0.SetRawData(byteArray0);
-                }
-                else
+                if (ediabas.edCommClass.TransmitData(request, out response))
                 {
                     arg0.SetRawData(response);
                 }
