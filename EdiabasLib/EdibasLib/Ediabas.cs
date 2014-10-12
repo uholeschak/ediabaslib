@@ -2063,7 +2063,7 @@ namespace EdiabasLib
                     {
                         result += ";";
                     }
-                    result += encoding.GetString(arg);
+                    result += encoding.GetString(arg, 0, arg.Length);
                 }
                 return result;
             }
