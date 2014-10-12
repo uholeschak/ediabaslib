@@ -928,10 +928,7 @@ namespace EdiabasLib
             byte[] result;
             try
             {
-                result = Enumerable.Range(0, valueStr.Length)
-                         .Where(x => x % 2 == 0)
-                         .Select(x => Convert.ToByte(valueStr.Substring(x, 2), 16))
-                         .ToArray();
+                result = Ediabas.HexToByteArray(valueStr);
                 ediabas.flags.carry = false;
             }
             catch (Exception)
@@ -1709,7 +1706,7 @@ namespace EdiabasLib
             pos--;
             if (pos < ediabas.argList.Count)
             {
-                string argStr = ediabas.argList[(int)pos];
+                string argStr = encoding.GetString(ediabas.argList[(int)pos]);
                 result = (EdValueType)StringToValue(argStr);
                 ediabas.flags.zero = false;
             }
@@ -1745,7 +1742,7 @@ namespace EdiabasLib
             pos--;
             if (pos < ediabas.argList.Count)
             {
-                string argStr = ediabas.argList[(int)pos];
+                string argStr = encoding.GetString(ediabas.argList[(int)pos]);
                 result = StringToFloat(argStr);
                 ediabas.flags.zero = false;
             }
@@ -1765,10 +1762,27 @@ namespace EdiabasLib
             pos--;
             if (pos < ediabas.argList.Count)
             {
-                result = ediabas.argList[(int)pos];
+                result = encoding.GetString(ediabas.argList[(int)pos]);
                 ediabas.flags.zero = false;
             }
             arg0.SetStringData(result);
+        }
+
+        private static void OpPary(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpPary: Invalid type");
+            }
+
+            byte[] result = Ediabas.byteArray0;
+            ediabas.flags.zero = true;
+            if (ediabas.argList.Count > 0)
+            {
+                result = ediabas.argList[0];
+                ediabas.flags.zero = false;
+            }
+            arg0.SetArrayData(result);
         }
 
         private static void OpPush(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)

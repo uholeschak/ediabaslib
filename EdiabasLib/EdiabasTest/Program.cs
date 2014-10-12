@@ -40,7 +40,7 @@ namespace EdiabasTest
                   v => compareOutput = v != null },
                 { "l|log=", "log file name.",
                   v => logFile = v },
-                { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>.",
+                { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>.\nFor binary job parameters perpend the hex string with| (e.g. |A3C2)",
                   v => jobNames.Add(v) },
                 { "h|help",  "show this message and exit", 
                   v => show_help = v != null },
@@ -139,7 +139,15 @@ namespace EdiabasTest
                         string jobName = parts[0];
                         if (parts.Length >= 2)
                         {
-                            ediabas.ArgString = parts[1];
+                            string argString = parts[1];
+                            if (argString.Length > 0 && argString[0] == '|')
+                            {   // binary data
+                                ediabas.ArgBinary = Ediabas.HexToByteArray(argString.Substring(1));
+                            }
+                            else
+                            {
+                                ediabas.ArgString = argString;
+                            }
                         }
                         if (parts.Length >= 3)
                         {
