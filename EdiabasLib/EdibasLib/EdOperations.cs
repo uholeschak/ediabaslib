@@ -1706,7 +1706,8 @@ namespace EdiabasLib
             pos--;
             if (pos < ediabas.argList.Count)
             {
-                string argStr = encoding.GetString(ediabas.argList[(int)pos]);
+                byte[] argData = ediabas.argList[(int)pos];
+                string argStr = encoding.GetString(argData, 0, argData.Length);
                 result = (EdValueType)StringToValue(argStr);
                 ediabas.flags.zero = false;
             }
@@ -1742,7 +1743,8 @@ namespace EdiabasLib
             pos--;
             if (pos < ediabas.argList.Count)
             {
-                string argStr = encoding.GetString(ediabas.argList[(int)pos]);
+                byte[] argData = ediabas.argList[(int)pos];
+                string argStr = encoding.GetString(argData, 0, argData.Length);
                 result = StringToFloat(argStr);
                 ediabas.flags.zero = false;
             }
@@ -1762,7 +1764,8 @@ namespace EdiabasLib
             pos--;
             if (pos < ediabas.argList.Count)
             {
-                result = encoding.GetString(ediabas.argList[(int)pos]);
+                byte[] argData = ediabas.argList[(int)pos];
+                result = encoding.GetString(argData, 0, argData.Length);
                 ediabas.flags.zero = false;
             }
             arg0.SetStringData(result);
