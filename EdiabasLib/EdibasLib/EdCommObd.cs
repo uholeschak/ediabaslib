@@ -103,11 +103,16 @@ namespace EdiabasLib
         {
             if (!base.InterfaceConnect())
             {
+                ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0018);
                 return false;
             }
             if (interfaceConnectFunc != null)
             {
                 connected = interfaceConnectFunc();
+                if (!connected)
+                {
+                    ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0018);
+                }
                 return connected;
             }
 
@@ -132,9 +137,9 @@ namespace EdiabasLib
 
                 connected = true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                ediabas.LogString("Serial port exception: " + Ediabas.GetExceptionText(ex));
+                ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0018);
                 return false;
             }
             return true;

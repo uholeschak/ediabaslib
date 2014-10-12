@@ -2632,10 +2632,7 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("edCommClass", "OpXconnect: No communication class present");
             }
 
-            if (!ediabas.edCommClass.InterfaceConnect())
-            {
-                throw new ArgumentOutOfRangeException("InterfaceConnect", "OpXconnect: Open interface failed");
-            }
+            ediabas.edCommClass.InterfaceConnect();
         }
 
         // BEST2: close_communication
