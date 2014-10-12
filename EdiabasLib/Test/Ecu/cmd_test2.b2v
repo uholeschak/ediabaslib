@@ -4938,7 +4938,32 @@ job(  name      : TEST_IFACE_FLAGS;
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergi		"XVERS", I8
+#endasm
 
+#asm
+					enewset
+					move		L4, #$AAAAAAAA
+					clrc
+					xbatt		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"XBATT", L4
+#endasm
+
+#asm
+					enewset
+					move		L4, #$AAAAAAAA
+					clrc
+					xignit		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"XIGNIT", L4
 #endasm
 
 #asm
@@ -5088,7 +5113,42 @@ job(  name      : TEST_IFACE_FLAGS;
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergi		"XVERS", I8
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
 
+#asm
+					enewset
+					move		L4, #$AAAAAAAA
+					clrc
+					xbatt		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"XBATT", L4
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
+
+#asm
+					enewset
+					move		L4, #$AAAAAAAA
+					clrc
+					xignit		L4
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergl		"XIGNIT", L4
 #endasm
 	get_error_bit();
 #asm

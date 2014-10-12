@@ -2567,6 +2567,23 @@ namespace EdiabasLib
             ediabas.commAnswerLen = answerArray;
         }
 
+        // BEST2: get_battery_voltage
+        private static void OpXbatt(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpXbat: Invalid type");
+            }
+            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
+            else
+            {
+                arg0.SetRawData((EdValueType)ediabas.edCommClass.BatteryVoltage);
+            }
+        }
+
         // BEST2: open_communication
         private static void OpXconnect(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
@@ -2590,6 +2607,23 @@ namespace EdiabasLib
             }
 
             ediabas.edCommClass.InterfaceDisconnect();
+        }
+
+        // BEST2: get_ignition_voltage
+        private static void OpXignit(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpXignit: Invalid type");
+            }
+            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
+            else
+            {
+                arg0.SetRawData((EdValueType)ediabas.edCommClass.IgnitionVoltage);
+            }
         }
 
         private static void OpXor(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
