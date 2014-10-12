@@ -1990,6 +1990,7 @@ namespace EdiabasLib
         private Stack<byte> stackList = new Stack<byte>();
         private List<byte[]> argList = new List<byte[]>();
         private Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
+        private Dictionary<string, ResultData> resultSysDict = new Dictionary<string, ResultData>();
         private Dictionary<string, bool> resultsRequestDict = new Dictionary<string, bool>();
         private List<Dictionary<string, ResultData>> resultSets = new List<Dictionary<string, ResultData>>();
         private Dictionary<string, string> configDict = new Dictionary<string, string>();
@@ -2695,6 +2696,51 @@ namespace EdiabasLib
             return null;
         }
 
+        private void SetSysResultData(ResultData resultData)
+        {
+            string key = resultData.name;
+            if (resultSysDict.ContainsKey(key))
+            {
+                resultSysDict[key] = resultData;
+            }
+            else
+            {
+                resultSysDict.Add(key, resultData);
+            }
+        }
+
+        private Dictionary<string, ResultData> CreateSystemResultDict(JobInfo jobInfo, int setCount)
+        {
+            Dictionary<string, ResultData> resultDictSystem = new Dictionary<string, ResultData>();
+
+            string objectName = Path.GetFileNameWithoutExtension(sgbdFileName);
+            if (jobInfo.UsesInfo != null)
+            {
+                objectName = jobInfo.UsesInfo.Name;
+            }
+
+            resultDictSystem.Add("VARIANTE", new ResultData(ResultType.TypeS, "VARIANTE", Path.GetFileNameWithoutExtension(this.sgbdFileName).ToUpper(culture)));
+            resultDictSystem.Add("OBJECT", new ResultData(ResultType.TypeS, "OBJECT", objectName));
+            resultDictSystem.Add("JOBNAME", new ResultData(ResultType.TypeS, "JOBNAME", jobInfo.JobName));
+            resultDictSystem.Add("JOBSTATUS", new ResultData(ResultType.TypeS, "JOBSTATUS", string.Empty));
+            resultDictSystem.Add("SAETZE", new ResultData(ResultType.TypeW, "SAETZE", (Int64)setCount));
+            resultDictSystem.Add("UBATTCURRENT", new ResultData(ResultType.TypeI, "UBATTCURRENT", (Int64)(-1)));
+            resultDictSystem.Add("UBATTHISTORY", new ResultData(ResultType.TypeI, "UBATTHISTORY", (Int64)(-1)));
+            resultDictSystem.Add("IGNITIONCURRENT", new ResultData(ResultType.TypeI, "IGNITIONCURRENT", (Int64)(-1)));
+            resultDictSystem.Add("IGNITIONHISTORY", new ResultData(ResultType.TypeI, "IGNITIONHISTORY", (Int64)(-1)));
+
+            foreach (string key in resultSysDict.Keys)
+            {
+                ResultData resultData = resultSysDict[key];
+                if (!resultDictSystem.ContainsKey(key))
+                {
+                    resultDictSystem.Add(key, resultData);
+                }
+            }
+
+            return resultDictSystem;
+        }
+
         private void JobProgressInform()
         {
             if (progressJobFunc != null)
@@ -3240,10 +3286,10 @@ namespace EdiabasLib
                 }
                 throw new Exception("executeInitJob", ex);
             }
-            if (resultSets.Count > 0)
+            if (resultSets.Count > 1)
             {
                 ResultData result;
-                if (resultSets[0].TryGetValue("DONE", out result))
+                if (resultSets[1].TryGetValue("DONE", out result))
                 {
                     if (result.opData.GetType() == typeof(Int64))
                     {
@@ -3300,10 +3346,10 @@ namespace EdiabasLib
                 }
                 throw new Exception("executeInitJob", ex);
             }
-            if (resultSets.Count > 0)
+            if (resultSets.Count > 1)
             {
                 ResultData result;
-                if (resultSets[0].TryGetValue("VARIANTE", out result))
+                if (resultSets[1].TryGetValue("VARIANTE", out result))
                 {
                     if (result.opData.GetType() == typeof(string))
                     {
@@ -3389,6 +3435,7 @@ namespace EdiabasLib
 
             resultSets.Clear();
             resultDict.Clear();
+            resultSysDict.Clear();
             stackList.Clear();
             SetConfigProperty("BipEcuFile", Path.GetFileNameWithoutExtension(sgbdFileName));
             SetConfigProperty("BipDebugLevel", "0");
@@ -3483,6 +3530,7 @@ namespace EdiabasLib
             {
                 CloseTableFs();
                 CloseAllUserFiles();
+                resultSets.Insert(0, CreateSystemResultDict(jobInfo, resultSets.Count));
                 SetConfigProperty("BipEcuFile", null);
             }
         }

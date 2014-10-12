@@ -566,9 +566,16 @@ namespace EdiabasLib
         {
             string data = arg0.GetStringData();
             EdValueType dataValue = arg1.GetValueData(2);
-            if (data == "!INITIALISIERUNG" && dataValue != 0)
+            if (data == "!INITIALISIERUNG")
             {
-                ediabas.requestInit = true;
+                if (dataValue != 0)
+                {
+                    ediabas.requestInit = true;
+                }
+            }
+            else
+            {
+                ediabas.SetSysResultData(new ResultData(ResultType.TypeI, data, (Int64)dataValue));
             }
         }
 
