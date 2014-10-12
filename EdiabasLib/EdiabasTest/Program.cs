@@ -168,7 +168,7 @@ namespace EdiabasTest
                             return 1;
                         }
 
-                        int dataSet = 1;
+                        int dataSet = 0;
                         List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
                         foreach (Dictionary<string, Ediabas.ResultData> resultDict in resultSets)
                         {
@@ -187,7 +187,7 @@ namespace EdiabasTest
                                 }
                                 else if (resultData.opData.GetType() == typeof(Double))
                                 {
-                                    resultText = string.Format(culture, "{0}", (Double)resultData.opData);
+                                    resultText = string.Format(culture, "R: {0}", (Double)resultData.opData);
                                 }
                                 else if (resultData.opData.GetType() == typeof(Int64))
                                 {
@@ -195,17 +195,31 @@ namespace EdiabasTest
                                     switch (resultData.type)
                                     {
                                         case Ediabas.ResultType.TypeB:  // 8 bit
+                                            resultText = string.Format(culture, "B: {0} 0x{1:X02}", value, (Byte)value);
+                                            break;
+
                                         case Ediabas.ResultType.TypeC:  // 8 bit char
-                                            resultText = string.Format(culture, "{0} 0x{1:X02}", value, (Byte)value);
+                                            resultText = string.Format(culture, "C: {0} 0x{1:X02}", value, (Byte)value);
                                             break;
 
                                         case Ediabas.ResultType.TypeW:  // 16 bit
+                                            resultText = string.Format(culture, "W: {0} 0x{1:X04}", value, (UInt16)value);
+                                            break;
+
                                         case Ediabas.ResultType.TypeI:  // 16 bit signed
-                                            resultText = string.Format(culture, "{0} 0x{1:X04}", value, (UInt16)value);
+                                            resultText = string.Format(culture, "I: {0} 0x{1:X04}", value, (UInt16)value);
+                                            break;
+
+                                        case Ediabas.ResultType.TypeD:  // 32 bit
+                                            resultText = string.Format(culture, "D: {0} 0x{1:X08}", value, (UInt32)value);
+                                            break;
+
+                                        case Ediabas.ResultType.TypeL:  // 32 bit signed
+                                            resultText = string.Format(culture, "L: {0} 0x{1:X08}", value, (UInt32)value);
                                             break;
 
                                         default:
-                                            resultText = string.Format(culture, "{0} 0x{1:X08}", value, (UInt32)value);
+                                            resultText = "?";
                                             break;
                                     }
                                 }

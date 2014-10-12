@@ -183,7 +183,7 @@ namespace EdiabasCall
                         return 1;
                     }
                     PrintProgress();
-                    PrintResults(true);
+                    PrintResults(false);
                 }
 
                 API.apiEnd();
@@ -263,7 +263,7 @@ namespace EdiabasCall
                                                     char resultChar;
                                                     if (API.apiResultChar(out resultChar, resultName, set))
                                                     {
-                                                        resultText = string.Format(culture, "{0} 0x{0:X02}", (sbyte)resultChar);
+                                                        resultText = string.Format(culture, "C: {0} 0x{0:X02}", (sbyte)resultChar);
                                                     }
                                                 }
                                                 else
@@ -271,7 +271,7 @@ namespace EdiabasCall
                                                     byte resultByte;
                                                     if (__api32ResultChar(apiHandle, out resultByte, resultName, set))
                                                     {
-                                                        resultText = string.Format(culture, "{0} 0x{0:X02}", (sbyte)resultByte);
+                                                        resultText = string.Format(culture, "C: {0} 0x{0:X02}", (sbyte)resultByte);
                                                     }
                                                 }
                                                 break;
@@ -282,7 +282,7 @@ namespace EdiabasCall
                                                 byte resultByte;
                                                 if (API.apiResultByte(out resultByte, resultName, set))
                                                 {
-                                                    resultText = string.Format(culture, "{0} 0x{0:X02}", resultByte);
+                                                    resultText = string.Format(culture, "B: {0} 0x{0:X02}", resultByte);
                                                 }
                                                 break;
                                             }
@@ -292,7 +292,7 @@ namespace EdiabasCall
                                                 short resultShort;
                                                 if (API.apiResultInt(out resultShort, resultName, set))
                                                 {
-                                                    resultText = string.Format(culture, "{0} 0x{0:X04}", resultShort);
+                                                    resultText = string.Format(culture, "I: {0} 0x{0:X04}", resultShort);
                                                 }
                                                 break;
                                             }
@@ -302,7 +302,7 @@ namespace EdiabasCall
                                                 ushort resultWord;
                                                 if (API.apiResultWord(out resultWord, resultName, set))
                                                 {
-                                                    resultText = string.Format(culture, "{0} 0x{0:X04}", resultWord);
+                                                    resultText = string.Format(culture, "W: {0} 0x{0:X04}", resultWord);
                                                 }
                                                 break;
                                             }
@@ -312,7 +312,7 @@ namespace EdiabasCall
                                                 int resultInt;
                                                 if (API.apiResultLong(out resultInt, resultName, set))
                                                 {
-                                                    resultText = string.Format(culture, "{0} 0x{0:X08}", resultInt);
+                                                    resultText = string.Format(culture, "L: {0} 0x{0:X08}", resultInt);
                                                 }
                                                 break;
                                             }
@@ -322,7 +322,7 @@ namespace EdiabasCall
                                                 uint resultUint;
                                                 if (API.apiResultDWord(out resultUint, resultName, set))
                                                 {
-                                                    resultText = string.Format(culture, "{0} 0x{0:X08}", resultUint);
+                                                    resultText = string.Format(culture, "D: {0} 0x{0:X08}", resultUint);
                                                 }
                                                 break;
                                             }
@@ -332,7 +332,7 @@ namespace EdiabasCall
                                                 double resultDouble;
                                                 if (API.apiResultReal(out resultDouble, resultName, set))
                                                 {
-                                                    resultText = string.Format(culture, "{0}", resultDouble);
+                                                    resultText = string.Format(culture, "R: {0}", resultDouble);
                                                 }
                                                 break;
                                             }
