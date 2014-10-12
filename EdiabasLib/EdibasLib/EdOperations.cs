@@ -2579,25 +2579,32 @@ namespace EdiabasLib
         // BEST2: set_answer_length
         private static void OpXawlen(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            byte[] dataArray = arg0.GetArrayData();
-            int length = dataArray.Length;
-            if ((length & 0x01) != 0x00)
+            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
             {
-                throw new ArgumentOutOfRangeException("length", "OpXawlen: Invalid data length");
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
+            else
+            {
+                byte[] dataArray = arg0.GetArrayData();
+                int length = dataArray.Length;
+                if ((length & 0x01) != 0x00)
+                {
+                    throw new ArgumentOutOfRangeException("length", "OpXawlen: Invalid data length");
+                }
 
-            length >>= 1;
-            Int16[] answerArray = new Int16[length];
-            for (int i = 0; i < length; i++)
-            {
-                int offset = i << 1;
-                Int16 value = (Int16) (
-                    dataArray[offset + 0] |
-                    (((Int16)dataArray[offset + 1]) << 8)
-                    );
-                answerArray[i] = value;
+                length >>= 1;
+                Int16[] answerArray = new Int16[length];
+                for (int i = 0; i < length; i++)
+                {
+                    int offset = i << 1;
+                    Int16 value = (Int16)(
+                        dataArray[offset + 0] |
+                        (((Int16)dataArray[offset + 1]) << 8)
+                        );
+                    answerArray[i] = value;
+                }
+                ediabas.edCommClass.CommAnswerLen = answerArray;
             }
-            ediabas.commAnswerLen = answerArray;
         }
 
         // BEST2: get_battery_voltage
@@ -2692,7 +2699,14 @@ namespace EdiabasLib
         // BEST2: set_repeat_counter
         private static void OpXreps(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.commRepeats = arg0.GetValueData();
+            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
+            else
+            {
+                ediabas.edCommClass.CommRepeats = arg0.GetValueData();
+            }
         }
 
         // BEST2: ifreset
@@ -2704,8 +2718,7 @@ namespace EdiabasLib
             }
             else
             {
-                ediabas.commParameter = new EdValueType[0];
-                ediabas.edCommClass.NewCommunicationPars();
+                ediabas.edCommClass.CommParameter = null;
             }
         }
 
@@ -2762,8 +2775,7 @@ namespace EdiabasLib
                         (((EdValueType)dataArray[offset + 3]) << 24);
                     parsArray[i] = value;
                 }
-                ediabas.commParameter = parsArray;
-                ediabas.edCommClass.NewCommunicationPars();
+                ediabas.edCommClass.CommParameter = parsArray;
             }
         }
 

@@ -2008,9 +2008,6 @@ namespace EdiabasLib
         private ErrorRaisedDelegate errorRaisedFunc = null;
         private StreamWriter swLog = null;
         private EdValueType arrayMaxBufSize = 1024;
-        private EdValueType[] commParameter = new EdValueType[0];
-        private EdValueType commRepeats = 0;
-        private Int16[] commAnswerLen = new Int16[0];
         private EdValueType errorTrapMask = 0;
         private int errorTrapBitNr = -1;
         private ErrorCodes errorCodeLast = ErrorCodes.EDIABAS_ERR_NONE;
@@ -2224,30 +2221,6 @@ namespace EdiabasLib
                 {
                     stringRegisters[i].NewArrayLength(arrayMaxBufSize);
                 }
-            }
-        }
-
-        public EdValueType[] CommParameter
-        {
-            get
-            {
-                return commParameter;
-            }
-        }
-
-        public EdValueType CommRepeats
-        {
-            get
-            {
-                return commRepeats;
-            }
-        }
-
-        public Int16[] CommAnswerLen
-        {
-            get
-            {
-                return commAnswerLen;
             }
         }
 

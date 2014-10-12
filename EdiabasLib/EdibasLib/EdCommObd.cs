@@ -101,6 +101,10 @@ namespace EdiabasLib
 
         public override bool InterfaceConnect()
         {
+            if (!base.InterfaceConnect())
+            {
+                return false;
+            }
             if (interfaceConnectFunc != null)
             {
                 connected = interfaceConnectFunc();
@@ -138,6 +142,7 @@ namespace EdiabasLib
 
         public override bool InterfaceDisconnect()
         {
+            base.InterfaceDisconnect();
             connected = false;
             if (interfaceDisconnectFunc != null)
             {
@@ -347,7 +352,7 @@ namespace EdiabasLib
                 }
             }
 
-            if (ediabas.CommParameter.Length < 1)
+            if ((commParameter == null) || (commParameter.Length < 1))
             {
                 ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                 return false;
@@ -360,55 +365,55 @@ namespace EdiabasLib
             int timeoutTelEnd;
             int timeoutNR;
             int retryNR;
-            switch (ediabas.CommParameter[0])
+            switch (commParameter[0])
             {
                 case 0x010D:    // KWP2000*
-                    if (ediabas.CommParameter.Length < 7)
+                    if (commParameter.Length < 7)
                     {
                         ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                         return false;
                     }
-                    if (ediabas.CommParameter.Length >= 34 && ediabas.CommParameter[33] != 1)
+                    if (commParameter.Length >= 34 && commParameter[33] != 1)
                     {   // not checksum calculated by interface
                         ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                         return false;
                     }
                     transmitFunc = TransKwp2000S;
-                    baudRate = (int)ediabas.CommParameter[1];
+                    baudRate = (int)commParameter[1];
                     parity = Parity.Even;
-                    timeoutStd = (int)ediabas.CommParameter[2];
-                    timeoutTelEnd = (int)ediabas.CommParameter[4];
-                    timeoutNR = (int)ediabas.CommParameter[7];
-                    retryNR = (int)ediabas.CommParameter[6];
+                    timeoutStd = (int)commParameter[2];
+                    timeoutTelEnd = (int)commParameter[4];
+                    timeoutNR = (int)commParameter[7];
+                    retryNR = (int)commParameter[6];
                     break;
 
                 case 0x010F:    // BMW-FAST
-                    if (ediabas.CommParameter.Length < 7)
+                    if (commParameter.Length < 7)
                     {
                         ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                         return false;
                     }
-                    if (ediabas.CommParameter[1] != 115200)
+                    if (commParameter[1] != 115200)
                     {   // not BMW-FAST baud rate
                         ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                         return false;
                     }
-                    if (ediabas.CommParameter.Length >= 8 && ediabas.CommParameter[7] != 1)
+                    if (commParameter.Length >= 8 && commParameter[7] != 1)
                     {   // not checksum calculated by interface
                         ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                         return false;
                     }
                     transmitFunc = TransBmwFast;
                     parity = Parity.None;
-                    baudRate = (int)ediabas.CommParameter[1];
-                    timeoutStd = (int)ediabas.CommParameter[2];
-                    timeoutTelEnd = (int)ediabas.CommParameter[4];
-                    timeoutNR = (int)ediabas.CommParameter[6];
-                    retryNR = (int)ediabas.CommParameter[5];
+                    baudRate = (int)commParameter[1];
+                    timeoutStd = (int)commParameter[2];
+                    timeoutTelEnd = (int)commParameter[4];
+                    timeoutNR = (int)commParameter[6];
+                    retryNR = (int)commParameter[5];
                     break;
 
                 case 0x0110:    // D-CAN
-                    if (ediabas.CommParameter.Length < 30)
+                    if (commParameter.Length < 30)
                     {
                         ediabas.SetError(Ediabas.ErrorCodes.EDIABAS_IFH_0041);
                         return false;
@@ -416,10 +421,10 @@ namespace EdiabasLib
                     transmitFunc = TransBmwFast;
                     parity = Parity.None;
                     baudRate = 115200;
-                    timeoutStd = (int)ediabas.CommParameter[7];
+                    timeoutStd = (int)commParameter[7];
                     timeoutTelEnd = 10;
-                    timeoutNR = (int)ediabas.CommParameter[9];
-                    retryNR = (int)ediabas.CommParameter[10];
+                    timeoutNR = (int)commParameter[9];
+                    retryNR = (int)commParameter[10];
                     break;
 
                 default:
@@ -448,7 +453,7 @@ namespace EdiabasLib
             }
 
             Ediabas.ErrorCodes errorCode = Ediabas.ErrorCodes.EDIABAS_ERR_NONE;
-            for (int i = 0; i < ediabas.CommRepeats + 1; i++)
+            for (int i = 0; i < commRepeats + 1; i++)
             {
                 errorCode = transmitFunc(sendData, sendDataLength, ref receiveData, out receiveLength, timeoutStd, timeoutTelEnd, timeoutNR, retryNR);
                 if (errorCode == Ediabas.ErrorCodes.EDIABAS_ERR_NONE)

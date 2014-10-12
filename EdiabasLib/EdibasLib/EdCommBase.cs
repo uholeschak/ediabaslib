@@ -9,15 +9,59 @@ namespace EdiabasLib
     {
         private bool disposed = false;
         protected Ediabas ediabas;
-        protected bool newCommPars = true;
+        protected UInt32 commRepeats = 0;
+        protected UInt32[] commParameter;
+        protected Int16[] commAnswerLen;
 
-        public abstract bool InterfaceConnect();
-        public abstract bool InterfaceDisconnect();
+        public virtual bool InterfaceConnect()
+        {
+            commRepeats = 0;
+            commParameter = null;
+            commAnswerLen = null;
+            return true;
+        }
+
+        public virtual bool InterfaceDisconnect()
+        {
+            return true;
+        }
+
         public abstract bool TransmitData(byte[] sendData, out byte[] receiveData);
 
-        public void NewCommunicationPars()
+        public UInt32 CommRepeats
         {
-            newCommPars = true;
+            get
+            {
+                return commRepeats;
+            }
+            set
+            {
+                commRepeats = value;
+            }
+        }
+
+        public UInt32[] CommParameter
+        {
+            get
+            {
+                return commParameter;
+            }
+            set
+            {
+                commParameter = value;
+            }
+        }
+
+        public Int16[] CommAnswerLen
+        {
+            get
+            {
+                return commAnswerLen;
+            }
+            set
+            {
+                commAnswerLen = value;
+            }
         }
 
         public abstract string InterfaceType
