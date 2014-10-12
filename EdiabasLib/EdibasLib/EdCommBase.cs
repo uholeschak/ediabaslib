@@ -35,6 +35,11 @@ namespace EdiabasLib
             get;
         }
 
+        public abstract byte[] State
+        {
+            get;
+        }
+
         public abstract bool Connected
         {
             get;

@@ -2610,7 +2610,7 @@ namespace EdiabasLib
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
-                throw new ArgumentOutOfRangeException("arg0", "OpXor: Invalid type");
+                throw new ArgumentOutOfRangeException("arg0", "OpXkeyb: Invalid type");
             }
             if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
             {
@@ -2701,6 +2701,23 @@ namespace EdiabasLib
                 }
                 ediabas.commParameter = parsArray;
                 ediabas.edCommClass.NewCommunicationPars();
+            }
+        }
+
+        // BEST2: recv_keybytes
+        private static void OpXstate(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpXstate: Invalid type");
+            }
+            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
+            else
+            {
+                arg0.SetRawData(ediabas.edCommClass.State);
             }
         }
 
