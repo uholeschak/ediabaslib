@@ -4740,6 +4740,50 @@ job(  name      : TEST_CFG_FLAGS;
 					ergi		"DUMMY_I", I8
 #endasm
 
+#asm
+					enewset
+					move		I8,#$AAAA
+					move		L5,#$7FFFFFFF
+					comp		L5,#-4
+					setc
+					cfgig		I8, "IfhTrace"
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergi		"IFHTRACE", I8
+#endasm
+
+#asm
+					enewset
+					move		I8,#$AAAA
+					move		L5,#$7FFFFFFF
+					comp		L5,#-4
+					setc
+					cfgis		"IfhTrace", #5.I
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
+					move		I8,#$AAAA
+					move		L5,#$7FFFFFFF
+					comp		L5,#-4
+					setc
+					cfgig		I8, "IfhTrace"
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergi		"IFHTRACE", I8
+#endasm
+
 }
 
 ////////////////////////////////////////////////////////////////////////
