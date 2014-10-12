@@ -783,9 +783,9 @@ namespace CarControl
                 ediabas.ExecuteJob(job.JobName);
 
                 List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
-                if (resultSets.Count >= 1)
+                if (resultSets.Count >= 2)
                 {
-                    MergeResultDictionarys(ref ediabasTempDict, resultSets[0]);
+                    MergeResultDictionarys(ref ediabasTempDict, resultSets[1]);
                 }
             }
             catch (Exception ex)
@@ -819,17 +819,17 @@ namespace CarControl
                 ediabas.ExecuteJob("MODE_CTRL_LESEN");
 
                 List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
-                if (resultSets.Count >= 1)
+                if (resultSets.Count >= 2)
                 {
                     Ediabas.ResultData resultData;
-                    if (resultSets[0].TryGetValue("WERT", out resultData))
+                    if (resultSets[1].TryGetValue("WERT", out resultData))
                     {
                         if (resultData.opData.GetType() == typeof(Int64))
                         {
                             axisMode = (int)((Int64)resultData.opData);
                         }
                     }
-                    MergeResultDictionarys(ref resultDict, resultSets[0], "MODE_CTRL_LESEN_");
+                    MergeResultDictionarys(ref resultDict, resultSets[1], "MODE_CTRL_LESEN_");
                 }
             }
             catch (Exception ex)
@@ -912,9 +912,9 @@ namespace CarControl
                         {
                             ediabas.ExecuteJob("STATUS_SIGNALE_NUMERISCH");
                             List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
-                            if (resultSets.Count >= 1)
+                            if (resultSets.Count >= 2)
                             {
-                                MergeResultDictionarys(ref resultDict, resultSets[0], string.Format("STATUS_SIGNALE_NUMERISCH{0}_", channel));
+                                MergeResultDictionarys(ref resultDict, resultSets[1], string.Format("STATUS_SIGNALE_NUMERISCH{0}_", channel));
                             }
                         }
                         catch (Exception ex)
@@ -1014,7 +1014,7 @@ namespace CarControl
                     List<Dictionary<string, Ediabas.ResultData>> resultSets = new List<Dictionary<string, Ediabas.ResultData>>(ediabas.ResultSets);
 
                     bool jobOk = false;
-                    if (resultSets.Count > 0)
+                    if (resultSets.Count > 1)
                     {
                         Ediabas.ResultData resultData;
                         if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
@@ -1032,8 +1032,15 @@ namespace CarControl
 
                     if (jobOk)
                     {
+                        int dictIndex = 0;
                         foreach (Dictionary<string, Ediabas.ResultData> resultDict in resultSets)
                         {
+                            if (dictIndex == 0)
+                            {
+                                dictIndex++;
+                                continue;
+                            }
+
                             Ediabas.ResultData resultData;
                             if (resultDict.TryGetValue("F_ORT_NR", out resultData))
                             {
@@ -1048,6 +1055,7 @@ namespace CarControl
                                         new List<Dictionary<string, Ediabas.ResultData>>(ediabas.ResultSets)));
                                 }
                             }
+                            dictIndex++;
                         }
                     }
                     else
@@ -1130,9 +1138,9 @@ namespace CarControl
                     ediabas.ExecuteJob(job.JobName);
 
                     List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
-                    if (resultSets.Count >= 1)
+                    if (resultSets.Count >= 2)
                     {
-                        MergeResultDictionarys(ref resultDict, resultSets[0]);
+                        MergeResultDictionarys(ref resultDict, resultSets[1]);
                     }
                 }
                 catch (Exception ex)
@@ -1227,14 +1235,21 @@ namespace CarControl
 
                     string lineText = string.Empty;
                     List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
-                    if (resultSets.Count < 1)
+                    if (resultSets.Count < 2)
                     {
                         lineText += "-\r\n";
                     }
                     else
                     {
+                        int dictIndex = 0;
                         foreach (Dictionary<string, Ediabas.ResultData> resultDict in resultSets)
                         {
+                            if (dictIndex == 0)
+                            {
+                                dictIndex++;
+                                continue;
+                            }
+
                             string newLineText = string.Empty;
                             foreach (string dataName in ediabasJob.JobData)
                             {
@@ -1270,6 +1285,7 @@ namespace CarControl
                                 newLineText += "\r\n";
                             }
                             lineText += newLineText;
+                            dictIndex++;
                         }
                     }
                     resultText += lineText;
