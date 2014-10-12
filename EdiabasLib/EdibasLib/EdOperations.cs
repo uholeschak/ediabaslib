@@ -2168,6 +2168,16 @@ namespace EdiabasLib
             }
         }
 
+        private static void OpSsize(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpSsize: Invalid type");
+            }
+            EdValueType value = ediabas.ArrayMaxBufSize;
+            arg0.SetRawData(value);
+        }
+
         // BEST2: strlen
         private static void OpStrlen(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {

@@ -1569,7 +1569,7 @@ namespace EdiabasLib
             new OpCode(0xB2, "xswitch", null),
             new OpCode(0xB3, "xsendex", null),
             new OpCode(0xB4, "xrecvex", null),
-            new OpCode(0xB5, "ssize", null),
+            new OpCode(0xB5, "ssize", new OperationDelegate(OpSsize)),
             new OpCode(0xB6, "tabcols", new OperationDelegate(OpTabcols)),
             new OpCode(0xB7, "tabrows", new OperationDelegate(OpTabrows)),
         };
