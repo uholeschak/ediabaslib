@@ -1987,12 +1987,14 @@ namespace EdiabasLib
         private const string jobNameIdent = "IDENTIFIKATION";
 
         private bool disposed = false;
+        private object interfaceLock = new object();
         private Stack<byte> stackList = new Stack<byte>();
         private List<byte[]> argList = new List<byte[]>();
         private Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
         private Dictionary<string, ResultData> resultSysDict = new Dictionary<string, ResultData>();
         private Dictionary<string, bool> resultsRequestDict = new Dictionary<string, bool>();
-        private List<Dictionary<string, ResultData>> resultSets = new List<Dictionary<string, ResultData>>();
+        private List<Dictionary<string, ResultData>> resultSets = null;
+        private List<Dictionary<string, ResultData>> resultSetsTemp = null;
         private Dictionary<string, string> configDict = new Dictionary<string, string>();
         private Dictionary<string, string> groupMappingDict = new Dictionary<string, string>();
         private Dictionary<string, byte[]> sharedDataDict = new Dictionary<string, byte[]>();
@@ -2046,7 +2048,10 @@ namespace EdiabasLib
         {
             get
             {
-                return argList;
+                lock (interfaceLock)
+                {
+                    return argList;
+                }
             }
         }
 
@@ -2054,26 +2059,32 @@ namespace EdiabasLib
         {
             get
             {
-                string result = string.Empty;
-                foreach (byte[] arg in ArgList)
-                {
-                    if (result.Length > 0)
+                    string result = string.Empty;
+                    lock (interfaceLock)
                     {
-                        result += ";";
+                        foreach (byte[] arg in ArgList)
+                        {
+                            if (result.Length > 0)
+                            {
+                                result += ";";
+                            }
+                            result += encoding.GetString(arg, 0, arg.Length);
+                        }
                     }
-                    result += encoding.GetString(arg, 0, arg.Length);
-                }
-                return result;
+                    return result;
             }
             set
             {
-                argList.Clear();
-                if (value.Length > 0)
+                lock (interfaceLock)
                 {
-                    string[] words = value.Split(';');
-                    foreach (string word in words)
+                    argList.Clear();
+                    if (value.Length > 0)
                     {
-                        argList.Add(encoding.GetBytes(word));
+                        string[] words = value.Split(';');
+                        foreach (string word in words)
+                        {
+                            argList.Add(encoding.GetBytes(word));
+                        }
                     }
                 }
             }
@@ -2084,16 +2095,22 @@ namespace EdiabasLib
             get
             {
                 byte[] result = byteArray0;
-                if (ArgList.Count > 0)
+                lock (interfaceLock)
                 {
-                    result = ArgList[0];
+                    if (ArgList.Count > 0)
+                    {
+                        result = ArgList[0];
+                    }
                 }
                 return result;
             }
             set
             {
-                argList.Clear();
-                argList.Add(value);
+                lock (interfaceLock)
+                {
+                    argList.Clear();
+                    argList.Add(value);
+                }
             }
         }
 
@@ -2101,7 +2118,10 @@ namespace EdiabasLib
         {
             get
             {
-                return resultSets;
+                lock (interfaceLock)
+                {
+                    return resultSets;
+                }
             }
         }
 
@@ -2109,7 +2129,10 @@ namespace EdiabasLib
         {
             get
             {
-                return resultsRequestDict;
+                lock (interfaceLock)
+                {
+                    return resultsRequestDict;
+                }
             }
         }
 
@@ -2118,27 +2141,33 @@ namespace EdiabasLib
             get
             {
                 string result = string.Empty;
-                foreach (string arg in resultsRequestDict.Keys)
+                lock (interfaceLock)
                 {
-                    if (result.Length > 0)
+                    foreach (string arg in resultsRequestDict.Keys)
                     {
-                        result += ";";
+                        if (result.Length > 0)
+                        {
+                            result += ";";
+                        }
+                        result += arg;
                     }
-                    result += arg;
                 }
                 return result;
             }
             set
             {
-                resultsRequestDict.Clear();
-                if (value.Length > 0)
+                lock (interfaceLock)
                 {
-                    string[] words = value.Split(';');
-                    foreach (string word in words)
+                    resultsRequestDict.Clear();
+                    if (value.Length > 0)
                     {
-                        if (word.Length > 0)
+                        string[] words = value.Split(';');
+                        foreach (string word in words)
                         {
-                            resultsRequestDict.Add(word, true);
+                            if (word.Length > 0)
+                            {
+                                resultsRequestDict.Add(word, true);
+                            }
                         }
                     }
                 }
@@ -3433,7 +3462,11 @@ namespace EdiabasLib
 
             byte[] buffer = new byte[2];
 
-            resultSets.Clear();
+            resultSetsTemp = new List<Dictionary<string, ResultData>>();
+            lock (interfaceLock)
+            {
+                resultSets = null;
+            }
             resultDict.Clear();
             resultSysDict.Clear();
             stackList.Clear();
@@ -3514,7 +3547,7 @@ namespace EdiabasLib
                 }
                 if (resultDict.Count > 0)
                 {
-                    resultSets.Add(new Dictionary<string, ResultData>(resultDict));
+                    resultSetsTemp.Add(new Dictionary<string, ResultData>(resultDict));
                 }
                 resultDict.Clear();
             }
@@ -3530,7 +3563,13 @@ namespace EdiabasLib
             {
                 CloseTableFs();
                 CloseAllUserFiles();
-                resultSets.Insert(0, CreateSystemResultDict(jobInfo, resultSets.Count));
+                Dictionary<string, ResultData> systemResultDict = CreateSystemResultDict(jobInfo, resultSetsTemp.Count);
+
+                resultSetsTemp.Insert(0, systemResultDict);
+                lock (interfaceLock)
+                {
+                    resultSets = resultSetsTemp;
+                }
                 SetConfigProperty("BipEcuFile", null);
             }
         }

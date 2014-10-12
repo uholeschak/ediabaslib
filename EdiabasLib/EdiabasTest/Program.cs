@@ -170,76 +170,79 @@ namespace EdiabasTest
 
                         int dataSet = 0;
                         List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
-                        foreach (Dictionary<string, Ediabas.ResultData> resultDict in resultSets)
+                        if (resultSets != null)
                         {
-                            outputWriter.WriteLine(string.Format(culture, "DATASET: {0}", dataSet));
-                            if (ediabas.SwLog != null)
+                            foreach (Dictionary<string, Ediabas.ResultData> resultDict in resultSets)
                             {
-                                ediabas.SwLog.WriteLine(string.Format(culture, "DATASET: {0}", dataSet));
-                            }
-                            foreach (string key in resultDict.Keys.OrderBy(x => x))
-                            {
-                                Ediabas.ResultData resultData = resultDict[key];
-                                string resultText = string.Empty;
-                                if (resultData.opData.GetType() == typeof(string))
-                                {
-                                    resultText = (string)resultData.opData;
-                                }
-                                else if (resultData.opData.GetType() == typeof(Double))
-                                {
-                                    resultText = string.Format(culture, "R: {0}", (Double)resultData.opData);
-                                }
-                                else if (resultData.opData.GetType() == typeof(Int64))
-                                {
-                                    Int64 value = (Int64)resultData.opData;
-                                    switch (resultData.type)
-                                    {
-                                        case Ediabas.ResultType.TypeB:  // 8 bit
-                                            resultText = string.Format(culture, "B: {0} 0x{1:X02}", value, (Byte)value);
-                                            break;
-
-                                        case Ediabas.ResultType.TypeC:  // 8 bit char
-                                            resultText = string.Format(culture, "C: {0} 0x{1:X02}", value, (Byte)value);
-                                            break;
-
-                                        case Ediabas.ResultType.TypeW:  // 16 bit
-                                            resultText = string.Format(culture, "W: {0} 0x{1:X04}", value, (UInt16)value);
-                                            break;
-
-                                        case Ediabas.ResultType.TypeI:  // 16 bit signed
-                                            resultText = string.Format(culture, "I: {0} 0x{1:X04}", value, (UInt16)value);
-                                            break;
-
-                                        case Ediabas.ResultType.TypeD:  // 32 bit
-                                            resultText = string.Format(culture, "D: {0} 0x{1:X08}", value, (UInt32)value);
-                                            break;
-
-                                        case Ediabas.ResultType.TypeL:  // 32 bit signed
-                                            resultText = string.Format(culture, "L: {0} 0x{1:X08}", value, (UInt32)value);
-                                            break;
-
-                                        default:
-                                            resultText = "?";
-                                            break;
-                                    }
-                                }
-                                else if (resultData.opData.GetType() == typeof(byte[]))
-                                {
-                                    byte[] data = (byte[])resultData.opData;
-                                    foreach (byte value in data)
-                                    {
-                                        resultText += string.Format(culture, "{0:X02} ", value);
-                                    }
-                                }
-                                outputWriter.WriteLine(resultData.name + ": " + resultText);
+                                outputWriter.WriteLine(string.Format(culture, "DATASET: {0}", dataSet));
                                 if (ediabas.SwLog != null)
                                 {
-                                    ediabas.SwLog.WriteLine(resultData.name + ": " + resultText);
+                                    ediabas.SwLog.WriteLine(string.Format(culture, "DATASET: {0}", dataSet));
                                 }
+                                foreach (string key in resultDict.Keys.OrderBy(x => x))
+                                {
+                                    Ediabas.ResultData resultData = resultDict[key];
+                                    string resultText = string.Empty;
+                                    if (resultData.opData.GetType() == typeof(string))
+                                    {
+                                        resultText = (string)resultData.opData;
+                                    }
+                                    else if (resultData.opData.GetType() == typeof(Double))
+                                    {
+                                        resultText = string.Format(culture, "R: {0}", (Double)resultData.opData);
+                                    }
+                                    else if (resultData.opData.GetType() == typeof(Int64))
+                                    {
+                                        Int64 value = (Int64)resultData.opData;
+                                        switch (resultData.type)
+                                        {
+                                            case Ediabas.ResultType.TypeB:  // 8 bit
+                                                resultText = string.Format(culture, "B: {0} 0x{1:X02}", value, (Byte)value);
+                                                break;
+
+                                            case Ediabas.ResultType.TypeC:  // 8 bit char
+                                                resultText = string.Format(culture, "C: {0} 0x{1:X02}", value, (Byte)value);
+                                                break;
+
+                                            case Ediabas.ResultType.TypeW:  // 16 bit
+                                                resultText = string.Format(culture, "W: {0} 0x{1:X04}", value, (UInt16)value);
+                                                break;
+
+                                            case Ediabas.ResultType.TypeI:  // 16 bit signed
+                                                resultText = string.Format(culture, "I: {0} 0x{1:X04}", value, (UInt16)value);
+                                                break;
+
+                                            case Ediabas.ResultType.TypeD:  // 32 bit
+                                                resultText = string.Format(culture, "D: {0} 0x{1:X08}", value, (UInt32)value);
+                                                break;
+
+                                            case Ediabas.ResultType.TypeL:  // 32 bit signed
+                                                resultText = string.Format(culture, "L: {0} 0x{1:X08}", value, (UInt32)value);
+                                                break;
+
+                                            default:
+                                                resultText = "?";
+                                                break;
+                                        }
+                                    }
+                                    else if (resultData.opData.GetType() == typeof(byte[]))
+                                    {
+                                        byte[] data = (byte[])resultData.opData;
+                                        foreach (byte value in data)
+                                        {
+                                            resultText += string.Format(culture, "{0:X02} ", value);
+                                        }
+                                    }
+                                    outputWriter.WriteLine(resultData.name + ": " + resultText);
+                                    if (ediabas.SwLog != null)
+                                    {
+                                        ediabas.SwLog.WriteLine(resultData.name + ": " + resultText);
+                                    }
+                                }
+                                dataSet++;
                             }
-                            dataSet++;
+                            outputWriter.WriteLine();
                         }
-                        outputWriter.WriteLine();
                     }
                 }
             }
