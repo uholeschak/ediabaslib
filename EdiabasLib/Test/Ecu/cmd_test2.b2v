@@ -4907,6 +4907,11 @@ job(  name      : TEST_IFACE_FLAGS;
    ) 
 {
 #asm
+					move		L4, #$FFFFFFFF
+					settmr		L4
+#endasm
+
+#asm
 					enewset
 					xconnect
 					clear		S4
@@ -4969,6 +4974,80 @@ job(  name      : TEST_IFACE_FLAGS;
 #asm
 					enewset
 					clrc
+					xsetpar		{$0F.B,$01.B,$00.B,$00.B,$00.B,$C2.B,$01.B,$00.B,$B0.B,$04.B,$00.B,$00.B,$14.B,$00.B,$00.B,$00.B,$0A.B,$00.B,$00.B,$00.B,$02.B,$00.B,$00.B,$00.B,$88.B,$13.B,$00.B,$00.B}
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
+					clear		S4
+					move		S4, "DEFAULT"
+					clrc
+					xsend		S4,{$84.B,$12.B,$F1.B,$18.B,$02.B,$FF.B,$FF.B}
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergy		"XSEND", S4
+#endasm
+
+#asm
+					enewset
+					clear		S4
+					move		S4, "DEFAULT"
+					clrc
+					xstate		S4
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"XSTATE_S", S4
+					ergy		"XSTATE_Y", S4
+#endasm
+
+#asm
+					enewset
+					clear		S4
+					move		S4, "DEFAULT"
+					clrc
+					xsend		S4,{$83.B,$12.B,$F1.B,$18.B,$02.B,$FF.B}
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergy		"XSEND", S4
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
+
+#asm
+					enewset
+					clear		S4
+					move		S4, "DEFAULT"
+					clrc
+					xstate		S4
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"XSTATE_S", S4
+					ergy		"XSTATE_Y", S4
+#endasm
+
+#asm
+					enewset
+					clrc
 					xreset
 #endasm
 	calc_flags();
@@ -4979,8 +5058,6 @@ job(  name      : TEST_IFACE_FLAGS;
 
 #asm
 					enewset
-					move		L4, #$00000001
-					settmr		L4
 					xhangup
 					clear		S4
 					move		S4, "DEFAULT"
