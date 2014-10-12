@@ -66,6 +66,22 @@ namespace EdiabasLib
             }
         }
 
+        public override UInt32 BatteryVoltage
+        {
+            get
+            {
+                return 12000;
+            }
+        }
+
+        public override UInt32 IgnitionVoltage
+        {
+            get
+            {
+                return 12000;
+            }
+        }
+
         public override bool Connected
         {
             get

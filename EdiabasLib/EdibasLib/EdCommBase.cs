@@ -40,6 +40,16 @@ namespace EdiabasLib
             get;
         }
 
+        public abstract UInt32 BatteryVoltage
+        {
+            get;
+        }
+
+        public abstract UInt32 IgnitionVoltage
+        {
+            get;
+        }
+
         public abstract bool Connected
         {
             get;
