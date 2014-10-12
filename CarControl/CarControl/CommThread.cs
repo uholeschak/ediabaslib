@@ -783,7 +783,7 @@ namespace CarControl
                 ediabas.ExecuteJob(job.JobName);
 
                 List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
-                if (resultSets.Count >= 2)
+                if (resultSets != null && resultSets.Count >= 2)
                 {
                     MergeResultDictionarys(ref ediabasTempDict, resultSets[1]);
                 }
@@ -819,7 +819,7 @@ namespace CarControl
                 ediabas.ExecuteJob("MODE_CTRL_LESEN");
 
                 List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
-                if (resultSets.Count >= 2)
+                if (resultSets != null && resultSets.Count >= 2)
                 {
                     Ediabas.ResultData resultData;
                     if (resultSets[1].TryGetValue("WERT", out resultData))
@@ -912,7 +912,7 @@ namespace CarControl
                         {
                             ediabas.ExecuteJob("STATUS_SIGNALE_NUMERISCH");
                             List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
-                            if (resultSets.Count >= 2)
+                            if (resultSets != null && resultSets.Count >= 2)
                             {
                                 MergeResultDictionarys(ref resultDict, resultSets[1], string.Format("STATUS_SIGNALE_NUMERISCH{0}_", channel));
                             }
@@ -1014,7 +1014,7 @@ namespace CarControl
                     List<Dictionary<string, Ediabas.ResultData>> resultSets = new List<Dictionary<string, Ediabas.ResultData>>(ediabas.ResultSets);
 
                     bool jobOk = false;
-                    if (resultSets.Count > 1)
+                    if (resultSets != null && resultSets.Count > 1)
                     {
                         Ediabas.ResultData resultData;
                         if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
@@ -1051,8 +1051,12 @@ namespace CarControl
 
                                     ediabas.ExecuteJob("FS_LESEN_DETAIL");
 
-                                    errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, resultDict,
-                                        new List<Dictionary<string, Ediabas.ResultData>>(ediabas.ResultSets)));
+                                    List<Dictionary<string, Ediabas.ResultData>> resultSetsDetail = new List<Dictionary<string, Ediabas.ResultData>>(ediabas.ResultSets);
+                                    if (resultSetsDetail != null)
+                                    {
+                                        errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, resultDict,
+                                            new List<Dictionary<string, Ediabas.ResultData>>(resultSetsDetail)));
+                                    }
                                 }
                             }
                             dictIndex++;
@@ -1138,7 +1142,7 @@ namespace CarControl
                     ediabas.ExecuteJob(job.JobName);
 
                     List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
-                    if (resultSets.Count >= 2)
+                    if (resultSets != null && resultSets.Count >= 2)
                     {
                         MergeResultDictionarys(ref resultDict, resultSets[1]);
                     }
@@ -1235,7 +1239,7 @@ namespace CarControl
 
                     string lineText = string.Empty;
                     List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
-                    if (resultSets.Count < 2)
+                    if ((resultSets == null) || (resultSets.Count < 2))
                     {
                         lineText += "-\r\n";
                     }
