@@ -50,6 +50,10 @@ TEST_SREG#
 					clear		S0
 					ergb		"CLEAR_B",S0[#$A]
 
+					move		L0,#0
+					ssize		L0
+					ergl		"SSIZE",L0
+
 					clear		S0
 					move		S0[#1000],#'A'
 					clear		S0
