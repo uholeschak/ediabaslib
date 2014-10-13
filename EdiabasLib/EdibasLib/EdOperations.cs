@@ -1313,34 +1313,46 @@ namespace EdiabasLib
         {
             long incVal = arg0.GetValueData();
             long newValue;
-            if (ediabas.infoProgressPos < 0)
+
+            lock (ediabas.interfaceLock)
             {
-                newValue = incVal;
+                if (ediabas.infoProgressPos < 0)
+                {
+                    newValue = incVal;
+                }
+                else
+                {
+                    newValue = ediabas.infoProgressPos + incVal;
+                }
+                if (newValue > ediabas.infoProgressRange)
+                {
+                    newValue = ediabas.infoProgressRange;
+                }
+                ediabas.infoProgressPos = newValue;
             }
-            else
-            {
-                newValue = ediabas.infoProgressPos + incVal;
-            }
-            if (newValue > ediabas.infoProgressRange)
-            {
-                newValue = ediabas.infoProgressRange;
-            }
-            ediabas.infoProgressPos = newValue;
             ediabas.JobProgressInform();
         }
 
         // BEST2: setProgressRange
         private static void OpIrange(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.infoProgressPos = -1;
-            ediabas.infoProgressRange = arg0.GetValueData();
+            EdValueType progressRange = arg0.GetValueData();
+            lock (ediabas.interfaceLock)
+            {
+                ediabas.infoProgressPos = -1;
+                ediabas.infoProgressRange = progressRange;
+            }
             ediabas.JobProgressInform();
         }
 
         // BEST2: updateInfo
         private static void OpIupdate(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.infoProgressText = arg0.GetStringData();
+            string progressText = arg0.GetStringData();
+            lock (ediabas.interfaceLock)
+            {
+                ediabas.infoProgressText = progressText;
+            }
             ediabas.JobProgressInform();
         }
 
@@ -2444,10 +2456,10 @@ namespace EdiabasLib
             string baseFileName = arg1.GetStringData();
             if (baseFileName.Length > 0)
             {
-                string fullFileName = Path.Combine(ediabas.fileSearchDir, baseFileName + ".prg");
+                string fullFileName = Path.Combine(ediabas.FileSearchDir, baseFileName + ".prg");
                 if (!File.Exists(fullFileName))
                 {
-                    fullFileName = Path.Combine(ediabas.fileSearchDir, baseFileName + ".grp");
+                    fullFileName = Path.Combine(ediabas.FileSearchDir, baseFileName + ".grp");
                 }
                 if (!File.Exists(fullFileName))
                 {
@@ -2621,7 +2633,8 @@ namespace EdiabasLib
         // BEST2: set_answer_length
         private static void OpXawlen(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            EdCommBase commClass = ediabas.EdCommClass;
+            if ((commClass == null) || !commClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
@@ -2645,7 +2658,7 @@ namespace EdiabasLib
                         );
                     answerArray[i] = value;
                 }
-                ediabas.edCommClass.CommAnswerLen = answerArray;
+                commClass.CommAnswerLen = answerArray;
             }
         }
 
@@ -2656,36 +2669,39 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpXbat: Invalid type");
             }
-            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            EdCommBase commClass = ediabas.EdCommClass;
+            if ((commClass == null) || !commClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                arg0.SetRawData((EdValueType)ediabas.edCommClass.BatteryVoltage);
+                arg0.SetRawData((EdValueType)commClass.BatteryVoltage);
             }
         }
 
         // BEST2: open_communication
         private static void OpXconnect(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            if (ediabas.edCommClass == null)
+            EdCommBase commClass = ediabas.EdCommClass;
+            if (commClass == null)
             {
                 throw new ArgumentOutOfRangeException("edCommClass", "OpXconnect: No communication class present");
             }
 
-            ediabas.edCommClass.InterfaceConnect();
+            commClass.InterfaceConnect();
         }
 
         // BEST2: close_communication
         private static void OpXhangup(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            if (ediabas.edCommClass == null)
+            EdCommBase commClass = ediabas.EdCommClass;
+            if (commClass == null)
             {
                 throw new ArgumentOutOfRangeException("edCommClass", "OpXhangup: No communication class present");
             }
 
-            ediabas.edCommClass.InterfaceDisconnect();
+            commClass.InterfaceDisconnect();
         }
 
         // BEST2: get_ignition_voltage
@@ -2695,13 +2711,14 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpXignit: Invalid type");
             }
-            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            EdCommBase commClass = ediabas.EdCommClass;
+            if ((commClass == null) || !commClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                arg0.SetRawData((EdValueType)ediabas.edCommClass.IgnitionVoltage);
+                arg0.SetRawData((EdValueType)commClass.IgnitionVoltage);
             }
         }
 
@@ -2725,39 +2742,42 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpXkeyb: Invalid type");
             }
-            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            EdCommBase commClass = ediabas.EdCommClass;
+            if ((commClass == null) || !commClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                arg0.SetRawData(ediabas.edCommClass.KeyBytes);
+                arg0.SetRawData(commClass.KeyBytes);
             }
         }
 
         // BEST2: set_repeat_counter
         private static void OpXreps(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            EdCommBase commClass = ediabas.EdCommClass;
+            if ((commClass == null) || !commClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                ediabas.edCommClass.CommRepeats = arg0.GetValueData();
+                commClass.CommRepeats = arg0.GetValueData();
             }
         }
 
         // BEST2: ifreset
         private static void OpXreset(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            EdCommBase commClass = ediabas.EdCommClass;
+            if ((commClass == null) || !commClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                ediabas.edCommClass.CommParameter = null;
+                commClass.CommParameter = null;
             }
         }
 
@@ -2769,7 +2789,8 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpXsend: Invalid type");
             }
 
-            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            EdCommBase commClass = ediabas.EdCommClass;
+            if ((commClass == null) || !commClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
@@ -2778,7 +2799,7 @@ namespace EdiabasLib
                 long startTime = Stopwatch.GetTimestamp();
                 byte[] request = arg1.GetArrayData();
                 byte[] response;
-                if (ediabas.edCommClass.TransmitData(request, out response))
+                if (commClass.TransmitData(request, out response))
                 {
                     arg0.SetRawData(response);
                 }
@@ -2789,7 +2810,8 @@ namespace EdiabasLib
         // BEST2: set_communication_pars
         private static void OpXsetpar(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            EdCommBase commClass = ediabas.EdCommClass;
+            if ((commClass == null) || !commClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
@@ -2814,7 +2836,7 @@ namespace EdiabasLib
                         (((EdValueType)dataArray[offset + 3]) << 24);
                     parsArray[i] = value;
                 }
-                ediabas.edCommClass.CommParameter = parsArray;
+                commClass.CommParameter = parsArray;
             }
         }
 
@@ -2825,20 +2847,22 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpXstate: Invalid type");
             }
-            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            EdCommBase commClass = ediabas.EdCommClass;
+            if ((commClass == null) || !commClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                arg0.SetRawData(ediabas.edCommClass.State);
+                arg0.SetRawData(commClass.State);
             }
         }
 
         // BEST2: stop_frequent
         private static void OpXstopf(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            EdCommBase commClass = ediabas.EdCommClass;
+            if ((commClass == null) || !commClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
@@ -2851,13 +2875,14 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpXtype: Invalid type");
             }
-            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            EdCommBase commClass = ediabas.EdCommClass;
+            if ((commClass == null) || !commClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                arg0.SetStringData(ediabas.edCommClass.InterfaceType);
+                arg0.SetStringData(commClass.InterfaceType);
             }
         }
 
@@ -2868,13 +2893,14 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpXvers: Invalid type");
             }
-            if ((ediabas.edCommClass == null) || !ediabas.edCommClass.Connected)
+            EdCommBase commClass = ediabas.EdCommClass;
+            if ((commClass == null) || !commClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                EdValueType value = (EdValueType)ediabas.edCommClass.InterfaceVersion;
+                EdValueType value = (EdValueType)commClass.InterfaceVersion;
                 arg0.SetRawData(value);
             }
         }
