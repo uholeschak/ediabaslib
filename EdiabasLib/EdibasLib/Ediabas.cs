@@ -2036,14 +2036,6 @@ namespace EdiabasLib
         private bool jobEnd = false;
         private bool requestInit = true;
 
-        public Dictionary<string, string> GroupMappingDict
-        {
-            get
-            {
-                return groupMappingDict;
-            }
-        }
-
         public List<byte[]> ArgList
         {
             get
@@ -2059,19 +2051,19 @@ namespace EdiabasLib
         {
             get
             {
-                    string result = string.Empty;
-                    lock (interfaceLock)
+                string result = string.Empty;
+                lock (interfaceLock)
+                {
+                    foreach (byte[] arg in ArgList)
                     {
-                        foreach (byte[] arg in ArgList)
+                        if (result.Length > 0)
                         {
-                            if (result.Length > 0)
-                            {
-                                result += ";";
-                            }
-                            result += encoding.GetString(arg, 0, arg.Length);
+                            result += ";";
                         }
+                        result += encoding.GetString(arg, 0, arg.Length);
                     }
-                    return result;
+                }
+                return result;
             }
             set
             {
@@ -2178,11 +2170,14 @@ namespace EdiabasLib
         {
             get
             {
-                if ((infoProgressPos < 0) || (infoProgressRange <= 0))
+                lock (interfaceLock)
                 {
-                    return -1;
+                    if ((infoProgressPos < 0) || (infoProgressRange <= 0))
+                    {
+                        return -1;
+                    }
+                    return (int)(infoProgressPos * 100 / infoProgressRange);
                 }
-                return (int)(infoProgressPos * 100 / infoProgressRange);
             }
         }
 
@@ -2190,7 +2185,10 @@ namespace EdiabasLib
         {
             get
             {
-                return infoProgressText;
+                lock (interfaceLock)
+                {
+                    return infoProgressText;
+                }
             }
         }
 
@@ -2198,11 +2196,17 @@ namespace EdiabasLib
         {
             get
             {
-                return abortJobFunc;
+                lock (interfaceLock)
+                {
+                    return abortJobFunc;
+                }
             }
             set
             {
-                abortJobFunc = value;
+                lock (interfaceLock)
+                {
+                    abortJobFunc = value;
+                }
             }
         }
 
@@ -2210,11 +2214,17 @@ namespace EdiabasLib
         {
             get
             {
-                return progressJobFunc;
+                lock (interfaceLock)
+                {
+                    return progressJobFunc;
+                }
             }
             set
             {
-                progressJobFunc = value;
+                lock (interfaceLock)
+                {
+                    progressJobFunc = value;
+                }
             }
         }
 
@@ -2222,11 +2232,17 @@ namespace EdiabasLib
         {
             get
             {
-                return errorRaisedFunc;
+                lock (interfaceLock)
+                {
+                    return errorRaisedFunc;
+                }
             }
             set
             {
-                errorRaisedFunc = value;
+                lock (interfaceLock)
+                {
+                    errorRaisedFunc = value;
+                }
             }
         }
 
@@ -2258,11 +2274,17 @@ namespace EdiabasLib
         {
             get
             {
-                return swLog;
+                lock (interfaceLock)
+                {
+                    return swLog;
+                }
             }
             set
             {
-                swLog = value;
+                lock (interfaceLock)
+                {
+                    swLog = value;
+                }
             }
         }
 
@@ -2270,12 +2292,18 @@ namespace EdiabasLib
         {
             get
             {
-                return sgbdFileName;
+                lock (interfaceLock)
+                {
+                    return sgbdFileName;
+                }
             }
             set
             {
                 CloseSgbdFs();
-                sgbdFileName = value;
+                lock (interfaceLock)
+                {
+                    sgbdFileName = value;
+                }
             }
         }
 
@@ -2283,12 +2311,18 @@ namespace EdiabasLib
         {
             get
             {
-                return fileSearchDir;
+                lock (interfaceLock)
+                {
+                    return fileSearchDir;
+                }
             }
             set
             {
                 CloseSgbdFs();
-                fileSearchDir = value;
+                lock (interfaceLock)
+                {
+                    fileSearchDir = value;
+                }
                 SetConfigProperty("EcuPath", fileSearchDir.TrimEnd(Path.DirectorySeparatorChar));
             }
         }
@@ -2297,11 +2331,17 @@ namespace EdiabasLib
         {
             get
             {
-                return edCommClass;
+                lock (interfaceLock)
+                {
+                    return edCommClass;
+                }
             }
             set
             {
-                edCommClass = value;
+                lock (interfaceLock)
+                {
+                    edCommClass = value;
+                }
             }
         }
 
@@ -2321,7 +2361,10 @@ namespace EdiabasLib
         {
             get
             {
-                return errorCodeLast;
+                lock (interfaceLock)
+                {
+                    return errorCodeLast;
+                }
             }
         }
 
@@ -2391,10 +2434,10 @@ namespace EdiabasLib
                     CloseSgbdFs();
                     CloseTableFs();
                     CloseAllUserFiles();
-                    if (SwLog != null)
+                    if (swLog != null)
                     {
-                        SwLog.Dispose();
-                        SwLog = null;
+                        swLog.Dispose();
+                        swLog = null;
                     }
                     if (edCommClass != null)
                     {
@@ -2408,13 +2451,24 @@ namespace EdiabasLib
             }
         }
 
+        public void ClearGroupMapping()
+        {
+            lock (interfaceLock)
+            {
+                groupMappingDict.Clear();
+            }
+        }
+
         public string GetConfigProperty(string name)
         {
             string key = name.ToUpper(culture);
             string value;
-            if (!configDict.TryGetValue(key, out value))
+            lock (interfaceLock)
             {
-                return null;
+                if (!configDict.TryGetValue(key, out value))
+                {
+                    return null;
+                }
             }
             return value;
         }
@@ -2422,20 +2476,23 @@ namespace EdiabasLib
         public void SetConfigProperty(string name, string value)
         {
             string key = name.ToUpper(culture);
-            if (configDict.ContainsKey(key))
+            lock (interfaceLock)
             {
-                if (!string.IsNullOrEmpty(value))
+                if (configDict.ContainsKey(key))
                 {
-                    configDict[key] = value;
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        configDict[key] = value;
+                    }
+                    else
+                    {
+                        configDict.Remove(key);
+                    }
                 }
                 else
                 {
-                    configDict.Remove(key);
+                    configDict.Add(key, value);
                 }
-            }
-            else
-            {
-                configDict.Add(key, value);
             }
         }
 
@@ -2467,7 +2524,7 @@ namespace EdiabasLib
             {
                 return true;
             }
-            string fileName = Path.Combine(fileSearchDir, sgbdFileName);
+            string fileName = Path.Combine(FileSearchDir, SgbdFileName);
             if (!File.Exists(fileName))
             {
                 LogString("OpenSgbdFs file not found: " + fileName);
@@ -2662,7 +2719,7 @@ namespace EdiabasLib
 
         public void SetError(ErrorCodes error)
         {
-            if (swLog != null)
+            if (SwLog != null)
             {
                 LogString(string.Format("SetError: {0}", error));
             }
@@ -2693,10 +2750,14 @@ namespace EdiabasLib
 
         public void RaiseError(ErrorCodes error)
         {
-            this.errorCodeLast = error;
-            if (errorRaisedFunc != null)
+            lock (interfaceLock)
             {
-                errorRaisedFunc(error);
+                this.errorCodeLast = error;
+            }
+            ErrorRaisedDelegate errorFunc = ErrorRaisedFunc;
+            if (errorFunc != null)
+            {
+                errorFunc(error);
             }
             throw new Exception(string.Format("Error occured: {0}", error));
         }
@@ -2742,13 +2803,13 @@ namespace EdiabasLib
         {
             Dictionary<string, ResultData> resultDictSystem = new Dictionary<string, ResultData>();
 
-            string objectName = Path.GetFileNameWithoutExtension(sgbdFileName);
+            string objectName = Path.GetFileNameWithoutExtension(SgbdFileName);
             if (jobInfo.UsesInfo != null)
             {
                 objectName = jobInfo.UsesInfo.Name;
             }
 
-            resultDictSystem.Add("VARIANTE", new ResultData(ResultType.TypeS, "VARIANTE", Path.GetFileNameWithoutExtension(this.sgbdFileName).ToUpper(culture)));
+            resultDictSystem.Add("VARIANTE", new ResultData(ResultType.TypeS, "VARIANTE", Path.GetFileNameWithoutExtension(SgbdFileName).ToUpper(culture)));
             resultDictSystem.Add("OBJECT", new ResultData(ResultType.TypeS, "OBJECT", objectName));
             resultDictSystem.Add("JOBNAME", new ResultData(ResultType.TypeS, "JOBNAME", jobInfo.JobName));
             resultDictSystem.Add("JOBSTATUS", new ResultData(ResultType.TypeS, "JOBSTATUS", string.Empty));
@@ -2772,9 +2833,10 @@ namespace EdiabasLib
 
         private void JobProgressInform()
         {
-            if (progressJobFunc != null)
+            ProgressJobDelegate progressFunc = ProgressJobFunc;
+            if (progressFunc != null)
             {
-                progressJobFunc(this);
+                progressFunc(this);
             }
         }
 
@@ -2812,7 +2874,7 @@ namespace EdiabasLib
 
             foreach (UsesInfo usesInfo in usesInfos.UsesInfoArray)
             {
-                string fileName = Path.Combine(fileSearchDir, usesInfo.Name.ToLower(culture) + ".prg");
+                string fileName = Path.Combine(FileSearchDir, usesInfo.Name.ToLower(culture) + ".prg");
                 if (File.Exists(fileName))
                 {
                     try
@@ -3252,19 +3314,27 @@ namespace EdiabasLib
         public void ResolveSgbdFile(string fileName)
         {
             SgbdFileName = Path.GetFileName(fileName);
-            UInt32 fileType = GetFileType(Path.Combine(fileSearchDir, fileName));
+            UInt32 fileType = GetFileType(Path.Combine(FileSearchDir, fileName));
             if (fileType == 0)
             {       // group file
                 string key = SgbdFileName.ToLower(culture);
                 string variantName = string.Empty;
-                if (!groupMappingDict.TryGetValue(key, out variantName))
+                bool mappingFound = false;
+                lock (interfaceLock)
+                {
+                    mappingFound = groupMappingDict.TryGetValue(key, out variantName);
+                }
+                if (!mappingFound)
                 {
                     variantName = ExecuteIdentJob().ToLower(culture);
                     if (variantName.Length == 0)
                     {
                         throw new ArgumentOutOfRangeException("variantName", "ResolveSgbdFile: No variant found");
                     }
-                    groupMappingDict.Add(key, variantName);
+                    lock (interfaceLock)
+                    {
+                        groupMappingDict.Add(key, variantName);
+                    }
                 }
                 SgbdFileName = variantName + ".prg";
             }
@@ -3309,7 +3379,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                if (swLog != null)
+                if (SwLog != null)
                 {
                     LogString("executeInitJob Exception: " + ex.Message);
                 }
@@ -3324,7 +3394,7 @@ namespace EdiabasLib
                     {
                         if ((Int64)result.opData == 1)
                         {
-                            if (swLog != null)
+                            if (SwLog != null)
                             {
                                 LogString("executeInitJob ok");
                             }
@@ -3334,7 +3404,7 @@ namespace EdiabasLib
                 }
             }
 
-            if (swLog != null)
+            if (SwLog != null)
             {
                 LogString("executeInitJob failed");
             }
@@ -3352,7 +3422,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                if (swLog != null)
+                if (SwLog != null)
                 {
                     LogString("ExecuteExitJob Exception: " + ex.Message);
                 }
@@ -3369,7 +3439,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                if (swLog != null)
+                if (SwLog != null)
                 {
                     LogString("executeIdentJob Exception: " + ex.Message);
                 }
@@ -3383,7 +3453,7 @@ namespace EdiabasLib
                     if (result.opData.GetType() == typeof(string))
                     {
                         string variantName = (string)result.opData;
-                        if (swLog != null)
+                        if (SwLog != null)
                         {
                             LogString("executeIdentJob ok: " + variantName);
                         }
@@ -3392,7 +3462,7 @@ namespace EdiabasLib
                 }
             }
 
-            if (swLog != null)
+            if (SwLog != null)
             {
                 LogString("executeIdentJob failed");
             }
@@ -3401,7 +3471,7 @@ namespace EdiabasLib
 
         public void ExecuteJob(string jobName)
         {
-            if (swLog != null)
+            if (SwLog != null)
             {
                 LogString(string.Format("executeJob: {0}", jobName));
             }
@@ -3418,7 +3488,7 @@ namespace EdiabasLib
 
             if (jobInfo.UsesInfo != null)
             {
-                string fileName = Path.Combine(fileSearchDir, jobInfo.UsesInfo.Name.ToLower(culture) + ".prg");
+                string fileName = Path.Combine(FileSearchDir, jobInfo.UsesInfo.Name.ToLower(culture) + ".prg");
                 if (!File.Exists(fileName))
                 {
                     throw new ArgumentOutOfRangeException("fileName", "executeJob: SGBD not found: " + fileName);
@@ -3446,7 +3516,7 @@ namespace EdiabasLib
             {
                 ExecuteJob(sgbdFs, jobInfo);
             }
-            if (swLog != null)
+            if (SwLog != null)
             {
                 LogString("executeJob successfull");
             }
@@ -3470,7 +3540,7 @@ namespace EdiabasLib
             resultDict.Clear();
             resultSysDict.Clear();
             stackList.Clear();
-            SetConfigProperty("BipEcuFile", Path.GetFileNameWithoutExtension(sgbdFileName));
+            SetConfigProperty("BipEcuFile", Path.GetFileNameWithoutExtension(SgbdFileName));
             SetConfigProperty("BipDebugLevel", "0");
             SetConfigProperty("IfhTrace", "0");
             flags.Init();
@@ -3519,9 +3589,10 @@ namespace EdiabasLib
                         arg0.opData1 = labelAddress;
                     }
 
-                    if (abortJobFunc != null)
+                    AbortJobDelegate abortFunc = AbortJobFunc;
+                    if (abortFunc != null)
                     {
-                        if (abortJobFunc())
+                        if (abortFunc())
                         {
                             throw new Exception("executeJob aborted");
                         }
@@ -3530,12 +3601,12 @@ namespace EdiabasLib
 
                     if (oc.opFunc != null)
                     {
-                        if (swLog != null)
+                        if (SwLog != null)
                         {
                             LogString(">" + getOpText(pcCounterOld, oc, arg0, arg1));
                         }
                         oc.opFunc(this, oc, arg0, arg1);
-                        if (swLog != null)
+                        if (SwLog != null)
                         {
                             LogString("<" + getOpText(pcCounter, oc, arg0, arg1));
                         }
@@ -3553,7 +3624,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                if (swLog != null)
+                if (SwLog != null)
                 {
                     LogString("executeJob Exception: " + GetExceptionText(ex));
                 }
@@ -3576,10 +3647,11 @@ namespace EdiabasLib
 
         public void LogString(string info)
         {
-            if (swLog == null) return;
+            StreamWriter swLogLocal = SwLog;
+            if (swLogLocal == null) return;
             try
             {
-                swLog.WriteLine(info);
+                swLogLocal.WriteLine(info);
             }
             catch (Exception)
             {
@@ -3588,7 +3660,8 @@ namespace EdiabasLib
 
         public void LogData(byte[] data, int offset, int length, string info)
         {
-            if (swLog == null) return;
+            StreamWriter swLogLocal = SwLog;
+            if (swLogLocal == null) return;
             string logString = "";
 
             for (int i = 0; i < length; i++)
@@ -3597,7 +3670,7 @@ namespace EdiabasLib
             }
             try
             {
-                swLog.WriteLine(" (" + info + "): " + logString);
+                swLogLocal.WriteLine(" (" + info + "): " + logString);
             }
             catch (Exception)
             {
