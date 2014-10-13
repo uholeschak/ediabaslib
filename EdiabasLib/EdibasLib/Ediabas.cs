@@ -1988,6 +1988,7 @@ namespace EdiabasLib
 
         private bool disposed = false;
         private object interfaceLock = new object();
+        private bool jobRunning = false;
         private Stack<byte> stackList = new Stack<byte>();
         private List<byte[]> argList = new List<byte[]>();
         private Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
@@ -2036,6 +2037,24 @@ namespace EdiabasLib
         private bool jobEnd = false;
         private bool requestInit = true;
 
+        public bool JobRunning
+        {
+            get
+            {
+                lock (interfaceLock)
+                {
+                    return jobRunning;
+                }
+            }
+            private set
+            {
+                lock (interfaceLock)
+                {
+                    jobRunning = value;
+                }
+            }
+        }
+
         public List<byte[]> ArgList
         {
             get
@@ -2067,6 +2086,10 @@ namespace EdiabasLib
             }
             set
             {
+                if (JobRunning)
+                {
+                    throw new ArgumentOutOfRangeException("JobRunning", "ArgString: Job is running");
+                }
                 lock (interfaceLock)
                 {
                     argList.Clear();
@@ -2098,6 +2121,10 @@ namespace EdiabasLib
             }
             set
             {
+                if (JobRunning)
+                {
+                    throw new ArgumentOutOfRangeException("JobRunning", "ArgBinary: Job is running");
+                }
                 lock (interfaceLock)
                 {
                     argList.Clear();
@@ -2203,6 +2230,10 @@ namespace EdiabasLib
             }
             set
             {
+                if (JobRunning)
+                {
+                    throw new ArgumentOutOfRangeException("JobRunning", "AbortJobFunc: Job is running");
+                }
                 lock (interfaceLock)
                 {
                     abortJobFunc = value;
@@ -2221,6 +2252,10 @@ namespace EdiabasLib
             }
             set
             {
+                if (JobRunning)
+                {
+                    throw new ArgumentOutOfRangeException("JobRunning", "ProgressJobFunc: Job is running");
+                }
                 lock (interfaceLock)
                 {
                     progressJobFunc = value;
@@ -2239,6 +2274,10 @@ namespace EdiabasLib
             }
             set
             {
+                if (JobRunning)
+                {
+                    throw new ArgumentOutOfRangeException("JobRunning", "ErrorRaisedFunc: Job is running");
+                }
                 lock (interfaceLock)
                 {
                     errorRaisedFunc = value;
@@ -2281,6 +2320,10 @@ namespace EdiabasLib
             }
             set
             {
+                if (JobRunning)
+                {
+                    throw new ArgumentOutOfRangeException("JobRunning", "SwLog: Job is running");
+                }
                 lock (interfaceLock)
                 {
                     swLog = value;
@@ -2299,6 +2342,10 @@ namespace EdiabasLib
             }
             set
             {
+                if (JobRunning)
+                {
+                    throw new ArgumentOutOfRangeException("JobRunning", "SgbdFileName: Job is running");
+                }
                 CloseSgbdFs();
                 lock (interfaceLock)
                 {
@@ -2318,6 +2365,10 @@ namespace EdiabasLib
             }
             set
             {
+                if (JobRunning)
+                {
+                    throw new ArgumentOutOfRangeException("JobRunning", "FileSearchDir: Job is running");
+                }
                 CloseSgbdFs();
                 lock (interfaceLock)
                 {
@@ -2338,6 +2389,10 @@ namespace EdiabasLib
             }
             set
             {
+                if (JobRunning)
+                {
+                    throw new ArgumentOutOfRangeException("JobRunning", "EdCommClass: Job is running");
+                }
                 lock (interfaceLock)
                 {
                     edCommClass = value;
@@ -2496,7 +2551,7 @@ namespace EdiabasLib
             }
         }
 
-        public JobInfo GetJobInfo(string jobName)
+        private JobInfo GetJobInfo(string jobName)
         {
             UInt32 jobIndex;
             if (jobInfos.JobNameDict.TryGetValue(jobName.ToUpper(culture), out jobIndex))
@@ -2719,7 +2774,7 @@ namespace EdiabasLib
 
         public void SetError(ErrorCodes error)
         {
-            if (SwLog != null)
+            if (swLog != null)
             {
                 LogString(string.Format("SetError: {0}", error));
             }
@@ -2840,7 +2895,7 @@ namespace EdiabasLib
             }
         }
 
-        public UsesInfos ReadAllUses(Stream fs)
+        private UsesInfos ReadAllUses(Stream fs)
         {
             byte[] buffer = new byte[4];
             fs.Position = 0x7C;
@@ -2868,7 +2923,7 @@ namespace EdiabasLib
             return usesInfosLocal;
         }
 
-        public JobInfos ReadAllJobs(Stream fs)
+        private JobInfos ReadAllJobs(Stream fs)
         {
             List<JobInfo> jobListComplete = GetJobList(fs, null);
 
@@ -2921,7 +2976,7 @@ namespace EdiabasLib
             return jobInfosLocal;
         }
 
-        public List<JobInfo> GetJobList(Stream fs, UsesInfo usesInfo)
+        private List<JobInfo> GetJobList(Stream fs, UsesInfo usesInfo)
         {
             byte[] buffer = new byte[4];
             fs.Position = 0x18;
@@ -3006,7 +3061,7 @@ namespace EdiabasLib
             return jobList;
         }
 
-        public TableInfos ReadAllTables(Stream fs)
+        private TableInfos ReadAllTables(Stream fs)
         {
             byte[] buffer = new byte[4];
             fs.Position = 0x84;
@@ -3042,7 +3097,7 @@ namespace EdiabasLib
             return tableInfosLocal;
         }
 
-        public TableInfo ReadTable(Stream fs, UInt32 tableOffset)
+        private TableInfo ReadTable(Stream fs, UInt32 tableOffset)
         {
             fs.Position = tableOffset;
 
@@ -3069,7 +3124,7 @@ namespace EdiabasLib
             return new TableInfo(name, tableOffset, tableColumnOffset, tableColumnCount, tableRowCount);
         }
 
-        public void IndexTable(Stream fs, TableInfo tableInfo)
+        private void IndexTable(Stream fs, TableInfo tableInfo)
         {
             if (tableInfo.TableEntries != null)
             {
@@ -3105,7 +3160,7 @@ namespace EdiabasLib
             tableInfo.TableEntries = tableEntries;
         }
 
-        public string GetTableString(Stream fs, UInt32 stringOffset)
+        private string GetTableString(Stream fs, UInt32 stringOffset)
         {
             fs.Position = stringOffset;
 
@@ -3119,7 +3174,7 @@ namespace EdiabasLib
             return encoding.GetString(tableItemBuffer, 0, l);
         }
 
-        public Int32 GetTableIndex(Stream fs, string tableName, out bool found)
+        private Int32 GetTableIndex(Stream fs, string tableName, out bool found)
         {
             found = false;
             TableInfos tableInfosLocal = GetTableInfos(fs);
@@ -3135,7 +3190,7 @@ namespace EdiabasLib
             return tableInfosLocal.TableInfoArray.Count() - 1;
         }
 
-        public UInt32 GetTableColumns(Stream fs, Int32 tableIdx)
+        private UInt32 GetTableColumns(Stream fs, Int32 tableIdx)
         {
             TableInfos tableInfosLocal = GetTableInfos(fs);
             TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
@@ -3146,7 +3201,7 @@ namespace EdiabasLib
             return tableArray[tableIdx].Columns;
         }
 
-        public UInt32 GetTableRows(Stream fs, Int32 tableIdx)
+        private UInt32 GetTableRows(Stream fs, Int32 tableIdx)
         {
             TableInfos tableInfosLocal = GetTableInfos(fs);
             TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
@@ -3157,7 +3212,7 @@ namespace EdiabasLib
             return tableArray[tableIdx].Rows;
         }
 
-        public Int32 GetTableLine(Stream fs, Int32 tableIdx, EdValueType line, out bool found)
+        private Int32 GetTableLine(Stream fs, Int32 tableIdx, EdValueType line, out bool found)
         {
             found = false;
             TableInfos tableInfosLocal = GetTableInfos(fs);
@@ -3175,7 +3230,7 @@ namespace EdiabasLib
             return (Int32) line;
         }
 
-        public Int32 SeekTable(Stream fs, Int32 tableIdx, string columnName, string valueName, out bool found)
+        private Int32 SeekTable(Stream fs, Int32 tableIdx, string columnName, string valueName, out bool found)
         {
             found = false;
             TableInfos tableInfosLocal = GetTableInfos(fs);
@@ -3226,7 +3281,7 @@ namespace EdiabasLib
             return (Int32)(table.Rows - 1); // select last line
         }
 
-        public Int32 SeekTable(Stream fs, Int32 tableIdx, string columnName, EdValueType value, out bool found)
+        private Int32 SeekTable(Stream fs, Int32 tableIdx, string columnName, EdValueType value, out bool found)
         {
             found = false;
             TableInfos tableInfosLocal = GetTableInfos(fs);
@@ -3278,7 +3333,7 @@ namespace EdiabasLib
             return (Int32)(table.Rows - 1); // select last line
         }
 
-        public Int32 GetTableColumnIdx(Stream fs, TableInfo table, string columnName)
+        private Int32 GetTableColumnIdx(Stream fs, TableInfo table, string columnName)
         {
             UInt32 column;
             if (table.ColumnNameDict.TryGetValue(columnName.ToUpper(culture), out column))
@@ -3288,7 +3343,7 @@ namespace EdiabasLib
             return -1;
         }
 
-        public string GetTableEntry(Stream fs, Int32 tableIdx, Int32 rowIdx, string columnName)
+        private string GetTableEntry(Stream fs, Int32 tableIdx, Int32 rowIdx, string columnName)
         {
             TableInfos tableInfosLocal = GetTableInfos(fs);
             TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
@@ -3313,6 +3368,10 @@ namespace EdiabasLib
 
         public void ResolveSgbdFile(string fileName)
         {
+            if (JobRunning)
+            {
+                throw new ArgumentOutOfRangeException("JobRunning", "ResolveSgbdFile: Job is running");
+            }
             SgbdFileName = Path.GetFileName(fileName);
             UInt32 fileType = GetFileType(Path.Combine(FileSearchDir, fileName));
             if (fileType == 0)
@@ -3371,158 +3430,193 @@ namespace EdiabasLib
             return fileType;
         }
 
-        public void ExecuteInitJob()
+        private void ExecuteInitJob()
         {
             try
             {
-                ExecuteJob(jobNameInit);
-            }
-            catch (Exception ex)
-            {
-                if (SwLog != null)
+                JobRunning = true;
+
+                try
                 {
-                    LogString("executeInitJob Exception: " + ex.Message);
+                    ExecuteJob(jobNameInit);
                 }
-                throw new Exception("executeInitJob", ex);
-            }
-            if (resultSets.Count > 1)
-            {
-                ResultData result;
-                if (resultSets[1].TryGetValue("DONE", out result))
+                catch (Exception ex)
                 {
-                    if (result.opData.GetType() == typeof(Int64))
+                    if (swLog != null)
                     {
-                        if ((Int64)result.opData == 1)
+                        LogString("executeInitJob Exception: " + ex.Message);
+                    }
+                    throw new Exception("executeInitJob", ex);
+                }
+                if (resultSets.Count > 1)
+                {
+                    ResultData result;
+                    if (resultSets[1].TryGetValue("DONE", out result))
+                    {
+                        if (result.opData.GetType() == typeof(Int64))
                         {
-                            if (SwLog != null)
+                            if ((Int64)result.opData == 1)
                             {
-                                LogString("executeInitJob ok");
+                                if (swLog != null)
+                                {
+                                    LogString("executeInitJob ok");
+                                }
+                                return;
                             }
-                            return;
                         }
                     }
                 }
-            }
 
-            if (SwLog != null)
-            {
-                LogString("executeInitJob failed");
-            }
-            throw new Exception("executeInitJob: Initialization failed");
-        }
-
-        public void ExecuteExitJob()
-        {
-            try
-            {
-                if (sgbdFs != null && GetJobInfo(jobNameExit) != null)
+                if (swLog != null)
                 {
-                    ExecuteJob(jobNameExit);
+                    LogString("executeInitJob failed");
                 }
+                throw new Exception("executeInitJob: Initialization failed");
             }
-            catch (Exception ex)
+            finally
             {
-                if (SwLog != null)
-                {
-                    LogString("ExecuteExitJob Exception: " + ex.Message);
-                }
-                throw new Exception("ExecuteExitJob", ex);
+                JobRunning = false;
             }
         }
 
-        public string ExecuteIdentJob()
+        private void ExecuteExitJob()
         {
-            resultDict.Clear();
             try
             {
-                ExecuteJob(jobNameIdent);
-            }
-            catch (Exception ex)
-            {
-                if (SwLog != null)
+                JobRunning = true;
+
+                try
                 {
-                    LogString("executeIdentJob Exception: " + ex.Message);
-                }
-                throw new Exception("executeInitJob", ex);
-            }
-            if (resultSets.Count > 1)
-            {
-                ResultData result;
-                if (resultSets[1].TryGetValue("VARIANTE", out result))
-                {
-                    if (result.opData.GetType() == typeof(string))
+                    if (sgbdFs != null && GetJobInfo(jobNameExit) != null)
                     {
-                        string variantName = (string)result.opData;
-                        if (SwLog != null)
-                        {
-                            LogString("executeIdentJob ok: " + variantName);
-                        }
-                        return variantName;
+                        ExecuteJob(jobNameExit);
                     }
                 }
+                catch (Exception ex)
+                {
+                    if (swLog != null)
+                    {
+                        LogString("ExecuteExitJob Exception: " + ex.Message);
+                    }
+                    throw new Exception("ExecuteExitJob", ex);
+                }
             }
-
-            if (SwLog != null)
+            finally
             {
-                LogString("executeIdentJob failed");
+                JobRunning = false;
+            }
+        }
+
+        private string ExecuteIdentJob()
+        {
+            try
+            {
+                JobRunning = false;
+
+                resultDict.Clear();
+                try
+                {
+                    ExecuteJob(jobNameIdent);
+                }
+                catch (Exception ex)
+                {
+                    if (swLog != null)
+                    {
+                        LogString("executeIdentJob Exception: " + ex.Message);
+                    }
+                    throw new Exception("executeInitJob", ex);
+                }
+                if (resultSets.Count > 1)
+                {
+                    ResultData result;
+                    if (resultSets[1].TryGetValue("VARIANTE", out result))
+                    {
+                        if (result.opData.GetType() == typeof(string))
+                        {
+                            string variantName = (string)result.opData;
+                            if (swLog != null)
+                            {
+                                LogString("executeIdentJob ok: " + variantName);
+                            }
+                            return variantName;
+                        }
+                    }
+                }
+
+                if (swLog != null)
+                {
+                    LogString("executeIdentJob failed");
+                }
+            }
+            finally
+            {
+                JobRunning = false;
             }
             return string.Empty;
         }
 
         public void ExecuteJob(string jobName)
         {
-            if (SwLog != null)
+            try
             {
-                LogString(string.Format("executeJob: {0}", jobName));
-            }
-
-            if (!OpenSgbdFs())
-            {
-                throw new ArgumentOutOfRangeException("OpenSgbdFs", "executeJob: Open SGBD failed");
-            }
-            JobInfo jobInfo = GetJobInfo(jobName);
-            if (jobInfo == null)
-            {
-                throw new ArgumentOutOfRangeException("jobName", "executeJob: Job not found: " + jobName);
-            }
-
-            if (jobInfo.UsesInfo != null)
-            {
-                string fileName = Path.Combine(FileSearchDir, jobInfo.UsesInfo.Name.ToLower(culture) + ".prg");
-                if (!File.Exists(fileName))
+                JobRunning = true;
+                if (swLog != null)
                 {
-                    throw new ArgumentOutOfRangeException("fileName", "executeJob: SGBD not found: " + fileName);
+                    LogString(string.Format("executeJob: {0}", jobName));
                 }
-                try
+
+                if (!OpenSgbdFs())
                 {
-                    using (Stream tempFs = MemoryStreamReader.OpenRead(fileName))
+                    throw new ArgumentOutOfRangeException("OpenSgbdFs", "executeJob: Open SGBD failed");
+                }
+                JobInfo jobInfo = GetJobInfo(jobName);
+                if (jobInfo == null)
+                {
+                    throw new ArgumentOutOfRangeException("jobName", "executeJob: Job not found: " + jobName);
+                }
+
+                if (jobInfo.UsesInfo != null)
+                {
+                    string fileName = Path.Combine(FileSearchDir, jobInfo.UsesInfo.Name.ToLower(culture) + ".prg");
+                    if (!File.Exists(fileName))
                     {
-                        sgbdBaseFs = tempFs;
-                        ExecuteJob(tempFs, jobInfo);
+                        throw new ArgumentOutOfRangeException("fileName", "executeJob: SGBD not found: " + fileName);
+                    }
+                    try
+                    {
+                        using (Stream tempFs = MemoryStreamReader.OpenRead(fileName))
+                        {
+                            sgbdBaseFs = tempFs;
+                            ExecuteJob(tempFs, jobInfo);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogString("executeJob base job exception: " + GetExceptionText(ex));
+                        throw new Exception("executeJob base job exception", ex);
+                    }
+                    finally
+                    {
+                        CloseTableFs();
+                        sgbdBaseFs = null;
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    LogString("executeJob base job exception: " + GetExceptionText(ex));
-                    throw new Exception("executeJob base job exception", ex);
+                    ExecuteJob(sgbdFs, jobInfo);
                 }
-                finally
+                if (swLog != null)
                 {
-                    CloseTableFs();
-                    sgbdBaseFs = null;
+                    LogString("executeJob successfull");
                 }
             }
-            else
+            finally
             {
-                ExecuteJob(sgbdFs, jobInfo);
-            }
-            if (SwLog != null)
-            {
-                LogString("executeJob successfull");
+                JobRunning = false;
             }
         }
 
-        public void ExecuteJob(Stream fs, JobInfo jobInfo)
+        private void ExecuteJob(Stream fs, JobInfo jobInfo)
         {
             if (requestInit)
             {
@@ -3601,12 +3695,12 @@ namespace EdiabasLib
 
                     if (oc.opFunc != null)
                     {
-                        if (SwLog != null)
+                        if (swLog != null)
                         {
                             LogString(">" + getOpText(pcCounterOld, oc, arg0, arg1));
                         }
                         oc.opFunc(this, oc, arg0, arg1);
-                        if (SwLog != null)
+                        if (swLog != null)
                         {
                             LogString("<" + getOpText(pcCounter, oc, arg0, arg1));
                         }
@@ -3624,7 +3718,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                if (SwLog != null)
+                if (swLog != null)
                 {
                     LogString("executeJob Exception: " + GetExceptionText(ex));
                 }
