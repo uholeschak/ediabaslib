@@ -3793,7 +3793,7 @@ namespace EdiabasLib
 
                 try
                 {
-                    ExecuteJob(jobNameInit);
+                    executeJob(jobNameInit);
                 }
                 catch (Exception ex)
                 {
@@ -3844,7 +3844,7 @@ namespace EdiabasLib
                 {
                     if (sgbdFs != null && GetJobInfo(jobNameExit) != null)
                     {
-                        ExecuteJob(jobNameExit);
+                        executeJob(jobNameExit);
                     }
                 }
                 catch (Exception ex)
@@ -3871,7 +3871,7 @@ namespace EdiabasLib
                 resultDict.Clear();
                 try
                 {
-                    ExecuteJob(jobNameIdent);
+                    executeJob(jobNameIdent);
                 }
                 catch (Exception ex)
                 {
@@ -3910,60 +3910,69 @@ namespace EdiabasLib
             return string.Empty;
         }
 
+        private void executeJob(string jobName)
+        {
+            if (swLog != null)
+            {
+                LogString(string.Format("executeJob: {0}", jobName));
+            }
+
+            if (!OpenSgbdFs())
+            {
+                throw new ArgumentOutOfRangeException("OpenSgbdFs", "ExecuteJobInternal: Open SGBD failed");
+            }
+            JobInfo jobInfo = GetJobInfo(jobName);
+            if (jobInfo == null)
+            {
+                throw new ArgumentOutOfRangeException("jobName", "ExecuteJobInternal: Job not found: " + jobName);
+            }
+
+            if (jobInfo.UsesInfo != null)
+            {
+                string fileName = Path.Combine(FileSearchDir, jobInfo.UsesInfo.Name.ToLower(culture) + ".prg");
+                if (!File.Exists(fileName))
+                {
+                    throw new ArgumentOutOfRangeException("fileName", "ExecuteJobInternal: SGBD not found: " + fileName);
+                }
+                try
+                {
+                    using (Stream tempFs = MemoryStreamReader.OpenRead(fileName))
+                    {
+                        sgbdBaseFs = tempFs;
+                        executeJob(tempFs, jobInfo);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogString("executeJob base job exception: " + GetExceptionText(ex));
+                    throw new Exception("executeJob base job exception", ex);
+                }
+                finally
+                {
+                    CloseTableFs();
+                    sgbdBaseFs = null;
+                }
+            }
+            else
+            {
+                executeJob(sgbdFs, jobInfo);
+            }
+            if (swLog != null)
+            {
+                LogString("executeJob successfull");
+            }
+        }
+
         public void ExecuteJob(string jobName)
         {
+            if (JobRunning)
+            {
+                throw new ArgumentOutOfRangeException("JobRunning", "ExecuteJob: Job is running");
+            }
             try
             {
                 JobRunning = true;
-                if (swLog != null)
-                {
-                    LogString(string.Format("executeJob: {0}", jobName));
-                }
-
-                if (!OpenSgbdFs())
-                {
-                    throw new ArgumentOutOfRangeException("OpenSgbdFs", "executeJob: Open SGBD failed");
-                }
-                JobInfo jobInfo = GetJobInfo(jobName);
-                if (jobInfo == null)
-                {
-                    throw new ArgumentOutOfRangeException("jobName", "executeJob: Job not found: " + jobName);
-                }
-
-                if (jobInfo.UsesInfo != null)
-                {
-                    string fileName = Path.Combine(FileSearchDir, jobInfo.UsesInfo.Name.ToLower(culture) + ".prg");
-                    if (!File.Exists(fileName))
-                    {
-                        throw new ArgumentOutOfRangeException("fileName", "executeJob: SGBD not found: " + fileName);
-                    }
-                    try
-                    {
-                        using (Stream tempFs = MemoryStreamReader.OpenRead(fileName))
-                        {
-                            sgbdBaseFs = tempFs;
-                            ExecuteJob(tempFs, jobInfo);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        LogString("executeJob base job exception: " + GetExceptionText(ex));
-                        throw new Exception("executeJob base job exception", ex);
-                    }
-                    finally
-                    {
-                        CloseTableFs();
-                        sgbdBaseFs = null;
-                    }
-                }
-                else
-                {
-                    ExecuteJob(sgbdFs, jobInfo);
-                }
-                if (swLog != null)
-                {
-                    LogString("executeJob successfull");
-                }
+                executeJob(jobName);
             }
             finally
             {
@@ -3971,7 +3980,7 @@ namespace EdiabasLib
             }
         }
 
-        private void ExecuteJob(Stream fs, JobInfo jobInfo)
+        private void executeJob(Stream fs, JobInfo jobInfo)
         {
             if (requestInit)
             {
