@@ -281,14 +281,8 @@ namespace EdiabasTest
 
         static void ErrorRaisedFunc(Ediabas.ErrorCodes error)
         {
-            if (compareOutput)
-            {
-                outputWriter.WriteLine(string.Format("Error occured: 0x{0:X08}", (UInt32)error));
-            }
-            else
-            {
-                outputWriter.WriteLine(string.Format("Error occured: {0}", error));
-            }
+            string errorText = Ediabas.GetErrorDescription(error);
+            outputWriter.WriteLine(string.Format(culture, "Error occured: 0x{0:X08} {1}", (UInt32)error, errorText));
         }
 
         static void ShowHelp(OptionSet p)
