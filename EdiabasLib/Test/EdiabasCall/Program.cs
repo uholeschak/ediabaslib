@@ -171,14 +171,7 @@ namespace EdiabasCall
                     }
                     if (API.apiState() == API.APIERROR)
                     {
-                        if (compareOutput)
-                        {
-                            outputWriter.WriteLine(string.Format(culture, "Error occured: 0x{0:X08}", API.apiErrorCode()));
-                        }
-                        else
-                        {
-                            outputWriter.WriteLine(string.Format(culture, "Error occured: {0}", API.apiErrorText()));
-                        }
+                        outputWriter.WriteLine(string.Format(culture, "Error occured: 0x{0:X08} {1}", API.apiErrorCode(), API.apiErrorText()));
                         API.apiEnd();
                         return 1;
                     }
