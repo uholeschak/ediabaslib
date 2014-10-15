@@ -3866,7 +3866,7 @@ namespace EdiabasLib
         {
             try
             {
-                JobRunning = false;
+                JobRunning = true;
 
                 resultDict.Clear();
                 try
