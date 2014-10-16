@@ -2347,7 +2347,7 @@ namespace EdiabasLib
         private long infoProgressPos;
         private string infoProgressText = string.Empty;
         private string sgbdFileName = string.Empty;
-        private string fileSearchDir = string.Empty;
+        private string ecuPath = string.Empty;
         private EdCommBase edCommClass;
         private static long timeMeas = 0;
         private byte[] opArgBuffer = new byte[5];
@@ -2698,27 +2698,14 @@ namespace EdiabasLib
             }
         }
 
-        public string FileSearchDir
+        public string EcuPath
         {
             get
             {
                 lock (interfaceLock)
                 {
-                    return fileSearchDir;
+                    return ecuPath;
                 }
-            }
-            set
-            {
-                if (JobRunning)
-                {
-                    throw new ArgumentOutOfRangeException("JobRunning", "FileSearchDir: Job is running");
-                }
-                CloseSgbdFs();
-                lock (interfaceLock)
-                {
-                    fileSearchDir = value;
-                }
-                SetConfigProperty("EcuPath", fileSearchDir.TrimEnd(Path.DirectorySeparatorChar));
             }
         }
 
@@ -2893,6 +2880,19 @@ namespace EdiabasLib
                     configDict.Add(key, value);
                 }
             }
+
+            if (string.Compare(key, "ECUPATH", StringComparison.Ordinal) == 0)
+            {
+                if (JobRunning)
+                {
+                    throw new ArgumentOutOfRangeException("JobRunning", "SetConfigProperty: Job is running");
+                }
+                lock (interfaceLock)
+                {
+                    ecuPath = value;
+                }
+                CloseSgbdFs();
+            }
         }
 
         private JobInfo GetJobInfo(string jobName)
@@ -2923,7 +2923,7 @@ namespace EdiabasLib
             {
                 return true;
             }
-            string fileName = Path.Combine(FileSearchDir, SgbdFileName);
+            string fileName = Path.Combine(EcuPath, SgbdFileName);
             if (!File.Exists(fileName))
             {
                 LogString("OpenSgbdFs file not found: " + fileName);
@@ -3284,7 +3284,7 @@ namespace EdiabasLib
 
             foreach (UsesInfo usesInfo in usesInfos.UsesInfoArray)
             {
-                string fileName = Path.Combine(FileSearchDir, usesInfo.Name.ToLower(culture) + ".prg");
+                string fileName = Path.Combine(EcuPath, usesInfo.Name.ToLower(culture) + ".prg");
                 if (File.Exists(fileName))
                 {
                     try
@@ -3728,7 +3728,7 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("JobRunning", "ResolveSgbdFile: Job is running");
             }
             SgbdFileName = Path.GetFileName(fileName);
-            UInt32 fileType = GetFileType(Path.Combine(FileSearchDir, fileName));
+            UInt32 fileType = GetFileType(Path.Combine(EcuPath, fileName));
             if (fileType == 0)
             {       // group file
                 string key = SgbdFileName.ToLower(culture);
@@ -3929,7 +3929,7 @@ namespace EdiabasLib
 
             if (jobInfo.UsesInfo != null)
             {
-                string fileName = Path.Combine(FileSearchDir, jobInfo.UsesInfo.Name.ToLower(culture) + ".prg");
+                string fileName = Path.Combine(EcuPath, jobInfo.UsesInfo.Name.ToLower(culture) + ".prg");
                 if (!File.Exists(fileName))
                 {
                     throw new ArgumentOutOfRangeException("fileName", "ExecuteJobInternal: SGBD not found: " + fileName);

@@ -553,11 +553,13 @@ namespace CarControl
             edCommBwmFast.ReceiveDataFunc = ReceiveData;
 
             ediabas.AbortJobFunc = AbortEdiabasJob;
-            ediabas.FileSearchDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase), "Ecu");
-            if (ediabas.FileSearchDir.StartsWith("\\Windows\\"))
+
+            string ecuPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase), "Ecu");
+            if (ecuPath.StartsWith("\\Windows\\"))
             {
-                ediabas.FileSearchDir = "\\UM\\Program Files\\CarControl\\Ecu";
+                ecuPath = "\\UM\\Program Files\\CarControl\\Ecu";
             }
+            ediabas.SetConfigProperty("EcuPath", ecuPath);
 
             // public properties
             TestResult = string.Empty;

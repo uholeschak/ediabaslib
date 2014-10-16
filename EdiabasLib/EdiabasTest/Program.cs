@@ -103,7 +103,7 @@ namespace EdiabasTest
                     ediabas.ProgressJobFunc = ProgressJobFunc;
                     ediabas.ErrorRaisedFunc = ErrorRaisedFunc;
 
-                    ediabas.FileSearchDir = Path.GetDirectoryName(sgbdFile);
+                    ediabas.SetConfigProperty("EcuPath", Path.GetDirectoryName(sgbdFile));
                     if (logFile != null)
                     {
                         ediabas.SwLog = new StreamWriter(logFile);
