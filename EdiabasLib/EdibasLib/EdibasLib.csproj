@@ -43,7 +43,7 @@
   <ItemGroup>
     <Compile Include="EdCommBase.cs" />
     <Compile Include="EdCommObd.cs" />
-    <Compile Include="Ediabas.cs" />
+    <Compile Include="EdiabasNet.cs" />
     <Compile Include="EdOperations.cs" />
     <Compile Include="MemoryStreamReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
