@@ -75,7 +75,7 @@ namespace CarControl
             get;
             private set;
         }
-        public Dictionary<string, Ediabas.ResultData> EdiabasResultDict
+        public Dictionary<string, EdiabasNet.ResultData> EdiabasResultDict
         {
             get;
             private set;
@@ -248,16 +248,16 @@ namespace CarControl
         public class EdiabasErrorReport
         {
             private string deviceName;
-            private Dictionary<string, Ediabas.ResultData> errorDict;
-            private List<Dictionary<string, Ediabas.ResultData>> errorDetailSet;
+            private Dictionary<string, EdiabasNet.ResultData> errorDict;
+            private List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet;
             private string execptionText;
 
-            public EdiabasErrorReport(string deviceName, Dictionary<string, Ediabas.ResultData> errorDict, List<Dictionary<string, Ediabas.ResultData>> errorDetailSet) :
+            public EdiabasErrorReport(string deviceName, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet) :
                 this(deviceName, errorDict, errorDetailSet, string.Empty)
             {
             }
 
-            public EdiabasErrorReport(string deviceName, Dictionary<string, Ediabas.ResultData> errorDict, List<Dictionary<string, Ediabas.ResultData>> errorDetailSet, string execptionText)
+            public EdiabasErrorReport(string deviceName, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet, string execptionText)
             {
                 this.deviceName = deviceName;
                 this.errorDict = errorDict;
@@ -273,7 +273,7 @@ namespace CarControl
                 }
             }
 
-            public Dictionary<string, Ediabas.ResultData> ErrorDict
+            public Dictionary<string, EdiabasNet.ResultData> ErrorDict
             {
                 get
                 {
@@ -281,7 +281,7 @@ namespace CarControl
                 }
             }
 
-            public List<Dictionary<string, Ediabas.ResultData>> ErrorDetailSet
+            public List<Dictionary<string, EdiabasNet.ResultData>> ErrorDetailSet
             {
                 get
                 {
@@ -521,14 +521,14 @@ namespace CarControl
         private StreamWriter _swLog;
         private Stopwatch _logTimeWatch;
         private Stopwatch commStopWatch;
-        private Ediabas ediabas;
+        private EdiabasNet ediabas;
         private bool ediabasInitReq;
         private bool ediabasJobAbort;
         private string ediabasSgbdFile;
         private int ediabasUpdateCount;
         private int ediabasInternalStep;
-        private Dictionary<string, Ediabas.ResultData> ediabasTempDict;
-        private Dictionary<string, Ediabas.ResultData> ediabasDynDict;
+        private Dictionary<string, EdiabasNet.ResultData> ediabasTempDict;
+        private Dictionary<string, EdiabasNet.ResultData> ediabasDynDict;
 
         public CommThread()
         {
@@ -542,7 +542,7 @@ namespace CarControl
             _swLog = null;
             _logTimeWatch = new Stopwatch();
             commStopWatch = new Stopwatch();
-            ediabas = new Ediabas();
+            ediabas = new EdiabasNet();
 
             EdCommObd edCommBwmFast = new EdCommObd(ediabas);
             ediabas.EdCommClass = edCommBwmFast;
@@ -752,7 +752,7 @@ namespace CarControl
                 }
                 catch (Exception ex)
                 {
-                    string exText = Ediabas.GetExceptionText(ex);
+                    string exText = EdiabasNet.GetExceptionText(ex);
                     lock (CommThread.DataLock)
                     {
                         EdiabasErrorMessage = exText;
@@ -764,7 +764,7 @@ namespace CarControl
                 ediabasInitReq = false;
             }
 
-            Dictionary<string, Ediabas.ResultData> resultDict = null;
+            Dictionary<string, EdiabasNet.ResultData> resultDict = null;
 
             if (firstRequestCall)
             {
@@ -782,7 +782,7 @@ namespace CarControl
             {
                 ediabas.ExecuteJob(job.JobName);
 
-                List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
                 if (resultSets != null && resultSets.Count >= 2)
                 {
                     MergeResultDictionarys(ref ediabasTempDict, resultSets[1]);
@@ -791,7 +791,7 @@ namespace CarControl
             catch (Exception ex)
             {
                 ediabasInitReq = true;
-                string exText = Ediabas.GetExceptionText(ex);
+                string exText = EdiabasNet.GetExceptionText(ex);
                 lock (CommThread.DataLock)
                 {
                     EdiabasResultDict = null;
@@ -818,10 +818,10 @@ namespace CarControl
             {
                 ediabas.ExecuteJob("MODE_CTRL_LESEN");
 
-                List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
                 if (resultSets != null && resultSets.Count >= 2)
                 {
-                    Ediabas.ResultData resultData;
+                    EdiabasNet.ResultData resultData;
                     if (resultSets[1].TryGetValue("WERT", out resultData))
                     {
                         if (resultData.opData.GetType() == typeof(Int64))
@@ -835,7 +835,7 @@ namespace CarControl
             catch (Exception ex)
             {
                 ediabasInitReq = true;
-                string exText = Ediabas.GetExceptionText(ex);
+                string exText = EdiabasNet.GetExceptionText(ex);
                 lock (CommThread.DataLock)
                 {
                     EdiabasResultDict = null;
@@ -860,7 +860,7 @@ namespace CarControl
                     catch (Exception ex)
                     {
                         ediabasInitReq = true;
-                        string exText = Ediabas.GetExceptionText(ex);
+                        string exText = EdiabasNet.GetExceptionText(ex);
                         lock (CommThread.DataLock)
                         {
                             EdiabasResultDict = null;
@@ -884,7 +884,7 @@ namespace CarControl
                     catch (Exception ex)
                     {
                         ediabasInitReq = true;
-                        string exText = Ediabas.GetExceptionText(ex);
+                        string exText = EdiabasNet.GetExceptionText(ex);
                         lock (CommThread.DataLock)
                         {
                             EdiabasResultDict = null;
@@ -911,7 +911,7 @@ namespace CarControl
                         try
                         {
                             ediabas.ExecuteJob("STATUS_SIGNALE_NUMERISCH");
-                            List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
+                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
                             if (resultSets != null && resultSets.Count >= 2)
                             {
                                 MergeResultDictionarys(ref resultDict, resultSets[1], string.Format("STATUS_SIGNALE_NUMERISCH{0}_", channel));
@@ -920,7 +920,7 @@ namespace CarControl
                         catch (Exception ex)
                         {
                             ediabasInitReq = true;
-                            string exText = Ediabas.GetExceptionText(ex);
+                            string exText = EdiabasNet.GetExceptionText(ex);
                             lock (CommThread.DataLock)
                             {
                                 EdiabasResultDict = null;
@@ -948,7 +948,7 @@ namespace CarControl
                         catch (Exception ex)
                         {
                             ediabasInitReq = true;
-                            string exText = Ediabas.GetExceptionText(ex);
+                            string exText = EdiabasNet.GetExceptionText(ex);
                             lock (CommThread.DataLock)
                             {
                                 EdiabasResultDict = null;
@@ -998,7 +998,7 @@ namespace CarControl
                 }
                 catch (Exception ex)
                 {
-                    string exText = Ediabas.GetExceptionText(ex);
+                    string exText = EdiabasNet.GetExceptionText(ex);
                     errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, null, null, exText));
                     continue;
                 }
@@ -1011,12 +1011,12 @@ namespace CarControl
                 {
                     ediabas.ExecuteJob("FS_LESEN");
 
-                    List<Dictionary<string, Ediabas.ResultData>> resultSets = new List<Dictionary<string, Ediabas.ResultData>>(ediabas.ResultSets);
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(ediabas.ResultSets);
 
                     bool jobOk = false;
                     if (resultSets != null && resultSets.Count > 1)
                     {
-                        Ediabas.ResultData resultData;
+                        EdiabasNet.ResultData resultData;
                         if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
                         {
                             if (resultData.opData.GetType() == typeof(string))
@@ -1033,7 +1033,7 @@ namespace CarControl
                     if (jobOk)
                     {
                         int dictIndex = 0;
-                        foreach (Dictionary<string, Ediabas.ResultData> resultDict in resultSets)
+                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
                         {
                             if (dictIndex == 0)
                             {
@@ -1041,7 +1041,7 @@ namespace CarControl
                                 continue;
                             }
 
-                            Ediabas.ResultData resultData;
+                            EdiabasNet.ResultData resultData;
                             if (resultDict.TryGetValue("F_ORT_NR", out resultData))
                             {
                                 if (resultData.opData.GetType() == typeof(Int64))
@@ -1051,11 +1051,11 @@ namespace CarControl
 
                                     ediabas.ExecuteJob("FS_LESEN_DETAIL");
 
-                                    List<Dictionary<string, Ediabas.ResultData>> resultSetsDetail = new List<Dictionary<string, Ediabas.ResultData>>(ediabas.ResultSets);
+                                    List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail = new List<Dictionary<string, EdiabasNet.ResultData>>(ediabas.ResultSets);
                                     if (resultSetsDetail != null)
                                     {
                                         errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, resultDict,
-                                            new List<Dictionary<string, Ediabas.ResultData>>(resultSetsDetail)));
+                                            new List<Dictionary<string, EdiabasNet.ResultData>>(resultSetsDetail)));
                                     }
                                 }
                             }
@@ -1070,7 +1070,7 @@ namespace CarControl
                 catch (Exception ex)
                 {
                     ediabasInitReq = true;
-                    string exText = Ediabas.GetExceptionText(ex);
+                    string exText = EdiabasNet.GetExceptionText(ex);
                     errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, null, null, exText));
                     continue;
                 }
@@ -1099,7 +1099,7 @@ namespace CarControl
                 }
                 catch (Exception ex)
                 {
-                    string exText = Ediabas.GetExceptionText(ex);
+                    string exText = EdiabasNet.GetExceptionText(ex);
                     lock (CommThread.DataLock)
                     {
                         EdiabasErrorMessage = exText;
@@ -1111,7 +1111,7 @@ namespace CarControl
                 ediabasInitReq = false;
             }
 
-            Dictionary<string, Ediabas.ResultData> resultDict = null;
+            Dictionary<string, EdiabasNet.ResultData> resultDict = null;
 
             foreach (EdiabasJob job in ediabasJobs.JobArray)
             {
@@ -1141,7 +1141,7 @@ namespace CarControl
                 {
                     ediabas.ExecuteJob(job.JobName);
 
-                    List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
                     if (resultSets != null && resultSets.Count >= 2)
                     {
                         MergeResultDictionarys(ref resultDict, resultSets[1]);
@@ -1150,7 +1150,7 @@ namespace CarControl
                 catch (Exception ex)
                 {
                     ediabasInitReq = true;
-                    string exText = Ediabas.GetExceptionText(ex);
+                    string exText = EdiabasNet.GetExceptionText(ex);
                     lock (CommThread.DataLock)
                     {
                         EdiabasResultDict = null;
@@ -1203,7 +1203,7 @@ namespace CarControl
                     catch (Exception ex)
                     {
                         ediabasInitReq = true;
-                        string exText = Ediabas.GetExceptionText(ex);
+                        string exText = EdiabasNet.GetExceptionText(ex);
                         lock (CommThread.DataLock)
                         {
                             TestResult = exText;
@@ -1238,7 +1238,7 @@ namespace CarControl
                     timeDiff += Stopwatch.GetTimestamp() - startTime;
 
                     string lineText = string.Empty;
-                    List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
                     if ((resultSets == null) || (resultSets.Count < 2))
                     {
                         lineText += "-\r\n";
@@ -1246,7 +1246,7 @@ namespace CarControl
                     else
                     {
                         int dictIndex = 0;
-                        foreach (Dictionary<string, Ediabas.ResultData> resultDict in resultSets)
+                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
                         {
                             if (dictIndex == 0)
                             {
@@ -1257,7 +1257,7 @@ namespace CarControl
                             string newLineText = string.Empty;
                             foreach (string dataName in ediabasJob.JobData)
                             {
-                                Ediabas.ResultData resultData;
+                                EdiabasNet.ResultData resultData;
                                 if (resultDict.TryGetValue(dataName, out resultData))
                                 {
                                     string valueText = string.Empty;
@@ -1297,7 +1297,7 @@ namespace CarControl
                 catch (Exception ex)
                 {
                     ediabasInitReq = true;
-                    string exText = Ediabas.GetExceptionText(ex);
+                    string exText = EdiabasNet.GetExceptionText(ex);
                     lock (CommThread.DataLock)
                     {
                         TestResult = exText;
@@ -1401,7 +1401,7 @@ namespace CarControl
             return true;
         }
 
-        private static void MergeResultDictionarys(ref Dictionary<string, Ediabas.ResultData> resultDict, Dictionary<string, Ediabas.ResultData> mergeDict)
+        private static void MergeResultDictionarys(ref Dictionary<string, EdiabasNet.ResultData> resultDict, Dictionary<string, EdiabasNet.ResultData> mergeDict)
         {
             if (resultDict == null)
             {
@@ -1419,11 +1419,11 @@ namespace CarControl
             }
         }
 
-        private static void MergeResultDictionarys(ref Dictionary<string, Ediabas.ResultData> resultDict, Dictionary<string, Ediabas.ResultData> mergeDict, string prefix)
+        private static void MergeResultDictionarys(ref Dictionary<string, EdiabasNet.ResultData> resultDict, Dictionary<string, EdiabasNet.ResultData> mergeDict, string prefix)
         {
             if (resultDict == null)
             {
-                resultDict = new Dictionary<string,Ediabas.ResultData>();
+                resultDict = new Dictionary<string,EdiabasNet.ResultData>();
             }
 
             foreach (string key in mergeDict.Keys)

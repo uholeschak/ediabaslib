@@ -8,7 +8,7 @@ namespace EdiabasLib
     public abstract class EdCommBase : IDisposable
     {
         private bool disposed = false;
-        protected Ediabas ediabas;
+        protected EdiabasNet ediabas;
         protected UInt32 commRepeats = 0;
         protected UInt32[] commParameter;
         protected Int16[] commAnswerLen;
@@ -99,7 +99,7 @@ namespace EdiabasLib
             get;
         }
 
-        protected EdCommBase(Ediabas ediabas)
+        protected EdCommBase(EdiabasNet ediabas)
         {
             this.ediabas = ediabas;
         }

@@ -308,7 +308,7 @@ namespace CarControl
                 {
                     string tempText;
                     bool found;
-                    Dictionary<string, Ediabas.ResultData> resultDict = null;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
                     lock (CommThread.DataLock)
                     {
                         resultDict = _commThread.EdiabasResultDict;
@@ -402,7 +402,7 @@ namespace CarControl
                 {
                     bool found;
                     string dataText;
-                    Dictionary<string, Ediabas.ResultData> resultDict = null;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
                     lock (CommThread.DataLock)
                     {
                         resultDict = _commThread.EdiabasResultDict;
@@ -460,7 +460,7 @@ namespace CarControl
 
                 if (motorDataUnevenRunningValid)
                 {
-                    Dictionary<string, Ediabas.ResultData> resultDict = null;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
                     lock (CommThread.DataLock)
                     {
                         resultDict = _commThread.EdiabasResultDict;
@@ -480,7 +480,7 @@ namespace CarControl
 
                 if (motorRotIrregularValid)
                 {
-                    Dictionary<string, Ediabas.ResultData> resultDict = null;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
                     lock (CommThread.DataLock)
                     {
                         resultDict = _commThread.EdiabasResultDict;
@@ -500,7 +500,7 @@ namespace CarControl
 
                 if (motorPmValid)
                 {
-                    Dictionary<string, Ediabas.ResultData> resultDict = null;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
                     lock (CommThread.DataLock)
                     {
                         resultDict = _commThread.EdiabasResultDict;
@@ -538,7 +538,7 @@ namespace CarControl
                 if (cccNavValid)
                 {
                     bool found;
-                    Dictionary<string, Ediabas.ResultData> resultDict = null;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
                     lock (CommThread.DataLock)
                     {
                         resultDict = _commThread.EdiabasResultDict;
@@ -572,7 +572,7 @@ namespace CarControl
 
                 if (ihkValid)
                 {
-                    Dictionary<string, Ediabas.ResultData> resultDict = null;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
                     lock (CommThread.DataLock)
                     {
                         resultDict = _commThread.EdiabasResultDict;
@@ -623,7 +623,7 @@ namespace CarControl
                                 message += ", ";
                                 message += FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
                                 string detailText = string.Empty;
-                                foreach (Dictionary<string, Ediabas.ResultData> errorDetail in errorReport.ErrorDetailSet)
+                                foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
                                 {
                                     string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
                                     if (kmText.Length > 0)
@@ -687,7 +687,7 @@ namespace CarControl
             }
         }
 
-        private String FormatResultDouble(Dictionary<string, Ediabas.ResultData> resultDict, string dataName, string format)
+        private String FormatResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
         {
             bool found;
             double value = GetResultDouble(resultDict, dataName, out found);
@@ -698,7 +698,7 @@ namespace CarControl
             return string.Empty;
         }
 
-        private String FormatResultInt64(Dictionary<string, Ediabas.ResultData> resultDict, string dataName, string format)
+        private String FormatResultInt64(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
         {
             bool found;
             Int64 value = GetResultInt64(resultDict, dataName, out found);
@@ -709,7 +709,7 @@ namespace CarControl
             return string.Empty;
         }
 
-        private String FormatResultString(Dictionary<string, Ediabas.ResultData> resultDict, string dataName, string format)
+        private String FormatResultString(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
         {
             bool found;
             string value = GetResultString(resultDict, dataName, out found);
@@ -720,10 +720,10 @@ namespace CarControl
             return string.Empty;
         }
 
-        private Int64 GetResultInt64(Dictionary<string, Ediabas.ResultData> resultDict, string dataName, out bool found)
+        private Int64 GetResultInt64(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
         {
             found = false;
-            Ediabas.ResultData resultData;
+            EdiabasNet.ResultData resultData;
             if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
             {
                 if (resultData.opData.GetType() == typeof(Int64))
@@ -735,10 +735,10 @@ namespace CarControl
             return 0;
         }
 
-        private Double GetResultDouble(Dictionary<string, Ediabas.ResultData> resultDict, string dataName, out bool found)
+        private Double GetResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
         {
             found = false;
-            Ediabas.ResultData resultData;
+            EdiabasNet.ResultData resultData;
             if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
             {
                 if (resultData.opData.GetType() == typeof(Double))
@@ -750,10 +750,10 @@ namespace CarControl
             return 0;
         }
 
-        private String GetResultString(Dictionary<string, Ediabas.ResultData> resultDict, string dataName, out bool found)
+        private String GetResultString(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
         {
             found = false;
-            Ediabas.ResultData resultData;
+            EdiabasNet.ResultData resultData;
             if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
             {
                 if (resultData.opData.GetType() == typeof(String))
