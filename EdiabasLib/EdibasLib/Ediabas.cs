@@ -13,11 +13,11 @@ namespace EdiabasLib
     using EdValueType = UInt32;
     using EdFloatType = Double;
 
-    public partial class Ediabas : IDisposable
+    public partial class EdiabasNet : IDisposable
     {
-        private delegate void OperationDelegate(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1);
+        private delegate void OperationDelegate(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1);
         public delegate bool AbortJobDelegate();
-        public delegate void ProgressJobDelegate(Ediabas ediabas);
+        public delegate void ProgressJobDelegate(EdiabasNet ediabas);
         public delegate void ErrorRaisedDelegate(ErrorCodes error);
 
         public static readonly int MAX_FILES = 5;
@@ -45,27 +45,27 @@ namespace EdiabasLib
 
         private class Operand
         {
-            public Operand(Ediabas ediabas)
+            public Operand(EdiabasNet ediabas)
                 : this(ediabas, OpAddrMode.None, null, null, null)
             {
             }
 
-            public Operand(Ediabas ediabas, OpAddrMode opAddrMode)
+            public Operand(EdiabasNet ediabas, OpAddrMode opAddrMode)
                 : this(ediabas, opAddrMode, null, null, null)
             {
             }
 
-            public Operand(Ediabas ediabas, OpAddrMode opAddrMode, Object opData1)
+            public Operand(EdiabasNet ediabas, OpAddrMode opAddrMode, Object opData1)
                 : this(ediabas, opAddrMode, opData1, null, null)
             {
             }
 
-            public Operand(Ediabas ediabas, OpAddrMode opAddrMode, Object opData1, Object opData2)
+            public Operand(EdiabasNet ediabas, OpAddrMode opAddrMode, Object opData1, Object opData2)
                 : this(ediabas, opAddrMode, opData1, opData2, null)
             {
             }
 
-            public Operand(Ediabas ediabas, OpAddrMode opAddrMode, Object opData1, Object opData2, Object opData3)
+            public Operand(EdiabasNet ediabas, OpAddrMode opAddrMode, Object opData1, Object opData2, Object opData3)
             {
                 this.ediabas = ediabas;
                 Init(opAddrMode, opData1, opData2, opData3);
@@ -256,11 +256,11 @@ namespace EdiabasLib
                             if (requiredLength > ediabas.ArrayMaxSize)
                             {
                                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
-                                return Ediabas.byteArray0;
+                                return EdiabasNet.byteArray0;
                             }
                             if (dataArray.Length < requiredLength)
                             {
-                                return Ediabas.byteArray0;
+                                return EdiabasNet.byteArray0;
                             }
 
                             byte[] resultArray = new byte[dataArray.Length - index];
@@ -322,13 +322,13 @@ namespace EdiabasLib
                             if (requiredLength > ediabas.ArrayMaxSize)
                             {
                                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
-                                return Ediabas.byteArray0;
+                                return EdiabasNet.byteArray0;
                             }
                             if (dataArray.Length < requiredLength)
                             {
                                 if (dataArray.Length <= index)
                                 {
-                                    return Ediabas.byteArray0;
+                                    return EdiabasNet.byteArray0;
                                 }
                                 len = (EdValueType) (dataArray.Length - index);
                             }
@@ -545,7 +545,7 @@ namespace EdiabasLib
                 SetArrayData(dataArray);
             }
 
-            private Ediabas ediabas;
+            private EdiabasNet ediabas;
             private OpAddrMode opAddrMode;
             public OpAddrMode AddrMode
             {
@@ -1302,7 +1302,7 @@ namespace EdiabasLib
 
         private class StringData
         {
-            public StringData(Ediabas ediabas, EdValueType length)
+            public StringData(EdiabasNet ediabas, EdValueType length)
             {
                 this.ediabas = ediabas;
                 this.length = 0;
@@ -1365,7 +1365,7 @@ namespace EdiabasLib
                 }
             }
 
-            private Ediabas ediabas;
+            private EdiabasNet ediabas;
             private EdValueType length;
             private byte[] data;
         }
@@ -1380,7 +1380,7 @@ namespace EdiabasLib
                 this.ediabas = null;
             }
 
-            public void SetEdiabas(Ediabas ediabas)
+            public void SetEdiabas(EdiabasNet ediabas)
             {
                 this.ediabas = ediabas;
             }
@@ -1643,7 +1643,7 @@ namespace EdiabasLib
 
             private RegisterType type;
             private uint index;
-            private Ediabas ediabas;
+            private EdiabasNet ediabas;
         }
 
         static private Register[] registerList = new Register[]
@@ -2767,7 +2767,7 @@ namespace EdiabasLib
             }
         }
 
-        public Ediabas()
+        public EdiabasNet()
         {
             if (trapBitDict == null)
             {

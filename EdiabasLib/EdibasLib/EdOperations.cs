@@ -13,9 +13,9 @@ namespace EdiabasLib
     using EdValueType = UInt32;
     using EdFloatType = Double;
 
-    public partial class Ediabas
+    public partial class EdiabasNet
     {
-        private static void OpA2fix(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpA2fix(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -27,7 +27,7 @@ namespace EdiabasLib
         }
 
         // BEST2: ator
-        private static void OpA2flt(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpA2flt(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -45,7 +45,7 @@ namespace EdiabasLib
         }
 
         // BEST2: atoy
-        private static void OpA2y(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpA2y(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -107,7 +107,7 @@ namespace EdiabasLib
             arg0.SetArrayData(resultList.ToArray());
         }
 
-        private static void OpAddc(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpAddc(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -129,7 +129,7 @@ namespace EdiabasLib
             ediabas.flags.SetCarry(sum, len);
         }
 
-        private static void OpAdds(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpAdds(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -147,7 +147,7 @@ namespace EdiabasLib
             ediabas.flags.SetCarry(sum, len);
         }
 
-        private static void OpAnd(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpAnd(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -160,7 +160,7 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(value, len);
         }
 
-        private static void OpAsl(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpAsl(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -205,7 +205,7 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(value, len);
         }
 
-        private static void OpAsr(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpAsr(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -282,7 +282,7 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(value, len);
         }
 
-        private static void OpAtsp(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpAtsp(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -321,12 +321,12 @@ namespace EdiabasLib
         }
 
         // BEST2: userbreak
-        private static void OpBreak(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpBreak(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.SetError(ErrorCodes.EDIABAS_BIP_0008);
         }
 
-        private static void OpClear(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpClear(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -353,7 +353,7 @@ namespace EdiabasLib
         }
 
         // BEST2: getCfgInt
-        private static void OpCfgig(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpCfgig(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -367,14 +367,14 @@ namespace EdiabasLib
             }
         }
 
-        private static void OpCfgis(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpCfgis(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             string valueString = string.Format("{0}", arg1.GetValueData());
             ediabas.SetConfigProperty(arg0.GetStringData(), valueString);
         }
 
         // BEST2: getCfgString
-        private static void OpCfgsg(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpCfgsg(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -389,24 +389,24 @@ namespace EdiabasLib
         }
 
         // clear carry
-        private static void OpClrc(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpClrc(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.flags.carry = false;
         }
 
         // BEST2: clear_error
-        private static void OpClrt(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpClrt(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.errorTrapBitNr = -1;
         }
 
         // clear overflow
-        private static void OpClrv(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpClrv(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.flags.overflow = false;
         }
 
-        private static void OpComp(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpComp(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdValueType len = GetArgsValueLength(arg0, arg1);
             EdValueType val0 = arg0.GetValueData(len);
@@ -419,7 +419,7 @@ namespace EdiabasLib
         }
 
         // BEST2: getdate
-        private static void OpDate(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpDate(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -442,7 +442,7 @@ namespace EdiabasLib
             arg0.SetArrayData(resultArray);
         }
 
-        private static void OpDivs(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpDivs(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -491,13 +491,13 @@ namespace EdiabasLib
         }
 
         // BEST2: make_error (execute)
-        private static void OpEerr(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpEerr(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.errorTrapBitNr >= 0)
             {
-                foreach (ErrorCodes key in Ediabas.trapBitDict.Keys)
+                foreach (ErrorCodes key in EdiabasNet.trapBitDict.Keys)
                 {
-                    if (Ediabas.trapBitDict[key] == ediabas.errorTrapBitNr)
+                    if (EdiabasNet.trapBitDict[key] == ediabas.errorTrapBitNr)
                     {
                         ediabas.RaiseError(key);
                     }
@@ -507,7 +507,7 @@ namespace EdiabasLib
         }
 
         // BEST2: new_set_of_results
-        private static void OpEnewset(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpEnewset(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.resultSetsTemp != null && ediabas.resultDict.Count > 0)
             {
@@ -516,53 +516,53 @@ namespace EdiabasLib
             }
         }
 
-        private static void OpErgb(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpErgb(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.SetResultData(new ResultData(ResultType.TypeB, arg0.GetStringData(), (Int64)((Byte)arg1.GetValueData(1))));
         }
 
-        private static void OpErgw(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpErgw(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.SetResultData(new ResultData(ResultType.TypeW, arg0.GetStringData(), (Int64)((UInt16)arg1.GetValueData(2))));
         }
 
-        private static void OpErgd(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpErgd(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.SetResultData(new ResultData(ResultType.TypeD, arg0.GetStringData(), (Int64)((UInt32)arg1.GetValueData(4))));
         }
 
-        private static void OpErgi(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpErgi(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.SetResultData(new ResultData(ResultType.TypeI, arg0.GetStringData(), (Int64)((Int16)arg1.GetValueData(2))));
         }
 
-        private static void OpErgr(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpErgr(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.SetResultData(new ResultData(ResultType.TypeR, arg0.GetStringData(), arg1.GetFloatData()));
         }
 
-        private static void OpErgs(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpErgs(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.SetResultData(new ResultData(ResultType.TypeS, arg0.GetStringData(), arg1.GetStringData()));
         }
 
-        private static void OpErgy(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpErgy(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.SetResultData(new ResultData(ResultType.TypeY, arg0.GetStringData(), arg1.GetArrayData()));
         }
 
-        private static void OpErgc(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpErgc(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.SetResultData(new ResultData(ResultType.TypeC, arg0.GetStringData(), (Int64)((SByte)arg1.GetValueData(1))));
         }
 
-        private static void OpErgl(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpErgl(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.SetResultData(new ResultData(ResultType.TypeL, arg0.GetStringData(), (Int64)((Int32)arg1.GetValueData(4))));
         }
 
         // BEST2: doNewInit
-        private static void OpErgsysi(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpErgsysi(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             string data = arg0.GetStringData();
             EdValueType dataValue = arg1.GetValueData(2);
@@ -580,7 +580,7 @@ namespace EdiabasLib
         }
 
         // BEST2: realadd
-        private static void OpFadd(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFadd(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -607,7 +607,7 @@ namespace EdiabasLib
             arg0.SetRawData(result);
         }
 
-        private static void OpFcomp(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFcomp(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdFloatType val0 = arg0.GetFloatData();
             EdFloatType val1 = arg1.GetFloatData();
@@ -623,7 +623,7 @@ namespace EdiabasLib
         }
 
         // BEST2: realdiv
-        private static void OpFdiv(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFdiv(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -651,7 +651,7 @@ namespace EdiabasLib
         }
 
         // BEST2: itoad
-        private static void OpFix2dez(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFix2dez(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -690,7 +690,7 @@ namespace EdiabasLib
         }
 
         // BEST2: itor
-        private static void OpFix2flt(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFix2flt(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -703,7 +703,7 @@ namespace EdiabasLib
         }
 
         // BEST2: itoax
-        private static void OpFix2hex(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFix2hex(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -742,7 +742,7 @@ namespace EdiabasLib
         }
 
         // BEST2: rtoa
-        private static void OpFlt2a(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFlt2a(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -772,7 +772,7 @@ namespace EdiabasLib
         }
 
         // BEST2: rtoi
-        private static void OpFlt2fix(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFlt2fix(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -788,7 +788,7 @@ namespace EdiabasLib
         }
 
         // BEST2: real_to_data (intel byte order)
-        private static void OpFlt2y4(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFlt2y4(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -831,7 +831,7 @@ namespace EdiabasLib
         }
 
         // BEST2: real_to_data (intel byte order)
-        private static void OpFlt2y8(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFlt2y8(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -864,7 +864,7 @@ namespace EdiabasLib
         }
 
         // BEST2: realmul
-        private static void OpFmul(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFmul(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -892,7 +892,7 @@ namespace EdiabasLib
         }
 
         // BEST2: realsub
-        private static void OpFsub(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFsub(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -919,13 +919,13 @@ namespace EdiabasLib
             arg0.SetRawData(result);
         }
 
-        private static void OpEoj(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpEoj(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.jobEnd = true;
         }
 
         // BEST2: ascii2hex
-        private static void OpHex2y(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpHex2y(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -935,7 +935,7 @@ namespace EdiabasLib
             byte[] result;
             try
             {
-                result = Ediabas.HexToByteArray(valueStr);
+                result = EdiabasNet.HexToByteArray(valueStr);
                 ediabas.flags.carry = false;
             }
             catch (Exception)
@@ -947,7 +947,7 @@ namespace EdiabasLib
         }
 
         // jump if result tag is not existing
-        private static void OpEtag(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpEtag(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             lock (ediabas.interfaceLock)
             {
@@ -963,7 +963,7 @@ namespace EdiabasLib
         }
 
         // BEST2: fclose
-        private static void OpFclose(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFclose(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdValueType handle = arg0.GetValueData(1);
             if (!ediabas.CloseUserFile((int)handle))
@@ -973,7 +973,7 @@ namespace EdiabasLib
         }
 
         // BEST2: fopen
-        private static void OpFopen(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFopen(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1008,7 +1008,7 @@ namespace EdiabasLib
         }
 
         // BEST2: fread
-        private static void OpFread(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFread(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1048,7 +1048,7 @@ namespace EdiabasLib
         }
 
         // BEST2: freadln
-        private static void OpFreadln(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFreadln(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1088,7 +1088,7 @@ namespace EdiabasLib
         }
 
         // BEST2: fseek
-        private static void OpFseek(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFseek(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdValueType handle = arg0.GetValueData(1);
             EdValueType position = arg1.GetValueData();
@@ -1111,7 +1111,7 @@ namespace EdiabasLib
         }
 
         // BEST2: fseekln
-        private static void OpFseekln(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFseekln(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdValueType handle = arg0.GetValueData(1);
             EdValueType line = arg1.GetValueData();
@@ -1141,7 +1141,7 @@ namespace EdiabasLib
         }
 
         // BEST2: ftell
-        private static void OpFtell(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFtell(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1172,7 +1172,7 @@ namespace EdiabasLib
         }
 
         // BEST2: ftellln
-        private static void OpFtellln(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpFtellln(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1222,7 +1222,7 @@ namespace EdiabasLib
         }
 
         // BEST2: generateRunError
-        private static void OpGenerr(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpGenerr(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ErrorCodes error = (ErrorCodes)arg0.GetValueData();
             if ((error < ErrorCodes.EDIABAS_RUN_0000) || (error > ErrorCodes.EDIABAS_RUN_LAST))
@@ -1236,7 +1236,7 @@ namespace EdiabasLib
         }
 
         // BEST2: get_trap_mask
-        private static void OpGettmr(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpGettmr(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1246,7 +1246,7 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(arg0.GetValueData(), arg0.GetDataLen());
         }
 
-        private static void OpMove(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpMove(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1309,7 +1309,7 @@ namespace EdiabasLib
         }
 
         // BEST2: incProgressPos
-        private static void OpIincpos(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpIincpos(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             long incVal = arg0.GetValueData();
             long newValue;
@@ -1334,7 +1334,7 @@ namespace EdiabasLib
         }
 
         // BEST2: setProgressRange
-        private static void OpIrange(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpIrange(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdValueType progressRange = arg0.GetValueData();
             lock (ediabas.interfaceLock)
@@ -1346,7 +1346,7 @@ namespace EdiabasLib
         }
 
         // BEST2: updateInfo
-        private static void OpIupdate(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpIupdate(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             string progressText = arg0.GetStringData();
             lock (ediabas.interfaceLock)
@@ -1357,7 +1357,7 @@ namespace EdiabasLib
         }
 
         // jump above
-        private static void OpJa(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJa(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (!ediabas.flags.carry && !ediabas.flags.zero)
             {
@@ -1366,7 +1366,7 @@ namespace EdiabasLib
         }
 
         // jump above equal (identical to jnc)
-        private static void OpJae(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJae(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (!ediabas.flags.carry)
             {
@@ -1375,7 +1375,7 @@ namespace EdiabasLib
         }
 
         // jump below or equal
-        private static void OpJbe(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJbe(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.flags.carry || ediabas.flags.zero)
             {
@@ -1384,7 +1384,7 @@ namespace EdiabasLib
         }
 
         // jump carry (identical to jb)
-        private static void OpJc(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJc(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.flags.carry)
             {
@@ -1393,7 +1393,7 @@ namespace EdiabasLib
         }
 
         // jump greater
-        private static void OpJg(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJg(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.flags.sign == ediabas.flags.overflow && !ediabas.flags.zero)
             {
@@ -1402,7 +1402,7 @@ namespace EdiabasLib
         }
 
         // jump greater or equal
-        private static void OpJge(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJge(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.flags.zero || (ediabas.flags.sign == ediabas.flags.overflow))
             {
@@ -1411,7 +1411,7 @@ namespace EdiabasLib
         }
 
         // jump less
-        private static void OpJl(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJl(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (!ediabas.flags.zero && (ediabas.flags.sign != ediabas.flags.overflow))
             {
@@ -1420,7 +1420,7 @@ namespace EdiabasLib
         }
 
         // jump less or equal
-        private static void OpJle(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJle(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if ((ediabas.flags.sign != ediabas.flags.overflow) || ediabas.flags.zero)
             {
@@ -1429,7 +1429,7 @@ namespace EdiabasLib
         }
 
         // jump minus
-        private static void OpJmi(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJmi(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.flags.sign)
             {
@@ -1438,7 +1438,7 @@ namespace EdiabasLib
         }
 
         // jump not trap
-        private static void OpJnt(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJnt(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             bool errorDetected = false;
             if (arg1.AddrMode != OpAddrMode.None)
@@ -1479,7 +1479,7 @@ namespace EdiabasLib
         }
 
         // jump not overflow
-        private static void OpJnv(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJnv(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (!ediabas.flags.overflow)
             {
@@ -1488,7 +1488,7 @@ namespace EdiabasLib
         }
 
         // jump not zero
-        private static void OpJnz(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJnz(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (!ediabas.flags.zero)
             {
@@ -1497,7 +1497,7 @@ namespace EdiabasLib
         }
 
         // jump plus
-        private static void OpJpl(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJpl(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (!ediabas.flags.sign)
             {
@@ -1506,13 +1506,13 @@ namespace EdiabasLib
         }
 
         // jump
-        private static void OpJump(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJump(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.pcCounter = arg0.GetValueData();
         }
 
         // jump trap
-        private static void OpJt(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJt(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             bool errorDetected = false;
             if (arg1.AddrMode != OpAddrMode.None)
@@ -1551,7 +1551,7 @@ namespace EdiabasLib
         }
 
         // jump overflow
-        private static void OpJv(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJv(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.flags.overflow)
             {
@@ -1560,7 +1560,7 @@ namespace EdiabasLib
         }
 
         // jump zero
-        private static void OpJz(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpJz(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.flags.zero)
             {
@@ -1568,7 +1568,7 @@ namespace EdiabasLib
             }
         }
 
-        private static void OpLsl(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpLsl(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1613,7 +1613,7 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(value, len);
         }
 
-        private static void OpLsr(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpLsr(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1658,7 +1658,7 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(value, len);
         }
 
-        private static void OpMult(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpMult(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1696,11 +1696,11 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(result, len);
         }
 
-        private static void OpNop(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpNop(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
         }
 
-        private static void OpNot(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpNot(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1712,7 +1712,7 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(arg0.GetValueData(), arg0.GetDataLen());
         }
 
-        private static void OpParl(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpParl(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1745,7 +1745,7 @@ namespace EdiabasLib
         }
 
         // BEST2: parcount
-        private static void OpParn(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpParn(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1762,7 +1762,7 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(arg0.GetValueData(), arg0.GetDataLen());
         }
 
-        private static void OpParr(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpParr(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1794,7 +1794,7 @@ namespace EdiabasLib
             arg0.SetRawData(result);
         }
 
-        private static void OpPars(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpPars(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1822,14 +1822,14 @@ namespace EdiabasLib
             arg0.SetStringData(result);
         }
 
-        private static void OpPary(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpPary(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpPary: Invalid type");
             }
 
-            byte[] result = Ediabas.byteArray0;
+            byte[] result = EdiabasNet.byteArray0;
             ediabas.flags.zero = true;
             lock (ediabas.interfaceLock)
             {
@@ -1842,7 +1842,7 @@ namespace EdiabasLib
             arg0.SetArrayData(result);
         }
 
-        private static void OpPush(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpPush(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdValueType value = arg0.GetValueData();
             EdValueType length = arg0.GetDataLen();
@@ -1854,7 +1854,7 @@ namespace EdiabasLib
             }
         }
 
-        private static void OpPushf(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpPushf(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdValueType value = ediabas.flags.ToValue();
             for (int i = 0; i < sizeof(EdValueType); i++)
@@ -1864,7 +1864,7 @@ namespace EdiabasLib
             }
         }
 
-        private static void OpPop(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpPop(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1895,7 +1895,7 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(value, length);
         }
 
-        private static void OpPopf(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpPopf(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdValueType value = 0;
             if (ediabas.stackList.Count < sizeof(EdValueType))
@@ -1913,7 +1913,7 @@ namespace EdiabasLib
             ediabas.flags.FromValue(value);
         }
 
-        private static void OpOr(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpOr(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1927,7 +1927,7 @@ namespace EdiabasLib
         }
 
         // BEST2: datacat
-        private static void OpScat(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpScat(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -1949,7 +1949,7 @@ namespace EdiabasLib
         }
 
         // BEST2: datacmp
-        private static void OpScmp(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpScmp(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             byte[] data1 = arg0.GetArrayData();
             byte[] data2 = arg1.GetArrayData();
@@ -1965,7 +1965,7 @@ namespace EdiabasLib
         }
 
         // dataerase
-        private static void OpSerase(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpSerase(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2005,26 +2005,26 @@ namespace EdiabasLib
         }
 
         // set carry
-        private static void OpSetc(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpSetc(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.flags.carry = true;
         }
 
         // rtoa (set float precision)
-        private static void OpSetflt(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpSetflt(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.floatPrecision = arg0.GetValueData();
         }
 
         // BEST2: get_token (store spearator)
-        private static void OpSetspc(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpSetspc(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.tokenSeparator = arg0.GetStringData();
             ediabas.tokenIndex = arg1.GetValueData();
         }
 
         // BEST2: make_error
-        private static void OpSett(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpSett(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdValueType error = arg0.GetValueData();
             if (error == 0)
@@ -2035,13 +2035,13 @@ namespace EdiabasLib
         }
 
         // BEST2: set_trap_mask
-        private static void OpSettmr(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpSettmr(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.errorTrapMask = arg0.GetValueData();
         }
 
         // BEST2: shdataget
-        private static void OpShmget(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpShmget(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2063,7 +2063,7 @@ namespace EdiabasLib
         }
 
         // BEST2: shdataset
-        private static void OpShmset(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpShmset(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             string key = arg0.GetStringData().ToUpper(culture);
             if (ediabas.sharedDataDict.ContainsKey(key))
@@ -2077,7 +2077,7 @@ namespace EdiabasLib
         }
 
         // string length
-        private static void OpSlen(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpSlen(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2089,7 +2089,7 @@ namespace EdiabasLib
         }
 
         // datainsert
-        private static void OpSpaste(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpSpaste(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2149,7 +2149,7 @@ namespace EdiabasLib
         }
 
         // BEST2: strrevers
-        private static void OpSrevrs(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpSrevrs(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2161,7 +2161,7 @@ namespace EdiabasLib
         }
 
         // BEST2: get_token (store token)
-        private static void OpStoken(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpStoken(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2188,7 +2188,7 @@ namespace EdiabasLib
         }
 
         // BEST2: strcat
-        private static void OpStrcat(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpStrcat(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2208,7 +2208,7 @@ namespace EdiabasLib
         }
 
         // BEST2: strcmp
-        private static void OpStrcmp(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpStrcmp(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             string string1 = arg0.GetStringData();
             string string2 = arg1.GetStringData();
@@ -2217,7 +2217,7 @@ namespace EdiabasLib
         }
 
         // BEST2: strcut
-        private static void OpScut(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpScut(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2239,7 +2239,7 @@ namespace EdiabasLib
             }
         }
 
-        private static void OpSsize(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpSsize(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2250,7 +2250,7 @@ namespace EdiabasLib
         }
 
         // BEST2: strlen
-        private static void OpStrlen(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpStrlen(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2264,7 +2264,7 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(result, arg0.GetDataLen());
         }
 
-        private static void OpSubb(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpSubb(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2282,7 +2282,7 @@ namespace EdiabasLib
             ediabas.flags.SetCarry(diff, len);
         }
 
-        private static void OpSubc(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpSubc(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2305,7 +2305,7 @@ namespace EdiabasLib
         }
 
         // swap array
-        private static void OpSwap(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpSwap(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2327,7 +2327,7 @@ namespace EdiabasLib
         }
 
         // BEST2: tabcolumns
-        private static void OpTabcols(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpTabcols(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.tableIndex < 0)
             {
@@ -2341,7 +2341,7 @@ namespace EdiabasLib
         }
 
         // BEST2: tabget
-        private static void OpTabget(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpTabget(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.tableIndex < 0)
             {
@@ -2363,7 +2363,7 @@ namespace EdiabasLib
         }
 
         // BEST2: tabline
-        private static void OpTabline(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpTabline(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.tableIndex < 0)
             {
@@ -2381,7 +2381,7 @@ namespace EdiabasLib
         }
 
         // BEST2: tabrows
-        private static void OpTabrows(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpTabrows(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.tableIndex < 0)
             {
@@ -2395,7 +2395,7 @@ namespace EdiabasLib
         }
 
         // BEST2: tabseek
-        private static void OpTabseek(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpTabseek(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.tableIndex < 0)
             {
@@ -2414,7 +2414,7 @@ namespace EdiabasLib
         }
 
         // BEST2: tabseeku
-        private static void OpTabseeku(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpTabseeku(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (ediabas.tableIndex < 0)
             {
@@ -2433,7 +2433,7 @@ namespace EdiabasLib
         }
 
         // BEST2: tabset
-        private static void OpTabset(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpTabset(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.CloseTableFs();
             if (ediabas.sgbdBaseFs != null)
@@ -2451,7 +2451,7 @@ namespace EdiabasLib
         }
 
         // BEST2: tabsetext
-        private static void OpTabsetex(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpTabsetex(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             string baseFileName = arg1.GetStringData();
             if (baseFileName.Length > 0)
@@ -2488,7 +2488,7 @@ namespace EdiabasLib
             ediabas.tableRowIndex = -1;
         }
 
-        private static void OpTest(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpTest(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdValueType len = GetArgsValueLength(arg0, arg1);
             EdValueType value = arg0.GetValueData(len) & arg1.GetValueData(len);
@@ -2496,7 +2496,7 @@ namespace EdiabasLib
             ediabas.flags.UpdateFlags(value, len);
         }
 
-        private static void OpTicks(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpTicks(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2507,7 +2507,7 @@ namespace EdiabasLib
         }
 
         // BEST2: gettime
-        private static void OpTime(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpTime(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2524,7 +2524,7 @@ namespace EdiabasLib
         }
 
         // BEST2: uitoad
-        private static void OpUfix2dez(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpUfix2dez(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2563,7 +2563,7 @@ namespace EdiabasLib
         }
 
         // BEST2: data_to_real (intel byte order)
-        private static void OpY42flt(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpY42flt(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2580,7 +2580,7 @@ namespace EdiabasLib
         }
 
         // BEST2: data_to_real (intel byte order)
-        private static void OpY82flt(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpY82flt(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2597,7 +2597,7 @@ namespace EdiabasLib
         }
 
         // BEST2: bcd2ascii
-        private static void OpY2bcd(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpY2bcd(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2614,7 +2614,7 @@ namespace EdiabasLib
         }
 
         // BEST2: hex2ascii
-        private static void OpY2hex(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpY2hex(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2631,7 +2631,7 @@ namespace EdiabasLib
         }
 
         // BEST2: set_answer_length
-        private static void OpXawlen(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpXawlen(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdCommBase commClass = ediabas.EdCommClass;
             if ((commClass == null) || !commClass.Connected)
@@ -2663,7 +2663,7 @@ namespace EdiabasLib
         }
 
         // BEST2: get_battery_voltage
-        private static void OpXbatt(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpXbatt(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2681,7 +2681,7 @@ namespace EdiabasLib
         }
 
         // BEST2: open_communication
-        private static void OpXconnect(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpXconnect(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdCommBase commClass = ediabas.EdCommClass;
             if (commClass == null)
@@ -2693,7 +2693,7 @@ namespace EdiabasLib
         }
 
         // BEST2: close_communication
-        private static void OpXhangup(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpXhangup(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdCommBase commClass = ediabas.EdCommClass;
             if (commClass == null)
@@ -2705,7 +2705,7 @@ namespace EdiabasLib
         }
 
         // BEST2: get_ignition_voltage
-        private static void OpXignit(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpXignit(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2722,7 +2722,7 @@ namespace EdiabasLib
             }
         }
 
-        private static void OpXor(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpXor(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2736,7 +2736,7 @@ namespace EdiabasLib
         }
 
         // BEST2: recv_keybytes
-        private static void OpXkeyb(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpXkeyb(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2754,7 +2754,7 @@ namespace EdiabasLib
         }
 
         // BEST2: set_repeat_counter
-        private static void OpXreps(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpXreps(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdCommBase commClass = ediabas.EdCommClass;
             if ((commClass == null) || !commClass.Connected)
@@ -2768,7 +2768,7 @@ namespace EdiabasLib
         }
 
         // BEST2: ifreset
-        private static void OpXreset(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpXreset(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdCommBase commClass = ediabas.EdCommClass;
             if ((commClass == null) || !commClass.Connected)
@@ -2782,7 +2782,7 @@ namespace EdiabasLib
         }
 
         // BEST2: send_and_receive
-        private static void OpXsend(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpXsend(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2808,7 +2808,7 @@ namespace EdiabasLib
         }
 
         // BEST2: set_communication_pars
-        private static void OpXsetpar(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpXsetpar(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdCommBase commClass = ediabas.EdCommClass;
             if ((commClass == null) || !commClass.Connected)
@@ -2841,7 +2841,7 @@ namespace EdiabasLib
         }
 
         // BEST2: recv_keybytes
-        private static void OpXstate(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpXstate(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2859,7 +2859,7 @@ namespace EdiabasLib
         }
 
         // BEST2: stop_frequent
-        private static void OpXstopf(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpXstopf(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdCommBase commClass = ediabas.EdCommClass;
             if ((commClass == null) || !commClass.Connected)
@@ -2869,7 +2869,7 @@ namespace EdiabasLib
         }
 
         // BEST2: iftype
-        private static void OpXtype(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpXtype(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2887,7 +2887,7 @@ namespace EdiabasLib
         }
 
         // BEST2: ifvers
-        private static void OpXvers(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpXvers(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.opData1.GetType() != typeof(Register))
             {
@@ -2906,13 +2906,13 @@ namespace EdiabasLib
         }
 
         // BEST2: wait
-        private static void OpWait(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpWait(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             Thread.Sleep((int)(arg0.GetValueData() * 1000));
         }
 
         // BEST2: waitex
-        private static void OpWaitex(Ediabas ediabas, OpCode oc, Operand arg0, Operand arg1)
+        private static void OpWaitex(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             Thread.Sleep((int)(arg0.GetValueData()));
         }

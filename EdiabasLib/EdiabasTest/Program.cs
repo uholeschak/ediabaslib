@@ -95,7 +95,7 @@ namespace EdiabasTest
                     return 1;
                 }
 
-                using (Ediabas ediabas = new Ediabas())
+                using (EdiabasNet ediabas = new EdiabasNet())
                 {
                     EdCommObd edCommBwmFast = new EdCommObd(ediabas);
                     edCommBwmFast.ComPort = comPort;
@@ -116,7 +116,7 @@ namespace EdiabasTest
                     }
                     catch (Exception ex)
                     {
-                        outputWriter.WriteLine("ResolveSgbdFile failed: " + Ediabas.GetExceptionText(ex));
+                        outputWriter.WriteLine("ResolveSgbdFile failed: " + EdiabasNet.GetExceptionText(ex));
                         return 1;
                     }
 
@@ -142,7 +142,7 @@ namespace EdiabasTest
                             string argString = parts[1];
                             if (argString.Length > 0 && argString[0] == '|')
                             {   // binary data
-                                ediabas.ArgBinary = Ediabas.HexToByteArray(argString.Substring(1));
+                                ediabas.ArgBinary = EdiabasNet.HexToByteArray(argString.Substring(1));
                             }
                             else
                             {
@@ -161,18 +161,18 @@ namespace EdiabasTest
                         }
                         catch (Exception ex)
                         {
-                            if (!compareOutput || ediabas.ErrorCodeLast == Ediabas.ErrorCodes.EDIABAS_ERR_NONE)
+                            if (!compareOutput || ediabas.ErrorCodeLast == EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                             {
-                                outputWriter.WriteLine("Job execution failed: " + Ediabas.GetExceptionText(ex));
+                                outputWriter.WriteLine("Job execution failed: " + EdiabasNet.GetExceptionText(ex));
                             }
                             return 1;
                         }
 
                         int dataSet = 0;
-                        List<Dictionary<string, Ediabas.ResultData>> resultSets = ediabas.ResultSets;
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
                         if (resultSets != null)
                         {
-                            foreach (Dictionary<string, Ediabas.ResultData> resultDict in resultSets)
+                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
                             {
                                 outputWriter.WriteLine(string.Format(culture, "DATASET: {0}", dataSet));
                                 if (ediabas.SwLog != null)
@@ -181,7 +181,7 @@ namespace EdiabasTest
                                 }
                                 foreach (string key in resultDict.Keys.OrderBy(x => x))
                                 {
-                                    Ediabas.ResultData resultData = resultDict[key];
+                                    EdiabasNet.ResultData resultData = resultDict[key];
                                     string resultText = string.Empty;
                                     if (resultData.opData.GetType() == typeof(string))
                                     {
@@ -196,27 +196,27 @@ namespace EdiabasTest
                                         Int64 value = (Int64)resultData.opData;
                                         switch (resultData.type)
                                         {
-                                            case Ediabas.ResultType.TypeB:  // 8 bit
+                                            case EdiabasNet.ResultType.TypeB:  // 8 bit
                                                 resultText = string.Format(culture, "B: {0} 0x{1:X02}", value, (Byte)value);
                                                 break;
 
-                                            case Ediabas.ResultType.TypeC:  // 8 bit char
+                                            case EdiabasNet.ResultType.TypeC:  // 8 bit char
                                                 resultText = string.Format(culture, "C: {0} 0x{1:X02}", value, (Byte)value);
                                                 break;
 
-                                            case Ediabas.ResultType.TypeW:  // 16 bit
+                                            case EdiabasNet.ResultType.TypeW:  // 16 bit
                                                 resultText = string.Format(culture, "W: {0} 0x{1:X04}", value, (UInt16)value);
                                                 break;
 
-                                            case Ediabas.ResultType.TypeI:  // 16 bit signed
+                                            case EdiabasNet.ResultType.TypeI:  // 16 bit signed
                                                 resultText = string.Format(culture, "I: {0} 0x{1:X04}", value, (UInt16)value);
                                                 break;
 
-                                            case Ediabas.ResultType.TypeD:  // 32 bit
+                                            case EdiabasNet.ResultType.TypeD:  // 32 bit
                                                 resultText = string.Format(culture, "D: {0} 0x{1:X08}", value, (UInt32)value);
                                                 break;
 
-                                            case Ediabas.ResultType.TypeL:  // 32 bit signed
+                                            case EdiabasNet.ResultType.TypeL:  // 32 bit signed
                                                 resultText = string.Format(culture, "L: {0} 0x{1:X08}", value, (UInt32)value);
                                                 break;
 
@@ -259,7 +259,7 @@ namespace EdiabasTest
             return 0;
         }
 
-        static void ProgressJobFunc(Ediabas ediabas)
+        static void ProgressJobFunc(EdiabasNet ediabas)
         {
             string jobInfo = ediabas.InfoProgressText;
             int jobProgress = ediabas.InfoProgressPercent;
@@ -279,9 +279,9 @@ namespace EdiabasTest
             }
         }
 
-        static void ErrorRaisedFunc(Ediabas.ErrorCodes error)
+        static void ErrorRaisedFunc(EdiabasNet.ErrorCodes error)
         {
-            string errorText = Ediabas.GetErrorDescription(error);
+            string errorText = EdiabasNet.GetErrorDescription(error);
             outputWriter.WriteLine(string.Format(culture, "Error occured: 0x{0:X08} {1}", (UInt32)error, errorText));
         }
 
