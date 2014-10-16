@@ -2456,10 +2456,10 @@ namespace EdiabasLib
             string baseFileName = arg1.GetStringData();
             if (baseFileName.Length > 0)
             {
-                string fullFileName = Path.Combine(ediabas.FileSearchDir, baseFileName + ".prg");
+                string fullFileName = Path.Combine(ediabas.EcuPath, baseFileName + ".prg");
                 if (!File.Exists(fullFileName))
                 {
-                    fullFileName = Path.Combine(ediabas.FileSearchDir, baseFileName + ".grp");
+                    fullFileName = Path.Combine(ediabas.EcuPath, baseFileName + ".grp");
                 }
                 if (!File.Exists(fullFileName))
                 {
