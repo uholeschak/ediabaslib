@@ -112,7 +112,7 @@ namespace EdiabasTest
                     // entries must be uppercase!
                     try
                     {
-                        ediabas.ResolveSgbdFile(Path.GetFileName(sgbdFile));
+                        ediabas.ResolveSgbdFile(Path.GetFileNameWithoutExtension(sgbdFile));
                     }
                     catch (Exception ex)
                     {
