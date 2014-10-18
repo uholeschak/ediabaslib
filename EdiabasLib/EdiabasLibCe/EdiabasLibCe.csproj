@@ -54,19 +54,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\EdibasLib\EdCommBase.cs">
+    <Compile Include="..\EdiabasLib\EdCommBase.cs">
       <Link>EdCommBase.cs</Link>
     </Compile>
-    <Compile Include="..\EdibasLib\EdCommObd.cs">
+    <Compile Include="..\EdiabasLib\EdCommObd.cs">
       <Link>EdCommObd.cs</Link>
     </Compile>
-    <Compile Include="..\EdibasLib\EdiabasNet.cs">
+    <Compile Include="..\EdiabasLib\EdiabasNet.cs">
       <Link>EdiabasNet.cs</Link>
     </Compile>
-    <Compile Include="..\EdibasLib\EdOperations.cs">
+    <Compile Include="..\EdiabasLib\EdOperations.cs">
       <Link>EdOperations.cs</Link>
     </Compile>
-    <Compile Include="..\EdibasLib\MemoryStreamReaderCe.cs">
+    <Compile Include="..\EdiabasLib\MemoryStreamReaderCe.cs">
       <Link>MemoryStreamReaderCe.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
