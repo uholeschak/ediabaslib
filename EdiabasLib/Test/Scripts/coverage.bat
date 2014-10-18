@@ -7,17 +7,36 @@ set REPORT_GENERATOR=%REPORTGENERATOR_PATH%\bin\ReportGenerator.exe
 set ECU_PATH=!BATPATH!\..\..\..\Ecu
 set ECU_TEST_PATH=!BATPATH!\..\Ecu
 set REPORTS_PATH=!BATPATH!\Reports
+
 if "%1"=="" (
 set EDIABAS_TEST=!BATPATH!\..\..\EdiabasTest\bin\Debug\EdiabasTest.exe
 set OUTFILE=output_lib.log
 set ADD_ARGS=-p COM4 -o !OUTFILE! -a -c
 set FILTERS=+[EdibasLib]*
-) else (
+set COVERAGE=1
+goto argsok
+)
+if "%1"=="apilib" (
+set EDIABAS_TEST=!BATPATH!\..\EdiabasLibCall\bin\Debug\EdiabasLibCall.exe
+set OUTFILE=output_apilib.log
+set ADD_ARGS=-p COM4 -o !OUTFILE! -a -c
+set FILTERS=+[EdibasLib]*
+set COVERAGE=1
+goto argsok
+)
+if "%1"=="ediabas" (
 set EDIABAS_TEST=!BATPATH!\..\EdiabasCall\bin\Debug\EdiabasCall.exe
 set OUTFILE=output_ediabas.log
 set ADD_ARGS=-p COM4 -o !OUTFILE! -a -c
 set FILTERS=-[*]*
+set COVERAGE=0
+goto argsok
 )
+
+echo invalid arguments
+goto done
+
+:argsok
 if exist "!OUTFILE!" del "!OUTFILE!"
 "%OPEN_COVER%" "-output:results1.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_PATH!\d_motor.grp\" -j \"FS_LESEN\" -j \"FS_LESEN_DETAIL#0x4232#F_ART_ANZ;F_UW_ANZ\" -j \"STATUS_RAILDRUCK_IST##STAT_RAILDRUCK_IST_WERT\" -j \"STATUS_MOTORTEMPERATUR##STAT_MOTORTEMPERATUR_WERT\" -j \"STATUS_LMM_MASSE##STAT_LMM_MASSE_WERT\" -j \"STATUS_MOTORDREHZAHL\" -j \"STATUS_SYSTEMCHECK_PM_INFO_1\" -j \"STATUS_SYSTEMCHECK_PM_INFO_2\""
 "%OPEN_COVER%" "-output:results2.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_PATH!\d_ccc.grp\" -j \"IDENT\" -j \"STATUS_GPS_TRACKING\" -j \"STATUS_GPS_ANTENNA\" -j \"STATUS_GPS_POSITION\" -j \"STATUS_GPS_TIME\" -j \"STATUS_GPS_SATINFO\" -j \"STATUS_TACHOPULSE\" -j \"STATUS_GYRO\" -j \"STATUS_GPS_DOP\" -j \"STATUS_DR_POSITION\""
@@ -48,9 +67,11 @@ for /l %%x in (0, 1, 32) do (
 "%OPEN_COVER%" "-output:results19.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#349\""
 "%OPEN_COVER%" "-output:results20.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#350\""
 
-if "%1"=="" (
+if "!COVERAGE!"=="1" (
 if exist "!REPORTS_PATH!" del /q "!REPORTS_PATH!\*.*"
 "%REPORT_GENERATOR%" "-reports:results*.xml" "-targetdir:!REPORTS_PATH!"
 )
 
 del results*.xml
+
+:done
