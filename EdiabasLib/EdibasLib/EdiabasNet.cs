@@ -1268,7 +1268,6 @@ namespace EdiabasLib
             TypeR,  // float
             TypeS,  // string
             TypeY,  // array
-            TypeSet,  // result set
         }
 
         private enum RegisterType : byte
@@ -3727,11 +3726,11 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("JobRunning", "ResolveSgbdFile: Job is running");
             }
-            SgbdFileName = Path.GetFileName(fileName);
             UInt32 fileType = GetFileType(Path.Combine(EcuPath, fileName));
+            string baseFileName = Path.GetFileNameWithoutExtension(fileName);
             if (fileType == 0)
             {       // group file
-                string key = SgbdFileName.ToLower(culture);
+                string key = baseFileName.ToLower(culture);
                 string variantName = string.Empty;
                 bool mappingFound = false;
                 lock (interfaceLock)
@@ -3740,6 +3739,7 @@ namespace EdiabasLib
                 }
                 if (!mappingFound)
                 {
+                    SgbdFileName = baseFileName + ".grp";
                     variantName = ExecuteIdentJob().ToLower(culture);
                     if (variantName.Length == 0)
                     {
@@ -3752,19 +3752,33 @@ namespace EdiabasLib
                 }
                 SgbdFileName = variantName + ".prg";
             }
+            else
+            {
+                SgbdFileName = baseFileName + ".prg";
+            }
         }
 
         public UInt32 GetFileType(string fileName)
         {
             UInt32 fileType = 0;
-            if (!File.Exists(fileName))
+
+            string baseFileName = Path.GetFileNameWithoutExtension(fileName);
+
+            string dirName = Path.GetDirectoryName(fileName);
+            string localFileName = Path.Combine(dirName, baseFileName + ".grp");
+            if (!File.Exists(localFileName))
+            {
+                localFileName = Path.Combine(dirName, baseFileName + ".prg");
+            }
+
+            if (!File.Exists(localFileName))
             {
                 LogString("GetFileType file not found: " + fileName);
                 throw new ArgumentOutOfRangeException(fileName, "GetFileType: File not found");
             }
             try
             {
-                using (Stream tempFs = MemoryStreamReader.OpenRead(fileName))
+                using (Stream tempFs = MemoryStreamReader.OpenRead(localFileName))
                 {
                     byte[] buffer = new byte[4];
                     tempFs.Position = 0x10;
