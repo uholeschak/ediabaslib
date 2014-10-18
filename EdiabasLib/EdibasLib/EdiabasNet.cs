@@ -2346,6 +2346,7 @@ namespace EdiabasLib
         private long infoProgressPos;
         private string infoProgressText = string.Empty;
         private string sgbdFileName = string.Empty;
+        private string sgbdFileResolveLast = string.Empty;
         private string ecuPath = string.Empty;
         private EdCommBase edCommClass;
         private static long timeMeas = 0;
@@ -3726,11 +3727,16 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("JobRunning", "ResolveSgbdFile: Job is running");
             }
+            string baseFileName = Path.GetFileNameWithoutExtension(fileName).ToLower(culture);
+            if (string.Compare(sgbdFileResolveLast, baseFileName, StringComparison.Ordinal) == 0)
+            {   // same name specified
+                return;
+            }
+
             UInt32 fileType = GetFileType(Path.Combine(EcuPath, fileName));
-            string baseFileName = Path.GetFileNameWithoutExtension(fileName);
             if (fileType == 0)
             {       // group file
-                string key = baseFileName.ToLower(culture);
+                string key = baseFileName;
                 string variantName = string.Empty;
                 bool mappingFound = false;
                 lock (interfaceLock)
@@ -3756,6 +3762,7 @@ namespace EdiabasLib
             {
                 SgbdFileName = baseFileName + ".prg";
             }
+            sgbdFileResolveLast = baseFileName;
         }
 
         public UInt32 GetFileType(string fileName)
