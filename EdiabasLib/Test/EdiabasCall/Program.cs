@@ -222,6 +222,7 @@ namespace EdiabasCall
                 {
                     if (API.apiErrorCode() != API.EDIABAS_ERR_NONE)
                     {
+                        outputWriter.WriteLine(string.Format(culture, "Error occured: 0x{0:X08} {1}", API.apiErrorCode(), API.apiErrorText()));
                         break;
                     }
                     if (ignoreSet0 && set == 0)
