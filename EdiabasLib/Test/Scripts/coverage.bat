@@ -19,15 +19,16 @@ goto argsok
 if "%1"=="apilib" (
 set EDIABAS_TEST=!BATPATH!\..\EdiabasLibCall\bin\Debug\EdiabasLibCall.exe
 set OUTFILE=output_apilib.log
-set ADD_ARGS=-p COM4 -o !OUTFILE! -a -c
+set ADD_ARGS=-o !OUTFILE! -a -c
 set FILTERS=+[EdiabasLib]*
 set COVERAGE=1
+copy /y "!BATPATH!\EdiabasLib.config" "!BATPATH!\..\EdiabasLibCall\bin\Debug\EdiabasLib.config"
 goto argsok
 )
 if "%1"=="ediabas" (
 set EDIABAS_TEST=!BATPATH!\..\EdiabasCall\bin\Debug\EdiabasCall.exe
 set OUTFILE=output_ediabas.log
-set ADD_ARGS=-p COM4 -o !OUTFILE! -a -c
+set ADD_ARGS=-o !OUTFILE! -a -c
 set FILTERS=-[*]*
 set COVERAGE=0
 goto argsok

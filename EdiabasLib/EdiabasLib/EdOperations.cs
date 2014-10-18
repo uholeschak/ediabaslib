@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Threading;
-using System.Globalization;
 using System.Diagnostics;
-using System.Reflection;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Threading;
 
 namespace EdiabasLib
 {
-    using EdValueType = UInt32;
     using EdFloatType = Double;
+    using EdValueType = UInt32;
 
     public partial class EdiabasNet
     {

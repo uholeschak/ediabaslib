@@ -1,15 +1,12 @@
 ﻿using System;
-
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
-using System.Diagnostics;
 using System.Reflection;
-using System.Linq;
-using Ftdi;
+using System.Threading;
 using EdiabasLib;
+using Ftdi;
 
 namespace CarControl
 {
@@ -300,34 +297,34 @@ namespace CarControl
 
         static private readonly EdiabasErrorRequest[] EdiabasErrorRequestList =
         {
-            new EdiabasErrorRequest("errorNameCAS", "d_cas.grp"),
-            new EdiabasErrorRequest("errorNameDDE", "d_motor.grp"),
-            new EdiabasErrorRequest("errorNameEKPS", "d_ekp.grp"),
-            new EdiabasErrorRequest("errorNameEHC", "d_ehc.grp"),
-            new EdiabasErrorRequest("errorNameDSC", "d_dsc.grp"),
-            new EdiabasErrorRequest("errorNameACSM", "d_sim.grp"),
-            new EdiabasErrorRequest("errorNameAHM", "d_ahm.grp"),
-            new EdiabasErrorRequest("errorNameCCCBO", "d_mmi.grp"),
-            new EdiabasErrorRequest("errorNameCCCGW", "d_mostgw.grp"),
-            new EdiabasErrorRequest("errorNameCCCA", "d_ccc.grp"),
-            new EdiabasErrorRequest("errorNameCCCANT", "d_anttu.grp"),
-            new EdiabasErrorRequest("errorNameCCCASK", "d_ask.grp"),
-            new EdiabasErrorRequest("errorNameCDC", "d_cdc.grp"),
-            new EdiabasErrorRequest("errorNameCID", "d_cid.grp"),
-            new EdiabasErrorRequest("errorNameCON", "d_ec.grp"),
-            new EdiabasErrorRequest("errorNameIHK", "d_klima.grp"),
-            new EdiabasErrorRequest("errorNameKBM", "d_kbm.grp"),
-            new EdiabasErrorRequest("errorNameKGM", "d_zgm.grp"),
-            new EdiabasErrorRequest("errorNameKOMBI", "d_kombi.grp"),
-            new EdiabasErrorRequest("errorNameLM", "d_lm.grp"),
-            new EdiabasErrorRequest("errorNamePDC", "d_pdc.grp"),
-            new EdiabasErrorRequest("errorNameRLS", "rlss70.prg" /*"d_rls.grp"*/),
-            new EdiabasErrorRequest("errorNameSZL", "d_szl.grp"),
-            new EdiabasErrorRequest("errorNameSZM", "d_bzm.grp"),
-            new EdiabasErrorRequest("errorNameTCU", "d_tel.grp"),
+            new EdiabasErrorRequest("errorNameCAS", "d_cas"),
+            new EdiabasErrorRequest("errorNameDDE", "d_motor"),
+            new EdiabasErrorRequest("errorNameEKPS", "d_ekp"),
+            new EdiabasErrorRequest("errorNameEHC", "d_ehc"),
+            new EdiabasErrorRequest("errorNameDSC", "d_dsc"),
+            new EdiabasErrorRequest("errorNameACSM", "d_sim"),
+            new EdiabasErrorRequest("errorNameAHM", "d_ahm"),
+            new EdiabasErrorRequest("errorNameCCCBO", "d_mmi"),
+            new EdiabasErrorRequest("errorNameCCCGW", "d_mostgw"),
+            new EdiabasErrorRequest("errorNameCCCA", "d_ccc"),
+            new EdiabasErrorRequest("errorNameCCCANT", "d_anttu"),
+            new EdiabasErrorRequest("errorNameCCCASK", "d_ask"),
+            new EdiabasErrorRequest("errorNameCDC", "d_cdc"),
+            new EdiabasErrorRequest("errorNameCID", "d_cid"),
+            new EdiabasErrorRequest("errorNameCON", "d_ec"),
+            new EdiabasErrorRequest("errorNameIHK", "d_klima"),
+            new EdiabasErrorRequest("errorNameKBM", "d_kbm"),
+            new EdiabasErrorRequest("errorNameKGM", "d_zgm"),
+            new EdiabasErrorRequest("errorNameKOMBI", "d_kombi"),
+            new EdiabasErrorRequest("errorNameLM", "d_lm"),
+            new EdiabasErrorRequest("errorNamePDC", "d_pdc"),
+            new EdiabasErrorRequest("errorNameRLS", "rlss70" /*"d_rls"*/),
+            new EdiabasErrorRequest("errorNameSZL", "d_szl"),
+            new EdiabasErrorRequest("errorNameSZM", "d_bzm"),
+            new EdiabasErrorRequest("errorNameTCU", "d_tel"),
         };
 
-        static private readonly EdiabasJobs EhcJobs = new EdiabasJobs("d_ehc.grp",
+        static private readonly EdiabasJobs EhcJobs = new EdiabasJobs("d_ehc",
             new EdiabasJob[]
             {
                 new EdiabasJob("LESEN_REGLERWERTE",
@@ -341,7 +338,7 @@ namespace CarControl
                     "ORGFASTFILTER_RL;ORGFASTFILTER_RR;FASTFILTER_RL;FASTFILTER_RR"),
             });
 
-        static private readonly EdiabasJobs MotorJobs = new EdiabasJobs("d_motor.grp",
+        static private readonly EdiabasJobs MotorJobs = new EdiabasJobs("d_motor",
             new EdiabasJob[]
             {
                 new EdiabasJob("STATUS_MESSWERTBLOCK_LESEN",
@@ -349,7 +346,7 @@ namespace CarControl
                     string.Empty),
             });
 
-        static private readonly EdiabasJobs MotorUnevenJobs = new EdiabasJobs("d_motor.grp",
+        static private readonly EdiabasJobs MotorUnevenJobs = new EdiabasJobs("d_motor",
             new EdiabasJob[]
             {
                 new EdiabasJob("START_SYSTEMCHECK_ZYL",
@@ -362,7 +359,7 @@ namespace CarControl
                     ),
             });
 
-        static private readonly EdiabasJobs MotorRotIrregularJobs = new EdiabasJobs("d_motor.grp",
+        static private readonly EdiabasJobs MotorRotIrregularJobs = new EdiabasJobs("d_motor",
             new EdiabasJob[]
             {
                 new EdiabasJob("START_SYSTEMCHECK_ZYL",
@@ -375,7 +372,7 @@ namespace CarControl
                     ),
             });
 
-        static private readonly EdiabasJobs MotorPmJobs = new EdiabasJobs("d_motor.grp",
+        static private readonly EdiabasJobs MotorPmJobs = new EdiabasJobs("d_motor",
             new EdiabasJob[]
             {
                 new EdiabasJob("STATUS_SYSTEMCHECK_PM_INFO_2",
@@ -384,7 +381,7 @@ namespace CarControl
                     ),
             });
 
-        static private readonly EdiabasJobs CccNavJobs = new EdiabasJobs("d_ccc.grp",
+        static private readonly EdiabasJobs CccNavJobs = new EdiabasJobs("d_ccc",
             new EdiabasJob[]
             {
                 new EdiabasJob("STATUS_GPS_TRACKING",
@@ -405,7 +402,7 @@ namespace CarControl
                     ),
             });
 
-        static private readonly EdiabasJobs IhkJobs = new EdiabasJobs("d_klima.grp",
+        static private readonly EdiabasJobs IhkJobs = new EdiabasJobs("d_klima",
             new EdiabasJob[]
             {
                 new EdiabasJob("STATUS_REGLERGROESSEN",
@@ -416,7 +413,7 @@ namespace CarControl
 
         // for tests
         static private readonly EdiabasTestJob[] MotorJobList = {
-            new EdiabasTestJob("d_motor.grp", "STATUS_MESSWERTBLOCK_LESEN",
+            new EdiabasTestJob("d_motor", "STATUS_MESSWERTBLOCK_LESEN",
                 "IUBAT;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;ITKRS;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED",
                 string.Empty,
                 new string[] {
@@ -446,7 +443,7 @@ namespace CarControl
             };
 
         static private readonly EdiabasTestJob[] MotorPmJobList = {
-            new EdiabasTestJob("d_motor.grp", "STATUS_SYSTEMCHECK_PM_INFO_2",
+            new EdiabasTestJob("d_motor", "STATUS_SYSTEMCHECK_PM_INFO_2",
                 "STAT_BATTERIE_KAPAZITAET_WERT;STAT_KALIBRIER_EVENT_CNT_WERT;STAT_LADUNGSZUSTAND_AKTUELL_WERT;STAT_LADUNGSZUSTAND_VOR_1_TAG_WERT;STAT_Q_SOC_AKTUELL_WERT;STAT_Q_SOC_VOR_1_TAG_WERT;STAT_SOC_FIT_WERT;STAT_SOH_WERT;STAT_STARTFAEHIGKEITSGRENZE_AKTUELL_WERT;STAT_STARTFAEHIGKEITSGRENZE_VOR_1_TAG_WERT;STAT_TEMP_SAISON_WERT",
                 "STAT_BATTERIE_KAPAZITAET_WERT;STAT_KALIBRIER_EVENT_CNT_WERT;STAT_LADUNGSZUSTAND_AKTUELL_WERT;STAT_LADUNGSZUSTAND_VOR_1_TAG_WERT;STAT_Q_SOC_AKTUELL_WERT;STAT_Q_SOC_VOR_1_TAG_WERT;STAT_SOC_FIT_WERT;STAT_SOH_WERT;STAT_STARTFAEHIGKEITSGRENZE_AKTUELL_WERT;STAT_STARTFAEHIGKEITSGRENZE_VOR_1_TAG_WERT;STAT_TEMP_SAISON_WERT",
                 new string[] {
@@ -465,7 +462,7 @@ namespace CarControl
             };
 
         static private readonly EdiabasTestJob[] ErrorJobList = {
-            new EdiabasTestJob("d_motor.grp", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
+            new EdiabasTestJob("d_motor", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
                 new string[] {
                     "F_ORT_TEXT",
                     "F_READY_TEXT",
@@ -473,11 +470,11 @@ namespace CarControl
                     "F_VORHANDEN_TEXT",
                     "F_WARNUNG_TEXT",
                 }),
-            new EdiabasTestJob("d_motor.grp", "FS_LESEN_DETAIL", "0x4232", "F_UW_KM",
+            new EdiabasTestJob("d_motor", "FS_LESEN_DETAIL", "0x4232", "F_UW_KM",
                 new string[] {
                     "F_UW_KM",
                 }),
-            new EdiabasTestJob("d_ccc.grp", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
+            new EdiabasTestJob("d_ccc", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
                 new string[] {
                     "F_ORT_TEXT",
                     "F_READY_TEXT",
@@ -485,7 +482,7 @@ namespace CarControl
                     "F_VORHANDEN_TEXT",
                     "F_WARNUNG_TEXT",
                 }),
-            new EdiabasTestJob("d_ehc.grp", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
+            new EdiabasTestJob("d_ehc", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
                 new string[] {
                     "F_ORT_TEXT",
                     "F_READY_TEXT",
@@ -493,11 +490,11 @@ namespace CarControl
                     "F_VORHANDEN_TEXT",
                     "F_WARNUNG_TEXT",
                 }),
-            new EdiabasTestJob("d_ehc.grp", "FS_LESEN_DETAIL", "0x5FB4", "F_UW_KM",
+            new EdiabasTestJob("d_ehc", "FS_LESEN_DETAIL", "0x5FB4", "F_UW_KM",
                 new string[] {
                     "F_UW_KM",
                 }),
-            new EdiabasTestJob("d_klima.grp", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
+            new EdiabasTestJob("d_klima", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
                 new string[] {
                     "F_ORT_TEXT",
                     "F_READY_TEXT",

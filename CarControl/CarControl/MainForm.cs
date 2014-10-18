@@ -1,24 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using System.Threading;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using CarControl.Properties;
-using Ftdi;
-using Microsoft.Win32;
-using OpenNETCF.Net;
-using OpenNETCF.Net.NetworkInformation;
-using NetworkFunctions;
-using PowerFunctions;
+using System.Windows.Forms;
 using EdiabasLib;
+using Ftdi;
+using NetworkFunctions;
+using OpenNETCF.Net.NetworkInformation;
+using PowerFunctions;
 
 namespace CarControl
 {
