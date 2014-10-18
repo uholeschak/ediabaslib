@@ -465,7 +465,6 @@ namespace Ediabas
             ediabas = new EdiabasNet();
 
             EdCommObd edCommBwmFast = new EdCommObd(ediabas);
-            edCommBwmFast.ComPort = "COM4";
             ediabas.EdCommClass = edCommBwmFast;
 
             ediabas.AbortJobFunc = abortJobFunc;

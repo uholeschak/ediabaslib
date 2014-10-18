@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.IO.Ports;
-using System.Diagnostics;
-using System.Threading;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Xml;
 
 namespace EdiabasLib
 {
-    using EdValueType = UInt32;
     using EdFloatType = Double;
+    using EdValueType = UInt32;
 
     public partial class EdiabasNet : IDisposable
     {
@@ -2342,6 +2341,7 @@ namespace EdiabasLib
         private Dictionary<string, string> configDict = new Dictionary<string, string>();
         private Dictionary<string, string> groupMappingDict = new Dictionary<string, string>();
         private Dictionary<string, byte[]> sharedDataDict = new Dictionary<string, byte[]>();
+        private XmlDocument xdocConfig = null;
         private long infoProgressRange;
         private long infoProgressPos;
         private string infoProgressText = string.Empty;
@@ -2794,6 +2794,26 @@ namespace EdiabasLib
                 arg.SetEdiabas(this);
             }
             SetConfigProperty("Simulation", "0");
+
+#if WindowsCE
+            string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);
+#else
+            string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+#endif
+            string configFile = Path.Combine(assemblyPath, "EdiabasLib.config");
+            if (File.Exists(configFile))
+            {
+                xdocConfig = new XmlDocument();
+                try
+                {
+                    xdocConfig.Load(configFile);
+                    SetConfigProperty("EdiabasIniPath", assemblyPath);
+                }
+                catch
+                {
+                    xdocConfig = null;
+                }
+            }
         }
 
         public void Dispose()
@@ -2843,6 +2863,35 @@ namespace EdiabasLib
             {
                 groupMappingDict.Clear();
             }
+        }
+
+        public string GetSettingsProperty(string name)
+        {
+            string result = string.Empty;
+            try
+            {
+                if (xdocConfig != null)
+                {
+                    XmlNode xnodes = xdocConfig.SelectSingleNode("/configuration/appSettings");
+
+                    if (xnodes != null)
+                    {
+                        foreach (XmlNode xnn in xnodes.ChildNodes)
+                        {
+                            string key = xnn.Attributes["key"].Value;
+                            if (string.Compare(key, name, StringComparison.Ordinal) == 0)
+                            {
+                                result = xnn.Attributes["value"].Value;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+            return result;
         }
 
         public string GetConfigProperty(string name)

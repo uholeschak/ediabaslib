@@ -91,6 +91,7 @@ namespace EdiabasLib
 
         public EdCommObd(EdiabasNet ediabas) : base(ediabas)
         {
+            comPort = ediabas.GetSettingsProperty("ObdComPort");
         }
 
         ~EdCommObd()
