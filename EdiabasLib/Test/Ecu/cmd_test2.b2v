@@ -67,7 +67,13 @@ job(  name      : INITIALISIERUNG;
    ) 
 {
 #asm
-					shmset		"ID","CMD_TEST2_INIT"
+					clear		S0
+					pary		S0
+					jnz			initpar
+					clear		S0
+					move		S0,"CMD_TEST2_INIT"
+initpar:
+					shmset		"ID",S0
 #endasm
     DONE = 1;
 }
@@ -78,7 +84,13 @@ job(  name      : ENDE;
    ) 
 {
 #asm
-					shmset		"ID","CMD_TEST2_EXIT"
+					clear		S0
+					pary		S0
+					jnz			exitpar
+					clear		S0
+					move		S0,"CMD_TEST2_EXIT"
+exitpar:
+					shmset		"ID",S0
 #endasm
 }
 
