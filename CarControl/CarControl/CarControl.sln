@@ -9,7 +9,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CarControlSetupDll", "..\Ca
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CarControlUnload", "..\CarControlUnload\CarControlUnload.vcproj", "{8EABEF2B-58E6-4134-83C9-9CF81DE5A414}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdibasLibCe", "..\..\EdiabasLib\EdibasLibCe\EdibasLibCe.csproj", "{15ABB909-DDB7-4E1A-9AC9-BB03221FC75A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLibCe", "..\..\EdiabasLib\EdibasLibCe\EdiabasLibCe.csproj", "{15ABB909-DDB7-4E1A-9AC9-BB03221FC75A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

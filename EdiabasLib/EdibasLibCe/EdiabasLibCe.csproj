@@ -7,8 +7,8 @@
     <ProjectGuid>{15ABB909-DDB7-4E1A-9AC9-BB03221FC75A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EdibasLibCe</RootNamespace>
-    <AssemblyName>EdibasLibCe</AssemblyName>
+    <RootNamespace>EdiabasLibCe</RootNamespace>
+    <AssemblyName>EdiabasLibCe</AssemblyName>
     <ProjectTypeGuids>{4D628B5B-2FBC-4AA6-8C16-197242AEB884};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PlatformFamilyName>WindowsCE</PlatformFamilyName>
     <PlatformID>E2BECB1F-8C8C-41ba-B736-9BE7D946A398</PlatformID>

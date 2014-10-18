@@ -123,9 +123,9 @@
     <None Include="DesignTimeAttributes.xmta" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\EdiabasLib\EdibasLibCe\EdibasLibCe.csproj">
+    <ProjectReference Include="..\..\EdiabasLib\EdibasLibCe\EdiabasLibCe.csproj">
       <Project>{15ABB909-DDB7-4E1A-9AC9-BB03221FC75A}</Project>
-      <Name>EdibasLibCe</Name>
+      <Name>EdiabasLibCe</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
