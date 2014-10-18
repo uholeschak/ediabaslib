@@ -476,6 +476,11 @@ namespace Ediabas
         {
             if (ediabas != null)
             {
+                abortJob = true;
+                while (jobThread != null)
+                {
+                    Thread.Sleep(10);
+                }
                 ediabas.Dispose();
                 ediabas = null;
             }
@@ -1024,8 +1029,6 @@ namespace Ediabas
 
         private static void executeJob(string ecu, string job, byte[] stdpara, int stdparalen, string paraString, byte[] para, int paralen, string result)
         {
-            setJobError(EDIABAS_ERR_NONE);
-
             if (ediabas == null)
             {
                 setJobError(EDIABAS_API_0006);
@@ -1033,10 +1036,10 @@ namespace Ediabas
             }
             if (jobThread != null)
             {
-                setJobError(EDIABAS_API_0008);
                 return;
             }
 
+            setJobError(EDIABAS_ERR_NONE);
             resultSets = null;
 
             try
