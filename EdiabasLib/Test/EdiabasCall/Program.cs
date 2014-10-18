@@ -155,7 +155,14 @@ namespace EdiabasCall
 
                     if (jobArgsData != null)
                     {
+#if false
+                        // for test of large buffer handling buffer
+                        byte[] buffer = new byte[API.APIMAXBINARY];
+                        Array.Copy(jobArgsData, buffer, jobArgsData.Length);
+                        API.apiJobData(sgbdBaseFile, jobName, buffer, jobArgsData.Length, jobResults);
+#else
                         API.apiJobData(sgbdBaseFile, jobName, jobArgsData, jobArgsData.Length, jobResults);
+#endif
                     }
                     else
                     {

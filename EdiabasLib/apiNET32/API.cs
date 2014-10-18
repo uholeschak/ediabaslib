@@ -1050,7 +1050,21 @@ namespace Ediabas
                 }
                 else if (para != null)
                 {
-                    ediabas.ArgBinary = para;
+                    if (para.Length != paralen)
+                    {
+                        byte[] binData = new byte[paralen];
+                        int copyLen = paralen;
+                        if (copyLen > para.Length)
+                        {
+                            copyLen = para.Length;
+                        }
+                        Array.Copy(para, binData, copyLen);
+                        ediabas.ArgBinary = binData;
+                    }
+                    else
+                    {
+                        ediabas.ArgBinary = para;
+                    }
                 }
                 ediabas.ResultsRequests = result;
             }
