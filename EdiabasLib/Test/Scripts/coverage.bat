@@ -12,7 +12,7 @@ if "%1"=="" (
 set EDIABAS_TEST=!BATPATH!\..\..\EdiabasTest\bin\Debug\EdiabasTest.exe
 set OUTFILE=output_lib.log
 set ADD_ARGS=-p COM4 -o !OUTFILE! -a -c
-set FILTERS=+[EdibasLib]*
+set FILTERS=+[EdiabasLib]*
 set COVERAGE=1
 goto argsok
 )
@@ -20,7 +20,7 @@ if "%1"=="apilib" (
 set EDIABAS_TEST=!BATPATH!\..\EdiabasLibCall\bin\Debug\EdiabasLibCall.exe
 set OUTFILE=output_apilib.log
 set ADD_ARGS=-p COM4 -o !OUTFILE! -a -c
-set FILTERS=+[EdibasLib]*
+set FILTERS=+[EdiabasLib]*
 set COVERAGE=1
 goto argsok
 )

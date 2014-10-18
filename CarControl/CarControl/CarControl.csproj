@@ -123,7 +123,7 @@
     <None Include="DesignTimeAttributes.xmta" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\EdiabasLib\EdibasLibCe\EdiabasLibCe.csproj">
+    <ProjectReference Include="..\..\EdiabasLib\EdiabasLibCe\EdiabasLibCe.csproj">
       <Project>{15ABB909-DDB7-4E1A-9AC9-BB03221FC75A}</Project>
       <Name>EdiabasLibCe</Name>
     </ProjectReference>
