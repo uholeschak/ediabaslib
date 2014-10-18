@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("EDIABAS .NET Library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("EdibasLib")]
+[assembly: AssemblyProduct("EdiabasLib")]
 [assembly: AssemblyCopyright("Ulrich Holeschak")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
