@@ -109,17 +109,6 @@ namespace EdiabasTest
                         ediabas.SwLog = new StreamWriter(logFile);
                     }
 
-                    // entries must be uppercase!
-                    try
-                    {
-                        ediabas.ResolveSgbdFile(Path.GetFileNameWithoutExtension(sgbdFile));
-                    }
-                    catch (Exception ex)
-                    {
-                        outputWriter.WriteLine("ResolveSgbdFile failed: " + EdiabasNet.GetExceptionText(ex));
-                        return 1;
-                    }
-
                     foreach (string jobString in jobNames)
                     {
                         if (jobString.Length == 0)
@@ -165,6 +154,16 @@ namespace EdiabasTest
                             {
                                 ediabas.ArgStringStd = argString;
                             }
+                        }
+
+                        try
+                        {
+                            ediabas.ResolveSgbdFile(Path.GetFileNameWithoutExtension(sgbdFile));
+                        }
+                        catch (Exception ex)
+                        {
+                            outputWriter.WriteLine("ResolveSgbdFile failed: " + EdiabasNet.GetExceptionText(ex));
+                            return 1;
                         }
 
                         outputWriter.WriteLine("JOB: " + jobName);

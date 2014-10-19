@@ -3089,7 +3089,6 @@ namespace EdiabasLib
                 LogString("OpenSgbdFs exception: " + GetExceptionText(ex));
                 return false;
             }
-            sharedDataDict.Clear();
             usesInfos = ReadAllUses(sgbdFs);
             jobInfos = ReadAllJobs(sgbdFs);
             tableInfos = ReadAllTables(sgbdFs);
@@ -3959,6 +3958,8 @@ namespace EdiabasLib
 
         private void ExecuteInitJob()
         {
+            bool jobRunningOld = JobRunning;
+            bool jobStdOld = jobStd;
             try
             {
                 JobRunning = true;
@@ -4003,13 +4004,15 @@ namespace EdiabasLib
             }
             finally
             {
-                jobStd = false;
-                JobRunning = false;
+                jobStd = jobStdOld;
+                JobRunning = jobRunningOld;
             }
         }
 
         private void ExecuteExitJob()
         {
+            bool jobRunningOld = JobRunning;
+            bool jobStdOld = jobStd;
             try
             {
                 JobRunning = true;
@@ -4033,13 +4036,15 @@ namespace EdiabasLib
             }
             finally
             {
-                jobStd = false;
-                JobRunning = false;
+                jobStd = jobStdOld;
+                JobRunning = jobRunningOld;
             }
         }
 
         private string ExecuteIdentJob()
         {
+            bool jobRunningOld = JobRunning;
+            bool jobStdOld = jobStd;
             try
             {
                 JobRunning = true;
@@ -4082,8 +4087,8 @@ namespace EdiabasLib
             }
             finally
             {
-                jobStd = false;
-                JobRunning = false;
+                jobStd = jobStdOld;
+                JobRunning = jobRunningOld;
             }
             return string.Empty;
         }

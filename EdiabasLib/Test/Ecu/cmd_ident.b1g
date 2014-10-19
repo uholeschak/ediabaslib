@@ -1,0 +1,37 @@
+
+INITIALISIERUNG#
+;    JOBNAME:INITIALISIERUNG
+;    JOBCOMMENT:Initialisierung und Kommunikationsparameter
+;    RESULT:DONE
+;    RESULTTYPE:int
+;    RESULTCOMMENT:1, wenn Okay
+;
+					clear		S0
+					pary		S0
+					jnz			initpar
+					clear		S0
+					move		S0,"CMD_IDENT_INIT"
+initpar:
+					shmset		"ID",S0
+					ergi		"DONE",#$1.I
+					eoj
+					eoj
+
+IDENTIFIKATION#
+;    JOBNAME:IDENTIFIKATION
+;    JOBCOMMENT:Identifikation der Variante
+;    RESULT:DONE
+;    RESULTTYPE:int
+;    RESULTCOMMENT:1, wenn Okay
+;
+					clear		S0
+					pary		S0
+					jnz			identpar
+					clear		S0
+					move		S0,"CMD_IDENT_IDENT"
+identpar:
+					shmset		"ID",S0
+					ergs		"VARIANTE","cmd_test1"
+					eoj
+					eoj
+
