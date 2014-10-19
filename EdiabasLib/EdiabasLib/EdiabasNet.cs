@@ -2366,7 +2366,7 @@ namespace EdiabasLib
         private const string jobNameIdent = "IDENTIFIKATION";
 
         private bool disposed = false;
-        private object interfaceLock = new object();
+        private object apiLock = new object();
         private bool jobRunning = false;
         private bool jobStd = false;
         private Stack<byte> stackList = new Stack<byte>();
@@ -2424,14 +2424,14 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     return jobRunning;
                 }
             }
             private set
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     jobRunning = value;
                 }
@@ -2442,7 +2442,7 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     if (argInfo.BinData == null)
                     {
@@ -2457,7 +2457,7 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ArgString: Job is running");
                 }
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     argInfo.BinData = encoding.GetBytes(value);
                 }
@@ -2468,7 +2468,7 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     if (argInfo.BinData == null)
                     {
@@ -2483,7 +2483,7 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ArgBinary: Job is running");
                 }
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     argInfo.BinData = value;
                 }
@@ -2494,7 +2494,7 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     if (argInfoStd.BinData == null)
                     {
@@ -2509,7 +2509,7 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ArgStringStd: Job is running");
                 }
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     argInfoStd.BinData = encoding.GetBytes(value);
                 }
@@ -2520,7 +2520,7 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     if (argInfoStd.BinData == null)
                     {
@@ -2535,7 +2535,7 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ArgBinaryStd: Job is running");
                 }
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     argInfoStd.BinData = value;
                 }
@@ -2582,7 +2582,7 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     return resultSets;
                 }
@@ -2593,7 +2593,7 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     return resultsRequestDict;
                 }
@@ -2605,7 +2605,7 @@ namespace EdiabasLib
             get
             {
                 string result = string.Empty;
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     foreach (string arg in resultsRequestDict.Keys)
                     {
@@ -2620,7 +2620,7 @@ namespace EdiabasLib
             }
             set
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     resultsRequestDict.Clear();
                     if (value.Length > 0)
@@ -2642,7 +2642,7 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     if ((infoProgressPos < 0) || (infoProgressRange <= 0))
                     {
@@ -2657,7 +2657,7 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     return infoProgressText;
                 }
@@ -2668,7 +2668,7 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     return abortJobFunc;
                 }
@@ -2679,7 +2679,7 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "AbortJobFunc: Job is running");
                 }
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     abortJobFunc = value;
                 }
@@ -2690,7 +2690,7 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     return progressJobFunc;
                 }
@@ -2701,7 +2701,7 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ProgressJobFunc: Job is running");
                 }
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     progressJobFunc = value;
                 }
@@ -2712,7 +2712,7 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     return errorRaisedFunc;
                 }
@@ -2723,7 +2723,7 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ErrorRaisedFunc: Job is running");
                 }
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     errorRaisedFunc = value;
                 }
@@ -2758,7 +2758,7 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     return swLog;
                 }
@@ -2769,7 +2769,7 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "SwLog: Job is running");
                 }
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     swLog = value;
                 }
@@ -2780,7 +2780,7 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     return sgbdFileName;
                 }
@@ -2792,7 +2792,7 @@ namespace EdiabasLib
                     throw new ArgumentOutOfRangeException("JobRunning", "SgbdFileName: Job is running");
                 }
                 CloseSgbdFs();
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     sgbdFileName = value;
                 }
@@ -2803,7 +2803,7 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     return ecuPath;
                 }
@@ -2814,7 +2814,7 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     return edCommClass;
                 }
@@ -2825,7 +2825,7 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "EdCommClass: Job is running");
                 }
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     edCommClass = value;
                 }
@@ -2848,14 +2848,18 @@ namespace EdiabasLib
         {
             get
             {
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     return errorCodeLast;
                 }
             }
         }
 
-        public EdiabasNet()
+        public EdiabasNet() : this(null)
+        {
+        }
+
+        public EdiabasNet(string configFile)
         {
             if (trapBitDict == null)
             {
@@ -2894,6 +2898,8 @@ namespace EdiabasLib
             {
                 arg.SetEdiabas(this);
             }
+
+            jobRunning = false;
             SetConfigProperty("Simulation", "0");
 
 #if WindowsCE
@@ -2901,20 +2907,30 @@ namespace EdiabasLib
 #else
             string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 #endif
-            string configFile = Path.Combine(assemblyPath, "EdiabasLib.config");
+            if (string.IsNullOrEmpty(configFile))
+            {
+                configFile = Path.Combine(assemblyPath, "EdiabasLib.config");
+            }
             if (File.Exists(configFile))
             {
                 xdocConfig = new XmlDocument();
                 try
                 {
                     xdocConfig.Load(configFile);
-                    SetConfigProperty("EdiabasIniPath", assemblyPath);
+                    SetConfigProperty("EdiabasIniPath", Path.GetDirectoryName(configFile));
                 }
                 catch
                 {
                     xdocConfig = null;
                 }
             }
+
+            string ecuPathLocal = GetSettingsProperty("EcuPath");
+            if (string.IsNullOrEmpty(ecuPathLocal))
+            {
+                ecuPathLocal = assemblyPath;
+            }
+            SetConfigProperty("EcuPath", ecuPathLocal);
         }
 
         public void Dispose()
@@ -2961,7 +2977,7 @@ namespace EdiabasLib
 
         public void ClearGroupMapping()
         {
-            lock (interfaceLock)
+            lock (apiLock)
             {
                 groupMappingDict.Clear();
             }
@@ -3000,7 +3016,7 @@ namespace EdiabasLib
         {
             string key = name.ToUpper(culture);
             string value;
-            lock (interfaceLock)
+            lock (apiLock)
             {
                 if (!configDict.TryGetValue(key, out value))
                 {
@@ -3013,7 +3029,7 @@ namespace EdiabasLib
         public void SetConfigProperty(string name, string value)
         {
             string key = name.ToUpper(culture);
-            lock (interfaceLock)
+            lock (apiLock)
             {
                 if (configDict.ContainsKey(key))
                 {
@@ -3038,7 +3054,7 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "SetConfigProperty: Job is running");
                 }
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     ecuPath = value;
                 }
@@ -3299,7 +3315,7 @@ namespace EdiabasLib
 
         public void RaiseError(ErrorCodes error)
         {
-            lock (interfaceLock)
+            lock (apiLock)
             {
                 this.errorCodeLast = error;
             }
@@ -3889,7 +3905,7 @@ namespace EdiabasLib
                 string key = baseFileName;
                 string variantName = string.Empty;
                 bool mappingFound = false;
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     mappingFound = groupMappingDict.TryGetValue(key, out variantName);
                 }
@@ -3901,7 +3917,7 @@ namespace EdiabasLib
                     {
                         throw new ArgumentOutOfRangeException("variantName", "ResolveSgbdFile: No variant found");
                     }
-                    lock (interfaceLock)
+                    lock (apiLock)
                     {
                         groupMappingDict.Add(key, variantName);
                     }
@@ -4178,7 +4194,7 @@ namespace EdiabasLib
             byte[] buffer = new byte[2];
 
             resultSetsTemp = new List<Dictionary<string, ResultData>>();
-            lock (interfaceLock)
+            lock (apiLock)
             {
                 resultSets = null;
             }
@@ -4282,7 +4298,7 @@ namespace EdiabasLib
                 Dictionary<string, ResultData> systemResultDict = CreateSystemResultDict(jobInfo, resultSetsTemp.Count);
 
                 resultSetsTemp.Insert(0, systemResultDict);
-                lock (interfaceLock)
+                lock (apiLock)
                 {
                     resultSets = resultSetsTemp;
                 }

@@ -18,6 +18,7 @@ namespace EdiabasTest
 
         static int Main(string[] args)
         {
+            string cfgString = null;
             string sgbdFile = null;
             string comPort = null;
             string outFile = null;
@@ -28,6 +29,8 @@ namespace EdiabasTest
 
             var p = new OptionSet()
             {
+                { "cfg=", "config string.",
+                  v => cfgString = v },
                 { "s|sgbd=", "sgbd file.",
                   v => sgbdFile = v },
                 { "p|port=", "COM port.",
@@ -66,7 +69,7 @@ namespace EdiabasTest
                 return 0;
             }
 
-            if (outFile == null)
+            if (string.IsNullOrEmpty(outFile))
             {
                 outputWriter = Console.Out;
             }
@@ -77,13 +80,13 @@ namespace EdiabasTest
 
             try
             {
-                if (sgbdFile == null)
+                if (string.IsNullOrEmpty(sgbdFile))
                 {
                     outputWriter.WriteLine("No sgbd file specified");
                     return 1;
                 }
 
-                if (comPort == null)
+                if (string.IsNullOrEmpty(comPort))
                 {
                     outputWriter.WriteLine("No COM port specified");
                     return 1;
@@ -95,7 +98,7 @@ namespace EdiabasTest
                     return 1;
                 }
 
-                using (EdiabasNet ediabas = new EdiabasNet())
+                using (EdiabasNet ediabas = new EdiabasNet(cfgString))
                 {
                     EdCommObd edCommBwmFast = new EdCommObd(ediabas);
                     edCommBwmFast.ComPort = comPort;

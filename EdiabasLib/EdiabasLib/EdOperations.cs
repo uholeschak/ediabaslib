@@ -947,7 +947,7 @@ namespace EdiabasLib
         // jump if result tag is not existing
         private static void OpEtag(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            lock (ediabas.interfaceLock)
+            lock (ediabas.apiLock)
             {
                 if (ediabas.resultsRequestDict.Count > 0)
                 {
@@ -1312,7 +1312,7 @@ namespace EdiabasLib
             long incVal = arg0.GetValueData();
             long newValue;
 
-            lock (ediabas.interfaceLock)
+            lock (ediabas.apiLock)
             {
                 if (ediabas.infoProgressPos < 0)
                 {
@@ -1335,7 +1335,7 @@ namespace EdiabasLib
         private static void OpIrange(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdValueType progressRange = arg0.GetValueData();
-            lock (ediabas.interfaceLock)
+            lock (ediabas.apiLock)
             {
                 ediabas.infoProgressPos = -1;
                 ediabas.infoProgressRange = progressRange;
@@ -1347,7 +1347,7 @@ namespace EdiabasLib
         private static void OpIupdate(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             string progressText = arg0.GetStringData();
-            lock (ediabas.interfaceLock)
+            lock (ediabas.apiLock)
             {
                 ediabas.infoProgressText = progressText;
             }

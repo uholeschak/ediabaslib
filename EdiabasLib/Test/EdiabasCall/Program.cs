@@ -30,6 +30,7 @@ namespace EdiabasCall
 
         static int Main(string[] args)
         {
+            string cfgString = null;
             string sgbdFile = null;
             string outFile = null;
             bool appendFile = false;
@@ -38,6 +39,8 @@ namespace EdiabasCall
 
             var p = new OptionSet()
             {
+                { "cfg=", "config string.",
+                  v => cfgString = v },
                 { "s|sgbd=", "sgbd file.",
                   v => sgbdFile = v },
                 { "o|out=", "output file name.",
@@ -72,7 +75,7 @@ namespace EdiabasCall
                 return 0;
             }
 
-            if (outFile == null)
+            if (string.IsNullOrEmpty(outFile))
             {
                 outputWriter = Console.Out;
             }
@@ -83,7 +86,7 @@ namespace EdiabasCall
 
             try
             {
-                if (sgbdFile == null)
+                if (string.IsNullOrEmpty(sgbdFile))
                 {
                     outputWriter.WriteLine("No sgbd file specified");
                     return 1;
@@ -96,6 +99,10 @@ namespace EdiabasCall
                 }
 
                 string configString = "EcuPath=" + Path.GetDirectoryName(sgbdFile);
+                if (!string.IsNullOrEmpty(cfgString))
+                {
+                    configString = cfgString;
+                }
                 if (!API.apiInitExt(string.Empty, string.Empty, string.Empty, configString))
                 {
                     outputWriter.WriteLine("Init api failed");
@@ -113,7 +120,10 @@ namespace EdiabasCall
                     }
                 }
 
-                //API.apiSetConfig("EcuPath", Path.GetDirectoryName(sgbdFile));
+                if (!string.IsNullOrEmpty(cfgString))
+                {
+                    API.apiSetConfig("EcuPath", Path.GetDirectoryName(sgbdFile));
+                }
 
                 string sgbdBaseFile = Path.GetFileNameWithoutExtension(sgbdFile);
                 foreach (string jobString in jobNames)
