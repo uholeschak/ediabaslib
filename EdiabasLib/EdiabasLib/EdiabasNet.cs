@@ -2056,7 +2056,44 @@ namespace EdiabasLib
             public bool overflow;
         }
 
-        public class JobInfo
+        private class ArgInfo
+        {
+            public ArgInfo()
+            {
+                this.binData = null;
+                this.stringList = null;
+            }
+
+            public byte[] BinData
+            {
+                get
+                {
+                    return binData;
+                }
+                set
+                {
+                    binData = value;
+                    stringList = null;
+                }
+            }
+
+            public List<string> StringList
+            {
+                get
+                {
+                    return stringList;
+                }
+                set
+                {
+                    stringList = value;
+                }
+            }
+
+            private byte[] binData;
+            private List<string> stringList;
+        }
+
+        private class JobInfo
         {
             public JobInfo(string jobName, UInt32 jobOffset, UInt32 jobSize, UInt32 arraySize, UsesInfo usesInfo)
             {
@@ -2114,7 +2151,7 @@ namespace EdiabasLib
             private UsesInfo usesInfo;
         }
 
-        public class JobInfos
+        private class JobInfos
         {
             public JobInfo[] JobInfoArray
             {
@@ -2144,7 +2181,7 @@ namespace EdiabasLib
             private Dictionary<string, UInt32> jobNameDict;
         }
 
-        public class UsesInfo
+        private class UsesInfo
         {
             public UsesInfo(string name)
             {
@@ -2162,7 +2199,7 @@ namespace EdiabasLib
             private string name;
         }
 
-        public class UsesInfos
+        private class UsesInfos
         {
             public UsesInfo[] UsesInfoArray
             {
@@ -2179,7 +2216,7 @@ namespace EdiabasLib
             private UsesInfo[] usesInfoArray;
         }
 
-        public class TableInfo
+        private class TableInfo
         {
             public TableInfo(string name, UInt32 tableOffset, UInt32 tableColumnOffset, EdValueType columns, EdValueType rows)
             {
@@ -2289,7 +2326,7 @@ namespace EdiabasLib
             private EdValueType[][] tableEntries;
         }
 
-        public class TableInfos
+        private class TableInfos
         {
             public TableInfo[] TableInfoArray
             {
@@ -2331,8 +2368,10 @@ namespace EdiabasLib
         private bool disposed = false;
         private object interfaceLock = new object();
         private bool jobRunning = false;
+        private bool jobStd = false;
         private Stack<byte> stackList = new Stack<byte>();
-        private List<byte[]> argList = new List<byte[]>();
+        private ArgInfo argInfo = new ArgInfo();
+        private ArgInfo argInfoStd = new ArgInfo();
         private Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
         private Dictionary<string, ResultData> resultSysDict = new Dictionary<string, ResultData>();
         private Dictionary<string, bool> resultsRequestDict = new Dictionary<string, bool>();
@@ -2399,34 +2438,18 @@ namespace EdiabasLib
             }
         }
 
-        public List<byte[]> ArgList
-        {
-            get
-            {
-                lock (interfaceLock)
-                {
-                    return argList;
-                }
-            }
-        }
-
         public string ArgString
         {
             get
             {
-                string result = string.Empty;
                 lock (interfaceLock)
                 {
-                    foreach (byte[] arg in ArgList)
+                    if (argInfo.BinData == null)
                     {
-                        if (result.Length > 0)
-                        {
-                            result += ";";
-                        }
-                        result += encoding.GetString(arg, 0, arg.Length);
+                        return string.Empty;
                     }
+                    return encoding.GetString(argInfo.BinData, 0, argInfo.BinData.Length);
                 }
-                return result;
             }
             set
             {
@@ -2436,15 +2459,7 @@ namespace EdiabasLib
                 }
                 lock (interfaceLock)
                 {
-                    argList.Clear();
-                    if (value.Length > 0)
-                    {
-                        string[] words = value.Split(';');
-                        foreach (string word in words)
-                        {
-                            argList.Add(encoding.GetBytes(word));
-                        }
-                    }
+                    argInfo.BinData = encoding.GetBytes(value);
                 }
             }
         }
@@ -2453,15 +2468,14 @@ namespace EdiabasLib
         {
             get
             {
-                byte[] result = byteArray0;
                 lock (interfaceLock)
                 {
-                    if (ArgList.Count > 0)
+                    if (argInfo.BinData == null)
                     {
-                        result = ArgList[0];
+                        return EdiabasNet.byteArray0;
                     }
+                    return argInfo.BinData;
                 }
-                return result;
             }
             set
             {
@@ -2471,10 +2485,97 @@ namespace EdiabasLib
                 }
                 lock (interfaceLock)
                 {
-                    argList.Clear();
-                    argList.Add(value);
+                    argInfo.BinData = value;
                 }
             }
+        }
+
+        public string ArgStringStd
+        {
+            get
+            {
+                lock (interfaceLock)
+                {
+                    if (argInfoStd.BinData == null)
+                    {
+                        return string.Empty;
+                    }
+                    return encoding.GetString(argInfoStd.BinData, 0, argInfoStd.BinData.Length);
+                }
+            }
+            set
+            {
+                if (JobRunning)
+                {
+                    throw new ArgumentOutOfRangeException("JobRunning", "ArgStringStd: Job is running");
+                }
+                lock (interfaceLock)
+                {
+                    argInfoStd.BinData = encoding.GetBytes(value);
+                }
+            }
+        }
+
+        public byte[] ArgBinaryStd
+        {
+            get
+            {
+                lock (interfaceLock)
+                {
+                    if (argInfoStd.BinData == null)
+                    {
+                        return EdiabasNet.byteArray0;
+                    }
+                    return argInfoStd.BinData;
+                }
+            }
+            set
+            {
+                if (JobRunning)
+                {
+                    throw new ArgumentOutOfRangeException("JobRunning", "ArgBinaryStd: Job is running");
+                }
+                lock (interfaceLock)
+                {
+                    argInfoStd.BinData = value;
+                }
+            }
+        }
+
+        private byte[] getActiveArgBinary()
+        {
+            if (jobStd)
+            {
+                return ArgBinaryStd;
+            }
+            return ArgBinary;
+        }
+
+        private List<string> getActiveArgStrings()
+        {
+            string args;
+            if (jobStd)
+            {
+                args = ArgStringStd;
+            }
+            else
+            {
+                args = ArgString;
+            }
+
+            if (argInfo.StringList == null)
+            {
+                argInfo.StringList = new List<string>();
+                if (args.Length > 0)
+                {
+                    string[] words = args.Split(';');
+                    foreach (string word in words)
+                    {
+                        argInfo.StringList.Add(word);
+                    }
+                }
+            }
+            return argInfo.StringList;
         }
 
         public List<Dictionary<string, ResultData>> ResultSets
@@ -2837,6 +2938,7 @@ namespace EdiabasLib
                 if (disposing)
                 {
                     // Dispose managed resources.
+                    abortJobFunc = null;    // prevent abort of exitJob
                     CloseSgbdFs();
                     CloseTableFs();
                     CloseAllUserFiles();
@@ -3860,6 +3962,7 @@ namespace EdiabasLib
             try
             {
                 JobRunning = true;
+                jobStd = true;
 
                 try
                 {
@@ -3900,6 +4003,7 @@ namespace EdiabasLib
             }
             finally
             {
+                jobStd = false;
                 JobRunning = false;
             }
         }
@@ -3909,6 +4013,7 @@ namespace EdiabasLib
             try
             {
                 JobRunning = true;
+                jobStd = true;
 
                 try
                 {
@@ -3928,6 +4033,7 @@ namespace EdiabasLib
             }
             finally
             {
+                jobStd = false;
                 JobRunning = false;
             }
         }
@@ -3937,6 +4043,7 @@ namespace EdiabasLib
             try
             {
                 JobRunning = true;
+                jobStd = true;
 
                 resultDict.Clear();
                 try
@@ -3975,6 +4082,7 @@ namespace EdiabasLib
             }
             finally
             {
+                jobStd = false;
                 JobRunning = false;
             }
             return string.Empty;
@@ -4042,10 +4150,14 @@ namespace EdiabasLib
             try
             {
                 JobRunning = true;
+                jobStd = false;
                 executeJob(jobName);
             }
             finally
             {
+                argInfo.BinData = null;
+                argInfoStd.BinData = null;
+                jobStd = false;
                 JobRunning = false;
             }
         }

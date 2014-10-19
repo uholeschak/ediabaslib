@@ -1725,18 +1725,11 @@ namespace EdiabasLib
             EdValueType pos = arg1.GetValueData();
             pos--;
 
-            byte[] argData = null;
-            lock (ediabas.interfaceLock)
+            List<string> argStrings = ediabas.getActiveArgStrings();
+            if (pos < argStrings.Count)
             {
-                if (pos < ediabas.argList.Count)
-                {
-                    argData = ediabas.argList[(int)pos];
-                }
-            }
-            if (argData != null)
-            {
-                string argStr = encoding.GetString(argData, 0, argData.Length);
-                result = (EdValueType)StringToValue(argStr);
+                string argString = argStrings[(int)pos];
+                result = (EdValueType)StringToValue(argString);
                 ediabas.flags.zero = false;
             }
             arg0.SetRawData(result);
@@ -1750,11 +1743,8 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpParn: Invalid type");
             }
 
-            EdValueType count;
-            lock (ediabas.interfaceLock)
-            {
-                count = (EdValueType)ediabas.argList.Count;
-            }
+            List<string> argStrings = ediabas.getActiveArgStrings();
+            EdValueType count = (EdValueType)argStrings.Count;
             arg0.SetRawData(count);
             ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(arg0.GetValueData(), arg0.GetDataLen());
@@ -1775,18 +1765,11 @@ namespace EdiabasLib
             EdValueType pos = arg1.GetValueData();
             pos--;
 
-            byte[] argData = null;
-            lock (ediabas.interfaceLock)
+            List<string> argStrings = ediabas.getActiveArgStrings();
+            if (pos < argStrings.Count)
             {
-                if (pos < ediabas.argList.Count)
-                {
-                    argData = ediabas.argList[(int)pos];
-                }
-            }
-            if (argData != null)
-            {
-                string argStr = encoding.GetString(argData, 0, argData.Length);
-                result = StringToFloat(argStr);
+                string argString = argStrings[(int)pos];
+                result = StringToFloat(argString);
                 ediabas.flags.zero = false;
             }
             arg0.SetRawData(result);
@@ -1804,17 +1787,10 @@ namespace EdiabasLib
             EdValueType pos = arg1.GetValueData();
             pos--;
 
-            byte[] argData = null;
-            lock (ediabas.interfaceLock)
+            List<string> argStrings = ediabas.getActiveArgStrings();
+            if (pos < argStrings.Count)
             {
-                if (pos < ediabas.argList.Count)
-                {
-                    argData = ediabas.argList[(int)pos];
-                }
-            }
-            if (argData != null)
-            {
-                result = encoding.GetString(argData, 0, argData.Length);
+                result = argStrings[(int)pos];
                 ediabas.flags.zero = false;
             }
             arg0.SetStringData(result);
@@ -1829,13 +1805,11 @@ namespace EdiabasLib
 
             byte[] result = EdiabasNet.byteArray0;
             ediabas.flags.zero = true;
-            lock (ediabas.interfaceLock)
+            byte[] argBin = ediabas.getActiveArgBinary();
+            if (argBin.Length > 0)
             {
-                if (ediabas.argList.Count > 0)
-                {
-                    result = ediabas.argList[0];
-                    ediabas.flags.zero = false;
-                }
+                result = argBin;
+                ediabas.flags.zero = false;
             }
             arg0.SetArrayData(result);
         }
