@@ -464,34 +464,12 @@ namespace Ediabas
             abortJob = false;
             resultSets = null;
 
-            string configFile = null;
-            if (!string.IsNullOrEmpty(config))
-            {
-                if (config[0] == '@')
-                {
-                    configFile = config.Substring(1);
-                }
-            }
-
-            ediabas = new EdiabasNet(configFile);
+            ediabas = new EdiabasNet(config);
 
             EdCommObd edCommBwmFast = new EdCommObd(ediabas);
             ediabas.EdCommClass = edCommBwmFast;
 
             ediabas.AbortJobFunc = abortJobFunc;
-
-            if (!string.IsNullOrEmpty(config) && configFile == null)
-            {
-                string[] words = config.Split(';');
-                foreach (string word in words)
-                {
-                    string[] cfgParts = word.Split(new char[] { '=' }, 2);
-                    if (cfgParts.Length == 2)
-                    {
-                        ediabas.SetConfigProperty(cfgParts[0], cfgParts[1]);
-                    }
-                }
-            }
 
             return true;
         }
@@ -968,7 +946,11 @@ namespace Ediabas
                 setLocalError(EDIABAS_API_0006);
                 return false;
             }
-            cfgValue = ediabas.GetConfigProperty(cfgName);
+            string prop = ediabas.GetConfigProperty(cfgName);
+            if (prop != null)
+            {
+                cfgValue = prop;
+            }
             return true;
         }
 

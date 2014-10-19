@@ -2859,7 +2859,7 @@ namespace EdiabasLib
         {
         }
 
-        public EdiabasNet(string configFile)
+        public EdiabasNet(string config)
         {
             if (trapBitDict == null)
             {
@@ -2907,10 +2907,16 @@ namespace EdiabasLib
 #else
             string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 #endif
-            if (string.IsNullOrEmpty(configFile))
+            SetConfigProperty("EcuPath", assemblyPath);
+
+            bool withFile = false;
+            string configFile = Path.Combine(assemblyPath, "EdiabasLib.config");
+            if (!string.IsNullOrEmpty(config) && (config[0] == '@'))
             {
-                configFile = Path.Combine(assemblyPath, "EdiabasLib.config");
+                withFile = true;
+                configFile = config.Substring(1);
             }
+
             if (File.Exists(configFile))
             {
                 xdocConfig = new XmlDocument();
@@ -2918,6 +2924,7 @@ namespace EdiabasLib
                 {
                     xdocConfig.Load(configFile);
                     SetConfigProperty("EdiabasIniPath", Path.GetDirectoryName(configFile));
+                    ReadAllSettingsProperties();
                 }
                 catch
                 {
@@ -2925,12 +2932,18 @@ namespace EdiabasLib
                 }
             }
 
-            string ecuPathLocal = GetSettingsProperty("EcuPath");
-            if (string.IsNullOrEmpty(ecuPathLocal))
+            if (!withFile && !string.IsNullOrEmpty(config))
             {
-                ecuPathLocal = assemblyPath;
+                string[] words = config.Split(';');
+                foreach (string word in words)
+                {
+                    string[] cfgParts = word.Split(new char[] { '=' }, 2);
+                    if (cfgParts.Length == 2)
+                    {
+                        SetConfigProperty(cfgParts[0], cfgParts[1]);
+                    }
+                }
             }
-            SetConfigProperty("EcuPath", ecuPathLocal);
         }
 
         public void Dispose()
@@ -2983,7 +2996,7 @@ namespace EdiabasLib
             }
         }
 
-        public string GetSettingsProperty(string name)
+        public void ReadAllSettingsProperties()
         {
             string result = string.Empty;
             try
@@ -2996,11 +3009,14 @@ namespace EdiabasLib
                     {
                         foreach (XmlNode xnn in xnodes.ChildNodes)
                         {
-                            string key = xnn.Attributes["key"].Value;
-                            if (string.Compare(key, name, StringComparison.Ordinal) == 0)
+                            try
                             {
-                                result = xnn.Attributes["value"].Value;
-                                break;
+                                string key = xnn.Attributes["key"].Value;
+                                string value = xnn.Attributes["value"].Value;
+                                SetConfigProperty(key, value);
+                            }
+                            catch (Exception)
+                            {
                             }
                         }
                     }
@@ -3009,7 +3025,6 @@ namespace EdiabasLib
             catch (Exception)
             {
             }
-            return result;
         }
 
         public string GetConfigProperty(string name)

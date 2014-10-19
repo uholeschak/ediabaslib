@@ -19,7 +19,9 @@ goto argsok
 if "%1"=="apilib" (
 set EDIABAS_TEST=!BATPATH!\..\EdiabasLibCall\bin\Debug\EdiabasLibCall.exe
 set OUTFILE=output_apilib.log
-set ADD_ARGS=-o !OUTFILE! -a -c --cfg="@!BATPATH!\EdiabasLib.config"
+set ADD_ARGS=-o !OUTFILE! -a -c
+rem set ADD_ARGS=!ADD_ARGS! --cfg="@!BATPATH!\EdiabasLib.config"
+set ADD_ARGS=!ADD_ARGS! --cfg=\"ObdComPort=COM4\"
 set FILTERS=+[EdiabasLib]*
 set COVERAGE=1
 goto argsok
