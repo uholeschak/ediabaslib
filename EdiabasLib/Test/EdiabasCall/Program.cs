@@ -132,9 +132,10 @@ namespace EdiabasCall
                         return 1;
                     }
                     string jobName = parts[0];
-                    string jobArgs = string.Empty;
+                    string jobArgs = null;
                     byte[] jobArgsData = null;
                     string jobResults = string.Empty;
+                    byte[] jobArgsStdData = null;
                     if (parts.Length >= 2)
                     {
                         string argString = parts[1];
@@ -145,16 +146,45 @@ namespace EdiabasCall
                         else
                         {
                             jobArgs = argString;
+                            jobArgsData = encoding.GetBytes(argString);
                         }
                     }
                     if (parts.Length >= 3)
                     {
                         jobResults = parts[2];
                     }
+                    if (parts.Length >= 4)
+                    {
+                        string argString = parts[3];
+                        if (argString.Length > 0 && argString[0] == '|')
+                        {   // binary data
+                            jobArgsStdData = HexToByteArray(argString.Substring(1));
+                        }
+                        else
+                        {
+                            jobArgsStdData = encoding.GetBytes(argString);
+                        }
+                    }
                     outputWriter.WriteLine("JOB: " + jobName);
 
-                    if (jobArgsData != null)
+                    if (jobArgsStdData != null)
                     {
+                        if (jobArgsData == null)
+                        {
+                            jobArgsData = new byte[0];
+                        }
+                        API.apiJobExt(sgbdBaseFile, jobName, jobArgsStdData, jobArgsStdData.Length, jobArgsData, jobArgsData.Length, jobResults, 0);
+                    }
+                    else if (jobArgs != null)
+                    {
+                        API.apiJob(sgbdBaseFile, jobName, jobArgs, jobResults);
+                    }
+                    else
+                    {
+                        if (jobArgsData == null)
+                        {
+                            jobArgsData = new byte[0];
+                        }
 #if false
                         // for test of large buffer handling buffer
                         byte[] buffer = new byte[API.APIMAXBINARY];
@@ -163,10 +193,6 @@ namespace EdiabasCall
 #else
                         API.apiJobData(sgbdBaseFile, jobName, jobArgsData, jobArgsData.Length, jobResults);
 #endif
-                    }
-                    else
-                    {
-                        API.apiJob(sgbdBaseFile, jobName, jobArgs, jobResults);
                     }
 
                     lastJobInfo = string.Empty;

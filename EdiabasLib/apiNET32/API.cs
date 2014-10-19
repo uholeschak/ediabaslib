@@ -38,6 +38,8 @@ namespace Ediabas
             }
         }
 
+        private static readonly Encoding encoding = Encoding.GetEncoding(1252);
+
         private static EdiabasNet ediabas;
         private static int apiStateValue;
         private static int localError;
@@ -493,17 +495,18 @@ namespace Ediabas
 
         public static void apiJob(string ecu, string job, string para, string result)
         {
-            executeJob(ecu, job, null, 0, para, null, 0, result);
+            byte[] paraBytes = encoding.GetBytes(para);
+            executeJob(ecu, job, null, 0, paraBytes, paraBytes.Length, result);
         }
 
         public static void apiJobData(string ecu, string job, byte[] para, int paralen, string result)
         {
-            apiJobExt(ecu, job, null, 0, para, paralen, result, 0);
+            executeJob(ecu, job, null, 0, para, paralen, result);
         }
 
         public static void apiJobExt(string ecu, string job, byte[] stdpara, int stdparalen, byte[] para, int paralen, string result, int reserved)
         {
-            executeJob(ecu, job, stdpara, stdparalen, null, para, paralen, result);
+            executeJob(ecu, job, stdpara, stdparalen, para, paralen, result);
         }
 
         public static int apiJobInfo(out string infoText)
@@ -1027,7 +1030,7 @@ namespace Ediabas
             return resultData;
         }
 
-        private static void executeJob(string ecu, string job, byte[] stdpara, int stdparalen, string paraString, byte[] para, int paralen, string result)
+        private static void executeJob(string ecu, string job, byte[] stdpara, int stdparalen, byte[] para, int paralen, string result)
         {
             if (ediabas == null)
             {
@@ -1044,28 +1047,38 @@ namespace Ediabas
 
             try
             {
-                if (paraString != null)
+                if (para != null && para.Length != paralen)
                 {
-                    ediabas.ArgString = paraString;
+                    byte[] binData = new byte[paralen];
+                    int copyLen = paralen;
+                    if (copyLen > para.Length)
+                    {
+                        copyLen = para.Length;
+                    }
+                    Array.Copy(para, binData, copyLen);
+                    ediabas.ArgBinary = binData;
                 }
-                else if (para != null)
+                else
                 {
-                    if (para.Length != paralen)
-                    {
-                        byte[] binData = new byte[paralen];
-                        int copyLen = paralen;
-                        if (copyLen > para.Length)
-                        {
-                            copyLen = para.Length;
-                        }
-                        Array.Copy(para, binData, copyLen);
-                        ediabas.ArgBinary = binData;
-                    }
-                    else
-                    {
-                        ediabas.ArgBinary = para;
-                    }
+                    ediabas.ArgBinary = para;
                 }
+
+                if (stdpara != null && stdpara.Length != stdparalen)
+                {
+                    byte[] binData = new byte[stdparalen];
+                    int copyLen = stdparalen;
+                    if (copyLen > stdpara.Length)
+                    {
+                        copyLen = stdpara.Length;
+                    }
+                    Array.Copy(stdpara, binData, copyLen);
+                    ediabas.ArgBinaryStd = binData;
+                }
+                else
+                {
+                    ediabas.ArgBinaryStd = stdpara;
+                }
+
                 ediabas.ResultsRequests = result;
             }
             catch (Exception)

@@ -128,7 +128,8 @@ namespace EdiabasTest
                             return 1;
                         }
 
-                        ediabas.ArgString = string.Empty;
+                        ediabas.ArgBinary = null;
+                        ediabas.ArgBinaryStd = null;
                         ediabas.ResultsRequests = string.Empty;
                         string[] parts = jobString.Split('#');
                         if ((parts.Length < 1) || (parts[0].Length == 0))
@@ -152,6 +153,18 @@ namespace EdiabasTest
                         if (parts.Length >= 3)
                         {
                             ediabas.ResultsRequests = parts[2];
+                        }
+                        if (parts.Length >= 4)
+                        {
+                            string argString = parts[3];
+                            if (argString.Length > 0 && argString[0] == '|')
+                            {   // binary data
+                                ediabas.ArgBinaryStd = EdiabasNet.HexToByteArray(argString.Substring(1));
+                            }
+                            else
+                            {
+                                ediabas.ArgStringStd = argString;
+                            }
                         }
 
                         outputWriter.WriteLine("JOB: " + jobName);
