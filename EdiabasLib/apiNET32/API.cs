@@ -523,8 +523,13 @@ namespace Ediabas
 
         public static bool apiResultChar(out char buffer, string result, ushort rset)
         {
-            setLocalError(EDIABAS_ERR_NONE);
             buffer = '\0';
+            if (!waitJobFinish())
+            {
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
@@ -542,8 +547,13 @@ namespace Ediabas
 
         public static bool apiResultByte(out byte buffer, string result, ushort rset)
         {
-            setLocalError(EDIABAS_ERR_NONE);
             buffer = 0;
+            if (!waitJobFinish())
+            {
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
@@ -561,8 +571,13 @@ namespace Ediabas
 
         public static bool apiResultInt(out short buffer, string result, ushort rset)
         {
-            setLocalError(EDIABAS_ERR_NONE);
             buffer = 0;
+            if (!waitJobFinish())
+            {
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
@@ -580,8 +595,13 @@ namespace Ediabas
 
         public static bool apiResultWord(out ushort buffer, string result, ushort rset)
         {
-            setLocalError(EDIABAS_ERR_NONE);
             buffer = 0;
+            if (!waitJobFinish())
+            {
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
@@ -599,8 +619,13 @@ namespace Ediabas
 
         public static bool apiResultLong(out int buffer, string result, ushort rset)
         {
-            setLocalError(EDIABAS_ERR_NONE);
             buffer = 0;
+            if (!waitJobFinish())
+            {
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
@@ -618,8 +643,13 @@ namespace Ediabas
 
         public static bool apiResultDWord(out uint buffer, string result, ushort rset)
         {
-            setLocalError(EDIABAS_ERR_NONE);
             buffer = 0;
+            if (!waitJobFinish())
+            {
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
@@ -637,8 +667,13 @@ namespace Ediabas
 
         public static bool apiResultReal(out double buffer, string result, ushort rset)
         {
-            setLocalError(EDIABAS_ERR_NONE);
             buffer = 0;
+            if (!waitJobFinish())
+            {
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
@@ -656,8 +691,13 @@ namespace Ediabas
 
         public static bool apiResultText(out string buffer, string result, ushort rset, string format)
         {
-            setLocalError(EDIABAS_ERR_NONE);
             buffer = string.Empty;
+            if (!waitJobFinish())
+            {
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
@@ -675,8 +715,13 @@ namespace Ediabas
 
         public static bool apiResultText(out char[] buffer, string result, ushort rset, string format)
         {
-            setLocalError(EDIABAS_ERR_NONE);
             buffer = null;
+            if (!waitJobFinish())
+            {
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
             string text;
             if (API.apiResultText(out text, result, rset, format))
             {
@@ -691,9 +736,14 @@ namespace Ediabas
 
         public static bool apiResultBinary(out byte[] buffer, out ushort bufferLen, string result, ushort rset)
         {
-            setLocalError(EDIABAS_ERR_NONE);
             buffer = null;
             bufferLen = 0;
+            if (!waitJobFinish())
+            {
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
@@ -718,9 +768,14 @@ namespace Ediabas
 
         public static bool apiResultBinaryExt(out byte[] buffer, out uint bufferLen, uint bufferSize, string result, ushort rset)
         {
-            setLocalError(EDIABAS_ERR_NONE);
             buffer = null;
             bufferLen = 0;
+            if (!waitJobFinish())
+            {
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
@@ -745,8 +800,13 @@ namespace Ediabas
 
         public static bool apiResultFormat(out int buffer, string result, ushort rset)
         {
-            setLocalError(EDIABAS_ERR_NONE);
             buffer = 0;
+            if (!waitJobFinish())
+            {
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
@@ -800,8 +860,13 @@ namespace Ediabas
 
         public static bool apiResultNumber(out ushort buffer, ushort rset)
         {
-            setLocalError(EDIABAS_ERR_NONE);
             buffer = 0;
+            if (!waitJobFinish())
+            {
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
             if (resultSets == null)
             {
                 setLocalError(EDIABAS_API_0014);
@@ -818,8 +883,13 @@ namespace Ediabas
 
         public static bool apiResultName(out string buffer, ushort index, ushort rset)
         {
-            setLocalError(EDIABAS_ERR_NONE);
             buffer = string.Empty;
+            if (!waitJobFinish())
+            {
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
             if (resultSets == null)
             {
                 setLocalError(EDIABAS_API_0014);
@@ -844,8 +914,13 @@ namespace Ediabas
 
         public static bool apiResultSets(out ushort rsets)
         {
-            setLocalError(EDIABAS_ERR_NONE);
             rsets = 0;
+            if (!waitJobFinish())
+            {
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
             if (ediabas == null)
             {
                 setLocalError(EDIABAS_API_0006);
@@ -867,9 +942,7 @@ namespace Ediabas
 
         public static bool apiResultVar(out string var)
         {
-            setLocalError(EDIABAS_ERR_NONE);
-            var = string.Empty;
-            return true;
+            return apiResultText(out var, "VARIANTE", 0, "");
         }
 
         public static API.APIRESULTFIELD apiResultsNew()
@@ -1009,6 +1082,19 @@ namespace Ediabas
 
             localError = error;
             apiStateValue = APIERROR;
+        }
+
+        private static bool waitJobFinish()
+        {
+            while (apiStateValue == APIBUSY)
+            {
+                Thread.Sleep(10);
+            }
+            if (apiStateValue != APIREADY)
+            {
+                return false;
+            }
+            return true;
         }
 
         private static EdiabasNet.ResultData getResultData(string result, ushort rset)
