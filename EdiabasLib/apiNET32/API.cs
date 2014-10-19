@@ -449,7 +449,7 @@ namespace Ediabas
             return apiInitExt(null, null, null, null);
         }
 
-        public static bool apiInitExt(string ifh, string unit, string app, string reserved)
+        public static bool apiInitExt(string ifh, string unit, string app, string config)
         {
             if (ediabas != null)
             {
@@ -470,6 +470,19 @@ namespace Ediabas
             ediabas.EdCommClass = edCommBwmFast;
 
             ediabas.AbortJobFunc = abortJobFunc;
+
+            if (!string.IsNullOrEmpty(config))
+            {
+                string[] words = config.Split(';');
+                foreach (string word in words)
+                {
+                    string[] cfgParts = word.Split(new char[] { '=' }, 2);
+                    if (cfgParts.Length == 2)
+                    {
+                        ediabas.SetConfigProperty(cfgParts[0], cfgParts[1]);
+                    }
+                }
+            }
 
             return true;
         }
