@@ -774,6 +774,7 @@ namespace CarControl
 
             EdiabasJob job = ediabasJobs.JobArray[ediabasInternalStep];
             ediabas.ArgString = job.JobArgs;
+            ediabas.ArgBinaryStd = null;
             ediabas.ResultsRequests = job.ResultRequests;
 
             ediabas.TimeMeas = 0;
@@ -811,6 +812,7 @@ namespace CarControl
             // get mode
             int axisMode = -1;
             ediabas.ArgString = string.Empty;
+            ediabas.ArgBinaryStd = null;
             ediabas.ResultsRequests = "WERT";
 
             try
@@ -850,6 +852,7 @@ namespace CarControl
                     (axisMode & AxisModeMask) != 0x00)
                 {   // set normal mode
                     ediabas.ArgString = "aus;aus;aus";
+                    ediabas.ArgBinaryStd = null;
                     ediabas.ResultsRequests = "JOB_STATUS";
 
                     try
@@ -874,6 +877,7 @@ namespace CarControl
                     (axisMode & AxisModeConveyor) == 0x00)
                 {   // set conveyor mode
                     ediabas.ArgString = "ein;aus;aus";
+                    ediabas.ArgBinaryStd = null;
                     ediabas.ResultsRequests = "JOB_STATUS";
 
                     try
@@ -905,6 +909,7 @@ namespace CarControl
                             break;
                         }
                         ediabas.ArgString = string.Format("0x{0:X02}", 0x11 + channel);
+                        ediabas.ArgBinaryStd = null;
                         ediabas.ResultsRequests = "WERT";
 
                         try
@@ -938,6 +943,7 @@ namespace CarControl
                             break;
                         }
                         ediabas.ArgString = string.Format("0x{0:X02};0x01;0x06", 0x11 + channel);
+                        ediabas.ArgBinaryStd = null;
                         ediabas.ResultsRequests = "JOB_STATUS";
 
                         try
@@ -1003,6 +1009,7 @@ namespace CarControl
                 }
 
                 ediabas.ArgString = string.Empty;
+                ediabas.ArgBinaryStd = null;
                 ediabas.ResultsRequests = "JOB_STATUS;F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT";
 
                 ediabas.TimeMeas = 0;
@@ -1046,6 +1053,7 @@ namespace CarControl
                                 if (resultData.opData.GetType() == typeof(Int64))
                                 {   // read details
                                     ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.opData);
+                                    ediabas.ArgBinaryStd = null;
                                     ediabas.ResultsRequests = "F_UW_KM";
 
                                     ediabas.ExecuteJob("FS_LESEN_DETAIL");
@@ -1133,6 +1141,7 @@ namespace CarControl
                         break;
                 }
                 ediabas.ArgString = argString;
+                ediabas.ArgBinaryStd = null;
                 ediabas.ResultsRequests = job.ResultRequests;
 
                 ediabas.TimeMeas = 0;
@@ -1228,6 +1237,7 @@ namespace CarControl
                 }
 
                 ediabas.ArgString = argString;
+                ediabas.ArgBinaryStd = null;
                 ediabas.ResultsRequests = ediabasJob.ResultRequests;
 
                 try
