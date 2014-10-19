@@ -22,7 +22,7 @@ set OUTFILE=output_apilib.log
 set ADD_ARGS=-o !OUTFILE! -a -c
 rem set ADD_ARGS=!ADD_ARGS! --cfg="@!BATPATH!\EdiabasLib.config"
 set ADD_ARGS=!ADD_ARGS! --cfg=\"ObdComPort=COM4\"
-set FILTERS=+[EdiabasLib]*
+set FILTERS=+[EdiabasLib]* +[apiNET32]*
 set COVERAGE=1
 goto argsok
 )

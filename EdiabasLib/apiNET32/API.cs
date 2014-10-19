@@ -40,14 +40,14 @@ namespace Ediabas
 
         private static readonly Encoding encoding = Encoding.GetEncoding(1252);
 
-        private static EdiabasNet ediabas;
-        private static int apiStateValue;
-        private static int localError;
-        private static Thread jobThread;
-        private static string jobName;
-        private static string jobEcuName;
-        private static bool abortJob;
-        private static List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
+        private static volatile EdiabasNet ediabas;
+        private static volatile int apiStateValue;
+        private static volatile int localError;
+        private static volatile Thread jobThread;
+        private static volatile string jobName;
+        private static volatile string jobEcuName;
+        private static volatile bool abortJob;
+        private static volatile List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
 
         public const int APICOMPATIBILITYVERSION = 1792;
         public const int APIBUSY = 0;
@@ -942,7 +942,7 @@ namespace Ediabas
 
         public static bool apiResultVar(out string var)
         {
-            return apiResultText(out var, "VARIANTE", 0, "");
+            return apiResultText(out var, "VARIANTE", 0, string.Empty);
         }
 
         public static API.APIRESULTFIELD apiResultsNew()
