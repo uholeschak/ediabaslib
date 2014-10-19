@@ -95,7 +95,8 @@ namespace EdiabasCall
                     return 1;
                 }
 
-                if (!API.apiInit())
+                string configString = "EcuPath=" + Path.GetDirectoryName(sgbdFile);
+                if (!API.apiInitExt(string.Empty, string.Empty, string.Empty, configString))
                 {
                     outputWriter.WriteLine("Init api failed");
                     return 1;
@@ -112,7 +113,7 @@ namespace EdiabasCall
                     }
                 }
 
-                API.apiSetConfig("EcuPath", Path.GetDirectoryName(sgbdFile));
+                //API.apiSetConfig("EcuPath", Path.GetDirectoryName(sgbdFile));
 
                 string sgbdBaseFile = Path.GetFileNameWithoutExtension(sgbdFile);
                 foreach (string jobString in jobNames)
