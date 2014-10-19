@@ -464,14 +464,23 @@ namespace Ediabas
             abortJob = false;
             resultSets = null;
 
-            ediabas = new EdiabasNet();
+            string configFile = null;
+            if (!string.IsNullOrEmpty(config))
+            {
+                if (config[0] == '@')
+                {
+                    configFile = config.Substring(1);
+                }
+            }
+
+            ediabas = new EdiabasNet(configFile);
 
             EdCommObd edCommBwmFast = new EdCommObd(ediabas);
             ediabas.EdCommClass = edCommBwmFast;
 
             ediabas.AbortJobFunc = abortJobFunc;
 
-            if (!string.IsNullOrEmpty(config))
+            if (!string.IsNullOrEmpty(config) && configFile == null)
             {
                 string[] words = config.Split(';');
                 foreach (string word in words)
@@ -984,12 +993,12 @@ namespace Ediabas
 
         public static bool enableServer(bool onOff)
         {
-            return true;
+            return false;
         }
 
         public static bool enableMultiThreading(bool onOff)
         {
-            return true;
+            return false;
         }
 
         private static void setLocalError(int error)
