@@ -40,7 +40,7 @@ namespace EdiabasTest
                   v => compareOutput = v != null },
                 { "l|log=", "log file name.",
                   v => logFile = v },
-                { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>.\nFor binary job parameters perpend the hex string with| (e.g. |A3C2)",
+                { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>#<standard job parameters semicolon separated>.\nFor binary job parameters perpend the hex string with| (e.g. |A3C2)",
                   v => jobNames.Add(v) },
                 { "h|help",  "show this message and exit", 
                   v => show_help = v != null },
