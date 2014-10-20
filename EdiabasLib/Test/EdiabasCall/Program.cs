@@ -34,6 +34,7 @@ namespace EdiabasCall
             string sgbdFile = null;
             string outFile = null;
             bool appendFile = false;
+            List<string> formatList = new List<string>();
             List<string> jobNames = new List<string>();
             bool show_help = false;
 
@@ -49,6 +50,8 @@ namespace EdiabasCall
                   v => appendFile = v != null },
                 { "c|compare", "compare output.",
                   v => compareOutput = v != null },
+                { "f|format=", "format for specific result. <result name>=<format string>",
+                  v => formatList.Add(v) },
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>#<standard job parameters semicolon separated>.\nFor binary job parameters perpend the hex string with| (e.g. |A3C2)",
                   v => jobNames.Add(v) },
                 { "h|help",  "show this message and exit",
@@ -220,7 +223,7 @@ namespace EdiabasCall
                         return 1;
                     }
                     PrintProgress();
-                    PrintResults(false);
+                    PrintResults(formatList);
                 }
 
                 API.apiEnd();
@@ -257,7 +260,7 @@ namespace EdiabasCall
             lastJobInfo = jobInfo;
         }
 
-        static void PrintResults(bool ignoreSet0)
+        static void PrintResults(List<string> formatList)
         {
             ushort resultSets;
             if (API.apiResultSets(out resultSets))
@@ -267,10 +270,6 @@ namespace EdiabasCall
                     if (API.apiErrorCode() != API.EDIABAS_ERR_NONE)
                     {
                         break;
-                    }
-                    if (ignoreSet0 && set == 0)
-                    {
-                        continue;
                     }
                     outputWriter.WriteLine(string.Format(culture, "DATASET: {0}", set));
                     ushort results;
@@ -413,6 +412,38 @@ namespace EdiabasCall
                                                 }
                                                 break;
                                             }
+                                    }
+                                }
+
+                                foreach (string format in formatList)
+                                {
+                                    string[] words = format.Split(new char[] { '=' }, 2);
+                                    if (words.Length == 2)
+                                    {
+                                        if (string.Compare(words[0], resultName, StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            if (apiHandle == 0)
+                                            {
+                                                string resultString;
+                                                if (API.apiResultText(out resultString, resultName, set, words[1]))
+                                                {
+                                                    resultText += " F: " + resultString;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                byte[] dataBuffer = new byte[API.APIMAXTEXT];
+                                                if (__api32ResultText(apiHandle, dataBuffer, resultName, set, words[1]))
+                                                {
+                                                    int length = Array.IndexOf(dataBuffer, (byte)0);
+                                                    if (length < 0)
+                                                    {
+                                                        length = API.APIMAXTEXT;
+                                                    }
+                                                    resultText += " F: " + encoding.GetString(dataBuffer, 0, length);
+                                                }
+                                            }
+                                        }
                                     }
                                 }
 
