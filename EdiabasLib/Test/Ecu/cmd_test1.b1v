@@ -788,10 +788,69 @@ TEST_PARR#
 					clear		S0
 					move 		S1,S0
 					parr		F0,#$1
-					ergr		"PARR",F0
 					jnz			parr_ok
 					ergs		"ARG", "MISSING"
 parr_ok:
+					ergr		"PARR",F0
+					eoj
+					eoj
+
+TEST_MULTIARG#
+;    JOBNAME:TEST_MULTIARG
+;    JOBCOMMENT:Test output format
+;    ARG: All types
+;    ARGTYPE: all types
+;    ARGCOMMENT: Test all arg types
+;    RESULT:All types
+;    RESULTTYPE: All types
+;    RESULTCOMMENT: Test values
+;
+					parb		B0,#1
+					jz			parb1_err
+					ergb		"ERGB",B0
+parb1_err:
+
+					parb		B0,#2
+					jz			parb2_err
+					ergc		"ERGC",B0
+parb2_err:
+
+					parw		I0,#3
+					jz			parw1_err
+					ergw		"ERGW",I0
+parw1_err:
+
+					parw		I0,#4
+					jz			parw2_err
+					ergi		"ERGI",I0
+parw2_err:
+
+					parl		L0,#5
+					jz			parl1_err
+					ergd		"ERGD",L0
+parl1_err:
+
+					parl		L0,#6
+					jz			parl2_err
+					ergl		"ERGL",L0
+parl2_err:
+
+					parr		F0,#7
+					jz			parf_err
+					ergr		"ERGR",F0
+parf_err:
+
+					clear		S0
+					pars		S0,#8
+					jz			pars1_err
+					ergs		"ERGS",S0
+pars1_err:
+
+					clear		S0
+					pars		S0,#9
+					jz			pars2_err
+					ergy		"ERGY",S0
+pars2_err:
 					eoj
 					eoj
 
