@@ -2937,10 +2937,12 @@ namespace EdiabasLib
                 string[] words = config.Split(';');
                 foreach (string word in words)
                 {
-                    string[] cfgParts = word.Split(new char[] { '=' }, 2);
-                    if (cfgParts.Length == 2)
+                    int assignPos = word.IndexOf('=');
+                    if (assignPos >= 0)
                     {
-                        SetConfigProperty(cfgParts[0], cfgParts[1]);
+                        string key = word.Substring(0, assignPos);
+                        string value = word.Substring(assignPos + 1);
+                        SetConfigProperty(key, value);
                     }
                 }
             }
@@ -3379,7 +3381,7 @@ namespace EdiabasLib
                     }
                 }
                 convertType = parseString[parseString.Length - 1];
-                parseString = parseString.Remove(parseString.Length - 1);
+                parseString = parseString.Remove(parseString.Length - 1, 1);
 
                 if (!string.IsNullOrEmpty(parseString))
                 {
@@ -3389,7 +3391,7 @@ namespace EdiabasLib
                         if ((lastChar == 'E') || (lastChar == 'e'))
                         {
                             exponent = lastChar;
-                            parseString = parseString.Remove(parseString.Length - 1);
+                            parseString = parseString.Remove(parseString.Length - 1, 1);
                         }
                     }
                 }
@@ -3609,7 +3611,7 @@ namespace EdiabasLib
                     string resultString = convString;
                     if (length2 >= 0 && length2 < resultString.Length)
                     {
-                        resultString = resultString.Remove(length2);
+                        resultString = resultString.Remove(length2, resultString.Length - length2);
                     }
                     if (length1 >= 0 && length1 > resultString.Length)
                     {
