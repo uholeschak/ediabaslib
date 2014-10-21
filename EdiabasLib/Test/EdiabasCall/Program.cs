@@ -427,7 +427,7 @@ namespace EdiabasCall
                                                 string resultString;
                                                 if (API.apiResultText(out resultString, resultName, set, words[1]))
                                                 {
-                                                    resultText += " F: " + resultString;
+                                                    resultText += " F: '" + resultString + "'";
                                                 }
                                             }
                                             else
@@ -440,7 +440,7 @@ namespace EdiabasCall
                                                     {
                                                         length = API.APIMAXTEXT;
                                                     }
-                                                    resultText += " F: " + encoding.GetString(dataBuffer, 0, length);
+                                                    resultText += " F: '" + encoding.GetString(dataBuffer, 0, length) + "'";
                                                 }
                                             }
                                         }
