@@ -19,7 +19,7 @@ namespace EdiabasLib
         public delegate void ProgressJobDelegate(EdiabasNet ediabas);
         public delegate void ErrorRaisedDelegate(ErrorCodes error);
 
-        public static readonly int MAX_FILES = 5;
+        private static readonly int MAX_FILES = 5;
 
         private class OpCode
         {
@@ -3351,6 +3351,285 @@ namespace EdiabasLib
             }
             uint index = (uint)(errorCode - ErrorCodes.EDIABAS_IFH_0000);
             return ErrorDescription[index];
+        }
+
+        public static string FormatResult(ResultData resultData, string format)
+        {
+            bool leftAlign = false;
+            Int32 length1 = -1;
+            Int32 length2 = -1;
+            char convertType = 'T';
+            char exponent = '\0';
+
+            // parse format
+            if (string.IsNullOrEmpty(format))
+            {   // string
+                convertType = 'T';
+            }
+            else
+            {
+                string parseString = format;
+                if (parseString[0] == '-')
+                {
+                    leftAlign = true;
+                    parseString = parseString.Substring(1);
+                    if (string.IsNullOrEmpty(parseString))
+                    {
+                        return null;
+                    }
+                }
+                convertType = parseString[parseString.Length - 1];
+                parseString = parseString.Remove(parseString.Length - 1);
+
+                if (!string.IsNullOrEmpty(parseString))
+                {
+                    if (convertType == 'R')
+                    {
+                        char lastChar = parseString[parseString.Length - 1];
+                        if ((lastChar == 'E') || (lastChar == 'e'))
+                        {
+                            exponent = lastChar;
+                            parseString = parseString.Remove(parseString.Length - 1);
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(parseString))
+                {
+                    string[] words = parseString.Split('.');
+                    if ((words.Length < 1) || (words.Length > 2))
+                    {
+                        return null;
+                    }
+                    try
+                    {
+                        if (words[0].Length > 0)
+                        {
+                            length1 = Convert.ToInt32(words[0], 10);
+                        }
+                        if (words.Length > 1)
+                        {
+                            if (words[1].Length > 0)
+                            {
+                                length2 = Convert.ToInt32(words[1], 10);
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        return null;
+                    }
+                }
+            }
+
+            // convert format
+            bool valueIsDouble = false;
+            Int64 valueInt64 = 0;
+            Double valueDouble = 0;
+            string valueString = null;
+
+            if (resultData.opData.GetType() == typeof(Int64))
+            {
+                valueInt64 = (Int64)resultData.opData;
+            }
+            else if (resultData.opData.GetType() == typeof(Double))
+            {
+                valueDouble = (Double)resultData.opData;
+                valueIsDouble = true;
+            }
+            else if (resultData.opData.GetType() == typeof(string))
+            {
+                valueString = (string)resultData.opData;
+            }
+            else
+            {
+                return null;
+            }
+
+            bool convIsDouble = false;
+            Int64 convInt64 = 0;
+            Double convDouble = 0;
+            string convString = null;
+
+            switch (convertType)
+            {
+                case 'C':
+                    if (valueString != null)
+                    {
+                        return null;
+                    }
+                    if (valueIsDouble)
+                    {
+                        convInt64 = (SByte)valueDouble;
+                    }
+                    else
+                    {
+                        convInt64 = (SByte)valueInt64;
+                    }
+                    break;
+
+                case 'B':
+                    if (valueString != null)
+                    {
+                        return null;
+                    }
+                    if (valueIsDouble)
+                    {
+                        convInt64 = (Byte)valueDouble;
+                    }
+                    else
+                    {
+                        convInt64 = (Byte)valueInt64;
+                    }
+                    break;
+
+                case 'I':
+                    if (valueString != null)
+                    {
+                        return null;
+                    }
+                    if (valueIsDouble)
+                    {
+                        convInt64 = (Int16)valueDouble;
+                    }
+                    else
+                    {
+                        convInt64 = (Int16)valueInt64;
+                    }
+                    break;
+
+                case 'W':
+                    if (valueString != null)
+                    {
+                        return null;
+                    }
+                    if (valueIsDouble)
+                    {
+                        convInt64 = (UInt16)valueDouble;
+                    }
+                    else
+                    {
+                        convInt64 = (UInt16)valueInt64;
+                    }
+                    break;
+
+                case 'L':
+                    if (valueString != null)
+                    {
+                        return null;
+                    }
+                    if (valueIsDouble)
+                    {
+                        convInt64 = (Int32)valueDouble;
+                    }
+                    else
+                    {
+                        convInt64 = (Int32)valueInt64;
+                    }
+                    break;
+
+                case 'D':
+                    if (valueString != null)
+                    {
+                        return null;
+                    }
+                    if (valueIsDouble)
+                    {
+                        convInt64 = (UInt32)valueDouble;
+                    }
+                    else
+                    {
+                        convInt64 = (UInt32)valueInt64;
+                    }
+                    break;
+
+                case 'R':
+                    if (valueString != null)
+                    {
+                        return null;
+                    }
+                    if (valueIsDouble)
+                    {
+                        convDouble = valueDouble;
+                    }
+                    else
+                    {
+                        convDouble = valueInt64;
+                    }
+                    convIsDouble = true;
+                    break;
+
+                case 'T':
+                    if (valueString == null)
+                    {
+                        return null;
+                    }
+                    convString = valueString;
+                    break;
+
+                default:
+                    return null;
+            }
+
+            // format result
+            try
+            {
+                if (convString == null)
+                {
+                    if (convIsDouble)
+                    {
+                        return string.Format("{0}", convDouble);
+                    }
+                    else
+                    {
+                        StringBuilder sb = new StringBuilder();
+
+                        string alignString = string.Empty;
+                        if (leftAlign)
+                        {
+                            sb.Append("-");
+                        }
+                        if (length1 >= 0)
+                        {
+                            sb.Append(string.Format(",{0}", length1));
+                        }
+                        if (length2 > 0)
+                        {
+                            sb.Append(":");
+                            sb.Append(new string('0', length2));
+                        }
+                        sb.Insert(0, "{0");
+                        sb.Append("}");
+                        string formatString = sb.ToString();
+                        return string.Format(formatString, convInt64);
+                    }
+                }
+                else
+                {
+                    string resultString = convString;
+                    if (length2 >= 0 && length2 < resultString.Length)
+                    {
+                        resultString = resultString.Remove(length2);
+                    }
+                    if (length1 >= 0 && length1 > resultString.Length)
+                    {
+                        string fillString = new String(' ', length1 - resultString.Length);
+                        if (leftAlign)
+                        {
+                            resultString += fillString;
+                        }
+                        else
+                        {
+                            resultString = fillString + resultString;
+                        }
+                    }
+                    return resultString;
+                }
+            }
+            catch (Exception)
+            {
+            }
+            return null;
         }
 
         private void SetResultData(ResultData resultData)

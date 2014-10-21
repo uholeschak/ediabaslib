@@ -703,12 +703,13 @@ namespace Ediabas
             {
                 return false;
             }
-            if ((resultData.type != EdiabasNet.ResultType.TypeS) || (resultData.opData.GetType() != typeof(string)))
+
+            string value = EdiabasNet.FormatResult(resultData, format);
+            if (value == null)
             {
                 setLocalError(EDIABAS_API_0005);
                 return false;
             }
-            string value = (string)resultData.opData;
             buffer = value;
             return true;
         }
