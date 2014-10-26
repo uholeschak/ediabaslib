@@ -41,8 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EdCommBase.cs" />
-    <Compile Include="EdCommObd.cs" />
+    <Compile Include="EdInterfaceBase.cs" />
+    <Compile Include="EdInterfaceObd.cs" />
     <Compile Include="EdiabasNet.cs" />
     <Compile Include="EdOperations.cs" />
     <Compile Include="MemoryStreamReader.cs" />
