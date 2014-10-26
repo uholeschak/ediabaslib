@@ -19,7 +19,7 @@ goto argsok
 if "%1"=="apilib" (
 set EDIABAS_TEST=!BATPATH!\..\EdiabasLibCall\bin\Debug\EdiabasLibCall.exe
 set OUTFILE=output_apilib.log
-set ADD_ARGS=-o !OUTFILE! -a -c
+set ADD_ARGS=-o !OUTFILE! --ifh="STD:OBD" --device="_" -a -c
 rem set ADD_ARGS=!ADD_ARGS! --cfg="@!BATPATH!\EdiabasLib.config"
 set ADD_ARGS=!ADD_ARGS! --cfg=\"ObdComPort=COM4\"
 set FILTERS=+[EdiabasLib]* +[apiNET32]*
@@ -29,7 +29,7 @@ goto argsok
 if "%1"=="ediabas" (
 set EDIABAS_TEST=!BATPATH!\..\EdiabasCall\bin\Debug\EdiabasCall.exe
 set OUTFILE=output_ediabas.log
-set ADD_ARGS=-o !OUTFILE! -a -c
+set ADD_ARGS=-o !OUTFILE! --ifh="STD:OBD" --device="_" -a -c
 set FILTERS=-[*]*
 set COVERAGE=0
 goto argsok
