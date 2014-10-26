@@ -25,6 +25,7 @@ namespace EdiabasCall
         private static TextWriter outputWriter;
         private static bool compareOutput = false;
         private static uint apiHandle = 0;
+        private static List<API.APIRESULTFIELD> apiResultFields;
         private static string lastJobInfo = string.Empty;
         private static int lastJobProgress = -1;
 
@@ -34,6 +35,7 @@ namespace EdiabasCall
             string sgbdFile = null;
             string outFile = null;
             bool appendFile = false;
+            bool storeResults = false;
             List<string> formatList = new List<string>();
             List<string> jobNames = new List<string>();
             bool show_help = false;
@@ -48,6 +50,8 @@ namespace EdiabasCall
                   v => outFile = v },
                 { "a|append", "append output file.",
                   v => appendFile = v != null },
+                { "store", "store results.",
+                  v => storeResults = v != null },
                 { "c|compare", "compare output.",
                   v => compareOutput = v != null },
                 { "f|format=", "format for specific result. <result name>=<format string>",
@@ -129,6 +133,11 @@ namespace EdiabasCall
                     {
                         apiHandle = (uint)value;
                     }
+                }
+
+                if (storeResults)
+                {
+                    apiResultFields = new List<API.APIRESULTFIELD>();
                 }
 
                 if (!string.IsNullOrEmpty(cfgString))
@@ -231,7 +240,25 @@ namespace EdiabasCall
                         return 1;
                     }
                     PrintProgress();
-                    PrintResults(formatList);
+
+                    if (apiResultFields != null)
+                    {
+                        apiResultFields.Add(API.apiResultsNew());
+                    }
+                    else
+                    {
+                        PrintResults(formatList);
+                    }
+                }
+
+                if (apiResultFields != null)
+                {
+                    foreach (API.APIRESULTFIELD resultField in apiResultFields)
+                    {
+                        API.apiResultsScope(resultField);
+                        PrintResults(formatList);
+                        API.apiResultsDelete(resultField);
+                    }
                 }
 
                 API.apiEnd();
@@ -270,6 +297,12 @@ namespace EdiabasCall
 
         static void PrintResults(List<string> formatList)
         {
+            string variantString;
+            if (API.apiResultVar(out variantString))
+            {
+                outputWriter.WriteLine("Variant: "+ variantString);
+            }
+
             ushort resultSets;
             if (API.apiResultSets(out resultSets))
             {
