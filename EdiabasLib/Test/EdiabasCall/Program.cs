@@ -127,6 +127,10 @@ namespace EdiabasCall
                 if (!API.apiInitExt(ifhName, deviceName, "EdiabasCall", configString))
                 {
                     outputWriter.WriteLine("Init api failed");
+                    if (API.apiErrorCode() != API.EDIABAS_ERR_NONE)
+                    {
+                        outputWriter.WriteLine(string.Format(culture, "Error occured: 0x{0:X08} {1}", API.apiErrorCode(), API.apiErrorText()));
+                    }
                     return 1;
                 }
 
