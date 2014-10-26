@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EdiabasLib
 {
-    public abstract class EdCommBase : IDisposable
+    public abstract class EdInterfaceBase : IDisposable
     {
         private bool disposed = false;
         protected EdiabasNet ediabas;
@@ -101,7 +101,7 @@ namespace EdiabasLib
             get;
         }
 
-        protected EdCommBase(EdiabasNet ediabas)
+        protected EdInterfaceBase(EdiabasNet ediabas)
         {
             this.ediabas = ediabas;
         }

@@ -498,7 +498,7 @@ namespace Ediabas
             }
 
             EdiabasNet ediabasTemp = new EdiabasNet(config);
-            EdCommObd edCommBwmFast = new EdCommObd(ediabasTemp);
+            EdInterfaceObd edCommBwmFast = new EdInterfaceObd(ediabasTemp);
 
             if (!string.IsNullOrEmpty(ifh))
             {
@@ -512,7 +512,7 @@ namespace Ediabas
             }
 
             ediabas = ediabasTemp;
-            ediabas.EdCommClass = edCommBwmFast;
+            ediabas.EdInterfaceClass = edCommBwmFast;
 
             ediabas.AbortJobFunc = abortJobFunc;
 

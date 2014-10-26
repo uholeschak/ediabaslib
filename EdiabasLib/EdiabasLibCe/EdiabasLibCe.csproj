@@ -54,14 +54,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\EdiabasLib\EdCommBase.cs">
-      <Link>EdCommBase.cs</Link>
-    </Compile>
-    <Compile Include="..\EdiabasLib\EdCommObd.cs">
-      <Link>EdCommObd.cs</Link>
-    </Compile>
     <Compile Include="..\EdiabasLib\EdiabasNet.cs">
       <Link>EdiabasNet.cs</Link>
+    </Compile>
+    <Compile Include="..\EdiabasLib\EdInterfaceBase.cs">
+      <Link>EdInterfaceBase.cs</Link>
+    </Compile>
+    <Compile Include="..\EdiabasLib\EdInterfaceObd.cs">
+      <Link>EdInterfaceObd.cs</Link>
     </Compile>
     <Compile Include="..\EdiabasLib\EdOperations.cs">
       <Link>EdOperations.cs</Link>

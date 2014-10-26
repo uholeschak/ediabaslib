@@ -2609,8 +2609,8 @@ namespace EdiabasLib
         // BEST2: set_answer_length
         private static void OpXawlen(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            EdCommBase commClass = ediabas.EdCommClass;
-            if ((commClass == null) || !commClass.Connected)
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if ((interfaceClass == null) || !interfaceClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
@@ -2634,7 +2634,7 @@ namespace EdiabasLib
                         );
                     answerArray[i] = value;
                 }
-                commClass.CommAnswerLen = answerArray;
+                interfaceClass.CommAnswerLen = answerArray;
             }
         }
 
@@ -2645,39 +2645,39 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpXbat: Invalid type");
             }
-            EdCommBase commClass = ediabas.EdCommClass;
-            if ((commClass == null) || !commClass.Connected)
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if ((interfaceClass == null) || !interfaceClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                arg0.SetRawData((EdValueType)commClass.BatteryVoltage);
+                arg0.SetRawData((EdValueType)interfaceClass.BatteryVoltage);
             }
         }
 
         // BEST2: open_communication
         private static void OpXconnect(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            EdCommBase commClass = ediabas.EdCommClass;
-            if (commClass == null)
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if (interfaceClass == null)
             {
-                throw new ArgumentOutOfRangeException("edCommClass", "OpXconnect: No communication class present");
+                throw new ArgumentOutOfRangeException("interfaceClass", "OpXconnect: No communication class present");
             }
 
-            commClass.InterfaceConnect();
+            interfaceClass.InterfaceConnect();
         }
 
         // BEST2: close_communication
         private static void OpXhangup(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            EdCommBase commClass = ediabas.EdCommClass;
-            if (commClass == null)
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if (interfaceClass == null)
             {
-                throw new ArgumentOutOfRangeException("edCommClass", "OpXhangup: No communication class present");
+                throw new ArgumentOutOfRangeException("interfaceClass", "OpXhangup: No communication class present");
             }
 
-            commClass.InterfaceDisconnect();
+            interfaceClass.InterfaceDisconnect();
         }
 
         // BEST2: get_ignition_voltage
@@ -2687,14 +2687,14 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpXignit: Invalid type");
             }
-            EdCommBase commClass = ediabas.EdCommClass;
-            if ((commClass == null) || !commClass.Connected)
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if ((interfaceClass == null) || !interfaceClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                arg0.SetRawData((EdValueType)commClass.IgnitionVoltage);
+                arg0.SetRawData((EdValueType)interfaceClass.IgnitionVoltage);
             }
         }
 
@@ -2718,42 +2718,42 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpXkeyb: Invalid type");
             }
-            EdCommBase commClass = ediabas.EdCommClass;
-            if ((commClass == null) || !commClass.Connected)
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if ((interfaceClass == null) || !interfaceClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                arg0.SetRawData(commClass.KeyBytes);
+                arg0.SetRawData(interfaceClass.KeyBytes);
             }
         }
 
         // BEST2: set_repeat_counter
         private static void OpXreps(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            EdCommBase commClass = ediabas.EdCommClass;
-            if ((commClass == null) || !commClass.Connected)
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if ((interfaceClass == null) || !interfaceClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                commClass.CommRepeats = arg0.GetValueData();
+                interfaceClass.CommRepeats = arg0.GetValueData();
             }
         }
 
         // BEST2: ifreset
         private static void OpXreset(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            EdCommBase commClass = ediabas.EdCommClass;
-            if ((commClass == null) || !commClass.Connected)
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if ((interfaceClass == null) || !interfaceClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                commClass.CommParameter = null;
+                interfaceClass.CommParameter = null;
             }
         }
 
@@ -2765,8 +2765,8 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpXsend: Invalid type");
             }
 
-            EdCommBase commClass = ediabas.EdCommClass;
-            if ((commClass == null) || !commClass.Connected)
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if ((interfaceClass == null) || !interfaceClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
@@ -2775,7 +2775,7 @@ namespace EdiabasLib
                 long startTime = Stopwatch.GetTimestamp();
                 byte[] request = arg1.GetArrayData();
                 byte[] response;
-                if (commClass.TransmitData(request, out response))
+                if (interfaceClass.TransmitData(request, out response))
                 {
                     arg0.SetRawData(response);
                 }
@@ -2786,8 +2786,8 @@ namespace EdiabasLib
         // BEST2: set_communication_pars
         private static void OpXsetpar(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            EdCommBase commClass = ediabas.EdCommClass;
-            if ((commClass == null) || !commClass.Connected)
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if ((interfaceClass == null) || !interfaceClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
@@ -2812,7 +2812,7 @@ namespace EdiabasLib
                         (((EdValueType)dataArray[offset + 3]) << 24);
                     parsArray[i] = value;
                 }
-                commClass.CommParameter = parsArray;
+                interfaceClass.CommParameter = parsArray;
             }
         }
 
@@ -2823,22 +2823,22 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpXstate: Invalid type");
             }
-            EdCommBase commClass = ediabas.EdCommClass;
-            if ((commClass == null) || !commClass.Connected)
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if ((interfaceClass == null) || !interfaceClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                arg0.SetRawData(commClass.State);
+                arg0.SetRawData(interfaceClass.State);
             }
         }
 
         // BEST2: stop_frequent
         private static void OpXstopf(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            EdCommBase commClass = ediabas.EdCommClass;
-            if ((commClass == null) || !commClass.Connected)
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if ((interfaceClass == null) || !interfaceClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
@@ -2851,14 +2851,14 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpXtype: Invalid type");
             }
-            EdCommBase commClass = ediabas.EdCommClass;
-            if ((commClass == null) || !commClass.Connected)
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if ((interfaceClass == null) || !interfaceClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                arg0.SetStringData(commClass.InterfaceType);
+                arg0.SetStringData(interfaceClass.InterfaceType);
             }
         }
 
@@ -2869,14 +2869,14 @@ namespace EdiabasLib
             {
                 throw new ArgumentOutOfRangeException("arg0", "OpXvers: Invalid type");
             }
-            EdCommBase commClass = ediabas.EdCommClass;
-            if ((commClass == null) || !commClass.Connected)
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if ((interfaceClass == null) || !interfaceClass.Connected)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                EdValueType value = (EdValueType)commClass.InterfaceVersion;
+                EdValueType value = (EdValueType)interfaceClass.InterfaceVersion;
                 arg0.SetRawData(value);
             }
         }

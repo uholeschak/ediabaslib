@@ -2390,7 +2390,7 @@ namespace EdiabasLib
         private string sgbdFileName = string.Empty;
         private string sgbdFileResolveLast = string.Empty;
         private string ecuPath = string.Empty;
-        private EdCommBase edCommClass;
+        private EdInterfaceBase edInterfaceClass;
         private static long timeMeas = 0;
         private byte[] opArgBuffer = new byte[5];
         private AbortJobDelegate abortJobFunc = null;
@@ -2813,24 +2813,24 @@ namespace EdiabasLib
             }
         }
 
-        public EdCommBase EdCommClass
+        public EdInterfaceBase EdInterfaceClass
         {
             get
             {
                 lock (apiLock)
                 {
-                    return edCommClass;
+                    return edInterfaceClass;
                 }
             }
             set
             {
                 if (JobRunning)
                 {
-                    throw new ArgumentOutOfRangeException("JobRunning", "EdCommClass: Job is running");
+                    throw new ArgumentOutOfRangeException("JobRunning", "EdInterfaceClass: Job is running");
                 }
                 lock (apiLock)
                 {
-                    edCommClass = value;
+                    edInterfaceClass = value;
                 }
             }
         }
@@ -2981,10 +2981,10 @@ namespace EdiabasLib
                         swLog.Dispose();
                         swLog = null;
                     }
-                    if (edCommClass != null)
+                    if (edInterfaceClass != null)
                     {
-                        edCommClass.Dispose();
-                        edCommClass = null;
+                        edInterfaceClass.Dispose();
+                        edInterfaceClass = null;
                     }
                 }
 

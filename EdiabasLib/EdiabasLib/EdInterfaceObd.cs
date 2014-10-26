@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace EdiabasLib
 {
-    public class EdCommObd : EdCommBase
+    public class EdInterfaceObd : EdInterfaceBase
     {
         public delegate bool InterfaceConnectDelegate();
         public delegate bool InterfaceDisconnectDelegate();
@@ -89,7 +89,7 @@ namespace EdiabasLib
             }
         }
 
-        public EdCommObd(EdiabasNet ediabas) : base(ediabas)
+        public EdInterfaceObd(EdiabasNet ediabas) : base(ediabas)
         {
             string prop = ediabas.GetConfigProperty("ObdComPort");
             if (prop != null)
@@ -98,7 +98,7 @@ namespace EdiabasLib
             }
         }
 
-        ~EdCommObd()
+        ~EdInterfaceObd()
         {
             Dispose(false);
         }
