@@ -101,6 +101,14 @@ namespace EdiabasCall
                     return 1;
                 }
 
+                string apiVersion;
+                if (!API.apiCheckVersion(API.APICOMPATIBILITYVERSION, out apiVersion))
+                {
+                    outputWriter.WriteLine("API incompatible");
+                    return 1;
+                }
+                outputWriter.WriteLine("API Version: " + apiVersion);
+
                 string configString = "EcuPath=" + Path.GetDirectoryName(sgbdFile);
                 if (!string.IsNullOrEmpty(cfgString))
                 {
