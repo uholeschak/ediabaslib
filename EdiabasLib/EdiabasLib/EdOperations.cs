@@ -919,6 +919,10 @@ namespace EdiabasLib
 
         private static void OpEoj(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
+            if (arg0.AddrMode != OpAddrMode.None)
+            {
+                ediabas.resultJobStatus = arg0.GetStringData();
+            }
             ediabas.jobEnd = true;
         }
 

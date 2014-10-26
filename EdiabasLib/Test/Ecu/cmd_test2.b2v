@@ -5273,6 +5273,7 @@ job(  name      : TEST_IFACE_FLAGS;
 					settmr		L4
 #endasm
 
+	return "IFACE_DONE";
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -5404,6 +5405,7 @@ waitex_ok2:
 					ergs		"TIMESTAT", S4
 #endasm
 
+	return "TIME_DONE";
 }
 
 ////////////////////////////////////////////////////////////////////////
