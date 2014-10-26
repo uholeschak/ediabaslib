@@ -103,6 +103,19 @@ namespace EdiabasLib
             Dispose(false);
         }
 
+        public override bool IsValidInterfaceName(string name)
+        {
+            if (string.Compare(name, "STD:OBD", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return true;
+            }
+            if (string.Compare(name, "STD:OMITEC", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public override bool InterfaceConnect()
         {
             if (!base.InterfaceConnect())

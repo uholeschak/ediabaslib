@@ -13,6 +13,8 @@ namespace EdiabasLib
         protected UInt32[] commParameter;
         protected Int16[] commAnswerLen;
 
+        public abstract bool IsValidInterfaceName(string name);
+
         public virtual bool InterfaceConnect()
         {
             commRepeats = 0;
