@@ -487,15 +487,6 @@ namespace Ediabas
             resultSets = null;
 
             setLocalError(EDIABAS_ERR_NONE);
-            if (!string.IsNullOrEmpty(ifh))
-            {
-                if ((string.Compare(ifh, "STD:OBD", StringComparison.OrdinalIgnoreCase) != 0) &&
-                    (string.Compare(ifh, "STD:OMITEC", StringComparison.OrdinalIgnoreCase) != 0))
-                {
-                    setLocalError(EDIABAS_IFH_0027);
-                    return false;
-                }
-            }
 
             if (!string.IsNullOrEmpty(unit))
             {
@@ -506,9 +497,21 @@ namespace Ediabas
                 }
             }
 
-            ediabas = new EdiabasNet(config);
+            EdiabasNet ediabasTemp = new EdiabasNet(config);
+            EdCommObd edCommBwmFast = new EdCommObd(ediabasTemp);
 
-            EdCommObd edCommBwmFast = new EdCommObd(ediabas);
+            if (!string.IsNullOrEmpty(ifh))
+            {
+                if (!edCommBwmFast.IsValidInterfaceName(ifh))
+                {
+                    setLocalError(EDIABAS_IFH_0027);
+                    edCommBwmFast.Dispose();
+                    ediabasTemp.Dispose();
+                    return false;
+                }
+            }
+
+            ediabas = ediabasTemp;
             ediabas.EdCommClass = edCommBwmFast;
 
             ediabas.AbortJobFunc = abortJobFunc;
@@ -532,6 +535,15 @@ namespace Ediabas
 
         public static bool apiSwitchDevice(string unit, string app)
         {
+            setLocalError(EDIABAS_ERR_NONE);
+            if (!string.IsNullOrEmpty(unit))
+            {
+                if (char.IsLetter(unit[0]))
+                {
+                    setLocalError(EDIABAS_IFH_0018);
+                    return false;
+                }
+            }
             return true;
         }
 
