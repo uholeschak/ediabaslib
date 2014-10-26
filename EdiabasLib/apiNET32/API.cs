@@ -486,6 +486,23 @@ namespace Ediabas
             abortJob = false;
             resultSets = null;
 
+            if (!string.IsNullOrEmpty(ifh))
+            {
+                if ((string.Compare(ifh, "STD:OBD", StringComparison.OrdinalIgnoreCase) != 0) &&
+                    (string.Compare(ifh, "STD:OMITEC", StringComparison.OrdinalIgnoreCase) != 0))
+                {
+                    return false;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(unit))
+            {
+                if (char.IsLetter(unit[0]))
+                {
+                    return false;
+                }
+            }
+
             ediabas = new EdiabasNet(config);
 
             EdCommObd edCommBwmFast = new EdCommObd(ediabas);
@@ -1083,7 +1100,7 @@ namespace Ediabas
 
         public static bool enableMultiThreading(bool onOff)
         {
-            return false;
+            return true;
         }
 
         private static void setLocalError(int error)
