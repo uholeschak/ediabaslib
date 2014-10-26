@@ -24,6 +24,7 @@ namespace EdiabasTest
             string outFile = null;
             bool appendFile = false;
             string logFile = null;
+            List<string> formatList = new List<string>();
             List<string> jobNames = new List<string>();
             bool show_help = false;
 
@@ -43,6 +44,8 @@ namespace EdiabasTest
                   v => compareOutput = v != null },
                 { "l|log=", "log file name.",
                   v => logFile = v },
+                { "f|format=", "format for specific result. <result name>=<format string>",
+                  v => formatList.Add(v) },
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>#<standard job parameters semicolon separated>.\nFor binary job parameters perpend the hex string with| (e.g. |A3C2)",
                   v => jobNames.Add(v) },
                 { "h|help",  "show this message and exit", 
@@ -248,6 +251,27 @@ namespace EdiabasTest
                                             resultText += string.Format(culture, "{0:X02} ", value);
                                         }
                                     }
+
+                                    foreach (string format in formatList)
+                                    {
+                                        string[] words = format.Split(new char[] { '=' }, 2);
+                                        if (words.Length == 2)
+                                        {
+                                            if (string.Compare(words[0], resultData.name, StringComparison.OrdinalIgnoreCase) == 0)
+                                            {
+                                                string resultString = EdiabasNet.FormatResult(resultData, words[1]);
+                                                if (resultString != null)
+                                                {
+                                                    resultText += " F: '" + resultString + "'";
+                                                }
+                                                else
+                                                {
+                                                    ErrorRaisedFunc(EdiabasNet.ErrorCodes.EDIABAS_API_0005);
+                                                }
+                                            }
+                                        }
+                                    }
+
                                     outputWriter.WriteLine(resultData.name + ": " + resultText);
                                     if (ediabas.SwLog != null)
                                     {

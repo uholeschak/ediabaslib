@@ -62,13 +62,40 @@ set TIMESTR=!TIMESTR:^ =0!
 for /l %%x in (0, 1, 32) do (
 !EDIABAS_TEST! !ADD_ARGS! -s "!ECU_TEST_PATH!\cmd_test1.prg" -j "TEST_RAISE_ERROR#%%x"
 )
-"%OPEN_COVER%" "-output:results14.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_BIP1\""
-"%OPEN_COVER%" "-output:results15.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_BIP10\""
-"%OPEN_COVER%" "-output:results16.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_BREAK\""
-"%OPEN_COVER%" "-output:results17.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#249\""
-"%OPEN_COVER%" "-output:results18.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#250\""
-"%OPEN_COVER%" "-output:results19.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#349\""
-"%OPEN_COVER%" "-output:results20.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#350\""
+"%OPEN_COVER%" "-output:results20.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" !"^"=!^
+ -f \"ERGB=W\" -f \"ERGB=6.4W\" -f \"ERGB=-6.4W\" -f \"ERGB=-.4W\" -f \"ERGB=8.W\" -f \"ERGB=-.W\" !"^"=!^
+ -f \"ERGC=I\" -f \"ERGC=6.4I\" -f \"ERGC=-6.4I\" !"^"=!^
+ -f \"ERGW=D\" -f \"ERGW=6.4D\" -f \"ERGW=-6.4D\" -f \"ERGI=6.4L\" -f \"ERGI=-6.4L\" !"^"=!^
+ -f \"ERGD=D\" -f \"ERGD=6.4D\" -f \"ERGD=-6.4D\" -f \"ERGD=6.4B\" -f \"ERGD=6.4C\" -f \"ERGL=6.4L\" -f \"ERGL=-6.4L\" -f \"ERGL=-6.4B\" -f \"ERGL=-6.4C\" !"^"=!^
+ -f \"ERGR=R\" -f \"ERGR=10.5R\" -f \"ERGR=-10.5R\" -f \"ERGR=10.5ER\" -f \"ERGR=-10.5eR\" -f \"ERGR=-.5R\" -f \"ERGR=-8.R\" -f \"ERGR=8.ER\" -f \"ERGR=0.3R\" -f \"ERGR=3.0R\" !"^"=!^
+ -f \"ERGS=10.4T\" -f \"ERGS=-10.4T\" -f \"ERGS=10.8T\" -f \"ERGS=0.8T\" -f \"ERGS=T\" !"^"=!^
+ -j \"TEST_MULTIARG#3;-4;10000;-10000;100000;-100000;0.001345;Ulrich;Erwin\""
+
+"%OPEN_COVER%" "-output:results21.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" !"^"=!^
+ -f \"ERGB=W\" -f \"ERGB=6.4W\" -f \"ERGB=-6.4W\" -f \"ERGB=-.4W\" -f \"ERGB=8.W\" -f \"ERGB=-.W\" !"^"=!^
+ -f \"ERGC=I\" -f \"ERGC=6.4I\" -f \"ERGC=-6.4I\" !"^"=!^
+ -f \"ERGW=D\" -f \"ERGW=6.4D\" -f \"ERGW=-6.4D\" -f \"ERGI=6.4L\" -f \"ERGI=-6.4L\" !"^"=!^
+ -f \"ERGD=D\" -f \"ERGD=6.4D\" -f \"ERGD=-6.4D\" -f \"ERGD=6.4B\" -f \"ERGD=6.4C\" -f \"ERGL=6.4L\" -f \"ERGL=-6.4L\" -f \"ERGL=-6.4B\" -f \"ERGL=-6.4C\" !"^"=!^
+ -f \"ERGR=R\" -f \"ERGR=10.5R\" -f \"ERGR=-10.5R\" -f \"ERGR=10.5ER\" -f \"ERGR=-10.5eR\" -f \"ERGR=-.5R\" -f \"ERGR=-8.R\" -f \"ERGR=8.ER\" -f \"ERGR=0.3R\" -f \"ERGR=3.0R\" !"^"=!^
+ -f \"ERGS=10.4T\" -f \"ERGS=-10.4T\" -f \"ERGS=10.8T\" -f \"ERGS=0.8T\" -f \"ERGS=T\" !"^"=!^
+ -j \"TEST_MULTIARG#-30;40;-12345;12345;-123456;123456;-13.45;Ulrich Test;Erwin\""
+
+"%OPEN_COVER%" "-output:results20.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" !"^"=!^
+ -f \"ERGB=W\" -f \"ERGB=6.4W\" -f \"ERGB=-6.4W\" -f \"ERGB=-.4W\" -f \"ERGB=8.W\" -f \"ERGB=-.W\" !"^"=!^
+ -f \"ERGC=I\" -f \"ERGC=6.4I\" -f \"ERGC=-6.4I\" !"^"=!^
+ -f \"ERGW=D\" -f \"ERGW=6.4D\" -f \"ERGW=-6.4D\" -f \"ERGI=6.4L\" -f \"ERGI=-6.4L\" !"^"=!^
+ -f \"ERGD=D\" -f \"ERGD=6.4D\" -f \"ERGD=-6.4D\" -f \"ERGD=6.4B\" -f \"ERGD=6.4C\" -f \"ERGL=6.4L\" -f \"ERGL=-6.4L\" -f \"ERGL=-6.4B\" -f \"ERGL=-6.4C\" !"^"=!^
+ -f \"ERGR=R\" -f \"ERGR=10.5R\" -f \"ERGR=-10.5R\" -f \"ERGR=10.5ER\" -f \"ERGR=-10.5eR\" -f \"ERGR=-.5R\" -f \"ERGR=-8.R\" -f \"ERGR=8.ER\" -f \"ERGR=0.3R\" -f \"ERGR=3.0R\" !"^"=!^
+ -f \"ERGS=10.4T\" -f \"ERGS=-10.4T\" -f \"ERGS=10.8T\" -f \"ERGS=0.8T\" -f \"ERGS=T\" !"^"=!^
+ -j \"TEST_MULTIARG#3;-4;10000;-10000;100000;-100000;12.3456789123;Ulrich;Erwin\""
+
+"%OPEN_COVER%" "-output:results30.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_BIP1\""
+"%OPEN_COVER%" "-output:results31.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_BIP10\""
+"%OPEN_COVER%" "-output:results32.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_BREAK\""
+"%OPEN_COVER%" "-output:results33.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#249\""
+"%OPEN_COVER%" "-output:results34.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#250\""
+"%OPEN_COVER%" "-output:results35.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#349\""
+"%OPEN_COVER%" "-output:results36.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#350\""
 
 if "!COVERAGE!"=="1" (
 if exist "!REPORTS_PATH!" del /q "!REPORTS_PATH!\*.*"
