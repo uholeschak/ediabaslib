@@ -367,7 +367,7 @@ namespace EdiabasLib
 
         private static void OpCfgis(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            string valueString = string.Format("{0}", arg1.GetValueData());
+            string valueString = string.Format(culture, "{0}", arg1.GetValueData());
             ediabas.SetConfigProperty(arg0.GetStringData(), valueString);
         }
 
@@ -670,15 +670,15 @@ namespace EdiabasLib
             switch (len)
             {
                 case 1:
-                    result = string.Format("{0}", (SByte)value);
+                    result = string.Format(culture, "{0}", (SByte)value);
                     break;
 
                 case 2:
-                    result = string.Format("{0}", (Int16)value);
+                    result = string.Format(culture, "{0}", (Int16)value);
                     break;
 
                 case 4:
-                    result = string.Format("{0}", (Int32)value);
+                    result = string.Format(culture, "{0}", (Int32)value);
                     break;
 
                 default:
@@ -722,15 +722,15 @@ namespace EdiabasLib
             switch (len)
             {
                 case 1:
-                    result = string.Format("0x{0:X02}", value);
+                    result = string.Format(culture, "0x{0:X02}", value);
                     break;
 
                 case 2:
-                    result = string.Format("0x{0:X04}", value);
+                    result = string.Format(culture, "0x{0:X04}", value);
                     break;
 
                 case 4:
-                    result = string.Format("0x{0:X08}", value);
+                    result = string.Format(culture, "0x{0:X08}", value);
                     break;
 
                 default:
@@ -2517,15 +2517,15 @@ namespace EdiabasLib
             switch (len)
             {
                 case 1:
-                    result = string.Format("{0}", (Byte)value);
+                    result = string.Format(culture, "{0}", (Byte)value);
                     break;
 
                 case 2:
-                    result = string.Format("{0}", (UInt16)value);
+                    result = string.Format(culture, "{0}", (UInt16)value);
                     break;
 
                 case 4:
-                    result = string.Format("{0}", (UInt32)value);
+                    result = string.Format(culture, "{0}", (UInt32)value);
                     break;
 
                 default:
@@ -2597,7 +2597,7 @@ namespace EdiabasLib
             byte[] dataArray = arg1.GetArrayData();
             foreach (byte data in dataArray)
             {
-                result += string.Format("{0:X02}", data);
+                result += string.Format(culture, "{0:X02}", data);
             }
             arg0.SetStringData(result);
         }
