@@ -3587,6 +3587,17 @@ namespace EdiabasLib
                             sb.Append("0.");
                             sb.Append(new string('0', length2));
                         }
+                        else
+                        {
+                            if ((length2 == 0) || (length1 >= 0))
+                            {
+                                sb.Append("0");
+                            }
+                            else
+                            {
+                                sb.Append("0.000000");
+                            }
+                        }
                         if (exponent != '\0')
                         {
                             sb.Append(exponent);
@@ -3594,6 +3605,7 @@ namespace EdiabasLib
                         }
                         sb.Insert(0, "{0:");
                         sb.Append("}");
+
                         string formatString = sb.ToString();
                         string resultString = string.Format(culture, formatString, convDouble);
 
@@ -3615,13 +3627,14 @@ namespace EdiabasLib
                     {
                         StringBuilder sb = new StringBuilder();
 
-                        if (leftAlign)
-                        {
-                            sb.Append("-");
-                        }
                         if (length1 >= 0)
                         {
-                            sb.Append(string.Format(culture, ",{0}", length1));
+                            sb.Append(",");
+                            if (leftAlign)
+                            {
+                                sb.Append("-");
+                            }
+                            sb.Append(string.Format(culture, "{0}", length1));
                         }
                         if (length2 > 0)
                         {
