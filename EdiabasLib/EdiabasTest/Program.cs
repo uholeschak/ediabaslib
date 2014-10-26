@@ -101,6 +101,8 @@ namespace EdiabasTest
                     return 1;
                 }
 
+                outputWriter.WriteLine(string.Format("API Version: {0}.{1}.{2}", (EdiabasNet.EdiabasVersion >> 8) & 0xF, (EdiabasNet.EdiabasVersion >> 4) & 0xF, EdiabasNet.EdiabasVersion & 0xF));
+
                 using (EdiabasNet ediabas = new EdiabasNet(cfgString))
                 {
                     EdCommObd edCommBwmFast = new EdCommObd(ediabas);

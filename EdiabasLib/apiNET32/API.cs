@@ -49,7 +49,7 @@ namespace Ediabas
         private static volatile bool abortJob;
         private static volatile List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
 
-        public const int APICOMPATIBILITYVERSION = 1792;
+        public const int APICOMPATIBILITYVERSION = 0x700;
         public const int APIBUSY = 0;
         public const int APIREADY = 1;
         public const int APIBREAK = 2;
@@ -441,6 +441,11 @@ namespace Ediabas
         public static bool apiCheckVersion(int versionCompatibility, out string versionInfo)
         {
             versionInfo = string.Empty;
+            if (versionCompatibility < APICOMPATIBILITYVERSION)
+            {
+                return false;
+            }
+            versionInfo = string.Format("{0}.{1}.{2}", (EdiabasNet.EdiabasVersion >> 8) & 0xF, (EdiabasNet.EdiabasVersion >> 4) & 0xF, EdiabasNet.EdiabasVersion & 0xF);
             return true;
         }
 

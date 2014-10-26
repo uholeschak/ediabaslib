@@ -559,6 +559,8 @@ namespace EdiabasLib
             public Object opData3;
         }
 
+        public const int EdiabasVersion = 0x730;
+
         public enum ErrorCodes : uint
         {
             EDIABAS_ERR_NONE = 0,
