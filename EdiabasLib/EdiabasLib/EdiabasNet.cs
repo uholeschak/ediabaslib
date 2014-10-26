@@ -2386,6 +2386,7 @@ namespace EdiabasLib
         private long infoProgressRange;
         private long infoProgressPos;
         private string infoProgressText = string.Empty;
+        private string resultJobStatus = string.Empty;
         private string sgbdFileName = string.Empty;
         private string sgbdFileResolveLast = string.Empty;
         private string ecuPath = string.Empty;
@@ -3727,7 +3728,7 @@ namespace EdiabasLib
             resultDictSystem.Add("VARIANTE", new ResultData(ResultType.TypeS, "VARIANTE", Path.GetFileNameWithoutExtension(SgbdFileName).ToUpper(culture)));
             resultDictSystem.Add("OBJECT", new ResultData(ResultType.TypeS, "OBJECT", objectName));
             resultDictSystem.Add("JOBNAME", new ResultData(ResultType.TypeS, "JOBNAME", jobInfo.JobName));
-            resultDictSystem.Add("JOBSTATUS", new ResultData(ResultType.TypeS, "JOBSTATUS", string.Empty));
+            resultDictSystem.Add("JOBSTATUS", new ResultData(ResultType.TypeS, "JOBSTATUS", resultJobStatus));
             resultDictSystem.Add("SAETZE", new ResultData(ResultType.TypeW, "SAETZE", (Int64)setCount));
             resultDictSystem.Add("UBATTCURRENT", new ResultData(ResultType.TypeI, "UBATTCURRENT", (Int64)(-1)));
             resultDictSystem.Add("UBATTHISTORY", new ResultData(ResultType.TypeI, "UBATTHISTORY", (Int64)(-1)));
@@ -4550,6 +4551,7 @@ namespace EdiabasLib
             infoProgressRange = -1;
             infoProgressPos = -1;
             infoProgressText = string.Empty;
+            resultJobStatus = string.Empty;
 
             ArrayMaxBufSize = jobInfo.ArraySize;
             pcCounter = jobInfo.JobOffset;
