@@ -486,11 +486,13 @@ namespace Ediabas
             abortJob = false;
             resultSets = null;
 
+            setLocalError(EDIABAS_ERR_NONE);
             if (!string.IsNullOrEmpty(ifh))
             {
                 if ((string.Compare(ifh, "STD:OBD", StringComparison.OrdinalIgnoreCase) != 0) &&
                     (string.Compare(ifh, "STD:OMITEC", StringComparison.OrdinalIgnoreCase) != 0))
                 {
+                    setLocalError(EDIABAS_IFH_0027);
                     return false;
                 }
             }
@@ -499,6 +501,7 @@ namespace Ediabas
             {
                 if (char.IsLetter(unit[0]))
                 {
+                    setLocalError(EDIABAS_IFH_0018);
                     return false;
                 }
             }
@@ -1031,13 +1034,13 @@ namespace Ediabas
 
         public static int apiErrorCode()
         {
-            if (ediabas == null)
-            {
-                return EDIABAS_API_0006;
-            }
             if (localError != EDIABAS_ERR_NONE)
             {
                 return localError;
+            }
+            if (ediabas == null)
+            {
+                return EDIABAS_API_0006;
             }
             return (int)ediabas.ErrorCodeLast;
         }
