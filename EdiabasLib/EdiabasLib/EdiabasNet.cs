@@ -1390,21 +1390,21 @@ namespace EdiabasLib
                     case RegisterType.RegAB:   // 8 bit
                         if (index > 15)
                         {
-                            return "A" + string.Format("{0:X}", index - 16);
+                            return "A" + string.Format(culture, "{0:X}", index - 16);
                         }
-                        return "B" + string.Format("{0:X}", index);
+                        return "B" + string.Format(culture, "{0:X}", index);
 
                     case RegisterType.RegI:   // 16 bit
-                        return "I" + string.Format("{0:X}", index);
+                        return "I" + string.Format(culture, "{0:X}", index);
 
                     case RegisterType.RegL:   // 32 bit
-                        return "L" + string.Format("{0:X}", index);
+                        return "L" + string.Format(culture, "{0:X}", index);
 
                     case RegisterType.RegF:
-                        return "F" + string.Format("{0:X}", index);
+                        return "F" + string.Format(culture, "{0:X}", index);
 
                     case RegisterType.RegS:
-                        return "S" + string.Format("{0:X}", index);
+                        return "S" + string.Format(culture, "{0:X}", index);
                 }
                 return string.Empty;
             }
@@ -3303,7 +3303,7 @@ namespace EdiabasLib
         {
             if (swLog != null)
             {
-                LogString(string.Format("SetError: {0}", error));
+                LogString(string.Format(culture, "SetError: {0}", error));
             }
 
             if (error != ErrorCodes.EDIABAS_ERR_NONE)
@@ -3341,7 +3341,7 @@ namespace EdiabasLib
             {
                 errorFunc(error);
             }
-            throw new Exception(string.Format("Error occured: {0}", error));
+            throw new Exception(string.Format(culture, "Error occured: {0}", error));
         }
 
         public static string GetErrorDescription(ErrorCodes errorCode)
@@ -3580,20 +3580,48 @@ namespace EdiabasLib
                 {
                     if (convIsDouble)
                     {
-                        return string.Format("{0}", convDouble);
+                        StringBuilder sb = new StringBuilder();
+
+                        if (length2 > 0)
+                        {
+                            sb.Append("0.");
+                            sb.Append(new string('0', length2));
+                        }
+                        if (exponent != '\0')
+                        {
+                            sb.Append(exponent);
+                            sb.Append("+000");
+                        }
+                        sb.Insert(0, "{0:");
+                        sb.Append("}");
+                        string formatString = sb.ToString();
+                        string resultString = string.Format(culture, formatString, convDouble);
+
+                        if (length1 >= 0 && length1 > resultString.Length)
+                        {
+                            string fillString = new String(' ', length1 - resultString.Length);
+                            if (leftAlign)
+                            {
+                                resultString += fillString;
+                            }
+                            else
+                            {
+                                resultString = fillString + resultString;
+                            }
+                        }
+                        return resultString;
                     }
                     else
                     {
                         StringBuilder sb = new StringBuilder();
 
-                        string alignString = string.Empty;
                         if (leftAlign)
                         {
                             sb.Append("-");
                         }
                         if (length1 >= 0)
                         {
-                            sb.Append(string.Format(",{0}", length1));
+                            sb.Append(string.Format(culture, ",{0}", length1));
                         }
                         if (length2 > 0)
                         {
@@ -3603,7 +3631,7 @@ namespace EdiabasLib
                         sb.Insert(0, "{0");
                         sb.Append("}");
                         string formatString = sb.ToString();
-                        return string.Format(formatString, convInt64);
+                        return string.Format(culture, formatString, convInt64);
                     }
                 }
                 else
@@ -4409,7 +4437,7 @@ namespace EdiabasLib
         {
             if (swLog != null)
             {
-                LogString(string.Format("executeJob: {0}", jobName));
+                LogString(string.Format(culture, "executeJob: {0}", jobName));
             }
 
             if (!OpenSgbdFs())
@@ -4623,7 +4651,7 @@ namespace EdiabasLib
 
             for (int i = 0; i < length; i++)
             {
-                logString += string.Format("{0:X02} ", data[offset + i]);
+                logString += string.Format(culture, "{0:X02} ", data[offset + i]);
             }
             try
             {
@@ -4658,7 +4686,7 @@ namespace EdiabasLib
                         {
                             readAndDecryptBytes(fs, opArgBuffer, 0, 1);
                             oper.Init(opAddrMode, (EdValueType)opArgBuffer[0]);
-                            // string.Format("#${0:X}.B", buffer[0]);
+                            // string.Format(culture, "#${0:X}.B", buffer[0]);
                             return;
                         }
                     case OpAddrMode.Imm16:
@@ -4669,7 +4697,7 @@ namespace EdiabasLib
                                 Array.Reverse(opArgBuffer, 0, 2);
                             }
                             oper.Init(opAddrMode, (EdValueType)BitConverter.ToUInt16(opArgBuffer, 0));
-                            // string.Format("#${0:X}.I", BitConverter.ToInt16(buffer, 0));
+                            // string.Format(culture, "#${0:X}.I", BitConverter.ToInt16(buffer, 0));
                             return;
                         }
                     case OpAddrMode.Imm32:
@@ -4680,7 +4708,7 @@ namespace EdiabasLib
                                 Array.Reverse(opArgBuffer, 0, 4);
                             }
                             oper.Init(opAddrMode, (EdValueType)BitConverter.ToUInt32(opArgBuffer, 0));
-                            // string.Format("#${0:X}.L", BitConverter.ToInt32(buffer, 0));
+                            // string.Format(culture, "#${0:X}.L", BitConverter.ToInt32(buffer, 0));
                             return;
                         }
                     case OpAddrMode.ImmStr:
@@ -4706,7 +4734,7 @@ namespace EdiabasLib
                             }
                             EdValueType idx = BitConverter.ToUInt16(opArgBuffer, 1);
                             oper.Init(opAddrMode, oaReg, (EdValueType)idx);
-                            // string.Format("{0}[#${1:X}]", oaReg.name, idx);
+                            // string.Format(culture, "{0}[#${1:X}]", oaReg.name, idx);
                             return;
                         }
                     case OpAddrMode.IdxReg:
@@ -4715,7 +4743,7 @@ namespace EdiabasLib
                             Register oaReg0 = GetRegister(opArgBuffer[0]);
                             Register oaReg1 = GetRegister(opArgBuffer[1]);
                             oper.Init(opAddrMode, oaReg0, oaReg1);
-                            // string.Format("{0}[{1}]", oaReg0.name, oaReg1.name);
+                            // string.Format(culture, "{0}[{1}]", oaReg0.name, oaReg1.name);
                             return;
                         }
                     case OpAddrMode.IdxRegImm:
@@ -4729,7 +4757,7 @@ namespace EdiabasLib
                             }
                             EdValueType inc = BitConverter.ToUInt16(opArgBuffer, 2);
                             oper.Init(opAddrMode, oaReg0, oaReg1, (EdValueType)inc);
-                            // string.Format("{0}[{1},#${2:X}]", oaReg0.name, oaReg1.name, inc);
+                            // string.Format(culture, "{0}[{1},#${2:X}]", oaReg0.name, oaReg1.name, inc);
                             return;
                         }
                     case OpAddrMode.IdxImmLenImm:
@@ -4747,7 +4775,7 @@ namespace EdiabasLib
                             }
                             EdValueType len = BitConverter.ToUInt16(opArgBuffer, 3);
                             oper.Init(opAddrMode, oaReg, (EdValueType)idx, (EdValueType)len);
-                            // string.Format("{0}[#${1:X}]#${2:X}", oaReg.name, idx, len);
+                            // string.Format(culture, "{0}[#${1:X}]#${2:X}", oaReg.name, idx, len);
                             return;
                         }
                     case OpAddrMode.IdxImmLenReg:
@@ -4761,7 +4789,7 @@ namespace EdiabasLib
                             EdValueType idx = BitConverter.ToUInt16(opArgBuffer, 1);
                             Register oaLen = GetRegister(opArgBuffer[3]);
                             oper.Init(opAddrMode, oaReg, (EdValueType)idx, oaLen);
-                            // string.Format("{0}[#${1:X}]{2}", oaReg.name, idx, oaLen.name);
+                            // string.Format(culture, "{0}[#${1:X}]{2}", oaReg.name, idx, oaLen.name);
                             return;
                         }
                     case OpAddrMode.IdxRegLenImm:
@@ -4775,7 +4803,7 @@ namespace EdiabasLib
                             }
                             EdValueType len = BitConverter.ToUInt16(opArgBuffer, 2);
                             oper.Init(opAddrMode, oaReg, oaIdx, (EdValueType)len);
-                            // string.Format("{0}[{1}]#${2:X}", oaReg.name, oaIdx.name, len);
+                            // string.Format(culture, "{0}[{1}]#${2:X}", oaReg.name, oaIdx.name, len);
                             return;
                         }
                     case OpAddrMode.IdxRegLenReg:
@@ -4785,7 +4813,7 @@ namespace EdiabasLib
                             Register oaIdx = GetRegister(opArgBuffer[1]);
                             Register oaLen = GetRegister(opArgBuffer[2]);
                             oper.Init(opAddrMode, oaReg, oaIdx, oaLen);
-                            // string.Format("{0}[{1}]{2}", oaReg.name, oaIdx.name, oaLen.name);
+                            // string.Format(culture, "{0}[{1}]{2}", oaReg.name, oaIdx.name, oaLen.name);
                             return;
                         }
                     default:
@@ -4827,7 +4855,7 @@ namespace EdiabasLib
 
         private static string getOpText(EdValueType addr, OpCode oc, Operand arg0, Operand arg1)
         {
-            string result = string.Format("{0:X08}: ", addr);
+            string result = string.Format(culture, "{0:X08}: ", addr);
             result += oc.pneumonic;
             string text1 = getOpArgText(arg0);
             string text2 = getOpArgText(arg1);
@@ -4881,58 +4909,58 @@ namespace EdiabasLib
                             }
                             else if (data.GetType() == typeof(EdFloatType))
                             {
-                                return regName1 + string.Format(": {0}", (EdFloatType)data);
+                                return regName1 + string.Format(culture, ": {0}", (EdFloatType)data);
                             }
                             return string.Empty;
                         }
 
                     case OpAddrMode.RegAB:
-                        return regName1 + string.Format(": ${0:X}", arg.GetValueData());
+                        return regName1 + string.Format(culture, ": ${0:X}", arg.GetValueData());
 
                     case OpAddrMode.RegI:
-                        return regName1 + string.Format(": ${0:X}", arg.GetValueData());
+                        return regName1 + string.Format(culture, ": ${0:X}", arg.GetValueData());
 
                     case OpAddrMode.RegL:
-                        return regName1 + string.Format(": ${0:X}", arg.GetValueData());
+                        return regName1 + string.Format(culture, ": ${0:X}", arg.GetValueData());
 
                     case OpAddrMode.Imm8:
-                        return string.Format("#${0:X}.B", arg.GetValueData());
+                        return string.Format(culture, "#${0:X}.B", arg.GetValueData());
 
                     case OpAddrMode.Imm16:
-                        return string.Format("#${0:X}.I", arg.GetValueData());
+                        return string.Format(culture, "#${0:X}.I", arg.GetValueData());
 
                     case OpAddrMode.Imm32:
-                        return string.Format("#${0:X}.L", arg.GetValueData());
+                        return string.Format(culture, "#${0:X}.L", arg.GetValueData());
 
                     case OpAddrMode.ImmStr:
                         return "#" + getStringText(arg.GetArrayData());
 
                     case OpAddrMode.IdxImm:
-                        return regName1 + string.Format("[#${0:X}]: ", (EdValueType)arg.opData2) +
+                        return regName1 + string.Format(culture, "[#${0:X}]: ", (EdValueType)arg.opData2) +
                             getStringText(arg.GetArrayData());
 
                     case OpAddrMode.IdxReg:
-                        return regName1 + string.Format("[{0}: ${1:X}]: ", regName2, ((Register)arg.opData2).GetValueData()) +
+                        return regName1 + string.Format(culture, "[{0}: ${1:X}]: ", regName2, ((Register)arg.opData2).GetValueData()) +
                             getStringText(arg.GetArrayData());
 
                     case OpAddrMode.IdxRegImm:
-                        return regName1 + string.Format("[{0}: ${1:X},#${2:X}]: ", regName2, ((Register)arg.opData2).GetValueData(), (EdValueType)arg.opData3) +
+                        return regName1 + string.Format(culture, "[{0}: ${1:X},#${2:X}]: ", regName2, ((Register)arg.opData2).GetValueData(), (EdValueType)arg.opData3) +
                             getStringText(arg.GetArrayData());
 
                     case OpAddrMode.IdxImmLenImm:
-                        return regName1 + string.Format("[#{0:X}],#${1:X}: ", (EdValueType)arg.opData2, (EdValueType)arg.opData3) +
+                        return regName1 + string.Format(culture, "[#{0:X}],#${1:X}: ", (EdValueType)arg.opData2, (EdValueType)arg.opData3) +
                             getStringText(arg.GetArrayData());
 
                     case OpAddrMode.IdxImmLenReg:
-                        return regName1 + string.Format("[#{0:X}],{1}: #${2:X}: ", (EdValueType)arg.opData2, regName3, ((Register)arg.opData3).GetValueData()) +
+                        return regName1 + string.Format(culture, "[#{0:X}],{1}: #${2:X}: ", (EdValueType)arg.opData2, regName3, ((Register)arg.opData3).GetValueData()) +
                             getStringText(arg.GetArrayData());
 
                     case OpAddrMode.IdxRegLenImm:
-                        return regName1 + string.Format("[{0}: ${1:X}],#${2:X}: ", regName2, ((Register)arg.opData2).GetValueData(), (EdValueType)arg.opData3) +
+                        return regName1 + string.Format(culture, "[{0}: ${1:X}],#${2:X}: ", regName2, ((Register)arg.opData2).GetValueData(), (EdValueType)arg.opData3) +
                             getStringText(arg.GetArrayData());
 
                     case OpAddrMode.IdxRegLenReg:
-                        return regName1 + string.Format("[{0}: ${1:X}],{2}: #${3:X}: ", regName2, ((Register)arg.opData2).GetValueData(), regName3, ((Register)arg.opData3).GetValueData()) +
+                        return regName1 + string.Format(culture, "[{0}: ${1:X}],{2}: #${3:X}: ", regName2, ((Register)arg.opData2).GetValueData(), regName3, ((Register)arg.opData3).GetValueData()) +
                             getStringText(arg.GetArrayData());
                 }
             }
@@ -5093,7 +5121,7 @@ namespace EdiabasLib
             }
             else
             {
-                result += string.Format("{0:X}", part1);
+                result += string.Format(culture, "{0:X}", part1);
             }
 
             if (part2 > 9)
@@ -5102,7 +5130,7 @@ namespace EdiabasLib
             }
             else
             {
-                result += string.Format("{0:X}", part2);
+                result += string.Format(culture, "{0:X}", part2);
             }
             return result;
         }
