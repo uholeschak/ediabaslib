@@ -34,6 +34,8 @@ namespace EdiabasCall
             string cfgString = null;
             string sgbdFile = null;
             string outFile = null;
+            string ifhName = string.Empty;
+            string deviceName = string.Empty;
             bool appendFile = false;
             bool storeResults = false;
             List<string> formatList = new List<string>();
@@ -50,6 +52,10 @@ namespace EdiabasCall
                   v => outFile = v },
                 { "a|append", "append output file.",
                   v => appendFile = v != null },
+                { "ifh=", "Interface handler.",
+                  v => ifhName = v },
+                { "device=", "Device name.",
+                  v => deviceName = v },
                 { "store", "store results.",
                   v => storeResults = v != null },
                 { "c|compare", "compare output.",
@@ -118,7 +124,7 @@ namespace EdiabasCall
                 {
                     configString = cfgString;
                 }
-                if (!API.apiInitExt(string.Empty, string.Empty, string.Empty, configString))
+                if (!API.apiInitExt(ifhName, deviceName, "EdiabasCall", configString))
                 {
                     outputWriter.WriteLine("Init api failed");
                     return 1;
