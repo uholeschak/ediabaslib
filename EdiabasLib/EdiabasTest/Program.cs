@@ -114,9 +114,9 @@ namespace EdiabasTest
 
                 using (EdiabasNet ediabas = new EdiabasNet(cfgString))
                 {
-                    EdInterfaceObd edCommBwmFast = new EdInterfaceObd(ediabas);
-                    edCommBwmFast.ComPort = comPort;
-                    ediabas.EdInterfaceClass = edCommBwmFast;
+                    EdInterfaceObd edInterfaceObd = new EdInterfaceObd();
+                    edInterfaceObd.ComPort = comPort;
+                    ediabas.EdInterfaceClass = edInterfaceObd;
                     ediabas.ProgressJobFunc = ProgressJobFunc;
                     ediabas.ErrorRaisedFunc = ErrorRaisedFunc;
 

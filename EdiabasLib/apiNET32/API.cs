@@ -497,22 +497,25 @@ namespace Ediabas
                 }
             }
 
-            EdiabasNet ediabasTemp = new EdiabasNet(config);
-            EdInterfaceObd edCommBwmFast = new EdInterfaceObd(ediabasTemp);
-
+            EdInterfaceObd edInterfaceObd = new EdInterfaceObd();
             if (!string.IsNullOrEmpty(ifh))
             {
-                if (!edCommBwmFast.IsValidInterfaceName(ifh))
+                if (!edInterfaceObd.IsValidInterfaceName(ifh))
                 {
                     setLocalError(EDIABAS_IFH_0027);
-                    edCommBwmFast.Dispose();
-                    ediabasTemp.Dispose();
+                    edInterfaceObd.Dispose();
                     return false;
                 }
             }
+            if (!edInterfaceObd.InterfaceLock())
+            {
+                setLocalError(EDIABAS_API_0006);
+                edInterfaceObd.Dispose();
+                return false;
+            }
 
-            ediabas = ediabasTemp;
-            ediabas.EdInterfaceClass = edCommBwmFast;
+            ediabas = new EdiabasNet(config);
+            ediabas.EdInterfaceClass = edInterfaceObd;
 
             ediabas.AbortJobFunc = abortJobFunc;
 

@@ -541,13 +541,13 @@ namespace CarControl
             commStopWatch = new Stopwatch();
             ediabas = new EdiabasNet();
 
-            EdInterfaceObd edInterfaceBwmFast = new EdInterfaceObd(ediabas);
-            ediabas.EdInterfaceClass = edInterfaceBwmFast;
-            edInterfaceBwmFast.InterfaceConnectFunc = InterfaceConnect;
-            edInterfaceBwmFast.InterfaceDisconnectFunc = InterfaceDisconnect;
-            edInterfaceBwmFast.InterfaceSetConfigFunc = InterfaceSetConfig;
-            edInterfaceBwmFast.SendDataFunc = SendData;
-            edInterfaceBwmFast.ReceiveDataFunc = ReceiveData;
+            EdInterfaceObd edInterfaceObd = new EdInterfaceObd();
+            ediabas.EdInterfaceClass = edInterfaceObd;
+            edInterfaceObd.InterfaceConnectFunc = InterfaceConnect;
+            edInterfaceObd.InterfaceDisconnectFunc = InterfaceDisconnect;
+            edInterfaceObd.InterfaceSetConfigFunc = InterfaceSetConfig;
+            edInterfaceObd.SendDataFunc = SendData;
+            edInterfaceObd.ReceiveDataFunc = ReceiveData;
 
             ediabas.AbortJobFunc = AbortEdiabasJob;
 

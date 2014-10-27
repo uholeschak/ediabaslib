@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 
 namespace EdiabasLib
 {
@@ -9,11 +7,48 @@ namespace EdiabasLib
     {
         private bool disposed = false;
         protected EdiabasNet ediabas;
+        protected static Mutex interfaceMutex;
+        protected bool mutexAquired = false;
         protected UInt32 commRepeats = 0;
         protected UInt32[] commParameter;
         protected Int16[] commAnswerLen;
 
         public abstract bool IsValidInterfaceName(string name);
+
+        public virtual bool InterfaceLock()
+        {
+            if (interfaceMutex == null)
+            {
+                return false;
+            }
+            try
+            {
+                if (!interfaceMutex.WaitOne(0, false))
+                {
+                    return false;
+                }
+                mutexAquired = true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public virtual bool InterfaceUnlock()
+        {
+            if (interfaceMutex == null)
+            {
+                return true;
+            }
+            if (mutexAquired)
+            {
+                mutexAquired = false;
+                interfaceMutex.ReleaseMutex();
+            }
+            return true;
+        }
 
         public virtual bool InterfaceConnect()
         {
@@ -29,6 +64,18 @@ namespace EdiabasLib
         }
 
         public abstract bool TransmitData(byte[] sendData, out byte[] receiveData);
+
+        public virtual EdiabasNet Ediabas
+        {
+            get
+            {
+                return ediabas;
+            }
+            set
+            {
+                ediabas = value;
+            }
+        }
 
         public UInt32 CommRepeats
         {
@@ -101,9 +148,8 @@ namespace EdiabasLib
             get;
         }
 
-        protected EdInterfaceBase(EdiabasNet ediabas)
+        protected EdInterfaceBase()
         {
-            this.ediabas = ediabas;
         }
 
         public void Dispose()
