@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace EdiabasLib
@@ -32,6 +30,24 @@ namespace EdiabasLib
         private byte[] state = new byte[2];
         private byte[] sendBuffer = new byte[260];
         private byte[] recBuffer = new byte[260];
+
+        public override EdiabasNet Ediabas
+        {
+            get
+            {
+                return base.Ediabas;
+            }
+            set
+            {
+                base.Ediabas = value;
+
+                string prop = ediabas.GetConfigProperty("ObdComPort");
+                if (prop != null)
+                {
+                    comPort = prop;
+                }
+            }
+        }
 
         public override string InterfaceType
         {
@@ -89,13 +105,17 @@ namespace EdiabasLib
             }
         }
 
-        public EdInterfaceObd(EdiabasNet ediabas) : base(ediabas)
+        static EdInterfaceObd()
         {
-            string prop = ediabas.GetConfigProperty("ObdComPort");
-            if (prop != null)
-            {
-                comPort = prop;
-            }
+#if WindowsCE
+            interfaceMutex = new Mutex(false);
+#else
+            interfaceMutex = new Mutex(false, "EdiabasLib_InterfaceObd");
+#endif
+        }
+
+        public EdInterfaceObd()
+        {
         }
 
         ~EdInterfaceObd()
@@ -743,6 +763,7 @@ namespace EdiabasLib
                     // Dispose managed resources.
                     serialPort.Dispose();
                 }
+                InterfaceUnlock();
 
                 // Note disposing has been done.
                 disposed = true;

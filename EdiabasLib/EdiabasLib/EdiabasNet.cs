@@ -2831,6 +2831,7 @@ namespace EdiabasLib
                 lock (apiLock)
                 {
                     edInterfaceClass = value;
+                    edInterfaceClass.Ediabas = this;
                 }
             }
         }
