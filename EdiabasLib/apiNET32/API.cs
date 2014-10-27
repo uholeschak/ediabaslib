@@ -1113,7 +1113,7 @@ namespace Ediabas
 
         public static bool enableServer(bool onOff)
         {
-            return false;
+            return true;
         }
 
         public static bool enableMultiThreading(bool onOff)
