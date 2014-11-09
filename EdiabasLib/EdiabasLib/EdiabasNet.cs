@@ -2905,6 +2905,9 @@ namespace EdiabasLib
 
             jobRunning = false;
             SetConfigProperty("Simulation", "0");
+            SetConfigProperty("BipDebugLevel", "0");
+            SetConfigProperty("ApiTrace", "0");
+            SetConfigProperty("IfhTrace", "0");
 
 #if WindowsCE
             string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);
@@ -2912,6 +2915,9 @@ namespace EdiabasLib
             string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 #endif
             SetConfigProperty("EcuPath", assemblyPath);
+
+            string tracePath = Path.Combine(assemblyPath, "Trace");
+            SetConfigProperty("TracePath", tracePath);
 
             bool withFile = false;
             string configFile = Path.Combine(assemblyPath, "EdiabasLib.config");
@@ -4543,8 +4549,6 @@ namespace EdiabasLib
             resultSysDict.Clear();
             stackList.Clear();
             SetConfigProperty("BipEcuFile", Path.GetFileNameWithoutExtension(SgbdFileName));
-            SetConfigProperty("BipDebugLevel", "0");
-            SetConfigProperty("IfhTrace", "0");
             flags.Init();
             errorTrapBitNr = -1;
             errorTrapMask = 0;
@@ -4665,15 +4669,15 @@ namespace EdiabasLib
         {
             StreamWriter swLogLocal = SwLog;
             if (swLogLocal == null) return;
-            string logString = "";
 
+            StringBuilder stringBuilder = new StringBuilder(length);
             for (int i = 0; i < length; i++)
             {
-                logString += string.Format(culture, "{0:X02} ", data[offset + i]);
+                stringBuilder.Append(string.Format(culture, "{0:X02} ", data[offset + i]));
             }
             try
             {
-                swLogLocal.WriteLine(" (" + info + "): " + logString);
+                swLogLocal.WriteLine(" (" + info + "): " + stringBuilder.ToString());
             }
             catch (Exception)
             {
