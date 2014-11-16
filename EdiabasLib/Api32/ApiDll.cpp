@@ -593,8 +593,9 @@ APIRESULTFIELD FAR PASCAL __apiResultsNew(unsigned int handle)
     }
 
     ApiInternal::APIRESULTFIELD ^ apiResultField = apiInternal->apiResultsNew();
-    GCHandle gch = GCHandle::Alloc(apiResultField, GCHandleType::Pinned);
-    return (void *) gch.AddrOfPinnedObject();
+    GCHandle hResult = GCHandle::Alloc(apiResultField);
+    IntPtr pointer = GCHandle::ToIntPtr(hResult);
+    return pointer.ToPointer();
 }
 
 void FAR PASCAL __apiResultsScope(unsigned int handle,APIRESULTFIELD field)
@@ -605,13 +606,13 @@ void FAR PASCAL __apiResultsScope(unsigned int handle,APIRESULTFIELD field)
         return;
     }
 
-    GCHandle gch = GCHandle::FromIntPtr((IntPtr) field);
-    ApiInternal::APIRESULTFIELD ^ apiResultField = dynamic_cast<ApiInternal::APIRESULTFIELD ^>(gch.Target);
-    if (apiResultField == nullptr)
+    IntPtr pointer(field);
+    GCHandle hResult = GCHandle::FromIntPtr(pointer);
+    ApiInternal::APIRESULTFIELD ^ apiResultField = dynamic_cast<ApiInternal::APIRESULTFIELD ^>(hResult.Target);
+    if (apiResultField != nullptr)
     {
-        return;
+        apiInternal->apiResultsScope(apiResultField);
     }
-    apiInternal->apiResultsScope(apiResultField);
 }
 
 void FAR PASCAL __apiResultsDelete(unsigned int handle,APIRESULTFIELD field)
@@ -622,14 +623,14 @@ void FAR PASCAL __apiResultsDelete(unsigned int handle,APIRESULTFIELD field)
         return;
     }
 
-    GCHandle gch = GCHandle::FromIntPtr((IntPtr) field);
-    ApiInternal::APIRESULTFIELD ^ apiResultField = dynamic_cast<ApiInternal::APIRESULTFIELD ^>(gch.Target);
-    if (apiResultField == nullptr)
+    IntPtr pointer(field);
+    GCHandle hResult = GCHandle::FromIntPtr(pointer);
+    ApiInternal::APIRESULTFIELD ^ apiResultField = dynamic_cast<ApiInternal::APIRESULTFIELD ^>(hResult.Target);
+    if (apiResultField != nullptr)
     {
-        return;
+        apiInternal->apiResultsDelete(apiResultField);
+        delete hResult;
     }
-    apiInternal->apiResultsDelete(apiResultField);
-    gch.Free();
 }
 
 int FAR PASCAL __apiState(unsigned int handle)

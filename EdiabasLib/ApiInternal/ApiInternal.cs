@@ -13,20 +13,7 @@ namespace Ediabas
     {
         public class APIRESULTFIELD
         {
-            private uint apiResult;
             private List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
-
-            public uint value
-            {
-                get
-                {
-                    return this.apiResult;
-                }
-                set
-                {
-                    this.apiResult = value;
-                }
-            }
 
             public List<Dictionary<string, EdiabasNet.ResultData>> ResultSets
             {
@@ -40,19 +27,9 @@ namespace Ediabas
                 }
             }
 
-            public APIRESULTFIELD(uint v)
+            public APIRESULTFIELD(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
             {
-                this.apiResult = v;
-            }
-
-            public static implicit operator APIRESULTFIELD(uint v)
-            {
-                return new APIRESULTFIELD(v);
-            }
-
-            public static implicit operator uint(APIRESULTFIELD v)
-            {
-                return v.apiResult;
+                this.resultSets = resultSets;
             }
         }
 
@@ -1151,8 +1128,7 @@ namespace Ediabas
             logFormat(API_LOG_LEVEL.NORMAL, "apiResultsNew()");
 
             waitJobFinish();
-            APIRESULTFIELD resultField = new APIRESULTFIELD(0);
-            resultField.ResultSets = resultSets;
+            APIRESULTFIELD resultField = new APIRESULTFIELD(resultSets);
 
             return resultField;
         }
