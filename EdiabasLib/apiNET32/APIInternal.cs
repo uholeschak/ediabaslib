@@ -466,7 +466,7 @@ namespace Ediabas
             resultSets = null;
         }
 
-        public bool apiCheckVersion(int versionCompatibility, out string versionInfo)
+        public static bool apiCheckVersion(int versionCompatibility, out string versionInfo)
         {
             versionInfo = string.Empty;
             if (versionCompatibility < APICOMPATIBILITYVERSION)
@@ -1283,26 +1283,26 @@ namespace Ediabas
             logFormat(API_LOG_LEVEL.NORMAL, "apiTrace({0})", msg);
         }
 
-        public bool apiXSysSetConfig(string cfgName, string cfgValue)
+        public static bool apiXSysSetConfig(string cfgName, string cfgValue)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiXSysSetConfig({0}, {1})", cfgName, cfgValue);
+            //logFormat(API_LOG_LEVEL.NORMAL, "apiXSysSetConfig({0}, {1})", cfgName, cfgValue);
             return true;
         }
 
-        public void closeServer()
+        public static void closeServer()
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "closeServer()");
+            //logFormat(API_LOG_LEVEL.NORMAL, "closeServer()");
         }
 
-        public bool enableServer(bool onOff)
+        public static bool enableServer(bool onOff)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "enableServer({0})", onOff);
+            //logFormat(API_LOG_LEVEL.NORMAL, "enableServer({0})", onOff);
             return true;
         }
 
-        public bool enableMultiThreading(bool onOff)
+        public static bool enableMultiThreading(bool onOff)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "enableMultiThreading({0})", onOff);
+            //logFormat(API_LOG_LEVEL.NORMAL, "enableMultiThreading({0})", onOff);
             return true;
         }
 

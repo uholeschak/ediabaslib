@@ -442,7 +442,7 @@ namespace Ediabas
 
         public static bool apiCheckVersion(int versionCompatibility, out string versionInfo)
         {
-            return apiInternal.apiCheckVersion(versionCompatibility, out versionInfo);
+            return ApiInternal.apiCheckVersion(versionCompatibility, out versionInfo);
         }
 
         public static bool apiInit()
@@ -624,22 +624,22 @@ namespace Ediabas
 
         public static bool apiXSysSetConfig(string cfgName, string cfgValue)
         {
-            return apiInternal.apiXSysSetConfig(cfgName, cfgValue);
+            return ApiInternal.apiXSysSetConfig(cfgName, cfgValue);
         }
 
         public static void closeServer()
         {
-            apiInternal.closeServer();
+            ApiInternal.closeServer();
         }
 
         public static bool enableServer(bool onOff)
         {
-            return apiInternal.enableServer(onOff);
+            return ApiInternal.enableServer(onOff);
         }
 
         public static bool enableMultiThreading(bool onOff)
         {
-            return apiInternal.enableMultiThreading(onOff);
+            return ApiInternal.enableMultiThreading(onOff);
         }
     }
 }
