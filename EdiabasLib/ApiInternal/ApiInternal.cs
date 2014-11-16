@@ -874,7 +874,7 @@ namespace Ediabas
 
             setLocalError(EDIABAS_ERR_NONE);
             string text;
-            if (API.apiResultText(out text, result, rset, format))
+            if (apiResultText(out text, result, rset, format))
             {
                 logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;

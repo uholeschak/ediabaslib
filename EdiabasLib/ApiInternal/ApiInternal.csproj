@@ -5,14 +5,13 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}</ProjectGuid>
+    <ProjectGuid>{F125B68A-1FA7-4E2B-A055-C4F6D8F5F0CF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EdiabasLib</RootNamespace>
-    <AssemblyName>EdiabasLib</AssemblyName>
+    <RootNamespace>ApiInternal</RootNamespace>
+    <AssemblyName>ApiInternal</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,7 +34,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>EdiabasLib.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>ApiInternal.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -47,18 +46,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EdInterfaceBase.cs" />
-    <Compile Include="EdInterfaceObd.cs" />
-    <Compile Include="EdiabasNet.cs" />
-    <Compile Include="EdOperations.cs" />
-    <Compile Include="MemoryStreamReader.cs" />
+    <Compile Include="ApiInternal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="EdiabasLib.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="EdiabasLib.snk" />
+    <ProjectReference Include="..\EdiabasLib\EdiabasLib.csproj">
+      <Project>{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}</Project>
+      <Name>EdiabasLib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ApiInternal.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
