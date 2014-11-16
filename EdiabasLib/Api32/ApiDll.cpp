@@ -82,7 +82,7 @@ APIBOOL FAR PASCAL __apiCheckVersion(int versionCompatibility,char far *versionI
         return APIFALSE;
     }
     marshal_context context;
-    strcpy_s(versionInfo, APIMAXTEXT, context.marshal_as<const char*>(verInfo));
+    strcpy_s(versionInfo, APIMAXRESULT, context.marshal_as<const char*>(verInfo));
     return APITRUE;
 }
 
@@ -543,7 +543,7 @@ APIBOOL FAR PASCAL __apiResultName(unsigned int handle,char far *buf,
         return APIFALSE;
     }
     marshal_context context;
-    strcpy_s(buf, APIMAXTEXT, context.marshal_as<const char*>(buffer));
+    strcpy_s(buf, APIMAXNAME, context.marshal_as<const char*>(buffer));
     return APITRUE;
 }
 
@@ -580,7 +580,7 @@ APIBOOL FAR PASCAL __apiResultVar(unsigned int handle,APITEXT far *ecu)
         return APIFALSE;
     }
     marshal_context context;
-    strcpy_s(ecu, APIMAXTEXT, context.marshal_as<const char*>(ecuBuffer));
+    strcpy_s(ecu, APIMAXNAME, context.marshal_as<const char*>(ecuBuffer));
     return APITRUE;
 }
 
