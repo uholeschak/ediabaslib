@@ -684,7 +684,7 @@ void FAR PASCAL __apiErrorText(unsigned int handle,
     }
     String ^ buffer = apiInternal->apiErrorText();
     marshal_context context;
-    strcpy_s(buf, APIMAXTEXT, context.marshal_as<const char*>(buffer));
+    strcpy_s(buf, bufsize, context.marshal_as<const char*>(buffer));
 }
 
 APIBOOL FAR PASCAL __apiSetConfig(unsigned int handle,
