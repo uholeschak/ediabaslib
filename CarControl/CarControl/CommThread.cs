@@ -1696,7 +1696,7 @@ namespace CarControl
                     commStopWatch.Stop();
                     if (logResponse)
                     {
-                        ediabas.LogData(receiveData, offset, recLen, "Rec ");
+                        ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, offset, recLen, "Rec ");
                     }
                     LogData(receiveData, offset, recLen, "Rec ");
                     if (recLen < length)
@@ -1729,7 +1729,7 @@ namespace CarControl
                 }
                 if (logResponse)
                 {
-                    ediabas.LogData(receiveData, offset, (int)bytesRead, "Rec ");
+                    ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, offset, (int)bytesRead, "Rec ");
                 }
                 LogData(receiveData, offset, (int)bytesRead, "Rec ");
                 if (bytesRead < length)

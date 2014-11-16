@@ -25,7 +25,6 @@ namespace EdiabasTest
             string outFile = null;
             bool appendFile = false;
             bool storeResults = false;
-            string logFile = null;
             List<string> formatList = new List<string>();
             List<string> jobNames = new List<string>();
             bool show_help = false;
@@ -46,8 +45,6 @@ namespace EdiabasTest
                   v => storeResults = v != null },
                 { "c|compare", "compare output.",
                   v => compareOutput = v != null },
-                { "l|log=", "log file name.",
-                  v => logFile = v },
                 { "f|format=", "format for specific result. <result name>=<format string>",
                   v => formatList.Add(v) },
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>#<standard job parameters semicolon separated>.\nFor binary job parameters perpend the hex string with| (e.g. |A3C2)",
@@ -121,10 +118,6 @@ namespace EdiabasTest
                     ediabas.ErrorRaisedFunc = ErrorRaisedFunc;
 
                     ediabas.SetConfigProperty("EcuPath", Path.GetDirectoryName(sgbdFile));
-                    if (logFile != null)
-                    {
-                        ediabas.SwLog = new StreamWriter(logFile);
-                    }
 
                     foreach (string jobString in jobNames)
                     {
@@ -276,10 +269,6 @@ namespace EdiabasTest
                 foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
                 {
                     outputWriter.WriteLine(string.Format(culture, "DATASET: {0}", dataSet));
-                    if (ediabas.SwLog != null)
-                    {
-                        ediabas.SwLog.WriteLine(string.Format(culture, "DATASET: {0}", dataSet));
-                    }
                     foreach (string key in resultDict.Keys.OrderBy(x => x))
                     {
                         EdiabasNet.ResultData resultData = resultDict[key];
@@ -356,10 +345,6 @@ namespace EdiabasTest
                         }
 
                         outputWriter.WriteLine(resultData.name + ": " + resultText);
-                        if (ediabas.SwLog != null)
-                        {
-                            ediabas.SwLog.WriteLine(resultData.name + ": " + resultText);
-                        }
                     }
                     dataSet++;
                 }
