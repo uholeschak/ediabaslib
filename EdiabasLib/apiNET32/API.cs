@@ -14,7 +14,7 @@ namespace Ediabas
         public class APIRESULTFIELD
         {
             private uint apiResult;
-            private List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
+            private ApiInternal.APIRESULTFIELD apiResultField;
 
             public uint value
             {
@@ -28,15 +28,15 @@ namespace Ediabas
                 }
             }
 
-            public List<Dictionary<string, EdiabasNet.ResultData>> ResultSets
+            public ApiInternal.APIRESULTFIELD ApiResultField
             {
                 get
                 {
-                    return this.resultSets;
+                    return this.apiResultField;
                 }
                 set
                 {
-                    this.resultSets = value;
+                    this.apiResultField = value;
                 }
             }
 
@@ -56,26 +56,7 @@ namespace Ediabas
             }
         }
 
-        private static readonly Encoding encoding = Encoding.GetEncoding(1252);
-        private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
-
-        private static volatile EdiabasNet ediabas;
-        private static object apiLogLock = new object();
-        private static StreamWriter swLog = null;
-        private static int logLevelApi = -1;
-        private static volatile int apiStateValue;
-        private static volatile int localError;
-        private static volatile Thread jobThread;
-        private static volatile string jobName;
-        private static volatile string jobEcuName;
-        private static volatile bool abortJob;
-        private static volatile List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
-
-        private enum API_LOG_LEVEL : int
-        {
-            OFF = 0,
-            NORMAL = 1,
-        };
+        private static ApiInternal apiInternal;
 
         public const int APICOMPATIBILITYVERSION = 0x700;
         public const int APIBUSY = 0;
@@ -456,1129 +437,209 @@ namespace Ediabas
 
         static API()
         {
-            ediabas = null;
-            apiStateValue = APIREADY;
-            localError = EDIABAS_ERR_NONE;
-            jobThread = null;
-            jobName = string.Empty;
-            jobEcuName = string.Empty;
-            abortJob = false;
-            resultSets = null;
+            apiInternal = new ApiInternal();
         }
 
         public static bool apiCheckVersion(int versionCompatibility, out string versionInfo)
         {
-            versionInfo = string.Empty;
-            if (versionCompatibility < APICOMPATIBILITYVERSION)
-            {
-                return false;
-            }
-            versionInfo = string.Format("{0}.{1}.{2}", (EdiabasNet.EdiabasVersion >> 8) & 0xF, (EdiabasNet.EdiabasVersion >> 4) & 0xF, EdiabasNet.EdiabasVersion & 0xF);
-            return true;
+            return apiInternal.apiCheckVersion(versionCompatibility, out versionInfo);
         }
 
         public static bool apiInit()
         {
-            return apiInitExt(null, null, null, null);
+            return apiInternal.apiInit();
         }
 
         public static bool apiInitExt(string ifh, string unit, string app, string config)
         {
-            if (ediabas != null)
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "apiInitExt({0}, {1}, {2}, {3}", ifh, unit, app, config);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", true);
-                return true;
-            }
-
-            apiStateValue = APIREADY;
-            localError = EDIABAS_ERR_NONE;
-            jobThread = null;
-            jobName = string.Empty;
-            jobEcuName = string.Empty;
-            abortJob = false;
-            resultSets = null;
-
-            setLocalError(EDIABAS_ERR_NONE);
-
-            if (!string.IsNullOrEmpty(unit))
-            {
-                if (char.IsLetter(unit[0]))
-                {
-                    setLocalError(EDIABAS_IFH_0018);
-                    return false;
-                }
-            }
-
-            EdInterfaceObd edInterfaceObd = new EdInterfaceObd();
-            if (!string.IsNullOrEmpty(ifh))
-            {
-                if (!edInterfaceObd.IsValidInterfaceName(ifh))
-                {
-                    setLocalError(EDIABAS_IFH_0027);
-                    edInterfaceObd.Dispose();
-                    return false;
-                }
-            }
-            if (!edInterfaceObd.InterfaceLock())
-            {
-                setLocalError(EDIABAS_API_0006);
-                edInterfaceObd.Dispose();
-                return false;
-            }
-
-            ediabas = new EdiabasNet(config);
-            ediabas.EdInterfaceClass = edInterfaceObd;
-
-            ediabas.AbortJobFunc = abortJobFunc;
-
-            logFormat(API_LOG_LEVEL.NORMAL, "apiInitExt({0}, {1}, {2}, {3}", ifh, unit, app, config);
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", true);
-            return true;
+            return apiInternal.apiInitExt(ifh, unit, app, config);
         }
 
         public static void apiEnd()
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiEnd()");
-
-            if (ediabas != null)
-            {
-                abortJob = true;
-                while (jobThread != null)
-                {
-                    Thread.Sleep(10);
-                }
-                closeLog();
-                ediabas.Dispose();
-                ediabas = null;
-            }
+            apiInternal.apiEnd();
         }
 
         public static bool apiSwitchDevice(string unit, string app)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiSwitchDevice({0}, {1})", unit, app);
-
-            setLocalError(EDIABAS_ERR_NONE);
-            if (!string.IsNullOrEmpty(unit))
-            {
-                if (char.IsLetter(unit[0]))
-                {
-                    setLocalError(EDIABAS_IFH_0018);
-                    return false;
-                }
-            }
-            return true;
+            return apiInternal.apiSwitchDevice(unit, app);
         }
 
         public static void apiJob(string ecu, string job, string para, string result)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiJob({0}, {1}, {2}, {3})", ecu, job, para, result);
-
-            byte[] paraBytes = encoding.GetBytes(para);
-            executeJob(ecu, job, null, 0, paraBytes, paraBytes.Length, result);
+            apiInternal.apiJob(ecu, job, para, result);
         }
 
         public static void apiJobData(string ecu, string job, byte[] para, int paralen, string result)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiJobData({0}, {1}, {2}, {3}, {4})", ecu, job, para, paralen, result);
-
-            executeJob(ecu, job, null, 0, para, paralen, result);
+            apiInternal.apiJobData(ecu, job, para, paralen, result);
         }
 
         public static void apiJobExt(string ecu, string job, byte[] stdpara, int stdparalen, byte[] para, int paralen, string result, int reserved)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiJobExt({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})", ecu, job, stdpara, stdparalen, para, paralen, result, reserved);
-
-            executeJob(ecu, job, stdpara, stdparalen, para, paralen, result);
+            apiInternal.apiJobExt(ecu, job, stdpara, stdparalen, para, paralen, result, reserved);
         }
 
         public static int apiJobInfo(out string infoText)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiJobInfo()");
-
-            int progressPercent = 0;
-            if (ediabas == null)
-            {
-                setLocalError(EDIABAS_API_0006);
-                infoText = string.Empty;
-                logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", progressPercent, infoText);
-                return progressPercent;
-            }
-            infoText = ediabas.InfoProgressText;
-
-            progressPercent = ediabas.InfoProgressPercent;
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", progressPercent, infoText);
-            return progressPercent;
+            return apiInternal.apiJobInfo(out infoText);
         }
 
         public static bool apiResultChar(out char buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultChar({0}, {1})", result, rset);
-
-            buffer = '\0';
-            if (!waitJobFinish())
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            if ((resultData.type != EdiabasNet.ResultType.TypeC) || (resultData.opData.GetType() != typeof(Int64)))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            Int64 value = (Int64)resultData.opData;
-            buffer = (char)value;
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
-            return true;
+            return apiInternal.apiResultChar(out buffer, result, rset);
         }
 
         public static bool apiResultByte(out byte buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultByte({0}, {1})", result, rset);
-
-            buffer = 0;
-            if (!waitJobFinish())
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            if ((resultData.type != EdiabasNet.ResultType.TypeB) || (resultData.opData.GetType() != typeof(Int64)))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            Int64 value = (Int64)resultData.opData;
-            buffer = (byte)value;
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
-            return true;
+            return apiInternal.apiResultByte(out buffer, result, rset);
         }
 
         public static bool apiResultInt(out short buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultInt({0}, {1})", result, rset);
-
-            buffer = 0;
-            if (!waitJobFinish())
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            if ((resultData.type != EdiabasNet.ResultType.TypeI) || (resultData.opData.GetType() != typeof(Int64)))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            Int64 value = (Int64)resultData.opData;
-            buffer = (short)value;
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
-            return true;
+            return apiInternal.apiResultInt(out buffer, result, rset);
         }
 
         public static bool apiResultWord(out ushort buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultWord({0}, {1})", result, rset);
-
-            buffer = 0;
-            if (!waitJobFinish())
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            if ((resultData.type != EdiabasNet.ResultType.TypeW) || (resultData.opData.GetType() != typeof(Int64)))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            Int64 value = (Int64)resultData.opData;
-            buffer = (ushort)value;
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
-            return true;
+            return apiInternal.apiResultWord(out buffer, result, rset);
         }
 
         public static bool apiResultLong(out int buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultLong({0}, {1})", result, rset);
-
-            buffer = 0;
-            if (!waitJobFinish())
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            if ((resultData.type != EdiabasNet.ResultType.TypeL) || (resultData.opData.GetType() != typeof(Int64)))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            Int64 value = (Int64)resultData.opData;
-            buffer = (int)value;
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
-            return true;
+            return apiInternal.apiResultLong(out buffer, result, rset);
         }
 
         public static bool apiResultDWord(out uint buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultDWord({0}, {1})", result, rset);
-
-            buffer = 0;
-            if (!waitJobFinish())
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            if ((resultData.type != EdiabasNet.ResultType.TypeD) || (resultData.opData.GetType() != typeof(Int64)))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            Int64 value = (Int64)resultData.opData;
-            buffer = (uint)value;
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
-            return true;
+            return apiInternal.apiResultDWord(out buffer, result, rset);
         }
 
         public static bool apiResultReal(out double buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultReal({0}, {1})", result, rset);
-
-            buffer = 0;
-            if (!waitJobFinish())
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            if ((resultData.type != EdiabasNet.ResultType.TypeR) || (resultData.opData.GetType() != typeof(Double)))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            Double value = (Double)resultData.opData;
-            buffer = value;
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
-            return true;
+            return apiInternal.apiResultReal(out buffer, result, rset);
         }
 
         public static bool apiResultText(out string buffer, string result, ushort rset, string format)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultText({0}, {1}, {2})", result, rset, format);
-
-            buffer = string.Empty;
-            if (!waitJobFinish())
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            string value = EdiabasNet.FormatResult(resultData, format);
-            if (value == null)
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            buffer = value;
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
-            return true;
+            return apiInternal.apiResultText(out buffer, result, rset, format);
         }
 
         public static bool apiResultText(out char[] buffer, string result, ushort rset, string format)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultText({0}, {1}, {2})", result, rset, format);
-
-            buffer = null;
-            if (!waitJobFinish())
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            setLocalError(EDIABAS_ERR_NONE);
-            string text;
-            if (API.apiResultText(out text, result, rset, format))
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            char[] charArray = text.ToCharArray();
-            Array.Resize(ref charArray, charArray.Length + 1);
-            charArray[charArray.Length - 1] = '\0';
-            buffer = charArray;
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
-            return true;
+            return apiInternal.apiResultText(out buffer, result, rset, format);
         }
 
         public static bool apiResultBinary(out byte[] buffer, out ushort bufferLen, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultText({0}, {1})", result, rset);
-
-            buffer = null;
-            bufferLen = 0;
-            if (!waitJobFinish())
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            if ((resultData.type != EdiabasNet.ResultType.TypeY) || (resultData.opData.GetType() != typeof(byte[])))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            byte[] value = (byte[])resultData.opData;
-            buffer = new byte[APIMAXBINARY];
-            int dataLength = value.Length;
-            if (value.Length > buffer.Length)
-            {
-                dataLength = buffer.Length;
-            }
-            Array.Copy(value, buffer, dataLength);
-            bufferLen = (ushort)dataLength;
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, value);
-            return true;
+            return apiInternal.apiResultBinary(out buffer, out bufferLen, result, rset);
         }
 
         public static bool apiResultBinaryExt(out byte[] buffer, out uint bufferLen, uint bufferSize, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultBinaryExt({0}, {1})", result, rset);
-
-            buffer = null;
-            bufferLen = 0;
-            if (!waitJobFinish())
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            if ((resultData.type != EdiabasNet.ResultType.TypeY) || (resultData.opData.GetType() != typeof(byte[])))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            byte[] value = (byte[])resultData.opData;
-            buffer = new byte[APIMAXBINARYEXT];
-            int dataLength = value.Length;
-            if (value.Length > buffer.Length)
-            {
-                dataLength = buffer.Length;
-            }
-            Array.Copy(value, buffer, dataLength);
-            bufferLen = (ushort)dataLength;
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, value);
-            return true;
+            return apiInternal.apiResultBinaryExt(out buffer, out bufferLen, bufferSize, result, rset);
         }
 
         public static bool apiResultFormat(out int buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultFormat({0}, {1})", result, rset);
-
-            buffer = 0;
-            if (!waitJobFinish())
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            switch (resultData.type)
-            {
-                case EdiabasNet.ResultType.TypeB:
-                    buffer = APIFORMAT_BYTE;
-                    break;
-
-                case EdiabasNet.ResultType.TypeW:
-                    buffer = APIFORMAT_WORD;
-                    break;
-
-                case EdiabasNet.ResultType.TypeD:
-                    buffer = APIFORMAT_DWORD;
-                    break;
-
-                case EdiabasNet.ResultType.TypeC:
-                    buffer = APIFORMAT_CHAR;
-                    break;
-
-                case EdiabasNet.ResultType.TypeI:
-                    buffer = APIFORMAT_INTEGER;
-                    break;
-
-                case EdiabasNet.ResultType.TypeL:
-                    buffer = APIFORMAT_LONG;
-                    break;
-
-                case EdiabasNet.ResultType.TypeR:
-                    buffer = APIFORMAT_REAL;
-                    break;
-
-                case EdiabasNet.ResultType.TypeS:
-                    buffer = APIFORMAT_TEXT;
-                    break;
-
-                case EdiabasNet.ResultType.TypeY:
-                    buffer = APIFORMAT_BINARY;
-                    break;
-
-                default:
-                    setLocalError(EDIABAS_API_0005);
-                    break;
-            }
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
-            return true;
+            return apiInternal.apiResultFormat(out buffer, result, rset);
         }
 
         public static bool apiResultNumber(out ushort buffer, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultNumber({0})", rset);
-
-            buffer = 0;
-            if (!waitJobFinish())
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            setLocalError(EDIABAS_ERR_NONE);
-            if (resultSets == null)
-            {
-                setLocalError(EDIABAS_API_0014);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            if (rset > resultSets.Count)
-            {
-                setLocalError(EDIABAS_API_0014);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            buffer = (ushort)resultSets[rset].Count;
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
-            return true;
+            return apiInternal.apiResultNumber(out buffer, rset);
         }
 
         public static bool apiResultName(out string buffer, ushort index, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultName({0}, {1})", index, rset);
-
-            buffer = string.Empty;
-            if (!waitJobFinish())
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            setLocalError(EDIABAS_ERR_NONE);
-            if (resultSets == null)
-            {
-                setLocalError(EDIABAS_API_0014);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            if (rset > resultSets.Count)
-            {
-                setLocalError(EDIABAS_API_0014);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[rset];
-            if ((index < 1) || (index > resultDict.Keys.Count))
-            {
-                setLocalError(EDIABAS_API_0014);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            buffer = resultDict.Keys.ElementAt(index - 1);
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
-            return true;
+            return apiInternal.apiResultName(out buffer, index, rset);
         }
 
         public static bool apiResultSets(out ushort rsets)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultSets()");
-
-            rsets = 0;
-            if (!waitJobFinish())
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-
-            setLocalError(EDIABAS_ERR_NONE);
-            if (ediabas == null)
-            {
-                setLocalError(EDIABAS_API_0006);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            if (resultSets == null)
-            {
-                setLocalError(EDIABAS_API_0014);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            if (resultSets.Count <= 1)
-            {
-                setLocalError(EDIABAS_API_0014);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            rsets = (ushort)(resultSets.Count - 1);
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, rsets);
-            return true;
+            return apiInternal.apiResultSets(out rsets);
         }
 
         public static bool apiResultVar(out string var)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultSets()");
-
-            bool result = apiResultText(out var, "VARIANTE", 0, string.Empty);
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", result, var);
-            return result;
+            return apiInternal.apiResultVar(out var);
         }
 
         public static API.APIRESULTFIELD apiResultsNew()
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultsNew()");
-
-            waitJobFinish();
-            APIRESULTFIELD resultField = new APIRESULTFIELD(0);
-            resultField.ResultSets = resultSets;
-
+            API.APIRESULTFIELD resultField = new APIRESULTFIELD(0);
+            resultField.ApiResultField = apiInternal.apiResultsNew();
             return resultField;
         }
 
         public static void apiResultsScope(API.APIRESULTFIELD resultField)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultsScope()");
-
-            waitJobFinish();
-            resultSets = resultField.ResultSets;
+            apiInternal.apiResultsScope(resultField.ApiResultField);
         }
 
         public static void apiResultsDelete(API.APIRESULTFIELD resultField)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultsDelete()");
-
-            resultField.ResultSets = null;
+            apiInternal.apiResultsDelete(resultField.ApiResultField);
         }
 
         public static int apiState()
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiState()");
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", apiStateValue);
-            return apiStateValue;
+            return apiInternal.apiState();
         }
 
         public static int apiStateExt(int suspendTime)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiState({0})", suspendTime);
-
-            int state = apiStateValue;
-            if (state == APIBUSY)
-            {
-                Thread.Sleep(suspendTime);
-            }
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", apiStateValue);
-            return state;
+            return apiInternal.apiStateExt(suspendTime);
         }
 
         public static void apiBreak()
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiBreak()");
-
-            if (jobThread == null)
-            {
-                return;
-            }
-            abortJob = true;
+            apiInternal.apiBreak();
         }
 
         public static int apiErrorCode()
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiErrorCode()");
-
-            if (localError != EDIABAS_ERR_NONE)
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", localError);
-                return localError;
-            }
-            if (ediabas == null)
-            {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", EDIABAS_API_0006);
-                return EDIABAS_API_0006;
-            }
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", ediabas.ErrorCodeLast);
-            return (int)ediabas.ErrorCodeLast;
+            return apiInternal.apiErrorCode();
         }
 
         public static string apiErrorText()
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiErrorText()");
-
-            string errorText = EdiabasNet.GetErrorDescription((EdiabasNet.ErrorCodes)apiErrorCode());
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", errorText);
-            return errorText;
+            return apiInternal.apiErrorText();
         }
 
         public static bool apiSetConfig(string cfgName, string cfgValue)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiSetConfig({0}, {1})", cfgName, cfgValue);
-
-            if (ediabas == null)
-            {
-                setLocalError(EDIABAS_API_0006);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", false);
-                return false;
-            }
-            ediabas.SetConfigProperty(cfgName, cfgValue);
-            if (string.Compare(cfgName, "TracePath", StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                closeLog();
-            }
-            if (string.Compare(cfgName, "ApiTrace", StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                closeLog();
-            }
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", true);
-            return true;
+            return apiInternal.apiSetConfig(cfgName, cfgValue);
         }
 
         public static bool apiGetConfig(string cfgName, out string cfgValue)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiSetConfig({0})", cfgName);
-
-            cfgValue = string.Empty;
-            if (ediabas == null)
-            {
-                setLocalError(EDIABAS_API_0006);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", false);
-                return false;
-            }
-            string prop = ediabas.GetConfigProperty(cfgName);
-            if (prop != null)
-            {
-                cfgValue = prop;
-            }
-
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, cfgValue);
-            return true;
+            return apiInternal.apiGetConfig(cfgName, out cfgValue);
         }
 
         public static void apiTrace(string msg)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiTrace({0})", msg);
+            apiInternal.apiTrace(msg);
         }
 
         public static bool apiXSysSetConfig(string cfgName, string cfgValue)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiXSysSetConfig({0}, {1})", cfgName, cfgValue);
-            return true;
+            return apiInternal.apiXSysSetConfig(cfgName, cfgValue);
         }
 
         public static void closeServer()
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "closeServer()");
+            apiInternal.closeServer();
         }
 
         public static bool enableServer(bool onOff)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "enableServer({0})", onOff);
-            return true;
+            return apiInternal.enableServer(onOff);
         }
 
         public static bool enableMultiThreading(bool onOff)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "enableMultiThreading({0})", onOff);
-            return true;
-        }
-
-        private static void setLocalError(int error)
-        {
-            if (error == EDIABAS_ERR_NONE)
-            {
-                switch (localError)
-                {
-                    case EDIABAS_API_0005:
-                    case EDIABAS_API_0014:
-                        localError = error;
-                        break;
-                }
-            }
-            localError = error;
-        }
-
-        private static void setJobError(int error)
-        {
-            if (error == EDIABAS_ERR_NONE)
-            {
-                localError = error;
-                apiStateValue = APIREADY;
-                return;
-            }
-
-            localError = error;
-            apiStateValue = APIERROR;
-        }
-
-        private static bool waitJobFinish()
-        {
-            while (apiStateValue == APIBUSY)
-            {
-                Thread.Sleep(10);
-            }
-            if (apiStateValue != APIREADY)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private static EdiabasNet.ResultData getResultData(string result, ushort rset)
-        {
-            if (resultSets == null)
-            {
-                setLocalError(EDIABAS_API_0014);
-                return null;
-            }
-            if (rset > resultSets.Count)
-            {
-                setLocalError(EDIABAS_API_0014);
-                return null;
-            }
-
-            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[rset];
-            EdiabasNet.ResultData resultData;
-            if (!resultDict.TryGetValue(result, out resultData))
-            {
-                setLocalError(EDIABAS_API_0014);
-                return null;
-            }
-            return resultData;
-        }
-
-        private static void executeJob(string ecu, string job, byte[] stdpara, int stdparalen, byte[] para, int paralen, string result)
-        {
-            if (ediabas == null)
-            {
-                setJobError(EDIABAS_API_0006);
-                return;
-            }
-            if (jobThread != null)
-            {
-                return;
-            }
-
-            setJobError(EDIABAS_ERR_NONE);
-            resultSets = null;
-
-            try
-            {
-                if (para != null && para.Length != paralen)
-                {
-                    byte[] binData = new byte[paralen];
-                    int copyLen = paralen;
-                    if (copyLen > para.Length)
-                    {
-                        copyLen = para.Length;
-                    }
-                    Array.Copy(para, binData, copyLen);
-                    ediabas.ArgBinary = binData;
-                }
-                else
-                {
-                    ediabas.ArgBinary = para;
-                }
-
-                if (stdpara != null && stdpara.Length != stdparalen)
-                {
-                    byte[] binData = new byte[stdparalen];
-                    int copyLen = stdparalen;
-                    if (copyLen > stdpara.Length)
-                    {
-                        copyLen = stdpara.Length;
-                    }
-                    Array.Copy(stdpara, binData, copyLen);
-                    ediabas.ArgBinaryStd = binData;
-                }
-                else
-                {
-                    ediabas.ArgBinaryStd = stdpara;
-                }
-
-                ediabas.ResultsRequests = result;
-            }
-            catch (Exception)
-            {
-                setJobError(EDIABAS_SYS_0000);
-                return;
-            }
-            jobName = job;
-            jobEcuName = ecu;
-            abortJob = false;
-            apiStateValue = APIBUSY;
-            jobThread = new Thread(jobThreadFunc);
-            jobThread.Start();
-        }
-
-        private static void jobThreadFunc()
-        {
-            try
-            {
-                try
-                {
-                    ediabas.ResolveSgbdFile(jobEcuName);
-                }
-                catch (Exception)
-                {
-                    if (abortJob)
-                    {
-                        apiStateValue = APIBREAK;
-                    }
-                    else
-                    {
-                        if (ediabas.ErrorCodeLast != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
-                        {
-                            apiStateValue = APIERROR;
-                        }
-                        else
-                        {
-                            setJobError(EDIABAS_SYS_0002);
-                        }
-                    }
-                    return;
-                }
-
-                ediabas.ExecuteJob(jobName);
-                resultSets = ediabas.ResultSets;
-                apiStateValue = APIREADY;
-            }
-            catch (Exception)
-            {
-                if (abortJob)
-                {
-                    apiStateValue = APIBREAK;
-                }
-                else
-                {
-                    if (ediabas.ErrorCodeLast != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
-                    {
-                        apiStateValue = APIERROR;
-                    }
-                    else
-                    {
-                        setJobError(EDIABAS_SYS_0000);
-                    }
-                }
-            }
-            finally
-            {
-                jobThread = null;
-                abortJob = false;
-            }
-        }
-
-        private static bool abortJobFunc()
-        {
-            return abortJob;
-        }
-
-        private static void logFormat(API_LOG_LEVEL logLevel, string format, params object[] args)
-        {
-            updateLogLevel();
-            if ((int)logLevel > logLevelApi)
-            {
-                return;
-            }
-
-            for (int i = 0; i < args.Length; i++)
-            {
-                if (args[i] == null)
-                {
-                    continue;
-                }
-                if (args[i].GetType() == typeof(string))
-                {
-                    args[i] = "'" + (string)args[i] + "'";
-                }
-                if (args[i].GetType() == typeof(byte[]))
-                {
-                    byte[] argArray = (byte[])args[i];
-                    StringBuilder stringBuilder = new StringBuilder(argArray.Length);
-                    for (int j = 0; j < argArray.Length; j++)
-                    {
-                        stringBuilder.Append(string.Format(culture, "{0:X02} ", argArray[j]));
-                    }
-
-                    args[i] = "[" + stringBuilder.ToString() +"]";
-                    continue;
-                }
-            }
-            logString(logLevel, string.Format(format, args));
-        }
-
-        private static void logString(API_LOG_LEVEL logLevel, string info)
-        {
-            updateLogLevel();
-            if ((int)logLevel > logLevelApi)
-            {
-                return;
-            }
-
-            try
-            {
-                lock (apiLogLock)
-                {
-                    if (swLog == null)
-                    {
-                        string tracePath = ediabas.GetConfigProperty("TracePath");
-                        Directory.CreateDirectory(tracePath);
-                        swLog = new StreamWriter(Path.Combine(tracePath, "api.trc"), false, encoding);
-                    }
-                    swLog.WriteLine(info);
-                }
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        private static void closeLog()
-        {
-            lock (apiLogLock)
-            {
-                if (swLog != null)
-                {
-                    swLog.Dispose();
-                    swLog = null;
-                }
-                logLevelApi = -1;
-            }
-        }
-
-        private static void updateLogLevel()
-        {
-            if (logLevelApi < 0)
-            {
-                lock (apiLogLock)
-                {
-                    string apiTrace = ediabas.GetConfigProperty("ApiTrace");
-                    logLevelApi = Convert.ToInt32(apiTrace);
-                }
-            }
+            return apiInternal.enableMultiThreading(onOff);
         }
     }
 }
