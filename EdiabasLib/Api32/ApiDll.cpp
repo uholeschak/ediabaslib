@@ -25,7 +25,7 @@ ref class GlobalObjects
                     {
                         ApiInternal ^apiInternal = gcnew ApiInternal();
                         handles[i] = apiInternal;
-                        return i;
+                        return i + 1;
                     }
                 }
             }
@@ -33,14 +33,15 @@ ref class GlobalObjects
             {
                 Monitor::Exit( handleLock );
             }
-            return -1;
+            return 0;
         }
 
-        static void DeleteApiInstance(int index)
+        static void DeleteApiInstance(int handle)
         {
             try
             {
                 Monitor::Enter( handleLock );
+                int index = handle - 1;
                 if (index >= 0 && index < handles->Length)
                 {
                     handles[index] = nullptr;
@@ -52,11 +53,12 @@ ref class GlobalObjects
             }
         }
 
-        static ApiInternal ^ GetApiInstance(int index)
+        static ApiInternal ^ GetApiInstance(int handle)
         {
             try
             {
                 Monitor::Enter( handleLock );
+                int index = handle - 1;
                 if (index >= 0 && index < handles->Length)
                 {
                     return handles[index];
@@ -89,8 +91,8 @@ APIBOOL FAR PASCAL __apiCheckVersion(int versionCompatibility,char far *versionI
 APIBOOL FAR PASCAL __apiInit(unsigned int far *handle)
 {
     *handle = 0;
-    int index = GlobalObjects::GetNewApiInstance();
-    if (index < 0)
+    unsigned int index = GlobalObjects::GetNewApiInstance();
+    if (index == 0)
     {
         return APIFALSE;
     }
