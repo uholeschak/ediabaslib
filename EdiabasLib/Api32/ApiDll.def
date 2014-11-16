@@ -1,0 +1,42 @@
+LIBRARY
+
+EXPORTS
+__apiCheckVersion @38
+__apiInit @43
+__apiInitExt @44
+__apiEnd @39
+__apiSwitchDevice @70
+__apiJob @45
+__apiJobData @46
+__apiJobExt @47
+__apiJobInfo @48
+__apiResultChar @52
+__apiResultByte @51
+__apiResultInt @55
+__apiResultWord @63
+__apiResultLong @56
+__apiResultDWord @53
+__apiResultReal @59
+__apiResultText @61
+__apiResultBinary @49
+__apiResultBinaryExt @50
+__apiResultFormat @54
+__apiResultNumber @58
+__apiResultName @57
+__apiResultSets @60
+__apiResultVar @62
+__apiResultsNew @65
+__apiResultsScope @66
+__apiResultsDelete @64
+__apiState @68
+__apiStateExt @69
+__apiBreak @37
+__apiErrorCode @40
+__apiErrorText @41
+__apiSetConfig @67
+__apiGetConfig @42
+__apiTrace @71
+apiXSysSetConfig
+closeServer
+enableServer
+enableMultiThreading
