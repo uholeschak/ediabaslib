@@ -2367,6 +2367,14 @@ namespace EdiabasLib
         private const string jobNameExit = "ENDE";
         private const string jobNameIdent = "IDENTIFIKATION";
 
+        public enum ED_LOG_LEVEL : int
+        {
+            OFF = 0,
+            IFH = 1,
+            ERROR = 2,
+            INFO = 3,
+        };
+
         private bool disposed = false;
         private object apiLock = new object();
         private bool jobRunning = false;
@@ -2397,6 +2405,8 @@ namespace EdiabasLib
         private ProgressJobDelegate progressJobFunc = null;
         private ErrorRaisedDelegate errorRaisedFunc = null;
         private StreamWriter swLog = null;
+        private object logLock = new object();
+        private int logLevelCached = -1;
         private EdValueType arrayMaxBufSize = 1024;
         private EdValueType errorTrapMask = 0;
         private int errorTrapBitNr = -1;
@@ -2757,28 +2767,6 @@ namespace EdiabasLib
             }
         }
 
-        public StreamWriter SwLog
-        {
-            get
-            {
-                lock (apiLock)
-                {
-                    return swLog;
-                }
-            }
-            set
-            {
-                if (JobRunning)
-                {
-                    throw new ArgumentOutOfRangeException("JobRunning", "SwLog: Job is running");
-                }
-                lock (apiLock)
-                {
-                    swLog = value;
-                }
-            }
-        }
-
         public string SgbdFileName
         {
             get
@@ -2983,11 +2971,7 @@ namespace EdiabasLib
                     CloseSgbdFs();
                     CloseTableFs();
                     CloseAllUserFiles();
-                    if (swLog != null)
-                    {
-                        swLog.Dispose();
-                        swLog = null;
-                    }
+                    closeLog();
                     if (edInterfaceClass != null)
                     {
                         edInterfaceClass.Dispose();
@@ -3087,6 +3071,14 @@ namespace EdiabasLib
                 }
                 CloseSgbdFs();
             }
+            if (string.Compare(key, "TRACEPATH", StringComparison.Ordinal) == 0)
+            {
+                closeLog();
+            }
+            if (string.Compare(key, "IFHTRACE", StringComparison.Ordinal) == 0)
+            {
+                closeLog();
+            }
         }
 
         private JobInfo GetJobInfo(string jobName)
@@ -3120,7 +3112,7 @@ namespace EdiabasLib
             string fileName = Path.Combine(EcuPath, SgbdFileName);
             if (!File.Exists(fileName))
             {
-                LogString("OpenSgbdFs file not found: " + fileName);
+                LogString(ED_LOG_LEVEL.ERROR, "OpenSgbdFs file not found: " + fileName);
                 return false;
             }
             try
@@ -3129,7 +3121,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                LogString("OpenSgbdFs exception: " + GetExceptionText(ex));
+                LogString(ED_LOG_LEVEL.ERROR, "OpenSgbdFs exception: " + GetExceptionText(ex));
                 return false;
             }
             usesInfos = ReadAllUses(sgbdFs);
@@ -3149,7 +3141,7 @@ namespace EdiabasLib
                 }
                 catch (Exception ex)
                 {
-                    LogString("CloseSgbdFs exception: " + GetExceptionText(ex));
+                    LogString(ED_LOG_LEVEL.ERROR, "CloseSgbdFs exception: " + GetExceptionText(ex));
                 }
                 sgbdFs.Dispose();
                 sgbdFs = null;
@@ -3311,10 +3303,7 @@ namespace EdiabasLib
 
         public void SetError(ErrorCodes error)
         {
-            if (swLog != null)
-            {
-                LogString(string.Format(culture, "SetError: {0}", error));
-            }
+            LogFormat(ED_LOG_LEVEL.ERROR, "SetError: {0}", error);
 
             if (error != ErrorCodes.EDIABAS_ERR_NONE)
             {
@@ -3810,7 +3799,7 @@ namespace EdiabasLib
                     }
                     catch (Exception ex)
                     {
-                        LogString("ReadAllJobs exception: " + GetExceptionText(ex));
+                        LogString(ED_LOG_LEVEL.ERROR, "ReadAllJobs exception: " + GetExceptionText(ex));
                     }
                 }
             }
@@ -4293,7 +4282,7 @@ namespace EdiabasLib
 
             if (!File.Exists(localFileName))
             {
-                LogString("GetFileType file not found: " + fileName);
+                LogString(ED_LOG_LEVEL.ERROR, "GetFileType file not found: " + fileName);
                 throw new ArgumentOutOfRangeException(fileName, "GetFileType: File not found");
             }
             try
@@ -4313,7 +4302,7 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
-                LogString("GetFileType file not found: " + fileName);
+                LogString(ED_LOG_LEVEL.ERROR, "GetFileType file not found: " + fileName);
                 throw new ArgumentOutOfRangeException(fileName, "GetFileType: Unable to read file");
             }
             return fileType;
@@ -4334,10 +4323,7 @@ namespace EdiabasLib
                 }
                 catch (Exception ex)
                 {
-                    if (swLog != null)
-                    {
-                        LogString("executeInitJob Exception: " + ex.Message);
-                    }
+                    LogString(ED_LOG_LEVEL.ERROR, "executeInitJob Exception: " + ex.Message);
                     throw new Exception("executeInitJob", ex);
                 }
                 if (resultSets.Count > 1)
@@ -4349,20 +4335,14 @@ namespace EdiabasLib
                         {
                             if ((Int64)result.opData == 1)
                             {
-                                if (swLog != null)
-                                {
-                                    LogString("executeInitJob ok");
-                                }
+                                LogString(ED_LOG_LEVEL.INFO, "executeInitJob ok");
                                 return;
                             }
                         }
                     }
                 }
 
-                if (swLog != null)
-                {
-                    LogString("executeInitJob failed");
-                }
+                LogString(ED_LOG_LEVEL.ERROR, "executeInitJob failed");
                 throw new Exception("executeInitJob: Initialization failed");
             }
             finally
@@ -4390,10 +4370,7 @@ namespace EdiabasLib
                 }
                 catch (Exception ex)
                 {
-                    if (swLog != null)
-                    {
-                        LogString("ExecuteExitJob Exception: " + ex.Message);
-                    }
+                    LogString(ED_LOG_LEVEL.ERROR, "ExecuteExitJob Exception: " + ex.Message);
                     throw new Exception("ExecuteExitJob", ex);
                 }
             }
@@ -4420,10 +4397,7 @@ namespace EdiabasLib
                 }
                 catch (Exception ex)
                 {
-                    if (swLog != null)
-                    {
-                        LogString("executeIdentJob Exception: " + ex.Message);
-                    }
+                    LogString(ED_LOG_LEVEL.ERROR, "executeIdentJob Exception: " + ex.Message);
                     throw new Exception("executeInitJob", ex);
                 }
                 if (resultSets.Count > 1)
@@ -4434,19 +4408,13 @@ namespace EdiabasLib
                         if (result.opData.GetType() == typeof(string))
                         {
                             string variantName = (string)result.opData;
-                            if (swLog != null)
-                            {
-                                LogString("executeIdentJob ok: " + variantName);
-                            }
+                            LogString(ED_LOG_LEVEL.INFO, "executeIdentJob ok: " + variantName);
                             return variantName;
                         }
                     }
                 }
 
-                if (swLog != null)
-                {
-                    LogString("executeIdentJob failed");
-                }
+                LogString(ED_LOG_LEVEL.ERROR, "executeIdentJob failed");
             }
             finally
             {
@@ -4458,10 +4426,7 @@ namespace EdiabasLib
 
         private void executeJob(string jobName)
         {
-            if (swLog != null)
-            {
-                LogString(string.Format(culture, "executeJob: {0}", jobName));
-            }
+            LogFormat(ED_LOG_LEVEL.INFO, "executeJob: {0}", jobName);
 
             if (!OpenSgbdFs())
             {
@@ -4470,6 +4435,7 @@ namespace EdiabasLib
             JobInfo jobInfo = GetJobInfo(jobName);
             if (jobInfo == null)
             {
+                LogString(ED_LOG_LEVEL.ERROR, "ExecuteJobInternal: Job not found: " + jobName);
                 throw new ArgumentOutOfRangeException("jobName", "ExecuteJobInternal: Job not found: " + jobName);
             }
 
@@ -4490,7 +4456,7 @@ namespace EdiabasLib
                 }
                 catch (Exception ex)
                 {
-                    LogString("executeJob base job exception: " + GetExceptionText(ex));
+                    LogString(ED_LOG_LEVEL.ERROR, "executeJob base job exception: " + GetExceptionText(ex));
                     throw new Exception("executeJob base job exception", ex);
                 }
                 finally
@@ -4503,10 +4469,7 @@ namespace EdiabasLib
             {
                 executeJob(sgbdFs, jobInfo);
             }
-            if (swLog != null)
-            {
-                LogString("executeJob successfull");
-            }
+            LogString(ED_LOG_LEVEL.INFO, "executeJob successfull");
         }
 
         public void ExecuteJob(string jobName)
@@ -4608,14 +4571,14 @@ namespace EdiabasLib
 
                     if (oc.opFunc != null)
                     {
-                        if (swLog != null)
+                        if ((ED_LOG_LEVEL)logLevelCached >= ED_LOG_LEVEL.INFO)
                         {
-                            LogString(">" + getOpText(pcCounterOld, oc, arg0, arg1));
+                            LogString(ED_LOG_LEVEL.INFO, ">" + getOpText(pcCounterOld, oc, arg0, arg1));
                         }
                         oc.opFunc(this, oc, arg0, arg1);
-                        if (swLog != null)
+                        if ((ED_LOG_LEVEL)logLevelCached >= ED_LOG_LEVEL.INFO)
                         {
-                            LogString("<" + getOpText(pcCounter, oc, arg0, arg1));
+                            LogString(ED_LOG_LEVEL.INFO, "<" + getOpText(pcCounter, oc, arg0, arg1));
                         }
                     }
                     else
@@ -4631,10 +4594,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                if (swLog != null)
-                {
-                    LogString("executeJob Exception: " + GetExceptionText(ex));
-                }
+                LogString(ED_LOG_LEVEL.ERROR, "executeJob Exception: " + GetExceptionText(ex));
                 throw new Exception("executeJob", ex);
             }
             finally
@@ -4652,35 +4612,99 @@ namespace EdiabasLib
             }
         }
 
-        public void LogString(string info)
+        public void LogFormat(ED_LOG_LEVEL logLevel, string format, params object[] args)
         {
-            StreamWriter swLogLocal = SwLog;
-            if (swLogLocal == null) return;
+            updateLogLevel();
+            if ((int)logLevel > logLevelCached)
+            {
+                return;
+            }
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] == null)
+                {
+                    continue;
+                }
+                if (args[i].GetType() == typeof(string))
+                {
+                    args[i] = "'" + (string)args[i] + "'";
+                }
+                if (args[i].GetType() == typeof(byte[]))
+                {
+                    byte[] argArray = (byte[])args[i];
+                    StringBuilder stringBuilder = new StringBuilder(argArray.Length);
+                    for (int j = 0; j < argArray.Length; j++)
+                    {
+                        stringBuilder.Append(string.Format(culture, "{0:X02} ", argArray[j]));
+                    }
+
+                    args[i] = "[" + stringBuilder.ToString() + "]";
+                    continue;
+                }
+            }
+            LogString(logLevel, string.Format(format, args));
+        }
+
+        public void LogString(ED_LOG_LEVEL logLevel, string info)
+        {
+            updateLogLevel();
+            if ((int)logLevel > logLevelCached)
+            {
+                return;
+            }
+
             try
             {
-                swLogLocal.WriteLine(info);
+                lock (logLock)
+                {
+                    if (swLog == null)
+                    {
+                        string tracePath = GetConfigProperty("TracePath");
+                        Directory.CreateDirectory(tracePath);
+                        swLog = new StreamWriter(Path.Combine(tracePath, "ifh.trc"), false, encoding);
+                    }
+                    swLog.WriteLine(info);
+                }
             }
             catch (Exception)
             {
             }
         }
 
-        public void LogData(byte[] data, int offset, int length, string info)
+        public void LogData(ED_LOG_LEVEL logLevel, byte[] data, int offset, int length, string info)
         {
-            StreamWriter swLogLocal = SwLog;
-            if (swLogLocal == null) return;
-
             StringBuilder stringBuilder = new StringBuilder(length);
             for (int i = 0; i < length; i++)
             {
                 stringBuilder.Append(string.Format(culture, "{0:X02} ", data[offset + i]));
             }
-            try
+
+            LogString(logLevel, " (" + info + "): " + stringBuilder.ToString());
+        }
+
+        private void closeLog()
+        {
+            lock (logLock)
             {
-                swLogLocal.WriteLine(" (" + info + "): " + stringBuilder.ToString());
+                if (swLog != null)
+                {
+                    swLog.Dispose();
+                    swLog = null;
+                }
+                logLevelCached = -1;
             }
-            catch (Exception)
+        }
+
+        private void updateLogLevel()
+        {
+            if (logLevelCached < 0)
             {
+                lock (logLock)
+                {
+                    string apiTrace = GetConfigProperty("IfhTrace");
+                    logLevelCached = Convert.ToInt32(apiTrace);
+                }
             }
         }
 
