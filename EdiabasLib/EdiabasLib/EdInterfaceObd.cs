@@ -65,6 +65,22 @@ namespace EdiabasLib
             }
         }
 
+        public override string InterfaceName
+        {
+            get
+            {
+                return "STD:OBD";
+            }
+        }
+
+        public override string InterfaceVerName
+        {
+            get
+            {
+                return "IFH-STD Version 7.3.0";
+            }
+        }
+
         public override byte[] KeyBytes
         {
             get
