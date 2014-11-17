@@ -760,7 +760,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiGetConfig(unsigned int handle,
         return APIFALSE;
     }
     marshal_context context;
-    strcpy_s(configValue, APIMAXTEXT, context.marshal_as<const char*>(buffer));
+    strcpy_s(configValue, APIMAXRESULT, context.marshal_as<const char*>(buffer));
     return APITRUE;
 }
 

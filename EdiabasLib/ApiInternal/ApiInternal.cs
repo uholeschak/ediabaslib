@@ -1525,7 +1525,7 @@ namespace Ediabas
                         swLog = new StreamWriter(Path.Combine(tracePath, "api.trc"), false, encoding);
                     }
                     swLog.WriteLine(info);
-                    //swLog.Flush();
+                    swLog.Flush();
                 }
             }
             catch (Exception)
