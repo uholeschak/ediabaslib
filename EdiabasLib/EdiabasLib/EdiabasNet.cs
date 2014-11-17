@@ -2820,6 +2820,8 @@ namespace EdiabasLib
                 {
                     edInterfaceClass = value;
                     edInterfaceClass.Ediabas = this;
+                    SetConfigProperty("Interface", edInterfaceClass.InterfaceName);
+                    SetConfigProperty("IfhVersion", edInterfaceClass.InterfaceVerName);
                 }
             }
         }
@@ -2897,6 +2899,14 @@ namespace EdiabasLib
             SetConfigProperty("BipDebugLevel", "0");
             SetConfigProperty("ApiTrace", "0");
             SetConfigProperty("IfhTrace", "0");
+
+            SetConfigProperty("UbattHandling", "0");
+            SetConfigProperty("IgnitionHandling", "0");
+            SetConfigProperty("ClampHandling", "0");
+
+            SetConfigProperty("RetryComm", "1");
+            SetConfigProperty("SystemResults", "1");
+            SetConfigProperty("TaskPriority", "0");
 
 #if WindowsCE
             string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);

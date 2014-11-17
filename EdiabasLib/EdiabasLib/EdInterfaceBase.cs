@@ -123,6 +123,16 @@ namespace EdiabasLib
             get;
         }
 
+        public abstract string InterfaceName
+        {
+            get;
+        }
+
+        public abstract string InterfaceVerName
+        {
+            get;
+        }
+
         public abstract byte[] KeyBytes
         {
             get;
