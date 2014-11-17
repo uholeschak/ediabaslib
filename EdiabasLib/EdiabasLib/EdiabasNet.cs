@@ -2892,6 +2892,7 @@ namespace EdiabasLib
             }
 
             jobRunning = false;
+            SetConfigProperty("EdiabasVersion", "7.3.0");
             SetConfigProperty("Simulation", "0");
             SetConfigProperty("BipDebugLevel", "0");
             SetConfigProperty("ApiTrace", "0");

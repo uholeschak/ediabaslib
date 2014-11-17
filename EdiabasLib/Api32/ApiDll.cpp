@@ -1,12 +1,14 @@
 #include <Windows.h>
 #include <msclr\marshal.h>
-#include "ApiDll.h"
+#include "Api.h"
 
 using namespace System;
 using namespace System::Threading;
 using namespace System::Runtime::InteropServices;
 using namespace msclr::interop;
 using namespace Ediabas;
+
+#define DLLEXPORT __declspec(dllexport)
 
 ref class GlobalObjects
 {
@@ -76,8 +78,9 @@ ref class GlobalObjects
 extern "C" {
 #endif 
 
-APIBOOL FAR PASCAL __apiCheckVersion(int versionCompatibility,char far *versionInfo)
+DLLEXPORT APIBOOL FAR PASCAL __apiCheckVersion(int versionCompatibility,char far *versionInfo)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@8")
     String ^ verInfo;
     if (!ApiInternal::apiCheckVersion(versionCompatibility, verInfo))
     {
@@ -88,8 +91,9 @@ APIBOOL FAR PASCAL __apiCheckVersion(int versionCompatibility,char far *versionI
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiInit(unsigned int far *handle)
+DLLEXPORT APIBOOL FAR PASCAL __apiInit(unsigned int far *handle)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@4")
     *handle = 0;
     unsigned int index = GlobalObjects::GetNewApiInstance();
     if (index == 0)
@@ -109,12 +113,13 @@ APIBOOL FAR PASCAL __apiInit(unsigned int far *handle)
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiInitExt(unsigned int far *handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiInitExt(unsigned int far *handle,
                             const char far *device,
                             const char far *devConnection,
                             const char far *devApplication,
                             const char far *reserved)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@20")
     *handle = 0;
     int index = GlobalObjects::GetNewApiInstance();
     if (index < 0)
@@ -138,8 +143,9 @@ APIBOOL FAR PASCAL __apiInitExt(unsigned int far *handle,
     return APITRUE;
 }
 
-void FAR PASCAL __apiEnd(unsigned int handle)
+DLLEXPORT void FAR PASCAL __apiEnd(unsigned int handle)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@4")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal != nullptr)
     {
@@ -148,10 +154,11 @@ void FAR PASCAL __apiEnd(unsigned int handle)
     }
 }
 
-APIBOOL FAR PASCAL __apiSwitchDevice(unsigned int handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiSwitchDevice(unsigned int handle,
                             const char far *deviceConnection,
                             const char far *deviceApplication)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@12")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -166,10 +173,11 @@ APIBOOL FAR PASCAL __apiSwitchDevice(unsigned int handle,
     return APITRUE;
 }
 
-void FAR PASCAL __apiJob(unsigned int handle,
+DLLEXPORT void FAR PASCAL __apiJob(unsigned int handle,
                             const char far *ecu,const char far *job,
                             const char far *para,const char far *result)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@20")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -182,11 +190,12 @@ void FAR PASCAL __apiJob(unsigned int handle,
         (result == NULL) ? nullptr : gcnew String(result));
 }
 
-void FAR PASCAL __apiJobData(unsigned int handle,
+DLLEXPORT void FAR PASCAL __apiJobData(unsigned int handle,
                             const char far *ecu,const char far *job,
                             const unsigned char far *parabuf,int paralen,
                             const char far *result)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@24")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -206,12 +215,13 @@ void FAR PASCAL __apiJobData(unsigned int handle,
         (result == NULL) ? nullptr : gcnew String(result));
 }
 
-void FAR PASCAL __apiJobExt(unsigned int handle,
+DLLEXPORT void FAR PASCAL __apiJobExt(unsigned int handle,
                             const char far *ecu,const char far *job,
                             const unsigned char far *stdparabuf,int stdparalen,
                             const unsigned char far *parabuf,int paralen,
                             const char far *result,long reserved)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@36")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -239,8 +249,9 @@ void FAR PASCAL __apiJobExt(unsigned int handle,
         reserved);
 }
 
-int FAR PASCAL __apiJobInfo(unsigned int handle,char far *infoText)
+DLLEXPORT int FAR PASCAL __apiJobInfo(unsigned int handle,char far *infoText)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@8")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -254,10 +265,11 @@ int FAR PASCAL __apiJobInfo(unsigned int handle,char far *infoText)
     return percent;
 }
 
-APIBOOL FAR PASCAL __apiResultChar(unsigned int handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiResultChar(unsigned int handle,
                             APICHAR far *buf,const char far *result,
                             APIWORD set)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@16")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -276,10 +288,11 @@ APIBOOL FAR PASCAL __apiResultChar(unsigned int handle,
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiResultByte(unsigned int handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiResultByte(unsigned int handle,
                             APIBYTE far *buf,const char far *result,
                             APIWORD set)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@16")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -298,10 +311,11 @@ APIBOOL FAR PASCAL __apiResultByte(unsigned int handle,
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiResultInt(unsigned int handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiResultInt(unsigned int handle,
                             APIINTEGER far *buf,const char far *result,
                             APIWORD set)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@16")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -320,10 +334,11 @@ APIBOOL FAR PASCAL __apiResultInt(unsigned int handle,
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiResultWord(unsigned int handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiResultWord(unsigned int handle,
                             APIWORD far *buf,const char far *result,
                             APIWORD set)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@16")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -342,10 +357,11 @@ APIBOOL FAR PASCAL __apiResultWord(unsigned int handle,
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiResultLong(unsigned int handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiResultLong(unsigned int handle,
                             APILONG far *buf,const char far *result,
                             APIWORD set)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@16")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -364,10 +380,11 @@ APIBOOL FAR PASCAL __apiResultLong(unsigned int handle,
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiResultDWord(unsigned int handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiResultDWord(unsigned int handle,
                             APIDWORD far *buf,const char far *result,
                             APIWORD set)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@16")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -386,10 +403,11 @@ APIBOOL FAR PASCAL __apiResultDWord(unsigned int handle,
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiResultReal(unsigned int handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiResultReal(unsigned int handle,
                             APIREAL far *buf,const char far *result,
                             APIWORD set)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@16")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -408,10 +426,11 @@ APIBOOL FAR PASCAL __apiResultReal(unsigned int handle,
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiResultText(unsigned int handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiResultText(unsigned int handle,
                             APITEXT far *buf,const char far *result,
                             APIWORD set,const char far *format)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@20")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -432,10 +451,11 @@ APIBOOL FAR PASCAL __apiResultText(unsigned int handle,
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiResultBinary(unsigned int handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiResultBinary(unsigned int handle,
                             APIBINARY far *buf,APIWORD far *buflen,
                             const char far *result,APIWORD set)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@20")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -458,10 +478,11 @@ APIBOOL FAR PASCAL __apiResultBinary(unsigned int handle,
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiResultBinaryExt(unsigned int handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiResultBinaryExt(unsigned int handle,
                             APIBINARY far *buf,APIDWORD far *buflen,APIDWORD bufSize,
                             const char far *result,APIWORD set)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@24")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -485,10 +506,11 @@ APIBOOL FAR PASCAL __apiResultBinaryExt(unsigned int handle,
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiResultFormat(unsigned int handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiResultFormat(unsigned int handle,
                             APIRESULTFORMAT far *buf,const char far *result,
                             APIWORD set)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@16")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -507,9 +529,10 @@ APIBOOL FAR PASCAL __apiResultFormat(unsigned int handle,
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiResultNumber(unsigned int handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiResultNumber(unsigned int handle,
                             APIWORD far *buf,APIWORD set)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@12")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -527,9 +550,10 @@ APIBOOL FAR PASCAL __apiResultNumber(unsigned int handle,
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiResultName(unsigned int handle,char far *buf,
+DLLEXPORT APIBOOL FAR PASCAL __apiResultName(unsigned int handle,char far *buf,
                             APIWORD index,APIWORD set)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@16")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -549,8 +573,9 @@ APIBOOL FAR PASCAL __apiResultName(unsigned int handle,char far *buf,
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiResultSets(unsigned int handle,APIWORD far *sets)
+DLLEXPORT APIBOOL FAR PASCAL __apiResultSets(unsigned int handle,APIWORD far *sets)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@8")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -567,8 +592,9 @@ APIBOOL FAR PASCAL __apiResultSets(unsigned int handle,APIWORD far *sets)
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiResultVar(unsigned int handle,APITEXT far *ecu)
+DLLEXPORT APIBOOL FAR PASCAL __apiResultVar(unsigned int handle,APITEXT far *ecu)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@8")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -586,8 +612,9 @@ APIBOOL FAR PASCAL __apiResultVar(unsigned int handle,APITEXT far *ecu)
     return APITRUE;
 }
 
-APIRESULTFIELD FAR PASCAL __apiResultsNew(unsigned int handle)
+DLLEXPORT APIRESULTFIELD FAR PASCAL __apiResultsNew(unsigned int handle)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@4")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -600,8 +627,9 @@ APIRESULTFIELD FAR PASCAL __apiResultsNew(unsigned int handle)
     return pointer.ToPointer();
 }
 
-void FAR PASCAL __apiResultsScope(unsigned int handle,APIRESULTFIELD field)
+DLLEXPORT void FAR PASCAL __apiResultsScope(unsigned int handle,APIRESULTFIELD field)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@8")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -617,8 +645,9 @@ void FAR PASCAL __apiResultsScope(unsigned int handle,APIRESULTFIELD field)
     }
 }
 
-void FAR PASCAL __apiResultsDelete(unsigned int handle,APIRESULTFIELD field)
+DLLEXPORT void FAR PASCAL __apiResultsDelete(unsigned int handle,APIRESULTFIELD field)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@8")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -635,8 +664,9 @@ void FAR PASCAL __apiResultsDelete(unsigned int handle,APIRESULTFIELD field)
     }
 }
 
-int FAR PASCAL __apiState(unsigned int handle)
+DLLEXPORT int FAR PASCAL __apiState(unsigned int handle)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@4")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -645,8 +675,9 @@ int FAR PASCAL __apiState(unsigned int handle)
     return apiInternal->apiState();
 }
 
-int FAR PASCAL __apiStateExt(unsigned int handle,int suspendTime)
+DLLEXPORT int FAR PASCAL __apiStateExt(unsigned int handle,int suspendTime)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@8")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -655,8 +686,9 @@ int FAR PASCAL __apiStateExt(unsigned int handle,int suspendTime)
     return apiInternal->apiStateExt(suspendTime);
 }
 
-void FAR PASCAL __apiBreak(unsigned int handle)
+DLLEXPORT void FAR PASCAL __apiBreak(unsigned int handle)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@4")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -665,8 +697,9 @@ void FAR PASCAL __apiBreak(unsigned int handle)
     apiInternal->apiBreak();
 }
 
-int FAR PASCAL __apiErrorCode(unsigned int handle)
+DLLEXPORT int FAR PASCAL __apiErrorCode(unsigned int handle)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@4")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -675,9 +708,10 @@ int FAR PASCAL __apiErrorCode(unsigned int handle)
     return apiInternal->apiErrorCode();
 }
 
-void FAR PASCAL __apiErrorText(unsigned int handle,
+DLLEXPORT void FAR PASCAL __apiErrorText(unsigned int handle,
                             char far *buf,int bufsize)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@12")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -689,10 +723,11 @@ void FAR PASCAL __apiErrorText(unsigned int handle,
     strcpy_s(buf, bufsize, context.marshal_as<const char*>(buffer));
 }
 
-APIBOOL FAR PASCAL __apiSetConfig(unsigned int handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiSetConfig(unsigned int handle,
                             const char far *configName,
                             const char far *configValue)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@12")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -707,10 +742,11 @@ APIBOOL FAR PASCAL __apiSetConfig(unsigned int handle,
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL __apiGetConfig(unsigned int handle,
+DLLEXPORT APIBOOL FAR PASCAL __apiGetConfig(unsigned int handle,
                             const char far *configName,
                             char far *configValue)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@12")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -728,8 +764,9 @@ APIBOOL FAR PASCAL __apiGetConfig(unsigned int handle,
     return APITRUE;
 }
 
-void FAR PASCAL __apiTrace(unsigned int handle,const char far *msg)
+DLLEXPORT void FAR PASCAL __apiTrace(unsigned int handle,const char far *msg)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@8")
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -739,8 +776,9 @@ void FAR PASCAL __apiTrace(unsigned int handle,const char far *msg)
         (msg == NULL) ? nullptr : gcnew String(msg));
 }
 
-APIBOOL FAR PASCAL apiXSysSetConfig(const char far *cfgName, const char far *cfgValue)
+DLLEXPORT APIBOOL FAR PASCAL __apiXSysSetConfig(const char far *cfgName, const char far *cfgValue)
 {
+#pragma comment(linker, "/EXPORT:_"__FUNCTION__"=_"__FUNCTION__"@8")
     if (!ApiInternal::apiXSysSetConfig(
         (cfgName == NULL) ? nullptr : gcnew String(cfgName),
         (cfgValue == NULL) ? nullptr : gcnew String(cfgValue)))
@@ -750,13 +788,15 @@ APIBOOL FAR PASCAL apiXSysSetConfig(const char far *cfgName, const char far *cfg
     return APITRUE;
 }
 
-void FAR PASCAL closeServer()
+DLLEXPORT void FAR PASCAL closeServer()
 {
+#pragma comment(linker, "/EXPORT:"__FUNCTION__"=_"__FUNCTION__"@0")
     ApiInternal::closeServer();
 }
 
-APIBOOL FAR PASCAL enableServer(APIBOOL onOff)
+DLLEXPORT APIBOOL FAR PASCAL enableServer(APIBOOL onOff)
 {
+#pragma comment(linker, "/EXPORT:"__FUNCTION__"=_"__FUNCTION__"@4")
     if (!ApiInternal::enableServer(onOff ? true : false))
     {
         return APIFALSE;
@@ -764,8 +804,9 @@ APIBOOL FAR PASCAL enableServer(APIBOOL onOff)
     return APITRUE;
 }
 
-APIBOOL FAR PASCAL enableMultiThreading(bool onOff)
+DLLEXPORT APIBOOL FAR PASCAL enableMultiThreading(bool onOff)
 {
+#pragma comment(linker, "/EXPORT:"__FUNCTION__"=_"__FUNCTION__"@4")
     if (!ApiInternal::enableMultiThreading(onOff ? true : false))
     {
         return APIFALSE;
