@@ -463,7 +463,7 @@ namespace Ediabas
         {
             if (ediabas != null)
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "apiInitExt({0}, {1}, {2}, {3}", ifh, unit, app, config);
+                logFormat(API_LOG_LEVEL.NORMAL, "apiInitExt({0}, {1}, {2}, {3})", ifh, unit, app, config);
                 logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", true);
                 return true;
             }
@@ -509,7 +509,7 @@ namespace Ediabas
 
             ediabas.AbortJobFunc = abortJobFunc;
 
-            logFormat(API_LOG_LEVEL.NORMAL, "apiInitExt({0}, {1}, {2}, {3}", ifh, unit, app, config);
+            logFormat(API_LOG_LEVEL.NORMAL, "apiInitExt({0}, {1}, {2}, {3})", ifh, unit, app, config);
             logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", true);
             return true;
         }
@@ -1235,7 +1235,7 @@ namespace Ediabas
 
         public bool apiGetConfig(string cfgName, out string cfgValue)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiSetConfig({0})", cfgName);
+            logFormat(API_LOG_LEVEL.NORMAL, "apiGetConfig({0})", cfgName);
 
             cfgValue = string.Empty;
             if (ediabas == null)
@@ -1525,6 +1525,7 @@ namespace Ediabas
                         swLog = new StreamWriter(Path.Combine(tracePath, "api.trc"), false, encoding);
                     }
                     swLog.WriteLine(info);
+                    //swLog.Flush();
                 }
             }
             catch (Exception)
