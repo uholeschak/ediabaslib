@@ -1923,6 +1923,7 @@ namespace EdiabasLib
         {
             new VJobInfo("_JOBS", new VJobDelegate(vJobJobs)),
             new VJobInfo("_TABLES", new VJobDelegate(vJobTables)),
+            new VJobInfo("_TABLE", new VJobDelegate(vJobTable)),
         };
 
         public class ResultData
@@ -4724,6 +4725,35 @@ namespace EdiabasLib
             {
                 Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
                 resultDict.Add(entryTableName, new ResultData(ResultType.TypeS, entryTableName, tableInfo.Name));
+                resultSets.Add(new Dictionary<string, ResultData>(resultDict));
+            }
+        }
+
+        static private void vJobTable(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        {
+            List<string> argStrings = ediabas.getActiveArgStrings();
+            if (argStrings.Count < 1)
+            {
+                return;
+            }
+
+            UInt32 tableIdx;
+            if (!ediabas.tableInfos.TableNameDict.TryGetValue(argStrings[0].ToUpper(culture), out tableIdx))
+            {
+                return;
+            }
+
+            TableInfo tableInfo = ediabas.tableInfos.TableInfoArray[tableIdx];
+            ediabas.IndexTable(ediabas.sgbdFs, tableInfo);
+            for (int i = 0; i < tableInfo.TableEntries.Length; i++)
+            {
+                Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
+                for (int j = 0; j < tableInfo.Columns; j++)
+                {
+                    string rowStr = ediabas.GetTableString(ediabas.sgbdFs, tableInfo.TableEntries[i][j]);
+                    string entryName = "COLUMN" + j.ToString(culture);
+                    resultDict.Add(entryName, new ResultData(ResultType.TypeS, entryName, rowStr));
+                }
                 resultSets.Add(new Dictionary<string, ResultData>(resultDict));
             }
         }
