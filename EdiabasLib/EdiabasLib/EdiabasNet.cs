@@ -15,6 +15,7 @@ namespace EdiabasLib
     public partial class EdiabasNet : IDisposable
     {
         private delegate void OperationDelegate(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1);
+        private delegate void VJobDelegate(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets);
         public delegate bool AbortJobDelegate();
         public delegate void ProgressJobDelegate(EdiabasNet ediabas);
         public delegate void ErrorRaisedDelegate(ErrorCodes error);
@@ -1918,6 +1919,11 @@ namespace EdiabasLib
             new OpCode(0xB7, "tabrows", new OperationDelegate(OpTabrows)),
         };
 
+        private static VJobInfo[] vJobList = new VJobInfo[]
+        {
+            new VJobInfo("_JOBS", new VJobDelegate(vJobJobs)),
+        };
+
         public class ResultData
         {
             public ResultData(ResultType type, string name, object opData)
@@ -2093,6 +2099,34 @@ namespace EdiabasLib
 
             private byte[] binData;
             private List<string> stringList;
+        }
+
+        private class VJobInfo
+        {
+            public VJobInfo(string jobName, VJobDelegate jobDelegate)
+            {
+                this.jobName = jobName;
+                this.jobDelegate = jobDelegate;
+            }
+
+            public string JobName
+            {
+                get
+                {
+                    return jobName;
+                }
+            }
+
+            public VJobDelegate JobDelegate
+            {
+                get
+                {
+                    return jobDelegate;
+                }
+            }
+
+            private string jobName;
+            private VJobDelegate jobDelegate;
         }
 
         private class JobInfo
@@ -4446,6 +4480,15 @@ namespace EdiabasLib
             JobInfo jobInfo = GetJobInfo(jobName);
             if (jobInfo == null)
             {
+                foreach (VJobInfo vJobInfo in vJobList)
+                {
+                    if (string.Compare(vJobInfo.JobName, jobName, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        executeVJob(sgbdFs, vJobInfo);
+                        LogString(ED_LOG_LEVEL.INFO, "executeJob successfull");
+                        return;
+                    }
+                }
                 LogString(ED_LOG_LEVEL.ERROR, "ExecuteJobInternal: Job not found: " + jobName);
                 throw new ArgumentOutOfRangeException("jobName", "ExecuteJobInternal: Job not found: " + jobName);
             }
@@ -4620,6 +4663,57 @@ namespace EdiabasLib
                     resultSets = resultSetsTemp;
                 }
                 SetConfigProperty("BipEcuFile", null);
+            }
+        }
+
+        private void executeVJob(Stream fs, VJobInfo vJobInfo)
+        {
+            if (requestInit)
+            {
+                requestInit = false;
+                ExecuteInitJob();
+            }
+
+            resultSetsTemp = new List<Dictionary<string, ResultData>>();
+            lock (apiLock)
+            {
+                resultSets = null;
+            }
+            SetConfigProperty("BipEcuFile", Path.GetFileNameWithoutExtension(SgbdFileName));
+
+            try
+            {
+                vJobInfo.JobDelegate(this, resultSetsTemp);
+            }
+            catch (Exception ex)
+            {
+                LogString(ED_LOG_LEVEL.ERROR, "executeVJob Exception: " + GetExceptionText(ex));
+                throw new Exception("executeVJob", ex);
+            }
+            finally
+            {
+                Dictionary<string, ResultData> systemResultDict = CreateSystemResultDict(new JobInfo(vJobInfo.JobName, 0, 0, 0, null), resultSetsTemp.Count);
+
+                resultSetsTemp.Insert(0, systemResultDict);
+                lock (apiLock)
+                {
+                    resultSets = resultSetsTemp;
+                }
+                SetConfigProperty("BipEcuFile", null);
+            }
+        }
+
+        static private void vJobJobs(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        {
+            const string entryJobName = "JOBNAME";
+            foreach (JobInfo jobInfo in ediabas.jobInfos.JobInfoArray)
+            {
+                if (jobInfo.UsesInfo == null)
+                {
+                    Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
+                    resultDict.Add(entryJobName, new ResultData(ResultType.TypeS, entryJobName, jobInfo.JobName));
+                    resultSets.Add(new Dictionary<string, ResultData>(resultDict));
+                }
             }
         }
 
