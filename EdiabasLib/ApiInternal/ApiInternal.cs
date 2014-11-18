@@ -1101,7 +1101,7 @@ namespace Ediabas
                 logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            if (resultSets.Count <= 1)
+            if (resultSets.Count < 1)
             {
                 setLocalError(EDIABAS_API_0014);
                 logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
