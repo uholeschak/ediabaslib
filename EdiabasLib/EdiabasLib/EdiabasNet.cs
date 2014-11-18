@@ -4489,8 +4489,7 @@ namespace EdiabasLib
                         return;
                     }
                 }
-                LogString(ED_LOG_LEVEL.ERROR, "ExecuteJobInternal: Job not found: " + jobName);
-                throw new ArgumentOutOfRangeException("jobName", "ExecuteJobInternal: Job not found: " + jobName);
+                SetError(EdiabasNet.ErrorCodes.EDIABAS_SYS_0008);
             }
 
             if (jobInfo.UsesInfo != null)

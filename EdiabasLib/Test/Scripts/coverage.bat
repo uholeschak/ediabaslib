@@ -89,13 +89,14 @@ for /l %%x in (0, 1, 32) do (
  -f \"ERGS=10.4T\" -f \"ERGS=-10.4T\" -f \"ERGS=10.8T\" -f \"ERGS=0.8T\" -f \"ERGS=T\" !"^"=!^
  -j \"TEST_MULTIARG#3;-4;10000;-10000;100000;-100000;12.3456789123;Ulrich;Erwin\""
 
-"%OPEN_COVER%" "-output:results30.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_BIP1\""
-"%OPEN_COVER%" "-output:results31.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_BIP10\""
-"%OPEN_COVER%" "-output:results32.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_BREAK\""
-"%OPEN_COVER%" "-output:results33.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#249\""
-"%OPEN_COVER%" "-output:results34.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#250\""
-"%OPEN_COVER%" "-output:results35.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#349\""
-"%OPEN_COVER%" "-output:results36.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#350\""
+"%OPEN_COVER%" "-output:results30.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"MISSING\""
+"%OPEN_COVER%" "-output:results31.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_BIP1\""
+"%OPEN_COVER%" "-output:results32.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_BIP10\""
+"%OPEN_COVER%" "-output:results33.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_BREAK\""
+"%OPEN_COVER%" "-output:results34.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#249\""
+"%OPEN_COVER%" "-output:results35.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#250\""
+"%OPEN_COVER%" "-output:results36.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#349\""
+"%OPEN_COVER%" "-output:results37.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#350\""
 
 if "!COVERAGE!"=="1" (
 if exist "!REPORTS_PATH!" del /q "!REPORTS_PATH!\*.*"
