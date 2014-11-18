@@ -1922,6 +1922,7 @@ namespace EdiabasLib
         private static VJobInfo[] vJobList = new VJobInfo[]
         {
             new VJobInfo("_JOBS", new VJobDelegate(vJobJobs)),
+            new VJobInfo("_TABLES", new VJobDelegate(vJobTables)),
         };
 
         public class ResultData
@@ -4713,6 +4714,17 @@ namespace EdiabasLib
                     resultDict.Add(entryJobName, new ResultData(ResultType.TypeS, entryJobName, jobInfo.JobName));
                     resultSets.Add(new Dictionary<string, ResultData>(resultDict));
                 }
+            }
+        }
+
+        static private void vJobTables(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        {
+            const string entryTableName = "TABLE";
+            foreach (TableInfo tableInfo in ediabas.tableInfos.TableInfoArray)
+            {
+                Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
+                resultDict.Add(entryTableName, new ResultData(ResultType.TypeS, entryTableName, tableInfo.Name));
+                resultSets.Add(new Dictionary<string, ResultData>(resultDict));
             }
         }
 
