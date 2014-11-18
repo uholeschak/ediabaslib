@@ -1922,6 +1922,7 @@ namespace EdiabasLib
         private static VJobInfo[] vJobList = new VJobInfo[]
         {
             new VJobInfo("_JOBS", new VJobDelegate(vJobJobs)),
+            new VJobInfo("_VERSIONINFO", new VJobDelegate(vJobVerinfos)),
             new VJobInfo("_TABLES", new VJobDelegate(vJobTables)),
             new VJobInfo("_TABLE", new VJobDelegate(vJobTable)),
         };
@@ -3809,11 +3810,17 @@ namespace EdiabasLib
             {
                 Array.Reverse(buffer, 0, 4);
             }
-            UInt32 usesOffset = BitConverter.ToUInt32(buffer, 0);
+            Int32 usesOffset = BitConverter.ToInt32(buffer, 0);
+
+            UsesInfos usesInfosLocal = new UsesInfos();
+            if (usesOffset < 0)
+            {
+                usesInfosLocal.UsesInfoArray = new UsesInfo[0];
+                return usesInfosLocal;
+            }
             fs.Position = usesOffset;
             int usesCount = readInt32(fs);
 
-            UsesInfos usesInfosLocal = new UsesInfos();
             usesInfosLocal.UsesInfoArray = new UsesInfo[usesCount];
 
             byte[] usesBuffer = new byte[0x100];
@@ -3903,11 +3910,15 @@ namespace EdiabasLib
             {
                 Array.Reverse(buffer, 0, 4);
             }
-            UInt32 jobListOffset = BitConverter.ToUInt32(buffer, 0);
-            fs.Position = jobListOffset;
-            int numJobs = readInt32(fs);
+            Int32 jobListOffset = BitConverter.ToInt32(buffer, 0);
 
             List<JobInfo> jobList = new List<JobInfo>();
+            if (jobListOffset < 0)
+            {
+                return jobList;
+            }
+            fs.Position = jobListOffset;
+            int numJobs = readInt32(fs);
 
             byte[] jobBuffer = new byte[0x44];
             UInt32 jobStart = (UInt32)fs.Position;
@@ -3971,11 +3982,19 @@ namespace EdiabasLib
             fs.Position = 0x84;
             fs.Read(buffer, 0, buffer.Length);
 
+            TableInfos tableInfosLocal = new TableInfos();
+            tableInfosLocal.TableNameDict = new Dictionary<string, UInt32>();
+
             if (!BitConverter.IsLittleEndian)
             {
                 Array.Reverse(buffer, 0, 4);
             }
-            UInt32 tableOffset = BitConverter.ToUInt32(buffer, 0);
+            Int32 tableOffset = BitConverter.ToInt32(buffer, 0);
+            if (tableOffset < 0)
+            {
+                tableInfosLocal.TableInfoArray = new TableInfo[0];
+                return tableInfosLocal;
+            }
             fs.Position = tableOffset;
 
             byte[] tableCountBuffer = new byte[4];
@@ -3985,9 +4004,6 @@ namespace EdiabasLib
                 Array.Reverse(tableCountBuffer, 0, 4);
             }
             int tableCount = BitConverter.ToInt32(tableCountBuffer, 0);
-
-            TableInfos tableInfosLocal = new TableInfos();
-            tableInfosLocal.TableNameDict = new Dictionary<string,UInt32>();
             tableInfosLocal.TableInfoArray = new TableInfo[tableCount];
 
             UInt32 tableStart = (UInt32)fs.Position;
@@ -4716,6 +4732,67 @@ namespace EdiabasLib
                     resultSets.Add(new Dictionary<string, ResultData>(resultDict));
                 }
             }
+        }
+
+        static private void vJobVerinfos(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        {
+            Stream fs = ediabas.sgbdFs;
+            byte[] buffer = new byte[4];
+            fs.Position = 0x94;
+            fs.Read(buffer, 0, buffer.Length);
+
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(buffer, 0, 4);
+            }
+            Int32 infoOffset = BitConverter.ToInt32(buffer, 0);
+            if (infoOffset < 0)
+            {
+                return;
+            }
+            fs.Position = infoOffset;
+
+            byte[] infoBuffer = new byte[0x6C];
+            readAndDecryptBytes(fs, infoBuffer, 0, infoBuffer.Length);
+
+            Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
+
+            const string entryBipVersion = "BIP_VERSION";
+            resultDict.Add(entryBipVersion, new ResultData(ResultType.TypeS, entryBipVersion, string.Format("{0}.{1}.{2}", infoBuffer[2], infoBuffer[1], infoBuffer[0])));
+
+            const string entryAuthor = "AUTHOR";
+            resultDict.Add(entryAuthor, new ResultData(ResultType.TypeS, entryAuthor, encoding.GetString(infoBuffer, 0x08, 0x40).TrimEnd('\0')));
+
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(buffer, 0x04, 2);
+            }
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(buffer, 0x06, 2);
+            }
+            const string entryRevision = "REVISION";
+            resultDict.Add(entryRevision, new ResultData(ResultType.TypeS, entryRevision, string.Format("{0}.{1}", BitConverter.ToInt16(infoBuffer, 0x06), BitConverter.ToInt16(infoBuffer, 0x04))));
+
+            const string entryFrom = "FROM";
+            resultDict.Add(entryFrom, new ResultData(ResultType.TypeS, entryFrom, encoding.GetString(infoBuffer, 0x48, 0x20).TrimEnd('\0')));
+
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(buffer, 0x68, 2);
+            }
+            const string entryPackage = "PACKAGE";
+            resultDict.Add(entryPackage, new ResultData(ResultType.TypeL, entryPackage, (Int64)BitConverter.ToInt32(infoBuffer, 0x68)));
+
+            int index = 0;
+            foreach (UsesInfo usesInfo in ediabas.usesInfos.UsesInfoArray)
+            {
+                string entryUses = "USES" + index.ToString(culture);
+                resultDict.Add(entryUses, new ResultData(ResultType.TypeS, entryUses, usesInfo.Name));
+                index++;
+            }
+
+            resultSets.Add(new Dictionary<string, ResultData>(resultDict));
         }
 
         static private void vJobTables(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
