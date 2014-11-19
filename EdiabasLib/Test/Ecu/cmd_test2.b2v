@@ -7,6 +7,7 @@ revision: 1.0;
 author  : uholeschak;
 uses	: base1,base2;
 comment : Internal tests EDIABAS BEST/2;
+comment : Compile with best2 -l test.lib cmd_test2.b2v;
 ////////////////////////////////////////////////////////////////////////
 //                        K O N S T A N T E N
 ////////////////////////////////////////////////////////////////////////
