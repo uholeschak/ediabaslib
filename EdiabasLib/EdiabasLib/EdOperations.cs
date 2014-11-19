@@ -956,7 +956,7 @@ namespace EdiabasLib
                 if (ediabas.resultsRequestDict.Count > 0)
                 {
                     bool result = false;
-                    if (!ediabas.resultsRequestDict.TryGetValue(arg1.GetStringData(), out result))
+                    if (!ediabas.resultsRequestDict.TryGetValue(arg1.GetStringData().ToUpper(culture), out result))
                     {
                         ediabas.pcCounter = arg0.GetValueData();
                     }
