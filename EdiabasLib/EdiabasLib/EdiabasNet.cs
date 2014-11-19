@@ -1922,6 +1922,7 @@ namespace EdiabasLib
         private static VJobInfo[] vJobList = new VJobInfo[]
         {
             new VJobInfo("_JOBS", new VJobDelegate(vJobJobs)),
+            new VJobInfo("_JOBCOMMENTS", new VJobDelegate(vJobJobComments)),
             new VJobInfo("_VERSIONINFO", new VJobDelegate(vJobVerinfos)),
             new VJobInfo("_TABLES", new VJobDelegate(vJobTables)),
             new VJobInfo("_TABLE", new VJobDelegate(vJobTable)),
@@ -4836,8 +4837,61 @@ namespace EdiabasLib
                 {
                     Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
                     resultDict.Add(entryJobName, new ResultData(ResultType.TypeS, entryJobName, jobInfo.JobName));
-                    resultSets.Add(new Dictionary<string, ResultData>(resultDict));
+                    if (resultDict.Count > 0)
+                    {
+                        resultSets.Add(new Dictionary<string, ResultData>(resultDict));
+                    }
                 }
+            }
+        }
+
+        static private void vJobJobComments(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        {
+            Stream fs = ediabas.sgbdFs;
+
+            List<string> argStrings = ediabas.getActiveArgStrings();
+            if (argStrings.Count < 1)
+            {
+                return;
+            }
+
+            if (ediabas.descriptionInfos == null)
+            {
+                ediabas.descriptionInfos = ediabas.ReadDescriptions(fs);
+            }
+
+            if (ediabas.descriptionInfos.JobComments == null)
+            {
+                return;
+            }
+            List<string> jobComments;
+            if (!ediabas.descriptionInfos.JobComments.TryGetValue(argStrings[0].ToUpper(culture), out jobComments))
+            {
+                return;
+            }
+            Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
+            int commentCount = 0;
+            foreach (string desc in jobComments)
+            {
+                int colon = desc.IndexOf(':');
+                if (colon >= 0)
+                {
+                    string key = desc.Substring(0, colon);
+                    string value = desc.Substring(colon + 1);
+                    if (string.Compare(key, "JOBCOMMENT", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        key += commentCount.ToString(culture);
+                        commentCount++;
+                        if (!resultDict.ContainsKey(key))
+                        {
+                            resultDict.Add(key, new ResultData(ResultType.TypeS, key, value));
+                        }
+                    }
+                }
+            }
+            if (resultDict.Count > 0)
+            {
+                resultSets.Add(new Dictionary<string, ResultData>(resultDict));
             }
         }
 
@@ -4926,7 +4980,10 @@ namespace EdiabasLib
                     }
                 }
             }
-            resultSets.Add(new Dictionary<string, ResultData>(resultDict));
+            if (resultDict.Count > 0)
+            {
+                resultSets.Add(new Dictionary<string, ResultData>(resultDict));
+            }
         }
 
         static private void vJobTables(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
@@ -4936,7 +4993,10 @@ namespace EdiabasLib
             {
                 Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
                 resultDict.Add(entryTableName, new ResultData(ResultType.TypeS, entryTableName, tableInfo.Name));
-                resultSets.Add(new Dictionary<string, ResultData>(resultDict));
+                if (resultDict.Count > 0)
+                {
+                    resultSets.Add(new Dictionary<string, ResultData>(resultDict));
+                }
             }
         }
 
@@ -4965,7 +5025,10 @@ namespace EdiabasLib
                     string entryName = "COLUMN" + j.ToString(culture);
                     resultDict.Add(entryName, new ResultData(ResultType.TypeS, entryName, rowStr));
                 }
-                resultSets.Add(new Dictionary<string, ResultData>(resultDict));
+                if (resultDict.Count > 0)
+                {
+                    resultSets.Add(new Dictionary<string, ResultData>(resultDict));
+                }
             }
         }
 
