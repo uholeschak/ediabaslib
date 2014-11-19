@@ -2255,6 +2255,36 @@ namespace EdiabasLib
             private UsesInfo[] usesInfoArray;
         }
 
+        private class DescriptionInfos
+        {
+            public List<string> GlobalComments
+            {
+                get
+                {
+                    return globalComments;
+                }
+                set
+                {
+                    globalComments = value;
+                }
+            }
+
+            public Dictionary<string, List<string>> JobComments
+            {
+                get
+                {
+                    return jobComments;
+                }
+                set
+                {
+                    jobComments = value;
+                }
+            }
+
+            private List<string> globalComments;
+            private Dictionary<string, List<string>> jobComments;
+        }
+
         private class TableInfo
         {
             public TableInfo(string name, UInt32 tableOffset, UInt32 tableColumnOffset, EdValueType columns, EdValueType rows)
@@ -2457,6 +2487,7 @@ namespace EdiabasLib
         private EdValueType pcCounter = 0;
         private JobInfos jobInfos = null;
         private UsesInfos usesInfos = null;
+        private DescriptionInfos descriptionInfos = null;
         private TableInfos tableInfos = null;
         private TableInfos tableInfosExt = null;
         private Stream tableFs = null;
@@ -3173,6 +3204,7 @@ namespace EdiabasLib
                 return false;
             }
             usesInfos = ReadAllUses(sgbdFs);
+            descriptionInfos = null;
             jobInfos = ReadAllJobs(sgbdFs);
             tableInfos = ReadAllTables(sgbdFs);
             requestInit = true;
@@ -3832,6 +3864,81 @@ namespace EdiabasLib
             }
 
             return usesInfosLocal;
+        }
+
+        private DescriptionInfos ReadDescriptions(Stream fs)
+        {
+            byte[] buffer = new byte[4];
+            fs.Position = 0x90;
+            fs.Read(buffer, 0, buffer.Length);
+
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(buffer, 0, 4);
+            }
+            Int32 descriptionOffset = BitConverter.ToInt32(buffer, 0);
+
+            DescriptionInfos descriptionInfosLocal = new DescriptionInfos();
+            descriptionInfosLocal.JobComments = new Dictionary<string, List<string>>();
+            if (descriptionOffset < 0)
+            {
+                return descriptionInfosLocal;
+            }
+            fs.Position = descriptionOffset;
+            int numBytes = readInt32(fs);
+
+            List<string> commentList = new List<string>();
+            string previousJobName = null;
+
+            byte[] recordBuffer = new byte[1100];
+            int recordOffset = 0;
+            for (int i = 0; i < numBytes; i++)
+            {
+                readAndDecryptBytes(fs, recordBuffer, recordOffset, 1);
+                recordOffset += 1;
+
+                if (recordOffset >= 1098)
+                    recordBuffer[recordOffset++] = 10; //\n
+
+                if (recordBuffer[recordOffset - 1] == 10) //\n
+                {
+                    recordBuffer[recordOffset] = 0;
+                    string comment = encoding.GetString(recordBuffer, 0, recordOffset - 1);
+                    if (comment.StartsWith("JOBNAME:", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (previousJobName == null)
+                        {
+                            descriptionInfosLocal.GlobalComments = commentList;
+                        }
+                        else
+                        {
+                            if (!descriptionInfosLocal.JobComments.ContainsKey(previousJobName))
+                            {
+                                descriptionInfosLocal.JobComments.Add(previousJobName, commentList);
+                            }
+                        }
+                        commentList = new List<string>();
+                        previousJobName = comment.Substring(8);
+                    }
+
+                    commentList.Add(comment);
+                    recordOffset = 0;
+                }
+            }
+
+            if (previousJobName == null)
+            {
+                descriptionInfosLocal.GlobalComments = commentList;
+            }
+            else
+            {
+                if (!descriptionInfosLocal.JobComments.ContainsKey(previousJobName))
+                {
+                    descriptionInfosLocal.JobComments.Add(previousJobName, commentList);
+                }
+            }
+
+            return descriptionInfosLocal;
         }
 
         private JobInfos ReadAllJobs(Stream fs)
@@ -4737,6 +4844,12 @@ namespace EdiabasLib
         static private void vJobVerinfos(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
             Stream fs = ediabas.sgbdFs;
+
+            if (ediabas.descriptionInfos == null)
+            {
+                ediabas.descriptionInfos = ediabas.ReadDescriptions(fs);
+            }
+
             byte[] buffer = new byte[4];
             fs.Position = 0x94;
             fs.Read(buffer, 0, buffer.Length);
@@ -4784,14 +4897,35 @@ namespace EdiabasLib
             const string entryPackage = "PACKAGE";
             resultDict.Add(entryPackage, new ResultData(ResultType.TypeL, entryPackage, (Int64)BitConverter.ToInt32(infoBuffer, 0x68)));
 
-            int index = 0;
-            foreach (UsesInfo usesInfo in ediabas.usesInfos.UsesInfoArray)
+            if (ediabas.descriptionInfos.GlobalComments != null)
             {
-                string entryUses = "USES" + index.ToString(culture);
-                resultDict.Add(entryUses, new ResultData(ResultType.TypeS, entryUses, usesInfo.Name));
-                index++;
-            }
+                int descCount = 0;
+                int usesCount = 0;
+                foreach (string desc in ediabas.descriptionInfos.GlobalComments)
+                {
+                    int colon = desc.IndexOf(':');
+                    if (colon >= 0)
+                    {
+                        string key = desc.Substring(0, colon);
+                        string value = desc.Substring(colon + 1);
+                        if (string.Compare(key, "ECUCOMMENT", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            key += descCount.ToString(culture);
+                            descCount++;
+                        }
+                        if (string.Compare(key, "USES", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            key += usesCount.ToString(culture);
+                            usesCount++;
+                        }
 
+                        if (!resultDict.ContainsKey(key))
+                        {
+                            resultDict.Add(key, new ResultData(ResultType.TypeS, key, value));
+                        }
+                    }
+                }
+            }
             resultSets.Add(new Dictionary<string, ResultData>(resultDict));
         }
 
