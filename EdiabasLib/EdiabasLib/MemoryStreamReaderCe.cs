@@ -210,8 +210,8 @@ namespace EdiabasLib
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            long num = this.filePos + (long)offset;
-            long num2 = this.filePos + (long)offset + (long)count;
+            long num = this.filePos;
+            long num2 = this.filePos + (long)count;
             if (num < 0L)
             {
                 throw new ArgumentOutOfRangeException("Attempt to read before the start of the stream");
@@ -220,6 +220,10 @@ namespace EdiabasLib
             if (num2 > this.fileLength)
             {
                 useCount = (int)(this.fileLength - offset - this.filePos);
+                if (useCount < 0)
+                {
+                    useCount = 0;
+                }
             }
             Marshal.Copy(this.PosPtr, buffer, offset, useCount);
             this.filePos += (long)useCount;
