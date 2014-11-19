@@ -114,8 +114,8 @@ namespace EdiabasLib
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            long num = mmStream.Position + (long)offset;
-            long num2 = mmStream.Position + (long)offset + (long)count;
+            long num = mmStream.Position;
+            long num2 = mmStream.Position + (long)count;
             if (num < 0L)
             {
                 throw new ArgumentOutOfRangeException("Attempt to read before the start of the stream");
@@ -124,6 +124,10 @@ namespace EdiabasLib
             if (num2 > this.fileLength)
             {
                 useCount = (int)(this.fileLength - offset - mmStream.Position);
+                if (useCount < 0)
+                {
+                    useCount = 0;
+                }
             }
             return mmStream.Read(buffer, offset, useCount);
         }
