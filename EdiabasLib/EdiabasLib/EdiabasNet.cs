@@ -3440,6 +3440,7 @@ namespace EdiabasLib
         public static string FormatResult(ResultData resultData, string format)
         {
             bool leftAlign = false;
+            bool zeroPrexif = false;
             Int32 length1 = -1;
             Int32 length2 = -1;
             char convertType = 'T';
@@ -3490,6 +3491,10 @@ namespace EdiabasLib
                         if (words[0].Length > 0)
                         {
                             length1 = Convert.ToInt32(words[0], 10);
+                            if (words[0][0] == '0')
+                            {
+                                zeroPrexif = true;
+                            }
                         }
                         if (words.Length > 1)
                         {
@@ -3531,6 +3536,7 @@ namespace EdiabasLib
             }
 
             bool convIsDouble = false;
+            bool hexValue = false;
             Int64 convInt64 = 0;
             Double convDouble = 0;
             string convString = null;
@@ -3661,6 +3667,22 @@ namespace EdiabasLib
                     }
                     break;
 
+                case 'X':
+                    if (valueString != null)
+                    {
+                        return null;
+                    }
+                    hexValue = true;
+                    if (valueIsDouble)
+                    {
+                        convInt64 = (UInt32)valueDouble;
+                    }
+                    else
+                    {
+                        convInt64 = (UInt32)valueInt64;
+                    }
+                    break;
+
                 default:
                     return null;
             }
@@ -3715,7 +3737,8 @@ namespace EdiabasLib
                         }
                         return resultString;
                     }
-                    else
+
+                    if (!hexValue)
                     {
                         StringBuilder sb = new StringBuilder();
 
@@ -3732,6 +3755,28 @@ namespace EdiabasLib
                         {
                             sb.Append(":");
                             sb.Append(new string('0', length2));
+                        }
+                        sb.Insert(0, "{0");
+                        sb.Append("}");
+                        string formatString = sb.ToString();
+                        return string.Format(culture, formatString, convInt64);
+                    }
+
+                    {
+                        StringBuilder sb = new StringBuilder();
+
+                        if (length1 >= 0)
+                        {
+                            sb.Append(",");
+                            if (leftAlign)
+                            {
+                                sb.Append("-");
+                            }
+                            sb.Append(string.Format(culture, "{0}:X", length1));
+                            if (zeroPrexif)
+                            {
+                                sb.Append(string.Format(culture, "0{0}", length1));
+                            }
                         }
                         sb.Insert(0, "{0");
                         sb.Append("}");
