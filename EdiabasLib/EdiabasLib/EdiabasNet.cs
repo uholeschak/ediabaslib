@@ -1923,6 +1923,7 @@ namespace EdiabasLib
         {
             new VJobInfo("_JOBS", new VJobDelegate(vJobJobs)),
             new VJobInfo("_JOBCOMMENTS", new VJobDelegate(vJobJobComments)),
+            new VJobInfo("_RESULTS", new VJobDelegate(vJobJobResults)),
             new VJobInfo("_VERSIONINFO", new VJobDelegate(vJobVerinfos)),
             new VJobInfo("_TABLES", new VJobDelegate(vJobTables)),
             new VJobInfo("_TABLE", new VJobDelegate(vJobTable)),
@@ -4890,6 +4891,84 @@ namespace EdiabasLib
                 }
             }
             if (resultDict.Count > 0)
+            {
+                resultSets.Add(new Dictionary<string, ResultData>(resultDict));
+            }
+        }
+
+        static private void vJobJobResults(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        {
+            Stream fs = ediabas.sgbdFs;
+
+            List<string> argStrings = ediabas.getActiveArgStrings();
+            if (argStrings.Count < 1)
+            {
+                return;
+            }
+
+            if (ediabas.descriptionInfos == null)
+            {
+                ediabas.descriptionInfos = ediabas.ReadDescriptions(fs);
+            }
+
+            if (ediabas.descriptionInfos.JobComments == null)
+            {
+                return;
+            }
+            List<string> jobComments;
+            if (!ediabas.descriptionInfos.JobComments.TryGetValue(argStrings[0].ToUpper(culture), out jobComments))
+            {
+                return;
+            }
+            Dictionary<string, ResultData> resultDict = null;
+            int commentCount = 0;
+            foreach (string desc in jobComments)
+            {
+                int colon = desc.IndexOf(':');
+                if (colon >= 0)
+                {
+                    string key = desc.Substring(0, colon);
+                    string value = desc.Substring(colon + 1);
+
+                    if (string.Compare(key, "RESULT", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        if (resultDict != null && resultDict.Count > 0)
+                        {
+                            resultSets.Add(new Dictionary<string, ResultData>(resultDict));
+                        }
+                        resultDict = new Dictionary<string, ResultData>();
+                        commentCount = 0;
+                    }
+
+                    if (resultDict != null)
+                    {
+                        if (string.Compare(key, "RESULT", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            if (!resultDict.ContainsKey(key))
+                            {
+                                resultDict.Add(key, new ResultData(ResultType.TypeS, key, value));
+                            }
+                        }
+                        if (string.Compare(key, "RESULTTYPE", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            if (!resultDict.ContainsKey(key))
+                            {
+                                resultDict.Add(key, new ResultData(ResultType.TypeS, key, value));
+                            }
+                        }
+                        if (string.Compare(key, "RESULTCOMMENT", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            key += commentCount.ToString(culture);
+                            commentCount++;
+                            if (!resultDict.ContainsKey(key))
+                            {
+                                resultDict.Add(key, new ResultData(ResultType.TypeS, key, value));
+                            }
+                        }
+                    }
+                }
+            }
+            if (resultDict != null && resultDict.Count > 0)
             {
                 resultSets.Add(new Dictionary<string, ResultData>(resultDict));
             }
