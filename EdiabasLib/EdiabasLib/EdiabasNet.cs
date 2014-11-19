@@ -2714,7 +2714,7 @@ namespace EdiabasLib
                         {
                             if (word.Length > 0)
                             {
-                                resultsRequestDict.Add(word, true);
+                                resultsRequestDict.Add(word.ToUpper(culture), true);
                             }
                         }
                     }
