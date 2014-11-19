@@ -3644,11 +3644,21 @@ namespace EdiabasLib
                     break;
 
                 case 'T':
-                    if (valueString == null)
+                    if (valueString != null)
                     {
-                        return null;
+                        convString = valueString;
+                        break;
                     }
-                    convString = valueString;
+                    if (valueIsDouble)
+                    {
+                        convDouble = valueDouble;
+                        exponent = 'E';
+                        convIsDouble = true;
+                    }
+                    else
+                    {
+                        convInt64 = valueInt64;
+                    }
                     break;
 
                 default:
