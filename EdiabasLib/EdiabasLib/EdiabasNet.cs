@@ -2970,6 +2970,7 @@ namespace EdiabasLib
             SetConfigProperty("BipDebugLevel", "0");
             SetConfigProperty("ApiTrace", "0");
             SetConfigProperty("IfhTrace", "0");
+            SetConfigProperty("TraceBuffering", "0");
 
             SetConfigProperty("UbattHandling", "0");
             SetConfigProperty("IgnitionHandling", "0");
@@ -5304,10 +5305,16 @@ namespace EdiabasLib
                     if (swLog == null)
                     {
                         string tracePath = GetConfigProperty("TracePath");
-                        Directory.CreateDirectory(tracePath);
-                        swLog = new StreamWriter(Path.Combine(tracePath, "ifh.trc"), false, encoding);
+                        if (tracePath != null)
+                        {
+                            Directory.CreateDirectory(tracePath);
+                            swLog = new StreamWriter(Path.Combine(tracePath, "ifh.trc"), false, encoding);
+                        }
                     }
-                    swLog.WriteLine(info);
+                    if (swLog != null)
+                    {
+                        swLog.WriteLine(info);
+                    }
                 }
             }
             catch (Exception)
@@ -5719,7 +5726,7 @@ namespace EdiabasLib
             return scale * Math.Round(value / scale, (int) digits);
         }
 
-        private static Int64 StringToValue(string number)
+        public static Int64 StringToValue(string number)
         {
             Int64 value = 0;
             string numberLocal = number.TrimEnd();
@@ -5764,7 +5771,7 @@ namespace EdiabasLib
             return value;
         }
 
-        private static EdFloatType StringToFloat(string number)
+        public static EdFloatType StringToFloat(string number)
         {
             EdFloatType result = 0;
             try

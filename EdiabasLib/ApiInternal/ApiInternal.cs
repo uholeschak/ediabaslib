@@ -1228,6 +1228,10 @@ namespace Ediabas
             {
                 closeLog();
             }
+            if (string.Compare(cfgName, "TraceBuffering", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                closeLog();
+            }
 
             logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", true);
             return true;
@@ -1521,11 +1525,24 @@ namespace Ediabas
                     if (swLog == null)
                     {
                         string tracePath = ediabas.GetConfigProperty("TracePath");
-                        Directory.CreateDirectory(tracePath);
-                        swLog = new StreamWriter(Path.Combine(tracePath, "api.trc"), false, encoding);
+                        if (tracePath != null)
+                        {
+                            string traceBuffering = ediabas.GetConfigProperty("TraceBuffering");
+                            Int64 buffering = 0;
+                            if (traceBuffering != null)
+                            {
+                                buffering = EdiabasNet.StringToValue(traceBuffering);
+                            }
+
+                            Directory.CreateDirectory(tracePath);
+                            swLog = new StreamWriter(Path.Combine(tracePath, "api.trc"), false, encoding);
+                            swLog.AutoFlush = buffering == 0;
+                        }
                     }
-                    swLog.WriteLine(info);
-                    swLog.Flush();
+                    if (swLog != null)
+                    {
+                        swLog.WriteLine(info);
+                    }
                 }
             }
             catch (Exception)
