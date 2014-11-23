@@ -35,6 +35,7 @@ namespace Ediabas
 
         private static readonly Encoding encoding = Encoding.GetEncoding(1252);
         private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
+        private static bool firstLog = true;
 
         private volatile EdiabasNet ediabas;
         private object apiLogLock = new object();
@@ -1178,7 +1179,17 @@ namespace Ediabas
                 logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", false);
                 return false;
             }
-            ediabas.SetConfigProperty(cfgName, cfgValue);
+            bool setProperty = true;
+#if false   // for debugging only!
+            if (string.Compare(cfgName, "ApiTrace", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                setProperty = false;
+            }
+#endif
+            if (setProperty)
+            {
+                ediabas.SetConfigProperty(cfgName, cfgValue);
+            }
             if (string.Compare(cfgName, "TracePath", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 closeLog();
@@ -1521,7 +1532,13 @@ namespace Ediabas
                             }
 
                             Directory.CreateDirectory(tracePath);
-                            swLog = new StreamWriter(Path.Combine(tracePath, "api.trc"), false, encoding);
+                            FileMode fileMode = FileMode.Append;
+                            if (firstLog)
+                            {
+                                firstLog = false;
+                                fileMode = FileMode.Create;
+                            }
+                            swLog = new StreamWriter(new FileStream(Path.Combine(tracePath, "api.trc"), fileMode, FileAccess.Write, FileShare.Write), encoding);
                             swLog.AutoFlush = buffering == 0;
                         }
                     }

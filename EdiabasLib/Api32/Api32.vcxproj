@@ -61,7 +61,7 @@
       <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent>
-      <Command>call "$(ProjectDir)CompileNetmodule.bat" /define:DEBUG</Command>
+      <Command>call "$(ProjectDir)CompileNetmodule.bat" /debug+ /define:DEBUG</Command>
       <Message>Create netmodule</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>

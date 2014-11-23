@@ -15,7 +15,7 @@ namespace EdiabasLib
         private delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR);
 
         private bool disposed = false;
-        private SerialPort serialPort = new SerialPort();
+        private static SerialPort serialPort = new SerialPort();
 
         private string comPort = string.Empty;
         private bool connected = false;
@@ -117,7 +117,11 @@ namespace EdiabasLib
         {
             get
             {
-                return connected;
+                if (interfaceConnectFunc != null)
+                {
+                    return connected;
+                }
+                return serialPort.IsOpen;
             }
         }
 
@@ -187,8 +191,6 @@ namespace EdiabasLib
                 serialPort.Handshake = Handshake.None;
                 serialPort.ReadTimeout = 1;
                 serialPort.Open();
-
-                connected = true;
             }
             catch (Exception)
             {
