@@ -57,6 +57,7 @@
   <ItemGroup>
     <None Include="EdiabasLib.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="EdiabasLib.snk" />
   </ItemGroup>

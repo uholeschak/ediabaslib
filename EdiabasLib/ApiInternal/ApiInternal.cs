@@ -601,20 +601,12 @@ namespace Ediabas
             }
 
             setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
+            Int64 int64Buffer;
+            if (!getResultInt64(out int64Buffer, result, rset))
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            if ((resultData.type != EdiabasNet.ResultType.TypeC) || (resultData.opData.GetType() != typeof(Int64)))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            Int64 value = (Int64)resultData.opData;
-            buffer = (char)value;
+            buffer = (char)int64Buffer;
 
             logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
             return true;
@@ -632,20 +624,12 @@ namespace Ediabas
             }
 
             setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
+            Int64 int64Buffer;
+            if (!getResultInt64(out int64Buffer, result, rset))
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            if ((resultData.type != EdiabasNet.ResultType.TypeB) || (resultData.opData.GetType() != typeof(Int64)))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            Int64 value = (Int64)resultData.opData;
-            buffer = (byte)value;
+            buffer = (byte)int64Buffer;
 
             logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
             return true;
@@ -663,20 +647,12 @@ namespace Ediabas
             }
 
             setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
+            Int64 int64Buffer;
+            if (!getResultInt64(out int64Buffer, result, rset))
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            if ((resultData.type != EdiabasNet.ResultType.TypeI) || (resultData.opData.GetType() != typeof(Int64)))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            Int64 value = (Int64)resultData.opData;
-            buffer = (short)value;
+            buffer = (short)int64Buffer;
 
             logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
             return true;
@@ -694,20 +670,12 @@ namespace Ediabas
             }
 
             setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
+            Int64 int64Buffer;
+            if (!getResultInt64(out int64Buffer, result, rset))
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            if ((resultData.type != EdiabasNet.ResultType.TypeW) || (resultData.opData.GetType() != typeof(Int64)))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            Int64 value = (Int64)resultData.opData;
-            buffer = (ushort)value;
+            buffer = (ushort)int64Buffer;
 
             logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
             return true;
@@ -725,20 +693,12 @@ namespace Ediabas
             }
 
             setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
+            Int64 int64Buffer;
+            if (!getResultInt64(out int64Buffer, result, rset))
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            if ((resultData.type != EdiabasNet.ResultType.TypeL) || (resultData.opData.GetType() != typeof(Int64)))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            Int64 value = (Int64)resultData.opData;
-            buffer = (int)value;
+            buffer = (int)int64Buffer;
 
             logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
             return true;
@@ -756,20 +716,12 @@ namespace Ediabas
             }
 
             setLocalError(EDIABAS_ERR_NONE);
-            EdiabasNet.ResultData resultData = getResultData(result, rset);
-            if (resultData == null)
+            Int64 int64Buffer;
+            if (!getResultInt64(out int64Buffer, result, rset))
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            if ((resultData.type != EdiabasNet.ResultType.TypeD) || (resultData.opData.GetType() != typeof(Int64)))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
-            Int64 value = (Int64)resultData.opData;
-            buffer = (uint)value;
+            buffer = (uint)int64Buffer;
 
             logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
             return true;
@@ -793,14 +745,22 @@ namespace Ediabas
                 logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            if ((resultData.type != EdiabasNet.ResultType.TypeR) || (resultData.opData.GetType() != typeof(Double)))
+            if ((resultData.opData.GetType() != typeof(Double) && (resultData.opData.GetType() != typeof(Int64))))
             {
                 setLocalError(EDIABAS_API_0005);
                 logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            Double value = (Double)resultData.opData;
-            buffer = value;
+            if ((resultData.opData.GetType() == typeof(Int64)))
+            {
+                Int64 value = (Int64)resultData.opData;
+                buffer = (Double)value;
+            }
+            else
+            {
+                Double value = (Double)resultData.opData;
+                buffer = (Double)value;
+            }
 
             logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
             return true;
@@ -1186,7 +1146,7 @@ namespace Ediabas
 
             if (localError != EDIABAS_ERR_NONE)
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", localError);
+                logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", (EdiabasNet.ErrorCodes)localError);
                 return localError;
             }
             if (ediabas == null)
@@ -1348,6 +1308,33 @@ namespace Ediabas
                 return null;
             }
             return resultData;
+        }
+
+        private bool getResultInt64(out Int64 buffer, string result, ushort rset)
+        {
+            buffer = 0;
+            EdiabasNet.ResultData resultData = getResultData(result, rset);
+            if (resultData == null)
+            {
+                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                return false;
+            }
+            if ((resultData.opData.GetType() != typeof(Double) && (resultData.opData.GetType() != typeof(Int64))))
+            {
+                setLocalError(EDIABAS_API_0005);
+                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                return false;
+            }
+            if ((resultData.opData.GetType() == typeof(Int64)))
+            {
+                buffer = (Int64)resultData.opData;
+            }
+            else
+            {
+                Double value = (Double)resultData.opData;
+                buffer = (Int64)value;
+            }
+            return true;
         }
 
         private void executeJob(string ecu, string job, byte[] stdpara, int stdparalen, byte[] para, int paralen, string result)
