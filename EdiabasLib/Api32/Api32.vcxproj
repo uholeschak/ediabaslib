@@ -60,10 +60,7 @@
       <AdditionalDependencies>ApiInternal.netmodule</AdditionalDependencies>
       <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
     </Link>
-    <PreBuildEvent>
-      <Command>call "$(ProjectDir)CompileNetmodule.bat" /debug+ /define:DEBUG</Command>
-      <Message>Create netmodule</Message>
-    </PreBuildEvent>
+    <PreBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -76,10 +73,7 @@
       <AdditionalDependencies>ApiInternal.netmodule</AdditionalDependencies>
       <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
     </Link>
-    <PreBuildEvent>
-      <Command>call "$(ProjectDir)CompileNetmodule.bat" /optimize</Command>
-      <Message>Create netmodule</Message>
-    </PreBuildEvent>
+    <PreBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -96,6 +90,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico" />
+    <CustomBuild Include="CompileNetmodule.bat">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call "$(ProjectDir)CompileNetmodule.bat" /debug+ /define:DEBUG</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call "$(ProjectDir)CompileNetmodule.bat" /optimize</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create netmodule</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create netmodule</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)ApiInternal.netmodule</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)ApiInternal.netmodule</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\ApiInternal\ApiInternal.cs;$(ProjectDir)..\EdiabasLib\EdiabasNet.cs;$(ProjectDir)..\EdiabasLib\EdOperations.cs;$(ProjectDir)..\EdiabasLib\MemoryStreamReader.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceBase.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceObd.cs;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\ApiInternal\ApiInternal.cs;$(ProjectDir)..\EdiabasLib\EdiabasNet.cs;$(ProjectDir)..\EdiabasLib\EdOperations.cs;$(ProjectDir)..\EdiabasLib\MemoryStreamReader.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceBase.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceObd.cs;%(AdditionalInputs)</AdditionalInputs>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />

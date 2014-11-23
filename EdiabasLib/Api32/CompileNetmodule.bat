@@ -1,5 +1,4 @@
 @echo off
-echo Compile netmodule
 SETLOCAL EnableDelayedExpansion
 
 set BATPATH=%~dp0
