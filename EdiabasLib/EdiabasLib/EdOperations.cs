@@ -34,10 +34,6 @@ namespace EdiabasLib
 
             string valueStr = arg1.GetStringData();
             EdFloatType result = StringToFloat(valueStr);
-            if (Double.IsNaN(result))
-            {
-                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0011);
-            }
 
             arg0.SetRawData(result);
         }
