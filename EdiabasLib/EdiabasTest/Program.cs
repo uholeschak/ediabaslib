@@ -25,6 +25,7 @@ namespace EdiabasTest
             string outFile = null;
             bool appendFile = false;
             bool storeResults = false;
+            bool printAllTypes = false;
             List<string> formatList = new List<string>();
             List<string> jobNames = new List<string>();
             bool show_help = false;
@@ -45,6 +46,8 @@ namespace EdiabasTest
                   v => storeResults = v != null },
                 { "c|compare", "compare output.",
                   v => compareOutput = v != null },
+                { "alltypes", "print all value types.",
+                  v => printAllTypes = v != null },
                 { "f|format=", "format for specific result. <result name>=<format string>",
                   v => formatList.Add(v) },
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>#<standard job parameters semicolon separated>.\nFor binary job parameters perpend the hex string with| (e.g. |A3C2)",
@@ -197,7 +200,7 @@ namespace EdiabasTest
                         }
                         else
                         {
-                            PrintResults(ediabas, formatList, resultSets);
+                            PrintResults(ediabas, formatList, printAllTypes, resultSets);
                         }
                     }
 
@@ -205,7 +208,7 @@ namespace EdiabasTest
                     {
                         foreach (List<Dictionary<string, EdiabasNet.ResultData>> resultSets in apiResultList)
                         {
-                            PrintResults(ediabas, formatList, resultSets);
+                            PrintResults(ediabas, formatList, printAllTypes, resultSets);
                         }
                     }
                 }
@@ -249,7 +252,7 @@ namespace EdiabasTest
             outputWriter.WriteLine(string.Format(culture, "Error occured: 0x{0:X08} {1}", (UInt32)error, errorText));
         }
 
-        static void PrintResults(EdiabasNet ediabas, List<string> formatList, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
+        static void PrintResults(EdiabasNet ediabas, List<string> formatList, bool printAllTypes, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
         {
             int dataSet = 0;
             if (resultSets != null)
@@ -321,6 +324,37 @@ namespace EdiabasTest
                             foreach (byte value in data)
                             {
                                 resultText += string.Format(culture, "{0:X02} ", value);
+                            }
+                        }
+
+                        if (printAllTypes)
+                        {
+                            if ((resultData.opData.GetType() == typeof(Int64)) || (resultData.opData.GetType() == typeof(Double)))
+                            {
+                                resultText += " ALL: ";
+                                if (resultData.opData.GetType() == typeof(Int64))
+                                {
+                                    Int64 value = (Int64)resultData.opData;
+                                    resultText += string.Format(culture, " {0}", (sbyte)value);
+                                    resultText += string.Format(culture, " {0}", (byte)value);
+                                    resultText += string.Format(culture, " {0}", (short)value);
+                                    resultText += string.Format(culture, " {0}", (ushort)value);
+                                    resultText += string.Format(culture, " {0}", (int)value);
+                                    resultText += string.Format(culture, " {0}", (uint)value);
+                                    resultText += string.Format(culture, " {0}", (double)value);
+                                }
+                                else if (resultData.opData.GetType() == typeof(Double))
+                                {
+                                    Double valueDouble = (Double)resultData.opData;
+                                    Int64 value = (Int64)valueDouble;
+                                    resultText += string.Format(culture, " {0}", (sbyte)value);
+                                    resultText += string.Format(culture, " {0}", (byte)value);
+                                    resultText += string.Format(culture, " {0}", (short)value);
+                                    resultText += string.Format(culture, " {0}", (ushort)value);
+                                    resultText += string.Format(culture, " {0}", (int)value);
+                                    resultText += string.Format(culture, " {0}", (uint)value);
+                                    resultText += string.Format(culture, " {0}", valueDouble);
+                                }
                             }
                         }
 

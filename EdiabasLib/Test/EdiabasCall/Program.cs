@@ -38,6 +38,7 @@ namespace EdiabasCall
             string deviceName = string.Empty;
             bool appendFile = false;
             bool storeResults = false;
+            bool printAllTypes = false;
             List<string> formatList = new List<string>();
             List<string> jobNames = new List<string>();
             bool show_help = false;
@@ -52,7 +53,7 @@ namespace EdiabasCall
                   v => outFile = v },
                 { "a|append", "append output file.",
                   v => appendFile = v != null },
-                { "ifh=", "Interface handler.",
+                { "ifh=", "interface handler.",
                   v => ifhName = v },
                 { "device=", "Device name.",
                   v => deviceName = v },
@@ -60,6 +61,8 @@ namespace EdiabasCall
                   v => storeResults = v != null },
                 { "c|compare", "compare output.",
                   v => compareOutput = v != null },
+                { "alltypes", "print all value types.",
+                  v => printAllTypes = v != null },
                 { "f|format=", "format for specific result. <result name>=<format string>",
                   v => formatList.Add(v) },
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>#<standard job parameters semicolon separated>.\nFor binary job parameters perpend the hex string with| (e.g. |A3C2)",
@@ -257,7 +260,7 @@ namespace EdiabasCall
                     }
                     else
                     {
-                        PrintResults(formatList);
+                        PrintResults(formatList, printAllTypes);
                     }
                 }
 
@@ -266,7 +269,7 @@ namespace EdiabasCall
                     foreach (API.APIRESULTFIELD resultField in apiResultFields)
                     {
                         API.apiResultsScope(resultField);
-                        PrintResults(formatList);
+                        PrintResults(formatList, printAllTypes);
                         API.apiResultsDelete(resultField);
                     }
                 }
@@ -305,7 +308,7 @@ namespace EdiabasCall
             lastJobInfo = jobInfo;
         }
 
-        static void PrintResults(List<string> formatList)
+        static void PrintResults(List<string> formatList, bool printAllTypes)
         {
             string variantString;
             if (API.apiResultVar(out variantString))
@@ -463,6 +466,80 @@ namespace EdiabasCall
                                                 }
                                                 break;
                                             }
+                                    }
+
+                                    if (printAllTypes)
+                                    {
+                                        switch (resultFormat)
+                                        {
+                                            case API.APIFORMAT_TEXT:
+                                            case API.APIFORMAT_BINARY:
+                                                break;
+
+                                            default:
+                                                resultText += " ALL: ";
+                                                {
+                                                    if (apiHandle == 0)
+                                                    {
+                                                        char resultChar;
+                                                        if (API.apiResultChar(out resultChar, resultName, set))
+                                                        {
+                                                            resultText += string.Format(culture, " {0}", (sbyte)resultChar);
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        byte resultByte;
+                                                        if (__api32ResultChar(apiHandle, out resultByte, resultName, set))
+                                                        {
+                                                            resultText += string.Format(culture, " {0}", (sbyte)resultByte);
+                                                        }
+                                                    }
+                                                }
+                                                {
+                                                    byte resultByte;
+                                                    if (API.apiResultByte(out resultByte, resultName, set))
+                                                    {
+                                                        resultText += string.Format(culture, " {0}", resultByte);
+                                                    }
+                                                }
+                                                {
+                                                    short resultShort;
+                                                    if (API.apiResultInt(out resultShort, resultName, set))
+                                                    {
+                                                        resultText += string.Format(culture, " {0}", resultShort);
+                                                    }
+                                                }
+                                                {
+                                                    ushort resultWord;
+                                                    if (API.apiResultWord(out resultWord, resultName, set))
+                                                    {
+                                                        resultText += string.Format(culture, " {0}", resultWord);
+                                                    }
+                                                }
+                                                {
+                                                    int resultInt;
+                                                    if (API.apiResultLong(out resultInt, resultName, set))
+                                                    {
+                                                        resultText += string.Format(culture, " {0}", resultInt);
+                                                    }
+                                                }
+                                                {
+                                                    uint resultUint;
+                                                    if (API.apiResultDWord(out resultUint, resultName, set))
+                                                    {
+                                                        resultText += string.Format(culture, " {0}", resultUint);
+                                                    }
+                                                }
+                                                {
+                                                    double resultDouble;
+                                                    if (API.apiResultReal(out resultDouble, resultName, set))
+                                                    {
+                                                        resultText += string.Format(culture, " {0}", resultDouble);
+                                                    }
+                                                }
+                                                break;
+                                        }
                                     }
                                 }
 
