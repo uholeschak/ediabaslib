@@ -5788,7 +5788,7 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
-                result = Double.NaN;
+                result = 0;
             }
             return result;
         }
