@@ -5783,8 +5783,11 @@ namespace EdiabasLib
             EdFloatType result = 0;
             try
             {
-                number = number.Replace(",", ".");
-                result = EdFloatType.Parse(number, culture);
+                if (string.Compare(number, Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(number)), StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    number = number.Replace(",", ".");
+                    result = EdFloatType.Parse(number, culture);
+                }
             }
             catch (Exception)
             {
