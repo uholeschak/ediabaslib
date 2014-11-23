@@ -2432,6 +2432,7 @@ namespace EdiabasLib
         private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
         private static readonly byte[] byteArray0 = new byte[0];
         private static Dictionary<ErrorCodes, UInt32> trapBitDict;
+        private static bool firstLog = true;
 
         private const string jobNameInit = "INITIALISIERUNG";
         private const string jobNameExit = "ENDE";
@@ -5308,7 +5309,13 @@ namespace EdiabasLib
                         if (tracePath != null)
                         {
                             Directory.CreateDirectory(tracePath);
-                            swLog = new StreamWriter(Path.Combine(tracePath, "ifh.trc"), false, encoding);
+                            FileMode fileMode = FileMode.Append;
+                            if (firstLog)
+                            {
+                                firstLog = false;
+                                fileMode = FileMode.Create;
+                            }
+                            swLog = new StreamWriter(new FileStream(Path.Combine(tracePath, "ifh.trc"), fileMode, FileAccess.Write, FileShare.ReadWrite), encoding);
                         }
                     }
                     if (swLog != null)
