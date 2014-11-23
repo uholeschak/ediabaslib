@@ -3,3 +3,5 @@
 *.user
 *.aps
 *.netmodule
+*.pdb
+*.err
