@@ -1538,7 +1538,7 @@ namespace Ediabas
                                 firstLog = false;
                                 fileMode = FileMode.Create;
                             }
-                            swLog = new StreamWriter(new FileStream(Path.Combine(tracePath, "api.trc"), fileMode, FileAccess.Write, FileShare.Write), encoding);
+                            swLog = new StreamWriter(new FileStream(Path.Combine(tracePath, "api.trc"), fileMode, FileAccess.Write, FileShare.ReadWrite), encoding);
                             swLog.AutoFlush = buffering == 0;
                         }
                     }
