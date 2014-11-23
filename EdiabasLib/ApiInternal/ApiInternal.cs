@@ -745,21 +745,20 @@ namespace Ediabas
                 logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            if ((resultData.opData.GetType() != typeof(Double) && (resultData.opData.GetType() != typeof(Int64))))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
             if ((resultData.opData.GetType() == typeof(Int64)))
             {
                 Int64 value = (Int64)resultData.opData;
                 buffer = (Double)value;
             }
+            else if ((resultData.opData.GetType() == typeof(Double)))
+            {
+                buffer = (Double)resultData.opData;
+            }
             else
             {
-                Double value = (Double)resultData.opData;
-                buffer = (Double)value;
+                setLocalError(EDIABAS_API_0005);
+                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                return false;
             }
 
             logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
@@ -1319,20 +1318,20 @@ namespace Ediabas
                 logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            if ((resultData.opData.GetType() != typeof(Double) && (resultData.opData.GetType() != typeof(Int64))))
-            {
-                setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
-                return false;
-            }
             if ((resultData.opData.GetType() == typeof(Int64)))
             {
                 buffer = (Int64)resultData.opData;
             }
-            else
+            else if ((resultData.opData.GetType() == typeof(Double)))
             {
                 Double value = (Double)resultData.opData;
                 buffer = (Int64)value;
+            }
+            else
+            {
+                setLocalError(EDIABAS_API_0005);
+                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                return false;
             }
             return true;
         }

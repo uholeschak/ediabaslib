@@ -47,7 +47,7 @@ if exist "!OUTFILE!" del "!OUTFILE!"
 "%OPEN_COVER%" "-output:results5.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_PATH!\e60.prg\" -j \"_VERSIONINFO\" -j \"IDENT_FUNKTIONAL\" -j \"FS_LESEN_FUNKTIONAL\""
 
 "%OPEN_COVER%" "-output:results10.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_SHMID#ARGS##STDARGS\" -j "_JOBS" -j \"TEST_SREG\" -j \"TEST_MATH\" -j \"TEST_PARY#^|12131415A1A2A3A4A5\" -j \"TEST_PARY#^|\" -j \"TEST_PARL# -5\" -j \"TEST_PARL#0x10 \" -j \"TEST_PARL#0y011001 \" -j \"TEST_PARR# 123.45 \" -j \"TEST_FILES\" -j \"TEST_PROGRESS_INFO\""
-"%OPEN_COVER%" "-output:results11.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"TEST_SHMID###STDARG1\" -j "_JOBS" -j \"TEST_SUBB_FLAGS\" -j \"TEST_SHMID\" -j \"TEST_SUBC_FLAGS\" -j \"TEST_SHMID\" -j \"TEST_ADDS_FLAGS\" -j \"TEST_ADDC_FLAGS\" -j \"TEST_COMP_FLAGS\" !"^"=!^
+"%OPEN_COVER%" "-output:results11.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! --alltypes -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"TEST_SHMID###STDARG1\" -j "_JOBS" -j \"TEST_SUBB_FLAGS\" -j \"TEST_SHMID\" -j \"TEST_SUBC_FLAGS\" -j \"TEST_SHMID\" -j \"TEST_ADDS_FLAGS\" -j \"TEST_ADDC_FLAGS\" -j \"TEST_COMP_FLAGS\" !"^"=!^
  -j \"TEST_MULT_FLAGS\" -j \"TEST_DIVS_FLAGS\" -j \"TEST_LSL_FLAGS\" -j \"TEST_ASL_FLAGS\" -j \"TEST_LSR_FLAGS\" -j \"TEST_ASR_FLAGS\" -j \"TEST_AND_FLAGS\" -j \"TEST_OR_FLAGS\" -j \"TEST_XOR_FLAGS\" -j \"TEST_TEST_FLAGS\" -j \"TEST_NOT_FLAGS\" !"^"=!^
  -j \"TEST_FSUB_FLAGS\" -j \"TEST_FADD_FLAGS\" -j \"TEST_FMUL_FLAGS\" -j \"TEST_FDIV_FLAGS\" -j \"TEST_FCOMP_FLAGS\" -j \"TEST_PAR_FLAGS#hallo;10;3.5\" -j \"TEST_PAR_FLAGS\" -j \"TEST_CLEAR_FLAGS\" -j \"TEST_TABLE_FLAGS\" -j \"TEST_CFG_FLAGS\" -j \"TEST_ERROR_FLAGS\" -j \"TEST_IFACE_FLAGS\" !"^"=!^
  -j \"TEST_SHMID\" -j \"TEST_BASE1_TABLE1\" -j \"TEST_SHMID\" -j \"TEST_BASE1_TABLE2\" -j \"TEST_SHMID\" -j \"TEST_BASE2_TABLE1\" -j \"TEST_SHMID\" -j \"TEST_BASE2_TABLE2\" -j \"TEST_SHMID\" !"^"=!^
@@ -81,7 +81,7 @@ for /l %%x in (0, 1, 32) do (
  -f \"ERGS=10.4T\" -f \"ERGS=-10.4T\" -f \"ERGS=10.8T\" -f \"ERGS=0.8T\" -f \"ERGS=T\" !"^"=!^
  -j \"TEST_MULTIARG#-30;40;-12345;12345;-123456;123456;-13.45;Ulrich Test;Erwin\""
 
-"%OPEN_COVER%" "-output:results20.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" !"^"=!^
+"%OPEN_COVER%" "-output:results20.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! --alltypes -s \"!ECU_TEST_PATH!\cmd_test1.prg\" !"^"=!^
  -f \"ERGB=W\" -f \"ERGB=6.4W\" -f \"ERGB=-6.4W\" -f \"ERGB=-.4W\" -f \"ERGB=8.W\" -f \"ERGB=-.W\" !"^"=!^
  -f \"ERGC=I\" -f \"ERGC=6.4I\" -f \"ERGC=-6.4I\" !"^"=!^
  -f \"ERGW=D\" -f \"ERGW=6.4D\" -f \"ERGW=-6.4D\" -f \"ERGI=6.4L\" -f \"ERGI=-6.4L\" !"^"=!^
