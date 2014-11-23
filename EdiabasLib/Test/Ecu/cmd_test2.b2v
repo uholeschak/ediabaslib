@@ -4795,6 +4795,8 @@ job(  name      : TEST_CFG_FLAGS;
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergi		"IFHTRACE", I8
+
+					cfgis		"IfhTrace", #0.I
 #endasm
 
 }
