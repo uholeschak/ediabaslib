@@ -53,11 +53,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>/FU"ApiInternal.netmodule" %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/FU"$(TargetDir)ApiInternal.netmodule" %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ApiInternal.netmodule</AdditionalDependencies>
+      <AdditionalDependencies>$(TargetDir)ApiInternal.netmodule</AdditionalDependencies>
       <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent />
@@ -66,11 +66,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>/FU"ApiInternal.netmodule" %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/FU"$(TargetDir)ApiInternal.netmodule" %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ApiInternal.netmodule</AdditionalDependencies>
+      <AdditionalDependencies>$(TargetDir)ApiInternal.netmodule</AdditionalDependencies>
       <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent />
@@ -92,12 +92,12 @@
     <None Include="app.ico" />
     <CustomBuild Include="CompileNetmodule.bat">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call "$(ProjectDir)CompileNetmodule.bat" /debug+ /define:DEBUG</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call "$(ProjectDir)CompileNetmodule.bat" /optimize</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call "$(ProjectDir)CompileNetmodule.bat" /out:"$(TargetDir)ApiInternal.netmodule" /debug+ /define:DEBUG</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call "$(ProjectDir)CompileNetmodule.bat" /out:"$(TargetDir)ApiInternal.netmodule" /optimize</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create netmodule</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create netmodule</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)ApiInternal.netmodule</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)ApiInternal.netmodule</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(TargetDir)ApiInternal.netmodule</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(TargetDir)ApiInternal.netmodule</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\ApiInternal\ApiInternal.cs;$(ProjectDir)..\EdiabasLib\EdiabasNet.cs;$(ProjectDir)..\EdiabasLib\EdOperations.cs;$(ProjectDir)..\EdiabasLib\MemoryStreamReader.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceBase.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceObd.cs;%(AdditionalInputs)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\ApiInternal\ApiInternal.cs;$(ProjectDir)..\EdiabasLib\EdiabasNet.cs;$(ProjectDir)..\EdiabasLib\EdOperations.cs;$(ProjectDir)..\EdiabasLib\MemoryStreamReader.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceBase.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceObd.cs;%(AdditionalInputs)</AdditionalInputs>
     </CustomBuild>
