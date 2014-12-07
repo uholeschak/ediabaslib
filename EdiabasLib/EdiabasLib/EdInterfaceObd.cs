@@ -421,12 +421,34 @@ namespace EdiabasLib
             TransmitDelegate transmitFunc;
             int baudRate;
             Parity parity;
-            int timeoutStd;
-            int timeoutTelEnd;
-            int timeoutNR;
-            int retryNR;
+            int timeoutStd = 0;
+            int timeoutTelEnd = 0;
+            int timeoutNR = 0;
+            int retryNR = 0;
             switch (commParameter[0])
             {
+                case 0x0006:    // DS2
+                    if (commParameter.Length < 8)
+                    {
+                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                        return false;
+                    }
+                    if (commParameter.Length >= 10 && commParameter[33] != 1)
+                    {   // not checksum calculated by interface
+                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                        return false;
+                    }
+                    if (commAnswerLen == null)
+                    {
+                        commAnswerLen = new short[] {-1, 0};
+                    }
+                    transmitFunc = TransDS2;
+                    baudRate = (int)commParameter[1];
+                    parity = Parity.Even;
+                    timeoutStd = (int)commParameter[5];
+                    timeoutTelEnd = (int)commParameter[7];
+                    break;
+
                 case 0x010D:    // KWP2000*
                     if (commParameter.Length < 7)
                     {
@@ -488,7 +510,7 @@ namespace EdiabasLib
                     break;
 
                 default:
-                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
                     return false;
             }
 
@@ -635,7 +657,7 @@ namespace EdiabasLib
         }
 
         // telegram length without checksum
-        private static int TelLengthBmwFast(byte[] dataBuffer)
+        private int TelLengthBmwFast(byte[] dataBuffer)
         {
             int telLength = dataBuffer[0] & 0x3F;
             if (telLength == 0)
@@ -649,7 +671,7 @@ namespace EdiabasLib
             return telLength;
         }
 
-        private static byte CalcChecksumBmwFast(byte[] data, int length)
+        private byte CalcChecksumBmwFast(byte[] data, int length)
         {
             byte sum = 0;
             for (int i = 0; i < length; i++)
@@ -753,13 +775,121 @@ namespace EdiabasLib
         }
 
         // telegram length without checksum
-        private static int TelLengthKwp2000S(byte[] dataBuffer)
+        private int TelLengthKwp2000S(byte[] dataBuffer)
         {
             int telLength = dataBuffer[3] + 4;
             return telLength;
         }
 
-        private static byte CalcChecksumKWP2000S(byte[] data, int length)
+        private byte CalcChecksumKWP2000S(byte[] data, int length)
+        {
+            byte sum = 0;
+            for (int i = 0; i < length; i++)
+            {
+                sum ^= data[i];
+            }
+            return sum;
+        }
+
+        private EdiabasNet.ErrorCodes TransDS2(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR)
+        {
+            receiveLength = 0;
+
+            if (sendDataLength > 0)
+            {
+                int sendLength = sendDataLength;
+                sendData[sendLength] = CalcChecksumDS2(sendData, sendLength);
+                sendLength++;
+                ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, sendLength, "Send");
+                if (!SendData(sendData, sendLength))
+                {
+                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                }
+                // remove remote echo
+                if (!ReceiveData(receiveData, 0, sendLength, echoTimeout, timeoutTelEnd))
+                {
+                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No echo received");
+                    ReceiveData(receiveData, 0, receiveData.Length, echoTimeout, timeoutTelEnd, true);
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                }
+                ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, sendLength, "Echo");
+                for (int i = 0; i < sendLength; i++)
+                {
+                    if (receiveData[i] != sendData[i])
+                    {
+                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Echo incorrect");
+                        ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, timeoutTelEnd, true);
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    }
+                }
+            }
+
+            // header byte
+            int headerLen = 0;
+            if (commAnswerLen != null && commAnswerLen.Length >= 2)
+            {
+                headerLen = commAnswerLen[0];
+                if (headerLen < 0)
+                {
+                    headerLen = (-headerLen) + 1;
+                }
+            }
+            if (headerLen == 0)
+            {
+                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Header lenght zero");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+            }
+            if (!ReceiveData(receiveData, 0, headerLen, timeoutStd, timeoutTelEnd))
+            {
+                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No header received");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+
+            int recLength = TelLengthDS2(receiveData);
+            if (recLength == 0)
+            {
+                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Receive lenght zero");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+            if (!ReceiveData(receiveData, headerLen, recLength - headerLen, timeoutTelEnd, timeoutTelEnd))
+            {
+                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No tail received");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+            ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, recLength, "Resp");
+            if (CalcChecksumDS2(receiveData, recLength - 1) != receiveData[recLength - 1])
+            {
+                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Checksum incorrect");
+                ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, timeoutTelEnd, true);
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+
+            receiveLength = recLength;
+            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+        }
+
+        // telegram length with checksum
+        private int TelLengthDS2(byte[] dataBuffer)
+        {
+            int telLength = 0;
+            if (commAnswerLen != null && commAnswerLen.Length >= 2)
+            {
+                telLength = commAnswerLen[0];   // >0 fix length
+                if (telLength < 0)
+                {   // offset in buffer
+                    int offset = (-telLength);
+                    if (dataBuffer.Length < offset)
+                    {
+                        return 0;
+                    }
+                    telLength = dataBuffer[offset] + commAnswerLen[1];  // + answer offset
+                }
+            }
+            return telLength;
+        }
+
+        private byte CalcChecksumDS2(byte[] data, int length)
         {
             byte sum = 0;
             for (int i = 0; i < length; i++)

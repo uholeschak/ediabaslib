@@ -109,11 +109,11 @@ namespace CarSimulator
                             bool addEntry = true;
                             foreach (CommThread.ResponseEntry responseEntry in _responseList)
                             {
-                                if (listCompare.Count != responseEntry.Compare.Length) continue;
+                                if (listCompare.Count != responseEntry.Request.Length) continue;
                                 bool equal = true;
                                 for (int i = 0; i < listCompare.Count; i++)
                                 {
-                                    if (listCompare[i] != responseEntry.Compare[i])
+                                    if (listCompare[i] != responseEntry.Request[i])
                                     {
                                         equal = false;
                                         break;
@@ -140,6 +140,64 @@ namespace CarSimulator
                         }
                     }
                 }
+
+                // split multi telegram responses
+                foreach (CommThread.ResponseEntry responseEntry in _responseList)
+                {
+                    {
+                        if (responseEntry.Request.Length < 4)
+                        {
+                            MessageBox.Show("Invalid response file request length!");
+                        }
+                        else
+                        {
+                            int telLength = responseEntry.Request[0] & 0x3F;
+                            if (telLength == 0)
+                            {   // with length byte
+                                telLength = responseEntry.Request[3] + 5;
+                            }
+                            else
+                            {
+                                telLength += 4;
+                            }
+                            if (telLength != responseEntry.Request.Length)
+                            {
+                                MessageBox.Show("Invalid response file request!");
+                            }
+                        }
+                    }
+
+                    int telOffset = 0;
+                    while ((telOffset + 1) < responseEntry.Response.Length)
+                    {
+                        if ((responseEntry.Response.Length - telOffset) < 4)
+                        {
+                            break;
+                        }
+                        int telLength = responseEntry.Response[telOffset + 0] & 0x3F;
+                        if (telLength == 0)
+                        {   // with length byte
+                            telLength = responseEntry.Response[telOffset + 3] + 5;
+                        }
+                        else
+                        {
+                            telLength += 4;
+                        }
+                        if (telOffset + telLength > responseEntry.Response.Length)
+                        {
+                            break;
+                        }
+                        byte[] responseTel = new byte[telLength];
+                        Array.Copy(responseEntry.Response, telOffset, responseTel, 0, telLength);
+                        responseEntry.ResponseList.Add(responseTel);
+                        telOffset += telLength;
+                    }
+                    if (telOffset != responseEntry.Response.Length)
+                    {
+                        MessageBox.Show("Invalid response file response!");
+                    }
+                }
+
             }
             catch
             {
@@ -176,7 +234,10 @@ namespace CarSimulator
                 if (listPorts.SelectedIndex < 0) return;
                 string selectedPort = listPorts.SelectedItem.ToString();
 
-                _commThread.StartThread(selectedPort, checkBoxKwp2000.Checked ,_responseList);
+                CommThread.ProtocolType protocolType = CommThread.ProtocolType.protocolBwmFast;
+                if (radioButtonKwp2000S.Checked) protocolType = CommThread.ProtocolType.protocolKwp2000S;
+                if (radioButtonDs2.Checked) protocolType = CommThread.ProtocolType.protocolDs2;
+                _commThread.StartThread(selectedPort, protocolType, _responseList);
             }
 
             UpdateDisplay();

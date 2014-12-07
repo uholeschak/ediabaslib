@@ -98,6 +98,7 @@ namespace EdiabasLib
             set
             {
                 commParameter = value;
+                commAnswerLen = null;
             }
         }
 

@@ -34,7 +34,11 @@
             this.timerUpdate = new System.Windows.Forms.Timer(this.components);
             this.checkBoxMoving = new System.Windows.Forms.CheckBox();
             this.checkBoxVariableValues = new System.Windows.Forms.CheckBox();
-            this.checkBoxKwp2000 = new System.Windows.Forms.CheckBox();
+            this.radioButtonBmwFast = new System.Windows.Forms.RadioButton();
+            this.groupBoxProtocols = new System.Windows.Forms.GroupBox();
+            this.radioButtonKwp2000S = new System.Windows.Forms.RadioButton();
+            this.radioButtonDs2 = new System.Windows.Forms.RadioButton();
+            this.groupBoxProtocols.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonConnect
@@ -81,22 +85,58 @@
             this.checkBoxVariableValues.Text = "Variable values";
             this.checkBoxVariableValues.UseVisualStyleBackColor = true;
             // 
-            // checkBoxKwp2000
+            // radioButtonBmwFast
             // 
-            this.checkBoxKwp2000.AutoSize = true;
-            this.checkBoxKwp2000.Location = new System.Drawing.Point(12, 74);
-            this.checkBoxKwp2000.Name = "checkBoxKwp2000";
-            this.checkBoxKwp2000.Size = new System.Drawing.Size(79, 17);
-            this.checkBoxKwp2000.TabIndex = 4;
-            this.checkBoxKwp2000.Text = "KWP2000*";
-            this.checkBoxKwp2000.UseVisualStyleBackColor = true;
+            this.radioButtonBmwFast.AutoSize = true;
+            this.radioButtonBmwFast.Checked = true;
+            this.radioButtonBmwFast.Location = new System.Drawing.Point(6, 19);
+            this.radioButtonBmwFast.Name = "radioButtonBmwFast";
+            this.radioButtonBmwFast.Size = new System.Drawing.Size(75, 17);
+            this.radioButtonBmwFast.TabIndex = 5;
+            this.radioButtonBmwFast.TabStop = true;
+            this.radioButtonBmwFast.Text = "BMW Fast";
+            this.radioButtonBmwFast.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxProtocols
+            // 
+            this.groupBoxProtocols.Controls.Add(this.radioButtonDs2);
+            this.groupBoxProtocols.Controls.Add(this.radioButtonKwp2000S);
+            this.groupBoxProtocols.Controls.Add(this.radioButtonBmwFast);
+            this.groupBoxProtocols.Location = new System.Drawing.Point(12, 88);
+            this.groupBoxProtocols.Name = "groupBoxProtocols";
+            this.groupBoxProtocols.Size = new System.Drawing.Size(268, 94);
+            this.groupBoxProtocols.TabIndex = 6;
+            this.groupBoxProtocols.TabStop = false;
+            this.groupBoxProtocols.Text = "Protocols";
+            // 
+            // radioButtonKwp2000S
+            // 
+            this.radioButtonKwp2000S.AutoSize = true;
+            this.radioButtonKwp2000S.Location = new System.Drawing.Point(6, 42);
+            this.radioButtonKwp2000S.Name = "radioButtonKwp2000S";
+            this.radioButtonKwp2000S.Size = new System.Drawing.Size(78, 17);
+            this.radioButtonKwp2000S.TabIndex = 6;
+            this.radioButtonKwp2000S.TabStop = true;
+            this.radioButtonKwp2000S.Text = "KWP2000*";
+            this.radioButtonKwp2000S.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonDs2
+            // 
+            this.radioButtonDs2.AutoSize = true;
+            this.radioButtonDs2.Location = new System.Drawing.Point(6, 65);
+            this.radioButtonDs2.Name = "radioButtonDs2";
+            this.radioButtonDs2.Size = new System.Drawing.Size(46, 17);
+            this.radioButtonDs2.TabIndex = 7;
+            this.radioButtonDs2.TabStop = true;
+            this.radioButtonDs2.Text = "DS2";
+            this.radioButtonDs2.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(292, 266);
-            this.Controls.Add(this.checkBoxKwp2000);
+            this.Controls.Add(this.groupBoxProtocols);
             this.Controls.Add(this.checkBoxVariableValues);
             this.Controls.Add(this.checkBoxMoving);
             this.Controls.Add(this.listPorts);
@@ -104,6 +144,8 @@
             this.Name = "MainForm";
             this.Text = "Car Simulator";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
+            this.groupBoxProtocols.ResumeLayout(false);
+            this.groupBoxProtocols.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -116,7 +158,10 @@
         private System.Windows.Forms.Timer timerUpdate;
         private System.Windows.Forms.CheckBox checkBoxMoving;
         private System.Windows.Forms.CheckBox checkBoxVariableValues;
-        private System.Windows.Forms.CheckBox checkBoxKwp2000;
+        private System.Windows.Forms.RadioButton radioButtonBmwFast;
+        private System.Windows.Forms.GroupBox groupBoxProtocols;
+        private System.Windows.Forms.RadioButton radioButtonKwp2000S;
+        private System.Windows.Forms.RadioButton radioButtonDs2;
 
     }
 }
