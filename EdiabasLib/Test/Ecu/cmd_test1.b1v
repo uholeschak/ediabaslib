@@ -570,41 +570,71 @@ TEST_MATH#
 					subc		S0[#$2],#$12.B
 					ergy		"SUBC_Y",S0
 
-					move		L0,#$2.L
+					move		L0,#$12345678.L
 					clear		S0
 					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
 					mult		L0,S0[#$2]
-					ergl		"MULT4",L0
+					ergl		"MULTA4",L0
+					ergy		"MULTB4",S0
 
-					move		I0,#$2.I
+					move		I0,#$1234.I
 					clear		S0
 					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
 					mult		I0,S0[#$2]
-					ergi		"MULT2",I0
+					ergi		"MULTA2",I0
+					ergy		"MULTB2",S0
 
-					move		B0,#$2.B
+					move		B0,#$12.B
 					clear		S0
 					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
 					mult		B0,S0[#$2]
-					ergb		"MULT1",B0
+					ergb		"MULTA1",B0
+					ergy		"MULTB1",S0
+
+					clear		S0
+					move		S0,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					clear		S1
+					move		S1,{$12.B,$34.B,$56.B,$78.B,$9A.B,$BC.B,$DE.B}
+					mult		S0[#$1],S1[#$2]
+					ergy		"MULTARRA1",S0
+					ergy		"MULTARRB1",S1
+
+					move		L0,#12345678.L
+					mult		L0,#1234.L
+					ergl		"MULTC4",L0
 
 					move		L0,#$12345678.L
 					clear		S0
 					move		S0,{$01.B,$02.B,$03.B,$04.B,$05.B,$06.B,$07.B}
 					divs		L0,S0[#$2]
-					ergl		"DIVS4",L0
+					ergl		"DIVSA4",L0
+					ergy		"DIVSB4",S0
 
 					move		I0,#$1234.I
 					clear		S0
 					move		S0,{$01.B,$02.B,$03.B,$04.B,$05.B,$06.B,$07.B}
 					divs		I0,S0[#$2]
-					ergi		"DIVS2",I0
+					ergi		"DIVSA2",I0
+					ergy		"DIVSB2",S0
 
 					move		B0,#$12.B
 					clear		S0
 					move		S0,{$01.B,$02.B,$03.B,$04.B,$05.B,$06.B,$07.B}
 					divs		B0,S0[#$2]
-					ergb		"DIVS1",B0
+					ergb		"DIVSA1",B0
+					ergy		"DIVSB1",S0
+
+					clear		S0
+					move		S0,{$01.B,$78.B,$56.B,$34.B,$12.B,$06.B,$07.B}
+					clear		S1
+					move		S1,{$01.B,$02.B,$03.B,$04.B,$05.B,$06.B,$07.B}
+					divs		S0[#$1],S1[#$2]
+					ergy		"DIVSARRA1",S0
+					ergy		"DIVSARRB1",S1
+
+					move		L0,#$12345678.L
+					divs		L0,#1234.L
+					ergl		"DIVSC4",L0
 
 					move		L0,#$82345678.L
 					setc
