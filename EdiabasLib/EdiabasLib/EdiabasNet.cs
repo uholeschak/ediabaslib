@@ -413,6 +413,11 @@ namespace EdiabasLib
 
             public void SetRawData(Object data)
             {
+                SetRawData(data, 1);
+            }
+
+            public void SetRawData(Object data, EdValueType dataLen)
+            {
                 switch (opAddrMode)
                 {
                     case OpAddrMode.RegS:
@@ -486,7 +491,7 @@ namespace EdiabasLib
                             byte[] sourceArray;
                             if (data.GetType() == typeof(EdValueType))
                             {
-                                len = 1;
+                                len = dataLen;
                                 EdValueType sourceValue = (EdValueType)data;
                                 sourceArray = new byte[len];
                                 for (int i = 0; i < len; i++)

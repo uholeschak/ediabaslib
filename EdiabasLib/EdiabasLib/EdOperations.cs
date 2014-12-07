@@ -444,7 +444,10 @@ namespace EdiabasLib
             }
             EdValueType len = GetArgsValueLength(arg0, arg1);
 
+            EdValueType value1 = arg0.GetValueData(len);
+            EdValueType value2 = arg1.GetValueData(len);
             EdValueType result = 0;
+            EdValueType remainder = 0;
             bool error = false;
             try
             {
@@ -452,18 +455,21 @@ namespace EdiabasLib
                 {
                     case 1:
                         // DIVS bug in ediabas!
-                        // result = (EdValueType)((SByte)arg0.GetValueData(len) / (SByte)arg1.GetValueData(len));
-                        result = (EdValueType)((Int32)arg0.GetValueData(len) / (Int32)arg1.GetValueData(len));
+                        // result = (EdValueType)((SByte)value1 / (SByte)value2);
+                        result = (EdValueType)((Int32)value1 / (Int32)value2);
+                        remainder = (EdValueType)((Int32)value1 % (Int32)value2);
                         break;
 
                     case 2:
                         // DIVS bug in ediabas!
-                        // result = (EdValueType)((Int16)arg0.GetValueData(len) / (Int16)arg1.GetValueData(len));
-                        result = (EdValueType)((Int32)arg0.GetValueData(len) / (Int32)arg1.GetValueData(len));
+                        // result = (EdValueType)((Int16)value1 / (Int16)value2);
+                        result = (EdValueType)((Int32)value1 / (Int32)value2);
+                        remainder = (EdValueType)((Int32)value1 % (Int32)value2);
                         break;
 
                     case 4:
-                        result = (EdValueType)((Int32)arg0.GetValueData(len) / (Int32)arg1.GetValueData(len));
+                        result = (EdValueType)((Int32)value1 / (Int32)value2);
+                        remainder = (EdValueType)((Int32)value1 % (Int32)value2);
                         break;
 
                     default:
@@ -482,6 +488,11 @@ namespace EdiabasLib
                 result = arg0.GetValueData(len);
             }
             arg0.SetRawData(result);
+
+            if (arg1.opData1.GetType() == typeof(Register))
+            {
+                arg1.SetRawData(remainder, len);
+            }
         }
 
         // BEST2: make_error (execute)
@@ -1664,21 +1675,23 @@ namespace EdiabasLib
             }
             EdValueType len = GetArgsValueLength(arg0, arg1);
 
+            EdValueType value1 = arg0.GetValueData(len);
+            EdValueType value2 = arg1.GetValueData(len);
             EdValueType result;
             try
             {
                 switch (len)
                 {
                     case 1:
-                        result = (EdValueType)((SByte)arg0.GetValueData(len) * (SByte)arg1.GetValueData(len));
+                        result = (EdValueType)((SByte)value1 * (SByte)value2);
                         break;
 
                     case 2:
-                        result = (EdValueType)((Int16)arg0.GetValueData(len) * (Int16)arg1.GetValueData(len));
+                        result = (EdValueType)((Int16)value1 * (Int16)value2);
                         break;
 
                     case 4:
-                        result = (EdValueType)((Int32)arg0.GetValueData(len) * (Int32)arg1.GetValueData(len));
+                        result = (EdValueType)((Int32)value1 * (Int32)value2);
                         break;
 
                     default:
@@ -1692,6 +1705,14 @@ namespace EdiabasLib
             arg0.SetRawData(result);
             ediabas.flags.overflow = false;
             ediabas.flags.UpdateFlags(result, len);
+
+            if (arg1.opData1.GetType() == typeof(Register))
+            {
+                EdValueType resultHigh = (EdValueType)((UInt64)result >> (int)(len << 3));
+                // If values are negative the result is unpredctiable.
+                // We don't emulate the origonal behaviour here in this case
+                arg1.SetRawData(resultHigh, len);
+            }
         }
 
         private static void OpNop(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
@@ -2791,23 +2812,47 @@ namespace EdiabasLib
             {
                 byte[] dataArray = arg0.GetArrayData();
                 int length = dataArray.Length;
-                if ((length & 0x03) != 0x00)
+                int dataTypeLen = 0;
+                if (length >= 2)
                 {
-                    throw new ArgumentOutOfRangeException("length", "OpXsetpar: Invalid data length");
+                    switch (dataArray[1])
+                    {
+                        case 0x00:
+                            dataTypeLen = 2;    // integer
+                            break;
+
+                        case 0x01:
+                            dataTypeLen = 4;    // long
+                            break;
+
+                        case 0xFF:
+                            dataTypeLen = 1;    // byte
+                            break;
+                    }
                 }
 
-                length >>= 2;
-                EdValueType[] parsArray = new EdValueType[length];
-                for (int i = 0; i < length; i++)
+                EdValueType[] parsArray = null;
+                if (dataTypeLen > 0 && (length % dataTypeLen == 0))
                 {
-                    int offset = i << 2;
-                    EdValueType value =
-                        dataArray[offset + 0] |
-                        (((EdValueType)dataArray[offset + 1]) << 8) |
-                        (((EdValueType)dataArray[offset + 2]) << 16) |
-                        (((EdValueType)dataArray[offset + 3]) << 24);
-                    parsArray[i] = value;
+                    length /= dataTypeLen;
+                    parsArray = new EdValueType[length];
+                    for (int i = 0; i < length; i++)
+                    {
+                        int offset = i * dataTypeLen;
+                        EdValueType value = dataArray[offset + 0];
+                        if (dataTypeLen >= 2)
+                        {
+                            value |= (((EdValueType)dataArray[offset + 1]) << 8);
+                        }
+                        if (dataTypeLen >= 4)
+                        {
+                            value |= (((EdValueType)dataArray[offset + 2]) << 16) |
+                            (((EdValueType)dataArray[offset + 3]) << 24);
+                        }
+                        parsArray[i] = value;
+                    }
                 }
+
                 interfaceClass.CommParameter = parsArray;
             }
         }
