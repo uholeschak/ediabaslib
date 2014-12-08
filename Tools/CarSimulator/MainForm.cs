@@ -25,7 +25,7 @@ namespace CarSimulator
 
             _lastPortCount = -1;
             _responseList = new List<CommThread.ResponseEntry>();
-            ReadResponseFile(Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "response.txt"));
+            UpdateResponseFiles();
             UpdatePorts();
             _commThread = new CommThread();
             timerUpdate.Enabled = true;
@@ -59,12 +59,36 @@ namespace CarSimulator
             _lastPortCount = ports.Length;
         }
 
+        private void UpdateResponseFiles()
+        {
+            string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            string[] files = Directory.GetFiles(appDir, "*.txt");
+            listBoxResponseFiles.BeginUpdate();
+            listBoxResponseFiles.Items.Clear();
+            string selectItem = null;
+            foreach (string file in files)
+            {
+                string baseFileName = Path.GetFileName(file);
+                if (string.Compare(baseFileName, "Response.txt", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    selectItem = baseFileName;
+                }
+                listBoxResponseFiles.Items.Add(baseFileName);
+            }
+            if (selectItem != null)
+            {
+                listBoxResponseFiles.SelectedItem = selectItem;
+            }
+            listBoxResponseFiles.EndUpdate();
+        }
+
         private bool ReadResponseFile(string fileName)
         {
             if (!File.Exists(fileName)) return false;
 
             try
             {
+                _responseList.Clear();
                 using (StreamReader streamReader = new StreamReader(fileName))
                 {
                     string line;
@@ -234,10 +258,20 @@ namespace CarSimulator
                 if (listPorts.SelectedIndex < 0) return;
                 string selectedPort = listPorts.SelectedItem.ToString();
 
-                CommThread.ProtocolType protocolType = CommThread.ProtocolType.protocolBwmFast;
-                if (radioButtonKwp2000S.Checked) protocolType = CommThread.ProtocolType.protocolKwp2000S;
-                if (radioButtonDs2.Checked) protocolType = CommThread.ProtocolType.protocolDs2;
-                _commThread.StartThread(selectedPort, protocolType, _responseList);
+                string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                string responseFile = (string)listBoxResponseFiles.SelectedItem;
+                if (responseFile != null)
+                {
+                    if (!ReadResponseFile(Path.Combine(appDir, responseFile)))
+                    {
+                        MessageBox.Show("Reading response file failed!");
+                    }
+                }
+
+                CommThread.ConceptType conceptType = CommThread.ConceptType.conceptBwmFast;
+                if (radioButtonKwp2000S.Checked) conceptType = CommThread.ConceptType.conceptKwp2000S;
+                if (radioButtonDs2.Checked) conceptType = CommThread.ConceptType.conceptDs2;
+                _commThread.StartThread(selectedPort, conceptType, _responseList);
             }
 
             UpdateDisplay();

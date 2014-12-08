@@ -37,18 +37,18 @@ namespace CarSimulator
             }
         }
 
-        public enum ProtocolType
+        public enum ConceptType
         {
-            protocolBwmFast,
-            protocolKwp2000S,
-            protocolDs2,
+            conceptBwmFast,
+            conceptKwp2000S,
+            conceptDs2,
         };
 
         private volatile bool   _stopThread;
         private bool            _threadRunning;
         private Thread          _workerThread;
         private string          _comPort;
-        private ProtocolType    _protocolType;
+        private ConceptType     _conceptType;
         private List<ResponseEntry> _responseList;
         private SerialPort       _serialPort;
         private byte[]          _sendData;
@@ -408,14 +408,14 @@ namespace CarSimulator
             Moving = false;
         }
 
-        public bool StartThread(string comPort, ProtocolType protocolType, List<ResponseEntry> responseList)
+        public bool StartThread(string comPort, ConceptType conceptType, List<ResponseEntry> responseList)
         {
             try
             {
                 StopThread();
                 _stopThread = false;
                 _comPort = comPort;
-                _protocolType = protocolType;
+                _conceptType = conceptType;
                 _responseList = responseList;
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
@@ -478,9 +478,9 @@ namespace CarSimulator
             try
             {
                 _serialPort.PortName = _comPort;
-                _serialPort.BaudRate = _protocolType == ProtocolType.protocolBwmFast ? 115200 : 9600;
+                _serialPort.BaudRate = _conceptType == ConceptType.conceptBwmFast ? 115200 : 9600;
                 _serialPort.DataBits = 8;
-                _serialPort.Parity = _protocolType == ProtocolType.protocolBwmFast ? Parity.None : Parity.Even;
+                _serialPort.Parity = _conceptType == ConceptType.conceptBwmFast ? Parity.None : Parity.Even;
                 _serialPort.StopBits = StopBits.One;
                 _serialPort.Handshake = Handshake.None;
                 _serialPort.ReadTimeout = 0;
@@ -515,7 +515,7 @@ namespace CarSimulator
             {
                 // wait for first byte
                 // for stable switching we always need 10ms, but then are problems with win CE client
-                int interByteTimeout = _protocolType == ProtocolType.protocolBwmFast ? 30 : 10;
+                int interByteTimeout = _conceptType == ConceptType.conceptBwmFast ? 30 : 10;
                 int lastBytesToRead = 0;
                 int recLen = 0;
                 _receiveStopWatch.Reset();
@@ -560,12 +560,12 @@ namespace CarSimulator
 
         private bool OBDSend(byte[] sendData)
         {
-            switch (_protocolType)
+            switch (_conceptType)
             {
-                case ProtocolType.protocolBwmFast:
+                case ConceptType.conceptBwmFast:
                     return SendBmwfast(sendData);
 
-                case ProtocolType.protocolKwp2000S:
+                case ConceptType.conceptKwp2000S:
                     {
                         byte[] tempArray = new byte[260];
                         // convert to KWP2000*
@@ -586,7 +586,7 @@ namespace CarSimulator
                         return SendKwp2000S(tempArray);
                     }
 
-                case ProtocolType.protocolDs2:
+                case ConceptType.conceptDs2:
                     {
                         byte[] tempArray = new byte[260];
                         // convert to DS2
@@ -617,12 +617,12 @@ namespace CarSimulator
 
         private bool OBDReceive(byte[] receiveData)
         {
-            switch (_protocolType)
+            switch (_conceptType)
             {
-                case ProtocolType.protocolBwmFast:
+                case ConceptType.conceptBwmFast:
                     return ReceiveBmwFast(receiveData);
 
-                case ProtocolType.protocolKwp2000S:
+                case ConceptType.conceptKwp2000S:
                     {
                         if (!ReceiveKwp2000S(receiveData))
                         {
@@ -646,7 +646,7 @@ namespace CarSimulator
                         return true;
                     }
 
-                case ProtocolType.protocolDs2:
+                case ConceptType.conceptDs2:
                     {
                         if (!ReceiveDs2(receiveData))
                         {
