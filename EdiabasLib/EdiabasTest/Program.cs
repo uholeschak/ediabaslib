@@ -115,10 +115,10 @@ namespace EdiabasTest
                 using (EdiabasNet ediabas = new EdiabasNet(cfgString))
                 {
                     EdInterfaceObd edInterfaceObd = new EdInterfaceObd();
-                    edInterfaceObd.ComPort = comPort;
                     ediabas.EdInterfaceClass = edInterfaceObd;
                     ediabas.ProgressJobFunc = ProgressJobFunc;
                     ediabas.ErrorRaisedFunc = ErrorRaisedFunc;
+                    edInterfaceObd.ComPort = comPort;
 
                     ediabas.SetConfigProperty("EcuPath", Path.GetDirectoryName(sgbdFile));
 
