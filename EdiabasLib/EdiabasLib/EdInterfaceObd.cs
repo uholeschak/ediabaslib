@@ -92,7 +92,7 @@ namespace EdiabasLib
                 switch (commParameter[0])
                 {
                     case 0x0006:    // DS2
-                        if (commParameter.Length < 8)
+                        if (commParameter.Length < 7)
                         {
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
