@@ -93,12 +93,6 @@ namespace EdiabasTest
                     return 1;
                 }
 
-                if (string.IsNullOrEmpty(comPort))
-                {
-                    outputWriter.WriteLine("No COM port specified");
-                    return 1;
-                }
-
                 if (jobNames.Count < 1)
                 {
                     outputWriter.WriteLine("No jobs specified");
@@ -118,7 +112,10 @@ namespace EdiabasTest
                     ediabas.EdInterfaceClass = edInterfaceObd;
                     ediabas.ProgressJobFunc = ProgressJobFunc;
                     ediabas.ErrorRaisedFunc = ErrorRaisedFunc;
-                    edInterfaceObd.ComPort = comPort;
+                    if (!string.IsNullOrEmpty(comPort))
+                    {
+                        edInterfaceObd.ComPort = comPort;
+                    }
 
                     ediabas.SetConfigProperty("EcuPath", Path.GetDirectoryName(sgbdFile));
 
