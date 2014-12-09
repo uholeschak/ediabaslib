@@ -87,6 +87,8 @@ namespace EdiabasLib
 
                 int baudRate;
                 Parity parity;
+                bool stateDtr = false;
+                bool stateRts = false;
                 switch (commParameter[0])
                 {
                     case 0x0006:    // DS2
@@ -103,6 +105,8 @@ namespace EdiabasLib
                         commAnswerLen = new short[] { -1, 0 };
                         baudRate = (int)commParameter[1];
                         parity = Parity.Even;
+                        stateDtr = false;
+                        stateRts = false;
                         this.parTransmitFunc = TransDS2;
                         this.parTimeoutStd = (int)commParameter[5];
                         this.parTimeoutTelEnd = (int)commParameter[7];
@@ -121,6 +125,8 @@ namespace EdiabasLib
                         }
                         baudRate = (int)commParameter[1];
                         parity = Parity.Even;
+                        stateDtr = false;
+                        stateRts = false;
                         this.parTransmitFunc = TransKwp2000S;
                         this.parTimeoutStd = (int)commParameter[2];
                         this.parTimeoutTelEnd = (int)commParameter[4];
@@ -141,6 +147,8 @@ namespace EdiabasLib
                         }
                         parity = Parity.None;
                         baudRate = (int)commParameter[1];
+                        stateDtr = true;
+                        stateRts = false;
                         this.parTransmitFunc = TransBmwFast;
                         this.parTimeoutStd = (int)commParameter[2];
                         this.parTimeoutTelEnd = (int)commParameter[4];
@@ -156,6 +164,8 @@ namespace EdiabasLib
                         }
                         parity = Parity.None;
                         baudRate = 115200;
+                        stateDtr = true;
+                        stateRts = false;
                         this.parTransmitFunc = TransBmwFast;
                         this.parTimeoutStd = (int)commParameter[7];
                         this.parTimeoutTelEnd = 10;
@@ -177,7 +187,7 @@ namespace EdiabasLib
                     }
                     if (interfaceSetDtrFunc != null)
                     {
-                        if (!interfaceSetDtrFunc(true))
+                        if (!interfaceSetDtrFunc(stateDtr))
                         {
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
@@ -185,7 +195,7 @@ namespace EdiabasLib
                     }
                     if (interfaceSetRtsFunc != null)
                     {
-                        if (!interfaceSetRtsFunc(false))
+                        if (!interfaceSetRtsFunc(stateRts))
                         {
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
