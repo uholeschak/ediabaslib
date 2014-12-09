@@ -513,8 +513,6 @@ namespace CarControl
         private string _comPort;
         private SerialPort _serialPort;
         private IntPtr _handleFtdi;
-        private int _baudRateFtdi;
-        private Parity _parityFtdi;
         private StreamWriter _swLog;
         private Stopwatch _logTimeWatch;
         private Stopwatch commStopWatch;
@@ -534,8 +532,6 @@ namespace CarControl
             _workerThread = null;
             _serialPort = new SerialPort();
             _handleFtdi = (IntPtr) 0;
-            _baudRateFtdi = 0;
-            _parityFtdi = Parity.None;
             _swLog = null;
             _logTimeWatch = new Stopwatch();
             commStopWatch = new Stopwatch();
@@ -546,6 +542,8 @@ namespace CarControl
             edInterfaceObd.InterfaceConnectFunc = InterfaceConnect;
             edInterfaceObd.InterfaceDisconnectFunc = InterfaceDisconnect;
             edInterfaceObd.InterfaceSetConfigFunc = InterfaceSetConfig;
+            edInterfaceObd.InterfaceSetDtrFunc = InterfaceSetDtr;
+            edInterfaceObd.InterfaceSetRtsFunc = InterfaceSetRts;
             edInterfaceObd.SendDataFunc = SendData;
             edInterfaceObd.ReceiveDataFunc = ReceiveData;
 
@@ -1369,19 +1367,17 @@ namespace CarControl
                         return false;
                     }
 
-                    ftStatus = Ftd2xx.FT_SetBaudRate(_handleFtdi, Ftd2xx.FT_BAUD_115200);
+                    ftStatus = Ftd2xx.FT_SetBaudRate(_handleFtdi, Ftd2xx.FT_BAUD_9600);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
                         return false;
                     }
-                    _baudRateFtdi = (int)Ftd2xx.FT_BAUD_115200;
 
                     ftStatus = Ftd2xx.FT_SetDataCharacteristics(_handleFtdi, Ftd2xx.FT_BITS_8, Ftd2xx.FT_STOP_BITS_1, Ftd2xx.FT_PARITY_NONE);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
                         return false;
                     }
-                    _parityFtdi = Parity.None;
 
                     ftStatus = Ftd2xx.FT_SetTimeouts(_handleFtdi, 0, _writeTimeout);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
@@ -1390,6 +1386,18 @@ namespace CarControl
                     }
 
                     ftStatus = Ftd2xx.FT_SetFlowControl(_handleFtdi, Ftd2xx.FT_FLOW_NONE, 0, 0);
+                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    {
+                        return false;
+                    }
+
+                    ftStatus = Ftd2xx.FT_ClrDtr(_handleFtdi);
+                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    {
+                        return false;
+                    }
+
+                    ftStatus = Ftd2xx.FT_ClrRts(_handleFtdi);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
                         return false;
@@ -1463,8 +1471,6 @@ namespace CarControl
                 Ftd2xx.FT_Close(_handleFtdi);
                 _handleFtdi = (IntPtr) 0;
             }
-            _baudRateFtdi = 0;
-            _parityFtdi = Parity.None;
             return true;
         }
 
@@ -1487,69 +1493,108 @@ namespace CarControl
             return true;
         }
 
+        private bool InterfaceSetDtr(bool dtr)
+        {
+            if (_handleFtdi == (IntPtr)0)
+            {   // com port
+                _serialPort.DtrEnable = dtr;
+            }
+            else
+            {
+                Ftd2xx.FT_STATUS ftStatus;
+
+                if (dtr)
+                {
+                    ftStatus = Ftd2xx.FT_SetDtr(_handleFtdi);
+                }
+                else
+                {
+                    ftStatus = Ftd2xx.FT_ClrDtr(_handleFtdi);
+                }
+                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool InterfaceSetRts(bool rts)
+        {
+            if (_handleFtdi == (IntPtr)0)
+            {   // com port
+                _serialPort.RtsEnable = rts;
+            }
+            else
+            {
+                Ftd2xx.FT_STATUS ftStatus;
+
+                if (rts)
+                {
+                    ftStatus = Ftd2xx.FT_SetRts(_handleFtdi);
+                }
+                else
+                {
+                    ftStatus = Ftd2xx.FT_ClrRts(_handleFtdi);
+                }
+                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private bool InterfaceSetConfig(int baudRate, Parity parity)
         {
             if (_handleFtdi == (IntPtr)0)
             {   // com port
-                if (_serialPort.BaudRate != baudRate)
-                {
-                    _serialPort.BaudRate = baudRate;
-                }
-                if (_serialPort.Parity != parity)
-                {
-                    _serialPort.Parity = parity;
-                }
+                _serialPort.BaudRate = baudRate;
+                _serialPort.Parity = parity;
             }
             else
             {
-                if (_baudRateFtdi != baudRate)
+                Ftd2xx.FT_STATUS ftStatus;
+
+                ftStatus = Ftd2xx.FT_SetBaudRate(_handleFtdi, (uint)baudRate);
+                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
-                    Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_SetBaudRate(_handleFtdi, (uint)baudRate);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
-                        return false;
-                    }
-                    _baudRateFtdi = baudRate;
+                    return false;
                 }
 
-                if (_parityFtdi != parity)
+                byte parityLocal;
+
+                switch (parity)
                 {
-                    byte parityLocal;
+                    case Parity.None:
+                        parityLocal = Ftd2xx.FT_PARITY_NONE;
+                        break;
 
-                    switch (parity)
-                    {
-                        case Parity.None:
-                            parityLocal = Ftd2xx.FT_PARITY_NONE;
-                            break;
+                    case Parity.Even:
+                        parityLocal = Ftd2xx.FT_PARITY_EVEN;
+                        break;
 
-                        case Parity.Even:
-                            parityLocal = Ftd2xx.FT_PARITY_EVEN;
-                            break;
+                    case Parity.Odd:
+                        parityLocal = Ftd2xx.FT_PARITY_ODD;
+                        break;
 
-                        case Parity.Odd:
-                            parityLocal = Ftd2xx.FT_PARITY_ODD;
-                            break;
+                    case Parity.Mark:
+                        parityLocal = Ftd2xx.FT_PARITY_MARK;
+                        break;
 
-                        case Parity.Mark:
-                            parityLocal = Ftd2xx.FT_PARITY_MARK;
-                            break;
+                    case Parity.Space:
+                        parityLocal = Ftd2xx.FT_PARITY_SPACE;
+                        break;
 
-                        case Parity.Space:
-                            parityLocal = Ftd2xx.FT_PARITY_SPACE;
-                            break;
-
-                        default:
-                            return false;
-                    }
-
-                    Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_SetDataCharacteristics(_handleFtdi, Ftd2xx.FT_BITS_8, Ftd2xx.FT_STOP_BITS_1, parityLocal);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
+                    default:
                         return false;
-                    }
-                    _parityFtdi = parity;
                 }
 
+                ftStatus = Ftd2xx.FT_SetDataCharacteristics(_handleFtdi, Ftd2xx.FT_BITS_8, Ftd2xx.FT_STOP_BITS_1, parityLocal);
+                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                {
+                    return false;
+                }
             }
             return true;
         }

@@ -2831,7 +2831,7 @@ namespace EdiabasLib
                     }
                 }
 
-                EdValueType[] parsArray = null;
+                EdValueType[] parsArray = new EdValueType[0];
                 if (dataTypeLen > 0 && (length % dataTypeLen == 0))
                 {
                     length /= dataTypeLen;
