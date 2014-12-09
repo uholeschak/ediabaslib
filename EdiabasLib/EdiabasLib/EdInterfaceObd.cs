@@ -10,6 +10,8 @@ namespace EdiabasLib
         public delegate bool InterfaceConnectDelegate();
         public delegate bool InterfaceDisconnectDelegate();
         public delegate bool InterfaceSetConfigDelegate(int baudRate, Parity parity);
+        public delegate bool InterfaceSetDtrDelegate(bool dtr);
+        public delegate bool InterfaceSetRtsDelegate(bool rts);
         public delegate bool SendDataDelegate(byte[] sendData, int length);
         public delegate bool ReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse);
         private delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR);
@@ -23,6 +25,8 @@ namespace EdiabasLib
         private InterfaceConnectDelegate interfaceConnectFunc = null;
         private InterfaceDisconnectDelegate interfaceDisconnectFunc = null;
         private InterfaceSetConfigDelegate interfaceSetConfigFunc = null;
+        private InterfaceSetDtrDelegate interfaceSetDtrFunc = null;
+        private InterfaceSetRtsDelegate interfaceSetRtsFunc = null;
         private SendDataDelegate sendDataFunc = null;
         private ReceiveDataDelegate receiveDataFunc = null;
         private Stopwatch stopWatch = new Stopwatch();
@@ -30,6 +34,12 @@ namespace EdiabasLib
         private byte[] state = new byte[2];
         private byte[] sendBuffer = new byte[260];
         private byte[] recBuffer = new byte[260];
+
+        private TransmitDelegate parTransmitFunc;
+        private int parTimeoutStd = 0;
+        private int parTimeoutTelEnd = 0;
+        private int parTimeoutNR = 0;
+        private int parRetryNR = 0;
 
         public override EdiabasNet Ediabas
         {
@@ -45,6 +55,149 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     comPort = prop;
+                }
+            }
+        }
+
+        public override UInt32[] CommParameter
+        {
+            get
+            {
+                return base.CommParameter;
+            }
+            set
+            {
+                base.CommParameter = value;
+
+                this.parTransmitFunc = null;
+                this.parTimeoutStd = 0;
+                this.parTimeoutTelEnd = 0;
+                this.parTimeoutNR = 0;
+                this.parRetryNR = 0;
+
+                if (commParameter == null)
+                {   // clear parameter
+                    return;
+                }
+                if (commParameter.Length < 1)
+                {
+                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                    return;
+                }
+
+                int baudRate;
+                Parity parity;
+                switch (commParameter[0])
+                {
+                    case 0x0006:    // DS2
+                        if (commParameter.Length < 8)
+                        {
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
+                        }
+                        if (commParameter.Length >= 10 && commParameter[33] != 1)
+                        {   // not checksum calculated by interface
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
+                        }
+                        commAnswerLen = new short[] { -1, 0 };
+                        baudRate = (int)commParameter[1];
+                        parity = Parity.Even;
+                        this.parTransmitFunc = TransDS2;
+                        this.parTimeoutStd = (int)commParameter[5];
+                        this.parTimeoutTelEnd = (int)commParameter[7];
+                        break;
+
+                    case 0x010D:    // KWP2000*
+                        if (commParameter.Length < 7)
+                        {
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
+                        }
+                        if (commParameter.Length >= 34 && commParameter[33] != 1)
+                        {   // not checksum calculated by interface
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
+                        }
+                        baudRate = (int)commParameter[1];
+                        parity = Parity.Even;
+                        this.parTransmitFunc = TransKwp2000S;
+                        this.parTimeoutStd = (int)commParameter[2];
+                        this.parTimeoutTelEnd = (int)commParameter[4];
+                        this.parTimeoutNR = (int)commParameter[7];
+                        this.parRetryNR = (int)commParameter[6];
+                        break;
+
+                    case 0x010F:    // BMW-FAST
+                        if (commParameter.Length < 7)
+                        {
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
+                        }
+                        if (commParameter.Length >= 8 && commParameter[7] != 1)
+                        {   // not checksum calculated by interface
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
+                        }
+                        parity = Parity.None;
+                        baudRate = (int)commParameter[1];
+                        this.parTransmitFunc = TransBmwFast;
+                        this.parTimeoutStd = (int)commParameter[2];
+                        this.parTimeoutTelEnd = (int)commParameter[4];
+                        this.parTimeoutNR = (int)commParameter[6];
+                        this.parRetryNR = (int)commParameter[5];
+                        break;
+
+                    case 0x0110:    // D-CAN
+                        if (commParameter.Length < 30)
+                        {
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
+                        }
+                        parity = Parity.None;
+                        baudRate = 115200;
+                        this.parTransmitFunc = TransBmwFast;
+                        this.parTimeoutStd = (int)commParameter[7];
+                        this.parTimeoutTelEnd = 10;
+                        this.parTimeoutNR = (int)commParameter[9];
+                        this.parRetryNR = (int)commParameter[10];
+                        break;
+
+                    default:
+                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
+                        return;
+                }
+
+                if (interfaceSetConfigFunc != null)
+                {
+                    if (!interfaceSetConfigFunc(baudRate, parity))
+                    {
+                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                        return;
+                    }
+                    if (interfaceSetDtrFunc != null)
+                    {
+                        if (!interfaceSetDtrFunc(true))
+                        {
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
+                        }
+                    }
+                    if (interfaceSetRtsFunc != null)
+                    {
+                        if (!interfaceSetRtsFunc(false))
+                        {
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    serialPort.BaudRate = baudRate;
+                    serialPort.Parity = parity;
+                    serialPort.DtrEnable = true;
+                    serialPort.RtsEnable = false;
                 }
             }
         }
@@ -184,11 +337,13 @@ namespace EdiabasLib
             try
             {
                 serialPort.PortName = comPort;
-                serialPort.BaudRate = 115200;
+                serialPort.BaudRate = 9600;
                 serialPort.DataBits = 8;
                 serialPort.Parity = Parity.None;
                 serialPort.StopBits = StopBits.One;
                 serialPort.Handshake = Handshake.None;
+                serialPort.DtrEnable = false;
+                serialPort.RtsEnable = false;
                 serialPort.ReadTimeout = 1;
                 serialPort.Open();
             }
@@ -280,6 +435,30 @@ namespace EdiabasLib
             set
             {
                 interfaceSetConfigFunc = value;
+            }
+        }
+
+        public InterfaceSetDtrDelegate InterfaceSetDtrFunc
+        {
+            get
+            {
+                return interfaceSetDtrFunc;
+            }
+            set
+            {
+                interfaceSetDtrFunc = value;
+            }
+        }
+
+        public InterfaceSetRtsDelegate InterfaceSetRtsFunc
+        {
+            get
+            {
+                return interfaceSetRtsFunc;
+            }
+            set
+            {
+                interfaceSetRtsFunc = value;
             }
         }
 
@@ -411,133 +590,16 @@ namespace EdiabasLib
                     return false;
                 }
             }
-
-            if ((commParameter == null) || (commParameter.Length < 1))
+            if (this.parTransmitFunc == null)
             {
-                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
                 return false;
-            }
-
-            TransmitDelegate transmitFunc;
-            int baudRate;
-            Parity parity;
-            int timeoutStd = 0;
-            int timeoutTelEnd = 0;
-            int timeoutNR = 0;
-            int retryNR = 0;
-            switch (commParameter[0])
-            {
-                case 0x0006:    // DS2
-                    if (commParameter.Length < 8)
-                    {
-                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                        return false;
-                    }
-                    if (commParameter.Length >= 10 && commParameter[33] != 1)
-                    {   // not checksum calculated by interface
-                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                        return false;
-                    }
-                    if (commAnswerLen == null)
-                    {
-                        commAnswerLen = new short[] {-1, 0};
-                    }
-                    transmitFunc = TransDS2;
-                    baudRate = (int)commParameter[1];
-                    parity = Parity.Even;
-                    timeoutStd = (int)commParameter[5];
-                    timeoutTelEnd = (int)commParameter[7];
-                    break;
-
-                case 0x010D:    // KWP2000*
-                    if (commParameter.Length < 7)
-                    {
-                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                        return false;
-                    }
-                    if (commParameter.Length >= 34 && commParameter[33] != 1)
-                    {   // not checksum calculated by interface
-                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                        return false;
-                    }
-                    transmitFunc = TransKwp2000S;
-                    baudRate = (int)commParameter[1];
-                    parity = Parity.Even;
-                    timeoutStd = (int)commParameter[2];
-                    timeoutTelEnd = (int)commParameter[4];
-                    timeoutNR = (int)commParameter[7];
-                    retryNR = (int)commParameter[6];
-                    break;
-
-                case 0x010F:    // BMW-FAST
-                    if (commParameter.Length < 7)
-                    {
-                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                        return false;
-                    }
-                    if (commParameter[1] != 115200)
-                    {   // not BMW-FAST baud rate
-                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                        return false;
-                    }
-                    if (commParameter.Length >= 8 && commParameter[7] != 1)
-                    {   // not checksum calculated by interface
-                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                        return false;
-                    }
-                    transmitFunc = TransBmwFast;
-                    parity = Parity.None;
-                    baudRate = (int)commParameter[1];
-                    timeoutStd = (int)commParameter[2];
-                    timeoutTelEnd = (int)commParameter[4];
-                    timeoutNR = (int)commParameter[6];
-                    retryNR = (int)commParameter[5];
-                    break;
-
-                case 0x0110:    // D-CAN
-                    if (commParameter.Length < 30)
-                    {
-                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                        return false;
-                    }
-                    transmitFunc = TransBmwFast;
-                    parity = Parity.None;
-                    baudRate = 115200;
-                    timeoutStd = (int)commParameter[7];
-                    timeoutTelEnd = 10;
-                    timeoutNR = (int)commParameter[9];
-                    retryNR = (int)commParameter[10];
-                    break;
-
-                default:
-                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
-                    return false;
-            }
-
-            if (interfaceSetConfigFunc != null)
-            {
-                if (!interfaceSetConfigFunc(baudRate, parity))
-                {
-                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                    return false;
-                }
-            }
-            else
-            {
-                if (serialPort.BaudRate != baudRate)
-                {
-                    serialPort.BaudRate = baudRate;
-                }
-                if (serialPort.Parity != parity)
-                {
-                    serialPort.Parity = parity;
-                }
             }
 
             EdiabasNet.ErrorCodes errorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
             for (int i = 0; i < commRepeats + 1; i++)
             {
-                errorCode = transmitFunc(sendData, sendDataLength, ref receiveData, out receiveLength, timeoutStd, timeoutTelEnd, timeoutNR, retryNR);
+                errorCode = this.parTransmitFunc(sendData, sendDataLength, ref receiveData, out receiveLength, this.parTimeoutStd, this.parTimeoutTelEnd, this.parTimeoutNR, this.parRetryNR);
                 if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
                     return true;

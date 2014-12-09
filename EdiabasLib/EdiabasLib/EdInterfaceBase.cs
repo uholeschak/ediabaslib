@@ -89,7 +89,7 @@ namespace EdiabasLib
             }
         }
 
-        public UInt32[] CommParameter
+        public virtual UInt32[] CommParameter
         {
             get
             {
@@ -98,7 +98,7 @@ namespace EdiabasLib
             set
             {
                 commParameter = value;
-                commAnswerLen = null;
+                commAnswerLen = new short[] { 0, 0 };
             }
         }
 
