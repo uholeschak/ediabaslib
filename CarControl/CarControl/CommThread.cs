@@ -1633,11 +1633,25 @@ namespace CarControl
             LogData(sendData, 0, length, "Send");
             if (_handleFtdi == (IntPtr)0)
             {   // com port
-                _serialPort.DiscardInBuffer();
-                _serialPort.Write(sendData, 0, length);
-                while (_serialPort.BytesToWrite > 0)
+                try
                 {
-                    Thread.Sleep(10);
+                    _serialPort.DiscardInBuffer();
+                    // make sure the buffer is really empty
+                    int bytesToRead = _serialPort.BytesToRead;
+                    if (bytesToRead > 0)
+                    {
+                        byte[] buffer = new byte[bytesToRead];
+                        _serialPort.Read(buffer, 0, bytesToRead);
+                    }
+                    _serialPort.Write(sendData, 0, length);
+                    while (_serialPort.BytesToWrite > 0)
+                    {
+                        Thread.Sleep(10);
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
                 }
             }
             else
