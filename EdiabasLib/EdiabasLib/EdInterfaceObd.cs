@@ -502,11 +502,25 @@ namespace EdiabasLib
             {
                 return sendDataFunc(sendData, length);
             }
-            serialPort.DiscardInBuffer();
-            serialPort.Write(sendData, 0, length);
-            while (serialPort.BytesToWrite > 0)
+            try
             {
-                Thread.Sleep(10);
+                serialPort.DiscardInBuffer();
+                // make sure the buffer is really empty
+                int bytesToRead = serialPort.BytesToRead;
+                if (bytesToRead > 0)
+                {
+                    byte[] buffer = new byte[bytesToRead];
+                    serialPort.Read(buffer, 0, bytesToRead);
+                }
+                serialPort.Write(sendData, 0, length);
+                while (serialPort.BytesToWrite > 0)
+                {
+                    Thread.Sleep(10);
+                }
+            }
+            catch (Exception)
+            {
+                return false;
             }
             return true;
         }
