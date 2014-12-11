@@ -12,6 +12,7 @@ namespace EdiabasLib
         public delegate bool InterfaceSetConfigDelegate(int baudRate, Parity parity);
         public delegate bool InterfaceSetDtrDelegate(bool dtr);
         public delegate bool InterfaceSetRtsDelegate(bool rts);
+        public delegate bool InterfaceGetDsrDelegate(out bool dsr);
         public delegate bool SendDataDelegate(byte[] sendData, int length);
         public delegate bool ReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse);
         private delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR);
@@ -27,6 +28,7 @@ namespace EdiabasLib
         private InterfaceSetConfigDelegate interfaceSetConfigFunc = null;
         private InterfaceSetDtrDelegate interfaceSetDtrFunc = null;
         private InterfaceSetRtsDelegate interfaceSetRtsFunc = null;
+        private InterfaceGetDsrDelegate interfaceGetDsrFunc = null;
         private SendDataDelegate sendDataFunc = null;
         private ReceiveDataDelegate receiveDataFunc = null;
         private Stopwatch stopWatch = new Stopwatch();
@@ -204,10 +206,22 @@ namespace EdiabasLib
                 }
                 else
                 {
-                    serialPort.BaudRate = baudRate;
-                    serialPort.Parity = parity;
-                    serialPort.DtrEnable = true;
-                    serialPort.RtsEnable = false;
+                    if (serialPort.BaudRate != baudRate)
+                    {
+                        serialPort.BaudRate = baudRate;
+                    }
+                    if (serialPort.Parity != parity)
+                    {
+                        serialPort.Parity = parity;
+                    }
+                    if (serialPort.DtrEnable != stateDtr)
+                    {
+                        serialPort.DtrEnable = stateDtr;
+                    }
+                    if (serialPort.RtsEnable != stateRts)
+                    {
+                        serialPort.RtsEnable = stateRts;
+                    }
                 }
             }
         }
@@ -256,6 +270,8 @@ namespace EdiabasLib
         {
             get
             {
+                state[0] = 0x00;
+                state[1] = (byte)(getDsrState() ? 0x00 : 0x30);
                 return state;
             }
         }
@@ -264,7 +280,7 @@ namespace EdiabasLib
         {
             get
             {
-                return 12000;
+                return (UInt32)(getDsrState() ? 12000 : 0);
             }
         }
 
@@ -272,7 +288,7 @@ namespace EdiabasLib
         {
             get
             {
-                return 12000;
+                return (UInt32)(getDsrState() ? 12000 : 0);
             }
         }
 
@@ -472,6 +488,18 @@ namespace EdiabasLib
             }
         }
 
+        public InterfaceGetDsrDelegate InterfaceGetDsrFunc
+        {
+            get
+            {
+                return interfaceGetDsrFunc;
+            }
+            set
+            {
+                interfaceGetDsrFunc = value;
+            }
+        }
+
         public SendDataDelegate SendDataFunc
         {
             get
@@ -494,6 +522,32 @@ namespace EdiabasLib
             {
                 receiveDataFunc = value;
             }
+        }
+
+        private bool getDsrState()
+        {
+            if (interfaceConnectFunc == null)
+            {
+                if (!serialPort.IsOpen)
+                {
+                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0019);
+                    return false;
+                }
+                return serialPort.DsrHolding;
+            }
+
+            if (interfaceGetDsrFunc == null)
+            {
+                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0019);
+                return false;
+            }
+            bool dsrState = false;
+            if (!interfaceGetDsrFunc(out dsrState))
+            {
+                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0019);
+                return false;
+            }
+            return dsrState;
         }
 
         private bool SendData(byte[] sendData, int length)

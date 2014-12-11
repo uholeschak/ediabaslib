@@ -244,6 +244,7 @@ namespace CarSimulator
             {
                 _commThread.Moving = checkBoxMoving.Checked;
                 _commThread.VariableValues = checkBoxVariableValues.Checked;
+                _commThread.IgnitionOk = checkBoxIgnitionOk.Checked;
             }
         }
 
@@ -284,6 +285,11 @@ namespace CarSimulator
         }
 
         private void checkBoxMoving_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateDisplay();
+        }
+
+        private void checkBoxIgnitionOk_CheckedChanged(object sender, EventArgs e)
         {
             UpdateDisplay();
         }

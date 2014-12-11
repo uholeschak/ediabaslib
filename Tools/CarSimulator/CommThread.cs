@@ -380,6 +380,12 @@ namespace CarSimulator
             set;
         }
 
+        public bool IgnitionOk
+        {
+            get;
+            set;
+        }
+
         public CommThread()
         {
             _stopThread = false;
@@ -406,6 +412,8 @@ namespace CarSimulator
             _timeIdleSpeedControlWrite = new Stopwatch();
             _receiveStopWatch = new Stopwatch();
             Moving = false;
+            VariableValues = false;
+            IgnitionOk = false;
         }
 
         public bool StartThread(string comPort, ConceptType conceptType, List<ResponseEntry> responseList)
@@ -484,6 +492,8 @@ namespace CarSimulator
                 _serialPort.StopBits = StopBits.One;
                 _serialPort.Handshake = Handshake.None;
                 _serialPort.ReadTimeout = 0;
+                _serialPort.DtrEnable = false;
+                _serialPort.RtsEnable = false;
                 _serialPort.Open();
             }
             catch (Exception)
@@ -513,6 +523,10 @@ namespace CarSimulator
         {
             try
             {
+                if (_serialPort.DtrEnable != IgnitionOk)
+                {
+                    _serialPort.DtrEnable = IgnitionOk;
+                }
                 // wait for first byte
                 // for stable switching we always need 10ms, but then are problems with win CE client
                 int interByteTimeout = _conceptType == ConceptType.conceptBwmFast ? 30 : 10;

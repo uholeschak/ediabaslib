@@ -544,6 +544,7 @@ namespace CarControl
             edInterfaceObd.InterfaceSetConfigFunc = InterfaceSetConfig;
             edInterfaceObd.InterfaceSetDtrFunc = InterfaceSetDtr;
             edInterfaceObd.InterfaceSetRtsFunc = InterfaceSetRts;
+            edInterfaceObd.InterfaceGetDsrFunc = InterfaceGetDsr;
             edInterfaceObd.SendDataFunc = SendData;
             edInterfaceObd.ReceiveDataFunc = ReceiveData;
 
@@ -1541,6 +1542,26 @@ namespace CarControl
                 {
                     return false;
                 }
+            }
+            return true;
+        }
+
+        private bool InterfaceGetDsr(out bool dsr)
+        {
+            if (_handleFtdi == (IntPtr)0)
+            {   // com port
+                dsr = _serialPort.DsrHolding;
+            }
+            else
+            {
+                dsr = false;
+                uint modemStatus = 0x0000;
+                Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_GetModemStatus(_handleFtdi, ref modemStatus);
+                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                {
+                    return false;
+                }
+                dsr = (modemStatus & 0x20) != 0;
             }
             return true;
         }

@@ -39,6 +39,7 @@
             this.radioButtonDs2 = new System.Windows.Forms.RadioButton();
             this.radioButtonKwp2000S = new System.Windows.Forms.RadioButton();
             this.listBoxResponseFiles = new System.Windows.Forms.ListBox();
+            this.checkBoxIgnitionOk = new System.Windows.Forms.CheckBox();
             this.groupBoxConcepts.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -103,9 +104,9 @@
             this.groupBoxConcepts.Controls.Add(this.radioButtonDs2);
             this.groupBoxConcepts.Controls.Add(this.radioButtonKwp2000S);
             this.groupBoxConcepts.Controls.Add(this.radioButtonBmwFast);
-            this.groupBoxConcepts.Location = new System.Drawing.Point(12, 88);
+            this.groupBoxConcepts.Location = new System.Drawing.Point(224, 88);
             this.groupBoxConcepts.Name = "groupBoxConcepts";
-            this.groupBoxConcepts.Size = new System.Drawing.Size(206, 94);
+            this.groupBoxConcepts.Size = new System.Drawing.Size(207, 94);
             this.groupBoxConcepts.TabIndex = 6;
             this.groupBoxConcepts.TabStop = false;
             this.groupBoxConcepts.Text = "Concepts";
@@ -135,17 +136,31 @@
             // listBoxResponseFiles
             // 
             this.listBoxResponseFiles.FormattingEnabled = true;
-            this.listBoxResponseFiles.Location = new System.Drawing.Point(12, 188);
+            this.listBoxResponseFiles.Location = new System.Drawing.Point(12, 88);
             this.listBoxResponseFiles.Name = "listBoxResponseFiles";
             this.listBoxResponseFiles.Size = new System.Drawing.Size(206, 108);
             this.listBoxResponseFiles.Sorted = true;
             this.listBoxResponseFiles.TabIndex = 7;
             // 
+            // checkBoxIgnitionOk
+            // 
+            this.checkBoxIgnitionOk.AutoSize = true;
+            this.checkBoxIgnitionOk.Checked = true;
+            this.checkBoxIgnitionOk.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxIgnitionOk.Location = new System.Drawing.Point(224, 42);
+            this.checkBoxIgnitionOk.Name = "checkBoxIgnitionOk";
+            this.checkBoxIgnitionOk.Size = new System.Drawing.Size(78, 17);
+            this.checkBoxIgnitionOk.TabIndex = 8;
+            this.checkBoxIgnitionOk.Text = "Ignition OK";
+            this.checkBoxIgnitionOk.UseVisualStyleBackColor = true;
+            this.checkBoxIgnitionOk.CheckedChanged += new System.EventHandler(this.checkBoxIgnitionOk_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(230, 307);
+            this.ClientSize = new System.Drawing.Size(443, 209);
+            this.Controls.Add(this.checkBoxIgnitionOk);
             this.Controls.Add(this.listBoxResponseFiles);
             this.Controls.Add(this.groupBoxConcepts);
             this.Controls.Add(this.checkBoxVariableValues);
@@ -174,6 +189,7 @@
         private System.Windows.Forms.RadioButton radioButtonKwp2000S;
         private System.Windows.Forms.RadioButton radioButtonDs2;
         private System.Windows.Forms.ListBox listBoxResponseFiles;
+        private System.Windows.Forms.CheckBox checkBoxIgnitionOk;
 
     }
 }
