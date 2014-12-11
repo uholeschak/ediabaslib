@@ -1636,13 +1636,6 @@ namespace CarControl
                 try
                 {
                     _serialPort.DiscardInBuffer();
-                    // make sure the buffer is really empty
-                    int bytesToRead = _serialPort.BytesToRead;
-                    if (bytesToRead > 0)
-                    {
-                        byte[] buffer = new byte[bytesToRead];
-                        _serialPort.Read(buffer, 0, bytesToRead);
-                    }
                     _serialPort.Write(sendData, 0, length);
                     while (_serialPort.BytesToWrite > 0)
                     {
