@@ -4470,6 +4470,7 @@ namespace EdiabasLib
 
         public void ResolveSgbdFile(string fileName)
         {
+            LogFormat(ED_LOG_LEVEL.INFO, "ResolveSgbdFile: {0}", fileName);
             if (JobRunning)
             {
                 throw new ArgumentOutOfRangeException("JobRunning", "ResolveSgbdFile: Job is running");
@@ -4477,6 +4478,7 @@ namespace EdiabasLib
             string baseFileName = Path.GetFileNameWithoutExtension(fileName).ToLower(culture);
             if (string.Compare(sgbdFileResolveLast, baseFileName, StringComparison.Ordinal) == 0)
             {   // same name specified
+                LogFormat(ED_LOG_LEVEL.INFO, "ResolveSgbdFile resolved: {0}", SgbdFileName);
                 return;
             }
 
@@ -4496,6 +4498,7 @@ namespace EdiabasLib
                     variantName = ExecuteIdentJob().ToLower(culture);
                     if (variantName.Length == 0)
                     {
+                        LogFormat(ED_LOG_LEVEL.ERROR, "ResolveSgbdFile: No variant found");
                         throw new ArgumentOutOfRangeException("variantName", "ResolveSgbdFile: No variant found");
                     }
                     lock (apiLock)
@@ -4509,6 +4512,7 @@ namespace EdiabasLib
             {
                 SgbdFileName = baseFileName + ".prg";
             }
+            LogFormat(ED_LOG_LEVEL.INFO, "ResolveSgbdFile resolved: {0}", SgbdFileName);
             sgbdFileResolveLast = baseFileName;
         }
 
