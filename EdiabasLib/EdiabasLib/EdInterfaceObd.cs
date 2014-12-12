@@ -668,7 +668,16 @@ namespace EdiabasLib
             }
 
             EdiabasNet.ErrorCodes errorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
-            for (int i = 0; i < commRepeats + 1; i++)
+            UInt32 retries = commRepeats;
+            string retryComm = ediabas.GetConfigProperty("RetryComm");
+            if (retryComm != null)
+            {
+                if (EdiabasNet.StringToValue(retryComm) == 0)
+                {
+                    retries = 0;
+                }
+            }
+            for (int i = 0; i < retries + 1; i++)
             {
                 errorCode = this.parTransmitFunc(sendData, sendDataLength, ref receiveData, out receiveLength, this.parTimeoutStd, this.parTimeoutTelEnd, this.parTimeoutNR, this.parRetryNR);
                 if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
