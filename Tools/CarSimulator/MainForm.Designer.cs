@@ -36,10 +36,12 @@
             this.checkBoxVariableValues = new System.Windows.Forms.CheckBox();
             this.radioButtonBmwFast = new System.Windows.Forms.RadioButton();
             this.groupBoxConcepts = new System.Windows.Forms.GroupBox();
+            this.radioButtonConcept2 = new System.Windows.Forms.RadioButton();
             this.radioButtonDs2 = new System.Windows.Forms.RadioButton();
             this.radioButtonKwp2000S = new System.Windows.Forms.RadioButton();
             this.listBoxResponseFiles = new System.Windows.Forms.ListBox();
             this.checkBoxIgnitionOk = new System.Windows.Forms.CheckBox();
+            this.radioButtonConcept1 = new System.Windows.Forms.RadioButton();
             this.groupBoxConcepts.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -101,15 +103,28 @@
             // 
             // groupBoxConcepts
             // 
+            this.groupBoxConcepts.Controls.Add(this.radioButtonConcept1);
+            this.groupBoxConcepts.Controls.Add(this.radioButtonConcept2);
             this.groupBoxConcepts.Controls.Add(this.radioButtonDs2);
             this.groupBoxConcepts.Controls.Add(this.radioButtonKwp2000S);
             this.groupBoxConcepts.Controls.Add(this.radioButtonBmwFast);
             this.groupBoxConcepts.Location = new System.Drawing.Point(224, 88);
             this.groupBoxConcepts.Name = "groupBoxConcepts";
-            this.groupBoxConcepts.Size = new System.Drawing.Size(207, 94);
+            this.groupBoxConcepts.Size = new System.Drawing.Size(207, 149);
             this.groupBoxConcepts.TabIndex = 6;
             this.groupBoxConcepts.TabStop = false;
             this.groupBoxConcepts.Text = "Concepts";
+            // 
+            // radioButtonConcept2
+            // 
+            this.radioButtonConcept2.AutoSize = true;
+            this.radioButtonConcept2.Location = new System.Drawing.Point(6, 88);
+            this.radioButtonConcept2.Name = "radioButtonConcept2";
+            this.radioButtonConcept2.Size = new System.Drawing.Size(158, 17);
+            this.radioButtonConcept2.TabIndex = 8;
+            this.radioButtonConcept2.TabStop = true;
+            this.radioButtonConcept2.Text = "Concept 2 (ISO 9141) /ADS";
+            this.radioButtonConcept2.UseVisualStyleBackColor = true;
             // 
             // radioButtonDs2
             // 
@@ -138,7 +153,7 @@
             this.listBoxResponseFiles.FormattingEnabled = true;
             this.listBoxResponseFiles.Location = new System.Drawing.Point(12, 88);
             this.listBoxResponseFiles.Name = "listBoxResponseFiles";
-            this.listBoxResponseFiles.Size = new System.Drawing.Size(206, 108);
+            this.listBoxResponseFiles.Size = new System.Drawing.Size(206, 147);
             this.listBoxResponseFiles.Sorted = true;
             this.listBoxResponseFiles.TabIndex = 7;
             // 
@@ -155,11 +170,22 @@
             this.checkBoxIgnitionOk.UseVisualStyleBackColor = true;
             this.checkBoxIgnitionOk.CheckedChanged += new System.EventHandler(this.checkBoxIgnitionOk_CheckedChanged);
             // 
+            // radioButtonConcept1
+            // 
+            this.radioButtonConcept1.AutoSize = true;
+            this.radioButtonConcept1.Location = new System.Drawing.Point(6, 111);
+            this.radioButtonConcept1.Name = "radioButtonConcept1";
+            this.radioButtonConcept1.Size = new System.Drawing.Size(101, 17);
+            this.radioButtonConcept1.TabIndex = 9;
+            this.radioButtonConcept1.TabStop = true;
+            this.radioButtonConcept1.Text = "Concept 1/ADS";
+            this.radioButtonConcept1.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(443, 209);
+            this.ClientSize = new System.Drawing.Size(443, 249);
             this.Controls.Add(this.checkBoxIgnitionOk);
             this.Controls.Add(this.listBoxResponseFiles);
             this.Controls.Add(this.groupBoxConcepts);
@@ -190,6 +216,8 @@
         private System.Windows.Forms.RadioButton radioButtonDs2;
         private System.Windows.Forms.ListBox listBoxResponseFiles;
         private System.Windows.Forms.CheckBox checkBoxIgnitionOk;
+        private System.Windows.Forms.RadioButton radioButtonConcept2;
+        private System.Windows.Forms.RadioButton radioButtonConcept1;
 
     }
 }

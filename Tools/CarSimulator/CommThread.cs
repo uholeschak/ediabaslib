@@ -1,10 +1,9 @@
 ﻿using System;
-
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.IO.Ports;
 using System.Diagnostics;
+using System.IO.Ports;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace CarSimulator
 {
@@ -42,6 +41,8 @@ namespace CarSimulator
             conceptBwmFast,
             conceptKwp2000S,
             conceptDs2,
+            concept2,     // ISO 9141
+            concept1,
         };
 
         private volatile bool   _stopThread;
@@ -50,7 +51,7 @@ namespace CarSimulator
         private string          _comPort;
         private ConceptType     _conceptType;
         private List<ResponseEntry> _responseList;
-        private SerialPort       _serialPort;
+        private SerialPort      _serialPort;
         private byte[]          _sendData;
         private byte[]          _receiveData;
         private byte[]          _receiveDataMotorBackup;
@@ -468,7 +469,64 @@ namespace CarSimulator
                 {
                     try
                     {
-                        SerialTransmission();
+                        if (_conceptType != ConceptType.concept2)
+                        {
+                            SerialTransmission();
+                        }
+                        else
+                        {
+                            bool initOk;
+                            byte wakeAddress;
+                            do
+                            {
+                                initOk = false;
+                                wakeAddress = 0x00;
+                                if (!ReceiveWakeUp(out wakeAddress))
+                                {
+                                    break;
+                                }
+                                Debug.WriteLine(string.Format("Wake Address: {0:X02}", wakeAddress));
+                                Thread.Sleep(100);
+                                _sendData[0] = 0x55;
+                                _serialPort.DiscardInBuffer();
+                                SendData(_sendData, 1);
+
+                                Thread.Sleep(10);
+                                _sendData[0] = 0x08;
+                                _sendData[1] = 0x08;
+                                //_sendData[0] = 0x94;
+                                //_sendData[1] = 0x94;
+                                //_sendData[0] = 0x8F;
+                                //_sendData[1] = 0xE9;
+                                _serialPort.DiscardInBuffer();
+                                SendData(_sendData, 2);
+
+                                if (ReceiveData(_receiveData, 0, 1, 50, 50))
+                                {
+                                    if ((byte)(~_receiveData[0]) == _sendData[1])
+                                    {
+                                        initOk = true;
+                                    }
+                                }
+                            } while (!initOk);
+
+                            _sendData[0] = (byte)(~wakeAddress);
+                            _serialPort.DiscardInBuffer();
+                            SendData(_sendData, 1);
+                            Debug.WriteLine("Init done");
+
+                            if (ReceiveData(_receiveData, 0, 1, 200, 200))
+                            {
+                                string text = string.Empty;
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    text += string.Format("{0:X02} ", _receiveData[i]);
+                                }
+                                Debug.WriteLine("Request: " + text);
+                            }
+
+                            Thread.Sleep(500);
+                        }
                     }
                     catch (Exception)
                     {
@@ -485,16 +543,39 @@ namespace CarSimulator
             if (_serialPort.IsOpen) return true;
             try
             {
+                int baudRate = 9600;
+                Parity parity = Parity.Even;
+                switch (_conceptType)
+                {
+                    case ConceptType.conceptBwmFast:
+                        baudRate = 115200;
+                        parity = Parity.None;
+                        break;
+
+                    case ConceptType.conceptKwp2000S:
+                    case ConceptType.conceptDs2:
+                    case ConceptType.concept1:
+                        baudRate = 9600;
+                        parity = Parity.Even;
+                        break;
+
+                    case ConceptType.concept2:
+                        baudRate = 10400;
+                        parity = Parity.None;
+                        break;
+                }
+
                 _serialPort.PortName = _comPort;
-                _serialPort.BaudRate = _conceptType == ConceptType.conceptBwmFast ? 115200 : 9600;
+                _serialPort.BaudRate = baudRate;
                 _serialPort.DataBits = 8;
-                _serialPort.Parity = _conceptType == ConceptType.conceptBwmFast ? Parity.None : Parity.Even;
+                _serialPort.Parity = parity;
                 _serialPort.StopBits = StopBits.One;
                 _serialPort.Handshake = Handshake.None;
                 _serialPort.ReadTimeout = 0;
                 _serialPort.DtrEnable = false;
                 _serialPort.RtsEnable = false;
                 _serialPort.Open();
+                _serialPort.BreakState = false;
             }
             catch (Exception)
             {
@@ -512,10 +593,87 @@ namespace CarSimulator
             return true;
         }
 
+        private bool ReceiveWakeUp(out byte address)
+        {
+            address = 0;
+            try
+            {
+                while (!_stopThread)
+                {
+                    if (_serialPort.DsrHolding)
+                    {   // start bit
+                        break;
+                    }
+                    Thread.Sleep(10);
+                }
+                if (_stopThread) return false;
+                Thread.Sleep(100);
+                int recValue = 0x00;
+                for (int i = 0; i < 9; i++)
+                {
+                    Thread.Sleep(200);
+                    if (!_serialPort.DsrHolding)
+                    {
+                        recValue |= (1 << i);
+                    }
+                    if (_stopThread) return false;
+                }
+                if ((recValue & 0x100) == 0)
+                {   // invalid stop bit
+                    return false;
+                }
+                Thread.Sleep(100);
+                address = (byte)recValue;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+#if false
+        private bool SendWakeUpResponse(byte value)
+        {
+            try
+            {
+                _serialPort.BreakState = true;  // start bit
+                Thread.Sleep(200);
+                if (_stopThread)
+                {
+                    _serialPort.BreakState = false;
+                    return false;
+                }
+                for (int i = 0; i < 8; i++)
+                {
+                    _serialPort.BreakState = (value & (1 << i)) == 0;
+                    Thread.Sleep(200);
+                    if (_stopThread)
+                    {
+                        _serialPort.BreakState = false;
+                        return false;
+                    }
+                }
+                _serialPort.BreakState = false; // stop bit
+                Thread.Sleep(200);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+#endif
         private bool SendData(byte[] sendData, int length)
         {
-            //_serialPort.DiscardInBuffer();
-            _serialPort.Write(sendData, 0, length);
+            try
+            {
+                //_serialPort.DiscardInBuffer();
+                _serialPort.Write(sendData, 0, length);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -572,6 +730,71 @@ namespace CarSimulator
             return true;
         }
 
+        private bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd)
+        {
+            try
+            {
+                // wait for first byte
+                int lastBytesToRead = 0;
+                _receiveStopWatch.Reset();
+                _receiveStopWatch.Start();
+                for (; ; )
+                {
+                    lastBytesToRead = _serialPort.BytesToRead;
+                    if (lastBytesToRead > 0)
+                    {
+                        break;
+                    }
+                    if (_receiveStopWatch.ElapsedMilliseconds > timeout)
+                    {
+                        _receiveStopWatch.Stop();
+                        return false;
+                    }
+                    Thread.Sleep(10);
+                }
+
+                int recLen = 0;
+                _receiveStopWatch.Reset();
+                _receiveStopWatch.Start();
+                for (; ; )
+                {
+                    int bytesToRead = _serialPort.BytesToRead;
+                    if (bytesToRead >= length)
+                    {
+                        recLen += _serialPort.Read(receiveData, offset + recLen, length - recLen);
+                    }
+                    if (recLen >= length)
+                    {
+                        break;
+                    }
+                    if (lastBytesToRead != bytesToRead)
+                    {   // bytes received
+                        _receiveStopWatch.Reset();
+                        _receiveStopWatch.Start();
+                        lastBytesToRead = bytesToRead;
+                    }
+                    else
+                    {
+                        if (_receiveStopWatch.ElapsedMilliseconds > timeoutTelEnd)
+                        {
+                            break;
+                        }
+                    }
+                    Thread.Sleep(10);
+                }
+                _receiveStopWatch.Stop();
+                if (recLen < length)
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         private bool OBDSend(byte[] sendData)
         {
             switch (_conceptType)
@@ -601,6 +824,7 @@ namespace CarSimulator
                     }
 
                 case ConceptType.conceptDs2:
+                case ConceptType.concept1:
                     {
                         byte[] tempArray = new byte[260];
                         // convert to DS2
@@ -661,6 +885,7 @@ namespace CarSimulator
                     }
 
                 case ConceptType.conceptDs2:
+                case ConceptType.concept1:
                     {
                         if (!ReceiveDs2(receiveData))
                         {
@@ -936,7 +1161,15 @@ namespace CarSimulator
             {
                 return;
             }
-            OBDSend(_receiveData);
+            switch (_conceptType)
+            {
+                case ConceptType.conceptBwmFast:
+                case ConceptType.conceptKwp2000S:
+                case ConceptType.conceptDs2:
+                    // send echo
+                    OBDSend(_receiveData);
+                    break;
+            }
             if (_noResponseCount > 0)
             {   // no response requested
                 _noResponseCount--;

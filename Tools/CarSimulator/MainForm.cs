@@ -272,6 +272,8 @@ namespace CarSimulator
                 CommThread.ConceptType conceptType = CommThread.ConceptType.conceptBwmFast;
                 if (radioButtonKwp2000S.Checked) conceptType = CommThread.ConceptType.conceptKwp2000S;
                 if (radioButtonDs2.Checked) conceptType = CommThread.ConceptType.conceptDs2;
+                if (radioButtonConcept2.Checked) conceptType = CommThread.ConceptType.concept2;
+                if (radioButtonConcept1.Checked) conceptType = CommThread.ConceptType.concept1;
                 _commThread.StartThread(selectedPort, conceptType, _responseList);
             }
 

@@ -1,0 +1,7 @@
+﻿;for vnc.prg (Concept 1)
+;all enries are in BWM-FAST format!
+
+;FS_LESEN
+81 2C F1 04 00 : 92 F1 2C A0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+;STATUS_LESEN
+82 2C F1 0B 04 00 : 8D F1 2C A0 00 00 00 00 2A 2A 02 4E 60 00 00 00 00
