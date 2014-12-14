@@ -49,6 +49,8 @@ namespace EdiabasLib
                     return;
                 }
 
+                ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, commParameter, 0, commParameter.Length, string.Format("{0} CommParameter Port={1}", InterfaceName, comPort));
+
                 int baudRate;
                 Parity parity;
                 bool stateDtr = false;
