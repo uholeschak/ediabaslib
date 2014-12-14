@@ -70,6 +70,7 @@ namespace CarSimulator
         private Stopwatch       _receiveStopWatch;
 
         private const double    _filterConst = 0.95;
+        private const int       _concept1Timeout = 200;
 
         // 0x38 EHC
         private byte[] _response381802FFFF = new byte[] {
@@ -510,19 +511,117 @@ namespace CarSimulator
                                 }
                             } while (!initOk);
 
-                            _sendData[0] = (byte)(~wakeAddress);
-                            _serialPort.DiscardInBuffer();
-                            SendData(_sendData, 1);
                             Debug.WriteLine("Init done");
 
-                            if (ReceiveData(_receiveData, 0, 1, 200, 200))
+                            byte blockCount = 1;
+                            int blockIndex = 0;
+                            for (; ; )
                             {
-                                string text = string.Empty;
-                                for (int i = 0; i < 1; i++)
+                                switch (blockIndex)
                                 {
-                                    text += string.Format("{0:X02} ", _receiveData[i]);
+                                    case 0:
+                                        _sendData[0] = 0x03;    // block length
+                                        _sendData[1] = blockCount++;    // block counter
+                                        _sendData[2] = 0x09;    // ACK
+                                        break;
+
+                                    case 1:
+                                        _sendData[0] = 0x0D;    // block length
+                                        _sendData[1] = blockCount++;    // block counter
+                                        _sendData[2] = 0xF6;    // ASCII
+                                        _sendData[3] = 0x35;
+                                        _sendData[4] = 0x37;
+                                        _sendData[5] = 0x30;
+                                        _sendData[6] = 0x33;
+                                        _sendData[7] = 0x30;
+                                        _sendData[8] = 0x32;
+                                        _sendData[9] = 0x31;
+                                        _sendData[10] = 0x36;
+                                        _sendData[11] = 0x32;
+                                        _sendData[12] = 0x30;
+                                        blockIndex++;
+                                        break;
+
+                                    case 2:
+                                        _sendData[0] = 0x0D;    // block length
+                                        _sendData[1] = blockCount++;    // block counter
+                                        _sendData[2] = 0xF6;    // ASCII
+                                        _sendData[3] = 0x34;
+                                        _sendData[4] = 0x33;
+                                        _sendData[5] = 0x39;
+                                        _sendData[6] = 0x37;
+                                        _sendData[7] = 0x35;
+                                        _sendData[8] = 0x33;
+                                        _sendData[9] = 0x37;
+                                        _sendData[10] = 0x36;
+                                        _sendData[11] = 0x32;
+                                        _sendData[12] = 0x31;
+                                        blockIndex++;
+                                        break;
+
+                                    case 3:
+                                        _sendData[0] = 0x0A;    // block length
+                                        _sendData[1] = blockCount++;    // block counter
+                                        _sendData[2] = 0xF6;    // ASCII
+                                        _sendData[3] = 0x37;
+                                        _sendData[4] = 0x35;
+                                        _sendData[5] = 0x31;
+                                        _sendData[6] = 0x33;
+                                        _sendData[7] = 0x30;
+                                        _sendData[8] = 0x34;
+                                        _sendData[9] = 0x31;
+                                        blockIndex++;
+                                        break;
+
+                                    case 4:
+                                        _sendData[0] = 0x06;    // block length
+                                        _sendData[1] = blockCount++;    // block counter
+                                        _sendData[2] = 0xF6;    // ASCII
+                                        _sendData[3] = 0x31;
+                                        _sendData[4] = 0x30;
+                                        _sendData[5] = 0x30;
+                                        blockIndex++;
+                                        break;
+
+                                    case 5:
+                                        _sendData[0] = 0x06;    // block length
+                                        _sendData[1] = blockCount++;    // block counter
+                                        _sendData[2] = 0xF6;    // ASCII
+                                        _sendData[3] = 0x34;
+                                        _sendData[4] = 0x37;
+                                        _sendData[5] = 0x31;
+                                        blockIndex++;
+                                        break;
+
+                                    case 6:
+                                        _sendData[0] = 0x03;    // block length
+                                        _sendData[1] = blockCount++;    // block counter
+                                        _sendData[2] = 0x09;    // ACK
+                                        break;
                                 }
-                                Debug.WriteLine("Request: " + text);
+                                if (!SendC1Block(_sendData))
+                                {
+                                    Debug.WriteLine("Send block failed");
+                                    break;
+                                }
+                                Debug.WriteLine("Send block ok");
+
+                                if (!ReceiveC1Block(_receiveData))
+                                {
+                                    Debug.WriteLine("Receive block failed");
+                                    break;
+                                }
+                                if (blockCount != _receiveData[1])
+                                {
+                                    Debug.WriteLine("Block count invalid");
+                                    break;
+                                }
+                                blockCount++;
+                                Debug.WriteLine("Receive block ok");
+                                if (_receiveData[2] == 0 && blockIndex == 0)
+                                {
+                                    blockIndex = 1;
+                                }
                             }
 
                             Thread.Sleep(500);
@@ -1072,6 +1171,71 @@ namespace CarSimulator
                 sum ^= data[i];
             }
             return sum;
+        }
+
+        private bool SendC1Block(byte[] sendData)
+        {
+            int blockLen = sendData[0];
+            byte[] buffer = new byte[1];
+            for (int i = 0; i < blockLen; i++)
+            {
+                _serialPort.DiscardInBuffer();
+                buffer[0] = sendData[i];
+                if (!SendData(buffer, 1))
+                {
+                    return false;
+                }
+                if (!ReceiveData(buffer, 0, 1, _concept1Timeout, _concept1Timeout))
+                {
+                    return false;
+                }
+                Debug.WriteLine(string.Format("Send {0:X02} Rec {1:X02}", sendData[i], (byte)(~buffer[0])));
+                if ((byte)(~buffer[0]) != sendData[i])
+                {
+                    return false;
+                }
+            }
+            buffer[0] = 0x03;   // block end
+            if (!SendData(buffer, 1))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool ReceiveC1Block(byte[] recData)
+        {
+            // block length
+            if (!ReceiveData(recData, 0, 1, _concept1Timeout, _concept1Timeout))
+            {
+                Debug.WriteLine("Nothing received");
+                return false;
+            }
+            Debug.WriteLine(string.Format("Rec {0:X02}", recData[0]));
+
+            int blockLen = recData[0];
+            byte[] buffer = new byte[1];
+            for (int i = 0; i < blockLen; i++)
+            {
+                _serialPort.DiscardInBuffer();
+                buffer[0] = (byte)~recData[i];
+                if (!SendData(buffer, 1))
+                {
+                    return false;
+                }
+                if (!ReceiveData(recData, i + 1, 1, _concept1Timeout, _concept1Timeout))
+                {
+                    Debug.WriteLine("Nothing received");
+                    return false;
+                }
+                Debug.WriteLine(string.Format("Rec {0:X02}", recData[i + 1]));
+            }
+            if (recData[blockLen] != 0x03)
+            {
+                Debug.WriteLine(string.Format("Block end invalid {0:X02}", recData[blockLen]));
+                return false;
+            }
+            return true;
         }
 
         private byte IntToBcd(int value)
