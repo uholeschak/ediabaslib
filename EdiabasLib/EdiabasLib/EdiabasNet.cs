@@ -5340,10 +5340,31 @@ namespace EdiabasLib
 
         public void LogData(ED_LOG_LEVEL logLevel, byte[] data, int offset, int length, string info)
         {
+            updateLogLevel();
+            if ((int)logLevel > logLevelCached)
+            {
+                return;
+            }
             StringBuilder stringBuilder = new StringBuilder(length);
             for (int i = 0; i < length; i++)
             {
                 stringBuilder.Append(string.Format(culture, "{0:X02} ", data[offset + i]));
+            }
+
+            LogString(logLevel, " (" + info + "): " + stringBuilder.ToString());
+        }
+
+        public void LogData(ED_LOG_LEVEL logLevel, UInt32[] data, int offset, int length, string info)
+        {
+            updateLogLevel();
+            if ((int)logLevel > logLevelCached)
+            {
+                return;
+            }
+            StringBuilder stringBuilder = new StringBuilder(length);
+            for (int i = 0; i < length; i++)
+            {
+                stringBuilder.Append(string.Format(culture, "{0:X08} ", data[offset + i]));
             }
 
             LogString(logLevel, " (" + info + "): " + stringBuilder.ToString());
