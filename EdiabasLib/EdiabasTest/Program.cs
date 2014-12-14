@@ -23,6 +23,7 @@ namespace EdiabasTest
             string sgbdFile = null;
             string comPort = null;
             string outFile = null;
+            string ifhName = string.Empty;
             bool appendFile = false;
             bool storeResults = false;
             bool printAllTypes = false;
@@ -42,6 +43,8 @@ namespace EdiabasTest
                   v => outFile = v },
                 { "a|append", "append output file.",
                   v => appendFile = v != null },
+                { "ifh=", "interface handler.",
+                  v => ifhName = v },
                 { "store", "store results.",
                   v => storeResults = v != null },
                 { "c|compare", "compare output.",
@@ -108,13 +111,38 @@ namespace EdiabasTest
 
                 using (EdiabasNet ediabas = new EdiabasNet(cfgString))
                 {
-                    EdInterfaceObd edInterfaceObd = new EdInterfaceObd();
-                    ediabas.EdInterfaceClass = edInterfaceObd;
+                    if (string.IsNullOrEmpty(ifhName))
+                    {
+                        ifhName = ediabas.GetConfigProperty("Interface");
+                    }
+                    EdInterfaceBase edInterface = new EdInterfaceObd();
+                    if (!string.IsNullOrEmpty(ifhName))
+                    {
+                        if (!edInterface.IsValidInterfaceName(ifhName))
+                        {
+                            edInterface.Dispose();
+                            edInterface = new EdInterfaceAds();
+                            if (!edInterface.IsValidInterfaceName(ifhName))
+                            {
+                                outputWriter.WriteLine("Interface not valid");
+                                return 1;
+                            }
+                        }
+                    }
+
+                    ediabas.EdInterfaceClass = edInterface;
                     ediabas.ProgressJobFunc = ProgressJobFunc;
                     ediabas.ErrorRaisedFunc = ErrorRaisedFunc;
                     if (!string.IsNullOrEmpty(comPort))
                     {
-                        edInterfaceObd.ComPort = comPort;
+                        if (edInterface is EdInterfaceObd)
+                        {
+                            ((EdInterfaceObd)edInterface).ComPort = comPort;
+                        }
+                        else if (edInterface is EdInterfaceAds)
+                        {
+                            ((EdInterfaceAds)edInterface).ComPort = comPort;
+                        }
                     }
 
                     ediabas.SetConfigProperty("EcuPath", Path.GetDirectoryName(sgbdFile));

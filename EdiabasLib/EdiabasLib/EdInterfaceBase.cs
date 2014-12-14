@@ -91,15 +91,8 @@ namespace EdiabasLib
 
         public virtual UInt32[] CommParameter
         {
-            get
-            {
-                return commParameter;
-            }
-            set
-            {
-                commParameter = value;
-                commAnswerLen = new short[] { 0, 0 };
-            }
+            get;
+            set;
         }
 
         public Int16[] CommAnswerLen

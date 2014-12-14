@@ -15,33 +15,33 @@ namespace EdiabasLib
         public delegate bool InterfaceGetDsrDelegate(out bool dsr);
         public delegate bool SendDataDelegate(byte[] sendData, int length);
         public delegate bool ReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse);
-        private delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR);
+        protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR);
 
         private bool disposed = false;
-        private static SerialPort serialPort = new SerialPort();
+        protected static SerialPort serialPort = new SerialPort();
 
-        private string comPort = string.Empty;
-        private bool connected = false;
-        private const int echoTimeout = 100;
-        private InterfaceConnectDelegate interfaceConnectFunc = null;
-        private InterfaceDisconnectDelegate interfaceDisconnectFunc = null;
-        private InterfaceSetConfigDelegate interfaceSetConfigFunc = null;
-        private InterfaceSetDtrDelegate interfaceSetDtrFunc = null;
-        private InterfaceSetRtsDelegate interfaceSetRtsFunc = null;
-        private InterfaceGetDsrDelegate interfaceGetDsrFunc = null;
-        private SendDataDelegate sendDataFunc = null;
-        private ReceiveDataDelegate receiveDataFunc = null;
-        private Stopwatch stopWatch = new Stopwatch();
-        private byte[] keyBytes = new byte[0];
-        private byte[] state = new byte[2];
-        private byte[] sendBuffer = new byte[260];
-        private byte[] recBuffer = new byte[260];
+        protected string comPort = string.Empty;
+        protected bool connected = false;
+        protected const int echoTimeout = 100;
+        protected InterfaceConnectDelegate interfaceConnectFunc = null;
+        protected InterfaceDisconnectDelegate interfaceDisconnectFunc = null;
+        protected InterfaceSetConfigDelegate interfaceSetConfigFunc = null;
+        protected InterfaceSetDtrDelegate interfaceSetDtrFunc = null;
+        protected InterfaceSetRtsDelegate interfaceSetRtsFunc = null;
+        protected InterfaceGetDsrDelegate interfaceGetDsrFunc = null;
+        protected SendDataDelegate sendDataFunc = null;
+        protected ReceiveDataDelegate receiveDataFunc = null;
+        protected Stopwatch stopWatch = new Stopwatch();
+        protected byte[] keyBytes = new byte[0];
+        protected byte[] state = new byte[2];
+        protected byte[] sendBuffer = new byte[260];
+        protected byte[] recBuffer = new byte[260];
 
-        private TransmitDelegate parTransmitFunc;
-        private int parTimeoutStd = 0;
-        private int parTimeoutTelEnd = 0;
-        private int parTimeoutNR = 0;
-        private int parRetryNR = 0;
+        protected TransmitDelegate parTransmitFunc;
+        protected int parTimeoutStd = 0;
+        protected int parTimeoutTelEnd = 0;
+        protected int parTimeoutNR = 0;
+        protected int parRetryNR = 0;
 
         public override EdiabasNet Ediabas
         {
@@ -69,7 +69,7 @@ namespace EdiabasLib
             }
             set
             {
-                base.CommParameter = value;
+                commParameter = value;
 
                 this.parTransmitFunc = null;
                 this.parTimeoutStd = 0;
@@ -93,27 +93,6 @@ namespace EdiabasLib
                 bool stateRts = false;
                 switch (commParameter[0])
                 {
-                    case 0x0001:    // Concept 1 (requires ADS adapter!)
-                        if (commParameter.Length < 7)
-                        {
-                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                            return;
-                        }
-                        if (commParameter.Length >= 10 && commParameter[33] != 1)
-                        {   // not checksum calculated by interface
-                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                            return;
-                        }
-                        commAnswerLen = new short[] { -2, 0 };
-                        baudRate = (int)commParameter[1];
-                        parity = Parity.Even;
-                        stateDtr = false;
-                        stateRts = false;
-                        this.parTransmitFunc = TransC1;
-                        this.parTimeoutStd = (int)commParameter[5];
-                        this.parTimeoutTelEnd = (int)commParameter[7];
-                        break;
-
                     case 0x0006:    // DS2
                         if (commParameter.Length < 7)
                         {
@@ -146,6 +125,7 @@ namespace EdiabasLib
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
                         }
+                        commAnswerLen = new short[] { 0, 0 };
                         baudRate = (int)commParameter[1];
                         parity = Parity.Even;
                         stateDtr = false;
@@ -168,8 +148,9 @@ namespace EdiabasLib
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
                         }
-                        parity = Parity.None;
+                        commAnswerLen = new short[] { 0, 0 };
                         baudRate = (int)commParameter[1];
+                        parity = Parity.None;
                         stateDtr = true;
                         stateRts = false;
                         this.parTransmitFunc = TransBmwFast;
@@ -185,8 +166,9 @@ namespace EdiabasLib
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
                         }
-                        parity = Parity.None;
+                        commAnswerLen = new short[] { 0, 0 };
                         baudRate = 115200;
+                        parity = Parity.None;
                         stateDtr = true;
                         stateRts = false;
                         this.parTransmitFunc = TransBmwFast;
@@ -546,7 +528,7 @@ namespace EdiabasLib
             }
         }
 
-        private bool getDsrState()
+        protected bool getDsrState()
         {
             if (interfaceConnectFunc == null)
             {
@@ -572,7 +554,7 @@ namespace EdiabasLib
             return dsrState;
         }
 
-        private bool SendData(byte[] sendData, int length)
+        protected bool SendData(byte[] sendData, int length)
         {
             if (sendDataFunc != null)
             {
@@ -594,7 +576,7 @@ namespace EdiabasLib
             return true;
         }
 
-        private bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse)
+        protected bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse)
         {
             if (receiveDataFunc != null)
             {
@@ -667,12 +649,12 @@ namespace EdiabasLib
             return true;
         }
 
-        private bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd)
+        protected bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd)
         {
             return ReceiveData(receiveData, offset, length, timeout, timeoutTelEnd, false);
         }
 
-        private bool OBDTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
+        protected bool OBDTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
             receiveLength = 0;
             if (interfaceConnectFunc == null)
@@ -1054,98 +1036,6 @@ namespace EdiabasLib
         }
 
         private byte CalcChecksumDS2(byte[] data, int length)
-        {
-            byte sum = 0;
-            for (int i = 0; i < length; i++)
-            {
-                sum ^= data[i];
-            }
-            return sum;
-        }
-
-        private EdiabasNet.ErrorCodes TransC1(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, int timeoutStd, int timeoutTelEnd, int timeoutNR, int retryNR)
-        {
-            receiveLength = 0;
-
-            if (sendDataLength > 0)
-            {
-                int sendLength = sendDataLength;
-                sendData[sendLength] = CalcChecksumC1(sendData, sendLength);
-                sendLength++;
-                ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, sendLength, "Send");
-                if (!SendData(sendData, sendLength))
-                {
-                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-                }
-                // no remote echo
-            }
-
-            // header byte
-            int headerLen = 0;
-            if (commAnswerLen != null && commAnswerLen.Length >= 2)
-            {
-                headerLen = commAnswerLen[0];
-                if (headerLen < 0)
-                {
-                    headerLen = (-headerLen) + 1;
-                }
-            }
-            if (headerLen == 0)
-            {
-                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Header lenght zero");
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
-            }
-            if (!ReceiveData(receiveData, 0, headerLen, timeoutStd, timeoutTelEnd))
-            {
-                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No header received");
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-            }
-
-            int recLength = TelLengthC1(receiveData);
-            if (recLength == 0)
-            {
-                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Receive lenght zero");
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-            }
-            if (!ReceiveData(receiveData, headerLen, recLength - headerLen, timeoutTelEnd, timeoutTelEnd))
-            {
-                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No tail received");
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-            }
-            ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, recLength, "Resp");
-            if (CalcChecksumC1(receiveData, recLength - 1) != receiveData[recLength - 1])
-            {
-                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Checksum incorrect");
-                ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, timeoutTelEnd, true);
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-            }
-
-            receiveLength = recLength;
-            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
-        }
-
-        // telegram length with checksum
-        private int TelLengthC1(byte[] dataBuffer)
-        {
-            int telLength = 0;
-            if (commAnswerLen != null && commAnswerLen.Length >= 2)
-            {
-                telLength = commAnswerLen[0];   // >0 fix length
-                if (telLength < 0)
-                {   // offset in buffer
-                    int offset = (-telLength);
-                    if (dataBuffer.Length < offset)
-                    {
-                        return 0;
-                    }
-                    telLength = dataBuffer[offset] + commAnswerLen[1];  // + answer offset
-                }
-            }
-            return telLength;
-        }
-
-        private byte CalcChecksumC1(byte[] data, int length)
         {
             byte sum = 0;
             for (int i = 0; i < length; i++)
