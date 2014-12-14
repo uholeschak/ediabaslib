@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EdInterfaceAds.cs" />
     <Compile Include="EdInterfaceBase.cs" />
     <Compile Include="EdInterfaceObd.cs" />
     <Compile Include="EdiabasNet.cs" />
