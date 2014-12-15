@@ -41,8 +41,7 @@ namespace CarSimulator
             conceptBwmFast,
             conceptKwp2000S,
             conceptDs2,
-            concept2,     // ISO 9141
-            concept1,
+            conceptIso9141,     // ISO 9141
         };
 
         private volatile bool   _stopThread;
@@ -50,6 +49,7 @@ namespace CarSimulator
         private Thread          _workerThread;
         private string          _comPort;
         private ConceptType     _conceptType;
+        private bool            _adsAdapter;
         private List<ResponseEntry> _responseList;
         private SerialPort      _serialPort;
         private byte[]          _sendData;
@@ -70,7 +70,7 @@ namespace CarSimulator
         private Stopwatch       _receiveStopWatch;
 
         private const double    _filterConst = 0.95;
-        private const int       _concept1Timeout = 200;
+        private const int       _isoTimeout = 2000;
 
         // 0x38 EHC
         private byte[] _response381802FFFF = new byte[] {
@@ -418,7 +418,7 @@ namespace CarSimulator
             IgnitionOk = false;
         }
 
-        public bool StartThread(string comPort, ConceptType conceptType, List<ResponseEntry> responseList)
+        public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, List<ResponseEntry> responseList)
         {
             try
             {
@@ -426,6 +426,7 @@ namespace CarSimulator
                 _stopThread = false;
                 _comPort = comPort;
                 _conceptType = conceptType;
+                _adsAdapter = adsAdapter;
                 _responseList = responseList;
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
@@ -470,7 +471,7 @@ namespace CarSimulator
                 {
                     try
                     {
-                        if (_conceptType != ConceptType.concept2)
+                        if (_conceptType != ConceptType.conceptIso9141)
                         {
                             SerialTransmission();
                         }
@@ -489,18 +490,16 @@ namespace CarSimulator
                                 Debug.WriteLine(string.Format("Wake Address: {0:X02}", wakeAddress));
                                 Thread.Sleep(100);
                                 _sendData[0] = 0x55;
-                                _serialPort.DiscardInBuffer();
-                                SendData(_sendData, 1);
+                                SendData(_sendData, 0, 1);
 
                                 Thread.Sleep(10);
-                                _sendData[0] = 0x08;
-                                _sendData[1] = 0x08;
-                                //_sendData[0] = 0x94;
-                                //_sendData[1] = 0x94;
-                                //_sendData[0] = 0x8F;
-                                //_sendData[1] = 0xE9;
-                                _serialPort.DiscardInBuffer();
-                                SendData(_sendData, 2);
+                                //_sendData[0] = 0x08;
+                                //_sendData[1] = 0x08;
+                                //_sendData[0] = 0x01;
+                                //_sendData[1] = 0x8A;
+                                _sendData[0] = 0x8F;
+                                _sendData[1] = 0xE9;
+                                SendData(_sendData, 0, 2);
 
                                 if (ReceiveData(_receiveData, 0, 1, 50, 50))
                                 {
@@ -517,9 +516,14 @@ namespace CarSimulator
                             int blockIndex = 0;
                             for (; ; )
                             {
+                                if (_stopThread)
+                                {
+                                    break;
+                                }
                                 switch (blockIndex)
                                 {
                                     case 0:
+                                    default:
                                         _sendData[0] = 0x03;    // block length
                                         _sendData[1] = blockCount++;    // block counter
                                         _sendData[2] = 0x09;    // ACK
@@ -590,23 +594,16 @@ namespace CarSimulator
                                         _sendData[3] = 0x34;
                                         _sendData[4] = 0x37;
                                         _sendData[5] = 0x31;
-                                        blockIndex++;
-                                        break;
-
-                                    case 6:
-                                        _sendData[0] = 0x03;    // block length
-                                        _sendData[1] = blockCount++;    // block counter
-                                        _sendData[2] = 0x09;    // ACK
+                                        blockIndex = 0;
                                         break;
                                 }
-                                if (!SendC1Block(_sendData))
+                                if (!SendIso9141Block(_sendData))
                                 {
                                     Debug.WriteLine("Send block failed");
                                     break;
                                 }
-                                Debug.WriteLine("Send block ok");
 
-                                if (!ReceiveC1Block(_receiveData))
+                                if (!ReceiveIso9141Block(_receiveData))
                                 {
                                     Debug.WriteLine("Receive block failed");
                                     break;
@@ -617,14 +614,11 @@ namespace CarSimulator
                                     break;
                                 }
                                 blockCount++;
-                                Debug.WriteLine("Receive block ok");
                                 if (_receiveData[2] == 0 && blockIndex == 0)
                                 {
                                     blockIndex = 1;
                                 }
                             }
-
-                            Thread.Sleep(500);
                         }
                     }
                     catch (Exception)
@@ -653,13 +647,13 @@ namespace CarSimulator
 
                     case ConceptType.conceptKwp2000S:
                     case ConceptType.conceptDs2:
-                    case ConceptType.concept1:
                         baudRate = 9600;
                         parity = Parity.Even;
                         break;
 
-                    case ConceptType.concept2:
+                    case ConceptType.conceptIso9141:
                         baudRate = 10400;
+                        //baudRate = 9600;
                         parity = Parity.None;
                         break;
                 }
@@ -763,16 +757,16 @@ namespace CarSimulator
         }
 #endif
         private bool SendData(byte[] sendData, int length)
-        {
-            try
-            {
-                //_serialPort.DiscardInBuffer();
-                _serialPort.Write(sendData, 0, length);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+        {   // no try cath to allow loop exit
+            //_serialPort.DiscardInBuffer();
+            _serialPort.Write(sendData, 0, length);
+            return true;
+        }
+
+        private bool SendData(byte[] sendData, int offset, int length)
+        {   // no try cath to allow loop exit
+            _serialPort.DiscardInBuffer();
+            _serialPort.Write(sendData, offset, length);
             return true;
         }
 
@@ -923,7 +917,6 @@ namespace CarSimulator
                     }
 
                 case ConceptType.conceptDs2:
-                case ConceptType.concept1:
                     {
                         byte[] tempArray = new byte[260];
                         // convert to DS2
@@ -984,7 +977,6 @@ namespace CarSimulator
                     }
 
                 case ConceptType.conceptDs2:
-                case ConceptType.concept1:
                     {
                         if (!ReceiveDs2(receiveData))
                         {
@@ -1173,40 +1165,43 @@ namespace CarSimulator
             return sum;
         }
 
-        private bool SendC1Block(byte[] sendData)
+        private bool SendIso9141Block(byte[] sendData)
         {
             int blockLen = sendData[0];
             byte[] buffer = new byte[1];
             for (int i = 0; i < blockLen; i++)
             {
+                if (_stopThread)
+                {
+                    return false;
+                }
                 _serialPort.DiscardInBuffer();
-                buffer[0] = sendData[i];
-                if (!SendData(buffer, 1))
+                if (!SendData(sendData, i, 1))
                 {
                     return false;
                 }
-                if (!ReceiveData(buffer, 0, 1, _concept1Timeout, _concept1Timeout))
+                if (!ReceiveData(buffer, 0, 1, _isoTimeout, _isoTimeout))
                 {
                     return false;
                 }
-                Debug.WriteLine(string.Format("Send {0:X02} Rec {1:X02}", sendData[i], (byte)(~buffer[0])));
+                Debug.WriteLine(string.Format("Send {0:X02}", sendData[i]));
                 if ((byte)(~buffer[0]) != sendData[i])
                 {
                     return false;
                 }
             }
             buffer[0] = 0x03;   // block end
-            if (!SendData(buffer, 1))
+            if (!SendData(buffer, 0, 1))
             {
                 return false;
             }
             return true;
         }
 
-        private bool ReceiveC1Block(byte[] recData)
+        private bool ReceiveIso9141Block(byte[] recData)
         {
             // block length
-            if (!ReceiveData(recData, 0, 1, _concept1Timeout, _concept1Timeout))
+            if (!ReceiveData(recData, 0, 1, _isoTimeout, _isoTimeout))
             {
                 Debug.WriteLine("Nothing received");
                 return false;
@@ -1217,13 +1212,16 @@ namespace CarSimulator
             byte[] buffer = new byte[1];
             for (int i = 0; i < blockLen; i++)
             {
-                _serialPort.DiscardInBuffer();
-                buffer[0] = (byte)~recData[i];
-                if (!SendData(buffer, 1))
+                if (_stopThread)
                 {
                     return false;
                 }
-                if (!ReceiveData(recData, i + 1, 1, _concept1Timeout, _concept1Timeout))
+                buffer[0] = (byte)~recData[i];
+                if (!SendData(buffer, 0, 1))
+                {
+                    return false;
+                }
+                if (!ReceiveData(recData, i + 1, 1, _isoTimeout, _isoTimeout))
                 {
                     Debug.WriteLine("Nothing received");
                     return false;
@@ -1325,14 +1323,10 @@ namespace CarSimulator
             {
                 return;
             }
-            switch (_conceptType)
+            if (!_adsAdapter)
             {
-                case ConceptType.conceptBwmFast:
-                case ConceptType.conceptKwp2000S:
-                case ConceptType.conceptDs2:
-                    // send echo
-                    OBDSend(_receiveData);
-                    break;
+                // send echo
+                OBDSend(_receiveData);
             }
             if (_noResponseCount > 0)
             {   // no response requested

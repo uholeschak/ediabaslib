@@ -1,4 +1,4 @@
-﻿;for vnc.prg (Concept 1)
+﻿;for vnc.prg (Concept 1/DS2)
 ;all enries are in BWM-FAST format!
 
 ;FS_LESEN
