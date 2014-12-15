@@ -95,6 +95,7 @@ namespace EdiabasLib
                 bool stateRts = false;
                 switch (commParameter[0])
                 {
+                    case 0x0001:    // Concept 1
                     case 0x0006:    // DS2
                         if (commParameter.Length < 7)
                         {
@@ -522,6 +523,14 @@ namespace EdiabasLib
             }
         }
 
+        protected virtual bool adapterEcho
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         protected bool getDsrState()
         {
             if (interfaceConnectFunc == null)
@@ -715,21 +724,24 @@ namespace EdiabasLib
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
-                // remove remote echo
-                if (!ReceiveData(receiveData, 0, sendLength, echoTimeout, timeoutTelEnd))
+                if (adapterEcho)
                 {
-                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No echo received");
-                    ReceiveData(receiveData, 0, receiveData.Length, echoTimeout, timeoutTelEnd, true);
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-                }
-                ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, sendLength, "Echo");
-                for (int i = 0; i < sendLength; i++)
-                {
-                    if (receiveData[i] != sendData[i])
+                    // remove remote echo
+                    if (!ReceiveData(receiveData, 0, sendLength, echoTimeout, timeoutTelEnd))
                     {
-                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Echo incorrect");
-                        ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, timeoutTelEnd, true);
+                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No echo received");
+                        ReceiveData(receiveData, 0, receiveData.Length, echoTimeout, timeoutTelEnd, true);
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    }
+                    ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, sendLength, "Echo");
+                    for (int i = 0; i < sendLength; i++)
+                    {
+                        if (receiveData[i] != sendData[i])
+                        {
+                            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Echo incorrect");
+                            ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, timeoutTelEnd, true);
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                        }
                     }
                 }
             }
@@ -845,21 +857,24 @@ namespace EdiabasLib
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
-                // remove remote echo
-                if (!ReceiveData(receiveData, 0, sendLength, echoTimeout, timeoutTelEnd))
+                if (adapterEcho)
                 {
-                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No echo received");
-                    ReceiveData(receiveData, 0, receiveData.Length, echoTimeout, timeoutTelEnd, true);
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-                }
-                ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, sendLength, "Echo");
-                for (int i = 0; i < sendLength; i++)
-                {
-                    if (receiveData[i] != sendData[i])
+                    // remove remote echo
+                    if (!ReceiveData(receiveData, 0, sendLength, echoTimeout, timeoutTelEnd))
                     {
-                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Echo incorrect");
-                        ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, timeoutTelEnd, true);
+                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No echo received");
+                        ReceiveData(receiveData, 0, receiveData.Length, echoTimeout, timeoutTelEnd, true);
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    }
+                    ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, sendLength, "Echo");
+                    for (int i = 0; i < sendLength; i++)
+                    {
+                        if (receiveData[i] != sendData[i])
+                        {
+                            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Echo incorrect");
+                            ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, timeoutTelEnd, true);
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                        }
                     }
                 }
             }
@@ -946,21 +961,24 @@ namespace EdiabasLib
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
-                // remove remote echo
-                if (!ReceiveData(receiveData, 0, sendLength, echoTimeout, timeoutTelEnd))
+                if (adapterEcho)
                 {
-                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No echo received");
-                    ReceiveData(receiveData, 0, receiveData.Length, echoTimeout, timeoutTelEnd, true);
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-                }
-                ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, sendLength, "Echo");
-                for (int i = 0; i < sendLength; i++)
-                {
-                    if (receiveData[i] != sendData[i])
+                    // remove remote echo
+                    if (!ReceiveData(receiveData, 0, sendLength, echoTimeout, timeoutTelEnd))
                     {
-                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Echo incorrect");
-                        ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, timeoutTelEnd, true);
+                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No echo received");
+                        ReceiveData(receiveData, 0, receiveData.Length, echoTimeout, timeoutTelEnd, true);
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    }
+                    ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, sendLength, "Echo");
+                    for (int i = 0; i < sendLength; i++)
+                    {
+                        if (receiveData[i] != sendData[i])
+                        {
+                            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Echo incorrect");
+                            ReceiveData(receiveData, 0, receiveData.Length, timeoutStd, timeoutTelEnd, true);
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                        }
                     }
                 }
             }
