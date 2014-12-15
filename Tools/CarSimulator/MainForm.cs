@@ -82,7 +82,7 @@ namespace CarSimulator
             listBoxResponseFiles.EndUpdate();
         }
 
-        private bool ReadResponseFile(string fileName)
+        private bool ReadResponseFile(string fileName, CommThread.ConceptType conceptType)
         {
             if (!File.Exists(fileName)) return false;
 
@@ -165,63 +165,150 @@ namespace CarSimulator
                     }
                 }
 
+                bool messageShown = false;
                 // split multi telegram responses
-                foreach (CommThread.ResponseEntry responseEntry in _responseList)
+                if (conceptType == CommThread.ConceptType.conceptIso9141)
                 {
+                    foreach (CommThread.ResponseEntry responseEntry in _responseList)
                     {
-                        if (responseEntry.Request.Length < 4)
                         {
-                            MessageBox.Show("Invalid response file request length!");
+                            if (responseEntry.Request.Length < 3)
+                            {
+                                if (!messageShown)
+                                {
+                                    messageShown = true;
+                                    MessageBox.Show("Invalid response file request length!");
+                                }
+                            }
+                            else
+                            {
+                                int telLength = responseEntry.Request[0];
+                                if (telLength != responseEntry.Request.Length)
+                                {
+                                    if (!messageShown)
+                                    {
+                                        messageShown = true;
+                                        MessageBox.Show("Invalid response file request!");
+                                    }
+                                }
+                            }
                         }
-                        else
+
+                        int telOffset = 0;
+                        while ((telOffset + 1) < responseEntry.Response.Length)
                         {
-                            int telLength = responseEntry.Request[0] & 0x3F;
+                            if ((responseEntry.Response.Length - telOffset) < 3)
+                            {
+                                break;
+                            }
+                            int telLength = responseEntry.Response[telOffset + 0];
+                            if (telLength < 3)
+                            {
+                                if (!messageShown)
+                                {
+                                    messageShown = true;
+                                    MessageBox.Show("Invalid response file response!");
+                                }
+                                break;
+                            }
+                            if (telOffset + telLength > responseEntry.Response.Length)
+                            {
+                                break;
+                            }
+                            byte[] responseTel = new byte[telLength];
+                            Array.Copy(responseEntry.Response, telOffset, responseTel, 0, telLength);
+                            responseEntry.ResponseList.Add(responseTel);
+                            telOffset += telLength;
+                        }
+                        if (telOffset != responseEntry.Response.Length)
+                        {
+                            if (!messageShown)
+                            {
+                                messageShown = true;
+                                MessageBox.Show("Invalid response file response!");
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (CommThread.ResponseEntry responseEntry in _responseList)
+                    {
+                        {
+                            if (responseEntry.Request.Length < 4)
+                            {
+                                if (!messageShown)
+                                {
+                                    messageShown = true;
+                                    MessageBox.Show("Invalid response file request length!");
+                                }
+                            }
+                            else
+                            {
+                                int telLength = responseEntry.Request[0] & 0x3F;
+                                if (telLength == 0)
+                                {   // with length byte
+                                    telLength = responseEntry.Request[3] + 5;
+                                }
+                                else
+                                {
+                                    telLength += 4;
+                                }
+                                if (telLength != responseEntry.Request.Length)
+                                {
+                                    if (!messageShown)
+                                    {
+                                        messageShown = true;
+                                        MessageBox.Show("Invalid response file request!");
+                                    }
+                                }
+                            }
+                        }
+
+                        int telOffset = 0;
+                        while ((telOffset + 1) < responseEntry.Response.Length)
+                        {
+                            if ((responseEntry.Response.Length - telOffset) < 4)
+                            {
+                                break;
+                            }
+                            int telLength = responseEntry.Response[telOffset + 0] & 0x3F;
                             if (telLength == 0)
                             {   // with length byte
-                                telLength = responseEntry.Request[3] + 5;
+                                telLength = responseEntry.Response[telOffset + 3] + 5;
                             }
                             else
                             {
                                 telLength += 4;
                             }
-                            if (telLength != responseEntry.Request.Length)
+                            if (telLength < 4)
                             {
-                                MessageBox.Show("Invalid response file request!");
+                                if (!messageShown)
+                                {
+                                    messageShown = true;
+                                    MessageBox.Show("Invalid response file response!");
+                                }
+                                break;
+                            }
+                            if (telOffset + telLength > responseEntry.Response.Length)
+                            {
+                                break;
+                            }
+                            byte[] responseTel = new byte[telLength];
+                            Array.Copy(responseEntry.Response, telOffset, responseTel, 0, telLength);
+                            responseEntry.ResponseList.Add(responseTel);
+                            telOffset += telLength;
+                        }
+                        if (telOffset != responseEntry.Response.Length)
+                        {
+                            if (!messageShown)
+                            {
+                                messageShown = true;
+                                MessageBox.Show("Invalid response file response!");
                             }
                         }
                     }
-
-                    int telOffset = 0;
-                    while ((telOffset + 1) < responseEntry.Response.Length)
-                    {
-                        if ((responseEntry.Response.Length - telOffset) < 4)
-                        {
-                            break;
-                        }
-                        int telLength = responseEntry.Response[telOffset + 0] & 0x3F;
-                        if (telLength == 0)
-                        {   // with length byte
-                            telLength = responseEntry.Response[telOffset + 3] + 5;
-                        }
-                        else
-                        {
-                            telLength += 4;
-                        }
-                        if (telOffset + telLength > responseEntry.Response.Length)
-                        {
-                            break;
-                        }
-                        byte[] responseTel = new byte[telLength];
-                        Array.Copy(responseEntry.Response, telOffset, responseTel, 0, telLength);
-                        responseEntry.ResponseList.Add(responseTel);
-                        telOffset += telLength;
-                    }
-                    if (telOffset != responseEntry.Response.Length)
-                    {
-                        MessageBox.Show("Invalid response file response!");
-                    }
                 }
-
             }
             catch
             {
@@ -259,20 +346,21 @@ namespace CarSimulator
                 if (listPorts.SelectedIndex < 0) return;
                 string selectedPort = listPorts.SelectedItem.ToString();
 
+                CommThread.ConceptType conceptType = CommThread.ConceptType.conceptBwmFast;
+                if (radioButtonKwp2000S.Checked) conceptType = CommThread.ConceptType.conceptKwp2000S;
+                if (radioButtonDs2.Checked) conceptType = CommThread.ConceptType.conceptDs2;
+                if (radioButtonIso9141.Checked) conceptType = CommThread.ConceptType.conceptIso9141;
+
                 string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 string responseFile = (string)listBoxResponseFiles.SelectedItem;
                 if (responseFile != null)
                 {
-                    if (!ReadResponseFile(Path.Combine(appDir, responseFile)))
+                    if (!ReadResponseFile(Path.Combine(appDir, responseFile), conceptType))
                     {
                         MessageBox.Show("Reading response file failed!");
                     }
                 }
 
-                CommThread.ConceptType conceptType = CommThread.ConceptType.conceptBwmFast;
-                if (radioButtonKwp2000S.Checked) conceptType = CommThread.ConceptType.conceptKwp2000S;
-                if (radioButtonDs2.Checked) conceptType = CommThread.ConceptType.conceptDs2;
-                if (radioButtonIso9141.Checked) conceptType = CommThread.ConceptType.conceptIso9141;
                 _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, _responseList);
             }
 

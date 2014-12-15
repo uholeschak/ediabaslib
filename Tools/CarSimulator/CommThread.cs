@@ -9,7 +9,7 @@ namespace CarSimulator
 {
     class CommThread
     {
-        public struct ResponseEntry
+        public class ResponseEntry
         {
             private byte[] requestArray;
             private byte[] responseArray;
@@ -477,148 +477,7 @@ namespace CarSimulator
                         }
                         else
                         {
-                            bool initOk;
-                            byte wakeAddress;
-                            do
-                            {
-                                initOk = false;
-                                wakeAddress = 0x00;
-                                if (!ReceiveWakeUp(out wakeAddress))
-                                {
-                                    break;
-                                }
-                                Debug.WriteLine(string.Format("Wake Address: {0:X02}", wakeAddress));
-                                Thread.Sleep(100);
-                                _sendData[0] = 0x55;
-                                SendData(_sendData, 0, 1);
-
-                                Thread.Sleep(10);
-                                //_sendData[0] = 0x08;
-                                //_sendData[1] = 0x08;
-                                //_sendData[0] = 0x01;
-                                //_sendData[1] = 0x8A;
-                                _sendData[0] = 0x8F;
-                                _sendData[1] = 0xE9;
-                                SendData(_sendData, 0, 2);
-
-                                if (ReceiveData(_receiveData, 0, 1, 50, 50))
-                                {
-                                    if ((byte)(~_receiveData[0]) == _sendData[1])
-                                    {
-                                        initOk = true;
-                                    }
-                                }
-                            } while (!initOk);
-
-                            Debug.WriteLine("Init done");
-
-                            byte blockCount = 1;
-                            int blockIndex = 0;
-                            for (; ; )
-                            {
-                                if (_stopThread)
-                                {
-                                    break;
-                                }
-                                switch (blockIndex)
-                                {
-                                    case 0:
-                                    default:
-                                        _sendData[0] = 0x03;    // block length
-                                        _sendData[1] = blockCount++;    // block counter
-                                        _sendData[2] = 0x09;    // ACK
-                                        break;
-
-                                    case 1:
-                                        _sendData[0] = 0x0D;    // block length
-                                        _sendData[1] = blockCount++;    // block counter
-                                        _sendData[2] = 0xF6;    // ASCII
-                                        _sendData[3] = 0x35;
-                                        _sendData[4] = 0x37;
-                                        _sendData[5] = 0x30;
-                                        _sendData[6] = 0x33;
-                                        _sendData[7] = 0x30;
-                                        _sendData[8] = 0x32;
-                                        _sendData[9] = 0x31;
-                                        _sendData[10] = 0x36;
-                                        _sendData[11] = 0x32;
-                                        _sendData[12] = 0x30;
-                                        blockIndex++;
-                                        break;
-
-                                    case 2:
-                                        _sendData[0] = 0x0D;    // block length
-                                        _sendData[1] = blockCount++;    // block counter
-                                        _sendData[2] = 0xF6;    // ASCII
-                                        _sendData[3] = 0x34;
-                                        _sendData[4] = 0x33;
-                                        _sendData[5] = 0x39;
-                                        _sendData[6] = 0x37;
-                                        _sendData[7] = 0x35;
-                                        _sendData[8] = 0x33;
-                                        _sendData[9] = 0x37;
-                                        _sendData[10] = 0x36;
-                                        _sendData[11] = 0x32;
-                                        _sendData[12] = 0x31;
-                                        blockIndex++;
-                                        break;
-
-                                    case 3:
-                                        _sendData[0] = 0x0A;    // block length
-                                        _sendData[1] = blockCount++;    // block counter
-                                        _sendData[2] = 0xF6;    // ASCII
-                                        _sendData[3] = 0x37;
-                                        _sendData[4] = 0x35;
-                                        _sendData[5] = 0x31;
-                                        _sendData[6] = 0x33;
-                                        _sendData[7] = 0x30;
-                                        _sendData[8] = 0x34;
-                                        _sendData[9] = 0x31;
-                                        blockIndex++;
-                                        break;
-
-                                    case 4:
-                                        _sendData[0] = 0x06;    // block length
-                                        _sendData[1] = blockCount++;    // block counter
-                                        _sendData[2] = 0xF6;    // ASCII
-                                        _sendData[3] = 0x31;
-                                        _sendData[4] = 0x30;
-                                        _sendData[5] = 0x30;
-                                        blockIndex++;
-                                        break;
-
-                                    case 5:
-                                        _sendData[0] = 0x06;    // block length
-                                        _sendData[1] = blockCount++;    // block counter
-                                        _sendData[2] = 0xF6;    // ASCII
-                                        _sendData[3] = 0x34;
-                                        _sendData[4] = 0x37;
-                                        _sendData[5] = 0x31;
-                                        blockIndex = 0;
-                                        break;
-                                }
-                                if (!SendIso9141Block(_sendData))
-                                {
-                                    Debug.WriteLine("Send block failed");
-                                    break;
-                                }
-
-                                if (!ReceiveIso9141Block(_receiveData))
-                                {
-                                    Debug.WriteLine("Receive block failed");
-                                    break;
-                                }
-                                if (blockCount != _receiveData[1])
-                                {
-                                    Debug.WriteLine("Block count invalid");
-                                    break;
-                                }
-                                blockCount++;
-                                if (_receiveData[2] == 0 && blockIndex == 0)
-                                {
-                                    blockIndex = 1;
-                                }
-                            }
+                            SerialIso9141Transmission();
                         }
                     }
                     catch (Exception)
@@ -3397,6 +3256,129 @@ namespace CarSimulator
                         text += string.Format("{0:X02} ", _receiveData[i]);
                     }
                     Debug.WriteLine("Not found: " + text);
+                }
+            }
+        }
+
+        private void SerialIso9141Transmission()
+        {
+            bool initOk;
+            byte wakeAddress;
+            do
+            {
+                initOk = false;
+                wakeAddress = 0x00;
+                if (!ReceiveWakeUp(out wakeAddress))
+                {
+                    break;
+                }
+                Debug.WriteLine(string.Format("Wake Address: {0:X02}", wakeAddress));
+                Thread.Sleep(100);
+                _sendData[0] = 0x55;
+                SendData(_sendData, 0, 1);
+
+                Thread.Sleep(10);
+                //_sendData[0] = 0x08;
+                //_sendData[1] = 0x08;
+                //_sendData[0] = 0x01;
+                //_sendData[1] = 0x8A;
+                _sendData[0] = 0x8F;
+                _sendData[1] = 0xE9;
+                SendData(_sendData, 0, 2);
+
+                if (ReceiveData(_receiveData, 0, 1, 50, 50))
+                {
+                    if ((byte)(~_receiveData[0]) == _sendData[1])
+                    {
+                        initOk = true;
+                    }
+                }
+            } while (!initOk);
+
+            Debug.WriteLine("Init done");
+
+            byte blockCount = 1;
+            int telBlockIndex = 0;
+            ResponseEntry activeResponse = null;
+            for (; ; )
+            {
+                if (_stopThread)
+                {
+                    break;
+                }
+
+                _sendData[0] = 0x03;    // block length
+                _sendData[2] = 0x09;    // ACK
+                if (activeResponse != null)
+                {
+                    if (telBlockIndex < activeResponse.ResponseList.Count)
+                    {
+                        byte[] responseTel = activeResponse.ResponseList[telBlockIndex];
+                        Array.Copy(responseTel, _sendData, responseTel.Length);
+                        telBlockIndex++;
+                    }
+                    if (telBlockIndex >= activeResponse.ResponseList.Count)
+                    {
+                        activeResponse = null;
+                    }
+                }
+                _sendData[1] = blockCount++;    // block counter
+
+                if (!SendIso9141Block(_sendData))
+                {
+                    Debug.WriteLine("Send block failed");
+                    break;
+                }
+
+                if (!ReceiveIso9141Block(_receiveData))
+                {
+                    Debug.WriteLine("Receive block failed");
+                    break;
+                }
+                if (blockCount != _receiveData[1])
+                {
+                    Debug.WriteLine("Block count invalid");
+                    break;
+                }
+                blockCount++;
+                byte command = _receiveData[2];
+                int recLength = _receiveData[0];
+                if (command != 0x09)
+                {   // no ack
+                    bool found = false;
+                    foreach (ResponseEntry responseEntry in _responseList)
+                    {
+                        if (recLength != responseEntry.Request.Length) continue;
+                        bool equal = true;
+                        for (int i = 0; i < recLength; i++)
+                        {
+                            if (i == 1)
+                            {   // don't compare block count
+                                continue;
+                            }
+                            if (_receiveData[i] != responseEntry.Request[i])
+                            {
+                                equal = false;
+                                break;
+                            }
+                        }
+                        if (equal)
+                        {       // entry found
+                            found = true;
+                            activeResponse = responseEntry;
+                            telBlockIndex = 0;
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        string text = string.Empty;
+                        for (int i = 0; i < recLength; i++)
+                        {
+                            text += string.Format("{0:X02} ", _receiveData[i]);
+                        }
+                        Debug.WriteLine("Not found: " + text);
+                    }
                 }
             }
         }

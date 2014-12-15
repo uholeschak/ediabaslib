@@ -76,6 +76,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="dm33s501.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Response.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
