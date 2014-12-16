@@ -1034,7 +1034,7 @@ namespace CarSimulator
                 {
                     return false;
                 }
-                _serialPort.DiscardInBuffer();
+                Debug.WriteLine(string.Format("Send {0:X02}", sendData[i]));
                 if (!SendData(sendData, i, 1))
                 {
                     return false;
@@ -1043,7 +1043,6 @@ namespace CarSimulator
                 {
                     return false;
                 }
-                Debug.WriteLine(string.Format("Send {0:X02}", sendData[i]));
                 if ((byte)(~buffer[0]) != sendData[i])
                 {
                     return false;
@@ -3282,8 +3281,8 @@ namespace CarSimulator
                 //_sendData[1] = 0x08;
                 //_sendData[0] = 0x01;
                 //_sendData[1] = 0x8A;
-                _sendData[0] = 0x8F;
-                _sendData[1] = 0xE9;
+                _sendData[0] = 0x00;
+                _sendData[1] = 0x81;
                 SendData(_sendData, 0, 2);
 
                 if (ReceiveData(_receiveData, 0, 1, 50, 50))
