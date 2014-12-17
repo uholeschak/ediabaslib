@@ -1156,15 +1156,14 @@ namespace EdiabasLib
                 }
                 this.keyBytes = keyBytesBuffer;
 
-                ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Key bytes: {0:X02} {1:X02}", keyBytesBuffer[0], keyBytesBuffer[1]);
-
                 iso9141Buffer[0] = (byte)(~keyBytesBuffer[1]);
-                Thread.Sleep(20);
+                Thread.Sleep(10);
                 if (!SendData(iso9141Buffer, 1))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending key byte response failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
+                ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Key bytes: {0:X02} {1:X02}", keyBytesBuffer[0], keyBytesBuffer[1]);
                 this.blockCounter = 1;
             }
 
@@ -1177,6 +1176,7 @@ namespace EdiabasLib
                 maxRecBlocks = commAnswerLen[0];
             }
 
+            int waitToSendCount = 0;
             bool waitToSend = true;
             bool transmitDone = false;
             for (; ; )
@@ -1186,33 +1186,13 @@ namespace EdiabasLib
                 {
                     return errorCode;
                 }
-                if (iso9141Buffer[1] != this.blockCounter)
-                {
-                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Invalid block counter");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-                }
                 this.blockCounter++;
 
                 byte command = iso9141Buffer[2];
-                bool sendDataValid = false;
-                if (command == 0x09)
-                {   // ack
-                    if (waitToSend)
+                if (!waitToSend)
+                {   // store received data
+                    if ((recBlocks == 0) || (command != 0x09))
                     {
-                        waitToSend = false;
-                        Array.Copy(sendData, iso9141Buffer, sendDataLength);
-                        sendDataValid = true;
-                    }
-                    else
-                    {   // all received
-                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Transmission finished");
-                        transmitDone = true;
-                    }
-                }
-                else
-                {   // data received
-                    if (!waitToSend)
-                    {   // store received data
                         int blockLen = iso9141Buffer[0];
                         if (recLength + blockLen > receiveData.Length)
                         {
@@ -1227,6 +1207,39 @@ namespace EdiabasLib
                             ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "All blocks received");
                             transmitDone = true;
                         }
+                    }
+                }
+
+                bool sendDataValid = false;
+                if (command == 0x09)
+                {   // ack
+                    if (waitToSend)
+                    {
+                        waitToSend = false;
+                        Array.Copy(sendData, iso9141Buffer, sendDataLength);
+                        sendDataValid = true;
+                    }
+                    else
+                    {
+                        if (recBlocks > 0)
+                        {
+                            // at least one block received
+                            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Transmission finished");
+                            transmitDone = true;
+                        }
+                    }
+                }
+                else
+                {   // data received
+                }
+
+                if (waitToSend)
+                {
+                    waitToSendCount++;
+                    if (waitToSendCount > 1000)
+                    {
+                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Wait for first ACK failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                     }
                 }
                 if (!sendDataValid)
@@ -1256,10 +1269,10 @@ namespace EdiabasLib
         private EdiabasNet.ErrorCodes SendIso9141Block(byte[] sendData)
         {
             int blockLen = sendData[0];
+            ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, blockLen, "Send");
             for (int i = 0; i < blockLen; i++)
             {
                 iso9141BlockBuffer[0] = sendData[i];
-                ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, iso9141BlockBuffer, 0, 1, "Send");
                 if (!SendData(iso9141BlockBuffer, 1))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
@@ -1277,7 +1290,6 @@ namespace EdiabasLib
                 }
             }
             iso9141BlockBuffer[0] = 0x03;   // block end
-            ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, iso9141BlockBuffer, 0, 1, "Send");
             if (!SendData(iso9141BlockBuffer, 1))
             {
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
@@ -1294,7 +1306,6 @@ namespace EdiabasLib
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No block length received");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
-            ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, recData, 0, 1, "Resp");
 
             int blockLen = recData[0];
             for (int i = 0; i < blockLen; i++)
@@ -1310,8 +1321,8 @@ namespace EdiabasLib
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No block data received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
-                ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, recData, i + 1, 1, "Resp");
             }
+            ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, recData, 0, blockLen, "Resp");
             if (recData[blockLen] != 0x03)
             {
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Block end invalid");
