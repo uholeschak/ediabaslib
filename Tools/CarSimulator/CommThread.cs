@@ -3298,6 +3298,7 @@ namespace CarSimulator
 
             byte blockCount = 1;
             int telBlockIndex = 0;
+            int initSequenceCount = 0;
             ResponseEntry activeResponse = null;
             for (; ; )
             {
@@ -3306,8 +3307,23 @@ namespace CarSimulator
                     break;
                 }
 
-                _sendData[0] = 0x03;    // block length
-                _sendData[2] = 0x09;    // ACK
+                if (initSequenceCount < 2)
+                {
+                    initSequenceCount++;
+                    _sendData[0] = 0x08;    // block length
+                    _sendData[2] = 0xF6;    // ASC II
+                    _sendData[3] = (byte)'S';
+                    _sendData[4] = (byte)'I';
+                    _sendData[5] = (byte)'M';
+                    _sendData[6] = (byte)'U';
+                    _sendData[7] = (byte)'L';
+                }
+                else
+                {
+                    _sendData[0] = 0x03;    // block length
+                    _sendData[2] = 0x09;    // ACK
+                }
+
                 if (activeResponse != null)
                 {
                     if (telBlockIndex < activeResponse.ResponseList.Count)
