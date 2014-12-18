@@ -1149,7 +1149,7 @@ namespace EdiabasLib
                 }
 
                 byte[] keyBytesBuffer = new byte[2];
-                if (!ReceiveData(keyBytesBuffer, 0, 2, 20, 20))
+                if (!ReceiveData(keyBytesBuffer, 0, 2, this.parTimeoutTelEnd, this.parTimeoutTelEnd))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No key bytes received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
@@ -1278,7 +1278,7 @@ namespace EdiabasLib
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
-                if (!ReceiveData(iso9141BlockBuffer, 0, 1, this.parTimeoutStd, this.parTimeoutStd))
+                if (!ReceiveData(iso9141BlockBuffer, 0, 1, this.parTimeoutTelEnd, this.parTimeoutTelEnd))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No block response");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
@@ -1301,7 +1301,7 @@ namespace EdiabasLib
         private EdiabasNet.ErrorCodes ReceiveIso9141Block(byte[] recData)
         {
             // block length
-            if (!ReceiveData(recData, 0, 1, this.parTimeoutStd, this.parTimeoutStd))
+            if (!ReceiveData(recData, 0, 1, this.parTimeoutTelEnd, this.parTimeoutTelEnd))
             {
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No block length received");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
@@ -1316,7 +1316,7 @@ namespace EdiabasLib
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
-                if (!ReceiveData(recData, i + 1, 1, this.parTimeoutStd, this.parTimeoutStd))
+                if (!ReceiveData(recData, i + 1, 1, this.parTimeoutTelEnd, this.parTimeoutTelEnd))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No block data received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
