@@ -50,6 +50,7 @@ namespace CarSimulator
         private string          _comPort;
         private ConceptType     _conceptType;
         private bool            _adsAdapter;
+        private bool            _e61Internal;
         private List<ResponseEntry> _responseList;
         private SerialPort      _serialPort;
         private byte[]          _sendData;
@@ -418,7 +419,7 @@ namespace CarSimulator
             IgnitionOk = false;
         }
 
-        public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, List<ResponseEntry> responseList)
+        public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, bool e61Internal, List<ResponseEntry> responseList)
         {
             try
             {
@@ -427,6 +428,7 @@ namespace CarSimulator
                 _comPort = comPort;
                 _conceptType = conceptType;
                 _adsAdapter = adsAdapter;
+                _e61Internal = e61Internal;
                 _responseList = responseList;
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
@@ -1192,8 +1194,13 @@ namespace CarSimulator
                 return;
             }
 
+            bool useResponseList = false;
+            if (!_e61Internal)
+            {
+                useResponseList = true;
+            }
             // axis unit
-            if (
+            else if (
                 _receiveData[0] == 0x82 &&
                 _receiveData[1] == 0x38 &&
                 _receiveData[2] == 0xF1 &&
@@ -3209,6 +3216,11 @@ namespace CarSimulator
             }
             else
             {   // nothing matched, check response list
+                useResponseList = true;
+            }
+
+            if (useResponseList)
+            {
                 int recLength = _receiveData[0] & 0x3F;
                 if (recLength == 0)
                 {   // with length byte

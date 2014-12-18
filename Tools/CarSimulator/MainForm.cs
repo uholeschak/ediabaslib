@@ -14,6 +14,7 @@ namespace CarSimulator
 {
     public partial class MainForm : Form
     {
+        private const string _stdResponseFile = "Response.txt";
         private CommThread _commThread;
         private int _lastPortCount;
         private List<CommThread.ResponseEntry> _responseList;
@@ -69,7 +70,7 @@ namespace CarSimulator
             foreach (string file in files)
             {
                 string baseFileName = Path.GetFileName(file);
-                if (string.Compare(baseFileName, "Response.txt", StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(baseFileName, _stdResponseFile, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     selectItem = baseFileName;
                 }
@@ -353,15 +354,21 @@ namespace CarSimulator
 
                 string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 string responseFile = (string)listBoxResponseFiles.SelectedItem;
+                bool e61Internal = true;
                 if (responseFile != null)
                 {
+                    if (string.Compare(responseFile, _stdResponseFile, StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        e61Internal = false;
+                    }
+
                     if (!ReadResponseFile(Path.Combine(appDir, responseFile), conceptType))
                     {
                         MessageBox.Show("Reading response file failed!");
                     }
                 }
 
-                _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, _responseList);
+                _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, e61Internal, _responseList);
             }
 
             UpdateDisplay();
