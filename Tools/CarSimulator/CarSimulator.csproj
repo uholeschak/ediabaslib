@@ -76,6 +76,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="d73n57c0.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="dm33s501.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
