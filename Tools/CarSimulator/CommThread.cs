@@ -1047,6 +1047,7 @@ namespace CarSimulator
                 }
                 if ((byte)(~buffer[0]) != sendData[i])
                 {
+                    Debug.WriteLine(string.Format("Echo incorrect {0:X02}", (byte)(~buffer[0])));
                     return false;
                 }
             }
@@ -3284,11 +3285,11 @@ namespace CarSimulator
                     break;
                 }
                 Debug.WriteLine(string.Format("Wake Address: {0:X02}", wakeAddress));
-                Thread.Sleep(100);
+                Thread.Sleep(100);  // maximum is 2000ms
                 _sendData[0] = 0x55;
                 SendData(_sendData, 0, 1);
 
-                Thread.Sleep(10);
+                Thread.Sleep(10);   // maximum 400ms
                 //_sendData[0] = 0x08;
                 //_sendData[1] = 0x08;
                 //_sendData[0] = 0x01;
