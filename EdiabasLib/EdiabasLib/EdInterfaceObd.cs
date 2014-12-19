@@ -40,6 +40,7 @@ namespace EdiabasLib
         protected byte[] iso9141Buffer = new byte[256];
         protected byte[] iso9141BlockBuffer = new byte[1];
         protected bool ecuConnected;
+        protected long lastCommTick;
         protected byte blockCounter;
 
         protected TransmitDelegate parTransmitFunc;
@@ -85,6 +86,8 @@ namespace EdiabasLib
                 this.parWakeAddress = 0;
                 this.keyBytes = byteArray0;
                 this.ecuConnected = false;
+                this.lastCommTick = DateTime.MinValue.Ticks;
+                this.blockCounter = 0;
 
                 if (commParameter == null)
                 {   // clear parameter
@@ -116,7 +119,7 @@ namespace EdiabasLib
                             return;
                         }
                         commAnswerLen = new short[] { 1, 0 };
-                        baudRate = 10400;
+                        baudRate = 9600;
                         parity = Parity.None;
                         stateDtr = false;
                         stateRts = false;
@@ -1130,32 +1133,81 @@ namespace EdiabasLib
 
             if (!this.ecuConnected)
             {
+                for (;;)
+                {
+                    long timeDiff = DateTime.Now.Ticks - this.lastCommTick;
+                    if (timeDiff > this.parTimeoutStd * 10000)
+                    {
+                        break;
+                    }
+                    Thread.Sleep(10);
+                }
+
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Establish connection");
+                if (interfaceSetConfigFunc != null)
+                {
+                    if (!interfaceSetConfigFunc(9600, Parity.None))
+                    {
+                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                    }
+                }
+                else
+                {
+                    serialPort.BaudRate = 9600;
+                }
+                this.lastCommTick = DateTime.Now.Ticks;
                 if (!SendWakeAddress5Baud(this.parWakeAddress))
                 {
+                    this.lastCommTick = DateTime.Now.Ticks;
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending wake address failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
 
-                if (!ReceiveData(iso9141Buffer, 0, 1, 300, 300))
+                this.lastCommTick = DateTime.Now.Ticks;
+                if (!ReceiveData(iso9141Buffer, 0, 1, this.parTimeoutStd, this.parTimeoutStd))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No wake response");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
-                if (iso9141Buffer[0] != 0x55)
+                ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Baud rate byte: {0:X02}", iso9141Buffer[0]);
+                if (iso9141Buffer[0] == 0x55)
                 {
-                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Invalid baud rate");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Baud rate 9.6k detected");
+                }
+                else
+                {   // baud rate different
+                    if ((iso9141Buffer[0] & 0x87) != 0x85)
+                    {
+                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Invalid baud rate");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
+                    ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Baud rate 10.4k detected");
+                    if (interfaceSetConfigFunc != null)
+                    {
+                        if (!interfaceSetConfigFunc(10400, Parity.None))
+                        {
+                            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                        }
+                    }
+                    else
+                    {
+                        serialPort.BaudRate = 10400;
+                    }
                 }
 
+                this.lastCommTick = DateTime.Now.Ticks;
                 byte[] keyBytesBuffer = new byte[2];
-                if (!ReceiveData(keyBytesBuffer, 0, 2, this.parTimeoutTelEnd, this.parTimeoutTelEnd))
+                if (!ReceiveData(keyBytesBuffer, 0, 2, 500, 500))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No key bytes received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 this.keyBytes = keyBytesBuffer;
 
+                this.lastCommTick = DateTime.Now.Ticks;
+                ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Key bytes: {0:X02} {1:X02}", keyBytesBuffer[0], keyBytesBuffer[1]);
                 iso9141Buffer[0] = (byte)(~keyBytesBuffer[1]);
                 Thread.Sleep(10);
                 if (!SendData(iso9141Buffer, 1))
@@ -1163,7 +1215,6 @@ namespace EdiabasLib
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending key byte response failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
-                ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Key bytes: {0:X02} {1:X02}", keyBytesBuffer[0], keyBytesBuffer[1]);
                 this.blockCounter = 1;
             }
 
@@ -1181,6 +1232,7 @@ namespace EdiabasLib
             bool transmitDone = false;
             for (; ; )
             {
+                this.lastCommTick = DateTime.Now.Ticks;
                 errorCode = ReceiveIso9141Block(iso9141Buffer);
                 if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
