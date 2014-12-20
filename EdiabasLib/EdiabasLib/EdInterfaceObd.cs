@@ -42,6 +42,8 @@ namespace EdiabasLib
         protected bool ecuConnected;
         protected long lastCommTick;
         protected byte blockCounter;
+        protected byte lastIso9141Cmd;
+        private AutoResetEvent receiveEvent = new AutoResetEvent(false);
 
         protected TransmitDelegate parTransmitFunc;
         protected int parTimeoutStd = 0;
@@ -88,6 +90,7 @@ namespace EdiabasLib
                 this.ecuConnected = false;
                 this.lastCommTick = DateTime.MinValue.Ticks;
                 this.blockCounter = 0;
+                this.lastIso9141Cmd = 0x00;
 
                 if (commParameter == null)
                 {   // clear parameter
@@ -404,6 +407,7 @@ namespace EdiabasLib
                 serialPort.DtrEnable = false;
                 serialPort.RtsEnable = false;
                 serialPort.ReadTimeout = 1;
+                serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
                 serialPort.Open();
             }
             catch (Exception)
@@ -426,6 +430,7 @@ namespace EdiabasLib
             if (serialPort.IsOpen)
             {
                 serialPort.Close();
+                serialPort.DataReceived -= SerialDataReceived;
             }
             return true;
         }
@@ -591,6 +596,11 @@ namespace EdiabasLib
             return dsrState;
         }
 
+        private void SerialDataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            receiveEvent.Set();
+        }
+
         protected bool SendData(byte[] sendData, int length)
         {
             if (sendDataFunc != null)
@@ -603,7 +613,7 @@ namespace EdiabasLib
                 serialPort.Write(sendData, 0, length);
                 while (serialPort.BytesToWrite > 0)
                 {
-                    Thread.Sleep(10);
+                    Thread.Sleep(1);
                 }
             }
             catch (Exception)
@@ -637,7 +647,7 @@ namespace EdiabasLib
                         stopWatch.Stop();
                         return false;
                     }
-                    Thread.Sleep(10);
+                    receiveEvent.WaitOne(1, false);
                 }
 
                 int recLen = 0;
@@ -667,7 +677,7 @@ namespace EdiabasLib
                             break;
                         }
                     }
-                    Thread.Sleep(10);
+                    receiveEvent.WaitOne(1, false);
                 }
                 stopWatch.Stop();
                 if (logResponse)
@@ -1216,6 +1226,15 @@ namespace EdiabasLib
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
                 this.blockCounter = 1;
+
+                Thread.Sleep(10);
+                errorCode = ReceiveIso9141Block(iso9141Buffer);
+                if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    return errorCode;
+                }
+                this.lastIso9141Cmd = iso9141Buffer[2];
+                this.blockCounter++;
             }
 
             ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, sendDataLength, "Request");
@@ -1233,37 +1252,9 @@ namespace EdiabasLib
             for (; ; )
             {
                 this.lastCommTick = DateTime.Now.Ticks;
-                errorCode = ReceiveIso9141Block(iso9141Buffer);
-                if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
-                {
-                    return errorCode;
-                }
-                this.blockCounter++;
-
-                byte command = iso9141Buffer[2];
-                if (!waitToSend)
-                {   // store received data
-                    if ((recBlocks == 0) || (command != 0x09))
-                    {
-                        int blockLen = iso9141Buffer[0];
-                        if (recLength + blockLen > receiveData.Length)
-                        {
-                            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Receive buffer overflow, ignore data");
-                            transmitDone = true;
-                        }
-                        Array.Copy(iso9141Buffer, 0, receiveData, recLength, blockLen);
-                        recLength += blockLen;
-                        recBlocks++;
-                        if (recBlocks >= maxRecBlocks)
-                        {   // all blocks received
-                            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "All blocks received");
-                            transmitDone = true;
-                        }
-                    }
-                }
 
                 bool sendDataValid = false;
-                if (command == 0x09)
+                if (this.lastIso9141Cmd == 0x09)
                 {   // ack
                     if (waitToSend)
                     {
@@ -1281,9 +1272,6 @@ namespace EdiabasLib
                         }
                     }
                 }
-                else
-                {   // data received
-                }
 
                 if (waitToSend)
                 {
@@ -1300,11 +1288,42 @@ namespace EdiabasLib
                     iso9141Buffer[2] = 0x09;    // ACK
                 }
 
+                Thread.Sleep(50);
+
                 iso9141Buffer[1] = this.blockCounter++;
                 errorCode = SendIso9141Block(iso9141Buffer);
                 if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
                     return errorCode;
+                }
+
+                errorCode = ReceiveIso9141Block(iso9141Buffer);
+                if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    return errorCode;
+                }
+                this.blockCounter++;
+                this.lastIso9141Cmd = iso9141Buffer[2];
+
+                if (!waitToSend)
+                {   // store received data
+                    if ((recBlocks == 0) || (this.lastIso9141Cmd != 0x09))
+                    {
+                        int blockLen = iso9141Buffer[0];
+                        if (recLength + blockLen > receiveData.Length)
+                        {
+                            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Receive buffer overflow, ignore data");
+                            transmitDone = true;
+                        }
+                        Array.Copy(iso9141Buffer, 0, receiveData, recLength, blockLen);
+                        recLength += blockLen;
+                        recBlocks++;
+                        if (recBlocks >= maxRecBlocks)
+                        {   // all blocks received
+                            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "All blocks received");
+                            transmitDone = true;
+                        }
+                    }
                 }
                 if (transmitDone)
                 {
