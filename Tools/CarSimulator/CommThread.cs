@@ -396,6 +396,7 @@ namespace CarSimulator
             _threadRunning = false;
             _workerThread = null;
             _serialPort = new SerialPort();
+            _serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
             _receiveEvent = new AutoResetEvent(false);
             _sendData = new byte[260];
             _receiveData = new byte[260];
@@ -531,7 +532,6 @@ namespace CarSimulator
                 _serialPort.DtrEnable = false;
                 _serialPort.RtsEnable = false;
                 _serialPort.Open();
-                _serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
             }
             catch (Exception)
             {
@@ -544,7 +544,6 @@ namespace CarSimulator
         {
             if (_serialPort.IsOpen)
             {
-                _serialPort.DataReceived -= SerialDataReceived;
                 _serialPort.Close();
             }
             return true;
