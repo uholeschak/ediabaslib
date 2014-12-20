@@ -530,9 +530,8 @@ namespace CarSimulator
                 _serialPort.ReadTimeout = 0;
                 _serialPort.DtrEnable = false;
                 _serialPort.RtsEnable = false;
-                _serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
                 _serialPort.Open();
-                _serialPort.BreakState = false;
+                _serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
             }
             catch (Exception)
             {
@@ -545,8 +544,8 @@ namespace CarSimulator
         {
             if (_serialPort.IsOpen)
             {
-                _serialPort.Close();
                 _serialPort.DataReceived -= SerialDataReceived;
+                _serialPort.Close();
             }
             return true;
         }
