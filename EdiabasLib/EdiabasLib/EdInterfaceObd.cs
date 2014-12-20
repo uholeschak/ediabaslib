@@ -1338,7 +1338,17 @@ namespace EdiabasLib
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                     }
                 }
-                if (!sendDataValid)
+                if (sendDataValid)
+                {
+#if false
+                    // EDIABAS seems not to respect the regeneration time
+                    while ((DateTime.Now.Ticks - this.lastResponseTick) < this.parRegenTime * 10000)
+                    {
+                        Thread.Sleep(10);
+                    }
+#endif
+                }
+                else
                 {
                     iso9141Buffer[0] = 0x03;    // block length
                     iso9141Buffer[2] = 0x09;    // ACK
@@ -1391,6 +1401,7 @@ namespace EdiabasLib
                 }
             }
 
+            this.lastResponseTick = DateTime.Now.Ticks;
             receiveLength = recLength;
             ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, receiveLength, "Answer");
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
