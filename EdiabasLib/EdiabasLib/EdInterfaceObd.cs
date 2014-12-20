@@ -19,7 +19,7 @@ namespace EdiabasLib
 
         private bool disposed = false;
         private static readonly byte[] byteArray0 = new byte[0];
-        protected static SerialPort serialPort = new SerialPort();
+        protected static SerialPort serialPort;
 
         protected string comPort = string.Empty;
         protected bool connected = false;
@@ -44,7 +44,7 @@ namespace EdiabasLib
         protected long lastResponseTick;
         protected byte blockCounter;
         protected byte lastIso9141Cmd;
-        private AutoResetEvent receiveEvent = new AutoResetEvent(false);
+        private static AutoResetEvent receiveEvent = new AutoResetEvent(false);
 
         protected TransmitDelegate parTransmitFunc;
         protected int parTimeoutStd = 0;
@@ -355,6 +355,8 @@ namespace EdiabasLib
 #else
             interfaceMutex = new Mutex(false, "EdiabasLib_InterfaceObd");
 #endif
+            serialPort = new SerialPort();
+            serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
         }
 
         public EdInterfaceObd()
@@ -417,7 +419,6 @@ namespace EdiabasLib
                 serialPort.RtsEnable = false;
                 serialPort.ReadTimeout = 1;
                 serialPort.Open();
-                serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
             }
             catch (Exception)
             {
@@ -438,7 +439,6 @@ namespace EdiabasLib
 
             if (serialPort.IsOpen)
             {
-                serialPort.DataReceived -= SerialDataReceived;
                 serialPort.Close();
             }
             return true;
@@ -605,7 +605,7 @@ namespace EdiabasLib
             return dsrState;
         }
 
-        private void SerialDataReceived(object sender, SerialDataReceivedEventArgs e)
+        private static void SerialDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             receiveEvent.Set();
         }
