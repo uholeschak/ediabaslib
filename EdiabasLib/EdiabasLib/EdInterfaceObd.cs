@@ -416,8 +416,8 @@ namespace EdiabasLib
                 serialPort.DtrEnable = false;
                 serialPort.RtsEnable = false;
                 serialPort.ReadTimeout = 1;
-                serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
                 serialPort.Open();
+                serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
             }
             catch (Exception)
             {
@@ -438,8 +438,8 @@ namespace EdiabasLib
 
             if (serialPort.IsOpen)
             {
-                serialPort.Close();
                 serialPort.DataReceived -= SerialDataReceived;
+                serialPort.Close();
             }
             return true;
         }
