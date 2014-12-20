@@ -1207,14 +1207,30 @@ namespace EdiabasLib
                     }
                 }
 
+                this.ecuConnected = true;
                 this.lastCommTick = DateTime.Now.Ticks;
                 byte[] keyBytesBuffer = new byte[2];
                 if (!ReceiveData(keyBytesBuffer, 0, 2, 500, 500))
                 {
+                    this.ecuConnected = false;
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No key bytes received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 this.keyBytes = keyBytesBuffer;
+
+                if (interfaceSetDtrFunc != null)
+                {
+                    if (!interfaceSetDtrFunc(true))
+                    {
+                        this.ecuConnected = false;
+                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                    }
+                }
+                else
+                {
+                    serialPort.DtrEnable = true;
+                }
 
                 this.lastCommTick = DateTime.Now.Ticks;
                 ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Key bytes: {0:X02} {1:X02}", keyBytesBuffer[0], keyBytesBuffer[1]);
@@ -1222,6 +1238,7 @@ namespace EdiabasLib
                 Thread.Sleep(10);
                 if (!SendData(iso9141Buffer, 1))
                 {
+                    this.ecuConnected = false;
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending key byte response failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
@@ -1231,6 +1248,7 @@ namespace EdiabasLib
                 errorCode = ReceiveIso9141Block(iso9141Buffer);
                 if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
+                    this.ecuConnected = false;
                     return errorCode;
                 }
                 this.lastIso9141Cmd = iso9141Buffer[2];
@@ -1251,8 +1269,6 @@ namespace EdiabasLib
             bool transmitDone = false;
             for (; ; )
             {
-                this.lastCommTick = DateTime.Now.Ticks;
-
                 bool sendDataValid = false;
                 if (this.lastIso9141Cmd == 0x09)
                 {   // ack
@@ -1278,6 +1294,7 @@ namespace EdiabasLib
                     waitToSendCount++;
                     if (waitToSendCount > 1000)
                     {
+                        this.ecuConnected = false;
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Wait for first ACK failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                     }
@@ -1290,16 +1307,20 @@ namespace EdiabasLib
 
                 Thread.Sleep(50);
 
+                this.lastCommTick = DateTime.Now.Ticks;
                 iso9141Buffer[1] = this.blockCounter++;
                 errorCode = SendIso9141Block(iso9141Buffer);
                 if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
+                    this.ecuConnected = false;
                     return errorCode;
                 }
 
+                this.lastCommTick = DateTime.Now.Ticks;
                 errorCode = ReceiveIso9141Block(iso9141Buffer);
                 if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
+                    this.ecuConnected = false;
                     return errorCode;
                 }
                 this.blockCounter++;
@@ -1331,7 +1352,6 @@ namespace EdiabasLib
                 }
             }
 
-            this.ecuConnected = true;
             receiveLength = recLength;
             ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, receiveLength, "Answer");
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
