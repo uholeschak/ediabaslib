@@ -53,6 +53,7 @@ namespace CarSimulator
         private bool            _e61Internal;
         private List<ResponseEntry> _responseList;
         private SerialPort      _serialPort;
+        private AutoResetEvent  _receiveEvent;
         private byte[]          _sendData;
         private byte[]          _receiveData;
         private byte[]          _receiveDataMotorBackup;
@@ -395,6 +396,7 @@ namespace CarSimulator
             _threadRunning = false;
             _workerThread = null;
             _serialPort = new SerialPort();
+            _receiveEvent = new AutoResetEvent(false);
             _sendData = new byte[260];
             _receiveData = new byte[260];
             _receiveDataMotorBackup = new byte[_receiveData.Length];
@@ -528,6 +530,7 @@ namespace CarSimulator
                 _serialPort.ReadTimeout = 0;
                 _serialPort.DtrEnable = false;
                 _serialPort.RtsEnable = false;
+                _serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
                 _serialPort.Open();
                 _serialPort.BreakState = false;
             }
@@ -543,6 +546,7 @@ namespace CarSimulator
             if (_serialPort.IsOpen)
             {
                 _serialPort.Close();
+                _serialPort.DataReceived -= SerialDataReceived;
             }
             return true;
         }
@@ -585,38 +589,12 @@ namespace CarSimulator
             }
             return true;
         }
-#if false
-        private bool SendWakeUpResponse(byte value)
+
+        private void SerialDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            try
-            {
-                _serialPort.BreakState = true;  // start bit
-                Thread.Sleep(200);
-                if (_stopThread)
-                {
-                    _serialPort.BreakState = false;
-                    return false;
-                }
-                for (int i = 0; i < 8; i++)
-                {
-                    _serialPort.BreakState = (value & (1 << i)) == 0;
-                    Thread.Sleep(200);
-                    if (_stopThread)
-                    {
-                        _serialPort.BreakState = false;
-                        return false;
-                    }
-                }
-                _serialPort.BreakState = false; // stop bit
-                Thread.Sleep(200);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
+            _receiveEvent.Set();
         }
-#endif
+
         private bool SendData(byte[] sendData, int length)
         {   // no try cath to allow loop exit
             //_serialPort.DiscardInBuffer();
@@ -704,7 +682,7 @@ namespace CarSimulator
                         _receiveStopWatch.Stop();
                         return false;
                     }
-                    Thread.Sleep(10);
+                    _receiveEvent.WaitOne(1, false);
                 }
 
                 int recLen = 0;
@@ -734,7 +712,7 @@ namespace CarSimulator
                             break;
                         }
                     }
-                    Thread.Sleep(10);
+                    _receiveEvent.WaitOne(1, false);
                 }
                 _receiveStopWatch.Stop();
                 if (recLen < length)
@@ -1052,6 +1030,7 @@ namespace CarSimulator
                 }
             }
             buffer[0] = 0x03;   // block end
+            Debug.WriteLine(string.Format("Send {0:X02}", buffer[0]));
             if (!SendData(buffer, 0, 1))
             {
                 return false;
