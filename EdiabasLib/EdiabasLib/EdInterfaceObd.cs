@@ -1166,6 +1166,21 @@ namespace EdiabasLib
                 {
                     serialPort.BaudRate = 9600;
                 }
+
+                if (interfaceSetDtrFunc != null)
+                {
+                    if (!interfaceSetDtrFunc(false))
+                    {
+                        this.ecuConnected = false;
+                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set DTR failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                    }
+                }
+                else
+                {
+                    serialPort.DtrEnable = false;
+                }
+
                 this.lastCommTick = DateTime.Now.Ticks;
                 if (!SendWakeAddress5Baud(this.parWakeAddress))
                 {
@@ -1223,7 +1238,7 @@ namespace EdiabasLib
                     if (!interfaceSetDtrFunc(true))
                     {
                         this.ecuConnected = false;
-                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
+                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set DTR failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
                     }
                 }
