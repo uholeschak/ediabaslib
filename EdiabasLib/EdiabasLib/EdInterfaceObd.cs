@@ -819,6 +819,10 @@ namespace EdiabasLib
 
         protected bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse)
         {
+            if (length <= 0)
+            {
+                return true;
+            }
             if (receiveDataFunc != null)
             {
                 return receiveDataFunc(receiveData, offset, length, timeout, timeoutTelEnd, logResponse);
