@@ -16,10 +16,28 @@ namespace EdiabasLib
         public delegate bool SendDataDelegate(byte[] sendData, int length);
         public delegate bool ReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse);
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
+        protected delegate EdiabasNet.ErrorCodes IdleDelegate();
+
+        protected enum CommThreadCommands
+        {
+            Idle,               // do nothing
+            SingleTransmit,     // single data transmission
+            IdleTransmit,       // idle data transmission
+            Exit,               // exit thread
+        }
 
         private bool disposed = false;
-        private static readonly byte[] byteArray0 = new byte[0];
+        protected static readonly byte[] byteArray0 = new byte[0];
+        protected static readonly long tickResolMs = Stopwatch.Frequency / 1000;
         protected static SerialPort serialPort;
+        protected static AutoResetEvent commReceiveEvent;
+        protected static AutoResetEvent commThreadReqEvent;
+        protected static AutoResetEvent commThreadResEvent;
+        protected static Thread commThread;
+        protected static object commThreadLock;
+        protected static volatile CommThreadCommands commThreadCommand;
+        protected static volatile uint commThreadReqCount;
+        protected static volatile uint commThreadResCount;
 
         protected string comPort = string.Empty;
         protected bool connected = false;
@@ -36,7 +54,10 @@ namespace EdiabasLib
         protected byte[] keyBytes = byteArray0;
         protected byte[] state = new byte[2];
         protected byte[] sendBuffer = new byte[260];
+        protected volatile int sendBufferLength = 0;
         protected byte[] recBuffer = new byte[260];
+        protected volatile int recBufferLength = 0;
+        protected volatile EdiabasNet.ErrorCodes recErrorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         protected byte[] iso9141Buffer = new byte[256];
         protected byte[] iso9141BlockBuffer = new byte[1];
         protected bool ecuConnected;
@@ -44,9 +65,9 @@ namespace EdiabasLib
         protected long lastResponseTick;
         protected byte blockCounter;
         protected byte lastIso9141Cmd;
-        private static AutoResetEvent receiveEvent = new AutoResetEvent(false);
 
         protected TransmitDelegate parTransmitFunc;
+        protected IdleDelegate parIdleFunc;
         protected int parTimeoutStd = 0;
         protected int parTimeoutTelEnd = 0;
         protected int parRegenTime = 0;
@@ -80,9 +101,12 @@ namespace EdiabasLib
             }
             set
             {
+                StopCommThread();
+
                 commParameter = value;
 
                 this.parTransmitFunc = null;
+                this.parIdleFunc = null;
                 this.parTimeoutStd = 0;
                 this.parTimeoutTelEnd = 0;
                 this.parRegenTime = 0;
@@ -131,6 +155,7 @@ namespace EdiabasLib
                         stateDtr = false;
                         stateRts = false;
                         this.parTransmitFunc = TransIso9141;
+                        this.parIdleFunc = IdleIso9141;
                         this.parWakeAddress = (byte)commParameter[2];
                         this.parTimeoutStd = (int)commParameter[5];
                         this.parRegenTime = (int)commParameter[6];
@@ -231,6 +256,8 @@ namespace EdiabasLib
                         ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
                         return;
                 }
+
+                StartCommThread();
 
                 if (interfaceSetConfigFunc != null)
                 {
@@ -357,6 +384,14 @@ namespace EdiabasLib
 #endif
             serialPort = new SerialPort();
             serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
+            commReceiveEvent = new AutoResetEvent(false);
+            commThreadReqEvent = new AutoResetEvent(false);
+            commThreadResEvent = new AutoResetEvent(false);
+            commThread = null;
+            commThreadLock = new Object();
+            commThreadCommand = CommThreadCommands.Idle;
+            commThreadReqCount = 0;
+            commThreadResCount = 0;
         }
 
         public EdInterfaceObd()
@@ -430,6 +465,7 @@ namespace EdiabasLib
 
         public override bool InterfaceDisconnect()
         {
+            StopCommThread();
             base.InterfaceDisconnect();
             connected = false;
             if (interfaceDisconnectFunc != null)
@@ -447,19 +483,49 @@ namespace EdiabasLib
         public override bool TransmitData(byte[] sendData, out byte[] receiveData)
         {
             receiveData = null;
-            if (sendData.Length > sendBuffer.Length)
+            if (sendData.Length > this.sendBuffer.Length)
             {
                 ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0031);
                 return false;
             }
-            sendData.CopyTo(sendBuffer, 0);
-            int receiveLength;
-            if (!OBDTrans(sendBuffer, sendData.Length, ref recBuffer, out receiveLength))
+            sendData.CopyTo(this.sendBuffer, 0);
+            this.sendBufferLength = sendData.Length;
+#if false
+            int recLength;
+            this.recErrorCode = OBDTrans(this.sendBuffer, sendData.Length, ref this.recBuffer, out recLength);
+            this.recBufferLength = recLength;
+#else
+            if (commThread == null)
             {
+                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0030);
                 return false;
             }
-            receiveData = new byte[receiveLength];
-            Array.Copy(recBuffer, receiveData, receiveLength);
+            lock (commThreadLock)
+            {
+                commThreadReqCount++;
+                commThreadCommand = CommThreadCommands.SingleTransmit;
+            }
+            commThreadReqEvent.Set();
+
+            for (;;)
+            {
+                lock (commThreadLock)
+                {
+                    if (commThreadResCount == commThreadReqCount)
+                    {
+                        break;
+                    }
+                }
+                commThreadResEvent.WaitOne(10, false);
+            }
+#endif
+            if (this.recErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                ediabas.SetError(this.recErrorCode);
+                return false;
+            }
+            receiveData = new byte[this.recBufferLength];
+            Array.Copy(this.recBuffer, receiveData, this.recBufferLength);
             return true;
         }
 
@@ -607,7 +673,126 @@ namespace EdiabasLib
 
         private static void SerialDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            receiveEvent.Set();
+            commReceiveEvent.Set();
+        }
+
+        private bool StartCommThread()
+        {
+            if (commThread != null)
+            {
+                return true;
+            }
+            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Start comm thread");
+            try
+            {
+                commThreadCommand = CommThreadCommands.Idle;
+                commThreadReqCount = 0;
+                commThreadResCount = 0;
+                commThread = new Thread(CommThreadFunc);
+                commThread.Priority = ThreadPriority.Highest;
+                commThread.Start();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private void StopCommThread()
+        {
+            if (ediabas != null)
+            {
+                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Stop comm thread");
+            }
+            if (commThread != null)
+            {
+                lock (commThreadLock)
+                {
+                    commThreadReqCount++;
+                    commThreadCommand = CommThreadCommands.Exit;
+                }
+                commThreadReqEvent.Set();
+                commThread.Join();
+                commThread = null;
+            }
+        }
+
+        private void CommThreadFunc()
+        {
+            uint lastReqCount = commThreadReqCount;
+            bool bExitThread = false;
+            for (; ; )
+            {
+                commThreadReqEvent.WaitOne(10, false);
+
+                uint reqCount;
+                CommThreadCommands command;
+                lock (commThreadLock)
+                {
+                    reqCount = commThreadReqCount;
+                    command = commThreadCommand;
+                }
+
+                switch (command)
+                {
+                    case CommThreadCommands.Idle:
+                        break;
+
+                    case CommThreadCommands.IdleTransmit:
+                        {
+                            EdiabasNet.ErrorCodes errorCode = OBDIdleTrans();
+                            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                            {
+                                lock (commThreadLock)
+                                {
+                                    if (commThreadCommand == CommThreadCommands.IdleTransmit)
+                                    {
+                                        commThreadCommand = CommThreadCommands.Idle;
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                }
+
+                if (lastReqCount == reqCount)
+                {
+                    continue;
+                }
+                lastReqCount = reqCount;
+
+                switch (command)
+                {
+                    case CommThreadCommands.SingleTransmit:
+                        {
+                            int recLength;
+                            this.recErrorCode = OBDTrans(this.sendBuffer, this.sendBufferLength, ref this.recBuffer, out recLength);
+                            this.recBufferLength = recLength;
+                            command = CommThreadCommands.Idle;
+                            if (this.parIdleFunc != null)
+                            {
+                                command = CommThreadCommands.IdleTransmit;
+                            }
+                            break;
+                        }
+
+                    case CommThreadCommands.Exit:
+                        command = CommThreadCommands.Idle;
+                        bExitThread = true;
+                        break;
+                }
+                lock (commThreadLock)
+                {
+                    commThreadCommand = command;
+                    commThreadResCount = reqCount;
+                }
+                commThreadResEvent.Set();
+                if (bExitThread)
+                {
+                    break;
+                }
+            }
         }
 
         protected bool SendData(byte[] sendData, int length)
@@ -656,7 +841,7 @@ namespace EdiabasLib
                         stopWatch.Stop();
                         return false;
                     }
-                    receiveEvent.WaitOne(1, false);
+                    commReceiveEvent.WaitOne(1, false);
                 }
 
                 int recLen = 0;
@@ -686,7 +871,7 @@ namespace EdiabasLib
                             break;
                         }
                     }
-                    receiveEvent.WaitOne(1, false);
+                    commReceiveEvent.WaitOne(1, false);
                 }
                 stopWatch.Stop();
                 if (logResponse)
@@ -736,21 +921,19 @@ namespace EdiabasLib
             return true;
         }
 
-        protected bool OBDTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
+        protected EdiabasNet.ErrorCodes OBDTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
             receiveLength = 0;
             if (interfaceConnectFunc == null)
             {
                 if (!serialPort.IsOpen)
                 {
-                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0019);
-                    return false;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
                 }
             }
             if (this.parTransmitFunc == null)
             {
-                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
-                return false;
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0014;
             }
 
             EdiabasNet.ErrorCodes errorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
@@ -768,15 +951,24 @@ namespace EdiabasLib
                 errorCode = this.parTransmitFunc(sendData, sendDataLength, ref receiveData, out receiveLength);
                 if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
-                    return true;
+                    return errorCode;
                 }
                 if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_IFH_0003)
                 {   // interface error
                     break;
                 }
             }
-            ediabas.SetError(errorCode);
-            return false;
+            return errorCode;
+        }
+
+        protected EdiabasNet.ErrorCodes OBDIdleTrans()
+        {
+            if (this.parIdleFunc == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0014;
+            }
+
+            return this.parIdleFunc();
         }
 
         private EdiabasNet.ErrorCodes TransBmwFast(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
@@ -800,7 +992,7 @@ namespace EdiabasLib
                 sendLength++;
                 ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, sendLength, "Send");
 
-                while ((DateTime.Now.Ticks - this.lastResponseTick) < this.parRegenTime * 10000)
+                while ((Stopwatch.GetTimestamp() - this.lastResponseTick) < this.parRegenTime * tickResolMs)
                 {
                     Thread.Sleep(1);
                 }
@@ -890,7 +1082,7 @@ namespace EdiabasLib
                 }
             }
 
-            this.lastResponseTick = DateTime.Now.Ticks;
+            this.lastResponseTick = Stopwatch.GetTimestamp();
             receiveLength = TelLengthBmwFast(receiveData) + 1;
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
@@ -941,7 +1133,7 @@ namespace EdiabasLib
                 sendLength++;
                 ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, sendLength, "Send");
 
-                while ((DateTime.Now.Ticks - this.lastResponseTick) < this.parRegenTime * 10000)
+                while ((Stopwatch.GetTimestamp() - this.lastResponseTick) < this.parRegenTime * tickResolMs)
                 {
                     Thread.Sleep(1);
                 }
@@ -1019,7 +1211,7 @@ namespace EdiabasLib
                 }
             }
 
-            this.lastResponseTick = DateTime.Now.Ticks;
+            this.lastResponseTick = Stopwatch.GetTimestamp();
             receiveLength = TelLengthKwp2000S(receiveData) + 1;
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
@@ -1052,7 +1244,7 @@ namespace EdiabasLib
                 sendLength++;
                 ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, sendLength, "Send");
 
-                while ((DateTime.Now.Ticks - this.lastResponseTick) < this.parRegenTime * 10000)
+                while ((Stopwatch.GetTimestamp() - this.lastResponseTick) < this.parRegenTime * tickResolMs)
                 {
                     Thread.Sleep(1);
                 }
@@ -1123,7 +1315,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
 
-            this.lastResponseTick = DateTime.Now.Ticks;
+            this.lastResponseTick = Stopwatch.GetTimestamp();
             receiveLength = recLength;
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
@@ -1172,7 +1364,7 @@ namespace EdiabasLib
 
             if (!this.ecuConnected)
             {
-                while ((DateTime.Now.Ticks - this.lastCommTick) < this.parTimeoutStd * 10000)
+                while ((Stopwatch.GetTimestamp() - this.lastCommTick) < this.parTimeoutStd * tickResolMs)
                 {
                     Thread.Sleep(10);
                 }
@@ -1205,15 +1397,15 @@ namespace EdiabasLib
                     serialPort.DtrEnable = false;
                 }
 
-                this.lastCommTick = DateTime.Now.Ticks;
+                this.lastCommTick = Stopwatch.GetTimestamp();
                 if (!SendWakeAddress5Baud(this.parWakeAddress))
                 {
-                    this.lastCommTick = DateTime.Now.Ticks;
+                    this.lastCommTick = Stopwatch.GetTimestamp();
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending wake address failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
 
-                this.lastCommTick = DateTime.Now.Ticks;
+                this.lastCommTick = Stopwatch.GetTimestamp();
                 if (!ReceiveData(iso9141Buffer, 0, 1, this.parTimeoutStd, this.parTimeoutStd))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No wake response");
@@ -1247,7 +1439,7 @@ namespace EdiabasLib
                 }
 
                 this.ecuConnected = true;
-                this.lastCommTick = DateTime.Now.Ticks;
+                this.lastCommTick = Stopwatch.GetTimestamp();
                 byte[] keyBytesBuffer = new byte[2];
                 if (!ReceiveData(keyBytesBuffer, 0, 2, 500, 500))
                 {
@@ -1271,7 +1463,7 @@ namespace EdiabasLib
                     serialPort.DtrEnable = true;
                 }
 
-                this.lastCommTick = DateTime.Now.Ticks;
+                this.lastCommTick = Stopwatch.GetTimestamp();
                 ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Key bytes: {0:X02} {1:X02}", keyBytesBuffer[0], keyBytesBuffer[1]);
                 iso9141Buffer[0] = (byte)(~keyBytesBuffer[1]);
                 Thread.Sleep(10);
@@ -1284,7 +1476,7 @@ namespace EdiabasLib
                 this.blockCounter = 1;
 
                 Thread.Sleep(10);
-                errorCode = ReceiveIso9141Block(iso9141Buffer);
+                errorCode = ReceiveIso9141Block(iso9141Buffer, true);
                 if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
                     this.ecuConnected = false;
@@ -1342,7 +1534,7 @@ namespace EdiabasLib
                 {
 #if false
                     // EDIABAS seems not to respect the regeneration time
-                    while ((DateTime.Now.Ticks - this.lastResponseTick) < this.parRegenTime * 10000)
+                    while ((Stopwatch.GetTimestamp() - this.lastResponseTick) < this.parRegenTime * tickResolMs)
                     {
                         Thread.Sleep(10);
                     }
@@ -1356,17 +1548,17 @@ namespace EdiabasLib
 
                 Thread.Sleep(50);
 
-                this.lastCommTick = DateTime.Now.Ticks;
+                this.lastCommTick = Stopwatch.GetTimestamp();
                 iso9141Buffer[1] = this.blockCounter++;
-                errorCode = SendIso9141Block(iso9141Buffer);
+                errorCode = SendIso9141Block(iso9141Buffer, true);
                 if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
                     this.ecuConnected = false;
                     return errorCode;
                 }
 
-                this.lastCommTick = DateTime.Now.Ticks;
-                errorCode = ReceiveIso9141Block(iso9141Buffer);
+                this.lastCommTick = Stopwatch.GetTimestamp();
+                errorCode = ReceiveIso9141Block(iso9141Buffer, true);
                 if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
                     this.ecuConnected = false;
@@ -1401,50 +1593,89 @@ namespace EdiabasLib
                 }
             }
 
-            this.lastResponseTick = DateTime.Now.Ticks;
+            this.lastResponseTick = Stopwatch.GetTimestamp();
             receiveLength = recLength;
             ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, receiveLength, "Answer");
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
-        private EdiabasNet.ErrorCodes SendIso9141Block(byte[] sendData)
+        private EdiabasNet.ErrorCodes IdleIso9141()
+        {
+            if (!this.ecuConnected)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+
+            while ((Stopwatch.GetTimestamp() - this.lastCommTick) < 500 * tickResolMs)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+            }
+
+            EdiabasNet.ErrorCodes errorCode;
+
+            iso9141Buffer[0] = 0x03;    // block length
+            iso9141Buffer[2] = 0x09;    // ACK
+
+            this.lastCommTick = Stopwatch.GetTimestamp();
+            iso9141Buffer[1] = this.blockCounter++;
+            errorCode = SendIso9141Block(iso9141Buffer, false);
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                this.ecuConnected = false;
+                return errorCode;
+            }
+
+            this.lastCommTick = Stopwatch.GetTimestamp();
+            errorCode = ReceiveIso9141Block(iso9141Buffer, false);
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                this.ecuConnected = false;
+                return errorCode;
+            }
+            this.blockCounter++;
+            this.lastIso9141Cmd = iso9141Buffer[2];
+
+            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+        }
+
+        private EdiabasNet.ErrorCodes SendIso9141Block(byte[] sendData, bool enableLog)
         {
             int blockLen = sendData[0];
-            ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, blockLen, "Send");
+            if (enableLog) ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, blockLen, "Send");
             for (int i = 0; i < blockLen; i++)
             {
                 iso9141BlockBuffer[0] = sendData[i];
                 if (!SendData(iso9141BlockBuffer, 1))
                 {
-                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
+                    if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
                 if (!ReceiveData(iso9141BlockBuffer, 0, 1, this.parTimeoutTelEnd, this.parTimeoutTelEnd))
                 {
-                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No block response");
+                    if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No block response");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 if ((byte)(~iso9141BlockBuffer[0]) != sendData[i])
                 {
-                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Response invalid");
+                    if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Response invalid");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
             }
             iso9141BlockBuffer[0] = 0x03;   // block end
             if (!SendData(iso9141BlockBuffer, 1))
             {
-                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
+                if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
             }
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
-        private EdiabasNet.ErrorCodes ReceiveIso9141Block(byte[] recData)
+        private EdiabasNet.ErrorCodes ReceiveIso9141Block(byte[] recData, bool enableLog)
         {
             // block length
             if (!ReceiveData(recData, 0, 1, this.parTimeoutTelEnd, this.parTimeoutTelEnd))
             {
-                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No block length received");
+                if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No block length received");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
 
@@ -1454,19 +1685,19 @@ namespace EdiabasLib
                 iso9141BlockBuffer[0] = (byte)(~recData[i]);
                 if (!SendData(iso9141BlockBuffer, 1))
                 {
-                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
+                    if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
                 if (!ReceiveData(recData, i + 1, 1, this.parTimeoutTelEnd, this.parTimeoutTelEnd))
                 {
-                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No block data received");
+                    if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No block data received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
             }
-            ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, recData, 0, blockLen, "Resp");
+            if (enableLog) ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, recData, 0, blockLen, "Resp");
             if (recData[blockLen] != 0x03)
             {
-                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Block end invalid");
+                if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Block end invalid");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
@@ -1477,6 +1708,7 @@ namespace EdiabasLib
             // Check to see if Dispose has already been called.
             if (!this.disposed)
             {
+                InterfaceDisconnect();
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
                 if (disposing)

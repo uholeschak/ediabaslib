@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using EdiabasLib;
 using NDesk.Options;
 
@@ -227,6 +228,9 @@ namespace EdiabasTest
                         {
                             PrintResults(ediabas, formatList, printAllTypes, resultSets);
                         }
+
+                        //Console.WriteLine("Press Key to continue");
+                        //Console.ReadKey(true);
                     }
 
                     if (apiResultList != null)
