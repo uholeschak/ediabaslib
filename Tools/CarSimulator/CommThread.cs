@@ -594,14 +594,14 @@ namespace CarSimulator
         }
 
         private bool SendData(byte[] sendData, int length)
-        {   // no try cath to allow loop exit
+        {   // no try catch to allow loop exit
             //_serialPort.DiscardInBuffer();
             _serialPort.Write(sendData, 0, length);
             return true;
         }
 
         private bool SendData(byte[] sendData, int offset, int length)
-        {   // no try cath to allow loop exit
+        {   // no try catch to allow loop exit
             _serialPort.DiscardInBuffer();
             _serialPort.Write(sendData, offset, length);
             return true;
@@ -646,6 +646,7 @@ namespace CarSimulator
                             break;
                         }
                     }
+                    // no _receiveEvent.WaitOne(1, false); allowed here!
                 }
                 _receiveStopWatch.Stop();
                 if (recLen < length)

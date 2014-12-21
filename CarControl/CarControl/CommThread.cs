@@ -621,7 +621,7 @@ namespace CarControl
                 InitProperties();
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
-                _workerThread.Priority = ThreadPriority.Highest;
+                //_workerThread.Priority = ThreadPriority.Highest;
                 _workerThread.Start();
             }
             catch (Exception)
@@ -662,74 +662,70 @@ namespace CarControl
 
         private void ThreadFunc()
         {
-            if (Connect())
+            DataUpdatedEvent();
+            SelectedDevice lastDevice = (SelectedDevice)(-1);
+            while (!_stopThread)
             {
-                DataUpdatedEvent();
-                SelectedDevice lastDevice = (SelectedDevice) (-1);
-                while (!_stopThread)
+                try
                 {
-                    try
+                    bool result = true;
+                    SelectedDevice copyDevice = Device;
+
+                    if (lastDevice != copyDevice)
                     {
-                        bool result = true;
-                        SelectedDevice copyDevice = Device;
-
-                        if (lastDevice != copyDevice)
-                        {
-                            lastDevice = copyDevice;
-                            InitProperties(true);
-                        }
-
-                        switch (copyDevice)
-                        {
-                            case SelectedDevice.DeviceAxis:
-                                result = CommEhc(copyDevice, EhcJobs);
-                                break;
-
-                            case SelectedDevice.DeviceMotor:
-                                result = CommEdiabas(copyDevice, MotorJobs);
-                                break;
-
-                            case SelectedDevice.DeviceMotorUnevenRunning:
-                                result = CommEdiabas(copyDevice, MotorUnevenJobs);
-                                break;
-
-                            case SelectedDevice.DeviceMotorRotIrregular:
-                                result = CommEdiabas(copyDevice, MotorRotIrregularJobs);
-                                break;
-
-                            case SelectedDevice.DeviceMotorPM:
-                                result = CommEdiabas(copyDevice, MotorPmJobs);
-                                break;
-
-                            case SelectedDevice.DeviceCccNav:
-                                result = CommEdiabas(copyDevice, CccNavJobs);
-                                break;
-
-                            case SelectedDevice.DeviceIhk:
-                                result = CommEdiabas(copyDevice, IhkJobs);
-                                break;
-
-                            case SelectedDevice.DeviceErrors:
-                                result = CommErrorsEdiabas(copyDevice);
-                                break;
-
-                            case SelectedDevice.Test:
-                                result = CommTest();
-                                break;
-                        }
-
-                        if (result)
-                        {
-                            Connected = true;
-                        }
+                        lastDevice = copyDevice;
+                        InitProperties(true);
                     }
-                    catch (Exception)
+
+                    switch (copyDevice)
                     {
-                        break;
+                        case SelectedDevice.DeviceAxis:
+                            result = CommEhc(copyDevice, EhcJobs);
+                            break;
+
+                        case SelectedDevice.DeviceMotor:
+                            result = CommEdiabas(copyDevice, MotorJobs);
+                            break;
+
+                        case SelectedDevice.DeviceMotorUnevenRunning:
+                            result = CommEdiabas(copyDevice, MotorUnevenJobs);
+                            break;
+
+                        case SelectedDevice.DeviceMotorRotIrregular:
+                            result = CommEdiabas(copyDevice, MotorRotIrregularJobs);
+                            break;
+
+                        case SelectedDevice.DeviceMotorPM:
+                            result = CommEdiabas(copyDevice, MotorPmJobs);
+                            break;
+
+                        case SelectedDevice.DeviceCccNav:
+                            result = CommEdiabas(copyDevice, CccNavJobs);
+                            break;
+
+                        case SelectedDevice.DeviceIhk:
+                            result = CommEdiabas(copyDevice, IhkJobs);
+                            break;
+
+                        case SelectedDevice.DeviceErrors:
+                            result = CommErrorsEdiabas(copyDevice);
+                            break;
+
+                        case SelectedDevice.Test:
+                            result = CommTest();
+                            break;
                     }
-                    DataUpdatedEvent();
+
+                    if (result)
+                    {
+                        Connected = true;
+                    }
                 }
-                Disconnect();
+                catch (Exception)
+                {
+                    break;
+                }
+                DataUpdatedEvent();
             }
             _threadRunning = false;
             DataUpdatedEvent();
@@ -1486,12 +1482,12 @@ namespace CarControl
 
         private bool InterfaceConnect()
         {
-            return true;
+            return Connect();
         }
 
         private bool InterfaceDisconnect()
         {
-            return true;
+            return Disconnect();
         }
 
         private bool InterfaceSetDtr(bool dtr)
