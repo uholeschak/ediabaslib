@@ -13,7 +13,7 @@ namespace EdiabasLib
         public delegate bool InterfaceSetDtrDelegate(bool dtr);
         public delegate bool InterfaceSetRtsDelegate(bool rts);
         public delegate bool InterfaceGetDsrDelegate(out bool dsr);
-        public delegate bool SendDataDelegate(byte[] sendData, int length);
+        public delegate bool SendDataDelegate(byte[] sendData, int length, bool setDtr);
         public delegate bool ReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse);
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
         protected delegate EdiabasNet.ErrorCodes IdleDelegate();
@@ -818,17 +818,38 @@ namespace EdiabasLib
 
         protected bool SendData(byte[] sendData, int length)
         {
+            return SendData(sendData, length, false);
+        }
+
+        protected bool SendData(byte[] sendData, int length, bool setDtr)
+        {
             if (sendDataFunc != null)
             {
-                return sendDataFunc(sendData, length);
+                return sendDataFunc(sendData, length, setDtr);
             }
             try
             {
-                serialPort.DiscardInBuffer();
-                serialPort.Write(sendData, 0, length);
-                while (serialPort.BytesToWrite > 0)
+                if (setDtr)
                 {
-                    Thread.Sleep(1);
+                    double byteTime = 1.0d / serialPort.BaudRate * 1000 * 10;
+                    long waitTime = (long)((0.2d + byteTime * length) * tickResolMs);
+                    serialPort.DiscardInBuffer();
+                    serialPort.DtrEnable = true;
+                    long startTime = Stopwatch.GetTimestamp();
+                    serialPort.Write(sendData, 0, length);
+                    while ((Stopwatch.GetTimestamp() - startTime) < waitTime)
+                    {
+                    }
+                    serialPort.DtrEnable = false;
+                }
+                else
+                {
+                    serialPort.DiscardInBuffer();
+                    serialPort.Write(sendData, 0, length);
+                    while (serialPort.BytesToWrite > 0)
+                    {
+                        Thread.Sleep(1);
+                    }
                 }
             }
             catch (Exception)
@@ -1474,25 +1495,11 @@ namespace EdiabasLib
                 }
                 this.keyBytes = keyBytesBuffer;
 
-                if (interfaceSetDtrFunc != null)
-                {
-                    if (!interfaceSetDtrFunc(true))
-                    {
-                        this.ecuConnected = false;
-                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set DTR failed");
-                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
-                    }
-                }
-                else
-                {
-                    serialPort.DtrEnable = true;
-                }
-
                 this.lastCommTick = Stopwatch.GetTimestamp();
                 ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Key bytes: {0:X02} {1:X02}", keyBytesBuffer[0], keyBytesBuffer[1]);
                 iso9141Buffer[0] = (byte)(~keyBytesBuffer[1]);
                 Thread.Sleep(10);
-                if (!SendData(iso9141Buffer, 1))
+                if (!SendData(iso9141Buffer, 1, true))
                 {
                     this.ecuConnected = false;
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending key byte response failed");
@@ -1670,7 +1677,7 @@ namespace EdiabasLib
             for (int i = 0; i < blockLen; i++)
             {
                 iso9141BlockBuffer[0] = sendData[i];
-                if (!SendData(iso9141BlockBuffer, 1))
+                if (!SendData(iso9141BlockBuffer, 1, true))
                 {
                     if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
@@ -1687,7 +1694,7 @@ namespace EdiabasLib
                 }
             }
             iso9141BlockBuffer[0] = 0x03;   // block end
-            if (!SendData(iso9141BlockBuffer, 1))
+            if (!SendData(iso9141BlockBuffer, 1, true))
             {
                 if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
@@ -1708,7 +1715,7 @@ namespace EdiabasLib
             for (int i = 0; i < blockLen; i++)
             {
                 iso9141BlockBuffer[0] = (byte)(~recData[i]);
-                if (!SendData(iso9141BlockBuffer, 1))
+                if (!SendData(iso9141BlockBuffer, 1, true))
                 {
                     if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;

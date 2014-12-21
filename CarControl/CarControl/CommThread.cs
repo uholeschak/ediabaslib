@@ -1645,7 +1645,7 @@ namespace CarControl
             ediabasDynDict = null;
         }
 
-        private bool SendData(byte[] sendData, int length)
+        private bool SendData(byte[] sendData, int length, bool setDtr)
         {
             LogData(sendData, 0, length, "Send");
             if (_handleFtdi == (IntPtr)0)
