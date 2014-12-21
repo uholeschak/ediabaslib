@@ -138,6 +138,28 @@ namespace EdiabasLib
                 bool stateRts = false;
                 switch (commParameter[0])
                 {
+                    case 0x0001:    // Concept 1
+                        if (commParameter.Length < 7)
+                        {
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
+                        }
+                        if (commParameter.Length >= 10 && commParameter[33] != 1)
+                        {   // not checksum calculated by interface
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
+                        }
+                        commAnswerLen = new short[] { -2, 0 };
+                        baudRate = (int)commParameter[1];
+                        parity = Parity.Even;
+                        stateDtr = false;
+                        stateRts = false;
+                        this.parTransmitFunc = TransDS2;
+                        this.parTimeoutStd = (int)commParameter[5];
+                        this.parRegenTime = (int)commParameter[6];
+                        this.parTimeoutTelEnd = (int)commParameter[7];
+                        break;
+
                     case 0x0002:    // Concept 2 ISO 9141
                         if (commParameter.Length < 7)
                         {
@@ -162,7 +184,6 @@ namespace EdiabasLib
                         this.parTimeoutTelEnd = (int)commParameter[7];
                         break;
 
-                    case 0x0001:    // Concept 1
                     case 0x0006:    // DS2
                         if (commParameter.Length < 7)
                         {
