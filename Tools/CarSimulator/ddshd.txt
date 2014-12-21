@@ -2,9 +2,5 @@
 
 ;IDENT
 15 00 05 00 10 : 15 00 0B 00 00 C1 10 00 38 95 62
-; test for zke1, this is no valid response, remove later!!!!
-55 55 11 02 A3 00 : 55 55 11 02 A3 00
-; test for irs_komp, this is no valid response, remove later!!!!
-B9 00 05 00 BC : B9 00 05 00 BC
 ; test for zv36, this is no valid response, remove later!!!!
 21 04 00 25 : 21 04 00 25
