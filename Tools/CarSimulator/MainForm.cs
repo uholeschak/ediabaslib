@@ -231,7 +231,7 @@ namespace CarSimulator
                         }
                     }
                 }
-                else
+                else if (conceptType != CommThread.ConceptType.concept1)
                 {
                     foreach (CommThread.ResponseEntry responseEntry in _responseList)
                     {
@@ -350,6 +350,7 @@ namespace CarSimulator
                 CommThread.ConceptType conceptType = CommThread.ConceptType.conceptBwmFast;
                 if (radioButtonKwp2000S.Checked) conceptType = CommThread.ConceptType.conceptKwp2000S;
                 if (radioButtonDs2.Checked) conceptType = CommThread.ConceptType.conceptDs2;
+                if (radioButtonConcept1.Checked) conceptType = CommThread.ConceptType.concept1;
                 if (radioButtonIso9141.Checked) conceptType = CommThread.ConceptType.conceptIso9141;
 
                 string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);

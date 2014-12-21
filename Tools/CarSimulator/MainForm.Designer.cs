@@ -42,6 +42,7 @@
             this.listBoxResponseFiles = new System.Windows.Forms.ListBox();
             this.checkBoxIgnitionOk = new System.Windows.Forms.CheckBox();
             this.checkBoxAdsAdapter = new System.Windows.Forms.CheckBox();
+            this.radioButtonConcept1 = new System.Windows.Forms.RadioButton();
             this.groupBoxConcepts.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -103,13 +104,14 @@
             // 
             // groupBoxConcepts
             // 
+            this.groupBoxConcepts.Controls.Add(this.radioButtonConcept1);
             this.groupBoxConcepts.Controls.Add(this.radioButtonIso9141);
             this.groupBoxConcepts.Controls.Add(this.radioButtonDs2);
             this.groupBoxConcepts.Controls.Add(this.radioButtonKwp2000S);
             this.groupBoxConcepts.Controls.Add(this.radioButtonBmwFast);
             this.groupBoxConcepts.Location = new System.Drawing.Point(224, 88);
             this.groupBoxConcepts.Name = "groupBoxConcepts";
-            this.groupBoxConcepts.Size = new System.Drawing.Size(207, 121);
+            this.groupBoxConcepts.Size = new System.Drawing.Size(207, 147);
             this.groupBoxConcepts.TabIndex = 6;
             this.groupBoxConcepts.TabStop = false;
             this.groupBoxConcepts.Text = "Concepts";
@@ -117,10 +119,10 @@
             // radioButtonIso9141
             // 
             this.radioButtonIso9141.AutoSize = true;
-            this.radioButtonIso9141.Location = new System.Drawing.Point(6, 88);
+            this.radioButtonIso9141.Location = new System.Drawing.Point(6, 111);
             this.radioButtonIso9141.Name = "radioButtonIso9141";
             this.radioButtonIso9141.Size = new System.Drawing.Size(70, 17);
-            this.radioButtonIso9141.TabIndex = 8;
+            this.radioButtonIso9141.TabIndex = 9;
             this.radioButtonIso9141.TabStop = true;
             this.radioButtonIso9141.Text = "ISO 9141";
             this.radioButtonIso9141.UseVisualStyleBackColor = true;
@@ -152,7 +154,7 @@
             this.listBoxResponseFiles.FormattingEnabled = true;
             this.listBoxResponseFiles.Location = new System.Drawing.Point(12, 88);
             this.listBoxResponseFiles.Name = "listBoxResponseFiles";
-            this.listBoxResponseFiles.Size = new System.Drawing.Size(206, 121);
+            this.listBoxResponseFiles.Size = new System.Drawing.Size(206, 147);
             this.listBoxResponseFiles.Sorted = true;
             this.listBoxResponseFiles.TabIndex = 7;
             // 
@@ -179,11 +181,22 @@
             this.checkBoxAdsAdapter.Text = "ADS adapter";
             this.checkBoxAdsAdapter.UseVisualStyleBackColor = true;
             // 
+            // radioButtonConcept1
+            // 
+            this.radioButtonConcept1.AutoSize = true;
+            this.radioButtonConcept1.Location = new System.Drawing.Point(6, 88);
+            this.radioButtonConcept1.Name = "radioButtonConcept1";
+            this.radioButtonConcept1.Size = new System.Drawing.Size(74, 17);
+            this.radioButtonConcept1.TabIndex = 8;
+            this.radioButtonConcept1.TabStop = true;
+            this.radioButtonConcept1.Text = "Concept 1";
+            this.radioButtonConcept1.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(443, 225);
+            this.ClientSize = new System.Drawing.Size(443, 248);
             this.Controls.Add(this.checkBoxAdsAdapter);
             this.Controls.Add(this.checkBoxIgnitionOk);
             this.Controls.Add(this.listBoxResponseFiles);
@@ -217,6 +230,7 @@
         private System.Windows.Forms.CheckBox checkBoxIgnitionOk;
         private System.Windows.Forms.RadioButton radioButtonIso9141;
         private System.Windows.Forms.CheckBox checkBoxAdsAdapter;
+        private System.Windows.Forms.RadioButton radioButtonConcept1;
 
     }
 }

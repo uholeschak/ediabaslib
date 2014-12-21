@@ -41,6 +41,7 @@ namespace CarSimulator
             conceptBwmFast,
             conceptKwp2000S,
             conceptDs2,
+            concept1,
             conceptIso9141,     // ISO 9141
         };
 
@@ -476,13 +477,19 @@ namespace CarSimulator
                 {
                     try
                     {
-                        if (_conceptType != ConceptType.conceptIso9141)
+                        switch (_conceptType)
                         {
-                            SerialTransmission();
-                        }
-                        else
-                        {
-                            SerialIso9141Transmission();
+                            case ConceptType.concept1:
+                                SerialConcept1Transmission();
+                                break;
+
+                            case ConceptType.conceptIso9141:
+                                SerialIso9141Transmission();
+                                break;
+
+                            default:
+                                SerialTransmission();
+                                break;
                         }
                     }
                     catch (Exception)
@@ -511,6 +518,7 @@ namespace CarSimulator
 
                     case ConceptType.conceptKwp2000S:
                     case ConceptType.conceptDs2:
+                    case ConceptType.concept1:
                         baudRate = 9600;
                         parity = Parity.Even;
                         break;
@@ -3247,6 +3255,65 @@ namespace CarSimulator
                     }
                     Debug.WriteLine("Not found: " + text);
                 }
+            }
+        }
+
+        private void SerialConcept1Transmission()
+        {
+            int recLength = 0;
+            for (;;)
+            {
+                if (!ReceiveData(_receiveData, recLength, 1))
+                {   // complete tel received
+                    break;
+                }
+                recLength++;
+            }
+            if (recLength == 0)
+            {
+                return;
+            }
+
+            if (!_adsAdapter)
+            {
+                // send echo
+                SendData(_receiveData, recLength);
+            }
+
+            bool found = false;
+            foreach (ResponseEntry responseEntry in _responseList)
+            {
+                if (recLength != responseEntry.Request.Length) continue;
+                bool equal = true;
+                for (int i = 0; i < recLength - 1; i++)
+                {   // don't compare checksum
+                    if (_receiveData[i] != responseEntry.Request[i])
+                    {
+                        equal = false;
+                        break;
+                    }
+                }
+                if (equal)
+                {       // entry found
+                    found = true;
+                    int responseLen = responseEntry.Response.Length;
+                    if (responseLen > 0)
+                    {
+                        Array.Copy(responseEntry.Response, _sendData, responseLen);
+                        _sendData[responseLen - 1] = CalcChecksumDs2(_sendData, responseLen - 1);
+                        SendData(_sendData, responseLen);
+                    }
+                    break;
+                }
+            }
+            if (!found)
+            {
+                string text = string.Empty;
+                for (int i = 0; i < recLength; i++)
+                {
+                    text += string.Format("{0:X02} ", _receiveData[i]);
+                }
+                Debug.WriteLine("Not found: " + text);
             }
         }
 
