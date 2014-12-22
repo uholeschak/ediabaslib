@@ -74,6 +74,7 @@ namespace EdiabasLib
         protected int parTimeoutNR = 0;
         protected int parRetryNR = 0;
         protected byte parWakeAddress = 0;
+        protected bool parSendSetDtr = false;
 
         public override EdiabasNet Ediabas
         {
@@ -113,6 +114,7 @@ namespace EdiabasLib
                 this.parTimeoutNR = 0;
                 this.parRetryNR = 0;
                 this.parWakeAddress = 0;
+                this.parSendSetDtr = false;
                 this.keyBytes = byteArray0;
                 this.ecuConnected = false;
                 this.lastCommTick = DateTime.MinValue.Ticks;
@@ -158,6 +160,7 @@ namespace EdiabasLib
                         this.parTimeoutStd = (int)commParameter[5];
                         this.parRegenTime = (int)commParameter[6];
                         this.parTimeoutTelEnd = (int)commParameter[7];
+                        this.parSendSetDtr = false;
                         break;
 
                     case 0x0002:    // Concept 2 ISO 9141
@@ -182,6 +185,7 @@ namespace EdiabasLib
                         this.parTimeoutStd = (int)commParameter[5];
                         this.parRegenTime = (int)commParameter[6];
                         this.parTimeoutTelEnd = (int)commParameter[7];
+                        this.parSendSetDtr = true;
                         break;
 
                     case 0x0006:    // DS2
@@ -204,6 +208,7 @@ namespace EdiabasLib
                         this.parTimeoutStd = (int)commParameter[5];
                         this.parRegenTime = (int)commParameter[6];
                         this.parTimeoutTelEnd = (int)commParameter[7];
+                        this.parSendSetDtr = !adapterEcho;
                         break;
 
                     case 0x010D:    // KWP2000*
@@ -228,6 +233,7 @@ namespace EdiabasLib
                         this.parTimeoutTelEnd = (int)commParameter[4];
                         this.parTimeoutNR = (int)commParameter[7];
                         this.parRetryNR = (int)commParameter[6];
+                        this.parSendSetDtr = !adapterEcho;
                         break;
 
                     case 0x010F:    // BMW-FAST
@@ -252,6 +258,7 @@ namespace EdiabasLib
                         this.parTimeoutTelEnd = (int)commParameter[4];
                         this.parTimeoutNR = (int)commParameter[6];
                         this.parRetryNR = (int)commParameter[5];
+                        this.parSendSetDtr = !adapterEcho;
                         break;
 
                     case 0x0110:    // D-CAN
@@ -271,6 +278,7 @@ namespace EdiabasLib
                         this.parRegenTime = (int)commParameter[8];
                         this.parTimeoutNR = (int)commParameter[9];
                         this.parRetryNR = (int)commParameter[10];
+                        this.parSendSetDtr = !adapterEcho;
                         break;
 
                     default:
@@ -1043,7 +1051,7 @@ namespace EdiabasLib
                 {
                     Thread.Sleep(1);
                 }
-                if (!SendData(sendData, sendLength))
+                if (!SendData(sendData, sendLength, this.parSendSetDtr))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
@@ -1184,7 +1192,7 @@ namespace EdiabasLib
                 {
                     Thread.Sleep(1);
                 }
-                if (!SendData(sendData, sendLength))
+                if (!SendData(sendData, sendLength, this.parSendSetDtr))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
@@ -1295,8 +1303,7 @@ namespace EdiabasLib
                 {
                     Thread.Sleep(1);
                 }
-                bool setDtr = !adapterEcho;
-                if (!SendData(sendData, sendLength, setDtr))
+                if (!SendData(sendData, sendLength, this.parSendSetDtr))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
@@ -1501,7 +1508,7 @@ namespace EdiabasLib
                 ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Key bytes: {0:X02} {1:X02}", keyBytesBuffer[0], keyBytesBuffer[1]);
                 iso9141Buffer[0] = (byte)(~keyBytesBuffer[1]);
                 Thread.Sleep(10);
-                if (!SendData(iso9141Buffer, 1, true))
+                if (!SendData(iso9141Buffer, 1, this.parSendSetDtr))
                 {
                     this.ecuConnected = false;
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending key byte response failed");
@@ -1679,7 +1686,7 @@ namespace EdiabasLib
             for (int i = 0; i < blockLen; i++)
             {
                 iso9141BlockBuffer[0] = sendData[i];
-                if (!SendData(iso9141BlockBuffer, 1, true))
+                if (!SendData(iso9141BlockBuffer, 1, this.parSendSetDtr))
                 {
                     if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
@@ -1696,7 +1703,7 @@ namespace EdiabasLib
                 }
             }
             iso9141BlockBuffer[0] = 0x03;   // block end
-            if (!SendData(iso9141BlockBuffer, 1, true))
+            if (!SendData(iso9141BlockBuffer, 1, this.parSendSetDtr))
             {
                 if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
@@ -1717,7 +1724,7 @@ namespace EdiabasLib
             for (int i = 0; i < blockLen; i++)
             {
                 iso9141BlockBuffer[0] = (byte)(~recData[i]);
-                if (!SendData(iso9141BlockBuffer, 1, true))
+                if (!SendData(iso9141BlockBuffer, 1, this.parSendSetDtr))
                 {
                     if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
