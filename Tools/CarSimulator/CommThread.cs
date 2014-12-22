@@ -3361,18 +3361,21 @@ namespace CarSimulator
                 SendData(_sendData, 0, 1);
 
                 Thread.Sleep(10);   // maximum 400ms
-                if (_configData.ConfigList.Count > 2)
+                int sendLen;
+                if (_configData.ConfigList.Count > 1)
                 {
-                    _sendData[0] = _configData.ConfigList[1];
-                    _sendData[1] = _configData.ConfigList[2];
+                    byte[] configArray = _configData.ConfigList.ToArray();
+                    sendLen = configArray.Length - 1;
+                    Array.Copy(configArray, 1, _sendData, 0, sendLen);
                 }
                 else
                 {
+                    sendLen = 2;
                     _sendData[0] = 0x08;
                     _sendData[1] = 0x08;
                 }
 
-                SendData(_sendData, 0, 2);
+                SendData(_sendData, 0, sendLen);
 
                 if (ReceiveData(_receiveData, 0, 1, 50, 50))
                 {
