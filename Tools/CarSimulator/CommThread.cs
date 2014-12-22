@@ -9,6 +9,26 @@ namespace CarSimulator
 {
     class CommThread
     {
+        public class ConfigData
+        {
+            public ConfigData()
+            {
+                configList = new List<byte>();
+                responseList = new List<ResponseEntry>();
+            }
+            public List<byte> ConfigList
+            {
+                get { return configList; }
+            }
+            public List<CommThread.ResponseEntry> ResponseList
+            {
+                get { return responseList; }
+            }
+
+            private List<byte> configList;
+            private List<CommThread.ResponseEntry> responseList;
+        }
+
         public class ResponseEntry
         {
             private byte[] requestArray;
@@ -52,7 +72,7 @@ namespace CarSimulator
         private ConceptType     _conceptType;
         private bool            _adsAdapter;
         private bool            _e61Internal;
-        private List<ResponseEntry> _responseList;
+        private ConfigData      _configData;
         private SerialPort      _serialPort;
         private AutoResetEvent  _receiveEvent;
         private byte[]          _sendData;
@@ -423,7 +443,7 @@ namespace CarSimulator
             IgnitionOk = false;
         }
 
-        public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, bool e61Internal, List<ResponseEntry> responseList)
+        public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, bool e61Internal, ConfigData configData)
         {
             try
             {
@@ -433,7 +453,7 @@ namespace CarSimulator
                 _conceptType = conceptType;
                 _adsAdapter = adsAdapter;
                 _e61Internal = e61Internal;
-                _responseList = responseList;
+                _configData = configData;
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
                 _workerThread.Priority = ThreadPriority.Highest;
@@ -3220,7 +3240,7 @@ namespace CarSimulator
                 recLength += 1; // checksum
 
                 bool found = false;
-                foreach (ResponseEntry responseEntry in _responseList)
+                foreach (ResponseEntry responseEntry in _configData.ResponseList)
                 {
                     if (recLength != responseEntry.Request.Length) continue;
                     bool equal = true;
@@ -3281,7 +3301,7 @@ namespace CarSimulator
             }
 
             bool found = false;
-            foreach (ResponseEntry responseEntry in _responseList)
+            foreach (ResponseEntry responseEntry in _configData.ResponseList)
             {
                 if (recLength != responseEntry.Request.Length) continue;
                 bool equal = true;
@@ -3330,17 +3350,28 @@ namespace CarSimulator
                     break;
                 }
                 Debug.WriteLine(string.Format("Wake Address: {0:X02}", wakeAddress));
+                if ((_configData.ConfigList.Count > 1) && (wakeAddress != _configData.ConfigList[0]))
+                {
+                    Debug.WriteLine("Invalid wake address");
+                    break;
+                }
+
                 Thread.Sleep(100);  // maximum is 2000ms
                 _sendData[0] = 0x55;
                 SendData(_sendData, 0, 1);
 
                 Thread.Sleep(10);   // maximum 400ms
-                //_sendData[0] = 0x08;
-                //_sendData[1] = 0x08;
-                //_sendData[0] = 0x01;
-                //_sendData[1] = 0x8A;
-                _sendData[0] = 0x00;
-                _sendData[1] = 0x81;
+                if (_configData.ConfigList.Count > 2)
+                {
+                    _sendData[0] = _configData.ConfigList[1];
+                    _sendData[1] = _configData.ConfigList[2];
+                }
+                else
+                {
+                    _sendData[0] = 0x08;
+                    _sendData[1] = 0x08;
+                }
+
                 SendData(_sendData, 0, 2);
 
                 if (ReceiveData(_receiveData, 0, 1, 50, 50))
@@ -3419,7 +3450,7 @@ namespace CarSimulator
                 if (command != 0x09)
                 {   // no ack
                     bool found = false;
-                    foreach (ResponseEntry responseEntry in _responseList)
+                    foreach (ResponseEntry responseEntry in _configData.ResponseList)
                     {
                         if (recLength != responseEntry.Request.Length) continue;
                         bool equal = true;

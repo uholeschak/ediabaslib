@@ -17,7 +17,7 @@ namespace CarSimulator
         private const string _stdResponseFile = "Response.txt";
         private CommThread _commThread;
         private int _lastPortCount;
-        private List<CommThread.ResponseEntry> _responseList;
+        private CommThread.ConfigData _configData;
 
         public MainForm()
         {
@@ -25,7 +25,7 @@ namespace CarSimulator
             InitializeComponent();
 
             _lastPortCount = -1;
-            _responseList = new List<CommThread.ResponseEntry>();
+            _configData = new CommThread.ConfigData();
             UpdateResponseFiles();
             UpdatePorts();
             _commThread = new CommThread();
@@ -87,9 +87,12 @@ namespace CarSimulator
         {
             if (!File.Exists(fileName)) return false;
 
+            List<byte> configList = _configData.ConfigList;
+            List<CommThread.ResponseEntry> responseList = _configData.ResponseList;
             try
             {
-                _responseList.Clear();
+                configList.Clear();
+                responseList.Clear();
                 using (StreamReader streamReader = new StreamReader(fileName))
                 {
                     string line;
@@ -98,7 +101,30 @@ namespace CarSimulator
                         if (line.StartsWith(";")) continue;
                         if (line.Length < 2) continue;
 
-                        string[] numberArray = line.Split(new char[] { ' ' });
+                        string[] numberArray;
+                        if (line.ToUpper().StartsWith("CFG:"))
+                        {
+                            configList.Clear();
+                            line = line.Substring(4);
+                            numberArray = line.Split(new char[] { ' ' });
+                            foreach (string number in numberArray)
+                            {
+                                if (number.Length > 1)
+                                {
+                                    try
+                                    {
+                                        int value = Convert.ToInt32(number, 16);
+                                        configList.Add((byte)value);
+                                    }
+                                    catch
+                                    {
+                                    }
+                                }
+                            }
+                            continue;
+                        }
+
+                        numberArray = line.Split(new char[] { ' ' });
                         bool responseData = false;
                         List<byte> listCompare = new List<byte>();
                         List<byte> listResponse = new List<byte>();
@@ -132,7 +158,7 @@ namespace CarSimulator
                         {
                             // find duplicates
                             bool addEntry = true;
-                            foreach (CommThread.ResponseEntry responseEntry in _responseList)
+                            foreach (CommThread.ResponseEntry responseEntry in responseList)
                             {
                                 if (listCompare.Count != responseEntry.Request.Length) continue;
                                 bool equal = true;
@@ -148,7 +174,7 @@ namespace CarSimulator
                                 {       // entry found
                                     if (responseEntry.Response.Length < listResponse.Count)
                                     {
-                                        _responseList.Remove(responseEntry);
+                                        responseList.Remove(responseEntry);
                                     }
                                     else
                                     {
@@ -160,7 +186,7 @@ namespace CarSimulator
 
                             if (addEntry)
                             {
-                                _responseList.Add(new CommThread.ResponseEntry(listCompare.ToArray(), listResponse.ToArray()));
+                                responseList.Add(new CommThread.ResponseEntry(listCompare.ToArray(), listResponse.ToArray()));
                             }
                         }
                     }
@@ -170,7 +196,7 @@ namespace CarSimulator
                 // split multi telegram responses
                 if (conceptType == CommThread.ConceptType.conceptIso9141)
                 {
-                    foreach (CommThread.ResponseEntry responseEntry in _responseList)
+                    foreach (CommThread.ResponseEntry responseEntry in responseList)
                     {
                         {
                             if (responseEntry.Request.Length < 3)
@@ -233,7 +259,7 @@ namespace CarSimulator
                 }
                 else if (conceptType != CommThread.ConceptType.concept1)
                 {
-                    foreach (CommThread.ResponseEntry responseEntry in _responseList)
+                    foreach (CommThread.ResponseEntry responseEntry in responseList)
                     {
                         {
                             if (responseEntry.Request.Length < 4)
@@ -369,7 +395,7 @@ namespace CarSimulator
                     }
                 }
 
-                _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, e61Internal, _responseList);
+                _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, e61Internal, _configData);
             }
 
             UpdateDisplay();
