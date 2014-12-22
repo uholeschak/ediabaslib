@@ -831,8 +831,9 @@ namespace EdiabasLib
             {
                 if (setDtr)
                 {
-                    double byteTime = 1.0d / serialPort.BaudRate * 1000 * 10;
-                    long waitTime = (long)((0.2d + byteTime * length) * tickResolMs);
+                    int bitCount = (serialPort.Parity == Parity.None) ? 10 : 11;
+                    double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
+                    long waitTime = (long)((0.3d + byteTime * length) * tickResolMs);
                     serialPort.DiscardInBuffer();
                     serialPort.DtrEnable = true;
                     long startTime = Stopwatch.GetTimestamp();
@@ -1294,7 +1295,8 @@ namespace EdiabasLib
                 {
                     Thread.Sleep(1);
                 }
-                if (!SendData(sendData, sendLength))
+                bool setDtr = !adapterEcho;
+                if (!SendData(sendData, sendLength, setDtr))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
