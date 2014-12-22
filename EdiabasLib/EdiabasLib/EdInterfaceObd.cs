@@ -250,7 +250,7 @@ namespace EdiabasLib
                         commAnswerLen = new short[] { 0, 0 };
                         baudRate = (int)commParameter[1];
                         parity = Parity.None;
-                        stateDtr = true;
+                        stateDtr = adapterEcho;
                         stateRts = false;
                         this.parTransmitFunc = TransBmwFast;
                         this.parTimeoutStd = (int)commParameter[2];
@@ -270,7 +270,7 @@ namespace EdiabasLib
                         commAnswerLen = new short[] { 0, 0 };
                         baudRate = 115200;
                         parity = Parity.None;
-                        stateDtr = true;
+                        stateDtr = adapterEcho;
                         stateRts = false;
                         this.parTransmitFunc = TransBmwFast;
                         this.parTimeoutStd = (int)commParameter[7];
