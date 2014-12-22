@@ -88,6 +88,12 @@
     <Content Include="dm33s501.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="dwa4.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="funkkomp.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="ihka.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
