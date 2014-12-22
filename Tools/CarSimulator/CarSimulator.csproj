@@ -97,6 +97,9 @@
     <Content Include="kombi34l.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="m60_338k.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Response.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
