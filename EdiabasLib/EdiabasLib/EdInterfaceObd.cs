@@ -874,6 +874,9 @@ namespace EdiabasLib
             {
                 return true;
             }
+            // add extra delay for internal signal transitions
+            timeout += 20;
+            timeoutTelEnd += 20;
             if (receiveDataFunc != null)
             {
                 return receiveDataFunc(receiveData, offset, length, timeout, timeoutTelEnd, logResponse);
