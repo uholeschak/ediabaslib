@@ -27,6 +27,7 @@ namespace EdiabasLib
         }
 
         private bool disposed = false;
+        protected const int transBufferSize = 1024; // transmit buffer size
         protected static readonly byte[] byteArray0 = new byte[0];
         protected static readonly long tickResolMs = Stopwatch.Frequency / 1000;
         protected static SerialPort serialPort;
@@ -53,9 +54,11 @@ namespace EdiabasLib
         protected Stopwatch stopWatch = new Stopwatch();
         protected byte[] keyBytes = byteArray0;
         protected byte[] state = new byte[2];
-        protected byte[] sendBuffer = new byte[260];
+        protected byte[] sendBuffer = new byte[transBufferSize];
+        protected byte[] sendBufferThread = new byte[transBufferSize];
         protected volatile int sendBufferLength = 0;
-        protected byte[] recBuffer = new byte[260];
+        protected byte[] recBuffer = new byte[transBufferSize];
+        protected byte[] recBufferThread = new byte[transBufferSize];
         protected volatile int recBufferLength = 0;
         protected volatile EdiabasNet.ErrorCodes recErrorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         protected byte[] iso9141Buffer = new byte[256];
@@ -517,9 +520,9 @@ namespace EdiabasLib
                 ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0031);
                 return false;
             }
+#if false
             sendData.CopyTo(this.sendBuffer, 0);
             this.sendBufferLength = sendData.Length;
-#if false
             int recLength;
             this.recErrorCode = OBDTrans(this.sendBuffer, sendData.Length, ref this.recBuffer, out recLength);
             this.recBufferLength = recLength;
@@ -531,6 +534,8 @@ namespace EdiabasLib
             }
             lock (commThreadLock)
             {
+                sendData.CopyTo(this.sendBuffer, 0);
+                this.sendBufferLength = sendData.Length;
                 commThreadReqCount++;
                 commThreadCommand = CommThreadCommands.SingleTransmit;
             }
@@ -757,10 +762,18 @@ namespace EdiabasLib
 
                 uint reqCount;
                 CommThreadCommands command;
+                int sendLength = 0;
+                bool newRequest = false;
                 lock (commThreadLock)
                 {
                     reqCount = commThreadReqCount;
                     command = commThreadCommand;
+                    if (lastReqCount != reqCount)
+                    {
+                        newRequest = true;
+                        Array.Copy(this.sendBuffer, this.sendBufferThread, this.sendBufferLength);
+                        sendLength = this.sendBufferLength;
+                    }
                 }
 
                 switch (command)
@@ -785,19 +798,18 @@ namespace EdiabasLib
                         }
                 }
 
-                if (lastReqCount == reqCount)
+                if (!newRequest)
                 {
                     continue;
                 }
                 lastReqCount = reqCount;
 
+                int recLength = -1;
                 switch (command)
                 {
                     case CommThreadCommands.SingleTransmit:
                         {
-                            int recLength;
-                            this.recErrorCode = OBDTrans(this.sendBuffer, this.sendBufferLength, ref this.recBuffer, out recLength);
-                            this.recBufferLength = recLength;
+                            this.recErrorCode = OBDTrans(this.sendBufferThread, sendLength, ref this.recBufferThread, out recLength);
                             command = CommThreadCommands.Idle;
                             if (this.parIdleFunc != null)
                             {
@@ -813,6 +825,11 @@ namespace EdiabasLib
                 }
                 lock (commThreadLock)
                 {
+                    if (recLength > 0)
+                    {
+                        Array.Copy(this.recBufferThread, this.recBuffer, recLength);
+                        this.recBufferLength = recLength;
+                    }
                     commThreadCommand = command;
                     commThreadResCount = reqCount;
                 }
