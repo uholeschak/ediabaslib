@@ -73,6 +73,7 @@ namespace EdiabasLib
         protected IdleDelegate parIdleFunc;
         protected int parTimeoutStd = 0;
         protected int parTimeoutTelEnd = 0;
+        protected int parInterbyteTime = 0;
         protected int parRegenTime = 0;
         protected int parTimeoutNR = 0;
         protected int parRetryNR = 0;
@@ -113,6 +114,7 @@ namespace EdiabasLib
                 this.parIdleFunc = null;
                 this.parTimeoutStd = 0;
                 this.parTimeoutTelEnd = 0;
+                this.parInterbyteTime = 0;
                 this.parRegenTime = 0;
                 this.parTimeoutNR = 0;
                 this.parRetryNR = 0;
@@ -216,6 +218,7 @@ namespace EdiabasLib
                         this.parTimeoutStd = (int)commParameter[5];
                         this.parRegenTime = (int)commParameter[6];
                         this.parTimeoutTelEnd = (int)commParameter[7];
+                        this.parInterbyteTime = (int)commParameter[8];
                         this.parSendSetDtr = !adapterEcho;
                         break;
 
@@ -846,9 +849,32 @@ namespace EdiabasLib
             }
         }
 
-        protected bool SendData(byte[] sendData, int length)
+        protected bool SendData(byte[] sendData, int length, bool setDtr, int interbyteTime)
         {
-            return SendData(sendData, length, false);
+            if (interbyteTime > 0)
+            {
+                byte[] buffer = new byte[1];
+                for (int i = 0; i < length; i++)
+                {
+                    buffer[0] = sendData[i];
+                    if (!SendData(buffer, 1, setDtr))
+                    {
+                        return false;
+                    }
+                    long startTime = Stopwatch.GetTimestamp();
+                    while ((Stopwatch.GetTimestamp() - startTime) < interbyteTime * tickResolMs)
+                    {
+                    }
+                }
+            }
+            else
+            {
+                if (!SendData(sendData, length, setDtr))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         protected bool SendData(byte[] sendData, int length, bool setDtr)
@@ -1328,7 +1354,7 @@ namespace EdiabasLib
                 {
                     Thread.Sleep(1);
                 }
-                if (!SendData(sendData, sendLength, this.parSendSetDtr))
+                if (!SendData(sendData, sendLength, this.parSendSetDtr, this.parInterbyteTime))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
