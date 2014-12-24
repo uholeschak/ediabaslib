@@ -144,6 +144,11 @@ namespace EdiabasLib
                 switch (commParameter[0])
                 {
                     case 0x0001:    // Concept 1
+                        if (adapterEcho)
+                        {   // only with ADS adapter
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
+                        }
                         if (commParameter.Length < 7)
                         {
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
@@ -167,13 +172,13 @@ namespace EdiabasLib
                         break;
 
                     case 0x0002:    // Concept 2 ISO 9141
-                        if (commParameter.Length < 7)
-                        {
+                        if (adapterEcho)
+                        {   // only with ADS adapter
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
                         }
-                        if (adapterEcho)
-                        {   // only with ADS adapter
+                        if (commParameter.Length < 7)
+                        {
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
                         }
