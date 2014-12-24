@@ -257,7 +257,7 @@ namespace CarSimulator
                         }
                     }
                 }
-                else if (conceptType != CommThread.ConceptType.concept1)
+                else if ((conceptType != CommThread.ConceptType.concept1) && (conceptType != CommThread.ConceptType.concept3))
                 {
                     foreach (CommThread.ResponseEntry responseEntry in responseList)
                     {
@@ -378,6 +378,7 @@ namespace CarSimulator
                 if (radioButtonDs2.Checked) conceptType = CommThread.ConceptType.conceptDs2;
                 if (radioButtonConcept1.Checked) conceptType = CommThread.ConceptType.concept1;
                 if (radioButtonIso9141.Checked) conceptType = CommThread.ConceptType.conceptIso9141;
+                if (radioButtonConcept3.Checked) conceptType = CommThread.ConceptType.concept3;
 
                 string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 string responseFile = (string)listBoxResponseFiles.SelectedItem;

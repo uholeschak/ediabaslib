@@ -36,13 +36,14 @@
             this.checkBoxVariableValues = new System.Windows.Forms.CheckBox();
             this.radioButtonBmwFast = new System.Windows.Forms.RadioButton();
             this.groupBoxConcepts = new System.Windows.Forms.GroupBox();
+            this.radioButtonConcept1 = new System.Windows.Forms.RadioButton();
             this.radioButtonIso9141 = new System.Windows.Forms.RadioButton();
             this.radioButtonDs2 = new System.Windows.Forms.RadioButton();
             this.radioButtonKwp2000S = new System.Windows.Forms.RadioButton();
             this.listBoxResponseFiles = new System.Windows.Forms.ListBox();
             this.checkBoxIgnitionOk = new System.Windows.Forms.CheckBox();
             this.checkBoxAdsAdapter = new System.Windows.Forms.CheckBox();
-            this.radioButtonConcept1 = new System.Windows.Forms.RadioButton();
+            this.radioButtonConcept3 = new System.Windows.Forms.RadioButton();
             this.groupBoxConcepts.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -104,6 +105,7 @@
             // 
             // groupBoxConcepts
             // 
+            this.groupBoxConcepts.Controls.Add(this.radioButtonConcept3);
             this.groupBoxConcepts.Controls.Add(this.radioButtonConcept1);
             this.groupBoxConcepts.Controls.Add(this.radioButtonIso9141);
             this.groupBoxConcepts.Controls.Add(this.radioButtonDs2);
@@ -111,10 +113,21 @@
             this.groupBoxConcepts.Controls.Add(this.radioButtonBmwFast);
             this.groupBoxConcepts.Location = new System.Drawing.Point(224, 88);
             this.groupBoxConcepts.Name = "groupBoxConcepts";
-            this.groupBoxConcepts.Size = new System.Drawing.Size(207, 147);
+            this.groupBoxConcepts.Size = new System.Drawing.Size(207, 160);
             this.groupBoxConcepts.TabIndex = 6;
             this.groupBoxConcepts.TabStop = false;
             this.groupBoxConcepts.Text = "Concepts";
+            // 
+            // radioButtonConcept1
+            // 
+            this.radioButtonConcept1.AutoSize = true;
+            this.radioButtonConcept1.Location = new System.Drawing.Point(6, 88);
+            this.radioButtonConcept1.Name = "radioButtonConcept1";
+            this.radioButtonConcept1.Size = new System.Drawing.Size(74, 17);
+            this.radioButtonConcept1.TabIndex = 8;
+            this.radioButtonConcept1.TabStop = true;
+            this.radioButtonConcept1.Text = "Concept 1";
+            this.radioButtonConcept1.UseVisualStyleBackColor = true;
             // 
             // radioButtonIso9141
             // 
@@ -154,7 +167,7 @@
             this.listBoxResponseFiles.FormattingEnabled = true;
             this.listBoxResponseFiles.Location = new System.Drawing.Point(12, 88);
             this.listBoxResponseFiles.Name = "listBoxResponseFiles";
-            this.listBoxResponseFiles.Size = new System.Drawing.Size(206, 147);
+            this.listBoxResponseFiles.Size = new System.Drawing.Size(206, 160);
             this.listBoxResponseFiles.Sorted = true;
             this.listBoxResponseFiles.TabIndex = 7;
             // 
@@ -181,22 +194,22 @@
             this.checkBoxAdsAdapter.Text = "ADS adapter";
             this.checkBoxAdsAdapter.UseVisualStyleBackColor = true;
             // 
-            // radioButtonConcept1
+            // radioButtonConcept3
             // 
-            this.radioButtonConcept1.AutoSize = true;
-            this.radioButtonConcept1.Location = new System.Drawing.Point(6, 88);
-            this.radioButtonConcept1.Name = "radioButtonConcept1";
-            this.radioButtonConcept1.Size = new System.Drawing.Size(74, 17);
-            this.radioButtonConcept1.TabIndex = 8;
-            this.radioButtonConcept1.TabStop = true;
-            this.radioButtonConcept1.Text = "Concept 1";
-            this.radioButtonConcept1.UseVisualStyleBackColor = true;
+            this.radioButtonConcept3.AutoSize = true;
+            this.radioButtonConcept3.Location = new System.Drawing.Point(6, 134);
+            this.radioButtonConcept3.Name = "radioButtonConcept3";
+            this.radioButtonConcept3.Size = new System.Drawing.Size(74, 17);
+            this.radioButtonConcept3.TabIndex = 10;
+            this.radioButtonConcept3.TabStop = true;
+            this.radioButtonConcept3.Text = "Concept 3";
+            this.radioButtonConcept3.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(443, 248);
+            this.ClientSize = new System.Drawing.Size(443, 266);
             this.Controls.Add(this.checkBoxAdsAdapter);
             this.Controls.Add(this.checkBoxIgnitionOk);
             this.Controls.Add(this.listBoxResponseFiles);
@@ -231,6 +244,7 @@
         private System.Windows.Forms.RadioButton radioButtonIso9141;
         private System.Windows.Forms.CheckBox checkBoxAdsAdapter;
         private System.Windows.Forms.RadioButton radioButtonConcept1;
+        private System.Windows.Forms.RadioButton radioButtonConcept3;
 
     }
 }

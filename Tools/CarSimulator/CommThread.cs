@@ -62,7 +62,8 @@ namespace CarSimulator
             conceptKwp2000S,
             conceptDs2,
             concept1,
-            conceptIso9141,     // ISO 9141
+            conceptIso9141,     // Concept2
+            concept3,
         };
 
         private volatile bool   _stopThread;
@@ -507,6 +508,10 @@ namespace CarSimulator
                                 SerialIso9141Transmission();
                                 break;
 
+                            case ConceptType.concept3:
+                                SerialConcept3Transmission();
+                                break;
+
                             default:
                                 SerialTransmission();
                                 break;
@@ -546,6 +551,11 @@ namespace CarSimulator
                     case ConceptType.conceptIso9141:
                         baudRate = 10400;
                         //baudRate = 9600;
+                        parity = Parity.None;
+                        break;
+
+                    case ConceptType.concept3:
+                        baudRate = 9600;
                         parity = Parity.None;
                         break;
                 }
@@ -3489,5 +3499,65 @@ namespace CarSimulator
                 }
             }
         }
+
+        private void SerialConcept3Transmission()
+        {
+            bool initOk;
+            byte wakeAddress;
+            do
+            {
+                initOk = false;
+                wakeAddress = 0x00;
+                if (!ReceiveWakeUp(out wakeAddress))
+                {
+                    break;
+                }
+                Debug.WriteLine(string.Format("Wake Address: {0:X02}", wakeAddress));
+                if ((_configData.ConfigList.Count > 1) && (wakeAddress != _configData.ConfigList[0]))
+                {
+                    Debug.WriteLine("Invalid wake address");
+                    break;
+                }
+
+                Thread.Sleep(100);  // maximum is 2000ms
+                _sendData[0] = 0x55;
+                SendData(_sendData, 0, 1);
+
+                Thread.Sleep(10);   // maximum 400ms
+                int sendLen = 0;
+                if (_configData.ConfigList.Count > 1)
+                {
+                    byte[] configArray = _configData.ConfigList.ToArray();
+                    sendLen = configArray.Length - 1;
+                    Array.Copy(configArray, 1, _sendData, 0, sendLen);
+                }
+
+                if (sendLen > 0)
+                {
+                    SendData(_sendData, 0, sendLen);
+                }
+                initOk = true;
+            } while (!initOk);
+
+            Debug.WriteLine("Init done");
+
+            for (int i = 0; i < 2; i++)
+            {
+                foreach (ResponseEntry responseEntry in _configData.ResponseList)
+                {
+                    if (_stopThread)
+                    {
+                        break;
+                    }
+                    int responseLen = responseEntry.Response.Length;
+                    if (responseLen > 0)
+                    {
+                        SendData(responseEntry.Response, responseLen);
+                    }
+                    Thread.Sleep(20);
+                }
+            }
+        }
+
     }
 }
