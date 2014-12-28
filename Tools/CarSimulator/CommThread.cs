@@ -556,7 +556,7 @@ namespace CarSimulator
 
                     case ConceptType.concept3:
                         baudRate = 9600;
-                        parity = Parity.None;
+                        parity = Parity.Even;
                         break;
                 }
 
@@ -3501,6 +3501,8 @@ namespace CarSimulator
             do
             {
                 initOk = false;
+                _serialPort.DataBits = 7;
+                _serialPort.Parity = Parity.Even;
                 wakeAddress = 0x00;
                 if (!ReceiveWakeUp(out wakeAddress))
                 {
@@ -3513,11 +3515,11 @@ namespace CarSimulator
                     break;
                 }
 
-                Thread.Sleep(100);  // maximum is 2000ms
+                Thread.Sleep(100);  // maximum is 2200ms
                 _sendData[0] = 0x55;
                 SendData(_sendData, 0, 1);
 
-                Thread.Sleep(10);   // maximum 400ms
+                Thread.Sleep(10);   // maximum 200ms
                 int sendLen = 0;
                 if (_configData.ConfigList.Count > 1)
                 {
@@ -3526,29 +3528,50 @@ namespace CarSimulator
                     Array.Copy(configArray, 1, _sendData, 0, sendLen);
                 }
 
-                if (sendLen > 0)
+                if (sendLen > 1)
                 {
-                    SendData(_sendData, 0, sendLen);
+                    SendData(_sendData, 1, sendLen);
+                    Thread.Sleep(10);
+                    _serialPort.DataBits = 8;
+                    _serialPort.Parity = Parity.Even;
+                    Thread.Sleep(10);     // max sum of both timeouts 2500ms
                 }
                 initOk = true;
             } while (!initOk);
 
             Debug.WriteLine("Init done");
 
-            for (int i = 0; i < 2; i++)
+            bool stopSend = false;
+            for (;;)
             {
+                if (stopSend)
+                {
+                    break;
+                }
+
                 foreach (ResponseEntry responseEntry in _configData.ResponseList)
                 {
                     if (_stopThread)
                     {
+                        stopSend = true;
+                        break;
+                    }
+                    if (_serialPort.BytesToRead > 0)
+                    {
+                        Debug.WriteLine("Abort comm");
+                        Thread.Sleep(100);
+                        stopSend = true;
                         break;
                     }
                     int responseLen = responseEntry.Response.Length;
                     if (responseLen > 0)
                     {
-                        SendData(responseEntry.Response, responseLen);
+                        Array.Copy(responseEntry.Response, _sendData, responseLen);
+                        _sendData[responseLen - 1] = CalcChecksumDs2(_sendData, responseLen - 1);
+                        SendData(_sendData, responseLen);
+                        // max interbyte timeout is 10ms
+                        Thread.Sleep(200);  // min 150ms, max 2500ms (this time includes the send time of 50ms!)
                     }
-                    Thread.Sleep(20);
                 }
             }
         }

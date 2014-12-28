@@ -154,7 +154,14 @@ namespace CarSimulator
                                 }
                             }
                         }
-                        if (listCompare.Count > 0 && listResponse.Count > 0)
+                        if (conceptType == CommThread.ConceptType.concept3)
+                        {   // empty request for concept3
+                            if (listResponse.Count > 0)
+                            {
+                                responseList.Add(new CommThread.ResponseEntry(listCompare.ToArray(), listResponse.ToArray()));
+                            }
+                        }
+                        else if (listCompare.Count > 0 && listResponse.Count > 0)
                         {
                             // find duplicates
                             bool addEntry = true;
