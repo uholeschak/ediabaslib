@@ -545,6 +545,8 @@ namespace CarControl
             edInterfaceObd.InterfaceSetDtrFunc = InterfaceSetDtr;
             edInterfaceObd.InterfaceSetRtsFunc = InterfaceSetRts;
             edInterfaceObd.InterfaceGetDsrFunc = InterfaceGetDsr;
+            edInterfaceObd.InterfaceSetBreakFunc = InterfaceSetBreak;
+            edInterfaceObd.InterfacePurgeInBufferFunc = InterfacePurgeInBuffer;
             edInterfaceObd.SendDataFunc = SendData;
             edInterfaceObd.ReceiveDataFunc = ReceiveData;
 
@@ -1494,7 +1496,14 @@ namespace CarControl
         {
             if (_handleFtdi == (IntPtr)0)
             {   // com port
-                _serialPort.DtrEnable = dtr;
+                try
+                {
+                    _serialPort.DtrEnable = dtr;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
             else
             {
@@ -1520,7 +1529,14 @@ namespace CarControl
         {
             if (_handleFtdi == (IntPtr)0)
             {   // com port
-                _serialPort.RtsEnable = rts;
+                try
+                {
+                    _serialPort.RtsEnable = rts;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
             else
             {
@@ -1546,7 +1562,15 @@ namespace CarControl
         {
             if (_handleFtdi == (IntPtr)0)
             {   // com port
-                dsr = _serialPort.DsrHolding;
+                dsr = false;
+                try
+                {
+                    dsr = _serialPort.DsrHolding;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
             else
             {
@@ -1562,12 +1586,53 @@ namespace CarControl
             return true;
         }
 
-        private bool InterfaceSetConfig(int baudRate, Parity parity)
+        private bool InterfaceSetBreak(bool enable)
         {
             if (_handleFtdi == (IntPtr)0)
             {   // com port
-                _serialPort.BaudRate = baudRate;
-                _serialPort.Parity = parity;
+                try
+                {
+                    _serialPort.BreakState = enable;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                Ftd2xx.FT_STATUS ftStatus;
+
+                if (enable)
+                {
+                    ftStatus = Ftd2xx.FT_SetBreakOn(_handleFtdi);
+                }
+                else
+                {
+                    ftStatus = Ftd2xx.FT_SetBreakOff(_handleFtdi);
+                }
+                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool InterfaceSetConfig(int baudRate, int dataBits, Parity parity)
+        {
+            if (_handleFtdi == (IntPtr)0)
+            {   // com port
+                try
+                {
+                    _serialPort.BaudRate = baudRate;
+                    _serialPort.DataBits = dataBits;
+                    _serialPort.Parity = parity;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
             else
             {
@@ -1577,6 +1642,30 @@ namespace CarControl
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
                     return false;
+                }
+
+                byte wordLength;
+
+                switch (dataBits)
+                {
+                    case 5:
+                        wordLength = Ftd2xx.FT_BITS_5;
+                        break;
+
+                    case 6:
+                        wordLength = Ftd2xx.FT_BITS_6;
+                        break;
+
+                    case 7:
+                        wordLength = Ftd2xx.FT_BITS_7;
+                        break;
+
+                    case 8:
+                        wordLength = Ftd2xx.FT_BITS_8;
+                        break;
+
+                    default:
+                        return false;
                 }
 
                 byte parityLocal;
@@ -1607,7 +1696,7 @@ namespace CarControl
                         return false;
                 }
 
-                ftStatus = Ftd2xx.FT_SetDataCharacteristics(_handleFtdi, Ftd2xx.FT_BITS_8, Ftd2xx.FT_STOP_BITS_1, parityLocal);
+                ftStatus = Ftd2xx.FT_SetDataCharacteristics(_handleFtdi, wordLength, Ftd2xx.FT_STOP_BITS_1, parityLocal);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
                     return false;
@@ -1643,6 +1732,31 @@ namespace CarControl
             ediabasInternalStep = 0;
             ediabasTempDict = null;
             ediabasDynDict = null;
+        }
+
+        private bool InterfacePurgeInBuffer()
+        {
+            if (_handleFtdi == (IntPtr)0)
+            {   // com port
+                try
+                {
+                    _serialPort.DiscardInBuffer();
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else
+            {   // ftdi
+                Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_Purge(_handleFtdi, Ftd2xx.FT_PURGE_RX);
+                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                {
+                    throw new IOException();
+                }
+            }
+
+            return true;
         }
 
         private bool SendData(byte[] sendData, int length, bool setDtr)
