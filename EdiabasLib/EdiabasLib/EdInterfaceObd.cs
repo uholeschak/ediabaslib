@@ -9,10 +9,12 @@ namespace EdiabasLib
     {
         public delegate bool InterfaceConnectDelegate();
         public delegate bool InterfaceDisconnectDelegate();
-        public delegate bool InterfaceSetConfigDelegate(int baudRate, Parity parity);
+        public delegate bool InterfaceSetConfigDelegate(int baudRate, int dataBits, Parity parity);
         public delegate bool InterfaceSetDtrDelegate(bool dtr);
         public delegate bool InterfaceSetRtsDelegate(bool rts);
         public delegate bool InterfaceGetDsrDelegate(out bool dsr);
+        public delegate bool InterfaceSetBreakDelegate(bool enable);
+        public delegate bool InterfacePurgeInBufferDelegate();
         public delegate bool SendDataDelegate(byte[] sendData, int length, bool setDtr);
         public delegate bool ReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse);
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
@@ -49,6 +51,8 @@ namespace EdiabasLib
         protected InterfaceSetDtrDelegate interfaceSetDtrFunc = null;
         protected InterfaceSetRtsDelegate interfaceSetRtsFunc = null;
         protected InterfaceGetDsrDelegate interfaceGetDsrFunc = null;
+        protected InterfaceSetBreakDelegate interfaceSetBreakFunc = null;
+        protected InterfacePurgeInBufferDelegate interfacePurgeInBufferFunc = null;
         protected SendDataDelegate sendDataFunc = null;
         protected ReceiveDataDelegate receiveDataFunc = null;
         protected Stopwatch stopWatch = new Stopwatch();
@@ -140,6 +144,7 @@ namespace EdiabasLib
                 ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, commParameter, 0, commParameter.Length, string.Format("{0} CommParameter Port={1}", InterfaceName, comPort));
 
                 int baudRate;
+                int dataBits = 8;
                 Parity parity;
                 bool stateDtr = false;
                 bool stateRts = false;
@@ -163,6 +168,7 @@ namespace EdiabasLib
                         }
                         commAnswerLen = new short[] { -2, 0 };
                         baudRate = (int)commParameter[1];
+                        dataBits = 8;
                         parity = Parity.Even;
                         stateDtr = false;
                         stateRts = false;
@@ -186,6 +192,7 @@ namespace EdiabasLib
                         }
                         commAnswerLen = new short[] { 1, 0 };
                         baudRate = 9600;
+                        dataBits = 8;
                         parity = Parity.None;
                         stateDtr = false;
                         stateRts = false;
@@ -211,6 +218,7 @@ namespace EdiabasLib
                         }
                         commAnswerLen = new short[] { -1, 0 };
                         baudRate = (int)commParameter[1];
+                        dataBits = 8;
                         parity = Parity.Even;
                         stateDtr = false;
                         stateRts = false;
@@ -235,6 +243,7 @@ namespace EdiabasLib
                         }
                         commAnswerLen = new short[] { 0, 0 };
                         baudRate = (int)commParameter[1];
+                        dataBits = 8;
                         parity = Parity.Even;
                         stateDtr = false;
                         stateRts = false;
@@ -260,6 +269,7 @@ namespace EdiabasLib
                         }
                         commAnswerLen = new short[] { 0, 0 };
                         baudRate = (int)commParameter[1];
+                        dataBits = 8;
                         parity = Parity.None;
                         stateDtr = adapterEcho;
                         stateRts = false;
@@ -280,6 +290,7 @@ namespace EdiabasLib
                         }
                         commAnswerLen = new short[] { 0, 0 };
                         baudRate = 115200;
+                        dataBits = 8;
                         parity = Parity.None;
                         stateDtr = adapterEcho;
                         stateRts = false;
@@ -301,7 +312,7 @@ namespace EdiabasLib
 
                 if (interfaceSetConfigFunc != null)
                 {
-                    if (!interfaceSetConfigFunc(baudRate, parity))
+                    if (!interfaceSetConfigFunc(baudRate, dataBits, parity))
                     {
                         ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                         return;
@@ -328,6 +339,10 @@ namespace EdiabasLib
                     if (serialPort.BaudRate != baudRate)
                     {
                         serialPort.BaudRate = baudRate;
+                    }
+                    if (serialPort.DataBits != dataBits)
+                    {
+                        serialPort.DataBits = dataBits;
                     }
                     if (serialPort.Parity != parity)
                     {
@@ -652,6 +667,30 @@ namespace EdiabasLib
             set
             {
                 interfaceGetDsrFunc = value;
+            }
+        }
+
+        public InterfaceSetBreakDelegate InterfaceSetBreakFunc
+        {
+            get
+            {
+                return interfaceSetBreakFunc;
+            }
+            set
+            {
+                interfaceSetBreakFunc = value;
+            }
+        }
+
+        public InterfacePurgeInBufferDelegate InterfacePurgeInBufferFunc
+        {
+            get
+            {
+                return interfacePurgeInBufferFunc;
+            }
+            set
+            {
+                interfacePurgeInBufferFunc = value;
             }
         }
 
@@ -1005,7 +1044,23 @@ namespace EdiabasLib
         {
             if (sendDataFunc != null)
             {
-                return false;
+                if (interfaceSetBreakFunc != null && interfacePurgeInBufferFunc != null)
+                {
+                    interfacePurgeInBufferFunc();
+                    interfaceSetBreakFunc(true);    // start bit
+                    Thread.Sleep(200);
+                    for (int i = 0; i < 8; i++)
+                    {
+                        interfaceSetBreakFunc((value & (1 << i)) == 0);
+                        Thread.Sleep(200);
+                    }
+                    interfaceSetBreakFunc(false);   // stop bit
+                    Thread.Sleep(200);
+                }
+                else
+                {
+                    return false;
+                }
             }
             try
             {
@@ -1478,7 +1533,7 @@ namespace EdiabasLib
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Establish connection");
                 if (interfaceSetConfigFunc != null)
                 {
-                    if (!interfaceSetConfigFunc(9600, Parity.None))
+                    if (!interfaceSetConfigFunc(9600, 8, Parity.None))
                     {
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -1532,7 +1587,7 @@ namespace EdiabasLib
                     ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Baud rate 10.4k detected");
                     if (interfaceSetConfigFunc != null)
                     {
-                        if (!interfaceSetConfigFunc(10400, Parity.None))
+                        if (!interfaceSetConfigFunc(10400, 8, Parity.None))
                         {
                             ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
