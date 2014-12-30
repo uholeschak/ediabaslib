@@ -88,10 +88,12 @@ namespace CarSimulator
             if (!File.Exists(fileName)) return false;
 
             List<byte> configList = _configData.ConfigList;
+            List<byte[]> responseOnlyList = _configData.ResponseOnlyList;
             List<CommThread.ResponseEntry> responseList = _configData.ResponseList;
             try
             {
                 configList.Clear();
+                responseOnlyList.Clear();
                 responseList.Clear();
                 using (StreamReader streamReader = new StreamReader(fileName))
                 {
@@ -154,11 +156,11 @@ namespace CarSimulator
                                 }
                             }
                         }
-                        if (conceptType == CommThread.ConceptType.concept3)
-                        {   // empty request for concept3
+                        if (listCompare.Count == 0)
+                        {   // empty request
                             if (listResponse.Count > 0)
                             {
-                                responseList.Add(new CommThread.ResponseEntry(listCompare.ToArray(), listResponse.ToArray()));
+                                responseOnlyList.Add(listResponse.ToArray());
                             }
                         }
                         else if (listCompare.Count > 0 && listResponse.Count > 0)

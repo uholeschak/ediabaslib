@@ -1,6 +1,6 @@
 ﻿;for dm33s501.prg (ISO 9141)
 
-; wake address, key bytes
+; wake address, key bytes (even parity)
 CFG: 10 00 81
 
 ;IDENT

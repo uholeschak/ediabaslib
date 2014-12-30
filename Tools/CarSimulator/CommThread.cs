@@ -14,11 +14,16 @@ namespace CarSimulator
             public ConfigData()
             {
                 configList = new List<byte>();
+                responseOnlyList = new List<byte[]>();
                 responseList = new List<ResponseEntry>();
             }
             public List<byte> ConfigList
             {
                 get { return configList; }
+            }
+            public List<byte[]> ResponseOnlyList
+            {
+                get { return responseOnlyList; }
             }
             public List<CommThread.ResponseEntry> ResponseList
             {
@@ -26,6 +31,7 @@ namespace CarSimulator
             }
 
             private List<byte> configList;
+            private List<byte[]> responseOnlyList;
             private List<CommThread.ResponseEntry> responseList;
         }
 
@@ -3403,16 +3409,11 @@ namespace CarSimulator
                     break;
                 }
 
-                if (initSequenceCount < 2)
+                if (initSequenceCount < _configData.ResponseOnlyList.Count)
                 {
+                    byte[] responseOnly = _configData.ResponseOnlyList[initSequenceCount];
+                    Array.Copy(responseOnly, _sendData, responseOnly.Length);
                     initSequenceCount++;
-                    _sendData[0] = 0x08;    // block length
-                    _sendData[2] = 0xF6;    // ASC II
-                    _sendData[3] = (byte)'S';
-                    _sendData[4] = (byte)'I';
-                    _sendData[5] = (byte)'M';
-                    _sendData[6] = (byte)'U';
-                    _sendData[7] = (byte)'L';
                 }
                 else
                 {
@@ -3501,8 +3502,8 @@ namespace CarSimulator
             do
             {
                 initOk = false;
-                _serialPort.DataBits = 7;
-                _serialPort.Parity = Parity.Even;
+                _serialPort.DataBits = 8;
+                _serialPort.Parity = Parity.None;
                 wakeAddress = 0x00;
                 if (!ReceiveWakeUp(out wakeAddress))
                 {
@@ -3549,7 +3550,7 @@ namespace CarSimulator
                     break;
                 }
 
-                foreach (ResponseEntry responseEntry in _configData.ResponseList)
+                foreach (byte[] responseOnly in _configData.ResponseOnlyList)
                 {
                     if (_stopThread)
                     {
@@ -3563,10 +3564,10 @@ namespace CarSimulator
                         stopSend = true;
                         break;
                     }
-                    int responseLen = responseEntry.Response.Length;
+                    int responseLen = responseOnly.Length;
                     if (responseLen > 0)
                     {
-                        Array.Copy(responseEntry.Response, _sendData, responseLen);
+                        Array.Copy(responseOnly, _sendData, responseLen);
                         _sendData[responseLen - 1] = CalcChecksumDs2(_sendData, responseLen - 1);
                         SendData(_sendData, responseLen);
                         // max interbyte timeout is 10ms
