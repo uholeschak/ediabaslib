@@ -65,6 +65,10 @@ namespace EdiabasLib
 
         public abstract bool TransmitData(byte[] sendData, out byte[] receiveData);
 
+        public abstract bool ReceiveFrequent(out byte[] receiveData);
+
+        public abstract bool StopFrequent();
+
         public virtual EdiabasNet Ediabas
         {
             get
