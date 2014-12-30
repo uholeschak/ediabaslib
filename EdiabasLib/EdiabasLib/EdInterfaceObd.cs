@@ -87,6 +87,7 @@ namespace EdiabasLib
         protected byte parWakeAddress = 0;
         protected bool parSendSetDtr = false;
         protected bool parHasKeyBytes = false;
+        protected bool parSupportFrequent = false;
 
         public override EdiabasNet Ediabas
         {
@@ -130,6 +131,7 @@ namespace EdiabasLib
                 this.parWakeAddress = 0;
                 this.parSendSetDtr = false;
                 this.parHasKeyBytes = false;
+                this.parSupportFrequent = false;
                 this.keyBytes = byteArray0;
                 this.ecuConnected = false;
                 // don't init lastCommTick here
@@ -238,6 +240,7 @@ namespace EdiabasLib
                         this.parTimeoutTelEnd = (int)commParameter[7];
                         this.parSendSetDtr = true;
                         this.parHasKeyBytes = true;
+                        this.parSupportFrequent = true;
                         break;
 
                     case 0x0006:    // DS2
@@ -671,6 +674,11 @@ namespace EdiabasLib
             {
                 ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                 return false;
+            }
+            if (!this.parSupportFrequent)
+            {
+                receiveData = byteArray0;
+                return true;
             }
             StartCommThread();
             lock (commThreadLock)
