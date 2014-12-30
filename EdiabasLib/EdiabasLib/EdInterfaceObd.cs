@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Threading;
@@ -83,6 +84,7 @@ namespace EdiabasLib
         protected int parRetryNR = 0;
         protected byte parWakeAddress = 0;
         protected bool parSendSetDtr = false;
+        protected bool parHasKeyBytes = false;
 
         public override EdiabasNet Ediabas
         {
@@ -124,9 +126,10 @@ namespace EdiabasLib
                 this.parRetryNR = 0;
                 this.parWakeAddress = 0;
                 this.parSendSetDtr = false;
+                this.parHasKeyBytes = false;
                 this.keyBytes = byteArray0;
                 this.ecuConnected = false;
-                this.lastCommTick = DateTime.MinValue.Ticks;
+                // don't init lastCommTick here
                 this.lastResponseTick = DateTime.MinValue.Ticks;
                 this.blockCounter = 0;
                 this.lastIso9141Cmd = 0x00;
@@ -203,6 +206,7 @@ namespace EdiabasLib
                         this.parRegenTime = (int)commParameter[6];
                         this.parTimeoutTelEnd = (int)commParameter[7];
                         this.parSendSetDtr = true;
+                        this.parHasKeyBytes = true;
                         break;
 
                     case 0x0006:    // DS2
@@ -388,7 +392,44 @@ namespace EdiabasLib
         {
             get
             {
-                return keyBytes;
+                if (this.commParameter != null && this.parHasKeyBytes)
+                {
+                    if (this.ecuConnected)
+                    {
+                        return keyBytes;
+                    }
+                    // start transmission
+                    if (commThread == null)
+                    {
+                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0030);
+                        return byteArray0;
+                    }
+                    lock (commThreadLock)
+                    {
+                        commThreadReqCount++;
+                        commThreadCommand = CommThreadCommands.SingleTransmit;
+                    }
+                    commThreadReqEvent.Set();
+
+                    for (; ; )
+                    {
+                        lock (commThreadLock)
+                        {
+                            if (commThreadResCount == commThreadReqCount)
+                            {
+                                break;
+                            }
+                        }
+                        commThreadResEvent.WaitOne(10, false);
+                    }
+                    if (this.recErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                    {
+                        ediabas.SetError(this.recErrorCode);
+                        return byteArray0;
+                    }
+                    return keyBytes;
+                }
+                return byteArray0;
             }
         }
 
@@ -509,6 +550,8 @@ namespace EdiabasLib
                 serialPort.RtsEnable = false;
                 serialPort.ReadTimeout = 1;
                 serialPort.Open();
+
+                this.lastCommTick = DateTime.MinValue.Ticks;
             }
             catch (Exception)
             {
@@ -581,8 +624,11 @@ namespace EdiabasLib
                 ediabas.SetError(this.recErrorCode);
                 return false;
             }
-            receiveData = new byte[this.recBufferLength];
-            Array.Copy(this.recBuffer, receiveData, this.recBufferLength);
+            lock (commThreadLock)
+            {
+                receiveData = new byte[this.recBufferLength];
+                Array.Copy(this.recBuffer, receiveData, this.recBufferLength);
+            }
             return true;
         }
 
@@ -1514,8 +1560,8 @@ namespace EdiabasLib
         private EdiabasNet.ErrorCodes TransIso9141(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
             receiveLength = 0;
-            keyBytes = byteArray0;
             EdiabasNet.ErrorCodes errorCode;
+            List<byte> keyBytesList = null;
 
             if (sendDataLength > iso9141Buffer.Length)
             {
@@ -1525,6 +1571,8 @@ namespace EdiabasLib
 
             if (!this.ecuConnected)
             {
+                keyBytes = byteArray0;
+                keyBytesList = new List<byte>();
                 while ((Stopwatch.GetTimestamp() - this.lastCommTick) < this.parTimeoutStd * tickResolMs)
                 {
                     Thread.Sleep(10);
@@ -1601,18 +1649,20 @@ namespace EdiabasLib
 
                 this.ecuConnected = true;
                 this.lastCommTick = Stopwatch.GetTimestamp();
-                byte[] keyBytesBuffer = new byte[2];
-                if (!ReceiveData(keyBytesBuffer, 0, 2, 500, 500))
+                if (!ReceiveData(iso9141Buffer, 0, 2, 500, 500))
                 {
                     this.ecuConnected = false;
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No key bytes received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
-                this.keyBytes = keyBytesBuffer;
+                keyBytesList.Add((byte)(iso9141Buffer[0] & 0x7F));
+                keyBytesList.Add((byte)(iso9141Buffer[1] & 0x7F));
+                keyBytesList.Add(0x09);
+                keyBytesList.Add(0x03);
 
                 this.lastCommTick = Stopwatch.GetTimestamp();
-                ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Key bytes: {0:X02} {1:X02}", keyBytesBuffer[0], keyBytesBuffer[1]);
-                iso9141Buffer[0] = (byte)(~keyBytesBuffer[1]);
+                ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Key bytes: {0:X02} {1:X02}", iso9141Buffer[0], iso9141Buffer[1]);
+                iso9141Buffer[0] = (byte)(~iso9141Buffer[1]);
                 Thread.Sleep(10);
                 if (!SendData(iso9141Buffer, 1, this.parSendSetDtr))
                 {
@@ -1631,6 +1681,15 @@ namespace EdiabasLib
                 }
                 this.lastIso9141Cmd = iso9141Buffer[2];
                 this.blockCounter++;
+                if (this.lastIso9141Cmd != 0x09)
+                {
+                    // store key bytes
+                    int dataLen = iso9141Buffer[0] + 1;
+                    for (int i = 0; i < dataLen; i++)
+                    {
+                        keyBytesList.Add(iso9141Buffer[i]);
+                    }
+                }
             }
 
             ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, sendDataLength, "Request");
@@ -1653,8 +1712,16 @@ namespace EdiabasLib
                     if (waitToSend)
                     {
                         waitToSend = false;
-                        Array.Copy(sendData, iso9141Buffer, sendDataLength);
-                        sendDataValid = true;
+                        if (sendDataLength > 0)
+                        {
+                            Array.Copy(sendData, iso9141Buffer, sendDataLength);
+                            sendDataValid = true;
+                        }
+                        else
+                        {
+                            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Receive ID finished");
+                            transmitDone = true;
+                        }
                     }
                     else
                     {
@@ -1734,10 +1801,27 @@ namespace EdiabasLib
                         }
                     }
                 }
+                else
+                {
+                    if ((keyBytesList != null) && (this.lastIso9141Cmd != 0x09))
+                    {   // store key bytes
+                        int dataLen = iso9141Buffer[0] + 1;
+                        for (int i = 0; i < dataLen; i++)
+                        {
+                            keyBytesList.Add(iso9141Buffer[i]);
+                        }
+                    }
+                }
                 if (transmitDone)
                 {
                     break;
                 }
+            }
+
+            if (keyBytesList != null)
+            {
+                this.keyBytes = keyBytesList.ToArray();
+                ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, this.keyBytes, 0, this.keyBytes.Length, "ID bytes");
             }
 
             this.lastResponseTick = Stopwatch.GetTimestamp();
