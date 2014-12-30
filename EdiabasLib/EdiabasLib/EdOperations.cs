@@ -2883,6 +2883,33 @@ namespace EdiabasLib
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
+            else
+            {
+                interfaceClass.StopFrequent();
+            }
+        }
+
+        // BEST2: recv_frequent
+        private static void OpXreqf(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.opData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpXreqf: Invalid type");
+            }
+
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if ((interfaceClass == null) || !interfaceClass.Connected)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
+            else
+            {
+                byte[] response;
+                if (interfaceClass.ReceiveFrequent(out response))
+                {
+                    arg0.SetRawData(response);
+                }
+            }
         }
 
         // BEST2: iftype

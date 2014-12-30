@@ -1782,7 +1782,7 @@ namespace EdiabasLib
             new OpCode(0x29, "xawlen", new OperationDelegate(OpXawlen)),
             new OpCode(0x2A, "xsend", new OperationDelegate(OpXsend)),
             new OpCode(0x2B, "xsendf", null),
-            new OpCode(0x2C, "xrequf", null),
+            new OpCode(0x2C, "xrequf", new OperationDelegate(OpXreqf)),
             new OpCode(0x2D, "xstopf", new OperationDelegate(OpXstopf)),
             new OpCode(0x2E, "xkeyb", new OperationDelegate(OpXkeyb)),
             new OpCode(0x2F, "xstate", new OperationDelegate(OpXstate)),
