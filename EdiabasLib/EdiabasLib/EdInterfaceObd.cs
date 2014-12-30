@@ -2212,6 +2212,7 @@ namespace EdiabasLib
             else
             {
                 serialPort.BaudRate = 10400;
+                serialPort.Parity = Parity.None;
             }
 
             Thread.Sleep(10);
