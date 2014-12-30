@@ -1097,7 +1097,6 @@ namespace EdiabasLib
             {
                 if (interfaceSetBreakFunc != null && interfacePurgeInBufferFunc != null)
                 {
-                    interfacePurgeInBufferFunc();
                     interfaceSetBreakFunc(true);    // start bit
                     Thread.Sleep(200);
                     for (int i = 0; i < 8; i++)
@@ -1106,7 +1105,9 @@ namespace EdiabasLib
                         Thread.Sleep(200);
                     }
                     interfaceSetBreakFunc(false);   // stop bit
-                    Thread.Sleep(200);
+                    Thread.Sleep(100);
+                    interfacePurgeInBufferFunc();
+                    Thread.Sleep(100);
                 }
                 else
                 {
@@ -1115,7 +1116,6 @@ namespace EdiabasLib
             }
             try
             {
-                serialPort.DiscardInBuffer();
                 serialPort.BreakState = true;  // start bit
                 Thread.Sleep(200);
                 for (int i = 0; i < 8; i++)
@@ -1124,7 +1124,9 @@ namespace EdiabasLib
                     Thread.Sleep(200);
                 }
                 serialPort.BreakState = false; // stop bit
-                Thread.Sleep(200);
+                Thread.Sleep(100);
+                serialPort.DiscardInBuffer();
+                Thread.Sleep(100);
             }
             catch (Exception)
             {
