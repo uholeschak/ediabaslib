@@ -3363,7 +3363,7 @@ namespace CarSimulator
                 if ((_configData.ConfigList.Count > 1) && (wakeAddress != _configData.ConfigList[0]))
                 {
                     Debug.WriteLine("Invalid wake address");
-                    break;
+                    continue;
                 }
 
                 Thread.Sleep(100);  // maximum is 2000ms
@@ -3450,7 +3450,7 @@ namespace CarSimulator
                 if (blockCount != _receiveData[1])
                 {
                     Debug.WriteLine("Block count invalid");
-                    break;
+                    //break;
                 }
                 blockCount++;
                 byte command = _receiveData[2];
@@ -3513,7 +3513,7 @@ namespace CarSimulator
                 if ((_configData.ConfigList.Count > 1) && (wakeAddress != _configData.ConfigList[0]))
                 {
                     Debug.WriteLine("Invalid wake address");
-                    break;
+                    continue;
                 }
 
                 Thread.Sleep(100);  // maximum is 2200ms
