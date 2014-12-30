@@ -938,15 +938,19 @@ namespace EdiabasLib
         {
             if (interbyteTime > 0)
             {
+                int bitCount = (serialPort.Parity == Parity.None) ? 10 : 11;
+                double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
+                interbyteTime += (int)byteTime;
+
                 byte[] buffer = new byte[1];
                 for (int i = 0; i < length; i++)
                 {
                     buffer[0] = sendData[i];
+                    long startTime = Stopwatch.GetTimestamp();
                     if (!SendData(buffer, 1, setDtr))
                     {
                         return false;
                     }
-                    long startTime = Stopwatch.GetTimestamp();
                     while ((Stopwatch.GetTimestamp() - startTime) < interbyteTime * tickResolMs)
                     {
                     }
@@ -970,11 +974,11 @@ namespace EdiabasLib
             }
             try
             {
+                int bitCount = (serialPort.Parity == Parity.None) ? 10 : 11;
+                double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
+                long waitTime = (long)((0.3d + byteTime * length) * tickResolMs);
                 if (setDtr)
                 {
-                    int bitCount = (serialPort.Parity == Parity.None) ? 10 : 11;
-                    double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
-                    long waitTime = (long)((0.3d + byteTime * length) * tickResolMs);
                     serialPort.DiscardInBuffer();
                     serialPort.DtrEnable = true;
                     long startTime = Stopwatch.GetTimestamp();
@@ -988,9 +992,9 @@ namespace EdiabasLib
                 {
                     serialPort.DiscardInBuffer();
                     serialPort.Write(sendData, 0, length);
-                    while (serialPort.BytesToWrite > 0)
+                    if (waitTime > 10)
                     {
-                        Thread.Sleep(1);
+                        Thread.Sleep((int)waitTime);
                     }
                 }
             }

@@ -3276,7 +3276,6 @@ namespace CarSimulator
 #else
                         foreach (byte[] responseTel in responseEntry.ResponseList)
                         {
-                            Thread.Sleep(1500);
                             OBDSend(responseTel);
                         }
 #endif
