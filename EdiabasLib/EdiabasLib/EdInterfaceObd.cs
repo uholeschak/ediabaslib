@@ -976,9 +976,9 @@ namespace EdiabasLib
             {
                 int bitCount = (serialPort.Parity == Parity.None) ? 10 : 11;
                 double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
-                long waitTime = (long)((0.3d + byteTime * length) * tickResolMs);
                 if (setDtr)
                 {
+                    long waitTime = (long)((0.3d + byteTime * length) * tickResolMs);
                     serialPort.DiscardInBuffer();
                     serialPort.DtrEnable = true;
                     long startTime = Stopwatch.GetTimestamp();
@@ -990,6 +990,7 @@ namespace EdiabasLib
                 }
                 else
                 {
+                    long waitTime = (long)(byteTime * length);
                     serialPort.DiscardInBuffer();
                     serialPort.Write(sendData, 0, length);
                     if (waitTime > 10)
