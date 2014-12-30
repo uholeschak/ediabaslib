@@ -847,7 +847,7 @@ namespace EdiabasLib
 
         private void CommThreadFunc()
         {
-            uint lastReqCount = commThreadReqCount;
+            long lastReqCount = -1;
             bool bExitThread = false;
             for (; ; )
             {
