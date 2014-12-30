@@ -2088,32 +2088,14 @@ namespace EdiabasLib
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Baud rate byte: {0:X02}", iso9141Buffer[0]);
-                int baudRate = 9600;
                 if (iso9141Buffer[0] == 0x55)
                 {
                     ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Baud rate 9.6k detected");
                 }
                 else
                 {   // baud rate different
-                    if ((iso9141Buffer[0] & 0x87) != 0x85)
-                    {
-                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Invalid baud rate");
-                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-                    }
-                    ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Baud rate 10.4k detected");
-                    baudRate = 10400;
-                    if (interfaceSetConfigFunc != null)
-                    {
-                        if (!interfaceSetConfigFunc(baudRate, 8, Parity.None))
-                        {
-                            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
-                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
-                        }
-                    }
-                    else
-                    {
-                        serialPort.BaudRate = 10400;
-                    }
+                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Invalid baud rate");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
 
                 this.ecuConnected = true;
@@ -2134,7 +2116,7 @@ namespace EdiabasLib
                 ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Key bytes: {0:X02} {1:X02} {2:X02}", iso9141Buffer[0], iso9141Buffer[1], iso9141Buffer[2]);
                 if (interfaceSetConfigFunc != null)
                 {
-                    if (!interfaceSetConfigFunc(baudRate, 8, Parity.Even))
+                    if (!interfaceSetConfigFunc(9600, 8, Parity.Even))
                     {
                         this.ecuConnected = false;
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
