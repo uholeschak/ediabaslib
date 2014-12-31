@@ -1337,17 +1337,23 @@ namespace EdiabasLib
             {
                 if (interfaceSetBreakFunc != null && interfacePurgeInBufferFunc != null)
                 {
+                    interfacePurgeInBufferFunc();
+                    long startTime = Stopwatch.GetTimestamp();
                     interfaceSetBreakFunc(true);    // start bit
-                    Thread.Sleep(200);
+                    Thread.Sleep(180);
+                    while ((Stopwatch.GetTimestamp() - startTime) < 200 * tickResolMs)
+                    {
+                    }
                     for (int i = 0; i < 8; i++)
                     {
                         interfaceSetBreakFunc((value & (1 << i)) == 0);
-                        Thread.Sleep(200);
+                        Thread.Sleep(180);
+                        while ((Stopwatch.GetTimestamp() - startTime) < 200 * (i + 2) * tickResolMs)
+                        {
+                        }
                     }
                     interfaceSetBreakFunc(false);   // stop bit
-                    Thread.Sleep(100);
-                    interfacePurgeInBufferFunc();
-                    Thread.Sleep(100);
+                    Thread.Sleep(200);
                 }
                 else
                 {
@@ -1356,17 +1362,23 @@ namespace EdiabasLib
             }
             try
             {
+                serialPort.DiscardInBuffer();
+                long startTime = Stopwatch.GetTimestamp();
                 serialPort.BreakState = true;  // start bit
-                Thread.Sleep(200);
+                Thread.Sleep(180);
+                while ((Stopwatch.GetTimestamp() - startTime) < 200 * tickResolMs)
+                {
+                }
                 for (int i = 0; i < 8; i++)
                 {
                     serialPort.BreakState = (value & (1 << i)) == 0;
-                    Thread.Sleep(200);
+                    Thread.Sleep(180);
+                    while ((Stopwatch.GetTimestamp() - startTime) < 200 * (i + 2) * tickResolMs)
+                    {
+                    }
                 }
                 serialPort.BreakState = false; // stop bit
-                Thread.Sleep(100);
-                serialPort.DiscardInBuffer();
-                Thread.Sleep(100);
+                Thread.Sleep(200);
             }
             catch (Exception)
             {
