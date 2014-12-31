@@ -85,6 +85,8 @@ namespace EdiabasLib
         protected int parTimeoutNR = 0;
         protected int parRetryNR = 0;
         protected byte parWakeAddress = 0;
+        protected bool parChecksumByUser = false;
+        protected bool parChecksumNoCheck = false;
         protected bool parSendSetDtr = false;
         protected bool parHasKeyBytes = false;
         protected bool parSupportFrequent = false;
@@ -129,6 +131,8 @@ namespace EdiabasLib
                 this.parTimeoutNR = 0;
                 this.parRetryNR = 0;
                 this.parWakeAddress = 0;
+                this.parChecksumByUser = false;
+                this.parChecksumNoCheck = false;
                 this.parSendSetDtr = false;
                 this.parHasKeyBytes = false;
                 this.parSupportFrequent = false;
@@ -169,10 +173,13 @@ namespace EdiabasLib
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
                         }
-                        if (commParameter.Length >= 10 && commParameter[33] != 1)
-                        {   // not checksum calculated by interface
-                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                            return;
+                        if (commParameter.Length >= 10)
+                        {
+                            if (!EvalChecksumPar(commParameter[9]))
+                            {
+                                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                                return;
+                            }
                         }
                         commAnswerLen = new short[] { -2, 0 };
                         baudRate = (int)commParameter[1];
@@ -197,6 +204,14 @@ namespace EdiabasLib
                         {
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
+                        }
+                        if (commParameter.Length >= 10)
+                        {
+                            if (!EvalChecksumPar(commParameter[9]))
+                            {
+                                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                                return;
+                            }
                         }
                         commAnswerLen = new short[] { 1, 0 };
                         baudRate = 9600;
@@ -225,6 +240,14 @@ namespace EdiabasLib
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
                         }
+                        if (commParameter.Length >= 10)
+                        {
+                            if (!EvalChecksumPar(commParameter[9]))
+                            {
+                                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                                return;
+                            }
+                        }
                         commAnswerLen = new short[] { 1, 0 };
                         baudRate = 9600;
                         dataBits = 8;
@@ -249,10 +272,13 @@ namespace EdiabasLib
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
                         }
-                        if (commParameter.Length >= 10 && commParameter[33] != 1)
-                        {   // not checksum calculated by interface
-                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                            return;
+                        if (commParameter.Length >= 10)
+                        {
+                            if (!EvalChecksumPar(commParameter[9]))
+                            {
+                                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                                return;
+                            }
                         }
                         commAnswerLen = new short[] { -1, 0 };
                         baudRate = (int)commParameter[1];
@@ -274,10 +300,13 @@ namespace EdiabasLib
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
                         }
-                        if (commParameter.Length >= 34 && commParameter[33] != 1)
-                        {   // not checksum calculated by interface
-                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                            return;
+                        if (commParameter.Length >= 22)
+                        {
+                            if (!EvalChecksumPar(commParameter[21]))
+                            {
+                                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                                return;
+                            }
                         }
                         commAnswerLen = new short[] { 0, 0 };
                         baudRate = (int)commParameter[1];
@@ -300,10 +329,13 @@ namespace EdiabasLib
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
                         }
-                        if (commParameter.Length >= 8 && commParameter[7] != 1)
-                        {   // not checksum calculated by interface
-                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                            return;
+                        if (commParameter.Length >= 8)
+                        {
+                            if (!EvalChecksumPar(commParameter[7]))
+                            {
+                                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                                return;
+                            }
                         }
                         commAnswerLen = new short[] { 0, 0 };
                         baudRate = (int)commParameter[1];
@@ -891,6 +923,13 @@ namespace EdiabasLib
             commReceiveEvent.Set();
         }
 
+        private bool EvalChecksumPar(uint value)
+        {
+            this.parChecksumByUser = (value & 0x01) == 0;
+            this.parChecksumNoCheck = (value & 0x02) != 0;
+            return true;
+        }
+
         private bool StartCommThread()
         {
             if (commThread != null)
@@ -1302,7 +1341,10 @@ namespace EdiabasLib
             if (sendDataLength > 0)
             {
                 int sendLength = TelLengthBmwFast(sendData);
-                sendData[sendLength] = CalcChecksumBmwFast(sendData, sendLength);
+                if (!this.parChecksumByUser)
+                {
+                    sendData[sendLength] = CalcChecksumBmwFast(sendData, sendLength);
+                }
                 sendLength++;
                 ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, sendLength, "Send");
 
@@ -1361,11 +1403,14 @@ namespace EdiabasLib
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, recLength + 1, "Resp");
-                if (CalcChecksumBmwFast(receiveData, recLength) != receiveData[recLength])
+                if (!this.parChecksumNoCheck)
                 {
-                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Checksum incorrect");
-                    ReceiveData(receiveData, 0, receiveData.Length, timeout, this.parTimeoutTelEnd, true);
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    if (CalcChecksumBmwFast(receiveData, recLength) != receiveData[recLength])
+                    {
+                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Checksum incorrect");
+                        ReceiveData(receiveData, 0, receiveData.Length, timeout, this.parTimeoutTelEnd, true);
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
                 }
                 if (!broadcast)
                 {
@@ -1443,7 +1488,10 @@ namespace EdiabasLib
             if (sendDataLength > 0)
             {
                 int sendLength = TelLengthKwp2000S(sendData);
-                sendData[sendLength] = CalcChecksumKWP2000S(sendData, sendLength);
+                if (!this.parChecksumByUser)
+                {
+                    sendData[sendLength] = CalcChecksumKWP2000S(sendData, sendLength);
+                }
                 sendLength++;
                 ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, sendLength, "Send");
 
@@ -1495,11 +1543,14 @@ namespace EdiabasLib
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, recLength + 1, "Resp");
-                if (CalcChecksumKWP2000S(receiveData, recLength) != receiveData[recLength])
+                if (!this.parChecksumNoCheck)
                 {
-                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Checksum incorrect");
-                    ReceiveData(receiveData, 0, receiveData.Length, timeout, this.parTimeoutTelEnd, true);
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    if (CalcChecksumKWP2000S(receiveData, recLength) != receiveData[recLength])
+                    {
+                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Checksum incorrect");
+                        ReceiveData(receiveData, 0, receiveData.Length, timeout, this.parTimeoutTelEnd, true);
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
                 }
                 if (!broadcast)
                 {
@@ -1554,8 +1605,11 @@ namespace EdiabasLib
             if (sendDataLength > 0)
             {
                 int sendLength = sendDataLength;
-                sendData[sendLength] = CalcChecksumDS2(sendData, sendLength);
-                sendLength++;
+                if (!this.parChecksumByUser)
+                {
+                    sendData[sendLength] = CalcChecksumDS2(sendData, sendLength);
+                    sendLength++;
+                }
                 ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, sendLength, "Send");
 
                 while ((Stopwatch.GetTimestamp() - this.lastResponseTick) < this.parRegenTime * tickResolMs)
@@ -1622,11 +1676,14 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
             ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, recLength, "Resp");
-            if (CalcChecksumDS2(receiveData, recLength - 1) != receiveData[recLength - 1])
+            if (!this.parChecksumNoCheck)
             {
-                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Checksum incorrect");
-                ReceiveData(receiveData, 0, receiveData.Length, this.parTimeoutStd, this.parTimeoutTelEnd, true);
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                if (CalcChecksumDS2(receiveData, recLength - 1) != receiveData[recLength - 1])
+                {
+                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Checksum incorrect");
+                    ReceiveData(receiveData, 0, receiveData.Length, this.parTimeoutStd, this.parTimeoutTelEnd, true);
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                }
             }
 
             this.lastResponseTick = Stopwatch.GetTimestamp();
@@ -2154,11 +2211,14 @@ namespace EdiabasLib
                 }
                 recLength++;
             }
-            if (CalcChecksumDS2(iso9141Buffer, recLength - 1) != iso9141Buffer[recLength - 1])
+            if (!this.parChecksumNoCheck)
             {
-                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Checksum incorrect");
-                FinishConcept3();
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                if (CalcChecksumDS2(iso9141Buffer, recLength - 1) != iso9141Buffer[recLength - 1])
+                {
+                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Checksum incorrect");
+                    FinishConcept3();
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                }
             }
             Array.Copy(iso9141Buffer, receiveData, recLength);
             receiveLength = recLength;
@@ -2199,10 +2259,13 @@ namespace EdiabasLib
                 }
                 recLength++;
             }
-            if (CalcChecksumDS2(iso9141Buffer, recLength - 1) != iso9141Buffer[recLength - 1])
+            if (!this.parChecksumNoCheck)
             {
-                FinishConcept3();
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                if (CalcChecksumDS2(iso9141Buffer, recLength - 1) != iso9141Buffer[recLength - 1])
+                {
+                    FinishConcept3();
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                }
             }
             this.lastCommTick = Stopwatch.GetTimestamp();
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
