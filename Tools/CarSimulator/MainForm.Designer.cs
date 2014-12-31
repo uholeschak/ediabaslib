@@ -36,6 +36,7 @@
             this.checkBoxVariableValues = new System.Windows.Forms.CheckBox();
             this.radioButtonBmwFast = new System.Windows.Forms.RadioButton();
             this.groupBoxConcepts = new System.Windows.Forms.GroupBox();
+            this.radioButtonConcept3 = new System.Windows.Forms.RadioButton();
             this.radioButtonConcept1 = new System.Windows.Forms.RadioButton();
             this.radioButtonIso9141 = new System.Windows.Forms.RadioButton();
             this.radioButtonDs2 = new System.Windows.Forms.RadioButton();
@@ -43,7 +44,7 @@
             this.listBoxResponseFiles = new System.Windows.Forms.ListBox();
             this.checkBoxIgnitionOk = new System.Windows.Forms.CheckBox();
             this.checkBoxAdsAdapter = new System.Windows.Forms.CheckBox();
-            this.radioButtonConcept3 = new System.Windows.Forms.RadioButton();
+            this.radioButtonKwp2000Bmw = new System.Windows.Forms.RadioButton();
             this.groupBoxConcepts.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -98,13 +99,14 @@
             this.radioButtonBmwFast.Location = new System.Drawing.Point(6, 19);
             this.radioButtonBmwFast.Name = "radioButtonBmwFast";
             this.radioButtonBmwFast.Size = new System.Drawing.Size(75, 17);
-            this.radioButtonBmwFast.TabIndex = 5;
+            this.radioButtonBmwFast.TabIndex = 20;
             this.radioButtonBmwFast.TabStop = true;
             this.radioButtonBmwFast.Text = "BMW Fast";
             this.radioButtonBmwFast.UseVisualStyleBackColor = true;
             // 
             // groupBoxConcepts
             // 
+            this.groupBoxConcepts.Controls.Add(this.radioButtonKwp2000Bmw);
             this.groupBoxConcepts.Controls.Add(this.radioButtonConcept3);
             this.groupBoxConcepts.Controls.Add(this.radioButtonConcept1);
             this.groupBoxConcepts.Controls.Add(this.radioButtonIso9141);
@@ -113,18 +115,29 @@
             this.groupBoxConcepts.Controls.Add(this.radioButtonBmwFast);
             this.groupBoxConcepts.Location = new System.Drawing.Point(224, 88);
             this.groupBoxConcepts.Name = "groupBoxConcepts";
-            this.groupBoxConcepts.Size = new System.Drawing.Size(207, 160);
+            this.groupBoxConcepts.Size = new System.Drawing.Size(207, 186);
             this.groupBoxConcepts.TabIndex = 6;
             this.groupBoxConcepts.TabStop = false;
             this.groupBoxConcepts.Text = "Concepts";
             // 
+            // radioButtonConcept3
+            // 
+            this.radioButtonConcept3.AutoSize = true;
+            this.radioButtonConcept3.Location = new System.Drawing.Point(6, 157);
+            this.radioButtonConcept3.Name = "radioButtonConcept3";
+            this.radioButtonConcept3.Size = new System.Drawing.Size(74, 17);
+            this.radioButtonConcept3.TabIndex = 26;
+            this.radioButtonConcept3.TabStop = true;
+            this.radioButtonConcept3.Text = "Concept 3";
+            this.radioButtonConcept3.UseVisualStyleBackColor = true;
+            // 
             // radioButtonConcept1
             // 
             this.radioButtonConcept1.AutoSize = true;
-            this.radioButtonConcept1.Location = new System.Drawing.Point(6, 88);
+            this.radioButtonConcept1.Location = new System.Drawing.Point(6, 111);
             this.radioButtonConcept1.Name = "radioButtonConcept1";
             this.radioButtonConcept1.Size = new System.Drawing.Size(74, 17);
-            this.radioButtonConcept1.TabIndex = 8;
+            this.radioButtonConcept1.TabIndex = 24;
             this.radioButtonConcept1.TabStop = true;
             this.radioButtonConcept1.Text = "Concept 1";
             this.radioButtonConcept1.UseVisualStyleBackColor = true;
@@ -132,10 +145,10 @@
             // radioButtonIso9141
             // 
             this.radioButtonIso9141.AutoSize = true;
-            this.radioButtonIso9141.Location = new System.Drawing.Point(6, 111);
+            this.radioButtonIso9141.Location = new System.Drawing.Point(6, 134);
             this.radioButtonIso9141.Name = "radioButtonIso9141";
             this.radioButtonIso9141.Size = new System.Drawing.Size(70, 17);
-            this.radioButtonIso9141.TabIndex = 9;
+            this.radioButtonIso9141.TabIndex = 25;
             this.radioButtonIso9141.TabStop = true;
             this.radioButtonIso9141.Text = "ISO 9141";
             this.radioButtonIso9141.UseVisualStyleBackColor = true;
@@ -143,10 +156,10 @@
             // radioButtonDs2
             // 
             this.radioButtonDs2.AutoSize = true;
-            this.radioButtonDs2.Location = new System.Drawing.Point(6, 65);
+            this.radioButtonDs2.Location = new System.Drawing.Point(6, 88);
             this.radioButtonDs2.Name = "radioButtonDs2";
             this.radioButtonDs2.Size = new System.Drawing.Size(46, 17);
-            this.radioButtonDs2.TabIndex = 7;
+            this.radioButtonDs2.TabIndex = 23;
             this.radioButtonDs2.TabStop = true;
             this.radioButtonDs2.Text = "DS2";
             this.radioButtonDs2.UseVisualStyleBackColor = true;
@@ -154,10 +167,10 @@
             // radioButtonKwp2000S
             // 
             this.radioButtonKwp2000S.AutoSize = true;
-            this.radioButtonKwp2000S.Location = new System.Drawing.Point(6, 42);
+            this.radioButtonKwp2000S.Location = new System.Drawing.Point(6, 65);
             this.radioButtonKwp2000S.Name = "radioButtonKwp2000S";
             this.radioButtonKwp2000S.Size = new System.Drawing.Size(78, 17);
-            this.radioButtonKwp2000S.TabIndex = 6;
+            this.radioButtonKwp2000S.TabIndex = 22;
             this.radioButtonKwp2000S.TabStop = true;
             this.radioButtonKwp2000S.Text = "KWP2000*";
             this.radioButtonKwp2000S.UseVisualStyleBackColor = true;
@@ -167,9 +180,9 @@
             this.listBoxResponseFiles.FormattingEnabled = true;
             this.listBoxResponseFiles.Location = new System.Drawing.Point(12, 88);
             this.listBoxResponseFiles.Name = "listBoxResponseFiles";
-            this.listBoxResponseFiles.Size = new System.Drawing.Size(206, 160);
+            this.listBoxResponseFiles.Size = new System.Drawing.Size(206, 186);
             this.listBoxResponseFiles.Sorted = true;
-            this.listBoxResponseFiles.TabIndex = 7;
+            this.listBoxResponseFiles.TabIndex = 10;
             // 
             // checkBoxIgnitionOk
             // 
@@ -179,7 +192,7 @@
             this.checkBoxIgnitionOk.Location = new System.Drawing.Point(224, 42);
             this.checkBoxIgnitionOk.Name = "checkBoxIgnitionOk";
             this.checkBoxIgnitionOk.Size = new System.Drawing.Size(78, 17);
-            this.checkBoxIgnitionOk.TabIndex = 8;
+            this.checkBoxIgnitionOk.TabIndex = 4;
             this.checkBoxIgnitionOk.Text = "Ignition OK";
             this.checkBoxIgnitionOk.UseVisualStyleBackColor = true;
             this.checkBoxIgnitionOk.CheckedChanged += new System.EventHandler(this.checkBoxIgnitionOk_CheckedChanged);
@@ -190,26 +203,26 @@
             this.checkBoxAdsAdapter.Location = new System.Drawing.Point(224, 65);
             this.checkBoxAdsAdapter.Name = "checkBoxAdsAdapter";
             this.checkBoxAdsAdapter.Size = new System.Drawing.Size(87, 17);
-            this.checkBoxAdsAdapter.TabIndex = 9;
+            this.checkBoxAdsAdapter.TabIndex = 5;
             this.checkBoxAdsAdapter.Text = "ADS adapter";
             this.checkBoxAdsAdapter.UseVisualStyleBackColor = true;
             // 
-            // radioButtonConcept3
+            // radioButtonKwp2000Bmw
             // 
-            this.radioButtonConcept3.AutoSize = true;
-            this.radioButtonConcept3.Location = new System.Drawing.Point(6, 134);
-            this.radioButtonConcept3.Name = "radioButtonConcept3";
-            this.radioButtonConcept3.Size = new System.Drawing.Size(74, 17);
-            this.radioButtonConcept3.TabIndex = 10;
-            this.radioButtonConcept3.TabStop = true;
-            this.radioButtonConcept3.Text = "Concept 3";
-            this.radioButtonConcept3.UseVisualStyleBackColor = true;
+            this.radioButtonKwp2000Bmw.AutoSize = true;
+            this.radioButtonKwp2000Bmw.Location = new System.Drawing.Point(6, 42);
+            this.radioButtonKwp2000Bmw.Name = "radioButtonKwp2000Bmw";
+            this.radioButtonKwp2000Bmw.Size = new System.Drawing.Size(104, 17);
+            this.radioButtonKwp2000Bmw.TabIndex = 21;
+            this.radioButtonKwp2000Bmw.TabStop = true;
+            this.radioButtonKwp2000Bmw.Text = "KWP2000 BMW";
+            this.radioButtonKwp2000Bmw.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(443, 266);
+            this.ClientSize = new System.Drawing.Size(443, 290);
             this.Controls.Add(this.checkBoxAdsAdapter);
             this.Controls.Add(this.checkBoxIgnitionOk);
             this.Controls.Add(this.listBoxResponseFiles);
@@ -245,6 +258,7 @@
         private System.Windows.Forms.CheckBox checkBoxAdsAdapter;
         private System.Windows.Forms.RadioButton radioButtonConcept1;
         private System.Windows.Forms.RadioButton radioButtonConcept3;
+        private System.Windows.Forms.RadioButton radioButtonKwp2000Bmw;
 
     }
 }

@@ -65,6 +65,7 @@ namespace CarSimulator
         public enum ConceptType
         {
             conceptBwmFast,
+            conceptKwp2000Bmw,
             conceptKwp2000S,
             conceptDs2,
             concept1,
@@ -547,6 +548,11 @@ namespace CarSimulator
                         parity = Parity.None;
                         break;
 
+                    case ConceptType.conceptKwp2000Bmw:
+                        baudRate = 10400;
+                        parity = Parity.None;
+                        break;
+
                     case ConceptType.conceptKwp2000S:
                     case ConceptType.conceptDs2:
                     case ConceptType.concept1:
@@ -775,6 +781,7 @@ namespace CarSimulator
             switch (_conceptType)
             {
                 case ConceptType.conceptBwmFast:
+                case ConceptType.conceptKwp2000Bmw:
                     return SendBmwfast(sendData);
 
                 case ConceptType.conceptKwp2000S:
@@ -832,6 +839,7 @@ namespace CarSimulator
             switch (_conceptType)
             {
                 case ConceptType.conceptBwmFast:
+                case ConceptType.conceptKwp2000Bmw:
                     return ReceiveBmwFast(receiveData);
 
                 case ConceptType.conceptKwp2000S:
@@ -1217,8 +1225,46 @@ namespace CarSimulator
                 return;
             }
 
+            bool standardResponse = false;
+            if (
+                _receiveData[0] == 0x81 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x81)
+            {   // start communication service
+                int i = 0;
+                _sendData[i++] = 0x83;
+                _sendData[i++] = 0xF1;
+                _sendData[i++] = _receiveData[1];
+                _sendData[i++] = 0xC1;
+                _sendData[i++] = 0xDF;  // key low
+                _sendData[i++] = 0x8F;  // key high
+
+                OBDSend(_sendData);
+                Debug.WriteLine("Start communication");
+                standardResponse = true;
+            }
+            else if (
+                _receiveData[0] == 0x81 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x3E)
+            {   // tester present
+                int i = 0;
+                _sendData[i++] = 0x83;
+                _sendData[i++] = 0xF1;
+                _sendData[i++] = _receiveData[1];
+                _sendData[i++] = 0x7E;
+
+                OBDSend(_sendData);
+                Debug.WriteLine("Tester present");
+                standardResponse = true;
+            }
+
             bool useResponseList = false;
-            if (!_e61Internal)
+            if (standardResponse)
+            {
+                useResponseList = false;
+            }
+            else if (!_e61Internal)
             {
                 useResponseList = true;
             }
