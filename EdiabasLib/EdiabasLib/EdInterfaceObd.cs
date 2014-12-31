@@ -1133,6 +1133,21 @@ namespace EdiabasLib
         {
             if (interbyteTime > 0)
             {
+                if (sendDataFunc != null)
+                {
+                    if (interfacePurgeInBufferFunc == null)
+                    {
+                        return false;
+                    }
+                    if (!interfacePurgeInBufferFunc())
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    serialPort.DiscardInBuffer();
+                }
 #if false
                 int bitCount = (serialPort.Parity == Parity.None) ? 10 : 11;
                 double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
@@ -1143,7 +1158,7 @@ namespace EdiabasLib
                 {
                     buffer[0] = sendData[i];
                     long startTime = Stopwatch.GetTimestamp();
-                    if (!SendData(buffer, 1, setDtr))
+                    if (!SendData(buffer, 1, setDtr, true))
                     {
                         return false;
                     }
@@ -1164,8 +1179,24 @@ namespace EdiabasLib
 
         protected bool SendData(byte[] sendData, int length, bool setDtr)
         {
+            return SendData(sendData, length, setDtr, false);
+        }
+
+        protected bool SendData(byte[] sendData, int length, bool setDtr, bool keepInBuffer)
+        {
             if (sendDataFunc != null)
             {
+                if (interfacePurgeInBufferFunc == null)
+                {
+                    return false;
+                }
+                if (!keepInBuffer)
+                {
+                    if (!interfacePurgeInBufferFunc())
+                    {
+                        return false;
+                    }
+                }
                 return sendDataFunc(sendData, length, setDtr);
             }
             try
@@ -1175,7 +1206,10 @@ namespace EdiabasLib
                 if (setDtr)
                 {
                     long waitTime = (long)((0.3d + byteTime * length) * tickResolMs);
-                    serialPort.DiscardInBuffer();
+                    if (!keepInBuffer)
+                    {
+                        serialPort.DiscardInBuffer();
+                    }
                     serialPort.DtrEnable = true;
                     long startTime = Stopwatch.GetTimestamp();
                     serialPort.Write(sendData, 0, length);
@@ -1187,7 +1221,10 @@ namespace EdiabasLib
                 else
                 {
                     long waitTime = (long)(byteTime * length);
-                    serialPort.DiscardInBuffer();
+                    if (!keepInBuffer)
+                    {
+                        serialPort.DiscardInBuffer();
+                    }
                     serialPort.Write(sendData, 0, length);
                     if (waitTime > 10)
                     {
