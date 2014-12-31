@@ -1027,10 +1027,11 @@ namespace EdiabasLib
         {
             if (interbyteTime > 0)
             {
+#if false
                 int bitCount = (serialPort.Parity == Parity.None) ? 10 : 11;
                 double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
                 interbyteTime += (int)byteTime;
-
+#endif
                 byte[] buffer = new byte[1];
                 for (int i = 0; i < length; i++)
                 {
