@@ -1328,16 +1328,6 @@ namespace EdiabasLib
         {
             receiveLength = 0;
 
-            bool broadcast = false;
-            if (sendData[1] == 0xEF)
-            {
-                broadcast = true;
-            }
-            if (sendDataLength == 0)
-            {
-                broadcast = true;
-            }
-
             if (sendDataLength > 0)
             {
                 int sendLength = TelLengthBmwFast(sendData);
@@ -1412,16 +1402,6 @@ namespace EdiabasLib
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                     }
                 }
-                if (!broadcast)
-                {
-                    if ((receiveData[1] != sendData[2]) ||
-                        (receiveData[2] != sendData[1]))
-                    {
-                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Address incorrect");
-                        ReceiveData(receiveData, 0, receiveData.Length, timeout, this.parTimeoutTelEnd, true);
-                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-                    }
-                }
 
                 int dataLen = receiveData[0] & 0x3F;
                 int dataStart = 3;
@@ -1474,16 +1454,6 @@ namespace EdiabasLib
         private EdiabasNet.ErrorCodes TransKwp2000S(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
             receiveLength = 0;
-
-            bool broadcast = false;
-            if (sendData[1] == 0xEF)
-            {
-                broadcast = true;
-            }
-            if (sendDataLength == 0)
-            {
-                broadcast = true;
-            }
 
             if (sendDataLength > 0)
             {
@@ -1548,16 +1518,6 @@ namespace EdiabasLib
                     if (CalcChecksumKWP2000S(receiveData, recLength) != receiveData[recLength])
                     {
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Checksum incorrect");
-                        ReceiveData(receiveData, 0, receiveData.Length, timeout, this.parTimeoutTelEnd, true);
-                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-                    }
-                }
-                if (!broadcast)
-                {
-                    if ((receiveData[1] != sendData[2]) ||
-                        (receiveData[2] != sendData[1]))
-                    {
-                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Address incorrect");
                         ReceiveData(receiveData, 0, receiveData.Length, timeout, this.parTimeoutTelEnd, true);
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                     }
