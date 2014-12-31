@@ -2103,6 +2103,7 @@ namespace EdiabasLib
                 else
                 {   // baud rate different
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Invalid baud rate");
+                    FinishConcept3();
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
 
@@ -2110,8 +2111,8 @@ namespace EdiabasLib
                 this.lastCommTick = Stopwatch.GetTimestamp();
                 if (!ReceiveData(iso9141Buffer, 0, 3, 200, 200))
                 {
-                    this.ecuConnected = false;
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No key bytes received");
+                    FinishConcept3();
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 keyBytesList.Add((byte)(iso9141Buffer[0] & 0x7F));
@@ -2126,8 +2127,8 @@ namespace EdiabasLib
                 {
                     if (!interfaceSetConfigFunc(9600, 8, Parity.Even))
                     {
-                        this.ecuConnected = false;
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
+                        FinishConcept3();
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
                     }
                 }
@@ -2139,8 +2140,8 @@ namespace EdiabasLib
             // receive a data block
             if (!ReceiveData(iso9141Buffer, 0, 1, this.parTimeoutStd, this.parTimeoutStd))
             {
-                this.ecuConnected = false;
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No header byte");
+                FinishConcept3();
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
             int recLength = 1;
@@ -2154,8 +2155,8 @@ namespace EdiabasLib
             }
             if (CalcChecksumDS2(iso9141Buffer, recLength - 1) != iso9141Buffer[recLength - 1])
             {
-                this.ecuConnected = false;
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Checksum incorrect");
+                FinishConcept3();
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
             Array.Copy(iso9141Buffer, receiveData, recLength);
@@ -2185,7 +2186,7 @@ namespace EdiabasLib
             // receive a data block
             if (!ReceiveData(iso9141Buffer, 0, 1, this.parTimeoutStd, this.parTimeoutStd))
             {
-                this.ecuConnected = false;
+                FinishConcept3();
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
             int recLength = 1;
@@ -2199,7 +2200,7 @@ namespace EdiabasLib
             }
             if (CalcChecksumDS2(iso9141Buffer, recLength - 1) != iso9141Buffer[recLength - 1])
             {
-                this.ecuConnected = false;
+                FinishConcept3();
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
             this.lastCommTick = Stopwatch.GetTimestamp();
@@ -2225,7 +2226,7 @@ namespace EdiabasLib
 
             Thread.Sleep(10);
             iso9141Buffer[0] = 0xFF;
-            if (!SendData(iso9141Buffer, 1, this.parSendSetDtr))
+            if (!SendData(iso9141Buffer, 1, false))
             {
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending stop byte failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
