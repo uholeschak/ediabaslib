@@ -161,7 +161,7 @@ namespace EdiabasLib
                     case 0x0001:    // Concept 1
                         if (adapterEcho)
                         {   // only with ADS adapter
-                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                             return;
                         }
                         if (commParameter.Length < 7)
@@ -190,7 +190,7 @@ namespace EdiabasLib
                     case 0x0002:    // Concept 2 ISO 9141
                         if (adapterEcho)
                         {   // only with ADS adapter
-                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                             return;
                         }
                         if (commParameter.Length < 7)
@@ -217,7 +217,7 @@ namespace EdiabasLib
                     case 0x0003:    // Concept 3
                         if (adapterEcho)
                         {   // only with ADS adapter
-                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                             return;
                         }
                         if (commParameter.Length < 7)
