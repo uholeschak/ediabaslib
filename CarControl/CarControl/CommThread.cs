@@ -1766,7 +1766,6 @@ namespace CarControl
             {   // com port
                 try
                 {
-                    _serialPort.DiscardInBuffer();
                     _serialPort.Write(sendData, 0, length);
                     while (_serialPort.BytesToWrite > 0)
                     {
@@ -1782,12 +1781,6 @@ namespace CarControl
             {   // ftdi
                 Ftd2xx.FT_STATUS ftStatus;
                 uint bytesWritten = 0;
-
-                ftStatus = Ftd2xx.FT_Purge(_handleFtdi, Ftd2xx.FT_PURGE_RX);
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                {
-                    throw new IOException();
-                }
 #if false
                 ftStatus = Ftd2xx.FT_WriteWrapper(_handleFtdi, sendData, length, 0, out bytesWritten);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
