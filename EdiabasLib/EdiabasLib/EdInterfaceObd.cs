@@ -1431,6 +1431,7 @@ namespace EdiabasLib
             {
                 if (interfaceSetBreakFunc != null && interfacePurgeInBufferFunc != null)
                 {
+                    interfacePurgeInBufferFunc();
                     long startTime = Stopwatch.GetTimestamp();
                     interfaceSetBreakFunc(true);    // start bit
                     Thread.Sleep(180);
@@ -1440,10 +1441,6 @@ namespace EdiabasLib
                     for (int i = 0; i < 8; i++)
                     {
                         interfaceSetBreakFunc((value & (1 << i)) == 0);
-                        if (i == 7)
-                        {
-                            interfacePurgeInBufferFunc();
-                        }
                         Thread.Sleep(180);
                         while ((Stopwatch.GetTimestamp() - startTime) < 200 * (i + 2) * tickResolMs)
                         {
@@ -1459,6 +1456,7 @@ namespace EdiabasLib
             }
             try
             {
+                serialPort.DiscardInBuffer();
                 long startTime = Stopwatch.GetTimestamp();
                 serialPort.BreakState = true;  // start bit
                 Thread.Sleep(180);
@@ -1468,10 +1466,6 @@ namespace EdiabasLib
                 for (int i = 0; i < 8; i++)
                 {
                     serialPort.BreakState = (value & (1 << i)) == 0;
-                    if (i == 7)
-                    {
-                        serialPort.DiscardInBuffer();
-                    }
                     Thread.Sleep(180);
                     while ((Stopwatch.GetTimestamp() - startTime) < 200 * (i + 2) * tickResolMs)
                     {
