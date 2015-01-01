@@ -1,0 +1,5 @@
+﻿;for zke3_sb1.prg (DS1)
+; all answers are dummies
+
+;IDENT
+00 05 00 04 00 : 00 10 A0 12 34 56 78 01 02 03 04 05 06 07 08 00

@@ -3345,6 +3345,11 @@ namespace CarSimulator
             {
                 return;
             }
+            if (!_adsAdapter)
+            {
+                // send echo
+                SendData(_receiveData, recLength);
+            }
 
             bool found = false;
             foreach (ResponseEntry responseEntry in _configData.ResponseList)

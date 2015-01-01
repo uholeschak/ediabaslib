@@ -1,7 +1,8 @@
 ﻿;for zke1.prg (Concept 1)
+; only IDENT is valid answer!
 
 ;IDENT
-55 55 11 02 A3 00 : 55 55 11 02 A3 B0
+55 55 11 02 A3 00 : 11 88 00 02 95 0E
 ;FS_LESEN
 55 55 11 02 BC 00 : 55 55 11 02 BC AF
 55 55 11 02 B8 00 : 55 55 11 02 B8 AB

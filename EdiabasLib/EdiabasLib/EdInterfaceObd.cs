@@ -169,7 +169,8 @@ namespace EdiabasLib
                 Parity parity;
                 bool stateDtr = false;
                 bool stateRts = false;
-                switch (commParameter[0])
+                uint concept = commParameter[0];
+                switch (concept)
                 {
                     case 0x0001:    // Concept 1
                         if (adapterEcho)
@@ -275,6 +276,7 @@ namespace EdiabasLib
                         this.parSupportFrequent = true;
                         break;
 
+                    case 0x0005:    // DS1
                     case 0x0006:    // DS2
                         if (commParameter.Length < 7)
                         {
@@ -300,7 +302,11 @@ namespace EdiabasLib
                         this.parRegenTime = (int)commParameter[6];
                         this.parTimeoutTelEnd = (int)commParameter[7];
                         this.parInterbyteTime = (int)commParameter[8];
-                        this.parSendSetDtr = !adapterEcho;
+                        this.parSendSetDtr = false;
+                        if (concept == 6)
+                        {   // DS2 uses DTR
+                            this.parSendSetDtr = !adapterEcho;
+                        }
                         break;
 
                     case 0x010C:    // KWP2000 BMW
