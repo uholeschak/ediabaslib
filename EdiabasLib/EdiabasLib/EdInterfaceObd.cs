@@ -1747,7 +1747,7 @@ namespace EdiabasLib
                 int sendLength = TelLengthKwp2000S(sendData);
                 if (!this.parChecksumByUser)
                 {
-                    sendData[sendLength] = CalcChecksumKWP2000S(sendData, sendLength);
+                    sendData[sendLength] = CalcChecksumXor(sendData, sendLength);
                 }
                 sendLength++;
                 ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, sendLength, "Send");
@@ -1802,7 +1802,7 @@ namespace EdiabasLib
                 ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, recLength + 1, "Resp");
                 if (!this.parChecksumNoCheck)
                 {
-                    if (CalcChecksumKWP2000S(receiveData, recLength) != receiveData[recLength])
+                    if (CalcChecksumXor(receiveData, recLength) != receiveData[recLength])
                     {
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Checksum incorrect");
                         ReceiveData(receiveData, 0, receiveData.Length, timeout, this.parTimeoutTelEnd, true);
@@ -1835,16 +1835,6 @@ namespace EdiabasLib
             return telLength;
         }
 
-        private byte CalcChecksumKWP2000S(byte[] data, int length)
-        {
-            byte sum = 0;
-            for (int i = 0; i < length; i++)
-            {
-                sum ^= data[i];
-            }
-            return sum;
-        }
-
         private EdiabasNet.ErrorCodes TransDS2(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
             receiveLength = 0;
@@ -1854,7 +1844,7 @@ namespace EdiabasLib
                 int sendLength = sendDataLength;
                 if (!this.parChecksumByUser)
                 {
-                    sendData[sendLength] = CalcChecksumDS2(sendData, sendLength);
+                    sendData[sendLength] = CalcChecksumXor(sendData, sendLength);
                     sendLength++;
                 }
                 ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, sendLength, "Send");
@@ -1925,7 +1915,7 @@ namespace EdiabasLib
             ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, 0, recLength, "Resp");
             if (!this.parChecksumNoCheck)
             {
-                if (CalcChecksumDS2(receiveData, recLength - 1) != receiveData[recLength - 1])
+                if (CalcChecksumXor(receiveData, recLength - 1) != receiveData[recLength - 1])
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Checksum incorrect");
                     ReceiveData(receiveData, 0, receiveData.Length, this.parTimeoutStd, this.parTimeoutTelEnd, true);
@@ -1958,7 +1948,7 @@ namespace EdiabasLib
             return telLength;
         }
 
-        private byte CalcChecksumDS2(byte[] data, int length)
+        private byte CalcChecksumXor(byte[] data, int length)
         {
             byte sum = 0;
             for (int i = 0; i < length; i++)
@@ -2470,7 +2460,7 @@ namespace EdiabasLib
             }
             if (!this.parChecksumNoCheck)
             {
-                if (CalcChecksumDS2(iso9141Buffer, recLength - 1) != iso9141Buffer[recLength - 1])
+                if (CalcChecksumXor(iso9141Buffer, recLength - 1) != iso9141Buffer[recLength - 1])
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Checksum incorrect");
                     FinishConcept3();
@@ -2518,7 +2508,7 @@ namespace EdiabasLib
             }
             if (!this.parChecksumNoCheck)
             {
-                if (CalcChecksumDS2(iso9141Buffer, recLength - 1) != iso9141Buffer[recLength - 1])
+                if (CalcChecksumXor(iso9141Buffer, recLength - 1) != iso9141Buffer[recLength - 1])
                 {
                     FinishConcept3();
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
