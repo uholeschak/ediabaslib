@@ -126,6 +126,8 @@ namespace EdiabasLib
                 StopCommThread();
 
                 commParameter = value;
+                commAnswerLen[0] = 0;
+                commAnswerLen[1] = 0;
 
                 this.parTransmitFunc = null;
                 this.parIdleFunc = null;
@@ -191,7 +193,8 @@ namespace EdiabasLib
                                 return;
                             }
                         }
-                        commAnswerLen = new short[] { -2, 0 };
+                        commAnswerLen[0] = -2;
+                        commAnswerLen[1] = 0;
                         baudRate = (int)commParameter[1];
                         dataBits = 8;
                         parity = Parity.Even;
@@ -223,7 +226,8 @@ namespace EdiabasLib
                                 return;
                             }
                         }
-                        commAnswerLen = new short[] { 1, 0 };
+                        commAnswerLen[0] = 1;
+                        commAnswerLen[1] = 0;
                         baudRate = 9600;
                         dataBits = 8;
                         parity = Parity.None;
@@ -258,7 +262,8 @@ namespace EdiabasLib
                                 return;
                             }
                         }
-                        commAnswerLen = new short[] { 1, 0 };
+                        commAnswerLen[0] = 52;
+                        commAnswerLen[1] = 0;
                         baudRate = 9600;
                         dataBits = 8;
                         parity = Parity.None;
@@ -291,7 +296,8 @@ namespace EdiabasLib
                                 return;
                             }
                         }
-                        commAnswerLen = new short[] { -1, 0 };
+                        commAnswerLen[0] = -1;
+                        commAnswerLen[1] = 0;
                         baudRate = (int)commParameter[1];
                         dataBits = 8;
                         parity = Parity.Even;
@@ -323,7 +329,6 @@ namespace EdiabasLib
                                 return;
                             }
                         }
-                        commAnswerLen = new short[] { 0, 0 };
                         baudRate = (int)commParameter[1];
                         dataBits = 8;
                         parity = Parity.None;
@@ -381,7 +386,6 @@ namespace EdiabasLib
                                 return;
                             }
                         }
-                        commAnswerLen = new short[] { 0, 0 };
                         baudRate = (int)commParameter[1];
                         dataBits = 8;
                         parity = Parity.Even;
@@ -411,7 +415,6 @@ namespace EdiabasLib
                                 return;
                             }
                         }
-                        commAnswerLen = new short[] { 0, 0 };
                         baudRate = (int)commParameter[1];
                         dataBits = 8;
                         parity = Parity.None;
@@ -432,7 +435,6 @@ namespace EdiabasLib
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
                         }
-                        commAnswerLen = new short[] { 0, 0 };
                         baudRate = 115200;
                         dataBits = 8;
                         parity = Parity.None;
@@ -1887,14 +1889,10 @@ namespace EdiabasLib
             }
 
             // header byte
-            int headerLen = 0;
-            if (commAnswerLen != null && commAnswerLen.Length >= 2)
+            int headerLen = commAnswerLen[0];
+            if (headerLen < 0)
             {
-                headerLen = commAnswerLen[0];
-                if (headerLen < 0)
-                {
-                    headerLen = (-headerLen) + 1;
-                }
+                headerLen = (-headerLen) + 1;
             }
             if (headerLen == 0)
             {
@@ -1937,19 +1935,15 @@ namespace EdiabasLib
         // telegram length with checksum
         private int TelLengthDS2(byte[] dataBuffer)
         {
-            int telLength = 0;
-            if (commAnswerLen != null && commAnswerLen.Length >= 2)
-            {
-                telLength = commAnswerLen[0];   // >0 fix length
-                if (telLength < 0)
-                {   // offset in buffer
-                    int offset = (-telLength);
-                    if (dataBuffer.Length < offset)
-                    {
-                        return 0;
-                    }
-                    telLength = dataBuffer[offset] + commAnswerLen[1];  // + answer offset
+            int telLength = commAnswerLen[0];   // >0 fix length
+            if (telLength < 0)
+            {   // offset in buffer
+                int offset = (-telLength);
+                if (dataBuffer.Length < offset)
+                {
+                    return 0;
                 }
+                telLength = dataBuffer[offset] + commAnswerLen[1];  // + answer offset
             }
             return telLength;
         }
@@ -2110,11 +2104,7 @@ namespace EdiabasLib
             ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, sendData, 0, sendDataLength, "Request");
             int recLength = 0;
             int recBlocks = 0;
-            int maxRecBlocks = 1;
-            if (commAnswerLen != null && commAnswerLen.Length >= 1)
-            {
-                maxRecBlocks = commAnswerLen[0];
-            }
+            int maxRecBlocks = commAnswerLen[0];
 
             int waitToSendCount = 0;
             bool waitToSend = true;

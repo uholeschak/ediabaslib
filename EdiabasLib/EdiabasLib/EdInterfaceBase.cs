@@ -11,7 +11,7 @@ namespace EdiabasLib
         protected bool mutexAquired = false;
         protected UInt32 commRepeats = 0;
         protected UInt32[] commParameter;
-        protected Int16[] commAnswerLen;
+        protected Int16[] commAnswerLen = new Int16[2];
 
         public abstract bool IsValidInterfaceName(string name);
 
@@ -54,7 +54,8 @@ namespace EdiabasLib
         {
             commRepeats = 0;
             commParameter = null;
-            commAnswerLen = null;
+            commAnswerLen[0] = 0;
+            commAnswerLen[1] = 0;
             return true;
         }
 
@@ -107,7 +108,11 @@ namespace EdiabasLib
             }
             set
             {
-                commAnswerLen = value;
+                if (value != null && value.Length >= 2)
+                {
+                    commAnswerLen[0] = value[0];
+                    commAnswerLen[1] = value[1];
+                }
             }
         }
 
