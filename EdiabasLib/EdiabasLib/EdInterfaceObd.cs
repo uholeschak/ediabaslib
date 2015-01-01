@@ -1140,11 +1140,10 @@ namespace EdiabasLib
             {
                 if (interbyteTime > 0)
                 {
-#if false
                     int bitCount = (serialPort.Parity == Parity.None) ? 10 : 11;
                     double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
-                    interbyteTime += (int)byteTime;
-#endif
+                    long interbyteTicks = (long)((interbyteTime + byteTime) * tickResolMs);
+
                     if (sendDataFunc != null)
                     {
                         if (interfacePurgeInBufferFunc == null)
@@ -1177,7 +1176,7 @@ namespace EdiabasLib
                         {
                             return false;
                         }
-                        while ((Stopwatch.GetTimestamp() - startTime) < interbyteTime * tickResolMs)
+                        while ((Stopwatch.GetTimestamp() - startTime) < interbyteTicks)
                         {
                         }
                     }
