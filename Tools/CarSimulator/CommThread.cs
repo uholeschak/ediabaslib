@@ -970,7 +970,7 @@ namespace CarSimulator
         private bool SendKwp2000S(byte[] sendData)
         {
             int sendLength = sendData[3] + 4;
-            sendData[sendLength] = CalcChecksumKwp2000S(sendData, sendLength);
+            sendData[sendLength] = CalcChecksumXor(sendData, sendLength);
             sendLength++;
             if (!SendData(sendData, sendLength))
             {
@@ -993,7 +993,7 @@ namespace CarSimulator
                 _serialPort.DiscardInBuffer();
                 return false;
             }
-            if (CalcChecksumKwp2000S(receiveData, recLength) != receiveData[recLength])
+            if (CalcChecksumXor(receiveData, recLength) != receiveData[recLength])
             {
                 _serialPort.DiscardInBuffer();
                 return false;
@@ -1001,20 +1001,10 @@ namespace CarSimulator
             return true;
         }
 
-        static public byte CalcChecksumKwp2000S(byte[] data, int length)
-        {
-            byte sum = 0;
-            for (int i = 0; i < length; i++)
-            {
-                sum ^= data[i];
-            }
-            return sum;
-        }
-
         private bool SendDs2(byte[] sendData)
         {
             int sendLength = sendData[1] - 1;
-            sendData[sendLength] = CalcChecksumDs2(sendData, sendLength);
+            sendData[sendLength] = CalcChecksumXor(sendData, sendLength);
             sendLength++;
             if (!SendData(sendData, sendLength))
             {
@@ -1037,7 +1027,7 @@ namespace CarSimulator
                 _serialPort.DiscardInBuffer();
                 return false;
             }
-            if (CalcChecksumDs2(receiveData, recLength) != receiveData[recLength])
+            if (CalcChecksumXor(receiveData, recLength) != receiveData[recLength])
             {
                 _serialPort.DiscardInBuffer();
                 return false;
@@ -1045,7 +1035,7 @@ namespace CarSimulator
             return true;
         }
 
-        static public byte CalcChecksumDs2(byte[] data, int length)
+        static public byte CalcChecksumXor(byte[] data, int length)
         {
             byte sum = 0;
             for (int i = 0; i < length; i++)
@@ -3376,7 +3366,7 @@ namespace CarSimulator
                     if (responseLen > 0)
                     {
                         Array.Copy(responseEntry.Response, _sendData, responseLen);
-                        _sendData[responseLen - 1] = CalcChecksumDs2(_sendData, responseLen - 1);
+                        _sendData[responseLen - 1] = CalcChecksumXor(_sendData, responseLen - 1);
                         SendData(_sendData, responseLen);
                     }
                     break;
@@ -3614,7 +3604,7 @@ namespace CarSimulator
                     if (responseLen > 0)
                     {
                         Array.Copy(responseOnly, _sendData, responseLen);
-                        _sendData[responseLen - 1] = CalcChecksumDs2(_sendData, responseLen - 1);
+                        _sendData[responseLen - 1] = CalcChecksumXor(_sendData, responseLen - 1);
                         SendData(_sendData, responseLen);
                         // max interbyte timeout is 10ms
                         Thread.Sleep(200);  // min 150ms, max 2500ms (this time includes the send time of 50ms!)
