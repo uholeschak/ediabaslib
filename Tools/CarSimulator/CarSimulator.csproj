@@ -75,56 +75,57 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Content Include="bae.txt">
+    <Content Include="Response\bae.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="d73n57c0.txt">
+    <Content Include="Response\d73n57c0.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="ddshd.txt">
+    <Content Include="Response\ddshd.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="dm33s501.txt">
+    <Content Include="Response\dm338ds1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="dwa4.txt">
+    <Content Include="Response\dm33s501.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="funkkomp.txt">
+    <Content Include="Response\dwa4.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="ihka.txt">
+    <Content Include="Response\funkkomp.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="irs_komp.txt">
+    <Content Include="Response\ihka.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="kombi34l.txt">
+    <Content Include="Response\irs_komp.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="m60_338k.txt">
+    <Content Include="Response\kombi34l.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="msd85.txt">
+    <Content Include="Response\m60_338k.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Response.txt">
+    <Content Include="Response\me72kwp1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="dm338ds1.txt">
+    <Content Include="Response\msd85.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="me72kwp1.txt">
+    <Content Include="Response\Response.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="vnc.txt">
+    <Content Include="Response\vnc.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="zke1.txt">
+    <Content Include="Response\zke1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="zke3_sb1.txt">
+    <Content Include="Response\zke3_sb1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -15,6 +15,7 @@ namespace CarSimulator
     public partial class MainForm : Form
     {
         private const string _stdResponseFile = "Response.txt";
+        private string responseDir;
         private CommThread _commThread;
         private int _lastPortCount;
         private CommThread.ConfigData _configData;
@@ -23,6 +24,9 @@ namespace CarSimulator
         {
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.AboveNormal;
             InitializeComponent();
+
+            string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            responseDir = Path.Combine(appDir, "Response");
 
             _lastPortCount = -1;
             _configData = new CommThread.ConfigData();
@@ -62,8 +66,7 @@ namespace CarSimulator
 
         private void UpdateResponseFiles()
         {
-            string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            string[] files = Directory.GetFiles(appDir, "*.txt");
+            string[] files = Directory.GetFiles(responseDir, "*.txt");
             listBoxResponseFiles.BeginUpdate();
             listBoxResponseFiles.Items.Clear();
             string selectItem = null;
@@ -390,7 +393,6 @@ namespace CarSimulator
                 if (radioButtonIso9141.Checked) conceptType = CommThread.ConceptType.conceptIso9141;
                 if (radioButtonConcept3.Checked) conceptType = CommThread.ConceptType.concept3;
 
-                string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 string responseFile = (string)listBoxResponseFiles.SelectedItem;
                 bool e61Internal = true;
                 if (responseFile != null)
@@ -400,7 +402,7 @@ namespace CarSimulator
                         e61Internal = false;
                     }
 
-                    if (!ReadResponseFile(Path.Combine(appDir, responseFile), conceptType))
+                    if (!ReadResponseFile(Path.Combine(responseDir, responseFile), conceptType))
                     {
                         MessageBox.Show("Reading response file failed!");
                     }

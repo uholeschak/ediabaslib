@@ -1,4 +1,4 @@
-﻿;for zke3_sb1.prg (DS1)
+﻿;for zke3_sb1.prg (DS1-2/Concept1)
 ; all answers are dummies
 
 ;IDENT
