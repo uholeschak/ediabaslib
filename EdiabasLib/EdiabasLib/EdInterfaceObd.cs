@@ -62,6 +62,7 @@ namespace EdiabasLib
         protected byte[] state = new byte[2];
         protected byte[] sendBuffer = new byte[transBufferSize];
         protected byte[] sendBufferThread = new byte[transBufferSize];
+        protected byte[] sendBufferInternal = new byte[1];
         protected volatile int sendBufferLength = 0;
         protected byte[] recBuffer = new byte[transBufferSize];
         protected byte[] recBufferThread = new byte[transBufferSize];
@@ -1131,48 +1132,67 @@ namespace EdiabasLib
 
         protected bool SendData(byte[] sendData, int length, bool setDtr, int interbyteTime)
         {
-            if (interbyteTime > 0)
+            if (length <= 0)
             {
-                if (sendDataFunc != null)
+                return true;
+            }
+            try
+            {
+                if (interbyteTime > 0)
                 {
-                    if (interfacePurgeInBufferFunc == null)
+#if false
+                    int bitCount = (serialPort.Parity == Parity.None) ? 10 : 11;
+                    double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
+                    interbyteTime += (int)byteTime;
+#endif
+                    if (sendDataFunc != null)
                     {
-                        return false;
+                        if (interfacePurgeInBufferFunc == null)
+                        {
+                            return false;
+                        }
+                        if (!interfacePurgeInBufferFunc())
+                        {
+                            return false;
+                        }
                     }
-                    if (!interfacePurgeInBufferFunc())
+                    else
                     {
-                        return false;
+                        serialPort.DiscardInBuffer();
+                    }
+
+                    if (setDtr)
+                    {
+                        if (!SetDtrSignal(true))
+                        {
+                            return false;
+                        }
+                    }
+                    for (int i = 0; i < length; i++)
+                    {
+                        this.sendBufferInternal[0] = sendData[i];
+                        bool dtrHandling = ((i + 1) < length) ? false : setDtr;
+                        long startTime = Stopwatch.GetTimestamp();
+                        if (!SendData(this.sendBufferInternal, 1, dtrHandling, true))
+                        {
+                            return false;
+                        }
+                        while ((Stopwatch.GetTimestamp() - startTime) < interbyteTime * tickResolMs)
+                        {
+                        }
                     }
                 }
                 else
                 {
-                    serialPort.DiscardInBuffer();
-                }
-#if false
-                int bitCount = (serialPort.Parity == Parity.None) ? 10 : 11;
-                double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
-                interbyteTime += (int)byteTime;
-#endif
-                byte[] buffer = new byte[1];
-                for (int i = 0; i < length; i++)
-                {
-                    buffer[0] = sendData[i];
-                    long startTime = Stopwatch.GetTimestamp();
-                    if (!SendData(buffer, 1, setDtr, true))
+                    if (!SendData(sendData, length, setDtr))
                     {
                         return false;
                     }
-                    while ((Stopwatch.GetTimestamp() - startTime) < interbyteTime * tickResolMs)
-                    {
-                    }
                 }
             }
-            else
+            catch (Exception)
             {
-                if (!SendData(sendData, length, setDtr))
-                {
-                    return false;
-                }
+                return false;
             }
             return true;
         }
@@ -1184,6 +1204,10 @@ namespace EdiabasLib
 
         protected bool SendData(byte[] sendData, int length, bool setDtr, bool keepInBuffer)
         {
+            if (length <= 0)
+            {
+                return true;
+            }
             if (sendDataFunc != null)
             {
                 if (interfacePurgeInBufferFunc == null)
@@ -1322,6 +1346,32 @@ namespace EdiabasLib
         protected bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd)
         {
             return ReceiveData(receiveData, offset, length, timeout, timeoutTelEnd, false);
+        }
+
+        protected bool SetDtrSignal(bool value)
+        {
+            try
+            {
+                if (sendDataFunc != null)
+                {
+                    if (interfaceSetDtrFunc == null)
+                    {
+                        return false;
+                    }
+                    if (!interfaceSetDtrFunc(value))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    serialPort.DtrEnable = value;
+                }
+            }
+            catch (Exception)
+            {
+            }
+            return true;
         }
 
         protected bool SendWakeFastInit(bool setDtr)
@@ -1951,20 +2001,21 @@ namespace EdiabasLib
                 }
                 else
                 {
-                    serialPort.BaudRate = 9600;
-                }
-
-                if (interfaceSetDtrFunc != null)
-                {
-                    if (!interfaceSetDtrFunc(false))
+                    try
                     {
-                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set DTR failed");
+                        serialPort.BaudRate = 9600;
+                    }
+                    catch (Exception)
+                    {
+                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
                     }
                 }
-                else
+
+                if (!SetDtrSignal(false))
                 {
-                    serialPort.DtrEnable = false;
+                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set DTR failed");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
                 }
 
                 this.lastCommTick = Stopwatch.GetTimestamp();
@@ -2004,7 +2055,15 @@ namespace EdiabasLib
                     }
                     else
                     {
-                        serialPort.BaudRate = 10400;
+                        try
+                        {
+                            serialPort.BaudRate = 10400;
+                        }
+                        catch (Exception)
+                        {
+                            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                        }
                     }
                 }
 
@@ -2320,21 +2379,22 @@ namespace EdiabasLib
                 }
                 else
                 {
-                    serialPort.BaudRate = 9600;
-                    serialPort.Parity = Parity.None;
-                }
-
-                if (interfaceSetDtrFunc != null)
-                {
-                    if (!interfaceSetDtrFunc(false))
+                    try
                     {
-                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set DTR failed");
+                        serialPort.BaudRate = 9600;
+                        serialPort.Parity = Parity.None;
+                    }
+                    catch (Exception)
+                    {
+                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
                     }
                 }
-                else
+
+                if (!SetDtrSignal(false))
                 {
-                    serialPort.DtrEnable = false;
+                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set DTR failed");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
                 }
 
                 this.lastCommTick = Stopwatch.GetTimestamp();

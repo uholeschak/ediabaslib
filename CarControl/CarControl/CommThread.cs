@@ -505,6 +505,7 @@ namespace CarControl
             };
 
         static public readonly Object DataLock = new Object();
+        protected static readonly long tickResolMs = Stopwatch.Frequency / 1000;
 
         private bool disposed = false;
         private volatile bool _stopThread;
@@ -1766,10 +1767,27 @@ namespace CarControl
             {   // com port
                 try
                 {
-                    _serialPort.Write(sendData, 0, length);
-                    while (_serialPort.BytesToWrite > 0)
+                    int bitCount = (_serialPort.Parity == Parity.None) ? 10 : 11;
+                    double byteTime = 1.0d / _serialPort.BaudRate * 1000 * bitCount;
+                    if (setDtr)
                     {
-                        Thread.Sleep(10);
+                        long waitTime = (long)((0.3d + byteTime * length) * tickResolMs);
+                        _serialPort.DtrEnable = true;
+                        long startTime = Stopwatch.GetTimestamp();
+                        _serialPort.Write(sendData, 0, length);
+                        while ((Stopwatch.GetTimestamp() - startTime) < waitTime)
+                        {
+                        }
+                        _serialPort.DtrEnable = false;
+                    }
+                    else
+                    {
+                        long waitTime = (long)(byteTime * length);
+                        _serialPort.Write(sendData, 0, length);
+                        if (waitTime > 10)
+                        {
+                            Thread.Sleep((int)waitTime);
+                        }
                     }
                 }
                 catch (Exception)
@@ -1781,6 +1799,10 @@ namespace CarControl
             {   // ftdi
                 Ftd2xx.FT_STATUS ftStatus;
                 uint bytesWritten = 0;
+                if (setDtr)
+                {
+                    return false;
+                }
 #if false
                 ftStatus = Ftd2xx.FT_WriteWrapper(_handleFtdi, sendData, length, 0, out bytesWritten);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
