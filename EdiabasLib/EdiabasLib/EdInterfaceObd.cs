@@ -2448,11 +2448,22 @@ namespace EdiabasLib
             int recLength = 1;
             for (; ; )
             {
+                if (recLength >= iso9141Buffer.Length)
+                {   // buffer overflow
+                    break;
+                }
                 if (!ReceiveData(iso9141Buffer, recLength, 1, 20, 20))
                 {   // last byte receive
                     break;
                 }
                 recLength++;
+            }
+            ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, iso9141Buffer, 0, recLength, "Rec");
+            if (commAnswerLen[0] > 0 && recLength != commAnswerLen[0])
+            {
+                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Invalid response length");
+                FinishConcept3();
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
             if (!this.parChecksumNoCheck)
             {
@@ -2496,11 +2507,20 @@ namespace EdiabasLib
             int recLength = 1;
             for (; ; )
             {
+                if (recLength >= iso9141Buffer.Length)
+                {   // buffer overflow
+                    break;
+                }
                 if (!ReceiveData(iso9141Buffer, recLength, 1, 20, 20))
                 {   // last byte receive
                     break;
                 }
                 recLength++;
+            }
+            if (commAnswerLen[0] > 0 && recLength != commAnswerLen[0])
+            {
+                FinishConcept3();
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
             if (!this.parChecksumNoCheck)
             {
