@@ -2311,6 +2311,7 @@ namespace EdiabasLib
                 if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No block length received");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
+            if (enableLog) ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.INFO, "(R): {0:X02}", recData[0]);
 
             int blockLen = recData[0];
             for (int i = 0; i < blockLen; i++)
@@ -2326,6 +2327,7 @@ namespace EdiabasLib
                     if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No block data received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
+                if (enableLog) ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.INFO, "(R): {0:X02}", recData[i + 1]);
             }
             if (enableLog) ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, recData, 0, blockLen, "Resp");
             if (recData[blockLen] != 0x03)
