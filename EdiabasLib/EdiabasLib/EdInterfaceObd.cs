@@ -1971,7 +1971,7 @@ namespace EdiabasLib
             {
                 keyBytes = byteArray0;
                 keyBytesList = new List<byte>();
-                while ((Stopwatch.GetTimestamp() - this.lastCommTick) < this.parTimeoutStd * tickResolMs)
+                while ((Stopwatch.GetTimestamp() - this.lastCommTick) < 2600 * tickResolMs)
                 {
                     Thread.Sleep(10);
                 }
@@ -2345,7 +2345,7 @@ namespace EdiabasLib
             {
                 keyBytes = byteArray0;
                 keyBytesList = new List<byte>();
-                while ((Stopwatch.GetTimestamp() - this.lastCommTick) < this.parTimeoutStd * tickResolMs)
+                while ((Stopwatch.GetTimestamp() - this.lastCommTick) < 2600 * tickResolMs)
                 {
                     Thread.Sleep(10);
                 }
