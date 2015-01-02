@@ -1564,6 +1564,7 @@ namespace EdiabasLib
                 {
                     Thread.Sleep(1);
                 }
+                this.lastCommTick = Stopwatch.GetTimestamp();
                 if (!SendData(sendData, sendLength, this.parSendSetDtr, this.parInterbyteTime))
                 {
                     if (enableLogging) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
@@ -1758,6 +1759,7 @@ namespace EdiabasLib
                 {
                     Thread.Sleep(1);
                 }
+                this.lastCommTick = Stopwatch.GetTimestamp();
                 if (!SendData(sendData, sendLength, this.parSendSetDtr, this.parInterbyteTime))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
@@ -1855,6 +1857,7 @@ namespace EdiabasLib
                 {
                     Thread.Sleep(1);
                 }
+                this.lastCommTick = Stopwatch.GetTimestamp();
                 if (!SendData(sendData, sendLength, this.parSendSetDtr, this.parInterbyteTime))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Sending failed");
@@ -2546,6 +2549,7 @@ namespace EdiabasLib
             }
 
             Thread.Sleep(10);
+            this.lastCommTick = Stopwatch.GetTimestamp();
             iso9141Buffer[0] = 0xFF;
             if (!SendData(iso9141Buffer, 1, false))
             {
