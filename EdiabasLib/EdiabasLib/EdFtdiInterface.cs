@@ -493,12 +493,19 @@ namespace EdiabasLib
                     {
                         return false;
                     }
-                    ftStatus = Ftd2xx.FT_ReadWrapper(handleFtdi, receiveData, length - recLen, offset + recLen, out bytesRead);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    while (recLen < length)
                     {
-                        return false;
+                        ftStatus = Ftd2xx.FT_ReadWrapper(handleFtdi, receiveData, length - recLen, offset + recLen, out bytesRead);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
+                        }
+                        if (bytesRead <= 0)
+                        {
+                            break;
+                        }
+                        recLen += (int)bytesRead;
                     }
-                    recLen += (int)bytesRead;
                 }
                 if (ediabasLog != null)
                 {
