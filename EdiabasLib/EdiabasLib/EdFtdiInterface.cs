@@ -48,17 +48,50 @@ namespace EdiabasLib
             try
             {
                 Ftd2xx.FT_STATUS ftStatus;
-                if (!port.ToUpper(culture).StartsWith(PortID))
-                {
-                    return false;
-                }
-                uint usbIndex = Convert.ToUInt32(port.Remove(0, 4));
-
-                ftStatus = Ftd2xx.FT_Open(usbIndex, out handleFtdi);
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                if (!port.StartsWith(PortID, StringComparison.OrdinalIgnoreCase))
                 {
                     InterfaceDisconnect();
                     return false;
+                }
+                string portData = port.Remove(0, PortID.Length);
+                if ((portData.Length > 0) && (portData[0] == ':'))
+                {   // special id
+                    if (portData.StartsWith(":SER=", StringComparison.OrdinalIgnoreCase))
+                    {   // serial number
+                        string id = portData.Remove(0, 5);
+                        ftStatus = Ftd2xx.FT_OpenEx(id, Ftd2xx.FT_OPEN_BY_SERIAL_NUMBER, out handleFtdi);
+                    }
+                    else if (portData.StartsWith(":DESC=", StringComparison.OrdinalIgnoreCase))
+                    {   // description
+                        string id = portData.Remove(0, 6);
+                        ftStatus = Ftd2xx.FT_OpenEx(id, Ftd2xx.FT_OPEN_BY_DESCRIPTION, out handleFtdi);
+                    }
+                    else if (portData.StartsWith(":LOC=", StringComparison.OrdinalIgnoreCase))
+                    {   // location
+                        long loc = EdiabasNet.StringToValue(portData.Remove(0, 5));
+                        ftStatus = Ftd2xx.FT_OpenEx((IntPtr)loc, Ftd2xx.FT_OPEN_BY_LOCATION, out handleFtdi);
+                    }
+                    else
+                    {
+                        InterfaceDisconnect();
+                        return false;
+                    }
+                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    {
+                        InterfaceDisconnect();
+                        return false;
+                    }
+                }
+                else
+                {
+                    uint usbIndex = Convert.ToUInt32(port.Remove(0, PortID.Length));
+
+                    ftStatus = Ftd2xx.FT_Open(usbIndex, out handleFtdi);
+                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    {
+                        InterfaceDisconnect();
+                        return false;
+                    }
                 }
 
                 ftStatus = Ftd2xx.FT_SetLatencyTimer(handleFtdi, 2);

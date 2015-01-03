@@ -149,6 +149,9 @@ namespace Ftdi
         public static extern FT_STATUS FT_OpenEx(IntPtr pArg1, UInt32 Flags, out IntPtr ftHandle);
 
         [DllImport("ftd2xx")]
+        public static extern FT_STATUS FT_OpenEx(string pArg1, UInt32 Flags, out IntPtr ftHandle);
+
+        [DllImport("ftd2xx")]
         public static extern FT_STATUS FT_ListDevices(ref IntPtr pArg1, ref IntPtr pArg2, UInt32 Flags);
 
         [DllImport("ftd2xx")]
