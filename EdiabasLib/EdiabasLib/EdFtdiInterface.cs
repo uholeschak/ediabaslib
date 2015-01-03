@@ -10,13 +10,34 @@ namespace EdiabasLib
     static class EdFtdiInterface
     {
         public const string PortID = "FTDI";
-        private const int writeTimeout = 500;      // write timeout [ms]
+        private const int writeTimeout = 500;       // write timeout [ms]
+        private const int readTimeoutCeMin = 500;   // min read timeout for CE [ms]
         private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
         private static readonly long tickResolMs = Stopwatch.Frequency / 1000;
         private static IntPtr handleFtdi = (IntPtr)0;
         private static int currentBaudRate = 0;
         private static int currentWordLength = 0;
         private static Parity currentParity = Parity.None;
+
+        public static IntPtr HandleFtdi
+        {
+            get { return handleFtdi; }
+        }
+
+        public static int CurrentBaudRate
+        {
+            get { return currentBaudRate; }
+        }
+
+        public static int CurrentWordLength
+        {
+            get { return currentWordLength; }
+        }
+
+        public static Parity CurrentParity
+        {
+            get { return currentParity; }
+        }
 
         public static bool InterfaceConnect(string port)
         {
@@ -323,7 +344,7 @@ namespace EdiabasLib
                 return false;
             }
             try
-            {   // ftdi
+            {
                 Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_RX);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
@@ -345,7 +366,7 @@ namespace EdiabasLib
                 return false;
             }
             try
-            {   // ftdi
+            {
                 Ftd2xx.FT_STATUS ftStatus;
                 uint bytesWritten = 0;
 
@@ -366,7 +387,7 @@ namespace EdiabasLib
                     {
                         int sendLength = length - i;
                         if (sendLength > sendBlockSize) sendLength = sendBlockSize;
-                        ftStatus = Ftd2xx.FT_WriteWrapper(_handleFtdi, sendData, sendLength, i, out bytesWritten);
+                        ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, sendData, sendLength, i, out bytesWritten);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
                             return false;
@@ -397,7 +418,7 @@ namespace EdiabasLib
                     {
                         int sendLength = length - i;
                         if (sendLength > sendBlockSize) sendLength = sendBlockSize;
-                        ftStatus = Ftd2xx.FT_WriteWrapper(_handleFtdi, sendData, sendLength, i, out bytesWritten);
+                        ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, sendData, sendLength, i, out bytesWritten);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
                             return false;
@@ -431,13 +452,13 @@ namespace EdiabasLib
                 return false;
             }
 #if WindowsCE
-            if (timeout < 500)
+            if (timeout < readTimeoutCeMin)
             {
-                timeout = _readTimeoutMin;
+                timeout = readTimeoutCeMin;
             }
-            if (timeoutTelEnd < 500)
+            if (timeoutTelEnd < readTimeoutCeMin)
             {
-                timeoutTelEnd = _readTimeoutMin;
+                timeoutTelEnd = readTimeoutCeMin;
             }
 #else
             // add extra delay for internal signal transitions
@@ -445,7 +466,7 @@ namespace EdiabasLib
             timeoutTelEnd += 20;
 #endif
             try
-            {   // ftdi
+            {
                 Ftd2xx.FT_STATUS ftStatus;
                 uint bytesRead = 0;
                 int recLen = 0;

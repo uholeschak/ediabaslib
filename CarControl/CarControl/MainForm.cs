@@ -17,7 +17,7 @@ namespace CarControl
         private delegate void DataUpdatedDelegate();
         private DataUpdatedDelegate DataUpdatedInvoke;
 
-        private const string logFileTemp = "\\Temp\\CarControl.txt";
+        private const string logFileTemp = "\\Temp\\ifh.trc";
         private CommThread _commThread;
         private int _lastPortCount;
         private int _lastUSBCount;
@@ -95,7 +95,7 @@ namespace CarControl
             listPorts.Items.Clear();
             for (int i = 0; i < (int)deviceCount; i++)
             {
-                int pos = listPorts.Items.Add("USB"+i.ToString());
+                int pos = listPorts.Items.Add("FTDI"+i.ToString());
                 if (index < 0) index = pos;
             }
 
@@ -886,7 +886,7 @@ namespace CarControl
                 if (listPorts.SelectedIndex < 0) return;
                 string selectedPort = listPorts.SelectedItem.ToString();
 
-                string logFile = "";
+                string logFile = null;
                 if (checkBoxLogFile.Checked)
                 {
                     logFile = logFileTemp;

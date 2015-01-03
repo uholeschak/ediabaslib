@@ -8,7 +8,7 @@ namespace Ftdi
     /// </summary>
     /// Here we will cast all the ftd2xx.h functions and structure that we need
     /// and will add some other specific communaction protocols 
-    class Ftd2xx
+    public class Ftd2xx
     {
         #region Stupid defines from the dll
 

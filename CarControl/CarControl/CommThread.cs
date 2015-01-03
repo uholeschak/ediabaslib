@@ -511,11 +511,6 @@ namespace CarControl
         private volatile bool _stopThread;
         private bool _threadRunning;
         private Thread _workerThread;
-        private string _comPort;
-        private SerialPort _serialPort;
-        private IntPtr _handleFtdi;
-        private StreamWriter _swLog;
-        private Stopwatch _logTimeWatch;
         private Stopwatch commStopWatch;
         private EdiabasNet ediabas;
         private bool ediabasInitReq;
@@ -531,26 +526,11 @@ namespace CarControl
             _stopThread = false;
             _threadRunning = false;
             _workerThread = null;
-            _serialPort = new SerialPort();
-            _handleFtdi = (IntPtr) 0;
-            _swLog = null;
-            _logTimeWatch = new Stopwatch();
             commStopWatch = new Stopwatch();
             ediabas = new EdiabasNet();
 
             EdInterfaceObd edInterfaceObd = new EdInterfaceObd();
             ediabas.EdInterfaceClass = edInterfaceObd;
-            edInterfaceObd.InterfaceConnectFunc = InterfaceConnect;
-            edInterfaceObd.InterfaceDisconnectFunc = InterfaceDisconnect;
-            edInterfaceObd.InterfaceSetConfigFunc = InterfaceSetConfig;
-            edInterfaceObd.InterfaceSetDtrFunc = InterfaceSetDtr;
-            edInterfaceObd.InterfaceSetRtsFunc = InterfaceSetRts;
-            edInterfaceObd.InterfaceGetDsrFunc = InterfaceGetDsr;
-            edInterfaceObd.InterfaceSetBreakFunc = InterfaceSetBreak;
-            edInterfaceObd.InterfacePurgeInBufferFunc = InterfacePurgeInBuffer;
-            edInterfaceObd.InterfaceSendDataFunc = InterfaceSendData;
-            edInterfaceObd.InterfaceReceiveDataFunc = InterfaceReceiveData;
-
             ediabas.AbortJobFunc = AbortEdiabasJob;
 
             string ecuPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase), "Ecu");
@@ -587,11 +567,6 @@ namespace CarControl
                 if (disposing)
                 {
                     // Dispose managed resources.
-                    if (_swLog != null)
-                    {
-                        _swLog.Dispose();
-                        _swLog = null;
-                    }
                     ediabas.Dispose();
                     ediabas = null;
                 }
@@ -607,24 +582,19 @@ namespace CarControl
             {
                 StopThread();
                 _stopThread = false;
-                _comPort = comPort;
-                _swLog = null;
-                if (logFile.Length > 0)
+                ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = comPort;
+                if (logFile != null)
                 {
-                    try
-                    {
-                        _swLog = new StreamWriter(logFile);
-                    }
-                    catch (Exception)
-                    {
-                        _swLog = null;
-                    }
+                    ediabas.SetConfigProperty("TracePath", Path.GetDirectoryName(logFile));
+                    ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.ED_LOG_LEVEL.IFH));
                 }
-                _logTimeWatch.Reset();
+                else
+                {
+                    ediabas.SetConfigProperty("IfhTrace", "0");
+                }
                 InitProperties();
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
-                //_workerThread.Priority = ThreadPriority.Highest;
                 _workerThread.Start();
             }
             catch (Exception)
@@ -637,24 +607,13 @@ namespace CarControl
 
         public void StopThread()
         {
-            if (_swLog != null)
-            {
-                try
-                {
-                    _swLog.Dispose();
-                }
-                catch (Exception)
-                {
-                }
-                _swLog = null;
-            }
-            _logTimeWatch.Reset();
             if (_workerThread != null)
             {
                 _stopThread = true;
                 _workerThread.Join();
                 _workerThread = null;
             }
+            ediabas.SetConfigProperty("IfhTrace", "0");
         }
 
         public bool ThreadRunning()
@@ -1323,110 +1282,6 @@ namespace CarControl
             return true;
         }
 
-        private bool Connect()
-        {
-            if (_comPort.StartsWith("COM"))
-            {
-                if (_serialPort.IsOpen) return true;
-                try
-                {
-                    _serialPort.PortName = _comPort;
-                    _serialPort.BaudRate = 115200;
-                    _serialPort.DataBits = 8;
-                    _serialPort.Parity = Parity.None;
-                    _serialPort.StopBits = StopBits.One;
-                    _serialPort.Handshake = Handshake.None;
-                    _serialPort.ReadTimeout = 0;
-                    _serialPort.ErrorReceived += new SerialErrorReceivedEventHandler(ErrorReceived);
-                    _serialPort.Open();
-                }
-                catch (Exception)
-                {
-                    Disconnect();
-                    return false;
-                }
-            }
-            else
-            {
-                if (_handleFtdi != (IntPtr) 0) return true;
-                try
-                {
-                    string usbIndexStr = _comPort.Remove(0, 3);
-                    uint usbIndex = Convert.ToUInt32(usbIndexStr);
-                    Ftd2xx.FT_STATUS ftStatus;
-
-                    ftStatus = Ftd2xx.FT_Open(usbIndex, out _handleFtdi);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
-                        Disconnect();
-                        return false;
-                    }
-
-                    ftStatus = Ftd2xx.FT_SetLatencyTimer(_handleFtdi, 2);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
-                        Disconnect();
-                        return false;
-                    }
-
-                    ftStatus = Ftd2xx.FT_SetBaudRate(_handleFtdi, Ftd2xx.FT_BAUD_9600);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
-                        Disconnect();
-                        return false;
-                    }
-
-                    ftStatus = Ftd2xx.FT_SetDataCharacteristics(_handleFtdi, Ftd2xx.FT_BITS_8, Ftd2xx.FT_STOP_BITS_1, Ftd2xx.FT_PARITY_NONE);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
-                        Disconnect();
-                        return false;
-                    }
-
-                    ftStatus = Ftd2xx.FT_SetTimeouts(_handleFtdi, 0, _writeTimeout);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
-                        Disconnect();
-                        return false;
-                    }
-
-                    ftStatus = Ftd2xx.FT_SetFlowControl(_handleFtdi, Ftd2xx.FT_FLOW_NONE, 0, 0);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
-                        Disconnect();
-                        return false;
-                    }
-
-                    ftStatus = Ftd2xx.FT_ClrDtr(_handleFtdi);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
-                        Disconnect();
-                        return false;
-                    }
-
-                    ftStatus = Ftd2xx.FT_ClrRts(_handleFtdi);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
-                        Disconnect();
-                        return false;
-                    }
-
-                    ftStatus = Ftd2xx.FT_Purge(_handleFtdi, Ftd2xx.FT_PURGE_TX | Ftd2xx.FT_PURGE_RX);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
-                        Disconnect();
-                        return false;
-                    }
-                }
-                catch (Exception)
-                {
-                    Disconnect();
-                    return false;
-                }
-            }
-            return true;
-        }
-
         private static void MergeResultDictionarys(ref Dictionary<string, EdiabasNet.ResultData> resultDict, Dictionary<string, EdiabasNet.ResultData> mergeDict)
         {
             if (resultDict == null)
@@ -1462,27 +1317,6 @@ namespace CarControl
             }
         }
 
-        private bool Disconnect()
-        {
-            if (_serialPort.IsOpen)
-            {
-                try
-                {
-                    _serialPort.Close();
-                }
-                catch (Exception)
-                {
-                }
-                _serialPort.ErrorReceived -= new SerialErrorReceivedEventHandler(ErrorReceived);
-            }
-            if (_handleFtdi != (IntPtr) 0)
-            {
-                Ftd2xx.FT_Close(_handleFtdi);
-                _handleFtdi = (IntPtr) 0;
-            }
-            return true;
-        }
-
         private bool AbortEdiabasJob()
         {
             if (ediabasJobAbort || _stopThread)
@@ -1490,253 +1324,6 @@ namespace CarControl
                 return true;
             }
             return false;
-        }
-
-        private bool InterfaceConnect(string port)
-        {
-            return Connect();
-        }
-
-        private bool InterfaceDisconnect()
-        {
-            return Disconnect();
-        }
-
-        private bool InterfaceSetConfig(int baudRate, int dataBits, Parity parity)
-        {
-            if (_handleFtdi == (IntPtr)0)
-            {   // com port
-                try
-                {
-                    _serialPort.BaudRate = baudRate;
-                    _serialPort.DataBits = dataBits;
-                    _serialPort.Parity = parity;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                Ftd2xx.FT_STATUS ftStatus;
-
-                ftStatus = Ftd2xx.FT_SetBaudRate(_handleFtdi, (uint)baudRate);
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                {
-                    return false;
-                }
-
-                byte wordLength;
-
-                switch (dataBits)
-                {
-                    case 5:
-                        wordLength = Ftd2xx.FT_BITS_5;
-                        break;
-
-                    case 6:
-                        wordLength = Ftd2xx.FT_BITS_6;
-                        break;
-
-                    case 7:
-                        wordLength = Ftd2xx.FT_BITS_7;
-                        break;
-
-                    case 8:
-                        wordLength = Ftd2xx.FT_BITS_8;
-                        break;
-
-                    default:
-                        return false;
-                }
-
-                byte parityLocal;
-
-                switch (parity)
-                {
-                    case Parity.None:
-                        parityLocal = Ftd2xx.FT_PARITY_NONE;
-                        break;
-
-                    case Parity.Even:
-                        parityLocal = Ftd2xx.FT_PARITY_EVEN;
-                        break;
-
-                    case Parity.Odd:
-                        parityLocal = Ftd2xx.FT_PARITY_ODD;
-                        break;
-
-                    case Parity.Mark:
-                        parityLocal = Ftd2xx.FT_PARITY_MARK;
-                        break;
-
-                    case Parity.Space:
-                        parityLocal = Ftd2xx.FT_PARITY_SPACE;
-                        break;
-
-                    default:
-                        return false;
-                }
-
-                ftStatus = Ftd2xx.FT_SetDataCharacteristics(_handleFtdi, wordLength, Ftd2xx.FT_STOP_BITS_1, parityLocal);
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private bool InterfaceSetDtr(bool dtr)
-        {
-            if (_handleFtdi == (IntPtr)0)
-            {   // com port
-                try
-                {
-                    _serialPort.DtrEnable = dtr;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                Ftd2xx.FT_STATUS ftStatus;
-
-                if (dtr)
-                {
-                    ftStatus = Ftd2xx.FT_SetDtr(_handleFtdi);
-                }
-                else
-                {
-                    ftStatus = Ftd2xx.FT_ClrDtr(_handleFtdi);
-                }
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private bool InterfaceSetRts(bool rts)
-        {
-            if (_handleFtdi == (IntPtr)0)
-            {   // com port
-                try
-                {
-                    _serialPort.RtsEnable = rts;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                Ftd2xx.FT_STATUS ftStatus;
-
-                if (rts)
-                {
-                    ftStatus = Ftd2xx.FT_SetRts(_handleFtdi);
-                }
-                else
-                {
-                    ftStatus = Ftd2xx.FT_ClrRts(_handleFtdi);
-                }
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private bool InterfaceGetDsr(out bool dsr)
-        {
-            if (_handleFtdi == (IntPtr)0)
-            {   // com port
-                dsr = false;
-                try
-                {
-                    dsr = _serialPort.DsrHolding;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                dsr = false;
-                uint modemStatus = 0x0000;
-                Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_GetModemStatus(_handleFtdi, ref modemStatus);
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                {
-                    return false;
-                }
-                dsr = (modemStatus & 0x20) != 0;
-            }
-            return true;
-        }
-
-        private bool InterfaceSetBreak(bool enable)
-        {
-            if (_handleFtdi == (IntPtr)0)
-            {   // com port
-                try
-                {
-                    _serialPort.BreakState = enable;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                Ftd2xx.FT_STATUS ftStatus;
-
-                if (enable)
-                {
-                    ftStatus = Ftd2xx.FT_SetBreakOn(_handleFtdi);
-                }
-                else
-                {
-                    ftStatus = Ftd2xx.FT_SetBreakOff(_handleFtdi);
-                }
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private bool InterfacePurgeInBuffer()
-        {
-            if (_handleFtdi == (IntPtr)0)
-            {   // com port
-                try
-                {
-                    _serialPort.DiscardInBuffer();
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-            else
-            {   // ftdi
-                Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_Purge(_handleFtdi, Ftd2xx.FT_PURGE_RX);
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                {
-                    return false;
-                }
-            }
-            return true;
         }
 
         private void InitProperties()
@@ -1768,347 +1355,9 @@ namespace CarControl
             ediabasDynDict = null;
         }
 
-        private bool InterfaceSendData(byte[] sendData, int length, bool setDtr)
-        {
-            LogData(sendData, 0, length, "Send");
-            if (_handleFtdi == (IntPtr)0)
-            {   // com port
-                try
-                {
-                    int bitCount = (_serialPort.Parity == Parity.None) ? 10 : 11;
-                    double byteTime = 1.0d / _serialPort.BaudRate * 1000 * bitCount;
-                    if (setDtr)
-                    {
-                        long waitTime = (long)((0.3d + byteTime * length) * tickResolMs);
-                        _serialPort.DtrEnable = true;
-                        long startTime = Stopwatch.GetTimestamp();
-                        _serialPort.Write(sendData, 0, length);
-                        while ((Stopwatch.GetTimestamp() - startTime) < waitTime)
-                        {
-                        }
-                        _serialPort.DtrEnable = false;
-                    }
-                    else
-                    {
-                        long waitTime = (long)(byteTime * length);
-                        _serialPort.Write(sendData, 0, length);
-                        if (waitTime > 10)
-                        {
-                            Thread.Sleep((int)waitTime);
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-            else
-            {   // ftdi
-                Ftd2xx.FT_STATUS ftStatus;
-                uint bytesWritten = 0;
-                if (setDtr)
-                {
-                    return false;
-                }
-#if false
-                ftStatus = Ftd2xx.FT_WriteWrapper(_handleFtdi, sendData, length, 0, out bytesWritten);
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                {
-                    return false;
-                }
-#else
-                const int sendBlockSize = 4;
-                for (int i = 0; i < length; i += sendBlockSize)
-                {
-                    int sendLength = length - i;
-                    if (sendLength > sendBlockSize) sendLength = sendBlockSize;
-                    ftStatus = Ftd2xx.FT_WriteWrapper(_handleFtdi, sendData, sendLength, i, out bytesWritten);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
-                        return false;
-                    }
-                }
-#endif
-            }
-
-            return true;
-        }
-
-        private bool InterfaceReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog)
-        {
-            if (timeout < _readTimeoutMin)
-            {
-                timeout = _readTimeoutMin;
-            }
-            if (timeoutTelEnd < _readTimeoutMin)
-            {
-                timeoutTelEnd = _readTimeoutMin;
-            }
-            if (_handleFtdi == (IntPtr)0)
-            {   // com port
-                try
-                {
-                    // wait for first byte
-                    int lastBytesToRead = 0;
-                    commStopWatch.Reset();
-                    commStopWatch.Start();
-                    for (; ; )
-                    {
-                        lastBytesToRead = _serialPort.BytesToRead;
-                        if (lastBytesToRead > 0)
-                        {
-                            break;
-                        }
-                        if (commStopWatch.ElapsedMilliseconds > timeout)
-                        {
-                            commStopWatch.Stop();
-                            LogString(string.Format("T*** {0}ms", timeout));
-                            return false;
-                        }
-                        Thread.Sleep(10);
-                    }
-
-                    int recLen = 0;
-                    commStopWatch.Reset();
-                    commStopWatch.Start();
-                    for (; ; )
-                    {
-                        int bytesToRead = _serialPort.BytesToRead;
-                        if (bytesToRead >= length)
-                        {
-                            recLen += _serialPort.Read(receiveData, offset + recLen, length - recLen);
-                        }
-                        if (recLen >= length)
-                        {
-                            break;
-                        }
-                        if (lastBytesToRead != bytesToRead)
-                        {   // bytes received
-                            commStopWatch.Reset();
-                            commStopWatch.Start();
-                            lastBytesToRead = bytesToRead;
-                        }
-                        else
-                        {
-                            if (commStopWatch.ElapsedMilliseconds > timeoutTelEnd)
-                            {
-                                LogString(string.Format("Len {0} < {1} ({2}ms)", bytesToRead, length, timeoutTelEnd));
-                                break;
-                            }
-                        }
-                        Thread.Sleep(10);
-                    }
-                    commStopWatch.Stop();
-                    if (ediabasLog != null)
-                    {
-                        ediabasLog.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, offset, recLen, "Rec ");
-                    }
-                    LogData(receiveData, offset, recLen, "Rec ");
-                    if (recLen < length)
-                    {
-                        LogString("L***");
-                        return false;
-                    }
-                }
-                catch (Exception)
-                {
-                    LogString("E***");
-                    return false;
-                }
-            }
-            else
-            {   // ftdi
-#if true
-                Ftd2xx.FT_STATUS ftStatus;
-                uint bytesRead = 0;
-
-                ftStatus = Ftd2xx.FT_SetTimeouts(_handleFtdi, (uint)timeout, _writeTimeout);
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                {
-                    return false;
-                }
-                ftStatus = Ftd2xx.FT_ReadWrapper(_handleFtdi, receiveData, length, offset, out bytesRead);
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                {
-                    return false;
-                }
-                if (ediabasLog != null)
-                {
-                    ediabasLog.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, offset, (int)bytesRead, "Rec ");
-                }
-                LogData(receiveData, offset, (int)bytesRead, "Rec ");
-                if (bytesRead < length)
-                {
-                    LogString("L***");
-                    return false;
-                }
-#else
-                try
-                {
-                    Ftd2xx.FT_STATUS ftStatus;
-
-                    // wait for first byte
-                    uint lastBytesToRead = 0;
-                    commStopWatch.Reset();
-                    commStopWatch.Start();
-                    for (; ; )
-                    {
-                        ftStatus = Ftd2xx.FT_GetQueueStatus(_handleFtdi, out lastBytesToRead);
-                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                        {
-                            return false;
-                        }
-                        if (lastBytesToRead > 0)
-                        {
-                            break;
-                        }
-                        if (commStopWatch.ElapsedMilliseconds > timeout)
-                        {
-                            commStopWatch.Stop();
-                            LogString(string.Format("T*** {0}ms {1}", timeout));
-                            return false;
-                        }
-                        Thread.Sleep(10);
-                    }
-
-                    int recLen = 0;
-                    commStopWatch.Reset();
-                    commStopWatch.Start();
-                    for (; ; )
-                    {
-                        uint bytesToRead;
-                        ftStatus = Ftd2xx.FT_GetQueueStatus(_handleFtdi, out bytesToRead);
-                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                        {
-                            return false;
-                        }
-                        if (bytesToRead >= length)
-                        {
-                            uint bytesRead;
-                            ftStatus = Ftd2xx.FT_ReadWrapper(_handleFtdi, receiveData, length - recLen, offset + recLen, out bytesRead);
-                            if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                            {
-                                return false;
-                            }
-                            recLen += (int)bytesRead;
-                        }
-                        if (recLen >= length)
-                        {
-                            break;
-                        }
-                        if (lastBytesToRead != bytesToRead)
-                        {   // bytes received
-                            commStopWatch.Reset();
-                            commStopWatch.Start();
-                            lastBytesToRead = bytesToRead;
-                        }
-                        else
-                        {
-                            if (commStopWatch.ElapsedMilliseconds > timeoutTelEnd)
-                            {
-                                LogString(string.Format("Len {0} < {1} ({2}ms)", bytesToRead, length, timeoutTelEnd));
-                                break;
-                            }
-                        }
-                        Thread.Sleep(10);
-                    }
-                    commStopWatch.Stop();
-                    if (ediabasLog != null)
-                    {
-                        ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, offset, recLen, "Rec ");
-                    }
-                    LogData(receiveData, offset, recLen, "Rec ");
-                    if (recLen < length)
-                    {
-                        LogString("L***");
-                        return false;
-                    }
-                }
-                catch (Exception)
-                {
-                    LogString("E***");
-                    return false;
-                }
-#endif
-            }
-            return true;
-        }
-
         private void DataUpdatedEvent()
         {
             if (DataUpdated != null) DataUpdated(this, EventArgs.Empty);
-        }
-
-        private void ErrorReceived(Object sender, SerialErrorReceivedEventArgs e)
-        {
-#if DEBUG
-            Trace.WriteLine("Error received");
-#endif
-        }
-
-        private void LogString(string info)
-        {
-            if (_swLog == null) return;
-            try
-            {
-                LogTimeStamp();
-                _swLog.WriteLine(" " + info);
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        private void LogTimeStamp()
-        {
-            if (_swLog == null) return;
-
-            if (!_logTimeWatch.IsRunning)
-            {
-                _logTimeWatch.Reset();
-                _logTimeWatch.Start();
-            }
-            long elapsed = _logTimeWatch.ElapsedMilliseconds;
-            _logTimeWatch.Reset();
-            _logTimeWatch.Start();
-            try
-            {
-                _swLog.Write(string.Format("{0:D04}", elapsed));
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        private void LogData(byte[] data, int offset, int length, string info)
-        {
-            if (_swLog == null) return;
-            string logString = "";
-
-            for (int i = 0; i < length; i++)
-            {
-                logString += string.Format("{0:X02} ", data[offset + i]);
-            }
-            LogTimeStamp();
-            try
-            {
-                _swLog.WriteLine(" (" + info + "): " + logString);
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        private int BcdToInt(byte bcdValue)
-        {
-            int result = 0;
-            int lowPart = bcdValue & 0x0F;
-            if (lowPart > 9) lowPart = 9;
-            int highPart = (bcdValue >> 4) & 0x0F;
-            if (highPart > 9) highPart = 9;
-            result = lowPart + 10 * highPart;
-            return result;
         }
     }
 }

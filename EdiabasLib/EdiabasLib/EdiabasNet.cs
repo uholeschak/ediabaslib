@@ -5389,8 +5389,8 @@ namespace EdiabasLib
             {
                 lock (logLock)
                 {
-                    string apiTrace = GetConfigProperty("IfhTrace");
-                    logLevelCached = Convert.ToInt32(apiTrace);
+                    string ifhTrace = GetConfigProperty("IfhTrace");
+                    logLevelCached = (int)StringToValue(ifhTrace);
                 }
             }
         }

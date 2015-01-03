@@ -663,7 +663,7 @@ namespace EdiabasLib
                 ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0018);
                 return false;
             }
-#if !WindowsCE
+
             if (comPort.ToUpper(culture).StartsWith(EdFtdiInterface.PortID))
             {   // automtatic hook of FTDI functions
                 if (interfaceConnectFunc == null)
@@ -680,7 +680,23 @@ namespace EdiabasLib
                     interfaceReceiveDataFunc = EdFtdiInterface.InterfaceReceiveData;
                 }
             }
-#endif
+            else
+            {
+                if (interfaceConnectFunc == EdFtdiInterface.InterfaceConnect)
+                {
+                    interfaceConnectFunc = null;
+                    interfaceDisconnectFunc = null;
+                    interfaceSetConfigFunc = null;
+                    interfaceSetDtrFunc = null;
+                    interfaceSetRtsFunc = null;
+                    interfaceGetDsrFunc = null;
+                    interfaceSetBreakFunc = null;
+                    interfacePurgeInBufferFunc = null;
+                    interfaceSendDataFunc = null;
+                    interfaceReceiveDataFunc = null;
+                }
+            }
+
             if (interfaceConnectFunc != null)
             {
                 connected = interfaceConnectFunc(comPort);
