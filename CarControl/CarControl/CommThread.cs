@@ -548,8 +548,8 @@ namespace CarControl
             edInterfaceObd.InterfaceGetDsrFunc = InterfaceGetDsr;
             edInterfaceObd.InterfaceSetBreakFunc = InterfaceSetBreak;
             edInterfaceObd.InterfacePurgeInBufferFunc = InterfacePurgeInBuffer;
-            edInterfaceObd.SendDataFunc = SendData;
-            edInterfaceObd.ReceiveDataFunc = ReceiveData;
+            edInterfaceObd.InterfaceSendDataFunc = InterfaceSendData;
+            edInterfaceObd.InterfaceReceiveDataFunc = InterfaceReceiveData;
 
             ediabas.AbortJobFunc = AbortEdiabasJob;
 
@@ -1358,54 +1358,63 @@ namespace CarControl
                     ftStatus = Ftd2xx.FT_Open(usbIndex, out _handleFtdi);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
+                        Disconnect();
                         return false;
                     }
 
                     ftStatus = Ftd2xx.FT_SetLatencyTimer(_handleFtdi, 2);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
+                        Disconnect();
                         return false;
                     }
 
                     ftStatus = Ftd2xx.FT_SetBaudRate(_handleFtdi, Ftd2xx.FT_BAUD_9600);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
+                        Disconnect();
                         return false;
                     }
 
                     ftStatus = Ftd2xx.FT_SetDataCharacteristics(_handleFtdi, Ftd2xx.FT_BITS_8, Ftd2xx.FT_STOP_BITS_1, Ftd2xx.FT_PARITY_NONE);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
+                        Disconnect();
                         return false;
                     }
 
                     ftStatus = Ftd2xx.FT_SetTimeouts(_handleFtdi, 0, _writeTimeout);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
+                        Disconnect();
                         return false;
                     }
 
                     ftStatus = Ftd2xx.FT_SetFlowControl(_handleFtdi, Ftd2xx.FT_FLOW_NONE, 0, 0);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
+                        Disconnect();
                         return false;
                     }
 
                     ftStatus = Ftd2xx.FT_ClrDtr(_handleFtdi);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
+                        Disconnect();
                         return false;
                     }
 
                     ftStatus = Ftd2xx.FT_ClrRts(_handleFtdi);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
+                        Disconnect();
                         return false;
                     }
 
                     ftStatus = Ftd2xx.FT_Purge(_handleFtdi, Ftd2xx.FT_PURGE_TX | Ftd2xx.FT_PURGE_RX);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
+                        Disconnect();
                         return false;
                     }
                 }
@@ -1483,7 +1492,7 @@ namespace CarControl
             return false;
         }
 
-        private bool InterfaceConnect()
+        private bool InterfaceConnect(string port)
         {
             return Connect();
         }
@@ -1491,6 +1500,92 @@ namespace CarControl
         private bool InterfaceDisconnect()
         {
             return Disconnect();
+        }
+
+        private bool InterfaceSetConfig(int baudRate, int dataBits, Parity parity)
+        {
+            if (_handleFtdi == (IntPtr)0)
+            {   // com port
+                try
+                {
+                    _serialPort.BaudRate = baudRate;
+                    _serialPort.DataBits = dataBits;
+                    _serialPort.Parity = parity;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                Ftd2xx.FT_STATUS ftStatus;
+
+                ftStatus = Ftd2xx.FT_SetBaudRate(_handleFtdi, (uint)baudRate);
+                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                {
+                    return false;
+                }
+
+                byte wordLength;
+
+                switch (dataBits)
+                {
+                    case 5:
+                        wordLength = Ftd2xx.FT_BITS_5;
+                        break;
+
+                    case 6:
+                        wordLength = Ftd2xx.FT_BITS_6;
+                        break;
+
+                    case 7:
+                        wordLength = Ftd2xx.FT_BITS_7;
+                        break;
+
+                    case 8:
+                        wordLength = Ftd2xx.FT_BITS_8;
+                        break;
+
+                    default:
+                        return false;
+                }
+
+                byte parityLocal;
+
+                switch (parity)
+                {
+                    case Parity.None:
+                        parityLocal = Ftd2xx.FT_PARITY_NONE;
+                        break;
+
+                    case Parity.Even:
+                        parityLocal = Ftd2xx.FT_PARITY_EVEN;
+                        break;
+
+                    case Parity.Odd:
+                        parityLocal = Ftd2xx.FT_PARITY_ODD;
+                        break;
+
+                    case Parity.Mark:
+                        parityLocal = Ftd2xx.FT_PARITY_MARK;
+                        break;
+
+                    case Parity.Space:
+                        parityLocal = Ftd2xx.FT_PARITY_SPACE;
+                        break;
+
+                    default:
+                        return false;
+                }
+
+                ftStatus = Ftd2xx.FT_SetDataCharacteristics(_handleFtdi, wordLength, Ftd2xx.FT_STOP_BITS_1, parityLocal);
+                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private bool InterfaceSetDtr(bool dtr)
@@ -1620,15 +1715,13 @@ namespace CarControl
             return true;
         }
 
-        private bool InterfaceSetConfig(int baudRate, int dataBits, Parity parity)
+        private bool InterfacePurgeInBuffer()
         {
             if (_handleFtdi == (IntPtr)0)
             {   // com port
                 try
                 {
-                    _serialPort.BaudRate = baudRate;
-                    _serialPort.DataBits = dataBits;
-                    _serialPort.Parity = parity;
+                    _serialPort.DiscardInBuffer();
                 }
                 catch (Exception)
                 {
@@ -1636,68 +1729,8 @@ namespace CarControl
                 }
             }
             else
-            {
-                Ftd2xx.FT_STATUS ftStatus;
-
-                ftStatus = Ftd2xx.FT_SetBaudRate(_handleFtdi, (uint)baudRate);
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                {
-                    return false;
-                }
-
-                byte wordLength;
-
-                switch (dataBits)
-                {
-                    case 5:
-                        wordLength = Ftd2xx.FT_BITS_5;
-                        break;
-
-                    case 6:
-                        wordLength = Ftd2xx.FT_BITS_6;
-                        break;
-
-                    case 7:
-                        wordLength = Ftd2xx.FT_BITS_7;
-                        break;
-
-                    case 8:
-                        wordLength = Ftd2xx.FT_BITS_8;
-                        break;
-
-                    default:
-                        return false;
-                }
-
-                byte parityLocal;
-
-                switch (parity)
-                {
-                    case Parity.None:
-                        parityLocal = Ftd2xx.FT_PARITY_NONE;
-                        break;
-
-                    case Parity.Even:
-                        parityLocal = Ftd2xx.FT_PARITY_EVEN;
-                        break;
-
-                    case Parity.Odd:
-                        parityLocal = Ftd2xx.FT_PARITY_ODD;
-                        break;
-
-                    case Parity.Mark:
-                        parityLocal = Ftd2xx.FT_PARITY_MARK;
-                        break;
-
-                    case Parity.Space:
-                        parityLocal = Ftd2xx.FT_PARITY_SPACE;
-                        break;
-
-                    default:
-                        return false;
-                }
-
-                ftStatus = Ftd2xx.FT_SetDataCharacteristics(_handleFtdi, wordLength, Ftd2xx.FT_STOP_BITS_1, parityLocal);
+            {   // ftdi
+                Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_Purge(_handleFtdi, Ftd2xx.FT_PURGE_RX);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
                     return false;
@@ -1735,32 +1768,7 @@ namespace CarControl
             ediabasDynDict = null;
         }
 
-        private bool InterfacePurgeInBuffer()
-        {
-            if (_handleFtdi == (IntPtr)0)
-            {   // com port
-                try
-                {
-                    _serialPort.DiscardInBuffer();
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-            else
-            {   // ftdi
-                Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_Purge(_handleFtdi, Ftd2xx.FT_PURGE_RX);
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                {
-                    throw new IOException();
-                }
-            }
-
-            return true;
-        }
-
-        private bool SendData(byte[] sendData, int length, bool setDtr)
+        private bool InterfaceSendData(byte[] sendData, int length, bool setDtr)
         {
             LogData(sendData, 0, length, "Send");
             if (_handleFtdi == (IntPtr)0)
@@ -1807,7 +1815,7 @@ namespace CarControl
                 ftStatus = Ftd2xx.FT_WriteWrapper(_handleFtdi, sendData, length, 0, out bytesWritten);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
-                    throw new IOException();
+                    return false;
                 }
 #else
                 const int sendBlockSize = 4;
@@ -1818,7 +1826,7 @@ namespace CarControl
                     ftStatus = Ftd2xx.FT_WriteWrapper(_handleFtdi, sendData, sendLength, i, out bytesWritten);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
-                        throw new IOException();
+                        return false;
                     }
                 }
 #endif
@@ -1827,7 +1835,7 @@ namespace CarControl
             return true;
         }
 
-        private bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse)
+        private bool InterfaceReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog)
         {
             if (timeout < _readTimeoutMin)
             {
@@ -1892,9 +1900,9 @@ namespace CarControl
                         Thread.Sleep(10);
                     }
                     commStopWatch.Stop();
-                    if (logResponse)
+                    if (ediabasLog != null)
                     {
-                        ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, offset, recLen, "Rec ");
+                        ediabasLog.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, offset, recLen, "Rec ");
                     }
                     LogData(receiveData, offset, recLen, "Rec ");
                     if (recLen < length)
@@ -1918,16 +1926,16 @@ namespace CarControl
                 ftStatus = Ftd2xx.FT_SetTimeouts(_handleFtdi, (uint)timeout, _writeTimeout);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
-                    throw new IOException();
+                    return false;
                 }
                 ftStatus = Ftd2xx.FT_ReadWrapper(_handleFtdi, receiveData, length, offset, out bytesRead);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
-                    throw new IOException();
+                    return false;
                 }
-                if (logResponse)
+                if (ediabasLog != null)
                 {
-                    ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, offset, (int)bytesRead, "Rec ");
+                    ediabasLog.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, offset, (int)bytesRead, "Rec ");
                 }
                 LogData(receiveData, offset, (int)bytesRead, "Rec ");
                 if (bytesRead < length)
@@ -1949,7 +1957,7 @@ namespace CarControl
                         ftStatus = Ftd2xx.FT_GetQueueStatus(_handleFtdi, out lastBytesToRead);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
-                            throw new IOException();
+                            return false;
                         }
                         if (lastBytesToRead > 0)
                         {
@@ -1973,7 +1981,7 @@ namespace CarControl
                         ftStatus = Ftd2xx.FT_GetQueueStatus(_handleFtdi, out bytesToRead);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
-                            throw new IOException();
+                            return false;
                         }
                         if (bytesToRead >= length)
                         {
@@ -1981,7 +1989,7 @@ namespace CarControl
                             ftStatus = Ftd2xx.FT_ReadWrapper(_handleFtdi, receiveData, length - recLen, offset + recLen, out bytesRead);
                             if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                             {
-                                throw new IOException();
+                                return false;
                             }
                             recLen += (int)bytesRead;
                         }
@@ -2006,9 +2014,9 @@ namespace CarControl
                         Thread.Sleep(10);
                     }
                     commStopWatch.Stop();
-                    if (logResponse)
+                    if (ediabasLog != null)
                     {
-                        ediabas.LogData(receiveData, offset, recLen, "Rec ");
+                        ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, offset, recLen, "Rec ");
                     }
                     LogData(receiveData, offset, recLen, "Rec ");
                     if (recLen < length)
@@ -2025,11 +2033,6 @@ namespace CarControl
 #endif
             }
             return true;
-        }
-
-        private bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd)
-        {
-            return ReceiveData(receiveData, offset, length, timeout, timeoutTelEnd, false);
         }
 
         private void DataUpdatedEvent()

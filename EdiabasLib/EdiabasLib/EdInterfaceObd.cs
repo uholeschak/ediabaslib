@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO.Ports;
 using System.Threading;
 
@@ -8,7 +9,7 @@ namespace EdiabasLib
 {
     public class EdInterfaceObd : EdInterfaceBase
     {
-        public delegate bool InterfaceConnectDelegate();
+        public delegate bool InterfaceConnectDelegate(string port);
         public delegate bool InterfaceDisconnectDelegate();
         public delegate bool InterfaceSetConfigDelegate(int baudRate, int dataBits, Parity parity);
         public delegate bool InterfaceSetDtrDelegate(bool dtr);
@@ -16,8 +17,8 @@ namespace EdiabasLib
         public delegate bool InterfaceGetDsrDelegate(out bool dsr);
         public delegate bool InterfaceSetBreakDelegate(bool enable);
         public delegate bool InterfacePurgeInBufferDelegate();
-        public delegate bool SendDataDelegate(byte[] sendData, int length, bool setDtr);
-        public delegate bool ReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse);
+        public delegate bool InterfaceSendDataDelegate(byte[] sendData, int length, bool setDtr);
+        public delegate bool InterfaceReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog);
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
         protected delegate EdiabasNet.ErrorCodes IdleDelegate();
         protected delegate EdiabasNet.ErrorCodes FinishDelegate();
@@ -32,6 +33,7 @@ namespace EdiabasLib
 
         private bool disposed = false;
         protected const int transBufferSize = 1024; // transmit buffer size
+        protected static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
         protected static readonly byte[] byteArray0 = new byte[0];
         protected static readonly long tickResolMs = Stopwatch.Frequency / 1000;
         protected static SerialPort serialPort;
@@ -55,8 +57,8 @@ namespace EdiabasLib
         protected InterfaceGetDsrDelegate interfaceGetDsrFunc = null;
         protected InterfaceSetBreakDelegate interfaceSetBreakFunc = null;
         protected InterfacePurgeInBufferDelegate interfacePurgeInBufferFunc = null;
-        protected SendDataDelegate sendDataFunc = null;
-        protected ReceiveDataDelegate receiveDataFunc = null;
+        protected InterfaceSendDataDelegate interfaceSendDataFunc = null;
+        protected InterfaceReceiveDataDelegate interfaceReceiveDataFunc = null;
         protected Stopwatch stopWatch = new Stopwatch();
         protected byte[] keyBytes = byteArray0;
         protected byte[] state = new byte[2];
@@ -661,9 +663,27 @@ namespace EdiabasLib
                 ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0018);
                 return false;
             }
+#if !WindowsCE
+            if (comPort.ToUpper(culture).StartsWith(EdFtdiInterface.PortID))
+            {   // automtatic hook of FTDI functions
+                if (interfaceConnectFunc == null)
+                {
+                    interfaceConnectFunc = EdFtdiInterface.InterfaceConnect;
+                    interfaceDisconnectFunc = EdFtdiInterface.InterfaceDisconnect;
+                    interfaceSetConfigFunc = EdFtdiInterface.InterfaceSetConfig;
+                    interfaceSetDtrFunc = EdFtdiInterface.InterfaceSetDtr;
+                    interfaceSetRtsFunc = EdFtdiInterface.InterfaceSetRts;
+                    interfaceGetDsrFunc = EdFtdiInterface.InterfaceGetDsr;
+                    interfaceSetBreakFunc = EdFtdiInterface.InterfaceSetBreak;
+                    interfacePurgeInBufferFunc = EdFtdiInterface.InterfacePurgeInBuffer;
+                    interfaceSendDataFunc = EdFtdiInterface.InterfaceSendData;
+                    interfaceReceiveDataFunc = EdFtdiInterface.InterfaceReceiveData;
+                }
+            }
+#endif
             if (interfaceConnectFunc != null)
             {
-                connected = interfaceConnectFunc();
+                connected = interfaceConnectFunc(comPort);
                 if (!connected)
                 {
                     ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0018);
@@ -936,27 +956,27 @@ namespace EdiabasLib
             }
         }
 
-        public SendDataDelegate SendDataFunc
+        public InterfaceSendDataDelegate InterfaceSendDataFunc
         {
             get
             {
-                return sendDataFunc;
+                return interfaceSendDataFunc;
             }
             set
             {
-                sendDataFunc = value;
+                interfaceSendDataFunc = value;
             }
         }
 
-        public ReceiveDataDelegate ReceiveDataFunc
+        public InterfaceReceiveDataDelegate InterfaceReceiveDataFunc
         {
             get
             {
-                return receiveDataFunc;
+                return interfaceReceiveDataFunc;
             }
             set
             {
-                receiveDataFunc = value;
+                interfaceReceiveDataFunc = value;
             }
         }
 
@@ -1148,11 +1168,11 @@ namespace EdiabasLib
             {
                 if (interbyteTime > 0)
                 {
-                    int bitCount = (serialPort.Parity == Parity.None) ? 10 : 11;
+                    int bitCount = (serialPort.Parity == Parity.None) ? (serialPort.DataBits + 2) : (serialPort.DataBits + 3);
                     double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
                     long interbyteTicks = (long)((interbyteTime + byteTime) * tickResolMs);
 
-                    if (sendDataFunc != null)
+                    if (interfaceSendDataFunc != null)
                     {
                         if (interfacePurgeInBufferFunc == null)
                         {
@@ -1215,7 +1235,7 @@ namespace EdiabasLib
             {
                 return true;
             }
-            if (sendDataFunc != null)
+            if (interfaceSendDataFunc != null)
             {
                 if (interfacePurgeInBufferFunc == null)
                 {
@@ -1228,11 +1248,11 @@ namespace EdiabasLib
                         return false;
                     }
                 }
-                return sendDataFunc(sendData, length, setDtr);
+                return interfaceSendDataFunc(sendData, length, setDtr);
             }
             try
             {
-                int bitCount = (serialPort.Parity == Parity.None) ? 10 : 11;
+                int bitCount = (serialPort.Parity == Parity.None) ? (serialPort.DataBits + 2) : (serialPort.DataBits + 3);
                 double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
                 if (setDtr)
                 {
@@ -1279,9 +1299,9 @@ namespace EdiabasLib
             // add extra delay for internal signal transitions
             timeout += 20;
             timeoutTelEnd += 20;
-            if (receiveDataFunc != null)
+            if (interfaceReceiveDataFunc != null)
             {
-                return receiveDataFunc(receiveData, offset, length, timeout, timeoutTelEnd, logResponse);
+                return interfaceReceiveDataFunc(receiveData, offset, length, timeout, timeoutTelEnd, logResponse ? ediabas : null);
             }
             try
             {
@@ -1359,7 +1379,7 @@ namespace EdiabasLib
         {
             try
             {
-                if (sendDataFunc != null)
+                if (interfaceSendDataFunc != null)
                 {
                     if (interfaceSetDtrFunc == null)
                     {
@@ -1383,7 +1403,7 @@ namespace EdiabasLib
 
         protected bool SendWakeFastInit(bool setDtr)
         {
-            if (sendDataFunc != null)
+            if (interfaceSendDataFunc != null)
             {
                 if (interfaceSetBreakFunc != null && interfaceSetDtrFunc != null)
                 {
@@ -1404,30 +1424,33 @@ namespace EdiabasLib
                     return false;
                 }
             }
-            try
+            else
             {
-                if (setDtr) serialPort.DtrEnable = true;
-                long startTime = Stopwatch.GetTimestamp();
-                serialPort.BreakState = true;
-                while ((Stopwatch.GetTimestamp() - startTime) < 25 * tickResolMs)
+                try
                 {
+                    if (setDtr) serialPort.DtrEnable = true;
+                    long startTime = Stopwatch.GetTimestamp();
+                    serialPort.BreakState = true;
+                    while ((Stopwatch.GetTimestamp() - startTime) < 25 * tickResolMs)
+                    {
+                    }
+                    serialPort.BreakState = false;
+                    while ((Stopwatch.GetTimestamp() - startTime) < 50 * tickResolMs)
+                    {
+                    }
+                    if (setDtr) serialPort.DtrEnable = false;
                 }
-                serialPort.BreakState = false;
-                while ((Stopwatch.GetTimestamp() - startTime) < 50 * tickResolMs)
+                catch (Exception)
                 {
+                    return false;
                 }
-                if (setDtr) serialPort.DtrEnable = false;
-            }
-            catch (Exception)
-            {
-                return false;
             }
             return true;
         }
 
         protected bool SendWakeAddress5Baud(byte value)
         {
-            if (sendDataFunc != null)
+            if (interfaceSendDataFunc != null)
             {
                 if (interfaceSetBreakFunc != null && interfacePurgeInBufferFunc != null)
                 {
@@ -1454,29 +1477,32 @@ namespace EdiabasLib
                     return false;
                 }
             }
-            try
+            else
             {
-                serialPort.DiscardInBuffer();
-                long startTime = Stopwatch.GetTimestamp();
-                serialPort.BreakState = true;  // start bit
-                Thread.Sleep(180);
-                while ((Stopwatch.GetTimestamp() - startTime) < 200 * tickResolMs)
+                try
                 {
-                }
-                for (int i = 0; i < 8; i++)
-                {
-                    serialPort.BreakState = (value & (1 << i)) == 0;
+                    serialPort.DiscardInBuffer();
+                    long startTime = Stopwatch.GetTimestamp();
+                    serialPort.BreakState = true;  // start bit
                     Thread.Sleep(180);
-                    while ((Stopwatch.GetTimestamp() - startTime) < 200 * (i + 2) * tickResolMs)
+                    while ((Stopwatch.GetTimestamp() - startTime) < 200 * tickResolMs)
                     {
                     }
+                    for (int i = 0; i < 8; i++)
+                    {
+                        serialPort.BreakState = (value & (1 << i)) == 0;
+                        Thread.Sleep(180);
+                        while ((Stopwatch.GetTimestamp() - startTime) < 200 * (i + 2) * tickResolMs)
+                        {
+                        }
+                    }
+                    serialPort.BreakState = false; // stop bit
+                    Thread.Sleep(200);
                 }
-                serialPort.BreakState = false; // stop bit
-                Thread.Sleep(200);
-            }
-            catch (Exception)
-            {
-                return false;
+                catch (Exception)
+                {
+                    return false;
+                }
             }
             return true;
         }
