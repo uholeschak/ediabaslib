@@ -1312,15 +1312,15 @@ namespace EdiabasLib
             {
                 return true;
             }
-            // add extra delay for internal signal transitions
-            timeout += 20;
-            timeoutTelEnd += 20;
             if (interfaceReceiveDataFunc != null)
             {
                 return interfaceReceiveDataFunc(receiveData, offset, length, timeout, timeoutTelEnd, logResponse ? ediabas : null);
             }
             try
             {
+                // add extra delay for internal signal transitions
+                timeout += 20;
+                timeoutTelEnd += 20;
                 // wait for first byte
                 int lastBytesToRead = 0;
                 stopWatch.Reset();
