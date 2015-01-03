@@ -56,6 +56,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\EdiabasLib\EdFtdiInterface.cs">
+      <Link>EdFtdiInterface.cs</Link>
+    </Compile>
     <Compile Include="..\EdiabasLib\EdiabasNet.cs">
       <Link>EdiabasNet.cs</Link>
     </Compile>
@@ -67,6 +70,9 @@
     </Compile>
     <Compile Include="..\EdiabasLib\EdOperations.cs">
       <Link>EdOperations.cs</Link>
+    </Compile>
+    <Compile Include="..\EdiabasLib\Ftd2xx.cs">
+      <Link>Ftd2xx.cs</Link>
     </Compile>
     <Compile Include="..\EdiabasLib\MemoryStreamReaderCe.cs">
       <Link>MemoryStreamReaderCe.cs</Link>
