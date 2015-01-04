@@ -3096,9 +3096,12 @@ namespace EdiabasLib
                         {
                             try
                             {
-                                string key = xnn.Attributes["key"].Value;
-                                string value = xnn.Attributes["value"].Value;
-                                SetConfigProperty(key, value);
+                                if (xnn.Attributes != null)
+                                {
+                                    string key = xnn.Attributes["key"].Value;
+                                    string value = xnn.Attributes["value"].Value;
+                                    SetConfigProperty(key, value);
+                                }
                             }
                             catch (Exception)
                             {
