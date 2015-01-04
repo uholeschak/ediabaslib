@@ -17,7 +17,7 @@ namespace EdiabasLib
         public delegate bool InterfaceGetDsrDelegate(out bool dsr);
         public delegate bool InterfaceSetBreakDelegate(bool enable);
         public delegate bool InterfacePurgeInBufferDelegate();
-        public delegate bool InterfaceSendDataDelegate(byte[] sendData, int length, bool setDtr);
+        public delegate bool InterfaceSendDataDelegate(byte[] sendData, int length, bool setDtr, double dtrTimeCorr);
         public delegate bool InterfaceReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog);
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
         protected delegate EdiabasNet.ErrorCodes IdleDelegate();
@@ -47,6 +47,8 @@ namespace EdiabasLib
         protected static volatile uint commThreadResCount;
 
         protected string comPort = string.Empty;
+        protected double dtrTimeCorrCom = 0.3;
+        protected double dtrTimeCorrFtdi = 0.3;
         protected bool connected = false;
         protected const int echoTimeout = 100;
         protected bool useExtInterfaceFunc = false;
@@ -120,10 +122,23 @@ namespace EdiabasLib
             {
                 base.Ediabas = value;
 
-                string prop = ediabas.GetConfigProperty("ObdComPort");
+                string prop;
+                prop = ediabas.GetConfigProperty("ObdComPort");
                 if (prop != null)
                 {
-                    comPort = prop;
+                    this.comPort = prop;
+                }
+
+                prop = ediabas.GetConfigProperty("ObdDtrTimeCorrCom");
+                if (prop != null)
+                {
+                    this.dtrTimeCorrCom = EdiabasNet.StringToFloat(prop);
+                }
+
+                prop = ediabas.GetConfigProperty("ObdDtrTimeCorrFtdi");
+                if (prop != null)
+                {
+                    this.dtrTimeCorrFtdi = EdiabasNet.StringToFloat(prop);
                 }
             }
         }
@@ -177,7 +192,7 @@ namespace EdiabasLib
                     return;
                 }
 
-                ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, commParameter, 0, commParameter.Length, string.Format("{0} CommParameter Port={1}", InterfaceName, comPort));
+                ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, commParameter, 0, commParameter.Length, string.Format("{0} CommParameter Port={1}", InterfaceName, this.comPort));
 
                 int baudRate;
                 int dataBits = 8;
@@ -670,7 +685,7 @@ namespace EdiabasLib
                 return false;
             }
 
-            if (comPort.ToUpper(culture).StartsWith(EdFtdiInterface.PortID))
+            if (this.comPort.ToUpper(culture).StartsWith(EdFtdiInterface.PortID))
             {   // automtatic hook of FTDI functions
                 interfaceConnectFuncInt = EdFtdiInterface.InterfaceConnect;
                 interfaceDisconnectFuncInt = EdFtdiInterface.InterfaceDisconnect;
@@ -700,7 +715,7 @@ namespace EdiabasLib
 
             if (this.useExtInterfaceFunc)
             {
-                connected = InterfaceConnectFuncUse(comPort);
+                connected = InterfaceConnectFuncUse(this.comPort);
                 if (!connected)
                 {
                     ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0018);
@@ -708,7 +723,7 @@ namespace EdiabasLib
                 return connected;
             }
 
-            if (comPort.Length == 0)
+            if (this.comPort.Length == 0)
             {
                 ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0018);
                 return false;
@@ -719,7 +734,7 @@ namespace EdiabasLib
             }
             try
             {
-                serialPort.PortName = comPort;
+                serialPort.PortName = this.comPort;
                 serialPort.BaudRate = 9600;
                 serialPort.DataBits = 8;
                 serialPort.Parity = Parity.None;
@@ -1357,7 +1372,7 @@ namespace EdiabasLib
                         return false;
                     }
                 }
-                return InterfaceSendDataFuncUse(sendData, length, setDtr);
+                return InterfaceSendDataFuncUse(sendData, length, setDtr, this.dtrTimeCorrFtdi);
             }
             try
             {
@@ -1365,7 +1380,7 @@ namespace EdiabasLib
                 double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
                 if (setDtr)
                 {
-                    long waitTime = (long)((0.3d + byteTime * length) * tickResolMs);
+                    long waitTime = (long)((this.dtrTimeCorrCom + byteTime * length) * tickResolMs);
                     if (!keepInBuffer)
                     {
                         serialPort.DiscardInBuffer();

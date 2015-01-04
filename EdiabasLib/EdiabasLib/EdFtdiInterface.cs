@@ -392,7 +392,7 @@ namespace EdiabasLib
             return true;
         }
 
-        public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr)
+        public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
         {
             if (handleFtdi == (IntPtr)0)
             {
@@ -407,7 +407,7 @@ namespace EdiabasLib
                 double byteTime = 1.0d / currentBaudRate * 1000 * bitCount;
                 if (setDtr)
                 {
-                    long waitTime = (long)((0.3d + byteTime * length) * tickResolMs);
+                    long waitTime = (long)((dtrTimeCorr + byteTime * length) * tickResolMs);
                     ftStatus = Ftd2xx.FT_SetDtr(handleFtdi);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
