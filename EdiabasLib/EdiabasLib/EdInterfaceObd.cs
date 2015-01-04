@@ -666,19 +666,16 @@ namespace EdiabasLib
 
             if (comPort.ToUpper(culture).StartsWith(EdFtdiInterface.PortID))
             {   // automtatic hook of FTDI functions
-                if (interfaceConnectFunc == null)
-                {
-                    interfaceConnectFunc = EdFtdiInterface.InterfaceConnect;
-                    interfaceDisconnectFunc = EdFtdiInterface.InterfaceDisconnect;
-                    interfaceSetConfigFunc = EdFtdiInterface.InterfaceSetConfig;
-                    interfaceSetDtrFunc = EdFtdiInterface.InterfaceSetDtr;
-                    interfaceSetRtsFunc = EdFtdiInterface.InterfaceSetRts;
-                    interfaceGetDsrFunc = EdFtdiInterface.InterfaceGetDsr;
-                    interfaceSetBreakFunc = EdFtdiInterface.InterfaceSetBreak;
-                    interfacePurgeInBufferFunc = EdFtdiInterface.InterfacePurgeInBuffer;
-                    interfaceSendDataFunc = EdFtdiInterface.InterfaceSendData;
-                    interfaceReceiveDataFunc = EdFtdiInterface.InterfaceReceiveData;
-                }
+                if (interfaceConnectFunc == null) interfaceConnectFunc = EdFtdiInterface.InterfaceConnect;
+                if (interfaceDisconnectFunc == null) interfaceDisconnectFunc = EdFtdiInterface.InterfaceDisconnect;
+                if (interfaceSetConfigFunc == null) interfaceSetConfigFunc = EdFtdiInterface.InterfaceSetConfig;
+                if (interfaceSetDtrFunc == null) interfaceSetDtrFunc = EdFtdiInterface.InterfaceSetDtr;
+                if (interfaceSetRtsFunc == null) interfaceSetRtsFunc = EdFtdiInterface.InterfaceSetRts;
+                if (interfaceGetDsrFunc == null) interfaceGetDsrFunc = EdFtdiInterface.InterfaceGetDsr;
+                if (interfaceSetBreakFunc == null) interfaceSetBreakFunc = EdFtdiInterface.InterfaceSetBreak;
+                if (interfacePurgeInBufferFunc == null) interfacePurgeInBufferFunc = EdFtdiInterface.InterfacePurgeInBuffer;
+                if (interfaceSendDataFunc == null) interfaceSendDataFunc = EdFtdiInterface.InterfaceSendData;
+                if (interfaceReceiveDataFunc == null) interfaceReceiveDataFunc = EdFtdiInterface.InterfaceReceiveData;
             }
             else
             {
