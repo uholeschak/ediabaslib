@@ -49,6 +49,7 @@ namespace EdiabasLib
         protected string comPort = string.Empty;
         protected bool connected = false;
         protected const int echoTimeout = 100;
+        protected bool useExtInterfaceFunc = false;
         protected InterfaceConnectDelegate interfaceConnectFunc = null;
         protected InterfaceDisconnectDelegate interfaceDisconnectFunc = null;
         protected InterfaceSetConfigDelegate interfaceSetConfigFunc = null;
@@ -458,28 +459,22 @@ namespace EdiabasLib
 
                 StartCommThread();
 
-                if (interfaceSetConfigFunc != null)
+                if (this.useExtInterfaceFunc)
                 {
                     if (!interfaceSetConfigFunc(baudRate, dataBits, parity))
                     {
                         ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                         return;
                     }
-                    if (interfaceSetDtrFunc != null)
+                    if (!interfaceSetDtrFunc(stateDtr))
                     {
-                        if (!interfaceSetDtrFunc(stateDtr))
-                        {
-                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                            return;
-                        }
+                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                        return;
                     }
-                    if (interfaceSetRtsFunc != null)
+                    if (!interfaceSetRtsFunc(stateRts))
                     {
-                        if (!interfaceSetRtsFunc(stateRts))
-                        {
-                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                            return;
-                        }
+                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                        return;
                     }
                 }
                 else
@@ -607,7 +602,7 @@ namespace EdiabasLib
         {
             get
             {
-                if (interfaceConnectFunc != null)
+                if (this.useExtInterfaceFunc)
                 {
                     return connected;
                 }
@@ -636,6 +631,7 @@ namespace EdiabasLib
 
         public EdInterfaceObd()
         {
+            UpdateUseExtInterfaceFunc();
         }
 
         ~EdInterfaceObd()
@@ -693,8 +689,9 @@ namespace EdiabasLib
                     interfaceReceiveDataFunc = null;
                 }
             }
+            UpdateUseExtInterfaceFunc();
 
-            if (interfaceConnectFunc != null)
+            if (this.useExtInterfaceFunc)
             {
                 connected = interfaceConnectFunc(comPort);
                 if (!connected)
@@ -741,7 +738,7 @@ namespace EdiabasLib
             StopCommThread();
             base.InterfaceDisconnect();
             connected = false;
-            if (interfaceDisconnectFunc != null)
+            if (this.useExtInterfaceFunc)
             {
                 return interfaceDisconnectFunc();
             }
@@ -882,6 +879,7 @@ namespace EdiabasLib
             set
             {
                 interfaceConnectFunc = value;
+                UpdateUseExtInterfaceFunc();
             }
         }
 
@@ -894,6 +892,7 @@ namespace EdiabasLib
             set
             {
                 interfaceDisconnectFunc = value;
+                UpdateUseExtInterfaceFunc();
             }
         }
 
@@ -906,6 +905,7 @@ namespace EdiabasLib
             set
             {
                 interfaceSetConfigFunc = value;
+                UpdateUseExtInterfaceFunc();
             }
         }
 
@@ -918,6 +918,7 @@ namespace EdiabasLib
             set
             {
                 interfaceSetDtrFunc = value;
+                UpdateUseExtInterfaceFunc();
             }
         }
 
@@ -930,6 +931,7 @@ namespace EdiabasLib
             set
             {
                 interfaceSetRtsFunc = value;
+                UpdateUseExtInterfaceFunc();
             }
         }
 
@@ -942,6 +944,7 @@ namespace EdiabasLib
             set
             {
                 interfaceGetDsrFunc = value;
+                UpdateUseExtInterfaceFunc();
             }
         }
 
@@ -954,6 +957,7 @@ namespace EdiabasLib
             set
             {
                 interfaceSetBreakFunc = value;
+                UpdateUseExtInterfaceFunc();
             }
         }
 
@@ -966,6 +970,7 @@ namespace EdiabasLib
             set
             {
                 interfacePurgeInBufferFunc = value;
+                UpdateUseExtInterfaceFunc();
             }
         }
 
@@ -978,6 +983,7 @@ namespace EdiabasLib
             set
             {
                 interfaceSendDataFunc = value;
+                UpdateUseExtInterfaceFunc();
             }
         }
 
@@ -990,6 +996,7 @@ namespace EdiabasLib
             set
             {
                 interfaceReceiveDataFunc = value;
+                UpdateUseExtInterfaceFunc();
             }
         }
 
@@ -1001,9 +1008,24 @@ namespace EdiabasLib
             }
         }
 
+        protected void UpdateUseExtInterfaceFunc()
+        {
+            this.useExtInterfaceFunc =
+                interfaceConnectFunc != null &&
+                interfaceDisconnectFunc != null &&
+                interfaceSetConfigFunc != null &&
+                interfaceSetDtrFunc != null &&
+                interfaceSetRtsFunc != null &&
+                interfaceGetDsrFunc != null &&
+                interfaceSetBreakFunc != null &&
+                interfacePurgeInBufferFunc != null &&
+                interfaceSendDataFunc != null &&
+                interfaceReceiveDataFunc != null;
+        }
+
         protected bool getDsrState()
         {
-            if (interfaceConnectFunc == null)
+            if (!this.useExtInterfaceFunc)
             {
                 if (!serialPort.IsOpen)
                 {
@@ -1013,11 +1035,6 @@ namespace EdiabasLib
                 return serialPort.DsrHolding;
             }
 
-            if (interfaceGetDsrFunc == null)
-            {
-                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0019);
-                return false;
-            }
             bool dsrState = false;
             if (!interfaceGetDsrFunc(out dsrState))
             {
@@ -1185,12 +1202,8 @@ namespace EdiabasLib
                     double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
                     long interbyteTicks = (long)((interbyteTime + byteTime) * tickResolMs);
 
-                    if (interfaceSendDataFunc != null)
+                    if (this.useExtInterfaceFunc)
                     {
-                        if (interfacePurgeInBufferFunc == null)
-                        {
-                            return false;
-                        }
                         if (!interfacePurgeInBufferFunc())
                         {
                             return false;
@@ -1248,12 +1261,8 @@ namespace EdiabasLib
             {
                 return true;
             }
-            if (interfaceSendDataFunc != null)
+            if (this.useExtInterfaceFunc)
             {
-                if (interfacePurgeInBufferFunc == null)
-                {
-                    return false;
-                }
                 if (!keepInBuffer)
                 {
                     if (!interfacePurgeInBufferFunc())
@@ -1309,7 +1318,7 @@ namespace EdiabasLib
             {
                 return true;
             }
-            if (interfaceReceiveDataFunc != null)
+            if (this.useExtInterfaceFunc)
             {
                 return interfaceReceiveDataFunc(receiveData, offset, length, timeout, timeoutTelEnd, logResponse ? ediabas : null);
             }
@@ -1392,12 +1401,8 @@ namespace EdiabasLib
         {
             try
             {
-                if (interfaceSendDataFunc != null)
+                if (this.useExtInterfaceFunc)
                 {
-                    if (interfaceSetDtrFunc == null)
-                    {
-                        return false;
-                    }
                     if (!interfaceSetDtrFunc(value))
                     {
                         return false;
@@ -1416,26 +1421,19 @@ namespace EdiabasLib
 
         protected bool SendWakeFastInit(bool setDtr)
         {
-            if (interfaceSendDataFunc != null)
+            if (this.useExtInterfaceFunc)
             {
-                if (interfaceSetBreakFunc != null && interfaceSetDtrFunc != null)
+                if (setDtr) interfaceSetDtrFunc(true);
+                long startTime = Stopwatch.GetTimestamp();
+                interfaceSetBreakFunc(true);
+                while ((Stopwatch.GetTimestamp() - startTime) < 25 * tickResolMs)
                 {
-                    if (setDtr) interfaceSetDtrFunc(true);
-                    long startTime = Stopwatch.GetTimestamp();
-                    interfaceSetBreakFunc(true);
-                    while ((Stopwatch.GetTimestamp() - startTime) < 25 * tickResolMs)
-                    {
-                    }
-                    interfaceSetBreakFunc(false);
-                    while ((Stopwatch.GetTimestamp() - startTime) < 50 * tickResolMs)
-                    {
-                    }
-                    if (setDtr) interfaceSetDtrFunc(false);
                 }
-                else
+                interfaceSetBreakFunc(false);
+                while ((Stopwatch.GetTimestamp() - startTime) < 50 * tickResolMs)
                 {
-                    return false;
                 }
+                if (setDtr) interfaceSetDtrFunc(false);
             }
             else
             {
@@ -1463,32 +1461,25 @@ namespace EdiabasLib
 
         protected bool SendWakeAddress5Baud(byte value)
         {
-            if (interfaceSendDataFunc != null)
+            if (this.useExtInterfaceFunc)
             {
-                if (interfaceSetBreakFunc != null && interfacePurgeInBufferFunc != null)
+                interfacePurgeInBufferFunc();
+                long startTime = Stopwatch.GetTimestamp();
+                interfaceSetBreakFunc(true);    // start bit
+                Thread.Sleep(180);
+                while ((Stopwatch.GetTimestamp() - startTime) < 200 * tickResolMs)
                 {
-                    interfacePurgeInBufferFunc();
-                    long startTime = Stopwatch.GetTimestamp();
-                    interfaceSetBreakFunc(true);    // start bit
+                }
+                for (int i = 0; i < 8; i++)
+                {
+                    interfaceSetBreakFunc((value & (1 << i)) == 0);
                     Thread.Sleep(180);
-                    while ((Stopwatch.GetTimestamp() - startTime) < 200 * tickResolMs)
+                    while ((Stopwatch.GetTimestamp() - startTime) < 200 * (i + 2) * tickResolMs)
                     {
                     }
-                    for (int i = 0; i < 8; i++)
-                    {
-                        interfaceSetBreakFunc((value & (1 << i)) == 0);
-                        Thread.Sleep(180);
-                        while ((Stopwatch.GetTimestamp() - startTime) < 200 * (i + 2) * tickResolMs)
-                        {
-                        }
-                    }
-                    interfaceSetBreakFunc(false);   // stop bit
-                    Thread.Sleep(200);
                 }
-                else
-                {
-                    return false;
-                }
+                interfaceSetBreakFunc(false);   // stop bit
+                Thread.Sleep(200);
             }
             else
             {
@@ -1523,16 +1514,12 @@ namespace EdiabasLib
         protected EdiabasNet.ErrorCodes OBDTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
             receiveLength = 0;
-            if (interfaceConnectFunc == null)
+            if (!this.useExtInterfaceFunc)
             {
                 if (!serialPort.IsOpen)
                 {
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
                 }
-            }
-            if (this.parTransmitFunc == null)
-            {
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0014;
             }
 
             EdiabasNet.ErrorCodes errorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
@@ -2016,7 +2003,7 @@ namespace EdiabasLib
                 }
 
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Establish connection");
-                if (interfaceSetConfigFunc != null)
+                if (this.useExtInterfaceFunc)
                 {
                     if (!interfaceSetConfigFunc(9600, 8, Parity.None))
                     {
@@ -2070,7 +2057,7 @@ namespace EdiabasLib
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                     }
                     ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Baud rate 10.4k detected");
-                    if (interfaceSetConfigFunc != null)
+                    if (this.useExtInterfaceFunc)
                     {
                         if (!interfaceSetConfigFunc(10400, 8, Parity.None))
                         {
@@ -2392,7 +2379,7 @@ namespace EdiabasLib
                 }
 
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Establish connection");
-                if (interfaceSetConfigFunc != null)
+                if (this.useExtInterfaceFunc)
                 {
                     if (!interfaceSetConfigFunc(9600, 8, Parity.None))
                     {
@@ -2462,7 +2449,7 @@ namespace EdiabasLib
 
                 this.lastCommTick = Stopwatch.GetTimestamp();
                 ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Key bytes: {0:X02} {1:X02} {2:X02}", iso9141Buffer[0], iso9141Buffer[1], iso9141Buffer[2]);
-                if (interfaceSetConfigFunc != null)
+                if (this.useExtInterfaceFunc)
                 {
                     if (!interfaceSetConfigFunc(9600, 8, Parity.Even))
                     {
@@ -2575,7 +2562,7 @@ namespace EdiabasLib
         private EdiabasNet.ErrorCodes FinishConcept3()
         {
             this.ecuConnected = false;
-            if (interfaceSetConfigFunc != null)
+            if (this.useExtInterfaceFunc)
             {
                 if (!interfaceSetConfigFunc(10400, 8, Parity.None))
                 {
