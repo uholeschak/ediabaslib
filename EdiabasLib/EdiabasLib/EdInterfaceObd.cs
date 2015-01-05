@@ -1168,7 +1168,6 @@ namespace EdiabasLib
             ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Start comm thread");
             try
             {
-                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
                 commThreadCommand = CommThreadCommands.Idle;
                 commThreadReqCount = 0;
                 commThreadResCount = 0;
@@ -1178,7 +1177,6 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
-                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
                 return false;
             }
             return true;
@@ -1200,7 +1198,6 @@ namespace EdiabasLib
                 commThreadReqEvent.Set();
                 commThread.Join();
                 commThread = null;
-                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
             }
         }
 

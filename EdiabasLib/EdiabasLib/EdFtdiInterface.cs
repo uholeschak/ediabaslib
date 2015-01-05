@@ -407,39 +407,51 @@ namespace EdiabasLib
                 double byteTime = 1.0d / currentBaudRate * 1000 * bitCount;
                 if (setDtr)
                 {
-                    long waitTime = (long)((dtrTimeCorr + byteTime * length) * tickResolMs);
-                    ftStatus = Ftd2xx.FT_SetDtr(handleFtdi);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    try
                     {
-                        return false;
-                    }
-                    long startTime = Stopwatch.GetTimestamp();
+#if !WindowsCE
+                        Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
+#endif
+                        long waitTime = (long)((dtrTimeCorr + byteTime * length) * tickResolMs);
+                        ftStatus = Ftd2xx.FT_SetDtr(handleFtdi);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
+                        }
+                        long startTime = Stopwatch.GetTimestamp();
 #if WindowsCE
-                    const int sendBlockSize = 4;
-                    for (int i = 0; i < length; i += sendBlockSize)
-                    {
-                        int sendLength = length - i;
-                        if (sendLength > sendBlockSize) sendLength = sendBlockSize;
-                        ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, sendData, sendLength, i, out bytesWritten);
+                        const int sendBlockSize = 4;
+                        for (int i = 0; i < length; i += sendBlockSize)
+                        {
+                            int sendLength = length - i;
+                            if (sendLength > sendBlockSize) sendLength = sendBlockSize;
+                            ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, sendData, sendLength, i, out bytesWritten);
+                            if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                            {
+                                return false;
+                            }
+                        }
+#else
+                        ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, sendData, length, 0, out bytesWritten);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
+                        }
+#endif
+                        while ((Stopwatch.GetTimestamp() - startTime) < waitTime)
+                        {
+                        }
+                        ftStatus = Ftd2xx.FT_ClrDtr(handleFtdi);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
                             return false;
                         }
                     }
-#else
-                    ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, sendData, length, 0, out bytesWritten);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    finally
                     {
-                        return false;
-                    }
+#if !WindowsCE
+                        Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
 #endif
-                    while ((Stopwatch.GetTimestamp() - startTime) < waitTime)
-                    {
-                    }
-                    ftStatus = Ftd2xx.FT_ClrDtr(handleFtdi);
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
-                        return false;
                     }
                 }
                 else
