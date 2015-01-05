@@ -2414,7 +2414,7 @@ namespace EdiabasLib
                 }
                 if (!ReceiveData(iso9141BlockBuffer, 0, 1, this.parTimeoutTelEnd, this.parTimeoutTelEnd))
                 {
-                    if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No block response");
+                    if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No data ack received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 if (enableLog) ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.INFO, "(A): {0:X02}", (byte)(~iso9141BlockBuffer[0]));
