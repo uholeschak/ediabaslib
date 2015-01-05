@@ -74,8 +74,16 @@ namespace Ftdi
         public const byte FT_EVENT_LINE_STATUS = 4;
 
         // Timeouts
-        private const UInt32 FT_DEFAULT_RX_TIMEOUT = 300;
-        private const UInt32 FT_DEFAULT_TX_TIMEOUT = 300;
+        public const UInt32 FT_DEFAULT_RX_TIMEOUT = 300;
+        public const UInt32 FT_DEFAULT_TX_TIMEOUT = 300;
+
+        // BtBang modes
+        public const byte FT_BITMODE_RESET = 0x00;
+        public const byte FT_BITMODE_ASYNC_BITBANG = 0x01;
+        public const byte FT_BITMODE_MPSSE = 0x02;
+        public const byte FT_BITMODE_SYNC_BITBANG = 0x04;
+        public const byte FT_BITMODE_MCU_HOST = 0x08;
+        public const byte FT_BITMODE_FAST_SERIAL = 0x10;
 
         #endregion Stupid defines
 
@@ -216,6 +224,12 @@ namespace Ftdi
 
         [DllImport("ftd2xx")]
         public static extern FT_STATUS FT_GetLatencyTimer(IntPtr ftHandle, out Byte pucLatency);
+
+        [DllImport("ftd2xx")]
+        public static extern FT_STATUS FT_SetBitMode(IntPtr ftHandle, Byte ucMask, Byte ucEnable);
+
+        [DllImport("ftd2xx")]
+        public static extern FT_STATUS FT_GetBitMode(IntPtr ftHandle, out Byte pucMode);
 
         [DllImport("ftd2xx")]
         public static extern FT_STATUS FT_SetResetPipeRetryCount(IntPtr ftHandle, UInt32 dwCount);
