@@ -192,7 +192,8 @@ namespace EdiabasLib
                     return;
                 }
 
-                ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, commParameter, 0, commParameter.Length, string.Format("{0} CommParameter Port={1}", InterfaceName, this.comPort));
+                ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, commParameter, 0, commParameter.Length,
+                    string.Format(culture, "{0} CommParameter Port={1}, CorrCom={2}, CorrFtdi={3}", InterfaceName, this.comPort, this.dtrTimeCorrCom, this.dtrTimeCorrFtdi));
 
                 int baudRate;
                 int dataBits = 8;
@@ -2416,6 +2417,7 @@ namespace EdiabasLib
                     if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No block response");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
+                if (enableLog) ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.INFO, "(A): {0:X02}", (byte)(~iso9141BlockBuffer[0]));
                 if ((byte)(~iso9141BlockBuffer[0]) != sendData[i])
                 {
                     if (enableLog) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Response invalid");
