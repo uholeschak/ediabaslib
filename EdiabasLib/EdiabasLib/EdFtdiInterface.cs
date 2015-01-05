@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define USE_BITBANG
+
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO.Ports;
@@ -18,6 +20,10 @@ namespace EdiabasLib
         private static int currentBaudRate = 0;
         private static int currentWordLength = 0;
         private static Parity currentParity = Parity.None;
+#if USE_BITBANG
+        private const int bitBangBaudFactor = 8;    // baud factor in bit bang mode
+        private static byte[] tempBuffer = new byte[1000];
+#endif
 
         public static IntPtr HandleFtdi
         {
@@ -92,6 +98,13 @@ namespace EdiabasLib
                         InterfaceDisconnect();
                         return false;
                     }
+                }
+
+                ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x00, Ftd2xx.FT_BITMODE_RESET);
+                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                {
+                    InterfaceDisconnect();
+                    return false;
                 }
 
                 ftStatus = Ftd2xx.FT_SetLatencyTimer(handleFtdi, 2);
@@ -407,6 +420,7 @@ namespace EdiabasLib
                 double byteTime = 1.0d / currentBaudRate * 1000 * bitCount;
                 if (setDtr)
                 {
+#if !USE_BITBANG
                     try
                     {
 #if !WindowsCE
@@ -453,6 +467,108 @@ namespace EdiabasLib
                         Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
 #endif
                     }
+#else
+                    int bitBangBitCount = 16 / bitBangBaudFactor;
+                    int bufferSize = (currentWordLength + 3) * bitBangBitCount + 2;
+                    if (bufferSize > tempBuffer.Length)
+                    {
+                        return false;
+                    }
+                    try
+                    {
+                        uint bytesRead = 0;
+                        // Bit 0=TXD, 2=RTS, 4=DTR
+                        ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x15, Ftd2xx.FT_BITMODE_SYNC_BITBANG);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
+                        }
+                        ftStatus = Ftd2xx.FT_SetBaudRate(handleFtdi, (uint)(currentBaudRate / bitBangBaudFactor));
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
+                        }
+                        ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_RX);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
+                        }
+                        ftStatus = Ftd2xx.FT_SetTimeouts(handleFtdi, writeTimeout, writeTimeout);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
+                        }
+                        int dataLen = 0;
+                        for (int i = 0; i < length; i++)
+                        {
+                            if (i == 0)
+                            {
+                                tempBuffer[dataLen++] = 0x01;   // DTR on
+                            }
+                            for (int k = 0; k < bitBangBitCount; k++)
+                            {
+                                tempBuffer[dataLen++] = 0x00;   // Start bit
+                            }
+                            bool parity = false;
+                            for (int j = 0; j < currentWordLength; j++)
+                            {
+                                bool bitSet = (sendData[i] & (1 << j)) != 0;
+                                if (bitSet) parity = !parity;
+                                byte value = (byte)(bitSet ? 0x01 : 0x00);
+                                for (int k = 0; k < bitBangBitCount; k++)
+                                {
+                                    tempBuffer[dataLen++] = value;
+                                }
+                            }
+                            switch (currentParity)
+                            {
+                                case Parity.Even:
+                                    {
+                                        byte value = (byte)(parity ? 0x01 : 0x00);
+                                        for (int k = 0; k < bitBangBitCount; k++)
+                                        {
+                                            tempBuffer[dataLen++] = value;
+                                        }
+                                        break;
+                                    }
+
+                                case Parity.Odd:
+                                    {
+                                        byte value = (byte)(parity ? 0x00 : 0x01);
+                                        for (int k = 0; k < bitBangBitCount; k++)
+                                        {
+                                            tempBuffer[dataLen++] = value;
+                                        }
+                                        break;
+                                    }
+                            }
+                            for (int k = 0; k < bitBangBitCount; k++)
+                            {
+                                tempBuffer[dataLen++] = 0x01;   // Stop bit
+                            }
+                            if ((i + 1) == length)
+                            {
+                                tempBuffer[dataLen++] = 0x11;   // DTR off
+                            }
+                        }
+                        ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, tempBuffer, dataLen, 0, out bytesWritten);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
+                        }
+                        ftStatus = Ftd2xx.FT_ReadWrapper(handleFtdi, tempBuffer, dataLen, 0, out bytesRead);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
+                        }
+                    }
+                    finally
+                    {
+                        ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x00, Ftd2xx.FT_BITMODE_RESET);
+                        ftStatus = Ftd2xx.FT_SetBaudRate(handleFtdi, (uint)currentBaudRate);
+                        ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_RX);
+                    }
+#endif
                 }
                 else
                 {
