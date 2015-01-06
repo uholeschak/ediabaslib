@@ -478,7 +478,7 @@ namespace EdiabasLib
                     {
                         uint bytesRead = 0;
                         // Bit 0=TXD, 2=RTS, 4=DTR
-                        ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x15, Ftd2xx.FT_BITMODE_SYNC_BITBANG);
+                        ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x15, Ftd2xx.FT_BITMODE_ASYNC_BITBANG);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
                             return false;
@@ -556,7 +556,7 @@ namespace EdiabasLib
                         {
                             return false;
                         }
-                        ftStatus = Ftd2xx.FT_ReadWrapper(handleFtdi, tempBuffer, dataLen, 0, out bytesRead);
+                        ftStatus = Ftd2xx.FT_ReadWrapper(handleFtdi, tempBuffer, 1, 0, out bytesRead);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
                             return false;
