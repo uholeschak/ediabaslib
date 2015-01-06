@@ -421,6 +421,9 @@ namespace EdiabasLib
                 if (setDtr)
                 {
 #if !USE_BITBANG
+#if !WindowsCE
+                    ProcessPriorityClass lastPriorityClass = Process.GetCurrentProcess().PriorityClass;
+#endif
                     try
                     {
 #if !WindowsCE
@@ -464,7 +467,7 @@ namespace EdiabasLib
                     finally
                     {
 #if !WindowsCE
-                        Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
+                        Process.GetCurrentProcess().PriorityClass = lastPriorityClass;
 #endif
                     }
 #else
