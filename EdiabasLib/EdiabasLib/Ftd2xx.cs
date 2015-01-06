@@ -77,7 +77,7 @@ namespace Ftdi
         public const UInt32 FT_DEFAULT_RX_TIMEOUT = 300;
         public const UInt32 FT_DEFAULT_TX_TIMEOUT = 300;
 
-        // BtBang modes
+        // BitBang modes
         public const byte FT_BITMODE_RESET = 0x00;
         public const byte FT_BITMODE_ASYNC_BITBANG = 0x01;
         public const byte FT_BITMODE_MPSSE = 0x02;
