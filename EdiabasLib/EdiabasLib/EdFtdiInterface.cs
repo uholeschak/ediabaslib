@@ -1,4 +1,4 @@
-﻿//#define USE_BITBANG
+﻿#define USE_BITBANG
 
 using System;
 using System.Diagnostics;
@@ -468,6 +468,10 @@ namespace EdiabasLib
 #endif
                     }
 #else
+                    for (int i = 0; i < length; i++)
+                    {
+                        sendData[i] = 0x55;
+                    }
                     int bitBangBitCount = 16 / bitBangBaudFactor;
                     int bufferSize = (currentWordLength + 3) * bitBangBitCount + 2;
                     if (bufferSize > tempBuffer.Length)
@@ -478,17 +482,7 @@ namespace EdiabasLib
                     {
                         uint bytesRead = 0;
                         // Bit 0=TXD, 2=RTS, 4=DTR
-                        ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x15, Ftd2xx.FT_BITMODE_SYNC_BITBANG);
-                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                        {
-                            return false;
-                        }
                         ftStatus = Ftd2xx.FT_SetBaudRate(handleFtdi, (uint)(currentBaudRate / bitBangBaudFactor));
-                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                        {
-                            return false;
-                        }
-                        ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_RX);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
                             return false;
@@ -498,6 +492,19 @@ namespace EdiabasLib
                         {
                             return false;
                         }
+                        ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x15, Ftd2xx.FT_BITMODE_ASYNC_BITBANG);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
+                        }
+#if false
+                        ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_RX);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
+                        }
+#endif
+                        Thread.Sleep(50);
                         int dataLen = 0;
                         for (int i = 0; i < length; i++)
                         {
@@ -556,7 +563,7 @@ namespace EdiabasLib
                         {
                             return false;
                         }
-                        ftStatus = Ftd2xx.FT_ReadWrapper(handleFtdi, tempBuffer, dataLen, 0, out bytesRead);
+                        ftStatus = Ftd2xx.FT_ReadWrapper(handleFtdi, tempBuffer, 1, 0, out bytesRead);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
                             return false;
