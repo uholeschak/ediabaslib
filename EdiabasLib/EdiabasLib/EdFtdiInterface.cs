@@ -14,6 +14,7 @@ namespace EdiabasLib
         public const string PortID = "FTDI";
         private const int writeTimeout = 500;       // write timeout [ms]
         private const int readTimeoutCeMin = 500;   // min read timeout for CE [ms]
+        private const int usbBufferSizeStd = 0x1000;    // standard usb buffer size
         private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
         private static readonly long tickResolMs = Stopwatch.Frequency / 1000;
         private static IntPtr handleFtdi = (IntPtr)0;
@@ -21,30 +22,28 @@ namespace EdiabasLib
         private static int currentWordLength = 0;
         private static Parity currentParity = Parity.None;
 #if USE_BITBANG
-        private const int usbBufferSize = 0x10000;
         // tested range: 1-59
         // good values: 27, 29!, 33, 35
         private const int bitBangDivisor = 29;  // only odd values allowed!
+        private const int bitBangRecBufferSize = 0x2000;
         private static bool bitBangMode = false;
         private static int bitBangBitsPerSendByte = 0;
         private static int bitBangBitsPerRecByte = 0;
-        private static byte[] tempBuffer;
-        private static byte[][] recBuffer;
+        private static byte[] bitBangSendBuffer;
+        private static byte[][] bitBangRecBuffer;
         private static int recBufReadPos = 0;
         private static int recBufReadIndex = 0;
         private static int recBufLastIndex = -1;
-#else
-        private const int usbBufferSize = 0x1000;
 #endif
 
         static EdFtdiInterface()
         {
 #if USE_BITBANG
-            tempBuffer = new byte[usbBufferSize];
+            bitBangSendBuffer = new byte[0x10000];
 
-            recBuffer = new byte[2][];
-            recBuffer[0] = new byte[usbBufferSize];
-            recBuffer[1] = new byte[usbBufferSize];
+            bitBangRecBuffer = new byte[2][];
+            bitBangRecBuffer[0] = new byte[bitBangRecBufferSize];
+            bitBangRecBuffer[1] = new byte[bitBangRecBufferSize];
 #endif
         }
 
@@ -133,7 +132,7 @@ namespace EdiabasLib
                     return false;
                 }
 
-                ftStatus = Ftd2xx.FT_SetUSBParameters(handleFtdi, usbBufferSize, usbBufferSize);
+                ftStatus = Ftd2xx.FT_SetUSBParameters(handleFtdi, usbBufferSizeStd, usbBufferSizeStd);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
                     InterfaceDisconnect();
@@ -323,12 +322,24 @@ namespace EdiabasLib
                     {
                         return false;
                     }
+                    ftStatus = Ftd2xx.FT_SetUSBParameters(handleFtdi, bitBangRecBufferSize, bitBangRecBufferSize);
+                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    {
+                        InterfaceDisconnect();
+                        return false;
+                    }
                 }
                 else
                 {
                     ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x00, Ftd2xx.FT_BITMODE_RESET);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
+                        return false;
+                    }
+                    ftStatus = Ftd2xx.FT_SetUSBParameters(handleFtdi, usbBufferSizeStd, usbBufferSizeStd);
+                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    {
+                        InterfaceDisconnect();
                         return false;
                     }
                 }
@@ -556,7 +567,7 @@ namespace EdiabasLib
                     else
                     {
                         int bufferSize = (currentWordLength + 4) * bitBangBitsPerSendByte * (length + 2);
-                        if (bufferSize > tempBuffer.Length)
+                        if (bufferSize > bitBangSendBuffer.Length)
                         {
                             return false;
                         }
@@ -574,16 +585,16 @@ namespace EdiabasLib
                             {
                                 for (int k = 0; k < bitBangBitsPerSendByte * 9; k++)
                                 {
-                                    tempBuffer[dataLen++] = 0x11; // DTR off
+                                    bitBangSendBuffer[dataLen++] = 0x11; // DTR off
                                 }
                                 for (int k = 0; k < bitBangBitsPerSendByte; k++)
                                 {
-                                    tempBuffer[dataLen++] = 0x01; // DTR on
+                                    bitBangSendBuffer[dataLen++] = 0x01; // DTR on
                                 }
                             }
                             for (int k = 0; k < bitBangBitsPerSendByte; k++)
                             {
-                                tempBuffer[dataLen++] = 0x00;   // Start bit
+                                bitBangSendBuffer[dataLen++] = 0x00;   // Start bit
                             }
                             bool parity = false;
                             for (int j = 0; j < currentWordLength; j++)
@@ -593,7 +604,7 @@ namespace EdiabasLib
                                 byte value = (byte)(bitSet ? 0x01 : 0x00);
                                 for (int k = 0; k < bitBangBitsPerSendByte; k++)
                                 {
-                                    tempBuffer[dataLen++] = value;
+                                    bitBangSendBuffer[dataLen++] = value;
                                 }
                             }
                             switch (currentParity)
@@ -603,7 +614,7 @@ namespace EdiabasLib
                                         byte value = (byte)(parity ? 0x01 : 0x00);
                                         for (int k = 0; k < bitBangBitsPerSendByte; k++)
                                         {
-                                            tempBuffer[dataLen++] = value;
+                                            bitBangSendBuffer[dataLen++] = value;
                                         }
                                         break;
                                     }
@@ -613,7 +624,7 @@ namespace EdiabasLib
                                         byte value = (byte)(parity ? 0x00 : 0x01);
                                         for (int k = 0; k < bitBangBitsPerSendByte; k++)
                                         {
-                                            tempBuffer[dataLen++] = value;
+                                            bitBangSendBuffer[dataLen++] = value;
                                         }
                                         break;
                                     }
@@ -621,15 +632,15 @@ namespace EdiabasLib
                             // 2 stop bits for time correction
                             for (int k = 0; k < bitBangBitsPerSendByte * 2; k++)
                             {
-                                tempBuffer[dataLen++] = 0x01;   // Stop bit
+                                bitBangSendBuffer[dataLen++] = 0x01;   // Stop bit
                             }
                             if ((i + 1) == length)
                             {
-                                tempBuffer[dataLen++] = 0x11;   // DTR off
+                                bitBangSendBuffer[dataLen++] = 0x11;   // DTR off
                             }
                         }
                         recBufLastIndex = -1;
-                        ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, tempBuffer, dataLen, 0, out bytesWritten);
+                        ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, bitBangSendBuffer, dataLen, 0, out bytesWritten);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
                             return false;
@@ -799,12 +810,12 @@ namespace EdiabasLib
             if (recBufLastIndex < 0)
             {   // all buffers empty
                 Debug.WriteLine("Start");
-                ftStatus = Ftd2xx.FT_ReadWrapper(handleFtdi, recBuffer[0], usbBufferSize, 0, out bytesRead);
+                ftStatus = Ftd2xx.FT_ReadWrapper(handleFtdi, bitBangRecBuffer[0], bitBangRecBufferSize, 0, out bytesRead);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
                     return false;
                 }
-                ftStatus = Ftd2xx.FT_ReadWrapper(handleFtdi, recBuffer[1], usbBufferSize, 0, out bytesRead);
+                ftStatus = Ftd2xx.FT_ReadWrapper(handleFtdi, bitBangRecBuffer[1], bitBangRecBufferSize, 0, out bytesRead);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
                     return false;
@@ -819,7 +830,7 @@ namespace EdiabasLib
                 {   // get next buffer
                     Debug.WriteLine("New buf");
                     recBufLastIndex = (recBufLastIndex == 0) ? 1 : 0;
-                    ftStatus = Ftd2xx.FT_ReadWrapper(handleFtdi, recBuffer[recBufLastIndex], usbBufferSize, 0, out bytesRead);
+                    ftStatus = Ftd2xx.FT_ReadWrapper(handleFtdi, bitBangRecBuffer[recBufLastIndex], bitBangRecBufferSize, 0, out bytesRead);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
                         recBufLastIndex = -1;
@@ -840,13 +851,13 @@ namespace EdiabasLib
             // find start bit
             for (;;)
             {
-                byte recVal = recBuffer[recBufReadIndex][recBufReadPos];
+                byte recVal = bitBangRecBuffer[recBufReadIndex][recBufReadPos];
                 if ((recVal & 0x02) == 0)
                 {
                     break;
                 }
                 recBufReadPos++;
-                if (recBufReadPos >= usbBufferSize)
+                if (recBufReadPos >= bitBangRecBufferSize)
                 {
                     recBufReadPos = 0;
                     recBufReadIndex = (recBufReadIndex == 0) ? 1 : 0;
@@ -856,9 +867,9 @@ namespace EdiabasLib
             }
             // middle of next data bit
             recBufReadPos += bitBangBitsPerRecByte + bitBangBitsPerRecByte / 2;
-            if (recBufReadPos >= usbBufferSize)
+            if (recBufReadPos >= bitBangRecBufferSize)
             {
-                recBufReadPos -= usbBufferSize;
+                recBufReadPos -= bitBangRecBufferSize;
                 recBufReadIndex = (recBufReadIndex == 0) ? 1 : 0;
                 Debug.WriteLine(string.Format("B {0}", recBufReadIndex));
             }
@@ -869,15 +880,15 @@ namespace EdiabasLib
             int dataBits = (currentParity == Parity.None) ? (currentWordLength + 0) : (currentWordLength + 1);
             for (int i = 0; i < dataBits; i++)
             {
-                byte recVal = recBuffer[recBufReadIndex][recBufReadPos];
+                byte recVal = bitBangRecBuffer[recBufReadIndex][recBufReadPos];
                 if ((recVal & 0x02) != 0)
                 {
                     recData |= (uint)(1 << i);
                 }
                 recBufReadPos += bitBangBitsPerRecByte;
-                if (recBufReadPos >= usbBufferSize)
+                if (recBufReadPos >= bitBangRecBufferSize)
                 {
-                    recBufReadPos -= usbBufferSize;
+                    recBufReadPos -= bitBangRecBufferSize;
                     recBufReadIndex = (recBufReadIndex == 0) ? 1 : 0;
                     Debug.WriteLine(string.Format("B {0}", recBufReadIndex));
                 }
