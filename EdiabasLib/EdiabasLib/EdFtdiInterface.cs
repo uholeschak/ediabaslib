@@ -26,7 +26,8 @@ namespace EdiabasLib
         // good values: 27, 29!, 33, 35
         private const int bitBangDivisor = 29;  // only odd values allowed!
         private static bool bitBangMode = false;
-        private static int bitBangBitsPerByte = 0;
+        private static int bitBangBitsPerSendByte = 0;
+        private static int bitBangBitsPerRecByte = 0;
         private static byte[] tempBuffer;
         private static byte[][] recBuffer;
         private static int recBufReadPos = 0;
@@ -305,7 +306,8 @@ namespace EdiabasLib
                 }
                 if (bitBangMode)
                 {
-                    bitBangBitsPerByte = 12000000 / bitBangDivisor / currentBaudRate;
+                    bitBangBitsPerSendByte = 12000000 / bitBangDivisor / currentBaudRate;
+                    bitBangBitsPerRecByte = 12000000 / 16 / currentBaudRate + 2;
                     ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x15, Ftd2xx.FT_BITMODE_ASYNC_BITBANG);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
@@ -553,7 +555,7 @@ namespace EdiabasLib
 #if USE_BITBANG
                     else
                     {
-                        int bufferSize = (currentWordLength + 4) * bitBangBitsPerByte * (length + 2);
+                        int bufferSize = (currentWordLength + 4) * bitBangBitsPerSendByte * (length + 2);
                         if (bufferSize > tempBuffer.Length)
                         {
                             return false;
@@ -570,16 +572,16 @@ namespace EdiabasLib
                         {
                             if (i == 0)
                             {
-                                for (int k = 0; k < bitBangBitsPerByte * 9; k++)
+                                for (int k = 0; k < bitBangBitsPerSendByte * 9; k++)
                                 {
                                     tempBuffer[dataLen++] = 0x11; // DTR off
                                 }
-                                for (int k = 0; k < bitBangBitsPerByte; k++)
+                                for (int k = 0; k < bitBangBitsPerSendByte; k++)
                                 {
                                     tempBuffer[dataLen++] = 0x01; // DTR on
                                 }
                             }
-                            for (int k = 0; k < bitBangBitsPerByte; k++)
+                            for (int k = 0; k < bitBangBitsPerSendByte; k++)
                             {
                                 tempBuffer[dataLen++] = 0x00;   // Start bit
                             }
@@ -589,7 +591,7 @@ namespace EdiabasLib
                                 bool bitSet = (sendData[i] & (1 << j)) != 0;
                                 if (bitSet) parity = !parity;
                                 byte value = (byte)(bitSet ? 0x01 : 0x00);
-                                for (int k = 0; k < bitBangBitsPerByte; k++)
+                                for (int k = 0; k < bitBangBitsPerSendByte; k++)
                                 {
                                     tempBuffer[dataLen++] = value;
                                 }
@@ -599,7 +601,7 @@ namespace EdiabasLib
                                 case Parity.Even:
                                     {
                                         byte value = (byte)(parity ? 0x01 : 0x00);
-                                        for (int k = 0; k < bitBangBitsPerByte; k++)
+                                        for (int k = 0; k < bitBangBitsPerSendByte; k++)
                                         {
                                             tempBuffer[dataLen++] = value;
                                         }
@@ -609,7 +611,7 @@ namespace EdiabasLib
                                 case Parity.Odd:
                                     {
                                         byte value = (byte)(parity ? 0x00 : 0x01);
-                                        for (int k = 0; k < bitBangBitsPerByte; k++)
+                                        for (int k = 0; k < bitBangBitsPerSendByte; k++)
                                         {
                                             tempBuffer[dataLen++] = value;
                                         }
@@ -617,7 +619,7 @@ namespace EdiabasLib
                                     }
                             }
                             // 2 stop bits for time correction
-                            for (int k = 0; k < bitBangBitsPerByte * 2; k++)
+                            for (int k = 0; k < bitBangBitsPerSendByte * 2; k++)
                             {
                                 tempBuffer[dataLen++] = 0x01;   // Stop bit
                             }
@@ -834,7 +836,6 @@ namespace EdiabasLib
 
         private static bool GetByteFromDataStream(out byte value)
         {
-            int recBitsPerByte = 80;//bitBangBitsPerByte * 2;
             value = 0;
             // find start bit
             for (;;)
@@ -854,7 +855,7 @@ namespace EdiabasLib
                 }
             }
             // middle of next data bit
-            recBufReadPos += recBitsPerByte + recBitsPerByte / 2;
+            recBufReadPos += bitBangBitsPerRecByte + bitBangBitsPerRecByte / 2;
             if (recBufReadPos >= usbBufferSize)
             {
                 recBufReadPos -= usbBufferSize;
@@ -873,7 +874,7 @@ namespace EdiabasLib
                 {
                     recData |= (uint)(1 << i);
                 }
-                recBufReadPos += recBitsPerByte;
+                recBufReadPos += bitBangBitsPerRecByte;
                 if (recBufReadPos >= usbBufferSize)
                 {
                     recBufReadPos -= usbBufferSize;
