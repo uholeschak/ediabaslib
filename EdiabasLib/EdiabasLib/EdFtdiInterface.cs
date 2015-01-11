@@ -322,7 +322,7 @@ namespace EdiabasLib
                     {
                         return false;
                     }
-                    ftStatus = Ftd2xx.FT_SetUSBParameters(handleFtdi, bitBangRecBufferSize, bitBangRecBufferSize);
+                    ftStatus = Ftd2xx.FT_SetUSBParameters(handleFtdi, bitBangRecBufferSize, 0x10000);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
                         InterfaceDisconnect();
