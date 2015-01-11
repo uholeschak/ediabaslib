@@ -232,6 +232,9 @@ namespace Ftdi
         public static extern FT_STATUS FT_GetBitMode(IntPtr ftHandle, out Byte pucMode);
 
         [DllImport("ftd2xx")]
+        public static extern FT_STATUS FT_SetUSBParameters(IntPtr ftHandle, UInt32 ulInTransferSize, UInt32 ulOutTransferSize);
+
+        [DllImport("ftd2xx")]
         public static extern FT_STATUS FT_SetResetPipeRetryCount(IntPtr ftHandle, UInt32 dwCount);
 
         [DllImport("ftd2xx")]
