@@ -22,11 +22,24 @@ namespace EdiabasLib
         private static int currentWordLength = 0;
         private static Parity currentParity = Parity.None;
 #if USE_BITBANG
+        [Flags]
+        private enum bitBangBits
+        {
+            TXD = 0x01,     // inverted
+            RXD = 0x02,     // inverted
+            RTS = 0x04,     // inverted
+            CTS = 0x08,     // inverted
+            DTR = 0x10,     // inverted
+            DSR = 0x20,     // inverted
+            CDC = 0x40,     // inverted
+            RI = 0x80,      // inverted
+        }
         // tested range: 1-59
         // good values: 27, 29!, 33, 35
         private const int bitBangDivisor = 29;  // only odd values allowed!
         private const int bitBangRecBufferSize = 0x2000;
         private static bool bitBangMode = false;
+        private static bitBangBits bitBangOutput = bitBangBits.DTR | /*bitBangBits.RTS | */ bitBangBits.TXD;
         private static int bitBangBitsPerSendByte = 0;
         private static int bitBangBitsPerRecByte = 0;
         private static byte[] bitBangSendBuffer;
@@ -124,6 +137,7 @@ namespace EdiabasLib
 
 #if USE_BITBANG
                 bitBangMode = false;
+                bitBangOutput = bitBangBits.DTR | /*bitBangBits.RTS | */ bitBangBits.TXD;
 #endif
                 ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x00, Ftd2xx.FT_BITMODE_RESET);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
@@ -307,7 +321,7 @@ namespace EdiabasLib
                 {
                     bitBangBitsPerSendByte = 12000000 / bitBangDivisor / currentBaudRate;
                     bitBangBitsPerRecByte = 12000000 / 16 / currentBaudRate + 2;
-                    ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x15, Ftd2xx.FT_BITMODE_ASYNC_BITBANG);
+                    ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, (byte)(bitBangBits.DTR | bitBangBits.RTS | bitBangBits.TXD), Ftd2xx.FT_BITMODE_ASYNC_BITBANG);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
                         return false;
@@ -325,7 +339,6 @@ namespace EdiabasLib
                     ftStatus = Ftd2xx.FT_SetUSBParameters(handleFtdi, bitBangRecBufferSize, 0x10000);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
-                        InterfaceDisconnect();
                         return false;
                     }
                 }
@@ -339,7 +352,6 @@ namespace EdiabasLib
                     ftStatus = Ftd2xx.FT_SetUSBParameters(handleFtdi, usbBufferSizeStd, usbBufferSizeStd);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
-                        InterfaceDisconnect();
                         return false;
                     }
                 }
@@ -363,26 +375,46 @@ namespace EdiabasLib
             {
                 return false;
             }
-            try
+#if USE_BITBANG
+            if (dtr)
             {
-                Ftd2xx.FT_STATUS ftStatus;
-
-                if (dtr)
-                {
-                    ftStatus = Ftd2xx.FT_SetDtr(handleFtdi);
-                }
-                else
-                {
-                    ftStatus = Ftd2xx.FT_ClrDtr(handleFtdi);
-                }
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                bitBangOutput &= ~bitBangBits.DTR;
+            }
+            else
+            {
+                bitBangOutput |= bitBangBits.DTR;
+            }
+            if (bitBangMode)
+            {
+                if (!SetBitBangOutput(bitBangOutput))
                 {
                     return false;
                 }
             }
-            catch (Exception)
+            else
+#endif
             {
-                return false;
+                try
+                {
+                    Ftd2xx.FT_STATUS ftStatus;
+
+                    if (dtr)
+                    {
+                        ftStatus = Ftd2xx.FT_SetDtr(handleFtdi);
+                    }
+                    else
+                    {
+                        ftStatus = Ftd2xx.FT_ClrDtr(handleFtdi);
+                    }
+                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
             return true;
         }
@@ -393,26 +425,46 @@ namespace EdiabasLib
             {
                 return false;
             }
-            try
+#if USE_BITBANG
+            if (rts)
             {
-                Ftd2xx.FT_STATUS ftStatus;
-
-                if (rts)
-                {
-                    ftStatus = Ftd2xx.FT_SetRts(handleFtdi);
-                }
-                else
-                {
-                    ftStatus = Ftd2xx.FT_ClrRts(handleFtdi);
-                }
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                bitBangOutput &= ~bitBangBits.RTS;
+            }
+            else
+            {
+                //bitBangOutput |= bitBangBits.RTS;
+            }
+            if (bitBangMode)
+            {
+                if (!SetBitBangOutput(bitBangOutput))
                 {
                     return false;
                 }
             }
-            catch (Exception)
+            else
+#endif
             {
-                return false;
+                try
+                {
+                    Ftd2xx.FT_STATUS ftStatus;
+
+                    if (rts)
+                    {
+                        ftStatus = Ftd2xx.FT_SetRts(handleFtdi);
+                    }
+                    else
+                    {
+                        ftStatus = Ftd2xx.FT_ClrRts(handleFtdi);
+                    }
+                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
             return true;
         }
@@ -448,26 +500,46 @@ namespace EdiabasLib
             {
                 return false;
             }
-            try
+#if USE_BITBANG
+            if (enable)
             {
-                Ftd2xx.FT_STATUS ftStatus;
-
-                if (enable)
-                {
-                    ftStatus = Ftd2xx.FT_SetBreakOn(handleFtdi);
-                }
-                else
-                {
-                    ftStatus = Ftd2xx.FT_SetBreakOff(handleFtdi);
-                }
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                bitBangOutput &= ~bitBangBits.TXD;
+            }
+            else
+            {
+                bitBangOutput |= bitBangBits.TXD;
+            }
+            if (bitBangMode)
+            {
+                if (!SetBitBangOutput(bitBangOutput))
                 {
                     return false;
                 }
             }
-            catch (Exception)
+            else
+#endif
             {
-                return false;
+                try
+                {
+                    Ftd2xx.FT_STATUS ftStatus;
+
+                    if (enable)
+                    {
+                        ftStatus = Ftd2xx.FT_SetBreakOn(handleFtdi);
+                    }
+                    else
+                    {
+                        ftStatus = Ftd2xx.FT_SetBreakOff(handleFtdi);
+                    }
+                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
             return true;
         }
@@ -577,7 +649,6 @@ namespace EdiabasLib
                             return false;
                         }
 
-                        // Bit 0=TXD, 1= RXD, 2=RTS, 4=DTR
                         int dataLen = 0;
                         for (int i = 0; i < length; i++)
                         {
@@ -585,58 +656,83 @@ namespace EdiabasLib
                             {
                                 for (int k = 0; k < bitBangBitsPerSendByte * 9; k++)
                                 {
-                                    bitBangSendBuffer[dataLen++] = 0x11; // DTR off
+                                    bitBangSendBuffer[dataLen++] = (byte)bitBangOutput;
                                 }
+                                bitBangOutput &= ~bitBangBits.DTR;       // DTR on
                                 for (int k = 0; k < bitBangBitsPerSendByte; k++)
                                 {
-                                    bitBangSendBuffer[dataLen++] = 0x01; // DTR on
+                                    bitBangSendBuffer[dataLen++] = (byte)bitBangOutput;
                                 }
                             }
+                            bitBangOutput &= ~bitBangBits.TXD;       // Start bit
                             for (int k = 0; k < bitBangBitsPerSendByte; k++)
                             {
-                                bitBangSendBuffer[dataLen++] = 0x00;   // Start bit
+                                bitBangSendBuffer[dataLen++] = (byte)bitBangOutput;
                             }
                             bool parity = false;
                             for (int j = 0; j < currentWordLength; j++)
                             {
                                 bool bitSet = (sendData[i] & (1 << j)) != 0;
                                 if (bitSet) parity = !parity;
-                                byte value = (byte)(bitSet ? 0x01 : 0x00);
+                                if (bitSet)
+                                {
+                                    bitBangOutput |= bitBangBits.TXD;
+                                }
+                                else
+                                {
+                                    bitBangOutput &= ~bitBangBits.TXD;
+                                }
                                 for (int k = 0; k < bitBangBitsPerSendByte; k++)
                                 {
-                                    bitBangSendBuffer[dataLen++] = value;
+                                    bitBangSendBuffer[dataLen++] = (byte)bitBangOutput;
                                 }
                             }
                             switch (currentParity)
                             {
                                 case Parity.Even:
                                     {
-                                        byte value = (byte)(parity ? 0x01 : 0x00);
+                                        if (parity)
+                                        {
+                                            bitBangOutput |= bitBangBits.TXD;
+                                        }
+                                        else
+                                        {
+                                            bitBangOutput &= ~bitBangBits.TXD;
+                                        }
                                         for (int k = 0; k < bitBangBitsPerSendByte; k++)
                                         {
-                                            bitBangSendBuffer[dataLen++] = value;
+                                            bitBangSendBuffer[dataLen++] = (byte)bitBangOutput;
                                         }
                                         break;
                                     }
 
                                 case Parity.Odd:
                                     {
-                                        byte value = (byte)(parity ? 0x00 : 0x01);
+                                        if (parity)
+                                        {
+                                            bitBangOutput &= ~bitBangBits.TXD;
+                                        }
+                                        else
+                                        {
+                                            bitBangOutput |= bitBangBits.TXD;
+                                        }
                                         for (int k = 0; k < bitBangBitsPerSendByte; k++)
                                         {
-                                            bitBangSendBuffer[dataLen++] = value;
+                                            bitBangSendBuffer[dataLen++] = (byte)bitBangOutput;
                                         }
                                         break;
                                     }
                             }
                             // 2 stop bits for time correction
+                            bitBangOutput |= bitBangBits.TXD;   // Stop bit
                             for (int k = 0; k < bitBangBitsPerSendByte * 2; k++)
                             {
-                                bitBangSendBuffer[dataLen++] = 0x01;   // Stop bit
+                                bitBangSendBuffer[dataLen++] = (byte)bitBangOutput;
                             }
                             if ((i + 1) == length)
                             {
-                                bitBangSendBuffer[dataLen++] = 0x11;   // DTR off
+                                bitBangOutput |= bitBangBits.DTR;      // DTR off
+                                bitBangSendBuffer[dataLen++] = (byte)bitBangOutput;
                             }
                         }
                         recBufLastIndex = -1;
@@ -801,6 +897,22 @@ namespace EdiabasLib
         }
 
 #if USE_BITBANG
+        private static bool SetBitBangOutput(bitBangBits output)
+        {
+            if (handleFtdi == (IntPtr)0)
+            {
+                return false;
+            }
+            bitBangSendBuffer[0] = (byte)output;
+            uint bytesWritten = 0;
+            Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, bitBangSendBuffer, 1, 0, out bytesWritten);
+            if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+            {
+                return false;
+            }
+            return true;
+        }
+
         private static bool ReceiveByteFromBitBangStream(out byte value)
         {
             Ftd2xx.FT_STATUS ftStatus;
@@ -849,7 +961,7 @@ namespace EdiabasLib
         {
             value = 0;
             // find start bit
-            for (;;)
+            for (; ; )
             {
                 byte recVal = bitBangRecBuffer[recBufReadIndex][recBufReadPos];
                 if ((recVal & 0x02) == 0)
