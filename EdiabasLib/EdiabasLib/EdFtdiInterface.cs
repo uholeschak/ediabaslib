@@ -25,8 +25,8 @@ namespace EdiabasLib
         [Flags]
         private enum bitBangBits
         {
-            TXD = 0x01,     // inverted
-            RXD = 0x02,     // inverted
+            TXD = 0x01,     // not inverted
+            RXD = 0x02,     // not inverted
             RTS = 0x04,     // inverted
             CTS = 0x08,     // inverted
             DTR = 0x10,     // inverted
@@ -390,31 +390,29 @@ namespace EdiabasLib
                 {
                     return false;
                 }
+                return true;
             }
-            else
 #endif
+            try
             {
-                try
-                {
-                    Ftd2xx.FT_STATUS ftStatus;
+                Ftd2xx.FT_STATUS ftStatus;
 
-                    if (dtr)
-                    {
-                        ftStatus = Ftd2xx.FT_SetDtr(handleFtdi);
-                    }
-                    else
-                    {
-                        ftStatus = Ftd2xx.FT_ClrDtr(handleFtdi);
-                    }
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
-                        return false;
-                    }
+                if (dtr)
+                {
+                    ftStatus = Ftd2xx.FT_SetDtr(handleFtdi);
                 }
-                catch (Exception)
+                else
+                {
+                    ftStatus = Ftd2xx.FT_ClrDtr(handleFtdi);
+                }
+                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
                     return false;
                 }
+            }
+            catch (Exception)
+            {
+                return false;
             }
             return true;
         }
@@ -440,31 +438,29 @@ namespace EdiabasLib
                 {
                     return false;
                 }
+                return true;
             }
-            else
 #endif
+            try
             {
-                try
-                {
-                    Ftd2xx.FT_STATUS ftStatus;
+                Ftd2xx.FT_STATUS ftStatus;
 
-                    if (rts)
-                    {
-                        ftStatus = Ftd2xx.FT_SetRts(handleFtdi);
-                    }
-                    else
-                    {
-                        ftStatus = Ftd2xx.FT_ClrRts(handleFtdi);
-                    }
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
-                        return false;
-                    }
+                if (rts)
+                {
+                    ftStatus = Ftd2xx.FT_SetRts(handleFtdi);
                 }
-                catch (Exception)
+                else
+                {
+                    ftStatus = Ftd2xx.FT_ClrRts(handleFtdi);
+                }
+                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
                     return false;
                 }
+            }
+            catch (Exception)
+            {
+                return false;
             }
             return true;
         }
@@ -476,6 +472,26 @@ namespace EdiabasLib
             {
                 return false;
             }
+#if USE_BITBANG
+            if (bitBangMode)
+            {
+                byte mode;
+                Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_GetBitMode(handleFtdi, out mode);
+                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                {
+                    return false;
+                }
+                if ((mode & (int)bitBangBits.DSR) == 0)
+                {
+                    dsr = true;
+                }
+                else
+                {
+                    dsr = false;
+                }
+                return true;
+            }
+#endif
             try
             {
                 dsr = false;
@@ -515,31 +531,29 @@ namespace EdiabasLib
                 {
                     return false;
                 }
+                return true;
             }
-            else
 #endif
+            try
             {
-                try
-                {
-                    Ftd2xx.FT_STATUS ftStatus;
+                Ftd2xx.FT_STATUS ftStatus;
 
-                    if (enable)
-                    {
-                        ftStatus = Ftd2xx.FT_SetBreakOn(handleFtdi);
-                    }
-                    else
-                    {
-                        ftStatus = Ftd2xx.FT_SetBreakOff(handleFtdi);
-                    }
-                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                    {
-                        return false;
-                    }
+                if (enable)
+                {
+                    ftStatus = Ftd2xx.FT_SetBreakOn(handleFtdi);
                 }
-                catch (Exception)
+                else
+                {
+                    ftStatus = Ftd2xx.FT_SetBreakOff(handleFtdi);
+                }
+                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
                     return false;
                 }
+            }
+            catch (Exception)
+            {
+                return false;
             }
             return true;
         }
@@ -585,21 +599,13 @@ namespace EdiabasLib
                     if (!bitBangMode)
 #endif
                     {
-#if !WindowsCE
-                        ProcessPriorityClass lastPriorityClass = Process.GetCurrentProcess().PriorityClass;
-#endif
-                        try
+                        long waitTime = (long)((dtrTimeCorr + byteTime * length) * tickResolMs);
+                        ftStatus = Ftd2xx.FT_SetDtr(handleFtdi);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
-#if !WindowsCE
-                            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
-#endif
-                            long waitTime = (long)((dtrTimeCorr + byteTime * length) * tickResolMs);
-                            ftStatus = Ftd2xx.FT_SetDtr(handleFtdi);
-                            if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                            {
-                                return false;
-                            }
-                            long startTime = Stopwatch.GetTimestamp();
+                            return false;
+                        }
+                        long startTime = Stopwatch.GetTimestamp();
 #if WindowsCE
                             const int sendBlockSize = 4;
                             for (int i = 0; i < length; i += sendBlockSize)
@@ -613,26 +619,19 @@ namespace EdiabasLib
                                 }
                             }
 #else
-                            ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, sendData, length, 0, out bytesWritten);
-                            if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                            {
-                                return false;
-                            }
-#endif
-                            while ((Stopwatch.GetTimestamp() - startTime) < waitTime)
-                            {
-                            }
-                            ftStatus = Ftd2xx.FT_ClrDtr(handleFtdi);
-                            if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                            {
-                                return false;
-                            }
-                        }
-                        finally
+                        ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, sendData, length, 0, out bytesWritten);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
-#if !WindowsCE
-                            Process.GetCurrentProcess().PriorityClass = lastPriorityClass;
+                            return false;
+                        }
 #endif
+                        while ((Stopwatch.GetTimestamp() - startTime) < waitTime)
+                        {
+                        }
+                        ftStatus = Ftd2xx.FT_ClrDtr(handleFtdi);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
                         }
                     }
 #if USE_BITBANG
@@ -640,11 +639,6 @@ namespace EdiabasLib
                     {
                         int bufferSize = (currentWordLength + 4) * bitBangBitsPerSendByte * (length + 2);
                         if (bufferSize > bitBangSendBuffer.Length)
-                        {
-                            return false;
-                        }
-                        ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_RX);
-                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
                             return false;
                         }
@@ -736,6 +730,11 @@ namespace EdiabasLib
                             }
                         }
                         recBufLastIndex = -1;
+                        ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_RX);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
+                        }
                         ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, bitBangSendBuffer, dataLen, 0, out bytesWritten);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {

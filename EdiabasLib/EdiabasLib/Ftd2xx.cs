@@ -238,6 +238,12 @@ namespace Ftdi
         public static extern FT_STATUS FT_SetResetPipeRetryCount(IntPtr ftHandle, UInt32 dwCount);
 
         [DllImport("ftd2xx")]
+        public static extern FT_STATUS FT_StopInTask(IntPtr ftHandle);
+
+        [DllImport("ftd2xx")]
+        public static extern FT_STATUS FT_RestartInTask(IntPtr ftHandle);
+
+        [DllImport("ftd2xx")]
         public static extern FT_STATUS FT_ResetPort(IntPtr ftHandle);
 
         #endregion Normal Functions
