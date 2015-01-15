@@ -49,6 +49,7 @@ namespace EdiabasLib
         protected string comPort = string.Empty;
         protected double dtrTimeCorrCom = 0.3;
         protected double dtrTimeCorrFtdi = 0.3;
+        protected bool enableFtdiBitBang = false;
         protected bool connected = false;
         protected const int echoTimeout = 100;
         protected bool useExtInterfaceFunc = false;
@@ -141,6 +142,12 @@ namespace EdiabasLib
                 {
                     this.dtrTimeCorrFtdi = EdiabasNet.StringToFloat(prop);
                 }
+
+                prop = ediabas.GetConfigProperty("ObdFtdiBitBang");
+                if (prop != null)
+                {
+                    this.enableFtdiBitBang = EdiabasNet.StringToValue(prop) != 0;
+                }
             }
         }
 
@@ -195,7 +202,8 @@ namespace EdiabasLib
                 }
 
                 ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, commParameter, 0, commParameter.Length,
-                    string.Format(culture, "{0} CommParameter Port={1}, CorrCom={2}, CorrFtdi={3}", InterfaceName, this.comPort, this.dtrTimeCorrCom, this.dtrTimeCorrFtdi));
+                    string.Format(culture, "{0} CommParameter Port={1}, CorrCom={2}, CorrFtdi={3}, BitBang={4}",
+                            InterfaceName, this.comPort, this.dtrTimeCorrCom, this.dtrTimeCorrFtdi, this.enableFtdiBitBang));
 
                 int baudRate;
                 int dataBits = 8;
@@ -272,7 +280,7 @@ namespace EdiabasLib
                         this.parRegenTime = (int)commParameter[6];
                         this.parTimeoutTelEnd = (int)commParameter[7];
                         this.parSendSetDtr = true;
-                        this.parAllowBitBang = true;
+                        this.parAllowBitBang = this.enableFtdiBitBang;
                         this.parHasKeyBytes = true;
                         break;
 
