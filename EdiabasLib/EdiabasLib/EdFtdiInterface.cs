@@ -39,7 +39,7 @@ namespace EdiabasLib
         private const int bitBangDivisor = 29;  // only odd values allowed!
         private const int bitBangRecBufferSize = 0x2000;
         private static bool bitBangMode = false;
-        private static bitBangBits bitBangOutput = bitBangBits.DTR | /*bitBangBits.RTS | */ bitBangBits.TXD;
+        private static bitBangBits bitBangOutput = bitBangBits.DTR | bitBangBits.RTS | bitBangBits.TXD;
         private static int bitBangBitsPerSendByte = 0;
         private static int bitBangBitsPerRecByte = 0;
         private static byte[] bitBangSendBuffer;
@@ -137,7 +137,7 @@ namespace EdiabasLib
 
 #if USE_BITBANG
                 bitBangMode = false;
-                bitBangOutput = bitBangBits.DTR | /*bitBangBits.RTS | */ bitBangBits.TXD;
+                bitBangOutput = bitBangBits.DTR | bitBangBits.RTS | bitBangBits.TXD;
 #endif
                 ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x00, Ftd2xx.FT_BITMODE_RESET);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
@@ -238,7 +238,7 @@ namespace EdiabasLib
             return true;
         }
 
-        public static bool InterfaceSetConfig(int baudRate, int dataBits, Parity parity)
+        public static bool InterfaceSetConfig(int baudRate, int dataBits, Parity parity, bool allowBitBang)
         {
             if (handleFtdi == (IntPtr)0)
             {
@@ -254,7 +254,7 @@ namespace EdiabasLib
 
 #if USE_BITBANG
                 bool bitBangOld = bitBangMode;
-                if (currentBaudRate <= 19200)
+                if (allowBitBang && currentBaudRate <= 19200)
                 {
                     bitBangMode = true;
                 }
@@ -290,6 +290,10 @@ namespace EdiabasLib
                         }
                         ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_TX | Ftd2xx.FT_PURGE_RX);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
+                        }
+                        if (!SetBitBangOutput(bitBangOutput))
                         {
                             return false;
                         }
@@ -441,7 +445,7 @@ namespace EdiabasLib
             }
             else
             {
-                //bitBangOutput |= bitBangBits.RTS;
+                bitBangOutput |= bitBangBits.RTS;
             }
             if (bitBangMode)
             {
@@ -938,7 +942,7 @@ namespace EdiabasLib
 
                 if (recBufLastIndex < 0)
                 {   // all buffers empty
-                    Debug.WriteLine("Start");
+                    //Debug.WriteLine("Start");
                     ftStatus = Ftd2xx.FT_ReadWrapper(handleFtdi, bitBangRecBuffer[0], bitBangRecBufferSize, 0, out bytesRead);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
@@ -957,7 +961,7 @@ namespace EdiabasLib
                 {
                     if (recBufLastIndex == recBufReadIndex)
                     {   // get next buffer
-                        Debug.WriteLine("New buf");
+                        //Debug.WriteLine("New buf");
                         recBufLastIndex = (recBufLastIndex == 0) ? 1 : 0;
                         ftStatus = Ftd2xx.FT_ReadWrapper(handleFtdi, bitBangRecBuffer[recBufLastIndex], bitBangRecBufferSize, 0, out bytesRead);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
@@ -995,7 +999,7 @@ namespace EdiabasLib
                 {
                     recBufReadPos = 0;
                     recBufReadIndex = (recBufReadIndex == 0) ? 1 : 0;
-                    Debug.WriteLine(string.Format("No S {0}", recBufReadIndex));
+                    //Debug.WriteLine(string.Format("No S {0}", recBufReadIndex));
                     return false;
                 }
             }
@@ -1005,7 +1009,7 @@ namespace EdiabasLib
             {
                 recBufReadPos -= bitBangRecBufferSize;
                 recBufReadIndex = (recBufReadIndex == 0) ? 1 : 0;
-                Debug.WriteLine(string.Format("B {0}", recBufReadIndex));
+                //Debug.WriteLine(string.Format("B {0}", recBufReadIndex));
             }
             // read the data bits
             bool dataValid = true;
@@ -1024,10 +1028,10 @@ namespace EdiabasLib
                 {
                     recBufReadPos -= bitBangRecBufferSize;
                     recBufReadIndex = (recBufReadIndex == 0) ? 1 : 0;
-                    Debug.WriteLine(string.Format("B {0}", recBufReadIndex));
+                    //Debug.WriteLine(string.Format("B {0}", recBufReadIndex));
                 }
             }
-            Debug.WriteLine(string.Format("{0:X03}", recData));
+            //Debug.WriteLine(string.Format("{0:X03}", recData));
 
             bool parity = false;
             for (int i = 0; i < currentWordLength; i++)
@@ -1061,7 +1065,7 @@ namespace EdiabasLib
             }
             if (!dataValid)
             {
-                Debug.WriteLine(string.Format("E", recBufReadIndex));
+                //Debug.WriteLine(string.Format("E", recBufReadIndex));
                 return false;
             }
             value = (byte)recData;

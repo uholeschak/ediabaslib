@@ -11,7 +11,7 @@ namespace EdiabasLib
     {
         public delegate bool InterfaceConnectDelegate(string port);
         public delegate bool InterfaceDisconnectDelegate();
-        public delegate bool InterfaceSetConfigDelegate(int baudRate, int dataBits, Parity parity);
+        public delegate bool InterfaceSetConfigDelegate(int baudRate, int dataBits, Parity parity, bool allowBitBang);
         public delegate bool InterfaceSetDtrDelegate(bool dtr);
         public delegate bool InterfaceSetRtsDelegate(bool rts);
         public delegate bool InterfaceGetDsrDelegate(out bool dsr);
@@ -109,6 +109,7 @@ namespace EdiabasLib
         protected bool parChecksumByUser = false;
         protected bool parChecksumNoCheck = false;
         protected bool parSendSetDtr = false;
+        protected bool parAllowBitBang = false;
         protected bool parHasKeyBytes = false;
         protected bool parSupportFrequent = false;
 
@@ -173,6 +174,7 @@ namespace EdiabasLib
                 this.parChecksumByUser = false;
                 this.parChecksumNoCheck = false;
                 this.parSendSetDtr = false;
+                this.parAllowBitBang = false;
                 this.parHasKeyBytes = false;
                 this.parSupportFrequent = false;
                 this.keyBytes = byteArray0;
@@ -234,6 +236,7 @@ namespace EdiabasLib
                         this.parRegenTime = (int)commParameter[6];
                         this.parTimeoutTelEnd = (int)commParameter[7];
                         this.parSendSetDtr = false;
+                        this.parAllowBitBang = false;
                         break;
 
                     case 0x0002:    // Concept 2 ISO 9141
@@ -269,6 +272,7 @@ namespace EdiabasLib
                         this.parRegenTime = (int)commParameter[6];
                         this.parTimeoutTelEnd = (int)commParameter[7];
                         this.parSendSetDtr = true;
+                        this.parAllowBitBang = true;
                         this.parHasKeyBytes = true;
                         break;
 
@@ -306,6 +310,7 @@ namespace EdiabasLib
                         this.parRegenTime = (int)commParameter[6];
                         this.parTimeoutTelEnd = (int)commParameter[7];
                         this.parSendSetDtr = true;
+                        this.parAllowBitBang = false;
                         this.parHasKeyBytes = true;
                         this.parSupportFrequent = true;
                         break;
@@ -342,6 +347,7 @@ namespace EdiabasLib
                         {   // DS2 uses DTR
                             this.parSendSetDtr = !adapterEcho;
                         }
+                        this.parAllowBitBang = false;
                         break;
 
                     case 0x010C:    // KWP2000 BMW
@@ -399,6 +405,7 @@ namespace EdiabasLib
                             }
                         }
                         this.parSendSetDtr = !adapterEcho;
+                        this.parAllowBitBang = false;
                         break;
 
                     case 0x010D:    // KWP2000*
@@ -428,6 +435,7 @@ namespace EdiabasLib
                         this.parTimeoutNR = (int)commParameter[7];
                         this.parRetryNR = (int)commParameter[6];
                         this.parSendSetDtr = !adapterEcho;
+                        this.parAllowBitBang = false;
                         break;
 
                     case 0x010F:    // BMW-FAST
@@ -456,6 +464,7 @@ namespace EdiabasLib
                         this.parTimeoutNR = (int)commParameter[6];
                         this.parRetryNR = (int)commParameter[5];
                         this.parSendSetDtr = !adapterEcho;
+                        this.parAllowBitBang = false;
                         break;
 
                     case 0x0110:    // D-CAN
@@ -476,6 +485,7 @@ namespace EdiabasLib
                         this.parTimeoutNR = (int)commParameter[9];
                         this.parRetryNR = (int)commParameter[10];
                         this.parSendSetDtr = !adapterEcho;
+                        this.parAllowBitBang = false;
                         break;
 
                     default:
@@ -487,7 +497,7 @@ namespace EdiabasLib
 
                 if (this.useExtInterfaceFunc)
                 {
-                    if (!InterfaceSetConfigFuncUse(baudRate, dataBits, parity))
+                    if (!InterfaceSetConfigFuncUse(baudRate, dataBits, parity, this.parAllowBitBang))
                     {
                         ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                         return;
@@ -2108,7 +2118,7 @@ namespace EdiabasLib
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Establish connection");
                 if (this.useExtInterfaceFunc)
                 {
-                    if (!InterfaceSetConfigFuncUse(9600, 8, Parity.None))
+                    if (!InterfaceSetConfigFuncUse(9600, 8, Parity.None, this.parAllowBitBang))
                     {
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -2162,7 +2172,7 @@ namespace EdiabasLib
                     ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Baud rate 10.4k detected");
                     if (this.useExtInterfaceFunc)
                     {
-                        if (!InterfaceSetConfigFuncUse(10400, 8, Parity.None))
+                        if (!InterfaceSetConfigFuncUse(10400, 8, Parity.None, this.parAllowBitBang))
                         {
                             ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -2485,7 +2495,7 @@ namespace EdiabasLib
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Establish connection");
                 if (this.useExtInterfaceFunc)
                 {
-                    if (!InterfaceSetConfigFuncUse(9600, 8, Parity.None))
+                    if (!InterfaceSetConfigFuncUse(9600, 8, Parity.None, this.parAllowBitBang))
                     {
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -2555,7 +2565,7 @@ namespace EdiabasLib
                 ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Key bytes: {0:X02} {1:X02} {2:X02}", iso9141Buffer[0], iso9141Buffer[1], iso9141Buffer[2]);
                 if (this.useExtInterfaceFunc)
                 {
-                    if (!InterfaceSetConfigFuncUse(9600, 8, Parity.Even))
+                    if (!InterfaceSetConfigFuncUse(9600, 8, Parity.Even, this.parAllowBitBang))
                     {
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                         FinishConcept3();
@@ -2668,7 +2678,7 @@ namespace EdiabasLib
             this.ecuConnected = false;
             if (this.useExtInterfaceFunc)
             {
-                if (!InterfaceSetConfigFuncUse(10400, 8, Parity.None))
+                if (!InterfaceSetConfigFuncUse(10400, 8, Parity.None, this.parAllowBitBang))
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
