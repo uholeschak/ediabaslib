@@ -1,4 +1,4 @@
-﻿//#define USE_BITBANG
+﻿#define USE_BITBANG
 
 using System;
 using System.Diagnostics;
@@ -240,6 +240,9 @@ namespace EdiabasLib
 
         public static bool InterfaceSetConfig(int baudRate, int dataBits, Parity parity, bool allowBitBang)
         {
+#if WindowsCE
+            allowBitBang = false;
+#endif
             if (handleFtdi == (IntPtr)0)
             {
                 return false;
