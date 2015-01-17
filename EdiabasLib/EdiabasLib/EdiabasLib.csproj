@@ -55,6 +55,12 @@
     <Compile Include="EdOperations.cs" />
     <Compile Include="Ftd2xx.cs" />
     <Compile Include="MemoryStreamReader.cs" />
+    <Compile Include="NativeUsbLib\Device.cs" />
+    <Compile Include="NativeUsbLib\UsbApi.cs" />
+    <Compile Include="NativeUsbLib\UsbBus.cs" />
+    <Compile Include="NativeUsbLib\UsbController.cs" />
+    <Compile Include="NativeUsbLib\UsbDevice.cs" />
+    <Compile Include="NativeUsbLib\UsbHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +70,7 @@
     </None>
     <None Include="EdiabasLib.snk" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
