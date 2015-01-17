@@ -1,4 +1,6 @@
-﻿#define USE_BITBANG
+﻿#if !WindowsCE
+#define USE_BITBANG
+#endif
 
 using System;
 using System.Diagnostics;
@@ -6,6 +8,9 @@ using System.Globalization;
 using System.IO.Ports;
 using System.Threading;
 using Ftdi;
+#if USE_BITBANG
+using NativeUsbLib;
+#endif
 
 namespace EdiabasLib
 {
@@ -47,6 +52,7 @@ namespace EdiabasLib
         private static int recBufReadPos = 0;
         private static int recBufReadIndex = 0;
         private static int recBufLastIndex = -1;
+        private static UsbBus usbBus = new UsbBus();
 #endif
 
         static EdFtdiInterface()
@@ -240,9 +246,6 @@ namespace EdiabasLib
 
         public static bool InterfaceSetConfig(int baudRate, int dataBits, Parity parity, bool allowBitBang)
         {
-#if WindowsCE
-            allowBitBang = false;
-#endif
             if (handleFtdi == (IntPtr)0)
             {
                 return false;
@@ -271,6 +274,10 @@ namespace EdiabasLib
                     bitBangBitsPerRecByte = 12000000 / 16 / currentBaudRate + 2;
                     if (bitBangMode != bitBangOld)
                     {
+                        if (!CheckUsbBus())
+                        {
+                            return false;
+                        }
                         ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, (byte)(bitBangBits.DTR | bitBangBits.RTS | bitBangBits.TXD), Ftd2xx.FT_BITMODE_ASYNC_BITBANG);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
@@ -1073,6 +1080,83 @@ namespace EdiabasLib
             }
             value = (byte)recData;
             return true;
+        }
+
+        private static bool CheckUsbBus()
+        {
+            if (handleFtdi == (IntPtr)0)
+            {
+                return false;
+            }
+            try
+            {
+                UInt32 deviceType;
+                UInt32 deviceId;
+                byte[] sernum = new byte[16];
+                byte[] desc = new byte[64];
+
+                Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_GetDeviceInfo(handleFtdi, out deviceType, out deviceId, sernum, desc, IntPtr.Zero);
+                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                {
+                    return false;
+                }
+                string serialNumber = System.Text.Encoding.Default.GetString(sernum).TrimEnd('\0');
+
+                usbBus.Refresh();
+                bool globalDeviceFound = false;
+                foreach (UsbController controller in usbBus.Controller)
+                {
+                    foreach (UsbHub hub in controller.Hubs)
+                    {
+                        //Debug.WriteLine("RootHub");
+                        bool deviceFound = false;
+                        int deviceCount = AnalyzeUsbHub(hub, serialNumber, ref deviceFound);
+                        if (deviceFound)
+                        {
+                            globalDeviceFound = true;
+                            if (deviceCount > 1)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                if (!globalDeviceFound)
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static int AnalyzeUsbHub(UsbHub usbHub, string serialNumber, ref bool deviceFound)
+        {
+            int deviceCount = 0;
+            foreach (Device device in usbHub.Devices)
+            {
+                if (device is UsbHub)
+                {
+                    deviceCount += AnalyzeUsbHub((UsbHub)device, serialNumber, ref deviceFound);
+                }
+                else
+                {
+                    if (device.IsConnected)
+                    {
+                        deviceCount++;
+                        //Debug.WriteLine(string.Format("Device: {0} {1}", device.DeviceDescription, device.SerialNumber));
+                        if (string.Compare(serialNumber, device.SerialNumber, StringComparison.Ordinal) == 0)
+                        {
+                            deviceFound = true;
+                        }
+                    }
+                }
+            }
+            return deviceCount;
         }
 #endif
 
