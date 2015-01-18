@@ -991,11 +991,27 @@ namespace CarSimulator
             if (!ReceiveData(receiveData, 4, recLength - 3))
             {
                 _serialPort.DiscardInBuffer();
+#if false
+                string text = string.Empty;
+                for (int i = 0; i < 4; i++)
+                {
+                    text += string.Format("{0:X02} ", _receiveData[i]);
+                }
+                Debug.WriteLine("No data: " + text);
+#endif
                 return false;
             }
             if (CalcChecksumXor(receiveData, recLength) != receiveData[recLength])
             {
                 _serialPort.DiscardInBuffer();
+#if false
+                string text = string.Empty;
+                for (int i = 0; i < recLength + 1; i++)
+                {
+                    text += string.Format("{0:X02} ", _receiveData[i]);
+                }
+                Debug.WriteLine("Checksum: " + text);
+#endif
                 return false;
             }
             return true;
@@ -3411,7 +3427,7 @@ namespace CarSimulator
                 _sendData[0] = 0x55;
                 SendData(_sendData, 0, 1);
 
-                Thread.Sleep(10);   // maximum 400ms
+                Thread.Sleep(100);   // maximum 400ms
                 int sendLen;
                 if (_configData.ConfigList.Count > 1)
                 {
