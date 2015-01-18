@@ -8,14 +8,18 @@ using System.Globalization;
 using System.IO.Ports;
 using System.Threading;
 using Ftdi;
-#if USE_BITBANG
-using NativeUsbLib;
-#endif
 
 namespace EdiabasLib
 {
-    static class EdFtdiInterface
+    static public class EdFtdiInterface
     {
+        public enum ErrorResult
+        {
+            NO_ERROR = 0,
+            CONFIG_ERROR,
+            USB_LOC_ERROR,
+        }
+
         public const string PortID = "FTDI";
         private const int writeTimeout = 500;       // write timeout [ms]
         private const int readTimeoutCeMin = 500;   // min read timeout for CE [ms]
@@ -52,7 +56,6 @@ namespace EdiabasLib
         private static int recBufReadPos = 0;
         private static int recBufReadIndex = 0;
         private static int recBufLastIndex = -1;
-        private static UsbBus usbBus = new UsbBus();
 #endif
 
         static EdFtdiInterface()
@@ -244,11 +247,11 @@ namespace EdiabasLib
             return true;
         }
 
-        public static bool InterfaceSetConfig(int baudRate, int dataBits, Parity parity, bool allowBitBang)
+        public static ErrorResult InterfaceSetConfig(int baudRate, int dataBits, Parity parity, bool allowBitBang)
         {
             if (handleFtdi == (IntPtr)0)
             {
-                return false;
+                return ErrorResult.CONFIG_ERROR;
             }
             try
             {
@@ -276,39 +279,39 @@ namespace EdiabasLib
                     {
                         if (!CheckUsbBus())
                         {
-                            return false;
+                            return ErrorResult.USB_LOC_ERROR;
                         }
                         ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, (byte)(bitBangBits.DTR | bitBangBits.RTS | bitBangBits.TXD), Ftd2xx.FT_BITMODE_ASYNC_BITBANG);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
-                            return false;
+                            return ErrorResult.CONFIG_ERROR;
                         }
                         ftStatus = Ftd2xx.FT_SetDivisor(handleFtdi, bitBangDivisor);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
-                            return false;
+                            return ErrorResult.CONFIG_ERROR;
                         }
                         ftStatus = Ftd2xx.FT_SetTimeouts(handleFtdi, writeTimeout, writeTimeout);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
-                            return false;
+                            return ErrorResult.CONFIG_ERROR;
                         }
                         ftStatus = Ftd2xx.FT_SetUSBParameters(handleFtdi, bitBangRecBufferSize, 0x10000);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
-                            return false;
+                            return ErrorResult.CONFIG_ERROR;
                         }
                         ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_TX | Ftd2xx.FT_PURGE_RX);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
-                            return false;
+                            return ErrorResult.CONFIG_ERROR;
                         }
                         if (!SetBitBangOutput(bitBangOutput))
                         {
-                            return false;
+                            return ErrorResult.CONFIG_ERROR;
                         }
                     }
-                    return true;
+                    return ErrorResult.NO_ERROR;
                 }
 #endif
                 byte parityLocal;
@@ -335,7 +338,7 @@ namespace EdiabasLib
                         break;
 
                     default:
-                        return false;
+                        return ErrorResult.CONFIG_ERROR;
                 }
 
                 byte wordLengthLocal;
@@ -358,40 +361,40 @@ namespace EdiabasLib
                         break;
 
                     default:
-                        return false;
+                        return ErrorResult.CONFIG_ERROR;
                 }
 
                 ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x00, Ftd2xx.FT_BITMODE_RESET);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
-                    return false;
+                    return ErrorResult.CONFIG_ERROR;
                 }
                 ftStatus = Ftd2xx.FT_SetUSBParameters(handleFtdi, usbBufferSizeStd, usbBufferSizeStd);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
-                    return false;
+                    return ErrorResult.CONFIG_ERROR;
                 }
                 ftStatus = Ftd2xx.FT_SetBaudRate(handleFtdi, (uint)baudRate);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
-                    return false;
+                    return ErrorResult.CONFIG_ERROR;
                 }
                 ftStatus = Ftd2xx.FT_SetDataCharacteristics(handleFtdi, wordLengthLocal, Ftd2xx.FT_STOP_BITS_1, parityLocal);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
-                    return false;
+                    return ErrorResult.CONFIG_ERROR;
                 }
                 ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_TX | Ftd2xx.FT_PURGE_RX);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
-                    return false;
+                    return ErrorResult.CONFIG_ERROR;
                 }
             }
             catch (Exception)
             {
-                return false;
+                return ErrorResult.CONFIG_ERROR;
             }
-            return true;
+            return ErrorResult.NO_ERROR;
         }
 
         public static bool InterfaceSetDtr(bool dtr)
@@ -1090,7 +1093,7 @@ namespace EdiabasLib
             }
             try
             {
-                UInt32 deviceType;
+                Ftd2xx.FT_DEVICE deviceType;
                 UInt32 deviceId;
                 byte[] sernum = new byte[16];
                 byte[] desc = new byte[64];
@@ -1100,17 +1103,21 @@ namespace EdiabasLib
                 {
                     return false;
                 }
+                if (deviceType != Ftd2xx.FT_DEVICE.FT_DEVICE_232R)
+                {
+                    return false;
+                }
                 string serialNumber = System.Text.Encoding.Default.GetString(sernum).TrimEnd('\0');
 
-                usbBus.Refresh();
+                NativeUsbLib.UsbBus usbBus = new NativeUsbLib.UsbBus();
                 bool globalDeviceFound = false;
-                foreach (UsbController controller in usbBus.Controller)
+                foreach (NativeUsbLib.UsbController controller in usbBus.Controller)
                 {
-                    foreach (UsbHub hub in controller.Hubs)
+                    foreach (NativeUsbLib.UsbHub hub in controller.Hubs)
                     {
                         //Debug.WriteLine("RootHub");
                         bool deviceFound = false;
-                        int deviceCount = AnalyzeUsbHub(hub, serialNumber, ref deviceFound);
+                        int deviceCount = AnalyzeUsbHub(hub, deviceId, serialNumber, ref deviceFound);
                         if (deviceFound)
                         {
                             globalDeviceFound = true;
@@ -1134,24 +1141,28 @@ namespace EdiabasLib
             return true;
         }
 
-        private static int AnalyzeUsbHub(UsbHub usbHub, string serialNumber, ref bool deviceFound)
+        private static int AnalyzeUsbHub(NativeUsbLib.UsbHub usbHub, UInt32 deviceId, string serialNumber, ref bool deviceFound)
         {
             int deviceCount = 0;
-            foreach (Device device in usbHub.Devices)
+            foreach (NativeUsbLib.Device device in usbHub.Devices)
             {
-                if (device is UsbHub)
+                if (device is NativeUsbLib.UsbHub)
                 {
-                    deviceCount += AnalyzeUsbHub((UsbHub)device, serialNumber, ref deviceFound);
+                    deviceCount += AnalyzeUsbHub((NativeUsbLib.UsbHub)device, deviceId, serialNumber, ref deviceFound);
                 }
                 else
                 {
                     if (device.IsConnected)
                     {
                         deviceCount++;
-                        //Debug.WriteLine(string.Format("Device: {0} {1}", device.DeviceDescription, device.SerialNumber));
-                        if (string.Compare(serialNumber, device.SerialNumber, StringComparison.Ordinal) == 0)
+                        UInt32 localDeviceId = ((UInt32)device.DeviceDescriptor.idVendor << 16) + device.DeviceDescriptor.idProduct;
+                        //Debug.WriteLine(string.Format("Device: {0:X08} {1} {2}", localDeviceId, device.DeviceDescription, device.SerialNumber));
+                        if (localDeviceId == deviceId)
                         {
-                            deviceFound = true;
+                            if (string.Compare(serialNumber, device.SerialNumber, StringComparison.Ordinal) == 0)
+                            {
+                                deviceFound = true;
+                            }
                         }
                     }
                 }

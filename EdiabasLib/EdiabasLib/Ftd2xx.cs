@@ -131,6 +131,54 @@ namespace Ftdi
             public ushort wReserved1;    /* Fill for now.                   */
         } ;
 
+        // Device type identifiers for FT_GetDeviceInfoDetail and FT_GetDeviceInfo
+        /// <summary>
+        /// List of FTDI device types
+        /// </summary>
+        public enum FT_DEVICE : int
+        {
+            /// <summary>
+            /// FT232B or FT245B device
+            /// </summary>
+            FT_DEVICE_BM = 0,
+            /// <summary>
+            /// FT8U232AM or FT8U245AM device
+            /// </summary>
+            FT_DEVICE_AM,
+            /// <summary>
+            /// FT8U100AX device
+            /// </summary>
+            FT_DEVICE_100AX,
+            /// <summary>
+            /// Unknown device
+            /// </summary>
+            FT_DEVICE_UNKNOWN,
+            /// <summary>
+            /// FT2232 device
+            /// </summary>
+            FT_DEVICE_2232,
+            /// <summary>
+            /// FT232R or FT245R device
+            /// </summary>
+            FT_DEVICE_232R,
+            /// <summary>
+            /// FT2232H device
+            /// </summary>
+            FT_DEVICE_2232H,
+            /// <summary>
+            /// FT4232H device
+            /// </summary>
+            FT_DEVICE_4232H,
+            /// <summary>
+            /// FT232H device
+            /// </summary>
+            FT_DEVICE_232H,
+            /// <summary>
+            /// FT232X device
+            /// </summary>
+            FT_DEVICE_X_SERIES
+        };
+
         #endregion Stupid Marshals
 
         #region W32 Functions from the dll
@@ -235,7 +283,7 @@ namespace Ftdi
         public static extern FT_STATUS FT_SetUSBParameters(IntPtr ftHandle, UInt32 ulInTransferSize, UInt32 ulOutTransferSize);
 
         [DllImport("ftd2xx")]
-        public static extern FT_STATUS FT_GetDeviceInfo(IntPtr ftHandle, out UInt32 pftType, out UInt32 lpdwID, byte[] pcSerialNumber, byte[] pcDescription, IntPtr pvDummy);
+        public static extern FT_STATUS FT_GetDeviceInfo(IntPtr ftHandle, out FT_DEVICE pftType, out UInt32 lpdwID, byte[] pcSerialNumber, byte[] pcDescription, IntPtr pvDummy);
 
         [DllImport("ftd2xx")]
         public static extern FT_STATUS FT_SetResetPipeRetryCount(IntPtr ftHandle, UInt32 dwCount);
@@ -248,6 +296,9 @@ namespace Ftdi
 
         [DllImport("ftd2xx")]
         public static extern FT_STATUS FT_ResetPort(IntPtr ftHandle);
+
+        [DllImport("ftd2xx")]
+        public static extern FT_STATUS FT_GetDeviceInfoDetail(UInt32 dwIndex, out UInt32 lpdwFlags, out FT_DEVICE lpdwType, out UInt32 lpdwID, out UInt32 lpdwLocId, byte[] lpSerialNumber, byte[] lpDescription, out IntPtr pftHandle);
 
         #endregion Normal Functions
 

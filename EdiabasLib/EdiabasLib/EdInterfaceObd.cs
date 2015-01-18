@@ -11,7 +11,7 @@ namespace EdiabasLib
     {
         public delegate bool InterfaceConnectDelegate(string port);
         public delegate bool InterfaceDisconnectDelegate();
-        public delegate bool InterfaceSetConfigDelegate(int baudRate, int dataBits, Parity parity, bool allowBitBang);
+        public delegate EdFtdiInterface.ErrorResult InterfaceSetConfigDelegate(int baudRate, int dataBits, Parity parity, bool allowBitBang);
         public delegate bool InterfaceSetDtrDelegate(bool dtr);
         public delegate bool InterfaceSetRtsDelegate(bool rts);
         public delegate bool InterfaceGetDsrDelegate(out bool dsr);
@@ -505,10 +505,20 @@ namespace EdiabasLib
 
                 if (this.useExtInterfaceFunc)
                 {
-                    if (!InterfaceSetConfigFuncUse(baudRate, dataBits, parity, this.parAllowBitBang))
+                    EdFtdiInterface.ErrorResult ftdiResult = InterfaceSetConfigFuncUse(baudRate, dataBits, parity, this.parAllowBitBang);
+                    switch (ftdiResult)
                     {
-                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
-                        return;
+                        case EdFtdiInterface.ErrorResult.NO_ERROR:
+                            break;
+
+                        case EdFtdiInterface.ErrorResult.USB_LOC_ERROR:
+                            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Invalid USB bus configuration! Only one device per USB root hub allowed!");
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0063);
+                            return;
+
+                        default:
+                            ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
                     }
                     if (!InterfaceSetDtrFuncUse(stateDtr))
                     {
@@ -2126,7 +2136,7 @@ namespace EdiabasLib
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Establish connection");
                 if (this.useExtInterfaceFunc)
                 {
-                    if (!InterfaceSetConfigFuncUse(9600, 8, Parity.None, this.parAllowBitBang))
+                    if (InterfaceSetConfigFuncUse(9600, 8, Parity.None, this.parAllowBitBang) != EdFtdiInterface.ErrorResult.NO_ERROR)
                     {
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -2180,7 +2190,7 @@ namespace EdiabasLib
                     ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Baud rate 10.4k detected");
                     if (this.useExtInterfaceFunc)
                     {
-                        if (!InterfaceSetConfigFuncUse(10400, 8, Parity.None, this.parAllowBitBang))
+                        if (InterfaceSetConfigFuncUse(10400, 8, Parity.None, this.parAllowBitBang) != EdFtdiInterface.ErrorResult.NO_ERROR)
                         {
                             ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -2503,7 +2513,7 @@ namespace EdiabasLib
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Establish connection");
                 if (this.useExtInterfaceFunc)
                 {
-                    if (!InterfaceSetConfigFuncUse(9600, 8, Parity.None, this.parAllowBitBang))
+                    if (InterfaceSetConfigFuncUse(9600, 8, Parity.None, this.parAllowBitBang) != EdFtdiInterface.ErrorResult.NO_ERROR)
                     {
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -2573,7 +2583,7 @@ namespace EdiabasLib
                 ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Key bytes: {0:X02} {1:X02} {2:X02}", iso9141Buffer[0], iso9141Buffer[1], iso9141Buffer[2]);
                 if (this.useExtInterfaceFunc)
                 {
-                    if (!InterfaceSetConfigFuncUse(9600, 8, Parity.Even, this.parAllowBitBang))
+                    if (InterfaceSetConfigFuncUse(9600, 8, Parity.Even, this.parAllowBitBang) != EdFtdiInterface.ErrorResult.NO_ERROR)
                     {
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                         FinishConcept3();
@@ -2686,7 +2696,7 @@ namespace EdiabasLib
             this.ecuConnected = false;
             if (this.useExtInterfaceFunc)
             {
-                if (!InterfaceSetConfigFuncUse(10400, 8, Parity.None, this.parAllowBitBang))
+                if (InterfaceSetConfigFuncUse(10400, 8, Parity.None, this.parAllowBitBang) != EdFtdiInterface.ErrorResult.NO_ERROR)
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
