@@ -595,7 +595,28 @@ namespace EdiabasLib
             }
             try
             {
-                Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_RX);
+                Ftd2xx.FT_STATUS ftStatus;
+#if USE_BITBANG
+                if (bitBangMode)
+                {
+                    UInt32 rxBytes;
+                    ftStatus = Ftd2xx.FT_GetQueueStatus(handleFtdi, out rxBytes);
+                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    {
+                        return false;
+                    }
+                    if (rxBytes >= 0x10000)
+                    {   // restart communication after buffer overrun
+                        ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_RX);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
+                        }
+                        Thread.Sleep(10);
+                    }
+                }
+#endif
+                ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_RX);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
                     return false;
