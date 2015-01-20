@@ -49,6 +49,7 @@ namespace EdiabasLib
         protected string comPort = string.Empty;
         protected double dtrTimeCorrCom = 0.3;
         protected double dtrTimeCorrFtdi = 0.3;
+        protected int addRecTimeout = 20;
         protected bool enableFtdiBitBang = false;
         protected bool connected = false;
         protected const int echoTimeout = 100;
@@ -143,6 +144,12 @@ namespace EdiabasLib
                     this.dtrTimeCorrFtdi = EdiabasNet.StringToFloat(prop);
                 }
 
+                prop = ediabas.GetConfigProperty("ObdAddRecTimeout");
+                if (prop != null)
+                {
+                    this.addRecTimeout = (int)EdiabasNet.StringToValue(prop);
+                }
+
                 prop = ediabas.GetConfigProperty("ObdFtdiBitBang");
                 if (prop != null)
                 {
@@ -202,8 +209,8 @@ namespace EdiabasLib
                 }
 
                 ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, commParameter, 0, commParameter.Length,
-                    string.Format(culture, "{0} CommParameter Port={1}, CorrCom={2}, CorrFtdi={3}, BitBang={4}",
-                            InterfaceName, this.comPort, this.dtrTimeCorrCom, this.dtrTimeCorrFtdi, this.enableFtdiBitBang));
+                    string.Format(culture, "{0} CommParameter Port={1}, CorrCom={2}, CorrFtdi={3}, RecTimeout={4}, BitBang={5}",
+                            InterfaceName, this.comPort, this.dtrTimeCorrCom, this.dtrTimeCorrFtdi, this.addRecTimeout, this.enableFtdiBitBang));
 
                 int baudRate;
                 int dataBits = 8;
@@ -1449,15 +1456,15 @@ namespace EdiabasLib
             {
                 return true;
             }
+            // add extra delay for internal signal transitions
+            timeout += this.addRecTimeout;
+            timeoutTelEnd += this.addRecTimeout;
             if (this.useExtInterfaceFunc)
             {
                 return InterfaceReceiveDataFuncUse(receiveData, offset, length, timeout, timeoutTelEnd, logResponse ? ediabas : null);
             }
             try
             {
-                // add extra delay for internal signal transitions
-                timeout += 20;
-                timeoutTelEnd += 20;
                 // wait for first byte
                 int lastBytesToRead = 0;
                 stopWatch.Reset();
