@@ -846,9 +846,6 @@ namespace EdiabasLib
             {
                 timeoutTelEnd = readTimeoutCeMin;
             }
-#else
-            timeout += 20;
-            timeoutTelEnd += 20;
 #endif
             try
             {
