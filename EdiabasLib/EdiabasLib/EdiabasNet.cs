@@ -4576,7 +4576,8 @@ namespace EdiabasLib
                 catch (Exception ex)
                 {
                     LogString(ED_LOG_LEVEL.ERROR, "executeInitJob Exception: " + ex.Message);
-                    throw new Exception("executeInitJob", ex);
+                    SetError(ErrorCodes.EDIABAS_SYS_0010);
+                    return;
                 }
                 if (resultSets.Count > 1)
                 {
@@ -4595,7 +4596,7 @@ namespace EdiabasLib
                 }
 
                 LogString(ED_LOG_LEVEL.ERROR, "executeInitJob failed");
-                throw new Exception("executeInitJob: Initialization failed");
+                SetError(ErrorCodes.EDIABAS_SYS_0010);
             }
             finally
             {
