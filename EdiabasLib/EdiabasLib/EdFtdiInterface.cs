@@ -43,12 +43,12 @@ namespace EdiabasLib
             CDC = 0x40,     // inverted
             RI = 0x80,      // inverted
         }
-        // tested range: 1-59
-        // good values: 27, 29!, 33, 35
-        private const int bitBangDivisor = 29;  // only odd values allowed!
-        private const int bitBangRecBufferSize = 0x2000;
+        private const int bitBangRecBufferSize = 0x1000;
         private static bool bitBangMode = false;
         private static bitBangBits bitBangOutput = bitBangBits.DTR | bitBangBits.RTS | bitBangBits.TXD;
+        private static Ftd2xx.FT_DEVICE bitBangDeviceType;
+        private static UInt32 bitBangDeviceId;
+        private static string bitBangDeviceSerial;
         private static int bitBangBitsPerSendByte = 0;
         private static int bitBangBitsPerRecByte = 0;
         private static byte[] bitBangSendBuffer;
@@ -273,8 +273,37 @@ namespace EdiabasLib
                 }
                 if (bitBangMode)
                 {
-                    bitBangBitsPerSendByte = 12000000 / bitBangDivisor / currentBaudRate;
-                    bitBangBitsPerRecByte = 12000000 / 16 / currentBaudRate + 2;
+                    byte[] sernum = new byte[16];
+                    byte[] desc = new byte[64];
+
+                    ftStatus = Ftd2xx.FT_GetDeviceInfo(handleFtdi, out bitBangDeviceType, out bitBangDeviceId, sernum, desc, IntPtr.Zero);
+                    if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                    {
+                        return ErrorResult.CONFIG_ERROR;
+                    }
+                    bitBangDeviceSerial = System.Text.Encoding.Default.GetString(sernum).TrimEnd('\0');
+
+                    int divisor;
+                    switch (bitBangDeviceType)
+                    {
+                        case Ftd2xx.FT_DEVICE.FT_DEVICE_232R:
+                            // tested range: 1-59
+                            // good values: 27, 29!, 33, 35
+                            divisor = 29;  // only odd values allowed!
+                            bitBangBitsPerSendByte = 12000000 / divisor / currentBaudRate;
+                            bitBangBitsPerRecByte = 12000000 / 16 / currentBaudRate + 2;
+                            return ErrorResult.CONFIG_ERROR;
+
+                        case Ftd2xx.FT_DEVICE.FT_DEVICE_232H:
+                            divisor = 120000000 / 2 / 50 / currentBaudRate;
+                            bitBangBitsPerSendByte = 120000000 / 2 / divisor / currentBaudRate;
+                            bitBangBitsPerRecByte = bitBangBitsPerSendByte;
+                            break;
+
+                        default:
+                            return ErrorResult.CONFIG_ERROR;
+                    }
+
                     if (bitBangMode != bitBangOld)
                     {
                         if (!CheckUsbBus())
@@ -286,7 +315,7 @@ namespace EdiabasLib
                         {
                             return ErrorResult.CONFIG_ERROR;
                         }
-                        ftStatus = Ftd2xx.FT_SetDivisor(handleFtdi, bitBangDivisor);
+                        ftStatus = Ftd2xx.FT_SetDivisor(handleFtdi, (UInt16)divisor);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
                             return ErrorResult.CONFIG_ERROR;
@@ -655,10 +684,6 @@ namespace EdiabasLib
                     {
                         if (i == 0)
                         {
-                            for (int k = 0; k < bitBangBitsPerSendByte * 9; k++)
-                            {
-                                bitBangSendBuffer[dataLen++] = (byte)bitBangOutput;
-                            }
                             if (setDtr)
                             {
                                 bitBangOutput &= ~bitBangBits.DTR;       // DTR on
@@ -1109,24 +1134,12 @@ namespace EdiabasLib
             {
                 return false;
             }
+            if (bitBangDeviceType != Ftd2xx.FT_DEVICE.FT_DEVICE_232R)
+            {
+                return true;
+            }
             try
             {
-                Ftd2xx.FT_DEVICE deviceType;
-                UInt32 deviceId;
-                byte[] sernum = new byte[16];
-                byte[] desc = new byte[64];
-
-                Ftd2xx.FT_STATUS ftStatus = Ftd2xx.FT_GetDeviceInfo(handleFtdi, out deviceType, out deviceId, sernum, desc, IntPtr.Zero);
-                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                {
-                    return false;
-                }
-                if (deviceType != Ftd2xx.FT_DEVICE.FT_DEVICE_232R)
-                {
-                    return false;
-                }
-                string serialNumber = System.Text.Encoding.Default.GetString(sernum).TrimEnd('\0');
-
                 NativeUsbLib.UsbBus usbBus = new NativeUsbLib.UsbBus();
                 bool globalDeviceFound = false;
                 foreach (NativeUsbLib.UsbController controller in usbBus.Controller)
@@ -1135,7 +1148,7 @@ namespace EdiabasLib
                     {
                         //Debug.WriteLine("RootHub");
                         bool deviceFound = false;
-                        int deviceCount = AnalyzeUsbHub(hub, deviceId, serialNumber, ref deviceFound);
+                        int deviceCount = AnalyzeUsbHub(hub, bitBangDeviceId, bitBangDeviceSerial, ref deviceFound);
                         if (deviceFound)
                         {
                             globalDeviceFound = true;

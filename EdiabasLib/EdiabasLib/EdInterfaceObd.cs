@@ -362,7 +362,7 @@ namespace EdiabasLib
                         {   // DS2 uses DTR
                             this.parSendSetDtr = !adapterEcho;
                         }
-                        this.parAllowBitBang = false;
+                        this.parAllowBitBang = this.enableFtdiBitBang && this.parSendSetDtr;
                         break;
 
                     case 0x010C:    // KWP2000 BMW
@@ -420,7 +420,7 @@ namespace EdiabasLib
                             }
                         }
                         this.parSendSetDtr = !adapterEcho;
-                        this.parAllowBitBang = false;
+                        this.parAllowBitBang = this.enableFtdiBitBang && this.parSendSetDtr;
                         break;
 
                     case 0x010D:    // KWP2000*
@@ -450,7 +450,7 @@ namespace EdiabasLib
                         this.parTimeoutNR = (int)commParameter[7];
                         this.parRetryNR = (int)commParameter[6];
                         this.parSendSetDtr = !adapterEcho;
-                        this.parAllowBitBang = false;
+                        this.parAllowBitBang = this.enableFtdiBitBang && this.parSendSetDtr;
                         break;
 
                     case 0x010F:    // BMW-FAST
