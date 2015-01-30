@@ -295,7 +295,7 @@ namespace EdiabasLib
                             return ErrorResult.CONFIG_ERROR;
 
                         case Ftd2xx.FT_DEVICE.FT_DEVICE_232H:
-                            divisor = 120000000 / 2 / 50 / currentBaudRate;
+                            divisor = 120000000 / 2 / 50 / 9600;
                             bitBangBitsPerSendByte = 120000000 / 2 / divisor / currentBaudRate;
                             bitBangBitsPerRecByte = bitBangBitsPerSendByte;
                             break;
