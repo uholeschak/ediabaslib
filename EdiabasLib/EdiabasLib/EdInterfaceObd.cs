@@ -325,7 +325,7 @@ namespace EdiabasLib
                         this.parRegenTime = (int)commParameter[6];
                         this.parTimeoutTelEnd = (int)commParameter[7];
                         this.parSendSetDtr = true;
-                        this.parAllowBitBang = false;
+                        this.parAllowBitBang = this.enableFtdiBitBang;
                         this.parHasKeyBytes = true;
                         this.parSupportFrequent = true;
                         break;
