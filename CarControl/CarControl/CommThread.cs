@@ -216,9 +216,6 @@ namespace CarControl
             }
         }
 
-        private const int _readTimeoutMin = 500;    // min read timeout [ms]
-        private const int _writeTimeout = 500;      // write timeout [ms]
-
         private class EdiabasErrorRequest
         {
             private string deviceName;
@@ -531,11 +528,15 @@ namespace CarControl
             ediabas.EdInterfaceClass = edInterfaceObd;
             ediabas.AbortJobFunc = AbortEdiabasJob;
 
+#if WindowsCE
             string ecuPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase), "Ecu");
             if (ecuPath.StartsWith("\\Windows\\"))
             {
                 ecuPath = "\\UM\\Program Files\\CarControl\\Ecu";
             }
+#else
+            string ecuPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Ecu");
+#endif
             ediabas.SetConfigProperty("EcuPath", ecuPath);
 
             // public properties

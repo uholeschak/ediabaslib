@@ -49,7 +49,7 @@ namespace CarControl
         private void MainForm_Closed(object sender, EventArgs e)
         {
             _commThread.StopThread();
-            _commThread.DataUpdated -= new CommThread.DataUpdatedEventHandler(DataUpdated);
+            _commThread.DataUpdated -= DataUpdated;
             _commThread.Dispose();
             _commThread = null;
 
