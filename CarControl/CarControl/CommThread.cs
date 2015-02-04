@@ -516,7 +516,7 @@ namespace CarControl
         private Dictionary<string, EdiabasNet.ResultData> ediabasTempDict;
         private Dictionary<string, EdiabasNet.ResultData> ediabasDynDict;
 
-        public CommThread()
+        public CommThread(string ecuPath)
         {
             _stopThread = false;
             _threadRunning = false;
@@ -527,16 +527,6 @@ namespace CarControl
             EdInterfaceObd edInterfaceObd = new EdInterfaceObd();
             ediabas.EdInterfaceClass = edInterfaceObd;
             ediabas.AbortJobFunc = AbortEdiabasJob;
-
-#if WindowsCE
-            string ecuPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase), "Ecu");
-            if (ecuPath.StartsWith("\\Windows\\"))
-            {
-                ecuPath = "\\UM\\Program Files\\CarControl\\Ecu";
-            }
-#else
-            string ecuPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Ecu");
-#endif
             ediabas.SetConfigProperty("EcuPath", ecuPath);
 
             // public properties

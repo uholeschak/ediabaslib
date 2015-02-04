@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
+using System.Reflection;
 using System.Windows.Forms;
 using EdiabasLib;
 using Ftdi;
@@ -38,7 +39,12 @@ namespace CarControl
             UpdateWlan();
             UpdateLog();
             checkBoxLogFile.Checked = false;
-            _commThread = new CommThread();
+            string ecuPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase), "Ecu");
+            if (ecuPath.StartsWith("\\Windows\\"))
+            {
+                ecuPath = "\\UM\\Program Files\\CarControl\\Ecu";
+            }
+            _commThread = new CommThread(ecuPath);
             _commThread.DataUpdated += new CommThread.DataUpdatedEventHandler(DataUpdated);
             DataUpdatedInvoke = new DataUpdatedDelegate(DataUpdatedMethode);
             timerUpdate.Enabled = true;
