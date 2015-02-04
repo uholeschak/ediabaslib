@@ -897,7 +897,7 @@ namespace CarControl
                 {
                     logFile = logFileTemp;
                 }
-                _commThread.StartThread(selectedPort, logFile);
+                _commThread.StartThread(selectedPort, logFile, CommThread.SelectedDevice.Test);
                 UpdateSelectedDevice();
             }
             UpdateDisplay();

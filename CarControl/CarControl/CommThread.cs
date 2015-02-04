@@ -565,7 +565,7 @@ namespace CarControl
             }
         }
 
-        public bool StartThread(string comPort, string logFile)
+        public bool StartThread(string comPort, string logFile, SelectedDevice selectedDevice)
         {
             try
             {
@@ -582,6 +582,7 @@ namespace CarControl
                     ediabas.SetConfigProperty("IfhTrace", "0");
                 }
                 InitProperties();
+                Device = selectedDevice;
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
                 _workerThread.Start();
