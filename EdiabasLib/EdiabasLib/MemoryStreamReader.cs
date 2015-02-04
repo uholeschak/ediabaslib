@@ -16,7 +16,21 @@ namespace EdiabasLib
             this.fileLength = fileInfo.Length;
 
             FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.None);
+#if MMAP_PAGESIZE_BUG
+            mmFile = MemoryMappedFile.CreateFromFile(fs, null, 0, MemoryMappedFileAccess.Read, HandleInheritability.None, false);
+            System.Reflection.Assembly memMapAssem = typeof(MemoryMappedFile).Assembly;
+            Type type = memMapAssem.GetType("System.IO.MemoryMappedFiles.MemoryMapImpl");
+            if (type != null)
+            {
+                System.Reflection.FieldInfo info = type.GetField("pagesize", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+                if (info != null)
+                {
+                    info.SetValue(null, 4096);
+                }
+            }
+#else
             mmFile = MemoryMappedFile.CreateFromFile(fs, null, 0, MemoryMappedFileAccess.Read, null, HandleInheritability.None, false);
+#endif
             mmStream = mmFile.CreateViewStream(0, 0, MemoryMappedFileAccess.Read);
         }
 
