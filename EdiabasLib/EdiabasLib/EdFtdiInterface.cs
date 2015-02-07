@@ -5,7 +5,6 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO.Ports;
 using System.Threading;
 using Ftdi;
 
@@ -13,13 +12,6 @@ namespace EdiabasLib
 {
     static public class EdFtdiInterface
     {
-        public enum ErrorResult
-        {
-            NO_ERROR = 0,
-            CONFIG_ERROR,
-            USB_LOC_ERROR,
-        }
-
         public const string PortID = "FTDI";
         private const int writeTimeout = 500;       // write timeout [ms]
         private const int readTimeoutCeMin = 500;   // min read timeout for CE [ms]
@@ -29,7 +21,7 @@ namespace EdiabasLib
         private static IntPtr handleFtdi = (IntPtr)0;
         private static int currentBaudRate = 0;
         private static int currentWordLength = 0;
-        private static Parity currentParity = Parity.None;
+        private static EdInterfaceObd.SerialParity currentParity = EdInterfaceObd.SerialParity.None;
 #if USE_BITBANG
         [Flags]
         private enum bitBangBits
@@ -84,7 +76,7 @@ namespace EdiabasLib
             get { return currentWordLength; }
         }
 
-        public static Parity CurrentParity
+        public static EdInterfaceObd.SerialParity CurrentParity
         {
             get { return currentParity; }
         }
@@ -184,7 +176,7 @@ namespace EdiabasLib
                     return false;
                 }
                 currentWordLength = 8;
-                currentParity = Parity.None;
+                currentParity = EdInterfaceObd.SerialParity.None;
 
                 ftStatus = Ftd2xx.FT_SetTimeouts(handleFtdi, 0, writeTimeout);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
@@ -247,11 +239,11 @@ namespace EdiabasLib
             return true;
         }
 
-        public static ErrorResult InterfaceSetConfig(int baudRate, int dataBits, Parity parity, bool allowBitBang)
+        public static EdInterfaceObd.InterfaceErrorResult InterfaceSetConfig(int baudRate, int dataBits, EdInterfaceObd.SerialParity parity, bool allowBitBang)
         {
             if (handleFtdi == (IntPtr)0)
             {
-                return ErrorResult.CONFIG_ERROR;
+                return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
             }
             try
             {
@@ -279,7 +271,7 @@ namespace EdiabasLib
                     ftStatus = Ftd2xx.FT_GetDeviceInfo(handleFtdi, out bitBangDeviceType, out bitBangDeviceId, sernum, desc, IntPtr.Zero);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                     {
-                        return ErrorResult.CONFIG_ERROR;
+                        return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                     }
                     bitBangDeviceSerial = System.Text.Encoding.Default.GetString(sernum).TrimEnd('\0');
 
@@ -292,7 +284,7 @@ namespace EdiabasLib
                             divisor = 29;  // only odd values allowed!
                             bitBangBitsPerSendByte = 12000000 / divisor / currentBaudRate;
                             bitBangBitsPerRecByte = 12000000 / 16 / currentBaudRate + 2;
-                            return ErrorResult.CONFIG_ERROR;
+                            return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
 
                         case Ftd2xx.FT_DEVICE.FT_DEVICE_232H:
                             divisor = 120000000 / 2 / 50 / 9600;
@@ -301,73 +293,73 @@ namespace EdiabasLib
                             break;
 
                         default:
-                            return ErrorResult.CONFIG_ERROR;
+                            return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                     }
 
                     if (bitBangMode != bitBangOld)
                     {
                         if (!CheckUsbBus())
                         {
-                            return ErrorResult.USB_LOC_ERROR;
+                            return EdInterfaceObd.InterfaceErrorResult.USB_LOC_ERROR;
                         }
                         ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, (byte)(bitBangBits.DTR | bitBangBits.RTS | bitBangBits.TXD), Ftd2xx.FT_BITMODE_ASYNC_BITBANG);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
-                            return ErrorResult.CONFIG_ERROR;
+                            return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                         }
                         ftStatus = Ftd2xx.FT_SetDivisor(handleFtdi, (UInt16)divisor);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
-                            return ErrorResult.CONFIG_ERROR;
+                            return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                         }
                         ftStatus = Ftd2xx.FT_SetTimeouts(handleFtdi, writeTimeout, writeTimeout);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
-                            return ErrorResult.CONFIG_ERROR;
+                            return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                         }
                         ftStatus = Ftd2xx.FT_SetUSBParameters(handleFtdi, bitBangRecBufferSize, 0x10000);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
-                            return ErrorResult.CONFIG_ERROR;
+                            return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                         }
                         ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_TX | Ftd2xx.FT_PURGE_RX);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
-                            return ErrorResult.CONFIG_ERROR;
+                            return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                         }
                         if (!SetBitBangOutput(bitBangOutput))
                         {
-                            return ErrorResult.CONFIG_ERROR;
+                            return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                         }
                     }
-                    return ErrorResult.NO_ERROR;
+                    return EdInterfaceObd.InterfaceErrorResult.NO_ERROR;
                 }
 #endif
                 byte parityLocal;
                 switch (parity)
                 {
-                    case Parity.None:
+                    case EdInterfaceObd.SerialParity.None:
                         parityLocal = Ftd2xx.FT_PARITY_NONE;
                         break;
 
-                    case Parity.Even:
+                    case EdInterfaceObd.SerialParity.Even:
                         parityLocal = Ftd2xx.FT_PARITY_EVEN;
                         break;
 
-                    case Parity.Odd:
+                    case EdInterfaceObd.SerialParity.Odd:
                         parityLocal = Ftd2xx.FT_PARITY_ODD;
                         break;
 
-                    case Parity.Mark:
+                    case EdInterfaceObd.SerialParity.Mark:
                         parityLocal = Ftd2xx.FT_PARITY_MARK;
                         break;
 
-                    case Parity.Space:
+                    case EdInterfaceObd.SerialParity.Space:
                         parityLocal = Ftd2xx.FT_PARITY_SPACE;
                         break;
 
                     default:
-                        return ErrorResult.CONFIG_ERROR;
+                        return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                 }
 
                 byte wordLengthLocal;
@@ -390,40 +382,40 @@ namespace EdiabasLib
                         break;
 
                     default:
-                        return ErrorResult.CONFIG_ERROR;
+                        return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                 }
 
                 ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x00, Ftd2xx.FT_BITMODE_RESET);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
-                    return ErrorResult.CONFIG_ERROR;
+                    return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                 }
                 ftStatus = Ftd2xx.FT_SetUSBParameters(handleFtdi, usbBufferSizeStd, usbBufferSizeStd);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
-                    return ErrorResult.CONFIG_ERROR;
+                    return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                 }
                 ftStatus = Ftd2xx.FT_SetBaudRate(handleFtdi, (uint)baudRate);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
-                    return ErrorResult.CONFIG_ERROR;
+                    return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                 }
                 ftStatus = Ftd2xx.FT_SetDataCharacteristics(handleFtdi, wordLengthLocal, Ftd2xx.FT_STOP_BITS_1, parityLocal);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
-                    return ErrorResult.CONFIG_ERROR;
+                    return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                 }
                 ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_TX | Ftd2xx.FT_PURGE_RX);
                 if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                 {
-                    return ErrorResult.CONFIG_ERROR;
+                    return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                 }
             }
             catch (Exception)
             {
-                return ErrorResult.CONFIG_ERROR;
+                return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
             }
-            return ErrorResult.NO_ERROR;
+            return EdInterfaceObd.InterfaceErrorResult.NO_ERROR;
         }
 
         public static bool InterfaceSetDtr(bool dtr)
@@ -718,7 +710,7 @@ namespace EdiabasLib
                         }
                         switch (currentParity)
                         {
-                            case Parity.Even:
+                            case EdInterfaceObd.SerialParity.Even:
                                 {
                                     if (parity)
                                     {
@@ -735,7 +727,7 @@ namespace EdiabasLib
                                     break;
                                 }
 
-                            case Parity.Odd:
+                            case EdInterfaceObd.SerialParity.Odd:
                                 {
                                     if (parity)
                                     {
@@ -781,7 +773,7 @@ namespace EdiabasLib
                     return true;
                 }
 #endif
-                int bitCount = (currentParity == Parity.None) ? (currentWordLength + 2) : (currentWordLength + 3);
+                int bitCount = (currentParity == EdInterfaceObd.SerialParity.None) ? (currentWordLength + 2) : (currentWordLength + 3);
                 double byteTime = 1.0d / currentBaudRate * 1000 * bitCount;
                 if (setDtr)
                 {
@@ -793,17 +785,17 @@ namespace EdiabasLib
                     }
                     long startTime = Stopwatch.GetTimestamp();
 #if WindowsCE
-                            const int sendBlockSize = 4;
-                            for (int i = 0; i < length; i += sendBlockSize)
-                            {
-                                int sendLength = length - i;
-                                if (sendLength > sendBlockSize) sendLength = sendBlockSize;
-                                ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, sendData, sendLength, i, out bytesWritten);
-                                if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
-                                {
-                                    return false;
-                                }
-                            }
+                    const int sendBlockSize = 4;
+                    for (int i = 0; i < length; i += sendBlockSize)
+                    {
+                        int sendLength = length - i;
+                        if (sendLength > sendBlockSize) sendLength = sendBlockSize;
+                        ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, sendData, sendLength, i, out bytesWritten);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+                        {
+                            return false;
+                        }
+                    }
 #else
                     ftStatus = Ftd2xx.FT_WriteWrapper(handleFtdi, sendData, length, 0, out bytesWritten);
                     if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
@@ -1071,7 +1063,7 @@ namespace EdiabasLib
             bool dataValid = true;
             uint recData = 0;
             // don't read stop bit, so we are able to sync next time
-            int dataBits = (currentParity == Parity.None) ? (currentWordLength + 0) : (currentWordLength + 1);
+            int dataBits = (currentParity == EdInterfaceObd.SerialParity.None) ? (currentWordLength + 0) : (currentWordLength + 1);
             for (int i = 0; i < dataBits; i++)
             {
                 byte recVal = bitBangRecBuffer[recBufReadIndex][recBufReadPos];
@@ -1099,7 +1091,7 @@ namespace EdiabasLib
             }
             switch (currentParity)
             {
-                case Parity.Even:
+                case EdInterfaceObd.SerialParity.Even:
                     {
                         bool recParity = (recData & (1 << (dataBits - 1))) != 0;
                         if (recParity != parity)
@@ -1109,7 +1101,7 @@ namespace EdiabasLib
                         break;
                     }
 
-                case Parity.Odd:
+                case EdInterfaceObd.SerialParity.Odd:
                     {
                         bool recParity = (recData & (1 << (dataBits - 1))) == 0;
                         if (recParity != parity)

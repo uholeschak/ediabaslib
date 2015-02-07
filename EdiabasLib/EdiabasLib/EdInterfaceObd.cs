@@ -1,17 +1,44 @@
-﻿using System;
+﻿#if !Android
+#define USE_SERIAL_PORT
+#endif
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO.Ports;
 using System.Threading;
 
 namespace EdiabasLib
 {
     public class EdInterfaceObd : EdInterfaceBase
     {
+        public enum SerialParity
+        {
+            None = 0,
+            Odd = 1,
+            Even = 2,
+            Mark = 3,
+            Space = 4,
+        }
+
+        protected enum CommThreadCommands
+        {
+            Idle,               // do nothing
+            SingleTransmit,     // single data transmission
+            IdleTransmit,       // idle data transmission
+            Exit,               // exit thread
+        }
+
+        public enum InterfaceErrorResult
+        {
+            NO_ERROR = 0,
+            CONFIG_ERROR,
+            USB_LOC_ERROR,
+        }
+
         public delegate bool InterfaceConnectDelegate(string port);
         public delegate bool InterfaceDisconnectDelegate();
-        public delegate EdFtdiInterface.ErrorResult InterfaceSetConfigDelegate(int baudRate, int dataBits, Parity parity, bool allowBitBang);
+        public delegate InterfaceErrorResult InterfaceSetConfigDelegate(int baudRate, int dataBits, SerialParity parity, bool allowBitBang);
         public delegate bool InterfaceSetDtrDelegate(bool dtr);
         public delegate bool InterfaceSetRtsDelegate(bool rts);
         public delegate bool InterfaceGetDsrDelegate(out bool dsr);
@@ -23,21 +50,15 @@ namespace EdiabasLib
         protected delegate EdiabasNet.ErrorCodes IdleDelegate();
         protected delegate EdiabasNet.ErrorCodes FinishDelegate();
 
-        protected enum CommThreadCommands
-        {
-            Idle,               // do nothing
-            SingleTransmit,     // single data transmission
-            IdleTransmit,       // idle data transmission
-            Exit,               // exit thread
-        }
-
         private bool disposed = false;
         protected const int transBufferSize = 1024; // transmit buffer size
         protected static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
         protected static readonly byte[] byteArray0 = new byte[0];
         protected static readonly long tickResolMs = Stopwatch.Frequency / 1000;
-        protected static SerialPort serialPort;
+#if USE_SERIAL_PORT
+        protected static System.IO.Ports.SerialPort serialPort;
         protected static AutoResetEvent commReceiveEvent;
+#endif
         protected static AutoResetEvent commThreadReqEvent;
         protected static AutoResetEvent commThreadResEvent;
         protected static Thread commThread;
@@ -90,6 +111,9 @@ namespace EdiabasLib
         protected bool ecuConnected;
         protected long lastCommTick;
         protected long lastResponseTick;
+        protected int currentBaudRate;
+        protected SerialParity currentParity;
+        protected int currentDataBits;
         protected byte blockCounter;
         protected byte lastIso9141Cmd;
 
@@ -214,7 +238,7 @@ namespace EdiabasLib
 
                 int baudRate;
                 int dataBits = 8;
-                Parity parity;
+                SerialParity parity;
                 bool stateDtr = false;
                 bool stateRts = false;
                 uint concept = commParameter[0];
@@ -243,7 +267,7 @@ namespace EdiabasLib
                         commAnswerLen[1] = 0;
                         baudRate = (int)commParameter[1];
                         dataBits = 8;
-                        parity = Parity.Even;
+                        parity = SerialParity.Even;
                         stateDtr = false;
                         stateRts = false;
                         this.parTransmitFunc = TransDS2;
@@ -277,7 +301,7 @@ namespace EdiabasLib
                         commAnswerLen[1] = 0;
                         baudRate = 9600;
                         dataBits = 8;
-                        parity = Parity.None;
+                        parity = SerialParity.None;
                         stateDtr = false;
                         stateRts = false;
                         this.parTransmitFunc = TransIso9141;
@@ -314,7 +338,7 @@ namespace EdiabasLib
                         commAnswerLen[1] = 0;
                         baudRate = 9600;
                         dataBits = 8;
-                        parity = Parity.None;
+                        parity = SerialParity.None;
                         stateDtr = false;
                         stateRts = false;
                         this.parTransmitFunc = TransConcept3;
@@ -349,7 +373,7 @@ namespace EdiabasLib
                         commAnswerLen[1] = 0;
                         baudRate = (int)commParameter[1];
                         dataBits = 8;
-                        parity = Parity.Even;
+                        parity = SerialParity.Even;
                         stateDtr = false;
                         stateRts = false;
                         this.parTransmitFunc = TransDS2;
@@ -381,7 +405,7 @@ namespace EdiabasLib
                         }
                         baudRate = (int)commParameter[1];
                         dataBits = 8;
-                        parity = Parity.None;
+                        parity = SerialParity.None;
                         stateDtr = false;
                         stateRts = false;
                         this.parTransmitFunc = TransKwp2000Bmw;
@@ -439,7 +463,7 @@ namespace EdiabasLib
                         }
                         baudRate = (int)commParameter[1];
                         dataBits = 8;
-                        parity = Parity.Even;
+                        parity = SerialParity.Even;
                         stateDtr = false;
                         stateRts = false;
                         this.parTransmitFunc = TransKwp2000S;
@@ -469,7 +493,7 @@ namespace EdiabasLib
                         }
                         baudRate = (int)commParameter[1];
                         dataBits = 8;
-                        parity = Parity.None;
+                        parity = SerialParity.None;
                         stateDtr = adapterEcho;
                         stateRts = false;
                         this.parTransmitFunc = TransBmwFast;
@@ -490,7 +514,7 @@ namespace EdiabasLib
                         }
                         baudRate = 115200;
                         dataBits = 8;
-                        parity = Parity.None;
+                        parity = SerialParity.None;
                         stateDtr = adapterEcho;
                         stateRts = false;
                         this.parTransmitFunc = TransBmwFast;
@@ -512,13 +536,13 @@ namespace EdiabasLib
 
                 if (this.useExtInterfaceFunc)
                 {
-                    EdFtdiInterface.ErrorResult ftdiResult = InterfaceSetConfigFuncUse(baudRate, dataBits, parity, this.parAllowBitBang);
+                    InterfaceErrorResult ftdiResult = InterfaceSetConfigFuncUse(baudRate, dataBits, parity, this.parAllowBitBang);
                     switch (ftdiResult)
                     {
-                        case EdFtdiInterface.ErrorResult.NO_ERROR:
+                        case InterfaceErrorResult.NO_ERROR:
                             break;
 
-                        case EdFtdiInterface.ErrorResult.USB_LOC_ERROR:
+                        case InterfaceErrorResult.USB_LOC_ERROR:
                             ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Invalid USB bus configuration! Only one device per USB root hub allowed!");
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0063);
                             return;
@@ -540,27 +564,65 @@ namespace EdiabasLib
                 }
                 else
                 {
-                    if (serialPort.BaudRate != baudRate)
+#if USE_SERIAL_PORT
+                    try
                     {
-                        serialPort.BaudRate = baudRate;
+                        if (serialPort.BaudRate != baudRate)
+                        {
+                            serialPort.BaudRate = baudRate;
+                        }
+                        if (serialPort.DataBits != dataBits)
+                        {
+                            serialPort.DataBits = dataBits;
+                        }
+
+                        System.IO.Ports.Parity newParity = System.IO.Ports.Parity.None;
+                        switch (parity)
+                        {
+                            case SerialParity.None:
+                                newParity = System.IO.Ports.Parity.None;
+                                break;
+
+                            case SerialParity.Odd:
+                                newParity = System.IO.Ports.Parity.Odd;
+                                break;
+
+                            case SerialParity.Even:
+                                newParity = System.IO.Ports.Parity.Even;
+                                break;
+
+                            case SerialParity.Mark:
+                                newParity = System.IO.Ports.Parity.Mark;
+                                break;
+
+                            case SerialParity.Space:
+                                newParity = System.IO.Ports.Parity.Space;
+                                break;
+                        }
+                        if (serialPort.Parity != newParity)
+                        {
+                            serialPort.Parity = newParity;
+                        }
+                        if (serialPort.DtrEnable != stateDtr)
+                        {
+                            serialPort.DtrEnable = stateDtr;
+                        }
+                        if (serialPort.RtsEnable != stateRts)
+                        {
+                            serialPort.RtsEnable = stateRts;
+                        }
                     }
-                    if (serialPort.DataBits != dataBits)
+                    catch (Exception)
                     {
-                        serialPort.DataBits = dataBits;
+                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                     }
-                    if (serialPort.Parity != parity)
-                    {
-                        serialPort.Parity = parity;
-                    }
-                    if (serialPort.DtrEnable != stateDtr)
-                    {
-                        serialPort.DtrEnable = stateDtr;
-                    }
-                    if (serialPort.RtsEnable != stateRts)
-                    {
-                        serialPort.RtsEnable = stateRts;
-                    }
+#else
+                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+#endif
                 }
+                this.currentBaudRate = baudRate;
+                this.currentParity = parity;
+                this.currentDataBits = dataBits;
             }
         }
 
@@ -667,7 +729,11 @@ namespace EdiabasLib
                 {
                     return connected;
                 }
+#if USE_SERIAL_PORT
                 return serialPort.IsOpen;
+#else
+                return false;
+#endif
             }
         }
 
@@ -678,9 +744,11 @@ namespace EdiabasLib
 #else
             interfaceMutex = new Mutex(false, "EdiabasLib_InterfaceObd");
 #endif
-            serialPort = new SerialPort();
-            serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
+#if USE_SERIAL_PORT
+            serialPort = new System.IO.Ports.SerialPort();
+            serialPort.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(SerialDataReceived);
             commReceiveEvent = new AutoResetEvent(false);
+#endif
             commThreadReqEvent = new AutoResetEvent(false);
             commThreadResEvent = new AutoResetEvent(false);
             commThread = null;
@@ -721,6 +789,7 @@ namespace EdiabasLib
                 return false;
             }
 
+#if USE_SERIAL_PORT
             if (this.comPort.ToUpper(culture).StartsWith(EdFtdiInterface.PortID))
             {   // automtatic hook of FTDI functions
                 interfaceConnectFuncInt = EdFtdiInterface.InterfaceConnect;
@@ -735,6 +804,7 @@ namespace EdiabasLib
                 interfaceReceiveDataFuncInt = EdFtdiInterface.InterfaceReceiveData;
             }
             else
+#endif
             {
                 interfaceConnectFuncInt = null;
                 interfaceDisconnectFuncInt = null;
@@ -749,6 +819,10 @@ namespace EdiabasLib
             }
             UpdateUseExtInterfaceFunc();
 
+            this.currentBaudRate = 9600;
+            this.currentParity = SerialParity.None;
+            this.currentDataBits = 8;
+
             if (this.useExtInterfaceFunc)
             {
                 connected = InterfaceConnectFuncUse(this.comPort);
@@ -759,6 +833,7 @@ namespace EdiabasLib
                 return connected;
             }
 
+#if USE_SERIAL_PORT
             if (this.comPort.Length == 0)
             {
                 ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0018);
@@ -773,9 +848,9 @@ namespace EdiabasLib
                 serialPort.PortName = this.comPort;
                 serialPort.BaudRate = 9600;
                 serialPort.DataBits = 8;
-                serialPort.Parity = Parity.None;
-                serialPort.StopBits = StopBits.One;
-                serialPort.Handshake = Handshake.None;
+                serialPort.Parity = System.IO.Ports.Parity.None;
+                serialPort.StopBits = System.IO.Ports.StopBits.One;
+                serialPort.Handshake = System.IO.Ports.Handshake.None;
                 serialPort.DtrEnable = false;
                 serialPort.RtsEnable = false;
                 serialPort.ReadTimeout = 1;
@@ -789,6 +864,9 @@ namespace EdiabasLib
                 return false;
             }
             return true;
+#else
+            return false;
+#endif
         }
 
         public override bool InterfaceDisconnect()
@@ -801,11 +879,15 @@ namespace EdiabasLib
                 return InterfaceDisconnectFuncUse();
             }
 
+#if USE_SERIAL_PORT
             if (serialPort.IsOpen)
             {
                 serialPort.Close();
             }
             return true;
+#else
+            return false;
+#endif
         }
 
         public override bool TransmitData(byte[] sendData, out byte[] receiveData)
@@ -1165,12 +1247,23 @@ namespace EdiabasLib
         {
             if (!this.useExtInterfaceFunc)
             {
-                if (!serialPort.IsOpen)
+#if USE_SERIAL_PORT
+                try
                 {
-                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0019);
+                    if (!serialPort.IsOpen)
+                    {
+                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0019);
+                        return false;
+                    }
+                    return serialPort.DsrHolding;
+                }
+                catch (Exception)
+                {
                     return false;
                 }
-                return serialPort.DsrHolding;
+#else
+                return false;
+#endif
             }
 
             bool dsrState = false;
@@ -1182,10 +1275,12 @@ namespace EdiabasLib
             return dsrState;
         }
 
-        private static void SerialDataReceived(object sender, SerialDataReceivedEventArgs e)
+#if USE_SERIAL_PORT
+        private static void SerialDataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
             commReceiveEvent.Set();
         }
+#endif
 
         private bool EvalChecksumPar(uint value)
         {
@@ -1336,8 +1431,8 @@ namespace EdiabasLib
             {
                 if (interbyteTime > 0)
                 {
-                    int bitCount = (serialPort.Parity == Parity.None) ? (serialPort.DataBits + 2) : (serialPort.DataBits + 3);
-                    double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
+                    int bitCount = (this.currentParity == SerialParity.None) ? (this.currentDataBits + 2) : (this.currentDataBits + 3);
+                    double byteTime = 1.0d / this.currentBaudRate * 1000 * bitCount;
                     long interbyteTicks = (long)((interbyteTime + byteTime) * tickResolMs);
 
                     if (this.useExtInterfaceFunc)
@@ -1349,7 +1444,11 @@ namespace EdiabasLib
                     }
                     else
                     {
+#if USE_SERIAL_PORT
                         serialPort.DiscardInBuffer();
+#else
+                        return false;
+#endif
                     }
 
                     if (setDtr)
@@ -1410,10 +1509,11 @@ namespace EdiabasLib
                 }
                 return InterfaceSendDataFuncUse(sendData, length, setDtr, this.dtrTimeCorrFtdi);
             }
+#if USE_SERIAL_PORT
             try
             {
-                int bitCount = (serialPort.Parity == Parity.None) ? (serialPort.DataBits + 2) : (serialPort.DataBits + 3);
-                double byteTime = 1.0d / serialPort.BaudRate * 1000 * bitCount;
+                int bitCount = (this.currentParity == SerialParity.None) ? (this.currentDataBits + 2) : (this.currentDataBits + 3);
+                double byteTime = 1.0d / this.currentBaudRate * 1000 * bitCount;
                 if (setDtr)
                 {
                     long waitTime = (long)((this.dtrTimeCorrCom + byteTime * length) * tickResolMs);
@@ -1448,6 +1548,9 @@ namespace EdiabasLib
                 return false;
             }
             return true;
+#else
+            return false;
+#endif
         }
 
         protected bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, bool logResponse)
@@ -1463,6 +1566,7 @@ namespace EdiabasLib
             {
                 return InterfaceReceiveDataFuncUse(receiveData, offset, length, timeout, timeoutTelEnd, logResponse ? ediabas : null);
             }
+#if USE_SERIAL_PORT
             try
             {
                 // wait for first byte
@@ -1528,6 +1632,9 @@ namespace EdiabasLib
                 return false;
             }
             return true;
+#else
+            return false;
+#endif
         }
 
         protected bool ReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd)
@@ -1548,7 +1655,11 @@ namespace EdiabasLib
                 }
                 else
                 {
+#if USE_SERIAL_PORT
                     serialPort.DtrEnable = value;
+#else
+                    return false;
+#endif
                 }
             }
             catch (Exception)
@@ -1575,6 +1686,7 @@ namespace EdiabasLib
             }
             else
             {
+#if USE_SERIAL_PORT
                 try
                 {
                     if (setDtr) serialPort.DtrEnable = true;
@@ -1593,6 +1705,9 @@ namespace EdiabasLib
                 {
                     return false;
                 }
+#else
+                return false;
+#endif
             }
             return true;
         }
@@ -1621,6 +1736,7 @@ namespace EdiabasLib
             }
             else
             {
+#if USE_SERIAL_PORT
                 try
                 {
                     serialPort.DiscardInBuffer();
@@ -1645,6 +1761,9 @@ namespace EdiabasLib
                 {
                     return false;
                 }
+#else
+                return false;
+#endif
             }
             return true;
         }
@@ -1654,10 +1773,14 @@ namespace EdiabasLib
             receiveLength = 0;
             if (!this.useExtInterfaceFunc)
             {
+#if USE_SERIAL_PORT
                 if (!serialPort.IsOpen)
                 {
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
                 }
+#else
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+#endif
             }
 
             EdiabasNet.ErrorCodes errorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
@@ -2143,7 +2266,7 @@ namespace EdiabasLib
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Establish connection");
                 if (this.useExtInterfaceFunc)
                 {
-                    if (InterfaceSetConfigFuncUse(9600, 8, Parity.None, this.parAllowBitBang) != EdFtdiInterface.ErrorResult.NO_ERROR)
+                    if (InterfaceSetConfigFuncUse(9600, 8, SerialParity.None, this.parAllowBitBang) != InterfaceErrorResult.NO_ERROR)
                     {
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -2151,16 +2274,23 @@ namespace EdiabasLib
                 }
                 else
                 {
+#if USE_SERIAL_PORT
                     try
                     {
                         serialPort.BaudRate = 9600;
+                        serialPort.Parity = System.IO.Ports.Parity.None;
                     }
                     catch (Exception)
                     {
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
                     }
+#else
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+#endif
                 }
+                this.currentBaudRate = 9600;
+                this.currentParity = SerialParity.None;
 
                 if (!SetDtrSignal(false))
                 {
@@ -2197,7 +2327,7 @@ namespace EdiabasLib
                     ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Baud rate 10.4k detected");
                     if (this.useExtInterfaceFunc)
                     {
-                        if (InterfaceSetConfigFuncUse(10400, 8, Parity.None, this.parAllowBitBang) != EdFtdiInterface.ErrorResult.NO_ERROR)
+                        if (InterfaceSetConfigFuncUse(10400, 8, SerialParity.None, this.parAllowBitBang) != InterfaceErrorResult.NO_ERROR)
                         {
                             ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -2205,16 +2335,23 @@ namespace EdiabasLib
                     }
                     else
                     {
+#if USE_SERIAL_PORT
                         try
                         {
                             serialPort.BaudRate = 10400;
+                            serialPort.Parity = System.IO.Ports.Parity.None;
                         }
                         catch (Exception)
                         {
                             ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
                         }
+#else
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+#endif
                     }
+                    this.currentBaudRate = 10400;
+                    this.currentParity = SerialParity.None;
                 }
 
                 this.ecuConnected = true;
@@ -2520,7 +2657,7 @@ namespace EdiabasLib
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Establish connection");
                 if (this.useExtInterfaceFunc)
                 {
-                    if (InterfaceSetConfigFuncUse(9600, 8, Parity.None, this.parAllowBitBang) != EdFtdiInterface.ErrorResult.NO_ERROR)
+                    if (InterfaceSetConfigFuncUse(9600, 8, SerialParity.None, this.parAllowBitBang) != InterfaceErrorResult.NO_ERROR)
                     {
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -2528,17 +2665,23 @@ namespace EdiabasLib
                 }
                 else
                 {
+#if USE_SERIAL_PORT
                     try
                     {
                         serialPort.BaudRate = 9600;
-                        serialPort.Parity = Parity.None;
+                        serialPort.Parity = System.IO.Ports.Parity.None;
                     }
                     catch (Exception)
                     {
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
                     }
+#else
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+#endif
                 }
+                this.currentBaudRate = 9600;
+                this.currentParity = SerialParity.None;
 
                 if (!SetDtrSignal(false))
                 {
@@ -2590,7 +2733,7 @@ namespace EdiabasLib
                 ediabas.LogFormat(EdiabasNet.ED_LOG_LEVEL.IFH, "Key bytes: {0:X02} {1:X02} {2:X02}", iso9141Buffer[0], iso9141Buffer[1], iso9141Buffer[2]);
                 if (this.useExtInterfaceFunc)
                 {
-                    if (InterfaceSetConfigFuncUse(9600, 8, Parity.Even, this.parAllowBitBang) != EdFtdiInterface.ErrorResult.NO_ERROR)
+                    if (InterfaceSetConfigFuncUse(9600, 8, SerialParity.Even, this.parAllowBitBang) != InterfaceErrorResult.NO_ERROR)
                     {
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                         FinishConcept3();
@@ -2599,7 +2742,19 @@ namespace EdiabasLib
                 }
                 else
                 {
-                    serialPort.Parity = Parity.Even;
+#if USE_SERIAL_PORT
+                    try
+                    {
+                        serialPort.Parity = System.IO.Ports.Parity.Even;
+                    }
+                    catch (Exception)
+                    {
+                        ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set parity failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                    }
+#else
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+#endif
                 }
             }
             // receive a data block
@@ -2703,7 +2858,7 @@ namespace EdiabasLib
             this.ecuConnected = false;
             if (this.useExtInterfaceFunc)
             {
-                if (InterfaceSetConfigFuncUse(10400, 8, Parity.None, this.parAllowBitBang) != EdFtdiInterface.ErrorResult.NO_ERROR)
+                if (InterfaceSetConfigFuncUse(10400, 8, SerialParity.None, this.parAllowBitBang) != InterfaceErrorResult.NO_ERROR)
                 {
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -2711,9 +2866,23 @@ namespace EdiabasLib
             }
             else
             {
-                serialPort.BaudRate = 10400;
-                serialPort.Parity = Parity.None;
+#if USE_SERIAL_PORT
+                try
+                {
+                    serialPort.BaudRate = 10400;
+                    serialPort.Parity = System.IO.Ports.Parity.None;
+                }
+                catch (Exception)
+                {
+                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Set baud rate failed");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                }
+#else
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+#endif
             }
+            this.currentBaudRate = 10400;
+            this.currentParity = SerialParity.None;
 
             Thread.Sleep(10);
             this.lastCommTick = Stopwatch.GetTimestamp();
@@ -2737,7 +2906,9 @@ namespace EdiabasLib
                 if (disposing)
                 {
                     // Dispose managed resources.
+#if USE_SERIAL_PORT
                     serialPort.Dispose();
+#endif
                 }
                 InterfaceUnlock();
 
