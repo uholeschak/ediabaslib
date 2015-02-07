@@ -302,7 +302,8 @@ namespace EdiabasLib
                         {
                             return EdInterfaceObd.InterfaceErrorResult.USB_LOC_ERROR;
                         }
-                        ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, (byte)(bitBangBits.DTR | bitBangBits.RTS | bitBangBits.TXD), Ftd2xx.FT_BITMODE_ASYNC_BITBANG);
+                        // set al to input to prevent start glitch
+                        ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x00, Ftd2xx.FT_BITMODE_ASYNC_BITBANG);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
                             return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
@@ -322,12 +323,17 @@ namespace EdiabasLib
                         {
                             return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                         }
-                        ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_TX | Ftd2xx.FT_PURGE_RX);
+                        if (!SetBitBangOutput(bitBangOutput))
+                        {
+                            return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
+                        }
+                        ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, (byte)(bitBangBits.DTR | bitBangBits.RTS | bitBangBits.TXD), Ftd2xx.FT_BITMODE_ASYNC_BITBANG);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
                             return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                         }
-                        if (!SetBitBangOutput(bitBangOutput))
+                        ftStatus = Ftd2xx.FT_Purge(handleFtdi, Ftd2xx.FT_PURGE_TX | Ftd2xx.FT_PURGE_RX);
+                        if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
                         {
                             return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
                         }
