@@ -246,6 +246,7 @@ namespace EdiabasLib
                         }
                         return false;
                     }
+                    Thread.Sleep(10);
                 }
             }
             catch (Exception)
