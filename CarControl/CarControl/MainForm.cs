@@ -19,6 +19,7 @@ namespace CarControl
         private DataUpdatedDelegate DataUpdatedInvoke;
 
         private const string logFileTemp = "\\Temp\\ifh.trc";
+        private string ecuPath;
         private CommThread _commThread;
         private int _lastPortCount;
         private int _lastUSBCount;
@@ -39,13 +40,11 @@ namespace CarControl
             UpdateWlan();
             UpdateLog();
             checkBoxLogFile.Checked = false;
-            string ecuPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase), "Ecu");
+            ecuPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase), "Ecu");
             if (ecuPath.StartsWith("\\Windows\\"))
             {
                 ecuPath = "\\UM\\Program Files\\CarControl\\Ecu";
             }
-            _commThread = new CommThread(ecuPath);
-            _commThread.DataUpdated += new CommThread.DataUpdatedEventHandler(DataUpdated);
             DataUpdatedInvoke = new DataUpdatedDelegate(DataUpdatedMethode);
             timerUpdate.Enabled = true;
             tabControlDevice.SelectedIndex = 0;
@@ -54,10 +53,7 @@ namespace CarControl
 
         private void MainForm_Closed(object sender, EventArgs e)
         {
-            _commThread.StopThread();
-            _commThread.DataUpdated -= DataUpdated;
-            _commThread.Dispose();
-            _commThread = null;
+            StopCommThread();
 
             if (_powerOff)
             {
@@ -230,6 +226,43 @@ namespace CarControl
             }
         }
 
+        private bool StartCommThread(string selectedPort, string logFile)
+        {
+            try
+            {
+                if (_commThread == null)
+                {
+                    _commThread = new CommThread(ecuPath);
+                    _commThread.DataUpdated += new CommThread.DataUpdatedEventHandler(DataUpdated);
+                }
+                _commThread.StartThread(selectedPort, logFile, CommThread.SelectedDevice.DeviceAxis);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool StopCommThread()
+        {
+            if (_commThread != null)
+            {
+                try
+                {
+                    _commThread.StopThread();
+                    _commThread.DataUpdated -= DataUpdated;
+                    _commThread.Dispose();
+                    _commThread = null;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private void DataUpdated(object sender, EventArgs e)
         {
             BeginInvoke(DataUpdatedInvoke);
@@ -249,7 +282,7 @@ namespace CarControl
                 bool errorsValid = false;
                 bool testValid = false;
 
-                if (_commThread.ThreadRunning())
+                if (_commThread != null && _commThread.ThreadRunning())
                 {
                     switch (_commThread.Device)
                     {
@@ -391,7 +424,7 @@ namespace CarControl
                     pushButtonDown.Enabled = false;
                     pushButtonUp.ButtonState = false;
                     pushButtonUp.Enabled = false;
-                    _commThread.AxisOpMode = CommThread.OperationMode.OpModeStatus;
+                    if (_commThread != null) _commThread.AxisOpMode = CommThread.OperationMode.OpModeStatus;
                 }
 
                 if (motorDataValid)
@@ -883,9 +916,9 @@ namespace CarControl
 
         private void buttonConnect_Click(object sender, EventArgs e)
         {
-            if (_commThread.ThreadRunning())
+            if (_commThread != null && _commThread.ThreadRunning())
             {
-                _commThread.StopThread();
+                StopCommThread();
             }
             else
             {
@@ -897,7 +930,7 @@ namespace CarControl
                 {
                     logFile = logFileTemp;
                 }
-                _commThread.StartThread(selectedPort, logFile, CommThread.SelectedDevice.Test);
+                StartCommThread(selectedPort, logFile);
                 UpdateSelectedDevice();
             }
             UpdateDisplay();
@@ -906,7 +939,7 @@ namespace CarControl
 
         private void timerUpdate_Tick(object sender, EventArgs e)
         {
-            if (!_commThread.ThreadRunning())
+            if ((_commThread == null) || !_commThread.ThreadRunning())
             {
                 UpdatePorts();
             }
