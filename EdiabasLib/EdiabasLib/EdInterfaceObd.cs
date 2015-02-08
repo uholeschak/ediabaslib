@@ -804,6 +804,21 @@ namespace EdiabasLib
                 interfaceReceiveDataFuncInt = EdFtdiInterface.InterfaceReceiveData;
             }
             else
+#else
+            if (this.comPort.ToUpper(culture).StartsWith(EdBluetoothInterface.PortID))
+            {   // automtatic hook of bluetooth functions
+                interfaceConnectFuncInt = EdBluetoothInterface.InterfaceConnect;
+                interfaceDisconnectFuncInt = EdBluetoothInterface.InterfaceDisconnect;
+                interfaceSetConfigFuncInt = EdBluetoothInterface.InterfaceSetConfig;
+                interfaceSetDtrFuncInt = EdBluetoothInterface.InterfaceSetDtr;
+                interfaceSetRtsFuncInt = EdBluetoothInterface.InterfaceSetRts;
+                interfaceGetDsrFuncInt = EdBluetoothInterface.InterfaceGetDsr;
+                interfaceSetBreakFuncInt = EdBluetoothInterface.InterfaceSetBreak;
+                interfacePurgeInBufferFuncInt = EdBluetoothInterface.InterfacePurgeInBuffer;
+                interfaceSendDataFuncInt = EdBluetoothInterface.InterfaceSendData;
+                interfaceReceiveDataFuncInt = EdBluetoothInterface.InterfaceReceiveData;
+            }
+            else
 #endif
             {
                 interfaceConnectFuncInt = null;

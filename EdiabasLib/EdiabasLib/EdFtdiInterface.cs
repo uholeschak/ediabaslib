@@ -890,6 +890,10 @@ namespace EdiabasLib
                                 recLen++;
                                 break;
                             }
+                            if (recLen >= length)
+                            {
+                                break;
+                            }
                             if ((Stopwatch.GetTimestamp() - startTime) > currTimeout * tickResolMs)
                             {
                                 if (ediabasLog != null)
