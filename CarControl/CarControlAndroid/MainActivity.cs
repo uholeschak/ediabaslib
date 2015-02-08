@@ -23,7 +23,9 @@ namespace CarControlAndroid
             REQUEST_ENABLE_BT
         }
 
-        private string deviceAddress = "98:D3:31:40:13:56";
+        private string deviceAddress = string.Empty;
+        private string sharedAppName = "CarControl";
+        private string ecuPath;
         private BluetoothAdapter bluetoothAdapter = null;
         private CommThread commThread;
 
@@ -45,7 +47,9 @@ namespace CarControlAndroid
                 return;
             }
 
-            string ecuPath = Path.Combine (
+            GetSettings ();
+
+            ecuPath = Path.Combine (
                 System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal), "Ecu");
             // copy asset files
             CopyAssets (ecuPath);
@@ -78,10 +82,9 @@ namespace CarControlAndroid
         {
             base.OnDestroy ();
 
-            commThread.StopThread();
-            commThread.DataUpdated -= DataUpdated;
-            commThread.Dispose();
-            commThread = null;
+            StopCommThread ();
+
+            StoreSettings ();
         }
 
         protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
@@ -93,7 +96,7 @@ namespace CarControlAndroid
                 if (resultCode == Result.Ok)
                 {
                     // Get the device MAC address
-                    //deviceAddress = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                    deviceAddress = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
                 }
                 break;
 
@@ -109,17 +112,115 @@ namespace CarControlAndroid
             }
         }
 
+        public override bool OnCreateOptionsMenu (IMenu menu)
+        {
+            var inflater = MenuInflater;
+            inflater.Inflate(Resource.Menu.option_menu, menu);
+            return true;
+        }
+
+        public override bool OnPrepareOptionsMenu (IMenu menu)
+        {
+            bool commActive = commThread != null && commThread.ThreadRunning ();
+            IMenuItem scanMenu = menu.FindItem (Resource.Id.scan);
+            if (scanMenu != null)
+            {
+                scanMenu.SetEnabled (!commActive);
+            }
+            return base.OnPrepareOptionsMenu (menu);
+        }
+
+        public override bool OnOptionsItemSelected (IMenuItem item)
+        {
+            switch (item.ItemId) 
+            {
+                case Resource.Id.scan:
+                // Launch the DeviceListActivity to see devices and do scan
+                Intent serverIntent = new Intent(this, typeof(DeviceListActivity));
+                StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_DEVICE);
+                return true;
+            }
+            return base.OnOptionsItemSelected(item);
+        }
+
         protected void ButtonClick (object sender, EventArgs e)
         {
-            if (commThread.ThreadRunning())
+            if (commThread != null && commThread.ThreadRunning())
             {
-                commThread.StopThread();
+                StopCommThread ();
             }
             else
             {
-                commThread.StartThread("BLUETOOTH:" + deviceAddress, null, CommThread.SelectedDevice.Test);
+                StartCommThread ();
             }
             UpdateDisplay();
+        }
+
+        private bool StartCommThread()
+        {
+            try
+            {
+                if (commThread == null)
+                {
+                    commThread = new CommThread(ecuPath);
+                    commThread.DataUpdated += new CommThread.DataUpdatedEventHandler(DataUpdated);
+                }
+                commThread.StartThread("BLUETOOTH:" + deviceAddress, null, CommThread.SelectedDevice.Test);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool StopCommThread()
+        {
+            if (commThread != null)
+            {
+                try
+                {
+                    commThread.StopThread();
+                    commThread.DataUpdated -= DataUpdated;
+                    commThread.Dispose();
+                    commThread = null;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool GetSettings()
+        {
+            try
+            {
+                ISharedPreferences prefs = Application.Context.GetSharedPreferences(sharedAppName, FileCreationMode.Private);
+                deviceAddress = prefs.GetString("DeviceAddress", "98:D3:31:40:13:56");
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool StoreSettings()
+        {
+            try
+            {
+                ISharedPreferences prefs = Application.Context.GetSharedPreferences(sharedAppName, FileCreationMode.Private);
+                ISharedPreferencesEditor prefsEdit = prefs.Edit();
+                prefsEdit.PutString("DeviceAddress", deviceAddress);
+                prefsEdit.Commit();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
         private void DataUpdated(object sender, EventArgs e)
@@ -134,22 +235,18 @@ namespace CarControlAndroid
 
         private void DataUpdatedMethode()
         {
-            if (commThread == null)
-            {
-                return;
-            }
             Button buttonConnect = FindViewById<Button> (Resource.Id.buttonConnect);
             TextView textView = FindViewById<TextView> (Resource.Id.textViewResult);
 
             bool testValid = false;
-            if (commThread.ThreadRunning ())
+            if (commThread != null && commThread.ThreadRunning ())
             {
-                buttonConnect.Text = GetString (Resource.String.disconnect);
+                buttonConnect.Text = GetString (Resource.String.button_disconnect);
                 if (commThread.Device == CommThread.SelectedDevice.Test) testValid = true;
             }
             else
             {
-                buttonConnect.Text = GetString (Resource.String.connect);
+                buttonConnect.Text = GetString (Resource.String.button_connect);
             }
 
             if (testValid)

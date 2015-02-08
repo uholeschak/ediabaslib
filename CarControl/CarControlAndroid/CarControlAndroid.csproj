@@ -51,6 +51,7 @@
     <Compile Include="..\CarControl\CommThread.cs">
       <Link>CommThread.cs</Link>
     </Compile>
+    <Compile Include="DeviceListActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -61,10 +62,14 @@
     <AndroidResource Include="Resources\layout\Main.axml" />
     <AndroidResource Include="Resources\values\Strings.xml" />
     <AndroidResource Include="Resources\drawable\Icon.png" />
+    <AndroidResource Include="Resources\layout\device_list.axml" />
+    <AndroidResource Include="Resources\menu\option_menu.xml" />
+    <AndroidResource Include="Resources\layout\device_name.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Assets\Ecu\" />
+    <Folder Include="Resources\menu\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="..\..\Ecu\d_zgm.grp">

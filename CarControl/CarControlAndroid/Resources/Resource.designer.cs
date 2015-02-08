@@ -61,14 +61,32 @@ namespace CarControlAndroid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f050002
-			public const int buttonConnect = 2131034114;
+			// aapt resource value: 0x7f060007
+			public const int buttonConnect = 2131099655;
 			
-			// aapt resource value: 0x7f050000
-			public const int scrollViewText = 2131034112;
+			// aapt resource value: 0x7f060004
+			public const int button_scan = 2131099652;
 			
-			// aapt resource value: 0x7f050001
-			public const int textViewResult = 2131034113;
+			// aapt resource value: 0x7f060003
+			public const int new_devices = 2131099651;
+			
+			// aapt resource value: 0x7f060001
+			public const int paired_devices = 2131099649;
+			
+			// aapt resource value: 0x7f060008
+			public const int scan = 2131099656;
+			
+			// aapt resource value: 0x7f060005
+			public const int scrollViewText = 2131099653;
+			
+			// aapt resource value: 0x7f060006
+			public const int textViewResult = 2131099654;
+			
+			// aapt resource value: 0x7f060002
+			public const int title_new_devices = 2131099650;
+			
+			// aapt resource value: 0x7f060000
+			public const int title_paired_devices = 2131099648;
 			
 			static Id()
 			{
@@ -84,7 +102,13 @@ namespace CarControlAndroid
 		{
 			
 			// aapt resource value: 0x7f030000
-			public const int Main = 2130903040;
+			public const int device_list = 2130903040;
+			
+			// aapt resource value: 0x7f030001
+			public const int device_name = 2130903041;
+			
+			// aapt resource value: 0x7f030002
+			public const int Main = 2130903042;
 			
 			static Layout()
 			{
@@ -92,6 +116,22 @@ namespace CarControlAndroid
 			}
 			
 			private Layout()
+			{
+			}
+		}
+		
+		public partial class Menu
+		{
+			
+			// aapt resource value: 0x7f050000
+			public const int option_menu = 2131034112;
+			
+			static Menu()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Menu()
 			{
 			}
 		}
@@ -109,13 +149,37 @@ namespace CarControlAndroid
 			public const int bt_not_enabled_leaving = 2130968580;
 			
 			// aapt resource value: 0x7f040001
-			public const int connect = 2130968577;
+			public const int button_connect = 2130968577;
 			
 			// aapt resource value: 0x7f040002
-			public const int disconnect = 2130968578;
+			public const int button_disconnect = 2130968578;
+			
+			// aapt resource value: 0x7f04000c
+			public const int button_scan = 2130968588;
+			
+			// aapt resource value: 0x7f04000d
+			public const int connect = 2130968589;
 			
 			// aapt resource value: 0x7f040000
 			public const int library_name = 2130968576;
+			
+			// aapt resource value: 0x7f040009
+			public const int none_found = 2130968585;
+			
+			// aapt resource value: 0x7f040008
+			public const int none_paired = 2130968584;
+			
+			// aapt resource value: 0x7f040006
+			public const int scanning = 2130968582;
+			
+			// aapt resource value: 0x7f040007
+			public const int select_device = 2130968583;
+			
+			// aapt resource value: 0x7f04000b
+			public const int title_other_devices = 2130968587;
+			
+			// aapt resource value: 0x7f04000a
+			public const int title_paired_devices = 2130968586;
 			
 			static String()
 			{
