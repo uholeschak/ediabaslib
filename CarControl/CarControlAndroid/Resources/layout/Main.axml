@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <ScrollView
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scrollViewText"
+        android:layout_gravity="top"
+        android:layout_weight="1"
+        android:scrollbars="vertical">
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/textViewResult"
+            android:gravity="top"
+            android:layout_gravity="top"
+            android:editable="false"
+            android:visibility="visible"
+            android:singleLine="false"
+            android:cursorVisible="false"
+            android:bufferType="normal"
+            android:scrollbars="none" />
+    </ScrollView>
+    <Button
+        android:id="@+id/buttonConnect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/connect"
+        android:layout_gravity="bottom"
+        android:layout_weight="0" />
+</LinearLayout>

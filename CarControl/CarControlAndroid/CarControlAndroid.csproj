@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5FC5723C-A88B-46E3-957C-FF24F9D8212F}</ProjectGuid>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>CarControlAndroid</RootNamespace>
+    <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
+    <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
+    <AndroidResgenClass>Resource</AndroidResgenClass>
+    <AndroidApplication>True</AndroidApplication>
+    <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
+    <AssemblyName>EdiabasLibTest</AssemblyName>
+    <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AndroidLinkMode>None</AndroidLinkMode>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <ConsolePause>false</ConsolePause>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Mono.Android" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="MainActivity.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="..\CarControl\CommThread.cs">
+      <Link>CommThread.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AboutResources.txt" />
+    <None Include="Assets\AboutAssets.txt" />
+    <None Include="Properties\AndroidManifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\Main.axml" />
+    <AndroidResource Include="Resources\values\Strings.xml" />
+    <AndroidResource Include="Resources\drawable\Icon.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Assets\Ecu\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="..\..\Ecu\d_zgm.grp">
+      <Link>Assets\Ecu\d_zgm.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_tel.grp">
+      <Link>Assets\Ecu\d_tel.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_szl.grp">
+      <Link>Assets\Ecu\d_szl.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_sim.grp">
+      <Link>Assets\Ecu\d_sim.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_pdc.grp">
+      <Link>Assets\Ecu\d_pdc.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_motor.grp">
+      <Link>Assets\Ecu\d_motor.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_mostgw.grp">
+      <Link>Assets\Ecu\d_mostgw.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_mmi.grp">
+      <Link>Assets\Ecu\d_mmi.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_lm.grp">
+      <Link>Assets\Ecu\d_lm.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_kombi.grp">
+      <Link>Assets\Ecu\d_kombi.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_klima.grp">
+      <Link>Assets\Ecu\d_klima.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_kbm.grp">
+      <Link>Assets\Ecu\d_kbm.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_ekp.grp">
+      <Link>Assets\Ecu\d_ekp.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_ehc.grp">
+      <Link>Assets\Ecu\d_ehc.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_ec.grp">
+      <Link>Assets\Ecu\d_ec.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_dsc.grp">
+      <Link>Assets\Ecu\d_dsc.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_cid.grp">
+      <Link>Assets\Ecu\d_cid.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_cdc.grp">
+      <Link>Assets\Ecu\d_cdc.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_ccc.grp">
+      <Link>Assets\Ecu\d_ccc.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_cas.grp">
+      <Link>Assets\Ecu\d_cas.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_bzm.grp">
+      <Link>Assets\Ecu\d_bzm.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_ask.grp">
+      <Link>Assets\Ecu\d_ask.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_anttu.grp">
+      <Link>Assets\Ecu\d_anttu.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_ahm.grp">
+      <Link>Assets\Ecu\d_ahm.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d_rls.grp">
+      <Link>Assets\Ecu\d_rls.grp</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\ask_60.prg">
+      <Link>Assets\Ecu\ask_60.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\ant_60.prg">
+      <Link>Assets\Ecu\ant_60.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\ahm_e65.prg">
+      <Link>Assets\Ecu\ahm_e65.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\cccg60.prg">
+      <Link>Assets\Ecu\cccg60.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\ccca60.prg">
+      <Link>Assets\Ecu\ccca60.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\ccc_60.prg">
+      <Link>Assets\Ecu\ccc_60.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\ekpm60_3.prg">
+      <Link>Assets\Ecu\ekpm60_3.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\ehc_e65.prg">
+      <Link>Assets\Ecu\ehc_e65.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\ecl60.prg">
+      <Link>Assets\Ecu\ecl60.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\ihka60_2.prg">
+      <Link>Assets\Ecu\ihka60_2.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\kbm_60.prg">
+      <Link>Assets\Ecu\kbm_60.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\pdc_65_2.prg">
+      <Link>Assets\Ecu\pdc_65_2.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\szm_60.prg">
+      <Link>Assets\Ecu\szm_60.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\t_ausb.prg">
+      <Link>Assets\Ecu\t_ausb.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\kgm_60.prg">
+      <Link>Assets\Ecu\kgm_60.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\cid_90.prg">
+      <Link>Assets\Ecu\cid_90.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\cdc_e65.prg">
+      <Link>Assets\Ecu\cdc_e65.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\szl_60.prg">
+      <Link>Assets\Ecu\szl_60.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\dxc8_p.prg">
+      <Link>Assets\Ecu\dxc8_p.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\rlss70.prg">
+      <Link>Assets\Ecu\rlss70.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\d60m47a0.prg">
+      <Link>Assets\Ecu\d60m47a0.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\tele60_3.prg">
+      <Link>Assets\Ecu\tele60_3.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\lm_ahl_2.prg">
+      <Link>Assets\Ecu\lm_ahl_2.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\acsm60.prg">
+      <Link>Assets\Ecu\acsm60.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\e60.prg">
+      <Link>Assets\Ecu\e60.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\cas.prg">
+      <Link>Assets\Ecu\cas.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\komb60.prg">
+      <Link>Assets\Ecu\komb60.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\t_pcod.prg">
+      <Link>Assets\Ecu\t_pcod.prg</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\t_grtb.prg">
+      <Link>Assets\Ecu\t_grtb.prg</Link>
+    </AndroidAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\EdiabasLib\EdiabasLibAndroid\EdiabasLibAndroid.csproj">
+      <Project>{FEDD5F23-F769-44D2-9F06-39D532008197}</Project>
+      <Name>EdiabasLibAndroid</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
