@@ -229,8 +229,11 @@ namespace EdiabasLib
                 while (recLen < length)
                 {
                     int currTimeout = (recLen == 0) ? timeout : timeoutTelEnd;
-                    int bytesRead = bluetoothInStream.Read (receiveData, offset + recLen, length - recLen);
-                    recLen += (int)bytesRead;
+                    if (bluetoothInStream.IsDataAvailable())
+                    {
+                        int bytesRead = bluetoothInStream.Read (receiveData, offset + recLen, length - recLen);
+                        recLen += (int)bytesRead;
+                    }
                     if (recLen >= length)
                     {
                         break;
