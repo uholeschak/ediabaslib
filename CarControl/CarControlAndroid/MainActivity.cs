@@ -54,9 +54,6 @@ namespace CarControlAndroid
             // copy asset files
             CopyAssets (ecuPath);
 
-            commThread = new CommThread(ecuPath);
-            commThread.DataUpdated += new CommThread.DataUpdatedEventHandler(DataUpdated);
-
             // Get our button from the layout resource,
             // and attach an event to it
             Button button = FindViewById<Button> (Resource.Id.buttonConnect);
@@ -78,11 +75,18 @@ namespace CarControlAndroid
             }
         }
 
+        protected override void OnStop ()
+        {
+            base.OnStop ();
+
+            StopCommThread (false);
+        }
+
         protected override void OnDestroy ()
         {
             base.OnDestroy ();
 
-            StopCommThread ();
+            StopCommThread (true);
 
             StoreSettings ();
         }
@@ -147,7 +151,7 @@ namespace CarControlAndroid
         {
             if (commThread != null && commThread.ThreadRunning())
             {
-                StopCommThread ();
+                StopCommThread (false);
             }
             else
             {
@@ -164,6 +168,7 @@ namespace CarControlAndroid
                 {
                     commThread = new CommThread(ecuPath);
                     commThread.DataUpdated += new CommThread.DataUpdatedEventHandler(DataUpdated);
+                    commThread.ThreadTerminated += new CommThread.ThreadTerminatedEventHandler(ThreadTerminated);
                 }
                 commThread.StartThread("BLUETOOTH:" + deviceAddress, null, CommThread.SelectedDevice.Test);
             }
@@ -174,16 +179,20 @@ namespace CarControlAndroid
             return true;
         }
 
-        private bool StopCommThread()
+        private bool StopCommThread(bool wait)
         {
             if (commThread != null)
             {
                 try
                 {
-                    commThread.StopThread();
-                    commThread.DataUpdated -= DataUpdated;
-                    commThread.Dispose();
-                    commThread = null;
+                    commThread.StopThread(wait);
+                    if (wait)
+                    {
+                        commThread.DataUpdated -= DataUpdated;
+                        commThread.ThreadTerminated -= ThreadTerminated;
+                        commThread.Dispose();
+                        commThread = null;
+                    }
                 }
                 catch (Exception)
                 {
@@ -228,6 +237,17 @@ namespace CarControlAndroid
             RunOnUiThread(DataUpdatedMethode);
         }
 
+        private void ThreadTerminated(object sender, EventArgs e)
+        {
+            RunOnUiThread(ThreadTerminatedMethode);
+        }
+
+        private void ThreadTerminatedMethode()
+        {
+            StopCommThread(true);
+            UpdateDisplay();
+        }
+
         private void UpdateDisplay()
         {
             DataUpdatedMethode();
@@ -239,8 +259,13 @@ namespace CarControlAndroid
             TextView textView = FindViewById<TextView> (Resource.Id.textViewResult);
 
             bool testValid = false;
+            bool buttonEnable = true;
             if (commThread != null && commThread.ThreadRunning ())
             {
+                if (commThread.ThreadStopping ())
+                {
+                    buttonEnable = false;
+                }
                 buttonConnect.Text = GetString (Resource.String.button_disconnect);
                 if (commThread.Device == CommThread.SelectedDevice.Test) testValid = true;
             }
@@ -248,6 +273,7 @@ namespace CarControlAndroid
             {
                 buttonConnect.Text = GetString (Resource.String.button_connect);
             }
+            buttonConnect.Enabled = buttonEnable;
 
             if (testValid)
             {

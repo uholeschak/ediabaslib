@@ -12,6 +12,8 @@ namespace CarControl
     {
         public delegate void DataUpdatedEventHandler(object sender, EventArgs e);
         public event DataUpdatedEventHandler DataUpdated;
+        public delegate void ThreadTerminatedEventHandler(object sender, EventArgs e);
+        public event ThreadTerminatedEventHandler ThreadTerminated;
 
         public enum OperationMode
         {
@@ -567,9 +569,12 @@ namespace CarControl
 
         public bool StartThread(string comPort, string logFile, SelectedDevice selectedDevice)
         {
+            if (_workerThread != null)
+            {
+                return false;
+            }
             try
             {
-                StopThread();
                 _stopThread = false;
                 ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = comPort;
                 if (logFile != null)
@@ -595,13 +600,16 @@ namespace CarControl
             return true;
         }
 
-        public void StopThread()
+        public void StopThread(bool wait)
         {
             if (_workerThread != null)
             {
                 _stopThread = true;
-                _workerThread.Join();
-                _workerThread = null;
+                if (wait)
+                {
+                    _workerThread.Join();
+                    _workerThread = null;
+                }
             }
             ediabas.SetConfigProperty("IfhTrace", "0");
         }
@@ -610,6 +618,12 @@ namespace CarControl
         {
             if (_workerThread == null) return false;
             return _threadRunning;
+        }
+
+        public bool ThreadStopping()
+        {
+            if (_workerThread == null) return false;
+            return _stopThread;
         }
 
         private void ThreadFunc()
@@ -681,6 +695,7 @@ namespace CarControl
             }
             _threadRunning = false;
             DataUpdatedEvent();
+            ThreadTerminatedEvent();
         }
 
         private bool CommEhc(SelectedDevice device, EdiabasJobs ediabasJobs)
@@ -1348,6 +1363,11 @@ namespace CarControl
         private void DataUpdatedEvent()
         {
             if (DataUpdated != null) DataUpdated(this, EventArgs.Empty);
+        }
+
+        private void ThreadTerminatedEvent()
+        {
+            if (ThreadTerminated != null) ThreadTerminated(this, EventArgs.Empty);
         }
     }
 }
