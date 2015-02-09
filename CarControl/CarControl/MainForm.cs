@@ -17,6 +17,8 @@ namespace CarControl
     {
         private delegate void DataUpdatedDelegate();
         private DataUpdatedDelegate DataUpdatedInvoke;
+        private delegate void ThreadTerminatedDelegate();
+        private ThreadTerminatedDelegate ThreadTerminatedInvoke;
 
         private const string logFileTemp = "\\Temp\\ifh.trc";
         private string ecuPath;
@@ -46,6 +48,7 @@ namespace CarControl
                 ecuPath = "\\UM\\Program Files\\CarControl\\Ecu";
             }
             DataUpdatedInvoke = new DataUpdatedDelegate(DataUpdatedMethode);
+            ThreadTerminatedInvoke = new ThreadTerminatedDelegate(ThreadTerminatedMethode);
             timerUpdate.Enabled = true;
             tabControlDevice.SelectedIndex = 0;
             DataUpdatedMethode();
@@ -53,7 +56,7 @@ namespace CarControl
 
         private void MainForm_Closed(object sender, EventArgs e)
         {
-            StopCommThread();
+            StopCommThread(true);
 
             if (_powerOff)
             {
@@ -234,6 +237,7 @@ namespace CarControl
                 {
                     _commThread = new CommThread(ecuPath);
                     _commThread.DataUpdated += new CommThread.DataUpdatedEventHandler(DataUpdated);
+                    _commThread.ThreadTerminated += new CommThread.ThreadTerminatedEventHandler(ThreadTerminated);
                 }
                 _commThread.StartThread(selectedPort, logFile, CommThread.SelectedDevice.DeviceAxis);
             }
@@ -244,16 +248,20 @@ namespace CarControl
             return true;
         }
 
-        private bool StopCommThread()
+        private bool StopCommThread(bool wait)
         {
             if (_commThread != null)
             {
                 try
                 {
-                    _commThread.StopThread();
-                    _commThread.DataUpdated -= DataUpdated;
-                    _commThread.Dispose();
-                    _commThread = null;
+                    _commThread.StopThread(wait);
+                    if (wait)
+                    {
+                        _commThread.DataUpdated -= DataUpdated;
+                        _commThread.ThreadTerminated -= ThreadTerminated;
+                        _commThread.Dispose();
+                        _commThread = null;
+                    }
                 }
                 catch (Exception)
                 {
@@ -266,6 +274,17 @@ namespace CarControl
         private void DataUpdated(object sender, EventArgs e)
         {
             BeginInvoke(DataUpdatedInvoke);
+        }
+
+        private void ThreadTerminated(object sender, EventArgs e)
+        {
+            BeginInvoke(ThreadTerminatedInvoke);
+        }
+
+        private void ThreadTerminatedMethode()
+        {
+            StopCommThread(true);
+            UpdateDisplay();
         }
 
         private void DataUpdatedMethode()
@@ -281,9 +300,14 @@ namespace CarControl
                 bool ihkValid = false;
                 bool errorsValid = false;
                 bool testValid = false;
+                bool buttonEnable = true;
 
                 if (_commThread != null && _commThread.ThreadRunning())
                 {
+                    if (_commThread.ThreadStopping())
+                    {
+                        buttonEnable = false;
+                    }
                     switch (_commThread.Device)
                     {
                         case CommThread.SelectedDevice.DeviceAxis:
@@ -333,6 +357,8 @@ namespace CarControl
                     checkBoxConnected.Checked = false;
                     textBoxErrorCount.Text = "";
                 }
+                buttonConnect.Enabled = buttonEnable;
+
                 if (axisDataValid)
                 {
                     string tempText;
@@ -918,7 +944,7 @@ namespace CarControl
         {
             if (_commThread != null && _commThread.ThreadRunning())
             {
-                StopCommThread();
+                StopCommThread(false);
             }
             else
             {
