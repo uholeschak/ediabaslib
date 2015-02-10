@@ -46,7 +46,16 @@ namespace CarControlAndroid
 		{
 			
 			// aapt resource value: 0x7f020000
-			public const int Icon = 2130837504;
+			public const int ic_tab_test = 2130837504;
+			
+			// aapt resource value: 0x7f020001
+			public const int ic_tab_test_selected = 2130837505;
+			
+			// aapt resource value: 0x7f020002
+			public const int ic_tab_test_unselected = 2130837506;
+			
+			// aapt resource value: 0x7f020003
+			public const int Icon = 2130837507;
 			
 			static Drawable()
 			{
@@ -109,6 +118,9 @@ namespace CarControlAndroid
 			
 			// aapt resource value: 0x7f030002
 			public const int Main = 2130903042;
+			
+			// aapt resource value: 0x7f030003
+			public const int tabs = 2130903043;
 			
 			static Layout()
 			{
