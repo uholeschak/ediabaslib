@@ -1157,7 +1157,7 @@ namespace CarControl
             string resultText = string.Format("Update: {0}\r\n", ediabasUpdateCount++);
             ediabas.TimeMeas = 0;
             long timeDiff = 0;
-            foreach (EdiabasTestJob ediabasJob in ErrorJobList)
+            foreach (EdiabasTestJob ediabasJob in MotorJobList)
             {
                 if (_stopThread)
                 {

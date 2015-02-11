@@ -70,8 +70,8 @@ namespace CarControlAndroid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f060007
-			public const int buttonConnect = 2131099655;
+			// aapt resource value: 0x7f060008
+			public const int buttonConnect = 2131099656;
 			
 			// aapt resource value: 0x7f060004
 			public const int button_scan = 2131099652;
@@ -82,14 +82,17 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f060001
 			public const int paired_devices = 2131099649;
 			
-			// aapt resource value: 0x7f060008
-			public const int scan = 2131099656;
-			
-			// aapt resource value: 0x7f060005
-			public const int scrollViewText = 2131099653;
+			// aapt resource value: 0x7f060009
+			public const int scan = 2131099657;
 			
 			// aapt resource value: 0x7f060006
-			public const int textViewResult = 2131099654;
+			public const int scrollViewText = 2131099654;
+			
+			// aapt resource value: 0x7f060005
+			public const int tabTest = 2131099653;
+			
+			// aapt resource value: 0x7f060007
+			public const int textViewResult = 2131099655;
 			
 			// aapt resource value: 0x7f060002
 			public const int title_new_devices = 2131099650;
@@ -117,10 +120,7 @@ namespace CarControlAndroid
 			public const int device_name = 2130903041;
 			
 			// aapt resource value: 0x7f030002
-			public const int Main = 2130903042;
-			
-			// aapt resource value: 0x7f030003
-			public const int tabs = 2130903043;
+			public const int main = 2130903042;
 			
 			static Layout()
 			{

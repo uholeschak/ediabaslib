@@ -29,15 +29,17 @@ namespace CarControlAndroid
         private BluetoothAdapter bluetoothAdapter = null;
         private CommThread commThread;
         private Button buttonConnect;
+        private TextView textViewResult;
 
         protected override void OnCreate (Bundle bundle)
         {
             base.OnCreate (bundle);
 
             // Set our view from the "main" layout resource
-            SetContentView (Resource.Layout.tabs);
-            CreateTab(typeof(TestActivity), "test", "Test", Resource.Drawable.ic_tab_test);
+            SetContentView (Resource.Layout.main);
+            CreateTab("test", "Test");
             buttonConnect = FindViewById<Button> (Resource.Id.buttonConnect);
+            textViewResult = FindViewById<TextView> (Resource.Id.textViewResult);
 
             // Get local Bluetooth adapter
             bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
@@ -64,16 +66,11 @@ namespace CarControlAndroid
             UpdateDisplay ();
         }
 
-        private void CreateTab(Type activityType, string tag, string label, int drawableId )
+        private void CreateTab(string tag, string label)
         {
-            Intent intent = new Intent(this, activityType);
-            intent.AddFlags(ActivityFlags.NewTask);
-
             TabHost.TabSpec spec = TabHost.NewTabSpec(tag);
-            var drawableIcon = Resources.GetDrawable(drawableId);
-            spec.SetIndicator(label, drawableIcon);
-            spec.SetContent(intent);
-
+            spec.SetIndicator(label);
+            spec.SetContent(Resource.Id.tabTest);
             TabHost.AddTab(spec);
         }
 
@@ -296,9 +293,7 @@ namespace CarControlAndroid
                 }
             }
 
-            Intent broadcastIntent = new Intent(TestActivity.ACTION_UPDATE_TEXT);
-            broadcastIntent.PutExtra(TestActivity.INDENT_TEXT_INFO, textViewText);
-            SendOrderedBroadcast (broadcastIntent, null);
+            textViewResult.Text = textViewText;
         }
 
         private bool CopyAssets(string ecuPath)
@@ -369,70 +364,6 @@ namespace CarControlAndroid
                     }
                 }
                 return true;
-            }
-        }
-    }
-
-    [Activity]
-    public class TestActivity : Activity
-    {
-        public const string ACTION_UPDATE_TEXT = "UPDATE_TEXT";
-        public const string INDENT_TEXT_INFO = "TEXT";
-        private Receiver receiver;
-        private TextView textView;
-
-        protected override void OnCreate (Bundle savedInstanceState)
-        {
-            base.OnCreate (savedInstanceState);
-            SetContentView (Resource.Layout.Main);
-
-            textView = FindViewById<TextView> (Resource.Id.textViewResult);
-            receiver = new Receiver ();
-        }
-
-        protected override void OnStart ()
-        {
-            base.OnStart ();
-
-            var filter = new IntentFilter (ACTION_UPDATE_TEXT);
-            RegisterReceiver (receiver, filter);
-        }
-
-        protected override void OnStop ()
-        {
-            base.OnStop ();
-
-            UnregisterReceiver (receiver);
-        }
-
-        public void UpdateText(string text)
-        {
-            RunOnUiThread (() => {
-                if (textView != null)
-                {
-                    textView.Text = text;
-                }
-            });
-        }
-
-        public class Receiver : BroadcastReceiver
-        {
-            public override void OnReceive (Context context, Intent intent)
-            {
-                string action = intent.Action;
-                TestActivity activity = context as TestActivity;
-
-                if (action == ACTION_UPDATE_TEXT)
-                {
-                    if (activity != null)
-                    {
-                        string text = intent.Extras.GetString(INDENT_TEXT_INFO);
-                        if (text != null)
-                        {
-                            activity.UpdateText (text);
-                        }
-                    }
-                }
             }
         }
     }

@@ -59,13 +59,11 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\Main.axml" />
     <AndroidResource Include="Resources\values\Strings.xml" />
     <AndroidResource Include="Resources\drawable\Icon.png" />
     <AndroidResource Include="Resources\layout\device_list.axml" />
     <AndroidResource Include="Resources\menu\option_menu.xml" />
     <AndroidResource Include="Resources\layout\device_name.axml" />
-    <AndroidResource Include="Resources\layout\tabs.axml" />
     <AndroidResource Include="Resources\drawable\ic_tab_test.xml" />
     <AndroidResource Include="Resources\drawable-hdpi\ic_tab_test_selected.png" />
     <AndroidResource Include="Resources\drawable-hdpi\ic_tab_test_unselected.png" />
@@ -73,6 +71,7 @@
     <AndroidResource Include="Resources\drawable-mdpi\ic_tab_test_unselected.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\ic_tab_test_selected.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\ic_tab_test_unselected.png" />
+    <AndroidResource Include="Resources\layout\main.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>

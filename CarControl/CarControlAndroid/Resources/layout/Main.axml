@@ -3,24 +3,61 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <ScrollView
-        android:minWidth="25px"
-        android:minHeight="25px"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/scrollViewText"
-        android:scrollbars="vertical">
-        <TextView
+    <TabHost
+        android:id="@android:id/tabhost"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="top"
+        android:layout_weight="1">
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/textViewResult"
-            android:gravity="top"
-            android:layout_gravity="top"
-            android:editable="false"
-            android:visibility="visible"
-            android:singleLine="false"
-            android:cursorVisible="false"
-            android:bufferType="normal"
-            android:scrollbars="none" />
-    </ScrollView>
+            android:padding="5dp">
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:padding="5dp">
+                <LinearLayout
+                    android:id="@+id/tabTest"
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+                    <ScrollView
+                        android:minWidth="25px"
+                        android:minHeight="25px"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/scrollViewText"
+                        android:scrollbars="vertical">
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:id="@+id/textViewResult"
+                            android:gravity="top"
+                            android:layout_gravity="top"
+                            android:editable="false"
+                            android:visibility="visible"
+                            android:singleLine="false"
+                            android:cursorVisible="false"
+                            android:bufferType="normal"
+                            android:scrollbars="none"
+                            android:textSize="10dp" />
+                    </ScrollView>
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+    </TabHost>
+    <Button
+        android:id="@+id/buttonConnect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_connect"
+        android:layout_gravity="bottom"
+        android:layout_weight="0" />
 </LinearLayout>
