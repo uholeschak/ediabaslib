@@ -1,10 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="button_connect">Connect</string>
-    <string name="button_disconnect">Disconnect</string>
     <string name="app_name">Car Control</string>
+    <string name="tab_axis">Axis</string>
+    <string name="tab_test">Test</string>
+    <string name="button_connected">Connected</string>
+    <string name="button_disconnected">Disconnected</string>
+    <string name="button_axis_up">Up</string>
+    <string name="button_axis_down">Down</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving application.</string>
     <string name="bt_not_available">Bluetooth is not available.</string>
+
+    <!--  Axis -->
+    <string name="axis_mode_conveyor">Conveyor</string>
+    <string name="axis_mode_garage">Garage</string>
+    <string name="axis_mode_normal">Normal</string>
+    <string name="axis_mode_transport">Transport</string>
+    <string name="label_axis_mode">Axis mode:</string>
+    <string name="label_axis_left">Axis left:</string>
+    <string name="label_axis_right">Axis right:</string>
+    <string name="label_axis_bat_volt">Battery voltage [V]:</string>
+    <string name="label_axis_speed">Speed [km/h]:</string>
+    <string name="label_axis_valve_state">Output states:</string>
 
     <!--  DeviceListActivity -->
     <string name="scanning">scanning for devices...</string>
