@@ -300,13 +300,13 @@ namespace CarControl
                 bool ihkValid = false;
                 bool errorsValid = false;
                 bool testValid = false;
-                bool buttonEnable = true;
+                bool buttonConnectEnable = true;
 
                 if (_commThread != null && _commThread.ThreadRunning())
                 {
                     if (_commThread.ThreadStopping())
                     {
-                        buttonEnable = false;
+                        buttonConnectEnable = false;
                     }
                     switch (_commThread.Device)
                     {
@@ -357,7 +357,7 @@ namespace CarControl
                     checkBoxConnected.Checked = false;
                     textBoxErrorCount.Text = "";
                 }
-                buttonConnect.Enabled = buttonEnable;
+                buttonConnect.Enabled = buttonConnectEnable;
 
                 if (axisDataValid)
                 {
@@ -980,9 +980,13 @@ namespace CarControl
 
         private void pushButtonDown_Click(object sender, EventArgs e)
         {
+            if (_commThread == null)
+            {
+                return;
+            }
             if (pushButtonDown.ButtonState)
             {
-                _commThread.AxisOpMode = CommThread.OperationMode.OpModeDown;
+                if (_commThread != null) _commThread.AxisOpMode = CommThread.OperationMode.OpModeDown;
                 pushButtonUp.ButtonState = false;
             }
             else
@@ -993,6 +997,10 @@ namespace CarControl
 
         private void pushButtonUp_Click(object sender, EventArgs e)
         {
+            if (_commThread == null)
+            {
+                return;
+            }
             if (pushButtonUp.ButtonState)
             {
                 _commThread.AxisOpMode = CommThread.OperationMode.OpModeUp;
