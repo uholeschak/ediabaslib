@@ -14,7 +14,7 @@ using CarControl;
 
 namespace CarControlAndroid
 {
-    [Activity (Label = "@string/app_name", MainLauncher = true,
+    [Activity (Label = "@string/app_name", Theme = "@android:style/Theme.NoTitleBar", MainLauncher = true,
                ConfigurationChanges=Android.Content.PM.ConfigChanges.KeyboardHidden | Android.Content.PM.ConfigChanges.Orientation)]
     public class ActivityMain : TabActivity
     {
@@ -33,6 +33,8 @@ namespace CarControlAndroid
         private ToggleButton buttonAxisDown;
         private ToggleButton buttonAxisUp;
         private TextView textViewResultAxis;
+        private TextView textViewResultMotorPm;
+        private TextView textViewResultErrors;
         private TextView textViewResultTest;
 
         protected override void OnCreate (Bundle bundle)
@@ -42,11 +44,16 @@ namespace CarControlAndroid
             // Set our view from the "main" layout resource
             SetContentView (Resource.Layout.main);
             CreateTab("axis", GetString (Resource.String.tab_axis), Resource.Id.tabAxis);
+            CreateTab("motor_pm", GetString (Resource.String.tab_motor_pm), Resource.Id.tabMotorPm);
+            CreateTab("errors", GetString (Resource.String.tab_errors), Resource.Id.tabErrors);
             CreateTab("test", GetString (Resource.String.tab_test), Resource.Id.tabTest);
+
             buttonConnect = FindViewById<ToggleButton> (Resource.Id.buttonConnect);
             buttonAxisUp = FindViewById<ToggleButton> (Resource.Id.button_axis_up);
             buttonAxisDown = FindViewById<ToggleButton> (Resource.Id.button_axis_down);
             textViewResultAxis = FindViewById<TextView> (Resource.Id.textViewResultAxis);
+            textViewResultMotorPm = FindViewById<TextView> (Resource.Id.textViewResultMotorPm);
+            textViewResultErrors = FindViewById<TextView> (Resource.Id.textViewResultErrors);
             textViewResultTest = FindViewById<TextView> (Resource.Id.textViewResultTest);
 
             // Get local Bluetooth adapter
@@ -353,10 +360,23 @@ namespace CarControlAndroid
                 case 7:
                     commThread.Device = CommThread.SelectedDevice.DeviceErrors;
                     break;
-#endif
-                case 1:
+
+                case 8:
                     commThread.Device = CommThread.SelectedDevice.Test;
                     break;
+#else
+                case 1:
+                    commThread.Device = CommThread.SelectedDevice.DeviceMotorPM;
+                    break;
+
+                case 2:
+                    commThread.Device = CommThread.SelectedDevice.DeviceErrors;
+                    break;
+
+                case 3:
+                    commThread.Device = CommThread.SelectedDevice.Test;
+                    break;
+#endif
             }
         }
 
@@ -539,6 +559,43 @@ namespace CarControlAndroid
 
             if (motorPmValid)
             {
+                string outputText = string.Empty;
+                Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                lock (CommThread.DataLock)
+                {
+                    resultDict = commThread.EdiabasResultDict;
+                }
+                outputText += GetString (Resource.String.label_motor_pm_bat_cap) + " " +
+                    FormatResultDouble(resultDict, "STAT_BATTERIE_KAPAZITAET_WERT", "{0,3:0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_pm_soh) + " " +
+                    FormatResultDouble(resultDict, "STAT_SOH_WERT", "{0,5:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_pm_soc_fit) + " " +
+                    FormatResultDouble(resultDict, "STAT_SOC_FIT_WERT", "{0,5:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_pm_season_temp) + " " +
+                    FormatResultDouble(resultDict, "STAT_TEMP_SAISON_WERT", "{0,5:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_pm_cal_events) + " " +
+                    FormatResultDouble(resultDict, "STAT_KALIBRIER_EVENT_CNT_WERT", "{0,3:0}") + "\r\n";
+
+                outputText += GetString (Resource.String.label_motor_pm_soc_q) + " " +
+                    FormatResultDouble (resultDict, "STAT_Q_SOC_AKTUELL_WERT", "{0,6:0.0}");
+                outputText += " " + GetString (Resource.String.label_motor_pm_day1) + " " +
+                    FormatResultDouble(resultDict, "STAT_Q_SOC_VOR_1_TAG_WERT", "{0,6:0.0}") + "\r\n";
+
+                outputText += GetString (Resource.String.label_motor_pm_start_cap) + " " +
+                    FormatResultDouble(resultDict, "STAT_STARTFAEHIGKEITSGRENZE_AKTUELL_WERT", "{0,5:0.0}");
+                outputText += " " + GetString (Resource.String.label_motor_pm_day1) + " " +
+                    FormatResultDouble(resultDict, "STAT_STARTFAEHIGKEITSGRENZE_VOR_1_TAG_WERT", "{0,5:0.0}") + "\r\n";
+
+                outputText += GetString (Resource.String.label_motor_pm_soc_percent) + " " +
+                    FormatResultDouble(resultDict, "STAT_LADUNGSZUSTAND_AKTUELL_WERT", "{0,5:0.0}");
+                outputText += " " + GetString (Resource.String.label_motor_pm_day1) + " " +
+                    FormatResultDouble(resultDict, "STAT_LADUNGSZUSTAND_VOR_1_TAG_WERT", "{0,5:0.0}") + "\r\n";
+
+                textViewResultMotorPm.Text = outputText;
+            }
+            else
+            {
+                textViewResultMotorPm.Text = string.Empty;
             }
 
             if (cccNavValid)
@@ -551,6 +608,74 @@ namespace CarControlAndroid
 
             if (errorsValid)
             {
+                List<CommThread.EdiabasErrorReport> errorReportList = null;
+                lock (CommThread.DataLock)
+                {
+                    errorReportList = commThread.EdiabasErrorReportList;
+                }
+
+                string outputText = string.Empty;
+
+                if (errorReportList != null)
+                {
+                    foreach (CommThread.EdiabasErrorReport errorReport in errorReportList)
+                    {
+                        string message;
+                        int resId = Resources.GetIdentifier (errorReport.DeviceName, "string", PackageName);
+                        if (resId != 0)
+                        {
+                            message = string.Format ("{0}: ", GetString (resId));
+                        }
+                        else
+                        {
+                            message = string.Format ("{0}: ", errorReport.DeviceName);
+                        }
+                        if (errorReport.ErrorDict == null)
+                        {
+                            message += GetString (Resource.String.error_no_response);
+                        }
+                        else
+                        {
+                            message += "\r\n";
+                            message += FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
+                            message += ", ";
+                            message += FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
+                            string detailText = string.Empty;
+                            foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
+                            {
+                                string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
+                                if (kmText.Length > 0)
+                                {
+                                    if (detailText.Length > 0)
+                                    {
+                                        detailText += ", ";
+                                    }
+                                    detailText += kmText + "km";
+                                }
+                            }
+                            if (detailText.Length > 0)
+                            {
+                                message += "\r\n" + detailText;
+                            }
+                        }
+
+                        if (message.Length > 0)
+                        {
+                            message += "\r\n";
+
+                            outputText += message;
+                        }
+                    }
+                    if (outputText.Length == 0)
+                    {
+                        outputText = GetString (Resource.String.error_no_error);
+                    }
+                }
+                textViewResultErrors.Text = outputText;
+            }
+            else
+            {
+                textViewResultErrors.Text = string.Empty;
             }
 
             if (testValid)

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Car Control</string>
-    <string name="tab_axis">Axis</string>
-    <string name="tab_test">Test</string>
     <string name="button_connected">Connected</string>
     <string name="button_disconnected">Disconnected</string>
-    <string name="button_axis_up">Up</string>
-    <string name="button_axis_down">Down</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving application.</string>
     <string name="bt_not_available">Bluetooth is not available.</string>
 
     <!--  Axis -->
+    <string name="tab_axis">Axis</string>
+    <string name="button_axis_up">Up</string>
+    <string name="button_axis_down">Down</string>
     <string name="axis_mode_conveyor">Conveyor</string>
     <string name="axis_mode_garage">Garage</string>
     <string name="axis_mode_normal">Normal</string>
@@ -21,6 +20,52 @@
     <string name="label_axis_bat_volt">Battery voltage [V]:</string>
     <string name="label_axis_speed">Speed [km/h]:</string>
     <string name="label_axis_valve_state">Output states:</string>
+
+    <!--  Motor PM -->
+    <string name="tab_motor_pm">Power management</string>
+    <string name="label_motor_pm_bat_cap">Battery capacity [Ah]:</string>
+    <string name="label_motor_pm_soh">State of Health (SoH) [+/-50]:</string>
+    <string name="label_motor_pm_soc_fit">State of Charge (SoC Fit) [%]:</string>
+    <string name="label_motor_pm_season_temp">Season Temperature [°C]:</string>
+    <string name="label_motor_pm_cal_events">Calibration Events:</string>
+    <string name="label_motor_pm_day1">Day 1:</string>
+    <string name="label_motor_pm_soc_q">State of Charge (SoC) [Ah]:</string>
+    <string name="label_motor_pm_start_cap">Start capability [%]:</string>
+    <string name="label_motor_pm_soc_percent">State of Charge (SoC) [%]:</string>
+
+    <!--  Errors -->
+    <string name="tab_errors">Errors</string>
+    <string name="error_no_error">No errors present</string>
+    <string name="error_no_response">No response</string>
+
+    <string name="errorNameACSM">ACSM Crash security module</string>
+    <string name="errorNameAHM">AHM Trailer module</string>
+    <string name="errorNameCAS">CAS Car access system</string>
+    <string name="errorNameCCCA">CCC-A Applications</string>
+    <string name="errorNameCCCANT">CCC-ANT Antenna tuner</string>
+    <string name="errorNameCCCASK">CCC-ASK Audio system controller</string>
+    <string name="errorNameCCCBO">CCC-BO Front panel</string>
+    <string name="errorNameCCCGW">CCC-GW Gateway</string>
+    <string name="errorNameCDC">CDC CD disk charger</string>
+    <string name="errorNameCID">CID Central information display</string>
+    <string name="errorNameCON">CON Controller</string>
+    <string name="errorNameDDE">DDE Diesel elektronic</string>
+    <string name="errorNameDSC">DSC Dynamic stability control</string>
+    <string name="errorNameEHC">EHC Level control</string>
+    <string name="errorNameEKPS">EKPS Fuel pump control</string>
+    <string name="errorNameIHK">IHK Integrated heating climate automatic</string>
+    <string name="errorNameKBM">KBM Chassis basic module</string>
+    <string name="errorNameKGM">KGM Chassis gateway module</string>
+    <string name="errorNameKOMBI">KOMBI Combination instrument</string>
+    <string name="errorNameLM">LM Light module</string>
+    <string name="errorNamePDC">PDC Park distance control</string>
+    <string name="errorNameRLS">RLS Rain main beam sensor</string>
+    <string name="errorNameSZL">SZL Gearshift unit steering column</string>
+    <string name="errorNameSZM">SZM Gearshift unit center console</string>
+    <string name="errorNameTCU">TCU Telematic control unit</string>
+
+    <!--  Test -->
+    <string name="tab_test">Test</string>
 
     <!--  DeviceListActivity -->
     <string name="scanning">scanning for devices...</string>
