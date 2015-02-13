@@ -33,6 +33,7 @@ namespace CarControlAndroid
         private ToggleButton buttonAxisDown;
         private ToggleButton buttonAxisUp;
         private TextView textViewResultAxis;
+        private TextView textViewResultMotor;
         private TextView textViewResultMotorPm;
         private TextView textViewResultErrors;
         private TextView textViewResultTest;
@@ -44,6 +45,7 @@ namespace CarControlAndroid
             // Set our view from the "main" layout resource
             SetContentView (Resource.Layout.main);
             CreateTab("axis", GetString (Resource.String.tab_axis), Resource.Id.tabAxis);
+            CreateTab("motor", GetString (Resource.String.tab_motor), Resource.Id.tabMotor);
             CreateTab("motor_pm", GetString (Resource.String.tab_motor_pm), Resource.Id.tabMotorPm);
             CreateTab("errors", GetString (Resource.String.tab_errors), Resource.Id.tabErrors);
             CreateTab("test", GetString (Resource.String.tab_test), Resource.Id.tabTest);
@@ -52,6 +54,7 @@ namespace CarControlAndroid
             buttonAxisUp = FindViewById<ToggleButton> (Resource.Id.button_axis_up);
             buttonAxisDown = FindViewById<ToggleButton> (Resource.Id.button_axis_down);
             textViewResultAxis = FindViewById<TextView> (Resource.Id.textViewResultAxis);
+            textViewResultMotor = FindViewById<TextView> (Resource.Id.textViewResultMotor);
             textViewResultMotorPm = FindViewById<TextView> (Resource.Id.textViewResultMotorPm);
             textViewResultErrors = FindViewById<TextView> (Resource.Id.textViewResultErrors);
             textViewResultTest = FindViewById<TextView> (Resource.Id.textViewResultTest);
@@ -366,14 +369,18 @@ namespace CarControlAndroid
                     break;
 #else
                 case 1:
-                    commThread.Device = CommThread.SelectedDevice.DeviceMotorPM;
+                    commThread.Device = CommThread.SelectedDevice.DeviceMotor;
                     break;
 
                 case 2:
-                    commThread.Device = CommThread.SelectedDevice.DeviceErrors;
+                    commThread.Device = CommThread.SelectedDevice.DeviceMotorPM;
                     break;
 
                 case 3:
+                    commThread.Device = CommThread.SelectedDevice.DeviceErrors;
+                    break;
+
+                case 4:
                     commThread.Device = CommThread.SelectedDevice.Test;
                     break;
 #endif
@@ -547,6 +554,69 @@ namespace CarControlAndroid
 
             if (motorDataValid)
             {
+                string outputText = string.Empty;
+                bool found;
+                string dataText;
+                Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                lock (CommThread.DataLock)
+                {
+                    resultDict = commThread.EdiabasResultDict;
+                }
+                outputText += GetString (Resource.String.label_motor_bat_voltage) + " " +
+                    FormatResultDouble(resultDict, "STAT_UBATT_WERT", "{0,7:0.00}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_temp) + " " +
+                    FormatResultDouble(resultDict, "STAT_CTSCD_tClntLin_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_air_mass) + " " +
+                    FormatResultDouble(resultDict, "STAT_LUFTMASSE_WERT", "{0,7:0.00}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_intake_air_temp) + " " +
+                    FormatResultDouble(resultDict, "STAT_LADELUFTTEMPERATUR_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_ambient_temp) + " " +
+                    FormatResultDouble(resultDict, "STAT_UMGEBUNGSTEMPERATUR_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_boost_press_set) + " " +
+                    FormatResultDouble(resultDict, "STAT_LADEDRUCK_SOLL_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_boost_press_act) + " " +
+                    FormatResultDouble(resultDict, "STAT_LADEDRUCK_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_rail_press_set) + " " +
+                    FormatResultDouble(resultDict, "STAT_RAILDRUCK_SOLL_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_rail_press_act) + " " +
+                    FormatResultDouble(resultDict, "STAT_RAILDRUCK_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_air_mass_set) + " " +
+                    FormatResultDouble(resultDict, "STAT_LUFTMASSE_SOLL_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_air_mass_act) + " " +
+                    FormatResultDouble(resultDict, "STAT_LUFTMASSE_PRO_HUB_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_ambient_press) + " " +
+                    FormatResultDouble(resultDict, "STAT_UMGEBUNGSDRUCK_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_fuel_temp) + " " +
+                    FormatResultDouble(resultDict, "STAT_KRAFTSTOFFTEMPERATURK_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_temp_before_filter) + " " +
+                    FormatResultDouble(resultDict, "STAT_ABGASTEMPERATUR_VOR_PARTIKELFILTER_1_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_temp_before_cat) + " " +
+                    FormatResultDouble(resultDict, "STAT_ABGASTEMPERATUR_VOR_KATALYSATOR_WERT", "{0,6:0.0}") + "\r\n";
+
+                dataText = string.Format("{0,6:0.0}", GetResultDouble(resultDict, "STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT", out found) / 1000.0);
+                if (!found) dataText = string.Empty;
+                outputText += GetString (Resource.String.label_motor_part_filt_dist_since_regen) + " " + dataText + "\r\n";
+
+                outputText += GetString (Resource.String.label_motor_exhaust_press) + " " +
+                    FormatResultDouble(resultDict, "STAT_DIFFERENZDRUCK_UEBER_PARTIKELFILTER_WERT", "{0,6:0.0}") + "\r\n";
+
+                dataText = ((GetResultDouble(resultDict, "STAT_OELDRUCKSCHALTER_EIN_WERT", out found) > 0.5) && found) ? "1" : "0";
+                outputText += GetString (Resource.String.label_motor_oil_press_switch) + " " + dataText + "\r\n";
+
+                dataText = ((GetResultDouble(resultDict, "STAT_REGENERATIONSANFORDERUNG_WERT", out found) < 0.5) && found) ? "1" : "0";
+                outputText += GetString (Resource.String.label_motor_part_filt_request) + " " + dataText + "\r\n";
+
+                dataText = ((GetResultDouble(resultDict, "STAT_EGT_st_WERT", out found) > 1.5) && found) ? "1" : "0";
+                outputText += GetString (Resource.String.label_motor_part_filt_status) + " " + dataText + "\r\n";
+
+                dataText = ((GetResultDouble(resultDict, "STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT", out found) < 0.5) && found) ? "1" : "0";
+                outputText += GetString (Resource.String.label_motor_part_filt_unblocked) + " " + dataText + "\r\n";
+
+                textViewResultMotor.Text = outputText;
+            }
+            else
+            {
+                textViewResultMotor.Text = string.Empty;
             }
 
             if (motorDataUnevenRunningValid)

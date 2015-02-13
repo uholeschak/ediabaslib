@@ -70,8 +70,8 @@ namespace CarControlAndroid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f060013
-			public const int buttonConnect = 2131099667;
+			// aapt resource value: 0x7f060016
+			public const int buttonConnect = 2131099670;
 			
 			// aapt resource value: 0x7f060008
 			public const int button_axis_down = 2131099656;
@@ -88,44 +88,53 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f060001
 			public const int paired_devices = 2131099649;
 			
-			// aapt resource value: 0x7f060014
-			public const int scan = 2131099668;
+			// aapt resource value: 0x7f060017
+			public const int scan = 2131099671;
 			
 			// aapt resource value: 0x7f060006
 			public const int scrollViewTextAxis = 2131099654;
 			
-			// aapt resource value: 0x7f06000e
-			public const int scrollViewTextErrors = 2131099662;
+			// aapt resource value: 0x7f060011
+			public const int scrollViewTextErrors = 2131099665;
 			
 			// aapt resource value: 0x7f06000b
-			public const int scrollViewTextMotorPm = 2131099659;
+			public const int scrollViewTextMotor = 2131099659;
 			
-			// aapt resource value: 0x7f060011
-			public const int scrollViewTextTest = 2131099665;
+			// aapt resource value: 0x7f06000e
+			public const int scrollViewTextMotorPm = 2131099662;
+			
+			// aapt resource value: 0x7f060014
+			public const int scrollViewTextTest = 2131099668;
 			
 			// aapt resource value: 0x7f060005
 			public const int tabAxis = 2131099653;
 			
-			// aapt resource value: 0x7f06000d
-			public const int tabErrors = 2131099661;
+			// aapt resource value: 0x7f060010
+			public const int tabErrors = 2131099664;
 			
 			// aapt resource value: 0x7f06000a
-			public const int tabMotorPm = 2131099658;
+			public const int tabMotor = 2131099658;
 			
-			// aapt resource value: 0x7f060010
-			public const int tabTest = 2131099664;
+			// aapt resource value: 0x7f06000d
+			public const int tabMotorPm = 2131099661;
+			
+			// aapt resource value: 0x7f060013
+			public const int tabTest = 2131099667;
 			
 			// aapt resource value: 0x7f060007
 			public const int textViewResultAxis = 2131099655;
 			
-			// aapt resource value: 0x7f06000f
-			public const int textViewResultErrors = 2131099663;
+			// aapt resource value: 0x7f060012
+			public const int textViewResultErrors = 2131099666;
 			
 			// aapt resource value: 0x7f06000c
-			public const int textViewResultMotorPm = 2131099660;
+			public const int textViewResultMotor = 2131099660;
 			
-			// aapt resource value: 0x7f060012
-			public const int textViewResultTest = 2131099666;
+			// aapt resource value: 0x7f06000f
+			public const int textViewResultMotorPm = 2131099663;
+			
+			// aapt resource value: 0x7f060015
+			public const int textViewResultTest = 2131099669;
 			
 			// aapt resource value: 0x7f060002
 			public const int title_new_devices = 2131099650;
@@ -217,92 +226,92 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f040003
 			public const int button_disconnected = 2130968579;
 			
-			// aapt resource value: 0x7f040040
-			public const int button_scan = 2130968640;
+			// aapt resource value: 0x7f040056
+			public const int button_scan = 2130968662;
 			
-			// aapt resource value: 0x7f040041
-			public const int connect = 2130968641;
-			
-			// aapt resource value: 0x7f040020
-			public const int errorNameACSM = 2130968608;
-			
-			// aapt resource value: 0x7f040021
-			public const int errorNameAHM = 2130968609;
-			
-			// aapt resource value: 0x7f040022
-			public const int errorNameCAS = 2130968610;
-			
-			// aapt resource value: 0x7f040023
-			public const int errorNameCCCA = 2130968611;
-			
-			// aapt resource value: 0x7f040024
-			public const int errorNameCCCANT = 2130968612;
-			
-			// aapt resource value: 0x7f040025
-			public const int errorNameCCCASK = 2130968613;
-			
-			// aapt resource value: 0x7f040026
-			public const int errorNameCCCBO = 2130968614;
-			
-			// aapt resource value: 0x7f040027
-			public const int errorNameCCCGW = 2130968615;
-			
-			// aapt resource value: 0x7f040028
-			public const int errorNameCDC = 2130968616;
-			
-			// aapt resource value: 0x7f040029
-			public const int errorNameCID = 2130968617;
-			
-			// aapt resource value: 0x7f04002a
-			public const int errorNameCON = 2130968618;
-			
-			// aapt resource value: 0x7f04002b
-			public const int errorNameDDE = 2130968619;
-			
-			// aapt resource value: 0x7f04002c
-			public const int errorNameDSC = 2130968620;
-			
-			// aapt resource value: 0x7f04002d
-			public const int errorNameEHC = 2130968621;
-			
-			// aapt resource value: 0x7f04002e
-			public const int errorNameEKPS = 2130968622;
-			
-			// aapt resource value: 0x7f04002f
-			public const int errorNameIHK = 2130968623;
-			
-			// aapt resource value: 0x7f040030
-			public const int errorNameKBM = 2130968624;
-			
-			// aapt resource value: 0x7f040031
-			public const int errorNameKGM = 2130968625;
-			
-			// aapt resource value: 0x7f040032
-			public const int errorNameKOMBI = 2130968626;
-			
-			// aapt resource value: 0x7f040033
-			public const int errorNameLM = 2130968627;
-			
-			// aapt resource value: 0x7f040034
-			public const int errorNamePDC = 2130968628;
-			
-			// aapt resource value: 0x7f040035
-			public const int errorNameRLS = 2130968629;
+			// aapt resource value: 0x7f040057
+			public const int connect = 2130968663;
 			
 			// aapt resource value: 0x7f040036
-			public const int errorNameSZL = 2130968630;
+			public const int errorNameACSM = 2130968630;
 			
 			// aapt resource value: 0x7f040037
-			public const int errorNameSZM = 2130968631;
+			public const int errorNameAHM = 2130968631;
 			
 			// aapt resource value: 0x7f040038
-			public const int errorNameTCU = 2130968632;
+			public const int errorNameCAS = 2130968632;
 			
-			// aapt resource value: 0x7f04001e
-			public const int error_no_error = 2130968606;
+			// aapt resource value: 0x7f040039
+			public const int errorNameCCCA = 2130968633;
 			
-			// aapt resource value: 0x7f04001f
-			public const int error_no_response = 2130968607;
+			// aapt resource value: 0x7f04003a
+			public const int errorNameCCCANT = 2130968634;
+			
+			// aapt resource value: 0x7f04003b
+			public const int errorNameCCCASK = 2130968635;
+			
+			// aapt resource value: 0x7f04003c
+			public const int errorNameCCCBO = 2130968636;
+			
+			// aapt resource value: 0x7f04003d
+			public const int errorNameCCCGW = 2130968637;
+			
+			// aapt resource value: 0x7f04003e
+			public const int errorNameCDC = 2130968638;
+			
+			// aapt resource value: 0x7f04003f
+			public const int errorNameCID = 2130968639;
+			
+			// aapt resource value: 0x7f040040
+			public const int errorNameCON = 2130968640;
+			
+			// aapt resource value: 0x7f040041
+			public const int errorNameDDE = 2130968641;
+			
+			// aapt resource value: 0x7f040042
+			public const int errorNameDSC = 2130968642;
+			
+			// aapt resource value: 0x7f040043
+			public const int errorNameEHC = 2130968643;
+			
+			// aapt resource value: 0x7f040044
+			public const int errorNameEKPS = 2130968644;
+			
+			// aapt resource value: 0x7f040045
+			public const int errorNameIHK = 2130968645;
+			
+			// aapt resource value: 0x7f040046
+			public const int errorNameKBM = 2130968646;
+			
+			// aapt resource value: 0x7f040047
+			public const int errorNameKGM = 2130968647;
+			
+			// aapt resource value: 0x7f040048
+			public const int errorNameKOMBI = 2130968648;
+			
+			// aapt resource value: 0x7f040049
+			public const int errorNameLM = 2130968649;
+			
+			// aapt resource value: 0x7f04004a
+			public const int errorNamePDC = 2130968650;
+			
+			// aapt resource value: 0x7f04004b
+			public const int errorNameRLS = 2130968651;
+			
+			// aapt resource value: 0x7f04004c
+			public const int errorNameSZL = 2130968652;
+			
+			// aapt resource value: 0x7f04004d
+			public const int errorNameSZM = 2130968653;
+			
+			// aapt resource value: 0x7f04004e
+			public const int errorNameTCU = 2130968654;
+			
+			// aapt resource value: 0x7f040034
+			public const int error_no_error = 2130968628;
+			
+			// aapt resource value: 0x7f040035
+			public const int error_no_response = 2130968629;
 			
 			// aapt resource value: 0x7f040010
 			public const int label_axis_bat_volt = 2130968592;
@@ -323,64 +332,130 @@ namespace CarControlAndroid
 			public const int label_axis_valve_state = 2130968594;
 			
 			// aapt resource value: 0x7f040014
-			public const int label_motor_pm_bat_cap = 2130968596;
-			
-			// aapt resource value: 0x7f040018
-			public const int label_motor_pm_cal_events = 2130968600;
-			
-			// aapt resource value: 0x7f040019
-			public const int label_motor_pm_day1 = 2130968601;
-			
-			// aapt resource value: 0x7f040017
-			public const int label_motor_pm_season_temp = 2130968599;
-			
-			// aapt resource value: 0x7f040016
-			public const int label_motor_pm_soc_fit = 2130968598;
-			
-			// aapt resource value: 0x7f04001c
-			public const int label_motor_pm_soc_percent = 2130968604;
-			
-			// aapt resource value: 0x7f04001a
-			public const int label_motor_pm_soc_q = 2130968602;
+			public const int label_motor_air_mass = 2130968596;
 			
 			// aapt resource value: 0x7f040015
-			public const int label_motor_pm_soh = 2130968597;
+			public const int label_motor_air_mass_act = 2130968597;
+			
+			// aapt resource value: 0x7f040016
+			public const int label_motor_air_mass_set = 2130968598;
+			
+			// aapt resource value: 0x7f040017
+			public const int label_motor_ambient_press = 2130968599;
+			
+			// aapt resource value: 0x7f040018
+			public const int label_motor_ambient_temp = 2130968600;
+			
+			// aapt resource value: 0x7f040019
+			public const int label_motor_bat_voltage = 2130968601;
+			
+			// aapt resource value: 0x7f04001a
+			public const int label_motor_boost_press_act = 2130968602;
 			
 			// aapt resource value: 0x7f04001b
-			public const int label_motor_pm_start_cap = 2130968603;
+			public const int label_motor_boost_press_set = 2130968603;
+			
+			// aapt resource value: 0x7f04001c
+			public const int label_motor_exhaust_press = 2130968604;
+			
+			// aapt resource value: 0x7f04001d
+			public const int label_motor_fuel_temp = 2130968605;
+			
+			// aapt resource value: 0x7f04001e
+			public const int label_motor_intake_air_temp = 2130968606;
+			
+			// aapt resource value: 0x7f040023
+			public const int label_motor_oil_press_switch = 2130968611;
+			
+			// aapt resource value: 0x7f04001f
+			public const int label_motor_part_filt_dist_since_regen = 2130968607;
+			
+			// aapt resource value: 0x7f040020
+			public const int label_motor_part_filt_request = 2130968608;
+			
+			// aapt resource value: 0x7f040021
+			public const int label_motor_part_filt_status = 2130968609;
+			
+			// aapt resource value: 0x7f040022
+			public const int label_motor_part_filt_unblocked = 2130968610;
+			
+			// aapt resource value: 0x7f04002a
+			public const int label_motor_pm_bat_cap = 2130968618;
+			
+			// aapt resource value: 0x7f04002e
+			public const int label_motor_pm_cal_events = 2130968622;
+			
+			// aapt resource value: 0x7f04002f
+			public const int label_motor_pm_day1 = 2130968623;
+			
+			// aapt resource value: 0x7f04002d
+			public const int label_motor_pm_season_temp = 2130968621;
+			
+			// aapt resource value: 0x7f04002c
+			public const int label_motor_pm_soc_fit = 2130968620;
+			
+			// aapt resource value: 0x7f040032
+			public const int label_motor_pm_soc_percent = 2130968626;
+			
+			// aapt resource value: 0x7f040030
+			public const int label_motor_pm_soc_q = 2130968624;
+			
+			// aapt resource value: 0x7f04002b
+			public const int label_motor_pm_soh = 2130968619;
+			
+			// aapt resource value: 0x7f040031
+			public const int label_motor_pm_start_cap = 2130968625;
+			
+			// aapt resource value: 0x7f040024
+			public const int label_motor_rail_press_act = 2130968612;
+			
+			// aapt resource value: 0x7f040025
+			public const int label_motor_rail_press_set = 2130968613;
+			
+			// aapt resource value: 0x7f040026
+			public const int label_motor_temp = 2130968614;
+			
+			// aapt resource value: 0x7f040027
+			public const int label_motor_temp_before_cat = 2130968615;
+			
+			// aapt resource value: 0x7f040028
+			public const int label_motor_temp_before_filter = 2130968616;
 			
 			// aapt resource value: 0x7f040000
 			public const int library_name = 2130968576;
 			
-			// aapt resource value: 0x7f04003d
-			public const int none_found = 2130968637;
+			// aapt resource value: 0x7f040053
+			public const int none_found = 2130968659;
 			
-			// aapt resource value: 0x7f04003c
-			public const int none_paired = 2130968636;
+			// aapt resource value: 0x7f040052
+			public const int none_paired = 2130968658;
 			
-			// aapt resource value: 0x7f04003a
-			public const int scanning = 2130968634;
+			// aapt resource value: 0x7f040050
+			public const int scanning = 2130968656;
 			
-			// aapt resource value: 0x7f04003b
-			public const int select_device = 2130968635;
+			// aapt resource value: 0x7f040051
+			public const int select_device = 2130968657;
 			
 			// aapt resource value: 0x7f040006
 			public const int tab_axis = 2130968582;
 			
-			// aapt resource value: 0x7f04001d
-			public const int tab_errors = 2130968605;
+			// aapt resource value: 0x7f040033
+			public const int tab_errors = 2130968627;
 			
 			// aapt resource value: 0x7f040013
-			public const int tab_motor_pm = 2130968595;
+			public const int tab_motor = 2130968595;
 			
-			// aapt resource value: 0x7f040039
-			public const int tab_test = 2130968633;
+			// aapt resource value: 0x7f040029
+			public const int tab_motor_pm = 2130968617;
 			
-			// aapt resource value: 0x7f04003f
-			public const int title_other_devices = 2130968639;
+			// aapt resource value: 0x7f04004f
+			public const int tab_test = 2130968655;
 			
-			// aapt resource value: 0x7f04003e
-			public const int title_paired_devices = 2130968638;
+			// aapt resource value: 0x7f040055
+			public const int title_other_devices = 2130968661;
+			
+			// aapt resource value: 0x7f040054
+			public const int title_paired_devices = 2130968660;
 			
 			static String()
 			{

@@ -21,7 +21,31 @@
     <string name="label_axis_speed">Speed [km/h]:</string>
     <string name="label_axis_valve_state">Output states:</string>
 
-    <!--  Motor PM -->
+    <!--  Motor -->
+    <string name="tab_motor">Motor</string>
+    <string name="label_motor_air_mass">Air mass [kg/h]:</string>
+    <string name="label_motor_air_mass_act">Air mass act [mg/pass]:</string>
+    <string name="label_motor_air_mass_set">Air mass set [mg/pass]:</string>
+    <string name="label_motor_ambient_press">Ambient pressure [mbar]:</string>
+    <string name="label_motor_ambient_temp">Ambient temp. [°C]:</string>
+    <string name="label_motor_bat_voltage">Battery voltage [V]:</string>
+    <string name="label_motor_boost_press_act">Boost pressure act [mbar]:</string>
+    <string name="label_motor_boost_press_set">Boost pressure set [mbar]:</string>
+    <string name="label_motor_exhaust_press">Exhaust back pressure [mbar]:</string>
+    <string name="label_motor_fuel_temp">Fuel temp. [°C]:</string>
+    <string name="label_motor_intake_air_temp">Intake air temp. [°C]:</string>
+    <string name="label_motor_part_filt_dist_since_regen">Part. filter dist. since regen. [km]:</string>
+    <string name="label_motor_part_filt_request">Part. filter regeneration request:</string>
+    <string name="label_motor_part_filt_status">Part. filter regeneration:</string>
+    <string name="label_motor_part_filt_unblocked">Part. filter unblock regeneration:</string>
+    <string name="label_motor_oil_press_switch">Oil pressure switch:</string>
+    <string name="label_motor_rail_press_act">Rail pressure act [bar]:</string>
+    <string name="label_motor_rail_press_set">Rail pressure set [bar]:</string>
+    <string name="label_motor_temp">Motor temperature [°C]:</string>
+    <string name="label_motor_temp_before_cat">Temp. before catalyst [°C]:</string>
+    <string name="label_motor_temp_before_filter">Temp. before part. filter [°C]:</string>
+
+        <!--  Motor PM -->
     <string name="tab_motor_pm">Power management</string>
     <string name="label_motor_pm_bat_cap">Battery capacity [Ah]:</string>
     <string name="label_motor_pm_soh">State of Health (SoH) [+/-50]:</string>

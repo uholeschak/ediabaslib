@@ -21,7 +21,7 @@
                 android:scrollbars="none">
                 <TabWidget
                     android:id="@android:id/tabs"
-                    android:layout_width="fill_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </HorizontalScrollView>
             <FrameLayout
@@ -76,6 +76,33 @@
                             android:textOn="@string/button_axis_up"
                             android:textOff="@string/button_axis_up" />
                     </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/tabMotor"
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+                    <ScrollView
+                        android:minWidth="25px"
+                        android:minHeight="25px"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/scrollViewTextMotor"
+                        android:layout_weight="1"
+                        android:scrollbars="vertical">
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:id="@+id/textViewResultMotor"
+                            android:gravity="top"
+                            android:layout_gravity="top"
+                            android:editable="false"
+                            android:visibility="visible"
+                            android:singleLine="false"
+                            android:cursorVisible="false"
+                            android:bufferType="normal"
+                            android:scrollbars="none" />
+                    </ScrollView>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/tabMotorPm"
