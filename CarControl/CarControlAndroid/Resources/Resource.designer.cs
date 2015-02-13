@@ -70,8 +70,8 @@ namespace CarControlAndroid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f060016
-			public const int buttonConnect = 2131099670;
+			// aapt resource value: 0x7f060019
+			public const int buttonConnect = 2131099673;
 			
 			// aapt resource value: 0x7f060008
 			public const int button_axis_down = 2131099656;
@@ -88,14 +88,17 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f060001
 			public const int paired_devices = 2131099649;
 			
-			// aapt resource value: 0x7f060017
-			public const int scan = 2131099671;
+			// aapt resource value: 0x7f06001a
+			public const int scan = 2131099674;
 			
 			// aapt resource value: 0x7f060006
 			public const int scrollViewTextAxis = 2131099654;
 			
 			// aapt resource value: 0x7f060011
-			public const int scrollViewTextErrors = 2131099665;
+			public const int scrollViewTextCccNav = 2131099665;
+			
+			// aapt resource value: 0x7f060014
+			public const int scrollViewTextErrors = 2131099668;
 			
 			// aapt resource value: 0x7f06000b
 			public const int scrollViewTextMotor = 2131099659;
@@ -103,14 +106,17 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f06000e
 			public const int scrollViewTextMotorPm = 2131099662;
 			
-			// aapt resource value: 0x7f060014
-			public const int scrollViewTextTest = 2131099668;
+			// aapt resource value: 0x7f060017
+			public const int scrollViewTextTest = 2131099671;
 			
 			// aapt resource value: 0x7f060005
 			public const int tabAxis = 2131099653;
 			
 			// aapt resource value: 0x7f060010
-			public const int tabErrors = 2131099664;
+			public const int tabCccNav = 2131099664;
+			
+			// aapt resource value: 0x7f060013
+			public const int tabErrors = 2131099667;
 			
 			// aapt resource value: 0x7f06000a
 			public const int tabMotor = 2131099658;
@@ -118,14 +124,17 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f06000d
 			public const int tabMotorPm = 2131099661;
 			
-			// aapt resource value: 0x7f060013
-			public const int tabTest = 2131099667;
+			// aapt resource value: 0x7f060016
+			public const int tabTest = 2131099670;
 			
 			// aapt resource value: 0x7f060007
 			public const int textViewResultAxis = 2131099655;
 			
 			// aapt resource value: 0x7f060012
-			public const int textViewResultErrors = 2131099666;
+			public const int textViewResultCccNav = 2131099666;
+			
+			// aapt resource value: 0x7f060015
+			public const int textViewResultErrors = 2131099669;
 			
 			// aapt resource value: 0x7f06000c
 			public const int textViewResultMotor = 2131099660;
@@ -133,8 +142,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f06000f
 			public const int textViewResultMotorPm = 2131099663;
 			
-			// aapt resource value: 0x7f060015
-			public const int textViewResultTest = 2131099669;
+			// aapt resource value: 0x7f060018
+			public const int textViewResultTest = 2131099672;
 			
 			// aapt resource value: 0x7f060002
 			public const int title_new_devices = 2131099650;
@@ -226,92 +235,92 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f040003
 			public const int button_disconnected = 2130968579;
 			
-			// aapt resource value: 0x7f040056
-			public const int button_scan = 2130968662;
+			// aapt resource value: 0x7f040062
+			public const int button_scan = 2130968674;
 			
-			// aapt resource value: 0x7f040057
-			public const int connect = 2130968663;
-			
-			// aapt resource value: 0x7f040036
-			public const int errorNameACSM = 2130968630;
-			
-			// aapt resource value: 0x7f040037
-			public const int errorNameAHM = 2130968631;
-			
-			// aapt resource value: 0x7f040038
-			public const int errorNameCAS = 2130968632;
-			
-			// aapt resource value: 0x7f040039
-			public const int errorNameCCCA = 2130968633;
-			
-			// aapt resource value: 0x7f04003a
-			public const int errorNameCCCANT = 2130968634;
-			
-			// aapt resource value: 0x7f04003b
-			public const int errorNameCCCASK = 2130968635;
-			
-			// aapt resource value: 0x7f04003c
-			public const int errorNameCCCBO = 2130968636;
-			
-			// aapt resource value: 0x7f04003d
-			public const int errorNameCCCGW = 2130968637;
-			
-			// aapt resource value: 0x7f04003e
-			public const int errorNameCDC = 2130968638;
-			
-			// aapt resource value: 0x7f04003f
-			public const int errorNameCID = 2130968639;
-			
-			// aapt resource value: 0x7f040040
-			public const int errorNameCON = 2130968640;
-			
-			// aapt resource value: 0x7f040041
-			public const int errorNameDDE = 2130968641;
+			// aapt resource value: 0x7f040063
+			public const int connect = 2130968675;
 			
 			// aapt resource value: 0x7f040042
-			public const int errorNameDSC = 2130968642;
+			public const int errorNameACSM = 2130968642;
 			
 			// aapt resource value: 0x7f040043
-			public const int errorNameEHC = 2130968643;
+			public const int errorNameAHM = 2130968643;
 			
 			// aapt resource value: 0x7f040044
-			public const int errorNameEKPS = 2130968644;
+			public const int errorNameCAS = 2130968644;
 			
 			// aapt resource value: 0x7f040045
-			public const int errorNameIHK = 2130968645;
+			public const int errorNameCCCA = 2130968645;
 			
 			// aapt resource value: 0x7f040046
-			public const int errorNameKBM = 2130968646;
+			public const int errorNameCCCANT = 2130968646;
 			
 			// aapt resource value: 0x7f040047
-			public const int errorNameKGM = 2130968647;
+			public const int errorNameCCCASK = 2130968647;
 			
 			// aapt resource value: 0x7f040048
-			public const int errorNameKOMBI = 2130968648;
+			public const int errorNameCCCBO = 2130968648;
 			
 			// aapt resource value: 0x7f040049
-			public const int errorNameLM = 2130968649;
+			public const int errorNameCCCGW = 2130968649;
 			
 			// aapt resource value: 0x7f04004a
-			public const int errorNamePDC = 2130968650;
+			public const int errorNameCDC = 2130968650;
 			
 			// aapt resource value: 0x7f04004b
-			public const int errorNameRLS = 2130968651;
+			public const int errorNameCID = 2130968651;
 			
 			// aapt resource value: 0x7f04004c
-			public const int errorNameSZL = 2130968652;
+			public const int errorNameCON = 2130968652;
 			
 			// aapt resource value: 0x7f04004d
-			public const int errorNameSZM = 2130968653;
+			public const int errorNameDDE = 2130968653;
 			
 			// aapt resource value: 0x7f04004e
-			public const int errorNameTCU = 2130968654;
+			public const int errorNameDSC = 2130968654;
 			
-			// aapt resource value: 0x7f040034
-			public const int error_no_error = 2130968628;
+			// aapt resource value: 0x7f04004f
+			public const int errorNameEHC = 2130968655;
 			
-			// aapt resource value: 0x7f040035
-			public const int error_no_response = 2130968629;
+			// aapt resource value: 0x7f040050
+			public const int errorNameEKPS = 2130968656;
+			
+			// aapt resource value: 0x7f040051
+			public const int errorNameIHK = 2130968657;
+			
+			// aapt resource value: 0x7f040052
+			public const int errorNameKBM = 2130968658;
+			
+			// aapt resource value: 0x7f040053
+			public const int errorNameKGM = 2130968659;
+			
+			// aapt resource value: 0x7f040054
+			public const int errorNameKOMBI = 2130968660;
+			
+			// aapt resource value: 0x7f040055
+			public const int errorNameLM = 2130968661;
+			
+			// aapt resource value: 0x7f040056
+			public const int errorNamePDC = 2130968662;
+			
+			// aapt resource value: 0x7f040057
+			public const int errorNameRLS = 2130968663;
+			
+			// aapt resource value: 0x7f040058
+			public const int errorNameSZL = 2130968664;
+			
+			// aapt resource value: 0x7f040059
+			public const int errorNameSZM = 2130968665;
+			
+			// aapt resource value: 0x7f04005a
+			public const int errorNameTCU = 2130968666;
+			
+			// aapt resource value: 0x7f040040
+			public const int error_no_error = 2130968640;
+			
+			// aapt resource value: 0x7f040041
+			public const int error_no_response = 2130968641;
 			
 			// aapt resource value: 0x7f040010
 			public const int label_axis_bat_volt = 2130968592;
@@ -330,6 +339,39 @@ namespace CarControlAndroid
 			
 			// aapt resource value: 0x7f040012
 			public const int label_axis_valve_state = 2130968594;
+			
+			// aapt resource value: 0x7f040034
+			public const int label_ccc_nav_almanach = 2130968628;
+			
+			// aapt resource value: 0x7f040035
+			public const int label_ccc_nav_gps_date_time = 2130968629;
+			
+			// aapt resource value: 0x7f040036
+			public const int label_ccc_nav_hip_driver = 2130968630;
+			
+			// aapt resource value: 0x7f040037
+			public const int label_ccc_nav_pos_height = 2130968631;
+			
+			// aapt resource value: 0x7f040038
+			public const int label_ccc_nav_pos_lat = 2130968632;
+			
+			// aapt resource value: 0x7f040039
+			public const int label_ccc_nav_pos_long = 2130968633;
+			
+			// aapt resource value: 0x7f04003a
+			public const int label_ccc_nav_pos_type = 2130968634;
+			
+			// aapt resource value: 0x7f04003b
+			public const int label_ccc_nav_res_horz = 2130968635;
+			
+			// aapt resource value: 0x7f04003c
+			public const int label_ccc_nav_res_pos = 2130968636;
+			
+			// aapt resource value: 0x7f04003d
+			public const int label_ccc_nav_res_vert = 2130968637;
+			
+			// aapt resource value: 0x7f04003e
+			public const int label_ccc_nav_speed = 2130968638;
 			
 			// aapt resource value: 0x7f040014
 			public const int label_motor_air_mass = 2130968596;
@@ -424,23 +466,26 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f040000
 			public const int library_name = 2130968576;
 			
-			// aapt resource value: 0x7f040053
-			public const int none_found = 2130968659;
+			// aapt resource value: 0x7f04005f
+			public const int none_found = 2130968671;
 			
-			// aapt resource value: 0x7f040052
-			public const int none_paired = 2130968658;
+			// aapt resource value: 0x7f04005e
+			public const int none_paired = 2130968670;
 			
-			// aapt resource value: 0x7f040050
-			public const int scanning = 2130968656;
+			// aapt resource value: 0x7f04005c
+			public const int scanning = 2130968668;
 			
-			// aapt resource value: 0x7f040051
-			public const int select_device = 2130968657;
+			// aapt resource value: 0x7f04005d
+			public const int select_device = 2130968669;
 			
 			// aapt resource value: 0x7f040006
 			public const int tab_axis = 2130968582;
 			
 			// aapt resource value: 0x7f040033
-			public const int tab_errors = 2130968627;
+			public const int tab_ccc_nav = 2130968627;
+			
+			// aapt resource value: 0x7f04003f
+			public const int tab_errors = 2130968639;
 			
 			// aapt resource value: 0x7f040013
 			public const int tab_motor = 2130968595;
@@ -448,14 +493,14 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f040029
 			public const int tab_motor_pm = 2130968617;
 			
-			// aapt resource value: 0x7f04004f
-			public const int tab_test = 2130968655;
+			// aapt resource value: 0x7f04005b
+			public const int tab_test = 2130968667;
 			
-			// aapt resource value: 0x7f040055
-			public const int title_other_devices = 2130968661;
+			// aapt resource value: 0x7f040061
+			public const int title_other_devices = 2130968673;
 			
-			// aapt resource value: 0x7f040054
-			public const int title_paired_devices = 2130968660;
+			// aapt resource value: 0x7f040060
+			public const int title_paired_devices = 2130968672;
 			
 			static String()
 			{

@@ -35,6 +35,7 @@ namespace CarControlAndroid
         private TextView textViewResultAxis;
         private TextView textViewResultMotor;
         private TextView textViewResultMotorPm;
+        private TextView textViewResultCccNav;
         private TextView textViewResultErrors;
         private TextView textViewResultTest;
 
@@ -47,6 +48,7 @@ namespace CarControlAndroid
             CreateTab("axis", GetString (Resource.String.tab_axis), Resource.Id.tabAxis);
             CreateTab("motor", GetString (Resource.String.tab_motor), Resource.Id.tabMotor);
             CreateTab("motor_pm", GetString (Resource.String.tab_motor_pm), Resource.Id.tabMotorPm);
+            CreateTab("ccc_nav", GetString (Resource.String.tab_ccc_nav), Resource.Id.tabCccNav);
             CreateTab("errors", GetString (Resource.String.tab_errors), Resource.Id.tabErrors);
             CreateTab("test", GetString (Resource.String.tab_test), Resource.Id.tabTest);
 
@@ -56,6 +58,7 @@ namespace CarControlAndroid
             textViewResultAxis = FindViewById<TextView> (Resource.Id.textViewResultAxis);
             textViewResultMotor = FindViewById<TextView> (Resource.Id.textViewResultMotor);
             textViewResultMotorPm = FindViewById<TextView> (Resource.Id.textViewResultMotorPm);
+            textViewResultCccNav = FindViewById<TextView> (Resource.Id.textViewResultCccNav);
             textViewResultErrors = FindViewById<TextView> (Resource.Id.textViewResultErrors);
             textViewResultTest = FindViewById<TextView> (Resource.Id.textViewResultTest);
 
@@ -377,10 +380,14 @@ namespace CarControlAndroid
                     break;
 
                 case 3:
-                    commThread.Device = CommThread.SelectedDevice.DeviceErrors;
+                    commThread.Device = CommThread.SelectedDevice.DeviceCccNav;
                     break;
 
                 case 4:
+                    commThread.Device = CommThread.SelectedDevice.DeviceErrors;
+                    break;
+
+                case 5:
                     commThread.Device = CommThread.SelectedDevice.Test;
                     break;
 #endif
@@ -670,6 +677,44 @@ namespace CarControlAndroid
 
             if (cccNavValid)
             {
+                string outputText = string.Empty;
+                bool found;
+                string dataText;
+                Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                lock (CommThread.DataLock)
+                {
+                    resultDict = commThread.EdiabasResultDict;
+                }
+                outputText += GetString (Resource.String.label_ccc_nav_pos_lat) + " " +
+                    FormatResultString(resultDict, "STAT_GPS_POSITION_BREITE", "{0}") + "\r\n";
+                outputText += GetString (Resource.String.label_ccc_nav_pos_long) + " " +
+                    FormatResultString(resultDict, "STAT_GPS_POSITION_LAENGE", "{0}") + "\r\n";
+                outputText += GetString (Resource.String.label_ccc_nav_pos_height) + " " +
+                    FormatResultString(resultDict, "STAT_GPS_POSITION_HOEHE", "{0}") + "\r\n";
+                outputText += GetString (Resource.String.label_ccc_nav_gps_date_time) + " " +
+                    FormatResultString(resultDict, "STAT_TIME_DATE_VAL", "{0}").Replace(".*6*", ".201") + "\r\n";
+                outputText += GetString (Resource.String.label_ccc_nav_pos_type) + " " +
+                    FormatResultString(resultDict, "STAT_GPS_TEXT", "{0}") + "\r\n";
+                outputText += GetString (Resource.String.label_ccc_nav_speed) + " " +
+                    FormatResultString(resultDict, "STAT_SPEED_VAL", "{0}") + "\r\n";
+                outputText += GetString (Resource.String.label_ccc_nav_res_horz) + " " +
+                    FormatResultString(resultDict, "STAT_HORIZONTALE_AUFLOES", "{0}") + "\r\n";
+                outputText += GetString (Resource.String.label_ccc_nav_res_vert) + " " +
+                    FormatResultString(resultDict, "STAT_VERTICALE_AUFLOES", "{0}") + "\r\n";
+                outputText += GetString (Resource.String.label_ccc_nav_res_pos) + " " +
+                    FormatResultString(resultDict, "STAT_POSITION_AUFLOES", "{0}") + "\r\n";
+
+                dataText = ((GetResultInt64(resultDict, "STAT_ALMANACH", out found) > 0.5) && found) ? "1" : "0";
+                outputText += GetString (Resource.String.label_ccc_nav_almanach) + " " + dataText + "\r\n";
+
+                dataText = ((GetResultInt64(resultDict, "STAT_HIP_DRIVER", out found) < 0.5) && found) ? "1" : "0";
+                outputText += GetString (Resource.String.label_ccc_nav_hip_driver) + " " + dataText + "\r\n";
+
+                textViewResultCccNav.Text = outputText;
+            }
+            else
+            {
+                textViewResultCccNav.Text = string.Empty;
             }
 
             if (ihkValid)
