@@ -281,792 +281,6 @@
   <data name="&gt;&gt;buttonStoreLog.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="&gt;&gt;groupBoxControl.Name" xml:space="preserve">
-    <value>groupBoxControl</value>
-  </data>
-  <data name="&gt;&gt;groupBoxControl.Type" xml:space="preserve">
-    <value>CarControl.GroupBox, CarControl, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;groupBoxControl.Parent" xml:space="preserve">
-    <value>tabPageAxis</value>
-  </data>
-  <data name="&gt;&gt;groupBoxControl.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;groupBoxStatus.Name" xml:space="preserve">
-    <value>groupBoxStatus</value>
-  </data>
-  <data name="&gt;&gt;groupBoxStatus.Type" xml:space="preserve">
-    <value>CarControl.GroupBox, CarControl, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;groupBoxStatus.Parent" xml:space="preserve">
-    <value>tabPageAxis</value>
-  </data>
-  <data name="&gt;&gt;groupBoxStatus.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="tabPageAxis.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 25</value>
-  </data>
-  <data name="tabPageAxis.Size" type="System.Drawing.Size, System.Drawing">
-    <value>624, 315</value>
-  </data>
-  <data name="tabPageAxis.Text" xml:space="preserve">
-    <value>Axis</value>
-  </data>
-  <data name="&gt;&gt;tabPageAxis.Name" xml:space="preserve">
-    <value>tabPageAxis</value>
-  </data>
-  <data name="&gt;&gt;tabPageAxis.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPageAxis.Parent" xml:space="preserve">
-    <value>tabControlDevice</value>
-  </data>
-  <data name="&gt;&gt;tabPageAxis.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;panelMotorData.Name" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;panelMotorData.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;panelMotorData.Parent" xml:space="preserve">
-    <value>tabPageMotor</value>
-  </data>
-  <data name="&gt;&gt;panelMotorData.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="tabPageMotor.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 25</value>
-  </data>
-  <data name="tabPageMotor.Size" type="System.Drawing.Size, System.Drawing">
-    <value>624, 315</value>
-  </data>
-  <data name="tabPageMotor.Text" xml:space="preserve">
-    <value>Motor</value>
-  </data>
-  <data name="&gt;&gt;tabPageMotor.Name" xml:space="preserve">
-    <value>tabPageMotor</value>
-  </data>
-  <data name="&gt;&gt;tabPageMotor.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPageMotor.Parent" xml:space="preserve">
-    <value>tabControlDevice</value>
-  </data>
-  <data name="&gt;&gt;tabPageMotor.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;panelMotorUnevenRunning.Name" xml:space="preserve">
-    <value>panelMotorUnevenRunning</value>
-  </data>
-  <data name="&gt;&gt;panelMotorUnevenRunning.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;panelMotorUnevenRunning.Parent" xml:space="preserve">
-    <value>tabPageMotorUnevenRunning</value>
-  </data>
-  <data name="&gt;&gt;panelMotorUnevenRunning.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="tabPageMotorUnevenRunning.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 25</value>
-  </data>
-  <data name="tabPageMotorUnevenRunning.Size" type="System.Drawing.Size, System.Drawing">
-    <value>624, 315</value>
-  </data>
-  <data name="tabPageMotorUnevenRunning.Text" xml:space="preserve">
-    <value>Uneven running</value>
-  </data>
-  <data name="&gt;&gt;tabPageMotorUnevenRunning.Name" xml:space="preserve">
-    <value>tabPageMotorUnevenRunning</value>
-  </data>
-  <data name="&gt;&gt;tabPageMotorUnevenRunning.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPageMotorUnevenRunning.Parent" xml:space="preserve">
-    <value>tabControlDevice</value>
-  </data>
-  <data name="&gt;&gt;tabPageMotorUnevenRunning.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;panelMotorRotIrregular.Name" xml:space="preserve">
-    <value>panelMotorRotIrregular</value>
-  </data>
-  <data name="&gt;&gt;panelMotorRotIrregular.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;panelMotorRotIrregular.Parent" xml:space="preserve">
-    <value>tabPageMotorRotIrregular</value>
-  </data>
-  <data name="&gt;&gt;panelMotorRotIrregular.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="tabPageMotorRotIrregular.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 25</value>
-  </data>
-  <data name="tabPageMotorRotIrregular.Size" type="System.Drawing.Size, System.Drawing">
-    <value>624, 315</value>
-  </data>
-  <data name="tabPageMotorRotIrregular.Text" xml:space="preserve">
-    <value>Rot. irregularity</value>
-  </data>
-  <data name="&gt;&gt;tabPageMotorRotIrregular.Name" xml:space="preserve">
-    <value>tabPageMotorRotIrregular</value>
-  </data>
-  <data name="&gt;&gt;tabPageMotorRotIrregular.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPageMotorRotIrregular.Parent" xml:space="preserve">
-    <value>tabControlDevice</value>
-  </data>
-  <data name="&gt;&gt;tabPageMotorRotIrregular.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;panelPm.Name" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;panelPm.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;panelPm.Parent" xml:space="preserve">
-    <value>tabPagePm</value>
-  </data>
-  <data name="&gt;&gt;panelPm.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="tabPagePm.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 25</value>
-  </data>
-  <data name="tabPagePm.Size" type="System.Drawing.Size, System.Drawing">
-    <value>624, 315</value>
-  </data>
-  <data name="tabPagePm.Text" xml:space="preserve">
-    <value>Power management</value>
-  </data>
-  <data name="&gt;&gt;tabPagePm.Name" xml:space="preserve">
-    <value>tabPagePm</value>
-  </data>
-  <data name="&gt;&gt;tabPagePm.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPagePm.Parent" xml:space="preserve">
-    <value>tabControlDevice</value>
-  </data>
-  <data name="&gt;&gt;tabPagePm.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="labelCccNavResVert.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 209</value>
-  </data>
-  <data name="labelCccNavResVert.Size" type="System.Drawing.Size, System.Drawing">
-    <value>291, 20</value>
-  </data>
-  <data name="labelCccNavResVert.Text" xml:space="preserve">
-    <value>GPS vertical resolution [m]:</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavResVert.Name" xml:space="preserve">
-    <value>labelCccNavResVert</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavResVert.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavResVert.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavResVert.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="textBoxCccNavResVert.Location" type="System.Drawing.Point, System.Drawing">
-    <value>300, 206</value>
-  </data>
-  <data name="textBoxCccNavResVert.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 23</value>
-  </data>
-  <data name="textBoxCccNavResVert.TabIndex" type="System.Int32, mscorlib">
-    <value>63</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavResVert.Name" xml:space="preserve">
-    <value>textBoxCccNavResVert</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavResVert.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavResVert.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavResVert.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="textBoxCccNavResHorz.Location" type="System.Drawing.Point, System.Drawing">
-    <value>300, 177</value>
-  </data>
-  <data name="textBoxCccNavResHorz.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 23</value>
-  </data>
-  <data name="textBoxCccNavResHorz.TabIndex" type="System.Int32, mscorlib">
-    <value>61</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavResHorz.Name" xml:space="preserve">
-    <value>textBoxCccNavResHorz</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavResHorz.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavResHorz.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavResHorz.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="labelCccNavResHorz.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 180</value>
-  </data>
-  <data name="labelCccNavResHorz.Size" type="System.Drawing.Size, System.Drawing">
-    <value>291, 20</value>
-  </data>
-  <data name="labelCccNavResHorz.Text" xml:space="preserve">
-    <value>GPS horizonal resolution [m]:</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavResHorz.Name" xml:space="preserve">
-    <value>labelCccNavResHorz</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavResHorz.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavResHorz.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavResHorz.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="textBoxCccNavResPos.Location" type="System.Drawing.Point, System.Drawing">
-    <value>300, 235</value>
-  </data>
-  <data name="textBoxCccNavResPos.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 23</value>
-  </data>
-  <data name="textBoxCccNavResPos.TabIndex" type="System.Int32, mscorlib">
-    <value>65</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavResPos.Name" xml:space="preserve">
-    <value>textBoxCccNavResPos</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavResPos.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavResPos.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavResPos.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="labelCccNavResPos.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 238</value>
-  </data>
-  <data name="labelCccNavResPos.Size" type="System.Drawing.Size, System.Drawing">
-    <value>291, 20</value>
-  </data>
-  <data name="labelCccNavResPos.Text" xml:space="preserve">
-    <value>GPS position resolution [m]:</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavResPos.Name" xml:space="preserve">
-    <value>labelCccNavResPos</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavResPos.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavResPos.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavResPos.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="textBoxCccNavGpsDateTime.Location" type="System.Drawing.Point, System.Drawing">
-    <value>300, 90</value>
-  </data>
-  <data name="textBoxCccNavGpsDateTime.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 23</value>
-  </data>
-  <data name="textBoxCccNavGpsDateTime.TabIndex" type="System.Int32, mscorlib">
-    <value>49</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavGpsDateTime.Name" xml:space="preserve">
-    <value>textBoxCccNavGpsDateTime</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavGpsDateTime.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavGpsDateTime.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavGpsDateTime.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="labelCccNavGpsDateTime.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 93</value>
-  </data>
-  <data name="labelCccNavGpsDateTime.Size" type="System.Drawing.Size, System.Drawing">
-    <value>291, 20</value>
-  </data>
-  <data name="labelCccNavGpsDateTime.Text" xml:space="preserve">
-    <value>GPS Date/Time:</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavGpsDateTime.Name" xml:space="preserve">
-    <value>labelCccNavGpsDateTime</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavGpsDateTime.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavGpsDateTime.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavGpsDateTime.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="textBoxCccNavSpeed.Location" type="System.Drawing.Point, System.Drawing">
-    <value>300, 148</value>
-  </data>
-  <data name="textBoxCccNavSpeed.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 23</value>
-  </data>
-  <data name="textBoxCccNavSpeed.TabIndex" type="System.Int32, mscorlib">
-    <value>59</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavSpeed.Name" xml:space="preserve">
-    <value>textBoxCccNavSpeed</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavSpeed.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavSpeed.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavSpeed.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="labelCccNavSpeed.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 151</value>
-  </data>
-  <data name="labelCccNavSpeed.Size" type="System.Drawing.Size, System.Drawing">
-    <value>291, 20</value>
-  </data>
-  <data name="labelCccNavSpeed.Text" xml:space="preserve">
-    <value>Speed [km/h]:</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavSpeed.Name" xml:space="preserve">
-    <value>labelCccNavSpeed</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavSpeed.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavSpeed.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavSpeed.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="checkBoxHipDriver.Location" type="System.Drawing.Point, System.Drawing">
-    <value>300, 286</value>
-  </data>
-  <data name="checkBoxHipDriver.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 20</value>
-  </data>
-  <data name="checkBoxHipDriver.TabIndex" type="System.Int32, mscorlib">
-    <value>53</value>
-  </data>
-  <data name="checkBoxHipDriver.Text" xml:space="preserve">
-    <value>HIP driver OK</value>
-  </data>
-  <data name="checkBoxCccNavAlmanach.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 286</value>
-  </data>
-  <data name="checkBoxCccNavAlmanach.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 20</value>
-  </data>
-  <data name="checkBoxCccNavAlmanach.TabIndex" type="System.Int32, mscorlib">
-    <value>52</value>
-  </data>
-  <data name="checkBoxCccNavAlmanach.Text" xml:space="preserve">
-    <value>Almanach status OK</value>
-  </data>
-  <data name="labelCccNavPosType.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 122</value>
-  </data>
-  <data name="labelCccNavPosType.Size" type="System.Drawing.Size, System.Drawing">
-    <value>291, 20</value>
-  </data>
-  <data name="labelCccNavPosType.Text" xml:space="preserve">
-    <value>GPS Status:</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosType.Name" xml:space="preserve">
-    <value>labelCccNavPosType</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosType.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosType.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosType.ZOrder" xml:space="preserve">
-    <value>12</value>
-  </data>
-  <data name="textBoxCccNavPosType.Location" type="System.Drawing.Point, System.Drawing">
-    <value>300, 119</value>
-  </data>
-  <data name="textBoxCccNavPosType.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 23</value>
-  </data>
-  <data name="textBoxCccNavPosType.TabIndex" type="System.Int32, mscorlib">
-    <value>57</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosType.Name" xml:space="preserve">
-    <value>textBoxCccNavPosType</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosType.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosType.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosType.ZOrder" xml:space="preserve">
-    <value>13</value>
-  </data>
-  <data name="textBoxCccNavPosHeight.Location" type="System.Drawing.Point, System.Drawing">
-    <value>300, 61</value>
-  </data>
-  <data name="textBoxCccNavPosHeight.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 23</value>
-  </data>
-  <data name="textBoxCccNavPosHeight.TabIndex" type="System.Int32, mscorlib">
-    <value>45</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosHeight.Name" xml:space="preserve">
-    <value>textBoxCccNavPosHeight</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosHeight.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosHeight.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosHeight.ZOrder" xml:space="preserve">
-    <value>14</value>
-  </data>
-  <data name="labelCccNavPosHeight.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 64</value>
-  </data>
-  <data name="labelCccNavPosHeight.Size" type="System.Drawing.Size, System.Drawing">
-    <value>291, 20</value>
-  </data>
-  <data name="labelCccNavPosHeight.Text" xml:space="preserve">
-    <value>Position height NN [m]:</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosHeight.Name" xml:space="preserve">
-    <value>labelCccNavPosHeight</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosHeight.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosHeight.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosHeight.ZOrder" xml:space="preserve">
-    <value>15</value>
-  </data>
-  <data name="textBoxCccNavPosLong.Location" type="System.Drawing.Point, System.Drawing">
-    <value>300, 32</value>
-  </data>
-  <data name="textBoxCccNavPosLong.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 23</value>
-  </data>
-  <data name="textBoxCccNavPosLong.TabIndex" type="System.Int32, mscorlib">
-    <value>40</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosLong.Name" xml:space="preserve">
-    <value>textBoxCccNavPosLong</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosLong.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosLong.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosLong.ZOrder" xml:space="preserve">
-    <value>16</value>
-  </data>
-  <data name="labelCccNavPosLong.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 35</value>
-  </data>
-  <data name="labelCccNavPosLong.Size" type="System.Drawing.Size, System.Drawing">
-    <value>291, 20</value>
-  </data>
-  <data name="labelCccNavPosLong.Text" xml:space="preserve">
-    <value>Position longitude:</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosLong.Name" xml:space="preserve">
-    <value>labelCccNavPosLong</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosLong.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosLong.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosLong.ZOrder" xml:space="preserve">
-    <value>17</value>
-  </data>
-  <data name="textBoxCccNavPosLat.Location" type="System.Drawing.Point, System.Drawing">
-    <value>300, 3</value>
-  </data>
-  <data name="textBoxCccNavPosLat.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 23</value>
-  </data>
-  <data name="textBoxCccNavPosLat.TabIndex" type="System.Int32, mscorlib">
-    <value>36</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosLat.Name" xml:space="preserve">
-    <value>textBoxCccNavPosLat</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosLat.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosLat.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;textBoxCccNavPosLat.ZOrder" xml:space="preserve">
-    <value>18</value>
-  </data>
-  <data name="labelCccNavPosLat.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 6</value>
-  </data>
-  <data name="labelCccNavPosLat.Size" type="System.Drawing.Size, System.Drawing">
-    <value>291, 20</value>
-  </data>
-  <data name="labelCccNavPosLat.Text" xml:space="preserve">
-    <value>Position latitude:</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosLat.Name" xml:space="preserve">
-    <value>labelCccNavPosLat</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosLat.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosLat.Parent" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;labelCccNavPosLat.ZOrder" xml:space="preserve">
-    <value>19</value>
-  </data>
-  <data name="panelCccNav.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
-  </data>
-  <data name="panelCccNav.Size" type="System.Drawing.Size, System.Drawing">
-    <value>618, 309</value>
-  </data>
-  <data name="&gt;&gt;panelCccNav.Name" xml:space="preserve">
-    <value>panelCccNav</value>
-  </data>
-  <data name="&gt;&gt;panelCccNav.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;panelCccNav.Parent" xml:space="preserve">
-    <value>tabPageCccNav</value>
-  </data>
-  <data name="&gt;&gt;panelCccNav.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="tabPageCccNav.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 25</value>
-  </data>
-  <data name="tabPageCccNav.Size" type="System.Drawing.Size, System.Drawing">
-    <value>624, 315</value>
-  </data>
-  <data name="tabPageCccNav.Text" xml:space="preserve">
-    <value>GPS</value>
-  </data>
-  <data name="&gt;&gt;tabPageCccNav.Name" xml:space="preserve">
-    <value>tabPageCccNav</value>
-  </data>
-  <data name="&gt;&gt;tabPageCccNav.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPageCccNav.Parent" xml:space="preserve">
-    <value>tabControlDevice</value>
-  </data>
-  <data name="&gt;&gt;tabPageCccNav.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;panelIhk.Name" xml:space="preserve">
-    <value>panelIhk</value>
-  </data>
-  <data name="&gt;&gt;panelIhk.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;panelIhk.Parent" xml:space="preserve">
-    <value>tabPageIhk</value>
-  </data>
-  <data name="&gt;&gt;panelIhk.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="tabPageIhk.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 25</value>
-  </data>
-  <data name="tabPageIhk.Size" type="System.Drawing.Size, System.Drawing">
-    <value>624, 315</value>
-  </data>
-  <data name="tabPageIhk.Text" xml:space="preserve">
-    <value>Climate</value>
-  </data>
-  <data name="&gt;&gt;tabPageIhk.Name" xml:space="preserve">
-    <value>tabPageIhk</value>
-  </data>
-  <data name="&gt;&gt;tabPageIhk.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPageIhk.Parent" xml:space="preserve">
-    <value>tabControlDevice</value>
-  </data>
-  <data name="&gt;&gt;tabPageIhk.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;panelErrors.Name" xml:space="preserve">
-    <value>panelErrors</value>
-  </data>
-  <data name="&gt;&gt;panelErrors.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;panelErrors.Parent" xml:space="preserve">
-    <value>tabPageErrors</value>
-  </data>
-  <data name="&gt;&gt;panelErrors.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="tabPageErrors.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 25</value>
-  </data>
-  <data name="tabPageErrors.Size" type="System.Drawing.Size, System.Drawing">
-    <value>624, 315</value>
-  </data>
-  <data name="tabPageErrors.Text" xml:space="preserve">
-    <value>Errors</value>
-  </data>
-  <data name="&gt;&gt;tabPageErrors.Name" xml:space="preserve">
-    <value>tabPageErrors</value>
-  </data>
-  <data name="&gt;&gt;tabPageErrors.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPageErrors.Parent" xml:space="preserve">
-    <value>tabControlDevice</value>
-  </data>
-  <data name="&gt;&gt;tabPageErrors.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;panelTest.Name" xml:space="preserve">
-    <value>panelTest</value>
-  </data>
-  <data name="&gt;&gt;panelTest.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;panelTest.Parent" xml:space="preserve">
-    <value>tabPageTest</value>
-  </data>
-  <data name="&gt;&gt;panelTest.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="tabPageTest.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 25</value>
-  </data>
-  <data name="tabPageTest.Size" type="System.Drawing.Size, System.Drawing">
-    <value>624, 315</value>
-  </data>
-  <data name="tabPageTest.Text" xml:space="preserve">
-    <value>Test</value>
-  </data>
-  <data name="&gt;&gt;tabPageTest.Name" xml:space="preserve">
-    <value>tabPageTest</value>
-  </data>
-  <data name="&gt;&gt;tabPageTest.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPageTest.Parent" xml:space="preserve">
-    <value>tabControlDevice</value>
-  </data>
-  <data name="&gt;&gt;tabPageTest.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="tabControlDevice.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 79</value>
-  </data>
-  <data name="tabControlDevice.Size" type="System.Drawing.Size, System.Drawing">
-    <value>632, 344</value>
-  </data>
-  <data name="tabControlDevice.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;tabControlDevice.Name" xml:space="preserve">
-    <value>tabControlDevice</value>
-  </data>
-  <data name="&gt;&gt;tabControlDevice.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabControlDevice.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;tabControlDevice.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;pushButtonDown.Name" xml:space="preserve">
-    <value>pushButtonDown</value>
-  </data>
-  <data name="&gt;&gt;pushButtonDown.Type" xml:space="preserve">
-    <value>CarControl.PushButton, CarControl, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;pushButtonDown.Parent" xml:space="preserve">
-    <value>groupBoxControl</value>
-  </data>
-  <data name="&gt;&gt;pushButtonDown.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;pushButtonUp.Name" xml:space="preserve">
-    <value>pushButtonUp</value>
-  </data>
-  <data name="&gt;&gt;pushButtonUp.Type" xml:space="preserve">
-    <value>CarControl.PushButton, CarControl, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;pushButtonUp.Parent" xml:space="preserve">
-    <value>groupBoxControl</value>
-  </data>
-  <data name="&gt;&gt;pushButtonUp.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="groupBoxControl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 4</value>
-  </data>
-  <data name="groupBoxControl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>621, 95</value>
-  </data>
-  <data name="groupBoxControl.TabIndex" type="System.Int32, mscorlib">
-    <value>30</value>
-  </data>
-  <data name="groupBoxControl.Text" xml:space="preserve">
-    <value>Control</value>
-  </data>
-  <data name="&gt;&gt;groupBoxControl.Name" xml:space="preserve">
-    <value>groupBoxControl</value>
-  </data>
-  <data name="&gt;&gt;groupBoxControl.Type" xml:space="preserve">
-    <value>CarControl.GroupBox, CarControl, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;groupBoxControl.Parent" xml:space="preserve">
-    <value>tabPageAxis</value>
-  </data>
-  <data name="&gt;&gt;groupBoxControl.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="pushButtonDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>9, 18</value>
   </data>
@@ -1115,202 +329,28 @@
   <data name="&gt;&gt;pushButtonUp.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;panelAxisData.Name" xml:space="preserve">
-    <value>panelAxisData</value>
+  <data name="groupBoxControl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 4</value>
   </data>
-  <data name="&gt;&gt;panelAxisData.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="groupBoxControl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>621, 95</value>
   </data>
-  <data name="&gt;&gt;panelAxisData.Parent" xml:space="preserve">
-    <value>groupBoxStatus</value>
+  <data name="groupBoxControl.TabIndex" type="System.Int32, mscorlib">
+    <value>30</value>
   </data>
-  <data name="&gt;&gt;panelAxisData.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="groupBoxControl.Text" xml:space="preserve">
+    <value>Control</value>
   </data>
-  <data name="groupBoxStatus.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 105</value>
+  <data name="&gt;&gt;groupBoxControl.Name" xml:space="preserve">
+    <value>groupBoxControl</value>
   </data>
-  <data name="groupBoxStatus.Size" type="System.Drawing.Size, System.Drawing">
-    <value>621, 207</value>
-  </data>
-  <data name="groupBoxStatus.TabIndex" type="System.Int32, mscorlib">
-    <value>29</value>
-  </data>
-  <data name="groupBoxStatus.Text" xml:space="preserve">
-    <value>Status</value>
-  </data>
-  <data name="&gt;&gt;groupBoxStatus.Name" xml:space="preserve">
-    <value>groupBoxStatus</value>
-  </data>
-  <data name="&gt;&gt;groupBoxStatus.Type" xml:space="preserve">
+  <data name="&gt;&gt;groupBoxControl.Type" xml:space="preserve">
     <value>CarControl.GroupBox, CarControl, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;groupBoxStatus.Parent" xml:space="preserve">
+  <data name="&gt;&gt;groupBoxControl.Parent" xml:space="preserve">
     <value>tabPageAxis</value>
   </data>
-  <data name="&gt;&gt;groupBoxStatus.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;textBoxSpeed.Name" xml:space="preserve">
-    <value>textBoxSpeed</value>
-  </data>
-  <data name="&gt;&gt;textBoxSpeed.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxSpeed.Parent" xml:space="preserve">
-    <value>panelAxisData</value>
-  </data>
-  <data name="&gt;&gt;textBoxSpeed.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;labelSpeed.Name" xml:space="preserve">
-    <value>labelSpeed</value>
-  </data>
-  <data name="&gt;&gt;labelSpeed.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelSpeed.Parent" xml:space="preserve">
-    <value>panelAxisData</value>
-  </data>
-  <data name="&gt;&gt;labelSpeed.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisBatteryVoltage.Name" xml:space="preserve">
-    <value>textBoxAxisBatteryVoltage</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisBatteryVoltage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisBatteryVoltage.Parent" xml:space="preserve">
-    <value>panelAxisData</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisBatteryVoltage.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;labelAxisBatteryVoltage.Name" xml:space="preserve">
-    <value>labelAxisBatteryVoltage</value>
-  </data>
-  <data name="&gt;&gt;labelAxisBatteryVoltage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelAxisBatteryVoltage.Parent" xml:space="preserve">
-    <value>panelAxisData</value>
-  </data>
-  <data name="&gt;&gt;labelAxisBatteryVoltage.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;textBoxValveState.Name" xml:space="preserve">
-    <value>textBoxValveState</value>
-  </data>
-  <data name="&gt;&gt;textBoxValveState.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxValveState.Parent" xml:space="preserve">
-    <value>panelAxisData</value>
-  </data>
-  <data name="&gt;&gt;textBoxValveState.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;labelOutputState.Name" xml:space="preserve">
-    <value>labelOutputState</value>
-  </data>
-  <data name="&gt;&gt;labelOutputState.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelOutputState.Parent" xml:space="preserve">
-    <value>panelAxisData</value>
-  </data>
-  <data name="&gt;&gt;labelOutputState.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisMode.Name" xml:space="preserve">
-    <value>textBoxAxisMode</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisMode.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisMode.Parent" xml:space="preserve">
-    <value>panelAxisData</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisMode.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;labelAxisMode.Name" xml:space="preserve">
-    <value>labelAxisMode</value>
-  </data>
-  <data name="&gt;&gt;labelAxisMode.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelAxisMode.Parent" xml:space="preserve">
-    <value>panelAxisData</value>
-  </data>
-  <data name="&gt;&gt;labelAxisMode.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;labelAxisLeft.Name" xml:space="preserve">
-    <value>labelAxisLeft</value>
-  </data>
-  <data name="&gt;&gt;labelAxisLeft.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelAxisLeft.Parent" xml:space="preserve">
-    <value>panelAxisData</value>
-  </data>
-  <data name="&gt;&gt;labelAxisLeft.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisRigth.Name" xml:space="preserve">
-    <value>textBoxAxisRigth</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisRigth.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisRigth.Parent" xml:space="preserve">
-    <value>panelAxisData</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisRigth.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisLeft.Name" xml:space="preserve">
-    <value>textBoxAxisLeft</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisLeft.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisLeft.Parent" xml:space="preserve">
-    <value>panelAxisData</value>
-  </data>
-  <data name="&gt;&gt;textBoxAxisLeft.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="&gt;&gt;labelAxisRight.Name" xml:space="preserve">
-    <value>labelAxisRight</value>
-  </data>
-  <data name="&gt;&gt;labelAxisRight.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelAxisRight.Parent" xml:space="preserve">
-    <value>panelAxisData</value>
-  </data>
-  <data name="&gt;&gt;labelAxisRight.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
-  <data name="panelAxisData.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 18</value>
-  </data>
-  <data name="panelAxisData.Size" type="System.Drawing.Size, System.Drawing">
-    <value>612, 117</value>
-  </data>
-  <data name="&gt;&gt;panelAxisData.Name" xml:space="preserve">
-    <value>panelAxisData</value>
-  </data>
-  <data name="&gt;&gt;panelAxisData.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;panelAxisData.Parent" xml:space="preserve">
-    <value>groupBoxStatus</value>
-  </data>
-  <data name="&gt;&gt;panelAxisData.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;groupBoxControl.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="textBoxSpeed.Location" type="System.Drawing.Point, System.Drawing">
@@ -1565,430 +605,67 @@
   <data name="&gt;&gt;labelAxisRight.ZOrder" xml:space="preserve">
     <value>11</value>
   </data>
-  <data name="&gt;&gt;textBoxMotorPartFilterDistSinceRegen.Name" xml:space="preserve">
-    <value>textBoxMotorPartFilterDistSinceRegen</value>
+  <data name="panelAxisData.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 18</value>
   </data>
-  <data name="&gt;&gt;textBoxMotorPartFilterDistSinceRegen.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="panelAxisData.Size" type="System.Drawing.Size, System.Drawing">
+    <value>612, 117</value>
   </data>
-  <data name="&gt;&gt;textBoxMotorPartFilterDistSinceRegen.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
+  <data name="&gt;&gt;panelAxisData.Name" xml:space="preserve">
+    <value>panelAxisData</value>
   </data>
-  <data name="&gt;&gt;textBoxMotorPartFilterDistSinceRegen.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;labelMotorPartFilterDistSinceRegen.Name" xml:space="preserve">
-    <value>labelMotorPartFilterDistSinceRegen</value>
-  </data>
-  <data name="&gt;&gt;labelMotorPartFilterDistSinceRegen.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorPartFilterDistSinceRegen.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorPartFilterDistSinceRegen.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorExhaustBackPressure.Name" xml:space="preserve">
-    <value>textBoxMotorExhaustBackPressure</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorExhaustBackPressure.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorExhaustBackPressure.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorExhaustBackPressure.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;labelMotorExhaustBackPressure.Name" xml:space="preserve">
-    <value>labelMotorExhaustBackPressure</value>
-  </data>
-  <data name="&gt;&gt;labelMotorExhaustBackPressure.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorExhaustBackPressure.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorExhaustBackPressure.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorTempBeforeFilter.Name" xml:space="preserve">
-    <value>textBoxMotorTempBeforeFilter</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorTempBeforeFilter.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorTempBeforeFilter.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorTempBeforeFilter.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;labelMotorTempBeforeFilter.Name" xml:space="preserve">
-    <value>labelMotorTempBeforeFilter</value>
-  </data>
-  <data name="&gt;&gt;labelMotorTempBeforeFilter.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorTempBeforeFilter.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorTempBeforeFilter.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorTempBeforeCat.Name" xml:space="preserve">
-    <value>textBoxMotorTempBeforeCat</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorTempBeforeCat.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorTempBeforeCat.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorTempBeforeCat.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;labelMotorTempBeforeCat.Name" xml:space="preserve">
-    <value>labelMotorTempBeforeCat</value>
-  </data>
-  <data name="&gt;&gt;labelMotorTempBeforeCat.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorTempBeforeCat.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorTempBeforeCat.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorFuelTemp.Name" xml:space="preserve">
-    <value>textBoxMotorFuelTemp</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorFuelTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorFuelTemp.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorFuelTemp.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="&gt;&gt;labelMotorFuelTemp.Name" xml:space="preserve">
-    <value>labelMotorFuelTemp</value>
-  </data>
-  <data name="&gt;&gt;labelMotorFuelTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorFuelTemp.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorFuelTemp.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAmbientPress.Name" xml:space="preserve">
-    <value>textBoxMotorAmbientPress</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAmbientPress.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAmbientPress.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAmbientPress.ZOrder" xml:space="preserve">
-    <value>12</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAmbientPress.Name" xml:space="preserve">
-    <value>labelMotorAmbientPress</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAmbientPress.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAmbientPress.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAmbientPress.ZOrder" xml:space="preserve">
-    <value>13</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAmbientTemp.Name" xml:space="preserve">
-    <value>textBoxMotorAmbientTemp</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAmbientTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAmbientTemp.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAmbientTemp.ZOrder" xml:space="preserve">
-    <value>14</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAmbientTemp.Name" xml:space="preserve">
-    <value>labelMotorAmbientTemp</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAmbientTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAmbientTemp.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAmbientTemp.ZOrder" xml:space="preserve">
-    <value>15</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAirMassAct.Name" xml:space="preserve">
-    <value>textBoxMotorAirMassAct</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAirMassAct.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAirMassAct.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAirMassAct.ZOrder" xml:space="preserve">
-    <value>18</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAirMassAct.Name" xml:space="preserve">
-    <value>labelMotorAirMassAct</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAirMassAct.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAirMassAct.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAirMassAct.ZOrder" xml:space="preserve">
-    <value>19</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAirMassSet.Name" xml:space="preserve">
-    <value>textBoxMotorAirMassSet</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAirMassSet.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAirMassSet.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAirMassSet.ZOrder" xml:space="preserve">
-    <value>20</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAirMassSet.Name" xml:space="preserve">
-    <value>labelMotorAirMassSet</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAirMassSet.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAirMassSet.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAirMassSet.ZOrder" xml:space="preserve">
-    <value>21</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRailPressAct.Name" xml:space="preserve">
-    <value>textBoxMotorRailPressAct</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRailPressAct.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRailPressAct.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRailPressAct.ZOrder" xml:space="preserve">
-    <value>22</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRailPressAct.Name" xml:space="preserve">
-    <value>labelMotorRailPressAct</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRailPressAct.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRailPressAct.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRailPressAct.ZOrder" xml:space="preserve">
-    <value>23</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRailPressSet.Name" xml:space="preserve">
-    <value>textBoxMotorRailPressSet</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRailPressSet.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRailPressSet.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRailPressSet.ZOrder" xml:space="preserve">
-    <value>24</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRailPressSet.Name" xml:space="preserve">
-    <value>labelMotorRailPressSet</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRailPressSet.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRailPressSet.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRailPressSet.ZOrder" xml:space="preserve">
-    <value>25</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorBoostPressAct.Name" xml:space="preserve">
-    <value>textBoxMotorBoostPressAct</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorBoostPressAct.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorBoostPressAct.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorBoostPressAct.ZOrder" xml:space="preserve">
-    <value>26</value>
-  </data>
-  <data name="&gt;&gt;labelMotorBoostPressAct.Name" xml:space="preserve">
-    <value>labelMotorBoostPressAct</value>
-  </data>
-  <data name="&gt;&gt;labelMotorBoostPressAct.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorBoostPressAct.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorBoostPressAct.ZOrder" xml:space="preserve">
-    <value>27</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorBoostPressSet.Name" xml:space="preserve">
-    <value>textBoxMotorBoostPressSet</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorBoostPressSet.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorBoostPressSet.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorBoostPressSet.ZOrder" xml:space="preserve">
-    <value>28</value>
-  </data>
-  <data name="&gt;&gt;labelMotorBoostPressSet.Name" xml:space="preserve">
-    <value>labelMotorBoostPressSet</value>
-  </data>
-  <data name="&gt;&gt;labelMotorBoostPressSet.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorBoostPressSet.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorBoostPressSet.ZOrder" xml:space="preserve">
-    <value>29</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorIntakeAirTemp.Name" xml:space="preserve">
-    <value>textBoxMotorIntakeAirTemp</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorIntakeAirTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorIntakeAirTemp.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorIntakeAirTemp.ZOrder" xml:space="preserve">
-    <value>30</value>
-  </data>
-  <data name="&gt;&gt;labelMotorIntakeAirTemp.Name" xml:space="preserve">
-    <value>labelMotorIntakeAirTemp</value>
-  </data>
-  <data name="&gt;&gt;labelMotorIntakeAirTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorIntakeAirTemp.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorIntakeAirTemp.ZOrder" xml:space="preserve">
-    <value>31</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorTemp.Name" xml:space="preserve">
-    <value>textBoxMotorTemp</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorTemp.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorTemp.ZOrder" xml:space="preserve">
-    <value>32</value>
-  </data>
-  <data name="&gt;&gt;labelMotorTemp.Name" xml:space="preserve">
-    <value>labelMotorTemp</value>
-  </data>
-  <data name="&gt;&gt;labelMotorTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorTemp.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorTemp.ZOrder" xml:space="preserve">
-    <value>33</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAirMass.Name" xml:space="preserve">
-    <value>textBoxMotorAirMass</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAirMass.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAirMass.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorAirMass.ZOrder" xml:space="preserve">
-    <value>34</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAirMass.Name" xml:space="preserve">
-    <value>labelMotorAirMass</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAirMass.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAirMass.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorAirMass.ZOrder" xml:space="preserve">
-    <value>35</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorBatteryVoltage.Name" xml:space="preserve">
-    <value>textBoxMotorBatteryVoltage</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorBatteryVoltage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorBatteryVoltage.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorBatteryVoltage.ZOrder" xml:space="preserve">
-    <value>36</value>
-  </data>
-  <data name="&gt;&gt;labelMotorBatteryVoltage.Name" xml:space="preserve">
-    <value>labelMotorBatteryVoltage</value>
-  </data>
-  <data name="&gt;&gt;labelMotorBatteryVoltage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorBatteryVoltage.Parent" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;labelMotorBatteryVoltage.ZOrder" xml:space="preserve">
-    <value>37</value>
-  </data>
-  <data name="panelMotorData.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
-  </data>
-  <data name="panelMotorData.Size" type="System.Drawing.Size, System.Drawing">
-    <value>618, 309</value>
-  </data>
-  <data name="&gt;&gt;panelMotorData.Name" xml:space="preserve">
-    <value>panelMotorData</value>
-  </data>
-  <data name="&gt;&gt;panelMotorData.Type" xml:space="preserve">
+  <data name="&gt;&gt;panelAxisData.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;panelMotorData.Parent" xml:space="preserve">
-    <value>tabPageMotor</value>
+  <data name="&gt;&gt;panelAxisData.Parent" xml:space="preserve">
+    <value>groupBoxStatus</value>
   </data>
-  <data name="&gt;&gt;panelMotorData.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;panelAxisData.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="groupBoxStatus.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 105</value>
+  </data>
+  <data name="groupBoxStatus.Size" type="System.Drawing.Size, System.Drawing">
+    <value>621, 207</value>
+  </data>
+  <data name="groupBoxStatus.TabIndex" type="System.Int32, mscorlib">
+    <value>29</value>
+  </data>
+  <data name="groupBoxStatus.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="&gt;&gt;groupBoxStatus.Name" xml:space="preserve">
+    <value>groupBoxStatus</value>
+  </data>
+  <data name="&gt;&gt;groupBoxStatus.Type" xml:space="preserve">
+    <value>CarControl.GroupBox, CarControl, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;groupBoxStatus.Parent" xml:space="preserve">
+    <value>tabPageAxis</value>
+  </data>
+  <data name="&gt;&gt;groupBoxStatus.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="tabPageAxis.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 25</value>
+  </data>
+  <data name="tabPageAxis.Size" type="System.Drawing.Size, System.Drawing">
+    <value>624, 315</value>
+  </data>
+  <data name="tabPageAxis.Text" xml:space="preserve">
+    <value>Axis</value>
+  </data>
+  <data name="&gt;&gt;tabPageAxis.Name" xml:space="preserve">
+    <value>tabPageAxis</value>
+  </data>
+  <data name="&gt;&gt;tabPageAxis.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPageAxis.Parent" xml:space="preserve">
+    <value>tabControlDevice</value>
+  </data>
+  <data name="&gt;&gt;tabPageAxis.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="checkBoxMotorPartFilterUnblock.Location" type="System.Drawing.Point, System.Drawing">
@@ -2655,7 +1332,7 @@
     <value>227, 20</value>
   </data>
   <data name="labelMotorTemp.Text" xml:space="preserve">
-    <value>Motor temperature  [°C]:</value>
+    <value>Motor temperature [°C]:</value>
   </data>
   <data name="&gt;&gt;labelMotorTemp.Name" xml:space="preserve">
     <value>labelMotorTemp</value>
@@ -2753,131 +1430,44 @@
   <data name="&gt;&gt;labelMotorBatteryVoltage.ZOrder" xml:space="preserve">
     <value>37</value>
   </data>
-  <data name="&gt;&gt;labelIdleSpeedControlOn.Name" xml:space="preserve">
-    <value>labelIdleSpeedControlOn</value>
-  </data>
-  <data name="&gt;&gt;labelIdleSpeedControlOn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelIdleSpeedControlOn.Parent" xml:space="preserve">
-    <value>panelMotorUnevenRunning</value>
-  </data>
-  <data name="&gt;&gt;labelIdleSpeedControlOn.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder4.Name" xml:space="preserve">
-    <value>textBoxMotorQuantCorrCylinder4</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder4.Parent" xml:space="preserve">
-    <value>panelMotorUnevenRunning</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder4.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder4.Name" xml:space="preserve">
-    <value>labelMotorQuantCorrCylinder4</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder4.Parent" xml:space="preserve">
-    <value>panelMotorUnevenRunning</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder4.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder3.Name" xml:space="preserve">
-    <value>textBoxMotorQuantCorrCylinder3</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder3.Parent" xml:space="preserve">
-    <value>panelMotorUnevenRunning</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder3.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder3.Name" xml:space="preserve">
-    <value>labelMotorQuantCorrCylinder3</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder3.Parent" xml:space="preserve">
-    <value>panelMotorUnevenRunning</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder3.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder2.Name" xml:space="preserve">
-    <value>textBoxMotorQuantCorrCylinder2</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder2.Parent" xml:space="preserve">
-    <value>panelMotorUnevenRunning</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder2.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder2.Name" xml:space="preserve">
-    <value>labelMotorQuantCorrCylinder2</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder2.Parent" xml:space="preserve">
-    <value>panelMotorUnevenRunning</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder2.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder1.Name" xml:space="preserve">
-    <value>textBoxMotorQuantCorrCylinder1</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder1.Parent" xml:space="preserve">
-    <value>panelMotorUnevenRunning</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorQuantCorrCylinder1.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder1.Name" xml:space="preserve">
-    <value>labelMotorQuantCorrCylinder1</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder1.Parent" xml:space="preserve">
-    <value>panelMotorUnevenRunning</value>
-  </data>
-  <data name="&gt;&gt;labelMotorQuantCorrCylinder1.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="panelMotorUnevenRunning.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="panelMotorData.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
   </data>
-  <data name="panelMotorUnevenRunning.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="panelMotorData.Size" type="System.Drawing.Size, System.Drawing">
     <value>618, 309</value>
   </data>
-  <data name="&gt;&gt;panelMotorUnevenRunning.Name" xml:space="preserve">
-    <value>panelMotorUnevenRunning</value>
+  <data name="&gt;&gt;panelMotorData.Name" xml:space="preserve">
+    <value>panelMotorData</value>
   </data>
-  <data name="&gt;&gt;panelMotorUnevenRunning.Type" xml:space="preserve">
+  <data name="&gt;&gt;panelMotorData.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;panelMotorUnevenRunning.Parent" xml:space="preserve">
-    <value>tabPageMotorUnevenRunning</value>
+  <data name="&gt;&gt;panelMotorData.Parent" xml:space="preserve">
+    <value>tabPageMotor</value>
   </data>
-  <data name="&gt;&gt;panelMotorUnevenRunning.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;panelMotorData.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="tabPageMotor.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 25</value>
+  </data>
+  <data name="tabPageMotor.Size" type="System.Drawing.Size, System.Drawing">
+    <value>624, 315</value>
+  </data>
+  <data name="tabPageMotor.Text" xml:space="preserve">
+    <value>Motor</value>
+  </data>
+  <data name="&gt;&gt;tabPageMotor.Name" xml:space="preserve">
+    <value>tabPageMotor</value>
+  </data>
+  <data name="&gt;&gt;tabPageMotor.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPageMotor.Parent" xml:space="preserve">
+    <value>tabControlDevice</value>
+  </data>
+  <data name="&gt;&gt;tabPageMotor.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="labelIdleSpeedControlOn.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 289</value>
@@ -3068,131 +1658,44 @@
   <data name="&gt;&gt;labelMotorQuantCorrCylinder1.ZOrder" xml:space="preserve">
     <value>8</value>
   </data>
-  <data name="&gt;&gt;labelIdleSpeedControlOff.Name" xml:space="preserve">
-    <value>labelIdleSpeedControlOff</value>
-  </data>
-  <data name="&gt;&gt;labelIdleSpeedControlOff.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelIdleSpeedControlOff.Parent" xml:space="preserve">
-    <value>panelMotorRotIrregular</value>
-  </data>
-  <data name="&gt;&gt;labelIdleSpeedControlOff.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder4.Name" xml:space="preserve">
-    <value>textBoxMotorRpmCylinder4</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder4.Parent" xml:space="preserve">
-    <value>panelMotorRotIrregular</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder4.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder4.Name" xml:space="preserve">
-    <value>labelMotorRpmCylinder4</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder4.Parent" xml:space="preserve">
-    <value>panelMotorRotIrregular</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder4.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder3.Name" xml:space="preserve">
-    <value>textBoxMotorRpmCylinder3</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder3.Parent" xml:space="preserve">
-    <value>panelMotorRotIrregular</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder3.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder3.Name" xml:space="preserve">
-    <value>labelMotorRpmCylinder3</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder3.Parent" xml:space="preserve">
-    <value>panelMotorRotIrregular</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder3.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder2.Name" xml:space="preserve">
-    <value>textBoxMotorRpmCylinder2</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder2.Parent" xml:space="preserve">
-    <value>panelMotorRotIrregular</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder2.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder2.Name" xml:space="preserve">
-    <value>labelMotorRpmCylinder2</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder2.Parent" xml:space="preserve">
-    <value>panelMotorRotIrregular</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder2.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder1.Name" xml:space="preserve">
-    <value>textBoxMotorRpmCylinder1</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder1.Parent" xml:space="preserve">
-    <value>panelMotorRotIrregular</value>
-  </data>
-  <data name="&gt;&gt;textBoxMotorRpmCylinder1.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder1.Name" xml:space="preserve">
-    <value>labelMotorRpmCylinder1</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder1.Parent" xml:space="preserve">
-    <value>panelMotorRotIrregular</value>
-  </data>
-  <data name="&gt;&gt;labelMotorRpmCylinder1.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="panelMotorRotIrregular.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="panelMotorUnevenRunning.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
   </data>
-  <data name="panelMotorRotIrregular.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="panelMotorUnevenRunning.Size" type="System.Drawing.Size, System.Drawing">
     <value>618, 309</value>
   </data>
-  <data name="&gt;&gt;panelMotorRotIrregular.Name" xml:space="preserve">
-    <value>panelMotorRotIrregular</value>
+  <data name="&gt;&gt;panelMotorUnevenRunning.Name" xml:space="preserve">
+    <value>panelMotorUnevenRunning</value>
   </data>
-  <data name="&gt;&gt;panelMotorRotIrregular.Type" xml:space="preserve">
+  <data name="&gt;&gt;panelMotorUnevenRunning.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;panelMotorRotIrregular.Parent" xml:space="preserve">
-    <value>tabPageMotorRotIrregular</value>
+  <data name="&gt;&gt;panelMotorUnevenRunning.Parent" xml:space="preserve">
+    <value>tabPageMotorUnevenRunning</value>
   </data>
-  <data name="&gt;&gt;panelMotorRotIrregular.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;panelMotorUnevenRunning.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="tabPageMotorUnevenRunning.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 25</value>
+  </data>
+  <data name="tabPageMotorUnevenRunning.Size" type="System.Drawing.Size, System.Drawing">
+    <value>624, 315</value>
+  </data>
+  <data name="tabPageMotorUnevenRunning.Text" xml:space="preserve">
+    <value>Uneven running</value>
+  </data>
+  <data name="&gt;&gt;tabPageMotorUnevenRunning.Name" xml:space="preserve">
+    <value>tabPageMotorUnevenRunning</value>
+  </data>
+  <data name="&gt;&gt;tabPageMotorUnevenRunning.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPageMotorUnevenRunning.Parent" xml:space="preserve">
+    <value>tabControlDevice</value>
+  </data>
+  <data name="&gt;&gt;tabPageMotorUnevenRunning.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="labelIdleSpeedControlOff.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 289</value>
@@ -3383,287 +1886,44 @@
   <data name="&gt;&gt;labelMotorRpmCylinder1.ZOrder" xml:space="preserve">
     <value>8</value>
   </data>
-  <data name="&gt;&gt;labelPmSocPercentD1.Name" xml:space="preserve">
-    <value>labelPmSocPercentD1</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocPercentD1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocPercentD1.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocPercentD1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;labelPmStartCapD1.Name" xml:space="preserve">
-    <value>labelPmStartCapD1</value>
-  </data>
-  <data name="&gt;&gt;labelPmStartCapD1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelPmStartCapD1.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;labelPmStartCapD1.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocQD1.Name" xml:space="preserve">
-    <value>labelPmSocQD1</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocQD1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocQD1.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocQD1.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocPercentD1.Name" xml:space="preserve">
-    <value>textBoxPmSocPercentD1</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocPercentD1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocPercentD1.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocPercentD1.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmStartCapD1.Name" xml:space="preserve">
-    <value>textBoxPmStartCapD1</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmStartCapD1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmStartCapD1.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmStartCapD1.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocQD1.Name" xml:space="preserve">
-    <value>textBoxPmSocQD1</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocQD1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocQD1.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocQD1.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocPercent.Name" xml:space="preserve">
-    <value>textBoxPmSocPercent</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocPercent.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocPercent.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocPercent.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocPercent.Name" xml:space="preserve">
-    <value>labelPmSocPercent</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocPercent.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocPercent.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocPercent.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmStartCap.Name" xml:space="preserve">
-    <value>textBoxPmStartCap</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmStartCap.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmStartCap.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmStartCap.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;labelPmStartCap.Name" xml:space="preserve">
-    <value>labelPmStartCap</value>
-  </data>
-  <data name="&gt;&gt;labelPmStartCap.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelPmStartCap.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;labelPmStartCap.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocQ.Name" xml:space="preserve">
-    <value>textBoxPmSocQ</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocQ.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocQ.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocQ.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocQ.Name" xml:space="preserve">
-    <value>labelPmSocQ</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocQ.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocQ.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocQ.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmCalEvents.Name" xml:space="preserve">
-    <value>textBoxPmCalEvents</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmCalEvents.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmCalEvents.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmCalEvents.ZOrder" xml:space="preserve">
-    <value>12</value>
-  </data>
-  <data name="&gt;&gt;labelPmCalEvents.Name" xml:space="preserve">
-    <value>labelPmCalEvents</value>
-  </data>
-  <data name="&gt;&gt;labelPmCalEvents.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelPmCalEvents.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;labelPmCalEvents.ZOrder" xml:space="preserve">
-    <value>13</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSeasonTemp.Name" xml:space="preserve">
-    <value>textBoxPmSeasonTemp</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSeasonTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSeasonTemp.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSeasonTemp.ZOrder" xml:space="preserve">
-    <value>14</value>
-  </data>
-  <data name="&gt;&gt;labelPmSeasonTemp.Name" xml:space="preserve">
-    <value>labelPmSeasonTemp</value>
-  </data>
-  <data name="&gt;&gt;labelPmSeasonTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelPmSeasonTemp.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;labelPmSeasonTemp.ZOrder" xml:space="preserve">
-    <value>15</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocFit.Name" xml:space="preserve">
-    <value>textBoxPmSocFit</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocFit.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocFit.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSocFit.ZOrder" xml:space="preserve">
-    <value>16</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocFit.Name" xml:space="preserve">
-    <value>labelPmSocFit</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocFit.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocFit.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;labelPmSocFit.ZOrder" xml:space="preserve">
-    <value>17</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSoh.Name" xml:space="preserve">
-    <value>textBoxPmSoh</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSoh.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSoh.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmSoh.ZOrder" xml:space="preserve">
-    <value>18</value>
-  </data>
-  <data name="&gt;&gt;labelPmSoh.Name" xml:space="preserve">
-    <value>labelPmSoh</value>
-  </data>
-  <data name="&gt;&gt;labelPmSoh.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelPmSoh.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;labelPmSoh.ZOrder" xml:space="preserve">
-    <value>19</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmBatCap.Name" xml:space="preserve">
-    <value>textBoxPmBatCap</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmBatCap.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmBatCap.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;textBoxPmBatCap.ZOrder" xml:space="preserve">
-    <value>20</value>
-  </data>
-  <data name="&gt;&gt;labelPmBatCap.Name" xml:space="preserve">
-    <value>labelPmBatCap</value>
-  </data>
-  <data name="&gt;&gt;labelPmBatCap.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelPmBatCap.Parent" xml:space="preserve">
-    <value>panelPm</value>
-  </data>
-  <data name="&gt;&gt;labelPmBatCap.ZOrder" xml:space="preserve">
-    <value>21</value>
-  </data>
-  <data name="panelPm.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="panelMotorRotIrregular.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
   </data>
-  <data name="panelPm.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="panelMotorRotIrregular.Size" type="System.Drawing.Size, System.Drawing">
     <value>618, 309</value>
   </data>
-  <data name="&gt;&gt;panelPm.Name" xml:space="preserve">
-    <value>panelPm</value>
+  <data name="&gt;&gt;panelMotorRotIrregular.Name" xml:space="preserve">
+    <value>panelMotorRotIrregular</value>
   </data>
-  <data name="&gt;&gt;panelPm.Type" xml:space="preserve">
+  <data name="&gt;&gt;panelMotorRotIrregular.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;panelPm.Parent" xml:space="preserve">
-    <value>tabPagePm</value>
+  <data name="&gt;&gt;panelMotorRotIrregular.Parent" xml:space="preserve">
+    <value>tabPageMotorRotIrregular</value>
   </data>
-  <data name="&gt;&gt;panelPm.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;panelMotorRotIrregular.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="tabPageMotorRotIrregular.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 25</value>
+  </data>
+  <data name="tabPageMotorRotIrregular.Size" type="System.Drawing.Size, System.Drawing">
+    <value>624, 315</value>
+  </data>
+  <data name="tabPageMotorRotIrregular.Text" xml:space="preserve">
+    <value>Rot. irregularity</value>
+  </data>
+  <data name="&gt;&gt;tabPageMotorRotIrregular.Name" xml:space="preserve">
+    <value>tabPageMotorRotIrregular</value>
+  </data>
+  <data name="&gt;&gt;tabPageMotorRotIrregular.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPageMotorRotIrregular.Parent" xml:space="preserve">
+    <value>tabControlDevice</value>
+  </data>
+  <data name="&gt;&gt;tabPageMotorRotIrregular.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <data name="labelPmSocPercentD1.Location" type="System.Drawing.Point, System.Drawing">
     <value>312, 151</value>
@@ -4127,167 +2387,485 @@
   <data name="&gt;&gt;labelPmBatCap.ZOrder" xml:space="preserve">
     <value>21</value>
   </data>
-  <data name="&gt;&gt;textBoxIhkHeatExSetpoint.Name" xml:space="preserve">
-    <value>textBoxIhkHeatExSetpoint</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkHeatExSetpoint.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkHeatExSetpoint.Parent" xml:space="preserve">
-    <value>panelIhk</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkHeatExSetpoint.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;labelIhkHeatExSetpoint.Name" xml:space="preserve">
-    <value>labelIhkHeatExSetpoint</value>
-  </data>
-  <data name="&gt;&gt;labelIhkHeatExSetpoint.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelIhkHeatExSetpoint.Parent" xml:space="preserve">
-    <value>panelIhk</value>
-  </data>
-  <data name="&gt;&gt;labelIhkHeatExSetpoint.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkHeatExTemp.Name" xml:space="preserve">
-    <value>textBoxIhkHeatExTemp</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkHeatExTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkHeatExTemp.Parent" xml:space="preserve">
-    <value>panelIhk</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkHeatExTemp.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;labelIhkHeatExTemp.Name" xml:space="preserve">
-    <value>labelIhkHeatExTemp</value>
-  </data>
-  <data name="&gt;&gt;labelIhkHeatExTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelIhkHeatExTemp.Parent" xml:space="preserve">
-    <value>panelIhk</value>
-  </data>
-  <data name="&gt;&gt;labelIhkHeatExTemp.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkSetpoint.Name" xml:space="preserve">
-    <value>textBoxIhkSetpoint</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkSetpoint.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkSetpoint.Parent" xml:space="preserve">
-    <value>panelIhk</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkSetpoint.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;labelIhkSetpoint.Name" xml:space="preserve">
-    <value>labelIhkSetpoint</value>
-  </data>
-  <data name="&gt;&gt;labelIhkSetpoint.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelIhkSetpoint.Parent" xml:space="preserve">
-    <value>panelIhk</value>
-  </data>
-  <data name="&gt;&gt;labelIhkSetpoint.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkOutTemp.Name" xml:space="preserve">
-    <value>textBoxIhkOutTemp</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkOutTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkOutTemp.Parent" xml:space="preserve">
-    <value>panelIhk</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkOutTemp.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;labelIhkOutTemp.Name" xml:space="preserve">
-    <value>labelIhkOutTemp</value>
-  </data>
-  <data name="&gt;&gt;labelIhkOutTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelIhkOutTemp.Parent" xml:space="preserve">
-    <value>panelIhk</value>
-  </data>
-  <data name="&gt;&gt;labelIhkOutTemp.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkInTempDelay.Name" xml:space="preserve">
-    <value>textBoxIhkInTempDelay</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkInTempDelay.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkInTempDelay.Parent" xml:space="preserve">
-    <value>panelIhk</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkInTempDelay.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;labelIhkInTempDelay.Name" xml:space="preserve">
-    <value>labelIhkInTempDelay</value>
-  </data>
-  <data name="&gt;&gt;labelIhkInTempDelay.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelIhkInTempDelay.Parent" xml:space="preserve">
-    <value>panelIhk</value>
-  </data>
-  <data name="&gt;&gt;labelIhkInTempDelay.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkInTemp.Name" xml:space="preserve">
-    <value>textBoxIhkInTemp</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkInTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkInTemp.Parent" xml:space="preserve">
-    <value>panelIhk</value>
-  </data>
-  <data name="&gt;&gt;textBoxIhkInTemp.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="&gt;&gt;labelIhkInTemp.Name" xml:space="preserve">
-    <value>labelIhkInTemp</value>
-  </data>
-  <data name="&gt;&gt;labelIhkInTemp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelIhkInTemp.Parent" xml:space="preserve">
-    <value>panelIhk</value>
-  </data>
-  <data name="&gt;&gt;labelIhkInTemp.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
-  <data name="panelIhk.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="panelPm.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
   </data>
-  <data name="panelIhk.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="panelPm.Size" type="System.Drawing.Size, System.Drawing">
     <value>618, 309</value>
   </data>
-  <data name="&gt;&gt;panelIhk.Name" xml:space="preserve">
-    <value>panelIhk</value>
+  <data name="&gt;&gt;panelPm.Name" xml:space="preserve">
+    <value>panelPm</value>
   </data>
-  <data name="&gt;&gt;panelIhk.Type" xml:space="preserve">
+  <data name="&gt;&gt;panelPm.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;panelIhk.Parent" xml:space="preserve">
-    <value>tabPageIhk</value>
+  <data name="&gt;&gt;panelPm.Parent" xml:space="preserve">
+    <value>tabPagePm</value>
   </data>
-  <data name="&gt;&gt;panelIhk.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;panelPm.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="tabPagePm.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 25</value>
+  </data>
+  <data name="tabPagePm.Size" type="System.Drawing.Size, System.Drawing">
+    <value>624, 315</value>
+  </data>
+  <data name="tabPagePm.Text" xml:space="preserve">
+    <value>Power management</value>
+  </data>
+  <data name="&gt;&gt;tabPagePm.Name" xml:space="preserve">
+    <value>tabPagePm</value>
+  </data>
+  <data name="&gt;&gt;tabPagePm.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPagePm.Parent" xml:space="preserve">
+    <value>tabControlDevice</value>
+  </data>
+  <data name="&gt;&gt;tabPagePm.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="labelCccNavResVert.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 209</value>
+  </data>
+  <data name="labelCccNavResVert.Size" type="System.Drawing.Size, System.Drawing">
+    <value>291, 20</value>
+  </data>
+  <data name="labelCccNavResVert.Text" xml:space="preserve">
+    <value>GPS vertical resolution [m]:</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavResVert.Name" xml:space="preserve">
+    <value>labelCccNavResVert</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavResVert.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavResVert.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavResVert.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="textBoxCccNavResVert.Location" type="System.Drawing.Point, System.Drawing">
+    <value>300, 206</value>
+  </data>
+  <data name="textBoxCccNavResVert.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 23</value>
+  </data>
+  <data name="textBoxCccNavResVert.TabIndex" type="System.Int32, mscorlib">
+    <value>63</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavResVert.Name" xml:space="preserve">
+    <value>textBoxCccNavResVert</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavResVert.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavResVert.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavResVert.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="textBoxCccNavResHorz.Location" type="System.Drawing.Point, System.Drawing">
+    <value>300, 177</value>
+  </data>
+  <data name="textBoxCccNavResHorz.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 23</value>
+  </data>
+  <data name="textBoxCccNavResHorz.TabIndex" type="System.Int32, mscorlib">
+    <value>61</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavResHorz.Name" xml:space="preserve">
+    <value>textBoxCccNavResHorz</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavResHorz.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavResHorz.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavResHorz.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="labelCccNavResHorz.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 180</value>
+  </data>
+  <data name="labelCccNavResHorz.Size" type="System.Drawing.Size, System.Drawing">
+    <value>291, 20</value>
+  </data>
+  <data name="labelCccNavResHorz.Text" xml:space="preserve">
+    <value>GPS horizonal resolution [m]:</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavResHorz.Name" xml:space="preserve">
+    <value>labelCccNavResHorz</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavResHorz.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavResHorz.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavResHorz.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="textBoxCccNavResPos.Location" type="System.Drawing.Point, System.Drawing">
+    <value>300, 235</value>
+  </data>
+  <data name="textBoxCccNavResPos.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 23</value>
+  </data>
+  <data name="textBoxCccNavResPos.TabIndex" type="System.Int32, mscorlib">
+    <value>65</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavResPos.Name" xml:space="preserve">
+    <value>textBoxCccNavResPos</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavResPos.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavResPos.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavResPos.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="labelCccNavResPos.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 238</value>
+  </data>
+  <data name="labelCccNavResPos.Size" type="System.Drawing.Size, System.Drawing">
+    <value>291, 20</value>
+  </data>
+  <data name="labelCccNavResPos.Text" xml:space="preserve">
+    <value>GPS position resolution [m]:</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavResPos.Name" xml:space="preserve">
+    <value>labelCccNavResPos</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavResPos.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavResPos.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavResPos.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="textBoxCccNavGpsDateTime.Location" type="System.Drawing.Point, System.Drawing">
+    <value>300, 90</value>
+  </data>
+  <data name="textBoxCccNavGpsDateTime.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 23</value>
+  </data>
+  <data name="textBoxCccNavGpsDateTime.TabIndex" type="System.Int32, mscorlib">
+    <value>49</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavGpsDateTime.Name" xml:space="preserve">
+    <value>textBoxCccNavGpsDateTime</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavGpsDateTime.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavGpsDateTime.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavGpsDateTime.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="labelCccNavGpsDateTime.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 93</value>
+  </data>
+  <data name="labelCccNavGpsDateTime.Size" type="System.Drawing.Size, System.Drawing">
+    <value>291, 20</value>
+  </data>
+  <data name="labelCccNavGpsDateTime.Text" xml:space="preserve">
+    <value>GPS Date/Time:</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavGpsDateTime.Name" xml:space="preserve">
+    <value>labelCccNavGpsDateTime</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavGpsDateTime.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavGpsDateTime.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavGpsDateTime.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="textBoxCccNavSpeed.Location" type="System.Drawing.Point, System.Drawing">
+    <value>300, 148</value>
+  </data>
+  <data name="textBoxCccNavSpeed.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 23</value>
+  </data>
+  <data name="textBoxCccNavSpeed.TabIndex" type="System.Int32, mscorlib">
+    <value>59</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavSpeed.Name" xml:space="preserve">
+    <value>textBoxCccNavSpeed</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavSpeed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavSpeed.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavSpeed.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="labelCccNavSpeed.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 151</value>
+  </data>
+  <data name="labelCccNavSpeed.Size" type="System.Drawing.Size, System.Drawing">
+    <value>291, 20</value>
+  </data>
+  <data name="labelCccNavSpeed.Text" xml:space="preserve">
+    <value>Speed [km/h]:</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavSpeed.Name" xml:space="preserve">
+    <value>labelCccNavSpeed</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavSpeed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavSpeed.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavSpeed.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="checkBoxHipDriver.Location" type="System.Drawing.Point, System.Drawing">
+    <value>300, 286</value>
+  </data>
+  <data name="checkBoxHipDriver.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 20</value>
+  </data>
+  <data name="checkBoxHipDriver.TabIndex" type="System.Int32, mscorlib">
+    <value>53</value>
+  </data>
+  <data name="checkBoxHipDriver.Text" xml:space="preserve">
+    <value>HIP driver OK</value>
+  </data>
+  <data name="checkBoxCccNavAlmanach.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 286</value>
+  </data>
+  <data name="checkBoxCccNavAlmanach.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 20</value>
+  </data>
+  <data name="checkBoxCccNavAlmanach.TabIndex" type="System.Int32, mscorlib">
+    <value>52</value>
+  </data>
+  <data name="checkBoxCccNavAlmanach.Text" xml:space="preserve">
+    <value>Almanach status OK</value>
+  </data>
+  <data name="labelCccNavPosType.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 122</value>
+  </data>
+  <data name="labelCccNavPosType.Size" type="System.Drawing.Size, System.Drawing">
+    <value>291, 20</value>
+  </data>
+  <data name="labelCccNavPosType.Text" xml:space="preserve">
+    <value>GPS Status:</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosType.Name" xml:space="preserve">
+    <value>labelCccNavPosType</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosType.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosType.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosType.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="textBoxCccNavPosType.Location" type="System.Drawing.Point, System.Drawing">
+    <value>300, 119</value>
+  </data>
+  <data name="textBoxCccNavPosType.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 23</value>
+  </data>
+  <data name="textBoxCccNavPosType.TabIndex" type="System.Int32, mscorlib">
+    <value>57</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosType.Name" xml:space="preserve">
+    <value>textBoxCccNavPosType</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosType.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosType.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosType.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="textBoxCccNavPosHeight.Location" type="System.Drawing.Point, System.Drawing">
+    <value>300, 61</value>
+  </data>
+  <data name="textBoxCccNavPosHeight.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 23</value>
+  </data>
+  <data name="textBoxCccNavPosHeight.TabIndex" type="System.Int32, mscorlib">
+    <value>45</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosHeight.Name" xml:space="preserve">
+    <value>textBoxCccNavPosHeight</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosHeight.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosHeight.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosHeight.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <data name="labelCccNavPosHeight.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 64</value>
+  </data>
+  <data name="labelCccNavPosHeight.Size" type="System.Drawing.Size, System.Drawing">
+    <value>291, 20</value>
+  </data>
+  <data name="labelCccNavPosHeight.Text" xml:space="preserve">
+    <value>Position height NN [m]:</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosHeight.Name" xml:space="preserve">
+    <value>labelCccNavPosHeight</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosHeight.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosHeight.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosHeight.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="textBoxCccNavPosLong.Location" type="System.Drawing.Point, System.Drawing">
+    <value>300, 32</value>
+  </data>
+  <data name="textBoxCccNavPosLong.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 23</value>
+  </data>
+  <data name="textBoxCccNavPosLong.TabIndex" type="System.Int32, mscorlib">
+    <value>40</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosLong.Name" xml:space="preserve">
+    <value>textBoxCccNavPosLong</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosLong.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosLong.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosLong.ZOrder" xml:space="preserve">
+    <value>16</value>
+  </data>
+  <data name="labelCccNavPosLong.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 35</value>
+  </data>
+  <data name="labelCccNavPosLong.Size" type="System.Drawing.Size, System.Drawing">
+    <value>291, 20</value>
+  </data>
+  <data name="labelCccNavPosLong.Text" xml:space="preserve">
+    <value>Position longitude:</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosLong.Name" xml:space="preserve">
+    <value>labelCccNavPosLong</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosLong.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosLong.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosLong.ZOrder" xml:space="preserve">
+    <value>17</value>
+  </data>
+  <data name="textBoxCccNavPosLat.Location" type="System.Drawing.Point, System.Drawing">
+    <value>300, 3</value>
+  </data>
+  <data name="textBoxCccNavPosLat.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 23</value>
+  </data>
+  <data name="textBoxCccNavPosLat.TabIndex" type="System.Int32, mscorlib">
+    <value>36</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosLat.Name" xml:space="preserve">
+    <value>textBoxCccNavPosLat</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosLat.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosLat.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;textBoxCccNavPosLat.ZOrder" xml:space="preserve">
+    <value>18</value>
+  </data>
+  <data name="labelCccNavPosLat.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 6</value>
+  </data>
+  <data name="labelCccNavPosLat.Size" type="System.Drawing.Size, System.Drawing">
+    <value>291, 20</value>
+  </data>
+  <data name="labelCccNavPosLat.Text" xml:space="preserve">
+    <value>Position latitude:</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosLat.Name" xml:space="preserve">
+    <value>labelCccNavPosLat</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosLat.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosLat.Parent" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;labelCccNavPosLat.ZOrder" xml:space="preserve">
+    <value>19</value>
+  </data>
+  <data name="panelCccNav.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="panelCccNav.Size" type="System.Drawing.Size, System.Drawing">
+    <value>618, 309</value>
+  </data>
+  <data name="&gt;&gt;panelCccNav.Name" xml:space="preserve">
+    <value>panelCccNav</value>
+  </data>
+  <data name="&gt;&gt;panelCccNav.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panelCccNav.Parent" xml:space="preserve">
+    <value>tabPageCccNav</value>
+  </data>
+  <data name="&gt;&gt;panelCccNav.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tabPageCccNav.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 25</value>
+  </data>
+  <data name="tabPageCccNav.Size" type="System.Drawing.Size, System.Drawing">
+    <value>624, 315</value>
+  </data>
+  <data name="tabPageCccNav.Text" xml:space="preserve">
+    <value>GPS</value>
+  </data>
+  <data name="&gt;&gt;tabPageCccNav.Name" xml:space="preserve">
+    <value>tabPageCccNav</value>
+  </data>
+  <data name="&gt;&gt;tabPageCccNav.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPageCccNav.Parent" xml:space="preserve">
+    <value>tabControlDevice</value>
+  </data>
+  <data name="&gt;&gt;tabPageCccNav.ZOrder" xml:space="preserve">
+    <value>5</value>
   </data>
   <data name="textBoxIhkHeatExSetpoint.Location" type="System.Drawing.Point, System.Drawing">
     <value>545, 61</value>
@@ -4541,47 +3119,44 @@
   <data name="&gt;&gt;labelIhkInTemp.ZOrder" xml:space="preserve">
     <value>11</value>
   </data>
-  <data name="&gt;&gt;textBoxErrors2.Name" xml:space="preserve">
-    <value>textBoxErrors2</value>
-  </data>
-  <data name="&gt;&gt;textBoxErrors2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxErrors2.Parent" xml:space="preserve">
-    <value>panelErrors</value>
-  </data>
-  <data name="&gt;&gt;textBoxErrors2.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;textBoxErrors1.Name" xml:space="preserve">
-    <value>textBoxErrors1</value>
-  </data>
-  <data name="&gt;&gt;textBoxErrors1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxErrors1.Parent" xml:space="preserve">
-    <value>panelErrors</value>
-  </data>
-  <data name="&gt;&gt;textBoxErrors1.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="panelErrors.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="panelIhk.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
   </data>
-  <data name="panelErrors.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="panelIhk.Size" type="System.Drawing.Size, System.Drawing">
     <value>618, 309</value>
   </data>
-  <data name="&gt;&gt;panelErrors.Name" xml:space="preserve">
-    <value>panelErrors</value>
+  <data name="&gt;&gt;panelIhk.Name" xml:space="preserve">
+    <value>panelIhk</value>
   </data>
-  <data name="&gt;&gt;panelErrors.Type" xml:space="preserve">
+  <data name="&gt;&gt;panelIhk.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;panelErrors.Parent" xml:space="preserve">
-    <value>tabPageErrors</value>
+  <data name="&gt;&gt;panelIhk.Parent" xml:space="preserve">
+    <value>tabPageIhk</value>
   </data>
-  <data name="&gt;&gt;panelErrors.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;panelIhk.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="tabPageIhk.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 25</value>
+  </data>
+  <data name="tabPageIhk.Size" type="System.Drawing.Size, System.Drawing">
+    <value>624, 315</value>
+  </data>
+  <data name="tabPageIhk.Text" xml:space="preserve">
+    <value>Climate</value>
+  </data>
+  <data name="&gt;&gt;tabPageIhk.Name" xml:space="preserve">
+    <value>tabPageIhk</value>
+  </data>
+  <data name="&gt;&gt;tabPageIhk.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPageIhk.Parent" xml:space="preserve">
+    <value>tabControlDevice</value>
+  </data>
+  <data name="&gt;&gt;tabPageIhk.ZOrder" xml:space="preserve">
+    <value>6</value>
   </data>
   <data name="textBoxErrors2.Location" type="System.Drawing.Point, System.Drawing">
     <value>310, 0</value>
@@ -4631,6 +3206,61 @@
   <data name="&gt;&gt;textBoxErrors1.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="panelErrors.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="panelErrors.Size" type="System.Drawing.Size, System.Drawing">
+    <value>618, 309</value>
+  </data>
+  <data name="&gt;&gt;panelErrors.Name" xml:space="preserve">
+    <value>panelErrors</value>
+  </data>
+  <data name="&gt;&gt;panelErrors.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panelErrors.Parent" xml:space="preserve">
+    <value>tabPageErrors</value>
+  </data>
+  <data name="&gt;&gt;panelErrors.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tabPageErrors.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 25</value>
+  </data>
+  <data name="tabPageErrors.Size" type="System.Drawing.Size, System.Drawing">
+    <value>624, 315</value>
+  </data>
+  <data name="tabPageErrors.Text" xml:space="preserve">
+    <value>Errors</value>
+  </data>
+  <data name="&gt;&gt;tabPageErrors.Name" xml:space="preserve">
+    <value>tabPageErrors</value>
+  </data>
+  <data name="&gt;&gt;tabPageErrors.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPageErrors.Parent" xml:space="preserve">
+    <value>tabControlDevice</value>
+  </data>
+  <data name="&gt;&gt;tabPageErrors.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="textBoxTest.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="textBoxTest.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="textBoxTest.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
+    <value>Both</value>
+  </data>
+  <data name="textBoxTest.Size" type="System.Drawing.Size, System.Drawing">
+    <value>618, 309</value>
+  </data>
+  <data name="textBoxTest.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
   <data name="&gt;&gt;textBoxTest.Name" xml:space="preserve">
     <value>textBoxTest</value>
   </data>
@@ -4661,33 +3291,47 @@
   <data name="&gt;&gt;panelTest.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="textBoxTest.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+  <data name="tabPageTest.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 25</value>
   </data>
-  <data name="textBoxTest.Multiline" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="tabPageTest.Size" type="System.Drawing.Size, System.Drawing">
+    <value>624, 315</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="textBoxTest.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
-    <value>Both</value>
+  <data name="tabPageTest.Text" xml:space="preserve">
+    <value>Test</value>
   </data>
-  <data name="textBoxTest.Size" type="System.Drawing.Size, System.Drawing">
-    <value>618, 309</value>
+  <data name="&gt;&gt;tabPageTest.Name" xml:space="preserve">
+    <value>tabPageTest</value>
   </data>
-  <data name="textBoxTest.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+  <data name="&gt;&gt;tabPageTest.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;textBoxTest.Name" xml:space="preserve">
-    <value>textBoxTest</value>
+  <data name="&gt;&gt;tabPageTest.Parent" xml:space="preserve">
+    <value>tabControlDevice</value>
   </data>
-  <data name="&gt;&gt;textBoxTest.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;tabPageTest.ZOrder" xml:space="preserve">
+    <value>8</value>
   </data>
-  <data name="&gt;&gt;textBoxTest.Parent" xml:space="preserve">
-    <value>panelTest</value>
+  <data name="tabControlDevice.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 79</value>
   </data>
-  <data name="&gt;&gt;textBoxTest.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="tabControlDevice.Size" type="System.Drawing.Size, System.Drawing">
+    <value>632, 344</value>
+  </data>
+  <data name="tabControlDevice.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;tabControlDevice.Name" xml:space="preserve">
+    <value>tabControlDevice</value>
+  </data>
+  <data name="&gt;&gt;tabControlDevice.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabControlDevice.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;tabControlDevice.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <data name="buttonPowerOff.Location" type="System.Drawing.Point, System.Drawing">
     <value>695, 100</value>
