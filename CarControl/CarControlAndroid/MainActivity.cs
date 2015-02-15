@@ -46,6 +46,9 @@ namespace CarControlAndroid
         {
             base.OnCreate (bundle);
 
+            // force linking of I18N.DLL
+            var ignore = new I18N.West.CP437();
+
             // Set our view from the "main" layout resource
             SetContentView (Resource.Layout.main);
             TabHost.TabWidget.SetDividerDrawable (Resource.Drawable.tab_divider);
