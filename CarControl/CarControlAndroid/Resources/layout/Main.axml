@@ -117,6 +117,56 @@
                     </ScrollView>
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/tabMotorUnevenRunning"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <ScrollView
+                        android:minWidth="25px"
+                        android:minHeight="25px"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/scrollViewTextMotorUnevenRunning"
+                        android:layout_weight="1"
+                        android:scrollbars="vertical">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/textViewResultMotorUnevenRunning"
+                            android:editable="false"
+                            android:visibility="visible"
+                            android:singleLine="false"
+                            android:cursorVisible="false"
+                            android:bufferType="normal"
+                            android:scrollbars="none" />
+                    </ScrollView>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/tabMotorRotIrregular"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <ScrollView
+                        android:minWidth="25px"
+                        android:minHeight="25px"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/scrollViewTextMotorRotIrregular"
+                        android:layout_weight="1"
+                        android:scrollbars="vertical">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/textViewResultMotorRotIrregular"
+                            android:editable="false"
+                            android:visibility="visible"
+                            android:singleLine="false"
+                            android:cursorVisible="false"
+                            android:bufferType="normal"
+                            android:scrollbars="none" />
+                    </ScrollView>
+                </LinearLayout>
+                <LinearLayout
                     android:id="@+id/tabMotorPm"
                     android:orientation="vertical"
                     android:layout_width="match_parent"

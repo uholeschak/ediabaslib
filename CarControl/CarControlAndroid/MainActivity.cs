@@ -34,6 +34,8 @@ namespace CarControlAndroid
         private ToggleButton buttonAxisUp;
         private TextView textViewResultAxis;
         private TextView textViewResultMotor;
+        private TextView textViewResultMotorUnevenRunning;
+        private TextView textViewResultMotorRotIrregular;
         private TextView textViewResultMotorPm;
         private TextView textViewResultCccNav;
         private TextView textViewResultIhk;
@@ -49,6 +51,8 @@ namespace CarControlAndroid
             TabHost.TabWidget.SetDividerDrawable (Resource.Drawable.tab_divider);
             CreateTab("axis", GetString (Resource.String.tab_axis), Resource.Id.tabAxis);
             CreateTab("motor", GetString (Resource.String.tab_motor), Resource.Id.tabMotor);
+            CreateTab("motor_uneven_running", GetString (Resource.String.tab_motor_uneven_running), Resource.Id.tabMotorUnevenRunning);
+            CreateTab("motor_rot_irregular", GetString (Resource.String.tab_motor_rot_irregular), Resource.Id.tabMotorRotIrregular);
             CreateTab("motor_pm", GetString (Resource.String.tab_motor_pm), Resource.Id.tabMotorPm);
             CreateTab("ccc_nav", GetString (Resource.String.tab_ccc_nav), Resource.Id.tabCccNav);
             CreateTab("ihk", GetString (Resource.String.tab_ihk), Resource.Id.tabIhk);
@@ -60,6 +64,8 @@ namespace CarControlAndroid
             buttonAxisDown = FindViewById<ToggleButton> (Resource.Id.button_axis_down);
             textViewResultAxis = FindViewById<TextView> (Resource.Id.textViewResultAxis);
             textViewResultMotor = FindViewById<TextView> (Resource.Id.textViewResultMotor);
+            textViewResultMotorUnevenRunning = FindViewById<TextView> (Resource.Id.textViewResultMotorUnevenRunning);
+            textViewResultMotorRotIrregular = FindViewById<TextView> (Resource.Id.textViewResultMotorRotIrregular);
             textViewResultMotorPm = FindViewById<TextView> (Resource.Id.textViewResultMotorPm);
             textViewResultCccNav = FindViewById<TextView> (Resource.Id.textViewResultCccNav);
             textViewResultIhk = FindViewById<TextView> (Resource.Id.textViewResultIhk);
@@ -350,7 +356,7 @@ namespace CarControlAndroid
                 default:
                     commThread.Device = CommThread.SelectedDevice.DeviceAxis;
                     break;
-#if false
+
                 case 1:
                     commThread.Device = CommThread.SelectedDevice.DeviceMotor;
                     break;
@@ -382,31 +388,6 @@ namespace CarControlAndroid
                 case 8:
                     commThread.Device = CommThread.SelectedDevice.Test;
                     break;
-#else
-                case 1:
-                    commThread.Device = CommThread.SelectedDevice.DeviceMotor;
-                    break;
-
-                case 2:
-                    commThread.Device = CommThread.SelectedDevice.DeviceMotorPM;
-                    break;
-
-                case 3:
-                    commThread.Device = CommThread.SelectedDevice.DeviceCccNav;
-                    break;
-
-                case 4:
-                    commThread.Device = CommThread.SelectedDevice.DeviceIhk;
-                    break;
-
-                case 5:
-                    commThread.Device = CommThread.SelectedDevice.DeviceErrors;
-                    break;
-
-                case 6:
-                    commThread.Device = CommThread.SelectedDevice.Test;
-                    break;
-#endif
             }
         }
 
@@ -644,10 +625,50 @@ namespace CarControlAndroid
 
             if (motorDataUnevenRunningValid)
             {
+                string outputText = string.Empty;
+                Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                lock (CommThread.DataLock)
+                {
+                    resultDict = commThread.EdiabasResultDict;
+                }
+                outputText += GetString (Resource.String.label_motor_quant_corr_c1) + " " +
+                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_LLR_MENGE_ZYL1_WERT", "{0,5:0.00}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_quant_corr_c2) + " " +
+                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_LLR_MENGE_ZYL2_WERT", "{0,5:0.00}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_quant_corr_c3) + " " +
+                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_LLR_MENGE_ZYL3_WERT", "{0,5:0.00}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_quant_corr_c4) + " " +
+                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_LLR_MENGE_ZYL4_WERT", "{0,5:0.00}") + "\r\n";
+
+                textViewResultMotorUnevenRunning.Text = outputText;
+            }
+            else
+            {
+                textViewResultMotorUnevenRunning.Text = string.Empty;
             }
 
             if (motorRotIrregularValid)
             {
+                string outputText = string.Empty;
+                Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                lock (CommThread.DataLock)
+                {
+                    resultDict = commThread.EdiabasResultDict;
+                }
+                outputText += GetString (Resource.String.label_motor_rpm_c1) + " " +
+                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_DREHZAHL_ZYL1_WERT", "{0,7:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_rpm_c2) + " " +
+                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_DREHZAHL_ZYL2_WERT", "{0,7:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_rpm_c3) + " " +
+                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_DREHZAHL_ZYL3_WERT", "{0,7:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_motor_rpm_c4) + " " +
+                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_DREHZAHL_ZYL4_WERT", "{0,7:0.0}") + "\r\n";
+
+                textViewResultMotorRotIrregular.Text = outputText;
+            }
+            else
+            {
+                textViewResultMotorRotIrregular.Text = string.Empty;
             }
 
             if (motorPmValid)
