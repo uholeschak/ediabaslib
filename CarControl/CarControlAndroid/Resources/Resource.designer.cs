@@ -46,7 +46,22 @@ namespace CarControlAndroid
 		{
 			
 			// aapt resource value: 0x7f020000
-			public const int Icon = 2130837504;
+			public const int icon = 2130837504;
+			
+			// aapt resource value: 0x7f020001
+			public const int tab_bg_selected = 2130837505;
+			
+			// aapt resource value: 0x7f020002
+			public const int tab_bg_selector = 2130837506;
+			
+			// aapt resource value: 0x7f020003
+			public const int tab_bg_unselected = 2130837507;
+			
+			// aapt resource value: 0x7f020004
+			public const int tab_divider = 2130837508;
+			
+			// aapt resource value: 0x7f020005
+			public const int tab_text_selector = 2130837509;
 			
 			static Drawable()
 			{
@@ -79,8 +94,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f060001
 			public const int paired_devices = 2131099649;
 			
-			// aapt resource value: 0x7f06001a
-			public const int scan = 2131099674;
+			// aapt resource value: 0x7f06001c
+			public const int scan = 2131099676;
 			
 			// aapt resource value: 0x7f060006
 			public const int scrollViewTextAxis = 2131099654;
@@ -117,6 +132,12 @@ namespace CarControlAndroid
 			
 			// aapt resource value: 0x7f060016
 			public const int tabTest = 2131099670;
+			
+			// aapt resource value: 0x7f06001a
+			public const int tabsLayout = 2131099674;
+			
+			// aapt resource value: 0x7f06001b
+			public const int tabsText = 2131099675;
 			
 			// aapt resource value: 0x7f060007
 			public const int textViewResultAxis = 2131099655;
@@ -163,6 +184,9 @@ namespace CarControlAndroid
 			
 			// aapt resource value: 0x7f030002
 			public const int main = 2130903042;
+			
+			// aapt resource value: 0x7f030003
+			public const int tabs_bg = 2130903043;
 			
 			static Layout()
 			{

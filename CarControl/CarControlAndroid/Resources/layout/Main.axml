@@ -1,36 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <TabHost
         android:id="@android:id/tabhost"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_weight="1">
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
             <HorizontalScrollView
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scrollbars="none"
                 android:fillViewport="true">
-                <TabWidget
-                    android:id="@android:id/tabs"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dip"
+                        android:background="#000" />
+                    <TabWidget
+                        android:id="@android:id/tabs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="0dip"
+                        android:layout_marginRight="0dip" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dip"
+                        android:background="#696969" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dip"
+                        android:background="#000" />
+                </LinearLayout>
             </HorizontalScrollView>
             <FrameLayout
                 android:id="@android:id/tabcontent"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
                 <LinearLayout
                     android:id="@+id/tabAxis"
                     android:orientation="vertical"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
                     <ScrollView
                         android:minWidth="25px"
                         android:minHeight="25px"
@@ -40,8 +59,8 @@
                         android:layout_weight="1"
                         android:scrollbars="vertical">
                         <TextView
-                            android:layout_width="fill_parent"
-                            android:layout_height="fill_parent"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:id="@+id/textViewResultAxis"
                             android:editable="false"
                             android:visibility="visible"
@@ -75,8 +94,8 @@
                 <LinearLayout
                     android:id="@+id/tabMotor"
                     android:orientation="vertical"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
                     <ScrollView
                         android:minWidth="25px"
                         android:minHeight="25px"
@@ -86,8 +105,8 @@
                         android:layout_weight="1"
                         android:scrollbars="vertical">
                         <TextView
-                            android:layout_width="fill_parent"
-                            android:layout_height="fill_parent"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:id="@+id/textViewResultMotor"
                             android:editable="false"
                             android:visibility="visible"
@@ -100,8 +119,8 @@
                 <LinearLayout
                     android:id="@+id/tabMotorPm"
                     android:orientation="vertical"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
                     <ScrollView
                         android:minWidth="25px"
                         android:minHeight="25px"
@@ -111,8 +130,8 @@
                         android:layout_weight="1"
                         android:scrollbars="vertical">
                         <TextView
-                            android:layout_width="fill_parent"
-                            android:layout_height="fill_parent"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:id="@+id/textViewResultMotorPm"
                             android:editable="false"
                             android:visibility="visible"
@@ -125,8 +144,8 @@
                 <LinearLayout
                     android:id="@+id/tabCccNav"
                     android:orientation="vertical"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
                     <ScrollView
                         android:minWidth="25px"
                         android:minHeight="25px"
@@ -136,8 +155,8 @@
                         android:layout_weight="1"
                         android:scrollbars="vertical">
                         <TextView
-                            android:layout_width="fill_parent"
-                            android:layout_height="fill_parent"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:id="@+id/textViewResultCccNav"
                             android:editable="false"
                             android:visibility="visible"
@@ -150,8 +169,8 @@
                 <LinearLayout
                     android:id="@+id/tabErrors"
                     android:orientation="vertical"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
                     <ScrollView
                         android:minWidth="25px"
                         android:minHeight="25px"
@@ -161,8 +180,8 @@
                         android:layout_weight="1"
                         android:scrollbars="vertical">
                         <TextView
-                            android:layout_width="fill_parent"
-                            android:layout_height="fill_parent"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:id="@+id/textViewResultErrors"
                             android:editable="false"
                             android:visibility="visible"
@@ -175,8 +194,8 @@
                 <LinearLayout
                     android:id="@+id/tabTest"
                     android:orientation="vertical"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
                     <ScrollView
                         android:minWidth="25px"
                         android:minHeight="25px"
@@ -185,8 +204,8 @@
                         android:id="@+id/scrollViewTextTest"
                         android:scrollbars="vertical">
                         <TextView
-                            android:layout_width="fill_parent"
-                            android:layout_height="fill_parent"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:id="@+id/textViewResultTest"
                             android:editable="false"
                             android:visibility="visible"

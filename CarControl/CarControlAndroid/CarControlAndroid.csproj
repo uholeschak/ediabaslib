@@ -60,11 +60,19 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\Strings.xml" />
-    <AndroidResource Include="Resources\drawable\Icon.png" />
     <AndroidResource Include="Resources\layout\device_list.axml" />
     <AndroidResource Include="Resources\menu\option_menu.xml" />
     <AndroidResource Include="Resources\layout\device_name.axml" />
     <AndroidResource Include="Resources\layout\main.axml" />
+    <AndroidResource Include="Resources\drawable\tab_bg_selector.axml" />
+    <AndroidResource Include="Resources\drawable\tab_text_selector.axml" />
+    <AndroidResource Include="Resources\layout\tabs_bg.axml" />
+    <AndroidResource Include="Resources\drawable\tab_bg_selected.axml" />
+    <AndroidResource Include="Resources\drawable\tab_bg_unselected.axml" />
+    <AndroidResource Include="Resources\drawable-hdpi\tab_divider.9.png" />
+    <AndroidResource Include="Resources\drawable-ldpi\icon.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\icon.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
@@ -73,6 +81,7 @@
     <Folder Include="Resources\drawable-hdpi\" />
     <Folder Include="Resources\drawable-mdpi\" />
     <Folder Include="Resources\drawable-xhdpi\" />
+    <Folder Include="Resources\drawable-ldpi\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="..\..\Ecu\d_zgm.grp">

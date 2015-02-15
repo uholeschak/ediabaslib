@@ -45,6 +45,7 @@ namespace CarControlAndroid
 
             // Set our view from the "main" layout resource
             SetContentView (Resource.Layout.main);
+            TabHost.TabWidget.SetDividerDrawable (Resource.Drawable.tab_divider);
             CreateTab("axis", GetString (Resource.String.tab_axis), Resource.Id.tabAxis);
             CreateTab("motor", GetString (Resource.String.tab_motor), Resource.Id.tabMotor);
             CreateTab("motor_pm", GetString (Resource.String.tab_motor_pm), Resource.Id.tabMotorPm);
@@ -93,9 +94,17 @@ namespace CarControlAndroid
         private void CreateTab(string tag, string label, int viewId)
         {
             TabHost.TabSpec spec = TabHost.NewTabSpec(tag);
-            spec.SetIndicator(label);
+            spec.SetIndicator(CreateTabView(label));
             spec.SetContent(viewId);
             TabHost.AddTab(spec);
+        }
+
+        private View CreateTabView(string label) 
+        {
+            var tabView = LayoutInflater.Inflate (Resource.Layout.tabs_bg, null);
+            var textView = tabView.FindViewById<TextView> (Resource.Id.tabsText);
+            textView.Text = label;
+            return tabView;
         }
 
         protected override void OnStart ()
