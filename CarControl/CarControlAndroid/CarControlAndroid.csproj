@@ -59,7 +59,6 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values\Strings.xml" />
     <AndroidResource Include="Resources\layout\device_list.axml" />
     <AndroidResource Include="Resources\menu\option_menu.xml" />
     <AndroidResource Include="Resources\layout\device_name.axml" />
@@ -73,6 +72,8 @@
     <AndroidResource Include="Resources\drawable-ldpi\icon.png" />
     <AndroidResource Include="Resources\drawable-mdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-hdpi\icon.png" />
+    <AndroidResource Include="Resources\values\Strings.xml" />
+    <AndroidResource Include="Resources\values-de\Strings.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
@@ -82,6 +83,8 @@
     <Folder Include="Resources\drawable-mdpi\" />
     <Folder Include="Resources\drawable-xhdpi\" />
     <Folder Include="Resources\drawable-ldpi\" />
+    <Folder Include="values-de\" />
+    <Folder Include="Resources\values-de\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="..\..\Ecu\d_zgm.grp">

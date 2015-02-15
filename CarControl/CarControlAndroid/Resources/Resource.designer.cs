@@ -484,29 +484,29 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f040034
 			public const int label_motor_pm_bat_cap = 2130968628;
 			
-			// aapt resource value: 0x7f040038
-			public const int label_motor_pm_cal_events = 2130968632;
+			// aapt resource value: 0x7f040035
+			public const int label_motor_pm_cal_events = 2130968629;
 			
-			// aapt resource value: 0x7f040039
-			public const int label_motor_pm_day1 = 2130968633;
+			// aapt resource value: 0x7f040036
+			public const int label_motor_pm_day1 = 2130968630;
 			
 			// aapt resource value: 0x7f040037
 			public const int label_motor_pm_season_temp = 2130968631;
 			
-			// aapt resource value: 0x7f040036
-			public const int label_motor_pm_soc_fit = 2130968630;
+			// aapt resource value: 0x7f040038
+			public const int label_motor_pm_soc_fit = 2130968632;
 			
-			// aapt resource value: 0x7f04003c
-			public const int label_motor_pm_soc_percent = 2130968636;
+			// aapt resource value: 0x7f040039
+			public const int label_motor_pm_soc_percent = 2130968633;
 			
 			// aapt resource value: 0x7f04003a
 			public const int label_motor_pm_soc_q = 2130968634;
 			
-			// aapt resource value: 0x7f040035
-			public const int label_motor_pm_soh = 2130968629;
-			
 			// aapt resource value: 0x7f04003b
-			public const int label_motor_pm_start_cap = 2130968635;
+			public const int label_motor_pm_soh = 2130968635;
+			
+			// aapt resource value: 0x7f04003c
+			public const int label_motor_pm_start_cap = 2130968636;
 			
 			// aapt resource value: 0x7f04002a
 			public const int label_motor_quant_corr_c1 = 2130968618;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Car Control</string>
+    <string name="app_name">BMW Control</string>
     <string name="button_connected">Connected</string>
     <string name="button_disconnected">Disconnected</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving application.</string>
@@ -62,14 +62,14 @@
     <!--  Motor PM -->
     <string name="tab_motor_pm">Power management</string>
     <string name="label_motor_pm_bat_cap">Battery capacity [Ah]:</string>
-    <string name="label_motor_pm_soh">State of Health (SoH) [+/-50]:</string>
-    <string name="label_motor_pm_soc_fit">State of Charge (SoC Fit) [%]:</string>
-    <string name="label_motor_pm_season_temp">Season Temperature [°C]:</string>
     <string name="label_motor_pm_cal_events">Calibration Events:</string>
     <string name="label_motor_pm_day1">Day 1:</string>
-    <string name="label_motor_pm_soc_q">State of Charge (SoC) [Ah]:</string>
-    <string name="label_motor_pm_start_cap">Start capability [%]:</string>
+    <string name="label_motor_pm_season_temp">Season Temperature [°C]:</string>
+    <string name="label_motor_pm_soc_fit">State of Charge (SoC Fit) [%]:</string>
     <string name="label_motor_pm_soc_percent">State of Charge (SoC) [%]:</string>
+    <string name="label_motor_pm_soc_q">State of Charge (SoC) [Ah]:</string>
+    <string name="label_motor_pm_soh">State of Health (SoH) [+/-50]:</string>
+    <string name="label_motor_pm_start_cap">Start capability [%]:</string>
 
     <!--  CCC Nav -->
     <string name="tab_ccc_nav">GPS</string>
@@ -129,12 +129,12 @@
     <string name="tab_test">Test</string>
 
     <!--  DeviceListActivity -->
-    <string name="scanning">scanning for devices...</string>
-    <string name="select_device">select a device</string>
+    <string name="scanning">Scanning for devices ...</string>
+    <string name="select_device">Select a device</string>
     <string name="none_paired">No devices have been paired</string>
     <string name="none_found">No devices found</string>
-    <string name="title_paired_devices">Paired Devices</string>
-    <string name="title_other_devices">Other Available Devices</string>
+    <string name="title_paired_devices">Paired devices</string>
+    <string name="title_other_devices">Other available devices</string>
     <string name="button_scan">Scan for devices</string>
 
     <!-- Options Menu -->
