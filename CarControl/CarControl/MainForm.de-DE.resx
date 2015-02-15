@@ -174,9 +174,6 @@
   <data name="labelAxisRight.Text" xml:space="preserve">
     <value>Achse rechts:</value>
   </data>
-  <data name="labelCccNavGearRate.Text" xml:space="preserve">
-    <value>Gear Rate [V]:</value>
-  </data>
   <data name="labelCccNavGpsDateTime.Text" xml:space="preserve">
     <value>GPS Datum/Zeit:</value>
   </data>
