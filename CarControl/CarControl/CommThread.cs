@@ -904,7 +904,8 @@ namespace CarControl
                         {
                             break;
                         }
-                        ediabas.ArgString = string.Format("0x{0:X02};0x01;0x06", 0x11 + channel);
+                        // longer timeout for bluetooth
+                        ediabas.ArgString = string.Format("0x{0:X02};0x01;0x0C", 0x11 + channel);
                         ediabas.ArgBinaryStd = null;
                         ediabas.ResultsRequests = "JOB_STATUS";
 
