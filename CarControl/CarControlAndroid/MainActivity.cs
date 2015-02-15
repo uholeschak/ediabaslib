@@ -36,6 +36,7 @@ namespace CarControlAndroid
         private TextView textViewResultMotor;
         private TextView textViewResultMotorPm;
         private TextView textViewResultCccNav;
+        private TextView textViewResultIhk;
         private TextView textViewResultErrors;
         private TextView textViewResultTest;
 
@@ -50,6 +51,7 @@ namespace CarControlAndroid
             CreateTab("motor", GetString (Resource.String.tab_motor), Resource.Id.tabMotor);
             CreateTab("motor_pm", GetString (Resource.String.tab_motor_pm), Resource.Id.tabMotorPm);
             CreateTab("ccc_nav", GetString (Resource.String.tab_ccc_nav), Resource.Id.tabCccNav);
+            CreateTab("ihk", GetString (Resource.String.tab_ihk), Resource.Id.tabIhk);
             CreateTab("errors", GetString (Resource.String.tab_errors), Resource.Id.tabErrors);
             CreateTab("test", GetString (Resource.String.tab_test), Resource.Id.tabTest);
 
@@ -60,6 +62,7 @@ namespace CarControlAndroid
             textViewResultMotor = FindViewById<TextView> (Resource.Id.textViewResultMotor);
             textViewResultMotorPm = FindViewById<TextView> (Resource.Id.textViewResultMotorPm);
             textViewResultCccNav = FindViewById<TextView> (Resource.Id.textViewResultCccNav);
+            textViewResultIhk = FindViewById<TextView> (Resource.Id.textViewResultIhk);
             textViewResultErrors = FindViewById<TextView> (Resource.Id.textViewResultErrors);
             textViewResultTest = FindViewById<TextView> (Resource.Id.textViewResultTest);
 
@@ -393,10 +396,14 @@ namespace CarControlAndroid
                     break;
 
                 case 4:
-                    commThread.Device = CommThread.SelectedDevice.DeviceErrors;
+                    commThread.Device = CommThread.SelectedDevice.DeviceIhk;
                     break;
 
                 case 5:
+                    commThread.Device = CommThread.SelectedDevice.DeviceErrors;
+                    break;
+
+                case 6:
                     commThread.Device = CommThread.SelectedDevice.Test;
                     break;
 #endif
@@ -728,6 +735,30 @@ namespace CarControlAndroid
 
             if (ihkValid)
             {
+                string outputText = string.Empty;
+                Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                lock (CommThread.DataLock)
+                {
+                    resultDict = commThread.EdiabasResultDict;
+                }
+                outputText += GetString (Resource.String.label_ihk_in_temp) + " " +
+                    FormatResultDouble(resultDict, "STAT_TINNEN_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_ihk_in_temp_delay) + " " +
+                    FormatResultDouble(resultDict, "STAT_TINNEN_VERZOEGERT_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_ihk_out_temp) + " " +
+                    FormatResultDouble(resultDict, "STAT_TAUSSEN_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_ihk_setpoint) + " " +
+                    FormatResultDouble(resultDict, "STAT_SOLL_LI_KORRIGIERT_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_ihk_heat_ex_temp) + " " +
+                    FormatResultDouble(resultDict, "STAT_WT_RE_WERT", "{0,6:0.0}") + "\r\n";
+                outputText += GetString (Resource.String.label_ihk_heat_ex_setpoint) + " " +
+                    FormatResultDouble(resultDict, "STAT_WTSOLL_RE_WERT", "{0,6:0.0}") + "\r\n";
+
+                textViewResultIhk.Text = outputText;
+            }
+            else
+            {
+                textViewResultIhk.Text = string.Empty;
             }
 
             if (errorsValid)

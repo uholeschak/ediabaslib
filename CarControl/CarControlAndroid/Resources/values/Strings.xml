@@ -57,7 +57,7 @@
     <string name="label_motor_pm_start_cap">Start capability [%]:</string>
     <string name="label_motor_pm_soc_percent">State of Charge (SoC) [%]:</string>
 
-    <!--  CC Nav -->
+    <!--  CCC Nav -->
     <string name="tab_ccc_nav">GPS</string>
     <string name="label_ccc_nav_almanach">Almanach status OK:</string>
     <string name="label_ccc_nav_gps_date_time">GPS Date/Time:</string>
@@ -70,6 +70,15 @@
     <string name="label_ccc_nav_res_pos">GPS position resolution [m]:</string>
     <string name="label_ccc_nav_res_vert">GPS vertical resolution [m]:</string>
     <string name="label_ccc_nav_speed">Speed [km/h]:</string>
+
+    <!--  IHK -->
+    <string name="tab_ihk">Climate</string>
+    <string name="label_ihk_heat_ex_setpoint">Heat exchanger setpoint [°C]:</string>
+    <string name="label_ihk_heat_ex_temp">Heat exchanger temperature [°C]:</string>
+    <string name="label_ihk_in_temp">Indoor temperature [°C]:</string>
+    <string name="label_ihk_in_temp_delay">Indoor temperature delayed [°C]:</string>
+    <string name="label_ihk_out_temp">Outdoor temperature [°C]:</string>
+    <string name="label_ihk_setpoint">Setpoint [°C]:</string>
 
     <!--  Errors -->
     <string name="tab_errors">Errors</string>
