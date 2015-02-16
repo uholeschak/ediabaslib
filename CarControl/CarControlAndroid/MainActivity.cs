@@ -642,15 +642,19 @@ namespace CarControlAndroid
                     FormatResultDouble(resultDict, "STAT_DIFFERENZDRUCK_UEBER_PARTIKELFILTER_WERT", "{0,6:0.0}") + "\r\n";
 
                 dataText = ((GetResultDouble(resultDict, "STAT_OELDRUCKSCHALTER_EIN_WERT", out found) > 0.5) && found) ? "1" : "0";
+                if (!found) dataText = string.Empty;
                 outputText += GetString (Resource.String.label_motor_oil_press_switch) + " " + dataText + "\r\n";
 
                 dataText = ((GetResultDouble(resultDict, "STAT_REGENERATIONSANFORDERUNG_WERT", out found) < 0.5) && found) ? "1" : "0";
+                if (!found) dataText = string.Empty;
                 outputText += GetString (Resource.String.label_motor_part_filt_request) + " " + dataText + "\r\n";
 
                 dataText = ((GetResultDouble(resultDict, "STAT_EGT_st_WERT", out found) > 1.5) && found) ? "1" : "0";
+                if (!found) dataText = string.Empty;
                 outputText += GetString (Resource.String.label_motor_part_filt_status) + " " + dataText + "\r\n";
 
                 dataText = ((GetResultDouble(resultDict, "STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT", out found) < 0.5) && found) ? "1" : "0";
+                if (!found) dataText = string.Empty;
                 outputText += GetString (Resource.String.label_motor_part_filt_unblocked) + " " + dataText + "\r\n";
 
                 textViewResultMotor.Text = outputText;
@@ -799,9 +803,11 @@ namespace CarControlAndroid
                     FormatResultString(resultDict, "STAT_POSITION_AUFLOES", "{0}") + "\r\n";
 
                 dataText = ((GetResultInt64(resultDict, "STAT_ALMANACH", out found) > 0.5) && found) ? "1" : "0";
+                if (!found) dataText = string.Empty;
                 outputText += GetString (Resource.String.label_ccc_nav_almanach) + " " + dataText + "\r\n";
 
                 dataText = ((GetResultInt64(resultDict, "STAT_HIP_DRIVER", out found) < 0.5) && found) ? "1" : "0";
+                if (!found) dataText = string.Empty;
                 outputText += GetString (Resource.String.label_ccc_nav_hip_driver) + " " + dataText + "\r\n";
 
                 textViewResultCccNav.Text = outputText;
