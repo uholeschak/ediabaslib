@@ -47,6 +47,8 @@
 
     <!--  Motor uneven running -->
     <string name="tab_motor_uneven_running">Uneven running</string>
+    <string name="button_uneven_running_on">Active</string>
+    <string name="button_uneven_running_off">Inactive</string>
     <string name="label_motor_quant_corr_c1">Quant. corr. cylinder 1 [mg/pass]:</string>
     <string name="label_motor_quant_corr_c2">Quant. corr. cylinder 2 [mg/pass]:</string>
     <string name="label_motor_quant_corr_c3">Quant. corr. cylinder 3 [mg/pass]:</string>
@@ -54,6 +56,8 @@
 
     <!--  Motor rot irregular -->
     <string name="tab_motor_rot_irregular">Rot. irregularity</string>
+    <string name="button_rot_irregular_on">Active</string>
+    <string name="button_rot_irregular_off">Inactive</string>
     <string name="label_motor_rpm_c1">Revolution cylinder 1 [1/min]:</string>
     <string name="label_motor_rpm_c2">Revolution cylinder 2 [1/min]:</string>
     <string name="label_motor_rpm_c3">Revolution cylinder 3 [1/min]:</string>

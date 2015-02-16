@@ -47,6 +47,8 @@
 
     <!--  Motor uneven running -->
     <string name="tab_motor_uneven_running">Laufunruhe</string>
+    <string name="button_uneven_running_on">Aktiv</string>
+    <string name="button_uneven_running_off">Inaktiv</string>
     <string name="label_motor_quant_corr_c1">Mengenkorrektur Zylinder 1 [mg/Hub]:</string>
     <string name="label_motor_quant_corr_c2">Mengenkorrektur Zylinder 2 [mg/Hub]:</string>
     <string name="label_motor_quant_corr_c3">Mengenkorrektur Zylinder 3 [mg/Hub]:</string>
@@ -54,6 +56,8 @@
 
     <!--  Motor rot irregular -->
     <string name="tab_motor_rot_irregular">Drehungsgleichförmig.</string>
+    <string name="button_rot_irregular_on">Aktiv</string>
+    <string name="button_rot_irregular_off">Inaktiv</string>
     <string name="label_motor_rpm_c1">Drehzahl Zylinder 1 [1/min]:</string>
     <string name="label_motor_rpm_c2">Drehzahl Zylinder 2 [1/min]:</string>
     <string name="label_motor_rpm_c3">Drehzahl Zylinder 3 [1/min]:</string>

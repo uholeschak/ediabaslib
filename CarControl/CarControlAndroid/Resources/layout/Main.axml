@@ -140,6 +140,18 @@
                             android:bufferType="normal"
                             android:scrollbars="none" />
                     </ScrollView>
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <ToggleButton
+                            android:id="@+id/button_uneven_running_active"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textOn="@string/button_uneven_running_on"
+                            android:textOff="@string/button_uneven_running_off" />
+                    </LinearLayout>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/tabMotorRotIrregular"
@@ -165,6 +177,18 @@
                             android:bufferType="normal"
                             android:scrollbars="none" />
                     </ScrollView>
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <ToggleButton
+                            android:id="@+id/button_rot_irregular_active"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textOn="@string/button_rot_irregular_on"
+                            android:textOff="@string/button_rot_irregular_off" />
+                    </LinearLayout>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/tabMotorPm"

@@ -62,6 +62,12 @@ namespace CarControl
             set;
         }
 
+        public bool CommActive
+        {
+            get;
+            set;
+        }
+
         public bool Connected
         {
             get;
@@ -567,7 +573,7 @@ namespace CarControl
             }
         }
 
-        public bool StartThread(string comPort, string logFile, SelectedDevice selectedDevice)
+        public bool StartThread(string comPort, string logFile, SelectedDevice selectedDevice, bool commActive)
         {
             if (_workerThread != null)
             {
@@ -587,6 +593,7 @@ namespace CarControl
                     ediabas.SetConfigProperty("IfhTrace", "0");
                 }
                 InitProperties();
+                CommActive = commActive;
                 Device = selectedDevice;
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
@@ -634,6 +641,10 @@ namespace CarControl
             {
                 try
                 {
+                    if (!CommActive)
+                    {
+                        continue;
+                    }
                     bool result = true;
                     SelectedDevice copyDevice = Device;
 

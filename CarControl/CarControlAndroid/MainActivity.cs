@@ -32,6 +32,8 @@ namespace CarControlAndroid
         private ToggleButton buttonConnect;
         private ToggleButton buttonAxisDown;
         private ToggleButton buttonAxisUp;
+        private ToggleButton buttonUnevenRunningActive;
+        private ToggleButton buttonRotIrregularActive;
         private TextView textViewResultAxis;
         private TextView textViewResultMotor;
         private TextView textViewResultMotorUnevenRunning;
@@ -65,6 +67,8 @@ namespace CarControlAndroid
             buttonConnect = FindViewById<ToggleButton> (Resource.Id.buttonConnect);
             buttonAxisUp = FindViewById<ToggleButton> (Resource.Id.button_axis_up);
             buttonAxisDown = FindViewById<ToggleButton> (Resource.Id.button_axis_down);
+            buttonUnevenRunningActive = FindViewById<ToggleButton> (Resource.Id.button_uneven_running_active);
+            buttonRotIrregularActive = FindViewById<ToggleButton> (Resource.Id.button_rot_irregular_active);
             textViewResultAxis = FindViewById<TextView> (Resource.Id.textViewResultAxis);
             textViewResultMotor = FindViewById<TextView> (Resource.Id.textViewResultMotor);
             textViewResultMotorUnevenRunning = FindViewById<TextView> (Resource.Id.textViewResultMotorUnevenRunning);
@@ -99,6 +103,8 @@ namespace CarControlAndroid
             buttonConnect.Click += ButtonConnectClick;
             buttonAxisDown.Click += ButtonAxisDownClick;
             buttonAxisUp.Click += ButtonAxisUpClick;
+            buttonUnevenRunningActive.Click += ButtonUnevenRunningClick;
+            buttonRotIrregularActive.Click += ButtonRotIrregularClick;
 
             UpdateDisplay ();
         }
@@ -258,6 +264,24 @@ namespace CarControlAndroid
             }
         }
 
+        protected void ButtonUnevenRunningClick (object sender, EventArgs e)
+        {
+            if (commThread == null)
+            {
+                return;
+            }
+            commThread.CommActive = buttonUnevenRunningActive.Checked;
+        }
+
+        protected void ButtonRotIrregularClick (object sender, EventArgs e)
+        {
+            if (commThread == null)
+            {
+                return;
+            }
+            commThread.CommActive = buttonRotIrregularActive.Checked;
+        }
+
         private bool StartCommThread()
         {
             try
@@ -268,7 +292,7 @@ namespace CarControlAndroid
                     commThread.DataUpdated += new CommThread.DataUpdatedEventHandler(DataUpdated);
                     commThread.ThreadTerminated += new CommThread.ThreadTerminatedEventHandler(ThreadTerminated);
                 }
-                commThread.StartThread("BLUETOOTH:" + deviceAddress, null, CommThread.SelectedDevice.Test);
+                commThread.StartThread("BLUETOOTH:" + deviceAddress, null, CommThread.SelectedDevice.DeviceAxis, true);
             }
             catch (Exception)
             {
@@ -353,44 +377,53 @@ namespace CarControlAndroid
                 return;
             }
 
+            CommThread.SelectedDevice newDevice = CommThread.SelectedDevice.DeviceAxis;
+            bool newCommActive = true;
             switch (TabHost.CurrentTab)
             {
                 case 0:
                 default:
-                    commThread.Device = CommThread.SelectedDevice.DeviceAxis;
+                    newDevice = CommThread.SelectedDevice.DeviceAxis;
                     break;
 
                 case 1:
-                    commThread.Device = CommThread.SelectedDevice.DeviceMotor;
+                    newDevice = CommThread.SelectedDevice.DeviceMotor;
                     break;
 
                 case 2:
-                    commThread.Device = CommThread.SelectedDevice.DeviceMotorUnevenRunning;
+                    newDevice = CommThread.SelectedDevice.DeviceMotorUnevenRunning;
+                    newCommActive = false;
                     break;
 
                 case 3:
-                    commThread.Device = CommThread.SelectedDevice.DeviceMotorRotIrregular;
+                    newDevice = CommThread.SelectedDevice.DeviceMotorRotIrregular;
+                    newCommActive = false;
                     break;
 
                 case 4:
-                    commThread.Device = CommThread.SelectedDevice.DeviceMotorPM;
+                    newDevice = CommThread.SelectedDevice.DeviceMotorPM;
                     break;
 
                 case 5:
-                    commThread.Device = CommThread.SelectedDevice.DeviceCccNav;
+                    newDevice = CommThread.SelectedDevice.DeviceCccNav;
                     break;
 
                 case 6:
-                    commThread.Device = CommThread.SelectedDevice.DeviceIhk;
+                    newDevice = CommThread.SelectedDevice.DeviceIhk;
                     break;
 
                 case 7:
-                    commThread.Device = CommThread.SelectedDevice.DeviceErrors;
+                    newDevice = CommThread.SelectedDevice.DeviceErrors;
                     break;
 
                 case 8:
-                    commThread.Device = CommThread.SelectedDevice.Test;
+                    newDevice = CommThread.SelectedDevice.Test;
                     break;
+            }
+            if (commThread.Device != newDevice)
+            {
+                commThread.CommActive = newCommActive;
+                commThread.Device = newDevice;
             }
         }
 
@@ -418,47 +451,48 @@ namespace CarControlAndroid
                 {
                     buttonConnectEnable = false;
                 }
-                switch (commThread.Device)
+                if (commThread.CommActive)
                 {
-                    case CommThread.SelectedDevice.DeviceAxis:
-                        axisDataValid = true;
-                        break;
+                    switch (commThread.Device)
+                    {
+                        case CommThread.SelectedDevice.DeviceAxis:
+                            axisDataValid = true;
+                            break;
 
-                    case CommThread.SelectedDevice.DeviceMotor:
-                        motorDataValid = true;
-                        break;
+                        case CommThread.SelectedDevice.DeviceMotor:
+                            motorDataValid = true;
+                            break;
 
-                    case CommThread.SelectedDevice.DeviceMotorUnevenRunning:
-                        motorDataUnevenRunningValid = true;
-                        break;
+                        case CommThread.SelectedDevice.DeviceMotorUnevenRunning:
+                            motorDataUnevenRunningValid = true;
+                            break;
 
-                    case CommThread.SelectedDevice.DeviceMotorRotIrregular:
-                        motorRotIrregularValid = true;
-                        break;
+                        case CommThread.SelectedDevice.DeviceMotorRotIrregular:
+                            motorRotIrregularValid = true;
+                            break;
 
-                    case CommThread.SelectedDevice.DeviceMotorPM:
-                        motorPmValid = true;
-                        break;
+                        case CommThread.SelectedDevice.DeviceMotorPM:
+                            motorPmValid = true;
+                            break;
 
-                    case CommThread.SelectedDevice.DeviceCccNav:
-                        cccNavValid = true;
-                        break;
+                        case CommThread.SelectedDevice.DeviceCccNav:
+                            cccNavValid = true;
+                            break;
 
-                    case CommThread.SelectedDevice.DeviceIhk:
-                        ihkValid = true;
-                        break;
+                        case CommThread.SelectedDevice.DeviceIhk:
+                            ihkValid = true;
+                            break;
 
-                    case CommThread.SelectedDevice.DeviceErrors:
-                        errorsValid = true;
-                        break;
+                        case CommThread.SelectedDevice.DeviceErrors:
+                            errorsValid = true;
+                            break;
 
-                    case CommThread.SelectedDevice.Test:
-                        testValid = true;
-                        break;
+                        case CommThread.SelectedDevice.Test:
+                            testValid = true;
+                            break;
+                    }
                 }
-
                 buttonConnect.Checked = true;
-                if (commThread.Device == CommThread.SelectedDevice.Test) testValid = true;
             }
             else
             {
@@ -649,6 +683,16 @@ namespace CarControlAndroid
             {
                 textViewResultMotorUnevenRunning.Text = string.Empty;
             }
+            if (commThread != null && commThread.ThreadRunning ())
+            {
+                buttonUnevenRunningActive.Enabled = true;
+                buttonUnevenRunningActive.Checked = commThread.CommActive;
+            }
+            else
+            {
+                buttonUnevenRunningActive.Enabled = false;
+                buttonUnevenRunningActive.Checked = false;
+            }
 
             if (motorRotIrregularValid)
             {
@@ -672,6 +716,16 @@ namespace CarControlAndroid
             else
             {
                 textViewResultMotorRotIrregular.Text = string.Empty;
+            }
+            if (commThread != null && commThread.ThreadRunning ())
+            {
+                buttonRotIrregularActive.Enabled = true;
+                buttonRotIrregularActive.Checked = commThread.CommActive;
+            }
+            else
+            {
+                buttonRotIrregularActive.Enabled = false;
+                buttonRotIrregularActive.Checked = false;
             }
 
             if (motorPmValid)
