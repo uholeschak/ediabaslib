@@ -33,7 +33,7 @@ namespace EdiabasLib
         {
             NO_ERROR = 0,
             CONFIG_ERROR,
-            USB_LOC_ERROR,
+            DEVICE_TYPE_ERROR,
         }
 
         public delegate bool InterfaceConnectDelegate(string port);
@@ -542,8 +542,8 @@ namespace EdiabasLib
                         case InterfaceErrorResult.NO_ERROR:
                             break;
 
-                        case InterfaceErrorResult.USB_LOC_ERROR:
-                            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Invalid USB bus configuration! Only one device per USB root hub allowed!");
+                        case InterfaceErrorResult.DEVICE_TYPE_ERROR:
+                            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Bit bang mode is only working with FT232H devices!");
                             ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0063);
                             return;
 
