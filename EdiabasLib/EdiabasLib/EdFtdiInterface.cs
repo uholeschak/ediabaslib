@@ -284,7 +284,7 @@ namespace EdiabasLib
                             divisor = 29;  // only odd values allowed!
                             bitBangBitsPerSendByte = 12000000 / divisor / currentBaudRate;
                             bitBangBitsPerRecByte = 12000000 / 16 / currentBaudRate + 2;
-                            return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
+                            return EdInterfaceObd.InterfaceErrorResult.DEVICE_TYPE_ERROR;
 
                         case Ftd2xx.FT_DEVICE.FT_DEVICE_232H:
                             divisor = 120000000 / 2 / 50 / 9600;
@@ -293,15 +293,11 @@ namespace EdiabasLib
                             break;
 
                         default:
-                            return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
+                            return EdInterfaceObd.InterfaceErrorResult.DEVICE_TYPE_ERROR;
                     }
 
                     if (bitBangMode != bitBangOld)
                     {
-                        if (!CheckUsbBus())
-                        {
-                            return EdInterfaceObd.InterfaceErrorResult.USB_LOC_ERROR;
-                        }
                         // set al to input to prevent start glitch
                         ftStatus = Ftd2xx.FT_SetBitMode(handleFtdi, 0x00, Ftd2xx.FT_BITMODE_ASYNC_BITBANG);
                         if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
@@ -1128,79 +1124,6 @@ namespace EdiabasLib
             }
             value = (byte)recData;
             return true;
-        }
-
-        private static bool CheckUsbBus()
-        {
-            if (handleFtdi == (IntPtr)0)
-            {
-                return false;
-            }
-            if (bitBangDeviceType != Ftd2xx.FT_DEVICE.FT_DEVICE_232R)
-            {
-                return true;
-            }
-            try
-            {
-                NativeUsbLib.UsbBus usbBus = new NativeUsbLib.UsbBus();
-                bool globalDeviceFound = false;
-                foreach (NativeUsbLib.UsbController controller in usbBus.Controller)
-                {
-                    foreach (NativeUsbLib.UsbHub hub in controller.Hubs)
-                    {
-                        //Debug.WriteLine("RootHub");
-                        bool deviceFound = false;
-                        int deviceCount = AnalyzeUsbHub(hub, bitBangDeviceId, bitBangDeviceSerial, ref deviceFound);
-                        if (deviceFound)
-                        {
-                            globalDeviceFound = true;
-                            if (deviceCount > 1)
-                            {
-                                return false;
-                            }
-                        }
-                    }
-                }
-                if (!globalDeviceFound)
-                {
-                    return false;
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private static int AnalyzeUsbHub(NativeUsbLib.UsbHub usbHub, UInt32 deviceId, string serialNumber, ref bool deviceFound)
-        {
-            int deviceCount = 0;
-            foreach (NativeUsbLib.Device device in usbHub.Devices)
-            {
-                if (device is NativeUsbLib.UsbHub)
-                {
-                    deviceCount += AnalyzeUsbHub((NativeUsbLib.UsbHub)device, deviceId, serialNumber, ref deviceFound);
-                }
-                else
-                {
-                    if (device.IsConnected)
-                    {
-                        deviceCount++;
-                        UInt32 localDeviceId = ((UInt32)device.DeviceDescriptor.idVendor << 16) + device.DeviceDescriptor.idProduct;
-                        //Debug.WriteLine(string.Format("Device: {0:X08} {1} {2}", localDeviceId, device.DeviceDescription, device.SerialNumber));
-                        if (localDeviceId == deviceId)
-                        {
-                            if (string.Compare(serialNumber, device.SerialNumber, StringComparison.Ordinal) == 0)
-                            {
-                                deviceFound = true;
-                            }
-                        }
-                    }
-                }
-            }
-            return deviceCount;
         }
 #endif
 
