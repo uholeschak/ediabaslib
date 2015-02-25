@@ -1264,6 +1264,21 @@ namespace CarSimulator
                 Debug.WriteLine("Tester present");
                 standardResponse = true;
             }
+            else if (
+                _receiveData[0] == 0x81 &&
+                _receiveData[1] == 0x00 &&
+                _receiveData[2] == 0x00)
+            {   // program CAN adapter
+                int i = 0;
+                _sendData[i++] = 0x81;
+                _sendData[i++] = 0x00;
+                _sendData[i++] = 0x00;
+                _sendData[i++] = (byte)(~_receiveData[3]);
+
+                OBDSend(_sendData);
+                Debug.WriteLine("Program CAN adapter");
+                standardResponse = true;
+            }
 
             bool useResponseList = false;
             if (standardResponse)
