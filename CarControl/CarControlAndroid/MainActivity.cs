@@ -34,6 +34,9 @@ namespace CarControlAndroid
         private ToggleButton buttonAxisUp;
         private ToggleButton buttonUnevenRunningActive;
         private ToggleButton buttonRotIrregularActive;
+        private Button buttonAdapterConfigCan500;
+        private Button buttonAdapterConfigCan100;
+        private Button buttonAdapterConfigCanOff;
         private TextView textViewResultAxis;
         private TextView textViewResultMotor;
         private TextView textViewResultMotorUnevenRunning;
@@ -42,6 +45,7 @@ namespace CarControlAndroid
         private TextView textViewResultCccNav;
         private TextView textViewResultIhk;
         private TextView textViewResultErrors;
+        private TextView textViewResultAdapterConfig;
         private TextView textViewResultTest;
 
         protected override void OnCreate (Bundle bundle)
@@ -62,6 +66,7 @@ namespace CarControlAndroid
             CreateTab("ccc_nav", GetString (Resource.String.tab_ccc_nav), Resource.Id.tabCccNav);
             CreateTab("ihk", GetString (Resource.String.tab_ihk), Resource.Id.tabIhk);
             CreateTab("errors", GetString (Resource.String.tab_errors), Resource.Id.tabErrors);
+            CreateTab("adapter_config", GetString (Resource.String.tab_adapter_config), Resource.Id.tabAdapterConfig);
             CreateTab("test", GetString (Resource.String.tab_test), Resource.Id.tabTest);
 
             buttonConnect = FindViewById<ToggleButton> (Resource.Id.buttonConnect);
@@ -69,6 +74,9 @@ namespace CarControlAndroid
             buttonAxisDown = FindViewById<ToggleButton> (Resource.Id.button_axis_down);
             buttonUnevenRunningActive = FindViewById<ToggleButton> (Resource.Id.button_uneven_running_active);
             buttonRotIrregularActive = FindViewById<ToggleButton> (Resource.Id.button_rot_irregular_active);
+            buttonAdapterConfigCan500 = FindViewById<Button> (Resource.Id.button_adapter_config_can_500);
+            buttonAdapterConfigCan100 = FindViewById<Button> (Resource.Id.button_adapter_config_can_100);
+            buttonAdapterConfigCanOff = FindViewById<Button> (Resource.Id.button_adapter_config_can_off);
             textViewResultAxis = FindViewById<TextView> (Resource.Id.textViewResultAxis);
             textViewResultMotor = FindViewById<TextView> (Resource.Id.textViewResultMotor);
             textViewResultMotorUnevenRunning = FindViewById<TextView> (Resource.Id.textViewResultMotorUnevenRunning);
@@ -77,6 +85,7 @@ namespace CarControlAndroid
             textViewResultCccNav = FindViewById<TextView> (Resource.Id.textViewResultCccNav);
             textViewResultIhk = FindViewById<TextView> (Resource.Id.textViewResultIhk);
             textViewResultErrors = FindViewById<TextView> (Resource.Id.textViewResultErrors);
+            textViewResultAdapterConfig = FindViewById<TextView> (Resource.Id.textViewResultAdapterConfig);
             textViewResultTest = FindViewById<TextView> (Resource.Id.textViewResultTest);
 
             // Get local Bluetooth adapter
@@ -105,6 +114,9 @@ namespace CarControlAndroid
             buttonAxisUp.Click += ButtonAxisUpClick;
             buttonUnevenRunningActive.Click += ButtonUnevenRunningClick;
             buttonRotIrregularActive.Click += ButtonRotIrregularClick;
+            buttonAdapterConfigCan500.Click += ButtonAdapterConfigClick;
+            buttonAdapterConfigCan100.Click += ButtonAdapterConfigClick;
+            buttonAdapterConfigCanOff.Click += ButtonAdapterConfigClick;
 
             UpdateDisplay ();
         }
@@ -282,6 +294,32 @@ namespace CarControlAndroid
             commThread.CommActive = buttonRotIrregularActive.Checked;
         }
 
+        protected void ButtonAdapterConfigClick (object sender, EventArgs e)
+        {
+            if (commThread == null)
+            {
+                return;
+            }
+            int configValue = -1;
+            if (sender == buttonAdapterConfigCan500)
+            {
+                configValue = 0x01;
+            }
+            else if (sender == buttonAdapterConfigCan100)
+            {
+                configValue = 0x09;
+            }
+            else if (sender == buttonAdapterConfigCanOff)
+            {
+                configValue = 0x00;
+            }
+            if (configValue >= 0)
+            {
+                commThread.AdapterConfigValue = configValue;
+                UpdateDisplay ();
+            }
+        }
+
         private bool StartCommThread()
         {
             try
@@ -292,7 +330,7 @@ namespace CarControlAndroid
                     commThread.DataUpdated += new CommThread.DataUpdatedEventHandler(DataUpdated);
                     commThread.ThreadTerminated += new CommThread.ThreadTerminatedEventHandler(ThreadTerminated);
                 }
-                commThread.StartThread("BLUETOOTH:" + deviceAddress, null, CommThread.SelectedDevice.DeviceAxis, true);
+                commThread.StartThread("BLUETOOTH:" + deviceAddress, null, GetSelectedDevice(), true);
             }
             catch (Exception)
             {
@@ -370,6 +408,55 @@ namespace CarControlAndroid
             UpdateDisplay();
         }
 
+        private CommThread.SelectedDevice GetSelectedDevice()
+        {
+            CommThread.SelectedDevice selDevice = CommThread.SelectedDevice.DeviceAxis;
+            switch (TabHost.CurrentTab)
+            {
+                case 0:
+                default:
+                    selDevice = CommThread.SelectedDevice.DeviceAxis;
+                    break;
+
+                case 1:
+                    selDevice = CommThread.SelectedDevice.DeviceMotor;
+                    break;
+
+                case 2:
+                    selDevice = CommThread.SelectedDevice.DeviceMotorUnevenRunning;
+                    break;
+
+                case 3:
+                    selDevice = CommThread.SelectedDevice.DeviceMotorRotIrregular;
+                    break;
+
+                case 4:
+                    selDevice = CommThread.SelectedDevice.DeviceMotorPM;
+                    break;
+
+                case 5:
+                    selDevice = CommThread.SelectedDevice.DeviceCccNav;
+                    break;
+
+                case 6:
+                    selDevice = CommThread.SelectedDevice.DeviceIhk;
+                    break;
+
+                case 7:
+                    selDevice = CommThread.SelectedDevice.DeviceErrors;
+                    break;
+
+                case 8:
+                    selDevice = CommThread.SelectedDevice.AdapterConfig;
+                    break;
+
+                case 9:
+                    selDevice = CommThread.SelectedDevice.Test;
+                    break;
+            }
+            return selDevice;
+        }
+
         private void UpdateSelectedDevice()
         {
             if ((commThread == null) || !commThread.ThreadRunning())
@@ -377,47 +464,13 @@ namespace CarControlAndroid
                 return;
             }
 
-            CommThread.SelectedDevice newDevice = CommThread.SelectedDevice.DeviceAxis;
+            CommThread.SelectedDevice newDevice = GetSelectedDevice();
             bool newCommActive = true;
-            switch (TabHost.CurrentTab)
+            switch (newDevice)
             {
-                case 0:
-                default:
-                    newDevice = CommThread.SelectedDevice.DeviceAxis;
-                    break;
-
-                case 1:
-                    newDevice = CommThread.SelectedDevice.DeviceMotor;
-                    break;
-
-                case 2:
-                    newDevice = CommThread.SelectedDevice.DeviceMotorUnevenRunning;
+                case CommThread.SelectedDevice.DeviceMotorUnevenRunning:
+                case CommThread.SelectedDevice.DeviceMotorRotIrregular:
                     newCommActive = false;
-                    break;
-
-                case 3:
-                    newDevice = CommThread.SelectedDevice.DeviceMotorRotIrregular;
-                    newCommActive = false;
-                    break;
-
-                case 4:
-                    newDevice = CommThread.SelectedDevice.DeviceMotorPM;
-                    break;
-
-                case 5:
-                    newDevice = CommThread.SelectedDevice.DeviceCccNav;
-                    break;
-
-                case 6:
-                    newDevice = CommThread.SelectedDevice.DeviceIhk;
-                    break;
-
-                case 7:
-                    newDevice = CommThread.SelectedDevice.DeviceErrors;
-                    break;
-
-                case 8:
-                    newDevice = CommThread.SelectedDevice.Test;
                     break;
             }
             if (commThread.Device != newDevice)
@@ -442,6 +495,7 @@ namespace CarControlAndroid
             bool cccNavValid = false;
             bool ihkValid = false;
             bool errorsValid = false;
+            bool adapterConfigValid = false;
             bool testValid = false;
             bool buttonConnectEnable = true;
 
@@ -485,6 +539,10 @@ namespace CarControlAndroid
 
                         case CommThread.SelectedDevice.DeviceErrors:
                             errorsValid = true;
+                            break;
+
+                        case CommThread.SelectedDevice.AdapterConfig:
+                            adapterConfigValid = true;
                             break;
 
                         case CommThread.SelectedDevice.Test:
@@ -915,6 +973,48 @@ namespace CarControlAndroid
             else
             {
                 textViewResultErrors.Text = string.Empty;
+            }
+
+            if (adapterConfigValid)
+            {
+                string outputText = string.Empty;
+                bool found;
+                Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                lock (CommThread.DataLock)
+                {
+                    resultDict = commThread.EdiabasResultDict;
+                }
+
+                Int64 resultValue = GetResultInt64(resultDict, "ADAPTER_RESULT", out found);
+                if (found)
+                {
+                    if (resultValue > 0)
+                    {
+                        outputText = GetString (Resource.String.adapter_config_ok);
+                    }
+                    else
+                    {
+                        outputText = GetString (Resource.String.adapter_config_error);
+                    }
+                }
+
+                textViewResultAdapterConfig.Text = outputText;
+            }
+            else
+            {
+                textViewResultAdapterConfig.Text = string.Empty;
+            }
+            if (commThread != null && commThread.ThreadRunning ())
+            {
+                buttonAdapterConfigCan500.Enabled = true;
+                buttonAdapterConfigCan100.Enabled = true;
+                buttonAdapterConfigCanOff.Enabled = true;
+            }
+            else
+            {
+                buttonAdapterConfigCan500.Enabled = false;
+                buttonAdapterConfigCan100.Enabled = false;
+                buttonAdapterConfigCanOff.Enabled = false;
             }
 
             if (testValid)

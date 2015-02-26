@@ -129,6 +129,14 @@
     <string name="errorNameSZM">SZM Gearshift unit center console</string>
     <string name="errorNameTCU">TCU Telematic control unit</string>
 
+    <!--  Adapter config -->
+    <string name="tab_adapter_config">Adapter config</string>
+    <string name="button_adapter_config_can_500">500 kbit D-CAN</string>
+    <string name="button_adapter_config_can_100">100 kbit K-CAN</string>
+    <string name="button_adapter_config_can_off">CAN off</string>
+    <string name="adapter_config_error">Configuration failed</string>
+    <string name="adapter_config_ok">Configuration successful</string>
+
     <!--  Test -->
     <string name="tab_test">Test</string>
 

@@ -254,6 +254,9 @@
     <AndroidAsset Include="..\..\Ecu\t_grtb.prg">
       <Link>Assets\Ecu\t_grtb.prg</Link>
     </AndroidAsset>
+    <AndroidAsset Include="..\..\Ecu\tmode.prg">
+      <Link>Assets\Ecu\tmode.prg</Link>
+    </AndroidAsset>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\EdiabasLib\EdiabasLibAndroid\EdiabasLibAndroid.csproj">

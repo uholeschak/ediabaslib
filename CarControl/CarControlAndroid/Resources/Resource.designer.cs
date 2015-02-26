@@ -76,8 +76,17 @@ namespace CarControlAndroid
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f06002a
+			public const int buttonConnect = 2131099690;
+			
+			// aapt resource value: 0x7f060025
+			public const int button_adapter_config_can_100 = 2131099685;
+			
 			// aapt resource value: 0x7f060024
-			public const int buttonConnect = 2131099684;
+			public const int button_adapter_config_can_500 = 2131099684;
+			
+			// aapt resource value: 0x7f060026
+			public const int button_adapter_config_can_off = 2131099686;
 			
 			// aapt resource value: 0x7f060008
 			public const int button_axis_down = 2131099656;
@@ -100,8 +109,11 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f060001
 			public const int paired_devices = 2131099649;
 			
-			// aapt resource value: 0x7f060027
-			public const int scan = 2131099687;
+			// aapt resource value: 0x7f06002d
+			public const int scan = 2131099693;
+			
+			// aapt resource value: 0x7f060022
+			public const int scrollViewAdapterConfig = 2131099682;
 			
 			// aapt resource value: 0x7f060006
 			public const int scrollViewTextAxis = 2131099654;
@@ -127,8 +139,11 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f06000e
 			public const int scrollViewTextMotorUnevenRunning = 2131099662;
 			
-			// aapt resource value: 0x7f060022
-			public const int scrollViewTextTest = 2131099682;
+			// aapt resource value: 0x7f060028
+			public const int scrollViewTextTest = 2131099688;
+			
+			// aapt resource value: 0x7f060021
+			public const int tabAdapterConfig = 2131099681;
 			
 			// aapt resource value: 0x7f060005
 			public const int tabAxis = 2131099653;
@@ -154,14 +169,17 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f06000d
 			public const int tabMotorUnevenRunning = 2131099661;
 			
-			// aapt resource value: 0x7f060021
-			public const int tabTest = 2131099681;
+			// aapt resource value: 0x7f060027
+			public const int tabTest = 2131099687;
 			
-			// aapt resource value: 0x7f060025
-			public const int tabsLayout = 2131099685;
+			// aapt resource value: 0x7f06002b
+			public const int tabsLayout = 2131099691;
 			
-			// aapt resource value: 0x7f060026
-			public const int tabsText = 2131099686;
+			// aapt resource value: 0x7f06002c
+			public const int tabsText = 2131099692;
+			
+			// aapt resource value: 0x7f060023
+			public const int textViewResultAdapterConfig = 2131099683;
 			
 			// aapt resource value: 0x7f060007
 			public const int textViewResultAxis = 2131099655;
@@ -187,8 +205,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f06000f
 			public const int textViewResultMotorUnevenRunning = 2131099663;
 			
-			// aapt resource value: 0x7f060023
-			public const int textViewResultTest = 2131099683;
+			// aapt resource value: 0x7f060029
+			public const int textViewResultTest = 2131099689;
 			
 			// aapt resource value: 0x7f060002
 			public const int title_new_devices = 2131099650;
@@ -250,6 +268,12 @@ namespace CarControlAndroid
 		public partial class String
 		{
 			
+			// aapt resource value: 0x7f040074
+			public const int adapter_config_error = 2130968692;
+			
+			// aapt resource value: 0x7f040075
+			public const int adapter_config_ok = 2130968693;
+			
 			// aapt resource value: 0x7f040001
 			public const int app_name = 2130968577;
 			
@@ -271,6 +295,15 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f040004
 			public const int bt_not_enabled_leaving = 2130968580;
 			
+			// aapt resource value: 0x7f040072
+			public const int button_adapter_config_can_100 = 2130968690;
+			
+			// aapt resource value: 0x7f040071
+			public const int button_adapter_config_can_500 = 2130968689;
+			
+			// aapt resource value: 0x7f040073
+			public const int button_adapter_config_can_off = 2130968691;
+			
 			// aapt resource value: 0x7f040008
 			public const int button_axis_down = 2130968584;
 			
@@ -289,8 +322,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f040031
 			public const int button_rot_irregular_on = 2130968625;
 			
-			// aapt resource value: 0x7f040077
-			public const int button_scan = 2130968695;
+			// aapt resource value: 0x7f04007d
+			public const int button_scan = 2130968701;
 			
 			// aapt resource value: 0x7f04002b
 			public const int button_uneven_running_off = 2130968619;
@@ -298,8 +331,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f04002a
 			public const int button_uneven_running_on = 2130968618;
 			
-			// aapt resource value: 0x7f040078
-			public const int connect = 2130968696;
+			// aapt resource value: 0x7f04007e
+			public const int connect = 2130968702;
 			
 			// aapt resource value: 0x7f040057
 			public const int errorNameACSM = 2130968663;
@@ -568,17 +601,20 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f040000
 			public const int library_name = 2130968576;
 			
-			// aapt resource value: 0x7f040074
-			public const int none_found = 2130968692;
+			// aapt resource value: 0x7f04007a
+			public const int none_found = 2130968698;
 			
-			// aapt resource value: 0x7f040073
-			public const int none_paired = 2130968691;
+			// aapt resource value: 0x7f040079
+			public const int none_paired = 2130968697;
 			
-			// aapt resource value: 0x7f040071
-			public const int scanning = 2130968689;
+			// aapt resource value: 0x7f040077
+			public const int scanning = 2130968695;
 			
-			// aapt resource value: 0x7f040072
-			public const int select_device = 2130968690;
+			// aapt resource value: 0x7f040078
+			public const int select_device = 2130968696;
+			
+			// aapt resource value: 0x7f040070
+			public const int tab_adapter_config = 2130968688;
 			
 			// aapt resource value: 0x7f040006
 			public const int tab_axis = 2130968582;
@@ -604,14 +640,14 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f040029
 			public const int tab_motor_uneven_running = 2130968617;
 			
-			// aapt resource value: 0x7f040070
-			public const int tab_test = 2130968688;
-			
 			// aapt resource value: 0x7f040076
-			public const int title_other_devices = 2130968694;
+			public const int tab_test = 2130968694;
 			
-			// aapt resource value: 0x7f040075
-			public const int title_paired_devices = 2130968693;
+			// aapt resource value: 0x7f04007c
+			public const int title_other_devices = 2130968700;
+			
+			// aapt resource value: 0x7f04007b
+			public const int title_paired_devices = 2130968699;
 			
 			static String()
 			{

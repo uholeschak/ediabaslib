@@ -32,6 +32,7 @@ namespace CarControl
             DeviceCccNav,
             DeviceIhk,
             DeviceErrors,
+            AdapterConfig,
             Test,
         }
 
@@ -66,6 +67,20 @@ namespace CarControl
         {
             get;
             set;
+        }
+
+        private int adapterConfigValue;
+        public int AdapterConfigValue
+        {
+            get
+            {
+                return adapterConfigValue;
+            }
+            set
+            {
+                adapterConfigValue = value;
+                EdiabasResultDict = null;
+            }
         }
 
         public bool Connected
@@ -688,6 +703,10 @@ namespace CarControl
                             result = CommErrorsEdiabas(copyDevice);
                             break;
 
+                        case SelectedDevice.AdapterConfig:
+                            result = CommAdapterConfig(copyDevice);
+                            break;
+
                         case SelectedDevice.Test:
                             result = CommTest();
                             break;
@@ -1066,6 +1085,158 @@ namespace CarControl
             return true;
         }
 
+        private bool CommAdapterConfig(SelectedDevice device)
+        {
+            if (AdapterConfigValue < 0)
+            {
+                Thread.Sleep (500);
+                return true;
+            }
+            byte adapterConfig = (byte)AdapterConfigValue;
+            AdapterConfigValue = -1;
+#pragma warning disable 219
+            bool firstRequestCall = false;
+#pragma warning restore 219
+            if (ediabasInitReq)
+            {
+                firstRequestCall = true;
+                ediabasJobAbort = false;
+
+                try
+                {
+                    ediabas.ResolveSgbdFile("tmode");
+                }
+                catch (Exception ex)
+                {
+                    string exText = EdiabasNet.GetExceptionText(ex);
+                    lock (CommThread.DataLock)
+                    {
+                        EdiabasErrorMessage = exText;
+                    }
+                    Thread.Sleep(1000);
+                    return false;
+                }
+
+                ediabasInitReq = false;
+            }
+
+            Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+
+            Dictionary<string, EdiabasNet.ResultData> resultDictTemp = new Dictionary<string, EdiabasNet.ResultData>();
+            EdiabasNet.ResultData resultDataTemp = new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeB, "ADAPTER_RESULT", (Int64)(0));
+            resultDictTemp.Add(resultDataTemp.name, resultDataTemp);
+            MergeResultDictionarys(ref resultDict, resultDictTemp);
+
+            // set communication parameter
+            ediabas.ArgBinary =
+                new byte[] {
+                0x0F, 0x01, 0x00, 0x00,
+                0x00, 0xC2, 0x01, 0x00,
+                0xB0, 0x04, 0x00, 0x00,
+                0x14, 0x00, 0x00, 0x00,
+                0x0A, 0x00, 0x00, 0x00,
+                0x02, 0x00, 0x00, 0x00,
+                0x88, 0x13, 0x00, 0x00};
+            ediabas.ArgBinaryStd = null;
+            ediabas.ResultsRequests = string.Empty;
+
+            try
+            {
+                ediabas.ExecuteJob("SETZE_SG_PARAMETER_ALLG");
+            }
+            catch (Exception ex)
+            {
+                ediabasInitReq = true;
+                string exText = EdiabasNet.GetExceptionText(ex);
+                lock (CommThread.DataLock)
+                {
+                    EdiabasResultDict = resultDict;
+                    EdiabasErrorMessage = exText;
+                }
+                Thread.Sleep(1000);
+                return true;
+            }
+
+            // set answer length
+            ediabas.ArgBinary = new byte[] {0x00, 0x00, 0x00, 0x00};
+            ediabas.ArgBinaryStd = null;
+            ediabas.ResultsRequests = string.Empty;
+
+            try
+            {
+                ediabas.ExecuteJob("SETZE_ANTWORTLAENGE");
+            }
+            catch (Exception ex)
+            {
+                ediabasInitReq = true;
+                string exText = EdiabasNet.GetExceptionText(ex);
+                lock (CommThread.DataLock)
+                {
+                    EdiabasResultDict = null;
+                    EdiabasErrorMessage = exText;
+                }
+                Thread.Sleep(1000);
+                return true;
+            }
+
+            // send command
+            ediabas.ArgBinary = new byte[] {0x81, 0x00, 0x00, adapterConfig};
+            ediabas.ArgBinaryStd = null;
+            ediabas.ResultsRequests = string.Empty;
+
+            byte[] response = null;
+            try
+            {
+                ediabas.ExecuteJob("SENDE_TELEGRAMM");
+
+                byte resultValue = 0;
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
+                if (resultSets != null && resultSets.Count >= 2)
+                {
+                    EdiabasNet.ResultData resultData;
+                    if (resultSets[1].TryGetValue("SG_ANTWORT", out resultData))
+                    {
+                        if (resultData.opData.GetType() == typeof(byte[]))
+                        {
+                            response = (byte[])resultData.opData;
+                        }
+                        if (response != null && response.Length >= 4)
+                        {
+                            if (response[3] == (byte)(~adapterConfig))
+                            {   // valid response
+                                resultValue = 1;
+                            }
+                        }
+                    }
+                }
+                resultDict = null;
+                resultDictTemp.Clear();
+                resultDataTemp = new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeB, "ADAPTER_RESULT", (Int64)(resultValue));
+                resultDictTemp.Add(resultDataTemp.name, resultDataTemp);
+                MergeResultDictionarys(ref resultDict, resultDictTemp);
+            }
+            catch (Exception ex)
+            {
+                ediabasInitReq = true;
+                string exText = EdiabasNet.GetExceptionText(ex);
+                lock (CommThread.DataLock)
+                {
+                    EdiabasResultDict = resultDict;
+                    EdiabasErrorMessage = exText;
+                }
+                Thread.Sleep(1000);
+                return true;
+            }
+
+            lock (CommThread.DataLock)
+            {
+                EdiabasResultDict = resultDict;
+                EdiabasErrorMessage = string.Empty;
+            }
+            Thread.Sleep(10);
+            return true;
+        }
+
         private bool CommEdiabas(SelectedDevice device, EdiabasJobs ediabasJobs)
         {
             bool firstRequestCall = false;
@@ -1355,6 +1526,7 @@ namespace CarControl
             {
                 Device = SelectedDevice.DeviceAxis;
                 Connected = false;
+                AdapterConfigValue = -1;
                 ErrorCounter = 0;
             }
 
