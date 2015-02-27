@@ -130,7 +130,7 @@
     <string name="errorNameTCU">TCU Telematic Control Unit</string>
 
     <!--  Adapter config -->
-    <string name="tab_adapter_config">Adapter konfigurieren</string>
+    <string name="tab_adapter_config">Adapter</string>
     <string name="button_adapter_config_can_500">500 kbit D-CAN</string>
     <string name="button_adapter_config_can_100">100 kbit K-CAN</string>
     <string name="button_adapter_config_can_off">CAN aus</string>

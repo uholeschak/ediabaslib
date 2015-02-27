@@ -239,7 +239,7 @@ namespace CarControl
                     _commThread.DataUpdated += new CommThread.DataUpdatedEventHandler(DataUpdated);
                     _commThread.ThreadTerminated += new CommThread.ThreadTerminatedEventHandler(ThreadTerminated);
                 }
-                _commThread.StartThread(selectedPort, logFile, CommThread.SelectedDevice.DeviceAxis, true);
+                _commThread.StartThread(selectedPort, logFile, GetSelectedDevice(), true);
             }
             catch (Exception)
             {
@@ -299,6 +299,7 @@ namespace CarControl
                 bool cccNavValid = false;
                 bool ihkValid = false;
                 bool errorsValid = false;
+                bool adapterConfigValid = false;
                 bool testValid = false;
                 bool buttonConnectEnable = true;
 
@@ -340,6 +341,10 @@ namespace CarControl
 
                         case CommThread.SelectedDevice.DeviceErrors:
                             errorsValid = true;
+                            break;
+
+                        case CommThread.SelectedDevice.AdapterConfig:
+                            adapterConfigValid = true;
                             break;
 
                         case CommThread.SelectedDevice.Test:
@@ -725,6 +730,48 @@ namespace CarControl
                     textBoxErrors2.Text = string.Empty;
                 }
 
+                if (adapterConfigValid)
+                {
+                    string outputText = string.Empty;
+                    bool found;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                    lock (CommThread.DataLock)
+                    {
+                        resultDict = _commThread.EdiabasResultDict;
+                    }
+
+                    Int64 resultValue = GetResultInt64(resultDict, "ADAPTER_RESULT", out found);
+                    if (found)
+                    {
+                        if (resultValue > 0)
+                        {
+                            outputText = Resources.strings.ResourceManager.GetString("adapterConfigOk");
+                        }
+                        else
+                        {
+                            outputText = Resources.strings.ResourceManager.GetString("adapterConfigError");
+                        }
+                    }
+
+                    textBoxAdapterConfigResult.Text = outputText;
+                }
+                else
+                {
+                    textBoxAdapterConfigResult.Text = string.Empty;
+                }
+                if (_commThread != null && _commThread.ThreadRunning())
+                {
+                    buttonAdapterConfigCan500.Enabled = true;
+                    buttonAdapterConfigCan100.Enabled = true;
+                    buttonAdapterConfigCanOff.Enabled = true;
+                }
+                else
+                {
+                    buttonAdapterConfigCan500.Enabled = false;
+                    buttonAdapterConfigCan100.Enabled = false;
+                    buttonAdapterConfigCanOff.Enabled = false;
+                }
+
                 if (testValid)
                 {
                     lock (CommThread.DataLock)
@@ -883,6 +930,55 @@ namespace CarControl
             DataUpdatedMethode();
         }
 
+        private CommThread.SelectedDevice GetSelectedDevice()
+        {
+            CommThread.SelectedDevice selDevice = CommThread.SelectedDevice.DeviceAxis;
+            switch (tabControlDevice.SelectedIndex)
+            {
+                case 0:
+                default:
+                    selDevice = CommThread.SelectedDevice.DeviceAxis;
+                    break;
+
+                case 1:
+                    selDevice = CommThread.SelectedDevice.DeviceMotor;
+                    break;
+
+                case 2:
+                    selDevice = CommThread.SelectedDevice.DeviceMotorUnevenRunning;
+                    break;
+
+                case 3:
+                    selDevice = CommThread.SelectedDevice.DeviceMotorRotIrregular;
+                    break;
+
+                case 4:
+                    selDevice = CommThread.SelectedDevice.DeviceMotorPM;
+                    break;
+
+                case 5:
+                    selDevice = CommThread.SelectedDevice.DeviceCccNav;
+                    break;
+
+                case 6:
+                    selDevice = CommThread.SelectedDevice.DeviceIhk;
+                    break;
+
+                case 7:
+                    selDevice = CommThread.SelectedDevice.DeviceErrors;
+                    break;
+
+                case 8:
+                    selDevice = CommThread.SelectedDevice.AdapterConfig;
+                    break;
+
+                case 9:
+                    selDevice = CommThread.SelectedDevice.Test;
+                    break;
+            }
+            return selDevice;
+        }
+
         private void UpdateSelectedDevice()
         {
             if ((_commThread == null) || !_commThread.ThreadRunning())
@@ -890,45 +986,7 @@ namespace CarControl
                 return;
             }
 
-            switch (tabControlDevice.SelectedIndex)
-            {
-                case 0:
-                default:
-                    _commThread.Device = CommThread.SelectedDevice.DeviceAxis;
-                    break;
-
-                case 1:
-                    _commThread.Device = CommThread.SelectedDevice.DeviceMotor;
-                    break;
-
-                case 2:
-                    _commThread.Device = CommThread.SelectedDevice.DeviceMotorUnevenRunning;
-                    break;
-
-                case 3:
-                    _commThread.Device = CommThread.SelectedDevice.DeviceMotorRotIrregular;
-                    break;
-
-                case 4:
-                    _commThread.Device = CommThread.SelectedDevice.DeviceMotorPM;
-                    break;
-
-                case 5:
-                    _commThread.Device = CommThread.SelectedDevice.DeviceCccNav;
-                    break;
-
-                case 6:
-                    _commThread.Device = CommThread.SelectedDevice.DeviceIhk;
-                    break;
-
-                case 7:
-                    _commThread.Device = CommThread.SelectedDevice.DeviceErrors;
-                    break;
-
-                case 8:
-                    _commThread.Device = CommThread.SelectedDevice.Test;
-                    break;
-            }
+            _commThread.Device = GetSelectedDevice();
         }
 
         private void UpdateLog()
@@ -1059,6 +1117,32 @@ namespace CarControl
         {
             SetWlanEnable(!GetWlanEnable());
             UpdateWlan();
+        }
+
+        private void buttonAdapterConfig_Click(object sender, EventArgs e)
+        {
+            if (_commThread == null)
+            {
+                return;
+            }
+            int configValue = -1;
+            if (sender == buttonAdapterConfigCan500)
+            {
+                configValue = 0x01;
+            }
+            else if (sender == buttonAdapterConfigCan100)
+            {
+                configValue = 0x09;
+            }
+            else if (sender == buttonAdapterConfigCanOff)
+            {
+                configValue = 0x00;
+            }
+            if (configValue >= 0)
+            {
+                _commThread.AdapterConfigValue = configValue;
+                UpdateDisplay();
+            }
         }
     }
 }

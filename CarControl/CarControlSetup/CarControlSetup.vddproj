@@ -14,6 +14,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_001AA0089E72AA051CD25564C61E4A51"
+        "OwnerKey" = "8:_366D885FD7374971848A4E15EE488DA9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_015E51B97E0A4CCCBE4FF423FC5C310A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -63,7 +69,7 @@
         "Entry"
         {
         "MsmKey" = "8:_13D5047794F2FD074591C346A29D0CE7"
-        "OwnerKey" = "8:_77467BF44390319DA3556949968F653C"
+        "OwnerKey" = "8:_001AA0089E72AA051CD25564C61E4A51"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -165,7 +171,7 @@
         "Entry"
         {
         "MsmKey" = "8:_2FA0A485070C328F8ABC9D92551DB55A"
-        "OwnerKey" = "8:_77467BF44390319DA3556949968F653C"
+        "OwnerKey" = "8:_001AA0089E72AA051CD25564C61E4A51"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -279,12 +285,18 @@
         "Entry"
         {
         "MsmKey" = "8:_4C6ADD45E43DB65198856588E8219F63"
-        "OwnerKey" = "8:_77467BF44390319DA3556949968F653C"
+        "OwnerKey" = "8:_001AA0089E72AA051CD25564C61E4A51"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_52648AC15C93440490AF55F4E5A13C48"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_52E541FB8D604B7DB98658E4D1CD0861"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -340,12 +352,6 @@
         {
         "MsmKey" = "8:_6C0874993B5841C68FBB4FF5DA4AF2D5"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_77467BF44390319DA3556949968F653C"
-        "OwnerKey" = "8:_366D885FD7374971848A4E15EE488DA9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -418,6 +424,12 @@
         {
         "MsmKey" = "8:_9863115E6A3C83CA051E44DD475E9D3A"
         "OwnerKey" = "8:_54E2DEF119984B177E7168B94D534187"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9863115E6A3C83CA051E44DD475E9D3A"
+        "OwnerKey" = "8:_001AA0089E72AA051CD25564C61E4A51"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -650,6 +662,34 @@
     {
         "File"
         {
+            "{E4F2F62A-3940-4BF5-A031-F7FA98CAAFFA}:_001AA0089E72AA051CD25564C61E4A51"
+            {
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:EdiabasLibCe, Version=1.0.5536.486, Culture=neutral, PublicKeyToken=1178ee4442d0c098"
+                "ScatterAssemblies"
+                {
+                    "_001AA0089E72AA051CD25564C61E4A51"
+                    {
+                    "Name" = "8:EdiabasLibCe.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:EdiabasLibCe.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_6C565DDA221B4C349FACC2FBDDDAD681"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{BA458234-9B71-4F46-8107-E91156377184}:_015E51B97E0A4CCCBE4FF423FC5C310A"
             {
             "SourcePath" = "8:..\\..\\Ecu\\ask_60.prg"
@@ -1148,6 +1188,24 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{BA458234-9B71-4F46-8107-E91156377184}:_52E541FB8D604B7DB98658E4D1CD0861"
+            {
+            "SourcePath" = "8:..\\..\\Ecu\\tmode.prg"
+            "TargetName" = "8:tmode.prg"
+            "Tag" = "8:"
+            "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
+            "Condition" = "8:"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "Register" = "3:0"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{BA458234-9B71-4F46-8107-E91156377184}:_54DF5AEE023240E4BFB81FE00FCBA66C"
             {
             "SourcePath" = "8:..\\..\\Ecu\\d_ekp.grp"
@@ -1292,34 +1350,6 @@
             "Register" = "3:0"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{E4F2F62A-3940-4BF5-A031-F7FA98CAAFFA}:_77467BF44390319DA3556949968F653C"
-            {
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:EdiabasLibCe, Version=1.0.5404.27112, Culture=neutral"
-                "ScatterAssemblies"
-                {
-                    "_77467BF44390319DA3556949968F653C"
-                    {
-                    "Name" = "8:EdiabasLibCe.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:EdiabasLibCe.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_6C565DDA221B4C349FACC2FBDDDAD681"
-            "Condition" = "8:"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "Register" = "3:0"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{E4F2F62A-3940-4BF5-A031-F7FA98CAAFFA}:_7D42331ABC0B096DE3511A19F2AC040A"

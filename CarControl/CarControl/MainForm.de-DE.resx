@@ -120,6 +120,15 @@
   <data name="$this.Text" xml:space="preserve">
     <value>BMW Steuerung</value>
   </data>
+  <data name="buttonAdapterConfigCan100.Text" xml:space="preserve">
+    <value>100 kbit K-CAN</value>
+  </data>
+  <data name="buttonAdapterConfigCan500.Text" xml:space="preserve">
+    <value>500 kbit D-CAN</value>
+  </data>
+  <data name="buttonAdapterConfigCanOff.Text" xml:space="preserve">
+    <value>CAN aus</value>
+  </data>
   <data name="buttonClose.Text" xml:space="preserve">
     <value>Schließen</value>
   </data>
@@ -161,6 +170,9 @@
   </data>
   <data name="groupBoxStatus.Text" xml:space="preserve">
     <value>Status</value>
+  </data>
+  <data name="labelAdapterConfigResult.Text" xml:space="preserve">
+    <value>Ergebnis:</value>
   </data>
   <data name="labelAxisBatteryVoltage.Text" xml:space="preserve">
     <value>Batteriespannung [V]:</value>
@@ -350,6 +362,9 @@
   </data>
   <data name="pushButtonWlan.Text" xml:space="preserve">
     <value>WLAN ein</value>
+  </data>
+  <data name="tabPageAdapterConfig.Text" xml:space="preserve">
+    <value>Adapter</value>
   </data>
   <data name="tabPageAxis.Text" xml:space="preserve">
     <value>Achse</value>
