@@ -1189,7 +1189,6 @@ namespace CarControl
             {
                 ediabas.ExecuteJob("SENDE_TELEGRAMM");
 
-                byte resultValue = 0;
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
                 if (resultSets != null && resultSets.Count >= 2)
                 {
@@ -1204,16 +1203,15 @@ namespace CarControl
                         {
                             if (response[3] == (byte)(~adapterConfig))
                             {   // valid response
-                                resultValue = 1;
+                                resultDict = null;
+                                resultDictTemp.Clear();
+                                resultDataTemp = new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeB, "ADAPTER_RESULT", (Int64)(1));
+                                resultDictTemp.Add(resultDataTemp.name, resultDataTemp);
+                                MergeResultDictionarys(ref resultDict, resultDictTemp);
                             }
                         }
                     }
                 }
-                resultDict = null;
-                resultDictTemp.Clear();
-                resultDataTemp = new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeB, "ADAPTER_RESULT", (Int64)(resultValue));
-                resultDictTemp.Add(resultDataTemp.name, resultDataTemp);
-                MergeResultDictionarys(ref resultDict, resultDictTemp);
             }
             catch (Exception ex)
             {
