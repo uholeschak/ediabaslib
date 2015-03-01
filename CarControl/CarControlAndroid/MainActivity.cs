@@ -25,6 +25,7 @@ namespace CarControlAndroid
         }
 
         private string deviceAddress = string.Empty;
+        private bool loggingActive = false;
         private string sharedAppName = "CarControl";
         private string ecuPath;
         private BluetoothAdapter bluetoothAdapter = null;
@@ -201,10 +202,23 @@ namespace CarControlAndroid
         public override bool OnPrepareOptionsMenu (IMenu menu)
         {
             bool commActive = commThread != null && commThread.ThreadRunning ();
-            IMenuItem scanMenu = menu.FindItem (Resource.Id.scan);
+            IMenuItem scanMenu = menu.FindItem (Resource.Id.menu_scan);
             if (scanMenu != null)
             {
                 scanMenu.SetEnabled (!commActive);
+            }
+            IMenuItem logMenu = menu.FindItem (Resource.Id.menu_enable_log);
+            if (logMenu != null)
+            {
+                logMenu.SetEnabled (!commActive);
+                if (loggingActive)
+                {
+                    logMenu.SetTitle (GetString (Resource.String.menu_enable_log_on));
+                }
+                else
+                {
+                    logMenu.SetTitle (GetString (Resource.String.menu_enable_log_off));
+                }
             }
             return base.OnPrepareOptionsMenu (menu);
         }
@@ -213,11 +227,15 @@ namespace CarControlAndroid
         {
             switch (item.ItemId) 
             {
-                case Resource.Id.scan:
-                // Launch the DeviceListActivity to see devices and do scan
-                Intent serverIntent = new Intent(this, typeof(DeviceListActivity));
-                StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_DEVICE);
-                return true;
+                case Resource.Id.menu_scan:
+                    // Launch the DeviceListActivity to see devices and do scan
+                    Intent serverIntent = new Intent(this, typeof(DeviceListActivity));
+                    StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_DEVICE);
+                    return true;
+
+                case Resource.Id.menu_enable_log:
+                    loggingActive = !loggingActive;
+                    return true;
             }
             return base.OnOptionsItemSelected(item);
         }
@@ -330,7 +348,13 @@ namespace CarControlAndroid
                     commThread.DataUpdated += new CommThread.DataUpdatedEventHandler(DataUpdated);
                     commThread.ThreadTerminated += new CommThread.ThreadTerminatedEventHandler(ThreadTerminated);
                 }
-                commThread.StartThread("BLUETOOTH:" + deviceAddress, null, GetSelectedDevice(), true);
+                string logFile = null;
+                if (loggingActive)
+                {
+                    string rootPath = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
+                    logFile = Path.Combine(Path.Combine(rootPath, "external_sd"), "CarControlLog", "ifh.trc");
+                }
+                commThread.StartThread("BLUETOOTH:" + deviceAddress, logFile, GetSelectedDevice(), true);
             }
             catch (Exception)
             {

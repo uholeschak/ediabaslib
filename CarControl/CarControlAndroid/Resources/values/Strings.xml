@@ -150,6 +150,8 @@
     <string name="button_scan">Scan for devices</string>
 
     <!-- Options Menu -->
-    <string name="connect">Select a device</string>
+    <string name="menu_connect">Select a device</string>
+    <string name="menu_enable_log_on">Logging active</string>
+    <string name="menu_enable_log_off">Logging inactive</string>
 
 </resources>

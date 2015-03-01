@@ -150,6 +150,8 @@
     <string name="button_scan">Nach Geräten suchen</string>
 
     <!-- Options Menu -->
-    <string name="connect">Gerät auswählen</string>
+    <string name="menu_connect">Gerät auswählen</string>
+    <string name="menu_enable_log_on">Logging aktiv</string>
+    <string name="menu_enable_log_off">Logging inaktiv</string>
 
 </resources>

@@ -103,14 +103,17 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f060010
 			public const int button_uneven_running_active = 2131099664;
 			
+			// aapt resource value: 0x7f06002e
+			public const int menu_enable_log = 2131099694;
+			
+			// aapt resource value: 0x7f06002d
+			public const int menu_scan = 2131099693;
+			
 			// aapt resource value: 0x7f060003
 			public const int new_devices = 2131099651;
 			
 			// aapt resource value: 0x7f060001
 			public const int paired_devices = 2131099649;
-			
-			// aapt resource value: 0x7f06002d
-			public const int scan = 2131099693;
 			
 			// aapt resource value: 0x7f060022
 			public const int scrollViewAdapterConfig = 2131099682;
@@ -330,9 +333,6 @@ namespace CarControlAndroid
 			
 			// aapt resource value: 0x7f04002a
 			public const int button_uneven_running_on = 2130968618;
-			
-			// aapt resource value: 0x7f04007e
-			public const int connect = 2130968702;
 			
 			// aapt resource value: 0x7f040057
 			public const int errorNameACSM = 2130968663;
@@ -600,6 +600,15 @@ namespace CarControlAndroid
 			
 			// aapt resource value: 0x7f040000
 			public const int library_name = 2130968576;
+			
+			// aapt resource value: 0x7f04007e
+			public const int menu_connect = 2130968702;
+			
+			// aapt resource value: 0x7f040080
+			public const int menu_enable_log_off = 2130968704;
+			
+			// aapt resource value: 0x7f04007f
+			public const int menu_enable_log_on = 2130968703;
 			
 			// aapt resource value: 0x7f04007a
 			public const int none_found = 2130968698;
