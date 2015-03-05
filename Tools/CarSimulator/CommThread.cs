@@ -1125,10 +1125,9 @@ namespace CarSimulator
                 dataOffset = 4;
             }
 
-            stsResult = PCANBasic.Reset(_pcanHandle);
-            if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+            // clear input buffer
+            while (PCANBasic.Read(_pcanHandle, out CANMsg, out CANTimeStamp) == TPCANStatus.PCAN_ERROR_OK)
             {
-                return false;
             }
 
             if (dataLength <= 6)
@@ -1169,34 +1168,51 @@ namespace CarSimulator
             {
                 if (waitForFC)
                 {
-                    _receiveStopWatch.Reset();
-                    _receiveStopWatch.Start();
-                    for (; ; )
+                    bool wait = false;
+                    do
                     {
-                        stsResult = PCANBasic.Read(_pcanHandle, out CANMsg, out CANTimeStamp);
-                        if (stsResult == TPCANStatus.PCAN_ERROR_OK)
+                        _receiveStopWatch.Reset();
+                        _receiveStopWatch.Start();
+                        for (; ; )
                         {
-                            break;
+                            stsResult = PCANBasic.Read(_pcanHandle, out CANMsg, out CANTimeStamp);
+                            if (stsResult == TPCANStatus.PCAN_ERROR_OK)
+                            {
+                                break;
+                            }
+                            if (_receiveStopWatch.ElapsedMilliseconds > 1000)
+                            {
+                                _receiveStopWatch.Stop();
+                                return false;
+                            }
                         }
-                        if (_receiveStopWatch.ElapsedMilliseconds > 1000)
+                        _receiveStopWatch.Stop();
+                        if ((CANMsg.LEN < 4) || (CANMsg.MSGTYPE != TPCANMessageType.PCAN_MESSAGE_STANDARD) ||
+                            ((CANMsg.ID & 0xFF00) != 0x0600))
                         {
-                            _receiveStopWatch.Stop();
                             return false;
                         }
-                    }
-                    _receiveStopWatch.Stop();
-                    if ((CANMsg.LEN < 4) || (CANMsg.MSGTYPE != TPCANMessageType.PCAN_MESSAGE_STANDARD) ||
-                        ((CANMsg.ID & 0xFF00) != 0x0600))
-                    {
-                        return false;
-                    }
-                    if (((CANMsg.ID & 0xFF) != destAddr) || (CANMsg.DATA[0] != sourceAddr) ||
-                        (CANMsg.DATA[1] != 0x30))
-                    {
-                        return false;
-                    }
-                    blockSize = CANMsg.DATA[2];
-                    sepTime = CANMsg.DATA[3];
+                        if (((CANMsg.ID & 0xFF) != destAddr) || (CANMsg.DATA[0] != sourceAddr) ||
+                            ((CANMsg.DATA[1] & 0xF0) != 0x30))
+                        {
+                            return false;
+                        }
+                        switch (CANMsg.DATA[1] & 0x0F)
+                        {
+                            case 0: // CTS
+                                wait = false;
+                                break;
+
+                            case 1: // Wait
+                                wait = true;
+                                break;
+
+                            default:
+                                return false;
+                        }
+                        blockSize = CANMsg.DATA[2];
+                        sepTime = CANMsg.DATA[3];
+                    } while (wait);
                 }
                 // consecutive frame
                 SendMsg.ID = (uint)(0x600 + sourceAddr);
