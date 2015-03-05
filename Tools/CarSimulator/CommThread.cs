@@ -73,6 +73,7 @@ namespace CarSimulator
             concept3,
         };
 
+        private static readonly long tickResolMs = Stopwatch.Frequency / 1000;
         private volatile bool   _stopThread;
         private bool            _threadRunning;
         private Thread          _workerThread;
@@ -82,10 +83,11 @@ namespace CarSimulator
         private bool            _e61Internal;
         private ConfigData      _configData;
         private byte            _pcanHandle;
+        private long            _lastCanSendTick;
         private SerialPort      _serialPort;
         private AutoResetEvent  _serialReceiveEvent;
         private AutoResetEvent  _pcanReceiveEvent;
-        private byte[] _sendData;
+        private byte[]          _sendData;
         private byte[]          _receiveData;
         private byte[]          _receiveDataMotorBackup;
         private int             _noResponseCount;
@@ -427,6 +429,7 @@ namespace CarSimulator
             _threadRunning = false;
             _workerThread = null;
             _pcanHandle = PCANBasic.PCAN_NONEBUS;
+            _lastCanSendTick = DateTime.MinValue.Ticks;
             _serialPort = new SerialPort();
             _serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
             _serialReceiveEvent = new AutoResetEvent(false);
@@ -1125,6 +1128,10 @@ namespace CarSimulator
                 dataOffset = 4;
             }
 
+            if ((Stopwatch.GetTimestamp() - _lastCanSendTick) < 10 * tickResolMs)
+            {
+                Thread.Sleep(10);   // required for multiple telegrams
+            }
             // clear input buffer
             while (PCANBasic.Read(_pcanHandle, out CANMsg, out CANTimeStamp) == TPCANStatus.PCAN_ERROR_OK)
             {
@@ -1143,6 +1150,7 @@ namespace CarSimulator
                 {
                     return false;
                 }
+                _lastCanSendTick = Stopwatch.GetTimestamp();
                 return true;
             }
             // first frame
@@ -1253,6 +1261,7 @@ namespace CarSimulator
                     Thread.Sleep(sepTime);
                 }
             }
+            _lastCanSendTick = Stopwatch.GetTimestamp();
             return true;
         }
 
