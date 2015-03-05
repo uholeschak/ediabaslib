@@ -1,4 +1,5 @@
 /bin/
 /obj/
-*.suo
-*.ncb
+/*.suo
+/*.ncb
+/*.dll

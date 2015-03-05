@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Threading;
-using System.Windows.Forms;
+using Peak.Can.Basic;
 
 namespace CarSimulator
 {
@@ -81,9 +81,11 @@ namespace CarSimulator
         private bool            _adsAdapter;
         private bool            _e61Internal;
         private ConfigData      _configData;
+        private byte            _pcanHandle;
         private SerialPort      _serialPort;
-        private AutoResetEvent  _receiveEvent;
-        private byte[]          _sendData;
+        private AutoResetEvent  _serialReceiveEvent;
+        private AutoResetEvent  _pcanReceiveEvent;
+        private byte[] _sendData;
         private byte[]          _receiveData;
         private byte[]          _receiveDataMotorBackup;
         private int             _noResponseCount;
@@ -424,9 +426,11 @@ namespace CarSimulator
             _stopThread = false;
             _threadRunning = false;
             _workerThread = null;
+            _pcanHandle = PCANBasic.PCAN_NONEBUS;
             _serialPort = new SerialPort();
             _serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
-            _receiveEvent = new AutoResetEvent(false);
+            _serialReceiveEvent = new AutoResetEvent(false);
+            _pcanReceiveEvent = new AutoResetEvent(false);
             _sendData = new byte[260];
             _receiveData = new byte[260];
             _receiveDataMotorBackup = new byte[_receiveData.Length];
@@ -536,7 +540,35 @@ namespace CarSimulator
 
         private bool Connect()
         {
-            if (_serialPort.IsOpen) return true;
+            Disconnect();
+            if (_comPort.StartsWith("CAN", StringComparison.OrdinalIgnoreCase))
+            {
+                TPCANStatus stsResult;
+                TPCANBaudrate baudRate = TPCANBaudrate.PCAN_BAUD_500K;
+                switch (_conceptType)
+                {
+                    case ConceptType.conceptBwmFast:
+                        baudRate = TPCANBaudrate.PCAN_BAUD_500K;
+                        break;
+
+                    default:
+                        return false;
+                }
+                stsResult = PCANBasic.Initialize(PCANBasic.PCAN_USBBUS1, baudRate, TPCANType.PCAN_TYPE_DNG, 0, 0);
+                if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                {
+                    return false;
+                }
+                _pcanHandle = PCANBasic.PCAN_USBBUS1;
+                UInt32 iEventBuffer = Convert.ToUInt32(_pcanReceiveEvent.SafeWaitHandle.DangerousGetHandle().ToInt32());
+                stsResult = PCANBasic.SetValue(_pcanHandle, TPCANParameter.PCAN_RECEIVE_EVENT, ref iEventBuffer, sizeof(UInt32));
+                if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                {
+                    Disconnect();
+                    return false;
+                }
+                return true;
+            }
             try
             {
                 int baudRate = 9600;
@@ -592,9 +624,20 @@ namespace CarSimulator
 
         private bool Disconnect()
         {
-            if (_serialPort.IsOpen)
+            if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
             {
-                _serialPort.Close();
+                PCANBasic.Uninitialize(_pcanHandle);
+                _pcanHandle = PCANBasic.PCAN_NONEBUS;
+            }
+            try
+            {
+                if (_serialPort.IsOpen)
+                {
+                    _serialPort.Close();
+                }
+            }
+            catch (Exception)
+            {
             }
             return true;
         }
@@ -640,7 +683,7 @@ namespace CarSimulator
 
         private void SerialDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            _receiveEvent.Set();
+            _serialReceiveEvent.Set();
         }
 
         private bool SendData(byte[] sendData, int length)
@@ -696,7 +739,7 @@ namespace CarSimulator
                             break;
                         }
                     }
-                    // no _receiveEvent.WaitOne(1, false); allowed here!
+                    // no _serialReceiveEvent.WaitOne(1, false); allowed here!
                 }
                 _receiveStopWatch.Stop();
                 if (recLen < length)
@@ -731,7 +774,7 @@ namespace CarSimulator
                         _receiveStopWatch.Stop();
                         return false;
                     }
-                    _receiveEvent.WaitOne(1, false);
+                    _serialReceiveEvent.WaitOne(1, false);
                 }
 
                 int recLen = 0;
@@ -761,7 +804,7 @@ namespace CarSimulator
                             break;
                         }
                     }
-                    _receiveEvent.WaitOne(1, false);
+                    _serialReceiveEvent.WaitOne(1, false);
                 }
                 _receiveStopWatch.Stop();
                 if (recLen < length)
@@ -782,6 +825,10 @@ namespace CarSimulator
             {
                 case ConceptType.conceptBwmFast:
                 case ConceptType.conceptKwp2000Bmw:
+                    if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
+                    {
+                        return SendCan(sendData);
+                    }
                     return SendBmwfast(sendData);
 
                 case ConceptType.conceptKwp2000S:
@@ -840,6 +887,10 @@ namespace CarSimulator
             {
                 case ConceptType.conceptBwmFast:
                 case ConceptType.conceptKwp2000Bmw:
+                    if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
+                    {
+                        return ReceiveCan(receiveData);
+                    }
                     return ReceiveBmwFast(receiveData);
 
                 case ConceptType.conceptKwp2000S:
@@ -899,6 +950,294 @@ namespace CarSimulator
                     }
             }
             return false;
+        }
+
+        private bool ReceiveCan(byte[] receiveData)
+        {
+            TPCANMsg CANMsg;
+            TPCANTimestamp CANTimeStamp;
+            TPCANStatus stsResult;
+            int len;
+            byte blockCount = 0;
+            byte sourceAddr = 0;
+            byte destAddr = 0;
+            byte[] dataBuffer = null;
+
+            int recLen = 0;
+            _receiveStopWatch.Reset();
+            _receiveStopWatch.Start();
+            for (; ; )
+            {
+                for (; ; )
+                {
+                    stsResult = PCANBasic.Read(_pcanHandle, out CANMsg, out CANTimeStamp);
+                    if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                    {
+                        break;
+                    }
+                    _receiveStopWatch.Reset();
+                    _receiveStopWatch.Start();
+                    if ((CANMsg.LEN != 8) || (CANMsg.MSGTYPE != TPCANMessageType.PCAN_MESSAGE_STANDARD) ||
+                        ((CANMsg.ID & 0xFF00) != 0x0600))
+                    {
+                        _receiveStopWatch.Stop();
+                        return false;
+                    }
+                    byte frameType = (byte)((CANMsg.DATA[1] >> 4) & 0x0F);
+                    if (recLen == 0)
+                    {   // first telegram
+                        sourceAddr = (byte)(CANMsg.ID & 0xFF);
+                        destAddr = CANMsg.DATA[0];
+                        switch (frameType)
+                        {
+                            case 0: // single frame
+                                len = CANMsg.DATA[1] & 0x0F;
+                                if (len > 6)
+                                {
+                                    _receiveStopWatch.Stop();
+                                    return false;
+                                }
+                                dataBuffer = new byte[CANMsg.DATA[1] & 0x0F];
+                                Array.Copy(CANMsg.DATA, 2, dataBuffer, 0, len);
+                                recLen = len;
+                                break;
+
+                            case 1: // first frame
+                                len = (((int)CANMsg.DATA[1] & 0x0F) << 8) + CANMsg.DATA[2];
+                                dataBuffer = new byte[len];
+                                Array.Copy(CANMsg.DATA, 3, dataBuffer, 0, 5);
+                                recLen = 5;
+                                blockCount = 1;
+                                {
+                                    TPCANMsg SendMsg = new TPCANMsg();
+                                    SendMsg.DATA = new byte[8];
+                                    SendMsg.ID = (uint)(0x600 + destAddr);
+                                    SendMsg.LEN = 8;
+                                    SendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                                    SendMsg.DATA[0] = sourceAddr;
+                                    SendMsg.DATA[1] = 0x30;  // FC
+                                    SendMsg.DATA[2] = 0x00;  // Block size (no control)
+                                    SendMsg.DATA[3] = 0x00;  // Min sep. Time
+                                    stsResult = PCANBasic.Write(_pcanHandle, ref SendMsg);
+                                    if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                                    {
+                                        _receiveStopWatch.Stop();
+                                        return false;
+                                    }
+                                }
+                                break;
+
+                            default:
+                                _receiveStopWatch.Stop();
+                                return false;
+                        }
+                    }
+                    else
+                    {
+                        if (frameType != 2)
+                        {   // consecutive frame
+                            _receiveStopWatch.Stop();
+                            return false;
+                        }
+                        if ((sourceAddr != (CANMsg.ID & 0xFF)) || (destAddr != CANMsg.DATA[0]) ||
+                            ((CANMsg.DATA[1] & 0x0F) != (blockCount & 0x0F)))
+                        {
+                            _receiveStopWatch.Stop();
+                            return false;
+                        }
+                        len = dataBuffer.Length - recLen;
+                        if (len > 6)
+                        {
+                            len = 6;
+                        }
+                        Array.Copy(CANMsg.DATA, 2, dataBuffer, recLen, len);
+                        recLen += len;
+                        blockCount++;
+                    }
+                    if (dataBuffer != null && recLen >= dataBuffer.Length)
+                    {
+                        break;
+                    }
+                }
+                if (dataBuffer != null && recLen >= dataBuffer.Length)
+                {
+                    break;
+                }
+                if (_receiveStopWatch.ElapsedMilliseconds > 1000)
+                {
+                    _receiveStopWatch.Stop();
+                    return false;
+                }
+                _pcanReceiveEvent.WaitOne(10);
+                if (recLen == 0)
+                {   // nothing received
+                    _receiveStopWatch.Stop();
+                    return false;
+                }
+            }
+            _receiveStopWatch.Stop();
+            // create BMW-FAST telegram
+            if (dataBuffer.Length > 0x3F)
+            {
+                receiveData[0] = 0x80;
+                receiveData[1] = destAddr;
+                receiveData[2] = sourceAddr;
+                receiveData[3] = (byte)dataBuffer.Length;
+                Array.Copy(dataBuffer, 0, receiveData, 4, dataBuffer.Length);
+                len = dataBuffer.Length + 4;
+            }
+            else
+            {
+                receiveData[0] = (byte)(0x80 | dataBuffer.Length);
+                receiveData[1] = destAddr;
+                receiveData[2] = sourceAddr;
+                Array.Copy(dataBuffer, 0, receiveData, 3, dataBuffer.Length);
+                len = dataBuffer.Length + 3;
+            }
+            if (destAddr == 0xEF)
+            {   // broadcast
+                receiveData[0] |= 0xC0;
+            }
+            receiveData[len] = CalcChecksumBmwFast(receiveData, len);
+            return true;
+        }
+
+        private bool SendCan(byte[] sendData)
+        {
+            TPCANMsg CANMsg;
+            TPCANTimestamp CANTimeStamp;
+            TPCANStatus stsResult;
+            TPCANMsg SendMsg = new TPCANMsg();
+            SendMsg.DATA = new byte[8];
+            int len;
+            bool waitForFC = false;
+            byte blockCount = 0;
+            byte blockSize = 0;
+            byte sepTime = 0;
+
+            byte destAddr = sendData[1];
+            byte sourceAddr = sendData[2];
+            int dataOffset = 3;
+            int dataLength = sendData[0] & 0x3F;
+            if (dataLength == 0)
+            {   // with length byte
+                dataLength = sendData[3];
+                dataOffset = 4;
+            }
+
+            stsResult = PCANBasic.Reset(_pcanHandle);
+            if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+            {
+                return false;
+            }
+
+            if (dataLength <= 6)
+            {   // single frame
+                SendMsg.ID = (uint)(0x600 + sourceAddr);
+                SendMsg.LEN = 8;
+                SendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                SendMsg.DATA[0] = destAddr;
+                SendMsg.DATA[1] = (byte)(0x00 | dataLength);  // SF
+                Array.Copy(sendData, dataOffset, SendMsg.DATA, 2, dataLength);
+                stsResult = PCANBasic.Write(_pcanHandle, ref SendMsg);
+                if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                {
+                    return false;
+                }
+                return true;
+            }
+            // first frame
+            SendMsg.ID = (uint)(0x600 + sourceAddr);
+            SendMsg.LEN = 8;
+            SendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+            SendMsg.DATA[0] = destAddr;
+            SendMsg.DATA[1] = (byte)(0x10 | ((dataLength >> 8) & 0xFF));  // FF
+            SendMsg.DATA[2] = (byte)dataLength;
+            len = 5;
+            Array.Copy(sendData, dataOffset, SendMsg.DATA, 3, len);
+            dataLength -= len;
+            dataOffset += len;
+            stsResult = PCANBasic.Write(_pcanHandle, ref SendMsg);
+            if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+            {
+                return false;
+            }
+            waitForFC = true;
+            blockCount = 1;
+
+            for (; ; )
+            {
+                if (waitForFC)
+                {
+                    _receiveStopWatch.Reset();
+                    _receiveStopWatch.Start();
+                    for (; ; )
+                    {
+                        stsResult = PCANBasic.Read(_pcanHandle, out CANMsg, out CANTimeStamp);
+                        if (stsResult == TPCANStatus.PCAN_ERROR_OK)
+                        {
+                            break;
+                        }
+                        if (_receiveStopWatch.ElapsedMilliseconds > 1000)
+                        {
+                            _receiveStopWatch.Stop();
+                            return false;
+                        }
+                    }
+                    _receiveStopWatch.Stop();
+                    if ((CANMsg.LEN < 4) || (CANMsg.MSGTYPE != TPCANMessageType.PCAN_MESSAGE_STANDARD) ||
+                        ((CANMsg.ID & 0xFF00) != 0x0600))
+                    {
+                        return false;
+                    }
+                    if (((CANMsg.ID & 0xFF) != destAddr) || (CANMsg.DATA[0] != sourceAddr) ||
+                        (CANMsg.DATA[1] != 0x30))
+                    {
+                        return false;
+                    }
+                    blockSize = CANMsg.DATA[2];
+                    sepTime = CANMsg.DATA[3];
+                }
+                // consecutive frame
+                SendMsg.ID = (uint)(0x600 + sourceAddr);
+                SendMsg.LEN = 8;
+                SendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                SendMsg.DATA[0] = destAddr;
+                SendMsg.DATA[1] = (byte)(0x20 | (blockCount & 0x0F));  // CF
+                len = dataLength;
+                if (len > 6)
+                {
+                    len = 6;
+                }
+                Array.Copy(sendData, dataOffset, SendMsg.DATA, 2, len);
+                dataLength -= len;
+                dataOffset += len;
+                blockCount++;
+                stsResult = PCANBasic.Write(_pcanHandle, ref SendMsg);
+                if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                {
+                    return false;
+                }
+                if (dataLength <= 0)
+                {
+                    break;
+                }
+
+                waitForFC = false;
+                if (blockSize > 0)
+                {
+                    if (blockSize == 1)
+                    {
+                        waitForFC = true;
+                    }
+                    blockSize--;
+                }
+                if (!waitForFC && sepTime > 0)
+                {
+                    Thread.Sleep(sepTime);
+                }
+            }
+            return true;
         }
 
         private bool SendBmwfast(byte[] sendData)
@@ -1220,7 +1559,7 @@ namespace CarSimulator
             {
                 return;
             }
-            if (!_adsAdapter)
+            if (!_adsAdapter && (_pcanHandle == PCANBasic.PCAN_NONEBUS))
             {
                 // send echo
                 OBDSend(_receiveData);

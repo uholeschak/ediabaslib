@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Threading;
-using System.IO.Ports;
 using System.IO;
+using System.IO.Ports;
+using System.Windows.Forms;
+using Peak.Can.Basic;
 
 namespace CarSimulator
 {
@@ -56,6 +52,18 @@ namespace CarSimulator
             foreach (string port in ports)
             {
                 index = listPorts.Items.Add(port);
+            }
+            try
+            {
+                UInt32 iBuffer;
+                TPCANStatus stsResult = PCANBasic.GetValue(PCANBasic.PCAN_USBBUS1, TPCANParameter.PCAN_CHANNEL_CONDITION, out iBuffer, sizeof(UInt32));
+                if ((stsResult == TPCANStatus.PCAN_ERROR_OK) && (iBuffer == PCANBasic.PCAN_CHANNEL_AVAILABLE))
+                {
+                    index = listPorts.Items.Add("CAN");
+                }
+            }
+            catch (Exception)
+            {
             }
             listPorts.SelectedIndex = index;
             listPorts.EndUpdate();
