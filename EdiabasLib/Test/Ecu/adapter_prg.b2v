@@ -1,0 +1,80 @@
+// compile with:
+// best2 -Q -L "C:\EDIABAS\Bin\B2Runtim.lib" adapter_prg.b2v
+//
+
+////////////////////////////////////////////////////////////////////////
+//                           H E A D E R
+////////////////////////////////////////////////////////////////////////
+ecu     : Program operation mode for CAN adapter;
+origin  : Ulrich Holeschak;
+revision: 1.0;
+author  : Ulrich Holeschak;
+comment : Configure the OBD CAN adapter mode;
+
+
+////////////////////////////////////////////////////////////////////////
+//                        K O N S T A N T S
+////////////////////////////////////////////////////////////////////////
+
+long PARAMETER[] = {0x010F,115200,1200,20,10,2,5000};
+int AWLEN[] = {0,0};
+char TEL_PRG[] = { 0x81,0x00,0x00,0x00 };
+
+////////////////////////////////////////////////////////////////////////
+//                              J O B S
+////////////////////////////////////////////////////////////////////////
+
+job(  name      : INITIALISIERUNG;
+      comment   : Initialisierung;
+      result    : DONE;
+        type    : int;
+        defrslt : ;
+        comment : Werte: 0 = Error during initialization;
+        comment : Werte: 1 = Initialization ok;
+   ) 
+{
+    open_communication();               // Connect
+    set_repeat_counter(1);              // Repeat counter
+    set_communication_pars(PARAMETER);
+    set_answer_length(AWLEN);
+    DONE = 1;
+}
+////////////////////////////////////////////////////////////////////////
+
+job(  name      : ADAPTER_PRG;
+      comment   : Program adapter mode;
+      argument  : MODE;
+        type    : int;
+        defrslt : ;
+        comment : Adapter mode;
+        comment : 0: CAN off;
+        comment : 1: D-CAN 500 kbit/s;
+        comment : 9: K-CAN 100 kbit/s;
+      result    : DONE;
+        type    : int;
+        defrslt : ;
+        comment : Werte: 0 = Error during programming;
+        comment : Werte: 1 = Programming ok;
+   ) 
+{
+
+    unsigned char response[];               // Buffer for ECU response
+    unsigned char request[];                // Buffer for ECU request
+
+    request=TEL_PRG;                        // create request
+
+    if(exist(MODE))
+    {                                       // paramter is present
+        request[3]=MODE;                    // set mode
+    }
+    send_and_receive(response,request);    
+
+    DONE = 0;
+    // check response
+    if ((datalen(response) >= 5) && (request[3] == (~response[3] & 0xFF)))
+    {
+        DONE = 1;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////
