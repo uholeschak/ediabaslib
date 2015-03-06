@@ -1104,7 +1104,7 @@ namespace CarControl
 
                 try
                 {
-                    ediabas.ResolveSgbdFile("tmode");
+                    ediabas.ResolveSgbdFile("adapter_prg");
                 }
                 catch (Exception ex)
                 {
@@ -1122,95 +1122,19 @@ namespace CarControl
 
             Dictionary<string, EdiabasNet.ResultData> resultDict = null;
 
-            Dictionary<string, EdiabasNet.ResultData> resultDictTemp = new Dictionary<string, EdiabasNet.ResultData>();
-            EdiabasNet.ResultData resultDataTemp = new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeB, "ADAPTER_RESULT", (Int64)(0));
-            resultDictTemp.Add(resultDataTemp.name, resultDataTemp);
-            MergeResultDictionarys(ref resultDict, resultDictTemp);
-
-            // set communication parameter
-            ediabas.ArgBinary =
-                new byte[] {
-                0x0F, 0x01, 0x00, 0x00,
-                0x00, 0xC2, 0x01, 0x00,
-                0xB0, 0x04, 0x00, 0x00,
-                0x14, 0x00, 0x00, 0x00,
-                0x0A, 0x00, 0x00, 0x00,
-                0x02, 0x00, 0x00, 0x00,
-                0x88, 0x13, 0x00, 0x00};
-            ediabas.ArgBinaryStd = null;
-            ediabas.ResultsRequests = string.Empty;
-
-            try
-            {
-                ediabas.ExecuteJob("SETZE_SG_PARAMETER_ALLG");
-            }
-            catch (Exception ex)
-            {
-                ediabasInitReq = true;
-                string exText = EdiabasNet.GetExceptionText(ex);
-                lock (CommThread.DataLock)
-                {
-                    EdiabasResultDict = resultDict;
-                    EdiabasErrorMessage = exText;
-                }
-                Thread.Sleep(1000);
-                return true;
-            }
-
-            // set answer length
-            ediabas.ArgBinary = new byte[] {0x00, 0x00, 0x00, 0x00};
-            ediabas.ArgBinaryStd = null;
-            ediabas.ResultsRequests = string.Empty;
-
-            try
-            {
-                ediabas.ExecuteJob("SETZE_ANTWORTLAENGE");
-            }
-            catch (Exception ex)
-            {
-                ediabasInitReq = true;
-                string exText = EdiabasNet.GetExceptionText(ex);
-                lock (CommThread.DataLock)
-                {
-                    EdiabasResultDict = null;
-                    EdiabasErrorMessage = exText;
-                }
-                Thread.Sleep(1000);
-                return true;
-            }
-
             // send command
-            ediabas.ArgBinary = new byte[] {0x81, 0x00, 0x00, adapterConfig};
+            ediabas.ArgString = string.Format("0x{0:X02}", adapterConfig);
             ediabas.ArgBinaryStd = null;
             ediabas.ResultsRequests = string.Empty;
 
-            byte[] response = null;
             try
             {
-                ediabas.ExecuteJob("SENDE_TELEGRAMM");
+                ediabas.ExecuteJob("ADAPTER_PRG");
 
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
                 if (resultSets != null && resultSets.Count >= 2)
                 {
-                    EdiabasNet.ResultData resultData;
-                    if (resultSets[1].TryGetValue("SG_ANTWORT", out resultData))
-                    {
-                        if (resultData.opData.GetType() == typeof(byte[]))
-                        {
-                            response = (byte[])resultData.opData;
-                        }
-                        if (response != null && response.Length >= 4)
-                        {
-                            if (response[3] == (byte)(~adapterConfig))
-                            {   // valid response
-                                resultDict = null;
-                                resultDictTemp.Clear();
-                                resultDataTemp = new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeB, "ADAPTER_RESULT", (Int64)(1));
-                                resultDictTemp.Add(resultDataTemp.name, resultDataTemp);
-                                MergeResultDictionarys(ref resultDict, resultDictTemp);
-                            }
-                        }
-                    }
+                    MergeResultDictionarys(ref resultDict, resultSets[1]);
                 }
             }
             catch (Exception ex)

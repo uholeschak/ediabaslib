@@ -254,8 +254,8 @@
     <AndroidAsset Include="..\..\Ecu\t_grtb.prg">
       <Link>Assets\Ecu\t_grtb.prg</Link>
     </AndroidAsset>
-    <AndroidAsset Include="..\..\Ecu\tmode.prg">
-      <Link>Assets\Ecu\tmode.prg</Link>
+    <AndroidAsset Include="..\..\EdiabasLib\Test\Ecu\adapter_prg.prg">
+      <Link>Assets\Ecu\adapter_prg.prg</Link>
     </AndroidAsset>
   </ItemGroup>
   <ItemGroup>

@@ -296,7 +296,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_52E541FB8D604B7DB98658E4D1CD0861"
+        "MsmKey" = "8:_526D3A05FC5B46D79B9A199AD69E5AA2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -665,7 +665,7 @@
             "{E4F2F62A-3940-4BF5-A031-F7FA98CAAFFA}:_001AA0089E72AA051CD25564C61E4A51"
             {
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:EdiabasLibCe, Version=1.0.5536.486, Culture=neutral, PublicKeyToken=1178ee4442d0c098"
+            "AssemblyAsmDisplayName" = "8:EdiabasLibCe, Version=1.0.5536.24281, Culture=neutral, PublicKeyToken=1178ee4442d0c098"
                 "ScatterAssemblies"
                 {
                     "_001AA0089E72AA051CD25564C61E4A51"
@@ -1188,10 +1188,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{BA458234-9B71-4F46-8107-E91156377184}:_52E541FB8D604B7DB98658E4D1CD0861"
+            "{BA458234-9B71-4F46-8107-E91156377184}:_526D3A05FC5B46D79B9A199AD69E5AA2"
             {
-            "SourcePath" = "8:..\\..\\Ecu\\tmode.prg"
-            "TargetName" = "8:tmode.prg"
+            "SourcePath" = "8:..\\..\\EdiabasLib\\Test\\Ecu\\adapter_prg.prg"
+            "TargetName" = "8:adapter_prg.prg"
             "Tag" = "8:"
             "Folder" = "8:_580057E445DE4EBCB31C603B5E249A50"
             "Condition" = "8:"

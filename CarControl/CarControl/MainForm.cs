@@ -740,7 +740,7 @@ namespace CarControl
                         resultDict = _commThread.EdiabasResultDict;
                     }
 
-                    Int64 resultValue = GetResultInt64(resultDict, "ADAPTER_RESULT", out found);
+                    Int64 resultValue = GetResultInt64(resultDict, "DONE", out found);
                     if (found)
                     {
                         if (resultValue > 0)
