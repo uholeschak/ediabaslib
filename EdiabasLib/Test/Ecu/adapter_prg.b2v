@@ -33,10 +33,6 @@ job(  name      : INITIALISIERUNG;
         comment : Werte: 1 = Initialization ok;
    ) 
 {
-    open_communication();               // Connect
-    set_repeat_counter(1);              // Repeat counter
-    set_communication_pars(PARAMETER);
-    set_answer_length(AWLEN);
     DONE = 1;
 }
 ////////////////////////////////////////////////////////////////////////
@@ -63,6 +59,11 @@ job(  name      : ADAPTER_PRG;
     unsigned char response[];               // Buffer for ECU response
     unsigned char request[];                // Buffer for ECU request
 
+    open_communication();                   // Connect
+    set_repeat_counter(1);                  // Repeat counter
+    set_communication_pars(PARAMETER);
+    set_answer_length(AWLEN);
+
     request=TEL_PRG;                        // create request
 
     if(exist(MODE))
@@ -77,6 +78,7 @@ job(  name      : ADAPTER_PRG;
     {
         DONE = 1;
     }
+    close_communication();                   // Disconnect
 }
 
 ////////////////////////////////////////////////////////////////////////
