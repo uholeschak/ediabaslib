@@ -10,9 +10,9 @@ origin  : Ulrich Holeschak;
 revision: 1.0;
 author  : Ulrich Holeschak;
 comment : Configure the OBD CAN adapter mode;
+comment : Replacement for D-CAN.exe;
 
-
-////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////
 //                        K O N S T A N T S
 ////////////////////////////////////////////////////////////////////////
 
@@ -50,6 +50,8 @@ job(  name      : ADAPTER_PRG;
         comment : 0: CAN off;
         comment : 1: D-CAN 500 kbit/s;
         comment : 9: K-CAN 100 kbit/s;
+        comment : Programming is only possible after power on of the adapter;
+        comment : while the red LED is active!;
       result    : DONE;
         type    : int;
         defrslt : ;
