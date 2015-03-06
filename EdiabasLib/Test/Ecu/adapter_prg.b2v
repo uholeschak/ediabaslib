@@ -70,7 +70,9 @@ job(  name      : ADAPTER_PRG;
     {                                       // paramter is present
         request[3]=MODE;                    // set mode
     }
+    set_trap_mask(0xffffffff);
     send_and_receive(response,request);    
+    set_trap_mask(0x00000000);
 
     DONE = 0;
     // check response
