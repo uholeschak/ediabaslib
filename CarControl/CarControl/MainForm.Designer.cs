@@ -40,6 +40,23 @@
             this.buttonStoreLog = new System.Windows.Forms.Button();
             this.tabControlDevice = new System.Windows.Forms.TabControl();
             this.tabPageAxis = new System.Windows.Forms.TabPage();
+            this.groupBoxControl = new CarControl.GroupBox();
+            this.pushButtonDown = new CarControl.PushButton();
+            this.pushButtonUp = new CarControl.PushButton();
+            this.groupBoxStatus = new CarControl.GroupBox();
+            this.panelAxisData = new System.Windows.Forms.Panel();
+            this.textBoxSpeed = new System.Windows.Forms.TextBox();
+            this.labelSpeed = new System.Windows.Forms.Label();
+            this.textBoxAxisBatteryVoltage = new System.Windows.Forms.TextBox();
+            this.labelAxisBatteryVoltage = new System.Windows.Forms.Label();
+            this.textBoxValveState = new System.Windows.Forms.TextBox();
+            this.labelOutputState = new System.Windows.Forms.Label();
+            this.textBoxAxisMode = new System.Windows.Forms.TextBox();
+            this.labelAxisMode = new System.Windows.Forms.Label();
+            this.labelAxisLeft = new System.Windows.Forms.Label();
+            this.textBoxAxisRigth = new System.Windows.Forms.TextBox();
+            this.textBoxAxisLeft = new System.Windows.Forms.TextBox();
+            this.labelAxisRight = new System.Windows.Forms.Label();
             this.tabPageMotor = new System.Windows.Forms.TabPage();
             this.panelMotorData = new System.Windows.Forms.Panel();
             this.checkBoxMotorPartFilterUnblock = new System.Windows.Forms.CheckBox();
@@ -179,25 +196,11 @@
             this.buttonPowerOff = new System.Windows.Forms.Button();
             this.labelBatteryLife = new System.Windows.Forms.Label();
             this.pushButtonWlan = new CarControl.PushButton();
-            this.groupBoxControl = new CarControl.GroupBox();
-            this.pushButtonDown = new CarControl.PushButton();
-            this.pushButtonUp = new CarControl.PushButton();
-            this.groupBoxStatus = new CarControl.GroupBox();
-            this.panelAxisData = new System.Windows.Forms.Panel();
-            this.textBoxSpeed = new System.Windows.Forms.TextBox();
-            this.labelSpeed = new System.Windows.Forms.Label();
-            this.textBoxAxisBatteryVoltage = new System.Windows.Forms.TextBox();
-            this.labelAxisBatteryVoltage = new System.Windows.Forms.Label();
-            this.textBoxValveState = new System.Windows.Forms.TextBox();
-            this.labelOutputState = new System.Windows.Forms.Label();
-            this.textBoxAxisMode = new System.Windows.Forms.TextBox();
-            this.labelAxisMode = new System.Windows.Forms.Label();
-            this.labelAxisLeft = new System.Windows.Forms.Label();
-            this.textBoxAxisRigth = new System.Windows.Forms.TextBox();
-            this.textBoxAxisLeft = new System.Windows.Forms.TextBox();
-            this.labelAxisRight = new System.Windows.Forms.Label();
             this.tabControlDevice.SuspendLayout();
             this.tabPageAxis.SuspendLayout();
+            this.groupBoxControl.SuspendLayout();
+            this.groupBoxStatus.SuspendLayout();
+            this.panelAxisData.SuspendLayout();
             this.tabPageMotor.SuspendLayout();
             this.panelMotorData.SuspendLayout();
             this.tabPageMotorUnevenRunning.SuspendLayout();
@@ -216,9 +219,6 @@
             this.panel1.SuspendLayout();
             this.tabPageTest.SuspendLayout();
             this.panelTest.SuspendLayout();
-            this.groupBoxControl.SuspendLayout();
-            this.groupBoxStatus.SuspendLayout();
-            this.panelAxisData.SuspendLayout();
             this.SuspendLayout();
             // 
             // listPorts
@@ -296,6 +296,122 @@
             this.tabPageAxis.Controls.Add(this.groupBoxStatus);
             resources.ApplyResources(this.tabPageAxis, "tabPageAxis");
             this.tabPageAxis.Name = "tabPageAxis";
+            // 
+            // groupBoxControl
+            // 
+            this.groupBoxControl.Controls.Add(this.pushButtonDown);
+            this.groupBoxControl.Controls.Add(this.pushButtonUp);
+            resources.ApplyResources(this.groupBoxControl, "groupBoxControl");
+            this.groupBoxControl.Name = "groupBoxControl";
+            // 
+            // pushButtonDown
+            // 
+            this.pushButtonDown.ButtonState = false;
+            resources.ApplyResources(this.pushButtonDown, "pushButtonDown");
+            this.pushButtonDown.Name = "pushButtonDown";
+            this.pushButtonDown.Click += new System.EventHandler(this.pushButtonDown_Click);
+            // 
+            // pushButtonUp
+            // 
+            this.pushButtonUp.ButtonState = false;
+            resources.ApplyResources(this.pushButtonUp, "pushButtonUp");
+            this.pushButtonUp.Name = "pushButtonUp";
+            this.pushButtonUp.Click += new System.EventHandler(this.pushButtonUp_Click);
+            // 
+            // groupBoxStatus
+            // 
+            this.groupBoxStatus.Controls.Add(this.panelAxisData);
+            resources.ApplyResources(this.groupBoxStatus, "groupBoxStatus");
+            this.groupBoxStatus.Name = "groupBoxStatus";
+            // 
+            // panelAxisData
+            // 
+            this.panelAxisData.Controls.Add(this.textBoxSpeed);
+            this.panelAxisData.Controls.Add(this.labelSpeed);
+            this.panelAxisData.Controls.Add(this.textBoxAxisBatteryVoltage);
+            this.panelAxisData.Controls.Add(this.labelAxisBatteryVoltage);
+            this.panelAxisData.Controls.Add(this.textBoxValveState);
+            this.panelAxisData.Controls.Add(this.labelOutputState);
+            this.panelAxisData.Controls.Add(this.textBoxAxisMode);
+            this.panelAxisData.Controls.Add(this.labelAxisMode);
+            this.panelAxisData.Controls.Add(this.labelAxisLeft);
+            this.panelAxisData.Controls.Add(this.textBoxAxisRigth);
+            this.panelAxisData.Controls.Add(this.textBoxAxisLeft);
+            this.panelAxisData.Controls.Add(this.labelAxisRight);
+            resources.ApplyResources(this.panelAxisData, "panelAxisData");
+            this.panelAxisData.Name = "panelAxisData";
+            // 
+            // textBoxSpeed
+            // 
+            resources.ApplyResources(this.textBoxSpeed, "textBoxSpeed");
+            this.textBoxSpeed.Name = "textBoxSpeed";
+            this.textBoxSpeed.ReadOnly = true;
+            this.textBoxSpeed.TabStop = false;
+            // 
+            // labelSpeed
+            // 
+            resources.ApplyResources(this.labelSpeed, "labelSpeed");
+            this.labelSpeed.Name = "labelSpeed";
+            // 
+            // textBoxAxisBatteryVoltage
+            // 
+            resources.ApplyResources(this.textBoxAxisBatteryVoltage, "textBoxAxisBatteryVoltage");
+            this.textBoxAxisBatteryVoltage.Name = "textBoxAxisBatteryVoltage";
+            this.textBoxAxisBatteryVoltage.ReadOnly = true;
+            this.textBoxAxisBatteryVoltage.TabStop = false;
+            // 
+            // labelAxisBatteryVoltage
+            // 
+            resources.ApplyResources(this.labelAxisBatteryVoltage, "labelAxisBatteryVoltage");
+            this.labelAxisBatteryVoltage.Name = "labelAxisBatteryVoltage";
+            // 
+            // textBoxValveState
+            // 
+            resources.ApplyResources(this.textBoxValveState, "textBoxValveState");
+            this.textBoxValveState.Name = "textBoxValveState";
+            this.textBoxValveState.ReadOnly = true;
+            this.textBoxValveState.TabStop = false;
+            // 
+            // labelOutputState
+            // 
+            resources.ApplyResources(this.labelOutputState, "labelOutputState");
+            this.labelOutputState.Name = "labelOutputState";
+            // 
+            // textBoxAxisMode
+            // 
+            resources.ApplyResources(this.textBoxAxisMode, "textBoxAxisMode");
+            this.textBoxAxisMode.Name = "textBoxAxisMode";
+            this.textBoxAxisMode.ReadOnly = true;
+            this.textBoxAxisMode.TabStop = false;
+            // 
+            // labelAxisMode
+            // 
+            resources.ApplyResources(this.labelAxisMode, "labelAxisMode");
+            this.labelAxisMode.Name = "labelAxisMode";
+            // 
+            // labelAxisLeft
+            // 
+            resources.ApplyResources(this.labelAxisLeft, "labelAxisLeft");
+            this.labelAxisLeft.Name = "labelAxisLeft";
+            // 
+            // textBoxAxisRigth
+            // 
+            resources.ApplyResources(this.textBoxAxisRigth, "textBoxAxisRigth");
+            this.textBoxAxisRigth.Name = "textBoxAxisRigth";
+            this.textBoxAxisRigth.ReadOnly = true;
+            this.textBoxAxisRigth.TabStop = false;
+            // 
+            // textBoxAxisLeft
+            // 
+            resources.ApplyResources(this.textBoxAxisLeft, "textBoxAxisLeft");
+            this.textBoxAxisLeft.Name = "textBoxAxisLeft";
+            this.textBoxAxisLeft.ReadOnly = true;
+            this.textBoxAxisLeft.TabStop = false;
+            // 
+            // labelAxisRight
+            // 
+            resources.ApplyResources(this.labelAxisRight, "labelAxisRight");
+            this.labelAxisRight.Name = "labelAxisRight";
             // 
             // tabPageMotor
             // 
@@ -1247,122 +1363,6 @@
             this.pushButtonWlan.Name = "pushButtonWlan";
             this.pushButtonWlan.Click += new System.EventHandler(this.pushButtonWlan_Click);
             // 
-            // groupBoxControl
-            // 
-            this.groupBoxControl.Controls.Add(this.pushButtonDown);
-            this.groupBoxControl.Controls.Add(this.pushButtonUp);
-            resources.ApplyResources(this.groupBoxControl, "groupBoxControl");
-            this.groupBoxControl.Name = "groupBoxControl";
-            // 
-            // pushButtonDown
-            // 
-            this.pushButtonDown.ButtonState = false;
-            resources.ApplyResources(this.pushButtonDown, "pushButtonDown");
-            this.pushButtonDown.Name = "pushButtonDown";
-            this.pushButtonDown.Click += new System.EventHandler(this.pushButtonDown_Click);
-            // 
-            // pushButtonUp
-            // 
-            this.pushButtonUp.ButtonState = false;
-            resources.ApplyResources(this.pushButtonUp, "pushButtonUp");
-            this.pushButtonUp.Name = "pushButtonUp";
-            this.pushButtonUp.Click += new System.EventHandler(this.pushButtonUp_Click);
-            // 
-            // groupBoxStatus
-            // 
-            this.groupBoxStatus.Controls.Add(this.panelAxisData);
-            resources.ApplyResources(this.groupBoxStatus, "groupBoxStatus");
-            this.groupBoxStatus.Name = "groupBoxStatus";
-            // 
-            // panelAxisData
-            // 
-            this.panelAxisData.Controls.Add(this.textBoxSpeed);
-            this.panelAxisData.Controls.Add(this.labelSpeed);
-            this.panelAxisData.Controls.Add(this.textBoxAxisBatteryVoltage);
-            this.panelAxisData.Controls.Add(this.labelAxisBatteryVoltage);
-            this.panelAxisData.Controls.Add(this.textBoxValveState);
-            this.panelAxisData.Controls.Add(this.labelOutputState);
-            this.panelAxisData.Controls.Add(this.textBoxAxisMode);
-            this.panelAxisData.Controls.Add(this.labelAxisMode);
-            this.panelAxisData.Controls.Add(this.labelAxisLeft);
-            this.panelAxisData.Controls.Add(this.textBoxAxisRigth);
-            this.panelAxisData.Controls.Add(this.textBoxAxisLeft);
-            this.panelAxisData.Controls.Add(this.labelAxisRight);
-            resources.ApplyResources(this.panelAxisData, "panelAxisData");
-            this.panelAxisData.Name = "panelAxisData";
-            // 
-            // textBoxSpeed
-            // 
-            resources.ApplyResources(this.textBoxSpeed, "textBoxSpeed");
-            this.textBoxSpeed.Name = "textBoxSpeed";
-            this.textBoxSpeed.ReadOnly = true;
-            this.textBoxSpeed.TabStop = false;
-            // 
-            // labelSpeed
-            // 
-            resources.ApplyResources(this.labelSpeed, "labelSpeed");
-            this.labelSpeed.Name = "labelSpeed";
-            // 
-            // textBoxAxisBatteryVoltage
-            // 
-            resources.ApplyResources(this.textBoxAxisBatteryVoltage, "textBoxAxisBatteryVoltage");
-            this.textBoxAxisBatteryVoltage.Name = "textBoxAxisBatteryVoltage";
-            this.textBoxAxisBatteryVoltage.ReadOnly = true;
-            this.textBoxAxisBatteryVoltage.TabStop = false;
-            // 
-            // labelAxisBatteryVoltage
-            // 
-            resources.ApplyResources(this.labelAxisBatteryVoltage, "labelAxisBatteryVoltage");
-            this.labelAxisBatteryVoltage.Name = "labelAxisBatteryVoltage";
-            // 
-            // textBoxValveState
-            // 
-            resources.ApplyResources(this.textBoxValveState, "textBoxValveState");
-            this.textBoxValveState.Name = "textBoxValveState";
-            this.textBoxValveState.ReadOnly = true;
-            this.textBoxValveState.TabStop = false;
-            // 
-            // labelOutputState
-            // 
-            resources.ApplyResources(this.labelOutputState, "labelOutputState");
-            this.labelOutputState.Name = "labelOutputState";
-            // 
-            // textBoxAxisMode
-            // 
-            resources.ApplyResources(this.textBoxAxisMode, "textBoxAxisMode");
-            this.textBoxAxisMode.Name = "textBoxAxisMode";
-            this.textBoxAxisMode.ReadOnly = true;
-            this.textBoxAxisMode.TabStop = false;
-            // 
-            // labelAxisMode
-            // 
-            resources.ApplyResources(this.labelAxisMode, "labelAxisMode");
-            this.labelAxisMode.Name = "labelAxisMode";
-            // 
-            // labelAxisLeft
-            // 
-            resources.ApplyResources(this.labelAxisLeft, "labelAxisLeft");
-            this.labelAxisLeft.Name = "labelAxisLeft";
-            // 
-            // textBoxAxisRigth
-            // 
-            resources.ApplyResources(this.textBoxAxisRigth, "textBoxAxisRigth");
-            this.textBoxAxisRigth.Name = "textBoxAxisRigth";
-            this.textBoxAxisRigth.ReadOnly = true;
-            this.textBoxAxisRigth.TabStop = false;
-            // 
-            // textBoxAxisLeft
-            // 
-            resources.ApplyResources(this.textBoxAxisLeft, "textBoxAxisLeft");
-            this.textBoxAxisLeft.Name = "textBoxAxisLeft";
-            this.textBoxAxisLeft.ReadOnly = true;
-            this.textBoxAxisLeft.TabStop = false;
-            // 
-            // labelAxisRight
-            // 
-            resources.ApplyResources(this.labelAxisRight, "labelAxisRight");
-            this.labelAxisRight.Name = "labelAxisRight";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1386,6 +1386,9 @@
             this.Closed += new System.EventHandler(this.MainForm_Closed);
             this.tabControlDevice.ResumeLayout(false);
             this.tabPageAxis.ResumeLayout(false);
+            this.groupBoxControl.ResumeLayout(false);
+            this.groupBoxStatus.ResumeLayout(false);
+            this.panelAxisData.ResumeLayout(false);
             this.tabPageMotor.ResumeLayout(false);
             this.panelMotorData.ResumeLayout(false);
             this.tabPageMotorUnevenRunning.ResumeLayout(false);
@@ -1404,9 +1407,6 @@
             this.panel1.ResumeLayout(false);
             this.tabPageTest.ResumeLayout(false);
             this.panelTest.ResumeLayout(false);
-            this.groupBoxControl.ResumeLayout(false);
-            this.groupBoxStatus.ResumeLayout(false);
-            this.panelAxisData.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

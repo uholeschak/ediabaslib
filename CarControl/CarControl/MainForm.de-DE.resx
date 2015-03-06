@@ -121,10 +121,10 @@
     <value>BMW Steuerung</value>
   </data>
   <data name="buttonAdapterConfigCan100.Text" xml:space="preserve">
-    <value>100 kbit K-CAN</value>
+    <value>100 kbit/s K-CAN</value>
   </data>
   <data name="buttonAdapterConfigCan500.Text" xml:space="preserve">
-    <value>500 kbit D-CAN</value>
+    <value>500 kbit/s D-CAN</value>
   </data>
   <data name="buttonAdapterConfigCanOff.Text" xml:space="preserve">
     <value>CAN aus</value>
