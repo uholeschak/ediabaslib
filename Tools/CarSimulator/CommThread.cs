@@ -76,6 +76,7 @@ namespace CarSimulator
         };
 
         private static readonly long tickResolMs = Stopwatch.Frequency / 1000;
+        private const byte      tcpTesterAddr = 0xF4;
         private volatile bool   _stopThread;
         private bool            _threadRunning;
         private Thread          _workerThread;
@@ -1070,7 +1071,7 @@ namespace CarSimulator
                     byte sourceAddr = dataBuffer[6];
                     byte targetAddr = dataBuffer[7];
                     int len;
-                    if (sourceAddr == 0xF4) sourceAddr = 0xF1;
+                    if (sourceAddr == tcpTesterAddr) sourceAddr = 0xF1;
                     if (dataLen > 0x3F)
                     {
                         receiveData[0] = 0x80;
@@ -1118,7 +1119,7 @@ namespace CarSimulator
             {
                 byte targetAddr = sendData[1];
                 byte sourceAddr = sendData[2];
-                if (targetAddr == 0xF1) targetAddr = 0xF4;
+                if (targetAddr == 0xF1) targetAddr = tcpTesterAddr;
                 int dataOffset = 3;
                 int dataLength = sendData[0] & 0x3F;
                 if (dataLength == 0)
