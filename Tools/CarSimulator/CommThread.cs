@@ -77,6 +77,8 @@ namespace CarSimulator
 
         private static readonly long tickResolMs = Stopwatch.Frequency / 1000;
         private const byte      tcpTesterAddr = 0xF4;
+        private const int       tcpServerPort = 6801;
+        private const int       udpClientPort = 6811;
         private volatile bool   _stopThread;
         private bool            _threadRunning;
         private Thread          _workerThread;
@@ -90,6 +92,7 @@ namespace CarSimulator
         TcpListener             _tcpServer;
         TcpClient               _tcpClient;
         NetworkStream           _tcpClientStream;
+        UdpClient               _udpClient;
         private SerialPort      _serialPort;
         private AutoResetEvent  _serialReceiveEvent;
         private AutoResetEvent  _pcanReceiveEvent;
@@ -439,6 +442,7 @@ namespace CarSimulator
             _tcpServer = null;
             _tcpClient = null;
             _tcpClientStream = null;
+            _udpClient = null;
             _serialPort = new SerialPort();
             _serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
             _serialReceiveEvent = new AutoResetEvent(false);
@@ -565,11 +569,13 @@ namespace CarSimulator
                         default:
                             return false;
                     }
-                    Int32 port = 6801;
-                    IPAddress localAddr = IPAddress.Parse("127.0.0.1");
-
-                    _tcpServer = new TcpListener(localAddr, port);
+                    _tcpServer = new TcpListener(IPAddress.Any, tcpServerPort);
                     _tcpServer.Start();
+
+                    // a virtual network adapter with an auto ip address
+                    // is required tp receive the UPD broadcasts
+                    _udpClient = new UdpClient(udpClientPort);
+                    StartUdpListen();
                 }
                 catch (Exception)
                 {
@@ -662,6 +668,11 @@ namespace CarSimulator
 
         private bool Disconnect()
         {
+            if (_udpClient != null)
+            {
+                _udpClient.Close();
+                _udpClient = null;
+            }
             if (_tcpClientStream != null)
             {
                 _tcpClientStream.Close();
@@ -1011,6 +1022,73 @@ namespace CarSimulator
                     }
             }
             return false;
+        }
+
+        private void StartUdpListen()
+        {
+            _udpClient.BeginReceive(UdpReceiver, new Object());
+        }
+
+        private void UdpReceiver(IAsyncResult ar)
+        {
+            try
+            {
+                UdpClient udpClientLocal = _udpClient;
+                if (udpClientLocal == null)
+                {
+                    return;
+                }
+                IPEndPoint ip = new IPEndPoint(IPAddress.Any, udpClientPort);
+                byte[] bytes = udpClientLocal.EndReceive(ar, ref ip);
+                StartUdpListen();
+#if false
+                if (bytes != null)
+                {
+                    string text = string.Empty;
+                    for (int i = 0; i < bytes.Length; i++)
+                    {
+                        text += string.Format("{0:X02} ", bytes[i]);
+                    }
+                    Debug.WriteLine("Udp: " + text);
+                }
+#endif
+                if (bytes != null && bytes.Length == 6 && bytes[5] == 0x11)
+                {
+                    byte[] identMessage = new byte[6 + 50];
+                    int idx = 0;
+                    identMessage[idx++] = 0x00;
+                    identMessage[idx++] = 0x00;
+                    identMessage[idx++] = 0x00;
+                    identMessage[idx++] = 50;
+                    identMessage[idx++] = 0x00;
+                    identMessage[idx++] = 0x04;     // Anouncement
+                    // TESTER ID
+                    identMessage[idx++] = (byte)'D';
+                    identMessage[idx++] = (byte)'I';
+                    identMessage[idx++] = (byte)'A';
+                    identMessage[idx++] = (byte)'G';
+                    identMessage[idx++] = (byte)'A';
+                    identMessage[idx++] = (byte)'D';
+                    identMessage[idx++] = (byte)'R';
+                    identMessage[idx++] = (byte)'1';
+                    identMessage[idx++] = (byte)'0';
+                    // MAC
+                    for (int i = 0; i < 17; i++)
+                    {
+                        identMessage[idx++] = (byte)'3';
+                    }
+                    // VIN
+                    for (int i = 0; i < 12; i++)
+                    {
+                        identMessage[idx++] = (byte)'V';
+                    }
+
+                    _udpClient.Send(identMessage, identMessage.Length, ip);
+                }
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private bool ReceiveEnet(byte[] receiveData)
