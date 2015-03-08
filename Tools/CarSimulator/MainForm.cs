@@ -49,6 +49,7 @@ namespace CarSimulator
             listPorts.BeginUpdate();
             listPorts.Items.Clear();
             int index = -1;
+            index = listPorts.Items.Add("ENET");
             foreach (string port in ports)
             {
                 index = listPorts.Items.Add(port);

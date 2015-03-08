@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using Peak.Can.Basic;
 
@@ -84,6 +86,9 @@ namespace CarSimulator
         private ConfigData      _configData;
         private byte            _pcanHandle;
         private long            _lastCanSendTick;
+        TcpListener             _tcpServer;
+        TcpClient               _tcpClient;
+        NetworkStream           _tcpClientStream;
         private SerialPort      _serialPort;
         private AutoResetEvent  _serialReceiveEvent;
         private AutoResetEvent  _pcanReceiveEvent;
@@ -430,6 +435,9 @@ namespace CarSimulator
             _workerThread = null;
             _pcanHandle = PCANBasic.PCAN_NONEBUS;
             _lastCanSendTick = DateTime.MinValue.Ticks;
+            _tcpServer = null;
+            _tcpClient = null;
+            _tcpClientStream = null;
             _serialPort = new SerialPort();
             _serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
             _serialReceiveEvent = new AutoResetEvent(false);
@@ -544,6 +552,32 @@ namespace CarSimulator
         private bool Connect()
         {
             Disconnect();
+            if (_comPort.StartsWith("ENET", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    switch (_conceptType)
+                    {
+                        case ConceptType.conceptBwmFast:
+                            break;
+
+                        default:
+                            return false;
+                    }
+                    Int32 port = 6801;
+                    IPAddress localAddr = IPAddress.Parse("127.0.0.1");
+
+                    _tcpServer = new TcpListener(localAddr, port);
+                    _tcpServer.Start();
+                }
+                catch (Exception)
+                {
+                    Disconnect();
+                    return false;
+                }
+
+                return true;
+            }
             if (_comPort.StartsWith("CAN", StringComparison.OrdinalIgnoreCase))
             {
                 TPCANStatus stsResult;
@@ -627,6 +661,21 @@ namespace CarSimulator
 
         private bool Disconnect()
         {
+            if (_tcpClientStream != null)
+            {
+                _tcpClientStream.Close();
+                _tcpClientStream = null;
+            }
+            if (_tcpClient != null)
+            {
+                _tcpClient.Close();
+                _tcpClient = null;
+            }
+            if (_tcpServer != null)
+            {
+                _tcpServer.Stop();
+                _tcpServer = null;
+            }
             if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
             {
                 PCANBasic.Uninitialize(_pcanHandle);
@@ -828,6 +877,10 @@ namespace CarSimulator
             {
                 case ConceptType.conceptBwmFast:
                 case ConceptType.conceptKwp2000Bmw:
+                    if (_tcpServer != null)
+                    {
+                        return SendEnet(sendData);
+                    }
                     if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
                     {
                         return SendCan(sendData);
@@ -890,6 +943,10 @@ namespace CarSimulator
             {
                 case ConceptType.conceptBwmFast:
                 case ConceptType.conceptKwp2000Bmw:
+                    if (_tcpServer != null)
+                    {
+                        return ReceiveEnet(receiveData);
+                    }
                     if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
                     {
                         return ReceiveCan(receiveData);
@@ -955,6 +1012,182 @@ namespace CarSimulator
             return false;
         }
 
+        private bool ReceiveEnet(byte[] receiveData)
+        {
+            if (!IsTcpClientConnected())
+            {
+                if (_tcpClientStream != null)
+                {
+                    _tcpClientStream.Close();
+                    _tcpClientStream = null;
+                }
+                if (_tcpClient != null)
+                {
+                    Debug.WriteLine("Closed");
+                    _tcpClient.Close();
+                    _tcpClient = null;
+                }
+                if (!_tcpServer.Pending())
+                {
+                    Thread.Sleep(10);
+                    return false;
+                }
+                _tcpClient = _tcpServer.AcceptTcpClient();
+                _tcpClientStream = _tcpClient.GetStream();
+            }
+
+            try
+            {
+                if (_tcpClientStream != null && _tcpClientStream.DataAvailable)
+                {
+                    byte[] dataBuffer = new byte[0x200];
+                    int recLen = _tcpClientStream.Read(dataBuffer, 0, dataBuffer.Length);
+#if false
+                    string text = string.Empty;
+                    for (int i = 0; i < recLen; i++)
+                    {
+                        text += string.Format("{0:X02} ", dataBuffer[i]);
+                    }
+                    Debug.WriteLine("Rec: " + text);
+#endif
+                    int dataLen = (((int)dataBuffer[0] << 24) | ((int)dataBuffer[1] << 16) | ((int)dataBuffer[2] << 8) | dataBuffer[3]) - 2;
+                    if (dataLen < 1)
+                    {
+                        return false;
+                    }
+                    int payloadType = ((int)dataBuffer[4] << 8) | dataBuffer[5];
+                    if (payloadType != 0x0001)
+                    {
+                        return false;
+                    }
+                    // send ack
+                    byte[] ack = new byte[recLen];
+                    Array.Copy(dataBuffer, ack, ack.Length);
+                    ack[5] = 0x02;
+                    _tcpClientStream.Write(ack, 0, ack.Length);
+
+                    // create BMW-FAST telegram
+                    byte sourceAddr = dataBuffer[6];
+                    byte targetAddr = dataBuffer[7];
+                    int len;
+                    if (sourceAddr == 0xF4) sourceAddr = 0xF1;
+                    if (dataLen > 0x3F)
+                    {
+                        receiveData[0] = 0x80;
+                        receiveData[1] = targetAddr;
+                        receiveData[2] = sourceAddr;
+                        receiveData[3] = (byte)dataLen;
+                        Array.Copy(dataBuffer, 8, receiveData, 4, dataLen);
+                        len = dataLen + 4;
+                    }
+                    else
+                    {
+                        receiveData[0] = (byte)(0x80 | dataLen);
+                        receiveData[1] = targetAddr;
+                        receiveData[2] = sourceAddr;
+                        Array.Copy(dataBuffer, 8, receiveData, 3, dataLen);
+                        len = dataLen + 3;
+                    }
+                    if (targetAddr == 0xEF)
+                    {   // broadcast
+                        receiveData[0] |= 0xC0;
+                    }
+                    receiveData[len] = CalcChecksumBmwFast(receiveData, len);
+                    return true;
+                }
+                else
+                {
+                    Thread.Sleep(10);
+                }
+            }
+            catch (Exception)
+            {
+                Thread.Sleep(10);
+                return false;
+            }
+            return false;
+        }
+
+        private bool SendEnet(byte[] sendData)
+        {
+            if (_tcpClientStream == null)
+            {
+                return false;
+            }
+            try
+            {
+                byte targetAddr = sendData[1];
+                byte sourceAddr = sendData[2];
+                if (targetAddr == 0xF1) targetAddr = 0xF4;
+                int dataOffset = 3;
+                int dataLength = sendData[0] & 0x3F;
+                if (dataLength == 0)
+                {   // with length byte
+                    dataLength = sendData[3];
+                    dataOffset = 4;
+                }
+                byte[] dataBuffer = new byte[dataLength + 8];
+                int payloadLength = dataLength + 2;
+                dataBuffer[0] = (byte)((payloadLength >> 24) & 0xFF);
+                dataBuffer[1] = (byte)((payloadLength >> 16) & 0xFF);
+                dataBuffer[2] = (byte)((payloadLength >> 8) & 0xFF);
+                dataBuffer[3] = (byte)(payloadLength & 0xFF);
+                dataBuffer[4] = 0x00;   // Payoad type: Diag message
+                dataBuffer[5] = 0x01;
+                dataBuffer[6] = sourceAddr;
+                dataBuffer[7] = targetAddr;
+                Array.Copy(sendData, dataOffset, dataBuffer, 8, dataLength);
+#if false
+                string text = string.Empty;
+                for (int i = 0; i < dataBuffer.Length; i++)
+                {
+                    text += string.Format("{0:X02} ", dataBuffer[i]);
+                }
+                Debug.WriteLine("Send: " + text);
+#endif
+                _tcpClientStream.Write(dataBuffer, 0, dataBuffer.Length);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool IsTcpClientConnected()
+        {
+            try
+            {
+                if (_tcpClient != null && _tcpClient.Client != null && _tcpClient.Client.Connected)
+                {
+                    // Detect if client disconnected
+                    if (_tcpClient.Client.Poll(0, SelectMode.SelectRead))
+                    {
+                        byte[] buff = new byte[1];
+                        if (_tcpClient.Client.Receive(buff, SocketFlags.Peek) == 0)
+                        {
+                            // Client disconnected
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private bool ReceiveCan(byte[] receiveData)
         {
             TPCANMsg CANMsg;
@@ -963,7 +1196,7 @@ namespace CarSimulator
             int len;
             byte blockCount = 0;
             byte sourceAddr = 0;
-            byte destAddr = 0;
+            byte targetAddr = 0;
             byte[] dataBuffer = null;
 
             int recLen = 0;
@@ -990,7 +1223,7 @@ namespace CarSimulator
                     if (recLen == 0)
                     {   // first telegram
                         sourceAddr = (byte)(CANMsg.ID & 0xFF);
-                        destAddr = CANMsg.DATA[0];
+                        targetAddr = CANMsg.DATA[0];
                         switch (frameType)
                         {
                             case 0: // single frame
@@ -1014,7 +1247,7 @@ namespace CarSimulator
                                 {
                                     TPCANMsg SendMsg = new TPCANMsg();
                                     SendMsg.DATA = new byte[8];
-                                    SendMsg.ID = (uint)(0x600 + destAddr);
+                                    SendMsg.ID = (uint)(0x600 + targetAddr);
                                     SendMsg.LEN = 8;
                                     SendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
                                     SendMsg.DATA[0] = sourceAddr;
@@ -1042,7 +1275,7 @@ namespace CarSimulator
                             _receiveStopWatch.Stop();
                             return false;
                         }
-                        if ((sourceAddr != (CANMsg.ID & 0xFF)) || (destAddr != CANMsg.DATA[0]) ||
+                        if ((sourceAddr != (CANMsg.ID & 0xFF)) || (targetAddr != CANMsg.DATA[0]) ||
                             ((CANMsg.DATA[1] & 0x0F) != (blockCount & 0x0F)))
                         {
                             _receiveStopWatch.Stop();
@@ -1083,7 +1316,7 @@ namespace CarSimulator
             if (dataBuffer.Length > 0x3F)
             {
                 receiveData[0] = 0x80;
-                receiveData[1] = destAddr;
+                receiveData[1] = targetAddr;
                 receiveData[2] = sourceAddr;
                 receiveData[3] = (byte)dataBuffer.Length;
                 Array.Copy(dataBuffer, 0, receiveData, 4, dataBuffer.Length);
@@ -1092,12 +1325,12 @@ namespace CarSimulator
             else
             {
                 receiveData[0] = (byte)(0x80 | dataBuffer.Length);
-                receiveData[1] = destAddr;
+                receiveData[1] = targetAddr;
                 receiveData[2] = sourceAddr;
                 Array.Copy(dataBuffer, 0, receiveData, 3, dataBuffer.Length);
                 len = dataBuffer.Length + 3;
             }
-            if (destAddr == 0xEF)
+            if (targetAddr == 0xEF)
             {   // broadcast
                 receiveData[0] |= 0xC0;
             }
@@ -1118,7 +1351,7 @@ namespace CarSimulator
             byte blockSize = 0;
             byte sepTime = 0;
 
-            byte destAddr = sendData[1];
+            byte targetAddr = sendData[1];
             byte sourceAddr = sendData[2];
             int dataOffset = 3;
             int dataLength = sendData[0] & 0x3F;
@@ -1142,7 +1375,7 @@ namespace CarSimulator
                 SendMsg.ID = (uint)(0x600 + sourceAddr);
                 SendMsg.LEN = 8;
                 SendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
-                SendMsg.DATA[0] = destAddr;
+                SendMsg.DATA[0] = targetAddr;
                 SendMsg.DATA[1] = (byte)(0x00 | dataLength);  // SF
                 Array.Copy(sendData, dataOffset, SendMsg.DATA, 2, dataLength);
                 stsResult = PCANBasic.Write(_pcanHandle, ref SendMsg);
@@ -1157,7 +1390,7 @@ namespace CarSimulator
             SendMsg.ID = (uint)(0x600 + sourceAddr);
             SendMsg.LEN = 8;
             SendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
-            SendMsg.DATA[0] = destAddr;
+            SendMsg.DATA[0] = targetAddr;
             SendMsg.DATA[1] = (byte)(0x10 | ((dataLength >> 8) & 0xFF));  // FF
             SendMsg.DATA[2] = (byte)dataLength;
             len = 5;
@@ -1200,7 +1433,7 @@ namespace CarSimulator
                         {
                             return false;
                         }
-                        if (((CANMsg.ID & 0xFF) != destAddr) || (CANMsg.DATA[0] != sourceAddr) ||
+                        if (((CANMsg.ID & 0xFF) != targetAddr) || (CANMsg.DATA[0] != sourceAddr) ||
                             ((CANMsg.DATA[1] & 0xF0) != 0x30))
                         {
                             return false;
@@ -1226,7 +1459,7 @@ namespace CarSimulator
                 SendMsg.ID = (uint)(0x600 + sourceAddr);
                 SendMsg.LEN = 8;
                 SendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
-                SendMsg.DATA[0] = destAddr;
+                SendMsg.DATA[0] = targetAddr;
                 SendMsg.DATA[1] = (byte)(0x20 | (blockCount & 0x0F));  // CF
                 len = dataLength;
                 if (len > 6)
@@ -1584,7 +1817,7 @@ namespace CarSimulator
             {
                 return;
             }
-            if (!_adsAdapter && (_pcanHandle == PCANBasic.PCAN_NONEBUS))
+            if (!_adsAdapter && (_tcpServer == null) && (_pcanHandle == PCANBasic.PCAN_NONEBUS))
             {
                 // send echo
                 OBDSend(_receiveData);

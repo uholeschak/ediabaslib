@@ -36,6 +36,7 @@
             this.checkBoxVariableValues = new System.Windows.Forms.CheckBox();
             this.radioButtonBmwFast = new System.Windows.Forms.RadioButton();
             this.groupBoxConcepts = new System.Windows.Forms.GroupBox();
+            this.radioButtonKwp2000Bmw = new System.Windows.Forms.RadioButton();
             this.radioButtonConcept3 = new System.Windows.Forms.RadioButton();
             this.radioButtonConcept1 = new System.Windows.Forms.RadioButton();
             this.radioButtonIso9141 = new System.Windows.Forms.RadioButton();
@@ -44,7 +45,6 @@
             this.listBoxResponseFiles = new System.Windows.Forms.ListBox();
             this.checkBoxIgnitionOk = new System.Windows.Forms.CheckBox();
             this.checkBoxAdsAdapter = new System.Windows.Forms.CheckBox();
-            this.radioButtonKwp2000Bmw = new System.Windows.Forms.RadioButton();
             this.groupBoxConcepts.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,7 +63,7 @@
             this.listPorts.FormattingEnabled = true;
             this.listPorts.Location = new System.Drawing.Point(12, 12);
             this.listPorts.Name = "listPorts";
-            this.listPorts.Size = new System.Drawing.Size(78, 56);
+            this.listPorts.Size = new System.Drawing.Size(78, 69);
             this.listPorts.TabIndex = 1;
             // 
             // timerUpdate
@@ -119,6 +119,17 @@
             this.groupBoxConcepts.TabIndex = 6;
             this.groupBoxConcepts.TabStop = false;
             this.groupBoxConcepts.Text = "Concepts";
+            // 
+            // radioButtonKwp2000Bmw
+            // 
+            this.radioButtonKwp2000Bmw.AutoSize = true;
+            this.radioButtonKwp2000Bmw.Location = new System.Drawing.Point(6, 42);
+            this.radioButtonKwp2000Bmw.Name = "radioButtonKwp2000Bmw";
+            this.radioButtonKwp2000Bmw.Size = new System.Drawing.Size(104, 17);
+            this.radioButtonKwp2000Bmw.TabIndex = 21;
+            this.radioButtonKwp2000Bmw.TabStop = true;
+            this.radioButtonKwp2000Bmw.Text = "KWP2000 BMW";
+            this.radioButtonKwp2000Bmw.UseVisualStyleBackColor = true;
             // 
             // radioButtonConcept3
             // 
@@ -206,17 +217,6 @@
             this.checkBoxAdsAdapter.TabIndex = 5;
             this.checkBoxAdsAdapter.Text = "ADS adapter";
             this.checkBoxAdsAdapter.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonKwp2000Bmw
-            // 
-            this.radioButtonKwp2000Bmw.AutoSize = true;
-            this.radioButtonKwp2000Bmw.Location = new System.Drawing.Point(6, 42);
-            this.radioButtonKwp2000Bmw.Name = "radioButtonKwp2000Bmw";
-            this.radioButtonKwp2000Bmw.Size = new System.Drawing.Size(104, 17);
-            this.radioButtonKwp2000Bmw.TabIndex = 21;
-            this.radioButtonKwp2000Bmw.TabStop = true;
-            this.radioButtonKwp2000Bmw.Text = "KWP2000 BMW";
-            this.radioButtonKwp2000Bmw.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
