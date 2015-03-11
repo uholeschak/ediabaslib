@@ -1130,7 +1130,7 @@ namespace CarSimulator
                     Debug.WriteLine("Rec: " + text);
 #endif
                     int dataLen = (((int)dataBuffer[0] << 24) | ((int)dataBuffer[1] << 16) | ((int)dataBuffer[2] << 8) | dataBuffer[3]) - 2;
-                    if (dataLen < 1)
+                    if ((dataLen < 1) || ((dataLen + 8) > recLen))
                     {
                         return false;
                     }
