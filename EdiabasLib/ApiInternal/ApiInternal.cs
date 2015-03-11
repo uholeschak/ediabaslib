@@ -503,10 +503,15 @@ namespace Ediabas
                     edInterface = new EdInterfaceAds();
                     if (!edInterface.IsValidInterfaceName(ifh))
                     {
-                        setLocalError(EDIABAS_IFH_0027);
                         edInterface.Dispose();
-                        ediabas.Dispose();
-                        return false;
+                        edInterface = new EdInterfaceEnet();
+                        if (!edInterface.IsValidInterfaceName(ifh))
+                        {
+                            setLocalError(EDIABAS_IFH_0027);
+                            edInterface.Dispose();
+                            ediabas.Dispose();
+                            return false;
+                        }
                     }
                 }
             }
