@@ -125,8 +125,14 @@ namespace EdiabasTest
                             edInterface = new EdInterfaceAds();
                             if (!edInterface.IsValidInterfaceName(ifhName))
                             {
-                                outputWriter.WriteLine("Interface not valid");
-                                return 1;
+                                edInterface.Dispose();
+                                edInterface = new EdInterfaceEnet();
+                                if (!edInterface.IsValidInterfaceName(ifhName))
+                                {
+                                    edInterface.Dispose();
+                                    outputWriter.WriteLine("Interface not valid");
+                                    return 1;
+                                }
                             }
                         }
                     }
@@ -143,6 +149,10 @@ namespace EdiabasTest
                         else if (edInterface is EdInterfaceAds)
                         {
                             ((EdInterfaceAds)edInterface).ComPort = comPort;
+                        }
+                        else if (edInterface is EdInterfaceEnet)
+                        {
+                            ((EdInterfaceEnet)edInterface).RemoteHost = comPort;
                         }
                     }
 
