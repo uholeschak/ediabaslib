@@ -18,12 +18,15 @@ namespace EdiabasLib
         protected const int transBufferSize = 512; // transmit buffer size
         protected static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
         protected static readonly byte[] byteArray0 = new byte[0];
+        protected static readonly byte[] udpIdentReq = new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x11};
         protected static readonly long tickResolMs = Stopwatch.Frequency / 1000;
 
         private static TcpClient tcpClient = null;
         private static NetworkStream tcpStream = null;
+        private UdpClient udpClient = null;
+        private volatile IPEndPoint udpRecEndPoint = null;
 
-        protected string remoteHost = "127.0.0.1";
+        protected string remoteHost = "auto";
         protected int testerAddress = 0xF4;
         protected int controlPort = 6811;
         protected int diagnosticPort = 6801;
@@ -248,9 +251,40 @@ namespace EdiabasLib
             }
             try
             {
+                IPAddress hostIp = null;
+                if (remoteHost.StartsWith("auto", StringComparison.OrdinalIgnoreCase))
+                {
+                    IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, 0);
+                    udpClient = new UdpClient(ipUdp);
+                    udpRecEndPoint = null;
+                    long startTime = Stopwatch.GetTimestamp();
+                    StartUdpListen();
+                    IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse("169.254.255.255"), controlPort);
+                    udpClient.Send(udpIdentReq, udpIdentReq.Length, ipUdpIdent);
+                    for (; ; )
+                    {
+                        if (udpRecEndPoint != null)
+                        {
+                            break;
+                        }
+                        if ((Stopwatch.GetTimestamp() - startTime) > 1000 * tickResolMs)
+                        {
+                            InterfaceDisconnect();
+                            return false;
+                        }
+                        Thread.Sleep(10);
+                    }
+                    hostIp = udpRecEndPoint.Address;
+                    udpClient.Close();
+                }
+                else
+                {
+                    hostIp = IPAddress.Parse(this.remoteHost);
+                }
+
                 tcpClient = new TcpClient();
-                IPEndPoint ip = new IPEndPoint(IPAddress.Parse(this.remoteHost), this.diagnosticPort);
-                tcpClient.Connect(ip);
+                IPEndPoint ipTcp = new IPEndPoint(hostIp, this.diagnosticPort);
+                tcpClient.Connect(ipTcp);
                 tcpStream = tcpClient.GetStream();
             }
             catch (Exception)
@@ -264,6 +298,7 @@ namespace EdiabasLib
         public override bool InterfaceDisconnect()
         {
             bool result = true;
+
             try
             {
                 if (tcpStream != null)
@@ -276,6 +311,7 @@ namespace EdiabasLib
             {
                 result = false;
             }
+
             try
             {
                 if (tcpClient != null)
@@ -288,6 +324,20 @@ namespace EdiabasLib
             {
                 result = false;
             }
+
+            try
+            {
+                if (udpClient != null)
+                {
+                    udpClient.Close();
+                    udpClient = null;
+                }
+            }
+            catch (Exception)
+            {
+                result = false;
+            }
+            udpRecEndPoint = null;
             return result;
         }
 
@@ -337,6 +387,56 @@ namespace EdiabasLib
             set
             {
                 remoteHost = value;
+            }
+        }
+
+        protected void StartUdpListen()
+        {
+            if (udpClient == null)
+            {
+                return;
+            }
+            udpClient.BeginReceive(UdpReceiver, new Object());
+        }
+
+        protected void UdpReceiver(IAsyncResult ar)
+        {
+            try
+            {
+                UdpClient udpClientLocal = udpClient;
+                if (udpClientLocal == null)
+                {
+                    return;
+                }
+                IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, 0);
+                byte[] bytes = udpClientLocal.EndReceive(ar, ref ipUdp);
+                if ((udpRecEndPoint == null) &&
+                    (bytes != null) && (bytes.Length == (6 + 50)) &&
+                    (bytes[0] == 0x00) &&
+                    (bytes[1] == 0x00) &&
+                    (bytes[2] == 0x00) &&
+                    (bytes[3] == 50) &&
+                    (bytes[4] == 0x00) &&
+                    (bytes[5] == 0x04) &&   // anouncement
+                    (bytes[6] == 'D') &&
+                    (bytes[7] == 'I') &&
+                    (bytes[8] == 'A') &&
+                    (bytes[9] == 'G') &&
+                    (bytes[10] == 'A') &&
+                    (bytes[11] == 'D') &&
+                    (bytes[12] == 'R') &&
+                    (bytes[13] == '1') &&
+                    (bytes[14] == '0'))
+                {
+                    udpRecEndPoint = ipUdp;
+                }
+                else
+                {
+                    StartUdpListen();
+                }
+            }
+            catch (Exception)
+            {
             }
         }
 
