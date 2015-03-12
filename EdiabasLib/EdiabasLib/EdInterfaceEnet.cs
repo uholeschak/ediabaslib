@@ -25,6 +25,7 @@ namespace EdiabasLib
         private static NetworkStream tcpStream = null;
         private UdpClient udpClient = null;
         private volatile IPEndPoint udpRecEndPoint = null;
+        private AutoResetEvent udpEvent = new AutoResetEvent(false);
 
         protected string remoteHost = "auto";
         protected int testerAddress = 0xF4;
@@ -257,22 +258,13 @@ namespace EdiabasLib
                     IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, 0);
                     udpClient = new UdpClient(ipUdp);
                     udpRecEndPoint = null;
-                    long startTime = Stopwatch.GetTimestamp();
                     StartUdpListen();
                     IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse("169.254.255.255"), controlPort);
                     udpClient.Send(udpIdentReq, udpIdentReq.Length, ipUdpIdent);
-                    for (; ; )
+                    if (!udpEvent.WaitOne(1000) || (udpRecEndPoint == null))
                     {
-                        if (udpRecEndPoint != null)
-                        {
-                            break;
-                        }
-                        if ((Stopwatch.GetTimestamp() - startTime) > 1000 * tickResolMs)
-                        {
-                            InterfaceDisconnect();
-                            return false;
-                        }
-                        Thread.Sleep(10);
+                        InterfaceDisconnect();
+                        return false;
                     }
                     hostIp = udpRecEndPoint.Address;
                     udpClient.Close();
@@ -429,6 +421,7 @@ namespace EdiabasLib
                     (bytes[14] == '0'))
                 {
                     udpRecEndPoint = ipUdp;
+                    udpEvent.Set();
                 }
                 else
                 {
