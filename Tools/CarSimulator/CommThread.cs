@@ -706,6 +706,21 @@ namespace CarSimulator
             return true;
         }
 
+        private bool UpdateOutState()
+        {
+            try
+            {
+                if (_serialPort.DtrEnable != IgnitionOk)
+                {
+                    _serialPort.DtrEnable = IgnitionOk;
+                }
+            }
+            catch (Exception)
+            {
+            }
+            return true;
+        }
+
         private bool ReceiveWakeUp(out byte address)
         {
             address = 0;
@@ -713,6 +728,7 @@ namespace CarSimulator
             {
                 while (!_stopThread)
                 {
+                    UpdateOutState();
                     if (_serialPort.DsrHolding)
                     {   // start bit
                         break;
@@ -768,10 +784,7 @@ namespace CarSimulator
         {
             try
             {
-                if (_serialPort.DtrEnable != IgnitionOk)
-                {
-                    _serialPort.DtrEnable = IgnitionOk;
-                }
+                UpdateOutState();
                 // wait for first byte
                 // for stable switching we always need 10ms, but then are problems with win CE client
                 int interByteTimeout = _conceptType == ConceptType.conceptBwmFast ? 30 : 10;
