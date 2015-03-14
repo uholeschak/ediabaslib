@@ -2663,13 +2663,17 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpXbat: Invalid type");
             }
             EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
-            if ((interfaceClass == null) || !interfaceClass.Connected)
+            if (interfaceClass == null)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                arg0.SetRawData((EdValueType)interfaceClass.BatteryVoltage);
+                Int64 voltage = interfaceClass.BatteryVoltage;
+                if (voltage != Int64.MinValue)
+                {
+                    arg0.SetRawData((EdValueType)voltage);
+                }
             }
         }
 
@@ -2705,13 +2709,17 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpXignit: Invalid type");
             }
             EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
-            if ((interfaceClass == null) || !interfaceClass.Connected)
+            if (interfaceClass == null)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                arg0.SetRawData((EdValueType)interfaceClass.IgnitionVoltage);
+                Int64 voltage = interfaceClass.IgnitionVoltage;
+                if (voltage != Int64.MinValue)
+                {
+                    arg0.SetRawData((EdValueType)voltage);
+                }
             }
         }
 
@@ -2736,13 +2744,17 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpXkeyb: Invalid type");
             }
             EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
-            if ((interfaceClass == null) || !interfaceClass.Connected)
+            if (interfaceClass == null)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                arg0.SetRawData(interfaceClass.KeyBytes);
+                byte[] keyBytes = interfaceClass.KeyBytes;
+                if (keyBytes != null)
+                {
+                    arg0.SetRawData(keyBytes);
+                }
             }
         }
 
@@ -2787,13 +2799,13 @@ namespace EdiabasLib
         private static void OpXreset(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
-            if ((interfaceClass == null) || !interfaceClass.Connected)
+            if (interfaceClass == null)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                interfaceClass.CommParameter = null;
+                interfaceClass.InterfaceReset();
             }
         }
 
@@ -2888,13 +2900,17 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpXstate: Invalid type");
             }
             EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
-            if ((interfaceClass == null) || !interfaceClass.Connected)
+            if (interfaceClass == null)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
             }
             else
             {
-                arg0.SetRawData(interfaceClass.State);
+                byte[] state = interfaceClass.State;
+                if (state != null)
+                {
+                    arg0.SetRawData(state);
+                }
             }
         }
 

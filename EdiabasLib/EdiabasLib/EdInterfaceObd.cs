@@ -654,6 +654,11 @@ namespace EdiabasLib
         {
             get
             {
+                if (!Connected)
+                {
+                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                    return null;
+                }
                 if (this.commParameter != null && this.parHasKeyBytes)
                 {
                     if (this.ecuConnected)
@@ -699,25 +704,40 @@ namespace EdiabasLib
         {
             get
             {
+                if (!Connected)
+                {
+                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                    return null;
+                }
                 state[0] = 0x00;
                 state[1] = (byte)(getDsrState() ? 0x00 : 0x30);
                 return state;
             }
         }
 
-        public override UInt32 BatteryVoltage
+        public override Int64 BatteryVoltage
         {
             get
             {
-                return (UInt32)(getDsrState() ? 12000 : 0);
+                if (!Connected)
+                {
+                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                    return Int64.MinValue;
+                }
+                return (Int64)(getDsrState() ? 12000 : 0);
             }
         }
 
-        public override UInt32 IgnitionVoltage
+        public override Int64 IgnitionVoltage
         {
             get
             {
-                return (UInt32)(getDsrState() ? 12000 : 0);
+                if (!Connected)
+                {
+                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                    return Int64.MinValue;
+                }
+                return (Int64)(getDsrState() ? 12000 : 0);
             }
         }
 
@@ -903,6 +923,16 @@ namespace EdiabasLib
 #else
             return false;
 #endif
+        }
+
+        public override bool InterfaceReset()
+        {
+            if (!Connected)
+            {
+                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+            }
+            CommParameter = null;
+            return true;
         }
 
         public override bool TransmitData(byte[] sendData, out byte[] receiveData)
