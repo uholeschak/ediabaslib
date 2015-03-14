@@ -64,6 +64,8 @@ namespace EdiabasLib
             return true;
         }
 
+        public abstract bool InterfaceReset();
+
         public abstract bool TransmitData(byte[] sendData, out byte[] receiveData);
 
         public abstract bool ReceiveFrequent(out byte[] receiveData);
@@ -149,12 +151,12 @@ namespace EdiabasLib
             get;
         }
 
-        public abstract UInt32 BatteryVoltage
+        public abstract Int64 BatteryVoltage
         {
             get;
         }
 
-        public abstract UInt32 IgnitionVoltage
+        public abstract Int64 IgnitionVoltage
         {
             get;
         }

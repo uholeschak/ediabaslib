@@ -192,19 +192,30 @@ namespace EdiabasLib
             }
         }
 
-        public override UInt32 BatteryVoltage
+        public override Int64 BatteryVoltage
         {
             get
             {
+                if (!Connected)
+                {
+                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                    return Int64.MinValue;
+                }
                 return 12000;
             }
         }
 
-        public override UInt32 IgnitionVoltage
+        public override Int64 IgnitionVoltage
         {
             get
             {
-                return 12000;
+                if (!Connected)
+                {
+                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                    return Int64.MinValue;
+                }
+                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                return Int64.MinValue;
             }
         }
 
@@ -406,6 +417,12 @@ namespace EdiabasLib
             }
             udpRecEndPoint = null;
             return result;
+        }
+
+        public override bool InterfaceReset()
+        {
+            CommParameter = null;
+            return true;
         }
 
         public override bool TransmitData(byte[] sendData, out byte[] receiveData)
