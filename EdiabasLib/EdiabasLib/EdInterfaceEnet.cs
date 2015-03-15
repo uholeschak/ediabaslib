@@ -345,7 +345,7 @@ namespace EdiabasLib
                         return false;
                     }
 
-                    if (!udpEvent.WaitOne(1000) || (udpRecEndPoint == null))
+                    if (!udpEvent.WaitOne(500) || (udpRecEndPoint == null))
                     {
                         ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "No answer received");
                         InterfaceDisconnect();
@@ -495,13 +495,7 @@ namespace EdiabasLib
                 IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, 0);
                 byte[] bytes = udpClientLocal.EndReceive(ar, ref ipUdp);
                 if ((udpRecEndPoint == null) &&
-                    (bytes != null) && (bytes.Length == (6 + 50)) &&
-                    (bytes[0] == 0x00) &&
-                    (bytes[1] == 0x00) &&
-                    (bytes[2] == 0x00) &&
-                    (bytes[3] == 50) &&
-                    (bytes[4] == 0x00) &&
-                    (bytes[5] == 0x04) &&   // anouncement
+                    (bytes != null) && (bytes.Length >= (6 + 38)) &&
                     (bytes[6] == 'D') &&
                     (bytes[7] == 'I') &&
                     (bytes[8] == 'A') &&
