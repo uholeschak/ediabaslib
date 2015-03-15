@@ -1169,12 +1169,17 @@ namespace CarSimulator
                     }
                     Debug.WriteLine("Ctrl Rec: " + text);
 #endif
-                    // send response
-                    // at the moent we do't know the correct response
-                    byte[] responseBuffer = new byte[6 + 10];
-                    responseBuffer[3] = (byte)(responseBuffer.Length - 6);
-                    responseBuffer[5] = 0x01;
-                    _tcpClientDiagStream.Write(responseBuffer, 0, responseBuffer.Length);
+                    if (recLen >= 6 && dataBuffer[5] == 0x10)
+                    {   // ignition state
+                        // send response
+                        byte[] responseBuffer = new byte[6 + 1];
+                        responseBuffer[2] = (byte)((responseBuffer.Length - 6) >> 8);
+                        responseBuffer[3] = (byte)(responseBuffer.Length - 6);
+                        responseBuffer[4] = 0x00;
+                        responseBuffer[5] = 0x10;   // ignition state
+                        responseBuffer[6] = 0x04;   // Clamp state, Bit3,4 = 1 -> ignition on
+                        _tcpClientControlStream.Write(responseBuffer, 0, responseBuffer.Length);
+                    }
 
                     return true;
                 }
