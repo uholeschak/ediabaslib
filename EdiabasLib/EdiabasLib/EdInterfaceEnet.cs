@@ -33,6 +33,7 @@ namespace EdiabasLib
 
         protected byte[] recBuffer = new byte[transBufferSize];
         protected byte[] dataBuffer = new byte[transBufferSize];
+        protected byte[] ackBuffer = new byte[transBufferSize];
 
         protected TransmitDelegate parTransmitFunc;
         protected int parTimeoutStd = 0;
@@ -562,23 +563,28 @@ namespace EdiabasLib
                 tcpStream.Write(dataBuffer, 0, sendLength);
 
                 // wait for ack
-                int recLen = ReceiveTelegram(dataBuffer, 1000);
+                int recLen = ReceiveTelegram(ackBuffer, 1000);
                 if (recLen < 0)
                 {
                     if (enableLogging) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No ack received");
                     return false;
                 }
-
-                if ((dataBuffer[0] != (byte)((payloadLength >> 24) & 0xFF)) ||
-                    (dataBuffer[1] != (byte)((payloadLength >> 16) & 0xFF)) ||
-                    (dataBuffer[2] != (byte)((payloadLength >> 8) & 0xFF)) ||
-                    (dataBuffer[3] != (byte)(payloadLength & 0xFF)) ||
-                    (dataBuffer[4] != 0x00) || (dataBuffer[5] != 0x02) ||
-                    (dataBuffer[6] != sourceAddr) || (dataBuffer[7] != targetAddr))
+                if ((recLen != sendLength) || (ackBuffer[5] != 0x02))
                 {
-                    if (enableLogging) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** Ack invalid");
+                    if (enableLogging) ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, recBuffer, 0, recLen, "*** Ack frame invalid");
                     return false;
                 }
+                ackBuffer[4] = dataBuffer[4];
+                ackBuffer[5] = dataBuffer[5];
+                for (int i = 0; i < recLen; i++)
+                {
+                    if (ackBuffer[i] != dataBuffer[i])
+                    {
+                        if (enableLogging) ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, recBuffer, 0, recLen, "*** Ack data invalid");
+                        return false;
+                    }
+                }
+
             }
             catch (Exception)
             {
@@ -649,7 +655,7 @@ namespace EdiabasLib
                 {
                     if (tcpStream.DataAvailable)
                     {
-                        int bytesRead = tcpStream.Read(dataBuffer, 0, 6);
+                        int bytesRead = tcpStream.Read(receiveData, 0, 6);
                         recLen = bytesRead;
                         break;
                     }
@@ -659,7 +665,7 @@ namespace EdiabasLib
                     }
                     Thread.Sleep(10);
                 }
-                int telLen = (((int)dataBuffer[0] << 24) | ((int)dataBuffer[1] << 16) | ((int)dataBuffer[2] << 8) | dataBuffer[3]) + 6;
+                int telLen = (((int)receiveData[0] << 24) | ((int)receiveData[1] << 16) | ((int)receiveData[2] << 8) | receiveData[3]) + 6;
                 if (telLen > transBufferSize)
                 {
                     return -1;
@@ -672,7 +678,7 @@ namespace EdiabasLib
                     }
                     if (tcpStream.DataAvailable)
                     {
-                        int bytesRead = tcpStream.Read(dataBuffer, recLen, telLen - recLen);
+                        int bytesRead = tcpStream.Read(receiveData, recLen, telLen - recLen);
                         recLen += bytesRead;
                     }
                     if (recLen >= telLen)
