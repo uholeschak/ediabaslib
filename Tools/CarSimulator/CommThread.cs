@@ -1100,7 +1100,7 @@ namespace CarSimulator
                     identMessage[idx++] = 0x00;
                     identMessage[idx++] = 0x00;
                     identMessage[idx++] = 0x00;
-                    identMessage[idx++] = 50;
+                    identMessage[idx++] = (byte)(identMessage.Length - 6);
                     identMessage[idx++] = 0x00;
                     identMessage[idx++] = 0x04;     // Anouncement
                     // TESTER ID
@@ -1114,16 +1114,15 @@ namespace CarSimulator
                     identMessage[idx++] = (byte)'1';
                     identMessage[idx++] = (byte)'0';
                     // MAC
-                    for (int i = 0; i < 17; i++)
+                    for (int i = 0; i < 18; i++)
                     {
-                        identMessage[idx++] = (byte)'3';
+                        identMessage[idx++] = (byte)('0'+ (i % 10));
                     }
                     // VIN
-                    for (int i = 0; i < 12; i++)
+                    for (int i = 0; i < 23; i++)
                     {
-                        identMessage[idx++] = (byte)'V';
+                        identMessage[idx++] = (byte)('a' + i);
                     }
-
                     _udpClient.Send(identMessage, identMessage.Length, ip);
                 }
             }
