@@ -214,8 +214,7 @@ namespace EdiabasLib
                     ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
                     return Int64.MinValue;
                 }
-                ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
-                return Int64.MinValue;
+                return 12000;
             }
         }
 

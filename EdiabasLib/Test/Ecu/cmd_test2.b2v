@@ -7,7 +7,7 @@ revision: 1.0;
 author  : uholeschak;
 uses	: base1,base2;
 comment : Internal tests EDIABAS BEST/2;
-comment : Compile with best2 -l test.lib cmd_test2.b2v;
+comment : Compile with best2 -Q -L test.lib cmd_test2.b2v;
 ////////////////////////////////////////////////////////////////////////
 //                        K O N S T A N T E N
 ////////////////////////////////////////////////////////////////////////
@@ -5008,6 +5008,12 @@ job(  name      : TEST_IFACE_FLAGS;
 					ergs		"XTYPE_S", S4
 					ergy		"XTYPE_Y", S4
 #endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+					move		S5, S4
+#endasm
 
 #asm
 					enewset
@@ -5020,6 +5026,11 @@ job(  name      : TEST_IFACE_FLAGS;
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergi		"XVERS", I8
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
 #endasm
 
 #asm
@@ -5034,8 +5045,16 @@ job(  name      : TEST_IFACE_FLAGS;
 					ergs		"JUMPS", S2
 					ergl		"XBATT", L4
 #endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
 
 #asm
+					strcmp		S5, "ENET"
+					jnz			no_xignit
+; at the moment we don't know the correct response
 					enewset
 					move		L4, #$AAAAAAAA
 					clrc
@@ -5046,6 +5065,12 @@ job(  name      : TEST_IFACE_FLAGS;
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 					ergl		"XIGNIT", L4
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+no_xignit:
 #endasm
 
 #asm
@@ -5062,6 +5087,11 @@ job(  name      : TEST_IFACE_FLAGS;
 					ergs		"XKEYB_S", S4
 					ergy		"XKEYB_Y", S4
 #endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
 
 #asm
 					enewset
@@ -5077,6 +5107,11 @@ job(  name      : TEST_IFACE_FLAGS;
 					ergs		"XSTATE_S", S4
 					ergy		"XSTATE_Y", S4
 #endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
 
 #asm
 					enewset
@@ -5087,6 +5122,11 @@ job(  name      : TEST_IFACE_FLAGS;
 #asm
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
 #endasm
 
 #asm
@@ -5102,6 +5142,11 @@ job(  name      : TEST_IFACE_FLAGS;
 					ergs		"JUMPS", S2
 					ergy		"XSEND", S4
 #endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
 
 #asm
 					enewset
@@ -5116,6 +5161,11 @@ job(  name      : TEST_IFACE_FLAGS;
 					ergs		"JUMPS", S2
 					ergs		"XSTATE_S", S4
 					ergy		"XSTATE_Y", S4
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
 #endasm
 
 #asm
@@ -5170,6 +5220,11 @@ job(  name      : TEST_IFACE_FLAGS;
 					ergs		"XSTATE_S", S4
 					ergy		"XSTATE_Y", S4
 #endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
 
 #asm
 					enewset
@@ -5180,6 +5235,11 @@ job(  name      : TEST_IFACE_FLAGS;
 #asm
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
 #endasm
 
 #asm

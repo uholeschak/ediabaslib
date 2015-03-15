@@ -77,8 +77,8 @@ namespace CarSimulator
 
         private static readonly long tickResolMs = Stopwatch.Frequency / 1000;
         private const byte      tcpTesterAddr = 0xF4;
-        private const int       tcpServerPort = 6801;
-        private const int       udpClientPort = 6811;
+        private const int       enetDiagPort = 6801;
+        private const int       enetControlPort = 6811;
         private volatile bool   _stopThread;
         private bool            _threadRunning;
         private Thread          _workerThread;
@@ -89,10 +89,13 @@ namespace CarSimulator
         private ConfigData      _configData;
         private byte            _pcanHandle;
         private long            _lastCanSendTick;
-        TcpListener             _tcpServer;
-        TcpClient               _tcpClient;
-        NetworkStream           _tcpClientStream;
-        UdpClient               _udpClient;
+        private TcpListener     _tcpServerDiag;
+        private TcpClient       _tcpClientDiag;
+        private NetworkStream   _tcpClientDiagStream;
+        private TcpListener     _tcpServerControl;
+        private TcpClient       _tcpClientControl;
+        private NetworkStream   _tcpClientControlStream;
+        private UdpClient       _udpClient;
         private SerialPort      _serialPort;
         private AutoResetEvent  _serialReceiveEvent;
         private AutoResetEvent  _pcanReceiveEvent;
@@ -439,9 +442,12 @@ namespace CarSimulator
             _workerThread = null;
             _pcanHandle = PCANBasic.PCAN_NONEBUS;
             _lastCanSendTick = DateTime.MinValue.Ticks;
-            _tcpServer = null;
-            _tcpClient = null;
-            _tcpClientStream = null;
+            _tcpServerDiag = null;
+            _tcpClientDiag = null;
+            _tcpClientDiagStream = null;
+            _tcpServerControl = null;
+            _tcpClientControl = null;
+            _tcpClientControlStream = null;
             _udpClient = null;
             _serialPort = new SerialPort();
             _serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
@@ -569,12 +575,15 @@ namespace CarSimulator
                         default:
                             return false;
                     }
-                    _tcpServer = new TcpListener(IPAddress.Any, tcpServerPort);
-                    _tcpServer.Start();
+                    _tcpServerDiag = new TcpListener(IPAddress.Any, enetDiagPort);
+                    _tcpServerDiag.Start();
+
+                    _tcpServerControl = new TcpListener(IPAddress.Any, enetControlPort);
+                    _tcpServerControl.Start();
 
                     // a virtual network adapter with an auto ip address
                     // is required tp receive the UPD broadcasts
-                    _udpClient = new UdpClient(udpClientPort);
+                    _udpClient = new UdpClient(enetControlPort);
                     StartUdpListen();
                 }
                 catch (Exception)
@@ -673,20 +682,38 @@ namespace CarSimulator
                 _udpClient.Close();
                 _udpClient = null;
             }
-            if (_tcpClientStream != null)
+            // diag port
+            if (_tcpClientDiagStream != null)
             {
-                _tcpClientStream.Close();
-                _tcpClientStream = null;
+                _tcpClientDiagStream.Close();
+                _tcpClientDiagStream = null;
             }
-            if (_tcpClient != null)
+            if (_tcpClientDiag != null)
             {
-                _tcpClient.Close();
-                _tcpClient = null;
+                _tcpClientDiag.Close();
+                _tcpClientDiag = null;
             }
-            if (_tcpServer != null)
+            if (_tcpServerDiag != null)
             {
-                _tcpServer.Stop();
-                _tcpServer = null;
+                _tcpServerDiag.Stop();
+                _tcpServerDiag = null;
+            }
+
+            // control port
+            if (_tcpClientControlStream != null)
+            {
+                _tcpClientControlStream.Close();
+                _tcpClientControlStream = null;
+            }
+            if (_tcpClientControl != null)
+            {
+                _tcpClientControl.Close();
+                _tcpClientControl = null;
+            }
+            if (_tcpServerControl != null)
+            {
+                _tcpServerControl.Stop();
+                _tcpServerControl = null;
             }
             if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
             {
@@ -902,7 +929,7 @@ namespace CarSimulator
             {
                 case ConceptType.conceptBwmFast:
                 case ConceptType.conceptKwp2000Bmw:
-                    if (_tcpServer != null)
+                    if (_tcpServerDiag != null)
                     {
                         return SendEnet(sendData);
                     }
@@ -968,8 +995,9 @@ namespace CarSimulator
             {
                 case ConceptType.conceptBwmFast:
                 case ConceptType.conceptKwp2000Bmw:
-                    if (_tcpServer != null)
+                    if (_tcpServerDiag != null)
                     {
+                        ReceiveEnetControl();
                         return ReceiveEnet(receiveData);
                     }
                     if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
@@ -1051,7 +1079,7 @@ namespace CarSimulator
                 {
                     return;
                 }
-                IPEndPoint ip = new IPEndPoint(IPAddress.Any, udpClientPort);
+                IPEndPoint ip = new IPEndPoint(IPAddress.Any, enetControlPort);
                 byte[] bytes = udpClientLocal.EndReceive(ar, ref ip);
                 StartUdpListen();
 #if false
@@ -1104,36 +1132,91 @@ namespace CarSimulator
             }
         }
 
-        private bool ReceiveEnet(byte[] receiveData)
+        private bool ReceiveEnetControl()
         {
-            if (!IsTcpClientConnected())
+            if (!IsTcpClientConnected(_tcpClientControl))
             {
-                if (_tcpClientStream != null)
+                if (_tcpClientControlStream != null)
                 {
-                    _tcpClientStream.Close();
-                    _tcpClientStream = null;
+                    _tcpClientControlStream.Close();
+                    _tcpClientControlStream = null;
                 }
-                if (_tcpClient != null)
+                if (_tcpClientControl != null)
                 {
-                    Debug.WriteLine("Closed");
-                    _tcpClient.Close();
-                    _tcpClient = null;
+                    Debug.WriteLine("Control Closed");
+                    _tcpClientControl.Close();
+                    _tcpClientControl = null;
                 }
-                if (!_tcpServer.Pending())
+                if (!_tcpServerControl.Pending())
                 {
                     Thread.Sleep(10);
                     return false;
                 }
-                _tcpClient = _tcpServer.AcceptTcpClient();
-                _tcpClientStream = _tcpClient.GetStream();
+                _tcpClientControl = _tcpServerControl.AcceptTcpClient();
+                _tcpClientControlStream = _tcpClientControl.GetStream();
             }
 
             try
             {
-                if (_tcpClientStream != null && _tcpClientStream.DataAvailable)
+                if (_tcpClientControlStream != null && _tcpClientControlStream.DataAvailable)
                 {
                     byte[] dataBuffer = new byte[0x200];
-                    int recLen = _tcpClientStream.Read(dataBuffer, 0, dataBuffer.Length);
+                    int recLen = _tcpClientControlStream.Read(dataBuffer, 0, dataBuffer.Length);
+#if false
+                    string text = string.Empty;
+                    for (int i = 0; i < recLen; i++)
+                    {
+                        text += string.Format("{0:X02} ", dataBuffer[i]);
+                    }
+                    Debug.WriteLine("Ctrl Rec: " + text);
+#endif
+                    // send response
+                    // at the moent we do't know the correct response
+                    byte[] responseBuffer = new byte[6 + 10];
+                    responseBuffer[3] = (byte)(responseBuffer.Length - 6);
+                    responseBuffer[5] = 0x01;
+                    _tcpClientDiagStream.Write(responseBuffer, 0, responseBuffer.Length);
+
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return false;
+        }
+
+        private bool ReceiveEnet(byte[] receiveData)
+        {
+            if (!IsTcpClientConnected(_tcpClientDiag))
+            {
+                if (_tcpClientDiagStream != null)
+                {
+                    _tcpClientDiagStream.Close();
+                    _tcpClientDiagStream = null;
+                }
+                if (_tcpClientDiag != null)
+                {
+                    Debug.WriteLine("Diag Closed");
+                    _tcpClientDiag.Close();
+                    _tcpClientDiag = null;
+                }
+                if (!_tcpServerDiag.Pending())
+                {
+                    Thread.Sleep(10);
+                    return false;
+                }
+                _tcpClientDiag = _tcpServerDiag.AcceptTcpClient();
+                _tcpClientDiagStream = _tcpClientDiag.GetStream();
+            }
+
+            try
+            {
+                if (_tcpClientDiagStream != null && _tcpClientDiagStream.DataAvailable)
+                {
+                    byte[] dataBuffer = new byte[0x200];
+                    int recLen = _tcpClientDiagStream.Read(dataBuffer, 0, dataBuffer.Length);
 #if false
                     string text = string.Empty;
                     for (int i = 0; i < recLen; i++)
@@ -1156,7 +1239,7 @@ namespace CarSimulator
                     byte[] ack = new byte[recLen];
                     Array.Copy(dataBuffer, ack, ack.Length);
                     ack[5] = 0x02;
-                    _tcpClientStream.Write(ack, 0, ack.Length);
+                    _tcpClientDiagStream.Write(ack, 0, ack.Length);
 
                     // create BMW-FAST telegram
                     byte sourceAddr = dataBuffer[6];
@@ -1202,7 +1285,7 @@ namespace CarSimulator
 
         private bool SendEnet(byte[] sendData)
         {
-            if (_tcpClientStream == null)
+            if (_tcpClientDiagStream == null)
             {
                 return false;
             }
@@ -1237,7 +1320,7 @@ namespace CarSimulator
                 }
                 Debug.WriteLine("Send: " + text);
 #endif
-                _tcpClientStream.Write(dataBuffer, 0, dataBuffer.Length);
+                _tcpClientDiagStream.Write(dataBuffer, 0, dataBuffer.Length);
             }
             catch (Exception)
             {
@@ -1246,17 +1329,17 @@ namespace CarSimulator
             return true;
         }
 
-        public bool IsTcpClientConnected()
+        public bool IsTcpClientConnected(TcpClient tcpClient)
         {
             try
             {
-                if (_tcpClient != null && _tcpClient.Client != null && _tcpClient.Client.Connected)
+                if (tcpClient != null && tcpClient.Client != null && tcpClient.Client.Connected)
                 {
                     // Detect if client disconnected
-                    if (_tcpClient.Client.Poll(0, SelectMode.SelectRead))
+                    if (tcpClient.Client.Poll(0, SelectMode.SelectRead))
                     {
                         byte[] buff = new byte[1];
-                        if (_tcpClient.Client.Receive(buff, SocketFlags.Peek) == 0)
+                        if (tcpClient.Client.Receive(buff, SocketFlags.Peek) == 0)
                         {
                             // Client disconnected
                             return false;
@@ -1909,7 +1992,7 @@ namespace CarSimulator
             {
                 return;
             }
-            if (!_adsAdapter && (_tcpServer == null) && (_pcanHandle == PCANBasic.PCAN_NONEBUS))
+            if (!_adsAdapter && (_tcpServerDiag == null) && (_pcanHandle == PCANBasic.PCAN_NONEBUS))
             {
                 // send echo
                 OBDSend(_receiveData);
