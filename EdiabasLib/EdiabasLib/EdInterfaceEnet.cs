@@ -563,7 +563,7 @@ namespace EdiabasLib
                 tcpStream.Write(dataBuffer, 0, sendLength);
 
                 // wait for ack
-                int recLen = ReceiveTelegram(ackBuffer, 1000);
+                int recLen = ReceiveTelegram(ackBuffer, 5000);
                 if (recLen < 0)
                 {
                     if (enableLogging) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No ack received");
