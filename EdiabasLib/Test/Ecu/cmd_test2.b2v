@@ -5012,7 +5012,6 @@ job(  name      : TEST_IFACE_FLAGS;
 #asm
 					ergl		"VALUE_ERROR", L0
 					clrt
-					move		S5, S4
 #endasm
 
 #asm
@@ -5052,9 +5051,6 @@ job(  name      : TEST_IFACE_FLAGS;
 #endasm
 
 #asm
-					strcmp		S5, "ENET"
-					jnz			no_xignit
-; at the moment we don't know the correct response
 					enewset
 					move		L4, #$AAAAAAAA
 					clrc
@@ -5070,7 +5066,6 @@ job(  name      : TEST_IFACE_FLAGS;
 #asm
 					ergl		"VALUE_ERROR", L0
 					clrt
-no_xignit:
 #endasm
 
 #asm
