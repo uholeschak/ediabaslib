@@ -262,6 +262,9 @@ namespace EdiabasCall
                     {
                         PrintResults(formatList, printAllTypes);
                     }
+
+                    //Console.WriteLine("Press Key to continue");
+                    //Console.ReadKey(true);
                 }
 
                 if (apiResultFields != null)
