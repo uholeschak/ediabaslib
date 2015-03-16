@@ -35,7 +35,7 @@ namespace EdiabasLib
             CDC = 0x40,     // inverted
             RI = 0x80,      // inverted
         }
-        private const int bitBangRecBufferSize = 0x1000;
+        private const int bitBangRecBufferSize = 0x800;
         private static bool bitBangMode = false;
         private static bitBangBits bitBangOutput = bitBangBits.DTR | bitBangBits.RTS | bitBangBits.TXD;
         private static Ftd2xx.FT_DEVICE bitBangDeviceType;
