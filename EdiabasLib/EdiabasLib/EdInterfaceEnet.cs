@@ -641,49 +641,40 @@ namespace EdiabasLib
             {
                 return -1;
             }
-            int recLen = -1;
+            int recLen = 0;
             try
             {
-                long startTime = Stopwatch.GetTimestamp();
                 for (; ; )
                 {
-                    if (tcpStream.DataAvailable)
+                    tcpStream.ReadTimeout = (recLen > 0) ? 50 : timeout;
+                    int bytesRead = tcpStream.Read(receiveData, recLen, 6 - recLen);
+                    if (bytesRead >= 0)
                     {
-                        int bytesRead = tcpStream.Read(receiveData, 0, 6);
-                        recLen = bytesRead;
+                        recLen += bytesRead;
                         break;
                     }
-                    if ((Stopwatch.GetTimestamp() - startTime) > timeout * tickResolMs)
+                    if (recLen >= 6)
                     {
-                        return -1;
+                        break;
                     }
-                    Thread.Sleep(10);
                 }
                 int telLen = (((int)receiveData[0] << 24) | ((int)receiveData[1] << 16) | ((int)receiveData[2] << 8) | receiveData[3]) + 6;
                 if (telLen > transBufferSize)
                 {
                     return -1;
                 }
+                tcpStream.ReadTimeout = 50;   // timeout for the remainder of the telegram
                 for (; ; )
                 {
                     if (recLen >= telLen)
                     {
                         break;
                     }
-                    if (tcpStream.DataAvailable)
+                    int bytesRead = tcpStream.Read(receiveData, recLen, telLen - recLen);
+                    if (bytesRead >= 0)
                     {
-                        int bytesRead = tcpStream.Read(receiveData, recLen, telLen - recLen);
                         recLen += bytesRead;
                     }
-                    if (recLen >= telLen)
-                    {
-                        break;
-                    }
-                    if ((Stopwatch.GetTimestamp() - startTime) > timeout * tickResolMs)
-                    {
-                        return -1;
-                    }
-                    Thread.Sleep(10);
                 }
             }
             catch (Exception)
