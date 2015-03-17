@@ -96,6 +96,7 @@ namespace CarSimulator
         private TcpClient       _tcpClientControl;
         private NetworkStream   _tcpClientControlStream;
         private UdpClient       _udpClient;
+        private long            _lastTcpDiagRecTick;
         private SerialPort      _serialPort;
         private AutoResetEvent  _serialReceiveEvent;
         private AutoResetEvent  _pcanReceiveEvent;
@@ -449,6 +450,7 @@ namespace CarSimulator
             _tcpClientControl = null;
             _tcpClientControlStream = null;
             _udpClient = null;
+            _lastTcpDiagRecTick = DateTime.MinValue.Ticks;
             _serialPort = new SerialPort();
             _serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
             _serialReceiveEvent = new AutoResetEvent(false);
@@ -1213,14 +1215,62 @@ namespace CarSimulator
                 }
                 _tcpClientDiag = _tcpServerDiag.AcceptTcpClient();
                 _tcpClientDiagStream = _tcpClientDiag.GetStream();
+                _lastTcpDiagRecTick = Stopwatch.GetTimestamp();
+            }
+
+            try
+            {
+                if (_tcpClientDiagStream != null)
+                {
+                    if ((Stopwatch.GetTimestamp() - _lastTcpDiagRecTick) > 2000 * tickResolMs)
+                    {
+                        _lastTcpDiagRecTick = Stopwatch.GetTimestamp();
+                        byte[] dataBuffer = new byte[6 + 2];
+                        dataBuffer[0] = 0x00;
+                        dataBuffer[1] = 0x00;
+                        dataBuffer[2] = 0x00;
+                        dataBuffer[3] = 0x02;
+                        dataBuffer[4] = 0x00;
+                        dataBuffer[5] = 0x12;   // Payoad type: alive check
+                        dataBuffer[6] = 0xF4;
+                        dataBuffer[7] = 0x00;
+                        _tcpClientDiagStream.Write(dataBuffer, 0, dataBuffer.Length);
+                        Debug.WriteLine("Alive Check");
+                    }
+                }
+            }
+            catch (Exception)
+            {
             }
 
             try
             {
                 if (_tcpClientDiagStream != null && _tcpClientDiagStream.DataAvailable)
                 {
+                    _lastTcpDiagRecTick = Stopwatch.GetTimestamp();
                     byte[] dataBuffer = new byte[0x200];
-                    int recLen = _tcpClientDiagStream.Read(dataBuffer, 0, dataBuffer.Length);
+                    int recLen = _tcpClientDiagStream.Read(dataBuffer, 0, 6);
+                    if (recLen < 6)
+                    {
+                        return false;
+                    }
+                    int payloadLength = (((int)dataBuffer[0] << 24) | ((int)dataBuffer[1] << 16) | ((int)dataBuffer[2] << 8) | dataBuffer[3]);
+                    if (payloadLength > dataBuffer.Length - 6)
+                    {
+                        while (_tcpClientDiagStream.DataAvailable)
+                        {
+                            _tcpClientDiagStream.ReadByte();
+                        }
+                        return false;
+                    }
+                    if (payloadLength > 0)
+                    {
+                        recLen += _tcpClientDiagStream.Read(dataBuffer, 6, payloadLength);
+                    }
+                    if (recLen < payloadLength + 6)
+                    {
+                        return false;
+                    }
 #if false
                     string text = string.Empty;
                     for (int i = 0; i < recLen; i++)
@@ -1229,13 +1279,13 @@ namespace CarSimulator
                     }
                     Debug.WriteLine("Rec: " + text);
 #endif
-                    int dataLen = (((int)dataBuffer[0] << 24) | ((int)dataBuffer[1] << 16) | ((int)dataBuffer[2] << 8) | dataBuffer[3]) - 2;
+                    int dataLen = payloadLength - 2;
                     if ((dataLen < 1) || ((dataLen + 8) > recLen))
                     {
                         return false;
                     }
-                    int payloadType = ((int)dataBuffer[4] << 8) | dataBuffer[5];
-                    if (payloadType != 0x0001)
+                    int payloadType = dataBuffer[5];
+                    if (payloadType != 0x01)
                     {
                         return false;
                     }
@@ -1311,8 +1361,8 @@ namespace CarSimulator
                 dataBuffer[1] = (byte)((payloadLength >> 16) & 0xFF);
                 dataBuffer[2] = (byte)((payloadLength >> 8) & 0xFF);
                 dataBuffer[3] = (byte)(payloadLength & 0xFF);
-                dataBuffer[4] = 0x00;   // Payoad type: Diag message
-                dataBuffer[5] = 0x01;
+                dataBuffer[4] = 0x00;
+                dataBuffer[5] = 0x01;   // Payoad type: Diag message
                 dataBuffer[6] = sourceAddr;
                 dataBuffer[7] = targetAddr;
                 Array.Copy(sendData, dataOffset, dataBuffer, 8, dataLength);
