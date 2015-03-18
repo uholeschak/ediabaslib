@@ -19,11 +19,15 @@ namespace EdiabasLib
         protected static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
         protected static readonly byte[] byteArray0 = new byte[0];
         protected static readonly byte[] udpIdentReq = new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x11};
+        protected static readonly byte[] tcpControlIgnitReq = new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x10 };
         protected static readonly long tickResolMs = Stopwatch.Frequency / 1000;
 
+        protected static IPAddress tcpHostIp = null;
         protected static TcpClient tcpDiagClient = null;
         protected static NetworkStream tcpDiagStream = null;
         protected static AutoResetEvent tcpDiagStreamRecEvent;
+        protected static TcpClient tcpControlClient = null;
+        protected static NetworkStream tcpControlStream = null;
         protected static object tcpDiagStreamSendLock;
         protected static object tcpDiagStreamRecLock;
         protected static byte[] tcpDiagBuffer;
@@ -224,7 +228,37 @@ namespace EdiabasLib
                     ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
                     return Int64.MinValue;
                 }
-                return 12000;
+                if (!TcpControlConnect())
+                {
+                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                    return Int64.MinValue;
+                }
+                try
+                {
+                    tcpControlStream.Write(tcpControlIgnitReq, 0, tcpControlIgnitReq.Length);
+                    tcpControlStream.ReadTimeout = 1000;
+                    int recLen = tcpControlStream.Read(recBuffer, 0, 7);
+                    if (recLen < 7)
+                    {
+                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                        return Int64.MinValue;
+                    }
+                    if (recBuffer[5] != 0x10)
+                    {   // no clamp state response
+                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                        return Int64.MinValue;
+                    }
+                    if ((recBuffer[6] & 0x0C) == 0x04)
+                    {   // ignition on
+                        return 12000;
+                    }
+                }
+                catch (Exception)
+                {
+                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                    return Int64.MinValue;
+                }
+                return 0;
             }
         }
 
@@ -278,7 +312,7 @@ namespace EdiabasLib
             }
             try
             {
-                IPAddress hostIp = null;
+                tcpHostIp = null;
                 if (remoteHost.StartsWith(autoIp, StringComparison.OrdinalIgnoreCase))
                 {
                     IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, 0);
@@ -367,17 +401,17 @@ namespace EdiabasLib
                         InterfaceDisconnect();
                         return false;
                     }
-                    hostIp = udpRecEndPoint.Address;
+                    tcpHostIp = udpRecEndPoint.Address;
                     udpClient.Close();
-                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, string.Format("Received: IP={0}", hostIp.ToString()));
+                    ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, string.Format("Received: IP={0}", tcpHostIp.ToString()));
                 }
                 else
                 {
-                    hostIp = IPAddress.Parse(this.remoteHost);
+                    tcpHostIp = IPAddress.Parse(this.remoteHost);
                 }
 
                 tcpDiagClient = new TcpClient();
-                IPEndPoint ipTcp = new IPEndPoint(hostIp, this.diagnosticPort);
+                IPEndPoint ipTcp = new IPEndPoint(tcpHostIp, this.diagnosticPort);
                 tcpDiagClient.Connect(ipTcp);
                 tcpDiagStream = tcpDiagClient.GetStream();
                 tcpDiagRecLen = 0;
@@ -423,6 +457,11 @@ namespace EdiabasLib
                 result = false;
             }
 
+            if (!TcpControlDisconnect())
+            {
+                result = false;
+            }
+
             try
             {
                 if (udpClient != null)
@@ -436,6 +475,7 @@ namespace EdiabasLib
                 result = false;
             }
             udpRecEndPoint = null;
+            tcpHostIp = null;
             return result;
         }
 
@@ -538,6 +578,61 @@ namespace EdiabasLib
             catch (Exception)
             {
             }
+        }
+
+        protected bool TcpControlConnect()
+        {
+            if (tcpControlClient != null)
+            {
+                return true;
+            }
+            if (tcpHostIp == null)
+            {
+                return false;
+            }
+            try
+            {
+                tcpControlClient = new TcpClient();
+                IPEndPoint ipTcp = new IPEndPoint(tcpHostIp, this.controlPort);
+                tcpControlClient.Connect(ipTcp);
+                tcpControlStream = tcpControlClient.GetStream();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        protected bool TcpControlDisconnect()
+        {
+            bool result = true;
+            try
+            {
+                if (tcpControlStream != null)
+                {
+                    tcpControlStream.Close();
+                    tcpControlStream = null;
+                }
+            }
+            catch (Exception)
+            {
+                result = false;
+            }
+
+            try
+            {
+                if (tcpControlClient != null)
+                {
+                    tcpControlClient.Close();
+                    tcpControlClient = null;
+                }
+            }
+            catch (Exception)
+            {
+                result = false;
+            }
+            return result;
         }
 
         protected bool StartReadTcpDiag(int telLength)
