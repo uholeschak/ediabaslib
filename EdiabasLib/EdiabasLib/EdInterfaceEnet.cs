@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace EdiabasLib
 {
@@ -20,11 +21,19 @@ namespace EdiabasLib
         protected static readonly byte[] udpIdentReq = new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x11};
         protected static readonly long tickResolMs = Stopwatch.Frequency / 1000;
 
-        private static TcpClient tcpClient = null;
-        private static NetworkStream tcpStream = null;
-        private UdpClient udpClient = null;
-        private volatile IPEndPoint udpRecEndPoint = null;
-        private AutoResetEvent udpEvent = new AutoResetEvent(false);
+        protected static TcpClient tcpDiagClient = null;
+        protected static NetworkStream tcpDiagStream = null;
+        protected static AutoResetEvent tcpDiagStreamRecEvent;
+        protected static object tcpDiagStreamSendLock;
+        protected static object tcpDiagStreamRecLock;
+        protected static byte[] tcpDiagBuffer;
+        protected static int tcpDiagRecLen;
+        protected static long lastTcpDiagRecTime;
+        protected static Queue<byte[]> tcpDiagRecQueue = null;
+
+        protected UdpClient udpClient = null;
+        protected volatile IPEndPoint udpRecEndPoint = null;
+        protected AutoResetEvent udpEvent = new AutoResetEvent(false);
 
         protected string remoteHost = autoIp;
         protected int testerAddress = 0xF4;
@@ -223,7 +232,7 @@ namespace EdiabasLib
         {
             get
             {
-                return (tcpClient != null) && (tcpStream != null);
+                return (tcpDiagClient != null) && (tcpDiagStream != null);
             }
         }
 
@@ -234,6 +243,13 @@ namespace EdiabasLib
 #else
             interfaceMutex = new Mutex(false, "EdiabasLib_InterfaceEnet");
 #endif
+            tcpDiagStreamRecEvent = new AutoResetEvent(false);
+            tcpDiagStreamSendLock = new Object();
+            tcpDiagStreamRecLock = new Object();
+            tcpDiagBuffer = new byte[transBufferSize];
+            tcpDiagRecLen = 0;
+            lastTcpDiagRecTime = DateTime.MinValue.Ticks;
+            tcpDiagRecQueue = new Queue<byte[]>();
         }
 
         public EdInterfaceEnet()
@@ -256,7 +272,7 @@ namespace EdiabasLib
 
         public override bool InterfaceConnect()
         {
-            if (tcpClient != null)
+            if (tcpDiagClient != null)
             {
                 return true;
             }
@@ -360,10 +376,14 @@ namespace EdiabasLib
                     hostIp = IPAddress.Parse(this.remoteHost);
                 }
 
-                tcpClient = new TcpClient();
+                tcpDiagClient = new TcpClient();
                 IPEndPoint ipTcp = new IPEndPoint(hostIp, this.diagnosticPort);
-                tcpClient.Connect(ipTcp);
-                tcpStream = tcpClient.GetStream();
+                tcpDiagClient.Connect(ipTcp);
+                tcpDiagStream = tcpDiagClient.GetStream();
+                tcpDiagRecLen = 0;
+                lastTcpDiagRecTime = DateTime.MinValue.Ticks;
+                tcpDiagRecQueue.Clear();
+                StartReadTcpDiag(6);
             }
             catch (Exception)
             {
@@ -379,10 +399,10 @@ namespace EdiabasLib
 
             try
             {
-                if (tcpStream != null)
+                if (tcpDiagStream != null)
                 {
-                    tcpStream.Close();
-                    tcpStream = null;
+                    tcpDiagStream.Close();
+                    tcpDiagStream = null;
                 }
             }
             catch (Exception)
@@ -392,10 +412,10 @@ namespace EdiabasLib
 
             try
             {
-                if (tcpClient != null)
+                if (tcpDiagClient != null)
                 {
-                    tcpClient.Close();
-                    tcpClient = null;
+                    tcpDiagClient.Close();
+                    tcpDiagClient = null;
                 }
             }
             catch (Exception)
@@ -476,18 +496,19 @@ namespace EdiabasLib
 
         protected void StartUdpListen()
         {
-            if (udpClient == null)
+            UdpClient udpClientLocal = udpClient;
+            if (udpClientLocal == null)
             {
                 return;
             }
-            udpClient.BeginReceive(UdpReceiver, new Object());
+            udpClient.BeginReceive(UdpReceiver, udpClientLocal);
         }
 
         protected void UdpReceiver(IAsyncResult ar)
         {
             try
             {
-                UdpClient udpClientLocal = udpClient;
+                UdpClient udpClientLocal = (UdpClient)ar.AsyncState;
                 if (udpClientLocal == null)
                 {
                     return;
@@ -519,18 +540,116 @@ namespace EdiabasLib
             }
         }
 
-        protected bool SendData(byte[] sendData, int length, bool enableLogging)
+        protected bool StartReadTcpDiag(int telLength)
         {
-            if (tcpStream == null)
+            NetworkStream localStream = tcpDiagStream;
+            if (localStream == null)
             {
                 return false;
             }
             try
             {
-                tcpStream.Flush();
-                while (tcpStream.DataAvailable)
+                localStream.BeginRead(tcpDiagBuffer, tcpDiagRecLen, telLength - tcpDiagRecLen, TcpDiagReceiver, tcpDiagStream);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        protected void TcpDiagReceiver(IAsyncResult ar)
+        {
+            try
+            {
+                NetworkStream networkStream = (NetworkStream)ar.AsyncState;
+                if (tcpDiagRecLen > 0)
                 {
-                    tcpStream.ReadByte();
+                    if ((Stopwatch.GetTimestamp() - lastTcpDiagRecTime) > 100 * tickResolMs)
+                    {   // pending telegram parts too late
+                        tcpDiagRecLen = 0;
+                    }
+                }
+                int recLen = networkStream.EndRead(ar);
+                if (recLen > 0)
+                {
+                    lastTcpDiagRecTime = Stopwatch.GetTimestamp();
+                    tcpDiagRecLen += recLen;
+                }
+                int nextReadLength = 6;
+                if (tcpDiagRecLen >= 6)
+                {   // header received
+                    int telLen = (((int)tcpDiagBuffer[0] << 24) | ((int)tcpDiagBuffer[1] << 16) | ((int)tcpDiagBuffer[2] << 8) | tcpDiagBuffer[3]) + 6;
+                    if (tcpDiagRecLen >= telLen)
+                    {   // telegram received
+                        switch (tcpDiagBuffer[5])
+                        {
+                            case 0x01: // diag data
+                            case 0x2: // ack
+                                lock (tcpDiagStreamRecLock)
+                                {
+                                    if (tcpDiagRecQueue.Count > 256)
+                                    {
+                                        tcpDiagRecQueue.Dequeue();
+                                    }
+                                    byte[] recTelTemp = new byte[telLen];
+                                    Array.Copy(tcpDiagBuffer, recTelTemp, telLen);
+                                    tcpDiagRecQueue.Enqueue(recTelTemp);
+                                }
+                                tcpDiagStreamRecEvent.Set();
+                                break;
+
+                            case 0x12:  // alive check
+                                tcpDiagBuffer[0] = 0x00;
+                                tcpDiagBuffer[1] = 0x00;
+                                tcpDiagBuffer[2] = 0x00;
+                                tcpDiagBuffer[3] = 0x02;
+                                tcpDiagBuffer[4] = 0x00;
+                                tcpDiagBuffer[5] = 0x13;    // alive check response
+                                tcpDiagBuffer[6] = 0x00;
+                                tcpDiagBuffer[7] = (byte)this.testerAddress;
+                                lock (tcpDiagStreamSendLock)
+                                {
+                                    networkStream.Write(tcpDiagBuffer, 0, 8);
+                                }
+                                break;
+                        }
+                        tcpDiagRecLen = 0;
+                    }
+                    else if (telLen > tcpDiagBuffer.Length)
+                    {   // telegram too large -> remove all
+                        while (tcpDiagStream.DataAvailable)
+                        {
+                            tcpDiagStream.ReadByte();
+                        }
+                        tcpDiagRecLen = 0;
+                    }
+                    else
+                    {
+                        nextReadLength = telLen;
+                    }
+                }
+                StartReadTcpDiag(nextReadLength);
+            }
+            catch (Exception)
+            {
+                tcpDiagRecLen = 0;
+                StartReadTcpDiag(6);
+            }
+        }
+
+        protected bool SendData(byte[] sendData, int length, bool enableLogging)
+        {
+            if (tcpDiagStream == null)
+            {
+                return false;
+            }
+            try
+            {
+                lock (tcpDiagStreamRecLock)
+                {
+                    tcpDiagStreamRecEvent.Reset();
+                    tcpDiagRecQueue.Clear();
                 }
 
                 byte targetAddr = sendData[1];
@@ -554,7 +673,10 @@ namespace EdiabasLib
                 dataBuffer[7] = targetAddr;
                 Array.Copy(sendData, dataOffset, dataBuffer, 8, dataLength);
                 int sendLength = dataLength + 8;
-                tcpStream.Write(dataBuffer, 0, sendLength);
+                lock (tcpDiagStreamSendLock)
+                {
+                    tcpDiagStream.Write(dataBuffer, 0, sendLength);
+                }
 
                 // wait for ack
                 int recLen = ReceiveTelegram(ackBuffer, 5000);
@@ -589,7 +711,7 @@ namespace EdiabasLib
 
         protected bool ReceiveData(byte[] receiveData, int timeout)
         {
-            if (tcpStream == null)
+            if (tcpDiagStream == null)
             {
                 return false;
             }
@@ -637,43 +759,32 @@ namespace EdiabasLib
 
         protected int ReceiveTelegram(byte[] receiveData, int timeout)
         {
-            if (tcpStream == null)
+            if (tcpDiagStream == null)
             {
                 return -1;
             }
             int recLen = 0;
             try
             {
-                for (; ; )
+                int recTels;
+                lock (tcpDiagStreamRecLock)
                 {
-                    tcpStream.ReadTimeout = (recLen > 0) ? 50 : timeout;
-                    int bytesRead = tcpStream.Read(receiveData, recLen, 6 - recLen);
-                    if (bytesRead >= 0)
+                    recTels = tcpDiagRecQueue.Count;
+                }
+                if (recTels == 0)
+                {
+                    if (!tcpDiagStreamRecEvent.WaitOne(timeout))
                     {
-                        recLen += bytesRead;
-                        break;
-                    }
-                    if (recLen >= 6)
-                    {
-                        break;
+                        return -1;
                     }
                 }
-                int telLen = (((int)receiveData[0] << 24) | ((int)receiveData[1] << 16) | ((int)receiveData[2] << 8) | receiveData[3]) + 6;
-                if (telLen > transBufferSize)
+                lock (tcpDiagStreamRecLock)
                 {
-                    return -1;
-                }
-                tcpStream.ReadTimeout = 50;   // timeout for the remainder of the telegram
-                for (; ; )
-                {
-                    if (recLen >= telLen)
+                    if (tcpDiagRecQueue.Count > 0)
                     {
-                        break;
-                    }
-                    int bytesRead = tcpStream.Read(receiveData, recLen, telLen - recLen);
-                    if (bytesRead >= 0)
-                    {
-                        recLen += bytesRead;
+                        byte[] recTelFirst = tcpDiagRecQueue.Dequeue();
+                        recLen = recTelFirst.Length;
+                        Array.Copy(recTelFirst, receiveData, recLen);
                     }
                 }
             }
@@ -687,7 +798,7 @@ namespace EdiabasLib
         protected EdiabasNet.ErrorCodes OBDTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
             receiveLength = 0;
-            if (tcpStream == null)
+            if (tcpDiagStream == null)
             {
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
