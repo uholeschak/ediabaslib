@@ -1179,7 +1179,7 @@ namespace CarSimulator
                         responseBuffer[3] = (byte)(responseBuffer.Length - 6);
                         responseBuffer[4] = 0x00;
                         responseBuffer[5] = 0x10;   // ignition state
-                        responseBuffer[6] = 0x04;   // Clamp state, Bit3,4 = 1 -> ignition on
+                        responseBuffer[6] = (byte)(IgnitionOk ? 0x04 : 0x00);   // Clamp state, Bit3,4 = 1 -> ignition on
                         _tcpClientControlStream.Write(responseBuffer, 0, responseBuffer.Length);
                     }
 
