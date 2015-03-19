@@ -128,7 +128,7 @@ namespace EdiabasLib
                 }
 
                 ediabas.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, commParameter, 0, commParameter.Length,
-                    string.Format(culture, "{0} CommParameter Host={1}, Tester={2}, ControlPort={3}, DiagPort={4}",
+                    string.Format(culture, "{0} CommParameter Host={1}, Tester=0x{2:X02}, ControlPort={3}, DiagPort={4}",
                             InterfaceName, this.remoteHost, this.testerAddress, this.controlPort, this.diagnosticPort));
 
                 uint concept = commParameter[0];
@@ -325,6 +325,7 @@ namespace EdiabasLib
             }
             try
             {
+                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Connect");
                 tcpHostIp = null;
                 if (remoteHost.StartsWith(autoIp, StringComparison.OrdinalIgnoreCase))
                 {
@@ -431,6 +432,7 @@ namespace EdiabasLib
                 lastTcpDiagRecTime = DateTime.MinValue.Ticks;
                 tcpDiagRecQueue.Clear();
                 StartReadTcpDiag(6);
+                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Connected");
             }
             catch (Exception)
             {
@@ -442,6 +444,7 @@ namespace EdiabasLib
 
         public override bool InterfaceDisconnect()
         {
+            ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Disconnect");
             bool result = true;
 
             try
