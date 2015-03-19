@@ -679,43 +679,46 @@ namespace CarSimulator
 
         private bool Disconnect()
         {
-            if (_udpClient != null)
+            try
             {
-                _udpClient.Close();
-                _udpClient = null;
+                if (_udpClient != null)
+                {
+                    _udpClient.Close();
+                    _udpClient = null;
+                }
             }
+            catch (Exception)
+            {
+            }
+
             // diag port
-            if (_tcpClientDiagStream != null)
+            EnetDiagClose();
+
+            try
             {
-                _tcpClientDiagStream.Close();
-                _tcpClientDiagStream = null;
+                if (_tcpServerDiag != null)
+                {
+                    _tcpServerDiag.Stop();
+                    _tcpServerDiag = null;
+                }
             }
-            if (_tcpClientDiag != null)
+            catch (Exception)
             {
-                _tcpClientDiag.Close();
-                _tcpClientDiag = null;
-            }
-            if (_tcpServerDiag != null)
-            {
-                _tcpServerDiag.Stop();
-                _tcpServerDiag = null;
             }
 
             // control port
-            if (_tcpClientControlStream != null)
+            EnetControlClose();
+
+            try
             {
-                _tcpClientControlStream.Close();
-                _tcpClientControlStream = null;
+                if (_tcpServerControl != null)
+                {
+                    _tcpServerControl.Stop();
+                    _tcpServerControl = null;
+                }
             }
-            if (_tcpClientControl != null)
+            catch (Exception)
             {
-                _tcpClientControl.Close();
-                _tcpClientControl = null;
-            }
-            if (_tcpServerControl != null)
-            {
-                _tcpServerControl.Stop();
-                _tcpServerControl = null;
             }
             if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
             {
@@ -1133,28 +1136,53 @@ namespace CarSimulator
             }
         }
 
-        private bool ReceiveEnetControl()
+        private void EnetControlClose()
         {
-            if (!IsTcpClientConnected(_tcpClientControl))
+            try
             {
                 if (_tcpClientControlStream != null)
                 {
                     _tcpClientControlStream.Close();
                     _tcpClientControlStream = null;
                 }
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
                 if (_tcpClientControl != null)
                 {
                     Debug.WriteLine("Control Closed");
                     _tcpClientControl.Close();
                     _tcpClientControl = null;
                 }
-                if (!_tcpServerControl.Pending())
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private bool ReceiveEnetControl()
+        {
+            try
+            {
+                if (!IsTcpClientConnected(_tcpClientControl))
                 {
-                    Thread.Sleep(10);
-                    return false;
+                    EnetControlClose();
+                    if (!_tcpServerControl.Pending())
+                    {
+                        Thread.Sleep(10);
+                        return false;
+                    }
+                    _tcpClientControl = _tcpServerControl.AcceptTcpClient();
+                    _tcpClientControlStream = _tcpClientControl.GetStream();
                 }
-                _tcpClientControl = _tcpServerControl.AcceptTcpClient();
-                _tcpClientControlStream = _tcpClientControl.GetStream();
+            }
+            catch (Exception)
+            {
+                EnetControlClose();
             }
 
             try
@@ -1193,29 +1221,54 @@ namespace CarSimulator
             return false;
         }
 
-        private bool ReceiveEnet(byte[] receiveData)
+        private void EnetDiagClose()
         {
-            if (!IsTcpClientConnected(_tcpClientDiag))
+            try
             {
                 if (_tcpClientDiagStream != null)
                 {
                     _tcpClientDiagStream.Close();
                     _tcpClientDiagStream = null;
                 }
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
                 if (_tcpClientDiag != null)
                 {
                     Debug.WriteLine("Diag Closed");
                     _tcpClientDiag.Close();
                     _tcpClientDiag = null;
                 }
-                if (!_tcpServerDiag.Pending())
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private bool ReceiveEnet(byte[] receiveData)
+        {
+            try
+            {
+                if (!IsTcpClientConnected(_tcpClientDiag))
                 {
-                    Thread.Sleep(10);
-                    return false;
+                    EnetDiagClose();
+                    if (!_tcpServerDiag.Pending())
+                    {
+                        Thread.Sleep(10);
+                        return false;
+                    }
+                    _tcpClientDiag = _tcpServerDiag.AcceptTcpClient();
+                    _tcpClientDiagStream = _tcpClientDiag.GetStream();
+                    _lastTcpDiagRecTick = Stopwatch.GetTimestamp();
                 }
-                _tcpClientDiag = _tcpServerDiag.AcceptTcpClient();
-                _tcpClientDiagStream = _tcpClientDiag.GetStream();
-                _lastTcpDiagRecTick = Stopwatch.GetTimestamp();
+            }
+            catch (Exception)
+            {
+                EnetDiagClose();
             }
 
             try
