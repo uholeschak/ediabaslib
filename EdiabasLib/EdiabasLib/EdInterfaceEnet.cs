@@ -28,8 +28,11 @@ namespace EdiabasLib
         protected static AutoResetEvent tcpDiagStreamRecEvent;
         protected static TcpClient tcpControlClient = null;
         protected static NetworkStream tcpControlStream = null;
+        protected static Timer tcpControlTimer = null;
+        protected static bool tcpControlTimerEnabled = false;
         protected static object tcpDiagStreamSendLock;
         protected static object tcpDiagStreamRecLock;
+        protected static object tcpControlTimerLock;
         protected static byte[] tcpDiagBuffer;
         protected static int tcpDiagRecLen;
         protected static long lastTcpDiagRecTime;
@@ -228,13 +231,17 @@ namespace EdiabasLib
                     ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
                     return Int64.MinValue;
                 }
-                if (!TcpControlConnect())
-                {
-                    ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
-                    return Int64.MinValue;
-                }
                 try
                 {
+                    lock (tcpControlTimerLock)
+                    {
+                        TcpControlTimerStop();
+                    }
+                    if (!TcpControlConnect())
+                    {
+                        ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                        return Int64.MinValue;
+                    }
                     tcpControlStream.Write(tcpControlIgnitReq, 0, tcpControlIgnitReq.Length);
                     tcpControlStream.ReadTimeout = 1000;
                     int recLen = tcpControlStream.Read(recBuffer, 0, 7);
@@ -258,6 +265,10 @@ namespace EdiabasLib
                     ediabas.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
                     return Int64.MinValue;
                 }
+                finally
+                {
+                    TcpControlTimerStart();
+                }
                 return 0;
             }
         }
@@ -280,6 +291,8 @@ namespace EdiabasLib
             tcpDiagStreamRecEvent = new AutoResetEvent(false);
             tcpDiagStreamSendLock = new Object();
             tcpDiagStreamRecLock = new Object();
+            tcpControlTimer = new Timer(TcpControlTimeout);
+            tcpControlTimerLock = new Object();
             tcpDiagBuffer = new byte[transBufferSize];
             tcpDiagRecLen = 0;
             lastTcpDiagRecTime = DateTime.MinValue.Ticks;
@@ -580,6 +593,29 @@ namespace EdiabasLib
             }
         }
 
+        protected static void TcpControlTimerStop()
+        {
+            tcpControlTimerEnabled = false;
+            tcpControlTimer.Change(Timeout.Infinite, Timeout.Infinite);
+        }
+
+        protected static void TcpControlTimerStart()
+        {
+            tcpControlTimerEnabled = true;
+            tcpControlTimer.Change(2000, Timeout.Infinite);
+        }
+
+        protected static void TcpControlTimeout(Object stateInfo)
+        {
+            lock (tcpControlTimerLock)
+            {
+                if (tcpControlTimerEnabled)
+                {
+                    TcpControlDisconnect();
+                }
+            }
+        }
+
         protected bool TcpControlConnect()
         {
             if (tcpControlClient != null)
@@ -592,6 +628,10 @@ namespace EdiabasLib
             }
             try
             {
+                lock (tcpControlTimerLock)
+                {
+                    TcpControlTimerStop();
+                }
                 tcpControlClient = new TcpClient();
                 IPEndPoint ipTcp = new IPEndPoint(tcpHostIp, this.controlPort);
                 tcpControlClient.Connect(ipTcp);
@@ -604,9 +644,10 @@ namespace EdiabasLib
             return true;
         }
 
-        protected bool TcpControlDisconnect()
+        protected static bool TcpControlDisconnect()
         {
             bool result = true;
+            TcpControlTimerStop();
             try
             {
                 if (tcpControlStream != null)
