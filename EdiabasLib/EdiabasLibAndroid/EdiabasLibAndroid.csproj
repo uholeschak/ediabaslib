@@ -63,6 +63,9 @@
     <Compile Include="..\EdiabasLib\MemoryStreamReader.cs">
       <Link>MemoryStreamReader.cs</Link>
     </Compile>
+    <Compile Include="..\EdiabasLib\EdInterfaceEnet.cs">
+      <Link>EdInterfaceEnet.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
