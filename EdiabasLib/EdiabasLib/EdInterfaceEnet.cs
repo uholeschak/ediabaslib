@@ -392,7 +392,11 @@ namespace EdiabasLib
                     {
                         try
                         {
+#if Android
+                            IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Broadcast, controlPort);
+#else
                             IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse("169.254.255.255"), controlPort);
+#endif
                             ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, string.Format("Sending to: {0}", ipUdpIdent.Address.ToString()));
                             udpClient.Send(udpIdentReq, udpIdentReq.Length, ipUdpIdent);
                             broadcastSend = true;
