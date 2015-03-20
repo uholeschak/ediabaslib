@@ -65,6 +65,9 @@
     <Compile Include="..\EdiabasLib\EdInterfaceBase.cs">
       <Link>EdInterfaceBase.cs</Link>
     </Compile>
+    <Compile Include="..\EdiabasLib\EdInterfaceEnet.cs">
+      <Link>EdInterfaceEnet.cs</Link>
+    </Compile>
     <Compile Include="..\EdiabasLib\EdInterfaceObd.cs">
       <Link>EdInterfaceObd.cs</Link>
     </Compile>
