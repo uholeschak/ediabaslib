@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define USE_UDP_SOCKET
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
@@ -96,6 +97,9 @@ namespace CarSimulator
         private TcpClient       _tcpClientControl;
         private NetworkStream   _tcpClientControlStream;
         private UdpClient       _udpClient;
+        private Socket          _udpSocket;
+        private byte[]          _udpBuffer;
+        private bool            _udpError;
         private long            _lastTcpDiagRecTick;
         private SerialPort      _serialPort;
         private AutoResetEvent  _serialReceiveEvent;
@@ -450,6 +454,9 @@ namespace CarSimulator
             _tcpClientControl = null;
             _tcpClientControlStream = null;
             _udpClient = null;
+            _udpSocket = null;
+            _udpBuffer = new byte[0x100];
+            _udpError = false;
             _lastTcpDiagRecTick = DateTime.MinValue.Ticks;
             _serialPort = new SerialPort();
             _serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
@@ -583,10 +590,7 @@ namespace CarSimulator
                     _tcpServerControl = new TcpListener(IPAddress.Any, enetControlPort);
                     _tcpServerControl.Start();
 
-                    // a virtual network adapter with an auto ip address
-                    // is required tp receive the UPD broadcasts
-                    _udpClient = new UdpClient(enetControlPort);
-                    StartUdpListen();
+                    UdpConnect();
                 }
                 catch (Exception)
                 {
@@ -679,17 +683,7 @@ namespace CarSimulator
 
         private bool Disconnect()
         {
-            try
-            {
-                if (_udpClient != null)
-                {
-                    _udpClient.Close();
-                    _udpClient = null;
-                }
-            }
-            catch (Exception)
-            {
-            }
+            UdpDisconnect();
 
             // diag port
             EnetDiagClose();
@@ -736,6 +730,65 @@ namespace CarSimulator
             {
             }
             return true;
+        }
+
+        private void UdpConnect()
+        {
+            // a virtual network adapter with an auto ip address
+            // is required tp receive the UPD broadcasts
+            _udpError = false;
+#if USE_UDP_SOCKET
+            _udpSocket =new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, enetControlPort);
+            _udpSocket.Bind(ipUdp);
+            StartUdpSocketListen();
+#else
+            _udpClient = new UdpClient(enetControlPort);
+            StartUdpListen();
+#endif
+        }
+
+        private void UdpDisconnect()
+        {
+            try
+            {
+                if (_udpSocket != null)
+                {
+                    _udpSocket.Close();
+                    _udpSocket = null;
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
+                if (_udpClient != null)
+                {
+                    _udpClient.Close();
+                    _udpClient = null;
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private void UdpRecover()
+        {
+            try
+            {
+                if (_udpError)
+                {
+                    UdpDisconnect();
+                    UdpConnect();
+                }
+            }
+            catch (Exception)
+            {
+                _udpError = true;
+            }
         }
 
         private bool UpdateOutState()
@@ -1002,6 +1055,7 @@ namespace CarSimulator
                 case ConceptType.conceptKwp2000Bmw:
                     if (_tcpServerDiag != null)
                     {
+                        UdpRecover();
                         ReceiveEnetControl();
                         return ReceiveEnet(receiveData);
                     }
@@ -1084,9 +1138,8 @@ namespace CarSimulator
                 {
                     return;
                 }
-                IPEndPoint ip = new IPEndPoint(IPAddress.Any, enetControlPort);
+                IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
                 byte[] bytes = udpClientLocal.EndReceive(ar, ref ip);
-                StartUdpListen();
 #if false
                 if (bytes != null)
                 {
@@ -1130,9 +1183,77 @@ namespace CarSimulator
                     }
                     _udpClient.Send(identMessage, identMessage.Length, ip);
                 }
+                StartUdpListen();
             }
             catch (Exception)
             {
+                _udpError = true;
+            }
+        }
+
+        private void StartUdpSocketListen()
+        {
+            IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
+            EndPoint tempRemoteEP = (EndPoint)ip;
+            _udpSocket.BeginReceiveFrom(_udpBuffer, 0, _udpBuffer.Length, SocketFlags.None, ref tempRemoteEP, UdpSocketReceiver, _udpSocket);
+        }
+
+        private void UdpSocketReceiver(IAsyncResult ar)
+        {
+            try
+            {
+                Socket udpSocketLocal = (Socket)ar.AsyncState;
+                IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
+                EndPoint tempRemoteEP = (EndPoint)ip;
+                int recLen = udpSocketLocal.EndReceiveFrom(ar, ref tempRemoteEP);
+#if true
+                if (recLen > 0)
+                {
+                    string text = string.Empty;
+                    for (int i = 0; i < recLen; i++)
+                    {
+                        text += string.Format("{0:X02} ", _udpBuffer[i]);
+                    }
+                    Debug.WriteLine("Udp: " + text);
+                }
+#endif
+                if (recLen == 6 && _udpBuffer[5] == 0x11)
+                {
+                    byte[] identMessage = new byte[6 + 50];
+                    int idx = 0;
+                    identMessage[idx++] = 0x00;
+                    identMessage[idx++] = 0x00;
+                    identMessage[idx++] = 0x00;
+                    identMessage[idx++] = (byte)(identMessage.Length - 6);
+                    identMessage[idx++] = 0x00;
+                    identMessage[idx++] = 0x04;     // Anouncement
+                    // TESTER ID
+                    identMessage[idx++] = (byte)'D';
+                    identMessage[idx++] = (byte)'I';
+                    identMessage[idx++] = (byte)'A';
+                    identMessage[idx++] = (byte)'G';
+                    identMessage[idx++] = (byte)'A';
+                    identMessage[idx++] = (byte)'D';
+                    identMessage[idx++] = (byte)'R';
+                    identMessage[idx++] = (byte)'1';
+                    identMessage[idx++] = (byte)'0';
+                    // MAC
+                    for (int i = 0; i < 18; i++)
+                    {
+                        identMessage[idx++] = (byte)('0' + (i % 10));
+                    }
+                    // VIN
+                    for (int i = 0; i < 23; i++)
+                    {
+                        identMessage[idx++] = (byte)('a' + i);
+                    }
+                    udpSocketLocal.SendTo(identMessage, tempRemoteEP);
+                }
+                StartUdpSocketListen();
+            }
+            catch (Exception)
+            {
+                _udpError = true;
             }
         }
 
