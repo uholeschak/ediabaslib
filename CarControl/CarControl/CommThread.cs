@@ -547,8 +547,11 @@ namespace CarControl
             commStopWatch = new Stopwatch();
             ediabas = new EdiabasNet();
 
-            EdInterfaceObd edInterfaceObd = new EdInterfaceObd();
-            ediabas.EdInterfaceClass = edInterfaceObd;
+#if true
+            ediabas.EdInterfaceClass = new EdInterfaceObd();
+#else
+            ediabas.EdInterfaceClass = new EdInterfaceEnet();
+#endif
             ediabas.AbortJobFunc = AbortEdiabasJob;
             ediabas.SetConfigProperty("EcuPath", ecuPath);
 
@@ -597,7 +600,10 @@ namespace CarControl
             try
             {
                 _stopThread = false;
-                ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = comPort;
+                if (ediabas.EdInterfaceClass is EdInterfaceObd)
+                {
+                    ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = comPort;
+                }
                 if (logFile != null)
                 {
                     ediabas.SetConfigProperty("TracePath", Path.GetDirectoryName(logFile));
