@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.Collections.Generic;
@@ -291,7 +290,7 @@ namespace EdiabasLib
             tcpDiagStreamRecEvent = new AutoResetEvent(false);
             tcpDiagStreamSendLock = new Object();
             tcpDiagStreamRecLock = new Object();
-            tcpControlTimer = new Timer(TcpControlTimeout);
+            tcpControlTimer = new Timer(TcpControlTimeout, null, Timeout.Infinite, Timeout.Infinite);
             tcpControlTimerLock = new Object();
             tcpDiagBuffer = new byte[transBufferSize];
             tcpDiagRecLen = 0;
@@ -327,6 +326,7 @@ namespace EdiabasLib
             {
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Connect");
                 tcpHostIp = null;
+#if !WindowsCE
                 if (remoteHost.StartsWith(autoIp, StringComparison.OrdinalIgnoreCase))
                 {
                     IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, 0);
@@ -348,15 +348,15 @@ namespace EdiabasLib
                             adapterName = configData.Remove(0, 1);
                         }
 
-                        NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
-                        foreach (NetworkInterface adapter in adapters)
+                        System.Net.NetworkInformation.NetworkInterface[] adapters = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
+                        foreach (System.Net.NetworkInformation.NetworkInterface adapter in adapters)
                         {
-                            if (adapter.OperationalStatus == OperationalStatus.Up)
+                            if (adapter.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up)
                             {
-                                IPInterfaceProperties properties = adapter.GetIPProperties();
+                                System.Net.NetworkInformation.IPInterfaceProperties properties = adapter.GetIPProperties();
                                 if (properties.UnicastAddresses != null)
                                 {
-                                    foreach (UnicastIPAddressInformation ipAddressInfo in properties.UnicastAddresses)
+                                    foreach (System.Net.NetworkInformation.UnicastIPAddressInformation ipAddressInfo in properties.UnicastAddresses)
                                     {
                                         if (ipAddressInfo.Address.AddressFamily == AddressFamily.InterNetwork)
                                         {
@@ -420,6 +420,7 @@ namespace EdiabasLib
                     ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, string.Format("Received: IP={0}", tcpHostIp.ToString()));
                 }
                 else
+#endif
                 {
                     tcpHostIp = IPAddress.Parse(this.remoteHost);
                 }
@@ -550,6 +551,7 @@ namespace EdiabasLib
             }
         }
 
+#if !WindowsCE
         protected void StartUdpListen()
         {
             UdpClient udpClientLocal = udpClient;
@@ -595,6 +597,7 @@ namespace EdiabasLib
             {
             }
         }
+#endif
 
         protected static void TcpControlTimerStop()
         {
@@ -912,7 +915,7 @@ namespace EdiabasLib
                 }
                 if (recTels == 0)
                 {
-                    if (!tcpDiagStreamRecEvent.WaitOne(timeout))
+                    if (!tcpDiagStreamRecEvent.WaitOne(timeout, false))
                     {
                         return -1;
                     }
