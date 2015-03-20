@@ -737,8 +737,8 @@ namespace EdiabasLib
                                     byte[] recTelTemp = new byte[telLen];
                                     Array.Copy(tcpDiagBuffer, recTelTemp, telLen);
                                     tcpDiagRecQueue.Enqueue(recTelTemp);
+                                    tcpDiagStreamRecEvent.Set();
                                 }
-                                tcpDiagStreamRecEvent.Set();
                                 break;
 
                             case 0x12:  // alive check
@@ -860,7 +860,7 @@ namespace EdiabasLib
             try
             {
                 int recLen = ReceiveTelegram(dataBuffer, timeout);
-                if (recLen < 0)
+                if (recLen < 4)
                 {
                     return false;
                 }
@@ -912,6 +912,10 @@ namespace EdiabasLib
                 lock (tcpDiagStreamRecLock)
                 {
                     recTels = tcpDiagRecQueue.Count;
+                    if (recTels == 0)
+                    {
+                        tcpDiagStreamRecEvent.Reset();
+                    }
                 }
                 if (recTels == 0)
                 {
@@ -927,6 +931,10 @@ namespace EdiabasLib
                         byte[] recTelFirst = tcpDiagRecQueue.Dequeue();
                         recLen = recTelFirst.Length;
                         Array.Copy(recTelFirst, receiveData, recLen);
+                    }
+                    else
+                    {
+                        recLen = 0;
                     }
                 }
             }
@@ -994,7 +1002,6 @@ namespace EdiabasLib
             int timeout = this.parTimeoutStd;
             for (int retry = 0; retry <= this.parRetryNR; retry++)
             {
-                // header byte
                 if (!ReceiveData(receiveData, timeout))
                 {
                     if (enableLogging) ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "*** No data received");
