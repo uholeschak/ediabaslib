@@ -1210,7 +1210,7 @@ namespace CarSimulator
                 IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
                 EndPoint tempRemoteEP = (EndPoint)ip;
                 int recLen = udpSocketLocal.EndReceiveFrom(ar, ref tempRemoteEP);
-#if true
+#if false
                 if (recLen > 0)
                 {
                     string text = string.Empty;
