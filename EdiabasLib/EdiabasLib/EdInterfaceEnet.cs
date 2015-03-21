@@ -398,7 +398,7 @@ namespace EdiabasLib
                     {
                         try
                         {
-#if Android
+#if Android || WindowsCE
                             IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Broadcast, controlPort);
 #else
                             IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse("169.254.255.255"), controlPort);
@@ -721,7 +721,7 @@ namespace EdiabasLib
                 }
                 if (tcpDiagRecLen > 0)
                 {
-                    if ((Stopwatch.GetTimestamp() - lastTcpDiagRecTime) > 100 * tickResolMs)
+                    if ((Stopwatch.GetTimestamp() - lastTcpDiagRecTime) > 300 * tickResolMs)
                     {   // pending telegram parts too late
                         tcpDiagRecLen = 0;
                     }
