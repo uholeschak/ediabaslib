@@ -285,6 +285,7 @@ namespace CarControl
         {
             StopCommThread(true);
             UpdateDisplay();
+            UpdateLog();
         }
 
         private void DataUpdatedMethode()
@@ -1006,8 +1007,11 @@ namespace CarControl
             }
             else
             {
-                if (listPorts.SelectedIndex < 0) return;
-                string selectedPort = listPorts.SelectedItem.ToString();
+                string selectedPort = "ENET";
+                if (listPorts.SelectedIndex >= 0)
+                {
+                    selectedPort = listPorts.SelectedItem.ToString();
+                }
 
                 string logFile = null;
                 if (checkBoxLogFile.Checked)
