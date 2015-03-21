@@ -604,6 +604,10 @@ namespace CarControl
                 {
                     ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = comPort;
                 }
+                if (ediabas.EdInterfaceClass is EdInterfaceEnet)
+                {
+                    //((EdInterfaceEnet)ediabas.EdInterfaceClass).RemoteHost = "192.168.10.244";
+                }
                 if (logFile != null)
                 {
                     ediabas.SetConfigProperty("TracePath", Path.GetDirectoryName(logFile));
