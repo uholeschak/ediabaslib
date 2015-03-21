@@ -1202,7 +1202,11 @@ namespace CarSimulator
         {
             try
             {
-                Socket udpSocketLocal = (Socket)ar.AsyncState;
+                Socket udpSocketLocal = _udpSocket;
+                if (udpSocketLocal == null)
+                {
+                    return;
+                }
                 IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
                 EndPoint tempRemoteEP = (EndPoint)ip;
                 int recLen = udpSocketLocal.EndReceiveFrom(ar, ref tempRemoteEP);
