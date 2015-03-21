@@ -398,7 +398,7 @@ namespace EdiabasLib
                     {
                         try
                         {
-#if Android
+#if Android || WindowsCE
                             IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Broadcast, controlPort);
 #else
                             IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse("169.254.255.255"), controlPort);
