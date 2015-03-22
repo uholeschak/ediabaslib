@@ -497,22 +497,36 @@ namespace Ediabas
             EdInterfaceBase edInterface = new EdInterfaceObd();
             if (!string.IsNullOrEmpty(ifh))
             {
-                if (!edInterface.IsValidInterfaceName(ifh))
+                if (!edInterface.IsValidInterfaceName (ifh))
                 {
-                    edInterface.Dispose();
+                    edInterface.Dispose ();
+                    edInterface = null;
+                }
+#if !Android
+                if (edInterface == null)
+                {
                     edInterface = new EdInterfaceAds();
                     if (!edInterface.IsValidInterfaceName(ifh))
                     {
                         edInterface.Dispose();
-                        edInterface = new EdInterfaceEnet();
-                        if (!edInterface.IsValidInterfaceName(ifh))
-                        {
-                            setLocalError(EDIABAS_IFH_0027);
-                            edInterface.Dispose();
-                            ediabas.Dispose();
-                            return false;
-                        }
+                        edInterface = null;
                     }
+                }
+#endif
+                if (edInterface == null)
+                {
+                    edInterface = new EdInterfaceEnet();
+                    if (!edInterface.IsValidInterfaceName(ifh))
+                    {
+                        edInterface.Dispose();
+                        edInterface = null;
+                    }
+                }
+                if (edInterface == null)
+                {
+                    setLocalError(EDIABAS_IFH_0027);
+                    ediabas.Dispose();
+                    return false;
                 }
             }
             if (!edInterface.InterfaceLock())
