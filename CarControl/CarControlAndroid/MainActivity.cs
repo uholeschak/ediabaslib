@@ -38,7 +38,8 @@ namespace CarControlAndroid
         private Button buttonAdapterConfigCan500;
         private Button buttonAdapterConfigCan100;
         private Button buttonAdapterConfigCanOff;
-        private TextView textViewResultAxis;
+        private ListView listViewResultAxis;
+        private ResultListAdapter resultListAdapterAxis;
         private TextView textViewResultMotor;
         private TextView textViewResultMotorUnevenRunning;
         private TextView textViewResultMotorRotIrregular;
@@ -78,7 +79,10 @@ namespace CarControlAndroid
             buttonAdapterConfigCan500 = FindViewById<Button> (Resource.Id.button_adapter_config_can_500);
             buttonAdapterConfigCan100 = FindViewById<Button> (Resource.Id.button_adapter_config_can_100);
             buttonAdapterConfigCanOff = FindViewById<Button> (Resource.Id.button_adapter_config_can_off);
-            textViewResultAxis = FindViewById<TextView> (Resource.Id.textViewResultAxis);
+            listViewResultAxis = FindViewById<ListView>(Resource.Id.resultListAxis);
+            resultListAdapterAxis = new ResultListAdapter(this);
+            listViewResultAxis.Adapter = resultListAdapterAxis;
+
             textViewResultMotor = FindViewById<TextView> (Resource.Id.textViewResultMotor);
             textViewResultMotorUnevenRunning = FindViewById<TextView> (Resource.Id.textViewResultMotorUnevenRunning);
             textViewResultMotorRotIrregular = FindViewById<TextView> (Resource.Id.textViewResultMotorRotIrregular);
@@ -584,7 +588,6 @@ namespace CarControlAndroid
 
             if (axisDataValid)
             {
-                string outputText = string.Empty;
                 string tempText;
                 bool found;
                 Dictionary<string, EdiabasNet.ResultData> resultDict = null;
@@ -592,6 +595,7 @@ namespace CarControlAndroid
                 {
                     resultDict = commThread.EdiabasResultDict;
                 }
+                resultListAdapterAxis.Items.Clear();
                 Int64 axisMode = GetResultInt64(resultDict, "MODE_CTRL_LESEN_WERT", out found);
                 tempText = string.Empty;
                 if (found)
@@ -613,17 +617,17 @@ namespace CarControlAndroid
                         tempText = GetString (Resource.String.axis_mode_normal);
                     }
                 }
-                outputText += GetString (Resource.String.label_axis_mode) + " " + tempText + "\r\n";
+                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_mode), tempText));
 
                 tempText = FormatResultInt64(resultDict, "ORGFASTFILTER_RL", "{0,4}");
                 if (tempText.Length > 0) tempText += " / ";
                 tempText += FormatResultInt64(resultDict, "FASTFILTER_RL", "{0,4}");
-                outputText += GetString (Resource.String.label_axis_left) + " " + tempText + "\r\n";
+                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_left), tempText));
 
                 tempText = FormatResultInt64(resultDict, "ORGFASTFILTER_RR", "{0,4}");
                 if (tempText.Length > 0) tempText += " / ";
                 tempText += FormatResultInt64(resultDict, "FASTFILTER_RR", "{0,4}");
-                outputText += GetString (Resource.String.label_axis_right) + " " + tempText + "\r\n";
+                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_right), tempText));
 
                 Int64 voltage = GetResultInt64(resultDict, "ANALOG_U_KL30", out found);
                 if (found)
@@ -634,17 +638,17 @@ namespace CarControlAndroid
                 {
                     tempText = string.Empty;
                 }
-                outputText += GetString (Resource.String.label_axis_bat_volt) + " " + tempText + "\r\n";
+                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_bat_volt), tempText));
 
                 tempText = FormatResultInt64(resultDict, "STATE_SPEED", "{0,4}");
-                outputText += GetString (Resource.String.label_axis_speed) + " " + tempText + "\r\n";
+                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_speed), tempText));
 
                 tempText = string.Empty;
                 for (int channel = 0; channel < 4; channel++)
                 {
                     tempText = FormatResultInt64(resultDict, string.Format("STATUS_SIGNALE_NUMERISCH{0}_WERT", channel), "{0}") + tempText;
                 }
-                outputText += GetString (Resource.String.label_axis_valve_state) + " " + tempText + "\r\n";
+                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_valve_state), tempText));
 
                 Int64 speed = GetResultInt64(resultDict, "STATE_SPEED", out found);
                 if (!found) speed = 0;
@@ -663,11 +667,13 @@ namespace CarControlAndroid
                     buttonAxisDown.Enabled = false;
                 }
                 buttonAxisUp.Enabled = true;
-                textViewResultAxis.Text = outputText;
+                resultListAdapterAxis.NotifyDataSetChanged();
             }
             else
             {
-                textViewResultAxis.Text = string.Empty;
+                resultListAdapterAxis.Items.Clear();
+                resultListAdapterAxis.NotifyDataSetChanged();
+
                 buttonAxisDown.Checked = false;
                 buttonAxisDown.Enabled = false;
                 buttonAxisUp.Checked = false;

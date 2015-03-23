@@ -50,25 +50,11 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <ScrollView
-                        android:minWidth="25px"
-                        android:minHeight="25px"
+                    <ListView
+                        android:id="@+id/resultListAxis"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:id="@+id/scrollViewTextAxis"
-                        android:layout_weight="1"
-                        android:scrollbars="vertical">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/textViewResultAxis"
-                            android:editable="false"
-                            android:visibility="visible"
-                            android:singleLine="false"
-                            android:cursorVisible="false"
-                            android:bufferType="normal"
-                            android:scrollbars="none" />
-                    </ScrollView>
+                        android:layout_weight="1" />
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"

@@ -58,6 +58,7 @@
       <Link>CommThread.cs</Link>
     </Compile>
     <Compile Include="DeviceListActivity.cs" />
+    <Compile Include="ResultListAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -80,6 +81,7 @@
     <AndroidResource Include="Resources\drawable-hdpi\icon.png" />
     <AndroidResource Include="Resources\values\Strings.xml" />
     <AndroidResource Include="Resources\values-de\Strings.xml" />
+    <AndroidResource Include="Resources\layout\result_list.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
