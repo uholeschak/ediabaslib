@@ -66,6 +66,7 @@ namespace CarControlAndroid
             }
             else
             {
+                textView2.Visibility = ViewStates.Visible;
                 textView2.Text = item.Text2;
                 if (textWeight >= 0)
                 {
