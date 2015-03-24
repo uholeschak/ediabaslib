@@ -172,50 +172,22 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <ScrollView
-                        android:minWidth="25px"
-                        android:minHeight="25px"
+                    <ListView
+                        android:id="@+id/resultListErrors"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:id="@+id/scrollViewTextErrors"
-                        android:layout_weight="1"
-                        android:scrollbars="vertical">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/textViewResultErrors"
-                            android:editable="false"
-                            android:visibility="visible"
-                            android:singleLine="false"
-                            android:cursorVisible="false"
-                            android:bufferType="normal"
-                            android:scrollbars="none" />
-                    </ScrollView>
+                        android:layout_weight="1" />
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/tabAdapterConfig"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <ScrollView
-                        android:minWidth="25px"
-                        android:minHeight="25px"
+                    <ListView
+                        android:id="@+id/resultListAdapterConfig"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:id="@+id/scrollViewAdapterConfig"
-                        android:layout_weight="1"
-                        android:scrollbars="vertical">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/textViewResultAdapterConfig"
-                            android:editable="false"
-                            android:visibility="visible"
-                            android:singleLine="false"
-                            android:cursorVisible="false"
-                            android:bufferType="normal"
-                            android:scrollbars="none" />
-                    </ScrollView>
+                        android:layout_weight="1" />
                     <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"

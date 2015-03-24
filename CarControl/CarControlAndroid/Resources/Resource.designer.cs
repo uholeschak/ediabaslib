@@ -76,23 +76,23 @@ namespace CarControlAndroid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f060024
-			public const int ListText1 = 2131099684;
-			
-			// aapt resource value: 0x7f060025
-			public const int ListText2 = 2131099685;
+			// aapt resource value: 0x7f060022
+			public const int ListText1 = 2131099682;
 			
 			// aapt resource value: 0x7f060023
-			public const int buttonConnect = 2131099683;
+			public const int ListText2 = 2131099683;
 			
-			// aapt resource value: 0x7f06001e
-			public const int button_adapter_config_can_100 = 2131099678;
+			// aapt resource value: 0x7f060021
+			public const int buttonConnect = 2131099681;
+			
+			// aapt resource value: 0x7f06001c
+			public const int button_adapter_config_can_100 = 2131099676;
+			
+			// aapt resource value: 0x7f06001b
+			public const int button_adapter_config_can_500 = 2131099675;
 			
 			// aapt resource value: 0x7f06001d
-			public const int button_adapter_config_can_500 = 2131099677;
-			
-			// aapt resource value: 0x7f06001f
-			public const int button_adapter_config_can_off = 2131099679;
+			public const int button_adapter_config_can_off = 2131099677;
 			
 			// aapt resource value: 0x7f060007
 			public const int button_axis_down = 2131099655;
@@ -109,11 +109,11 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f06000d
 			public const int button_uneven_running_active = 2131099661;
 			
-			// aapt resource value: 0x7f060029
-			public const int menu_enable_log = 2131099689;
+			// aapt resource value: 0x7f060027
+			public const int menu_enable_log = 2131099687;
 			
-			// aapt resource value: 0x7f060028
-			public const int menu_scan = 2131099688;
+			// aapt resource value: 0x7f060026
+			public const int menu_scan = 2131099686;
 			
 			// aapt resource value: 0x7f060003
 			public const int new_devices = 2131099651;
@@ -121,11 +121,17 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f060001
 			public const int paired_devices = 2131099649;
 			
+			// aapt resource value: 0x7f06001a
+			public const int resultListAdapterConfig = 2131099674;
+			
 			// aapt resource value: 0x7f060006
 			public const int resultListAxis = 2131099654;
 			
 			// aapt resource value: 0x7f060014
 			public const int resultListCccNav = 2131099668;
+			
+			// aapt resource value: 0x7f060018
+			public const int resultListErrors = 2131099672;
 			
 			// aapt resource value: 0x7f060016
 			public const int resultListIhk = 2131099670;
@@ -142,17 +148,11 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f06000c
 			public const int resultListMotorUnevenRunning = 2131099660;
 			
-			// aapt resource value: 0x7f06001b
-			public const int scrollViewAdapterConfig = 2131099675;
+			// aapt resource value: 0x7f06001f
+			public const int scrollViewTextTest = 2131099679;
 			
-			// aapt resource value: 0x7f060018
-			public const int scrollViewTextErrors = 2131099672;
-			
-			// aapt resource value: 0x7f060021
-			public const int scrollViewTextTest = 2131099681;
-			
-			// aapt resource value: 0x7f06001a
-			public const int tabAdapterConfig = 2131099674;
+			// aapt resource value: 0x7f060019
+			public const int tabAdapterConfig = 2131099673;
 			
 			// aapt resource value: 0x7f060005
 			public const int tabAxis = 2131099653;
@@ -178,23 +178,17 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f06000b
 			public const int tabMotorUnevenRunning = 2131099659;
 			
+			// aapt resource value: 0x7f06001e
+			public const int tabTest = 2131099678;
+			
+			// aapt resource value: 0x7f060024
+			public const int tabsLayout = 2131099684;
+			
+			// aapt resource value: 0x7f060025
+			public const int tabsText = 2131099685;
+			
 			// aapt resource value: 0x7f060020
-			public const int tabTest = 2131099680;
-			
-			// aapt resource value: 0x7f060026
-			public const int tabsLayout = 2131099686;
-			
-			// aapt resource value: 0x7f060027
-			public const int tabsText = 2131099687;
-			
-			// aapt resource value: 0x7f06001c
-			public const int textViewResultAdapterConfig = 2131099676;
-			
-			// aapt resource value: 0x7f060019
-			public const int textViewResultErrors = 2131099673;
-			
-			// aapt resource value: 0x7f060022
-			public const int textViewResultTest = 2131099682;
+			public const int textViewResultTest = 2131099680;
 			
 			// aapt resource value: 0x7f060002
 			public const int title_new_devices = 2131099650;

@@ -52,8 +52,11 @@ namespace CarControlAndroid
         private ResultListAdapter resultListAdapterCccNav;
         private ListView listViewResultIhk;
         private ResultListAdapter resultListAdapterIhk;
-        private TextView textViewResultErrors;
-        private TextView textViewResultAdapterConfig;
+        private ListView listViewResultErrors;
+        private ResultListAdapter resultListAdapterErrors;
+        private ListView listViewResultAdapterConfig;
+        private ResultListAdapter resultListAdapterAdapterConfig;
+
         private TextView textViewResultTest;
 
         protected override void OnCreate (Bundle bundle)
@@ -96,12 +99,14 @@ namespace CarControlAndroid
             listViewResultMotorPm = FindViewById<ListView>(Resource.Id.resultListMotorPm);
             listViewResultMotorPm.Adapter = resultListAdapterMotorPm = new ResultListAdapter(this);
             listViewResultCccNav = FindViewById<ListView>(Resource.Id.resultListCccNav);
-            listViewResultCccNav.Adapter = resultListAdapterCccNav = new ResultListAdapter(this, 2);
+            listViewResultCccNav.Adapter = resultListAdapterCccNav = new ResultListAdapter(this, 1.7f);
             listViewResultIhk = FindViewById<ListView>(Resource.Id.resultListIhk);
             listViewResultIhk.Adapter = resultListAdapterIhk = new ResultListAdapter(this);
+            listViewResultErrors = FindViewById<ListView>(Resource.Id.resultListErrors);
+            listViewResultErrors.Adapter = resultListAdapterErrors = new ResultListAdapter(this);
+            listViewResultAdapterConfig = FindViewById<ListView>(Resource.Id.resultListAdapterConfig);
+            listViewResultAdapterConfig.Adapter = resultListAdapterAdapterConfig = new ResultListAdapter(this);
 
-            textViewResultErrors = FindViewById<TextView> (Resource.Id.textViewResultErrors);
-            textViewResultAdapterConfig = FindViewById<TextView> (Resource.Id.textViewResultAdapterConfig);
             textViewResultTest = FindViewById<TextView> (Resource.Id.textViewResultTest);
 
             // Get local Bluetooth adapter
@@ -965,9 +970,7 @@ namespace CarControlAndroid
                 {
                     errorReportList = commThread.EdiabasErrorReportList;
                 }
-
-                string outputText = string.Empty;
-
+                resultListAdapterErrors.Items.Clear();
                 if (errorReportList != null)
                 {
                     foreach (CommThread.EdiabasErrorReport errorReport in errorReportList)
@@ -1013,51 +1016,52 @@ namespace CarControlAndroid
 
                         if (message.Length > 0)
                         {
-                            message += "\r\n";
-
-                            outputText += message;
+                            resultListAdapterErrors.Items.Add(new TableResultItem(message, null));
                         }
                     }
-                    if (outputText.Length == 0)
+                    if (resultListAdapterErrors.Items.Count == 0)
                     {
-                        outputText = GetString (Resource.String.error_no_error);
+                        resultListAdapterErrors.Items.Add(new TableResultItem(GetString (Resource.String.error_no_error), null));
                     }
                 }
-                textViewResultErrors.Text = outputText;
+
+                resultListAdapterErrors.NotifyDataSetChanged();
             }
             else
             {
-                textViewResultErrors.Text = string.Empty;
+                resultListAdapterErrors.Items.Clear();
+                resultListAdapterErrors.NotifyDataSetChanged();
             }
 
             if (adapterConfigValid)
             {
-                string outputText = string.Empty;
                 bool found;
                 Dictionary<string, EdiabasNet.ResultData> resultDict = null;
                 lock (CommThread.DataLock)
                 {
                     resultDict = commThread.EdiabasResultDict;
                 }
+                resultListAdapterAdapterConfig.Items.Clear();
 
                 Int64 resultValue = GetResultInt64(resultDict, "DONE", out found);
                 if (found)
                 {
                     if (resultValue > 0)
                     {
-                        outputText = GetString (Resource.String.adapter_config_ok);
+                        resultListAdapterAdapterConfig.Items.Add(new TableResultItem(GetString (Resource.String.adapter_config_ok), null));
                     }
                     else
                     {
-                        outputText = GetString (Resource.String.adapter_config_error);
+                        resultListAdapterAdapterConfig.Items.Add(new TableResultItem(GetString (Resource.String.adapter_config_error), null));
                     }
                 }
 
-                textViewResultAdapterConfig.Text = outputText;
+                resultListAdapterAdapterConfig.NotifyDataSetChanged();
             }
             else
             {
-                textViewResultAdapterConfig.Text = string.Empty;
+                resultListAdapterAdapterConfig.Items.Clear();
+                resultListAdapterAdapterConfig.NotifyDataSetChanged();
             }
             if (commThread != null && commThread.ThreadRunning ())
             {

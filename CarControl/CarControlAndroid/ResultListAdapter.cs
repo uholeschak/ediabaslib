@@ -22,6 +22,7 @@ namespace CarControlAndroid
         }
         Activity context;
         float textWeight;
+
         public ResultListAdapter(Activity context, float textWeight)
             : base()
         {
@@ -59,12 +60,19 @@ namespace CarControlAndroid
             TextView textView1 = view.FindViewById<TextView>(Resource.Id.ListText1);
             TextView textView2 = view.FindViewById<TextView>(Resource.Id.ListText2);
             textView1.Text = item.Text1;
-            textView2.Text = item.Text2;
-            if (textWeight >= 0)
+            if (item.Text2 == null)
             {
-                LinearLayout.LayoutParams layoutPar = (LinearLayout.LayoutParams)textView2.LayoutParameters;
-                layoutPar.Weight = textWeight;
-                textView2.LayoutParameters = layoutPar;
+                textView2.Visibility = ViewStates.Gone;
+            }
+            else
+            {
+                textView2.Text = item.Text2;
+                if (textWeight >= 0)
+                {
+                    LinearLayout.LayoutParams layoutPar = (LinearLayout.LayoutParams)textView2.LayoutParameters;
+                    layoutPar.Weight = textWeight;
+                    textView2.LayoutParameters = layoutPar;
+                }
             }
 
             return view;
