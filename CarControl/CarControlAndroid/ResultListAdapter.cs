@@ -21,11 +21,17 @@ namespace CarControlAndroid
             }
         }
         Activity context;
-        public ResultListAdapter(Activity context)
+        float textWeight;
+        public ResultListAdapter(Activity context, float textWeight)
             : base()
         {
             this.context = context;
             this.items = new List<TableResultItem> ();
+            this.textWeight = textWeight;
+        }
+
+        public ResultListAdapter(Activity context) : this(context, -1)
+        {
         }
 
         public override long GetItemId(int position)
@@ -50,8 +56,16 @@ namespace CarControlAndroid
             View view = convertView;
             if (view == null) // no view to re-use, create new
                 view = context.LayoutInflater.Inflate(Resource.Layout.result_list, null);
-            view.FindViewById<TextView>(Resource.Id.ListText1).Text = item.Text1;
-            view.FindViewById<TextView>(Resource.Id.ListText2).Text = item.Text2;
+            TextView textView1 = view.FindViewById<TextView>(Resource.Id.ListText1);
+            TextView textView2 = view.FindViewById<TextView>(Resource.Id.ListText2);
+            textView1.Text = item.Text1;
+            textView2.Text = item.Text2;
+            if (textWeight >= 0)
+            {
+                LinearLayout.LayoutParams layoutPar = (LinearLayout.LayoutParams)textView2.LayoutParameters;
+                layoutPar.Weight = textWeight;
+                textView2.LayoutParameters = layoutPar;
+            }
 
             return view;
         }

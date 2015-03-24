@@ -49,10 +49,10 @@
     <string name="tab_motor_uneven_running">Laufunruhe</string>
     <string name="button_uneven_running_on">Aktiv</string>
     <string name="button_uneven_running_off">Inaktiv</string>
-    <string name="label_motor_quant_corr_c1">Mengenkorrektur Zylinder 1 [mg/Hub]:</string>
-    <string name="label_motor_quant_corr_c2">Mengenkorrektur Zylinder 2 [mg/Hub]:</string>
-    <string name="label_motor_quant_corr_c3">Mengenkorrektur Zylinder 3 [mg/Hub]:</string>
-    <string name="label_motor_quant_corr_c4">Mengenkorrektur Zylinder 4 [mg/Hub]:</string>
+    <string name="label_motor_quant_corr_c1">Mengenkorr. Zylinder 1 [mg/Hub]:</string>
+    <string name="label_motor_quant_corr_c2">Mengenkorr. Zylinder 2 [mg/Hub]:</string>
+    <string name="label_motor_quant_corr_c3">Mengenkorr. Zylinder 3 [mg/Hub]:</string>
+    <string name="label_motor_quant_corr_c4">Mengenkorr. Zylinder 4 [mg/Hub]:</string>
 
     <!--  Motor rot irregular -->
     <string name="tab_motor_rot_irregular">Drehungsgleichförmig.</string>

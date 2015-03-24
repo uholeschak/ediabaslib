@@ -40,12 +40,18 @@ namespace CarControlAndroid
         private Button buttonAdapterConfigCanOff;
         private ListView listViewResultAxis;
         private ResultListAdapter resultListAdapterAxis;
-        private TextView textViewResultMotor;
-        private TextView textViewResultMotorUnevenRunning;
-        private TextView textViewResultMotorRotIrregular;
-        private TextView textViewResultMotorPm;
-        private TextView textViewResultCccNav;
-        private TextView textViewResultIhk;
+        private ListView listViewResultMotor;
+        private ResultListAdapter resultListAdapterMotor;
+        private ListView listViewResultMotorUnevenRunning;
+        private ResultListAdapter resultListAdapterMotorUnevenRunning;
+        private ListView listViewResultMotorRotIrregular;
+        private ResultListAdapter resultListAdapterMotorRotIrregular;
+        private ListView listViewResultMotorPm;
+        private ResultListAdapter resultListAdapterMotorPm;
+        private ListView listViewResultCccNav;
+        private ResultListAdapter resultListAdapterCccNav;
+        private ListView listViewResultIhk;
+        private ResultListAdapter resultListAdapterIhk;
         private TextView textViewResultErrors;
         private TextView textViewResultAdapterConfig;
         private TextView textViewResultTest;
@@ -80,15 +86,20 @@ namespace CarControlAndroid
             buttonAdapterConfigCan100 = FindViewById<Button> (Resource.Id.button_adapter_config_can_100);
             buttonAdapterConfigCanOff = FindViewById<Button> (Resource.Id.button_adapter_config_can_off);
             listViewResultAxis = FindViewById<ListView>(Resource.Id.resultListAxis);
-            resultListAdapterAxis = new ResultListAdapter(this);
-            listViewResultAxis.Adapter = resultListAdapterAxis;
+            listViewResultAxis.Adapter = resultListAdapterAxis = new ResultListAdapter(this, 2);
+            listViewResultMotor = FindViewById<ListView>(Resource.Id.resultListMotor);
+            listViewResultMotor.Adapter = resultListAdapterMotor = new ResultListAdapter(this);
+            listViewResultMotorUnevenRunning = FindViewById<ListView>(Resource.Id.resultListMotorUnevenRunning);
+            listViewResultMotorUnevenRunning.Adapter = resultListAdapterMotorUnevenRunning = new ResultListAdapter(this);
+            listViewResultMotorRotIrregular = FindViewById<ListView>(Resource.Id.resultListMotorRotIrregular);
+            listViewResultMotorRotIrregular.Adapter = resultListAdapterMotorRotIrregular = new ResultListAdapter(this);
+            listViewResultMotorPm = FindViewById<ListView>(Resource.Id.resultListMotorPm);
+            listViewResultMotorPm.Adapter = resultListAdapterMotorPm = new ResultListAdapter(this);
+            listViewResultCccNav = FindViewById<ListView>(Resource.Id.resultListCccNav);
+            listViewResultCccNav.Adapter = resultListAdapterCccNav = new ResultListAdapter(this, 2);
+            listViewResultIhk = FindViewById<ListView>(Resource.Id.resultListIhk);
+            listViewResultIhk.Adapter = resultListAdapterIhk = new ResultListAdapter(this);
 
-            textViewResultMotor = FindViewById<TextView> (Resource.Id.textViewResultMotor);
-            textViewResultMotorUnevenRunning = FindViewById<TextView> (Resource.Id.textViewResultMotorUnevenRunning);
-            textViewResultMotorRotIrregular = FindViewById<TextView> (Resource.Id.textViewResultMotorRotIrregular);
-            textViewResultMotorPm = FindViewById<TextView> (Resource.Id.textViewResultMotorPm);
-            textViewResultCccNav = FindViewById<TextView> (Resource.Id.textViewResultCccNav);
-            textViewResultIhk = FindViewById<TextView> (Resource.Id.textViewResultIhk);
             textViewResultErrors = FindViewById<TextView> (Resource.Id.textViewResultErrors);
             textViewResultAdapterConfig = FindViewById<TextView> (Resource.Id.textViewResultAdapterConfig);
             textViewResultTest = FindViewById<TextView> (Resource.Id.textViewResultTest);
@@ -588,7 +599,7 @@ namespace CarControlAndroid
 
             if (axisDataValid)
             {
-                string tempText;
+                string dataText;
                 bool found;
                 Dictionary<string, EdiabasNet.ResultData> resultDict = null;
                 lock (CommThread.DataLock)
@@ -597,58 +608,58 @@ namespace CarControlAndroid
                 }
                 resultListAdapterAxis.Items.Clear();
                 Int64 axisMode = GetResultInt64(resultDict, "MODE_CTRL_LESEN_WERT", out found);
-                tempText = string.Empty;
+                dataText = string.Empty;
                 if (found)
                 {
                     if ((axisMode & CommThread.AxisModeConveyor) != 0x00)
                     {
-                        tempText = GetString (Resource.String.axis_mode_conveyor);
+                        dataText = GetString (Resource.String.axis_mode_conveyor);
                     }
                     else if ((axisMode & CommThread.AxisModeTransport) != 0x00)
                     {
-                        tempText = GetString (Resource.String.axis_mode_transport);
+                        dataText = GetString (Resource.String.axis_mode_transport);
                     }
                     else if ((axisMode & CommThread.AxisModeGarage) != 0x00)
                     {
-                        tempText = GetString (Resource.String.axis_mode_garage);
+                        dataText = GetString (Resource.String.axis_mode_garage);
                     }
                     else
                     {
-                        tempText = GetString (Resource.String.axis_mode_normal);
+                        dataText = GetString (Resource.String.axis_mode_normal);
                     }
                 }
-                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_mode), tempText));
+                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_mode), dataText));
 
-                tempText = FormatResultInt64(resultDict, "ORGFASTFILTER_RL", "{0,4}");
-                if (tempText.Length > 0) tempText += " / ";
-                tempText += FormatResultInt64(resultDict, "FASTFILTER_RL", "{0,4}");
-                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_left), tempText));
+                dataText = FormatResultInt64(resultDict, "ORGFASTFILTER_RL", "{0,4}");
+                if (dataText.Length > 0) dataText += " / ";
+                dataText += FormatResultInt64(resultDict, "FASTFILTER_RL", "{0,4}");
+                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_left), dataText));
 
-                tempText = FormatResultInt64(resultDict, "ORGFASTFILTER_RR", "{0,4}");
-                if (tempText.Length > 0) tempText += " / ";
-                tempText += FormatResultInt64(resultDict, "FASTFILTER_RR", "{0,4}");
-                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_right), tempText));
+                dataText = FormatResultInt64(resultDict, "ORGFASTFILTER_RR", "{0,4}");
+                if (dataText.Length > 0) dataText += " / ";
+                dataText += FormatResultInt64(resultDict, "FASTFILTER_RR", "{0,4}");
+                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_right), dataText));
 
                 Int64 voltage = GetResultInt64(resultDict, "ANALOG_U_KL30", out found);
                 if (found)
                 {
-                    tempText = string.Format("{0,6:0.00}", (double)voltage / 1000);
+                    dataText = string.Format("{0,6:0.00}", (double)voltage / 1000);
                 }
                 else
                 {
-                    tempText = string.Empty;
+                    dataText = string.Empty;
                 }
-                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_bat_volt), tempText));
+                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_bat_volt), dataText));
 
-                tempText = FormatResultInt64(resultDict, "STATE_SPEED", "{0,4}");
-                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_speed), tempText));
+                dataText = FormatResultInt64(resultDict, "STATE_SPEED", "{0,4}");
+                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_speed), dataText));
 
-                tempText = string.Empty;
+                dataText = string.Empty;
                 for (int channel = 0; channel < 4; channel++)
                 {
-                    tempText = FormatResultInt64(resultDict, string.Format("STATUS_SIGNALE_NUMERISCH{0}_WERT", channel), "{0}") + tempText;
+                    dataText = FormatResultInt64(resultDict, string.Format("STATUS_SIGNALE_NUMERISCH{0}_WERT", channel), "{0}") + dataText;
                 }
-                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_valve_state), tempText));
+                resultListAdapterAxis.Items.Add (new TableResultItem(GetString (Resource.String.label_axis_valve_state), dataText));
 
                 Int64 speed = GetResultInt64(resultDict, "STATE_SPEED", out found);
                 if (!found) speed = 0;
@@ -683,7 +694,6 @@ namespace CarControlAndroid
 
             if (motorDataValid)
             {
-                string outputText = string.Empty;
                 bool found;
                 string dataText;
                 Dictionary<string, EdiabasNet.ResultData> resultDict = null;
@@ -691,89 +701,97 @@ namespace CarControlAndroid
                 {
                     resultDict = commThread.EdiabasResultDict;
                 }
-                outputText += GetString (Resource.String.label_motor_bat_voltage) + " " +
-                    FormatResultDouble(resultDict, "STAT_UBATT_WERT", "{0,7:0.00}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_temp) + " " +
-                    FormatResultDouble(resultDict, "STAT_CTSCD_tClntLin_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_air_mass) + " " +
-                    FormatResultDouble(resultDict, "STAT_LUFTMASSE_WERT", "{0,7:0.00}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_intake_air_temp) + " " +
-                    FormatResultDouble(resultDict, "STAT_LADELUFTTEMPERATUR_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_ambient_temp) + " " +
-                    FormatResultDouble(resultDict, "STAT_UMGEBUNGSTEMPERATUR_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_boost_press_set) + " " +
-                    FormatResultDouble(resultDict, "STAT_LADEDRUCK_SOLL_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_boost_press_act) + " " +
-                    FormatResultDouble(resultDict, "STAT_LADEDRUCK_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_rail_press_set) + " " +
-                    FormatResultDouble(resultDict, "STAT_RAILDRUCK_SOLL_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_rail_press_act) + " " +
-                    FormatResultDouble(resultDict, "STAT_RAILDRUCK_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_air_mass_set) + " " +
-                    FormatResultDouble(resultDict, "STAT_LUFTMASSE_SOLL_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_air_mass_act) + " " +
-                    FormatResultDouble(resultDict, "STAT_LUFTMASSE_PRO_HUB_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_ambient_press) + " " +
-                    FormatResultDouble(resultDict, "STAT_UMGEBUNGSDRUCK_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_fuel_temp) + " " +
-                    FormatResultDouble(resultDict, "STAT_KRAFTSTOFFTEMPERATURK_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_temp_before_filter) + " " +
-                    FormatResultDouble(resultDict, "STAT_ABGASTEMPERATUR_VOR_PARTIKELFILTER_1_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_temp_before_cat) + " " +
-                    FormatResultDouble(resultDict, "STAT_ABGASTEMPERATUR_VOR_KATALYSATOR_WERT", "{0,6:0.0}") + "\r\n";
+                resultListAdapterMotor.Items.Clear();
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_bat_voltage), FormatResultDouble(resultDict, "STAT_UBATT_WERT", "{0,7:0.00}")));
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_temp), FormatResultDouble(resultDict, "STAT_CTSCD_tClntLin_WERT", "{0,6:0.0}")));
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_air_mass), FormatResultDouble(resultDict, "STAT_LUFTMASSE_WERT", "{0,7:0.00}")));
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_intake_air_temp), FormatResultDouble(resultDict, "STAT_LADELUFTTEMPERATUR_WERT", "{0,6:0.0}")));
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_ambient_temp), FormatResultDouble(resultDict, "STAT_UMGEBUNGSTEMPERATUR_WERT", "{0,6:0.0}")));
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_boost_press_set), FormatResultDouble(resultDict, "STAT_LADEDRUCK_SOLL_WERT", "{0,6:0.0}")));
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_boost_press_act), FormatResultDouble(resultDict, "STAT_LADEDRUCK_WERT", "{0,6:0.0}")));
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_rail_press_set), FormatResultDouble(resultDict, "STAT_RAILDRUCK_SOLL_WERT", "{0,6:0.0}")));
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_rail_press_act), FormatResultDouble(resultDict, "STAT_RAILDRUCK_WERT", "{0,6:0.0}")));
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_air_mass_set), FormatResultDouble(resultDict, "STAT_LUFTMASSE_SOLL_WERT", "{0,6:0.0}")));
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_air_mass_act), FormatResultDouble(resultDict, "STAT_LUFTMASSE_PRO_HUB_WERT", "{0,6:0.0}")));
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_ambient_press), FormatResultDouble(resultDict, "STAT_UMGEBUNGSDRUCK_WERT", "{0,6:0.0}")));
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_fuel_temp), FormatResultDouble(resultDict, "STAT_KRAFTSTOFFTEMPERATURK_WERT", "{0,6:0.0}")));
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_temp_before_filter), FormatResultDouble(resultDict, "STAT_ABGASTEMPERATUR_VOR_PARTIKELFILTER_1_WERT", "{0,6:0.0}")));
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_temp_before_cat), FormatResultDouble(resultDict, "STAT_ABGASTEMPERATUR_VOR_KATALYSATOR_WERT", "{0,6:0.0}")));
 
                 dataText = string.Format("{0,6:0.0}", GetResultDouble(resultDict, "STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT", out found) / 1000.0);
                 if (!found) dataText = string.Empty;
-                outputText += GetString (Resource.String.label_motor_part_filt_dist_since_regen) + " " + dataText + "\r\n";
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_part_filt_dist_since_regen), dataText));
 
-                outputText += GetString (Resource.String.label_motor_exhaust_press) + " " +
-                    FormatResultDouble(resultDict, "STAT_DIFFERENZDRUCK_UEBER_PARTIKELFILTER_WERT", "{0,6:0.0}") + "\r\n";
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_exhaust_press), FormatResultDouble(resultDict, "STAT_DIFFERENZDRUCK_UEBER_PARTIKELFILTER_WERT", "{0,6:0.0}")));
 
                 dataText = ((GetResultDouble(resultDict, "STAT_OELDRUCKSCHALTER_EIN_WERT", out found) > 0.5) && found) ? "1" : "0";
                 if (!found) dataText = string.Empty;
-                outputText += GetString (Resource.String.label_motor_oil_press_switch) + " " + dataText + "\r\n";
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_oil_press_switch), dataText));
 
                 dataText = ((GetResultDouble(resultDict, "STAT_REGENERATIONSANFORDERUNG_WERT", out found) < 0.5) && found) ? "1" : "0";
                 if (!found) dataText = string.Empty;
-                outputText += GetString (Resource.String.label_motor_part_filt_request) + " " + dataText + "\r\n";
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_part_filt_request), dataText));
 
                 dataText = ((GetResultDouble(resultDict, "STAT_EGT_st_WERT", out found) > 1.5) && found) ? "1" : "0";
                 if (!found) dataText = string.Empty;
-                outputText += GetString (Resource.String.label_motor_part_filt_status) + " " + dataText + "\r\n";
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_part_filt_status), dataText));
 
                 dataText = ((GetResultDouble(resultDict, "STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT", out found) < 0.5) && found) ? "1" : "0";
                 if (!found) dataText = string.Empty;
-                outputText += GetString (Resource.String.label_motor_part_filt_unblocked) + " " + dataText + "\r\n";
+                resultListAdapterMotor.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_part_filt_unblocked), dataText));
 
-                textViewResultMotor.Text = outputText;
+                resultListAdapterMotor.NotifyDataSetChanged();
             }
             else
             {
-                textViewResultMotor.Text = string.Empty;
+                resultListAdapterMotor.Items.Clear();
+                resultListAdapterMotor.NotifyDataSetChanged();
             }
 
             if (motorDataUnevenRunningValid)
             {
-                string outputText = string.Empty;
                 Dictionary<string, EdiabasNet.ResultData> resultDict = null;
                 lock (CommThread.DataLock)
                 {
                     resultDict = commThread.EdiabasResultDict;
                 }
-                outputText += GetString (Resource.String.label_motor_quant_corr_c1) + " " +
-                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_LLR_MENGE_ZYL1_WERT", "{0,5:0.00}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_quant_corr_c2) + " " +
-                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_LLR_MENGE_ZYL2_WERT", "{0,5:0.00}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_quant_corr_c3) + " " +
-                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_LLR_MENGE_ZYL3_WERT", "{0,5:0.00}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_quant_corr_c4) + " " +
-                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_LLR_MENGE_ZYL4_WERT", "{0,5:0.00}") + "\r\n";
+                resultListAdapterMotorUnevenRunning.Items.Clear();
+                resultListAdapterMotorUnevenRunning.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_quant_corr_c1), FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_LLR_MENGE_ZYL1_WERT", "{0,5:0.00}")));
+                resultListAdapterMotorUnevenRunning.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_quant_corr_c2), FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_LLR_MENGE_ZYL2_WERT", "{0,5:0.00}")));
+                resultListAdapterMotorUnevenRunning.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_quant_corr_c3), FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_LLR_MENGE_ZYL3_WERT", "{0,5:0.00}")));
+                resultListAdapterMotorUnevenRunning.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_quant_corr_c4), FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_LLR_MENGE_ZYL4_WERT", "{0,5:0.00}")));
 
-                textViewResultMotorUnevenRunning.Text = outputText;
+                resultListAdapterMotorUnevenRunning.NotifyDataSetChanged();
             }
             else
             {
-                textViewResultMotorUnevenRunning.Text = string.Empty;
+                resultListAdapterMotorUnevenRunning.Items.Clear();
+                resultListAdapterMotorUnevenRunning.NotifyDataSetChanged();
             }
             if (commThread != null && commThread.ThreadRunning ())
             {
@@ -788,26 +806,27 @@ namespace CarControlAndroid
 
             if (motorRotIrregularValid)
             {
-                string outputText = string.Empty;
                 Dictionary<string, EdiabasNet.ResultData> resultDict = null;
                 lock (CommThread.DataLock)
                 {
                     resultDict = commThread.EdiabasResultDict;
                 }
-                outputText += GetString (Resource.String.label_motor_rpm_c1) + " " +
-                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_DREHZAHL_ZYL1_WERT", "{0,7:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_rpm_c2) + " " +
-                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_DREHZAHL_ZYL2_WERT", "{0,7:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_rpm_c3) + " " +
-                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_DREHZAHL_ZYL3_WERT", "{0,7:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_rpm_c4) + " " +
-                    FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_DREHZAHL_ZYL4_WERT", "{0,7:0.0}") + "\r\n";
+                resultListAdapterMotorRotIrregular.Items.Clear();
+                resultListAdapterMotorRotIrregular.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_rpm_c1), FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_DREHZAHL_ZYL1_WERT", "{0,7:0.0}")));
+                resultListAdapterMotorRotIrregular.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_rpm_c2), FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_DREHZAHL_ZYL2_WERT", "{0,7:0.0}")));
+                resultListAdapterMotorRotIrregular.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_rpm_c3), FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_DREHZAHL_ZYL3_WERT", "{0,7:0.0}")));
+                resultListAdapterMotorRotIrregular.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_rpm_c4), FormatResultDouble(resultDict, "STAT_LAUFUNRUHE_DREHZAHL_ZYL4_WERT", "{0,7:0.0}")));
 
-                textViewResultMotorRotIrregular.Text = outputText;
+                resultListAdapterMotorRotIrregular.NotifyDataSetChanged();
             }
             else
             {
-                textViewResultMotorRotIrregular.Text = string.Empty;
+                resultListAdapterMotorRotIrregular.Items.Clear();
+                resultListAdapterMotorRotIrregular.NotifyDataSetChanged();
             }
             if (commThread != null && commThread.ThreadRunning ())
             {
@@ -822,48 +841,48 @@ namespace CarControlAndroid
 
             if (motorPmValid)
             {
-                string outputText = string.Empty;
                 Dictionary<string, EdiabasNet.ResultData> resultDict = null;
                 lock (CommThread.DataLock)
                 {
                     resultDict = commThread.EdiabasResultDict;
                 }
-                outputText += GetString (Resource.String.label_motor_pm_bat_cap) + " " +
-                    FormatResultDouble(resultDict, "STAT_BATTERIE_KAPAZITAET_WERT", "{0,3:0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_pm_soh) + " " +
-                    FormatResultDouble(resultDict, "STAT_SOH_WERT", "{0,5:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_pm_soc_fit) + " " +
-                    FormatResultDouble(resultDict, "STAT_SOC_FIT_WERT", "{0,5:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_pm_season_temp) + " " +
-                    FormatResultDouble(resultDict, "STAT_TEMP_SAISON_WERT", "{0,5:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_motor_pm_cal_events) + " " +
-                    FormatResultDouble(resultDict, "STAT_KALIBRIER_EVENT_CNT_WERT", "{0,3:0}") + "\r\n";
+                resultListAdapterMotorPm.Items.Clear();
+                resultListAdapterMotorPm.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_pm_bat_cap), FormatResultDouble(resultDict, "STAT_BATTERIE_KAPAZITAET_WERT", "{0,3:0}")));
+                resultListAdapterMotorPm.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_pm_soh), FormatResultDouble(resultDict, "STAT_SOH_WERT", "{0,5:0.0}")));
+                resultListAdapterMotorPm.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_pm_soc_fit), FormatResultDouble(resultDict, "STAT_SOC_FIT_WERT", "{0,5:0.0}")));
+                resultListAdapterMotorPm.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_pm_season_temp), FormatResultDouble(resultDict, "STAT_TEMP_SAISON_WERT", "{0,5:0.0}")));
+                resultListAdapterMotorPm.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_pm_cal_events), FormatResultDouble(resultDict, "STAT_KALIBRIER_EVENT_CNT_WERT", "{0,3:0}")));
 
-                outputText += GetString (Resource.String.label_motor_pm_soc_q) + " " +
-                    FormatResultDouble (resultDict, "STAT_Q_SOC_AKTUELL_WERT", "{0,6:0.0}");
-                outputText += " " + GetString (Resource.String.label_motor_pm_day1) + " " +
-                    FormatResultDouble(resultDict, "STAT_Q_SOC_VOR_1_TAG_WERT", "{0,6:0.0}") + "\r\n";
+                resultListAdapterMotorPm.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_pm_soc_q), FormatResultDouble (resultDict, "STAT_Q_SOC_AKTUELL_WERT", "{0,6:0.0}")));
+                resultListAdapterMotorPm.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_pm_day1), FormatResultDouble(resultDict, "STAT_Q_SOC_VOR_1_TAG_WERT", "{0,6:0.0}")));
 
-                outputText += GetString (Resource.String.label_motor_pm_start_cap) + " " +
-                    FormatResultDouble(resultDict, "STAT_STARTFAEHIGKEITSGRENZE_AKTUELL_WERT", "{0,5:0.0}");
-                outputText += " " + GetString (Resource.String.label_motor_pm_day1) + " " +
-                    FormatResultDouble(resultDict, "STAT_STARTFAEHIGKEITSGRENZE_VOR_1_TAG_WERT", "{0,5:0.0}") + "\r\n";
+                resultListAdapterMotorPm.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_pm_start_cap), FormatResultDouble(resultDict, "STAT_STARTFAEHIGKEITSGRENZE_AKTUELL_WERT", "{0,5:0.0}")));
+                resultListAdapterMotorPm.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_pm_day1), FormatResultDouble(resultDict, "STAT_STARTFAEHIGKEITSGRENZE_VOR_1_TAG_WERT", "{0,5:0.0}")));
 
-                outputText += GetString (Resource.String.label_motor_pm_soc_percent) + " " +
-                    FormatResultDouble(resultDict, "STAT_LADUNGSZUSTAND_AKTUELL_WERT", "{0,5:0.0}");
-                outputText += " " + GetString (Resource.String.label_motor_pm_day1) + " " +
-                    FormatResultDouble(resultDict, "STAT_LADUNGSZUSTAND_VOR_1_TAG_WERT", "{0,5:0.0}") + "\r\n";
+                resultListAdapterMotorPm.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_pm_soc_percent), FormatResultDouble(resultDict, "STAT_LADUNGSZUSTAND_AKTUELL_WERT", "{0,5:0.0}")));
+                resultListAdapterMotorPm.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_motor_pm_day1), FormatResultDouble(resultDict, "STAT_LADUNGSZUSTAND_VOR_1_TAG_WERT", "{0,5:0.0}")));
 
-                textViewResultMotorPm.Text = outputText;
+                resultListAdapterMotorPm.NotifyDataSetChanged();
             }
             else
             {
-                textViewResultMotorPm.Text = string.Empty;
+                resultListAdapterMotorPm.Items.Clear();
+                resultListAdapterMotorPm.NotifyDataSetChanged();
             }
 
             if (cccNavValid)
             {
-                string outputText = string.Empty;
                 bool found;
                 string dataText;
                 Dictionary<string, EdiabasNet.ResultData> resultDict = null;
@@ -871,38 +890,42 @@ namespace CarControlAndroid
                 {
                     resultDict = commThread.EdiabasResultDict;
                 }
-                outputText += GetString (Resource.String.label_ccc_nav_pos_lat) + " " +
-                    FormatResultString(resultDict, "STAT_GPS_POSITION_BREITE", "{0}") + "\r\n";
-                outputText += GetString (Resource.String.label_ccc_nav_pos_long) + " " +
-                    FormatResultString(resultDict, "STAT_GPS_POSITION_LAENGE", "{0}") + "\r\n";
-                outputText += GetString (Resource.String.label_ccc_nav_pos_height) + " " +
-                    FormatResultString(resultDict, "STAT_GPS_POSITION_HOEHE", "{0}") + "\r\n";
-                outputText += GetString (Resource.String.label_ccc_nav_gps_date_time) + " " +
-                    FormatResultString(resultDict, "STAT_TIME_DATE_VAL", "{0}").Replace(".*6*", ".201") + "\r\n";
-                outputText += GetString (Resource.String.label_ccc_nav_pos_type) + " " +
-                    FormatResultString(resultDict, "STAT_GPS_TEXT", "{0}") + "\r\n";
-                outputText += GetString (Resource.String.label_ccc_nav_speed) + " " +
-                    FormatResultString(resultDict, "STAT_SPEED_VAL", "{0}") + "\r\n";
-                outputText += GetString (Resource.String.label_ccc_nav_res_horz) + " " +
-                    FormatResultString(resultDict, "STAT_HORIZONTALE_AUFLOES", "{0}") + "\r\n";
-                outputText += GetString (Resource.String.label_ccc_nav_res_vert) + " " +
-                    FormatResultString(resultDict, "STAT_VERTICALE_AUFLOES", "{0}") + "\r\n";
-                outputText += GetString (Resource.String.label_ccc_nav_res_pos) + " " +
-                    FormatResultString(resultDict, "STAT_POSITION_AUFLOES", "{0}") + "\r\n";
+                resultListAdapterCccNav.Items.Clear();
+                resultListAdapterCccNav.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ccc_nav_pos_lat), FormatResultString(resultDict, "STAT_GPS_POSITION_BREITE", "{0}")));
+                resultListAdapterCccNav.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ccc_nav_pos_long), FormatResultString(resultDict, "STAT_GPS_POSITION_LAENGE", "{0}")));
+                resultListAdapterCccNav.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ccc_nav_pos_height), FormatResultString(resultDict, "STAT_GPS_POSITION_HOEHE", "{0}")));
+                resultListAdapterCccNav.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ccc_nav_gps_date_time), FormatResultString(resultDict, "STAT_TIME_DATE_VAL", "{0}").Replace(".*6*", ".201")));
+                resultListAdapterCccNav.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ccc_nav_pos_type), FormatResultString(resultDict, "STAT_GPS_TEXT", "{0}")));
+                resultListAdapterCccNav.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ccc_nav_speed), FormatResultString(resultDict, "STAT_SPEED_VAL", "{0}")));
+                resultListAdapterCccNav.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ccc_nav_res_horz), FormatResultString(resultDict, "STAT_HORIZONTALE_AUFLOES", "{0}")));
+                resultListAdapterCccNav.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ccc_nav_res_vert), FormatResultString(resultDict, "STAT_VERTICALE_AUFLOES", "{0}")));
+                resultListAdapterCccNav.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ccc_nav_res_pos), FormatResultString(resultDict, "STAT_POSITION_AUFLOES", "{0}")));
 
                 dataText = ((GetResultInt64(resultDict, "STAT_ALMANACH", out found) > 0.5) && found) ? "1" : "0";
                 if (!found) dataText = string.Empty;
-                outputText += GetString (Resource.String.label_ccc_nav_almanach) + " " + dataText + "\r\n";
+                resultListAdapterCccNav.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ccc_nav_almanach), dataText));
 
                 dataText = ((GetResultInt64(resultDict, "STAT_HIP_DRIVER", out found) < 0.5) && found) ? "1" : "0";
                 if (!found) dataText = string.Empty;
-                outputText += GetString (Resource.String.label_ccc_nav_hip_driver) + " " + dataText + "\r\n";
+                resultListAdapterCccNav.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ccc_nav_hip_driver), dataText));
 
-                textViewResultCccNav.Text = outputText;
+                resultListAdapterCccNav.NotifyDataSetChanged();
             }
             else
             {
-                textViewResultCccNav.Text = string.Empty;
+                resultListAdapterCccNav.Items.Clear();
+                resultListAdapterCccNav.NotifyDataSetChanged();
             }
 
             if (ihkValid)
@@ -913,24 +936,26 @@ namespace CarControlAndroid
                 {
                     resultDict = commThread.EdiabasResultDict;
                 }
-                outputText += GetString (Resource.String.label_ihk_in_temp) + " " +
-                    FormatResultDouble(resultDict, "STAT_TINNEN_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_ihk_in_temp_delay) + " " +
-                    FormatResultDouble(resultDict, "STAT_TINNEN_VERZOEGERT_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_ihk_out_temp) + " " +
-                    FormatResultDouble(resultDict, "STAT_TAUSSEN_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_ihk_setpoint) + " " +
-                    FormatResultDouble(resultDict, "STAT_SOLL_LI_KORRIGIERT_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_ihk_heat_ex_temp) + " " +
-                    FormatResultDouble(resultDict, "STAT_WT_RE_WERT", "{0,6:0.0}") + "\r\n";
-                outputText += GetString (Resource.String.label_ihk_heat_ex_setpoint) + " " +
-                    FormatResultDouble(resultDict, "STAT_WTSOLL_RE_WERT", "{0,6:0.0}") + "\r\n";
+                resultListAdapterIhk.Items.Clear();
+                resultListAdapterIhk.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ihk_in_temp), FormatResultDouble(resultDict, "STAT_TINNEN_WERT", "{0,6:0.0}")));
+                resultListAdapterIhk.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ihk_in_temp_delay), FormatResultDouble(resultDict, "STAT_TINNEN_VERZOEGERT_WERT", "{0,6:0.0}")));
+                resultListAdapterIhk.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ihk_out_temp), FormatResultDouble(resultDict, "STAT_TAUSSEN_WERT", "{0,6:0.0}")));
+                resultListAdapterIhk.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ihk_setpoint), FormatResultDouble(resultDict, "STAT_SOLL_LI_KORRIGIERT_WERT", "{0,6:0.0}")));
+                resultListAdapterIhk.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ihk_heat_ex_temp), FormatResultDouble(resultDict, "STAT_WT_RE_WERT", "{0,6:0.0}")));
+                resultListAdapterIhk.Items.Add(
+                    new TableResultItem(GetString (Resource.String.label_ihk_heat_ex_setpoint), FormatResultDouble(resultDict, "STAT_WTSOLL_RE_WERT", "{0,6:0.0}")));
 
-                textViewResultIhk.Text = outputText;
+                resultListAdapterIhk.NotifyDataSetChanged();
             }
             else
             {
-                textViewResultIhk.Text = string.Empty;
+                resultListAdapterIhk.Items.Clear();
+                resultListAdapterIhk.NotifyDataSetChanged();
             }
 
             if (errorsValid)
