@@ -283,7 +283,7 @@ namespace EdiabasLib
 
         static EdInterfaceEnet()
         {
-#if WindowsCE
+#if WindowsCE || Android
             interfaceMutex = new Mutex(false);
 #else
             interfaceMutex = new Mutex(false, "EdiabasLib_InterfaceEnet");
