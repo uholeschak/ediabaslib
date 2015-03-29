@@ -60,11 +60,11 @@
     <Compile Include="..\EdiabasLib\EdOperations.cs">
       <Link>EdOperations.cs</Link>
     </Compile>
-    <Compile Include="..\EdiabasLib\MemoryStreamReader.cs">
-      <Link>MemoryStreamReader.cs</Link>
-    </Compile>
     <Compile Include="..\EdiabasLib\EdInterfaceEnet.cs">
       <Link>EdInterfaceEnet.cs</Link>
+    </Compile>
+    <Compile Include="..\EdiabasLib\MemoryStreamReaderAndroid.cs">
+      <Link>MemoryStreamReaderAndroid.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
