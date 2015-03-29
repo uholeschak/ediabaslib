@@ -26,7 +26,7 @@ namespace CarControlAndroid
 		
 		public static void UpdateIdValues()
 		{
-			EdiabasLibAndroid.Resource.String.library_name = CarControlAndroid.Resource.String.library_name;
+			global::EdiabasLibAndroid.Resource.String.library_name = global::CarControlAndroid.Resource.String.library_name;
 		}
 		
 		public partial class Attribute
