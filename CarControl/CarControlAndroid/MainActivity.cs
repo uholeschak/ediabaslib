@@ -74,6 +74,7 @@ namespace CarControlAndroid
             var ignore = new I18N.West.CP437();
 
             SupportActionBar.NavigationMode = ActionBar.NavigationModeTabs;
+            SupportActionBar.SetDisplayOptions(0, ActionBar.DisplayShowHome | ActionBar.DisplayShowTitle);
             SetContentView (Resource.Layout.main);
 
             buttonConnect = FindViewById<ToggleButton> (Resource.Id.buttonConnect);
