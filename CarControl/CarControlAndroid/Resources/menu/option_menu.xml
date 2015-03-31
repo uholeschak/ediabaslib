@@ -19,5 +19,6 @@
           android:title="@string/menu_connect" />
     <item android:id="@+id/menu_enable_log"
           android:icon="@android:drawable/ic_menu_agenda"
-          android:title="@string/menu_enable_log_off" />
+          android:title="@string/menu_enable_log"
+          android:checkable="true" />
 </menu>

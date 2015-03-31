@@ -225,14 +225,7 @@ namespace CarControlAndroid
             if (logMenu != null)
             {
                 logMenu.SetEnabled (!commActive);
-                if (loggingActive)
-                {
-                    logMenu.SetTitle (GetString (Resource.String.menu_enable_log_on));
-                }
-                else
-                {
-                    logMenu.SetTitle (GetString (Resource.String.menu_enable_log_off));
-                }
+                logMenu.SetChecked(loggingActive);
             }
             return base.OnPrepareOptionsMenu (menu);
         }
@@ -249,6 +242,7 @@ namespace CarControlAndroid
 
                 case Resource.Id.menu_enable_log:
                     loggingActive = !loggingActive;
+                    SupportInvalidateOptionsMenu();
                     return true;
             }
             return base.OnOptionsItemSelected(item);
@@ -382,6 +376,7 @@ namespace CarControlAndroid
             {
                 return false;
             }
+            SupportInvalidateOptionsMenu();
             return true;
         }
 
@@ -405,6 +400,7 @@ namespace CarControlAndroid
                     return false;
                 }
             }
+            SupportInvalidateOptionsMenu();
             return true;
         }
 

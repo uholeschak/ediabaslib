@@ -151,7 +151,6 @@
 
     <!-- Options Menu -->
     <string name="menu_connect">Gerät auswählen</string>
-    <string name="menu_enable_log_on">Logging aktiv</string>
-    <string name="menu_enable_log_off">Logging inaktiv</string>
+    <string name="menu_enable_log">Logfile erzeugen</string>
 
 </resources>

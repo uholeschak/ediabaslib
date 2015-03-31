@@ -1593,11 +1593,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a008d
 			public const int menu_connect = 2131361933;
 			
-			// aapt resource value: 0x7f0a008f
-			public const int menu_enable_log_off = 2131361935;
-			
 			// aapt resource value: 0x7f0a008e
-			public const int menu_enable_log_on = 2131361934;
+			public const int menu_enable_log = 2131361934;
 			
 			// aapt resource value: 0x7f0a0087
 			public const int none_found = 2131361927;
