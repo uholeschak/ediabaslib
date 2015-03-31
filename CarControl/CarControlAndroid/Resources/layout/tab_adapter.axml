@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <ListView
+        android:id="@+id/resultList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/button_adapter_config_can_500"
+            android:text="@string/button_adapter_config_can_500"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onConfig500Click" />
+        <Button
+            android:id="@+id/button_adapter_config_can_100"
+            android:text="@string/button_adapter_config_can_100"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onConfig100Click" />
+        <Button
+            android:id="@+id/button_adapter_config_can_off"
+            android:text="@string/button_adapter_config_can_off"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onConfigOffClick" />
+    </LinearLayout>
+</LinearLayout>

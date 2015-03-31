@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{5FC5723C-A88B-46E3-957C-FF24F9D8212F}</ProjectGuid>
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <ConsolePause>false</ConsolePause>
-    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <MandroidI18n>west</MandroidI18n>
   </PropertyGroup>
   <ItemGroup>
@@ -49,6 +49,13 @@
     <Reference Include="I18N.West">
       <HintPath>C:\Program Files %28x86%29\Reference Assemblies\Microsoft\Framework\MonoAndroid\v1.0\I18N.West.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.Android.Support.v7.AppCompat">
+      <HintPath>Components\xamandroidsupportv7appcompat-20.0.0.1\lib\android\Xamarin.Android.Support.v7.AppCompat.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v4">
+      <HintPath>Components\xamandroidsupportv7appcompat-20.0.0.1\lib\android\Xamarin.Android.Support.v4.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Android.Export" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Resources\Resource.designer.cs" />
@@ -69,19 +76,18 @@
     <AndroidResource Include="Resources\layout\device_list.axml" />
     <AndroidResource Include="Resources\menu\option_menu.xml" />
     <AndroidResource Include="Resources\layout\device_name.axml" />
-    <AndroidResource Include="Resources\layout\main.axml" />
-    <AndroidResource Include="Resources\drawable\tab_bg_selector.axml" />
-    <AndroidResource Include="Resources\drawable\tab_text_selector.axml" />
-    <AndroidResource Include="Resources\layout\tabs_bg.axml" />
-    <AndroidResource Include="Resources\drawable\tab_bg_selected.axml" />
-    <AndroidResource Include="Resources\drawable\tab_bg_unselected.axml" />
-    <AndroidResource Include="Resources\drawable-hdpi\tab_divider.9.png" />
     <AndroidResource Include="Resources\drawable-ldpi\icon.png" />
     <AndroidResource Include="Resources\drawable-mdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-hdpi\icon.png" />
     <AndroidResource Include="Resources\values\Strings.xml" />
     <AndroidResource Include="Resources\values-de\Strings.xml" />
     <AndroidResource Include="Resources\layout\result_list.axml" />
+    <AndroidResource Include="Resources\layout\tab_list.axml" />
+    <AndroidResource Include="Resources\layout\tab_activate.axml" />
+    <AndroidResource Include="Resources\layout\tab_axis.axml" />
+    <AndroidResource Include="Resources\layout\tab_adapter.axml" />
+    <AndroidResource Include="Resources\layout\tab_text.axml" />
+    <AndroidResource Include="Resources\layout\main.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
@@ -92,6 +98,7 @@
     <Folder Include="Resources\drawable-xhdpi\" />
     <Folder Include="Resources\drawable-ldpi\" />
     <Folder Include="Resources\values-de\" />
+    <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="..\..\Ecu\d_zgm.grp">

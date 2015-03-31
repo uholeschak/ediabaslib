@@ -149,6 +149,10 @@
     <string name="title_other_devices">Other available devices</string>
     <string name="button_scan">Scan for devices</string>
 
+    <!-- tabs_activate -->
+    <string name="button_active">Active</string>
+    <string name="button_inactive">Inactive</string>
+
     <!-- Options Menu -->
     <string name="menu_connect">Select a device</string>
     <string name="menu_enable_log_on">Logging active</string>
