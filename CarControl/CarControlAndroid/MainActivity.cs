@@ -697,6 +697,23 @@ namespace CarControlAndroid
                         buttonAxisDown.Enabled = false;
                     }
                     buttonAxisUp.Enabled = true;
+                    switch (commThread.AxisOpMode)
+                    {
+                        case CommThread.OperationMode.OpModeStatus:
+                            buttonAxisDown.Checked = false;
+                            buttonAxisUp.Checked = false;
+                            break;
+
+                        case CommThread.OperationMode.OpModeUp:
+                            buttonAxisDown.Checked = false;
+                            buttonAxisUp.Checked = true;
+                            break;
+
+                        case CommThread.OperationMode.OpModeDown:
+                            buttonAxisDown.Checked = true;
+                            buttonAxisUp.Checked = false;
+                            break;
+                    }
                     resultListAdapter.NotifyDataSetChanged ();
                 }
                 else
