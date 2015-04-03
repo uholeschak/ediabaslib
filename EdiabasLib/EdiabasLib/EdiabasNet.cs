@@ -224,7 +224,7 @@ namespace EdiabasLib
                             Register arg1Data = (Register)opData1;
                             byte[] dataArray = arg1Data.GetArrayData(true);
 
-                            EdValueType index = 0;
+                            EdValueType index;
                             if (opAddrMode == OpAddrMode.IdxImm)
                             {
                                 if (opData2.GetType() != typeof(EdValueType))
@@ -280,7 +280,7 @@ namespace EdiabasLib
                             Register arg1Data = (Register)opData1;
                             byte[] dataArray = arg1Data.GetArrayData(true);
 
-                            EdValueType index = 0;
+                            EdValueType index;
                             if ((opAddrMode == OpAddrMode.IdxImmLenImm) || (opAddrMode == OpAddrMode.IdxImmLenReg))
                             {
                                 if (opData2.GetType() != typeof(EdValueType))
@@ -350,7 +350,7 @@ namespace EdiabasLib
             {
                 Object rawData = GetRawData();
                 EdValueType value;
-                if (rawData.GetType() == typeof(EdValueType))
+                if (rawData is EdValueType)
                 {
                     value = (EdValueType)rawData;
                     return value & GetValueMask();
@@ -459,7 +459,7 @@ namespace EdiabasLib
                             Register arg1Data = (Register)opData1;
                             byte[] dataArray = arg1Data.GetArrayData();
 
-                            EdValueType index = 0;
+                            EdValueType index;
                             if (opAddrMode == OpAddrMode.IdxImm)
                             {
                                 if (opData2.GetType() != typeof(EdValueType))
@@ -489,7 +489,7 @@ namespace EdiabasLib
 
                             EdValueType len;
                             byte[] sourceArray;
-                            if (data.GetType() == typeof(EdValueType))
+                            if (data is EdValueType)
                             {
                                 len = dataLen;
                                 EdValueType sourceValue = (EdValueType)data;
@@ -1652,7 +1652,7 @@ namespace EdiabasLib
             private EdiabasNet ediabas;
         }
 
-        static private Register[] registerList = new Register[]
+        static private Register[] registerList = new []
         {
             new Register(0x00, RegisterType.RegAB, 0),
             new Register(0x01, RegisterType.RegAB, 1),
@@ -1736,7 +1736,7 @@ namespace EdiabasLib
             new Register(0x9B, RegisterType.RegL, 7),
         };
 
-        private static OpCode[] ocList = new OpCode[]
+        private static OpCode[] ocList = new []
         {
             new OpCode(0x00, "move", new OperationDelegate(OpMove)),
             new OpCode(0x01, "clear", new OperationDelegate(OpClear)),
@@ -1924,7 +1924,7 @@ namespace EdiabasLib
             new OpCode(0xB7, "tabrows", new OperationDelegate(OpTabrows)),
         };
 
-        private static VJobInfo[] vJobList = new VJobInfo[]
+        private static VJobInfo[] vJobList = new []
         {
             new VJobInfo("_JOBS", new VJobDelegate(vJobJobs)),
             new VJobInfo("_JOBCOMMENTS", new VJobDelegate(vJobJobComments)),
@@ -1964,8 +1964,8 @@ namespace EdiabasLib
 
             public void UpdateFlags(EdValueType value, EdValueType length)
             {
-                EdValueType valueMask = 0;
-                EdValueType signMask = 0;
+                EdValueType valueMask;
+                EdValueType signMask;
 
                 switch (length)
                 {
@@ -1993,7 +1993,7 @@ namespace EdiabasLib
 
             public void SetOverflow(UInt32 value1, UInt32 value2, UInt32 result, EdValueType length)
             {
-                UInt64 signMask = 0;
+                UInt64 signMask;
 
                 switch (length)
                 {
@@ -2028,7 +2028,7 @@ namespace EdiabasLib
 
             public void SetCarry(UInt64 value, EdValueType length)
             {
-                UInt64 carryMask = 0;
+                UInt64 carryMask;
 
                 switch (length)
                 {
@@ -3049,7 +3049,7 @@ namespace EdiabasLib
         protected virtual void Dispose(bool disposing)
         {
             // Check to see if Dispose has already been called.
-            if (!this.disposed)
+            if (!disposed)
             {
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
@@ -3305,7 +3305,7 @@ namespace EdiabasLib
         private string ReadFileLine(Stream fs)
         {
             StringBuilder stringBuilder = new StringBuilder(100);
-            int currByte = -1;
+            int currByte;
             for (; ; )
             {
                 currByte = fs.ReadByte();
@@ -3337,7 +3337,7 @@ namespace EdiabasLib
         private long ReadFileLineLength(Stream fs)
         {
             StringBuilder stringBuilder = new StringBuilder(100);
-            int currByte = -1;
+            int currByte;
             long lineLength = 0;
             for (; ; )
             {
@@ -3410,7 +3410,7 @@ namespace EdiabasLib
                     this.errorTrapBitNr = 0;
                 }
 
-                EdValueType activeErrors = (EdValueType)((1 << (int)this.errorTrapBitNr) & ~this.errorTrapMask);
+                EdValueType activeErrors = (EdValueType)((1 << this.errorTrapBitNr) & ~this.errorTrapMask);
                 if (activeErrors != 0)
                 {
                     RaiseError(error);
@@ -3443,7 +3443,7 @@ namespace EdiabasLib
             {
                 return string.Empty;
             }
-            uint index = (uint)(errorCode - ErrorCodes.EDIABAS_IFH_0000);
+            uint index = errorCode - ErrorCodes.EDIABAS_IFH_0000;
             return ErrorDescription[index];
         }
 
@@ -3453,7 +3453,7 @@ namespace EdiabasLib
             bool zeroPrexif = false;
             Int32 length1 = -1;
             Int32 length2 = -1;
-            char convertType = 'T';
+            char convertType;
             char exponent = '\0';
 
             // parse format
@@ -3527,16 +3527,16 @@ namespace EdiabasLib
             Double valueDouble = 0;
             string valueString = null;
 
-            if (resultData.opData.GetType() == typeof(Int64))
+            if (resultData.opData is Int64)
             {
                 valueInt64 = (Int64)resultData.opData;
             }
-            else if (resultData.opData.GetType() == typeof(Double))
+            else if (resultData.opData is Double)
             {
                 valueDouble = (Double)resultData.opData;
                 valueIsDouble = true;
             }
-            else if (resultData.opData.GetType() == typeof(string))
+            else if (resultData.opData is string)
             {
                 valueString = (string)resultData.opData;
             }
@@ -4489,8 +4489,8 @@ namespace EdiabasLib
             if (fileType == 0)
             {       // group file
                 string key = baseFileName;
-                string variantName = string.Empty;
-                bool mappingFound = false;
+                string variantName;
+                bool mappingFound;
                 lock (apiLock)
                 {
                     mappingFound = groupMappingDict.TryGetValue(key, out variantName);
@@ -4521,7 +4521,7 @@ namespace EdiabasLib
 
         public UInt32 GetFileType(string fileName)
         {
-            UInt32 fileType = 0;
+            UInt32 fileType;
 
             string baseFileName = Path.GetFileNameWithoutExtension(fileName);
 
@@ -4584,7 +4584,7 @@ namespace EdiabasLib
                     ResultData result;
                     if (resultSets[1].TryGetValue("DONE", out result))
                     {
-                        if (result.opData.GetType() == typeof(Int64))
+                        if (result.opData is Int64)
                         {
                             if ((Int64)result.opData == 1)
                             {
@@ -4658,7 +4658,7 @@ namespace EdiabasLib
                     ResultData result;
                     if (resultSets[1].TryGetValue("VARIANTE", out result))
                     {
-                        if (result.opData.GetType() == typeof(string))
+                        if (result.opData is string)
                         {
                             string variantName = (string)result.opData;
                             LogString(ED_LOG_LEVEL.INFO, "executeIdentJob ok: " + variantName);
@@ -5284,11 +5284,11 @@ namespace EdiabasLib
                 {
                     continue;
                 }
-                if (args[i].GetType() == typeof(string))
+                if (args[i] is string)
                 {
                     args[i] = "'" + (string)args[i] + "'";
                 }
-                if (args[i].GetType() == typeof(byte[]))
+                if (args[i] is byte[])
                 {
                     byte[] argArray = (byte[])args[i];
                     StringBuilder stringBuilder = new StringBuilder(argArray.Length);
@@ -5297,7 +5297,7 @@ namespace EdiabasLib
                         stringBuilder.Append(string.Format(culture, "{0:X02} ", argArray[j]));
                     }
 
-                    args[i] = "[" + stringBuilder.ToString() + "]";
+                    args[i] = "[" + stringBuilder + "]";
                     continue;
                 }
             }
@@ -5355,7 +5355,7 @@ namespace EdiabasLib
                 stringBuilder.Append(string.Format(culture, "{0:X02} ", data[offset + i]));
             }
 
-            LogString(logLevel, " (" + info + "): " + stringBuilder.ToString());
+            LogString(logLevel, " (" + info + "): " + stringBuilder);
         }
 
         public void LogData(ED_LOG_LEVEL logLevel, UInt32[] data, int offset, int length, string info)
@@ -5371,7 +5371,7 @@ namespace EdiabasLib
                 stringBuilder.Append(string.Format(culture, "{0:X08} ", data[offset + i]));
             }
 
-            LogString(logLevel, " (" + info + "): " + stringBuilder.ToString());
+            LogString(logLevel, " (" + info + "): " + stringBuilder);
         }
 
         private void closeLog()
@@ -5640,11 +5640,11 @@ namespace EdiabasLib
                     case OpAddrMode.RegS:
                         {
                             Object data = arg.GetRawData();
-                            if (data.GetType() == typeof(byte[]))
+                            if (data is byte[])
                             {
                                 return regName1 + ": " + getStringText(arg.GetArrayData());
                             }
-                            else if (data.GetType() == typeof(EdFloatType))
+                            else if (data is EdFloatType)
                             {
                                 return regName1 + string.Format(culture, ": {0}", (EdFloatType)data);
                             }

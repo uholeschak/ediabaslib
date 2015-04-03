@@ -63,7 +63,7 @@ namespace EdiabasLib
                     }
                 }
 
-                string[] stringArray = stringData.Split(new char[] { ',', ';' });
+                string[] stringArray = stringData.Split(new [] { ',', ';' });
                 foreach (string stringValue in stringArray)
                 {
                     if (string.IsNullOrEmpty(stringValue.Trim()))
@@ -962,7 +962,7 @@ namespace EdiabasLib
             {
                 if (ediabas.resultsRequestDict.Count > 0)
                 {
-                    bool result = false;
+                    bool result;
                     if (!ediabas.resultsRequestDict.TryGetValue(arg1.GetStringData().ToUpper(culture), out result))
                     {
                         ediabas.pcCounter = arg0.GetValueData();
@@ -1286,7 +1286,7 @@ namespace EdiabasLib
                 else if (data1Type == typeof(byte[]))
                 {
                     object sourceData = arg1.GetRawData();
-                    if ((arg0.AddrMode == OpAddrMode.RegS) && (sourceData.GetType() == typeof(byte[])))
+                    if ((arg0.AddrMode == OpAddrMode.RegS) && (sourceData is byte[]))
                     {
                         byte[] destArray = arg0.GetArrayData();
                         byte[] sourceArray = (byte[])sourceData;
@@ -2363,7 +2363,7 @@ namespace EdiabasLib
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
                 return;
             }
-            bool found = false;
+            bool found;
             Int32 rowIndex = ediabas.GetTableLine(ediabas.GetTableFs(), ediabas.tableIndex, arg0.GetValueData(), out found);
             if (rowIndex < 0)
             {
@@ -2395,7 +2395,7 @@ namespace EdiabasLib
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
                 return;
             }
-            bool found = false;
+            bool found;
             Int32 rowIndex = ediabas.SeekTable(ediabas.GetTableFs(), ediabas.tableIndex, arg0.GetStringData(), arg1.GetStringData(), out found);
             if (rowIndex < 0)
             {
@@ -2414,7 +2414,7 @@ namespace EdiabasLib
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
                 return;
             }
-            bool found = false;
+            bool found;
             Int32 rowIndex = ediabas.SeekTable(ediabas.GetTableFs(), ediabas.tableIndex, arg0.GetStringData(), arg1.GetValueData(), out found);
             if (rowIndex < 0)
             {
@@ -2471,7 +2471,7 @@ namespace EdiabasLib
                     ediabas.SetError(ErrorCodes.EDIABAS_SYS_0002);
                 }
             }
-            bool found = false;
+            bool found;
             Int32 tableAddr = ediabas.GetTableIndex(ediabas.GetTableFs(), arg0.GetStringData(), out found);
             if (!found)
             {
@@ -2960,7 +2960,7 @@ namespace EdiabasLib
             }
             else
             {
-                EdValueType value = (EdValueType)interfaceClass.InterfaceVersion;
+                EdValueType value = interfaceClass.InterfaceVersion;
                 arg0.SetRawData(value);
             }
         }
