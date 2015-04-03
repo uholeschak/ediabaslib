@@ -13,12 +13,19 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu_scan"
-          android:icon="@android:drawable/ic_menu_search"
-          android:title="@string/menu_connect" />
-    <item android:id="@+id/menu_enable_log"
-          android:icon="@android:drawable/ic_menu_agenda"
-          android:title="@string/menu_enable_log"
-          android:checkable="true" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_menu"
+          android:icon="@android:drawable/ic_menu_preferences"
+          app:showAsAction="always">
+        <menu>
+            <item android:id="@+id/menu_scan"
+                  android:icon="@android:drawable/ic_menu_search"
+                  android:title="@string/menu_device" />
+            <item android:id="@+id/menu_enable_log"
+                  android:icon="@android:drawable/ic_menu_agenda"
+                  android:title="@string/menu_enable_log"
+                  android:checkable="true" />
+        </menu>
+    </item>
 </menu>

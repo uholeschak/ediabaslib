@@ -88,6 +88,7 @@
     <AndroidResource Include="Resources\layout\tab_adapter.axml" />
     <AndroidResource Include="Resources\layout\tab_text.axml" />
     <AndroidResource Include="Resources\layout\main.axml" />
+    <AndroidResource Include="Resources\layout\bar_connect.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>

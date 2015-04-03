@@ -28,6 +28,7 @@ namespace CarControlAndroid
             REQUEST_ENABLE_BT
         }
 
+        private string deviceName = string.Empty;
         private string deviceAddress = string.Empty;
         private bool loggingActive = false;
         private string sharedAppName = "CarControl";
@@ -36,6 +37,7 @@ namespace CarControlAndroid
         private CommThread commThread;
         private List<Fragment> fragmentList;
         private ToggleButton buttonConnect;
+        private View barConnectView;
         private Fragment fragmentAxis;
         private Fragment fragmentMotor;
         private Fragment fragmentMotorUnevenRunning;
@@ -74,10 +76,22 @@ namespace CarControlAndroid
             var ignore = new I18N.West.CP437();
 
             SupportActionBar.NavigationMode = ActionBar.NavigationModeTabs;
-            SupportActionBar.SetDisplayOptions(0, ActionBar.DisplayShowHome | ActionBar.DisplayShowTitle);
+            SupportActionBar.SetDisplayShowCustomEnabled(true);
+            SupportActionBar.SetDisplayUseLogoEnabled(false);
+            SupportActionBar.SetDisplayShowTitleEnabled(false);
+            SupportActionBar.SetIcon(Android.Resource.Color.Transparent);   // hide icon
             SetContentView (Resource.Layout.main);
 
-            buttonConnect = FindViewById<ToggleButton> (Resource.Id.buttonConnect);
+            barConnectView = LayoutInflater.Inflate(Resource.Layout.bar_connect, null);
+            ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
+                ActionBar.LayoutParams.MatchParent,
+                ActionBar.LayoutParams.WrapContent);
+            barLayoutParams.Gravity = barLayoutParams.Gravity &
+                (int)(~(GravityFlags.HorizontalGravityMask | GravityFlags.VerticalGravityMask)) |
+                (int)(GravityFlags.Left | GravityFlags.CenterVertical);
+            SupportActionBar.SetCustomView(barConnectView, barLayoutParams);
+
+            buttonConnect = barConnectView.FindViewById<ToggleButton> (Resource.Id.buttonConnect);
             fragmentList = new List<Fragment>();
 
             fragmentAxis = new TabContentFragment(Resource.Layout.tab_axis);
@@ -190,7 +204,9 @@ namespace CarControlAndroid
                 if (resultCode == Result.Ok)
                 {
                     // Get the device MAC address
+                    deviceName = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_NAME);
                     deviceAddress = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                    SupportInvalidateOptionsMenu();
                 }
                 break;
 
@@ -219,12 +235,13 @@ namespace CarControlAndroid
             IMenuItem scanMenu = menu.FindItem (Resource.Id.menu_scan);
             if (scanMenu != null)
             {
-                scanMenu.SetEnabled (!commActive);
+                scanMenu.SetTitle(string.Format("{0}: {1}", GetString(Resource.String.menu_device), deviceName));
+                scanMenu.SetEnabled(!commActive);
             }
             IMenuItem logMenu = menu.FindItem (Resource.Id.menu_enable_log);
             if (logMenu != null)
             {
-                logMenu.SetEnabled (!commActive);
+                logMenu.SetEnabled(!commActive);
                 logMenu.SetChecked(loggingActive);
             }
             return base.OnPrepareOptionsMenu (menu);
@@ -409,6 +426,7 @@ namespace CarControlAndroid
             try
             {
                 ISharedPreferences prefs = Application.Context.GetSharedPreferences(sharedAppName, FileCreationMode.Private);
+                deviceName = prefs.GetString("DeviceName", "DIAG");
                 deviceAddress = prefs.GetString("DeviceAddress", "98:D3:31:40:13:56");
             }
             catch (Exception)
@@ -424,6 +442,7 @@ namespace CarControlAndroid
             {
                 ISharedPreferences prefs = Application.Context.GetSharedPreferences(sharedAppName, FileCreationMode.Private);
                 ISharedPreferencesEditor prefsEdit = prefs.Edit();
+                prefsEdit.PutString("DeviceName", deviceName);
                 prefsEdit.PutString("DeviceAddress", deviceAddress);
                 prefsEdit.Commit();
             }

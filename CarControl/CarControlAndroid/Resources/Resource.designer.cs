@@ -845,6 +845,9 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f09001d
 			public const int action_context_bar = 2131296285;
 			
+			// aapt resource value: 0x7f09004e
+			public const int action_menu = 2131296334;
+			
 			// aapt resource value: 0x7f090002
 			public const int action_menu_divider = 2131296258;
 			
@@ -863,8 +866,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f090016
 			public const int beginning = 2131296278;
 			
-			// aapt resource value: 0x7f090042
-			public const int buttonConnect = 2131296322;
+			// aapt resource value: 0x7f09003c
+			public const int buttonConnect = 2131296316;
 			
 			// aapt resource value: 0x7f090046
 			public const int button_active = 2131296326;
@@ -884,8 +887,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f09004b
 			public const int button_axis_up = 2131296331;
 			
-			// aapt resource value: 0x7f090040
-			public const int button_scan = 2131296320;
+			// aapt resource value: 0x7f090041
+			public const int button_scan = 2131296321;
 			
 			// aapt resource value: 0x7f09002d
 			public const int checkbox = 2131296301;
@@ -938,11 +941,11 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f090029
 			public const int list_item = 2131296297;
 			
-			// aapt resource value: 0x7f09004f
-			public const int menu_enable_log = 2131296335;
+			// aapt resource value: 0x7f090050
+			public const int menu_enable_log = 2131296336;
 			
-			// aapt resource value: 0x7f09004e
-			public const int menu_scan = 2131296334;
+			// aapt resource value: 0x7f09004f
+			public const int menu_scan = 2131296335;
 			
 			// aapt resource value: 0x7f090018
 			public const int middle = 2131296280;
@@ -950,8 +953,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f090012
 			public const int never = 2131296274;
 			
-			// aapt resource value: 0x7f09003f
-			public const int new_devices = 2131296319;
+			// aapt resource value: 0x7f090040
+			public const int new_devices = 2131296320;
 			
 			// aapt resource value: 0x7f090019
 			public const int none = 2131296281;
@@ -959,8 +962,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f090007
 			public const int normal = 2131296263;
 			
-			// aapt resource value: 0x7f09003d
-			public const int paired_devices = 2131296317;
+			// aapt resource value: 0x7f09003e
+			public const int paired_devices = 2131296318;
 			
 			// aapt resource value: 0x7f090004
 			public const int progress_circular = 2131296260;
@@ -1025,8 +1028,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f090039
 			public const int submit_area = 2131296313;
 			
-			// aapt resource value: 0x7f090041
-			public const int tabFrameLayout = 2131296321;
+			// aapt resource value: 0x7f090042
+			public const int tabFrameLayout = 2131296322;
 			
 			// aapt resource value: 0x7f090008
 			public const int tabMode = 2131296264;
@@ -1037,11 +1040,11 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f09002b
 			public const int title = 2131296299;
 			
-			// aapt resource value: 0x7f09003e
-			public const int title_new_devices = 2131296318;
+			// aapt resource value: 0x7f09003f
+			public const int title_new_devices = 2131296319;
 			
-			// aapt resource value: 0x7f09003c
-			public const int title_paired_devices = 2131296316;
+			// aapt resource value: 0x7f09003d
+			public const int title_paired_devices = 2131296317;
 			
 			// aapt resource value: 0x7f090020
 			public const int top_action_bar = 2131296288;
@@ -1157,34 +1160,37 @@ namespace CarControlAndroid
 			public const int abc_simple_decor = 2130903063;
 			
 			// aapt resource value: 0x7f030018
-			public const int device_list = 2130903064;
+			public const int bar_connect = 2130903064;
 			
 			// aapt resource value: 0x7f030019
-			public const int device_name = 2130903065;
+			public const int device_list = 2130903065;
 			
 			// aapt resource value: 0x7f03001a
-			public const int main = 2130903066;
+			public const int device_name = 2130903066;
 			
 			// aapt resource value: 0x7f03001b
-			public const int result_list = 2130903067;
+			public const int main = 2130903067;
 			
 			// aapt resource value: 0x7f03001c
-			public const int support_simple_spinner_dropdown_item = 2130903068;
+			public const int result_list = 2130903068;
 			
 			// aapt resource value: 0x7f03001d
-			public const int tab_activate = 2130903069;
+			public const int support_simple_spinner_dropdown_item = 2130903069;
 			
 			// aapt resource value: 0x7f03001e
-			public const int tab_adapter = 2130903070;
+			public const int tab_activate = 2130903070;
 			
 			// aapt resource value: 0x7f03001f
-			public const int tab_axis = 2130903071;
+			public const int tab_adapter = 2130903071;
 			
 			// aapt resource value: 0x7f030020
-			public const int tab_list = 2130903072;
+			public const int tab_axis = 2130903072;
 			
 			// aapt resource value: 0x7f030021
-			public const int tab_text = 2130903073;
+			public const int tab_list = 2130903073;
+			
+			// aapt resource value: 0x7f030022
+			public const int tab_text = 2130903074;
 			
 			static Layout()
 			{
@@ -1591,7 +1597,7 @@ namespace CarControlAndroid
 			public const int library_name = 2131361805;
 			
 			// aapt resource value: 0x7f0a008d
-			public const int menu_connect = 2131361933;
+			public const int menu_device = 2131361933;
 			
 			// aapt resource value: 0x7f0a008e
 			public const int menu_enable_log = 2131361934;

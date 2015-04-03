@@ -150,7 +150,7 @@
     <string name="button_scan">Nach Geräten suchen</string>
 
     <!-- Options Menu -->
-    <string name="menu_connect">Gerät auswählen</string>
+    <string name="menu_device">Gerät</string>
     <string name="menu_enable_log">Logfile erzeugen</string>
 
 </resources>
