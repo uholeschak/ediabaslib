@@ -28,9 +28,9 @@ namespace CarControlAndroid
         private string deviceName = string.Empty;
         private string deviceAddress = string.Empty;
         private bool loggingActive = false;
-        private string sharedAppName = "CarControl";
+        private const string sharedAppName = "CarControl";
         private string ecuPath;
-        private BluetoothAdapter bluetoothAdapter = null;
+        private BluetoothAdapter bluetoothAdapter;
         private CommThread commThread;
         private List<Fragment> fragmentList;
         private ToggleButton buttonConnect;
@@ -65,9 +65,9 @@ namespace CarControlAndroid
             //Log.Debug(Tag, "The tab {0} as been unselected.", tab.Text);
         }
 
-        protected override void OnCreate (Bundle bundle)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate (bundle);
+            base.OnCreate (savedInstanceState);
 
             // force linking of I18N.DLL
             var ignore = new I18N.West.CP437();
@@ -81,8 +81,8 @@ namespace CarControlAndroid
 
             barConnectView = LayoutInflater.Inflate(Resource.Layout.bar_connect, null);
             ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
-                ActionBar.LayoutParams.MatchParent,
-                ActionBar.LayoutParams.WrapContent);
+                ViewGroup.LayoutParams.MatchParent,
+                ViewGroup.LayoutParams.WrapContent);
             barLayoutParams.Gravity = barLayoutParams.Gravity &
                 (int)(~(GravityFlags.HorizontalGravityMask | GravityFlags.VerticalGravityMask)) |
                 (int)(GravityFlags.Left | GravityFlags.CenterVertical);
@@ -262,12 +262,6 @@ namespace CarControlAndroid
             return base.OnOptionsItemSelected(item);
         }
 
-        protected void HandleTabChanged (object sender, TabHost.TabChangeEventArgs e)
-        {
-            UpdateSelectedDevice ();
-            UpdateDisplay ();
-        }
-
         protected void ButtonConnectClick (object sender, EventArgs e)
         {
             if (commThread != null && commThread.ThreadRunning())
@@ -375,8 +369,8 @@ namespace CarControlAndroid
                 if (commThread == null)
                 {
                     commThread = new CommThread(ecuPath);
-                    commThread.DataUpdated += new CommThread.DataUpdatedEventHandler(DataUpdated);
-                    commThread.ThreadTerminated += new CommThread.ThreadTerminatedEventHandler(ThreadTerminated);
+                    commThread.DataUpdated += DataUpdated;
+                    commThread.ThreadTerminated += ThreadTerminated;
                 }
                 string logFile = null;
                 if (loggingActive)
@@ -472,7 +466,6 @@ namespace CarControlAndroid
             switch (SupportActionBar.SelectedTab.Position)
             {
                 case 0:
-                default:
                     selDevice = CommThread.SelectedDevice.DeviceAxis;
                     break;
 
@@ -631,7 +624,7 @@ namespace CarControlAndroid
                 {
                     string dataText;
                     bool found;
-                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict;
                     lock (CommThread.DataLock)
                     {
                         resultDict = commThread.EdiabasResultDict;
@@ -761,7 +754,7 @@ namespace CarControlAndroid
                 {
                     bool found;
                     string dataText;
-                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict;
                     lock (CommThread.DataLock)
                     {
                         resultDict = commThread.EdiabasResultDict;
@@ -852,7 +845,7 @@ namespace CarControlAndroid
 
                 if (motorDataUnevenRunningValid)
                 {
-                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict;
                     lock (CommThread.DataLock)
                     {
                         resultDict = commThread.EdiabasResultDict;
@@ -898,7 +891,7 @@ namespace CarControlAndroid
 
                 if (motorRotIrregularValid)
                 {
-                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict;
                     lock (CommThread.DataLock)
                     {
                         resultDict = commThread.EdiabasResultDict;
@@ -943,7 +936,7 @@ namespace CarControlAndroid
 
                 if (motorPmValid)
                 {
-                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict;
                     lock (CommThread.DataLock)
                     {
                         resultDict = commThread.EdiabasResultDict;
@@ -997,7 +990,7 @@ namespace CarControlAndroid
                 {
                     bool found;
                     string dataText;
-                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict;
                     lock (CommThread.DataLock)
                     {
                         resultDict = commThread.EdiabasResultDict;
@@ -1058,8 +1051,7 @@ namespace CarControlAndroid
 
                 if (ihkValid)
                 {
-                    string outputText = string.Empty;
-                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict;
                     lock (CommThread.DataLock)
                     {
                         resultDict = commThread.EdiabasResultDict;
@@ -1098,7 +1090,7 @@ namespace CarControlAndroid
 
                 if (errorsValid)
                 {
-                    List<CommThread.EdiabasErrorReport> errorReportList = null;
+                    List<CommThread.EdiabasErrorReport> errorReportList;
                     lock (CommThread.DataLock)
                     {
                         errorReportList = commThread.EdiabasErrorReportList;
@@ -1182,7 +1174,7 @@ namespace CarControlAndroid
                 if (adapterConfigValid)
                 {
                     bool found;
-                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict;
                     lock (CommThread.DataLock)
                     {
                         resultDict = commThread.EdiabasResultDict;
@@ -1280,7 +1272,7 @@ namespace CarControlAndroid
             EdiabasNet.ResultData resultData;
             if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
             {
-                if (resultData.opData.GetType() == typeof(Int64))
+                if (resultData.opData is Int64)
                 {
                     found = true;
                     return (Int64)resultData.opData;
@@ -1295,7 +1287,7 @@ namespace CarControlAndroid
             EdiabasNet.ResultData resultData;
             if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
             {
-                if (resultData.opData.GetType() == typeof(Double))
+                if (resultData.opData is Double)
                 {
                     found = true;
                     return (Double)resultData.opData;
@@ -1310,7 +1302,7 @@ namespace CarControlAndroid
             EdiabasNet.ResultData resultData;
             if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
             {
-                if (resultData.opData.GetType() == typeof(String))
+                if (resultData.opData is String)
                 {
                     found = true;
                     return (String)resultData.opData;
@@ -1394,14 +1386,14 @@ namespace CarControlAndroid
         {
             private int resourceId;
 
-            public TabContentFragment(int resource)
+            public TabContentFragment(int resourceId)
             {
-                this.resourceId = resource;
+                this.resourceId = resourceId;
             }
 
             public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
             {
-                View view = inflater.Inflate(this.resourceId, null);
+                View view = inflater.Inflate(resourceId, null);
                 return view;
             }
         }

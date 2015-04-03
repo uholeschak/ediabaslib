@@ -342,7 +342,7 @@ namespace CarControl
         };
 
         static private readonly EdiabasJobs EhcJobs = new EdiabasJobs("d_ehc",
-            new EdiabasJob[]
+            new []
             {
                 new EdiabasJob("LESEN_REGLERWERTE",
                     string.Empty,
@@ -356,7 +356,7 @@ namespace CarControl
             });
 
         static private readonly EdiabasJobs MotorJobs = new EdiabasJobs("d_motor",
-            new EdiabasJob[]
+            new []
             {
                 new EdiabasJob("STATUS_MESSWERTBLOCK_LESEN",
                     "IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;ITKRS;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED",
@@ -364,7 +364,7 @@ namespace CarControl
             });
 
         static private readonly EdiabasJobs MotorUnevenJobs = new EdiabasJobs("d_motor",
-            new EdiabasJob[]
+            new []
             {
                 new EdiabasJob("START_SYSTEMCHECK_ZYL",
                     "LLR_EIN",
@@ -377,7 +377,7 @@ namespace CarControl
             });
 
         static private readonly EdiabasJobs MotorRotIrregularJobs = new EdiabasJobs("d_motor",
-            new EdiabasJob[]
+            new []
             {
                 new EdiabasJob("START_SYSTEMCHECK_ZYL",
                     "LLR_AUS",
@@ -390,7 +390,7 @@ namespace CarControl
             });
 
         static private readonly EdiabasJobs MotorPmJobs = new EdiabasJobs("d_motor",
-            new EdiabasJob[]
+            new []
             {
                 new EdiabasJob("STATUS_SYSTEMCHECK_PM_INFO_2",
                     string.Empty,
@@ -399,7 +399,7 @@ namespace CarControl
             });
 
         static private readonly EdiabasJobs CccNavJobs = new EdiabasJobs("d_ccc",
-            new EdiabasJob[]
+            new []
             {
                 new EdiabasJob("STATUS_GPS_TRACKING",
                     string.Empty,
@@ -420,7 +420,7 @@ namespace CarControl
             });
 
         static private readonly EdiabasJobs IhkJobs = new EdiabasJobs("d_klima",
-            new EdiabasJob[]
+            new []
             {
                 new EdiabasJob("STATUS_REGLERGROESSEN",
                     string.Empty,
@@ -433,7 +433,7 @@ namespace CarControl
             new EdiabasTestJob("d_motor", "STATUS_MESSWERTBLOCK_LESEN",
                 "IUBAT;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;ITKRS;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED",
                 string.Empty,
-                new string[] {
+                new [] {
                     "STAT_UBATT_WERT",
                     "STAT_CTSCD_tClntLin_WERT",
                     "STAT_KRAFTSTOFFTEMPERATURK_WERT",
@@ -463,7 +463,7 @@ namespace CarControl
             new EdiabasTestJob("d_motor", "STATUS_SYSTEMCHECK_PM_INFO_2",
                 "STAT_BATTERIE_KAPAZITAET_WERT;STAT_KALIBRIER_EVENT_CNT_WERT;STAT_LADUNGSZUSTAND_AKTUELL_WERT;STAT_LADUNGSZUSTAND_VOR_1_TAG_WERT;STAT_Q_SOC_AKTUELL_WERT;STAT_Q_SOC_VOR_1_TAG_WERT;STAT_SOC_FIT_WERT;STAT_SOH_WERT;STAT_STARTFAEHIGKEITSGRENZE_AKTUELL_WERT;STAT_STARTFAEHIGKEITSGRENZE_VOR_1_TAG_WERT;STAT_TEMP_SAISON_WERT",
                 "STAT_BATTERIE_KAPAZITAET_WERT;STAT_KALIBRIER_EVENT_CNT_WERT;STAT_LADUNGSZUSTAND_AKTUELL_WERT;STAT_LADUNGSZUSTAND_VOR_1_TAG_WERT;STAT_Q_SOC_AKTUELL_WERT;STAT_Q_SOC_VOR_1_TAG_WERT;STAT_SOC_FIT_WERT;STAT_SOH_WERT;STAT_STARTFAEHIGKEITSGRENZE_AKTUELL_WERT;STAT_STARTFAEHIGKEITSGRENZE_VOR_1_TAG_WERT;STAT_TEMP_SAISON_WERT",
-                new string[] {
+                new [] {
                     "STAT_BATTERIE_KAPAZITAET_WERT",
                     "STAT_KALIBRIER_EVENT_CNT_WERT",
                     "STAT_LADUNGSZUSTAND_AKTUELL_WERT",
@@ -480,7 +480,7 @@ namespace CarControl
 
         static private readonly EdiabasTestJob[] ErrorJobList = {
             new EdiabasTestJob("d_motor", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
-                new string[] {
+                new [] {
                     "F_ORT_TEXT",
                     "F_READY_TEXT",
                     "F_SYMPTOM_TEXT",
@@ -488,11 +488,11 @@ namespace CarControl
                     "F_WARNUNG_TEXT",
                 }),
             new EdiabasTestJob("d_motor", "FS_LESEN_DETAIL", "0x4232", "F_UW_KM",
-                new string[] {
+                new [] {
                     "F_UW_KM",
                 }),
             new EdiabasTestJob("d_ccc", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
-                new string[] {
+                new [] {
                     "F_ORT_TEXT",
                     "F_READY_TEXT",
                     "F_SYMPTOM_TEXT",
@@ -500,7 +500,7 @@ namespace CarControl
                     "F_WARNUNG_TEXT",
                 }),
             new EdiabasTestJob("d_ehc", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
-                new string[] {
+                new [] {
                     "F_ORT_TEXT",
                     "F_READY_TEXT",
                     "F_SYMPTOM_TEXT",
@@ -508,11 +508,11 @@ namespace CarControl
                     "F_WARNUNG_TEXT",
                 }),
             new EdiabasTestJob("d_ehc", "FS_LESEN_DETAIL", "0x5FB4", "F_UW_KM",
-                new string[] {
+                new [] {
                     "F_UW_KM",
                 }),
             new EdiabasTestJob("d_klima", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
-                new string[] {
+                new [] {
                     "F_ORT_TEXT",
                     "F_READY_TEXT",
                     "F_SYMPTOM_TEXT",
@@ -574,7 +574,7 @@ namespace CarControl
         protected virtual void Dispose(bool disposing)
         {
             // Check to see if Dispose has already been called.
-            if (!this.disposed)
+            if (!disposed)
             {
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
@@ -764,7 +764,7 @@ namespace CarControl
                 ediabasInitReq = false;
             }
 
-            Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+            Dictionary<string, EdiabasNet.ResultData> resultDict;
 
             if (firstRequestCall)
             {
@@ -826,7 +826,7 @@ namespace CarControl
                     EdiabasNet.ResultData resultData;
                     if (resultSets[1].TryGetValue("WERT", out resultData))
                     {
-                        if (resultData.opData.GetType() == typeof(Int64))
+                        if (resultData.opData is Int64)
                         {
                             axisMode = (int)((Int64)resultData.opData);
                         }
@@ -1027,7 +1027,7 @@ namespace CarControl
                         EdiabasNet.ResultData resultData;
                         if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
                         {
-                            if (resultData.opData.GetType() == typeof(string))
+                            if (resultData.opData is string)
                             {   // read details
                                 string jobStatus = (string)resultData.opData;
                                 if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
@@ -1052,7 +1052,7 @@ namespace CarControl
                             EdiabasNet.ResultData resultData;
                             if (resultDict.TryGetValue("F_ORT_NR", out resultData))
                             {
-                                if (resultData.opData.GetType() == typeof(Int64))
+                                if (resultData.opData is Int64)
                                 {   // read details
                                     ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.opData);
                                     ediabas.ArgBinaryStd = null;
@@ -1103,12 +1103,8 @@ namespace CarControl
             }
             byte adapterConfig = (byte)AdapterConfigValue;
             AdapterConfigValue = -1;
-#pragma warning disable 219
-            bool firstRequestCall = false;
-#pragma warning restore 219
             if (ediabasInitReq)
             {
-                firstRequestCall = true;
                 ediabasJobAbort = false;
 
                 try
@@ -1346,19 +1342,19 @@ namespace CarControl
                                 if (resultDict.TryGetValue(dataName, out resultData))
                                 {
                                     string valueText = string.Empty;
-                                    if (resultData.opData.GetType() == typeof(string))
+                                    if (resultData.opData is string)
                                     {
                                         valueText = (string)resultData.opData;
                                     }
-                                    else if (resultData.opData.GetType() == typeof(Double))
+                                    else if (resultData.opData is Double)
                                     {
-                                        valueText = ((Double)resultData.opData).ToString();
+                                        valueText = ((Double)resultData.opData).ToString ();
                                     }
-                                    else if (resultData.opData.GetType() == typeof(Int64))
+                                    else if (resultData.opData is Int64)
                                     {
-                                        valueText = ((Int64)resultData.opData).ToString();
+                                        valueText = ((Int64)resultData.opData).ToString ();
                                     }
-                                    else if (resultData.opData.GetType() == typeof(byte[]))
+                                    else if (resultData.opData is byte[])
                                     {
                                         byte[] dataArray = (byte[])resultData.opData;
                                         foreach (byte value in dataArray)
