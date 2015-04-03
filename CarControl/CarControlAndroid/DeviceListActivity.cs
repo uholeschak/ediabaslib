@@ -34,7 +34,7 @@ namespace CarControlAndroid
     /// </summary>
     [Activity (Label = "@string/select_device",
                 Theme = "@android:style/Theme.Dialog",
-                ConfigurationChanges=Android.Content.PM.ConfigChanges.KeyboardHidden | Android.Content.PM.ConfigChanges.Orientation)]			
+                ConfigurationChanges=Android.Content.PM.ConfigChanges.KeyboardHidden | Android.Content.PM.ConfigChanges.Orientation)]
     public class DeviceListActivity : Activity
     {
         // Debugging
