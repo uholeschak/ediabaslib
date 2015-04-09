@@ -69,9 +69,6 @@ namespace CarControlAndroid
         {
             base.OnCreate (savedInstanceState);
 
-            // force linking of I18N.DLL
-            var ignore = new I18N.West.CP437();
-
             SupportActionBar.NavigationMode = ActionBar.NavigationModeTabs;
             SupportActionBar.SetDisplayShowCustomEnabled(true);
             SupportActionBar.SetDisplayUseLogoEnabled(false);
