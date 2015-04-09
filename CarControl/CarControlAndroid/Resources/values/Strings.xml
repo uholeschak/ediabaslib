@@ -150,8 +150,8 @@
     <string name="button_scan">Scan for devices</string>
 
     <!-- tabs_activate -->
-    <string name="button_active">Active</string>
-    <string name="button_inactive">Inactive</string>
+    <string name="button_active">Aktiv</string>
+    <string name="button_inactive">Inaktiv</string>
 
     <!-- Options Menu -->
     <string name="menu_device">Device</string>

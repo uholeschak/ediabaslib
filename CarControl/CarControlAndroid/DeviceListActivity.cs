@@ -51,9 +51,9 @@ namespace CarControlAndroid
         private static ArrayAdapter<string> newDevicesArrayAdapter;
         private Receiver receiver;
 
-        protected override void OnCreate (Bundle bundle)
+        protected override void OnCreate (Bundle savedInstanceState)
         {
-            base.OnCreate (bundle);
+            base.OnCreate (savedInstanceState);
 
             // Setup the window
             RequestWindowFeature (WindowFeatures.IndeterminateProgress);

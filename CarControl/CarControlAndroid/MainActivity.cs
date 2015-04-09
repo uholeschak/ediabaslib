@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Android.App;
 using Android.Bluetooth;
 using Android.Content;
 using Android.OS;
@@ -15,7 +14,7 @@ using Java.Interop;
 
 namespace CarControlAndroid
 {
-    [Activity (Label = "@string/app_name", Theme = "@style/Theme.AppCompat", MainLauncher = true,
+    [Android.App.Activity (Label = "@string/app_name", Theme = "@style/Theme.AppCompat", MainLauncher = true,
                ConfigurationChanges=Android.Content.PM.ConfigChanges.KeyboardHidden | Android.Content.PM.ConfigChanges.Orientation)]
     public class ActivityMain : ActionBarActivity, ActionBar.ITabListener
     {
@@ -69,7 +68,7 @@ namespace CarControlAndroid
         {
             base.OnCreate (savedInstanceState);
 
-            SupportActionBar.NavigationMode = ActionBar.NavigationModeTabs;
+            SupportActionBar.NavigationMode = Android.Support.V7.App.ActionBar.NavigationModeTabs;
             SupportActionBar.SetDisplayShowCustomEnabled(true);
             SupportActionBar.SetDisplayUseLogoEnabled(false);
             SupportActionBar.SetDisplayShowTitleEnabled(false);
@@ -189,13 +188,13 @@ namespace CarControlAndroid
             StoreSettings ();
         }
 
-        protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
+        protected override void OnActivityResult (int requestCode, Android.App.Result resultCode, Intent data)
         {
             switch((activityRequest)requestCode)
             {
             case activityRequest.REQUEST_SELECT_DEVICE:
                 // When DeviceListActivity returns with a device to connect
-                if (resultCode == Result.Ok)
+                if (resultCode == Android.App.Result.Ok)
                 {
                     // Get the device MAC address
                     deviceName = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_NAME);
@@ -206,7 +205,7 @@ namespace CarControlAndroid
 
             case activityRequest.REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
-                if (resultCode != Result.Ok)
+                if (resultCode != Android.App.Result.Ok)
                 {
                     // User did not enable Bluetooth or an error occured
                     Toast.MakeText(this, Resource.String.bt_not_enabled_leaving, ToastLength.Short).Show();
@@ -413,7 +412,7 @@ namespace CarControlAndroid
         {
             try
             {
-                ISharedPreferences prefs = Application.Context.GetSharedPreferences(sharedAppName, FileCreationMode.Private);
+                ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(sharedAppName, FileCreationMode.Private);
                 deviceName = prefs.GetString("DeviceName", "DIAG");
                 deviceAddress = prefs.GetString("DeviceAddress", "98:D3:31:40:13:56");
             }
@@ -428,7 +427,7 @@ namespace CarControlAndroid
         {
             try
             {
-                ISharedPreferences prefs = Application.Context.GetSharedPreferences(sharedAppName, FileCreationMode.Private);
+                ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(sharedAppName, FileCreationMode.Private);
                 ISharedPreferencesEditor prefsEdit = prefs.Edit();
                 prefsEdit.PutString("DeviceName", deviceName);
                 prefsEdit.PutString("DeviceAddress", deviceAddress);
