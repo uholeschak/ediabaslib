@@ -375,6 +375,10 @@ int _tmain(int argc, const wchar_t *argv[])
     wcscpy(name_buffer, filename);
     PathRemoveFileSpec(name_buffer);
     std::wstring output_path = name_buffer + std::wstring(_T("\\extract"));
+    if (argc >= 3)
+    {
+        output_path = name_buffer + std::wstring(_T("\\")) + argv[2];
+    }
 
     FILE *fp = _wfopen(filename, _T("rb"));
     if (fp == NULL)
