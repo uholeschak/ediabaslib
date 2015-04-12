@@ -978,7 +978,7 @@ namespace CarControlAndroid
                 ListView listViewResult = fragmentCccNav.View.FindViewById<ListView>(Resource.Id.resultList);
                 if (listViewResult.Adapter == null)
                 {
-                    listViewResult.Adapter = new ResultListAdapter(this);
+                    listViewResult.Adapter = new ResultListAdapter(this, 1.8f);
                 }
                 ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult.Adapter;
 
