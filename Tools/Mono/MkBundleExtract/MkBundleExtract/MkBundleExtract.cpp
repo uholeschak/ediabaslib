@@ -372,13 +372,18 @@ int _tmain(int argc, const wchar_t *argv[])
     }
     const wchar_t *filename = argv[1];
     wchar_t name_buffer[MAX_PATH];
-    wcscpy(name_buffer, filename);
+    if (GetFullPathName(filename, MAX_PATH, name_buffer, NULL) == 0)
+    {
+        printf("Invalid file name\n");
+        return 1;
+    }
     PathRemoveFileSpec(name_buffer);
     std::wstring output_path = name_buffer + std::wstring(_T("\\extract"));
     if (argc >= 3)
     {
         output_path = name_buffer + std::wstring(_T("\\")) + argv[2];
     }
+    wprintf(_T("Extract to %s\n"), output_path.c_str());
 
     FILE *fp = _wfopen(filename, _T("rb"));
     if (fp == NULL)
@@ -398,14 +403,14 @@ int _tmain(int argc, const wchar_t *argv[])
     if (!read_pe_header())
     {
         printf("Invalid PE header\n");
-        result = 0;
+        result = 1;
         goto DONE;
     }
     uint32_t comp_struct = search_compressed_struct();
     if (comp_struct == 0)
     {
         printf("Invalid compressed stucture\n");
-        result = 0;
+        result = 1;
         goto DONE;
     }
 
@@ -414,14 +419,14 @@ int _tmain(int argc, const wchar_t *argv[])
     if (!CreateDirectory(output_path.c_str(), NULL))
     {
         printf("Unable to create output directory\n");
-        result = 0;
+        result = 1;
         goto DONE;
     }
 
     if (!store_xml(output_path))
     {
         printf("Unable to store XML\n");
-        result = 0;
+        result = 1;
         goto DONE;
     }
 
@@ -431,12 +436,11 @@ int _tmain(int argc, const wchar_t *argv[])
     {
         uLong real_size;
         uLongf zsize;
-        int result;
         CompressedAssembly *c_assem = (CompressedAssembly *) map_address((uint32_t) (*ptr));
         if (c_assem == NULL)
         {
             printf ("Invalid pointer %p\n", *ptr);
-            result = 0;
+            result = 1;
             goto DONE;
         }
         const char *name = (const char *) map_address((uint32_t) (c_assem->assembly.name));
@@ -445,12 +449,12 @@ int _tmain(int argc, const wchar_t *argv[])
         real_size = c_assem->assembly.size;
         zsize = c_assem->compressed_size;
         Bytef *buffer = (Bytef *) malloc (real_size);
-        result = my_inflate (data, zsize, buffer, real_size);
-        if (result != 0)
+        int return_code = my_inflate (data, zsize, buffer, real_size);
+        if (return_code != 0)
         {
             free(buffer);
             printf ("Error %d decompressing data for %s\n", result, name);
-            result = 0;
+            result = 1;
             goto DONE;
         }
         AnsiToUnicode16(name, name_buffer, MAX_PATH);
@@ -460,7 +464,7 @@ int _tmain(int argc, const wchar_t *argv[])
         {
             free(buffer);
             printf ("Unable to store data for %s\n", name);
-            result = 0;
+            result = 1;
             goto DONE;
         }
         fwrite(buffer, real_size, 1, fw);

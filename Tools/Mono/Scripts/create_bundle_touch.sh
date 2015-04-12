@@ -1,10 +1,11 @@
+#!/bin/sh
 # install mono with: msiexec -i xxx.msi INSTALLFOLDER="C:\Programs\Mono"
 # Mono paths
 mono_version="4.5"
 export MONO="/c/Programs/Mono/"
 export PATH="$PATH:$MONO/lib/mono/$mono_version:$MONO/bin"
 export PKG_CONFIG_PATH="$MONO/lib/pkgconfig"
-machineconfig="info1.xml"
+machineconfig="./info1.xml"
 # Compiler
 export CC="gcc -U _WIN32"
 dep_files="./I18N.CJK.dll \
