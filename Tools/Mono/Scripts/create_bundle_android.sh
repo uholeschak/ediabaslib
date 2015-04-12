@@ -32,7 +32,7 @@ $MONO/lib/mono/$mono_version/mscorlib.dll \
 ./System.Xml.dll \
 ./System.Xml.Linq.dll \
 ./Xamarin.Android.Cecil.dll \
-./Xamarin.Android.Cecil.Mdb.dll "
+./Xamarin.Android.Cecil.Mdb.dll"
 
 #echo "files: $dep_files"
 mkbundle --deps -z --machine-config $machineconfig -o temp.c -oo bundles.o -c ./mandroid-win.exe $dep_files
