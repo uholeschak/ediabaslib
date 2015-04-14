@@ -18,53 +18,8 @@ namespace EdiabasLib
             FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.None);
             try
             {
-#if MMAP_PAGESIZE_FIX
-                mmFile = MemoryMappedFile.CreateFromFile(fs, null, 0, MemoryMappedFileAccess.Read, HandleInheritability.None, false);
-                try
-                {
-                    mmStream = mmFile.CreateViewStream(0, 0, MemoryMappedFileAccess.Read);
-                }
-                catch (Exception)
-                {
-                    // some mono versions have a get page size bug
-                    System.Reflection.Assembly memMapAssem = typeof(MemoryMappedFile).Assembly;
-                    Type type = memMapAssem.GetType("System.IO.MemoryMappedFiles.MemoryMapImpl");
-                    if (type != null)
-                    {
-                        System.Reflection.FieldInfo info = type.GetField("pagesize", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-                        if (info != null)
-                        {
-                            object value = info.GetValue(null);
-                            if (value.GetType() == typeof(int))
-                            {
-                                if ((int)value == 0)
-                                {
-                                    info.SetValue(null, 4096);
-                                }
-                            }
-                        }
-                    }
-                    for (int i = 0; ; i++)
-                    {
-                        try
-                        {
-                            mmStream = mmFile.CreateViewStream(0, 0, MemoryMappedFileAccess.Read);
-                            break;
-                        }
-                        catch (Exception ex)
-                        {
-                            // sometimes the first try fails
-                            if (i > 1)
-                            {
-                                throw ex;
-                            }
-                        }
-                    }
-                }
-#else
                 mmFile = MemoryMappedFile.CreateFromFile(fs, null, 0, MemoryMappedFileAccess.Read, null, HandleInheritability.None, false);
                 mmStream = mmFile.CreateViewStream(0, 0, MemoryMappedFileAccess.Read);
-#endif
             }
             catch (Exception ex)
             {
