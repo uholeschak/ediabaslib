@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Touch.Client", "MonoTouchClient\Mono.Touch.Client.csproj", "{2A717E82-957F-46D9-B310-3BA85E3E6E60}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Touch.Common", "MonoTouchCommon\Mono.Touch.Common.csproj", "{96886A0C-3EF3-47C3-9214-1D928E4E54A7}"
