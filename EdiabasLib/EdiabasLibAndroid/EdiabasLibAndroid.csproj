@@ -22,7 +22,7 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;Android;MMAP_PAGESIZE_FIX</DefineConstants>
+    <DefineConstants>DEBUG;Android</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <ConsolePause>false</ConsolePause>
-    <DefineConstants>Android;MMAP_PAGESIZE_FIX</DefineConstants>
+    <DefineConstants>Android</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
