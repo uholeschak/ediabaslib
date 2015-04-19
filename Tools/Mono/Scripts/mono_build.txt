@@ -1,0 +1,47 @@
+Mono 3.12.1
+Install mono with: msiexec -i xxx.msi INSTALLFOLDER="C:\Programs\Mono"
+
+Install cygwin:
+Add all packages from:
+http://www.mono-project.com/docs/compiling-mono/windows/
+Additionally:
+- gettext
+- zlib zlib-devel
+- dos2unix
+- pkg-config
+
+extract:
+tar -jxvf mono-xxx.tar.bz2
+patch mvs\tools\mkbundle\mkbundle.cs:
+- Remove line: dos2unix.StandardInput.WriteLine ("\u0004");
+patch mcs\class\corlib\Makefile
+- change:
+ LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618 -d:INSIDE_CORLIB -d:LIBC
+ to
+ LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618 -d:INSIDE_CORLIB
+patch mcs\class\System.Core\Makefile
+- change:
+ LIB_MCS_FLAGS = -d:INSIDE_SYSCORE -d:LIBC /r:System.dll -unsafe
+ to
+ LIB_MCS_FLAGS = -d:INSIDE_SYSCORE /r:System.dll -unsafe
+patch mcs\class\System.Core\System\TimeZoneInfo.cs
+- change at the end:
+move
+-----------------------
+#else
+	}
+#endif
+-----------------------
+before
+	struct TimeType {
+
+build (Path to existing mono):
+export PATH=$PATH:/cygdrive/c/Programs/Mono/bin/
+./configure --host=i686-pc-mingw32 --prefix=/cygdrive/c/Programs/MonoXXX/
+make
+make install
+build MonoPosixHelper.dll with VS
+- open msvc/mono.sln
+- Adjust Platform toolset of eglib, libgc, libmonoutils, monoposixhelper
+- Compile monoposixhelper (debug only, set runtime to multitread-DLL (/MD))
+- Copy MonoPosixHelper.dll to /cygdrive/c/Programs/MonoXXX/bin
