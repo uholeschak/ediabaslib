@@ -72,6 +72,7 @@
     <Compile Include="GroupBox.Designer.cs">
       <DependentUpon>GroupBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="JobReader.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

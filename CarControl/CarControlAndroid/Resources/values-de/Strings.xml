@@ -140,6 +140,9 @@
     <!--  Test -->
     <string name="tab_test">Test</string>
 
+    <!--  Dynamic -->
+    <string name="format_invalid">Format ungültig</string>
+
     <!--  DeviceListActivity -->
     <string name="scanning">Nach Geräten suchen ...</string>
     <string name="select_device">Gerät auswählen</string>

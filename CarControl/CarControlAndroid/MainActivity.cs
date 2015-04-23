@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using Android.Bluetooth;
 using Android.Content;
 using Android.OS;
@@ -11,6 +8,10 @@ using Android.Widget;
 using CarControl;
 using EdiabasLib;
 using Java.Interop;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 
 namespace CarControlAndroid
 {
@@ -24,11 +25,14 @@ namespace CarControlAndroid
             REQUEST_ENABLE_BT
         }
 
+        private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
         private string deviceName = string.Empty;
         private string deviceAddress = string.Empty;
         private bool loggingActive = false;
         private const string sharedAppName = "CarControl";
+        private string externalPath;
         private string ecuPath;
+        private JobReader jobReader;
         private BluetoothAdapter bluetoothAdapter;
         private CommThread commThread;
         private List<Fragment> fragmentList;
@@ -74,6 +78,10 @@ namespace CarControlAndroid
             SupportActionBar.SetDisplayShowTitleEnabled(false);
             SupportActionBar.SetIcon(Android.Resource.Color.Transparent);   // hide icon
             SetContentView (Resource.Layout.main);
+
+            GetSettings ();
+            externalPath = Path.Combine (Path.Combine (Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, "external_sd"), "CarControl");
+            jobReader = new JobReader(Path.Combine (externalPath, "JobList.xml"));
 
             barConnectView = LayoutInflater.Inflate(Resource.Layout.bar_connect, null);
             ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
@@ -127,6 +135,14 @@ namespace CarControlAndroid
             fragmentList.Add(fragmentTest);
             AddTabToActionBar(Resource.String.tab_test);
 
+            foreach (JobReader.PageInfo pageInfo in jobReader.PageList)
+            {
+                Fragment fragmentPage = new TabContentFragment(Resource.Layout.tab_list);
+                fragmentList.Add(fragmentPage);
+                pageInfo.InfoObject = fragmentPage;
+                AddTabToActionBar(pageInfo.Name);
+            }
+
             // Get local Bluetooth adapter
             bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
 
@@ -137,8 +153,6 @@ namespace CarControlAndroid
                 Finish ();
                 return;
             }
-
-            GetSettings ();
 
             ecuPath = Path.Combine (
                 System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal), "Ecu");
@@ -155,6 +169,14 @@ namespace CarControlAndroid
         {
             ActionBar.Tab tab = SupportActionBar.NewTab()
                 .SetText(labelResourceId)
+                .SetTabListener(this);
+            SupportActionBar.AddTab(tab);
+        }
+
+        void AddTabToActionBar(string label)
+        {
+            ActionBar.Tab tab = SupportActionBar.NewTab()
+                .SetText(label)
                 .SetTabListener(this);
             SupportActionBar.AddTab(tab);
         }
@@ -228,7 +250,7 @@ namespace CarControlAndroid
             IMenuItem scanMenu = menu.FindItem (Resource.Id.menu_scan);
             if (scanMenu != null)
             {
-                scanMenu.SetTitle(string.Format("{0}: {1}", GetString(Resource.String.menu_device), deviceName));
+                scanMenu.SetTitle(string.Format(culture, "{0}: {1}", GetString(Resource.String.menu_device), deviceName));
                 scanMenu.SetEnabled(!commActive);
             }
             IMenuItem logMenu = menu.FindItem (Resource.Id.menu_enable_log);
@@ -371,10 +393,11 @@ namespace CarControlAndroid
                 string logFile = null;
                 if (loggingActive)
                 {
-                    string rootPath = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
-                    logFile = Path.Combine(Path.Combine(rootPath, "external_sd"), "CarControlLog", "ifh.trc");
+                    logFile = Path.Combine(externalPath, "ifh.trc");
                 }
-                commThread.StartThread("BLUETOOTH:" + deviceAddress, logFile, GetSelectedDevice(), true);
+                JobReader.PageInfo selPageInfo;
+                CommThread.SelectedDevice selDevice = GetSelectedDevice(out selPageInfo);
+                commThread.StartThread("BLUETOOTH:" + deviceAddress, logFile, selDevice, selPageInfo, true);
             }
             catch (Exception)
             {
@@ -456,10 +479,12 @@ namespace CarControlAndroid
             UpdateDisplay();
         }
 
-        private CommThread.SelectedDevice GetSelectedDevice()
+        private CommThread.SelectedDevice GetSelectedDevice(out JobReader.PageInfo pageInfo)
         {
             CommThread.SelectedDevice selDevice = CommThread.SelectedDevice.DeviceAxis;
-            switch (SupportActionBar.SelectedTab.Position)
+            JobReader.PageInfo selPageInfo = null;
+            int index = SupportActionBar.SelectedTab.Position;
+            switch (index)
             {
                 case 0:
                     selDevice = CommThread.SelectedDevice.DeviceAxis;
@@ -500,7 +525,16 @@ namespace CarControlAndroid
                 case 9:
                     selDevice = CommThread.SelectedDevice.Test;
                     break;
+
+                default:
+                    if (index >= 10 && index < (10 + jobReader.PageList.Count))
+                    {
+                        selDevice = CommThread.SelectedDevice.Dynamic;
+                        selPageInfo = jobReader.PageList [index - 10];
+                    }
+                    break;
             }
+            pageInfo = selPageInfo;
             return selDevice;
         }
 
@@ -511,7 +545,8 @@ namespace CarControlAndroid
                 return;
             }
 
-            CommThread.SelectedDevice newDevice = GetSelectedDevice();
+            JobReader.PageInfo newPageInfo;
+            CommThread.SelectedDevice newDevice = GetSelectedDevice(out newPageInfo);
             bool newCommActive = true;
             switch (newDevice)
             {
@@ -520,9 +555,10 @@ namespace CarControlAndroid
                     newCommActive = false;
                     break;
             }
-            if (commThread.Device != newDevice)
+            if ((commThread.Device != newDevice) || (commThread.JobPageInfo != newPageInfo))
             {
                 commThread.CommActive = newCommActive;
+                commThread.JobPageInfo = newPageInfo;
                 commThread.Device = newDevice;
             }
         }
@@ -544,6 +580,7 @@ namespace CarControlAndroid
             bool errorsValid = false;
             bool adapterConfigValid = false;
             bool testValid = false;
+            bool dynamicValid = false;
             bool buttonConnectEnable = true;
 
             if (commThread != null && commThread.ThreadRunning ())
@@ -594,6 +631,10 @@ namespace CarControlAndroid
 
                         case CommThread.SelectedDevice.Test:
                             testValid = true;
+                            break;
+
+                        case CommThread.SelectedDevice.Dynamic:
+                            dynamicValid = true;
                             break;
                     }
                 }
@@ -664,7 +705,7 @@ namespace CarControlAndroid
                     Int64 voltage = GetResultInt64 (resultDict, "ANALOG_U_KL30", out found);
                     if (found)
                     {
-                        dataText = string.Format ("{0,6:0.00}", (double)voltage / 1000);
+                        dataText = string.Format (culture, "{0,6:0.00}", (double)voltage / 1000);
                     }
                     else
                     {
@@ -678,7 +719,7 @@ namespace CarControlAndroid
                     dataText = string.Empty;
                     for (int channel = 0; channel < 4; channel++)
                     {
-                        dataText = FormatResultInt64 (resultDict, string.Format ("STATUS_SIGNALE_NUMERISCH{0}_WERT", channel), "{0}") + dataText;
+                        dataText = FormatResultInt64 (resultDict, string.Format (culture, "STATUS_SIGNALE_NUMERISCH{0}_WERT", channel), "{0}") + dataText;
                     }
                     resultListAdapter.Items.Add (new TableResultItem (GetString (Resource.String.label_axis_valve_state), dataText));
 
@@ -787,7 +828,7 @@ namespace CarControlAndroid
                     resultListAdapter.Items.Add (
                         new TableResultItem (GetString (Resource.String.label_motor_temp_before_cat), FormatResultDouble (resultDict, "STAT_ABGASTEMPERATUR_VOR_KATALYSATOR_WERT", "{0,6:0.0}")));
 
-                    dataText = string.Format ("{0,6:0.0}", GetResultDouble (resultDict, "STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT", out found) / 1000.0);
+                    dataText = string.Format (culture, "{0,6:0.0}", GetResultDouble (resultDict, "STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT", out found) / 1000.0);
                     if (!found)
                         dataText = string.Empty;
                     resultListAdapter.Items.Add (
@@ -1100,11 +1141,11 @@ namespace CarControlAndroid
                             int resId = Resources.GetIdentifier (errorReport.DeviceName, "string", PackageName);
                             if (resId != 0)
                             {
-                                message = string.Format ("{0}: ", GetString (resId));
+                                message = string.Format(culture, "{0}: ", GetString (resId));
                             }
                             else
                             {
-                                message = string.Format ("{0}: ", errorReport.DeviceName);
+                                message = string.Format(culture, "{0}: ", errorReport.DeviceName);
                             }
                             if (errorReport.ErrorDict == null)
                             {
@@ -1227,6 +1268,60 @@ namespace CarControlAndroid
                     textView.Text = string.Empty;
                 }
             }
+
+            Fragment dynamicFragment = null;
+            JobReader.PageInfo pageInfo = null;
+            if (commThread != null)
+            {
+                pageInfo = commThread.JobPageInfo;
+                if (pageInfo != null)
+                {
+                    dynamicFragment = (Fragment)pageInfo.InfoObject;
+                }
+            }
+
+            if (dynamicFragment != null && dynamicFragment.View != null)
+            {
+                ListView listViewResult = dynamicFragment.View.FindViewById<ListView>(Resource.Id.resultList);
+                if (listViewResult.Adapter == null)
+                {
+                    listViewResult.Adapter = new ResultListAdapter (this);
+                }
+                ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult.Adapter;
+
+                if (dynamicValid)
+                {
+                    //bool found;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict;
+                    lock (CommThread.DataLock)
+                    {
+                        resultDict = commThread.EdiabasResultDict;
+                    }
+                    resultListAdapter.Items.Clear();
+
+                    foreach (JobReader.JobInfo job in pageInfo.JobList)
+                    {
+                        foreach (JobReader.DisplayInfo displayInfo in job.DisplayList)
+                        {
+                            string result = string.Empty;
+                            EdiabasNet.ResultData resultData;
+                            if (resultDict != null && resultDict.TryGetValue(job.Name + "_" + displayInfo.Result, out resultData))
+                            {
+                                result = EdiabasNet.FormatResult(resultData, displayInfo.Format);
+                                if (result == null) result = GetString(Resource.String.format_invalid);
+                            }
+                            resultListAdapter.Items.Add(new TableResultItem(displayInfo.Name, result));
+                        }
+                    }
+
+                    resultListAdapter.NotifyDataSetChanged();
+                }
+                else
+                {
+                    resultListAdapter.Items.Clear();
+                    resultListAdapter.NotifyDataSetChanged();
+                }
+            }
         }
 
         private String FormatResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
@@ -1235,7 +1330,7 @@ namespace CarControlAndroid
             double value = GetResultDouble(resultDict, dataName, out found);
             if (found)
             {
-                return string.Format(format, value);
+                return string.Format(culture, format, value);
             }
             return string.Empty;
         }
@@ -1246,7 +1341,7 @@ namespace CarControlAndroid
             Int64 value = GetResultInt64(resultDict, dataName, out found);
             if (found)
             {
-                return string.Format(format, value);
+                return string.Format(culture, format, value);
             }
             return string.Empty;
         }
@@ -1257,7 +1352,7 @@ namespace CarControlAndroid
             string value = GetResultString(resultDict, dataName, out found);
             if (found)
             {
-                return string.Format(format, value);
+                return string.Format(culture, format, value);
             }
             return string.Empty;
         }

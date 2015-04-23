@@ -140,7 +140,10 @@
     <!--  Test -->
     <string name="tab_test">Test</string>
 
-    <!--  DeviceListActivity -->
+    <!--  Dynamic -->
+    <string name="format_invalid">Format invalid</string>
+
+  <!--  DeviceListActivity -->
     <string name="scanning">Scanning for devices ...</string>
     <string name="select_device">Select a device</string>
     <string name="none_paired">No devices have been paired</string>

@@ -3,3 +3,5 @@
 /packages/
 /*.userprefs
 /*.apk
+/*.user
+/*.suo

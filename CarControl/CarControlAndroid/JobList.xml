@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+    <pages>
+        <page name ="Motor" sgbd="d_motor">
+            <job
+              name="STATUS_MESSWERTBLOCK_LESEN"
+              args_first="JA;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;ITKRS;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED"
+              args="NEIN;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;ITKRS;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED"
+              results="">
+                <display name="Batterie" result="STAT_UBATT_WERT" format="7.2R" />
+                <display name="Temperatur" result="STAT_CTSCD_tClntLin_WERT" format="6.2R" />
+            </job>
+        </page>
+    </pages>
+</configuration>

@@ -33,6 +33,7 @@ namespace CarControl
             DeviceErrors,
             AdapterConfig,
             Test,
+            Dynamic,
         }
 
         public enum CccNavGpsPosType
@@ -57,6 +58,12 @@ namespace CarControl
         }
 
         public SelectedDevice Device
+        {
+            get;
+            set;
+        }
+
+        public JobReader.PageInfo JobPageInfo
         {
             get;
             set;
@@ -590,7 +597,7 @@ namespace CarControl
             }
         }
 
-        public bool StartThread(string comPort, string logFile, SelectedDevice selectedDevice, bool commActive)
+        public bool StartThread(string comPort, string logFile, SelectedDevice selectedDevice, JobReader.PageInfo pageInfo, bool commActive)
         {
             if (_workerThread != null)
             {
@@ -619,6 +626,7 @@ namespace CarControl
                 InitProperties();
                 CommActive = commActive;
                 Device = selectedDevice;
+                JobPageInfo = pageInfo;
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
                 _workerThread.Start();
@@ -661,6 +669,7 @@ namespace CarControl
         {
             DataUpdatedEvent();
             SelectedDevice lastDevice = (SelectedDevice)(-1);
+            JobReader.PageInfo lastPageInfo = null;
             while (!_stopThread)
             {
                 try
@@ -671,10 +680,12 @@ namespace CarControl
                     }
                     bool result = true;
                     SelectedDevice copyDevice = Device;
+                    JobReader.PageInfo copyPageInfo = JobPageInfo;
 
-                    if (lastDevice != copyDevice)
+                    if ((lastDevice != copyDevice) || (lastPageInfo != copyPageInfo))
                     {
                         lastDevice = copyDevice;
+                        lastPageInfo = copyPageInfo;
                         InitProperties(true);
                     }
 
@@ -718,6 +729,10 @@ namespace CarControl
 
                         case SelectedDevice.Test:
                             result = CommTest();
+                            break;
+
+                        case SelectedDevice.Dynamic:
+                            result = CommDynamic(copyDevice, copyPageInfo);
                             break;
                     }
 
@@ -1394,6 +1409,92 @@ namespace CarControl
                 TestResult = resultText;
             }
             Thread.Sleep(20);
+            return true;
+        }
+
+        private bool CommDynamic(SelectedDevice device, JobReader.PageInfo pageInfo)
+        {
+            if (pageInfo == null)
+            {
+                Thread.Sleep(1000);
+                return false;
+            }
+#pragma warning disable 219
+            bool firstRequestCall = false;
+#pragma warning restore 219
+            if (ediabasInitReq)
+            {
+                firstRequestCall = true;
+                ediabasJobAbort = false;
+
+                try
+                {
+                    ediabas.ResolveSgbdFile(pageInfo.Sgbd);
+                }
+                catch (Exception ex)
+                {
+                    string exText = EdiabasNet.GetExceptionText(ex);
+                    lock (CommThread.DataLock)
+                    {
+                        EdiabasErrorMessage = exText;
+                    }
+                    Thread.Sleep(1000);
+                    return false;
+                }
+
+                ediabasInitReq = false;
+            }
+
+            Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+
+            foreach (JobReader.JobInfo job in pageInfo.JobList)
+            {
+                if (_stopThread)
+                {
+                    break;
+                }
+
+                string argString = job.Args;
+                if (firstRequestCall && !string.IsNullOrEmpty(job.ArgsFirst))
+                {
+                    argString = job.ArgsFirst;
+                }
+
+                ediabas.ArgString = argString;
+                ediabas.ArgBinaryStd = null;
+                ediabas.ResultsRequests = job.Results;
+
+                ediabas.TimeMeas = 0;
+                try
+                {
+                    ediabas.ExecuteJob(job.Name);
+
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        MergeResultDictionarys(ref resultDict, resultSets[1], job.Name + "_");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ediabasInitReq = true;
+                    string exText = EdiabasNet.GetExceptionText(ex);
+                    lock (CommThread.DataLock)
+                    {
+                        EdiabasResultDict = null;
+                        EdiabasErrorMessage = exText;
+                    }
+                    Thread.Sleep(1000);
+                    return true;
+                }
+            }
+
+            lock (CommThread.DataLock)
+            {
+                EdiabasResultDict = resultDict;
+                EdiabasErrorMessage = string.Empty;
+            }
+            Thread.Sleep(10);
             return true;
         }
 
