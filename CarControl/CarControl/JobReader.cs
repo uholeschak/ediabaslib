@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mono.CSharp;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -47,19 +48,13 @@ namespace CarControl
 
         public class JobInfo
         {
-            public JobInfo(string name, string args, string argsFirst, string results, List<DisplayInfo> displayList)
+            public JobInfo(string name, List<DisplayInfo> displayList)
             {
                 this.name = name;
-                this.args = args;
-                this.argsFirst = argsFirst;
-                this.results = results;
                 this.displayList = displayList;
             }
 
             private string name;
-            private string argsFirst;
-            private string args;
-            private string results;
             private List<DisplayInfo> displayList;
 
             public string Name
@@ -67,30 +62,6 @@ namespace CarControl
                 get
                 {
                     return name;
-                }
-            }
-
-            public string ArgsFirst
-            {
-                get
-                {
-                    return argsFirst;
-                }
-            }
-
-            public string Args
-            {
-                get
-                {
-                    return args;
-                }
-            }
-
-            public string Results
-            {
-                get
-                {
-                    return results;
                 }
             }
 
@@ -105,18 +76,23 @@ namespace CarControl
 
         public class PageInfo
         {
-            public PageInfo(string name, string sgbd, List<JobInfo> jobList)
+            public PageInfo(string name, string sgbd, string classCode, List<JobInfo> jobList)
             {
                 this.name = name;
                 this.sgbd = sgbd;
+                this.classCode = classCode;
                 this.jobList = jobList;
                 this.infoObject = null;
+                this.classObject = null;
             }
 
             private string name;
             private string sgbd;
+            private string classCode;
             private List<JobInfo> jobList;
             private object infoObject;
+            private Evaluator eval;
+            private dynamic classObject;
 
             public string Name
             {
@@ -131,6 +107,14 @@ namespace CarControl
                 get
                 {
                     return sgbd;
+                }
+            }
+
+            public string ClassCode
+            {
+                get
+                {
+                    return classCode;
                 }
             }
 
@@ -151,6 +135,30 @@ namespace CarControl
                 set
                 {
                     infoObject = value;
+                }
+            }
+
+            public Evaluator Eval
+            {
+                get
+                {
+                    return eval;
+                }
+                set
+                {
+                    eval = value;
+                }
+            }
+
+            public dynamic ClassObject
+            {
+                get
+                {
+                    return classObject;
+                }
+                set
+                {
+                    classObject = value;
                 }
             }
         }
@@ -195,6 +203,7 @@ namespace CarControl
                         XmlAttribute attrib;
                         string pageName = string.Empty;
                         string sgbdName = string.Empty;
+                        string classCode = xnodePage.InnerText;
                         if (xnodePage.Attributes != null)
                         {
                             attrib = xnodePage.Attributes["name"];
@@ -202,7 +211,7 @@ namespace CarControl
                             attrib = xnodePage.Attributes["sgbd"];
                             if (attrib != null) sgbdName = attrib.Value;
                         }
-                        if (string.IsNullOrEmpty(pageName) || string.IsNullOrEmpty(sgbdName)) continue;
+                        if (string.IsNullOrEmpty(pageName) || string.IsNullOrEmpty(classCode)) continue;
 
                         List<JobInfo> jobList = new List<JobInfo>();
                         foreach (XmlNode xnodeJob in xnodePage.ChildNodes)
@@ -240,20 +249,14 @@ namespace CarControl
                                     {
                                         attrib = xnodeJob.Attributes["name"];
                                         if (attrib != null) name = attrib.Value;
-                                        attrib = xnodeJob.Attributes["args_first"];
-                                        if (attrib != null) argsFirst = attrib.Value;
-                                        attrib = xnodeJob.Attributes["args"];
-                                        if (attrib != null) args = attrib.Value;
-                                        attrib = xnodeJob.Attributes["results"];
-                                        if (attrib != null) results = attrib.Value;
 
                                         if (string.IsNullOrEmpty(name)) continue;
-                                        jobList.Add (new JobInfo (name, args, argsFirst, results, displayList));
+                                        jobList.Add (new JobInfo (name, displayList));
                                     }
                                 }
                             }
                         }
-                        pageList.Add(new PageInfo (pageName, sgbdName, jobList));
+                        pageList.Add(new PageInfo (pageName, sgbdName, classCode, jobList));
                     }
                 }
                 return true;

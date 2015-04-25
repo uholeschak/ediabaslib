@@ -1,13 +1,15 @@
-﻿using System;
+﻿using EdiabasLib;
+using Mono.CSharp;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Threading;
-using EdiabasLib;
 
 namespace CarControl
 {
-    class CommThread : IDisposable
+    public class CommThread : IDisposable
     {
         public delegate void DataUpdatedEventHandler(object sender, EventArgs e);
         public event DataUpdatedEventHandler DataUpdated;
@@ -119,6 +121,14 @@ namespace CarControl
         {
             get;
             private set;
+        }
+
+        public EdiabasNet Ediabas
+        {
+            get
+            {
+                return ediabas;
+            }
         }
 
         private class EdiabasJob
@@ -1416,6 +1426,46 @@ namespace CarControl
         {
             if (pageInfo == null)
             {
+                lock (CommThread.DataLock)
+                {
+                    EdiabasErrorMessage = "No Page info";
+                }
+                Thread.Sleep(1000);
+                return false;
+            }
+            if (pageInfo.Eval == null)
+            {
+                StringWriter reportWriter = new StringWriter();
+                try
+                {
+                    Evaluator evaluator = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter(reportWriter)));
+                    evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
+                    evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
+                    evaluator.Compile(pageInfo.ClassCode);
+                    pageInfo.Eval = evaluator;
+                    pageInfo.ClassObject = evaluator.Evaluate("new PageClass()");
+                }
+                catch (Exception ex)
+                {
+                    string exText = reportWriter.ToString();
+                    if (string.IsNullOrEmpty(exText))
+                    {
+                        exText = EdiabasNet.GetExceptionText(ex);
+                    }
+                    lock (CommThread.DataLock)
+                    {
+                        EdiabasErrorMessage = exText;
+                    }
+                    Thread.Sleep(1000);
+                    return false;
+                }
+            }
+            if (pageInfo.ClassObject == null)
+            {
+                lock (CommThread.DataLock)
+                {
+                    EdiabasErrorMessage = "No Class object";
+                }
                 Thread.Sleep(1000);
                 return false;
             }
@@ -1429,7 +1479,7 @@ namespace CarControl
 
                 try
                 {
-                    ediabas.ResolveSgbdFile(pageInfo.Sgbd);
+                    ediabas.ResolveSgbdFile(pageInfo.ClassObject.GetSgbdFileName());
                 }
                 catch (Exception ex)
                 {
@@ -1454,26 +1504,9 @@ namespace CarControl
                     break;
                 }
 
-                string argString = job.Args;
-                if (firstRequestCall && !string.IsNullOrEmpty(job.ArgsFirst))
-                {
-                    argString = job.ArgsFirst;
-                }
-
-                ediabas.ArgString = argString;
-                ediabas.ArgBinaryStd = null;
-                ediabas.ResultsRequests = job.Results;
-
-                ediabas.TimeMeas = 0;
                 try
                 {
-                    ediabas.ExecuteJob(job.Name);
-
-                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
-                    if (resultSets != null && resultSets.Count >= 2)
-                    {
-                        MergeResultDictionarys(ref resultDict, resultSets[1], job.Name + "_");
-                    }
+                    pageInfo.ClassObject.ExecuteJob(ediabas, ref resultDict, firstRequestCall);
                 }
                 catch (Exception ex)
                 {
@@ -1498,7 +1531,7 @@ namespace CarControl
             return true;
         }
 
-        private static void MergeResultDictionarys(ref Dictionary<string, EdiabasNet.ResultData> resultDict, Dictionary<string, EdiabasNet.ResultData> mergeDict)
+        public static void MergeResultDictionarys(ref Dictionary<string, EdiabasNet.ResultData> resultDict, Dictionary<string, EdiabasNet.ResultData> mergeDict)
         {
             if (resultDict == null)
             {
@@ -1516,7 +1549,7 @@ namespace CarControl
             }
         }
 
-        private static void MergeResultDictionarys(ref Dictionary<string, EdiabasNet.ResultData> resultDict, Dictionary<string, EdiabasNet.ResultData> mergeDict, string prefix)
+        public static void MergeResultDictionarys(ref Dictionary<string, EdiabasNet.ResultData> resultDict, Dictionary<string, EdiabasNet.ResultData> mergeDict, string prefix)
         {
             if (resultDict == null)
             {
