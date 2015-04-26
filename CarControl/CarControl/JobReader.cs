@@ -192,7 +192,7 @@ namespace CarControl
                             {
                                 string name = string.Empty;
                                 string result = string.Empty;
-                                string format = string.Empty;
+                                string format = null;
                                 if (xnodeDisplay.Attributes != null)
                                 {
                                     attrib = xnodeDisplay.Attributes["name"];
@@ -202,7 +202,7 @@ namespace CarControl
                                     attrib = xnodeDisplay.Attributes["format"];
                                     if (attrib != null) format = attrib.Value;
 
-                                    if (string.IsNullOrEmpty(name)) continue;
+                                    if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(result)) continue;
                                     displayList.Add (new DisplayInfo (name, result, format));
                                 }
                             }

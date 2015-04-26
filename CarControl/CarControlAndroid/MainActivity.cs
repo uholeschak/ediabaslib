@@ -28,7 +28,7 @@ namespace CarControlAndroid
             REQUEST_ENABLE_BT
         }
 
-        private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
+        public static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
         private string deviceName = string.Empty;
         private string deviceAddress = string.Empty;
         private bool loggingActive = false;
@@ -283,6 +283,7 @@ namespace CarControlAndroid
                     return true;
 
                 case Resource.Id.menu_exit:
+                    OnDestroy();
                     System.Environment.Exit(0);
                     return true;
             }
@@ -1311,11 +1312,27 @@ namespace CarControlAndroid
                     foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                     {
                         string result = string.Empty;
-                        EdiabasNet.ResultData resultData;
-                        if (resultDict != null && resultDict.TryGetValue(displayInfo.Result, out resultData))
+                        if (displayInfo.Format == null)
                         {
-                            result = EdiabasNet.FormatResult(resultData, displayInfo.Format);
-                            if (result == null) result = GetString(Resource.String.format_invalid);
+                            if (resultDict != null)
+                            {
+                                try
+                                {
+                                    result = pageInfo.ClassObject.FormatResult(resultDict, displayInfo.Result);
+                                }
+                                catch (Exception)
+                                {
+                                }
+                            }
+                        }
+                        else
+                        {
+                            EdiabasNet.ResultData resultData;
+                            if (resultDict != null && resultDict.TryGetValue(displayInfo.Result, out resultData))
+                            {
+                                result = EdiabasNet.FormatResult(resultData, displayInfo.Format);
+                                if (result == null) result = GetString(Resource.String.format_invalid);
+                            }
                         }
                         resultListAdapter.Items.Add(new TableResultItem(displayInfo.Name, result));
                     }
@@ -1330,7 +1347,7 @@ namespace CarControlAndroid
             }
         }
 
-        private String FormatResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
+        public static String FormatResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
         {
             bool found;
             double value = GetResultDouble(resultDict, dataName, out found);
@@ -1341,7 +1358,7 @@ namespace CarControlAndroid
             return string.Empty;
         }
 
-        private String FormatResultInt64(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
+        public static String FormatResultInt64(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
         {
             bool found;
             Int64 value = GetResultInt64(resultDict, dataName, out found);
@@ -1352,7 +1369,7 @@ namespace CarControlAndroid
             return string.Empty;
         }
 
-        private String FormatResultString(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
+        public static String FormatResultString(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
         {
             bool found;
             string value = GetResultString(resultDict, dataName, out found);
@@ -1363,7 +1380,7 @@ namespace CarControlAndroid
             return string.Empty;
         }
 
-        private Int64 GetResultInt64(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
+        public static Int64 GetResultInt64(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
         {
             found = false;
             EdiabasNet.ResultData resultData;
@@ -1378,7 +1395,7 @@ namespace CarControlAndroid
             return 0;
         }
 
-        private Double GetResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
+        public static Double GetResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
         {
             found = false;
             EdiabasNet.ResultData resultData;
@@ -1393,7 +1410,7 @@ namespace CarControlAndroid
             return 0;
         }
 
-        private String GetResultString(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
+        public static String GetResultString(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
         {
             found = false;
             EdiabasNet.ResultData resultData;
@@ -1503,6 +1520,15 @@ namespace CarControlAndroid
                         evaluator.Compile(pageInfo.ClassCode);
                         pageInfo.Eval = evaluator;
                         pageInfo.ClassObject = evaluator.Evaluate("new PageClass()");
+                        Type pageType = pageInfo.ClassObject.GetType();
+                        if (pageType.GetMethod("GetSgbdFileName") == null)
+                        {
+                            throw new Exception("No GetSgbdFileName method");
+                        }
+                        if (pageType.GetMethod("ExecuteJob") == null)
+                        {
+                            throw new Exception("No ExecuteJob method");
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -1511,6 +1537,7 @@ namespace CarControlAndroid
                         {
                             exText = EdiabasNet.GetExceptionText(ex);
                         }
+                        exText = pageInfo.Name + ":\r\n" + exText;
                         RunOnUiThread(() => ShowAlert(exText));
                     }
                 }

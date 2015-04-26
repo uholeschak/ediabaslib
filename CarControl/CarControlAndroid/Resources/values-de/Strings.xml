@@ -45,7 +45,7 @@
   <string name="label_motor_oil_press_switch">Öldruckschalter:</string>
   <string name="label_motor_rail_press_act">Raildruck ist [bar]:</string>
   <string name="label_motor_rail_press_set">Raildruck soll [bar]:</string>
-  <string name="label_motor_temp">Motortemperatur  [°C]:</string>
+  <string name="label_motor_temp">Motortemperatur [°C]:</string>
   <string name="label_motor_temp_before_cat">Temp. vor Katalysator [°C]:</string>
   <string name="label_motor_temp_before_filter">Temp. vor Partikelfilter [°C]:</string>
 

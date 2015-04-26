@@ -2,13 +2,21 @@
 <configuration>
   <pages>
       <page name ="Motor">
-        <display name="Batterie" result="STAT_UBATT_WERT" format="-7.2R" />
-        <display name="Temperatur" result="STAT_CTSCD_tClntLin_WERT" format="-6.2R" />
+        <display name="Batteriespannung [V]:" result="STAT_UBATT_WERT" format="7.2R" />
+        <display name="Motortemperatur [°C]:" result="STAT_CTSCD_tClntLin_WERT" format="6.2R" />
+        <display name="Luftmasse [kg/h]:" result="STAT_LUFTMASSE_WERT" format="7.2R" />
+        <display name="Ansauglufttemp. [°C]:" result="STAT_LADELUFTTEMPERATUR_WERT" format="6.2R" />
+        <display name="Partikelfilter Strecke seit Regen. [km]:" result="STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT" />
+        <display name="Öldruckschalter:" result="STAT_OELDRUCKSCHALTER_EIN_WERT" />
+        <display name="Partikelfilter Anforderung Regen.:" result="STAT_REGENERATIONSANFORDERUNG_WERT" />
+        <display name="Partikelfilter Regeneration:" result="STAT_EGT_st_WERT" />
+        <display name="Partikelfilter Freigabe Regen.:" result="STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT" />
         <![CDATA[
   using System;
   using System.Collections.Generic;
   using EdiabasLib;
   using CarControl;
+  using CarControlAndroid;
 
   class PageClass
   {
@@ -39,6 +47,41 @@
       {
           CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
       }
+    }
+
+    public string FormatResult(Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName)
+    {
+      string result = string.Empty;
+      bool found;
+
+      switch (resultName)
+      {
+        case "STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT":
+          result = string.Format(ActivityMain.culture, "{0,6:0.0}", ActivityMain.GetResultDouble(resultDict, resultName, out found) / 1000.0);
+          if (!found) result = string.Empty;
+          break;
+
+        case "STAT_OELDRUCKSCHALTER_EIN_WERT":
+          result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) > 0.5) && found) ? "1" : "0";
+          if (!found) result = string.Empty;
+          break;
+
+        case "STAT_REGENERATIONSANFORDERUNG_WERT":
+          result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) < 0.5) && found) ? "1" : "0";
+          if (!found) result = string.Empty;
+          break;
+
+        case "STAT_EGT_st_WERT":
+          result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) > 1.5) && found) ? "1" : "0";
+          if (!found) result = string.Empty;
+          break;
+
+        case "STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT":
+          result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) < 0.5) && found) ? "1" : "0";
+          if (!found) result = string.Empty;
+          break;
+      }
+      return result;
     }
   }
         ]]>
