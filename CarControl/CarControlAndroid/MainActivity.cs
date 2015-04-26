@@ -82,7 +82,7 @@ namespace CarControlAndroid
             SupportActionBar.SetIcon(Android.Resource.Color.Transparent);   // hide icon
             SetContentView (Resource.Layout.main);
 
-            GetSettings ();
+            GetSettings();
             externalPath = Path.Combine (Path.Combine (Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, "external_sd"), "CarControl");
             jobReader = new JobReader(Path.Combine (externalPath, "JobList.xml"));
 
@@ -143,7 +143,7 @@ namespace CarControlAndroid
                 Fragment fragmentPage = new TabContentFragment(Resource.Layout.tab_list);
                 fragmentList.Add(fragmentPage);
                 pageInfo.InfoObject = fragmentPage;
-                AddTabToActionBar(pageInfo.Name);
+                AddTabToActionBar(GetPageString(pageInfo, pageInfo.Name));
             }
 
             // Get local Bluetooth adapter
@@ -1295,7 +1295,7 @@ namespace CarControlAndroid
                 ListView listViewResult = dynamicFragment.View.FindViewById<ListView>(Resource.Id.resultList);
                 if (listViewResult.Adapter == null)
                 {
-                    listViewResult.Adapter = new ResultListAdapter (this);
+                    listViewResult.Adapter = new ResultListAdapter (this, pageInfo.Weight);
                 }
                 ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult.Adapter;
 
@@ -1334,7 +1334,7 @@ namespace CarControlAndroid
                                 if (result == null) result = GetString(Resource.String.format_invalid);
                             }
                         }
-                        resultListAdapter.Items.Add(new TableResultItem(displayInfo.Name, result));
+                        resultListAdapter.Items.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result));
                     }
 
                     resultListAdapter.NotifyDataSetChanged();
@@ -1423,6 +1423,36 @@ namespace CarControlAndroid
                 }
             }
             return string.Empty;
+        }
+
+        public static String GetPageString(JobReader.PageInfo pageInfo, string name)
+        {
+            string lang = CultureInfo.CurrentUICulture.Name;
+            string langIso = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+            JobReader.StringInfo stringInfoDefault = null;
+            JobReader.StringInfo stringInfoSel = null;
+            foreach (JobReader.StringInfo stringInfo in pageInfo.StringList)
+            {
+                if (string.IsNullOrEmpty(stringInfo.Lang))
+                {
+                    stringInfoDefault = stringInfo;
+                }
+                else if ((string.Compare(stringInfo.Lang, lang, StringComparison.OrdinalIgnoreCase) == 0) ||
+                        (string.Compare(stringInfo.Lang, langIso, StringComparison.OrdinalIgnoreCase) == 0))
+                {
+                    stringInfoSel = stringInfo;
+                }
+            }
+            if (stringInfoSel == null) stringInfoSel = stringInfoDefault;
+            string result = String.Empty;
+            if (stringInfoSel != null)
+            {
+                if (!stringInfoSel.StringDict.TryGetValue(name, out result))
+                {
+                    result = String.Empty;
+                }
+            }
+            return result;
         }
 
         private bool CopyAssets(string ecuPath)
