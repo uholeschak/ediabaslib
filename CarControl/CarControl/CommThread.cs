@@ -7,7 +7,10 @@ using System.Threading;
 
 namespace CarControl
 {
-    public class CommThread : IDisposable
+#if !WindowsCE
+    public
+#endif
+    class CommThread : IDisposable
     {
         public delegate void DataUpdatedEventHandler(object sender, EventArgs e);
         public event DataUpdatedEventHandler DataUpdated;
@@ -63,11 +66,13 @@ namespace CarControl
             set;
         }
 
+#if !WindowsCE
         public JobReader.PageInfo JobPageInfo
         {
             get;
             set;
         }
+#endif
 
         public bool CommActive
         {
@@ -605,7 +610,11 @@ namespace CarControl
             }
         }
 
+#if WindowsCE
+        public bool StartThread(string comPort, string logFile, SelectedDevice selectedDevice, bool commActive)
+#else
         public bool StartThread(string comPort, string logFile, SelectedDevice selectedDevice, JobReader.PageInfo pageInfo, bool commActive)
+#endif
         {
             if (_workerThread != null)
             {
@@ -634,7 +643,9 @@ namespace CarControl
                 InitProperties();
                 CommActive = commActive;
                 Device = selectedDevice;
+#if !WindowsCE
                 JobPageInfo = pageInfo;
+#endif
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
                 _workerThread.Start();
@@ -677,7 +688,9 @@ namespace CarControl
         {
             DataUpdatedEvent();
             SelectedDevice lastDevice = (SelectedDevice)(-1);
+#if !WindowsCE
             JobReader.PageInfo lastPageInfo = null;
+#endif
             while (!_stopThread)
             {
                 try
@@ -688,12 +701,20 @@ namespace CarControl
                     }
                     bool result = true;
                     SelectedDevice copyDevice = Device;
+#if !WindowsCE
                     JobReader.PageInfo copyPageInfo = JobPageInfo;
+#endif
 
-                    if ((lastDevice != copyDevice) || (lastPageInfo != copyPageInfo))
+                    if ((lastDevice != copyDevice)
+#if !WindowsCE
+                        || (lastPageInfo != copyPageInfo)
+#endif
+                        )
                     {
                         lastDevice = copyDevice;
+#if !WindowsCE
                         lastPageInfo = copyPageInfo;
+#endif
                         InitProperties(true);
                     }
 
@@ -739,9 +760,11 @@ namespace CarControl
                             result = CommTest();
                             break;
 
+#if !WindowsCE
                         case SelectedDevice.Dynamic:
                             result = CommDynamic(copyDevice, copyPageInfo);
                             break;
+#endif
                     }
 
                     if (result)
@@ -1420,6 +1443,7 @@ namespace CarControl
             return true;
         }
 
+#if !WindowsCE
         private bool CommDynamic(SelectedDevice device, JobReader.PageInfo pageInfo)
         {
             if (pageInfo == null)
@@ -1493,6 +1517,7 @@ namespace CarControl
             Thread.Sleep(10);
             return true;
         }
+#endif
 
         public static void MergeResultDictionarys(ref Dictionary<string, EdiabasNet.ResultData> resultDict, Dictionary<string, EdiabasNet.ResultData> mergeDict)
         {

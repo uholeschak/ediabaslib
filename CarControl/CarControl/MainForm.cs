@@ -239,7 +239,7 @@ namespace CarControl
                     _commThread.DataUpdated += new CommThread.DataUpdatedEventHandler(DataUpdated);
                     _commThread.ThreadTerminated += new CommThread.ThreadTerminatedEventHandler(ThreadTerminated);
                 }
-                _commThread.StartThread(selectedPort, logFile, GetSelectedDevice(), null, true);
+                _commThread.StartThread(selectedPort, logFile, GetSelectedDevice(), true);
             }
             catch (Exception)
             {
