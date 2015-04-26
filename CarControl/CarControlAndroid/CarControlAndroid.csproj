@@ -84,7 +84,9 @@
     <AndroidResource Include="Resources\values\Strings.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\values-de\Strings.xml" />
+    <AndroidResource Include="Resources\values-de\Strings.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <AndroidResource Include="Resources\layout\result_list.axml" />
     <AndroidResource Include="Resources\layout\tab_list.axml" />
     <AndroidResource Include="Resources\layout\tab_activate.axml" />

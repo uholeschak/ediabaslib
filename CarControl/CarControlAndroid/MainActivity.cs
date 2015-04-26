@@ -8,14 +8,17 @@ using Android.Widget;
 using CarControl;
 using EdiabasLib;
 using Java.Interop;
+using Mono.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
+using System.Threading;
 
 namespace CarControlAndroid
 {
-    [Android.App.Activity (Label = "@string/app_name", Theme = "@style/Theme.AppCompat", MainLauncher = true,
+    [Android.App.Activity(Label = "@string/app_name", Theme = "@style/Theme.AppCompat", MainLauncher = true,
                ConfigurationChanges=Android.Content.PM.ConfigChanges.KeyboardHidden | Android.Content.PM.ConfigChanges.Orientation)]
     public class ActivityMain : ActionBarActivity, ActionBar.ITabListener
     {
@@ -149,7 +152,7 @@ namespace CarControlAndroid
             // If the adapter is null, then Bluetooth is not supported
             if (bluetoothAdapter == null)
             {
-                Toast.MakeText (this, Resource.String.bt_not_available, ToastLength.Long).Show ();
+                Toast.MakeText(this, Resource.String.bt_not_available, ToastLength.Long).Show ();
                 Finish ();
                 return;
             }
@@ -158,6 +161,8 @@ namespace CarControlAndroid
                 System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal), "Ecu");
             // copy asset files
             CopyAssets (ecuPath);
+            // compile user code
+            CompileCode();
 
             // Get our button from the layout resource,
             // and attach an event to it
@@ -275,6 +280,10 @@ namespace CarControlAndroid
                 case Resource.Id.menu_enable_log:
                     loggingActive = !loggingActive;
                     SupportInvalidateOptionsMenu();
+                    return true;
+
+                case Resource.Id.menu_exit:
+                    System.Environment.Exit(0);
                     return true;
             }
             return base.OnOptionsItemSelected(item);
@@ -1299,19 +1308,16 @@ namespace CarControlAndroid
                     }
                     resultListAdapter.Items.Clear();
 
-                    foreach (JobReader.JobInfo job in pageInfo.JobList)
+                    foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                     {
-                        foreach (JobReader.DisplayInfo displayInfo in job.DisplayList)
+                        string result = string.Empty;
+                        EdiabasNet.ResultData resultData;
+                        if (resultDict != null && resultDict.TryGetValue(displayInfo.Result, out resultData))
                         {
-                            string result = string.Empty;
-                            EdiabasNet.ResultData resultData;
-                            if (resultDict != null && resultDict.TryGetValue(job.Name + "_" + displayInfo.Result, out resultData))
-                            {
-                                result = EdiabasNet.FormatResult(resultData, displayInfo.Format);
-                                if (result == null) result = GetString(Resource.String.format_invalid);
-                            }
-                            resultListAdapter.Items.Add(new TableResultItem(displayInfo.Name, result));
+                            result = EdiabasNet.FormatResult(resultData, displayInfo.Format);
+                            if (result == null) result = GetString(Resource.String.format_invalid);
                         }
+                        resultListAdapter.Items.Add(new TableResultItem(displayInfo.Name, result));
                     }
 
                     resultListAdapter.NotifyDataSetChanged();
@@ -1471,6 +1477,54 @@ namespace CarControlAndroid
                 }
                 return true;
             }
+        }
+
+        private void CompileCode()
+        {
+            if (jobReader.pageList.Count == 0)
+            {
+                return;
+            }
+            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
+            progress.SetCancelable(false);
+            progress.SetMessage(GetString(Resource.String.compile_start));
+            progress.Show();
+
+            new Thread(new ThreadStart(delegate
+            {
+                foreach (JobReader.PageInfo pageInfo in jobReader.pageList)
+                {
+                    StringWriter reportWriter = new StringWriter();
+                    try
+                    {
+                        Evaluator evaluator = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter(reportWriter)));
+                        evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
+                        evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
+                        evaluator.Compile(pageInfo.ClassCode);
+                        pageInfo.Eval = evaluator;
+                        pageInfo.ClassObject = evaluator.Evaluate("new PageClass()");
+                    }
+                    catch (Exception ex)
+                    {
+                        string exText = reportWriter.ToString();
+                        if (string.IsNullOrEmpty(exText))
+                        {
+                            exText = EdiabasNet.GetExceptionText(ex);
+                        }
+                        RunOnUiThread(() => ShowAlert(exText));
+                    }
+                }
+
+                RunOnUiThread(() => progress.Hide());
+            })).Start();
+        }
+
+        private void ShowAlert(string message)
+        {
+            Android.App.AlertDialog.Builder builder = new Android.App.AlertDialog.Builder(this);
+            builder.SetMessage(message);
+            builder.SetNeutralButton(Resource.String.compile_ok_btn, (s, e) => { });
+            builder.Create().Show();
         }
 
         public class TabContentFragment : Fragment

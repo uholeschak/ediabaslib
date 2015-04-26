@@ -46,42 +46,14 @@ namespace CarControl
             }
         }
 
-        public class JobInfo
-        {
-            public JobInfo(string name, List<DisplayInfo> displayList)
-            {
-                this.name = name;
-                this.displayList = displayList;
-            }
-
-            private string name;
-            private List<DisplayInfo> displayList;
-
-            public string Name
-            {
-                get
-                {
-                    return name;
-                }
-            }
-
-            public List<DisplayInfo> DisplayList
-            {
-                get
-                {
-                    return displayList;
-                }
-            }
-        }
-
         public class PageInfo
         {
-            public PageInfo(string name, string sgbd, string classCode, List<JobInfo> jobList)
+            public PageInfo(string name, string sgbd, string classCode, List<DisplayInfo> displayList)
             {
                 this.name = name;
                 this.sgbd = sgbd;
                 this.classCode = classCode;
-                this.jobList = jobList;
+                this.displayList = displayList;
                 this.infoObject = null;
                 this.classObject = null;
             }
@@ -89,7 +61,7 @@ namespace CarControl
             private string name;
             private string sgbd;
             private string classCode;
-            private List<JobInfo> jobList;
+            private List<DisplayInfo> displayList;
             private object infoObject;
             private Evaluator eval;
             private dynamic classObject;
@@ -118,11 +90,11 @@ namespace CarControl
                 }
             }
 
-            public List<JobInfo> JobList
+            public List<DisplayInfo> DisplayList
             {
                 get
                 {
-                    return jobList;
+                    return displayList;
                 }
             }
 
@@ -213,50 +185,29 @@ namespace CarControl
                         }
                         if (string.IsNullOrEmpty(pageName) || string.IsNullOrEmpty(classCode)) continue;
 
-                        List<JobInfo> jobList = new List<JobInfo>();
-                        foreach (XmlNode xnodeJob in xnodePage.ChildNodes)
+                        List<DisplayInfo> displayList = new List<DisplayInfo> ();
+                        foreach (XmlNode xnodeDisplay in xnodePage.ChildNodes)
                         {
-                            if (string.Compare(xnodeJob.Name, "job", StringComparison.OrdinalIgnoreCase) == 0)
+                            if (string.Compare(xnodeDisplay.Name, "display", StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                List<DisplayInfo> displayList = new List<DisplayInfo> ();
-                                foreach (XmlNode xnodeDisplay in xnodeJob.ChildNodes)
+                                string name = string.Empty;
+                                string result = string.Empty;
+                                string format = string.Empty;
+                                if (xnodeDisplay.Attributes != null)
                                 {
-                                    if (string.Compare(xnodeDisplay.Name, "display", StringComparison.OrdinalIgnoreCase) == 0)
-                                    {
-                                        string name = string.Empty;
-                                        string result = string.Empty;
-                                        string format = string.Empty;
-                                        if (xnodeDisplay.Attributes != null)
-                                        {
-                                            attrib = xnodeDisplay.Attributes["name"];
-                                            if (attrib != null) name = attrib.Value;
-                                            attrib = xnodeDisplay.Attributes["result"];
-                                            if (attrib != null) result = attrib.Value;
-                                            attrib = xnodeDisplay.Attributes["format"];
-                                            if (attrib != null) format = attrib.Value;
+                                    attrib = xnodeDisplay.Attributes["name"];
+                                    if (attrib != null) name = attrib.Value;
+                                    attrib = xnodeDisplay.Attributes["result"];
+                                    if (attrib != null) result = attrib.Value;
+                                    attrib = xnodeDisplay.Attributes["format"];
+                                    if (attrib != null) format = attrib.Value;
 
-                                            if (string.IsNullOrEmpty(name)) continue;
-                                            displayList.Add (new DisplayInfo (name, result, format));
-                                        }
-                                    }
-                                }
-                                {
-                                    string name = string.Empty;
-                                    string argsFirst = string.Empty;
-                                    string args = string.Empty;
-                                    string results = string.Empty;
-                                    if (xnodeJob.Attributes != null)
-                                    {
-                                        attrib = xnodeJob.Attributes["name"];
-                                        if (attrib != null) name = attrib.Value;
-
-                                        if (string.IsNullOrEmpty(name)) continue;
-                                        jobList.Add (new JobInfo (name, displayList));
-                                    }
+                                    if (string.IsNullOrEmpty(name)) continue;
+                                    displayList.Add (new DisplayInfo (name, result, format));
                                 }
                             }
                         }
-                        pageList.Add(new PageInfo (pageName, sgbdName, classCode, jobList));
+                        pageList.Add(new PageInfo(pageName, sgbdName, classCode, displayList));
                     }
                 }
                 return true;

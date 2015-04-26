@@ -1,10 +1,8 @@
 ﻿using EdiabasLib;
-using Mono.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Threading;
 
 namespace CarControl
@@ -1433,33 +1431,6 @@ namespace CarControl
                 Thread.Sleep(1000);
                 return false;
             }
-            if (pageInfo.Eval == null)
-            {
-                StringWriter reportWriter = new StringWriter();
-                try
-                {
-                    Evaluator evaluator = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter(reportWriter)));
-                    evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
-                    evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
-                    evaluator.Compile(pageInfo.ClassCode);
-                    pageInfo.Eval = evaluator;
-                    pageInfo.ClassObject = evaluator.Evaluate("new PageClass()");
-                }
-                catch (Exception ex)
-                {
-                    string exText = reportWriter.ToString();
-                    if (string.IsNullOrEmpty(exText))
-                    {
-                        exText = EdiabasNet.GetExceptionText(ex);
-                    }
-                    lock (CommThread.DataLock)
-                    {
-                        EdiabasErrorMessage = exText;
-                    }
-                    Thread.Sleep(1000);
-                    return false;
-                }
-            }
             if (pageInfo.ClassObject == null)
             {
                 lock (CommThread.DataLock)
@@ -1497,29 +1468,21 @@ namespace CarControl
 
             Dictionary<string, EdiabasNet.ResultData> resultDict = null;
 
-            foreach (JobReader.JobInfo job in pageInfo.JobList)
+            try
             {
-                if (_stopThread)
+                pageInfo.ClassObject.ExecuteJob(ediabas, ref resultDict, firstRequestCall);
+            }
+            catch (Exception ex)
+            {
+                ediabasInitReq = true;
+                string exText = EdiabasNet.GetExceptionText(ex);
+                lock (CommThread.DataLock)
                 {
-                    break;
+                    EdiabasResultDict = null;
+                    EdiabasErrorMessage = exText;
                 }
-
-                try
-                {
-                    pageInfo.ClassObject.ExecuteJob(ediabas, ref resultDict, firstRequestCall);
-                }
-                catch (Exception ex)
-                {
-                    ediabasInitReq = true;
-                    string exText = EdiabasNet.GetExceptionText(ex);
-                    lock (CommThread.DataLock)
-                    {
-                        EdiabasResultDict = null;
-                        EdiabasErrorMessage = exText;
-                    }
-                    Thread.Sleep(1000);
-                    return true;
-                }
+                Thread.Sleep(1000);
+                return true;
             }
 
             lock (CommThread.DataLock)

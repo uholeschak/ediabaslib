@@ -1,159 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">BMW Steuerung</string>
-    <string name="button_connected">Verbunden</string>
-    <string name="button_disconnected">Getrennt</string>
-    <string name="bt_not_enabled_leaving">Bluetooth ist nicht aktiviert. Programm wird beendet.</string>
-    <string name="bt_not_available">Bluetooth ist nicht verfügbar.</string>
+  <string name="app_name">BMW Steuerung</string>
+  <string name="button_connected">Verbunden</string>
+  <string name="button_disconnected">Getrennt</string>
+  <string name="bt_not_enabled_leaving">Bluetooth ist nicht aktiviert. Programm wird beendet.</string>
+  <string name="bt_not_available">Bluetooth ist nicht verfügbar.</string>
 
-    <!--  Axis -->
-    <string name="tab_axis">Achse</string>
-    <string name="button_axis_up">Aufwärts</string>
-    <string name="button_axis_down">Abwärts</string>
-    <string name="axis_mode_conveyor">Band</string>
-    <string name="axis_mode_garage">Werkstatt</string>
-    <string name="axis_mode_normal">Normal</string>
-    <string name="axis_mode_transport">Transport</string>
-    <string name="label_axis_mode">Achsenmodus:</string>
-    <string name="label_axis_left">Achse links:</string>
-    <string name="label_axis_right">Achse rechts:</string>
-    <string name="label_axis_bat_volt">Batteriespannung [V]:</string>
-    <string name="label_axis_speed">Geschwindigkeit [km/h]:</string>
-    <string name="label_axis_valve_state">Zustand Ausgänge:</string>
+  <!-- Compile -->
+  <string name="compile_start">Anwendercode kompilieren</string>
+  <string name="compile_ok_btn">OK</string>
 
-    <!--  Motor -->
-    <string name="tab_motor">Motor</string>
-    <string name="label_motor_air_mass">Luftmasse [kg/h]:</string>
-    <string name="label_motor_air_mass_act">Luftmasse ist [mg/Hub]:</string>
-    <string name="label_motor_air_mass_set">Luftmasse soll [mg/Hub]:</string>
-    <string name="label_motor_ambient_press">Umgebungsdruck [mbar]:</string>
-    <string name="label_motor_ambient_temp">Umgebungstemperatur [°C]:</string>
-    <string name="label_motor_bat_voltage">Batteriespannung [V]:</string>
-    <string name="label_motor_boost_press_act">Ladedruck ist [mbar]:</string>
-    <string name="label_motor_boost_press_set">Ladedruck soll [mbar]:</string>
-    <string name="label_motor_exhaust_press">Abgasgegendruck [mbar]:</string>
-    <string name="label_motor_fuel_temp">Treibstofftemperatur [°C]:</string>
-    <string name="label_motor_intake_air_temp">Ansauglufttemp. [°C]:</string>
-    <string name="label_motor_part_filt_dist_since_regen">Partikelfilter Strecke seit Regen. [km]:</string>
-    <string name="label_motor_part_filt_request">Partikelfilter Anforderung Regen.:</string>
-    <string name="label_motor_part_filt_status">Partikelfilter Regeneration:</string>
-    <string name="label_motor_part_filt_unblocked">Partikelfilter Freigabe Regen.:</string>
-    <string name="label_motor_oil_press_switch">Öldruckschalter:</string>
-    <string name="label_motor_rail_press_act">Raildruck ist [bar]:</string>
-    <string name="label_motor_rail_press_set">Raildruck soll [bar]:</string>
-    <string name="label_motor_temp">Motortemperatur  [°C]:</string>
-    <string name="label_motor_temp_before_cat">Temp. vor Katalysator [°C]:</string>
-    <string name="label_motor_temp_before_filter">Temp. vor Partikelfilter [°C]:</string>
+  <!--  Axis -->
+  <string name="tab_axis">Achse</string>
+  <string name="button_axis_up">Aufwärts</string>
+  <string name="button_axis_down">Abwärts</string>
+  <string name="axis_mode_conveyor">Band</string>
+  <string name="axis_mode_garage">Werkstatt</string>
+  <string name="axis_mode_normal">Normal</string>
+  <string name="axis_mode_transport">Transport</string>
+  <string name="label_axis_mode">Achsenmodus:</string>
+  <string name="label_axis_left">Achse links:</string>
+  <string name="label_axis_right">Achse rechts:</string>
+  <string name="label_axis_bat_volt">Batteriespannung [V]:</string>
+  <string name="label_axis_speed">Geschwindigkeit [km/h]:</string>
+  <string name="label_axis_valve_state">Zustand Ausgänge:</string>
 
-    <!--  Motor uneven running -->
-    <string name="tab_motor_uneven_running">Laufunruhe</string>
-    <string name="button_uneven_running_on">Aktiv</string>
-    <string name="button_uneven_running_off">Inaktiv</string>
-    <string name="label_motor_quant_corr_c1">Mengenkorr. Zylinder 1 [mg/Hub]:</string>
-    <string name="label_motor_quant_corr_c2">Mengenkorr. Zylinder 2 [mg/Hub]:</string>
-    <string name="label_motor_quant_corr_c3">Mengenkorr. Zylinder 3 [mg/Hub]:</string>
-    <string name="label_motor_quant_corr_c4">Mengenkorr. Zylinder 4 [mg/Hub]:</string>
+  <!--  Motor -->
+  <string name="tab_motor">Motor</string>
+  <string name="label_motor_air_mass">Luftmasse [kg/h]:</string>
+  <string name="label_motor_air_mass_act">Luftmasse ist [mg/Hub]:</string>
+  <string name="label_motor_air_mass_set">Luftmasse soll [mg/Hub]:</string>
+  <string name="label_motor_ambient_press">Umgebungsdruck [mbar]:</string>
+  <string name="label_motor_ambient_temp">Umgebungstemperatur [°C]:</string>
+  <string name="label_motor_bat_voltage">Batteriespannung [V]:</string>
+  <string name="label_motor_boost_press_act">Ladedruck ist [mbar]:</string>
+  <string name="label_motor_boost_press_set">Ladedruck soll [mbar]:</string>
+  <string name="label_motor_exhaust_press">Abgasgegendruck [mbar]:</string>
+  <string name="label_motor_fuel_temp">Treibstofftemperatur [°C]:</string>
+  <string name="label_motor_intake_air_temp">Ansauglufttemp. [°C]:</string>
+  <string name="label_motor_part_filt_dist_since_regen">Partikelfilter Strecke seit Regen. [km]:</string>
+  <string name="label_motor_part_filt_request">Partikelfilter Anforderung Regen.:</string>
+  <string name="label_motor_part_filt_status">Partikelfilter Regeneration:</string>
+  <string name="label_motor_part_filt_unblocked">Partikelfilter Freigabe Regen.:</string>
+  <string name="label_motor_oil_press_switch">Öldruckschalter:</string>
+  <string name="label_motor_rail_press_act">Raildruck ist [bar]:</string>
+  <string name="label_motor_rail_press_set">Raildruck soll [bar]:</string>
+  <string name="label_motor_temp">Motortemperatur  [°C]:</string>
+  <string name="label_motor_temp_before_cat">Temp. vor Katalysator [°C]:</string>
+  <string name="label_motor_temp_before_filter">Temp. vor Partikelfilter [°C]:</string>
 
-    <!--  Motor rot irregular -->
-    <string name="tab_motor_rot_irregular">Drehungsgleichförmig.</string>
-    <string name="button_rot_irregular_on">Aktiv</string>
-    <string name="button_rot_irregular_off">Inaktiv</string>
-    <string name="label_motor_rpm_c1">Drehzahl Zylinder 1 [1/min]:</string>
-    <string name="label_motor_rpm_c2">Drehzahl Zylinder 2 [1/min]:</string>
-    <string name="label_motor_rpm_c3">Drehzahl Zylinder 3 [1/min]:</string>
-    <string name="label_motor_rpm_c4">Drehzahl Zylinder 4 [1/min]:</string>
+  <!--  Motor uneven running -->
+  <string name="tab_motor_uneven_running">Laufunruhe</string>
+  <string name="button_uneven_running_on">Aktiv</string>
+  <string name="button_uneven_running_off">Inaktiv</string>
+  <string name="label_motor_quant_corr_c1">Mengenkorr. Zylinder 1 [mg/Hub]:</string>
+  <string name="label_motor_quant_corr_c2">Mengenkorr. Zylinder 2 [mg/Hub]:</string>
+  <string name="label_motor_quant_corr_c3">Mengenkorr. Zylinder 3 [mg/Hub]:</string>
+  <string name="label_motor_quant_corr_c4">Mengenkorr. Zylinder 4 [mg/Hub]:</string>
 
-    <!--  Motor PM -->
-    <string name="tab_motor_pm">Energiemanagement</string>
-    <string name="label_motor_pm_bat_cap">Batteriekapazität [Ah]:</string>
-    <string name="label_motor_pm_cal_events">Kalibierereignisse:</string>
-    <string name="label_motor_pm_day1">Tag 1:</string>
-    <string name="label_motor_pm_season_temp">Saison Temperatur [°C]:</string>
-    <string name="label_motor_pm_soc_fit">Ladezustand (SoC Fit) [%]:</string>
-    <string name="label_motor_pm_soc_percent">Ladezustand (SoC) [%]:</string>
-    <string name="label_motor_pm_soc_q">Ladezustand (SoC) [Ah]:</string>
-    <string name="label_motor_pm_soh">Gesundheitszustand (SoH) [+/-50]:</string>
-    <string name="label_motor_pm_start_cap">Startfähigkeit [%]:</string>
+  <!--  Motor rot irregular -->
+  <string name="tab_motor_rot_irregular">Drehungsgleichförmig.</string>
+  <string name="button_rot_irregular_on">Aktiv</string>
+  <string name="button_rot_irregular_off">Inaktiv</string>
+  <string name="label_motor_rpm_c1">Drehzahl Zylinder 1 [1/min]:</string>
+  <string name="label_motor_rpm_c2">Drehzahl Zylinder 2 [1/min]:</string>
+  <string name="label_motor_rpm_c3">Drehzahl Zylinder 3 [1/min]:</string>
+  <string name="label_motor_rpm_c4">Drehzahl Zylinder 4 [1/min]:</string>
 
-    <!--  CCC Nav -->
-    <string name="tab_ccc_nav">GPS</string>
-    <string name="label_ccc_nav_almanach">Almanach Status OK:</string>
-    <string name="label_ccc_nav_gps_date_time">GPS Datum/Zeit:</string>
-    <string name="label_ccc_nav_hip_driver">HIP Treiber OK:</string>
-    <string name="label_ccc_nav_pos_height">Position Höhe NN [m]:</string>
-    <string name="label_ccc_nav_pos_lat">Position Breite:</string>
-    <string name="label_ccc_nav_pos_long">Position Länge:</string>
-    <string name="label_ccc_nav_pos_type">GPS Status:</string>
-    <string name="label_ccc_nav_res_horz">GPS horizonale Auflösung [m]:</string>
-    <string name="label_ccc_nav_res_pos">GPS Position Auflösung [m]:</string>
-    <string name="label_ccc_nav_res_vert">GPS vertikale Auflösung [m]:</string>
-    <string name="label_ccc_nav_speed">Geschwindigkeit [km/h]:</string>
+  <!--  Motor PM -->
+  <string name="tab_motor_pm">Energiemanagement</string>
+  <string name="label_motor_pm_bat_cap">Batteriekapazität [Ah]:</string>
+  <string name="label_motor_pm_cal_events">Kalibierereignisse:</string>
+  <string name="label_motor_pm_day1">Tag 1:</string>
+  <string name="label_motor_pm_season_temp">Saison Temperatur [°C]:</string>
+  <string name="label_motor_pm_soc_fit">Ladezustand (SoC Fit) [%]:</string>
+  <string name="label_motor_pm_soc_percent">Ladezustand (SoC) [%]:</string>
+  <string name="label_motor_pm_soc_q">Ladezustand (SoC) [Ah]:</string>
+  <string name="label_motor_pm_soh">Gesundheitszustand (SoH) [+/-50]:</string>
+  <string name="label_motor_pm_start_cap">Startfähigkeit [%]:</string>
 
-    <!--  IHK -->
-    <string name="tab_ihk">Klima</string>
-    <string name="label_ihk_heat_ex_setpoint">Wärmetauschersollwert [°C]:</string>
-    <string name="label_ihk_heat_ex_temp">Wärmetauschertemperatur [°C]:</string>
-    <string name="label_ihk_in_temp">Innentemperatur [°C]:</string>
-    <string name="label_ihk_in_temp_delay">Innentemperatur verzögert [°C]:</string>
-    <string name="label_ihk_out_temp">Außentemperatur [°C]:</string>
-    <string name="label_ihk_setpoint">Sollwert [°C]:</string>
+  <!--  CCC Nav -->
+  <string name="tab_ccc_nav">GPS</string>
+  <string name="label_ccc_nav_almanach">Almanach Status OK:</string>
+  <string name="label_ccc_nav_gps_date_time">GPS Datum/Zeit:</string>
+  <string name="label_ccc_nav_hip_driver">HIP Treiber OK:</string>
+  <string name="label_ccc_nav_pos_height">Position Höhe NN [m]:</string>
+  <string name="label_ccc_nav_pos_lat">Position Breite:</string>
+  <string name="label_ccc_nav_pos_long">Position Länge:</string>
+  <string name="label_ccc_nav_pos_type">GPS Status:</string>
+  <string name="label_ccc_nav_res_horz">GPS horizonale Auflösung [m]:</string>
+  <string name="label_ccc_nav_res_pos">GPS Position Auflösung [m]:</string>
+  <string name="label_ccc_nav_res_vert">GPS vertikale Auflösung [m]:</string>
+  <string name="label_ccc_nav_speed">Geschwindigkeit [km/h]:</string>
 
-    <!--  Errors -->
-    <string name="tab_errors">Fehler</string>
-    <string name="error_no_error">Keine Fehler vorhanden</string>
-    <string name="error_no_response">Keine Antwort</string>
+  <!--  IHK -->
+  <string name="tab_ihk">Klima</string>
+  <string name="label_ihk_heat_ex_setpoint">Wärmetauschersollwert [°C]:</string>
+  <string name="label_ihk_heat_ex_temp">Wärmetauschertemperatur [°C]:</string>
+  <string name="label_ihk_in_temp">Innentemperatur [°C]:</string>
+  <string name="label_ihk_in_temp_delay">Innentemperatur verzögert [°C]:</string>
+  <string name="label_ihk_out_temp">Außentemperatur [°C]:</string>
+  <string name="label_ihk_setpoint">Sollwert [°C]:</string>
 
-    <string name="errorNameACSM">ACSM Crash-Sicherheits-Modul</string>
-    <string name="errorNameAHM">AHM Anhängermodul</string>
-    <string name="errorNameCAS">CAS Car Access System</string>
-    <string name="errorNameCCCA">CCC-A Anwendungen</string>
-    <string name="errorNameCCCANT">CCC-ANT Antennentuner</string>
-    <string name="errorNameCCCASK">CCC-ASK Audiosystem-Kontroller</string>
-    <string name="errorNameCCCBO">CCC-BO Bedienoberfläche</string>
-    <string name="errorNameCCCGW">CCC-GW Gateway</string>
-    <string name="errorNameCDC">CDC CD-Wechsler</string>
-    <string name="errorNameCID">CID Central Information Display</string>
-    <string name="errorNameCON">CON Controller</string>
-    <string name="errorNameDDE">DDE Diesel Elektronik</string>
-    <string name="errorNameDSC">DSC Dynamische Stabilitätskontrolle</string>
-    <string name="errorNameEHC">EHC Höhenstands Control</string>
-    <string name="errorNameEKPS">EKPS Kraftstoffpumpensteuerung</string>
-    <string name="errorNameIHK">IHK Integrierte Heiz-Klima-Automatik</string>
-    <string name="errorNameKBM">KBM Karosserie-Basismodul</string>
-    <string name="errorNameKGM">KGM Karosserie-Gateway-Modul</string>
-    <string name="errorNameKOMBI">KOMBI Instrumentenkombination</string>
-    <string name="errorNameLM">LM Lichtmodul</string>
-    <string name="errorNamePDC">PDC Park-Distance-Control</string>
-    <string name="errorNameRLS">RLS Regen-Fahrlicht-Sensor</string>
-    <string name="errorNameSZL">SZL Schaltzentrum Lenksäule</string>
-    <string name="errorNameSZM">SZM Schaltzentrum Mittelkonsole</string>
-    <string name="errorNameTCU">TCU Telematic Control Unit</string>
+  <!--  Errors -->
+  <string name="tab_errors">Fehler</string>
+  <string name="error_no_error">Keine Fehler vorhanden</string>
+  <string name="error_no_response">Keine Antwort</string>
 
-    <!--  Adapter config -->
-    <string name="tab_adapter_config">Adapter</string>
-    <string name="button_adapter_config_can_500">500 kbit/s D-CAN</string>
-    <string name="button_adapter_config_can_100">100 kbit/s K-CAN</string>
-    <string name="button_adapter_config_can_off">CAN aus</string>
-    <string name="adapter_config_error">Konfiguration fehlgeschlagen</string>
-    <string name="adapter_config_ok">Konfiguration erfolgreich</string>
+  <string name="errorNameACSM">ACSM Crash-Sicherheits-Modul</string>
+  <string name="errorNameAHM">AHM Anhängermodul</string>
+  <string name="errorNameCAS">CAS Car Access System</string>
+  <string name="errorNameCCCA">CCC-A Anwendungen</string>
+  <string name="errorNameCCCANT">CCC-ANT Antennentuner</string>
+  <string name="errorNameCCCASK">CCC-ASK Audiosystem-Kontroller</string>
+  <string name="errorNameCCCBO">CCC-BO Bedienoberfläche</string>
+  <string name="errorNameCCCGW">CCC-GW Gateway</string>
+  <string name="errorNameCDC">CDC CD-Wechsler</string>
+  <string name="errorNameCID">CID Central Information Display</string>
+  <string name="errorNameCON">CON Controller</string>
+  <string name="errorNameDDE">DDE Diesel Elektronik</string>
+  <string name="errorNameDSC">DSC Dynamische Stabilitätskontrolle</string>
+  <string name="errorNameEHC">EHC Höhenstands Control</string>
+  <string name="errorNameEKPS">EKPS Kraftstoffpumpensteuerung</string>
+  <string name="errorNameIHK">IHK Integrierte Heiz-Klima-Automatik</string>
+  <string name="errorNameKBM">KBM Karosserie-Basismodul</string>
+  <string name="errorNameKGM">KGM Karosserie-Gateway-Modul</string>
+  <string name="errorNameKOMBI">KOMBI Instrumentenkombination</string>
+  <string name="errorNameLM">LM Lichtmodul</string>
+  <string name="errorNamePDC">PDC Park-Distance-Control</string>
+  <string name="errorNameRLS">RLS Regen-Fahrlicht-Sensor</string>
+  <string name="errorNameSZL">SZL Schaltzentrum Lenksäule</string>
+  <string name="errorNameSZM">SZM Schaltzentrum Mittelkonsole</string>
+  <string name="errorNameTCU">TCU Telematic Control Unit</string>
 
-    <!--  Test -->
-    <string name="tab_test">Test</string>
+  <!--  Adapter config -->
+  <string name="tab_adapter_config">Adapter</string>
+  <string name="button_adapter_config_can_500">500 kbit/s D-CAN</string>
+  <string name="button_adapter_config_can_100">100 kbit/s K-CAN</string>
+  <string name="button_adapter_config_can_off">CAN aus</string>
+  <string name="adapter_config_error">Konfiguration fehlgeschlagen</string>
+  <string name="adapter_config_ok">Konfiguration erfolgreich</string>
 
-    <!--  Dynamic -->
-    <string name="format_invalid">Format ungültig</string>
+  <!--  Test -->
+  <string name="tab_test">Test</string>
 
-    <!--  DeviceListActivity -->
-    <string name="scanning">Nach Geräten suchen ...</string>
-    <string name="select_device">Gerät auswählen</string>
-    <string name="none_paired">Keine Geräte sind gekoppelt</string>
-    <string name="none_found">Keine Geräte gefunden</string>
-    <string name="title_paired_devices">Gekoppelte Geräte</string>
-    <string name="title_other_devices">Andere verfügbare Geräte</string>
+  <!--  Dynamic -->
+  <string name="format_invalid">Format ungültig</string>
+
+  <!--  DeviceListActivity -->
+  <string name="scanning">Nach Geräten suchen ...</string>
+  <string name="select_device">Gerät auswählen</string>
+  <string name="none_paired">Keine Geräte sind gekoppelt</string>
+  <string name="none_found">Keine Geräte gefunden</string>
+  <string name="title_paired_devices">Gekoppelte Geräte</string>
+  <string name="title_other_devices">Andere verfügbare Geräte</string>
     <string name="button_scan">Nach Geräten suchen</string>
 
-    <!-- Options Menu -->
-    <string name="menu_device">Gerät</string>
-    <string name="menu_enable_log">Logfile erzeugen</string>
+  <!-- tabs_activate -->
+  <string name="button_active">Aktiv</string>
+  <string name="button_inactive">Inaktiv</string>
 
+  <!-- Options Menu -->
+  <string name="menu_device">Gerät</string>
+  <string name="menu_enable_log">Logfile erzeugen</string>
+  <string name="menu_exit">App beenden</string>
 </resources>

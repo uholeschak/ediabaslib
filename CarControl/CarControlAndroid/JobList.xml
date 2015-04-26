@@ -1,11 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <configuration>
-    <pages>
-        <page name ="Motor">
-            <job name="1">
-                <display name="Batterie" result="STAT_UBATT_WERT" format="7.2R" />
-                <display name="Temperatur" result="STAT_CTSCD_tClntLin_WERT" format="6.2R" />
-            </job>
+  <pages>
+      <page name ="Motor">
+        <display name="Batterie" result="STAT_UBATT_WERT" format="-7.2R" />
+        <display name="Temperatur" result="STAT_CTSCD_tClntLin_WERT" format="-6.2R" />
         <![CDATA[
   using System;
   using System.Collections.Generic;
@@ -39,11 +37,11 @@
       List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
       if (resultSets != null && resultSets.Count >= 2)
       {
-          CommThread.MergeResultDictionarys(ref resultDict, resultSets[1], "1_");
+          CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
       }
     }
   }
         ]]>
-        </page>
-    </pages>
+      </page>
+  </pages>
 </configuration>
