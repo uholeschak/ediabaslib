@@ -1455,15 +1455,6 @@ namespace CarControl
                 Thread.Sleep(1000);
                 return false;
             }
-            if (pageInfo.ClassObject == null)
-            {
-                lock (CommThread.DataLock)
-                {
-                    EdiabasErrorMessage = "No Class object";
-                }
-                Thread.Sleep(1000);
-                return false;
-            }
 #pragma warning disable 219
             bool firstRequestCall = false;
 #pragma warning restore 219
@@ -1474,7 +1465,7 @@ namespace CarControl
 
                 try
                 {
-                    ediabas.ResolveSgbdFile(pageInfo.ClassObject.GetSgbdFileName());
+                    ediabas.ResolveSgbdFile(pageInfo.JobInfo.Sgbd);
                 }
                 catch (Exception ex)
                 {
@@ -1491,10 +1482,22 @@ namespace CarControl
             }
 
             Dictionary<string, EdiabasNet.ResultData> resultDict = null;
-
             try
             {
-                pageInfo.ClassObject.ExecuteJob(ediabas, ref resultDict, firstRequestCall);
+                if (!string.IsNullOrEmpty(pageInfo.JobInfo.Name))
+                {
+                    ediabas.ArgString = pageInfo.JobInfo.Args;
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = pageInfo.JobInfo.Results;
+                    ediabas.ExecuteJob(pageInfo.JobInfo.Name);
+                }
+                else
+                {
+                    if (pageInfo.ClassObject != null)
+                    {
+                        pageInfo.ClassObject.ExecuteJob(ediabas, ref resultDict, firstRequestCall);
+                    }
+                }
             }
             catch (Exception ex)
             {

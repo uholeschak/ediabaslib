@@ -77,13 +77,71 @@ namespace CarControl
             }
         }
 
+        public class JobInfo
+        {
+            public JobInfo(string sgbd, string name, string args, string results, string classCode)
+            {
+                this.sgbd = sgbd;
+                this.name = name;
+                this.args = args;
+                this.results = results;
+                this.classCode = classCode;
+            }
+
+            private string sgbd;
+            private string name;
+            private string args;
+            private string results;
+            private string classCode;
+
+            public string Sgbd
+            {
+                get
+                {
+                    return sgbd;
+                }
+            }
+
+            public string Name
+            {
+                get
+                {
+                    return name;
+                }
+            }
+
+            public string Args
+            {
+                get
+                {
+                    return args;
+                }
+            }
+
+            public string Results
+            {
+                get
+                {
+                    return results;
+                }
+            }
+
+            public string ClassCode
+            {
+                get
+                {
+                    return classCode;
+                }
+            }
+        }
+
         public class PageInfo
         {
-            public PageInfo(string name, float weight, string classCode, List<DisplayInfo> displayList, List<StringInfo> stringList)
+            public PageInfo(string name, float weight, JobInfo jobInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
             {
                 this.name = name;
                 this.weight = weight;
-                this.classCode = classCode;
+                this.jobInfo = jobInfo;
                 this.displayList = displayList;
                 this.stringList = stringList;
                 this.infoObject = null;
@@ -92,7 +150,7 @@ namespace CarControl
 
             private string name;
             private float weight;
-            private string classCode;
+            private JobInfo jobInfo;
             private List<DisplayInfo> displayList;
             private List<StringInfo> stringList;
             private object infoObject;
@@ -115,11 +173,11 @@ namespace CarControl
                 }
             }
 
-            public string ClassCode
+            public JobInfo JobInfo
             {
                 get
                 {
-                    return classCode;
+                    return jobInfo;
                 }
             }
 
@@ -216,7 +274,6 @@ namespace CarControl
                         XmlAttribute attrib;
                         string pageName = string.Empty;
                         float pageWeight = -1;
-                        string classCode = string.Empty;
                         if (xnodePage.Attributes != null)
                         {
                             attrib = xnodePage.Attributes["name"];
@@ -231,13 +288,33 @@ namespace CarControl
                             }
                         }
 
-                        List<DisplayInfo> displayList = new List<DisplayInfo> ();
+                        JobInfo jobInfo = null;
+                        List<DisplayInfo> displayList = new List<DisplayInfo>();
                         List<StringInfo> stringList = new List<StringInfo>();
                         foreach (XmlNode xnodePageChild in xnodePage.ChildNodes)
                         {
-                            if (string.Compare(xnodePageChild.Name, "code", StringComparison.OrdinalIgnoreCase) == 0)
+                            if (string.Compare(xnodePageChild.Name, "job", StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                classCode = xnodePageChild.InnerText;
+                                string sgbd = null;
+                                string jobName = null;
+                                string jobArgs = string.Empty;
+                                string jobResults = string.Empty;
+                                string classCode = xnodePageChild.InnerText;
+                                if (string.IsNullOrWhiteSpace(classCode)) classCode = null;
+                                if (xnodePageChild.Attributes != null)
+                                {
+                                    attrib = xnodePageChild.Attributes["sgbd"];
+                                    if (attrib != null) sgbd = attrib.Value;
+                                    attrib = xnodePageChild.Attributes["name"];
+                                    if (attrib != null) jobName = attrib.Value;
+                                    attrib = xnodePageChild.Attributes["args"];
+                                    if (attrib != null) jobArgs = attrib.Value;
+                                    attrib = xnodePageChild.Attributes["results"];
+                                    if (attrib != null) jobResults = attrib.Value;
+                                }
+                                if (string.IsNullOrEmpty(sgbd)) continue;
+                                if (classCode == null && string.IsNullOrEmpty(jobName)) continue;
+                                jobInfo = new JobInfo(sgbd, jobName, jobArgs, jobResults, classCode);
                             }
                             if (string.Compare(xnodePageChild.Name, "display", StringComparison.OrdinalIgnoreCase) == 0)
                             {
@@ -285,9 +362,9 @@ namespace CarControl
                                 stringList.Add(new StringInfo(lang, stringDict));
                             }
                         }
-                        if (string.IsNullOrEmpty(pageName) || string.IsNullOrEmpty(classCode)) continue;
+                        if (string.IsNullOrEmpty(pageName) || (jobInfo == null)) continue;
 
-                        pageList.Add(new PageInfo(pageName, pageWeight, classCode, displayList, stringList));
+                        pageList.Add(new PageInfo(pageName, pageWeight, jobInfo, displayList, stringList));
                     }
                 }
                 return true;

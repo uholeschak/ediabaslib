@@ -1548,6 +1548,7 @@ namespace CarControlAndroid
             {
                 foreach (JobReader.PageInfo pageInfo in jobReader.pageList)
                 {
+                    if (pageInfo.JobInfo.ClassCode == null) continue;
                     StringWriter reportWriter = new StringWriter();
                     try
                     {
@@ -1560,16 +1561,12 @@ namespace CarControlAndroid
                             using EdiabasLib;
                             using CarControl;
                             using CarControlAndroid;"
-                            + pageInfo.ClassCode;
+                            + pageInfo.JobInfo.ClassCode;
                         evaluator.Compile(classCode);
                         pageInfo.Eval = evaluator;
                         pageInfo.ClassObject = evaluator.Evaluate("new PageClass()");
                         Type pageType = pageInfo.ClassObject.GetType();
-                        if (pageType.GetMethod("GetSgbdFileName") == null)
-                        {
-                            throw new Exception("No GetSgbdFileName method");
-                        }
-                        if (pageType.GetMethod("ExecuteJob") == null)
+                        if (string.IsNullOrEmpty(pageInfo.JobInfo.Name) && pageType.GetMethod("ExecuteJob") == null)
                         {
                             throw new Exception("No ExecuteJob method");
                         }

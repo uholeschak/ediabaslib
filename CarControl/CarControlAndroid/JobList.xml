@@ -1,85 +1,80 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <pages>
-      <page name ="tab_motor">
-        <display name="label_motor_bat_voltage" result="STAT_UBATT_WERT" format="7.2R" />
-        <display name="label_motor_temp" result="STAT_CTSCD_tClntLin_WERT" format="6.2R" />
-        <display name="label_motor_air_mass" result="STAT_LUFTMASSE_WERT" format="7.2R" />
-        <display name="label_motor_intake_air_temp" result="STAT_LADELUFTTEMPERATUR_WERT" format="6.2R" />
-        <display name="label_motor_ambient_temp" result="STAT_UMGEBUNGSTEMPERATUR_WERT" format="6.2R" />
-        <display name="label_motor_boost_press_set" result="STAT_LADEDRUCK_SOLL_WERT" format="6.2R" />
-        <display name="label_motor_boost_press_act" result="STAT_LADEDRUCK_WERT" format="6.2R" />
-        <display name="label_motor_rail_press_set" result="STAT_RAILDRUCK_SOLL_WERT" format="6.2R" />
-        <display name="label_motor_rail_press_act" result="STAT_RAILDRUCK_WERT" format="6.2R" />
-        <display name="label_motor_air_mass_set" result="STAT_LUFTMASSE_SOLL_WERT" format="6.2R" />
-        <display name="label_motor_air_mass_act" result="STAT_LUFTMASSE_PRO_HUB_WERT" format="6.2R" />
-        <display name="label_motor_ambient_press" result="STAT_UMGEBUNGSDRUCK_WERT" format="6.2R" />
-        <display name="label_motor_fuel_temp" result="STAT_KRAFTSTOFFTEMPERATURK_WERT" format="6.2R" />
-        <display name="label_motor_temp_before_filter" result="STAT_ABGASTEMPERATUR_VOR_PARTIKELFILTER_1_WERT" format="6.2R" />
-        <display name="label_motor_temp_before_cat" result="STAT_ABGASTEMPERATUR_VOR_KATALYSATOR_WERT" format="6.2R" />
-        <display name="label_motor_part_filt_dist_since_regen" result="STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT" />
-        <display name="label_motor_exhaust_press" result="STAT_DIFFERENZDRUCK_UEBER_PARTIKELFILTER_WERT" format="6.2R" />
-        <display name="label_motor_oil_press_switch" result="STAT_OELDRUCKSCHALTER_EIN_WERT" />
-        <display name="label_motor_part_filt_request" result="STAT_REGENERATIONSANFORDERUNG_WERT" />
-        <display name="label_motor_part_filt_status" result="STAT_EGT_st_WERT" />
-        <display name="label_motor_part_filt_unblocked" result="STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT" />
-        <strings>
-          <string name="tab_motor">Motor</string>
-          <string name="label_motor_air_mass">Air mass [kg/h]:</string>
-          <string name="label_motor_air_mass_act">Air mass act [mg/pass]:</string>
-          <string name="label_motor_air_mass_set">Air mass set [mg/pass]:</string>
-          <string name="label_motor_ambient_press">Ambient pressure [mbar]:</string>
-          <string name="label_motor_ambient_temp">Ambient temp. [°C]:</string>
-          <string name="label_motor_bat_voltage">Battery voltage [V]:</string>
-          <string name="label_motor_boost_press_act">Boost pressure act [mbar]:</string>
-          <string name="label_motor_boost_press_set">Boost pressure set [mbar]:</string>
-          <string name="label_motor_exhaust_press">Exhaust back pressure [mbar]:</string>
-          <string name="label_motor_fuel_temp">Fuel temp. [°C]:</string>
-          <string name="label_motor_intake_air_temp">Intake air temp. [°C]:</string>
-          <string name="label_motor_part_filt_dist_since_regen">Part. filter dist. since regen. [km]:</string>
-          <string name="label_motor_part_filt_request">Part. filter regeneration request:</string>
-          <string name="label_motor_part_filt_status">Part. filter regeneration:</string>
-          <string name="label_motor_part_filt_unblocked">Part. filter unblock regeneration:</string>
-          <string name="label_motor_oil_press_switch">Oil pressure switch:</string>
-          <string name="label_motor_rail_press_act">Rail pressure act [bar]:</string>
-          <string name="label_motor_rail_press_set">Rail pressure set [bar]:</string>
-          <string name="label_motor_temp">Motor temperature [°C]:</string>
-          <string name="label_motor_temp_before_cat">Temp. before catalyst [°C]:</string>
-          <string name="label_motor_temp_before_filter">Temp. before part. filter [°C]:</string>
-        </strings>
-        <strings lang="de">
-          <string name="tab_motor">Motor</string>
-          <string name="label_motor_air_mass">Luftmasse [kg/h]:</string>
-          <string name="label_motor_air_mass_act">Luftmasse ist [mg/Hub]:</string>
-          <string name="label_motor_air_mass_set">Luftmasse soll [mg/Hub]:</string>
-          <string name="label_motor_ambient_press">Umgebungsdruck [mbar]:</string>
-          <string name="label_motor_ambient_temp">Umgebungstemperatur [°C]:</string>
-          <string name="label_motor_bat_voltage">Batteriespannung [V]:</string>
-          <string name="label_motor_boost_press_act">Ladedruck ist [mbar]:</string>
-          <string name="label_motor_boost_press_set">Ladedruck soll [mbar]:</string>
-          <string name="label_motor_exhaust_press">Abgasgegendruck [mbar]:</string>
-          <string name="label_motor_fuel_temp">Treibstofftemperatur [°C]:</string>
-          <string name="label_motor_intake_air_temp">Ansauglufttemp. [°C]:</string>
-          <string name="label_motor_part_filt_dist_since_regen">Partikelfilter Strecke seit Regen. [km]:</string>
-          <string name="label_motor_part_filt_request">Partikelfilter Anforderung Regen.:</string>
-          <string name="label_motor_part_filt_status">Partikelfilter Regeneration:</string>
-          <string name="label_motor_part_filt_unblocked">Partikelfilter Freigabe Regen.:</string>
-          <string name="label_motor_oil_press_switch">Öldruckschalter:</string>
-          <string name="label_motor_rail_press_act">Raildruck ist [bar]:</string>
-          <string name="label_motor_rail_press_set">Raildruck soll [bar]:</string>
-          <string name="label_motor_temp">Motortemperatur [°C]:</string>
-          <string name="label_motor_temp_before_cat">Temp. vor Katalysator [°C]:</string>
-          <string name="label_motor_temp_before_filter">Temp. vor Partikelfilter [°C]:</string>
-        </strings>
-        <code>
-          <![CDATA[
+    <page name ="tab_motor">
+      <display name="label_motor_bat_voltage" result="STAT_UBATT_WERT" format="7.2R" />
+      <display name="label_motor_temp" result="STAT_CTSCD_tClntLin_WERT" format="6.2R" />
+      <display name="label_motor_air_mass" result="STAT_LUFTMASSE_WERT" format="7.2R" />
+      <display name="label_motor_intake_air_temp" result="STAT_LADELUFTTEMPERATUR_WERT" format="6.2R" />
+      <display name="label_motor_ambient_temp" result="STAT_UMGEBUNGSTEMPERATUR_WERT" format="6.2R" />
+      <display name="label_motor_boost_press_set" result="STAT_LADEDRUCK_SOLL_WERT" format="6.2R" />
+      <display name="label_motor_boost_press_act" result="STAT_LADEDRUCK_WERT" format="6.2R" />
+      <display name="label_motor_rail_press_set" result="STAT_RAILDRUCK_SOLL_WERT" format="6.2R" />
+      <display name="label_motor_rail_press_act" result="STAT_RAILDRUCK_WERT" format="6.2R" />
+      <display name="label_motor_air_mass_set" result="STAT_LUFTMASSE_SOLL_WERT" format="6.2R" />
+      <display name="label_motor_air_mass_act" result="STAT_LUFTMASSE_PRO_HUB_WERT" format="6.2R" />
+      <display name="label_motor_ambient_press" result="STAT_UMGEBUNGSDRUCK_WERT" format="6.2R" />
+      <display name="label_motor_fuel_temp" result="STAT_KRAFTSTOFFTEMPERATURK_WERT" format="6.2R" />
+      <display name="label_motor_temp_before_filter" result="STAT_ABGASTEMPERATUR_VOR_PARTIKELFILTER_1_WERT" format="6.2R" />
+      <display name="label_motor_temp_before_cat" result="STAT_ABGASTEMPERATUR_VOR_KATALYSATOR_WERT" format="6.2R" />
+      <display name="label_motor_part_filt_dist_since_regen" result="STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT" />
+      <display name="label_motor_exhaust_press" result="STAT_DIFFERENZDRUCK_UEBER_PARTIKELFILTER_WERT" format="6.2R" />
+      <display name="label_motor_oil_press_switch" result="STAT_OELDRUCKSCHALTER_EIN_WERT" />
+      <display name="label_motor_part_filt_request" result="STAT_REGENERATIONSANFORDERUNG_WERT" />
+      <display name="label_motor_part_filt_status" result="STAT_EGT_st_WERT" />
+      <display name="label_motor_part_filt_unblocked" result="STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT" />
+      <strings>
+        <string name="tab_motor">Motor</string>
+        <string name="label_motor_air_mass">Air mass [kg/h]:</string>
+        <string name="label_motor_air_mass_act">Air mass act [mg/pass]:</string>
+        <string name="label_motor_air_mass_set">Air mass set [mg/pass]:</string>
+        <string name="label_motor_ambient_press">Ambient pressure [mbar]:</string>
+        <string name="label_motor_ambient_temp">Ambient temp. [°C]:</string>
+        <string name="label_motor_bat_voltage">Battery voltage [V]:</string>
+        <string name="label_motor_boost_press_act">Boost pressure act [mbar]:</string>
+        <string name="label_motor_boost_press_set">Boost pressure set [mbar]:</string>
+        <string name="label_motor_exhaust_press">Exhaust back pressure [mbar]:</string>
+        <string name="label_motor_fuel_temp">Fuel temp. [°C]:</string>
+        <string name="label_motor_intake_air_temp">Intake air temp. [°C]:</string>
+        <string name="label_motor_part_filt_dist_since_regen">Part. filter dist. since regen. [km]:</string>
+        <string name="label_motor_part_filt_request">Part. filter regeneration request:</string>
+        <string name="label_motor_part_filt_status">Part. filter regeneration:</string>
+        <string name="label_motor_part_filt_unblocked">Part. filter unblock regeneration:</string>
+        <string name="label_motor_oil_press_switch">Oil pressure switch:</string>
+        <string name="label_motor_rail_press_act">Rail pressure act [bar]:</string>
+        <string name="label_motor_rail_press_set">Rail pressure set [bar]:</string>
+        <string name="label_motor_temp">Motor temperature [°C]:</string>
+        <string name="label_motor_temp_before_cat">Temp. before catalyst [°C]:</string>
+        <string name="label_motor_temp_before_filter">Temp. before part. filter [°C]:</string>
+      </strings>
+      <strings lang="de">
+        <string name="tab_motor">Motor</string>
+        <string name="label_motor_air_mass">Luftmasse [kg/h]:</string>
+        <string name="label_motor_air_mass_act">Luftmasse ist [mg/Hub]:</string>
+        <string name="label_motor_air_mass_set">Luftmasse soll [mg/Hub]:</string>
+        <string name="label_motor_ambient_press">Umgebungsdruck [mbar]:</string>
+        <string name="label_motor_ambient_temp">Umgebungstemperatur [°C]:</string>
+        <string name="label_motor_bat_voltage">Batteriespannung [V]:</string>
+        <string name="label_motor_boost_press_act">Ladedruck ist [mbar]:</string>
+        <string name="label_motor_boost_press_set">Ladedruck soll [mbar]:</string>
+        <string name="label_motor_exhaust_press">Abgasgegendruck [mbar]:</string>
+        <string name="label_motor_fuel_temp">Treibstofftemperatur [°C]:</string>
+        <string name="label_motor_intake_air_temp">Ansauglufttemp. [°C]:</string>
+        <string name="label_motor_part_filt_dist_since_regen">Partikelfilter Strecke seit Regen. [km]:</string>
+        <string name="label_motor_part_filt_request">Partikelfilter Anforderung Regen.:</string>
+        <string name="label_motor_part_filt_status">Partikelfilter Regeneration:</string>
+        <string name="label_motor_part_filt_unblocked">Partikelfilter Freigabe Regen.:</string>
+        <string name="label_motor_oil_press_switch">Öldruckschalter:</string>
+        <string name="label_motor_rail_press_act">Raildruck ist [bar]:</string>
+        <string name="label_motor_rail_press_set">Raildruck soll [bar]:</string>
+        <string name="label_motor_temp">Motortemperatur [°C]:</string>
+        <string name="label_motor_temp_before_cat">Temp. vor Katalysator [°C]:</string>
+        <string name="label_motor_temp_before_filter">Temp. vor Partikelfilter [°C]:</string>
+      </strings>
+      <job sgbd="d_motor">
+        <![CDATA[
   class PageClass
   {
-    public string GetSgbdFileName()
-    {
-      return "d_motor";
-    }
-
     public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
     {
       string argString = "IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;ITKRS;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED";
@@ -139,8 +134,102 @@
       return result;
     }
   }
-          ]]>
-        </code>
-      </page>
+        ]]>
+      </job>
+    </page>
+    <page name ="tab_motor_uneven_running">
+      <display name="label_motor_quant_corr_c1" result="STAT_LAUFUNRUHE_LLR_MENGE_ZYL1_WERT" format="5.2R" />
+      <display name="label_motor_quant_corr_c2" result="STAT_LAUFUNRUHE_LLR_MENGE_ZYL2_WERT" format="5.2R" />
+      <display name="label_motor_quant_corr_c3" result="STAT_LAUFUNRUHE_LLR_MENGE_ZYL3_WERT" format="5.2R" />
+      <display name="label_motor_quant_corr_c4" result="STAT_LAUFUNRUHE_LLR_MENGE_ZYL4_WERT" format="5.2R" />
+      <strings>
+        <string name="tab_motor_uneven_running">Uneven running</string>
+        <string name="label_motor_quant_corr_c1">Quant. corr. cylinder 1 [mg/pass]:</string>
+        <string name="label_motor_quant_corr_c2">Quant. corr. cylinder 2 [mg/pass]:</string>
+        <string name="label_motor_quant_corr_c3">Quant. corr. cylinder 3 [mg/pass]:</string>
+        <string name="label_motor_quant_corr_c4">Quant. corr. cylinder 4 [mg/pass]:</string>
+      </strings>
+      <strings lang="de">
+        <string name="tab_motor_uneven_running">Laufunruhe</string>
+        <string name="label_motor_quant_corr_c1">Mengenkorr. Zylinder 1 [mg/Hub]:</string>
+        <string name="label_motor_quant_corr_c2">Mengenkorr. Zylinder 2 [mg/Hub]:</string>
+        <string name="label_motor_quant_corr_c3">Mengenkorr. Zylinder 3 [mg/Hub]:</string>
+        <string name="label_motor_quant_corr_c4">Mengenkorr. Zylinder 4 [mg/Hub]:</string>
+      </strings>
+      <job sgbd="d_motor">
+        <![CDATA[
+  class PageClass
+  {
+    public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
+    {
+      ediabas.ArgString = "LLR_EIN";
+      ediabas.ArgBinaryStd = null;
+      ediabas.ResultsRequests = "JOB_STATUS";
+
+      ediabas.ExecuteJob("START_SYSTEMCHECK_ZYL");
+
+      ediabas.ArgString = string.Empty;
+      ediabas.ArgBinaryStd = null;
+      ediabas.ResultsRequests = "STAT_LAUFUNRUHE_LLR_MENGE_ZYL1_WERT;STAT_LAUFUNRUHE_LLR_MENGE_ZYL2_WERT;STAT_LAUFUNRUHE_LLR_MENGE_ZYL3_WERT;STAT_LAUFUNRUHE_LLR_MENGE_ZYL4_WERT";
+
+      ediabas.ExecuteJob("STATUS_LAUFUNRUHE_LLR_MENGE");
+
+      List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
+      if (resultSets != null && resultSets.Count >= 2)
+      {
+          CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
+      }
+    }
+  }
+        ]]>
+      </job>
+    </page>
+    <page name ="tab_motor_rot_irregular">
+      <display name="label_motor_rpm_c1" result="STAT_LAUFUNRUHE_DREHZAHL_ZYL1_WERT" format="7.2R" />
+      <display name="label_motor_rpm_c1" result="STAT_LAUFUNRUHE_DREHZAHL_ZYL2_WERT" format="7.2R" />
+      <display name="label_motor_rpm_c1" result="STAT_LAUFUNRUHE_DREHZAHL_ZYL3_WERT" format="7.2R" />
+      <display name="label_motor_rpm_c1" result="STAT_LAUFUNRUHE_DREHZAHL_ZYL4_WERT" format="7.2R" />
+      <strings>
+        <string name="tab_motor_rot_irregular">Rot. irregularity</string>
+        <string name="label_motor_rpm_c1">Revolution cylinder 1 [1/min]:</string>
+        <string name="label_motor_rpm_c2">Revolution cylinder 2 [1/min]:</string>
+        <string name="label_motor_rpm_c3">Revolution cylinder 3 [1/min]:</string>
+        <string name="label_motor_rpm_c4">Revolution cylinder 4 [1/min]:</string>
+      </strings>
+      <strings lang="de">
+        <string name="tab_motor_rot_irregular">Drehungsgleichförmig.</string>
+        <string name="label_motor_rpm_c1">Drehzahl Zylinder 1 [1/min]:</string>
+        <string name="label_motor_rpm_c2">Drehzahl Zylinder 2 [1/min]:</string>
+        <string name="label_motor_rpm_c3">Drehzahl Zylinder 3 [1/min]:</string>
+        <string name="label_motor_rpm_c4">Drehzahl Zylinder 4 [1/min]:</string>
+      </strings>
+      <job sgbd="d_motor">
+        <![CDATA[
+  class PageClass
+  {
+    public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
+    {
+      ediabas.ArgString = "LLR_AUS";
+      ediabas.ArgBinaryStd = null;
+      ediabas.ResultsRequests = "JOB_STATUS";
+
+      ediabas.ExecuteJob("START_SYSTEMCHECK_ZYL");
+
+      ediabas.ArgString = string.Empty;
+      ediabas.ArgBinaryStd = null;
+      ediabas.ResultsRequests = "STAT_LAUFUNRUHE_DREHZAHL_ZYL1_WERT;STAT_LAUFUNRUHE_DREHZAHL_ZYL2_WERT;STAT_LAUFUNRUHE_DREHZAHL_ZYL3_WERT;STAT_LAUFUNRUHE_DREHZAHL_ZYL4_WERT";
+
+      ediabas.ExecuteJob("STATUS_LAUFUNRUHE_DREHZAHL");
+
+      List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
+      if (resultSets != null && resultSets.Count >= 2)
+      {
+          CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
+      }
+    }
+  }
+        ]]>
+      </job>
+    </page>
   </pages>
 </configuration>
