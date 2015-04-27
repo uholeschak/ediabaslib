@@ -1327,12 +1327,7 @@ namespace CarControlAndroid
                         }
                         else
                         {
-                            EdiabasNet.ResultData resultData;
-                            if (resultDict != null && resultDict.TryGetValue(displayInfo.Result, out resultData))
-                            {
-                                result = EdiabasNet.FormatResult(resultData, displayInfo.Format);
-                                if (result == null) result = GetString(Resource.String.format_invalid);
-                            }
+                            result = FormatResultEdiabas(resultDict, displayInfo.Result, displayInfo.Format);
                         }
                         resultListAdapter.Items.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result));
                     }
@@ -1378,6 +1373,18 @@ namespace CarControlAndroid
                 return string.Format(culture, format, value);
             }
             return string.Empty;
+        }
+
+        public static String FormatResultEdiabas(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
+        {
+            string result = string.Empty;
+            EdiabasNet.ResultData resultData;
+            if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
+            {
+                result = EdiabasNet.FormatResult(resultData, format);
+                if (result == null) result = "?";
+            }
+            return result;
         }
 
         public static Int64 GetResultInt64(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
@@ -1547,7 +1554,14 @@ namespace CarControlAndroid
                         Evaluator evaluator = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter(reportWriter)));
                         evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
                         evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
-                        evaluator.Compile(pageInfo.ClassCode);
+                        string classCode = @"
+                            using System;
+                            using System.Collections.Generic;
+                            using EdiabasLib;
+                            using CarControl;
+                            using CarControlAndroid;"
+                            + pageInfo.ClassCode;
+                        evaluator.Compile(classCode);
                         pageInfo.Eval = evaluator;
                         pageInfo.ClassObject = evaluator.Evaluate("new PageClass()");
                         Type pageType = pageInfo.ClassObject.GetType();

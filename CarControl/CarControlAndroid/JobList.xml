@@ -6,7 +6,19 @@
         <display name="label_motor_temp" result="STAT_CTSCD_tClntLin_WERT" format="6.2R" />
         <display name="label_motor_air_mass" result="STAT_LUFTMASSE_WERT" format="7.2R" />
         <display name="label_motor_intake_air_temp" result="STAT_LADELUFTTEMPERATUR_WERT" format="6.2R" />
+        <display name="label_motor_ambient_temp" result="STAT_UMGEBUNGSTEMPERATUR_WERT" format="6.2R" />
+        <display name="label_motor_boost_press_set" result="STAT_LADEDRUCK_SOLL_WERT" format="6.2R" />
+        <display name="label_motor_boost_press_act" result="STAT_LADEDRUCK_WERT" format="6.2R" />
+        <display name="label_motor_rail_press_set" result="STAT_RAILDRUCK_SOLL_WERT" format="6.2R" />
+        <display name="label_motor_rail_press_act" result="STAT_RAILDRUCK_WERT" format="6.2R" />
+        <display name="label_motor_air_mass_set" result="STAT_LUFTMASSE_SOLL_WERT" format="6.2R" />
+        <display name="label_motor_air_mass_act" result="STAT_LUFTMASSE_PRO_HUB_WERT" format="6.2R" />
+        <display name="label_motor_ambient_press" result="STAT_UMGEBUNGSDRUCK_WERT" format="6.2R" />
+        <display name="label_motor_fuel_temp" result="STAT_KRAFTSTOFFTEMPERATURK_WERT" format="6.2R" />
+        <display name="label_motor_temp_before_filter" result="STAT_ABGASTEMPERATUR_VOR_PARTIKELFILTER_1_WERT" format="6.2R" />
+        <display name="label_motor_temp_before_cat" result="STAT_ABGASTEMPERATUR_VOR_KATALYSATOR_WERT" format="6.2R" />
         <display name="label_motor_part_filt_dist_since_regen" result="STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT" />
+        <display name="label_motor_exhaust_press" result="STAT_DIFFERENZDRUCK_UEBER_PARTIKELFILTER_WERT" format="6.2R" />
         <display name="label_motor_oil_press_switch" result="STAT_OELDRUCKSCHALTER_EIN_WERT" />
         <display name="label_motor_part_filt_request" result="STAT_REGENERATIONSANFORDERUNG_WERT" />
         <display name="label_motor_part_filt_status" result="STAT_EGT_st_WERT" />
@@ -61,12 +73,6 @@
         </strings>
         <code>
           <![CDATA[
-  using System;
-  using System.Collections.Generic;
-  using EdiabasLib;
-  using CarControl;
-  using CarControlAndroid;
-
   class PageClass
   {
     public string GetSgbdFileName()

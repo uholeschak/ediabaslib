@@ -1638,8 +1638,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0014
 			public const int bt_not_enabled_leaving = 2131361812;
 			
-			// aapt resource value: 0x7f0a0091
-			public const int button_active = 2131361937;
+			// aapt resource value: 0x7f0a0090
+			public const int button_active = 2131361936;
 			
 			// aapt resource value: 0x7f0a0084
 			public const int button_adapter_config_can_100 = 2131361924;
@@ -1662,8 +1662,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0013
 			public const int button_disconnected = 2131361811;
 			
-			// aapt resource value: 0x7f0a0092
-			public const int button_inactive = 2131361938;
+			// aapt resource value: 0x7f0a0091
+			public const int button_inactive = 2131361937;
 			
 			// aapt resource value: 0x7f0a0044
 			public const int button_rot_irregular_off = 2131361860;
@@ -1671,8 +1671,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0043
 			public const int button_rot_irregular_on = 2131361859;
 			
-			// aapt resource value: 0x7f0a0090
-			public const int button_scan = 2131361936;
+			// aapt resource value: 0x7f0a008f
+			public const int button_scan = 2131361935;
 			
 			// aapt resource value: 0x7f0a003d
 			public const int button_uneven_running_off = 2131361853;
@@ -1766,9 +1766,6 @@ namespace CarControlAndroid
 			
 			// aapt resource value: 0x7f0a0068
 			public const int error_no_response = 2131361896;
-			
-			// aapt resource value: 0x7f0a0089
-			public const int format_invalid = 2131361929;
 			
 			// aapt resource value: 0x7f0a0022
 			public const int label_axis_bat_volt = 2131361826;
@@ -1956,26 +1953,26 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0010
 			public const int library_name = 2131361808;
 			
+			// aapt resource value: 0x7f0a0092
+			public const int menu_device = 2131361938;
+			
 			// aapt resource value: 0x7f0a0093
-			public const int menu_device = 2131361939;
+			public const int menu_enable_log = 2131361939;
 			
 			// aapt resource value: 0x7f0a0094
-			public const int menu_enable_log = 2131361940;
-			
-			// aapt resource value: 0x7f0a0095
-			public const int menu_exit = 2131361941;
-			
-			// aapt resource value: 0x7f0a008d
-			public const int none_found = 2131361933;
+			public const int menu_exit = 2131361940;
 			
 			// aapt resource value: 0x7f0a008c
-			public const int none_paired = 2131361932;
-			
-			// aapt resource value: 0x7f0a008a
-			public const int scanning = 2131361930;
+			public const int none_found = 2131361932;
 			
 			// aapt resource value: 0x7f0a008b
-			public const int select_device = 2131361931;
+			public const int none_paired = 2131361931;
+			
+			// aapt resource value: 0x7f0a0089
+			public const int scanning = 2131361929;
+			
+			// aapt resource value: 0x7f0a008a
+			public const int select_device = 2131361930;
 			
 			// aapt resource value: 0x7f0a0082
 			public const int tab_adapter_config = 2131361922;
@@ -2007,11 +2004,11 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0088
 			public const int tab_test = 2131361928;
 			
-			// aapt resource value: 0x7f0a008f
-			public const int title_other_devices = 2131361935;
-			
 			// aapt resource value: 0x7f0a008e
-			public const int title_paired_devices = 2131361934;
+			public const int title_other_devices = 2131361934;
+			
+			// aapt resource value: 0x7f0a008d
+			public const int title_paired_devices = 2131361933;
 			
 			static String()
 			{
