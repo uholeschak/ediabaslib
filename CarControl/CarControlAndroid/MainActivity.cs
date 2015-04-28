@@ -140,7 +140,10 @@ namespace CarControlAndroid
 
             foreach (JobReader.PageInfo pageInfo in jobReader.PageList)
             {
-                Fragment fragmentPage = new TabContentFragment(Resource.Layout.tab_list);
+                int resourceId = Resource.Layout.tab_list;
+                if (pageInfo.JobInfo.Activate) resourceId = Resource.Layout.tab_activate;
+
+                Fragment fragmentPage = new TabContentFragment(resourceId);
                 fragmentList.Add(fragmentPage);
                 pageInfo.InfoObject = fragmentPage;
                 AddTabToActionBar(GetPageString(pageInfo, pageInfo.Name));
@@ -540,7 +543,7 @@ namespace CarControlAndroid
                     if (index >= 10 && index < (10 + jobReader.PageList.Count))
                     {
                         selDevice = CommThread.SelectedDevice.Dynamic;
-                        selPageInfo = jobReader.PageList [index - 10];
+                        selPageInfo = jobReader.PageList[index - 10];
                     }
                     break;
             }
@@ -564,6 +567,10 @@ namespace CarControlAndroid
                 case CommThread.SelectedDevice.DeviceMotorRotIrregular:
                     newCommActive = false;
                     break;
+            }
+            if (newPageInfo != null && newPageInfo.JobInfo.Activate)
+            {
+                newCommActive = false;
             }
             if ((commThread.Device != newDevice) || (commThread.JobPageInfo != newPageInfo))
             {
@@ -1298,6 +1305,11 @@ namespace CarControlAndroid
                     listViewResult.Adapter = new ResultListAdapter (this, pageInfo.Weight);
                 }
                 ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult.Adapter;
+                ToggleButton buttonActive = null;
+                if (pageInfo.JobInfo.Activate)
+                {
+                    buttonActive = dynamicFragment.View.FindViewById<ToggleButton>(Resource.Id.button_active);
+                }
 
                 if (dynamicValid)
                 {
@@ -1338,6 +1350,19 @@ namespace CarControlAndroid
                 {
                     resultListAdapter.Items.Clear();
                     resultListAdapter.NotifyDataSetChanged();
+                }
+                if (buttonActive != null)
+                {
+                    if (commThread != null && commThread.ThreadRunning())
+                    {
+                        buttonActive.Enabled = true;
+                        buttonActive.Checked = commThread.CommActive;
+                    }
+                    else
+                    {
+                        buttonActive.Enabled = false;
+                        buttonActive.Checked = false;
+                    }
                 }
             }
         }

@@ -156,7 +156,7 @@
         <string name="label_motor_quant_corr_c3">Mengenkorr. Zylinder 3 [mg/Hub]:</string>
         <string name="label_motor_quant_corr_c4">Mengenkorr. Zylinder 4 [mg/Hub]:</string>
       </strings>
-      <job sgbd="d_motor">
+      <job sgbd="d_motor" activate="true">
         <![CDATA[
   class PageClass
   {
@@ -203,7 +203,7 @@
         <string name="label_motor_rpm_c3">Drehzahl Zylinder 3 [1/min]:</string>
         <string name="label_motor_rpm_c4">Drehzahl Zylinder 4 [1/min]:</string>
       </strings>
-      <job sgbd="d_motor">
+      <job sgbd="d_motor" activate="true">
         <![CDATA[
   class PageClass
   {
