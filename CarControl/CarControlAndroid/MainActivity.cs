@@ -36,6 +36,7 @@ namespace CarControlAndroid
         private string externalPath;
         private string ecuPath;
         private JobReader jobReader;
+        private Handler updateHandler;
         private BluetoothAdapter bluetoothAdapter;
         private CommThread commThread;
         private List<Fragment> fragmentList;
@@ -85,6 +86,7 @@ namespace CarControlAndroid
             GetSettings();
             externalPath = Path.Combine (Path.Combine (Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, "external_sd"), "CarControl");
             jobReader = new JobReader(Path.Combine (externalPath, "JobList.xml"));
+            updateHandler = new Handler();
 
             barConnectView = LayoutInflater.Inflate(Resource.Layout.bar_connect, null);
             ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
@@ -98,43 +100,43 @@ namespace CarControlAndroid
             buttonConnect = barConnectView.FindViewById<ToggleButton> (Resource.Id.buttonConnect);
             fragmentList = new List<Fragment>();
 
-            fragmentAxis = new TabContentFragment(Resource.Layout.tab_axis);
+            fragmentAxis = new TabContentFragment(this, Resource.Layout.tab_axis);
             fragmentList.Add(fragmentAxis);
             AddTabToActionBar(Resource.String.tab_axis);
 
-            fragmentMotor = new TabContentFragment(Resource.Layout.tab_list);
+            fragmentMotor = new TabContentFragment(this, Resource.Layout.tab_list);
             fragmentList.Add(fragmentMotor);
             AddTabToActionBar(Resource.String.tab_motor);
 
-            fragmentMotorUnevenRunning = new TabContentFragment(Resource.Layout.tab_activate);
+            fragmentMotorUnevenRunning = new TabContentFragment(this, Resource.Layout.tab_activate);
             fragmentList.Add(fragmentMotorUnevenRunning);
             AddTabToActionBar(Resource.String.tab_motor_uneven_running);
 
-            fragmentMotorRotIrregular = new TabContentFragment(Resource.Layout.tab_activate);
+            fragmentMotorRotIrregular = new TabContentFragment(this, Resource.Layout.tab_activate);
             fragmentList.Add(fragmentMotorRotIrregular);
             AddTabToActionBar(Resource.String.tab_motor_rot_irregular);
 
-            fragmentMotorPm = new TabContentFragment(Resource.Layout.tab_list);
+            fragmentMotorPm = new TabContentFragment(this, Resource.Layout.tab_list);
             fragmentList.Add(fragmentMotorPm);
             AddTabToActionBar(Resource.String.tab_motor_pm);
 
-            fragmentCccNav = new TabContentFragment(Resource.Layout.tab_list);
+            fragmentCccNav = new TabContentFragment(this, Resource.Layout.tab_list);
             fragmentList.Add(fragmentCccNav);
             AddTabToActionBar(Resource.String.tab_ccc_nav);
 
-            fragmentIhk = new TabContentFragment(Resource.Layout.tab_list);
+            fragmentIhk = new TabContentFragment(this, Resource.Layout.tab_list);
             fragmentList.Add(fragmentIhk);
             AddTabToActionBar(Resource.String.tab_ihk);
 
-            fragmentErrors = new TabContentFragment(Resource.Layout.tab_list);
+            fragmentErrors = new TabContentFragment(this, Resource.Layout.tab_list);
             fragmentList.Add(fragmentErrors);
             AddTabToActionBar(Resource.String.tab_errors);
 
-            fragmentAdapterConfig = new TabContentFragment(Resource.Layout.tab_adapter);
+            fragmentAdapterConfig = new TabContentFragment(this, Resource.Layout.tab_adapter);
             fragmentList.Add(fragmentAdapterConfig);
             AddTabToActionBar(Resource.String.tab_adapter_config);
 
-            fragmentTest = new TabContentFragment(Resource.Layout.tab_text);
+            fragmentTest = new TabContentFragment(this, Resource.Layout.tab_text);
             fragmentList.Add(fragmentTest);
             AddTabToActionBar(Resource.String.tab_test);
 
@@ -143,7 +145,7 @@ namespace CarControlAndroid
                 int resourceId = Resource.Layout.tab_list;
                 if (pageInfo.JobInfo.Activate) resourceId = Resource.Layout.tab_activate;
 
-                Fragment fragmentPage = new TabContentFragment(resourceId);
+                Fragment fragmentPage = new TabContentFragment(this, resourceId, pageInfo);
                 fragmentList.Add(fragmentPage);
                 pageInfo.InfoObject = fragmentPage;
                 AddTabToActionBar(GetPageString(pageInfo, pageInfo.Name));
@@ -170,7 +172,7 @@ namespace CarControlAndroid
             // Get our button from the layout resource,
             // and attach an event to it
             buttonConnect.Click += ButtonConnectClick;
-            UpdateDisplay ();
+            UpdateDisplay();
         }
 
         void AddTabToActionBar(int labelResourceId)
@@ -368,7 +370,7 @@ namespace CarControlAndroid
                 return;
             }
             commThread.AdapterConfigValue = 0x01;
-            UpdateDisplay ();
+            UpdateDisplay();
         }
 
         [Export ("onConfig100Click")]
@@ -379,7 +381,7 @@ namespace CarControlAndroid
                 return;
             }
             commThread.AdapterConfigValue = 0x09;
-            UpdateDisplay ();
+            UpdateDisplay();
         }
 
         [Export ("onConfigOffClick")]
@@ -390,7 +392,7 @@ namespace CarControlAndroid
                 return;
             }
             commThread.AdapterConfigValue = 0x00;
-            UpdateDisplay ();
+            UpdateDisplay();
         }
 
         private bool StartCommThread()
@@ -1288,13 +1290,10 @@ namespace CarControlAndroid
 
             Fragment dynamicFragment = null;
             JobReader.PageInfo pageInfo = null;
-            if (commThread != null)
+            GetSelectedDevice(out pageInfo);
+            if (pageInfo != null)
             {
-                pageInfo = commThread.JobPageInfo;
-                if (pageInfo != null)
-                {
-                    dynamicFragment = (Fragment)pageInfo.InfoObject;
-                }
+                dynamicFragment = (Fragment)pageInfo.InfoObject;
             }
 
             if (dynamicFragment != null && dynamicFragment.View != null)
@@ -1351,6 +1350,19 @@ namespace CarControlAndroid
                     resultListAdapter.Items.Clear();
                     resultListAdapter.NotifyDataSetChanged();
                 }
+
+                try
+                {
+                    Type pageType = pageInfo.ClassObject.GetType();
+                    if (string.IsNullOrEmpty(pageInfo.JobInfo.Name) && pageType.GetMethod("UpdateLayout") != null)
+                    {
+                        pageInfo.ClassObject.UpdateLayout(pageInfo, dynamicValid, commThread != null);
+                    }
+                }
+                catch (Exception)
+                {
+                }
+
                 if (buttonActive != null)
                 {
                     if (commThread != null && commThread.ThreadRunning())
@@ -1580,12 +1592,15 @@ namespace CarControlAndroid
                         Evaluator evaluator = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter(reportWriter)));
                         evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
                         evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
+                        evaluator.ReferenceAssembly(typeof(View).Assembly);
                         string classCode = @"
-                            using System;
-                            using System.Collections.Generic;
+                            using Android.Views;
+                            using Android.Widget;
                             using EdiabasLib;
                             using CarControl;
-                            using CarControlAndroid;"
+                            using CarControlAndroid;
+                            using System;
+                            using System.Collections.Generic;"
                             + pageInfo.JobInfo.ClassCode;
                         evaluator.Compile(classCode);
                         pageInfo.Eval = evaluator;
@@ -1622,17 +1637,66 @@ namespace CarControlAndroid
 
         public class TabContentFragment : Fragment
         {
+            private ActivityMain activity;
             private int resourceId;
+            private JobReader.PageInfo pageInfo;
 
-            public TabContentFragment(int resourceId)
+            public TabContentFragment(ActivityMain activity, int resourceId, JobReader.PageInfo pageInfo)
             {
+                this.activity = activity;
                 this.resourceId = resourceId;
+                this.pageInfo = pageInfo;
+            }
+
+            public TabContentFragment(ActivityMain activity, int resourceId)
+                : this(activity, resourceId, null)
+            {
             }
 
             public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
             {
                 View view = inflater.Inflate(resourceId, null);
+                if (pageInfo != null)
+                {
+                    try
+                    {
+                        Type pageType = pageInfo.ClassObject.GetType();
+                        if (string.IsNullOrEmpty(pageInfo.JobInfo.Name) && pageType.GetMethod("CreateLayout") != null)
+                        {
+                            LinearLayout pageLayout = view.FindViewById<LinearLayout>(Resource.Id.listLayout);
+                            pageInfo.ClassObject.CreateLayout(pageInfo, pageLayout);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+
+                activity.updateHandler.Post(() =>
+                {
+                    activity.UpdateDisplay();
+                });
                 return view;
+            }
+
+            public override void OnDestroyView()
+            {
+                base.OnDestroyView();
+
+                if (pageInfo != null)
+                {
+                    try
+                    {
+                        Type pageType = pageInfo.ClassObject.GetType();
+                        if (string.IsNullOrEmpty(pageInfo.JobInfo.Name) && pageType.GetMethod("DestroyLayout") != null)
+                        {
+                            pageInfo.ClassObject.DestroyLayout(pageInfo);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
             }
         }
     }
