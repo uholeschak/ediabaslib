@@ -7,6 +7,7 @@
       <display name="label_axis_right" result="ORGFASTFILTER_RR" />
       <display name="label_axis_bat_volt" result="ANALOG_U_KL30" />
       <display name="label_axis_speed" result="STATE_SPEED" format="4L" />
+      <display name="label_axis_valve_state" result="STATUS_SIGNALE_NUMERISCH" />
       <strings>
         <string name="tab_axis">Axis</string>
         <string name="button_axis_up">Up</string>
@@ -76,12 +77,12 @@
       {
         if (buttonDown.Checked)
         {
-            buttonUp.Checked = false;
-            opMode = OpModeDown;
+          buttonUp.Checked = false;
+          opMode = OpModeDown;
         }
         else
         {
-            opMode = OpModeStatus;
+          opMode = OpModeStatus;
         }
       };
       buttonLayout.AddView(buttonDown, buttonLayoutParams);
@@ -94,12 +95,12 @@
       {
         if (buttonUp.Checked)
         {
-            buttonDown.Checked = false;
-            opMode = OpModeUp;
+          buttonDown.Checked = false;
+          opMode = OpModeUp;
         }
         else
         {
-            opMode = OpModeStatus;
+          opMode = OpModeStatus;
         }
       };
       buttonLayout.AddView(buttonUp, buttonLayoutParams);
@@ -188,7 +189,7 @@
           resultSets = ediabas.ResultSets;
           if (resultSets != null && resultSets.Count >= 2)
           {
-              CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+            CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
           }
           updateStep++;
           break;
@@ -203,7 +204,7 @@
           resultSets = ediabas.ResultSets;
           if (resultSets != null && resultSets.Count >= 2)
           {
-              CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+            CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
           }
           updateStep++;
           break;
@@ -218,7 +219,7 @@
           resultSets = ediabas.ResultSets;
           if (resultSets != null && resultSets.Count >= 2)
           {
-              CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+            CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
           }
           dynDict = tempDict;
           updateStep = 0;
@@ -241,15 +242,65 @@
       resultSets = ediabas.ResultSets;
       if (resultSets != null && resultSets.Count >= 2)
       {
-          EdiabasNet.ResultData resultData;
-          if (resultSets[1].TryGetValue("WERT", out resultData))
+        EdiabasNet.ResultData resultData;
+        if (resultSets[1].TryGetValue("WERT", out resultData))
+        {
+            if (resultData.opData is Int64)
+            {
+                axisMode = (int)((Int64)resultData.opData);
+            }
+        }
+        CommThread.MergeResultDictionarys(ref resultDict, resultSets[1], "MODE_CTRL_LESEN_");
+      }
+
+      if (axisMode >= 0)
+      {
+        if ((opMode == OpModeUp) && (axisMode & AxisModeMask) != 0x00)
+        {   // set normal mode
+          ediabas.ArgString = "aus;aus;aus";
+          ediabas.ArgBinaryStd = null;
+          ediabas.ResultsRequests = "JOB_STATUS";
+
+          ediabas.ExecuteJob("ENERGIESPARMODE");
+        }
+
+        if ((opMode == OpModeDown) && (axisMode & AxisModeConveyor) == 0x00)
+        {   // set conveyor mode
+          ediabas.ArgString = "ein;aus;aus";
+          ediabas.ArgBinaryStd = null;
+          ediabas.ResultsRequests = "JOB_STATUS";
+
+          ediabas.ExecuteJob("ENERGIESPARMODE");
+        }
+
+        if ((opMode == OpModeDown) && (axisMode & AxisModeConveyor) != 0x00)
+        {   // manual down
+          // read channel states
+          for (int channel = 0; channel < 4; channel++)
           {
-              if (resultData.opData is Int64)
-              {
-                  axisMode = (int)((Int64)resultData.opData);
-              }
+            ediabas.ArgString = string.Format("0x{0:X02}", 0x11 + channel);
+            ediabas.ArgBinaryStd = null;
+            ediabas.ResultsRequests = "WERT";
+
+            ediabas.ExecuteJob("STATUS_SIGNALE_NUMERISCH");
+            resultSets = ediabas.ResultSets;
+            if (resultSets != null && resultSets.Count >= 2)
+            {
+              CommThread.MergeResultDictionarys(ref resultDict, resultSets[1], string.Format("STATUS_SIGNALE_NUMERISCH{0}_", channel));
+            }
           }
-          CommThread.MergeResultDictionarys(ref resultDict, resultSets[1], "MODE_CTRL_LESEN_");
+
+          // set channel states
+          for (int channel = 0; channel < 3; channel++)
+          {
+            // longer timeout for bluetooth
+            ediabas.ArgString = string.Format("0x{0:X02};0x01;0x0C", 0x11 + channel);
+            ediabas.ArgBinaryStd = null;
+            ediabas.ResultsRequests = "JOB_STATUS";
+
+            ediabas.ExecuteJob("STEUERN_DIGITALSIGNALE");
+          }
+        }
       }
     }
 
@@ -265,37 +316,35 @@
           Int64 axisMode = ActivityMain.GetResultInt64 (resultDict, resultName, out found);
           if (found)
           {
-              if ((axisMode & AxisModeConveyor) != 0x00)
-              {
-                  result = ActivityMain.GetPageString(pageInfo, "axis_mode_conveyor");
-              }
-              else if ((axisMode & AxisModeTransport) != 0x00)
-              {
-                  result = ActivityMain.GetPageString(pageInfo, "axis_mode_transport");
-              }
-              else if ((axisMode & AxisModeGarage) != 0x00)
-              {
-                  result = ActivityMain.GetPageString(pageInfo, "axis_mode_garage");
-              }
-              else
-              {
-                  result = ActivityMain.GetPageString(pageInfo, "axis_mode_normal");
-              }
+            if ((axisMode & AxisModeConveyor) != 0x00)
+            {
+              result = ActivityMain.GetPageString(pageInfo, "axis_mode_conveyor");
+            }
+            else if ((axisMode & AxisModeTransport) != 0x00)
+            {
+              result = ActivityMain.GetPageString(pageInfo, "axis_mode_transport");
+            }
+            else if ((axisMode & AxisModeGarage) != 0x00)
+            {
+              result = ActivityMain.GetPageString(pageInfo, "axis_mode_garage");
+            }
+            else
+            {
+              result = ActivityMain.GetPageString(pageInfo, "axis_mode_normal");
+            }
           }
           break;
         }
 
         case "ORGFASTFILTER_RL":
           result = ActivityMain.FormatResultInt64(resultDict, resultName, "{0,4}");
-          if (result.Length > 0)
-              result += " / ";
+          if (result.Length > 0) result += " / ";
           result += ActivityMain.FormatResultInt64(resultDict, "FASTFILTER_RL", "{0,4}");
           break;
 
         case "ORGFASTFILTER_RR":
           result = ActivityMain.FormatResultInt64(resultDict, resultName, "{0,4}");
-          if (result.Length > 0)
-              result += " / ";
+          if (result.Length > 0) result += " / ";
           result += ActivityMain.FormatResultInt64(resultDict, "FASTFILTER_RR", "{0,4}");
           break;
 
@@ -304,10 +353,17 @@
           Int64 voltage = ActivityMain.GetResultInt64(resultDict, resultName, out found);
           if (found)
           {
-              result = string.Format(ActivityMain.culture, "{0,6:0.00}", (double)voltage / 1000);
+            result = string.Format(ActivityMain.culture, "{0,6:0.00}", (double)voltage / 1000);
           }
           break;
         }
+
+        case "STATUS_SIGNALE_NUMERISCH":
+          for (int channel = 0; channel < 4; channel++)
+          {
+            result = ActivityMain.FormatResultInt64(resultDict, string.Format(ActivityMain.culture, "STATUS_SIGNALE_NUMERISCH{0}_WERT", channel), "{0}") + result;
+          }
+          break;
       }
       return result;
     }
