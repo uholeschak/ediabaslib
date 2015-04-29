@@ -1664,7 +1664,7 @@ namespace CarControlAndroid
                         if (string.IsNullOrEmpty(pageInfo.JobInfo.Name) && pageType.GetMethod("CreateLayout") != null)
                         {
                             LinearLayout pageLayout = view.FindViewById<LinearLayout>(Resource.Id.listLayout);
-                            pageInfo.ClassObject.CreateLayout(pageInfo, pageLayout);
+                            pageInfo.ClassObject.CreateLayout(activity, pageInfo, pageLayout);
                         }
                     }
                     catch (Exception)

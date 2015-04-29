@@ -47,12 +47,20 @@
     private static int AxisModeGarage = 0x40;
     private static int AxisModeMask = 0x46;
 
+    private static int OpModeStatus = 0;
+    private static int OpModeUp = 1;
+    private static int OpModeDown = 2;
+
     private ToggleButton buttonDown;
     private ToggleButton buttonUp;
+    private int updateStep = 0;
+    private int opMode = OpModeStatus;
+    private Dictionary<string, EdiabasNet.ResultData> tempDict;
+    private Dictionary<string, EdiabasNet.ResultData> dynDict;
 
-    public void CreateLayout(JobReader.PageInfo pageInfo, LinearLayout pageLayout)
+    public void CreateLayout(ActivityMain activity, JobReader.PageInfo pageInfo, LinearLayout pageLayout)
     {
-      LinearLayout buttonLayout = new LinearLayout(Android.App.Application.Context);
+      LinearLayout buttonLayout = new LinearLayout(activity);
       buttonLayout.Orientation = Orientation.Horizontal;
 
       LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(
@@ -60,7 +68,7 @@
           ViewGroup.LayoutParams.WrapContent);
       buttonLayoutParams.Weight = 1;
 
-      buttonDown = new ToggleButton(Android.App.Application.Context);
+      buttonDown = new ToggleButton(activity);
       buttonDown.Text = ActivityMain.GetPageString(pageInfo, "button_axis_down");
       buttonDown.TextOff = buttonDown.Text;
       buttonDown.TextOn = buttonDown.Text;
@@ -69,11 +77,16 @@
         if (buttonDown.Checked)
         {
             buttonUp.Checked = false;
+            opMode = OpModeDown;
+        }
+        else
+        {
+            opMode = OpModeStatus;
         }
       };
       buttonLayout.AddView(buttonDown, buttonLayoutParams);
 
-      buttonUp = new ToggleButton(Android.App.Application.Context);
+      buttonUp = new ToggleButton(activity);
       buttonUp.Text = ActivityMain.GetPageString(pageInfo, "button_axis_up");
       buttonUp.TextOff = buttonUp.Text;
       buttonUp.TextOn = buttonUp.Text;
@@ -82,6 +95,11 @@
         if (buttonUp.Checked)
         {
             buttonDown.Checked = false;
+            opMode = OpModeUp;
+        }
+        else
+        {
+            opMode = OpModeStatus;
         }
       };
       buttonLayout.AddView(buttonUp, buttonLayoutParams);
@@ -90,6 +108,9 @@
           ViewGroup.LayoutParams.MatchParent,
           ViewGroup.LayoutParams.WrapContent);
       pageLayout.AddView(buttonLayout, layoutParams);
+
+      updateStep = 0;
+      opMode = OpModeStatus;
     }
 
     public void DestroyLayout(JobReader.PageInfo pageInfo)
@@ -118,6 +139,21 @@
       {
         buttonDown.Enabled = true;
         buttonUp.Enabled = true;
+        if (opMode == OpModeDown)
+        {
+          buttonDown.Checked = true;
+          buttonUp.Checked = false;
+        }
+        else if (opMode == OpModeUp)
+        {
+          buttonDown.Checked = false;
+          buttonUp.Checked = true;
+        }
+        else
+        {
+          buttonDown.Checked = false;
+          buttonUp.Checked = false;
+        }
       }
       else
       {
@@ -130,43 +166,70 @@
 
     public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
     {
+      if (firstCall)
+      {
+        updateStep = 0;
+        opMode = OpModeStatus;
+        tempDict = null;
+        dynDict = null;
+      }
       List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
 
-      ediabas.ArgString = string.Empty;
-      ediabas.ArgBinaryStd = null;
-      ediabas.ResultsRequests = "STATE_SPEED";
-
-      ediabas.ExecuteJob("LESEN_REGLERWERTE");
-
-      resultSets = ediabas.ResultSets;
-      if (resultSets != null && resultSets.Count >= 2)
+      switch (updateStep)
       {
-          CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
+        case 0:
+          tempDict = null;
+          ediabas.ArgString = string.Empty;
+          ediabas.ArgBinaryStd = null;
+          ediabas.ResultsRequests = "STATE_SPEED";
+
+          ediabas.ExecuteJob("LESEN_REGLERWERTE");
+
+          resultSets = ediabas.ResultSets;
+          if (resultSets != null && resultSets.Count >= 2)
+          {
+              CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+          }
+          updateStep++;
+          break;
+
+        case 1:
+          ediabas.ArgString = string.Empty;
+          ediabas.ArgBinaryStd = null;
+          ediabas.ResultsRequests = "ANALOG_U_KL30";
+
+          ediabas.ExecuteJob("LESEN_ANALOGWERTE");
+
+          resultSets = ediabas.ResultSets;
+          if (resultSets != null && resultSets.Count >= 2)
+          {
+              CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+          }
+          updateStep++;
+          break;
+
+        case 2:
+          ediabas.ArgString = string.Empty;
+          ediabas.ArgBinaryStd = null;
+          ediabas.ResultsRequests = "ORGFASTFILTER_RL;ORGFASTFILTER_RR;FASTFILTER_RL;FASTFILTER_RR";
+
+          ediabas.ExecuteJob("LESEN_FILTERWERTE");
+
+          resultSets = ediabas.ResultSets;
+          if (resultSets != null && resultSets.Count >= 2)
+          {
+              CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+          }
+          dynDict = tempDict;
+          updateStep = 0;
+          break;
+
+        default:
+          updateStep = 0;
+          break;
       }
 
-      ediabas.ArgString = string.Empty;
-      ediabas.ArgBinaryStd = null;
-      ediabas.ResultsRequests = "ANALOG_U_KL30";
-
-      ediabas.ExecuteJob("LESEN_ANALOGWERTE");
-
-      resultSets = ediabas.ResultSets;
-      if (resultSets != null && resultSets.Count >= 2)
-      {
-          CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
-      }
-
-      ediabas.ArgString = string.Empty;
-      ediabas.ArgBinaryStd = null;
-      ediabas.ResultsRequests = "ORGFASTFILTER_RL;ORGFASTFILTER_RR;FASTFILTER_RL;FASTFILTER_RR";
-
-      ediabas.ExecuteJob("LESEN_FILTERWERTE");
-
-      resultSets = ediabas.ResultSets;
-      if (resultSets != null && resultSets.Count >= 2)
-      {
-          CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
-      }
+      resultDict = dynDict;
 
       ediabas.ArgString = string.Empty;
       ediabas.ArgBinaryStd = null;
