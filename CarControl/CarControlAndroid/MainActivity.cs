@@ -1329,7 +1329,7 @@ namespace CarControlAndroid
                             {
                                 try
                                 {
-                                    result = pageInfo.ClassObject.FormatResult(resultDict, displayInfo.Result);
+                                    result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result);
                                 }
                                 catch (Exception)
                                 {
@@ -1618,7 +1618,7 @@ namespace CarControlAndroid
                         {
                             exText = EdiabasNet.GetExceptionText(ex);
                         }
-                        exText = pageInfo.Name + ":\r\n" + exText;
+                        exText = GetPageString(pageInfo, pageInfo.Name) + ":\r\n" + exText;
                         RunOnUiThread(() => ShowAlert(exText));
                     }
                 }
