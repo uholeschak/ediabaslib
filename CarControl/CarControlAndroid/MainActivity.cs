@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarControlAndroid
 {
@@ -1581,50 +1581,66 @@ namespace CarControlAndroid
             progress.SetMessage(GetString(Resource.String.compile_start));
             progress.Show();
 
-            new Thread(new ThreadStart(delegate
+            Task.Factory.StartNew(() =>
             {
+                List<Task<string>> taskList = new List<Task<string>>();
                 foreach (JobReader.PageInfo pageInfo in jobReader.pageList)
                 {
                     if (pageInfo.JobInfo.ClassCode == null) continue;
-                    StringWriter reportWriter = new StringWriter();
-                    try
+                    Task<string> compileTask = Task<string>.Factory.StartNew(() =>
                     {
-                        Evaluator evaluator = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter(reportWriter)));
-                        evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
-                        evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
-                        evaluator.ReferenceAssembly(typeof(View).Assembly);
-                        string classCode = @"
-                            using Android.Views;
-                            using Android.Widget;
-                            using EdiabasLib;
-                            using CarControl;
-                            using CarControlAndroid;
-                            using System;
-                            using System.Collections.Generic;"
-                            + pageInfo.JobInfo.ClassCode;
-                        evaluator.Compile(classCode);
-                        pageInfo.Eval = evaluator;
-                        pageInfo.ClassObject = evaluator.Evaluate("new PageClass()");
-                        Type pageType = pageInfo.ClassObject.GetType();
-                        if (string.IsNullOrEmpty(pageInfo.JobInfo.Name) && pageType.GetMethod("ExecuteJob") == null)
+                        string result = string.Empty;
+                        StringWriter reportWriter = new StringWriter();
+                        try
                         {
-                            throw new Exception("No ExecuteJob method");
+                            Evaluator evaluator = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter(reportWriter)));
+                            evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
+                            evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
+                            evaluator.ReferenceAssembly(typeof(View).Assembly);
+                            string classCode = @"
+                                using Android.Views;
+                                using Android.Widget;
+                                using EdiabasLib;
+                                using CarControl;
+                                using CarControlAndroid;
+                                using System;
+                                using System.Collections.Generic;"
+                                + pageInfo.JobInfo.ClassCode;
+                            evaluator.Compile(classCode);
+                            pageInfo.Eval = evaluator;
+                            pageInfo.ClassObject = evaluator.Evaluate("new PageClass()");
+                            Type pageType = pageInfo.ClassObject.GetType();
+                            if (string.IsNullOrEmpty(pageInfo.JobInfo.Name) && pageType.GetMethod("ExecuteJob") == null)
+                            {
+                                throw new Exception("No ExecuteJob method");
+                            }
                         }
-                    }
-                    catch (Exception ex)
+                        catch (Exception ex)
+                        {
+                            result = reportWriter.ToString();
+                            if (string.IsNullOrEmpty(result))
+                            {
+                                result = EdiabasNet.GetExceptionText(ex);
+                            }
+                            result = GetPageString(pageInfo, pageInfo.Name) + ":\r\n" + result;
+                        }
+                        return result;
+                    });
+                    taskList.Add(compileTask);
+                }
+                Task.WaitAll(taskList.ToArray());
+
+                foreach (Task<string> task in taskList)
+                {
+                    string result = task.Result;
+                    if (!string.IsNullOrEmpty(result))
                     {
-                        string exText = reportWriter.ToString();
-                        if (string.IsNullOrEmpty(exText))
-                        {
-                            exText = EdiabasNet.GetExceptionText(ex);
-                        }
-                        exText = GetPageString(pageInfo, pageInfo.Name) + ":\r\n" + exText;
-                        RunOnUiThread(() => ShowAlert(exText));
+                        RunOnUiThread(() => ShowAlert(result));
                     }
                 }
 
                 RunOnUiThread(() => progress.Hide());
-            })).Start();
+            });
         }
 
         private void ShowAlert(string message)
