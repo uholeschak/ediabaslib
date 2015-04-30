@@ -56,6 +56,7 @@
     private ToggleButton buttonUp;
     private int updateStep = 0;
     private int opMode = OpModeStatus;
+    private Int64 currentSpeed = 0;
     private Dictionary<string, EdiabasNet.ResultData> tempDict;
     private Dictionary<string, EdiabasNet.ResultData> dynDict;
 
@@ -112,6 +113,7 @@
 
       updateStep = 0;
       opMode = OpModeStatus;
+      currentSpeed = 0;
     }
 
     public void DestroyLayout(JobReader.PageInfo pageInfo)
@@ -138,8 +140,13 @@
 
       if (pageValid)
       {
-        buttonDown.Enabled = true;
+        bool stopped = currentSpeed < 5;
+        buttonDown.Enabled = stopped;
         buttonUp.Enabled = true;
+        if (!stopped)
+        {
+          opMode = OpModeStatus;
+        }
         if (opMode == OpModeDown)
         {
           buttonDown.Checked = true;
@@ -301,6 +308,19 @@
             ediabas.ExecuteJob("STEUERN_DIGITALSIGNALE");
           }
         }
+      }
+
+      {
+        Int64 speed = 0;
+        EdiabasNet.ResultData resultData;
+        if (resultDict.TryGetValue("STATE_SPEED", out resultData))
+        {
+          if (resultData.opData is Int64)
+          {
+            speed = ((Int64)resultData.opData);
+          }
+        }
+        currentSpeed = speed;
       }
     }
 
