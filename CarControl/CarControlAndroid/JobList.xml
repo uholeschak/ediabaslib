@@ -42,7 +42,7 @@
         <![CDATA[
   class PageClass
   {
-    private static int AxisModeNormal = 0x00;
+    //private static int AxisModeNormal = 0x00;
     private static int AxisModeConveyor = 0x02;
     private static int AxisModeTransport = 0x04;
     private static int AxisModeGarage = 0x40;
