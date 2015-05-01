@@ -79,10 +79,11 @@ namespace CarControl
 
         public class JobInfo
         {
-            public JobInfo(string sgbd, bool activate, string name, string args, string results, string classCode)
+            public JobInfo(string sgbd, bool activate, bool showWarnings, string name, string args, string results, string classCode)
             {
                 this.sgbd = sgbd;
                 this.activate = activate;
+                this.showWarnings = showWarnings;
                 this.name = name;
                 this.args = args;
                 this.results = results;
@@ -91,6 +92,7 @@ namespace CarControl
 
             private string sgbd;
             private bool activate;
+            private bool showWarnings;
             private string name;
             private string args;
             private string results;
@@ -109,6 +111,14 @@ namespace CarControl
                 get
                 {
                     return activate;
+                }
+            }
+
+            public bool ShowWarnings
+            {
+                get
+                {
+                    return showWarnings;
                 }
             }
 
@@ -307,6 +317,7 @@ namespace CarControl
                             {
                                 string sgbd = null;
                                 bool jobActivate = false;
+                                bool jobShowWarnings = false;
                                 string jobName = null;
                                 string jobArgs = string.Empty;
                                 string jobResults = string.Empty;
@@ -318,6 +329,8 @@ namespace CarControl
                                     if (attrib != null) sgbd = attrib.Value;
                                     attrib = xnodePageChild.Attributes["activate"];
                                     if (attrib != null) jobActivate = string.Compare(attrib.Value, "true", StringComparison.OrdinalIgnoreCase) == 0;
+                                    attrib = xnodePageChild.Attributes["show_warnigs"];
+                                    if (attrib != null) jobShowWarnings = string.Compare(attrib.Value, "true", StringComparison.OrdinalIgnoreCase) == 0;
                                     attrib = xnodePageChild.Attributes["name"];
                                     if (attrib != null) jobName = attrib.Value;
                                     attrib = xnodePageChild.Attributes["args"];
@@ -327,7 +340,7 @@ namespace CarControl
                                 }
                                 if (string.IsNullOrEmpty(sgbd)) continue;
                                 if (classCode == null && string.IsNullOrEmpty(jobName)) continue;
-                                jobInfo = new JobInfo(sgbd, jobActivate, jobName, jobArgs, jobResults, classCode);
+                                jobInfo = new JobInfo(sgbd, jobActivate, jobShowWarnings, jobName, jobArgs, jobResults, classCode);
                             }
                             if (string.Compare(xnodePageChild.Name, "display", StringComparison.OrdinalIgnoreCase) == 0)
                             {

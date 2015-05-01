@@ -38,7 +38,7 @@
         <string name="label_axis_speed">Geschwindigkeit [km/h]:</string>
         <string name="label_axis_valve_state">Zustand Ausgänge:</string>
       </strings>
-      <job sgbd="d_ehc">
+      <job sgbd="d_ehc" show_warnigs="true">
         <![CDATA[
   class PageClass
   {
@@ -461,7 +461,7 @@
         <string name="label_motor_temp_before_cat">Temp. vor Katalysator [°C]:</string>
         <string name="label_motor_temp_before_filter">Temp. vor Partikelfilter [°C]:</string>
       </strings>
-      <job sgbd="d_motor">
+      <job sgbd="d_motor" show_warnigs="true">
         <![CDATA[
   class PageClass
   {
@@ -546,7 +546,7 @@
         <string name="label_motor_quant_corr_c3">Mengenkorr. Zylinder 3 [mg/Hub]:</string>
         <string name="label_motor_quant_corr_c4">Mengenkorr. Zylinder 4 [mg/Hub]:</string>
       </strings>
-      <job sgbd="d_motor" activate="true">
+      <job sgbd="d_motor" activate="true" show_warnigs="true">
         <![CDATA[
   class PageClass
   {
@@ -593,7 +593,7 @@
         <string name="label_motor_rpm_c3">Drehzahl Zylinder 3 [1/min]:</string>
         <string name="label_motor_rpm_c4">Drehzahl Zylinder 4 [1/min]:</string>
       </strings>
-      <job sgbd="d_motor" activate="true">
+      <job sgbd="d_motor" activate="true" show_warnigs="true">
         <![CDATA[
   class PageClass
   {

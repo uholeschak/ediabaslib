@@ -1624,6 +1624,11 @@ namespace CarControlAndroid
                             }
                             result = GetPageString(pageInfo, pageInfo.Name) + ":\r\n" + result;
                         }
+                        if (pageInfo.JobInfo.ShowWarnings && string.IsNullOrEmpty(result))
+                        {
+                            result = reportWriter.ToString();
+                        }
+
                         return result;
                     });
                     taskList.Add(compileTask);
