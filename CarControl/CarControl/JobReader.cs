@@ -338,7 +338,6 @@ namespace CarControl
                                     attrib = xnodePageChild.Attributes["results"];
                                     if (attrib != null) jobResults = attrib.Value;
                                 }
-                                if (string.IsNullOrEmpty(sgbd)) continue;
                                 if (classCode == null && string.IsNullOrEmpty(jobName)) continue;
                                 jobInfo = new JobInfo(sgbd, jobActivate, jobShowWarnings, jobName, jobArgs, jobResults, classCode);
                             }

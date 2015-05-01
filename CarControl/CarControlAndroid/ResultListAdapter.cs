@@ -5,7 +5,7 @@ using Android.Widget;
 
 namespace CarControlAndroid
 {
-    class ResultListAdapter : BaseAdapter<TableResultItem>
+    public class ResultListAdapter : BaseAdapter<TableResultItem>
     {
         private List<TableResultItem> items;
         public List<TableResultItem> Items

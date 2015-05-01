@@ -1463,19 +1463,22 @@ namespace CarControl
                 firstRequestCall = true;
                 ediabasJobAbort = false;
 
-                try
+                if (!string.IsNullOrEmpty(pageInfo.JobInfo.Sgbd))
                 {
-                    ediabas.ResolveSgbdFile(pageInfo.JobInfo.Sgbd);
-                }
-                catch (Exception ex)
-                {
-                    string exText = EdiabasNet.GetExceptionText(ex);
-                    lock (CommThread.DataLock)
+                    try
                     {
-                        EdiabasErrorMessage = exText;
+                        ediabas.ResolveSgbdFile(pageInfo.JobInfo.Sgbd);
                     }
-                    Thread.Sleep(1000);
-                    return false;
+                    catch (Exception ex)
+                    {
+                        string exText = EdiabasNet.GetExceptionText(ex);
+                        lock (CommThread.DataLock)
+                        {
+                            EdiabasErrorMessage = exText;
+                        }
+                        Thread.Sleep(1000);
+                        return false;
+                    }
                 }
 
                 ediabasInitReq = false;

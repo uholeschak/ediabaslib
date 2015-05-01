@@ -40,354 +40,354 @@
       </strings>
       <job sgbd="d_ehc" show_warnigs="true">
         <![CDATA[
-  class PageClass
-  {
-    //private static int AxisModeNormal = 0x00;
-    private static int AxisModeConveyor = 0x02;
-    private static int AxisModeTransport = 0x04;
-    private static int AxisModeGarage = 0x40;
-    private static int AxisModeMask = 0x46;
-
-    private static int OpModeStatus = 0;
-    private static int OpModeUp = 1;
-    private static int OpModeDown = 2;
-
-    private ToggleButton buttonDown;
-    private ToggleButton buttonUp;
-    private int updateStep = 0;
-    private int opMode = OpModeStatus;
-    private Int64 currentSpeed = 0;
-    private Dictionary<string, EdiabasNet.ResultData> tempDict;
-    private Dictionary<string, EdiabasNet.ResultData> dynDict;
-
-    public void CreateLayout(ActivityMain activity, JobReader.PageInfo pageInfo, LinearLayout pageLayout)
+    class PageClass
     {
-      LinearLayout buttonLayout = new LinearLayout(activity);
-      buttonLayout.Orientation = Orientation.Horizontal;
+        //private static int AxisModeNormal = 0x00;
+        private static int AxisModeConveyor = 0x02;
+        private static int AxisModeTransport = 0x04;
+        private static int AxisModeGarage = 0x40;
+        private static int AxisModeMask = 0x46;
 
-      LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(
-          ViewGroup.LayoutParams.MatchParent,
-          ViewGroup.LayoutParams.WrapContent);
-      buttonLayoutParams.Weight = 1;
+        private static int OpModeStatus = 0;
+        private static int OpModeUp = 1;
+        private static int OpModeDown = 2;
 
-      buttonDown = new ToggleButton(activity);
-      buttonDown.Text = ActivityMain.GetPageString(pageInfo, "button_axis_down");
-      buttonDown.TextOff = buttonDown.Text;
-      buttonDown.TextOn = buttonDown.Text;
-      buttonDown.Click += delegate
-      {
-        if (buttonDown.Checked)
+        private ToggleButton buttonDown;
+        private ToggleButton buttonUp;
+        private int updateStep = 0;
+        private int opMode = OpModeStatus;
+        private Int64 currentSpeed = 0;
+        private Dictionary<string, EdiabasNet.ResultData> tempDict;
+        private Dictionary<string, EdiabasNet.ResultData> dynDict;
+
+        public void CreateLayout(ActivityMain activity, JobReader.PageInfo pageInfo, LinearLayout pageLayout)
         {
-          buttonUp.Checked = false;
-          opMode = OpModeDown;
-        }
-        else
-        {
-          opMode = OpModeStatus;
-        }
-      };
-      buttonLayout.AddView(buttonDown, buttonLayoutParams);
+            LinearLayout buttonLayout = new LinearLayout(activity);
+            buttonLayout.Orientation = Orientation.Horizontal;
 
-      buttonUp = new ToggleButton(activity);
-      buttonUp.Text = ActivityMain.GetPageString(pageInfo, "button_axis_up");
-      buttonUp.TextOff = buttonUp.Text;
-      buttonUp.TextOn = buttonUp.Text;
-      buttonUp.Click += delegate
-      {
-        if (buttonUp.Checked)
-        {
-          buttonDown.Checked = false;
-          opMode = OpModeUp;
-        }
-        else
-        {
-          opMode = OpModeStatus;
-        }
-      };
-      buttonLayout.AddView(buttonUp, buttonLayoutParams);
+            LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MatchParent,
+                ViewGroup.LayoutParams.WrapContent);
+            buttonLayoutParams.Weight = 1;
 
-      LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-          ViewGroup.LayoutParams.MatchParent,
-          ViewGroup.LayoutParams.WrapContent);
-      pageLayout.AddView(buttonLayout, layoutParams);
-
-      updateStep = 0;
-      opMode = OpModeStatus;
-      currentSpeed = 0;
-    }
-
-    public void DestroyLayout(JobReader.PageInfo pageInfo)
-    {
-      if (buttonDown != null)
-      {
-        buttonDown.Dispose();
-        buttonDown = null;
-      }
-      if (buttonUp != null)
-      {
-        buttonUp.Dispose();
-        buttonUp = null;
-      }
-      //Android.Util.Log.Info("Custom", "Destroyed");
-    }
-
-    public void UpdateLayout(JobReader.PageInfo pageInfo, bool pageValid, bool threadActive)
-    {
-      if ((buttonDown == null) || (buttonUp == null))
-      {
-        return;
-      }
-
-      if (pageValid)
-      {
-        bool stopped = currentSpeed < 5;
-        buttonDown.Enabled = stopped;
-        buttonUp.Enabled = true;
-        if (!stopped)
-        {
-          opMode = OpModeStatus;
-        }
-        if (opMode == OpModeDown)
-        {
-          buttonDown.Checked = true;
-          buttonUp.Checked = false;
-        }
-        else if (opMode == OpModeUp)
-        {
-          buttonDown.Checked = false;
-          buttonUp.Checked = true;
-        }
-        else
-        {
-          buttonDown.Checked = false;
-          buttonUp.Checked = false;
-        }
-      }
-      else
-      {
-        buttonDown.Checked = false;
-        buttonDown.Enabled = false;
-        buttonUp.Checked = false;
-        buttonUp.Enabled = false;
-      }
-    }
-
-    public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
-    {
-      if (firstCall)
-      {
-        updateStep = 0;
-        opMode = OpModeStatus;
-        tempDict = null;
-        dynDict = null;
-      }
-      List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
-
-      switch (updateStep)
-      {
-        case 0:
-          tempDict = null;
-          ediabas.ArgString = string.Empty;
-          ediabas.ArgBinaryStd = null;
-          ediabas.ResultsRequests = "STATE_SPEED";
-
-          ediabas.ExecuteJob("LESEN_REGLERWERTE");
-
-          resultSets = ediabas.ResultSets;
-          if (resultSets != null && resultSets.Count >= 2)
-          {
-            CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
-          }
-          updateStep++;
-          break;
-
-        case 1:
-          ediabas.ArgString = string.Empty;
-          ediabas.ArgBinaryStd = null;
-          ediabas.ResultsRequests = "ANALOG_U_KL30";
-
-          ediabas.ExecuteJob("LESEN_ANALOGWERTE");
-
-          resultSets = ediabas.ResultSets;
-          if (resultSets != null && resultSets.Count >= 2)
-          {
-            CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
-          }
-          updateStep++;
-          break;
-
-        case 2:
-          ediabas.ArgString = string.Empty;
-          ediabas.ArgBinaryStd = null;
-          ediabas.ResultsRequests = "ORGFASTFILTER_RL;ORGFASTFILTER_RR;FASTFILTER_RL;FASTFILTER_RR";
-
-          ediabas.ExecuteJob("LESEN_FILTERWERTE");
-
-          resultSets = ediabas.ResultSets;
-          if (resultSets != null && resultSets.Count >= 2)
-          {
-            CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
-          }
-          dynDict = tempDict;
-          updateStep = 0;
-          break;
-
-        default:
-          updateStep = 0;
-          break;
-      }
-
-      resultDict = dynDict;
-
-      ediabas.ArgString = string.Empty;
-      ediabas.ArgBinaryStd = null;
-      ediabas.ResultsRequests = "WERT";
-
-      ediabas.ExecuteJob("MODE_CTRL_LESEN");
-
-      int axisMode = -1;
-      resultSets = ediabas.ResultSets;
-      if (resultSets != null && resultSets.Count >= 2)
-      {
-        EdiabasNet.ResultData resultData;
-        if (resultSets[1].TryGetValue("WERT", out resultData))
-        {
-            if (resultData.opData is Int64)
+            buttonDown = new ToggleButton(activity);
+            buttonDown.Text = ActivityMain.GetPageString(pageInfo, "button_axis_down");
+            buttonDown.TextOff = buttonDown.Text;
+            buttonDown.TextOn = buttonDown.Text;
+            buttonDown.Click += delegate
             {
-                axisMode = (int)((Int64)resultData.opData);
+              if (buttonDown.Checked)
+              {
+                  buttonUp.Checked = false;
+                  opMode = OpModeDown;
+              }
+              else
+              {
+                  opMode = OpModeStatus;
+              }
+            };
+            buttonLayout.AddView(buttonDown, buttonLayoutParams);
+
+            buttonUp = new ToggleButton(activity);
+            buttonUp.Text = ActivityMain.GetPageString(pageInfo, "button_axis_up");
+            buttonUp.TextOff = buttonUp.Text;
+            buttonUp.TextOn = buttonUp.Text;
+            buttonUp.Click += delegate
+            {
+              if (buttonUp.Checked)
+              {
+                  buttonDown.Checked = false;
+                  opMode = OpModeUp;
+              }
+              else
+              {
+                  opMode = OpModeStatus;
+              }
+            };
+            buttonLayout.AddView(buttonUp, buttonLayoutParams);
+
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MatchParent,
+                ViewGroup.LayoutParams.WrapContent);
+            pageLayout.AddView(buttonLayout, layoutParams);
+
+            updateStep = 0;
+            opMode = OpModeStatus;
+            currentSpeed = 0;
+        }
+
+        public void DestroyLayout(JobReader.PageInfo pageInfo)
+        {
+            if (buttonDown != null)
+            {
+                buttonDown.Dispose();
+                buttonDown = null;
             }
-        }
-        CommThread.MergeResultDictionarys(ref resultDict, resultSets[1], "MODE_CTRL_LESEN_");
-      }
-
-      if (axisMode >= 0)
-      {
-        if ((opMode == OpModeUp) && (axisMode & AxisModeMask) != 0x00)
-        {   // set normal mode
-          ediabas.ArgString = "aus;aus;aus";
-          ediabas.ArgBinaryStd = null;
-          ediabas.ResultsRequests = "JOB_STATUS";
-
-          ediabas.ExecuteJob("ENERGIESPARMODE");
-        }
-
-        if ((opMode == OpModeDown) && (axisMode & AxisModeConveyor) == 0x00)
-        {   // set conveyor mode
-          ediabas.ArgString = "ein;aus;aus";
-          ediabas.ArgBinaryStd = null;
-          ediabas.ResultsRequests = "JOB_STATUS";
-
-          ediabas.ExecuteJob("ENERGIESPARMODE");
-        }
-
-        if ((opMode == OpModeDown) && (axisMode & AxisModeConveyor) != 0x00)
-        {   // manual down
-          // read channel states
-          for (int channel = 0; channel < 4; channel++)
-          {
-            ediabas.ArgString = string.Format("0x{0:X02}", 0x11 + channel);
-            ediabas.ArgBinaryStd = null;
-            ediabas.ResultsRequests = "WERT";
-
-            ediabas.ExecuteJob("STATUS_SIGNALE_NUMERISCH");
-            resultSets = ediabas.ResultSets;
-            if (resultSets != null && resultSets.Count >= 2)
+            if (buttonUp != null)
             {
-              CommThread.MergeResultDictionarys(ref resultDict, resultSets[1], string.Format("STATUS_SIGNALE_NUMERISCH{0}_", channel));
+                buttonUp.Dispose();
+                buttonUp = null;
             }
-          }
-
-          // set channel states
-          for (int channel = 0; channel < 3; channel++)
-          {
-            // longer timeout for bluetooth
-            ediabas.ArgString = string.Format("0x{0:X02};0x01;0x0C", 0x11 + channel);
-            ediabas.ArgBinaryStd = null;
-            ediabas.ResultsRequests = "JOB_STATUS";
-
-            ediabas.ExecuteJob("STEUERN_DIGITALSIGNALE");
-          }
+            //Android.Util.Log.Info("Custom", "Destroyed");
         }
-      }
 
-      {
-        Int64 speed = 0;
-        EdiabasNet.ResultData resultData;
-        if (resultDict.TryGetValue("STATE_SPEED", out resultData))
+        public void UpdateLayout(JobReader.PageInfo pageInfo, bool pageValid, bool threadActive)
         {
-          if (resultData.opData is Int64)
-          {
-            speed = ((Int64)resultData.opData);
-          }
-        }
-        currentSpeed = speed;
-      }
-    }
-
-    public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName)
-    {
-      string result = string.Empty;
-      bool found;
-
-      switch (resultName)
-      {
-        case "MODE_CTRL_LESEN_WERT":
-        {
-          Int64 axisMode = ActivityMain.GetResultInt64 (resultDict, resultName, out found);
-          if (found)
-          {
-            if ((axisMode & AxisModeConveyor) != 0x00)
+            if ((buttonDown == null) || (buttonUp == null))
             {
-              result = ActivityMain.GetPageString(pageInfo, "axis_mode_conveyor");
+                return;
             }
-            else if ((axisMode & AxisModeTransport) != 0x00)
+
+            if (pageValid)
             {
-              result = ActivityMain.GetPageString(pageInfo, "axis_mode_transport");
-            }
-            else if ((axisMode & AxisModeGarage) != 0x00)
-            {
-              result = ActivityMain.GetPageString(pageInfo, "axis_mode_garage");
+                bool stopped = currentSpeed < 5;
+                buttonDown.Enabled = stopped;
+                buttonUp.Enabled = true;
+                if (!stopped)
+                {
+                    opMode = OpModeStatus;
+                }
+                if (opMode == OpModeDown)
+                {
+                    buttonDown.Checked = true;
+                    buttonUp.Checked = false;
+                }
+                else if (opMode == OpModeUp)
+                {
+                    buttonDown.Checked = false;
+                    buttonUp.Checked = true;
+                }
+                else
+                {
+                    buttonDown.Checked = false;
+                    buttonUp.Checked = false;
+                }
             }
             else
             {
-              result = ActivityMain.GetPageString(pageInfo, "axis_mode_normal");
+                buttonDown.Checked = false;
+                buttonDown.Enabled = false;
+                buttonUp.Checked = false;
+                buttonUp.Enabled = false;
             }
-          }
-          break;
         }
 
-        case "ORGFASTFILTER_RL":
-          result = ActivityMain.FormatResultInt64(resultDict, resultName, "{0,4}");
-          if (result.Length > 0) result += " / ";
-          result += ActivityMain.FormatResultInt64(resultDict, "FASTFILTER_RL", "{0,4}");
-          break;
-
-        case "ORGFASTFILTER_RR":
-          result = ActivityMain.FormatResultInt64(resultDict, resultName, "{0,4}");
-          if (result.Length > 0) result += " / ";
-          result += ActivityMain.FormatResultInt64(resultDict, "FASTFILTER_RR", "{0,4}");
-          break;
-
-        case "ANALOG_U_KL30":
+        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
         {
-          Int64 voltage = ActivityMain.GetResultInt64(resultDict, resultName, out found);
-          if (found)
-          {
-            result = string.Format(ActivityMain.culture, "{0,6:0.00}", (double)voltage / 1000);
-          }
-          break;
+            if (firstCall)
+            {
+                updateStep = 0;
+                opMode = OpModeStatus;
+                tempDict = null;
+                dynDict = null;
+            }
+            List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
+
+            switch (updateStep)
+            {
+                case 0:
+                    tempDict = null;
+                    ediabas.ArgString = string.Empty;
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = "STATE_SPEED";
+
+                    ediabas.ExecuteJob("LESEN_REGLERWERTE");
+
+                    resultSets = ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+                    }
+                    updateStep++;
+                    break;
+
+                case 1:
+                    ediabas.ArgString = string.Empty;
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = "ANALOG_U_KL30";
+
+                    ediabas.ExecuteJob("LESEN_ANALOGWERTE");
+
+                    resultSets = ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+                    }
+                    updateStep++;
+                    break;
+
+                case 2:
+                    ediabas.ArgString = string.Empty;
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = "ORGFASTFILTER_RL;ORGFASTFILTER_RR;FASTFILTER_RL;FASTFILTER_RR";
+
+                    ediabas.ExecuteJob("LESEN_FILTERWERTE");
+
+                    resultSets = ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+                    }
+                    dynDict = tempDict;
+                    updateStep = 0;
+                    break;
+
+                default:
+                    updateStep = 0;
+                    break;
+            }
+
+            resultDict = dynDict;
+
+            ediabas.ArgString = string.Empty;
+            ediabas.ArgBinaryStd = null;
+            ediabas.ResultsRequests = "WERT";
+
+            ediabas.ExecuteJob("MODE_CTRL_LESEN");
+
+            int axisMode = -1;
+            resultSets = ediabas.ResultSets;
+            if (resultSets != null && resultSets.Count >= 2)
+            {
+                EdiabasNet.ResultData resultData;
+                if (resultSets[1].TryGetValue("WERT", out resultData))
+                {
+                    if (resultData.opData is Int64)
+                    {
+                        axisMode = (int)((Int64)resultData.opData);
+                    }
+                }
+                CommThread.MergeResultDictionarys(ref resultDict, resultSets[1], "MODE_CTRL_LESEN_");
+            }
+
+            if (axisMode >= 0)
+            {
+                if ((opMode == OpModeUp) && (axisMode & AxisModeMask) != 0x00)
+                {   // set normal mode
+                    ediabas.ArgString = "aus;aus;aus";
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = "JOB_STATUS";
+
+                    ediabas.ExecuteJob("ENERGIESPARMODE");
+                }
+
+                if ((opMode == OpModeDown) && (axisMode & AxisModeConveyor) == 0x00)
+                {   // set conveyor mode
+                    ediabas.ArgString = "ein;aus;aus";
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = "JOB_STATUS";
+
+                    ediabas.ExecuteJob("ENERGIESPARMODE");
+                }
+
+                if ((opMode == OpModeDown) && (axisMode & AxisModeConveyor) != 0x00)
+                {   // manual down
+                    // read channel states
+                    for (int channel = 0; channel < 4; channel++)
+                    {
+                        ediabas.ArgString = string.Format("0x{0:X02}", 0x11 + channel);
+                        ediabas.ArgBinaryStd = null;
+                        ediabas.ResultsRequests = "WERT";
+
+                        ediabas.ExecuteJob("STATUS_SIGNALE_NUMERISCH");
+                        resultSets = ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            CommThread.MergeResultDictionarys(ref resultDict, resultSets[1], string.Format("STATUS_SIGNALE_NUMERISCH{0}_", channel));
+                        }
+                    }
+
+                    // set channel states
+                    for (int channel = 0; channel < 3; channel++)
+                    {
+                        // longer timeout for bluetooth
+                        ediabas.ArgString = string.Format("0x{0:X02};0x01;0x0C", 0x11 + channel);
+                        ediabas.ArgBinaryStd = null;
+                        ediabas.ResultsRequests = "JOB_STATUS";
+
+                        ediabas.ExecuteJob("STEUERN_DIGITALSIGNALE");
+                    }
+                }
+            }
+
+            {
+                Int64 speed = 0;
+                EdiabasNet.ResultData resultData;
+                if (resultDict.TryGetValue("STATE_SPEED", out resultData))
+                {
+                    if (resultData.opData is Int64)
+                    {
+                        speed = ((Int64)resultData.opData);
+                    }
+                }
+                currentSpeed = speed;
+            }
         }
 
-        case "STATUS_SIGNALE_NUMERISCH":
-          for (int channel = 0; channel < 4; channel++)
-          {
-            result = ActivityMain.FormatResultInt64(resultDict, string.Format(ActivityMain.culture, "STATUS_SIGNALE_NUMERISCH{0}_WERT", channel), "{0}") + result;
-          }
-          break;
-      }
-      return result;
+        public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName)
+        {
+            string result = string.Empty;
+            bool found;
+
+            switch (resultName)
+            {
+                case "MODE_CTRL_LESEN_WERT":
+                {
+                    Int64 axisMode = ActivityMain.GetResultInt64 (resultDict, resultName, out found);
+                    if (found)
+                    {
+                      if ((axisMode & AxisModeConveyor) != 0x00)
+                      {
+                          result = ActivityMain.GetPageString(pageInfo, "axis_mode_conveyor");
+                      }
+                      else if ((axisMode & AxisModeTransport) != 0x00)
+                      {
+                          result = ActivityMain.GetPageString(pageInfo, "axis_mode_transport");
+                      }
+                      else if ((axisMode & AxisModeGarage) != 0x00)
+                      {
+                          result = ActivityMain.GetPageString(pageInfo, "axis_mode_garage");
+                      }
+                      else
+                      {
+                          result = ActivityMain.GetPageString(pageInfo, "axis_mode_normal");
+                      }
+                    }
+                    break;
+                }
+
+                case "ORGFASTFILTER_RL":
+                    result = ActivityMain.FormatResultInt64(resultDict, resultName, "{0,4}");
+                    if (result.Length > 0) result += " / ";
+                    result += ActivityMain.FormatResultInt64(resultDict, "FASTFILTER_RL", "{0,4}");
+                    break;
+
+                case "ORGFASTFILTER_RR":
+                    result = ActivityMain.FormatResultInt64(resultDict, resultName, "{0,4}");
+                    if (result.Length > 0) result += " / ";
+                    result += ActivityMain.FormatResultInt64(resultDict, "FASTFILTER_RR", "{0,4}");
+                    break;
+
+                case "ANALOG_U_KL30":
+                {
+                    Int64 voltage = ActivityMain.GetResultInt64(resultDict, resultName, out found);
+                    if (found)
+                    {
+                        result = string.Format(ActivityMain.culture, "{0,6:0.00}", (double)voltage / 1000);
+                    }
+                    break;
+                }
+
+                case "STATUS_SIGNALE_NUMERISCH":
+                    for (int channel = 0; channel < 4; channel++)
+                    {
+                        result = ActivityMain.FormatResultInt64(resultDict, string.Format(ActivityMain.culture, "STATUS_SIGNALE_NUMERISCH{0}_WERT", channel), "{0}") + result;
+                    }
+                    break;
+            }
+            return result;
+        }
     }
-  }
         ]]>
       </job>
     </page>
@@ -463,67 +463,67 @@
       </strings>
       <job sgbd="d_motor" show_warnigs="true">
         <![CDATA[
-  class PageClass
-  {
-    public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
+    class PageClass
     {
-      string argString = "IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;ITKRS;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED";
-      if (firstCall)
-      {
-        argString = "JA;" + argString;
-      }
-      else
-      {
-        argString = "NEIN;" + argString;
-      }
-      ediabas.ArgString = argString;
-      ediabas.ArgBinaryStd = null;
-      ediabas.ResultsRequests = string.Empty;
+        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
+        {
+            string argString = "IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;ITKRS;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED";
+            if (firstCall)
+            {
+                argString = "JA;" + argString;
+            }
+            else
+            {
+                argString = "NEIN;" + argString;
+            }
+            ediabas.ArgString = argString;
+            ediabas.ArgBinaryStd = null;
+            ediabas.ResultsRequests = string.Empty;
 
-      ediabas.ExecuteJob("STATUS_MESSWERTBLOCK_LESEN");
+            ediabas.ExecuteJob("STATUS_MESSWERTBLOCK_LESEN");
 
-      List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
-      if (resultSets != null && resultSets.Count >= 2)
-      {
-          CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
-      }
+            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
+            if (resultSets != null && resultSets.Count >= 2)
+            {
+                CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
+            }
+        }
+
+        public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName)
+        {
+            string result = string.Empty;
+            bool found;
+
+            switch (resultName)
+            {
+              case "STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT":
+                  result = string.Format(ActivityMain.culture, "{0,6:0.0}", ActivityMain.GetResultDouble(resultDict, resultName, out found) / 1000.0);
+                  if (!found) result = string.Empty;
+                  break;
+
+              case "STAT_OELDRUCKSCHALTER_EIN_WERT":
+                  result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) > 0.5) && found) ? "1" : "0";
+                  if (!found) result = string.Empty;
+                  break;
+
+              case "STAT_REGENERATIONSANFORDERUNG_WERT":
+                  result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) < 0.5) && found) ? "1" : "0";
+                  if (!found) result = string.Empty;
+                  break;
+
+              case "STAT_EGT_st_WERT":
+                  result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) > 1.5) && found) ? "1" : "0";
+                  if (!found) result = string.Empty;
+                  break;
+
+              case "STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT":
+                  result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) < 0.5) && found) ? "1" : "0";
+                  if (!found) result = string.Empty;
+                  break;
+            }
+            return result;
+        }
     }
-
-    public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName)
-    {
-      string result = string.Empty;
-      bool found;
-
-      switch (resultName)
-      {
-        case "STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT":
-          result = string.Format(ActivityMain.culture, "{0,6:0.0}", ActivityMain.GetResultDouble(resultDict, resultName, out found) / 1000.0);
-          if (!found) result = string.Empty;
-          break;
-
-        case "STAT_OELDRUCKSCHALTER_EIN_WERT":
-          result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) > 0.5) && found) ? "1" : "0";
-          if (!found) result = string.Empty;
-          break;
-
-        case "STAT_REGENERATIONSANFORDERUNG_WERT":
-          result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) < 0.5) && found) ? "1" : "0";
-          if (!found) result = string.Empty;
-          break;
-
-        case "STAT_EGT_st_WERT":
-          result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) > 1.5) && found) ? "1" : "0";
-          if (!found) result = string.Empty;
-          break;
-
-        case "STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT":
-          result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) < 0.5) && found) ? "1" : "0";
-          if (!found) result = string.Empty;
-          break;
-      }
-      return result;
-    }
-  }
         ]]>
       </job>
     </page>
@@ -548,29 +548,29 @@
       </strings>
       <job sgbd="d_motor" activate="true" show_warnigs="true">
         <![CDATA[
-  class PageClass
-  {
-    public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
+    class PageClass
     {
-      ediabas.ArgString = "LLR_EIN";
-      ediabas.ArgBinaryStd = null;
-      ediabas.ResultsRequests = "JOB_STATUS";
+        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
+        {
+            ediabas.ArgString = "LLR_EIN";
+            ediabas.ArgBinaryStd = null;
+            ediabas.ResultsRequests = "JOB_STATUS";
 
-      ediabas.ExecuteJob("START_SYSTEMCHECK_ZYL");
+            ediabas.ExecuteJob("START_SYSTEMCHECK_ZYL");
 
-      ediabas.ArgString = string.Empty;
-      ediabas.ArgBinaryStd = null;
-      ediabas.ResultsRequests = "STAT_LAUFUNRUHE_LLR_MENGE_ZYL1_WERT;STAT_LAUFUNRUHE_LLR_MENGE_ZYL2_WERT;STAT_LAUFUNRUHE_LLR_MENGE_ZYL3_WERT;STAT_LAUFUNRUHE_LLR_MENGE_ZYL4_WERT";
+            ediabas.ArgString = string.Empty;
+            ediabas.ArgBinaryStd = null;
+            ediabas.ResultsRequests = "STAT_LAUFUNRUHE_LLR_MENGE_ZYL1_WERT;STAT_LAUFUNRUHE_LLR_MENGE_ZYL2_WERT;STAT_LAUFUNRUHE_LLR_MENGE_ZYL3_WERT;STAT_LAUFUNRUHE_LLR_MENGE_ZYL4_WERT";
 
-      ediabas.ExecuteJob("STATUS_LAUFUNRUHE_LLR_MENGE");
+            ediabas.ExecuteJob("STATUS_LAUFUNRUHE_LLR_MENGE");
 
-      List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
-      if (resultSets != null && resultSets.Count >= 2)
-      {
-          CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
-      }
+            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
+            if (resultSets != null && resultSets.Count >= 2)
+            {
+                CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
+            }
+        }
     }
-  }
         ]]>
       </job>
     </page>
@@ -595,29 +595,362 @@
       </strings>
       <job sgbd="d_motor" activate="true" show_warnigs="true">
         <![CDATA[
-  class PageClass
-  {
-    public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
+    class PageClass
     {
-      ediabas.ArgString = "LLR_AUS";
-      ediabas.ArgBinaryStd = null;
-      ediabas.ResultsRequests = "JOB_STATUS";
+        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
+        {
+            ediabas.ArgString = "LLR_AUS";
+            ediabas.ArgBinaryStd = null;
+            ediabas.ResultsRequests = "JOB_STATUS";
 
-      ediabas.ExecuteJob("START_SYSTEMCHECK_ZYL");
+            ediabas.ExecuteJob("START_SYSTEMCHECK_ZYL");
 
-      ediabas.ArgString = string.Empty;
-      ediabas.ArgBinaryStd = null;
-      ediabas.ResultsRequests = "STAT_LAUFUNRUHE_DREHZAHL_ZYL1_WERT;STAT_LAUFUNRUHE_DREHZAHL_ZYL2_WERT;STAT_LAUFUNRUHE_DREHZAHL_ZYL3_WERT;STAT_LAUFUNRUHE_DREHZAHL_ZYL4_WERT";
+            ediabas.ArgString = string.Empty;
+            ediabas.ArgBinaryStd = null;
+            ediabas.ResultsRequests = "STAT_LAUFUNRUHE_DREHZAHL_ZYL1_WERT;STAT_LAUFUNRUHE_DREHZAHL_ZYL2_WERT;STAT_LAUFUNRUHE_DREHZAHL_ZYL3_WERT;STAT_LAUFUNRUHE_DREHZAHL_ZYL4_WERT";
 
-      ediabas.ExecuteJob("STATUS_LAUFUNRUHE_DREHZAHL");
+            ediabas.ExecuteJob("STATUS_LAUFUNRUHE_DREHZAHL");
 
-      List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
-      if (resultSets != null && resultSets.Count >= 2)
-      {
-          CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
-      }
+            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
+            if (resultSets != null && resultSets.Count >= 2)
+            {
+                CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
+            }
+        }
     }
-  }
+        ]]>
+      </job>
+    </page>
+    <page name ="tab_errors">
+      <strings>
+        <string name="tab_errors">Errors</string>
+        <string name="error_no_error">No errors present</string>
+        <string name="error_no_response">No response</string>
+
+        <string name="errorNameACSM">ACSM Crash security module</string>
+        <string name="errorNameAHM">AHM Trailer module</string>
+        <string name="errorNameCAS">CAS Car access system</string>
+        <string name="errorNameCCCA">CCC-A Applications</string>
+        <string name="errorNameCCCANT">CCC-ANT Antenna tuner</string>
+        <string name="errorNameCCCASK">CCC-ASK Audio system controller</string>
+        <string name="errorNameCCCBO">CCC-BO Front panel</string>
+        <string name="errorNameCCCGW">CCC-GW Gateway</string>
+        <string name="errorNameCDC">CDC CD disk charger</string>
+        <string name="errorNameCID">CID Central information display</string>
+        <string name="errorNameCON">CON Controller</string>
+        <string name="errorNameDDE">DDE Diesel elektronic</string>
+        <string name="errorNameDSC">DSC Dynamic stability control</string>
+        <string name="errorNameEHC">EHC Level control</string>
+        <string name="errorNameEKPS">EKPS Fuel pump control</string>
+        <string name="errorNameIHK">IHK Integrated heating climate automatic</string>
+        <string name="errorNameKBM">KBM Chassis basic module</string>
+        <string name="errorNameKGM">KGM Chassis gateway module</string>
+        <string name="errorNameKOMBI">KOMBI Combination instrument</string>
+        <string name="errorNameLM">LM Light module</string>
+        <string name="errorNamePDC">PDC Park distance control</string>
+        <string name="errorNameRLS">RLS Rain main beam sensor</string>
+        <string name="errorNameSZL">SZL Gearshift unit steering column</string>
+        <string name="errorNameSZM">SZM Gearshift unit center console</string>
+        <string name="errorNameTCU">TCU Telematic control unit</string>
+      </strings>
+      <strings lang="de">
+        <string name="tab_errors">Fehler</string>
+        <string name="error_no_error">Keine Fehler vorhanden</string>
+        <string name="error_no_response">Keine Antwort</string>
+
+        <string name="errorNameACSM">ACSM Crash-Sicherheits-Modul</string>
+        <string name="errorNameAHM">AHM Anhängermodul</string>
+        <string name="errorNameCAS">CAS Car Access System</string>
+        <string name="errorNameCCCA">CCC-A Anwendungen</string>
+        <string name="errorNameCCCANT">CCC-ANT Antennentuner</string>
+        <string name="errorNameCCCASK">CCC-ASK Audiosystem-Kontroller</string>
+        <string name="errorNameCCCBO">CCC-BO Bedienoberfläche</string>
+        <string name="errorNameCCCGW">CCC-GW Gateway</string>
+        <string name="errorNameCDC">CDC CD-Wechsler</string>
+        <string name="errorNameCID">CID Central Information Display</string>
+        <string name="errorNameCON">CON Controller</string>
+        <string name="errorNameDDE">DDE Diesel Elektronik</string>
+        <string name="errorNameDSC">DSC Dynamische Stabilitätskontrolle</string>
+        <string name="errorNameEHC">EHC Höhenstands Control</string>
+        <string name="errorNameEKPS">EKPS Kraftstoffpumpensteuerung</string>
+        <string name="errorNameIHK">IHK Integrierte Heiz-Klima-Automatik</string>
+        <string name="errorNameKBM">KBM Karosserie-Basismodul</string>
+        <string name="errorNameKGM">KGM Karosserie-Gateway-Modul</string>
+        <string name="errorNameKOMBI">KOMBI Instrumentenkombination</string>
+        <string name="errorNameLM">LM Lichtmodul</string>
+        <string name="errorNamePDC">PDC Park-Distance-Control</string>
+        <string name="errorNameRLS">RLS Regen-Fahrlicht-Sensor</string>
+        <string name="errorNameSZL">SZL Schaltzentrum Lenksäule</string>
+        <string name="errorNameSZM">SZM Schaltzentrum Mittelkonsole</string>
+        <string name="errorNameTCU">TCU Telematic Control Unit</string>
+      </strings>
+      <job show_warnigs="true">
+        <![CDATA[
+    class PageClass
+    {
+        private class EdiabasErrorRequest
+        {
+            private string deviceName;
+            private string sgbdFile;
+
+            public EdiabasErrorRequest(string deviceName, string sgbdFile)
+            {
+                this.deviceName = deviceName;
+                this.sgbdFile = sgbdFile;
+            }
+
+            public string DeviceName
+            {
+                get { return deviceName; }
+            }
+            public string SgbdFile
+            {
+                get { return sgbdFile; }
+            }
+        }
+
+        public class EdiabasErrorReport
+        {
+            private string deviceName;
+            private Dictionary<string, EdiabasNet.ResultData> errorDict;
+            private List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet;
+            private string execptionText;
+
+            public EdiabasErrorReport(string deviceName, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet) :
+                this(deviceName, errorDict, errorDetailSet, string.Empty)
+            {
+            }
+
+            public EdiabasErrorReport(string deviceName, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet, string execptionText)
+            {
+                this.deviceName = deviceName;
+                this.errorDict = errorDict;
+                this.errorDetailSet = errorDetailSet;
+                this.execptionText = execptionText;
+            }
+
+            public string DeviceName
+            {
+                get
+                {
+                    return deviceName;
+                }
+            }
+
+            public Dictionary<string, EdiabasNet.ResultData> ErrorDict
+            {
+                get
+                {
+                    return errorDict;
+                }
+            }
+
+            public List<Dictionary<string, EdiabasNet.ResultData>> ErrorDetailSet
+            {
+                get
+                {
+                    return errorDetailSet;
+                }
+            }
+
+            public string ExecptionText
+            {
+                get
+                {
+                    return execptionText;
+                }
+            }
+        }
+
+        static private readonly EdiabasErrorRequest[] EdiabasErrorRequestList =
+        {
+            new EdiabasErrorRequest("errorNameCAS", "d_cas"),
+            new EdiabasErrorRequest("errorNameDDE", "d_motor"),
+            new EdiabasErrorRequest("errorNameEKPS", "d_ekp"),
+            new EdiabasErrorRequest("errorNameEHC", "d_ehc"),
+            new EdiabasErrorRequest("errorNameDSC", "d_dsc"),
+            new EdiabasErrorRequest("errorNameACSM", "d_sim"),
+            new EdiabasErrorRequest("errorNameAHM", "d_ahm"),
+            new EdiabasErrorRequest("errorNameCCCBO", "d_mmi"),
+            new EdiabasErrorRequest("errorNameCCCGW", "d_mostgw"),
+            new EdiabasErrorRequest("errorNameCCCA", "d_ccc"),
+            new EdiabasErrorRequest("errorNameCCCANT", "d_anttu"),
+            new EdiabasErrorRequest("errorNameCCCASK", "d_ask"),
+            new EdiabasErrorRequest("errorNameCDC", "d_cdc"),
+            new EdiabasErrorRequest("errorNameCID", "d_cid"),
+            new EdiabasErrorRequest("errorNameCON", "d_ec"),
+            new EdiabasErrorRequest("errorNameIHK", "d_klima"),
+            new EdiabasErrorRequest("errorNameKBM", "d_kbm"),
+            new EdiabasErrorRequest("errorNameKGM", "d_zgm"),
+            new EdiabasErrorRequest("errorNameKOMBI", "d_kombi"),
+            new EdiabasErrorRequest("errorNameLM", "d_lm"),
+            new EdiabasErrorRequest("errorNamePDC", "d_pdc"),
+            new EdiabasErrorRequest("errorNameRLS", "rlss70" /*"d_rls"*/),
+            new EdiabasErrorRequest("errorNameSZL", "d_szl"),
+            new EdiabasErrorRequest("errorNameSZM", "d_bzm"),
+            new EdiabasErrorRequest("errorNameTCU", "d_tel"),
+        };
+
+        List<EdiabasErrorReport> errorReportListStore;
+
+        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
+        {
+            if (firstCall)
+            {
+                lock (CommThread.DataLock)
+                {
+                    errorReportListStore = null;
+                }
+            }
+
+            List<EdiabasErrorReport> errorReportList = new List<EdiabasErrorReport>();
+
+            foreach (EdiabasErrorRequest errorRequest in EdiabasErrorRequestList)
+            {
+                try
+                {
+                    ediabas.ResolveSgbdFile(errorRequest.SgbdFile);
+                }
+                catch (Exception ex)
+                {
+                    string exText = EdiabasNet.GetExceptionText(ex);
+                    errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, null, null, exText));
+                    continue;
+                }
+
+                ediabas.ArgString = string.Empty;
+                ediabas.ArgBinaryStd = null;
+                ediabas.ResultsRequests = "JOB_STATUS;F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT";
+
+                try
+                {
+                    ediabas.ExecuteJob("FS_LESEN");
+
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(ediabas.ResultSets);
+
+                    bool jobOk = false;
+                    if (resultSets != null && resultSets.Count > 1)
+                    {
+                        EdiabasNet.ResultData resultData;
+                        if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
+                        {
+                            if (resultData.opData is string)
+                            {   // read details
+                                string jobStatus = (string)resultData.opData;
+                                if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    jobOk = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if (jobOk)
+                    {
+                        int dictIndex = 0;
+                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                        {
+                            if (dictIndex == 0)
+                            {
+                                dictIndex++;
+                                continue;
+                            }
+
+                            EdiabasNet.ResultData resultData;
+                            if (resultDictLocal.TryGetValue("F_ORT_NR", out resultData))
+                            {
+                                if (resultData.opData is Int64)
+                                {   // read details
+                                    ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.opData);
+                                    ediabas.ArgBinaryStd = null;
+                                    ediabas.ResultsRequests = "F_UW_KM";
+
+                                    ediabas.ExecuteJob("FS_LESEN_DETAIL");
+
+                                    List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail = new List<Dictionary<string, EdiabasNet.ResultData>>(ediabas.ResultSets);
+                                    if (resultSetsDetail != null)
+                                    {
+                                        errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, resultDictLocal,
+                                            new List<Dictionary<string, EdiabasNet.ResultData>>(resultSetsDetail)));
+                                    }
+                                }
+                            }
+                            dictIndex++;
+                        }
+                    }
+                    else
+                    {
+                        errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, null, null));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    string exText = EdiabasNet.GetExceptionText(ex);
+                    errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, null, null, exText));
+                    continue;
+                }
+                Thread.Sleep(10);
+            }
+
+            lock (CommThread.DataLock)
+            {
+                errorReportListStore = errorReportList;
+            }
+        }
+
+        public void UpdateResultList(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, ResultListAdapter resultListAdapter)
+        {
+            List<EdiabasErrorReport> errorReportList;
+            lock (CommThread.DataLock)
+            {
+                errorReportList = errorReportListStore;
+            }
+            if (errorReportList != null)
+            {
+                foreach (EdiabasErrorReport errorReport in errorReportList)
+                {
+                    string message = string.Format(ActivityMain.culture, "{0}: ", ActivityMain.GetPageString(pageInfo, errorReport.DeviceName));
+                    if (errorReport.ErrorDict == null)
+                    {
+                        message += ActivityMain.GetPageString(pageInfo, "error_no_response");
+                    }
+                    else
+                    {
+                        message += "\r\n";
+                        message += ActivityMain.FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
+                        message += ", ";
+                        message += ActivityMain.FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
+                        string detailText = string.Empty;
+                        foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
+                        {
+                            string kmText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
+                            if (kmText.Length > 0)
+                            {
+                                if (detailText.Length > 0)
+                                {
+                                    detailText += ", ";
+                                }
+                                detailText += kmText + "km";
+                            }
+                        }
+                        if (detailText.Length > 0)
+                        {
+                            message += "\r\n" + detailText;
+                        }
+                    }
+
+                    if (message.Length > 0)
+                    {
+                        resultListAdapter.Items.Add(new TableResultItem(message, null));
+                    }
+                }
+                if (resultListAdapter.Items.Count == 0)
+                {
+                    resultListAdapter.Items.Add(new TableResultItem(ActivityMain.GetPageString(pageInfo, "error_no_error"), null));
+                }
+            }
+        }
+    }
         ]]>
       </job>
     </page>

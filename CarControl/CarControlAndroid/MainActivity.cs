@@ -1320,6 +1320,8 @@ namespace CarControlAndroid
                     }
                     resultListAdapter.Items.Clear();
 
+                    Type pageType = pageInfo.ClassObject.GetType();
+                    bool formatResult = pageType.GetMethod("FormatResult") != null;
                     foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                     {
                         string result = string.Empty;
@@ -1329,7 +1331,10 @@ namespace CarControlAndroid
                             {
                                 try
                                 {
-                                    result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result);
+                                    if (formatResult)
+                                    {
+                                        result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result);
+                                    }
                                 }
                                 catch (Exception)
                                 {
@@ -1344,6 +1349,11 @@ namespace CarControlAndroid
                         {
                             resultListAdapter.Items.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result));
                         }
+                    }
+
+                    if (pageType.GetMethod("UpdateResultList") != null)
+                    {
+                        pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict, resultListAdapter);
                     }
 
                     resultListAdapter.NotifyDataSetChanged();
@@ -1607,7 +1617,8 @@ namespace CarControlAndroid
                                 using CarControl;
                                 using CarControlAndroid;
                                 using System;
-                                using System.Collections.Generic;"
+                                using System.Collections.Generic;
+                                using System.Threading;"
                                 + pageInfo.JobInfo.ClassCode;
                             evaluator.Compile(classCode);
                             pageInfo.Eval = evaluator;
