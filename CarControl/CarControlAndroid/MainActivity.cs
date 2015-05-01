@@ -1340,7 +1340,10 @@ namespace CarControlAndroid
                         {
                             result = FormatResultEdiabas(resultDict, displayInfo.Result, displayInfo.Format);
                         }
-                        resultListAdapter.Items.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result));
+                        if (result != null)
+                        {
+                            resultListAdapter.Items.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result));
+                        }
                     }
 
                     resultListAdapter.NotifyDataSetChanged();
