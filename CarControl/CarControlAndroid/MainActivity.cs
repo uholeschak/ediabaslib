@@ -99,7 +99,7 @@ namespace CarControlAndroid
 
             buttonConnect = barConnectView.FindViewById<ToggleButton> (Resource.Id.buttonConnect);
             fragmentList = new List<Fragment>();
-
+#if false
             fragmentAxis = new TabContentFragment(this, Resource.Layout.tab_axis);
             fragmentList.Add(fragmentAxis);
             AddTabToActionBar(Resource.String.tab_axis);
@@ -131,7 +131,7 @@ namespace CarControlAndroid
             fragmentErrors = new TabContentFragment(this, Resource.Layout.tab_list);
             fragmentList.Add(fragmentErrors);
             AddTabToActionBar(Resource.String.tab_errors);
-
+#endif
             fragmentAdapterConfig = new TabContentFragment(this, Resource.Layout.tab_adapter);
             fragmentList.Add(fragmentAdapterConfig);
             AddTabToActionBar(Resource.String.tab_adapter_config);
@@ -501,6 +501,7 @@ namespace CarControlAndroid
             int index = SupportActionBar.SelectedTab.Position;
             switch (index)
             {
+#if false
                 case 0:
                     selDevice = CommThread.SelectedDevice.DeviceAxis;
                     break;
@@ -548,6 +549,23 @@ namespace CarControlAndroid
                         selPageInfo = jobReader.PageList[index - 10];
                     }
                     break;
+#else
+                case 0:
+                    selDevice = CommThread.SelectedDevice.AdapterConfig;
+                    break;
+
+                case 1:
+                    selDevice = CommThread.SelectedDevice.Test;
+                    break;
+
+                default:
+                    if (index >= 2 && index < (2 + jobReader.PageList.Count))
+                    {
+                        selDevice = CommThread.SelectedDevice.Dynamic;
+                        selPageInfo = jobReader.PageList[index - 2];
+                    }
+                    break;
+#endif
             }
             pageInfo = selPageInfo;
             return selDevice;
