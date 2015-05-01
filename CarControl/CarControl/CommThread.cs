@@ -1493,6 +1493,12 @@ namespace CarControl
                     ediabas.ArgBinaryStd = null;
                     ediabas.ResultsRequests = pageInfo.JobInfo.Results;
                     ediabas.ExecuteJob(pageInfo.JobInfo.Name);
+
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        MergeResultDictionarys(ref resultDict, resultSets[1]);
+                    }
                 }
                 else
                 {

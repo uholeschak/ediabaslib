@@ -1320,8 +1320,14 @@ namespace CarControlAndroid
                     }
                     resultListAdapter.Items.Clear();
 
-                    Type pageType = pageInfo.ClassObject.GetType();
-                    bool formatResult = pageType.GetMethod("FormatResult") != null;
+                    bool formatResult = false;
+                    bool updateResult = false;
+                    if (pageInfo.ClassObject != null)
+                    {
+                        Type pageType = pageInfo.ClassObject.GetType();
+                        formatResult = pageType.GetMethod("FormatResult") != null;
+                        updateResult = pageType.GetMethod("UpdateResultList") != null;
+                    }
                     foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                     {
                         string result = string.Empty;
@@ -1351,7 +1357,7 @@ namespace CarControlAndroid
                         }
                     }
 
-                    if (pageType.GetMethod("UpdateResultList") != null)
+                    if (updateResult)
                     {
                         pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict, resultListAdapter);
                     }
@@ -1364,16 +1370,19 @@ namespace CarControlAndroid
                     resultListAdapter.NotifyDataSetChanged();
                 }
 
-                try
+                if (pageInfo.ClassObject != null)
                 {
-                    Type pageType = pageInfo.ClassObject.GetType();
-                    if (string.IsNullOrEmpty(pageInfo.JobInfo.Name) && pageType.GetMethod("UpdateLayout") != null)
+                    try
                     {
-                        pageInfo.ClassObject.UpdateLayout(pageInfo, dynamicValid, commThread != null);
+                        Type pageType = pageInfo.ClassObject.GetType();
+                        if (string.IsNullOrEmpty(pageInfo.JobInfo.Name) && pageType.GetMethod("UpdateLayout") != null)
+                        {
+                            pageInfo.ClassObject.UpdateLayout(pageInfo, dynamicValid, commThread != null);
+                        }
                     }
-                }
-                catch (Exception)
-                {
+                    catch (Exception)
+                    {
+                    }
                 }
 
                 if (buttonActive != null)
@@ -1691,7 +1700,7 @@ namespace CarControlAndroid
             public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
             {
                 View view = inflater.Inflate(resourceId, null);
-                if (pageInfo != null)
+                if (pageInfo != null && pageInfo.ClassObject != null)
                 {
                     try
                     {
@@ -1718,7 +1727,7 @@ namespace CarControlAndroid
             {
                 base.OnDestroyView();
 
-                if (pageInfo != null)
+                if (pageInfo != null && pageInfo.ClassObject != null)
                 {
                     try
                     {
