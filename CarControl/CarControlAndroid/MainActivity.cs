@@ -6,6 +6,7 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using CarControl;
+using com.xamarin.recipes.filepicker;
 using EdiabasLib;
 using Java.Interop;
 using Mono.CSharp;
@@ -25,16 +26,17 @@ namespace CarControlAndroid
         enum activityRequest
         {
             REQUEST_SELECT_DEVICE,
+            REQUEST_SELECT_CONFIG,
             REQUEST_ENABLE_BT
         }
 
         public static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
         private string deviceName = string.Empty;
         private string deviceAddress = string.Empty;
+        private string configFileName = string.Empty;
         private bool loggingActive = false;
         private const string sharedAppName = "CarControl";
         private string externalPath;
-        private string ecuPath;
         private JobReader jobReader;
         private Handler updateHandler;
         private BluetoothAdapter bluetoothAdapter;
@@ -66,17 +68,17 @@ namespace CarControlAndroid
         {
             base.OnCreate (savedInstanceState);
 
-            SupportActionBar.NavigationMode = Android.Support.V7.App.ActionBar.NavigationModeTabs;
+            SupportActionBar.NavigationMode = Android.Support.V7.App.ActionBar.NavigationModeStandard;
             SupportActionBar.SetDisplayShowCustomEnabled(true);
             SupportActionBar.SetDisplayUseLogoEnabled(false);
             SupportActionBar.SetDisplayShowTitleEnabled(false);
             SupportActionBar.SetIcon(Android.Resource.Color.Transparent);   // hide icon
             SetContentView (Resource.Layout.main);
 
-            GetSettings();
-            externalPath = Path.Combine (Path.Combine (Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, "external_sd"), "CarControl");
-            jobReader = new JobReader(Path.Combine (externalPath, "JobList.xml"));
             updateHandler = new Handler();
+            jobReader = new JobReader();
+            externalPath = Path.Combine(Path.Combine(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, "external_sd"), "CarControl");
+            GetSettings();
 
             barConnectView = LayoutInflater.Inflate(Resource.Layout.bar_connect, null);
             ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
@@ -89,6 +91,7 @@ namespace CarControlAndroid
 
             buttonConnect = barConnectView.FindViewById<ToggleButton> (Resource.Id.buttonConnect);
             fragmentList = new List<Fragment>();
+            buttonConnect.Click += ButtonConnectClick;
 
             // Get local Bluetooth adapter
             bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
@@ -101,14 +104,9 @@ namespace CarControlAndroid
                 return;
             }
 
-            ecuPath = jobReader.EcuPath;
+            jobReader.ReadXml(configFileName);
             // compile user code
             CompileCode();
-
-            // Get our button from the layout resource,
-            // and attach an event to it
-            buttonConnect.Click += ButtonConnectClick;
-            UpdateDisplay();
         }
 
         void AddTabToActionBar(string label)
@@ -123,6 +121,7 @@ namespace CarControlAndroid
         {
             SupportActionBar.RemoveAllTabs();
             fragmentList.Clear();
+            SupportActionBar.NavigationMode = Android.Support.V7.App.ActionBar.NavigationModeStandard;
             foreach (JobReader.PageInfo pageInfo in jobReader.PageList)
             {
                 int resourceId = Resource.Layout.tab_list;
@@ -133,6 +132,8 @@ namespace CarControlAndroid
                 pageInfo.InfoObject = fragmentPage;
                 AddTabToActionBar(GetPageString(pageInfo, pageInfo.Name));
             }
+            SupportActionBar.NavigationMode = (jobReader.PageList.Count > 0) ? Android.Support.V7.App.ActionBar.NavigationModeTabs : Android.Support.V7.App.ActionBar.NavigationModeStandard;
+            UpdateDisplay();
         }
 
         protected override void OnStart ()
@@ -168,26 +169,37 @@ namespace CarControlAndroid
         {
             switch((activityRequest)requestCode)
             {
-            case activityRequest.REQUEST_SELECT_DEVICE:
-                // When DeviceListActivity returns with a device to connect
-                if (resultCode == Android.App.Result.Ok)
-                {
-                    // Get the device MAC address
-                    deviceName = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_NAME);
-                    deviceAddress = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-                    SupportInvalidateOptionsMenu();
-                }
-                break;
+                case activityRequest.REQUEST_SELECT_DEVICE:
+                    // When DeviceListActivity returns with a device to connect
+                    if (resultCode == Android.App.Result.Ok)
+                    {
+                        // Get the device MAC address
+                        deviceName = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_NAME);
+                        deviceAddress = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                        SupportInvalidateOptionsMenu();
+                    }
+                    break;
 
-            case activityRequest.REQUEST_ENABLE_BT:
-                // When the request to enable Bluetooth returns
-                if (resultCode != Android.App.Result.Ok)
-                {
-                    // User did not enable Bluetooth or an error occured
-                    Toast.MakeText(this, Resource.String.bt_not_enabled_leaving, ToastLength.Short).Show();
-                    Finish();
-                }
-                break;
+                case activityRequest.REQUEST_SELECT_CONFIG:
+                    // When FilePickerActivity returns with a file
+                    if (resultCode == Android.App.Result.Ok)
+                    {
+                        configFileName = data.Extras.GetString(FilePickerActivity.EXTRA_FILE_NAME);
+                        jobReader.ReadXml(configFileName);
+                        CompileCode();
+                        SupportInvalidateOptionsMenu();
+                    }
+                    break;
+
+                case activityRequest.REQUEST_ENABLE_BT:
+                    // When the request to enable Bluetooth returns
+                    if (resultCode != Android.App.Result.Ok)
+                    {
+                        // User did not enable Bluetooth or an error occured
+                        Toast.MakeText(this, Resource.String.bt_not_enabled_leaving, ToastLength.Short).Show();
+                        Finish();
+                    }
+                    break;
             }
         }
 
@@ -221,10 +233,20 @@ namespace CarControlAndroid
             switch (item.ItemId) 
             {
                 case Resource.Id.menu_scan:
-                    // Launch the DeviceListActivity to see devices and do scan
-                    Intent serverIntent = new Intent(this, typeof(DeviceListActivity));
-                    StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_DEVICE);
-                    return true;
+                    {
+                        // Launch the DeviceListActivity to see devices and do scan
+                        Intent serverIntent = new Intent(this, typeof(DeviceListActivity));
+                        StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_DEVICE);
+                        return true;
+                    }
+
+                case Resource.Id.menu_sel_cfg:
+                    {
+                        // Launch the FilePickerActivity to select a configuration
+                        Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
+                        StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_CONFIG);
+                        return true;
+                    }
 
                 case Resource.Id.menu_enable_log:
                     loggingActive = !loggingActive;
@@ -270,7 +292,7 @@ namespace CarControlAndroid
             {
                 if (commThread == null)
                 {
-                    commThread = new CommThread(ecuPath);
+                    commThread = new CommThread(jobReader.EcuPath);
                     commThread.DataUpdated += DataUpdated;
                     commThread.ThreadTerminated += ThreadTerminated;
                 }
@@ -324,6 +346,7 @@ namespace CarControlAndroid
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(sharedAppName, FileCreationMode.Private);
                 deviceName = prefs.GetString("DeviceName", "DIAG");
                 deviceAddress = prefs.GetString("DeviceAddress", "98:D3:31:40:13:56");
+                configFileName = prefs.GetString("ConfigFile", Path.Combine(externalPath, "JobList.xml"));
             }
             catch (Exception)
             {
@@ -340,6 +363,7 @@ namespace CarControlAndroid
                 ISharedPreferencesEditor prefsEdit = prefs.Edit();
                 prefsEdit.PutString("DeviceName", deviceName);
                 prefsEdit.PutString("DeviceAddress", deviceAddress);
+                prefsEdit.PutString("ConfigFile", configFileName);
                 prefsEdit.Commit();
             }
             catch (Exception)
@@ -414,6 +438,10 @@ namespace CarControlAndroid
             bool dynamicValid = false;
             bool buttonConnectEnable = true;
 
+            if (jobReader.PageList.Count == 0)
+            {
+                buttonConnectEnable = false;
+            }
             if (commThread != null && commThread.ThreadRunning ())
             {
                 if (commThread.ThreadStopping ())
@@ -666,8 +694,9 @@ namespace CarControlAndroid
 
         private void CompileCode()
         {
-            if (jobReader.pageList.Count == 0)
+            if (jobReader.PageList.Count == 0)
             {
+                CreateActionBarTabs();
                 return;
             }
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
@@ -678,7 +707,7 @@ namespace CarControlAndroid
             Task.Factory.StartNew(() =>
             {
                 List<Task<string>> taskList = new List<Task<string>>();
-                foreach (JobReader.PageInfo pageInfo in jobReader.pageList)
+                foreach (JobReader.PageInfo pageInfo in jobReader.PageList)
                 {
                     if (pageInfo.JobInfo.ClassCode == null) continue;
                     Task<string> compileTask = Task<string>.Factory.StartNew(() =>

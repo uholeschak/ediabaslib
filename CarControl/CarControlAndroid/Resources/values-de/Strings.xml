@@ -25,6 +25,11 @@
 
   <!-- Options Menu -->
   <string name="menu_device">Gerät</string>
+  <string name="menu_sel_cfg">Konfiguration wählen</string>
   <string name="menu_enable_log">Logfile erzeugen</string>
   <string name="menu_exit">App beenden</string>
+
+  <!-- FilePicker -->
+  <string name="select_file">Datei wählen</string>
+  <string name="access_dir_failed">Zugriff verweigert:</string>
 </resources>

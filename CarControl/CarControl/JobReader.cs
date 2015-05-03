@@ -254,7 +254,7 @@ namespace CarControl
             }
         }
 
-        public List<PageInfo> pageList;
+        private List<PageInfo> pageList = new List<PageInfo>();
         private string ecuPath = string.Empty;
 
         public List<PageInfo> PageList
@@ -284,12 +284,16 @@ namespace CarControl
 
         public bool ReadXml(string xmlName)
         {
-            pageList = null;
-            ecuPath = Path.GetDirectoryName(xmlName);
-            if (!File.Exists (xmlName))
+            pageList.Clear();
+            if (string.IsNullOrEmpty(xmlName))
             {
                 return false;
             }
+            if (!File.Exists(xmlName))
+            {
+                return false;
+            }
+            ecuPath = Path.GetDirectoryName(xmlName);
 
             XmlDocument xdocConfig = new XmlDocument();
             try
@@ -309,7 +313,6 @@ namespace CarControl
                 XmlNodeList xnodePages = xdocConfig.SelectNodes("/configuration/pages/page");
                 if (xnodePages != null)
                 {
-                    pageList = new List<PageInfo>();
                     foreach (XmlNode xnodePage in xnodePages)
                     {
                         string pageName = string.Empty;
