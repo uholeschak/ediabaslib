@@ -1175,8 +1175,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f080032
 			public const int action_context_bar = 2131230770;
 			
-			// aapt resource value: 0x7f080052
-			public const int action_menu = 2131230802;
+			// aapt resource value: 0x7f08004d
+			public const int action_menu = 2131230797;
 			
 			// aapt resource value: 0x7f080002
 			public const int action_menu_divider = 2131230722;
@@ -1207,21 +1207,6 @@ namespace CarControlAndroid
 			
 			// aapt resource value: 0x7f08004a
 			public const int button_active = 2131230794;
-			
-			// aapt resource value: 0x7f08004c
-			public const int button_adapter_config_can_100 = 2131230796;
-			
-			// aapt resource value: 0x7f08004b
-			public const int button_adapter_config_can_500 = 2131230795;
-			
-			// aapt resource value: 0x7f08004d
-			public const int button_adapter_config_can_off = 2131230797;
-			
-			// aapt resource value: 0x7f08004e
-			public const int button_axis_down = 2131230798;
-			
-			// aapt resource value: 0x7f08004f
-			public const int button_axis_up = 2131230799;
 			
 			// aapt resource value: 0x7f080044
 			public const int button_scan = 2131230788;
@@ -1283,14 +1268,14 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f080025
 			public const int list_item = 2131230757;
 			
-			// aapt resource value: 0x7f080054
-			public const int menu_enable_log = 2131230804;
+			// aapt resource value: 0x7f08004f
+			public const int menu_enable_log = 2131230799;
 			
-			// aapt resource value: 0x7f080055
-			public const int menu_exit = 2131230805;
+			// aapt resource value: 0x7f080050
+			public const int menu_exit = 2131230800;
 			
-			// aapt resource value: 0x7f080053
-			public const int menu_scan = 2131230803;
+			// aapt resource value: 0x7f08004e
+			public const int menu_scan = 2131230798;
 			
 			// aapt resource value: 0x7f080015
 			public const int middle = 2131230741;
@@ -1322,8 +1307,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f080049
 			public const int resultList = 2131230793;
 			
-			// aapt resource value: 0x7f080050
-			public const int scrollViewText = 2131230800;
+			// aapt resource value: 0x7f08004b
+			public const int scrollViewText = 2131230795;
 			
 			// aapt resource value: 0x7f080035
 			public const int search_badge = 2131230773;
@@ -1379,8 +1364,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f08000b
 			public const int tabMode = 2131230731;
 			
-			// aapt resource value: 0x7f080051
-			public const int textViewResult = 2131230801;
+			// aapt resource value: 0x7f08004c
+			public const int textViewResult = 2131230796;
 			
 			// aapt resource value: 0x7f080027
 			public const int title = 2131230759;
@@ -1526,16 +1511,10 @@ namespace CarControlAndroid
 			public const int tab_activate = 2130903068;
 			
 			// aapt resource value: 0x7f03001d
-			public const int tab_adapter = 2130903069;
+			public const int tab_list = 2130903069;
 			
 			// aapt resource value: 0x7f03001e
-			public const int tab_axis = 2130903070;
-			
-			// aapt resource value: 0x7f03001f
-			public const int tab_list = 2130903071;
-			
-			// aapt resource value: 0x7f030020
-			public const int tab_text = 2130903072;
+			public const int tab_text = 2130903070;
 			
 			static Layout()
 			{

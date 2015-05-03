@@ -99,8 +99,6 @@
     <AndroidResource Include="Resources\layout\result_list.axml" />
     <AndroidResource Include="Resources\layout\tab_list.axml" />
     <AndroidResource Include="Resources\layout\tab_activate.axml" />
-    <AndroidResource Include="Resources\layout\tab_axis.axml" />
-    <AndroidResource Include="Resources\layout\tab_adapter.axml" />
     <AndroidResource Include="Resources\layout\tab_text.axml" />
     <AndroidResource Include="Resources\layout\main.axml" />
     <AndroidResource Include="Resources\layout\bar_connect.axml" />
