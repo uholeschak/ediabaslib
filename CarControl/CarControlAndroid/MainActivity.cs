@@ -162,10 +162,7 @@ namespace CarControlAndroid
                 return;
             }
 
-            ecuPath = Path.Combine (
-                System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal), "Ecu");
-            // copy asset files
-            CopyAssets (ecuPath);
+            ecuPath = jobReader.EcuPath;
             // compile user code
             CompileCode();
 
@@ -1533,77 +1530,6 @@ namespace CarControlAndroid
                 }
             }
             return result;
-        }
-
-        private bool CopyAssets(string ecuPath)
-        {
-            try
-            {
-                if (!Directory.Exists(ecuPath))
-                {
-                    Directory.CreateDirectory (ecuPath);
-                }
-
-                string assetDir = "Ecu";
-                string[] assetList = Assets.List (assetDir);
-                foreach(string assetName in assetList)
-                {
-                    using (Stream asset = Assets.Open (Path.Combine(assetDir, assetName)))
-                    {
-                        string fileDest = Path.Combine(ecuPath, assetName);
-                        bool copyFile = false;
-                        if (!File.Exists(fileDest))
-                        {
-                            copyFile = true;
-                        }
-                        else
-                        {
-                            using (var fileComp = new FileStream(fileDest, FileMode.Open))
-                            {
-                                copyFile = !StreamEquals(asset, fileComp);
-                            }
-                        }
-                        if (copyFile)
-                        {
-                            using (Stream dest = File.Create (fileDest))
-                            {
-                                asset.CopyTo (dest);
-                            }
-                        }
-                    }
-                }
-            }
-            catch(Exception)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private static bool StreamEquals(Stream stream1, Stream stream2)
-        {
-            const int bufferSize = 2048;
-            byte[] buffer1 = new byte[bufferSize]; //buffer size
-            byte[] buffer2 = new byte[bufferSize];
-            while (true) {
-                int count1 = stream1.Read(buffer1, 0, bufferSize);
-                int count2 = stream2.Read(buffer2, 0, bufferSize);
-
-                if (count1 != count2)
-                    return false;
-
-                if (count1 == 0)
-                    return true;
-
-                for (int i = 0; i < buffer1.Length; i++)
-                {
-                    if (buffer1 [i] != buffer2 [i])
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
         }
 
         private void CompileCode()
