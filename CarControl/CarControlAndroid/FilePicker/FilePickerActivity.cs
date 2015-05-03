@@ -9,7 +9,9 @@
     public class FilePickerActivity : FragmentActivity
     {
         // Return Intent extra
+        public const string EXTRA_INIT_DIR = "init_dir";
         public const string EXTRA_FILE_NAME = "file_name";
+        public string initDir;
 
         protected override void OnCreate(Bundle bundle)
         {

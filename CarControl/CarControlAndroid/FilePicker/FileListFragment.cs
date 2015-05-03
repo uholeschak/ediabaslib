@@ -22,13 +22,18 @@ namespace com.xamarin.recipes.filepicker
     /// </remarks>
     public class FileListFragment : ListFragment
     {
-        public static readonly string DefaultInitialDirectory = "/";
+        public string DefaultInitialDirectory = "/";
         private FileListAdapter _adapter;
         private DirectoryInfo _directory;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            string initDir = Activity.Intent.GetStringExtra(FilePickerActivity.EXTRA_INIT_DIR) ?? "/";
+            if (Directory.Exists(initDir))
+            {
+                DefaultInitialDirectory = initDir;
+            }
             _adapter = new FileListAdapter(Activity, new FileSystemInfo[0]);
             ListAdapter = _adapter;
         }
@@ -65,7 +70,7 @@ namespace com.xamarin.recipes.filepicker
         public void RefreshFilesList(string directory)
         {
             IList<FileSystemInfo> visibleThings = new List<FileSystemInfo>();
-            var dir = new DirectoryInfo(directory);
+            DirectoryInfo dir = new DirectoryInfo(directory);
 
             try
             {
