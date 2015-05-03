@@ -3077,6 +3077,7 @@ namespace EdiabasLib
         {
             lock (apiLock)
             {
+                sgbdFileResolveLast = string.Empty;
                 groupMappingDict.Clear();
             }
         }
@@ -3415,6 +3416,7 @@ namespace EdiabasLib
                 {
                     RaiseError(error);
                 }
+                sgbdFileResolveLast = string.Empty;     // reset last file after error to force sgbd reload
             }
             else
             {
