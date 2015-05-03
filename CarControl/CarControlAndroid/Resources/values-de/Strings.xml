@@ -10,9 +10,6 @@
   <string name="compile_start">Anwendercode kompilieren</string>
   <string name="compile_ok_btn">OK</string>
 
-  <!--  Test -->
-  <string name="tab_test">Test</string>
-
   <!--  DeviceListActivity -->
   <string name="scanning">Nach Geräten suchen ...</string>
   <string name="select_device">Gerät auswählen</string>

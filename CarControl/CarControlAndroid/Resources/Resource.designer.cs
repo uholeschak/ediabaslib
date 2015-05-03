@@ -1175,8 +1175,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f080032
 			public const int action_context_bar = 2131230770;
 			
-			// aapt resource value: 0x7f08004d
-			public const int action_menu = 2131230797;
+			// aapt resource value: 0x7f08004b
+			public const int action_menu = 2131230795;
 			
 			// aapt resource value: 0x7f080002
 			public const int action_menu_divider = 2131230722;
@@ -1268,14 +1268,14 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f080025
 			public const int list_item = 2131230757;
 			
-			// aapt resource value: 0x7f08004f
-			public const int menu_enable_log = 2131230799;
-			
-			// aapt resource value: 0x7f080050
-			public const int menu_exit = 2131230800;
+			// aapt resource value: 0x7f08004d
+			public const int menu_enable_log = 2131230797;
 			
 			// aapt resource value: 0x7f08004e
-			public const int menu_scan = 2131230798;
+			public const int menu_exit = 2131230798;
+			
+			// aapt resource value: 0x7f08004c
+			public const int menu_scan = 2131230796;
 			
 			// aapt resource value: 0x7f080015
 			public const int middle = 2131230741;
@@ -1306,9 +1306,6 @@ namespace CarControlAndroid
 			
 			// aapt resource value: 0x7f080049
 			public const int resultList = 2131230793;
-			
-			// aapt resource value: 0x7f08004b
-			public const int scrollViewText = 2131230795;
 			
 			// aapt resource value: 0x7f080035
 			public const int search_badge = 2131230773;
@@ -1363,9 +1360,6 @@ namespace CarControlAndroid
 			
 			// aapt resource value: 0x7f08000b
 			public const int tabMode = 2131230731;
-			
-			// aapt resource value: 0x7f08004c
-			public const int textViewResult = 2131230796;
 			
 			// aapt resource value: 0x7f080027
 			public const int title = 2131230759;
@@ -1513,9 +1507,6 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f03001d
 			public const int tab_list = 2130903069;
 			
-			// aapt resource value: 0x7f03001e
-			public const int tab_text = 2130903070;
-			
 			static Layout()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
@@ -1602,8 +1593,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0014
 			public const int bt_not_enabled_leaving = 2131361812;
 			
-			// aapt resource value: 0x7f0a0020
-			public const int button_active = 2131361824;
+			// aapt resource value: 0x7f0a001f
+			public const int button_active = 2131361823;
 			
 			// aapt resource value: 0x7f0a0012
 			public const int button_connected = 2131361810;
@@ -1611,11 +1602,11 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0013
 			public const int button_disconnected = 2131361811;
 			
-			// aapt resource value: 0x7f0a0021
-			public const int button_inactive = 2131361825;
+			// aapt resource value: 0x7f0a0020
+			public const int button_inactive = 2131361824;
 			
-			// aapt resource value: 0x7f0a001f
-			public const int button_scan = 2131361823;
+			// aapt resource value: 0x7f0a001e
+			public const int button_scan = 2131361822;
 			
 			// aapt resource value: 0x7f0a0017
 			public const int compile_ok_btn = 2131361815;
@@ -1626,35 +1617,32 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0010
 			public const int library_name = 2131361808;
 			
+			// aapt resource value: 0x7f0a0021
+			public const int menu_device = 2131361825;
+			
 			// aapt resource value: 0x7f0a0022
-			public const int menu_device = 2131361826;
+			public const int menu_enable_log = 2131361826;
 			
 			// aapt resource value: 0x7f0a0023
-			public const int menu_enable_log = 2131361827;
-			
-			// aapt resource value: 0x7f0a0024
-			public const int menu_exit = 2131361828;
-			
-			// aapt resource value: 0x7f0a001c
-			public const int none_found = 2131361820;
+			public const int menu_exit = 2131361827;
 			
 			// aapt resource value: 0x7f0a001b
-			public const int none_paired = 2131361819;
-			
-			// aapt resource value: 0x7f0a0019
-			public const int scanning = 2131361817;
+			public const int none_found = 2131361819;
 			
 			// aapt resource value: 0x7f0a001a
-			public const int select_device = 2131361818;
+			public const int none_paired = 2131361818;
 			
 			// aapt resource value: 0x7f0a0018
-			public const int tab_test = 2131361816;
+			public const int scanning = 2131361816;
 			
-			// aapt resource value: 0x7f0a001e
-			public const int title_other_devices = 2131361822;
+			// aapt resource value: 0x7f0a0019
+			public const int select_device = 2131361817;
 			
 			// aapt resource value: 0x7f0a001d
-			public const int title_paired_devices = 2131361821;
+			public const int title_other_devices = 2131361821;
+			
+			// aapt resource value: 0x7f0a001c
+			public const int title_paired_devices = 2131361820;
 			
 			static String()
 			{

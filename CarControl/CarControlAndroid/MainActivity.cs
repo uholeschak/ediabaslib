@@ -42,7 +42,6 @@ namespace CarControlAndroid
         private List<Fragment> fragmentList;
         private ToggleButton buttonConnect;
         private View barConnectView;
-        private Fragment fragmentTest;
 
         public void OnTabReselected(ActionBar.Tab tab, FragmentTransaction ft)
         {
@@ -91,21 +90,6 @@ namespace CarControlAndroid
             buttonConnect = barConnectView.FindViewById<ToggleButton> (Resource.Id.buttonConnect);
             fragmentList = new List<Fragment>();
 
-            fragmentTest = new TabContentFragment(this, Resource.Layout.tab_text);
-            fragmentList.Add(fragmentTest);
-            AddTabToActionBar(Resource.String.tab_test);
-
-            foreach (JobReader.PageInfo pageInfo in jobReader.PageList)
-            {
-                int resourceId = Resource.Layout.tab_list;
-                if (pageInfo.JobInfo.Activate) resourceId = Resource.Layout.tab_activate;
-
-                Fragment fragmentPage = new TabContentFragment(this, resourceId, pageInfo);
-                fragmentList.Add(fragmentPage);
-                pageInfo.InfoObject = fragmentPage;
-                AddTabToActionBar(GetPageString(pageInfo, pageInfo.Name));
-            }
-
             // Get local Bluetooth adapter
             bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
 
@@ -127,20 +111,28 @@ namespace CarControlAndroid
             UpdateDisplay();
         }
 
-        void AddTabToActionBar(int labelResourceId)
-        {
-            ActionBar.Tab tab = SupportActionBar.NewTab()
-                .SetText(labelResourceId)
-                .SetTabListener(this);
-            SupportActionBar.AddTab(tab);
-        }
-
         void AddTabToActionBar(string label)
         {
             ActionBar.Tab tab = SupportActionBar.NewTab()
                 .SetText(label)
                 .SetTabListener(this);
             SupportActionBar.AddTab(tab);
+        }
+
+        void CreateActionBarTabs()
+        {
+            SupportActionBar.RemoveAllTabs();
+            fragmentList.Clear();
+            foreach (JobReader.PageInfo pageInfo in jobReader.PageList)
+            {
+                int resourceId = Resource.Layout.tab_list;
+                if (pageInfo.JobInfo.Activate) resourceId = Resource.Layout.tab_activate;
+
+                Fragment fragmentPage = new TabContentFragment(this, resourceId, pageInfo);
+                fragmentList.Add(fragmentPage);
+                pageInfo.InfoObject = fragmentPage;
+                AddTabToActionBar(GetPageString(pageInfo, pageInfo.Name));
+            }
         }
 
         protected override void OnStart ()
@@ -287,9 +279,11 @@ namespace CarControlAndroid
                 {
                     logFile = Path.Combine(externalPath, "ifh.trc");
                 }
-                JobReader.PageInfo selPageInfo;
-                CommThread.SelectedDevice selDevice = GetSelectedDevice(out selPageInfo);
-                commThread.StartThread("BLUETOOTH:" + deviceAddress, logFile, selDevice, selPageInfo, true);
+                JobReader.PageInfo pageInfo = GetSelectedDevice();
+                if (pageInfo != null)
+                {
+                    commThread.StartThread("BLUETOOTH:" + deviceAddress, logFile, CommThread.SelectedDevice.Dynamic, pageInfo, true);
+                }
             }
             catch (Exception)
             {
@@ -371,77 +365,18 @@ namespace CarControlAndroid
             UpdateDisplay();
         }
 
-        private CommThread.SelectedDevice GetSelectedDevice(out JobReader.PageInfo pageInfo)
+        private JobReader.PageInfo GetSelectedDevice()
         {
-            CommThread.SelectedDevice selDevice = CommThread.SelectedDevice.DeviceAxis;
-            JobReader.PageInfo selPageInfo = null;
-            int index = SupportActionBar.SelectedTab.Position;
-            switch (index)
+            JobReader.PageInfo pageInfo = null;
+            if (SupportActionBar.SelectedTab != null)
             {
-#if false
-                case 0:
-                    selDevice = CommThread.SelectedDevice.DeviceAxis;
-                    break;
-
-                case 1:
-                    selDevice = CommThread.SelectedDevice.DeviceMotor;
-                    break;
-
-                case 2:
-                    selDevice = CommThread.SelectedDevice.DeviceMotorUnevenRunning;
-                    break;
-
-                case 3:
-                    selDevice = CommThread.SelectedDevice.DeviceMotorRotIrregular;
-                    break;
-
-                case 4:
-                    selDevice = CommThread.SelectedDevice.DeviceMotorPM;
-                    break;
-
-                case 5:
-                    selDevice = CommThread.SelectedDevice.DeviceCccNav;
-                    break;
-
-                case 6:
-                    selDevice = CommThread.SelectedDevice.DeviceIhk;
-                    break;
-
-                case 7:
-                    selDevice = CommThread.SelectedDevice.DeviceErrors;
-                    break;
-
-                case 8:
-                    selDevice = CommThread.SelectedDevice.AdapterConfig;
-                    break;
-
-                case 9:
-                    selDevice = CommThread.SelectedDevice.Test;
-                    break;
-
-                default:
-                    if (index >= 10 && index < (10 + jobReader.PageList.Count))
-                    {
-                        selDevice = CommThread.SelectedDevice.Dynamic;
-                        selPageInfo = jobReader.PageList[index - 10];
-                    }
-                    break;
-#else
-                case 0:
-                    selDevice = CommThread.SelectedDevice.Test;
-                    break;
-
-                default:
-                    if (index >= 1 && index < (1 + jobReader.PageList.Count))
-                    {
-                        selDevice = CommThread.SelectedDevice.Dynamic;
-                        selPageInfo = jobReader.PageList[index - 1];
-                    }
-                    break;
-#endif
+                int index = SupportActionBar.SelectedTab.Position;
+                if (index >= 0 && index < (jobReader.PageList.Count))
+                {
+                    pageInfo = jobReader.PageList[index];
+                }
             }
-            pageInfo = selPageInfo;
-            return selDevice;
+            return pageInfo;
         }
 
         private void UpdateSelectedDevice()
@@ -451,25 +386,21 @@ namespace CarControlAndroid
                 return;
             }
 
-            JobReader.PageInfo newPageInfo;
-            CommThread.SelectedDevice newDevice = GetSelectedDevice(out newPageInfo);
-            bool newCommActive = true;
-            switch (newDevice)
+            JobReader.PageInfo newPageInfo = GetSelectedDevice();
+            if (newPageInfo == null)
             {
-                case CommThread.SelectedDevice.DeviceMotorUnevenRunning:
-                case CommThread.SelectedDevice.DeviceMotorRotIrregular:
-                    newCommActive = false;
-                    break;
+                return;
             }
-            if (newPageInfo != null && newPageInfo.JobInfo.Activate)
+            bool newCommActive = true;
+            if (newPageInfo.JobInfo.Activate)
             {
                 newCommActive = false;
             }
-            if ((commThread.Device != newDevice) || (commThread.JobPageInfo != newPageInfo))
+            if ((commThread.JobPageInfo != newPageInfo))
             {
                 commThread.CommActive = newCommActive;
                 commThread.JobPageInfo = newPageInfo;
-                commThread.Device = newDevice;
+                commThread.Device = CommThread.SelectedDevice.Dynamic;
             }
         }
 
@@ -480,7 +411,6 @@ namespace CarControlAndroid
 
         private void DataUpdatedMethode()
         {
-            bool testValid = false;
             bool dynamicValid = false;
             bool buttonConnectEnable = true;
 
@@ -492,16 +422,7 @@ namespace CarControlAndroid
                 }
                 if (commThread.CommActive)
                 {
-                    switch (commThread.Device)
-                    {
-                        case CommThread.SelectedDevice.Test:
-                            testValid = true;
-                            break;
-
-                        case CommThread.SelectedDevice.Dynamic:
-                            dynamicValid = true;
-                            break;
-                    }
+                    dynamicValid = true;
                 }
                 buttonConnect.Checked = true;
             }
@@ -511,26 +432,8 @@ namespace CarControlAndroid
             }
             buttonConnect.Enabled = buttonConnectEnable;
 
-            if (fragmentTest != null && fragmentTest.View != null)
-            {
-                TextView textView = fragmentTest.View.FindViewById<TextView> (Resource.Id.textViewResult);
-
-                if (testValid)
-                {
-                    lock (CommThread.DataLock)
-                    {
-                        textView.Text = commThread.TestResult;
-                    }
-                }
-                else
-                {
-                    textView.Text = string.Empty;
-                }
-            }
-
             Fragment dynamicFragment = null;
-            JobReader.PageInfo pageInfo = null;
-            GetSelectedDevice(out pageInfo);
+            JobReader.PageInfo pageInfo = GetSelectedDevice();
             if (pageInfo != null)
             {
                 dynamicFragment = (Fragment)pageInfo.InfoObject;
@@ -796,6 +699,7 @@ namespace CarControlAndroid
                                 using CarControlAndroid;
                                 using System;
                                 using System.Collections.Generic;
+                                using System.Diagnostics;
                                 using System.Threading;"
                                 + pageInfo.JobInfo.ClassCode;
                             evaluator.Compile(classCode);
@@ -836,7 +740,11 @@ namespace CarControlAndroid
                     }
                 }
 
-                RunOnUiThread(() => progress.Hide());
+                RunOnUiThread(() =>
+                {
+                    CreateActionBarTabs();
+                    progress.Hide();
+                });
             });
         }
 
