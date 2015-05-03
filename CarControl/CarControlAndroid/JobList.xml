@@ -801,25 +801,112 @@
       <display name="label_ihk_setpoint" result="STAT_SOLL_LI_KORRIGIERT_WERT" format="6.1R" />
       <display name="label_ihk_heat_ex_temp" result="STAT_WT_RE_WERT" format="6.1R" />
       <display name="label_ihk_heat_ex_setpoint" result="STAT_WTSOLL_RE_WERT" format="6.1R" />
+      <display name="label_ihk_heat_ex_actuator" result="STAT_YWT_RE_WERT" format="3L" />
+      <display name="label_ihk_main_actuator" result="STAT_Y_RE_WERT" format="3L" />
+      <display name="label_ihk_evap_temp" result="STAT_TEMP_VERDAMFER_WERT" format="6.1R" />
+      <display name="label_ihk_press_sense" result="STAT_DRUCKSENSOR_WERT" format="6.1R" />
+      <display name="label_ihk_heat_ex_sense" result="STAT_WT_WERT" format="6.1R" />
       <strings>
         <string name="tab_ihk">Climate</string>
+        <string name="label_ihk_evap_temp">Evaporator temperature [°C]:</string>
+        <string name="label_ihk_heat_ex_actuator">Heat exchanger actuator [%]:</string>
+        <string name="label_ihk_heat_ex_sense">Heat exchanger sensor [°C]:</string>
         <string name="label_ihk_heat_ex_setpoint">Heat exchanger setpoint [°C]:</string>
         <string name="label_ihk_heat_ex_temp">Heat exchanger temperature [°C]:</string>
         <string name="label_ihk_in_temp">Indoor temperature [°C]:</string>
         <string name="label_ihk_in_temp_delay">Indoor temperature delayed [°C]:</string>
+        <string name="label_ihk_main_actuator">Main actuator [%]:</string>
         <string name="label_ihk_out_temp">Outdoor temperature [°C]:</string>
+        <string name="label_ihk_press_sense">Pressure sensor [bar]:</string>
         <string name="label_ihk_setpoint">Setpoint [°C]:</string>
       </strings>
       <strings lang="de">
         <string name="tab_ihk">Klima</string>
+        <string name="label_ihk_evap_temp">Verdampfertemperatur [°C]:</string>
+        <string name="label_ihk_heat_ex_actuator">Wärmetauscherstellgröße [%]:</string>
+        <string name="label_ihk_heat_ex_sense">Wärmetauschersensor [°C]:</string>
         <string name="label_ihk_heat_ex_setpoint">Wärmetauschersollwert [°C]:</string>
         <string name="label_ihk_heat_ex_temp">Wärmetauschertemperatur [°C]:</string>
         <string name="label_ihk_in_temp">Innentemperatur [°C]:</string>
         <string name="label_ihk_in_temp_delay">Innentemperatur verzögert [°C]:</string>
+        <string name="label_ihk_main_actuator">Hauptstellgröße [%]:</string>
         <string name="label_ihk_out_temp">Außentemperatur [°C]:</string>
+        <string name="label_ihk_press_sense">Drucksensor [bar]:</string>
         <string name="label_ihk_setpoint">Sollwert [°C]:</string>
       </strings>
-      <job sgbd="d_klima" name="STATUS_REGLERGROESSEN" results="STAT_TINNEN_WERT;STAT_TINNEN_VERZOEGERT_WERT;STAT_TAUSSEN_WERT;STAT_SOLL_LI_KORRIGIERT_WERT;STAT_WT_RE_WERT;STAT_WTSOLL_RE_WERT">
+      <job sgbd="d_klima" show_warnigs="true">
+        <![CDATA[
+    class PageClass
+    {
+        private class EdiabasJob
+        {
+            private string jobName;
+            private string jobArgs;
+            private string resultRequests;
+
+            public EdiabasJob(string jobName, string jobArgs, string resultRequests)
+            {
+                this.jobName = jobName;
+                this.jobArgs = jobArgs;
+                this.resultRequests = resultRequests;
+            }
+
+            public string JobName
+            {
+                get
+                {
+                    return jobName;
+                }
+            }
+
+            public string JobArgs
+            {
+                get
+                {
+                    return jobArgs;
+                }
+            }
+
+            public string ResultRequests
+            {
+                get
+                {
+                    return resultRequests;
+                }
+            }
+        }
+
+        static private readonly EdiabasJob[] jobArray =
+            {
+                new EdiabasJob("STATUS_REGLERGROESSEN",
+                    string.Empty,
+                    "STAT_TINNEN_WERT;STAT_TINNEN_VERZOEGERT_WERT;STAT_TAUSSEN_WERT;STAT_SOLL_LI_KORRIGIERT_WERT;STAT_WT_RE_WERT;STAT_WTSOLL_RE_WERT;STAT_YWT_RE_WERT;STAT_Y_RE_WERT;STAT_FUEHR_LI_WERT"
+                    ),
+                new EdiabasJob("STATUS_ANALOGEINGAENGE",
+                    string.Empty,
+                    "STAT_TEMP_VERDAMFER_WERT;STAT_DRUCKSENSOR_WERT;STAT_WT_WERT"
+                    ),
+            };
+
+        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
+        {
+            foreach (EdiabasJob job in jobArray)
+            {
+                ediabas.ArgString = job.JobArgs;
+                ediabas.ArgBinaryStd = null;
+                ediabas.ResultsRequests = job.ResultRequests;
+
+                ediabas.ExecuteJob(job.JobName);
+
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
+                if (resultSets != null && resultSets.Count >= 2)
+                {
+                    CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
+                }
+            }
+        }
+    }
+        ]]>
       </job>
     </page>
     <page name ="tab_errors">
