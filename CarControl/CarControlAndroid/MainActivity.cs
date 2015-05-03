@@ -42,6 +42,7 @@ namespace CarControlAndroid
         private BluetoothAdapter bluetoothAdapter;
         private CommThread commThread;
         private List<Fragment> fragmentList;
+        private Fragment lastFragment;
         private ToggleButton buttonConnect;
         private View barConnectView;
 
@@ -55,6 +56,7 @@ namespace CarControlAndroid
             //Log.Debug(Tag, "The tab {0} has been selected.", tab.Text);
             Fragment frag = fragmentList[tab.Position];
             ft.Replace(Resource.Id.tabFrameLayout, frag);
+            lastFragment = frag;
             UpdateSelectedDevice();
         }
 
@@ -62,6 +64,11 @@ namespace CarControlAndroid
         {
             // perform any extra work associated with saving fragment state here.
             //Log.Debug(Tag, "The tab {0} as been unselected.", tab.Text);
+            if (lastFragment != null)
+            {
+                ft.Remove(lastFragment);
+                lastFragment = null;
+            }
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -213,13 +220,18 @@ namespace CarControlAndroid
         public override bool OnPrepareOptionsMenu (IMenu menu)
         {
             bool commActive = commThread != null && commThread.ThreadRunning ();
-            IMenuItem scanMenu = menu.FindItem (Resource.Id.menu_scan);
+            IMenuItem scanMenu = menu.FindItem(Resource.Id.menu_scan);
             if (scanMenu != null)
             {
                 scanMenu.SetTitle(string.Format(culture, "{0}: {1}", GetString(Resource.String.menu_device), deviceName));
                 scanMenu.SetEnabled(!commActive);
             }
-            IMenuItem logMenu = menu.FindItem (Resource.Id.menu_enable_log);
+            IMenuItem selCfgMenu = menu.FindItem(Resource.Id.menu_sel_cfg);
+            if (selCfgMenu != null)
+            {
+                selCfgMenu.SetEnabled(!commActive);
+            }
+            IMenuItem logMenu = menu.FindItem(Resource.Id.menu_enable_log);
             if (logMenu != null)
             {
                 logMenu.SetEnabled(!commActive);
@@ -696,7 +708,10 @@ namespace CarControlAndroid
         {
             if (jobReader.PageList.Count == 0)
             {
-                CreateActionBarTabs();
+                updateHandler.Post(() =>
+                {
+                    CreateActionBarTabs();
+                });
                 return;
             }
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
