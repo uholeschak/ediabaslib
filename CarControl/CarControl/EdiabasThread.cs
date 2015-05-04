@@ -108,7 +108,7 @@ namespace CarControl
             }
         }
 
-        public bool StartThread(string comPort, string logFile, JobReader.PageInfo pageInfo, bool commActive)
+        public bool StartThread(string comPort, string logDir, JobReader.PageInfo pageInfo, bool commActive)
         {
             if (_workerThread != null)
             {
@@ -125,9 +125,9 @@ namespace CarControl
                 {
                     //((EdInterfaceEnet)ediabas.EdInterfaceClass).RemoteHost = "192.168.10.244";
                 }
-                if (logFile != null)
+                if (!string.IsNullOrEmpty(logDir))
                 {
-                    ediabas.SetConfigProperty("TracePath", Path.GetDirectoryName(logFile));
+                    ediabas.SetConfigProperty("TracePath", logDir);
                     ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.ED_LOG_LEVEL.IFH));
                 }
                 else

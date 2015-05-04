@@ -326,15 +326,15 @@ namespace CarControlAndroid
                     ediabasThread.DataUpdated += DataUpdated;
                     ediabasThread.ThreadTerminated += ThreadTerminated;
                 }
-                string logFile = null;
-                if (loggingActive)
+                string logDir = null;
+                if (loggingActive && !string.IsNullOrEmpty(configFileName))
                 {
-                    logFile = Path.Combine(externalPath, "ifh.trc");
+                    logDir = Path.GetDirectoryName(configFileName);
                 }
                 JobReader.PageInfo pageInfo = GetSelectedDevice();
                 if (pageInfo != null)
                 {
-                    ediabasThread.StartThread("BLUETOOTH:" + deviceAddress, logFile, pageInfo, true);
+                    ediabasThread.StartThread("BLUETOOTH:" + deviceAddress, logDir, pageInfo, true);
                 }
             }
             catch (Exception)

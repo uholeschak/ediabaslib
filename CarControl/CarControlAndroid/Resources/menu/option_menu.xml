@@ -23,7 +23,7 @@
                 android:icon="@android:drawable/ic_menu_search"
                 android:title="@string/menu_device" />
           <item android:id="@+id/menu_sel_cfg"
-                android:icon="@android:drawable/ic_menu_save"
+                android:icon="@android:drawable/ic_menu_manage"
                 android:title="@string/menu_sel_cfg" />
           <item android:id="@+id/menu_enable_log"
                 android:icon="@android:drawable/ic_menu_agenda"
