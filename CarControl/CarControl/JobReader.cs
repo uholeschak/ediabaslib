@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Xml;
+using XmlGenSharp.Lib.Utility;
 
 namespace CarControl
 {
@@ -295,11 +296,10 @@ namespace CarControl
             }
             ecuPath = Path.GetDirectoryName(xmlName);
 
-            XmlDocument xdocConfig = new XmlDocument();
             try
             {
+                XmlDocument xdocConfig = XmlDocumentLoader.LoadWithIncludes(xmlName);
                 XmlAttribute attrib;
-                xdocConfig.Load(xmlName);
                 XmlNode xnodeGlobal = xdocConfig.SelectSingleNode("/configuration/global");
                 if (xnodeGlobal != null)
                 {

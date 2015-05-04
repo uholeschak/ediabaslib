@@ -68,6 +68,9 @@
     <Compile Include="..\CarControl\EdiabasThread.cs">
       <Link>EdiabasThread.cs</Link>
     </Compile>
+    <Compile Include="..\CarControl\XmlDocumentLoader.cs">
+      <Link>XmlDocumentLoader.cs</Link>
+    </Compile>
     <Compile Include="FilePicker\FileListAdapter.cs" />
     <Compile Include="FilePicker\FileListFragment.cs" />
     <Compile Include="FilePicker\FileListRowViewHolder.cs" />
