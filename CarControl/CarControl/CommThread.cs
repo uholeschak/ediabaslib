@@ -7,9 +7,6 @@ using System.Threading;
 
 namespace CarControl
 {
-#if !WindowsCE
-    public
-#endif
     class CommThread : IDisposable
     {
         public delegate void DataUpdatedEventHandler(object sender, EventArgs e);
@@ -36,7 +33,6 @@ namespace CarControl
             DeviceErrors,
             AdapterConfig,
             Test,
-            Dynamic,
         }
 
         public enum CccNavGpsPosType
@@ -65,14 +61,6 @@ namespace CarControl
             get;
             set;
         }
-
-#if !WindowsCE
-        public JobReader.PageInfo JobPageInfo
-        {
-            get;
-            set;
-        }
-#endif
 
         public bool CommActive
         {
@@ -610,11 +598,7 @@ namespace CarControl
             }
         }
 
-#if WindowsCE
         public bool StartThread(string comPort, string logFile, SelectedDevice selectedDevice, bool commActive)
-#else
-        public bool StartThread(string comPort, string logFile, SelectedDevice selectedDevice, JobReader.PageInfo pageInfo, bool commActive)
-#endif
         {
             if (_workerThread != null)
             {
@@ -643,9 +627,6 @@ namespace CarControl
                 InitProperties();
                 CommActive = commActive;
                 Device = selectedDevice;
-#if !WindowsCE
-                JobPageInfo = pageInfo;
-#endif
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
                 _workerThread.Start();
@@ -688,9 +669,6 @@ namespace CarControl
         {
             DataUpdatedEvent();
             SelectedDevice lastDevice = (SelectedDevice)(-1);
-#if !WindowsCE
-            JobReader.PageInfo lastPageInfo = null;
-#endif
             while (!_stopThread)
             {
                 try
@@ -701,20 +679,10 @@ namespace CarControl
                     }
                     bool result = true;
                     SelectedDevice copyDevice = Device;
-#if !WindowsCE
-                    JobReader.PageInfo copyPageInfo = JobPageInfo;
-#endif
 
-                    if ((lastDevice != copyDevice)
-#if !WindowsCE
-                        || (lastPageInfo != copyPageInfo)
-#endif
-                        )
+                    if (lastDevice != copyDevice)
                     {
                         lastDevice = copyDevice;
-#if !WindowsCE
-                        lastPageInfo = copyPageInfo;
-#endif
                         InitProperties(true);
                     }
 
@@ -759,12 +727,6 @@ namespace CarControl
                         case SelectedDevice.Test:
                             result = CommTest();
                             break;
-
-#if !WindowsCE
-                        case SelectedDevice.Dynamic:
-                            result = CommDynamic(copyDevice, copyPageInfo);
-                            break;
-#endif
                     }
 
                     if (result)
@@ -1442,94 +1404,6 @@ namespace CarControl
             Thread.Sleep(20);
             return true;
         }
-
-#if !WindowsCE
-        private bool CommDynamic(SelectedDevice device, JobReader.PageInfo pageInfo)
-        {
-            if (pageInfo == null)
-            {
-                lock (CommThread.DataLock)
-                {
-                    EdiabasErrorMessage = "No Page info";
-                }
-                Thread.Sleep(1000);
-                return false;
-            }
-#pragma warning disable 219
-            bool firstRequestCall = false;
-#pragma warning restore 219
-            if (ediabasInitReq)
-            {
-                firstRequestCall = true;
-                ediabasJobAbort = false;
-
-                if (!string.IsNullOrEmpty(pageInfo.JobInfo.Sgbd))
-                {
-                    try
-                    {
-                        ediabas.ResolveSgbdFile(pageInfo.JobInfo.Sgbd);
-                    }
-                    catch (Exception ex)
-                    {
-                        string exText = EdiabasNet.GetExceptionText(ex);
-                        lock (CommThread.DataLock)
-                        {
-                            EdiabasErrorMessage = exText;
-                        }
-                        Thread.Sleep(1000);
-                        return false;
-                    }
-                }
-
-                ediabasInitReq = false;
-            }
-
-            Dictionary<string, EdiabasNet.ResultData> resultDict = null;
-            try
-            {
-                if (!string.IsNullOrEmpty(pageInfo.JobInfo.Name))
-                {
-                    ediabas.ArgString = pageInfo.JobInfo.Args;
-                    ediabas.ArgBinaryStd = null;
-                    ediabas.ResultsRequests = pageInfo.JobInfo.Results;
-                    ediabas.ExecuteJob(pageInfo.JobInfo.Name);
-
-                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
-                    if (resultSets != null && resultSets.Count >= 2)
-                    {
-                        MergeResultDictionarys(ref resultDict, resultSets[1]);
-                    }
-                }
-                else
-                {
-                    if (pageInfo.ClassObject != null)
-                    {
-                        pageInfo.ClassObject.ExecuteJob(ediabas, ref resultDict, firstRequestCall);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ediabasInitReq = true;
-                string exText = EdiabasNet.GetExceptionText(ex);
-                lock (CommThread.DataLock)
-                {
-                    EdiabasResultDict = null;
-                    EdiabasErrorMessage = exText;
-                }
-                Thread.Sleep(1000);
-                return true;
-            }
-
-            lock (CommThread.DataLock)
-            {
-                EdiabasResultDict = resultDict;
-                EdiabasErrorMessage = string.Empty;
-            }
-            Thread.Sleep(10);
-            return true;
-        }
-#endif
 
         public static void MergeResultDictionarys(ref Dictionary<string, EdiabasNet.ResultData> resultDict, Dictionary<string, EdiabasNet.ResultData> mergeDict)
         {

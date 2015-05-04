@@ -197,7 +197,7 @@
                     resultSets = ediabas.ResultSets;
                     if (resultSets != null && resultSets.Count >= 2)
                     {
-                        CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+                        EdiabasThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
                     }
                     updateStep++;
                     break;
@@ -212,7 +212,7 @@
                     resultSets = ediabas.ResultSets;
                     if (resultSets != null && resultSets.Count >= 2)
                     {
-                        CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+                        EdiabasThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
                     }
                     updateStep++;
                     break;
@@ -227,7 +227,7 @@
                     resultSets = ediabas.ResultSets;
                     if (resultSets != null && resultSets.Count >= 2)
                     {
-                        CommThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+                        EdiabasThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
                     }
                     dynDict = tempDict;
                     updateStep = 0;
@@ -258,7 +258,7 @@
                         axisMode = (int)((Int64)resultData.opData);
                     }
                 }
-                CommThread.MergeResultDictionarys(ref resultDict, resultSets[1], "MODE_CTRL_LESEN_");
+                EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1], "MODE_CTRL_LESEN_");
             }
 
             if (axisMode >= 0)
@@ -294,7 +294,7 @@
                         resultSets = ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
-                            CommThread.MergeResultDictionarys(ref resultDict, resultSets[1], string.Format("STATUS_SIGNALE_NUMERISCH{0}_", channel));
+                            EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1], string.Format("STATUS_SIGNALE_NUMERISCH{0}_", channel));
                         }
                     }
 
@@ -486,7 +486,7 @@
             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
             if (resultSets != null && resultSets.Count >= 2)
             {
-                CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
+                EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
             }
         }
 
@@ -568,7 +568,7 @@
             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
             if (resultSets != null && resultSets.Count >= 2)
             {
-                CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
+                EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
             }
         }
     }
@@ -615,7 +615,7 @@
             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
             if (resultSets != null && resultSets.Count >= 2)
             {
-                CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
+                EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
             }
         }
     }
@@ -774,7 +774,7 @@
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
                 if (resultSets != null && resultSets.Count >= 2)
                 {
-                    CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
+                    EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
                 }
             }
         }
@@ -902,7 +902,7 @@
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
                 if (resultSets != null && resultSets.Count >= 2)
                 {
-                    CommThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
+                    EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
                 }
             }
         }
@@ -1086,7 +1086,7 @@
         {
             if (firstCall)
             {
-                lock (CommThread.DataLock)
+                lock (EdiabasThread.DataLock)
                 {
                     errorReportListStore = null;
                 }
@@ -1181,7 +1181,7 @@
                 Thread.Sleep(10);
             }
 
-            lock (CommThread.DataLock)
+            lock (EdiabasThread.DataLock)
             {
                 errorReportListStore = errorReportList;
             }
@@ -1190,7 +1190,7 @@
         public void UpdateResultList(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, ResultListAdapter resultListAdapter)
         {
             List<EdiabasErrorReport> errorReportList;
-            lock (CommThread.DataLock)
+            lock (EdiabasThread.DataLock)
             {
                 errorReportList = errorReportListStore;
             }
@@ -1549,7 +1549,7 @@
                 catch (Exception ex)
                 {
                     string exText = EdiabasNet.GetExceptionText(ex);
-                    lock (CommThread.DataLock)
+                    lock (EdiabasThread.DataLock)
                     {
                         testResult = exText;
                     }
@@ -1627,7 +1627,7 @@
                 catch (Exception ex)
                 {
                     string exText = EdiabasNet.GetExceptionText(ex);
-                    lock (CommThread.DataLock)
+                    lock (EdiabasThread.DataLock)
                     {
                         testResult = exText;
                     }
@@ -1637,7 +1637,7 @@
             }
             resultText += string.Format("Zeit: {0}ms, Intern: {1}ms", timeDiff / (Stopwatch.Frequency / 1000), ediabas.TimeMeas / (Stopwatch.Frequency / 1000));
 
-            lock (CommThread.DataLock)
+            lock (EdiabasThread.DataLock)
             {
                 testResult = resultText;
             }
@@ -1647,7 +1647,7 @@
         public void UpdateResultList(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, ResultListAdapter resultListAdapter)
         {
             string resultText;
-            lock (CommThread.DataLock)
+            lock (EdiabasThread.DataLock)
             {
                 resultText = testResult;
             }

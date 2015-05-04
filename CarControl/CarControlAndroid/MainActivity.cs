@@ -40,7 +40,7 @@ namespace CarControlAndroid
         private JobReader jobReader;
         private Handler updateHandler;
         private BluetoothAdapter bluetoothAdapter;
-        private CommThread commThread;
+        private EdiabasThread ediabasThread;
         private List<Fragment> fragmentList;
         private Fragment lastFragment;
         private ToggleButton buttonConnect;
@@ -160,14 +160,14 @@ namespace CarControlAndroid
         {
             base.OnStop ();
 
-            StopCommThread (false);
+            StopEdiabasThread (false);
         }
 
         protected override void OnDestroy ()
         {
             base.OnDestroy ();
 
-            StopCommThread (true);
+            StopEdiabasThread (true);
 
             StoreSettings ();
         }
@@ -219,7 +219,7 @@ namespace CarControlAndroid
 
         public override bool OnPrepareOptionsMenu (IMenu menu)
         {
-            bool commActive = commThread != null && commThread.ThreadRunning ();
+            bool commActive = ediabasThread != null && ediabasThread.ThreadRunning ();
             IMenuItem scanMenu = menu.FindItem(Resource.Id.menu_scan);
             if (scanMenu != null)
             {
@@ -287,13 +287,13 @@ namespace CarControlAndroid
 
         protected void ButtonConnectClick (object sender, EventArgs e)
         {
-            if (commThread != null && commThread.ThreadRunning())
+            if (ediabasThread != null && ediabasThread.ThreadRunning())
             {
-                StopCommThread (false);
+                StopEdiabasThread (false);
             }
             else
             {
-                StartCommThread ();
+                StartEdiabasThread ();
                 UpdateSelectedDevice();
             }
             UpdateDisplay();
@@ -302,23 +302,23 @@ namespace CarControlAndroid
         [Export ("onActiveClick")]
         public void OnActiveClick (View v)
         {
-            if (commThread == null)
+            if (ediabasThread == null)
             {
                 return;
             }
             ToggleButton button = v.FindViewById<ToggleButton> (Resource.Id.button_active);
-            commThread.CommActive = button.Checked;
+            ediabasThread.CommActive = button.Checked;
         }
 
-        private bool StartCommThread()
+        private bool StartEdiabasThread()
         {
             try
             {
-                if (commThread == null)
+                if (ediabasThread == null)
                 {
-                    commThread = new CommThread(jobReader.EcuPath);
-                    commThread.DataUpdated += DataUpdated;
-                    commThread.ThreadTerminated += ThreadTerminated;
+                    ediabasThread = new EdiabasThread(jobReader.EcuPath);
+                    ediabasThread.DataUpdated += DataUpdated;
+                    ediabasThread.ThreadTerminated += ThreadTerminated;
                 }
                 string logFile = null;
                 if (loggingActive)
@@ -328,7 +328,7 @@ namespace CarControlAndroid
                 JobReader.PageInfo pageInfo = GetSelectedDevice();
                 if (pageInfo != null)
                 {
-                    commThread.StartThread("BLUETOOTH:" + deviceAddress, logFile, CommThread.SelectedDevice.Dynamic, pageInfo, true);
+                    ediabasThread.StartThread("BLUETOOTH:" + deviceAddress, logFile, pageInfo, true);
                 }
             }
             catch (Exception)
@@ -339,19 +339,19 @@ namespace CarControlAndroid
             return true;
         }
 
-        private bool StopCommThread(bool wait)
+        private bool StopEdiabasThread(bool wait)
         {
-            if (commThread != null)
+            if (ediabasThread != null)
             {
                 try
                 {
-                    commThread.StopThread(wait);
+                    ediabasThread.StopThread(wait);
                     if (wait)
                     {
-                        commThread.DataUpdated -= DataUpdated;
-                        commThread.ThreadTerminated -= ThreadTerminated;
-                        commThread.Dispose();
-                        commThread = null;
+                        ediabasThread.DataUpdated -= DataUpdated;
+                        ediabasThread.ThreadTerminated -= ThreadTerminated;
+                        ediabasThread.Dispose();
+                        ediabasThread = null;
                     }
                 }
                 catch (Exception)
@@ -409,7 +409,7 @@ namespace CarControlAndroid
 
         private void ThreadTerminatedMethode()
         {
-            StopCommThread(true);
+            StopEdiabasThread(true);
             UpdateDisplay();
         }
 
@@ -429,7 +429,7 @@ namespace CarControlAndroid
 
         private void UpdateSelectedDevice()
         {
-            if ((commThread == null) || !commThread.ThreadRunning())
+            if ((ediabasThread == null) || !ediabasThread.ThreadRunning())
             {
                 return;
             }
@@ -444,11 +444,10 @@ namespace CarControlAndroid
             {
                 newCommActive = false;
             }
-            if ((commThread.JobPageInfo != newPageInfo))
+            if (ediabasThread.JobPageInfo != newPageInfo)
             {
-                commThread.CommActive = newCommActive;
-                commThread.JobPageInfo = newPageInfo;
-                commThread.Device = CommThread.SelectedDevice.Dynamic;
+                ediabasThread.CommActive = newCommActive;
+                ediabasThread.JobPageInfo = newPageInfo;
             }
         }
 
@@ -466,13 +465,13 @@ namespace CarControlAndroid
             {
                 buttonConnectEnable = false;
             }
-            if (commThread != null && commThread.ThreadRunning ())
+            if (ediabasThread != null && ediabasThread.ThreadRunning ())
             {
-                if (commThread.ThreadStopping ())
+                if (ediabasThread.ThreadStopping ())
                 {
                     buttonConnectEnable = false;
                 }
-                if (commThread.CommActive)
+                if (ediabasThread.CommActive)
                 {
                     dynamicValid = true;
                 }
@@ -509,9 +508,9 @@ namespace CarControlAndroid
                 {
                     //bool found;
                     Dictionary<string, EdiabasNet.ResultData> resultDict;
-                    lock (CommThread.DataLock)
+                    lock (EdiabasThread.DataLock)
                     {
-                        resultDict = commThread.EdiabasResultDict;
+                        resultDict = ediabasThread.EdiabasResultDict;
                     }
                     resultListAdapter.Items.Clear();
 
@@ -572,7 +571,7 @@ namespace CarControlAndroid
                         Type pageType = pageInfo.ClassObject.GetType();
                         if (string.IsNullOrEmpty(pageInfo.JobInfo.Name) && pageType.GetMethod("UpdateLayout") != null)
                         {
-                            pageInfo.ClassObject.UpdateLayout(pageInfo, dynamicValid, commThread != null);
+                            pageInfo.ClassObject.UpdateLayout(pageInfo, dynamicValid, ediabasThread != null);
                         }
                     }
                     catch (Exception)
@@ -582,10 +581,10 @@ namespace CarControlAndroid
 
                 if (buttonActive != null)
                 {
-                    if (commThread != null && commThread.ThreadRunning())
+                    if (ediabasThread != null && ediabasThread.ThreadRunning())
                     {
                         buttonActive.Enabled = true;
-                        buttonActive.Checked = commThread.CommActive;
+                        buttonActive.Checked = ediabasThread.CommActive;
                     }
                     else
                     {
