@@ -9,11 +9,39 @@ namespace com.xamarin.recipes.filepicker
     using Android.Widget;
     using CarControlAndroid;
 
-    public class FileListAdapter : ArrayAdapter<FileSystemInfo>
+    public class FileInfoEx
+    {
+        public FileInfoEx(FileSystemInfo fileSystemInfo, string rootDir)
+        {
+            this.fileSystemInfo = fileSystemInfo;
+            this.rootDir = rootDir;
+        }
+
+        private FileSystemInfo fileSystemInfo;
+        private string rootDir;
+
+        public FileSystemInfo FileSysInfo
+        {
+            get
+            {
+                return fileSystemInfo;
+            }
+        }
+
+        public string RootDir
+        {
+            get
+            {
+                return rootDir;
+            }
+        }
+    }
+
+    public class FileListAdapter : ArrayAdapter<FileInfoEx>
     {
         private readonly Context _context;
 
-        public FileListAdapter(Context context, IList<FileSystemInfo> fsi)
+        public FileListAdapter(Context context, IList<FileInfoEx> fsi)
             : base(context, Resource.Layout.file_picker_list_item, Android.Resource.Id.Text1, fsi)
         {
             _context = context;
@@ -23,7 +51,7 @@ namespace com.xamarin.recipes.filepicker
         ///   We provide this method to get around some of the
         /// </summary>
         /// <param name="directoryContents"> </param>
-        public void AddDirectoryContents(IEnumerable<FileSystemInfo> directoryContents)
+        public void AddDirectoryContents(IEnumerable<FileInfoEx> directoryContents)
         {
             Clear();
             // Notify the _adapter that things have changed or that there is nothing 
@@ -55,7 +83,7 @@ namespace com.xamarin.recipes.filepicker
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-            var fileSystemEntry = GetItem(position);
+            FileInfoEx fileSystemEntry = GetItem(position);
 
             FileListRowViewHolder viewHolder;
             View row;
@@ -70,7 +98,14 @@ namespace com.xamarin.recipes.filepicker
                 row = convertView;
                 viewHolder = (FileListRowViewHolder)row.Tag;
             }
-            viewHolder.Update(fileSystemEntry.Name, fileSystemEntry.IsDirectory() ? Resource.Drawable.folder : Resource.Drawable.file);
+            if (fileSystemEntry.RootDir != null)
+            {
+                viewHolder.Update("..", Resource.Drawable.folder);
+            }
+            else
+            {
+                viewHolder.Update(fileSystemEntry.FileSysInfo.Name, fileSystemEntry.FileSysInfo.IsDirectory() ? Resource.Drawable.folder : Resource.Drawable.file);
+            }
 
             return row;
         }

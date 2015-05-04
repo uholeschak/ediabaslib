@@ -57,5 +57,19 @@ namespace com.xamarin.recipes.filepicker
             var isHidden = (fsi.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden;
             return !isHidden;
         }
+
+        public static bool HasFileExtension(this FileSystemInfo fsi, string extension)
+        {
+            if (!IsFile(fsi))
+            {
+                return false;
+            }
+            string ext = Path.GetExtension(fsi.FullName);
+            if (string.Compare(ext, extension, System.StringComparison.OrdinalIgnoreCase) != 0)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

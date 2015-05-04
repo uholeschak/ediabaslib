@@ -32,30 +32,45 @@ namespace com.xamarin.recipes.filepicker
             string initDir = Activity.Intent.GetStringExtra(FilePickerActivity.EXTRA_INIT_DIR) ?? "/";
             if (Directory.Exists(initDir))
             {
-                DefaultInitialDirectory = initDir;
+                try
+                {
+                    DirectoryInfo dir = new DirectoryInfo(initDir);
+                    dir.GetFileSystemInfos();
+                    DefaultInitialDirectory = initDir;
+                }
+                catch
+                {
+                }
             }
-            _adapter = new FileListAdapter(Activity, new FileSystemInfo[0]);
+            _adapter = new FileListAdapter(Activity, new FileInfoEx[0]);
             ListAdapter = _adapter;
         }
 
         public override void OnListItemClick(ListView l, View v, int position, long id)
         {
-            var fileSystemInfo = _adapter.GetItem(position);
+            FileInfoEx fileSystemInfo = _adapter.GetItem(position);
 
-            if (fileSystemInfo.IsFile())
+            if (fileSystemInfo.RootDir != null)
             {
-                // Do something with the file.  In this case we just pop some toast.
-                //Log.Verbose("FileListFragment", "The file {0} was clicked.", fileSystemInfo.FullName);
-                Intent intent = new Intent();
-                intent.PutExtra(FilePickerActivity.EXTRA_FILE_NAME, fileSystemInfo.FullName);
-
-                Activity.SetResult(Android.App.Result.Ok, intent);
-                Activity.Finish();
+                RefreshFilesList(fileSystemInfo.RootDir);
             }
             else
             {
-                // Dig into this directory, and display it's contents
-                RefreshFilesList(fileSystemInfo.FullName);
+                if (fileSystemInfo.FileSysInfo.IsFile())
+                {
+                    // Do something with the file.  In this case we just pop some toast.
+                    //Log.Verbose("FileListFragment", "The file {0} was clicked.", fileSystemInfo.FullName);
+                    Intent intent = new Intent();
+                    intent.PutExtra(FilePickerActivity.EXTRA_FILE_NAME, fileSystemInfo.FileSysInfo.FullName);
+
+                    Activity.SetResult(Android.App.Result.Ok, intent);
+                    Activity.Finish();
+                }
+                else
+                {
+                    // Dig into this directory, and display it's contents
+                    RefreshFilesList(fileSystemInfo.FileSysInfo.FullName);
+                }
             }
 
             base.OnListItemClick(l, v, position, id);
@@ -69,14 +84,27 @@ namespace com.xamarin.recipes.filepicker
 
         public void RefreshFilesList(string directory)
         {
-            IList<FileSystemInfo> visibleThings = new List<FileSystemInfo>();
+            IList<FileInfoEx> visibleThings = new List<FileInfoEx>();
             DirectoryInfo dir = new DirectoryInfo(directory);
 
             try
             {
+                string rootDir = Path.GetDirectoryName(directory);
+                if (!string.IsNullOrEmpty(rootDir))
+                {
+                    visibleThings.Add(new FileInfoEx(null, rootDir));
+                }
                 foreach (var item in dir.GetFileSystemInfos().Where(item => item.IsVisible()))
                 {
-                    visibleThings.Add(item);
+                    bool add = true;
+                    if (item.IsFile())
+                    {
+                        add = item.HasFileExtension(".xml");
+                    }
+                    if (add)
+                    {
+                        visibleThings.Add(new FileInfoEx(item, null));
+                    }
                 }
             }
             catch (Exception)
