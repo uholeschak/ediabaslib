@@ -25,7 +25,7 @@
 
   <!-- Options Menu -->
   <string name="menu_device">Device</string>
-  <string name="menu_sel_cfg">Select configuration</string>
+  <string name="menu_sel_cfg">Configuration</string>
   <string name="menu_enable_log">Create log file</string>
   <string name="menu_exit">Exit app</string>
 

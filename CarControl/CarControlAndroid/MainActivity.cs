@@ -229,6 +229,12 @@ namespace CarControlAndroid
             IMenuItem selCfgMenu = menu.FindItem(Resource.Id.menu_sel_cfg);
             if (selCfgMenu != null)
             {
+                string fileName = string.Empty;
+                if (!string.IsNullOrEmpty(configFileName))
+                {
+                    fileName = Path.GetFileNameWithoutExtension(configFileName);
+                }
+                selCfgMenu.SetTitle(string.Format(culture, "{0}: {1}", GetString(Resource.String.menu_sel_cfg), fileName));
                 selCfgMenu.SetEnabled(!commActive);
             }
             IMenuItem logMenu = menu.FindItem(Resource.Id.menu_enable_log);
