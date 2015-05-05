@@ -10,8 +10,7 @@ namespace CarControl
 {
     public class JobReader
     {
-        private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
-        private const string XMLNamespace = "http://holeschak.de/CarControl.xsd";
+        private const string XMLNamespace = "http://www.holeschak.de/CarControl/CarControl.xsd";
 
         public class DisplayInfo
         {

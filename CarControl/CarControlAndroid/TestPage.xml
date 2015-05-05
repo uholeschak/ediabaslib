@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns="http://holeschak.de/CarControl.xsd">
+<fragment xmlns="http://www.holeschak.de/CarControl/CarControl.xsd">
   <page name ="tab_test">
     <strings>
       <string name="tab_test">Test</string>
