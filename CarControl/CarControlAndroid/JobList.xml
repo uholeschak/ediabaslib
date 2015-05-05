@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<configuration>
+<configuration xmlns="http://holeschak.de/CarControl.xsd">
   <global ecu_path="Ecu" />
   <pages>
     <page name ="tab_axis">

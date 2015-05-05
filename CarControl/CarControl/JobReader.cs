@@ -11,6 +11,7 @@ namespace CarControl
     public class JobReader
     {
         private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
+        private const string XMLNamespace = "http://holeschak.de/CarControl.xsd";
 
         public class DisplayInfo
         {
@@ -299,18 +300,31 @@ namespace CarControl
             try
             {
                 XmlDocument xdocConfig = XmlDocumentLoader.LoadWithIncludes(xmlName);
+                XmlNamespaceManager namespaceManager = new XmlNamespaceManager(xdocConfig.NameTable);
+                namespaceManager.AddNamespace("carcontrol", XMLNamespace);
+
                 XmlAttribute attrib;
-                XmlNode xnodeGlobal = xdocConfig.SelectSingleNode("/configuration/global");
+                XmlNode xnodeGlobal = xdocConfig.SelectSingleNode("/carcontrol:configuration/carcontrol:global", namespaceManager);
                 if (xnodeGlobal != null)
                 {
                     if (xnodeGlobal.Attributes != null)
                     {
                         attrib = xnodeGlobal.Attributes["ecu_path"];
-                        if (attrib != null) ecuPath = Path.Combine(ecuPath, attrib.Value);
+                        if (attrib != null)
+                        {
+                            if (Path.IsPathRooted(attrib.Value))
+                            {
+                                ecuPath = attrib.Value;
+                            }
+                            else
+                            {
+                                ecuPath = Path.Combine(ecuPath, attrib.Value);
+                            }
+                        }
                     }
                 }
 
-                XmlNodeList xnodePages = xdocConfig.SelectNodes("/configuration/pages/page");
+                XmlNodeList xnodePages = xdocConfig.SelectNodes("/carcontrol:configuration/carcontrol:pages/carcontrol:page", namespaceManager);
                 if (xnodePages != null)
                 {
                     foreach (XmlNode xnodePage in xnodePages)
@@ -417,7 +431,7 @@ namespace CarControl
                 }
                 return true;
             }
-            catch
+            catch (Exception)
             {
                 return false;
             }

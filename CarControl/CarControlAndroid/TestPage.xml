@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<include>
+<fragment xmlns="http://holeschak.de/CarControl.xsd">
   <page name ="tab_test">
     <strings>
       <string name="tab_test">Test</string>
@@ -246,4 +246,4 @@
         ]]>
     </job>
   </page>
-</include>
+</fragment>
