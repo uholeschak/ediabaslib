@@ -5,11 +5,18 @@
     xmlns:mstns="http://holeschak.de/CarControl.xsd"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
+
+  <xs:simpleType name="string1-type">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:complexType name="include-type">
     <xs:annotation>
       <xs:documentation>Allows to include page fragments from another file.</xs:documentation>
     </xs:annotation>
-    <xs:attribute name="filename" type="xs:string" use="required">
+    <xs:attribute name="filename" type="string1-type" use="required">
       <xs:annotation>
         <xs:documentation>File name of xml page fragment to include.</xs:documentation>
         <xs:documentation>File name could be absolute or relative.</xs:documentation>
@@ -21,7 +28,7 @@
     <xs:annotation>
       <xs:documentation>Global specifications for all pages.</xs:documentation>
     </xs:annotation>
-    <xs:attribute name="ecu_path" type="xs:string" use="optional">
+    <xs:attribute name="ecu_path" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>Relative or absolute path of the ecu files to use</xs:documentation>
       </xs:annotation>
@@ -32,13 +39,13 @@
     <xs:annotation>
       <xs:documentation>Specifies a result output row.</xs:documentation>
     </xs:annotation>
-    <xs:attribute name="name" type="xs:string" use="required">
+    <xs:attribute name="name" type="string1-type" use="required">
       <xs:annotation>
         <xs:documentation>Name of the output list entry.</xs:documentation>
         <xs:documentation>Must be a reference to a string element.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="result" type="xs:string" use="required">
+    <xs:attribute name="result" type="string1-type" use="required">
       <xs:annotation>
         <xs:documentation>Name of the EDIABAS result</xs:documentation>
       </xs:annotation>
@@ -56,7 +63,7 @@
     <xs:annotation>
       <xs:documentation>String translation element.</xs:documentation>
     </xs:annotation>
-    <xs:attribute name="name" type="xs:string" use="required">
+    <xs:attribute name="name" type="string1-type" use="required">
       <xs:annotation>
         <xs:documentation>Name of the translation entry.</xs:documentation>
         <xs:documentation>It will be used as reference in page and display elements.</xs:documentation>
@@ -72,7 +79,7 @@
     <xs:sequence>
       <xs:element name="string" type="string-type" maxOccurs="unbounded"/>
     </xs:sequence>
-    <xs:attribute name="lang" type="xs:string" use="optional">
+    <xs:attribute name="lang" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>Name of the language (culture).</xs:documentation>
         <xs:documentation>This could be either the short form e.g. 'de' or the long one 'de-DE'.</xs:documentation>
@@ -85,7 +92,7 @@
     <xs:annotation>
       <xs:documentation>Specifies the EDIABAS job to execute.</xs:documentation>
     </xs:annotation>
-    <xs:attribute name="sgbd" type="xs:string" use="optional">
+    <xs:attribute name="sgbd" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>Name of the SGBD file to load.</xs:documentation>
         <xs:documentation>If omitted the SGBD must be loaded in ExecuteJob().</xs:documentation>
@@ -102,7 +109,7 @@
         <xs:documentation>Show warnings during compilation of user code.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="name" type="xs:string" use="optional">
+    <xs:attribute name="name" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>Name of the EDIABAS job to execute.</xs:documentation>
         <xs:documentation>If this element is used the function ExecuteJob() will not be called.</xs:documentation>
@@ -125,7 +132,7 @@
       <xs:element name="strings" type="strings-type" maxOccurs="unbounded"/>
       <xs:element name="job" type="job-type" maxOccurs="1"/>
     </xs:sequence>
-    <xs:attribute name="name" type="xs:string" use="required">
+    <xs:attribute name="name" type="string1-type" use="required">
       <xs:annotation>
         <xs:documentation>Name of the page.</xs:documentation>
         <xs:documentation>Must be a reference to a string element.</xs:documentation>
