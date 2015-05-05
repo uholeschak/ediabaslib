@@ -338,10 +338,11 @@ namespace CarControl
                             attrib = xnodePage.Attributes["weight"];
                             if (attrib != null)
                             {
-                                if (!float.TryParse(attrib.Value, NumberStyles.Any, culture, out pageWeight))
+                                try
                                 {
-                                    pageWeight = -1;
+                                    pageWeight = XmlConvert.ToSingle(attrib.Value);
                                 }
+                                catch { }
                             }
                         }
 
@@ -365,9 +366,9 @@ namespace CarControl
                                     attrib = xnodePageChild.Attributes["sgbd"];
                                     if (attrib != null) sgbd = attrib.Value;
                                     attrib = xnodePageChild.Attributes["activate"];
-                                    if (attrib != null) jobActivate = string.Compare(attrib.Value, "true", StringComparison.OrdinalIgnoreCase) == 0;
+                                    if (attrib != null) jobActivate = XmlConvert.ToBoolean(attrib.Value);
                                     attrib = xnodePageChild.Attributes["show_warnigs"];
-                                    if (attrib != null) jobShowWarnings = string.Compare(attrib.Value, "true", StringComparison.OrdinalIgnoreCase) == 0;
+                                    if (attrib != null) jobShowWarnings = XmlConvert.ToBoolean(attrib.Value);
                                     attrib = xnodePageChild.Attributes["name"];
                                     if (attrib != null) jobName = attrib.Value;
                                     attrib = xnodePageChild.Attributes["args"];

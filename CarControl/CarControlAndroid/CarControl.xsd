@@ -131,7 +131,7 @@
         <xs:documentation>Must be a reference to a string element.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="weight" type="xs:double" use="optional">
+    <xs:attribute name="weight" type="xs:float" use="optional">
       <xs:annotation>
         <xs:documentation>Weight to control with width of the result colum.</xs:documentation>
         <xs:documentation>A value of 1 indicates 50% of the page width.</xs:documentation>
