@@ -1,17 +1,15 @@
 ﻿using Mono.CSharp;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Xml;
+using System.Xml.XPath;
 using XmlGenSharp.Lib.Utility;
 
 namespace CarControl
 {
     public class JobReader
     {
-        private const string XMLNamespace = "http://www.holeschak.de/CarControl/CarControl.xsd";
-
         public class DisplayInfo
         {
             public DisplayInfo(string name, string result, string format)
@@ -300,7 +298,16 @@ namespace CarControl
             {
                 XmlDocument xdocConfig = XmlDocumentLoader.LoadWithIncludes(xmlName);
                 XmlNamespaceManager namespaceManager = new XmlNamespaceManager(xdocConfig.NameTable);
-                namespaceManager.AddNamespace("carcontrol", XMLNamespace);
+                XPathNavigator xNav = xdocConfig.CreateNavigator();
+                if (xNav.MoveToFollowing(XPathNodeType.Element))
+                {
+                    IDictionary<string, string> localNamespaces = xNav.GetNamespacesInScope(XmlNamespaceScope.Local);
+                    string nameSpace;
+                    if (localNamespaces.TryGetValue("", out nameSpace))
+                    {
+                        namespaceManager.AddNamespace("carcontrol", nameSpace);
+                    }
+                }
 
                 XmlAttribute attrib;
                 XmlNode xnodeGlobal = xdocConfig.SelectSingleNode("/carcontrol:configuration/carcontrol:global", namespaceManager);
