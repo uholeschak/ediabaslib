@@ -395,32 +395,14 @@ namespace CarSimulator
             0x85, 0xF1, 0x65, 0x61, 0xF9, 0x07, 0x00, 0x00};
 
         // device 0x78 IHK
-        private byte[] _response78300101 = new byte[] {
-            0x91, 0xF1, 0x78, 0x70, 0x01, 0x01, 0x28, 0x81, 0xC3, 0x68,
-            0x3C, 0x68, 0x6F, 0x50, 0x80, 0x64, 0x00, 0x00, 0x00, 0x00};
-
         private byte[] _response78300201 = new byte[] {
             0x9F, 0xF1, 0x78, 0x70, 0x02, 0x01, 0xC3, 0x28, 0x50, 0x64,
             0x69, 0x65, 0x3F, 0xFF, 0xFF, 0x0E, 0x10, 0x0E, 0x10, 0x59,
             0x53, 0x00, 0xAA, 0xAA, 0xC8, 0x00, 0x00, 0x00, 0xFF, 0xFB,
             0x00, 0x00, 0x00, 0x0F};
 
-        private byte[] _response78300301 = new byte[] {
-            0x89, 0xF1, 0x78, 0x70, 0x03, 0x01, 0xC3, 0x28, 0x6E, 0x40,
-            0x20, 0xFA};
-
-        private byte[] _response78300401 = new byte[] {
-            0x87, 0xF1, 0x78, 0x70, 0x04, 0x01, 0x57, 0x64, 0x64, 0x89};
-
-        private byte[] _response78300501 = new byte[] {
-            0x84, 0xF1, 0x78, 0x70, 0x05, 0x01, 0x00};
-
         private byte[] _response78300601 = new byte[] {
             0x86, 0xF1, 0x78, 0x70, 0x06, 0x01, 0x00, 0x00, 0x00};
-
-        private byte[] _response78300701 = new byte[] {
-            0x8C, 0xF1, 0x78, 0x70, 0x07, 0x01, 0xC8, 0xC8, 0x40, 0x2E,
-            0x2E, 0x10, 0xC8, 0xC8, 0x00};
 
         public bool Moving
         {
@@ -4099,18 +4081,6 @@ namespace CarSimulator
                 _receiveData[1] == 0x78 &&
                 _receiveData[2] == 0xF1 &&
                 _receiveData[3] == 0x30 &&
-                _receiveData[4] == 0x01 &&
-                _receiveData[5] == 0x01)
-            {   // Status Analog
-                Array.Copy(_response78300101, _sendData, _response78300101.Length);
-
-                OBDSend(_sendData);
-            }
-            else if (
-                _receiveData[0] == 0x83 &&
-                _receiveData[1] == 0x78 &&
-                _receiveData[2] == 0xF1 &&
-                _receiveData[3] == 0x30 &&
                 _receiveData[4] == 0x02 &&
                 _receiveData[5] == 0x01)
             {   // Status Regler
@@ -4220,58 +4190,10 @@ namespace CarSimulator
                 _receiveData[1] == 0x78 &&
                 _receiveData[2] == 0xF1 &&
                 _receiveData[3] == 0x30 &&
-                _receiveData[4] == 0x03 &&
-                _receiveData[5] == 0x01)
-            {   // Status Bedienteil
-                Array.Copy(_response78300301, _sendData, _response78300301.Length);
-
-                OBDSend(_sendData);
-            }
-            else if (
-                _receiveData[0] == 0x83 &&
-                _receiveData[1] == 0x78 &&
-                _receiveData[2] == 0xF1 &&
-                _receiveData[3] == 0x30 &&
-                _receiveData[4] == 0x04 &&
-                _receiveData[5] == 0x01)
-            {   // Status IO
-                Array.Copy(_response78300401, _sendData, _response78300401.Length);
-
-                OBDSend(_sendData);
-            }
-            else if (
-                _receiveData[0] == 0x83 &&
-                _receiveData[1] == 0x78 &&
-                _receiveData[2] == 0xF1 &&
-                _receiveData[3] == 0x30 &&
-                _receiveData[4] == 0x05 &&
-                _receiveData[5] == 0x01)
-            {   // Status Klappen
-                Array.Copy(_response78300501, _sendData, _response78300501.Length);
-
-                OBDSend(_sendData);
-            }
-            else if (
-                _receiveData[0] == 0x83 &&
-                _receiveData[1] == 0x78 &&
-                _receiveData[2] == 0xF1 &&
-                _receiveData[3] == 0x30 &&
                 _receiveData[4] == 0x06 &&
                 _receiveData[5] == 0x01)
             {   // Status Digital
                 Array.Copy(_response78300601, _sendData, _response78300601.Length);
-
-                OBDSend(_sendData);
-            }
-            else if (
-                _receiveData[0] == 0x83 &&
-                _receiveData[1] == 0x78 &&
-                _receiveData[2] == 0xF1 &&
-                _receiveData[3] == 0x30 &&
-                _receiveData[4] == 0x07 &&
-                _receiveData[5] == 0x01)
-            {   // Status Klappen 2
-                Array.Copy(_response78300701, _sendData, _response78300701.Length);
 
                 OBDSend(_sendData);
             }
