@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<configuration xmlns="http://www.holeschak.de/CarControl/CarControl.xsd">
+<configuration xmlns="http://www.holeschak.de/CarControl/2015/CarControl.xsd">
   <global ecu_path="Ecu" />
   <pages>
     <page name ="tab_axis">
@@ -806,12 +806,10 @@
       <display name="label_ihk_main_actuator" result="STAT_Y_RE_WERT" format="3L" />
       <display name="label_ihk_evap_temp" result="STAT_TEMP_VERDAMFER_WERT" format="6.1R" />
       <display name="label_ihk_press_sense" result="STAT_DRUCKSENSOR_WERT" format="6.1R" />
-      <display name="label_ihk_heat_ex_sense" result="STAT_WT_WERT" format="6.1R" />
       <strings>
         <string name="tab_ihk">Climate</string>
         <string name="label_ihk_evap_temp">Evaporator temperature [°C]:</string>
         <string name="label_ihk_heat_ex_actuator">Heat exchanger actuator [%]:</string>
-        <string name="label_ihk_heat_ex_sense">Heat exchanger sensor [°C]:</string>
         <string name="label_ihk_heat_ex_setpoint">Heat exchanger setpoint [°C]:</string>
         <string name="label_ihk_heat_ex_temp">Heat exchanger temperature [°C]:</string>
         <string name="label_ihk_in_temp">Indoor temperature [°C]:</string>
@@ -825,7 +823,6 @@
         <string name="tab_ihk">Klima</string>
         <string name="label_ihk_evap_temp">Verdampfertemperatur [°C]:</string>
         <string name="label_ihk_heat_ex_actuator">Wärmetauscherstellgröße [%]:</string>
-        <string name="label_ihk_heat_ex_sense">Wärmetauschersensor [°C]:</string>
         <string name="label_ihk_heat_ex_setpoint">Wärmetauschersollwert [°C]:</string>
         <string name="label_ihk_heat_ex_temp">Wärmetauschertemperatur [°C]:</string>
         <string name="label_ihk_in_temp">Innentemperatur [°C]:</string>

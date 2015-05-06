@@ -296,6 +296,7 @@ namespace CarControl
 
             try
             {
+                string prefix = string.Empty;
                 XmlDocument xdocConfig = XmlDocumentLoader.LoadWithIncludes(xmlName);
                 XmlNamespaceManager namespaceManager = new XmlNamespaceManager(xdocConfig.NameTable);
                 XPathNavigator xNav = xdocConfig.CreateNavigator();
@@ -306,11 +307,12 @@ namespace CarControl
                     if (localNamespaces.TryGetValue("", out nameSpace))
                     {
                         namespaceManager.AddNamespace("carcontrol", nameSpace);
+                        prefix = "carcontrol:";
                     }
                 }
 
                 XmlAttribute attrib;
-                XmlNode xnodeGlobal = xdocConfig.SelectSingleNode("/carcontrol:configuration/carcontrol:global", namespaceManager);
+                XmlNode xnodeGlobal = xdocConfig.SelectSingleNode(string.Format("/{0}configuration/{0}global", prefix), namespaceManager);
                 if (xnodeGlobal != null)
                 {
                     if (xnodeGlobal.Attributes != null)
@@ -330,7 +332,7 @@ namespace CarControl
                     }
                 }
 
-                XmlNodeList xnodePages = xdocConfig.SelectNodes("/carcontrol:configuration/carcontrol:pages/carcontrol:page", namespaceManager);
+                XmlNodeList xnodePages = xdocConfig.SelectNodes(string.Format("/{0}configuration/{0}pages/{0}page", prefix), namespaceManager);
                 if (xnodePages != null)
                 {
                     foreach (XmlNode xnodePage in xnodePages)

@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema targetNamespace="http://www.holeschak.de/CarControl/CarControl.xsd"
+<xs:schema targetNamespace="http://www.holeschak.de/CarControl/2015/CarControl.xsd"
     elementFormDefault="qualified"
-    xmlns="http://www.holeschak.de/CarControl/CarControl.xsd"
-    xmlns:mstns="http://www.holeschak.de/CarControl/CarControl.xsd"
+    xmlns="http://www.holeschak.de/CarControl/2015/CarControl.xsd"
+    xmlns:mstns="http://www.holeschak.de/CarControl/2015/CarControl.xsd"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
 
