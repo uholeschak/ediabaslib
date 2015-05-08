@@ -227,6 +227,7 @@ namespace CarControlAndroid
             {
                 scanMenu.SetTitle(string.Format(culture, "{0}: {1}", GetString(Resource.String.menu_device), deviceName));
                 scanMenu.SetEnabled(!commActive);
+                scanMenu.SetVisible(jobReader.Interface == JobReader.InterfaceType.BLUETOOTH);
             }
             IMenuItem selCfgMenu = menu.FindItem(Resource.Id.menu_sel_cfg);
             if (selCfgMenu != null)
@@ -301,7 +302,7 @@ namespace CarControlAndroid
             }
             else
             {
-                StartEdiabasThread ();
+                StartEdiabasThread();
                 UpdateSelectedDevice();
             }
             UpdateDisplay();
@@ -324,7 +325,7 @@ namespace CarControlAndroid
             {
                 if (ediabasThread == null)
                 {
-                    ediabasThread = new EdiabasThread(jobReader.EcuPath);
+                    ediabasThread = new EdiabasThread(jobReader.EcuPath, jobReader.Interface);
                     ediabasThread.DataUpdated += DataUpdated;
                     ediabasThread.ThreadTerminated += ThreadTerminated;
                 }
@@ -336,7 +337,12 @@ namespace CarControlAndroid
                 JobReader.PageInfo pageInfo = GetSelectedDevice();
                 if (pageInfo != null)
                 {
-                    ediabasThread.StartThread("BLUETOOTH:" + deviceAddress, logDir, pageInfo, true);
+                    string portName = string.Empty;
+                    if (jobReader.Interface == JobReader.InterfaceType.BLUETOOTH)
+                    {
+                        portName = "BLUETOOTH:" + deviceAddress;
+                    }
+                    ediabasThread.StartThread(portName, logDir, pageInfo, true);
                 }
             }
             catch (Exception)
