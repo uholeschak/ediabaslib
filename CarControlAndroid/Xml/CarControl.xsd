@@ -28,6 +28,13 @@
     </xs:attribute>
   </xs:complexType>
 
+  <xs:simpleType name="interface-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="BLUETOOTH"/>
+      <xs:enumeration value="ENET"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:complexType name="global-type">
     <xs:annotation>
       <xs:documentation>Global specifications for all pages.</xs:documentation>
@@ -36,6 +43,14 @@
       <xs:annotation>
         <xs:documentation>
           Relative or absolute path of the ecu files to use
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="interface" type="interface-type" default="BLUETOOTH" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Name of the selected communication interface.
+          If ommited bluetooth is the default.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>

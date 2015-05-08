@@ -253,8 +253,15 @@ namespace CarControl
             }
         }
 
+        public enum InterfaceType
+        {
+            BLUETOOTH,
+            ENET,
+        }
+
         private List<PageInfo> pageList = new List<PageInfo>();
         private string ecuPath = string.Empty;
+        private string interfaceName = string.Empty;
 
         public List<PageInfo> PageList
         {
@@ -269,6 +276,26 @@ namespace CarControl
             get
             {
                 return ecuPath;
+            }
+        }
+
+        public string InterfaceName
+        {
+            get
+            {
+                return interfaceName;
+            }
+        }
+
+        public InterfaceType Interface
+        {
+            get
+            {
+                if (string.Compare(interfaceName, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return InterfaceType.ENET;
+                }
+                return InterfaceType.BLUETOOTH;
             }
         }
 
@@ -293,6 +320,7 @@ namespace CarControl
                 return false;
             }
             ecuPath = Path.GetDirectoryName(xmlName);
+            interfaceName = string.Empty;
 
             try
             {
@@ -328,6 +356,12 @@ namespace CarControl
                             {
                                 ecuPath = Path.Combine(ecuPath, attrib.Value);
                             }
+                        }
+
+                        attrib = xnodeGlobal.Attributes["interface"];
+                        if (attrib != null)
+                        {
+                            interfaceName = attrib.Value;
                         }
                     }
                 }

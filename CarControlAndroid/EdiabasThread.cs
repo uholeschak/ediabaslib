@@ -60,18 +60,21 @@ namespace CarControl
         private bool ediabasInitReq;
         private bool ediabasJobAbort;
 
-        public EdiabasThread(string ecuPath)
+        public EdiabasThread(string ecuPath, JobReader.InterfaceType interfaceType)
         {
             _stopThread = false;
             _threadRunning = false;
             _workerThread = null;
             ediabas = new EdiabasNet();
 
-#if true
-            ediabas.EdInterfaceClass = new EdInterfaceObd();
-#else
-            ediabas.EdInterfaceClass = new EdInterfaceEnet();
-#endif
+            if (interfaceType == JobReader.InterfaceType.ENET)
+            {
+                ediabas.EdInterfaceClass = new EdInterfaceEnet();
+            }
+            else
+            {
+                ediabas.EdInterfaceClass = new EdInterfaceObd();
+            }
             ediabas.AbortJobFunc = AbortEdiabasJob;
             ediabas.SetConfigProperty("EcuPath", ecuPath);
 
