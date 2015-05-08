@@ -92,6 +92,9 @@
     <AndroidResource Include="Resources\layout\file_picker.axml" />
     <AndroidResource Include="Resources\layout\file_picker_list_item.axml" />
     <AndroidResource Include="Resources\layout-large\file_picker.axml" />
+    <None Include="Xml\CarControl.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\device_list.axml" />
@@ -139,5 +142,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-mdpi\folder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Xml\JobList.xml" />
+    <Content Include="Xml\TestPage.xml" />
   </ItemGroup>
 </Project>
