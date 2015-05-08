@@ -64,25 +64,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CarControl\EdiabasThread.cs">
-      <Link>EdiabasThread.cs</Link>
-    </Compile>
-    <Compile Include="..\CarControl\XmlDocumentLoader.cs">
-      <Link>XmlDocumentLoader.cs</Link>
-    </Compile>
+    <Compile Include="EdiabasThread.cs" />
     <Compile Include="FilePicker\FileListAdapter.cs" />
     <Compile Include="FilePicker\FileListFragment.cs" />
     <Compile Include="FilePicker\FileListRowViewHolder.cs" />
     <Compile Include="FilePicker\FilePickerActivity.cs" />
     <Compile Include="FilePicker\Helpers.cs" />
+    <Compile Include="JobReader.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="DeviceListActivity.cs" />
     <Compile Include="ResultListAdapter.cs" />
-    <Compile Include="..\CarControl\JobReader.cs">
-      <Link>JobReader.cs</Link>
-    </Compile>
+    <Compile Include="XmlDocumentLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
