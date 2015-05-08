@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">BMW Steuerung</string>
+  <string name="button_connected">Verbunden</string>
+  <string name="button_disconnected">Getrennt</string>
+  <string name="bt_not_enabled_leaving">Bluetooth ist nicht aktiviert. Programm wird beendet.</string>
+  <string name="bt_not_available">Bluetooth ist nicht verfügbar.</string>
+
+  <!-- Compile -->
+  <string name="compile_start">Anwendercode kompilieren</string>
+  <string name="compile_ok_btn">OK</string>
+
+  <!--  DeviceListActivity -->
+  <string name="scanning">Nach Geräten suchen ...</string>
+  <string name="select_device">Gerät auswählen</string>
+  <string name="none_paired">Keine Geräte sind gekoppelt</string>
+  <string name="none_found">Keine Geräte gefunden</string>
+  <string name="title_paired_devices">Gekoppelte Geräte</string>
+  <string name="title_other_devices">Andere verfügbare Geräte</string>
+    <string name="button_scan">Nach Geräten suchen</string>
+
+  <!-- tabs_activate -->
+  <string name="button_active">Aktiv</string>
+  <string name="button_inactive">Inaktiv</string>
+
+  <!-- Options Menu -->
+  <string name="menu_device">Gerät</string>
+  <string name="menu_sel_cfg">Konfiguration</string>
+  <string name="menu_enable_log">Logfile erzeugen</string>
+  <string name="menu_exit">App beenden</string>
+
+  <!-- FilePicker -->
+  <string name="select_file">Datei wählen</string>
+  <string name="access_dir_failed">Zugriff verweigert:</string>
+</resources>
