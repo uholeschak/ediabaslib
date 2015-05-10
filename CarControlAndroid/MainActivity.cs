@@ -1,5 +1,6 @@
 using Android.Bluetooth;
 using Android.Content;
+using Android.Net.Wifi;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Support.V7.App;
@@ -42,6 +43,7 @@ namespace CarControlAndroid
         private JobReader jobReader;
         private Handler updateHandler;
         private BluetoothAdapter bluetoothAdapter;
+        private WifiManager maWifi;
         private EdiabasThread ediabasThread;
         private List<Fragment> fragmentList;
         private Fragment lastFragment;
@@ -102,16 +104,8 @@ namespace CarControlAndroid
             fragmentList = new List<Fragment>();
             buttonConnect.Click += ButtonConnectClick;
 
-            // Get local Bluetooth adapter
             bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
-
-            // If the adapter is null, then Bluetooth is not supported
-            if (bluetoothAdapter == null)
-            {
-                Toast.MakeText(this, Resource.String.bt_not_available, ToastLength.Long).Show ();
-                Finish ();
-                return;
-            }
+            maWifi = (WifiManager)GetSystemService(WifiService);
 
             jobReader.ReadXml(configFileName);
             // compile user code
@@ -149,13 +143,14 @@ namespace CarControlAndroid
         {
             base.OnStart ();
 
-            // If BT is not on, request that it be enabled.
-            // setupChat() will then be called during onActivityResult
-            if (!bluetoothAdapter.IsEnabled)
+            EnableInterface();
+#if false
+            if (bluetoothAdapter != null && !bluetoothAdapter.IsEnabled)
             {
                 Intent enableIntent = new Intent (BluetoothAdapter.ActionRequestEnable);
                 StartActivityForResult (enableIntent, (int)activityRequest.REQUEST_ENABLE_BT);
             }
+#endif
         }
 
         protected override void OnStop ()
@@ -221,12 +216,13 @@ namespace CarControlAndroid
 
         public override bool OnPrepareOptionsMenu (IMenu menu)
         {
-            bool commActive = ediabasThread != null && ediabasThread.ThreadRunning ();
+            bool commActive = ediabasThread != null && ediabasThread.ThreadRunning();
+            bool interfaceEnabled = IsInterfaceEnabled();
             IMenuItem scanMenu = menu.FindItem(Resource.Id.menu_scan);
             if (scanMenu != null)
             {
                 scanMenu.SetTitle(string.Format(culture, "{0}: {1}", GetString(Resource.String.menu_device), deviceName));
-                scanMenu.SetEnabled(!commActive);
+                scanMenu.SetEnabled(interfaceEnabled && !commActive);
                 scanMenu.SetVisible(jobReader.Interface == JobReader.InterfaceType.BLUETOOTH);
             }
             IMenuItem selCfgMenu = menu.FindItem(Resource.Id.menu_sel_cfg);
@@ -243,7 +239,7 @@ namespace CarControlAndroid
             IMenuItem logMenu = menu.FindItem(Resource.Id.menu_enable_log);
             if (logMenu != null)
             {
-                logMenu.SetEnabled(!commActive);
+                logMenu.SetEnabled(interfaceEnabled && !commActive);
                 logMenu.SetChecked(loggingActive);
             }
             return base.OnPrepareOptionsMenu (menu);
@@ -475,7 +471,7 @@ namespace CarControlAndroid
             bool dynamicValid = false;
             bool buttonConnectEnable = true;
 
-            if (jobReader.PageList.Count == 0)
+            if (!IsInterfaceEnabled())
             {
                 buttonConnectEnable = false;
             }
@@ -811,6 +807,7 @@ namespace CarControlAndroid
 
                 RunOnUiThread(() =>
                 {
+                    EnableInterface();
                     CreateActionBarTabs();
                     progress.Hide();
                 });
@@ -823,6 +820,77 @@ namespace CarControlAndroid
             builder.SetMessage(message);
             builder.SetNeutralButton(Resource.String.compile_ok_btn, (s, e) => { });
             builder.Create().Show();
+        }
+
+        private void EnableInterface()
+        {
+            if (jobReader.PageList.Count > 0)
+            {
+                switch(jobReader.Interface)
+                {
+                    case JobReader.InterfaceType.BLUETOOTH:
+                        if (bluetoothAdapter == null)
+                        {
+                            Toast.MakeText(this, Resource.String.bt_not_available, ToastLength.Long).Show();
+                            break;
+                        }
+                        if (!bluetoothAdapter.IsEnabled)
+                        {
+                            try
+                            {
+                                bluetoothAdapter.Enable();
+                            }
+                            catch(Exception)
+                            {
+                            }
+                        }
+                        break;
+
+                    case JobReader.InterfaceType.ENET:
+                        if (maWifi == null)
+                        {
+                            Toast.MakeText(this, Resource.String.wifi_not_available, ToastLength.Long).Show();
+                            break;
+                        }
+                        if (!maWifi.IsWifiEnabled)
+                        {
+                            try
+                            {
+                                maWifi.SetWifiEnabled(true);
+                            }
+                            catch (Exception)
+                            {
+                            }
+                        }
+                        break;
+                }
+            }
+            SupportInvalidateOptionsMenu();
+        }
+
+        private bool IsInterfaceEnabled()
+        {
+            if (jobReader.PageList.Count == 0)
+            {
+                return false;
+            }
+            switch (jobReader.Interface)
+            {
+                case JobReader.InterfaceType.BLUETOOTH:
+                    if (bluetoothAdapter == null)
+                    {
+                        return false;
+                    }
+                    return bluetoothAdapter.IsEnabled;
+
+                case JobReader.InterfaceType.ENET:
+                    if (maWifi == null)
+                    {
+                        return false;
+                    }
+                    return maWifi.IsWifiEnabled;
+            }
+            return false;
         }
 
         public class TabContentFragment : Fragment

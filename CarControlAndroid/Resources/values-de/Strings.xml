@@ -5,6 +5,7 @@
   <string name="button_disconnected">Getrennt</string>
   <string name="bt_not_enabled_leaving">Bluetooth ist nicht aktiviert. Programm wird beendet.</string>
   <string name="bt_not_available">Bluetooth ist nicht verfügbar.</string>
+  <string name="wifi_not_available">Wifi ist nicht verfügbar.</string>
 
   <!-- Compile -->
   <string name="compile_start">Anwendercode kompilieren</string>

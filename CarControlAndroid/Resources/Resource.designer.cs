@@ -1860,8 +1860,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0010
 			public const int abc_toolbar_collapse_description = 2131361808;
 			
-			// aapt resource value: 0x7f0a0027
-			public const int access_dir_failed = 2131361831;
+			// aapt resource value: 0x7f0a0028
+			public const int access_dir_failed = 2131361832;
 			
 			// aapt resource value: 0x7f0a0012
 			public const int app_name = 2131361810;
@@ -1872,8 +1872,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0015
 			public const int bt_not_enabled_leaving = 2131361813;
 			
-			// aapt resource value: 0x7f0a0020
-			public const int button_active = 2131361824;
+			// aapt resource value: 0x7f0a0021
+			public const int button_active = 2131361825;
 			
 			// aapt resource value: 0x7f0a0013
 			public const int button_connected = 2131361811;
@@ -1881,53 +1881,56 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0014
 			public const int button_disconnected = 2131361812;
 			
-			// aapt resource value: 0x7f0a0021
-			public const int button_inactive = 2131361825;
+			// aapt resource value: 0x7f0a0022
+			public const int button_inactive = 2131361826;
 			
-			// aapt resource value: 0x7f0a001f
-			public const int button_scan = 2131361823;
+			// aapt resource value: 0x7f0a0020
+			public const int button_scan = 2131361824;
+			
+			// aapt resource value: 0x7f0a0019
+			public const int compile_ok_btn = 2131361817;
 			
 			// aapt resource value: 0x7f0a0018
-			public const int compile_ok_btn = 2131361816;
-			
-			// aapt resource value: 0x7f0a0017
-			public const int compile_start = 2131361815;
+			public const int compile_start = 2131361816;
 			
 			// aapt resource value: 0x7f0a0011
 			public const int library_name = 2131361809;
 			
-			// aapt resource value: 0x7f0a0022
-			public const int menu_device = 2131361826;
-			
-			// aapt resource value: 0x7f0a0024
-			public const int menu_enable_log = 2131361828;
+			// aapt resource value: 0x7f0a0023
+			public const int menu_device = 2131361827;
 			
 			// aapt resource value: 0x7f0a0025
-			public const int menu_exit = 2131361829;
-			
-			// aapt resource value: 0x7f0a0023
-			public const int menu_sel_cfg = 2131361827;
-			
-			// aapt resource value: 0x7f0a001c
-			public const int none_found = 2131361820;
-			
-			// aapt resource value: 0x7f0a001b
-			public const int none_paired = 2131361819;
-			
-			// aapt resource value: 0x7f0a0019
-			public const int scanning = 2131361817;
-			
-			// aapt resource value: 0x7f0a001a
-			public const int select_device = 2131361818;
+			public const int menu_enable_log = 2131361829;
 			
 			// aapt resource value: 0x7f0a0026
-			public const int select_file = 2131361830;
+			public const int menu_exit = 2131361830;
 			
-			// aapt resource value: 0x7f0a001e
-			public const int title_other_devices = 2131361822;
+			// aapt resource value: 0x7f0a0024
+			public const int menu_sel_cfg = 2131361828;
 			
 			// aapt resource value: 0x7f0a001d
-			public const int title_paired_devices = 2131361821;
+			public const int none_found = 2131361821;
+			
+			// aapt resource value: 0x7f0a001c
+			public const int none_paired = 2131361820;
+			
+			// aapt resource value: 0x7f0a001a
+			public const int scanning = 2131361818;
+			
+			// aapt resource value: 0x7f0a001b
+			public const int select_device = 2131361819;
+			
+			// aapt resource value: 0x7f0a0027
+			public const int select_file = 2131361831;
+			
+			// aapt resource value: 0x7f0a001f
+			public const int title_other_devices = 2131361823;
+			
+			// aapt resource value: 0x7f0a001e
+			public const int title_paired_devices = 2131361822;
+			
+			// aapt resource value: 0x7f0a0017
+			public const int wifi_not_available = 2131361815;
 			
 			static String()
 			{

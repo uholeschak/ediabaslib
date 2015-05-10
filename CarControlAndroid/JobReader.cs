@@ -262,6 +262,7 @@ namespace CarControl
         private List<PageInfo> pageList = new List<PageInfo>();
         private string ecuPath = string.Empty;
         private string interfaceName = string.Empty;
+        private InterfaceType interfaceType = InterfaceType.BLUETOOTH;
 
         public List<PageInfo> PageList
         {
@@ -291,11 +292,7 @@ namespace CarControl
         {
             get
             {
-                if (string.Compare(interfaceName, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    return InterfaceType.ENET;
-                }
-                return InterfaceType.BLUETOOTH;
+                return interfaceType;
             }
         }
 
@@ -364,6 +361,12 @@ namespace CarControl
                             interfaceName = attrib.Value;
                         }
                     }
+                }
+
+                interfaceType = InterfaceType.BLUETOOTH;
+                if (string.Compare(interfaceName, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    interfaceType = InterfaceType.ENET;
                 }
 
                 XmlNodeList xnodePages = xdocConfig.SelectNodes(string.Format("/{0}configuration/{0}pages/{0}page", prefix), namespaceManager);
