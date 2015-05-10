@@ -1,19 +1,59 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace EdiabasLib
 {
     class MemoryStreamReader : Stream
     {
+        [DllImport("libc", SetLastError = true)]
+        static extern int open(string path, int flags, int access);
+
+        [DllImport("libc")]
+        static extern int close(int fd);
+
+        [DllImport("libc")]
+        static extern IntPtr mmap(IntPtr addr, IntPtr len, int prot, int flags, int fd, int offset);
+
+        [DllImport("libc")]
+        static extern int munmap(IntPtr addr, IntPtr size);
+
+        const int DEFFILEMODE = 0x666;
+        const int O_RDONLY = 0x0;
+        const int O_WRONLY = 0x1;
+        const int O_RDWR = 0x2;
+
+        const int PROT_READ = 0x1;
+        const int PROT_WRITE = 0x2;
+        const int PROT_EXEC = 0x4;
+
+        const int MAP_PRIVATE = 0x2;
+        const int MAP_SHARED = 0x1;
+
         public MemoryStreamReader(string path)
         {
             this.filePos = 0;
+            this.fd = -1;
+            this.mapAddr = (IntPtr)(-1);
 
-            FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.None);
-            this.fileLength = fileStream.Length;
-            this.fileBuffer = new byte[this.fileLength];
-            fileStream.Read(this.fileBuffer, 0, (int)this.fileLength);
-            fileStream.Close();
+            FileInfo fileInfo = new FileInfo(path);
+            this.fileLength = fileInfo.Length;
+
+            bool openSuccess = false;
+            fd = open(path, O_RDONLY, DEFFILEMODE);
+            if (fd != -1)
+            {
+                this.mapAddr = mmap(IntPtr.Zero, (IntPtr)this.fileLength, PROT_READ, MAP_PRIVATE, fd, 0);
+                if (this.mapAddr != (IntPtr)(-1))
+                {
+                    openSuccess = true;
+                }
+            }
+            if (!openSuccess)
+            {
+                Close();
+                throw new FileNotFoundException();
+            }
         }
 
         public static MemoryStreamReader OpenRead(string path)
@@ -95,7 +135,16 @@ namespace EdiabasLib
 
         public override void Close()
         {
-            fileBuffer = null;
+            if (this.mapAddr != (IntPtr)(-1))
+            {
+                munmap(this.mapAddr, (IntPtr)this.fileLength);
+                this.mapAddr = (IntPtr)(-1);
+            }
+            if (this.fd != -1)
+            {
+                close(this.fd);
+                this.fd = -1;
+            }
         }
 
         public override int Read(byte[] buffer, int offset, int count)
@@ -115,7 +164,7 @@ namespace EdiabasLib
                     useCount = 0;
                 }
             }
-            Array.Copy(this.fileBuffer, this.filePos, buffer, offset, useCount);
+            Marshal.Copy(this.PosPtr, buffer, offset, useCount);
             this.filePos += (long)useCount;
             return count;
         }
@@ -180,8 +229,17 @@ namespace EdiabasLib
             throw new NotSupportedException();
         }
 
-        private byte[] fileBuffer = null;
+        private IntPtr PosPtr
+        {
+            get
+            {
+                return IntPtr.Add(this.mapAddr, (int)this.filePos);
+            }
+        }
+
         private long filePos = 0;
         private long fileLength = 0;
+        private int fd = -1;
+        private IntPtr mapAddr = (IntPtr)(-1);
     }
 }
