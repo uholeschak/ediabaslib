@@ -36,17 +36,8 @@
     <ConsolePause>false</ConsolePause>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <MandroidI18n>West</MandroidI18n>
-    <DebugType>full</DebugType>
     <AndroidLinkSkip>Mono.Android</AndroidLinkSkip>
     <AndroidSupportedAbis>armeabi-v7a</AndroidSupportedAbis>
-    <AndroidStoreUncompressedFileExtensions>
-    </AndroidStoreUncompressedFileExtensions>
-    <JavaMaximumHeapSize>
-    </JavaMaximumHeapSize>
-    <JavaOptions>
-    </JavaOptions>
-    <MonoDroidExtraArgs>
-    </MonoDroidExtraArgs>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
