@@ -40,6 +40,7 @@ namespace CarControlAndroid
         private bool loggingActive = false;
         private const string sharedAppName = "CarControl";
         private string externalPath;
+        private bool emulator;
         private JobReader jobReader;
         private Handler updateHandler;
         private BluetoothAdapter bluetoothAdapter;
@@ -89,6 +90,7 @@ namespace CarControlAndroid
             updateHandler = new Handler();
             jobReader = new JobReader();
             externalPath = Path.Combine(Path.Combine(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, "external_sd"), "CarControl");
+            emulator = IsEmulator();
             GetSettings();
 
             barConnectView = LayoutInflater.Inflate(Resource.Layout.bar_connect, null);
@@ -847,6 +849,10 @@ namespace CarControlAndroid
                         break;
 
                     case JobReader.InterfaceType.ENET:
+                        if (emulator)
+                        {
+                            break;
+                        }
                         if (maWifi == null)
                         {
                             Toast.MakeText(this, Resource.String.wifi_not_available, ToastLength.Long).Show();
@@ -884,6 +890,10 @@ namespace CarControlAndroid
                     return bluetoothAdapter.IsEnabled;
 
                 case JobReader.InterfaceType.ENET:
+                    if (emulator)
+                    {
+                        return true;
+                    }
                     if (maWifi == null)
                     {
                         return false;
@@ -891,6 +901,17 @@ namespace CarControlAndroid
                     return maWifi.IsWifiEnabled;
             }
             return false;
+        }
+
+        private static bool IsEmulator()
+        {
+            string fing = Build.Fingerprint;
+            bool isEmulator = false;
+            if (fing != null)
+            {
+                isEmulator = fing.Contains("vbox") || fing.Contains("generic");
+            }
+            return isEmulator;
         }
 
         public class TabContentFragment : Fragment
