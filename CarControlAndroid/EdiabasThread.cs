@@ -131,7 +131,7 @@ namespace CarControl
                 if (!string.IsNullOrEmpty(logDir))
                 {
                     ediabas.SetConfigProperty("TracePath", logDir);
-                    ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.ED_LOG_LEVEL.IFH));
+                    ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.ED_LOG_LEVEL.ERROR));
                 }
                 else
                 {
