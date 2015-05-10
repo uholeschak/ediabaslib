@@ -76,7 +76,6 @@
     <None Include="packages.config" />
     <AndroidResource Include="Resources\layout\file_picker.axml" />
     <AndroidResource Include="Resources\layout\file_picker_list_item.axml" />
-    <AndroidResource Include="Resources\layout-large\file_picker.axml" />
     <None Include="Xml\CarControl.xsd">
       <SubType>Designer</SubType>
     </None>
