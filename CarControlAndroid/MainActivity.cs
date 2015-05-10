@@ -336,9 +336,18 @@ namespace CarControlAndroid
                 if (pageInfo != null)
                 {
                     string portName = string.Empty;
-                    if (jobReader.Interface == JobReader.InterfaceType.BLUETOOTH)
+                    switch (jobReader.Interface)
                     {
-                        portName = "BLUETOOTH:" + deviceAddress;
+                        case JobReader.InterfaceType.BLUETOOTH:
+                            portName = "BLUETOOTH:" + deviceAddress;
+                            break;
+
+                        case JobReader.InterfaceType.ENET:
+                            if (emulator)
+                            {   // broadcast is not working with emulator
+                                portName = "192.168.10.244";
+                            }
+                            break;
                     }
                     ediabasThread.StartThread(portName, logDir, pageInfo, true);
                 }

@@ -126,7 +126,10 @@ namespace CarControl
                 }
                 if (ediabas.EdInterfaceClass is EdInterfaceEnet)
                 {
-                    //((EdInterfaceEnet)ediabas.EdInterfaceClass).RemoteHost = "192.168.10.244";
+                    if (!string.IsNullOrEmpty(comPort))
+                    {
+                        ((EdInterfaceEnet)ediabas.EdInterfaceClass).RemoteHost = comPort;
+                    }
                 }
                 if (!string.IsNullOrEmpty(logDir))
                 {
