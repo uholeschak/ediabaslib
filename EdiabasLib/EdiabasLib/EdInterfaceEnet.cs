@@ -444,8 +444,9 @@ namespace EdiabasLib
                 StartReadTcpDiag(6);
                 ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "Connected");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ediabas.LogString(EdiabasNet.ED_LOG_LEVEL.IFH, "InterfaceConnect exception: " + EdiabasNet.GetExceptionText(ex));
                 InterfaceDisconnect();
                 return false;
             }
