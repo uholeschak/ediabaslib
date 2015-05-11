@@ -1,6 +1,6 @@
 #!/bin/sh
 # Mono paths
-export MONO="/cygdrive/c/Programs/Mono3_12_1"
+export MONO="/cygdrive/c/Programs/Mono4_0_1"
 export PATH="$PATH:$MONO/bin"
 export PKG_CONFIG_PATH="$MONO/lib/pkgconfig"
 machineconfig="./info1.xml"
