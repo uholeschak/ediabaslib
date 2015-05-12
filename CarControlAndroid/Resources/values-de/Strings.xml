@@ -3,7 +3,11 @@
   <string name="app_name">BMW Steuerung</string>
   <string name="button_connected">Verbunden</string>
   <string name="button_disconnected">Getrennt</string>
-  <string name="bt_not_enabled_leaving">Bluetooth ist nicht aktiviert. Programm wird beendet.</string>
+  <string name="button_yes">Ja</string>
+  <string name="button_no">Nein</string>
+  <string name="interface_activate">Aktivierung</string>
+  <string name="bt_enable">Bluetooth ist nicht aktiviert. Wollen Sie es jetzt aktivieren?</string>
+  <string name="wifi_enable">Wifi ist nicht aktiviert. Wollen Sie es jetzt aktivieren?</string>
   <string name="bt_not_available">Bluetooth ist nicht verfügbar.</string>
   <string name="wifi_not_available">Wifi ist nicht verfügbar.</string>
 

@@ -17,6 +17,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace CarControlAndroid
 {
@@ -30,7 +31,6 @@ namespace CarControlAndroid
         {
             REQUEST_SELECT_DEVICE,
             REQUEST_SELECT_CONFIG,
-            REQUEST_ENABLE_BT
         }
 
         public static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
@@ -41,6 +41,7 @@ namespace CarControlAndroid
         private const string sharedAppName = "CarControl";
         private string externalPath;
         private bool emulator;
+        private bool activateRequest = false;
         private JobReader jobReader;
         private Handler updateHandler;
         private BluetoothAdapter bluetoothAdapter;
@@ -50,6 +51,7 @@ namespace CarControlAndroid
         private Fragment lastFragment;
         private ToggleButton buttonConnect;
         private View barConnectView;
+        private Timer updateTimer;
 
         public void OnTabReselected(ActionBar.Tab tab, FragmentTransaction ft)
         {
@@ -112,6 +114,16 @@ namespace CarControlAndroid
             jobReader.ReadXml(configFileName);
             // compile user code
             CompileCode();
+
+            updateTimer = new Timer(1000);
+            updateTimer.Elapsed += (sender, args) =>
+                {
+                    RunOnUiThread(() =>
+                    {
+                        SupportInvalidateOptionsMenu();
+                        UpdateDisplay();
+                    });
+                };
         }
 
         void AddTabToActionBar(string label)
@@ -145,28 +157,22 @@ namespace CarControlAndroid
         {
             base.OnStart ();
 
-            EnableInterface();
-#if false
-            if (bluetoothAdapter != null && !bluetoothAdapter.IsEnabled)
-            {
-                Intent enableIntent = new Intent (BluetoothAdapter.ActionRequestEnable);
-                StartActivityForResult (enableIntent, (int)activityRequest.REQUEST_ENABLE_BT);
-            }
-#endif
+            updateTimer.Start();
+            RequestInterfaceEnable();
         }
 
         protected override void OnStop ()
         {
             base.OnStop ();
 
-            StopEdiabasThread (false);
+            StopEdiabasThread(false);
         }
 
         protected override void OnDestroy ()
         {
             base.OnDestroy ();
 
-            StopEdiabasThread (true);
+            StopEdiabasThread(true);
 
             StoreSettings ();
         }
@@ -192,18 +198,9 @@ namespace CarControlAndroid
                     {
                         configFileName = data.Extras.GetString(FilePickerActivity.EXTRA_FILE_NAME);
                         jobReader.ReadXml(configFileName);
+                        RequestInterfaceEnable();
                         CompileCode();
                         SupportInvalidateOptionsMenu();
-                    }
-                    break;
-
-                case activityRequest.REQUEST_ENABLE_BT:
-                    // When the request to enable Bluetooth returns
-                    if (resultCode != Android.App.Result.Ok)
-                    {
-                        // User did not enable Bluetooth or an error occured
-                        Toast.MakeText(this, Resource.String.bt_not_enabled_leaving, ToastLength.Short).Show();
-                        Finish();
                     }
                     break;
             }
@@ -356,6 +353,7 @@ namespace CarControlAndroid
             {
                 return false;
             }
+            updateTimer.Stop();
             SupportInvalidateOptionsMenu();
             return true;
         }
@@ -380,6 +378,7 @@ namespace CarControlAndroid
                     return false;
                 }
             }
+            updateTimer.Start();
             SupportInvalidateOptionsMenu();
             return true;
         }
@@ -818,7 +817,6 @@ namespace CarControlAndroid
 
                 RunOnUiThread(() =>
                 {
-                    EnableInterface();
                     CreateActionBarTabs();
                     progress.Hide();
                 });
@@ -827,10 +825,10 @@ namespace CarControlAndroid
 
         private void ShowAlert(string message)
         {
-            Android.App.AlertDialog.Builder builder = new Android.App.AlertDialog.Builder(this);
-            builder.SetMessage(message);
-            builder.SetNeutralButton(Resource.String.compile_ok_btn, (s, e) => { });
-            builder.Create().Show();
+            new AlertDialog.Builder(this)
+            .SetMessage(message)
+            .SetNeutralButton(Resource.String.compile_ok_btn, (s, e) => { })
+            .Show();
         }
 
         private void EnableInterface()
@@ -881,6 +879,7 @@ namespace CarControlAndroid
                 }
             }
             SupportInvalidateOptionsMenu();
+            UpdateDisplay();
         }
 
         private bool IsInterfaceEnabled()
@@ -910,6 +909,51 @@ namespace CarControlAndroid
                     return maWifi.IsWifiEnabled;
             }
             return false;
+        }
+
+        private void RequestInterfaceEnable()
+        {
+            if (activateRequest)
+            {
+                return;
+            }
+            if (jobReader.PageList.Count == 0)
+            {
+                return;
+            }
+            if (IsInterfaceEnabled())
+            {
+                return;
+            }
+            int resourceID;
+            switch (jobReader.Interface)
+            {
+                case JobReader.InterfaceType.BLUETOOTH:
+                    resourceID = Resource.String.bt_enable;
+                    break;
+
+                case JobReader.InterfaceType.ENET:
+                    resourceID = Resource.String.wifi_enable;
+                    break;
+
+                default:
+                    return;
+            }
+            activateRequest = true;
+            new AlertDialog.Builder(this)
+                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                {
+                    activateRequest = false;
+                    EnableInterface();
+                })
+                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                {
+                    activateRequest = false;
+                })
+                .SetCancelable(false)
+                .SetMessage(resourceID)
+                .SetTitle(Resource.String.interface_activate)
+                .Show();
         }
 
         private static bool IsEmulator()
