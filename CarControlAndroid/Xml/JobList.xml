@@ -1305,12 +1305,9 @@
                 ViewGroup.LayoutParams.MatchParent,
                 ViewGroup.LayoutParams.WrapContent);
             buttonLayoutParams.Weight = 1;
-            buttonLayoutParams.SetMargins(5, 5, 5, 5);
 
             buttonCan500 = new Button(activity);
             buttonCan500.Text = ActivityMain.GetPageString(pageInfo, "button_adapter_config_can_500");
-            buttonCan500.SetTextColor(Android.Graphics.Color.Black);
-            buttonCan500.SetBackgroundColor(Android.Graphics.Color.LightGray);
             buttonCan500.Click += delegate
             {
                 adapterConfigValue = 0x01;
@@ -1319,8 +1316,6 @@
 
             buttonCan100 = new Button(activity);
             buttonCan100.Text = ActivityMain.GetPageString(pageInfo, "button_adapter_config_can_100");
-            buttonCan100.SetTextColor(Android.Graphics.Color.Black);
-            buttonCan100.SetBackgroundColor(Android.Graphics.Color.LightGray);
             buttonCan100.Click += delegate
             {
                 adapterConfigValue = 0x09;
@@ -1329,8 +1324,6 @@
 
             buttonCanOff = new Button(activity);
             buttonCanOff.Text = ActivityMain.GetPageString(pageInfo, "button_adapter_config_can_off");
-            buttonCanOff.SetTextColor(Android.Graphics.Color.Black);
-            buttonCanOff.SetBackgroundColor(Android.Graphics.Color.LightGray);
             buttonCanOff.Click += delegate
             {
                 adapterConfigValue = 0x00;
