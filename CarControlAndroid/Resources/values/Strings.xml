@@ -3,7 +3,11 @@
   <string name="app_name">BMW Control</string>
   <string name="button_connected">Connected</string>
   <string name="button_disconnected">Disconnected</string>
-  <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving application.</string>
+  <string name="button_yes">Yes</string>
+  <string name="button_no">No</string>
+  <string name="interface_activate">Activation</string>
+  <string name="bt_enable">Bluetooth is not enabled. Do you want to enable it now?</string>
+  <string name="wifi_enable">Wifi is not enabled. Do you want to enable it now?</string>
   <string name="bt_not_available">Bluetooth is not available.</string>
   <string name="wifi_not_available">Wifi is not available.</string>
 
