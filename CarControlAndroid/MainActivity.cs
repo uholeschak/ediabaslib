@@ -481,10 +481,6 @@ namespace CarControlAndroid
             bool dynamicValid = false;
             bool buttonConnectEnable = true;
 
-            if (!IsInterfaceEnabled())
-            {
-                buttonConnectEnable = false;
-            }
             if (ediabasThread != null && ediabasThread.ThreadRunning ())
             {
                 if (ediabasThread.ThreadStopping ())
@@ -499,6 +495,10 @@ namespace CarControlAndroid
             }
             else
             {
+                if (!IsInterfaceEnabled())
+                {
+                    buttonConnectEnable = false;
+                }
                 buttonConnect.Checked = false;
             }
             buttonConnect.Enabled = buttonConnectEnable;
