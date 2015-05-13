@@ -91,7 +91,7 @@ namespace CarControlAndroid
 
             updateHandler = new Handler();
             jobReader = new JobReader();
-            externalPath = Path.Combine(Path.Combine(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, "external_sd"), "CarControl");
+            externalPath = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
             emulator = IsEmulator();
             GetSettings();
 
@@ -390,7 +390,7 @@ namespace CarControlAndroid
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(sharedAppName, FileCreationMode.Private);
                 deviceName = prefs.GetString("DeviceName", "DIAG");
                 deviceAddress = prefs.GetString("DeviceAddress", "98:D3:31:40:13:56");
-                configFileName = prefs.GetString("ConfigFile", Path.Combine(externalPath, "JobList.xml"));
+                configFileName = prefs.GetString("ConfigFile", string.Empty);
             }
             catch (Exception)
             {
