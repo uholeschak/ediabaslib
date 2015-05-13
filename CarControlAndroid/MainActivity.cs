@@ -260,7 +260,7 @@ namespace CarControlAndroid
                     {
                         // Launch the FilePickerActivity to select a configuration
                         Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
-                        string initDir = null;
+                        string initDir = externalPath;
                         try
                         {
                             if (!string.IsNullOrEmpty(configFileName))
