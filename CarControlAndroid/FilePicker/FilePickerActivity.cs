@@ -1,12 +1,14 @@
 ﻿namespace com.xamarin.recipes.filepicker
 {
-    using Android.App;
     using Android.OS;
     using Android.Support.V4.App;
+    using Android.Support.V7.App;
     using CarControlAndroid;
 
-    [Activity(Label = "@string/select_file")]
-    public class FilePickerActivity : FragmentActivity
+    [Android.App.Activity(Label = "@string/select_file", Theme = "@style/Theme.AppCompat")]
+#pragma warning disable 618
+    public class FilePickerActivity : ActionBarActivity
+#pragma warning restore 618
     {
         // Return Intent extra
         public const string EXTRA_INIT_DIR = "init_dir";
@@ -19,7 +21,7 @@
             SetContentView(Resource.Layout.file_picker);
 
             // Set result CANCELED incase the user backs out
-            SetResult(Result.Canceled);
+            SetResult(Android.App.Result.Canceled);
         }
     }
 }
