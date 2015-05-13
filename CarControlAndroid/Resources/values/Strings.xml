@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">BMW Control</string>
+  <string name="app_name">BMW Diagnostics</string>
   <string name="button_connected">Connected</string>
   <string name="button_disconnected">Disconnected</string>
   <string name="button_yes">Yes</string>
@@ -10,6 +10,8 @@
   <string name="wifi_enable">Wifi is not enabled. Do you want to enable it now?</string>
   <string name="bt_not_available">Bluetooth is not available.</string>
   <string name="wifi_not_available">Wifi is not available.</string>
+  <string name="config_select">No valid configuration is present. Do you want to select a configuration now?</string>
+  <string name="config_select_title">Configuration</string>
 
   <!-- Compile -->
   <string name="compile_start">Compiling user code</string>
