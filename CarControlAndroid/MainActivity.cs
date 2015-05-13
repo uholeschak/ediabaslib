@@ -112,6 +112,7 @@ namespace CarControlAndroid
             maWifi = (WifiManager)GetSystemService(WifiService);
 
             jobReader.ReadXml(configFileName);
+            RequestConfigSelect();
             // compile user code
             CompileCode();
 
@@ -246,7 +247,7 @@ namespace CarControlAndroid
 
         public override bool OnOptionsItemSelected (IMenuItem item)
         {
-            switch (item.ItemId) 
+            switch (item.ItemId)
             {
                 case Resource.Id.menu_scan:
                     {
@@ -257,24 +258,8 @@ namespace CarControlAndroid
                     }
 
                 case Resource.Id.menu_sel_cfg:
-                    {
-                        // Launch the FilePickerActivity to select a configuration
-                        Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
-                        string initDir = externalPath;
-                        try
-                        {
-                            if (!string.IsNullOrEmpty(configFileName))
-                            {
-                                initDir = Path.GetDirectoryName(configFileName);
-                            }
-                        }
-                        catch (Exception)
-                        {
-                        }
-                        serverIntent.PutExtra(FilePickerActivity.EXTRA_INIT_DIR, initDir);
-                        StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_CONFIG);
-                        return true;
-                    }
+                    SelectConfigFile();
+                    return true;
 
                 case Resource.Id.menu_enable_log:
                     loggingActive = !loggingActive;
@@ -954,6 +939,45 @@ namespace CarControlAndroid
                 .SetMessage(resourceID)
                 .SetTitle(Resource.String.interface_activate)
                 .Show();
+        }
+
+        private void RequestConfigSelect()
+        {
+            if (jobReader.PageList.Count > 0)
+            {
+                return;
+            }
+            new AlertDialog.Builder(this)
+                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                {
+                    SelectConfigFile();
+                })
+                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                {
+                })
+                .SetCancelable(false)
+                .SetMessage(Resource.String.config_select)
+                .SetTitle(Resource.String.config_select_title)
+                .Show();
+        }
+
+        private void SelectConfigFile()
+        {
+            // Launch the FilePickerActivity to select a configuration
+            Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
+            string initDir = externalPath;
+            try
+            {
+                if (!string.IsNullOrEmpty(configFileName))
+                {
+                    initDir = Path.GetDirectoryName(configFileName);
+                }
+            }
+            catch (Exception)
+            {
+            }
+            serverIntent.PutExtra(FilePickerActivity.EXTRA_INIT_DIR, initDir);
+            StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_CONFIG);
         }
 
         private static bool IsEmulator()
