@@ -40,6 +40,7 @@ namespace CarControlAndroid
         private string externalPath;
         private bool emulator;
         private bool activateRequest = false;
+        private bool autoStart = false;
         private JobReader jobReader;
         private Handler updateHandler;
         private BluetoothAdapter bluetoothAdapter;
@@ -188,7 +189,12 @@ namespace CarControlAndroid
                         deviceName = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_NAME);
                         deviceAddress = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
                         SupportInvalidateOptionsMenu();
+                        if (autoStart)
+                        {
+                            ButtonConnectClick(buttonConnect, new EventArgs());
+                        }
                     }
+                    autoStart = false;
                     break;
 
                 case activityRequest.REQUEST_SELECT_CONFIG:
@@ -248,12 +254,8 @@ namespace CarControlAndroid
             switch (item.ItemId)
             {
                 case Resource.Id.menu_scan:
-                    {
-                        // Launch the DeviceListActivity to see devices and do scan
-                        Intent serverIntent = new Intent(this, typeof(DeviceListActivity));
-                        StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_DEVICE);
-                        return true;
-                    }
+                    SelectDevice();
+                    break;
 
                 case Resource.Id.menu_sel_cfg:
                     SelectConfigFile();
@@ -274,6 +276,11 @@ namespace CarControlAndroid
 
         protected void ButtonConnectClick (object sender, EventArgs e)
         {
+            autoStart = false;
+            if (!RequestDeviceSelect())
+            {
+                return;
+            }
             if (ediabasThread != null && ediabasThread.ThreadRunning())
             {
                 StopEdiabasThread (false);
@@ -299,6 +306,7 @@ namespace CarControlAndroid
 
         private bool StartEdiabasThread()
         {
+            autoStart = false;
             try
             {
                 if (ediabasThread == null)
@@ -371,8 +379,8 @@ namespace CarControlAndroid
             try
             {
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(sharedAppName, FileCreationMode.Private);
-                deviceName = prefs.GetString("DeviceName", "DIAG");
-                deviceAddress = prefs.GetString("DeviceAddress", "98:D3:31:40:13:56");
+                deviceName = prefs.GetString("DeviceName", string.Empty);
+                deviceAddress = prefs.GetString("DeviceAddress", string.Empty);
                 configFileName = prefs.GetString("ConfigFile", string.Empty);
             }
             catch (Exception)
@@ -976,6 +984,53 @@ namespace CarControlAndroid
             }
             serverIntent.PutExtra(FilePickerActivity.EXTRA_INIT_DIR, initDir);
             StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_CONFIG);
+        }
+
+        private bool RequestDeviceSelect()
+        {
+            if (!IsInterfaceEnabled())
+            {
+                return true;
+            }
+            if (jobReader.Interface != JobReader.InterfaceType.BLUETOOTH)
+            {
+                return true;
+            }
+            if (!string.IsNullOrEmpty(deviceAddress))
+            {
+                return true;
+            }
+            new AlertDialog.Builder(this)
+                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                {
+                    if (SelectDevice())
+                    {
+                        autoStart = true;
+                    }
+                })
+                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                {
+                })
+                .SetCancelable(false)
+                .SetMessage(Resource.String.device_select)
+                .SetTitle(Resource.String.device_select_title)
+                .Show();
+            return false;
+        }
+
+        private bool SelectDevice()
+        {
+            if (!IsInterfaceEnabled())
+            {
+                return false;
+            }
+            if (jobReader.Interface != JobReader.InterfaceType.BLUETOOTH)
+            {
+                return false;
+            }
+            Intent serverIntent = new Intent(this, typeof(DeviceListActivity));
+            StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_DEVICE);
+            return true;
         }
 
         private static bool IsEmulator()
