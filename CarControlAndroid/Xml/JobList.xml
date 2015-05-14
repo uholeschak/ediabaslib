@@ -1311,6 +1311,7 @@
             buttonCan500.Click += delegate
             {
                 adapterConfigValue = 0x01;
+                configResult = -1;
             };
             buttonLayout.AddView(buttonCan500, buttonLayoutParams);
 
@@ -1319,6 +1320,7 @@
             buttonCan100.Click += delegate
             {
                 adapterConfigValue = 0x09;
+                configResult = -1;
             };
             buttonLayout.AddView(buttonCan100, buttonLayoutParams);
 
@@ -1327,6 +1329,7 @@
             buttonCanOff.Click += delegate
             {
                 adapterConfigValue = 0x00;
+                configResult = -1;
             };
             buttonLayout.AddView(buttonCanOff, buttonLayoutParams);
 
