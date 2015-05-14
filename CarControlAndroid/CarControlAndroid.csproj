@@ -109,12 +109,6 @@
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup />
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\file.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\folder.png" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\file.png" />
   </ItemGroup>
   <ItemGroup>
@@ -128,6 +122,10 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\file.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\folder.png" />
+    <AndroidResource Include="Resources\drawable\file.png" />
+    <AndroidResource Include="Resources\drawable\folder.png" />
     <Content Include="Xml\JobList.xml" />
     <Content Include="Xml\TestPage.xml" />
   </ItemGroup>
