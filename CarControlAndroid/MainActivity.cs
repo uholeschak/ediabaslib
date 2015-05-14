@@ -23,9 +23,7 @@ namespace CarControlAndroid
 {
     [Android.App.Activity(Label = "@string/app_name", Theme = "@style/Theme.AppCompat", MainLauncher = true,
                ConfigurationChanges=Android.Content.PM.ConfigChanges.KeyboardHidden | Android.Content.PM.ConfigChanges.Orientation)]
-#pragma warning disable 618
-    public class ActivityMain : ActionBarActivity, ActionBar.ITabListener
-#pragma warning restore 618
+    public class ActivityMain : AppCompatActivity, ActionBar.ITabListener
     {
         enum activityRequest
         {

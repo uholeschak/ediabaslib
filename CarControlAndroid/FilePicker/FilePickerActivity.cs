@@ -6,9 +6,7 @@
     using CarControlAndroid;
 
     [Android.App.Activity(Label = "@string/select_file", Theme = "@style/Theme.AppCompat")]
-#pragma warning disable 618
-    public class FilePickerActivity : ActionBarActivity
-#pragma warning restore 618
+    public class FilePickerActivity : AppCompatActivity
     {
         // Return Intent extra
         public const string EXTRA_INIT_DIR = "init_dir";
