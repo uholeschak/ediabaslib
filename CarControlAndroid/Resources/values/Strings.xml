@@ -12,6 +12,8 @@
   <string name="wifi_not_available">Wifi is not available.</string>
   <string name="config_select">No valid configuration is present. Do you want to select a configuration now?</string>
   <string name="config_select_title">Configuration</string>
+  <string name="device_select">No Bluetooth device has been selected. Do you want to select a device now?</string>
+  <string name="device_select_title">Device selection</string>
 
   <!-- Compile -->
   <string name="compile_start">Compiling user code</string>
