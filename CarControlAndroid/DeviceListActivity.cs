@@ -14,14 +14,14 @@
 * limitations under the License.
 */
 
-using System;
-using Android.App;
 using Android.Bluetooth;
 using Android.Content;
 using Android.OS;
+using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using System;
 
 namespace CarControlAndroid
 {
@@ -32,10 +32,10 @@ namespace CarControlAndroid
     /// by the user, the MAC address of the device is sent back to the parent
     /// Activity in the result Intent.
     /// </summary>
-    [Activity (Label = "@string/select_device",
-                Theme = "@android:style/Theme.Dialog",
+    [Android.App.Activity (Label = "@string/select_device",
+                Theme = "@style/Theme.AppCompat",
                 ConfigurationChanges=Android.Content.PM.ConfigChanges.KeyboardHidden | Android.Content.PM.ConfigChanges.Orientation)]
-    public class DeviceListActivity : Activity
+    public class DeviceListActivity : AppCompatActivity
     {
         // Debugging
         private const string TAG = "DeviceListActivity";
@@ -56,11 +56,10 @@ namespace CarControlAndroid
             base.OnCreate (savedInstanceState);
 
             // Setup the window
-            RequestWindowFeature (WindowFeatures.IndeterminateProgress);
-            SetContentView (Resource.Layout.device_list);
+            SetContentView(Resource.Layout.device_list);
 
             // Set result CANCELED incase the user backs out
-            SetResult (Result.Canceled);
+            SetResult (Android.App.Result.Canceled);
 
             // Initialize the button to perform device discovery
             var scanButton = FindViewById<Button> (Resource.Id.button_scan);
@@ -139,7 +138,7 @@ namespace CarControlAndroid
                 Log.Debug (TAG, "doDiscovery()");
 
             // Indicate scanning in the title
-            SetProgressBarIndeterminateVisibility (true);
+            FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Visible;
             SetTitle (Resource.String.scanning);
 
             // Turn on sub-title for new devices
@@ -178,15 +177,15 @@ namespace CarControlAndroid
             intent.PutExtra (EXTRA_DEVICE_ADDRESS, address);
 
             // Set result and finish this Activity
-            SetResult (Result.Ok, intent);
+            SetResult(Android.App.Result.Ok, intent);
             Finish ();
         }
 
         public class Receiver : BroadcastReceiver
         {
-            Activity _chat;
+            Android.App.Activity _chat;
 
-            public Receiver (Activity chat)
+            public Receiver(Android.App.Activity chat)
             {
                 _chat = chat;
             }
@@ -209,7 +208,8 @@ namespace CarControlAndroid
                 }
                 else if (action == BluetoothAdapter.ActionDiscoveryFinished)
                 {
-                    _chat.SetProgressBarIndeterminateVisibility (false);
+                    //_chat.SetProgressBarIndeterminateVisibility (false);
+                    _chat.FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Invisible;
                     _chat.SetTitle (Resource.String.select_device);
                     if (newDevicesArrayAdapter.Count == 0)
                     {
