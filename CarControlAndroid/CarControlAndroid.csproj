@@ -107,9 +107,7 @@
     <AndroidResource Include="Resources\layout\bar_connect.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Resources\drawable-xhdpi\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\file.png" />
   </ItemGroup>
@@ -129,6 +127,7 @@
     <AndroidResource Include="Resources\drawable-mdpi\folder.png" />
   </ItemGroup>
   <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
     <Content Include="Xml\JobList.xml" />
     <Content Include="Xml\TestPage.xml" />
   </ItemGroup>
