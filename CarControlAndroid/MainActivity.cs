@@ -749,6 +749,7 @@ namespace CarControlAndroid
                     if (pageInfo.JobInfo.ClassCode == null) continue;
                     Task<string> compileTask = Task<string>.Factory.StartNew(() =>
                     {
+#if true
                         string result = string.Empty;
                         StringWriter reportWriter = new StringWriter();
                         try
@@ -769,12 +770,14 @@ namespace CarControlAndroid
                                 using System.Threading;"
                                 + pageInfo.JobInfo.ClassCode;
                             evaluator.Compile(classCode);
-                            pageInfo.Eval = evaluator;
                             pageInfo.ClassObject = evaluator.Evaluate("new PageClass()");
-                            Type pageType = pageInfo.ClassObject.GetType();
-                            if (string.IsNullOrEmpty(pageInfo.JobInfo.Name) && pageType.GetMethod("ExecuteJob") == null)
+                            if (string.IsNullOrEmpty(pageInfo.JobInfo.Name))
                             {
-                                throw new Exception("No ExecuteJob method");
+                                Type pageType = pageInfo.ClassObject.GetType();
+                                if (pageType.GetMethod("ExecuteJob") == null)
+                                {
+                                    throw new Exception("No ExecuteJob method");
+                                }
                             }
                         }
                         catch (Exception ex)
@@ -792,6 +795,47 @@ namespace CarControlAndroid
                         }
 
                         return result;
+#else
+                        List<Assembly> assemblyList = new List<Assembly>();
+                        assemblyList.Add(Assembly.GetExecutingAssembly());
+                        assemblyList.Add(typeof(EdiabasNet).Assembly);
+                        assemblyList.Add(typeof(View).Assembly);
+
+                        string classCode = @"
+                                using Android.Views;
+                                using Android.Widget;
+                                using EdiabasLib;
+                                using CarControl;
+                                using CarControlAndroid;
+                                using System;
+                                using System.Collections.Generic;
+                                using System.Diagnostics;
+                                using System.Threading;"
+                            + pageInfo.JobInfo.ClassCode;
+
+                        Compiler.CompileInfo compileInfo = new Compiler.CompileInfo(classCode, assemblyList, pageInfo.JobInfo.ShowWarnings);
+                        string result = Compiler.Compile(compileInfo);
+                        pageInfo.ClassObject = compileInfo.ClassObject;
+                        if (string.IsNullOrEmpty(result))
+                        {
+                            if (string.IsNullOrEmpty(pageInfo.JobInfo.Name))
+                            {
+                                Type pageType = pageInfo.ClassObject.GetType();
+                                if (pageType.GetMethod("ExecuteJob") == null)
+                                {
+                                    result = "No ExecuteJob method";
+                                }
+
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(result))
+                        {
+                            result = GetPageString(pageInfo, pageInfo.Name) + ":\r\n" + result;
+                        }
+
+                        return result;
+#endif
                     });
                     taskList.Add(compileTask);
                 }

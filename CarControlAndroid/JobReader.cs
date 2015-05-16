@@ -1,5 +1,4 @@
-﻿using Mono.CSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -173,7 +172,6 @@ namespace CarControl
             private List<DisplayInfo> displayList;
             private List<StringInfo> stringList;
             private object infoObject;
-            private Evaluator eval;
             private dynamic classObject;
 
             public string Name
@@ -225,18 +223,6 @@ namespace CarControl
                 set
                 {
                     infoObject = value;
-                }
-            }
-
-            public Evaluator Eval
-            {
-                get
-                {
-                    return eval;
-                }
-                set
-                {
-                    eval = value;
                 }
             }
 
