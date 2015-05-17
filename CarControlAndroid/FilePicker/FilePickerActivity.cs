@@ -5,7 +5,10 @@
     using Android.Support.V7.App;
     using CarControlAndroid;
 
-    [Android.App.Activity(Label = "@string/select_file", Theme = "@style/Theme.AppCompat")]
+    [Android.App.Activity(Label = "@string/select_file", Theme = "@style/Theme.AppCompat",
+            ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
+                Android.Content.PM.ConfigChanges.Orientation |
+                Android.Content.PM.ConfigChanges.ScreenSize)]
     public class FilePickerActivity : AppCompatActivity
     {
         // Return Intent extra
