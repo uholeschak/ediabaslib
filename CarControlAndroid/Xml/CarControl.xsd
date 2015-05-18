@@ -188,7 +188,7 @@
     <xs:sequence>
       <xs:element name="display" type="display-type" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="strings" type="strings-type" maxOccurs="unbounded"/>
-      <xs:element name="job" type="job-type" maxOccurs="1"/>
+      <xs:element name="job" type="job-type"/>
     </xs:sequence>
     <xs:attribute name="name" type="string1-type" use="required">
       <xs:annotation>
@@ -215,16 +215,21 @@
       </xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="page" type="page-type" maxOccurs="unbounded"/>
-      <xs:element name="include" type="include-type" maxOccurs="unbounded"/>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="page" type="page-type"/>
+        <xs:element name="include" type="include-type"/>
+      </xs:choice>
     </xs:sequence>
   </xs:complexType>
 
   <xs:element name="configuration">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="global" type="global-type" maxOccurs="1"/>
-        <xs:element name="pages" type="pages-type" maxOccurs="unbounded"/>
+        <xs:element name="global" type="global-type"/>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="pages" type="pages-type"/>
+          <xs:element name="include" type="include-type"/>
+        </xs:choice>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -236,7 +241,7 @@
       </xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:sequence>
+      <xs:choice>
         <xs:element name="page" type="page-type" maxOccurs="unbounded">
           <xs:annotation>
             <xs:documentation>
@@ -244,7 +249,14 @@
             </xs:documentation>
           </xs:annotation>
         </xs:element>
-      </xs:sequence>
+        <xs:element name="pages" type="pages-type">
+          <xs:annotation>
+            <xs:documentation>
+              Description of all pages.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
     </xs:complexType>
   </xs:element>
 </xs:schema>
