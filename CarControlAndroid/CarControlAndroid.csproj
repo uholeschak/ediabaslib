@@ -83,6 +83,7 @@
     <None Include="packages.config" />
     <AndroidResource Include="Resources\layout\file_picker.axml" />
     <AndroidResource Include="Resources\layout\file_picker_list_item.axml" />
+    <None Include="Xml\Axis.ccpage" />
     <None Include="Xml\CarControl.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -126,8 +127,20 @@
     <AndroidResource Include="Resources\drawable-xhdpi\folder.png" />
     <AndroidResource Include="Resources\drawable\file.png" />
     <AndroidResource Include="Resources\drawable\folder.png" />
-    <Content Include="Xml\JobList.xml" />
-    <Content Include="Xml\TestPage.xml" />
+    <None Include="Xml\E61Bt.cccfg">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Xml\Adapter.ccpage" />
+    <None Include="Xml\Ccc.ccpage" />
+    <None Include="Xml\E61.ccpages" />
+    <None Include="Xml\E61Enet.cccfg" />
+    <None Include="Xml\Ihk.ccpage" />
+    <None Include="Xml\Errors.ccpage" />
+    <None Include="Xml\Motor.ccpage" />
+    <None Include="Xml\MotorIrregular.ccpage" />
+    <None Include="Xml\MotorPm.ccpage" />
+    <None Include="Xml\MotorUneven.ccpage" />
+    <None Include="Xml\Test.ccpage" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\EdiabasLibAndroid.csproj">

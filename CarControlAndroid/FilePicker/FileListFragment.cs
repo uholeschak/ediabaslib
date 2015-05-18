@@ -99,7 +99,7 @@ namespace com.xamarin.recipes.filepicker
                     bool add = true;
                     if (item.IsFile())
                     {
-                        add = item.HasFileExtension(".xml");
+                        add = item.HasFileExtension(".cccfg");
                     }
                     if (add)
                     {
