@@ -51,6 +51,7 @@ namespace CarControlAndroid
         private List<Fragment> fragmentList;
         private Fragment lastFragment;
         private ToggleButton buttonConnect;
+        private ImageView imageBackground;
         private View barConnectView;
         private Timer updateTimer;
 
@@ -106,6 +107,7 @@ namespace CarControlAndroid
             SupportActionBar.SetCustomView(barConnectView, barLayoutParams);
 
             buttonConnect = barConnectView.FindViewById<ToggleButton> (Resource.Id.buttonConnect);
+            imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
             fragmentList = new List<Fragment>();
             buttonConnect.Click += ButtonConnectClick;
 
@@ -495,6 +497,7 @@ namespace CarControlAndroid
                 buttonConnect.Checked = false;
             }
             buttonConnect.Enabled = buttonConnectEnable;
+            imageBackground.Visibility = dynamicValid ? ViewStates.Invisible : ViewStates.Visible;
 
             Fragment dynamicFragment = null;
             JobReader.PageInfo pageInfo = GetSelectedDevice();

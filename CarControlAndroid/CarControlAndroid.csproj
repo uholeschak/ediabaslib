@@ -108,7 +108,6 @@
     <AndroidResource Include="Resources\layout\bar_connect.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
-  <ItemGroup />
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\file.png" />
   </ItemGroup>
@@ -148,4 +147,8 @@
       <Name>EdiabasLibAndroid</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\background.jpg" />
+  </ItemGroup>
+  <ItemGroup />
 </Project>
