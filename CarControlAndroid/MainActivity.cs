@@ -82,14 +82,14 @@ namespace CarControlAndroid
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate (savedInstanceState);
+            base.OnCreate(savedInstanceState);
 
             SupportActionBar.NavigationMode = Android.Support.V7.App.ActionBar.NavigationModeStandard;
             SupportActionBar.SetDisplayShowCustomEnabled(true);
             SupportActionBar.SetDisplayUseLogoEnabled(false);
             SupportActionBar.SetDisplayShowTitleEnabled(false);
             SupportActionBar.SetIcon(Android.Resource.Color.Transparent);   // hide icon
-            SetContentView (Resource.Layout.main);
+            SetContentView(Resource.Layout.main);
 
             updateHandler = new Handler();
             jobReader = new JobReader();
@@ -106,7 +106,7 @@ namespace CarControlAndroid
                 (int)(GravityFlags.Left | GravityFlags.CenterVertical);
             SupportActionBar.SetCustomView(barConnectView, barLayoutParams);
 
-            buttonConnect = barConnectView.FindViewById<ToggleButton> (Resource.Id.buttonConnect);
+            buttonConnect = barConnectView.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
             imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
             fragmentList = new List<Fragment>();
             buttonConnect.Click += ButtonConnectClick;
@@ -157,31 +157,31 @@ namespace CarControlAndroid
             UpdateDisplay();
         }
 
-        protected override void OnStart ()
+        protected override void OnStart()
         {
-            base.OnStart ();
+            base.OnStart();
 
             updateTimer.Start();
             RequestInterfaceEnable();
         }
 
-        protected override void OnStop ()
+        protected override void OnStop()
         {
-            base.OnStop ();
+            base.OnStop();
 
             StopEdiabasThread(false);
         }
 
-        protected override void OnDestroy ()
+        protected override void OnDestroy()
         {
-            base.OnDestroy ();
+            base.OnDestroy();
 
             StopEdiabasThread(true);
 
-            StoreSettings ();
+            StoreSettings();
         }
 
-        protected override void OnActivityResult (int requestCode, Android.App.Result resultCode, Intent data)
+        protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
         {
             switch((activityRequest)requestCode)
             {
@@ -215,14 +215,14 @@ namespace CarControlAndroid
             }
         }
 
-        public override bool OnCreateOptionsMenu (IMenu menu)
+        public override bool OnCreateOptionsMenu(IMenu menu)
         {
             var inflater = MenuInflater;
             inflater.Inflate(Resource.Menu.option_menu, menu);
             return true;
         }
 
-        public override bool OnPrepareOptionsMenu (IMenu menu)
+        public override bool OnPrepareOptionsMenu(IMenu menu)
         {
             bool commActive = ediabasThread != null && ediabasThread.ThreadRunning();
             bool interfaceEnabled = IsInterfaceEnabled();
@@ -250,10 +250,10 @@ namespace CarControlAndroid
                 logMenu.SetEnabled(interfaceEnabled && !commActive);
                 logMenu.SetChecked(loggingActive);
             }
-            return base.OnPrepareOptionsMenu (menu);
+            return base.OnPrepareOptionsMenu(menu);
         }
 
-        public override bool OnOptionsItemSelected (IMenuItem item)
+        public override bool OnOptionsItemSelected(IMenuItem item)
         {
             switch (item.ItemId)
             {
@@ -278,7 +278,7 @@ namespace CarControlAndroid
             return base.OnOptionsItemSelected(item);
         }
 
-        protected void ButtonConnectClick (object sender, EventArgs e)
+        protected void ButtonConnectClick(object sender, EventArgs e)
         {
             autoStart = false;
             if (!RequestDeviceSelect())
@@ -287,7 +287,7 @@ namespace CarControlAndroid
             }
             if (ediabasThread != null && ediabasThread.ThreadRunning())
             {
-                StopEdiabasThread (false);
+                StopEdiabasThread(false);
             }
             else
             {
@@ -297,14 +297,14 @@ namespace CarControlAndroid
             UpdateDisplay();
         }
 
-        [Export ("onActiveClick")]
-        public void OnActiveClick (View v)
+        [Export("onActiveClick")]
+        public void OnActiveClick(View v)
         {
             if (ediabasThread == null)
             {
                 return;
             }
-            ToggleButton button = v.FindViewById<ToggleButton> (Resource.Id.button_active);
+            ToggleButton button = v.FindViewById<ToggleButton>(Resource.Id.button_active);
             ediabasThread.CommActive = button.Checked;
         }
 
@@ -476,9 +476,9 @@ namespace CarControlAndroid
             bool dynamicValid = false;
             bool buttonConnectEnable = true;
 
-            if (ediabasThread != null && ediabasThread.ThreadRunning ())
+            if (ediabasThread != null && ediabasThread.ThreadRunning())
             {
-                if (ediabasThread.ThreadStopping ())
+                if (ediabasThread.ThreadStopping())
                 {
                     buttonConnectEnable = false;
                 }
@@ -511,7 +511,7 @@ namespace CarControlAndroid
                 ListView listViewResult = dynamicFragment.View.FindViewById<ListView>(Resource.Id.resultList);
                 if (listViewResult.Adapter == null)
                 {
-                    listViewResult.Adapter = new ResultListAdapter (this, pageInfo.Weight);
+                    listViewResult.Adapter = new ResultListAdapter(this, pageInfo.Weight);
                 }
                 ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult.Adapter;
                 ToggleButton buttonActive = null;
