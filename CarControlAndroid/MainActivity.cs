@@ -170,6 +170,8 @@ namespace CarControlAndroid
             base.OnStop();
 
             StopEdiabasThread(false);
+
+            StoreSettings();
         }
 
         protected override void OnDestroy()
