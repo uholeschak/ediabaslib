@@ -199,6 +199,7 @@ namespace CarControlAndroid
             base.OnDestroy();
 
             StopEdiabasThread(true);
+            StoreSettings();
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
