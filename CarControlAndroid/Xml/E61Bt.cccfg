@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <configuration xmlns="http://www.holeschak.de/CarControl/2015/CarControl.xsd">
-  <global ecu_path="Ecu" interface="BLUETOOTH" />
+  <global ecu_path="Ecu" log_path="Log" append_log="true" interface="BLUETOOTH" />
   <include filename="E61.ccpages"/>
 </configuration>

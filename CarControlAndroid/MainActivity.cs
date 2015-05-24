@@ -37,7 +37,10 @@ namespace CarControlAndroid
         private string deviceName = string.Empty;
         private string deviceAddress = string.Empty;
         private string configFileName = string.Empty;
-        private bool loggingActive = false;
+        private bool tracingActive = false;
+        private bool dataLogActive = false;
+        private bool activityStarted = false;
+        private bool createTabsPending = false;
         private const string sharedAppName = "CarControl";
         private string externalPath;
         private string externalWritePath;
@@ -49,6 +52,8 @@ namespace CarControlAndroid
         private BluetoothAdapter bluetoothAdapter;
         private WifiManager maWifi;
         private EdiabasThread ediabasThread;
+        private StreamWriter swDataLog;
+        private string dataLogDir;
         private List<Fragment> fragmentList;
         private Fragment lastFragment;
         private ToggleButton buttonConnect;
@@ -141,6 +146,12 @@ namespace CarControlAndroid
 
         void CreateActionBarTabs()
         {
+            if (!activityStarted)
+            {
+                createTabsPending = true;
+                return;
+            }
+            createTabsPending = false;
             SupportActionBar.RemoveAllTabs();
             fragmentList.Clear();
             SupportActionBar.NavigationMode = Android.Support.V7.App.ActionBar.NavigationModeStandard;
@@ -162,6 +173,11 @@ namespace CarControlAndroid
         {
             base.OnStart();
 
+            activityStarted = true;
+            if (createTabsPending)
+            {
+                CreateActionBarTabs();
+            }
             updateTimer.Start();
             RequestInterfaceEnable();
         }
@@ -170,8 +186,11 @@ namespace CarControlAndroid
         {
             base.OnStop();
 
-            StopEdiabasThread(false);
-
+            activityStarted = false;
+            if (swDataLog == null)
+            {
+                StopEdiabasThread(false);
+            }
             StoreSettings();
         }
 
@@ -245,11 +264,17 @@ namespace CarControlAndroid
                 selCfgMenu.SetTitle(string.Format(culture, "{0}: {1}", GetString(Resource.String.menu_sel_cfg), fileName));
                 selCfgMenu.SetEnabled(!commActive);
             }
-            IMenuItem logMenu = menu.FindItem(Resource.Id.menu_enable_log);
-            if (logMenu != null)
+            IMenuItem traceMenu = menu.FindItem(Resource.Id.menu_enable_trace);
+            if (traceMenu != null)
             {
-                logMenu.SetEnabled(interfaceEnabled && !commActive);
-                logMenu.SetChecked(loggingActive);
+                traceMenu.SetEnabled(interfaceEnabled && !commActive);
+                traceMenu.SetChecked(tracingActive);
+            }
+            IMenuItem dataLogMenu = menu.FindItem(Resource.Id.menu_enable_datalog);
+            if (dataLogMenu != null)
+            {
+                dataLogMenu.SetEnabled(interfaceEnabled);
+                dataLogMenu.SetChecked(dataLogActive);
             }
             return base.OnPrepareOptionsMenu(menu);
         }
@@ -266,8 +291,17 @@ namespace CarControlAndroid
                     SelectConfigFile();
                     return true;
 
-                case Resource.Id.menu_enable_log:
-                    loggingActive = !loggingActive;
+                case Resource.Id.menu_enable_trace:
+                    tracingActive = !tracingActive;
+                    SupportInvalidateOptionsMenu();
+                    return true;
+
+                case Resource.Id.menu_enable_datalog:
+                    dataLogActive = !dataLogActive;
+                    if (!dataLogActive)
+                    {
+                        CloseDataLog();
+                    }
                     SupportInvalidateOptionsMenu();
                     return true;
 
@@ -320,17 +354,41 @@ namespace CarControlAndroid
                     ediabasThread.DataUpdated += DataUpdated;
                     ediabasThread.ThreadTerminated += ThreadTerminated;
                 }
-                string logDir = null;
-                if (loggingActive && !string.IsNullOrEmpty(configFileName))
+                string logDir;
+                if (string.IsNullOrEmpty(externalWritePath))
                 {
-                    if (string.IsNullOrEmpty(externalWritePath))
+                    logDir = Path.GetDirectoryName(configFileName);
+                }
+                else
+                {
+                    logDir = externalWritePath;
+                }
+
+                if (!string.IsNullOrEmpty(jobReader.LogPath))
+                {
+                    if (Path.IsPathRooted(jobReader.LogPath))
                     {
-                        logDir = Path.GetDirectoryName(configFileName);
+                        logDir = jobReader.LogPath;
                     }
                     else
                     {
-                        logDir = externalWritePath;
+                        logDir = Path.Combine(logDir, jobReader.LogPath);
                     }
+                }
+                try
+                {
+                    Directory.CreateDirectory(logDir);
+                }
+                catch (Exception)
+                {
+                    logDir = string.Empty;
+                }
+                dataLogDir = logDir;
+
+                string traceDir = null;
+                if (tracingActive && !string.IsNullOrEmpty(configFileName))
+                {
+                    traceDir = logDir;
                 }
                 JobReader.PageInfo pageInfo = GetSelectedDevice();
                 if (pageInfo != null)
@@ -349,7 +407,7 @@ namespace CarControlAndroid
                             }
                             break;
                     }
-                    ediabasThread.StartThread(portName, logDir, pageInfo, true);
+                    ediabasThread.StartThread(portName, traceDir, pageInfo, true);
                 }
             }
             catch (Exception)
@@ -381,9 +439,19 @@ namespace CarControlAndroid
                     return false;
                 }
             }
+            CloseDataLog();
             updateTimer.Start();
             SupportInvalidateOptionsMenu();
             return true;
+        }
+
+        private void CloseDataLog()
+        {
+            if (swDataLog != null)
+            {
+                swDataLog.Dispose();
+                swDataLog = null;
+            }
         }
 
         private bool GetSettings()
@@ -471,6 +539,7 @@ namespace CarControlAndroid
             {
                 ediabasThread.CommActive = newCommActive;
                 ediabasThread.JobPageInfo = newPageInfo;
+                CloseDataLog();
             }
         }
 
@@ -483,12 +552,17 @@ namespace CarControlAndroid
         {
             bool dynamicValid = false;
             bool buttonConnectEnable = true;
+            bool threadRunning = false;
 
             if (ediabasThread != null && ediabasThread.ThreadRunning())
             {
                 if (ediabasThread.ThreadStopping())
                 {
                     buttonConnectEnable = false;
+                }
+                else
+                {
+                    threadRunning = true;
                 }
                 if (ediabasThread.CommActive)
                 {
@@ -530,7 +604,26 @@ namespace CarControlAndroid
 
                 if (dynamicValid)
                 {
-                    //bool found;
+                    if (dataLogActive && threadRunning && swDataLog == null && !string.IsNullOrEmpty(pageInfo.LogFile))
+                    {
+                        try
+                        {
+                            FileMode fileMode;
+                            string fileName = Path.Combine(dataLogDir, pageInfo.LogFile);
+                            if (File.Exists(fileName))
+                            {
+                                fileMode = jobReader.AppendLog ? FileMode.Append : FileMode.Create;
+                            }
+                            else
+                            {
+                                fileMode = FileMode.Create;
+                            }
+                            swDataLog = new StreamWriter(new FileStream(fileName, fileMode, FileAccess.Write, FileShare.ReadWrite));
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
                     Dictionary<string, EdiabasNet.ResultData> resultDict;
                     lock (EdiabasThread.DataLock)
                     {
@@ -545,6 +638,11 @@ namespace CarControlAndroid
                         Type pageType = pageInfo.ClassObject.GetType();
                         formatResult = pageType.GetMethod("FormatResult") != null;
                         updateResult = pageType.GetMethod("UpdateResultList") != null;
+                    }
+                    string currDateTime = string.Empty;
+                    if (dataLogActive)
+                    {
+                        currDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", culture);
                     }
                     foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                     {
@@ -572,6 +670,16 @@ namespace CarControlAndroid
                         if (result != null)
                         {
                             resultListAdapter.Items.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result));
+                            if (!string.IsNullOrEmpty(displayInfo.LogTag) && dataLogActive && swDataLog != null)
+                            {
+                                try
+                                {
+                                    swDataLog.Write(string.Format("{0}\t{1}\t{2}\r\n", displayInfo.LogTag, currDateTime, result));
+                                }
+                                catch (Exception)
+                                {
+                                }
+                            }
                         }
                     }
 

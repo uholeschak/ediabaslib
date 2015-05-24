@@ -35,7 +35,8 @@
   <!-- Options Menu -->
   <string name="menu_device">Gerät</string>
   <string name="menu_sel_cfg">Konfiguration</string>
-  <string name="menu_enable_log">Logfile erzeugen</string>
+  <string name="menu_enable_trace">Tracefile erzeugen</string>
+  <string name="menu_enable_datalog">Daten aufzeichnen</string>
   <string name="menu_exit">App beenden</string>
 
   <!-- FilePicker -->

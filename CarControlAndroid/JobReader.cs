@@ -11,16 +11,18 @@ namespace CarControl
     {
         public class DisplayInfo
         {
-            public DisplayInfo(string name, string result, string format)
+            public DisplayInfo(string name, string result, string format, string logTag)
             {
                 this.name = name;
                 this.result = result;
                 this.format = format;
+                this.logTag = logTag;
             }
 
             private string name;
             private string result;
             private string format;
+            private string logTag;
 
             public string Name
             {
@@ -43,6 +45,14 @@ namespace CarControl
                 get
                 {
                     return format;
+                }
+            }
+
+            public string LogTag
+            {
+                get
+                {
+                    return logTag;
                 }
             }
         }
@@ -155,10 +165,11 @@ namespace CarControl
 
         public class PageInfo
         {
-            public PageInfo(string name, float weight, JobInfo jobInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
+            public PageInfo(string name, float weight, string logFile, JobInfo jobInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
             {
                 this.name = name;
                 this.weight = weight;
+                this.logFile = logFile;
                 this.jobInfo = jobInfo;
                 this.displayList = displayList;
                 this.stringList = stringList;
@@ -168,6 +179,7 @@ namespace CarControl
 
             private string name;
             private float weight;
+            private string logFile;
             private JobInfo jobInfo;
             private List<DisplayInfo> displayList;
             private List<StringInfo> stringList;
@@ -187,6 +199,14 @@ namespace CarControl
                 get
                 {
                     return weight;
+                }
+            }
+
+            public string LogFile
+            {
+                get
+                {
+                    return logFile;
                 }
             }
 
@@ -247,6 +267,8 @@ namespace CarControl
 
         private List<PageInfo> pageList = new List<PageInfo>();
         private string ecuPath = string.Empty;
+        private string logPath = string.Empty;
+        private bool appendLog = false;
         private string interfaceName = string.Empty;
         private InterfaceType interfaceType = InterfaceType.BLUETOOTH;
 
@@ -263,6 +285,22 @@ namespace CarControl
             get
             {
                 return ecuPath;
+            }
+        }
+
+        public string LogPath
+        {
+            get
+            {
+                return logPath;
+            }
+        }
+
+        public bool AppendLog
+        {
+            get
+            {
+                return appendLog;
             }
         }
 
@@ -303,6 +341,7 @@ namespace CarControl
                 return false;
             }
             ecuPath = Path.GetDirectoryName(xmlName);
+            logPath = string.Empty;
             interfaceName = string.Empty;
 
             try
@@ -341,6 +380,18 @@ namespace CarControl
                             }
                         }
 
+                        attrib = xnodeGlobal.Attributes["log_path"];
+                        if (attrib != null)
+                        {
+                            logPath = attrib.Value;
+                        }
+
+                        attrib = xnodeGlobal.Attributes["append_log"];
+                        if (attrib != null)
+                        {
+                            appendLog = XmlConvert.ToBoolean(attrib.Value);
+                        }
+
                         attrib = xnodeGlobal.Attributes["interface"];
                         if (attrib != null)
                         {
@@ -362,6 +413,7 @@ namespace CarControl
                     {
                         string pageName = string.Empty;
                         float pageWeight = -1;
+                        string logFile = string.Empty;
                         if (xnodePage.Attributes != null)
                         {
                             attrib = xnodePage.Attributes["name"];
@@ -375,11 +427,14 @@ namespace CarControl
                                 }
                                 catch { }
                             }
+                            attrib = xnodePage.Attributes["logfile"];
+                            if (attrib != null) logFile = attrib.Value;
                         }
 
                         JobInfo jobInfo = null;
                         List<DisplayInfo> displayList = new List<DisplayInfo>();
                         List<StringInfo> stringList = new List<StringInfo>();
+                        bool logEnabled = false;
                         foreach (XmlNode xnodePageChild in xnodePage.ChildNodes)
                         {
                             if (string.Compare(xnodePageChild.Name, "job", StringComparison.OrdinalIgnoreCase) == 0)
@@ -415,6 +470,7 @@ namespace CarControl
                                 string name = string.Empty;
                                 string result = string.Empty;
                                 string format = null;
+                                string logTag = string.Empty;
                                 if (xnodePageChild.Attributes != null)
                                 {
                                     attrib = xnodePageChild.Attributes["name"];
@@ -423,9 +479,12 @@ namespace CarControl
                                     if (attrib != null) result = attrib.Value;
                                     attrib = xnodePageChild.Attributes["format"];
                                     if (attrib != null) format = attrib.Value;
+                                    attrib = xnodePageChild.Attributes["log_tag"];
+                                    if (attrib != null) logTag = attrib.Value;
+                                    if (!string.IsNullOrEmpty(logTag)) logEnabled = true;
 
                                     if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(result)) continue;
-                                    displayList.Add (new DisplayInfo (name, result, format));
+                                    displayList.Add(new DisplayInfo(name, result, format, logTag));
                                 }
                             }
                             if (string.Compare(xnodePageChild.Name, "strings", StringComparison.OrdinalIgnoreCase) == 0)
@@ -456,9 +515,10 @@ namespace CarControl
                                 stringList.Add(new StringInfo(lang, stringDict));
                             }
                         }
+                        if (!logEnabled) logFile = string.Empty;
                         if (string.IsNullOrEmpty(pageName) || (jobInfo == null)) continue;
 
-                        pageList.Add(new PageInfo(pageName, pageWeight, jobInfo, displayList, stringList));
+                        pageList.Add(new PageInfo(pageName, pageWeight, logFile, jobInfo, displayList, stringList));
                     }
                 }
                 return true;

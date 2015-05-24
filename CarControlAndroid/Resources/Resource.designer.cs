@@ -1481,11 +1481,14 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f08002a
 			public const int list_item = 2131230762;
 			
-			// aapt resource value: 0x7f080063
-			public const int menu_enable_log = 2131230819;
-			
 			// aapt resource value: 0x7f080064
-			public const int menu_exit = 2131230820;
+			public const int menu_enable_datalog = 2131230820;
+			
+			// aapt resource value: 0x7f080063
+			public const int menu_enable_trace = 2131230819;
+			
+			// aapt resource value: 0x7f080065
+			public const int menu_exit = 2131230821;
 			
 			// aapt resource value: 0x7f080061
 			public const int menu_scan = 2131230817;
@@ -1863,8 +1866,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0010
 			public const int abc_toolbar_collapse_description = 2131361808;
 			
-			// aapt resource value: 0x7f0a0030
-			public const int access_dir_failed = 2131361840;
+			// aapt resource value: 0x7f0a0031
+			public const int access_dir_failed = 2131361841;
 			
 			// aapt resource value: 0x7f0a0012
 			public const int app_name = 2131361810;
@@ -1923,11 +1926,14 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a002b
 			public const int menu_device = 2131361835;
 			
-			// aapt resource value: 0x7f0a002d
-			public const int menu_enable_log = 2131361837;
-			
 			// aapt resource value: 0x7f0a002e
-			public const int menu_exit = 2131361838;
+			public const int menu_enable_datalog = 2131361838;
+			
+			// aapt resource value: 0x7f0a002d
+			public const int menu_enable_trace = 2131361837;
+			
+			// aapt resource value: 0x7f0a002f
+			public const int menu_exit = 2131361839;
 			
 			// aapt resource value: 0x7f0a002c
 			public const int menu_sel_cfg = 2131361836;
@@ -1944,8 +1950,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0023
 			public const int select_device = 2131361827;
 			
-			// aapt resource value: 0x7f0a002f
-			public const int select_file = 2131361839;
+			// aapt resource value: 0x7f0a0030
+			public const int select_file = 2131361840;
 			
 			// aapt resource value: 0x7f0a0027
 			public const int title_other_devices = 2131361831;
