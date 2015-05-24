@@ -42,7 +42,21 @@
     <xs:attribute name="ecu_path" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>
-          Relative or absolute path of the ecu files to use
+          Relative or absolute path of the ecu files to use.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="log_path" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Relative or absolute path for the trace and data log files.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="append_log" type="xs:boolean" default="false" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          If true the log file is appended.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -81,6 +95,14 @@
           Format of the output value.
           The format specifier must have an EDIABAS apiResultText format.
           If ommited the function FormatResult() will be called.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="log_tag" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Tag for the data log file.
+          Data is only logged if tag is present.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -203,6 +225,14 @@
         <xs:documentation>
           Weight to control with width of the result colum.
           A value of 1 indicates 50% of the page width.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="logfile" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Name of the data logfile.
+          Data logging is only available if a log file name has been set.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
