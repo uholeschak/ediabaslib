@@ -40,6 +40,7 @@ namespace CarControlAndroid
         private bool loggingActive = false;
         private const string sharedAppName = "CarControl";
         private string externalPath;
+        private string externalWritePath;
         private bool emulator;
         private bool activateRequest = false;
         private bool autoStart = false;
@@ -93,7 +94,7 @@ namespace CarControlAndroid
 
             updateHandler = new Handler();
             jobReader = new JobReader();
-            externalPath = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
+            SetStoragePath();
             emulator = IsEmulator();
             GetSettings();
 
@@ -322,7 +323,14 @@ namespace CarControlAndroid
                 string logDir = null;
                 if (loggingActive && !string.IsNullOrEmpty(configFileName))
                 {
-                    logDir = Path.GetDirectoryName(configFileName);
+                    if (string.IsNullOrEmpty(externalWritePath))
+                    {
+                        logDir = Path.GetDirectoryName(configFileName);
+                    }
+                    else
+                    {
+                        logDir = externalWritePath;
+                    }
                 }
                 JobReader.PageInfo pageInfo = GetSelectedDevice();
                 if (pageInfo != null)
@@ -1038,6 +1046,21 @@ namespace CarControlAndroid
             Intent serverIntent = new Intent(this, typeof(DeviceListActivity));
             StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_DEVICE);
             return true;
+        }
+
+        private void SetStoragePath()
+        {
+            externalPath = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
+            externalWritePath = string.Empty;
+            if (Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+            {   // writing to external disk is only allowed in special directories.
+                Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
+                if (externalFilesDirs.Length > 0)
+                {
+                    // index 0 is the internal disk
+                    externalWritePath = externalFilesDirs.Length > 1 ? externalFilesDirs[1].AbsolutePath : externalFilesDirs[0].AbsolutePath;
+                }
+            }
         }
 
         private static bool IsEmulator()
