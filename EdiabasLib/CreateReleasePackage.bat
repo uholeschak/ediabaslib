@@ -20,7 +20,7 @@ copy "!BATPATH!EdiabasTest\bin\Release\*.config" "!EDIABASTESTPATH!"
 mkdir "!API32PATH!"
 copy "!BATPATH!Api32\Release\*.dll" "!API32PATH!"
 copy "!BATPATH!EdiabasTest\bin\Release\*.config" "!API32PATH!"
-copy "!WINDIR!\System32\MSVCR100.DLL" "!API32PATH!"
+copy "!WINDIR!\System32\MSVCR120.DLL" "!API32PATH!"
 
 mkdir "!APINET32PATH!"
 copy "!BATPATH!apiNET32\bin\Release\*.dll" "!APINET32PATH!"
