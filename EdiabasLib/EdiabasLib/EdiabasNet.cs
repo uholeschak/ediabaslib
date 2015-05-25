@@ -4653,7 +4653,7 @@ namespace EdiabasLib
                 catch (Exception ex)
                 {
                     LogString(ED_LOG_LEVEL.ERROR, "executeIdentJob Exception: " + ex.Message);
-                    throw new Exception("executeInitJob", ex);
+                    throw new Exception("executeIdentJob", ex);
                 }
                 if (resultSets.Count > 1)
                 {
