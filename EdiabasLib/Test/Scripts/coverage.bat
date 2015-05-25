@@ -7,11 +7,18 @@ set REPORT_GENERATOR=%REPORTGENERATOR_PATH%\bin\ReportGenerator.exe
 set ECU_PATH=!BATPATH!\..\..\..\Ecu
 set ECU_TEST_PATH=!BATPATH!\..\Ecu
 set REPORTS_PATH=!BATPATH!\Reports
+if "%2"=="" (
+set IFH=STD:OBD
+) else (
+set IFH=%2
+)
 
-if "%1"=="" (
+if "%1"=="lib" (
 set EDIABAS_TEST=!BATPATH!\..\..\EdiabasTest\bin\Debug\EdiabasTest.exe
 set OUTFILE=output_lib.log
-set ADD_ARGS=-p COM4 -o !OUTFILE! -a -c
+rem set ADD_ARGS=-p COM4 -o "!OUTFILE!" -a -c
+set ADD_ARGS=--ifh="!IFH!" -o "!OUTFILE!" -a -c
+set ADD_ARGS=!ADD_ARGS! --cfg="ObdComPort=COM4"
 set FILTERS=+[EdiabasLib]*
 set COVERAGE=1
 goto argsok
@@ -19,9 +26,9 @@ goto argsok
 if "%1"=="apilib" (
 set EDIABAS_TEST=!BATPATH!\..\EdiabasLibCall\bin\Debug\EdiabasLibCall.exe
 set OUTFILE=output_apilib.log
-set ADD_ARGS=-o !OUTFILE! --ifh="STD:OBD" --device="_" -a -c
+set ADD_ARGS=-o !OUTFILE! --ifh="!IFH!" --device="_" -a -c
 rem set ADD_ARGS=!ADD_ARGS! --cfg="@!BATPATH!\EdiabasLib.config"
-set ADD_ARGS=!ADD_ARGS! --cfg=\"ObdComPort=COM4\"
+set ADD_ARGS=!ADD_ARGS! --cfg="ObdComPort=COM4"
 set FILTERS=+[EdiabasLib]* +[apiNET32]*
 set COVERAGE=1
 goto argsok
@@ -29,7 +36,7 @@ goto argsok
 if "%1"=="ediabas" (
 set EDIABAS_TEST=!BATPATH!\..\EdiabasCall\bin\Debug\EdiabasCall.exe
 set OUTFILE=output_ediabas.log
-set ADD_ARGS=-o !OUTFILE! --ifh="STD:OBD" --device="_" -a -c
+set ADD_ARGS=-o "!OUTFILE!" --ifh="!IFH!" --device="_" -a -c
 set FILTERS=-[*]*
 set COVERAGE=0
 goto argsok
