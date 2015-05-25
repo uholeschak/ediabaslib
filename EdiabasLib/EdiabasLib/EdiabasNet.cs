@@ -2859,10 +2859,18 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "SgbdFileName: Job is running");
                 }
-                CloseSgbdFs();
+                bool changed = false;
                 lock (apiLock)
                 {
-                    sgbdFileName = value;
+                    changed = sgbdFileName != value;
+                }
+                if (changed)
+                {
+                    CloseSgbdFs();
+                    lock (apiLock)
+                    {
+                        sgbdFileName = value;
+                    }
                 }
             }
         }
