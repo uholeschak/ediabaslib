@@ -1,5 +1,6 @@
 using Android.Bluetooth;
 using Android.Content;
+using Android.Net;
 using Android.Net.Wifi;
 using Android.OS;
 using Android.Support.V4.App;
@@ -17,7 +18,6 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace CarControlAndroid
 {
@@ -51,6 +51,7 @@ namespace CarControlAndroid
         private Handler updateHandler;
         private BluetoothAdapter bluetoothAdapter;
         private WifiManager maWifi;
+        private ConnectivityManager maConnectivity;
         private EdiabasThread ediabasThread;
         private StreamWriter swDataLog;
         private string dataLogDir;
@@ -59,7 +60,7 @@ namespace CarControlAndroid
         private ToggleButton buttonConnect;
         private ImageView imageBackground;
         private View barConnectView;
-        private Timer updateTimer;
+        private Receiver receiver;
 
         public void OnTabReselected(ActionBar.Tab tab, FragmentTransaction ft)
         {
@@ -119,21 +120,16 @@ namespace CarControlAndroid
 
             bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
             maWifi = (WifiManager)GetSystemService(WifiService);
+            maConnectivity = (ConnectivityManager)GetSystemService(ConnectivityService);
 
             jobReader.ReadXml(configFileName);
             RequestConfigSelect();
             // compile user code
             CompileCode();
 
-            updateTimer = new Timer(1000);
-            updateTimer.Elapsed += (sender, args) =>
-                {
-                    RunOnUiThread(() =>
-                    {
-                        SupportInvalidateOptionsMenu();
-                        UpdateDisplay();
-                    });
-                };
+            receiver = new Receiver(this);
+            RegisterReceiver(receiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
+            RegisterReceiver(receiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
         }
 
         void AddTabToActionBar(string label)
@@ -178,7 +174,6 @@ namespace CarControlAndroid
             {
                 CreateActionBarTabs();
             }
-            updateTimer.Start();
             RequestInterfaceEnable();
         }
 
@@ -198,6 +193,7 @@ namespace CarControlAndroid
         {
             base.OnDestroy();
 
+            UnregisterReceiver(receiver);
             StopEdiabasThread(true);
             StoreSettings();
         }
@@ -246,12 +242,12 @@ namespace CarControlAndroid
         public override bool OnPrepareOptionsMenu(IMenu menu)
         {
             bool commActive = ediabasThread != null && ediabasThread.ThreadRunning();
-            bool interfaceEnabled = IsInterfaceEnabled();
+            bool interfaceAvailable = IsInterfaceAvailable();
             IMenuItem scanMenu = menu.FindItem(Resource.Id.menu_scan);
             if (scanMenu != null)
             {
                 scanMenu.SetTitle(string.Format(culture, "{0}: {1}", GetString(Resource.String.menu_device), deviceName));
-                scanMenu.SetEnabled(interfaceEnabled && !commActive);
+                scanMenu.SetEnabled(interfaceAvailable && !commActive);
                 scanMenu.SetVisible(jobReader.Interface == JobReader.InterfaceType.BLUETOOTH);
             }
             IMenuItem selCfgMenu = menu.FindItem(Resource.Id.menu_sel_cfg);
@@ -268,13 +264,13 @@ namespace CarControlAndroid
             IMenuItem traceMenu = menu.FindItem(Resource.Id.menu_enable_trace);
             if (traceMenu != null)
             {
-                traceMenu.SetEnabled(interfaceEnabled && !commActive);
+                traceMenu.SetEnabled(interfaceAvailable && !commActive);
                 traceMenu.SetChecked(tracingActive);
             }
             IMenuItem dataLogMenu = menu.FindItem(Resource.Id.menu_enable_datalog);
             if (dataLogMenu != null)
             {
-                dataLogMenu.SetEnabled(interfaceEnabled);
+                dataLogMenu.SetEnabled(interfaceAvailable);
                 dataLogMenu.SetChecked(dataLogActive);
             }
             return base.OnPrepareOptionsMenu(menu);
@@ -415,7 +411,6 @@ namespace CarControlAndroid
             {
                 return false;
             }
-            updateTimer.Stop();
             SupportInvalidateOptionsMenu();
             return true;
         }
@@ -441,7 +436,6 @@ namespace CarControlAndroid
                 }
             }
             CloseDataLog();
-            updateTimer.Start();
             SupportInvalidateOptionsMenu();
             return true;
         }
@@ -573,7 +567,7 @@ namespace CarControlAndroid
             }
             else
             {
-                if (!IsInterfaceEnabled())
+                if (!IsInterfaceAvailable())
                 {
                     buttonConnectEnable = false;
                 }
@@ -962,7 +956,9 @@ namespace CarControlAndroid
                         {
                             try
                             {
+#pragma warning disable 0618
                                 bluetoothAdapter.Enable();
+#pragma warning restore 0618
                             }
                             catch(Exception)
                             {
@@ -971,10 +967,6 @@ namespace CarControlAndroid
                         break;
 
                     case JobReader.InterfaceType.ENET:
-                        if (emulator)
-                        {
-                            break;
-                        }
                         if (maWifi == null)
                         {
                             Toast.MakeText(this, Resource.String.wifi_not_available, ToastLength.Long).Show();
@@ -1013,15 +1005,41 @@ namespace CarControlAndroid
                     return bluetoothAdapter.IsEnabled;
 
                 case JobReader.InterfaceType.ENET:
-                    if (emulator)
-                    {
-                        return true;
-                    }
                     if (maWifi == null)
                     {
                         return false;
                     }
                     return maWifi.IsWifiEnabled;
+            }
+            return false;
+        }
+
+        private bool IsInterfaceAvailable()
+        {
+            if (jobReader.PageList.Count == 0)
+            {
+                return false;
+            }
+            switch (jobReader.Interface)
+            {
+                case JobReader.InterfaceType.BLUETOOTH:
+                    if (bluetoothAdapter == null)
+                    {
+                        return false;
+                    }
+                    return bluetoothAdapter.IsEnabled;
+
+                case JobReader.InterfaceType.ENET:
+                    if (maConnectivity == null)
+                    {
+                        return false;
+                    }
+                    NetworkInfo networkInfo = maConnectivity.ActiveNetworkInfo;
+                    if (networkInfo == null)
+                    {
+                        return false;
+                    }
+                    return networkInfo.IsConnected;
             }
             return false;
         }
@@ -1033,6 +1051,10 @@ namespace CarControlAndroid
                 return;
             }
             if (jobReader.PageList.Count == 0)
+            {
+                return;
+            }
+            if (IsInterfaceAvailable())
             {
                 return;
             }
@@ -1112,7 +1134,7 @@ namespace CarControlAndroid
 
         private bool RequestDeviceSelect()
         {
-            if (!IsInterfaceEnabled())
+            if (!IsInterfaceAvailable())
             {
                 return true;
             }
@@ -1144,7 +1166,7 @@ namespace CarControlAndroid
 
         private bool SelectDevice()
         {
-            if (!IsInterfaceEnabled())
+            if (!IsInterfaceAvailable())
             {
                 return false;
             }
@@ -1181,6 +1203,28 @@ namespace CarControlAndroid
                 isEmulator = fing.Contains("vbox") || fing.Contains("generic");
             }
             return isEmulator;
+        }
+
+        public class Receiver : BroadcastReceiver
+        {
+            ActivityMain activity;
+
+            public Receiver(ActivityMain activity)
+            {
+                this.activity = activity;
+            }
+
+            public override void OnReceive(Context context, Intent intent)
+            {
+                string action = intent.Action;
+
+                if ((action == BluetoothAdapter.ActionStateChanged) ||
+                    (action == ConnectivityManager.ConnectivityAction))
+                {
+                    activity.SupportInvalidateOptionsMenu();
+                    activity.UpdateDisplay();
+                }
+            }
         }
 
         public class TabContentFragment : Fragment
