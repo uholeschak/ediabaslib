@@ -1,8 +1,8 @@
 ﻿namespace com.xamarin.recipes.filepicker
 {
     using Android.OS;
-    using Android.Support.V4.App;
     using Android.Support.V7.App;
+    using Android.Views;
     using CarControlAndroid;
 
     [Android.App.Activity(Label = "@string/select_file", Theme = "@style/Theme.AppCompat",
@@ -19,10 +19,25 @@
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+
+            SupportActionBar.SetHomeButtonEnabled(true);
+            SupportActionBar.SetDisplayShowHomeEnabled(true);
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SetContentView(Resource.Layout.file_picker);
 
             // Set result CANCELED incase the user backs out
             SetResult(Android.App.Result.Canceled);
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Android.Resource.Id.Home:
+                    Finish();
+                    return true;
+            }
+            return base.OnOptionsItemSelected(item);
         }
     }
 }
