@@ -56,6 +56,9 @@ namespace CarControlAndroid
         {
             base.OnCreate (savedInstanceState);
 
+            SupportActionBar.SetHomeButtonEnabled(true);
+            SupportActionBar.SetDisplayShowHomeEnabled(true);
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             // Setup the window
             SetContentView(Resource.Layout.device_list);
 
@@ -114,7 +117,6 @@ namespace CarControlAndroid
                 String noDevices = Resources.GetText (Resource.String.none_paired);
                 pairedDevicesArrayAdapter.Add (noDevices);
             }
-
         }
 
         protected override void OnDestroy ()
@@ -128,6 +130,17 @@ namespace CarControlAndroid
 
             // Unregister broadcast listeners
             UnregisterReceiver (receiver);
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Android.Resource.Id.Home:
+                    Finish();
+                    return true;
+            }
+            return base.OnOptionsItemSelected(item);
         }
 
         /// <summary>
