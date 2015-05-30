@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_menu_tool"
+          android:icon="@android:drawable/ic_menu_preferences"
+          app:showAsAction="always">
+      <menu>
+        <item android:id="@+id/menu_tool_sel_sgbd"
+              android:icon="@android:drawable/ic_menu_manage"
+              android:title="@string/menu_tool_sel_sgbd" />
+        <item android:id="@+id/menu_scan"
+              android:icon="@android:drawable/ic_menu_search"
+              android:title="@string/menu_device" />
+      </menu>
+    </item>
+</menu>

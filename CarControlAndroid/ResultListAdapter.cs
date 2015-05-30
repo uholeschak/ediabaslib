@@ -15,8 +15,8 @@ namespace CarControlAndroid
                 return items;
             }
         }
-        Activity context;
-        float textWeight;
+        private Activity context;
+        private float textWeight;
 
         public ResultListAdapter(Activity context, float textWeight)
             : base()

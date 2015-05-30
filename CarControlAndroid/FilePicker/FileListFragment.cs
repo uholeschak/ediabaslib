@@ -25,6 +25,7 @@ namespace com.xamarin.recipes.filepicker
         public string DefaultInitialDirectory = "/";
         private FileListAdapter _adapter;
         private DirectoryInfo _directory;
+        private List<string> _extensionList;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -42,6 +43,18 @@ namespace com.xamarin.recipes.filepicker
                 {
                 }
             }
+
+            _extensionList = new List<string>();
+            string fileExtensions = Activity.Intent.GetStringExtra(FilePickerActivity.EXTRA_FILE_EXTENSIONS);
+            if (!string.IsNullOrEmpty(fileExtensions))
+            {
+                string[] extensions = fileExtensions.Split(';');
+                foreach (string extension in extensions)
+                {
+                    _extensionList.Add(extension);
+                }
+            }
+
             _adapter = new FileListAdapter(Activity, new FileInfoEx[0]);
             ListAdapter = _adapter;
         }
@@ -99,7 +112,18 @@ namespace com.xamarin.recipes.filepicker
                     bool add = true;
                     if (item.IsFile())
                     {
-                        add = item.HasFileExtension(".cccfg");
+                        if (_extensionList.Count > 0)
+                        {
+                            add = false;
+                            foreach (string extension in _extensionList)
+                            {
+                                if (item.HasFileExtension(extension))
+                                {
+                                    add = true;
+                                    break;
+                                }
+                            }
+                        }
                     }
                     if (add)
                     {

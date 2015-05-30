@@ -35,6 +35,7 @@
   <!-- Options Menu -->
   <string name="menu_device">Device</string>
   <string name="menu_sel_cfg">Configuration</string>
+  <string name="menu_ediabas_tool">Ediabas tool</string>
   <string name="menu_enable_trace">Create trace file</string>
   <string name="menu_enable_datalog">Log data</string>
   <string name="menu_exit">Exit app</string>
@@ -42,4 +43,16 @@
   <!-- FilePicker -->
   <string name="select_file">Select file</string>
   <string name="access_dir_failed">Access denied:</string>
+
+  <!--  EdiabasToolActivity -->
+  <string name="tool_title">Ediabas tool</string>
+  <string name="tool_select_sgbd">Select SGBD</string>
+  <string name="tool_read_sgbd">Read SGBD information</string>
+  <string name="tool_job_jobs">Jobs:</string>
+  <string name="tool_job_arguments">Arguments:</string>
+  <string name="tool_job_results">Results:</string>
+  <string name="tool_job_infos">Informations:</string>
+
+  <!-- Ediabas Tool Options Menu -->
+  <string name="menu_tool_sel_sgbd">SGBD</string>
 </resources>

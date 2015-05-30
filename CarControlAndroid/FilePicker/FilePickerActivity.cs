@@ -11,10 +11,11 @@
                 Android.Content.PM.ConfigChanges.ScreenSize)]
     public class FilePickerActivity : AppCompatActivity
     {
-        // Return Intent extra
+        // Intent extra
+        public const string EXTRA_TITLE = "title";
         public const string EXTRA_INIT_DIR = "init_dir";
         public const string EXTRA_FILE_NAME = "file_name";
-        public string initDir;
+        public const string EXTRA_FILE_EXTENSIONS = "file_extensions";
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -23,6 +24,11 @@
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            string title = Intent.GetStringExtra(FilePickerActivity.EXTRA_TITLE);
+            if (!string.IsNullOrEmpty(title))
+            {
+                SupportActionBar.Title = title;
+            }
             SetContentView(Resource.Layout.file_picker);
 
             // Set result CANCELED incase the user backs out

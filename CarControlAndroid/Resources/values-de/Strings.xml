@@ -26,7 +26,7 @@
   <string name="none_found">Keine Geräte gefunden</string>
   <string name="title_paired_devices">Gekoppelte Geräte</string>
   <string name="title_other_devices">Andere verfügbare Geräte</string>
-    <string name="button_scan">Nach Geräten suchen</string>
+  <string name="button_scan">Nach Geräten suchen</string>
 
   <!-- tabs_activate -->
   <string name="button_active">Aktiv</string>
@@ -35,6 +35,7 @@
   <!-- Options Menu -->
   <string name="menu_device">Gerät</string>
   <string name="menu_sel_cfg">Konfiguration</string>
+  <string name="menu_ediabas_tool">Ediabas Tool</string>
   <string name="menu_enable_trace">Tracefile erzeugen</string>
   <string name="menu_enable_datalog">Daten aufzeichnen</string>
   <string name="menu_exit">App beenden</string>
@@ -42,4 +43,16 @@
   <!-- FilePicker -->
   <string name="select_file">Datei wählen</string>
   <string name="access_dir_failed">Zugriff verweigert:</string>
+
+  <!--  EdiabasToolActivity -->
+  <string name="tool_title">Ediabas Tool</string>
+  <string name="tool_select_sgbd">SGBD auswählen</string>
+  <string name="tool_read_sgbd">SGBD Informationen lesen</string>
+  <string name="tool_job_jobs">Jobs:</string>
+  <string name="tool_job_arguments">Argumente:</string>
+  <string name="tool_job_results">Ergebnisse:</string>
+  <string name="tool_job_infos">Informationen:</string>
+
+  <!-- Ediabas Tool Options Menu -->
+  <string name="menu_tool_sel_sgbd">SGBD</string>
 </resources>
