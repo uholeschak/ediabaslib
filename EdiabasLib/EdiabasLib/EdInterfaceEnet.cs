@@ -17,7 +17,7 @@ namespace EdiabasLib
         protected const string autoIp = "auto";
         protected static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
         protected static readonly byte[] byteArray0 = new byte[0];
-        protected static readonly byte[] udpIdentReq = new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x11};
+        protected static readonly byte[] udpIdentReq = new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x11 };
         protected static readonly byte[] tcpControlIgnitReq = new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x10 };
         protected static readonly long tickResolMs = Stopwatch.Frequency / 1000;
 
@@ -46,6 +46,7 @@ namespace EdiabasLib
         protected int testerAddress = 0xF4;
         protected int controlPort = 6811;
         protected int diagnosticPort = 6801;
+        protected int connectTimeout = 5000;
 
         protected byte[] recBuffer = new byte[transBufferSize];
         protected byte[] dataBuffer = new byte[transBufferSize];
@@ -94,6 +95,11 @@ namespace EdiabasLib
                     this.diagnosticPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
+                prop = ediabas.GetConfigProperty("EnetConnectTimeout");
+                if (prop != null)
+                {
+                    this.connectTimeout = (int)EdiabasNet.StringToValue(prop);
+                }
             }
         }
 
@@ -434,9 +440,7 @@ namespace EdiabasLib
                     tcpHostIp = IPAddress.Parse(this.remoteHost);
                 }
 
-                tcpDiagClient = new TcpClient();
-                IPEndPoint ipTcp = new IPEndPoint(tcpHostIp, this.diagnosticPort);
-                tcpDiagClient.Connect(ipTcp);
+                tcpDiagClient = new TcpClientWithTimeout(tcpHostIp, this.diagnosticPort, this.connectTimeout).Connect();
                 tcpDiagStream = tcpDiagClient.GetStream();
                 tcpDiagRecLen = 0;
                 lastTcpDiagRecTime = DateTime.MinValue.Ticks;
@@ -649,13 +653,12 @@ namespace EdiabasLib
                 {
                     TcpControlTimerStop();
                 }
-                tcpControlClient = new TcpClient();
-                IPEndPoint ipTcp = new IPEndPoint(tcpHostIp, this.controlPort);
-                tcpControlClient.Connect(ipTcp);
+                tcpControlClient = tcpDiagClient = new TcpClientWithTimeout(tcpHostIp, this.controlPort, this.connectTimeout).Connect();
                 tcpControlStream = tcpControlClient.GetStream();
             }
             catch (Exception)
             {
+                TcpControlDisconnect();
                 return false;
             }
             return true;
@@ -1093,6 +1096,79 @@ namespace EdiabasLib
 
                 // Note disposing has been done.
                 disposed = true;
+            }
+        }
+
+        /// <summary>
+        /// TcpClientWithTimeout is used to open a TcpClient connection, with a
+        /// user definable connection timeout in milliseconds (1000=1second)
+        /// Use it like this:
+        /// TcpClient connection = new TcpClientWithTimeout(host,80,1000).Connect();
+        /// </summary>
+        private class TcpClientWithTimeout
+        {
+            protected IPAddress _host;
+            protected int _port;
+            protected int _timeout_milliseconds;
+            protected TcpClient connection;
+            protected bool connected;
+            protected Exception exception;
+
+            public TcpClientWithTimeout(IPAddress host, int port, int timeout_milliseconds)
+            {
+                _host = host;
+                _port = port;
+                _timeout_milliseconds = timeout_milliseconds;
+            }
+
+            public TcpClient Connect()
+            {
+                // kick off the thread that tries to connect
+                connected = false;
+                exception = null;
+                Thread thread = new Thread(new ThreadStart(BeginConnect));
+                thread.IsBackground = true; // So that a failed connection attempt 
+                // wont prevent the process from terminating while it does the long timeout
+                thread.Start();
+
+                // wait for either the timeout or the thread to finish
+                thread.Join(_timeout_milliseconds);
+
+                if (connected == true)
+                {
+                    // it succeeded, so return the connection
+                    thread.Abort();
+                    return connection;
+                }
+                if (exception != null)
+                {
+                    // it crashed, so return the exception to the caller
+                    thread.Abort();
+                    throw exception;
+                }
+                else
+                {
+                    // if it gets here, it timed out, so abort the thread and throw an exception
+                    thread.Abort();
+                    throw new TimeoutException("Connect timeout");
+                }
+            }
+
+            protected void BeginConnect()
+            {
+                try
+                {
+                    connection = new TcpClient();
+                    IPEndPoint ipTcp = new IPEndPoint(_host, _port);
+                    connection.Connect(ipTcp);
+                    // record that it succeeded, for the main thread to return to the caller
+                    connected = true;
+                }
+                catch (Exception ex)
+                {
+                    // record the exception for the main thread to re-throw back to the calling code
+                    exception = ex;
+                }
             }
         }
     }
