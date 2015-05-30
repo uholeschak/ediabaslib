@@ -143,6 +143,7 @@ namespace CarControlAndroid
         private ActivityCommon activityCommon;
         private EdiabasNet ediabas;
         private bool ediabasJobAbort = false;
+        private int ignoreResultSelectLayoutChange = 0;
         private string sgbdFileName = string.Empty;
         private string deviceName = string.Empty;
         private string deviceAddress = string.Empty;
@@ -167,22 +168,34 @@ namespace CarControlAndroid
             spinnerJobs.Adapter = jobListAdapter;
             spinnerJobs.ItemSelected += (sender, args) =>
                 {
-                    DisplayJobComments(args.Position);
+                    NewJobSelected();
+                    DisplayJobComments();
+                };
+            spinnerJobs.LayoutChange += (sender, args) =>
+                {
+                    DisplayJobComments();
                 };
 
             editTextArgs = FindViewById<EditText>(Resource.Id.editTextArgs);
             editTextArgs.Enabled = false;
             editTextArgs.Click += (sender, args) =>
                 {
-                    DisplayJobArguments(spinnerJobs.SelectedItemPosition);
+                    DisplayJobArguments();
                 };
 
             spinnerResults = FindViewById<Spinner>(Resource.Id.spinnerResults);
             resultSelectListAdapter = new ResultSelectListAdapter(this);
             spinnerResults.Adapter = resultSelectListAdapter;
-            spinnerResults.ItemSelected += (sender, args) =>
+            spinnerResults.LayoutChange += (sender, args) =>
                 {
-                    DisplayJobResults(spinnerJobs.SelectedItemPosition);
+                    if (ignoreResultSelectLayoutChange > 0)
+                    {
+                        ignoreResultSelectLayoutChange--;
+                    }
+                    else
+                    {
+                        DisplayJobResults();
+                    }
                 };
 
             listViewInfo = FindViewById<ListView>(Resource.Id.infoList);
@@ -351,13 +364,46 @@ namespace CarControlAndroid
             return true;
         }
 
-        private void DisplayJobComments(int pos)
+        private JobInfo GetSelectedJob()
         {
-            infoListAdapter.Items.Clear();
-            resultSelectListAdapter.Items.Clear();
-            if (pos >= 0)
+            int pos = spinnerJobs.SelectedItemPosition;
+            if (pos < 0)
             {
-                JobInfo jobInfo = jobListAdapter.Items[pos];
+                return null;
+            }
+            return jobListAdapter.Items[pos];
+        }
+
+        private void NewJobSelected()
+        {
+            if (jobList.Count == 0)
+            {
+                return;
+            }
+            JobInfo jobInfo = GetSelectedJob();
+            ignoreResultSelectLayoutChange = 1;
+            resultSelectListAdapter.Items.Clear();
+            if (jobInfo != null)
+            {
+                foreach (ExtraInfo result in jobInfo.Results)
+                {
+                    resultSelectListAdapter.Items.Add(result);
+                }
+            }
+            resultSelectListAdapter.NotifyDataSetChanged();
+            editTextArgs.Text = string.Empty;
+        }
+
+        private void DisplayJobComments()
+        {
+            if (jobList.Count == 0)
+            {
+                return;
+            }
+            JobInfo jobInfo = GetSelectedJob();
+            infoListAdapter.Items.Clear();
+            if (jobInfo != null)
+            {
                 StringBuilder stringBuilderComments = new StringBuilder();
                 stringBuilderComments.Append(jobInfo.Name);
                 stringBuilderComments.Append(":");
@@ -367,22 +413,20 @@ namespace CarControlAndroid
                     stringBuilderComments.Append(comment);
                 }
                 infoListAdapter.Items.Add(new TableResultItem(stringBuilderComments.ToString(), null));
-
-                foreach (ExtraInfo result in jobInfo.Results)
-                {
-                    resultSelectListAdapter.Items.Add(result);
-                }
             }
             infoListAdapter.NotifyDataSetChanged();
-            resultSelectListAdapter.NotifyDataSetChanged();
         }
 
-        private void DisplayJobArguments(int pos)
+        private void DisplayJobArguments()
         {
-            infoListAdapter.Items.Clear();
-            if (pos >= 0)
+            if (jobList.Count == 0)
             {
-                JobInfo jobInfo = jobListAdapter.Items[pos];
+                return;
+            }
+            JobInfo jobInfo = GetSelectedJob();
+            infoListAdapter.Items.Clear();
+            if (jobInfo != null)
+            {
                 infoListAdapter.Items.Add(new TableResultItem(GetString(Resource.String.tool_job_arguments), null));
                 foreach (ExtraInfo info in jobInfo.Arguments)
                 {
@@ -399,12 +443,16 @@ namespace CarControlAndroid
             infoListAdapter.NotifyDataSetChanged();
         }
 
-        private void DisplayJobResults(int pos)
+        private void DisplayJobResults()
         {
-            infoListAdapter.Items.Clear();
-            if (pos >= 0)
+            if (jobList.Count == 0)
             {
-                JobInfo jobInfo = jobListAdapter.Items[pos];
+                return;
+            }
+            JobInfo jobInfo = GetSelectedJob();
+            infoListAdapter.Items.Clear();
+            if (jobInfo != null)
+            {
                 infoListAdapter.Items.Add(new TableResultItem(GetString(Resource.String.tool_job_results), null));
                 foreach (ExtraInfo info in jobInfo.Results)
                 {
