@@ -7,7 +7,6 @@ using Android.Support.V4.App;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
-using CarControl;
 using com.xamarin.recipes.filepicker;
 using EdiabasLib;
 using Java.Interop;
@@ -27,10 +26,11 @@ namespace CarControlAndroid
                 Android.Content.PM.ConfigChanges.ScreenSize)]
     public class ActivityMain : AppCompatActivity, ActionBar.ITabListener
     {
-        enum activityRequest
+        private enum activityRequest
         {
             REQUEST_SELECT_DEVICE,
             REQUEST_SELECT_CONFIG,
+            REQUEST_EDIABAS_TOOL,
         }
 
         public static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
@@ -44,14 +44,10 @@ namespace CarControlAndroid
         private const string sharedAppName = "CarControl";
         private string externalPath;
         private string externalWritePath;
-        private bool emulator;
-        private bool activateRequest = false;
         private bool autoStart = false;
+        private ActivityCommon activityCommon;
         private JobReader jobReader;
         private Handler updateHandler;
-        private BluetoothAdapter bluetoothAdapter;
-        private WifiManager maWifi;
-        private ConnectivityManager maConnectivity;
         private EdiabasThread ediabasThread;
         private StreamWriter swDataLog;
         private string dataLogDir;
@@ -73,7 +69,7 @@ namespace CarControlAndroid
             Fragment frag = fragmentList[tab.Position];
             ft.Replace(Resource.Id.tabFrameLayout, frag);
             lastFragment = frag;
-            UpdateSelectedDevice();
+            UpdateSelectedPage();
         }
 
         public void OnTabUnselected(ActionBar.Tab tab, FragmentTransaction ft)
@@ -98,10 +94,10 @@ namespace CarControlAndroid
             SupportActionBar.SetIcon(Android.Resource.Color.Transparent);   // hide icon
             SetContentView(Resource.Layout.main);
 
+            activityCommon = new ActivityCommon(this);
             updateHandler = new Handler();
             jobReader = new JobReader();
             SetStoragePath();
-            emulator = IsEmulator();
             GetSettings();
 
             barConnectView = LayoutInflater.Inflate(Resource.Layout.bar_connect, null);
@@ -118,14 +114,7 @@ namespace CarControlAndroid
             fragmentList = new List<Fragment>();
             buttonConnect.Click += ButtonConnectClick;
 
-            bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
-            maWifi = (WifiManager)GetSystemService(WifiService);
-            maConnectivity = (ConnectivityManager)GetSystemService(ConnectivityService);
-
-            jobReader.ReadXml(configFileName);
-            RequestConfigSelect();
-            // compile user code
-            CompileCode();
+            ReadConfigFile();
 
             receiver = new Receiver(this);
             RegisterReceiver(receiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
@@ -174,7 +163,11 @@ namespace CarControlAndroid
             {
                 CreateActionBarTabs();
             }
-            RequestInterfaceEnable();
+            activityCommon.RequestInterfaceEnable((sender, args) =>
+                {
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                });
         }
 
         protected override void OnStop()
@@ -223,11 +216,12 @@ namespace CarControlAndroid
                     if (resultCode == Android.App.Result.Ok)
                     {
                         configFileName = data.Extras.GetString(FilePickerActivity.EXTRA_FILE_NAME);
-                        jobReader.ReadXml(configFileName);
-                        RequestInterfaceEnable();
-                        CompileCode();
+                        ReadConfigFile();
                         SupportInvalidateOptionsMenu();
                     }
+                    break;
+
+                case activityRequest.REQUEST_EDIABAS_TOOL:
                     break;
             }
         }
@@ -242,14 +236,15 @@ namespace CarControlAndroid
         public override bool OnPrepareOptionsMenu(IMenu menu)
         {
             bool commActive = ediabasThread != null && ediabasThread.ThreadRunning();
-            bool interfaceAvailable = IsInterfaceAvailable();
+            bool interfaceAvailable = activityCommon.IsInterfaceAvailable();
             IMenuItem scanMenu = menu.FindItem(Resource.Id.menu_scan);
             if (scanMenu != null)
             {
                 scanMenu.SetTitle(string.Format(culture, "{0}: {1}", GetString(Resource.String.menu_device), deviceName));
                 scanMenu.SetEnabled(interfaceAvailable && !commActive);
-                scanMenu.SetVisible(jobReader.Interface == JobReader.InterfaceType.BLUETOOTH);
+                scanMenu.SetVisible(activityCommon.SelectedInterface == ActivityCommon.InterfaceType.BLUETOOTH);
             }
+
             IMenuItem selCfgMenu = menu.FindItem(Resource.Id.menu_sel_cfg);
             if (selCfgMenu != null)
             {
@@ -261,18 +256,27 @@ namespace CarControlAndroid
                 selCfgMenu.SetTitle(string.Format(culture, "{0}: {1}", GetString(Resource.String.menu_sel_cfg), fileName));
                 selCfgMenu.SetEnabled(!commActive);
             }
+
+            IMenuItem ediabasToolMenu = menu.FindItem(Resource.Id.menu_ediabas_tool);
+            if (ediabasToolMenu != null)
+            {
+                ediabasToolMenu.SetEnabled(!commActive);
+            }
+
             IMenuItem traceMenu = menu.FindItem(Resource.Id.menu_enable_trace);
             if (traceMenu != null)
             {
                 traceMenu.SetEnabled(interfaceAvailable && !commActive);
                 traceMenu.SetChecked(tracingActive);
             }
+
             IMenuItem dataLogMenu = menu.FindItem(Resource.Id.menu_enable_datalog);
             if (dataLogMenu != null)
             {
                 dataLogMenu.SetEnabled(interfaceAvailable);
                 dataLogMenu.SetChecked(dataLogActive);
             }
+
             return base.OnPrepareOptionsMenu(menu);
         }
 
@@ -281,11 +285,15 @@ namespace CarControlAndroid
             switch (item.ItemId)
             {
                 case Resource.Id.menu_scan:
-                    SelectDevice();
+                    SelectBluetoothDevice();
                     break;
 
                 case Resource.Id.menu_sel_cfg:
                     SelectConfigFile();
+                    return true;
+
+                case Resource.Id.menu_ediabas_tool:
+                    StartEdiabasTool();
                     return true;
 
                 case Resource.Id.menu_enable_trace:
@@ -313,7 +321,7 @@ namespace CarControlAndroid
         protected void ButtonConnectClick(object sender, EventArgs e)
         {
             autoStart = false;
-            if (!RequestDeviceSelect())
+            if (!RequestBluetoothDeviceSelect())
             {
                 return;
             }
@@ -324,7 +332,7 @@ namespace CarControlAndroid
             else
             {
                 StartEdiabasThread();
-                UpdateSelectedDevice();
+                UpdateSelectedPage();
             }
             UpdateDisplay();
         }
@@ -347,7 +355,7 @@ namespace CarControlAndroid
             {
                 if (ediabasThread == null)
                 {
-                    ediabasThread = new EdiabasThread(jobReader.EcuPath, jobReader.Interface);
+                    ediabasThread = new EdiabasThread(jobReader.EcuPath, activityCommon.SelectedInterface);
                     ediabasThread.DataUpdated += DataUpdated;
                     ediabasThread.ThreadTerminated += ThreadTerminated;
                 }
@@ -391,16 +399,16 @@ namespace CarControlAndroid
                 if (pageInfo != null)
                 {
                     string portName = string.Empty;
-                    switch (jobReader.Interface)
+                    switch (activityCommon.SelectedInterface)
                     {
-                        case JobReader.InterfaceType.BLUETOOTH:
+                        case ActivityCommon.InterfaceType.BLUETOOTH:
                             portName = "BLUETOOTH:" + deviceAddress;
                             break;
 
-                        case JobReader.InterfaceType.ENET:
-                            if (emulator)
+                        case ActivityCommon.InterfaceType.ENET:
+                            if (activityCommon.Emulator)
                             {   // broadcast is not working with emulator
-                                portName = "192.168.10.244";
+                                portName = ActivityCommon.EMULATOR_ENET_IP;
                             }
                             break;
                     }
@@ -513,7 +521,7 @@ namespace CarControlAndroid
             return pageInfo;
         }
 
-        private void UpdateSelectedDevice()
+        private void UpdateSelectedPage()
         {
             if ((ediabasThread == null) || !ediabasThread.ThreadRunning())
             {
@@ -567,7 +575,7 @@ namespace CarControlAndroid
             }
             else
             {
-                if (!IsInterfaceAvailable())
+                if (!activityCommon.IsInterfaceAvailable())
                 {
                     buttonConnectEnable = false;
                 }
@@ -842,6 +850,21 @@ namespace CarControlAndroid
             return result;
         }
 
+        private void ReadConfigFile()
+        {
+            jobReader.ReadXml(configFileName);
+            if (jobReader.PageList.Count > 0)
+            {
+                activityCommon.SelectedInterface = jobReader.Interface;
+            }
+            else
+            {
+                activityCommon.SelectedInterface = ActivityCommon.InterfaceType.NONE;
+            }
+            RequestConfigSelect();
+            CompileCode();
+        }
+
         private void CompileCode()
         {
             if (jobReader.PageList.Count == 0)
@@ -877,7 +900,6 @@ namespace CarControlAndroid
                                 using Android.Views;
                                 using Android.Widget;
                                 using EdiabasLib;
-                                using CarControl;
                                 using CarControlAndroid;
                                 using System;
                                 using System.Collections.Generic;
@@ -920,7 +942,7 @@ namespace CarControlAndroid
                     string result = task.Result;
                     if (!string.IsNullOrEmpty(result))
                     {
-                        RunOnUiThread(() => ShowAlert(result));
+                        RunOnUiThread(() => activityCommon.ShowAlert(result));
                     }
                 }
 
@@ -930,167 +952,6 @@ namespace CarControlAndroid
                     progress.Hide();
                 });
             });
-        }
-
-        private void ShowAlert(string message)
-        {
-            new AlertDialog.Builder(this)
-            .SetMessage(message)
-            .SetNeutralButton(Resource.String.compile_ok_btn, (s, e) => { })
-            .Show();
-        }
-
-        private void EnableInterface()
-        {
-            if (jobReader.PageList.Count > 0)
-            {
-                switch(jobReader.Interface)
-                {
-                    case JobReader.InterfaceType.BLUETOOTH:
-                        if (bluetoothAdapter == null)
-                        {
-                            Toast.MakeText(this, Resource.String.bt_not_available, ToastLength.Long).Show();
-                            break;
-                        }
-                        if (!bluetoothAdapter.IsEnabled)
-                        {
-                            try
-                            {
-#pragma warning disable 0618
-                                bluetoothAdapter.Enable();
-#pragma warning restore 0618
-                            }
-                            catch(Exception)
-                            {
-                            }
-                        }
-                        break;
-
-                    case JobReader.InterfaceType.ENET:
-                        if (maWifi == null)
-                        {
-                            Toast.MakeText(this, Resource.String.wifi_not_available, ToastLength.Long).Show();
-                            break;
-                        }
-                        if (!maWifi.IsWifiEnabled)
-                        {
-                            try
-                            {
-                                maWifi.SetWifiEnabled(true);
-                            }
-                            catch (Exception)
-                            {
-                            }
-                        }
-                        break;
-                }
-            }
-            SupportInvalidateOptionsMenu();
-            UpdateDisplay();
-        }
-
-        private bool IsInterfaceEnabled()
-        {
-            if (jobReader.PageList.Count == 0)
-            {
-                return false;
-            }
-            switch (jobReader.Interface)
-            {
-                case JobReader.InterfaceType.BLUETOOTH:
-                    if (bluetoothAdapter == null)
-                    {
-                        return false;
-                    }
-                    return bluetoothAdapter.IsEnabled;
-
-                case JobReader.InterfaceType.ENET:
-                    if (maWifi == null)
-                    {
-                        return false;
-                    }
-                    return maWifi.IsWifiEnabled;
-            }
-            return false;
-        }
-
-        private bool IsInterfaceAvailable()
-        {
-            if (jobReader.PageList.Count == 0)
-            {
-                return false;
-            }
-            switch (jobReader.Interface)
-            {
-                case JobReader.InterfaceType.BLUETOOTH:
-                    if (bluetoothAdapter == null)
-                    {
-                        return false;
-                    }
-                    return bluetoothAdapter.IsEnabled;
-
-                case JobReader.InterfaceType.ENET:
-                    if (maConnectivity == null)
-                    {
-                        return false;
-                    }
-                    NetworkInfo networkInfo = maConnectivity.ActiveNetworkInfo;
-                    if (networkInfo == null)
-                    {
-                        return false;
-                    }
-                    return networkInfo.IsConnected;
-            }
-            return false;
-        }
-
-        private void RequestInterfaceEnable()
-        {
-            if (activateRequest)
-            {
-                return;
-            }
-            if (jobReader.PageList.Count == 0)
-            {
-                return;
-            }
-            if (IsInterfaceAvailable())
-            {
-                return;
-            }
-            if (IsInterfaceEnabled())
-            {
-                return;
-            }
-            int resourceID;
-            switch (jobReader.Interface)
-            {
-                case JobReader.InterfaceType.BLUETOOTH:
-                    resourceID = Resource.String.bt_enable;
-                    break;
-
-                case JobReader.InterfaceType.ENET:
-                    resourceID = Resource.String.wifi_enable;
-                    break;
-
-                default:
-                    return;
-            }
-            activateRequest = true;
-            new AlertDialog.Builder(this)
-                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                {
-                    activateRequest = false;
-                    EnableInterface();
-                })
-                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                {
-                    activateRequest = false;
-                })
-                .SetCancelable(false)
-                .SetMessage(resourceID)
-                .SetTitle(Resource.String.interface_activate)
-                .Show();
         }
 
         private void RequestConfigSelect()
@@ -1129,16 +990,17 @@ namespace CarControlAndroid
             {
             }
             serverIntent.PutExtra(FilePickerActivity.EXTRA_INIT_DIR, initDir);
+            serverIntent.PutExtra(FilePickerActivity.EXTRA_FILE_EXTENSIONS, ".cccfg");
             StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_CONFIG);
         }
 
-        private bool RequestDeviceSelect()
+        private bool RequestBluetoothDeviceSelect()
         {
-            if (!IsInterfaceAvailable())
+            if (!activityCommon.IsInterfaceAvailable())
             {
                 return true;
             }
-            if (jobReader.Interface != JobReader.InterfaceType.BLUETOOTH)
+            if (activityCommon.SelectedInterface != ActivityCommon.InterfaceType.BLUETOOTH)
             {
                 return true;
             }
@@ -1149,7 +1011,7 @@ namespace CarControlAndroid
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
-                    if (SelectDevice())
+                    if (SelectBluetoothDevice())
                     {
                         autoStart = true;
                     }
@@ -1164,18 +1026,37 @@ namespace CarControlAndroid
             return false;
         }
 
-        private bool SelectDevice()
+        private bool SelectBluetoothDevice()
         {
-            if (!IsInterfaceAvailable())
+            if (!activityCommon.IsInterfaceAvailable())
             {
                 return false;
             }
-            if (jobReader.Interface != JobReader.InterfaceType.BLUETOOTH)
+            if (activityCommon.SelectedInterface != ActivityCommon.InterfaceType.BLUETOOTH)
             {
                 return false;
             }
             Intent serverIntent = new Intent(this, typeof(DeviceListActivity));
             StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_DEVICE);
+            return true;
+        }
+
+        private bool StartEdiabasTool()
+        {
+            Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
+            string initDir = externalPath;
+            try
+            {
+                if (!string.IsNullOrEmpty(configFileName))
+                {
+                    initDir = Path.GetDirectoryName(configFileName);
+                }
+            }
+            catch (Exception)
+            {
+            }
+            serverIntent.PutExtra(EdiabasToolActivity.EXTRA_INIT_DIR, initDir);
+            StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_EDIABAS_TOOL);
             return true;
         }
 
@@ -1192,17 +1073,6 @@ namespace CarControlAndroid
                     externalWritePath = externalFilesDirs.Length > 1 ? externalFilesDirs[1].AbsolutePath : externalFilesDirs[0].AbsolutePath;
                 }
             }
-        }
-
-        private static bool IsEmulator()
-        {
-            string fing = Build.Fingerprint;
-            bool isEmulator = false;
-            if (fing != null)
-            {
-                isEmulator = fing.Contains("vbox") || fing.Contains("generic");
-            }
-            return isEmulator;
         }
 
         public class Receiver : BroadcastReceiver

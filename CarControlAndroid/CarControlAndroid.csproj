@@ -76,7 +76,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActivityCommon.cs" />
     <Compile Include="EdiabasThread.cs" />
+    <Compile Include="EdiabasToolActivity.cs" />
     <Compile Include="FilePicker\FileListAdapter.cs" />
     <Compile Include="FilePicker\FileListFragment.cs" />
     <Compile Include="FilePicker\FileListRowViewHolder.cs" />
@@ -97,6 +99,13 @@
     <None Include="packages.config" />
     <AndroidResource Include="Resources\layout\file_picker.axml" />
     <AndroidResource Include="Resources\layout\file_picker_list_item.axml" />
+    <AndroidResource Include="Resources\layout\ediabas_tool.axml" />
+    <AndroidResource Include="Resources\layout\job_list.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\result_select_list.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
     <None Include="Xml\Axis.ccpage" />
     <None Include="Xml\CarControl.xsd">
       <SubType>Designer</SubType>
@@ -164,5 +173,7 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\background.jpg" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\tool_menu.xml" />
+  </ItemGroup>
 </Project>

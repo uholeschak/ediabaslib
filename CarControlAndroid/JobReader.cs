@@ -5,7 +5,7 @@ using System.Xml;
 using System.Xml.XPath;
 using XmlGenSharp.Lib.Utility;
 
-namespace CarControl
+namespace CarControlAndroid
 {
     public class JobReader
     {
@@ -259,18 +259,12 @@ namespace CarControl
             }
         }
 
-        public enum InterfaceType
-        {
-            BLUETOOTH,
-            ENET,
-        }
-
         private List<PageInfo> pageList = new List<PageInfo>();
         private string ecuPath = string.Empty;
         private string logPath = string.Empty;
         private bool appendLog = false;
         private string interfaceName = string.Empty;
-        private InterfaceType interfaceType = InterfaceType.BLUETOOTH;
+        private ActivityCommon.InterfaceType interfaceType = ActivityCommon.InterfaceType.NONE;
 
         public List<PageInfo> PageList
         {
@@ -312,7 +306,7 @@ namespace CarControl
             }
         }
 
-        public InterfaceType Interface
+        public ActivityCommon.InterfaceType Interface
         {
             get
             {
@@ -400,10 +394,10 @@ namespace CarControl
                     }
                 }
 
-                interfaceType = InterfaceType.BLUETOOTH;
+                interfaceType = ActivityCommon.InterfaceType.BLUETOOTH;
                 if (string.Compare(interfaceName, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    interfaceType = InterfaceType.ENET;
+                    interfaceType = ActivityCommon.InterfaceType.ENET;
                 }
 
                 XmlNodeList xnodePages = xdocConfig.SelectNodes(string.Format("/{0}configuration/{0}pages/{0}page", prefix), namespaceManager);

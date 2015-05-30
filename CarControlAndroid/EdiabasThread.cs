@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
-namespace CarControl
+namespace CarControlAndroid
 {
     public class EdiabasThread : IDisposable
     {
@@ -60,14 +60,14 @@ namespace CarControl
         private bool ediabasInitReq;
         private bool ediabasJobAbort;
 
-        public EdiabasThread(string ecuPath, JobReader.InterfaceType interfaceType)
+        public EdiabasThread(string ecuPath, ActivityCommon.InterfaceType interfaceType)
         {
             _stopThread = false;
             _threadRunning = false;
             _workerThread = null;
             ediabas = new EdiabasNet();
 
-            if (interfaceType == JobReader.InterfaceType.ENET)
+            if (interfaceType == ActivityCommon.InterfaceType.ENET)
             {
                 ediabas.EdInterfaceClass = new EdInterfaceEnet();
             }
