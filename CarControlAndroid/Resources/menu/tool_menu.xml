@@ -5,6 +5,9 @@
           android:icon="@android:drawable/ic_menu_preferences"
           app:showAsAction="always">
       <menu>
+        <item android:id="@+id/menu_tool_sel_interface"
+              android:icon="@android:drawable/ic_menu_manage"
+              android:title="@string/menu_tool_sel_interface" />
         <item android:id="@+id/menu_tool_sel_sgbd"
               android:icon="@android:drawable/ic_menu_manage"
               android:title="@string/menu_tool_sel_sgbd" />

@@ -171,10 +171,13 @@ namespace CarControlAndroid
                     NewJobSelected();
                     DisplayJobComments();
                 };
-            spinnerJobs.LayoutChange += (sender, args) =>
+            if (Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+            {
+                spinnerJobs.LayoutChange += (sender, args) =>
                 {
                     DisplayJobComments();
                 };
+            }
 
             editTextArgs = FindViewById<EditText>(Resource.Id.editTextArgs);
             editTextArgs.Enabled = false;
@@ -186,7 +189,23 @@ namespace CarControlAndroid
             spinnerResults = FindViewById<Spinner>(Resource.Id.spinnerResults);
             resultSelectListAdapter = new ResultSelectListAdapter(this);
             spinnerResults.Adapter = resultSelectListAdapter;
-            spinnerResults.LayoutChange += (sender, args) =>
+            if (Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+            {
+                spinnerResults.LayoutChange += (sender, args) =>
+                    {
+                        if (ignoreResultSelectLayoutChange > 0)
+                        {
+                            ignoreResultSelectLayoutChange--;
+                        }
+                        else
+                        {
+                            DisplayJobResult();
+                        }
+                    };
+            }
+            else
+            {
+                spinnerResults.ItemSelected += (sender, args) =>
                 {
                     if (ignoreResultSelectLayoutChange > 0)
                     {
@@ -194,26 +213,19 @@ namespace CarControlAndroid
                     }
                     else
                     {
-                        DisplayJobResults();
+                        DisplayJobResult();
                     }
                 };
+            }
 
             listViewInfo = FindViewById<ListView>(Resource.Id.infoList);
             infoListAdapter = new ResultListAdapter(this);
             listViewInfo.Adapter = infoListAdapter;
 
             activityCommon = new ActivityCommon(this);
-            activityCommon.SelectedInterface = ActivityCommon.InterfaceType.ENET;
-            ediabas = new EdiabasNet();
-            if (activityCommon.SelectedInterface == ActivityCommon.InterfaceType.ENET)
-            {
-                ediabas.EdInterfaceClass = new EdInterfaceEnet();
-            }
-            else
-            {
-                ediabas.EdInterfaceClass = new EdInterfaceObd();
-            }
-            ediabas.AbortJobFunc = AbortEdiabasJob;
+            activityCommon.SelectedInterface = ActivityCommon.InterfaceType.NONE;
+
+            EdiabasClose();
 
             receiver = new Receiver(this);
             RegisterReceiver(receiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
@@ -224,10 +236,11 @@ namespace CarControlAndroid
         {
             base.OnStart();
 
-            activityCommon.RequestInterfaceEnable((sender, args) =>
+            if (activityCommon.SelectedInterface == ActivityCommon.InterfaceType.NONE)
             {
-                SupportInvalidateOptionsMenu();
-            });
+                SelectInterface();
+            }
+            SelectInterfaceEnable();
         }
 
         protected override void OnStop()
@@ -240,11 +253,7 @@ namespace CarControlAndroid
             base.OnDestroy();
 
             UnregisterReceiver(receiver);
-            if (ediabas != null)
-            {
-                ediabas.Dispose();
-                ediabas = null;
-            }
+            EdiabasClose();
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
@@ -284,7 +293,27 @@ namespace CarControlAndroid
 
         public override bool OnPrepareOptionsMenu(IMenu menu)
         {
+            bool commActive = false;
             bool interfaceAvailable = activityCommon.IsInterfaceAvailable();
+
+            IMenuItem selInterfaceMenu = menu.FindItem(Resource.Id.menu_tool_sel_interface);
+            if (selInterfaceMenu != null)
+            {
+                string interfaceName = string.Empty;
+                switch (activityCommon.SelectedInterface)
+                {
+                    case ActivityCommon.InterfaceType.BLUETOOTH:
+                        interfaceName = GetString(Resource.String.select_interface_bt);
+                        break;
+
+                    case ActivityCommon.InterfaceType.ENET:
+                        interfaceName = GetString(Resource.String.select_interface_enet);
+                        break;
+                }
+                selInterfaceMenu.SetTitle(string.Format(culture, "{0}: {1}", GetString(Resource.String.menu_tool_sel_interface), interfaceName));
+                selInterfaceMenu.SetEnabled(!commActive);
+            }
+
             IMenuItem selCfgMenu = menu.FindItem(Resource.Id.menu_tool_sel_sgbd);
             if (selCfgMenu != null)
             {
@@ -294,14 +323,14 @@ namespace CarControlAndroid
                     fileName = Path.GetFileNameWithoutExtension(sgbdFileName);
                 }
                 selCfgMenu.SetTitle(string.Format(culture, "{0}: {1}", GetString(Resource.String.menu_tool_sel_sgbd), fileName));
-                selCfgMenu.SetEnabled(interfaceAvailable);
+                selCfgMenu.SetEnabled(!commActive && interfaceAvailable);
             }
 
             IMenuItem scanMenu = menu.FindItem(Resource.Id.menu_scan);
             if (scanMenu != null)
             {
                 scanMenu.SetTitle(string.Format(culture, "{0}: {1}", GetString(Resource.String.menu_device), deviceName));
-                scanMenu.SetEnabled(interfaceAvailable);
+                scanMenu.SetEnabled(!commActive && interfaceAvailable);
                 scanMenu.SetVisible(activityCommon.SelectedInterface == ActivityCommon.InterfaceType.BLUETOOTH);
             }
 
@@ -316,15 +345,38 @@ namespace CarControlAndroid
                     Finish();
                     return true;
 
+                case Resource.Id.menu_tool_sel_interface:
+                    SelectInterface();
+                    return true;
+
                 case Resource.Id.menu_tool_sel_sgbd:
                     SelectSgbdFile();
                     return true;
 
                 case Resource.Id.menu_scan:
                     SelectBluetoothDevice();
-                    break;
+                    return true;
             }
             return base.OnOptionsItemSelected(item);
+        }
+
+        private void EdiabasClose()
+        {
+            jobListAdapter.Items.Clear();
+            jobListAdapter.NotifyDataSetChanged();
+            resultSelectListAdapter.Items.Clear();
+            resultSelectListAdapter.NotifyDataSetChanged();
+            infoListAdapter.Items.Clear();
+            infoListAdapter.NotifyDataSetChanged();
+            editTextArgs.Enabled = false;
+            jobList.Clear();
+
+            if (ediabas != null)
+            {
+                ediabas.Dispose();
+                ediabas = null;
+            }
+            SupportInvalidateOptionsMenu();
         }
 
         private void SelectSgbdFile()
@@ -346,6 +398,25 @@ namespace CarControlAndroid
             serverIntent.PutExtra(FilePickerActivity.EXTRA_INIT_DIR, initDir);
             serverIntent.PutExtra(FilePickerActivity.EXTRA_FILE_EXTENSIONS, ".grp;.prg");
             StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_SGBD);
+        }
+
+        private void SelectInterface()
+        {
+            activityCommon.SelectInterface((sender, args) =>
+            {
+                EdiabasClose();
+                sgbdFileName = string.Empty;
+                SupportInvalidateOptionsMenu();
+                SelectInterfaceEnable();
+            });
+        }
+
+        private void SelectInterfaceEnable()
+        {
+            activityCommon.RequestInterfaceEnable((sender, args) =>
+            {
+                SupportInvalidateOptionsMenu();
+            });
         }
 
         private bool SelectBluetoothDevice()
@@ -404,6 +475,7 @@ namespace CarControlAndroid
             infoListAdapter.Items.Clear();
             if (jobInfo != null)
             {
+                infoListAdapter.Items.Add(new TableResultItem(GetString(Resource.String.tool_job_job), null));
                 StringBuilder stringBuilderComments = new StringBuilder();
                 stringBuilderComments.Append(jobInfo.Name);
                 stringBuilderComments.Append(":");
@@ -443,7 +515,7 @@ namespace CarControlAndroid
             infoListAdapter.NotifyDataSetChanged();
         }
 
-        private void DisplayJobResults()
+        private void DisplayJobResult()
         {
             if (jobList.Count == 0)
             {
@@ -453,9 +525,10 @@ namespace CarControlAndroid
             infoListAdapter.Items.Clear();
             if (jobInfo != null)
             {
-                infoListAdapter.Items.Add(new TableResultItem(GetString(Resource.String.tool_job_results), null));
-                foreach (ExtraInfo info in jobInfo.Results)
+                infoListAdapter.Items.Add(new TableResultItem(GetString(Resource.String.tool_job_result), null));
+                if (spinnerResults.SelectedItemPosition >= 0)
                 {
+                    ExtraInfo info = jobInfo.Results[spinnerResults.SelectedItemPosition];
                     StringBuilder stringBuilderComments = new StringBuilder();
                     stringBuilderComments.Append(info.Name + " (" + info.Type + "):");
                     foreach (string comment in info.CommentList)
@@ -471,15 +544,21 @@ namespace CarControlAndroid
 
         private void ReadSgbd()
         {
-            jobListAdapter.Items.Clear();
-            jobListAdapter.NotifyDataSetChanged();
-            resultSelectListAdapter.Items.Clear();
-            resultSelectListAdapter.NotifyDataSetChanged();
-            infoListAdapter.Items.Clear();
-            infoListAdapter.NotifyDataSetChanged();
-            editTextArgs.Enabled = false;
-            jobList.Clear();
-
+            if (string.IsNullOrEmpty(sgbdFileName))
+            {
+                return;
+            }
+            EdiabasClose();
+            ediabas = new EdiabasNet();
+            if (activityCommon.SelectedInterface == ActivityCommon.InterfaceType.ENET)
+            {
+                ediabas.EdInterfaceClass = new EdInterfaceEnet();
+            }
+            else
+            {
+                ediabas.EdInterfaceClass = new EdInterfaceObd();
+            }
+            ediabas.AbortJobFunc = AbortEdiabasJob;
             ediabas.SetConfigProperty("EcuPath", Path.GetDirectoryName(sgbdFileName));
 
             if (ediabas.EdInterfaceClass is EdInterfaceObd)
@@ -776,6 +855,7 @@ namespace CarControlAndroid
                 View view = convertView;
                 if (view == null) // no view to re-use, create new
                     view = context.LayoutInflater.Inflate(Resource.Layout.job_list, null);
+                //view.SetBackgroundColor(Android.Graphics.Color.DarkGray);
                 TextView textName = view.FindViewById<TextView>(Resource.Id.textJobName);
                 TextView textDesc = view.FindViewById<TextView>(Resource.Id.textJobDesc);
                 textName.Text = item.Name;
@@ -839,6 +919,7 @@ namespace CarControlAndroid
                 View view = convertView;
                 if (view == null) // no view to re-use, create new
                     view = context.LayoutInflater.Inflate(Resource.Layout.result_select_list, null);
+                //view.SetBackgroundColor(Android.Graphics.Color.DarkGray);
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxResultSelect);
                 ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;

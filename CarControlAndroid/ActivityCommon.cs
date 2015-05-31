@@ -139,6 +139,50 @@ namespace CarControlAndroid
             .Show();
         }
 
+        public void SelectInterface(EventHandler<DialogClickEventArgs> handler)
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.SetTitle(Resource.String.select_interface);
+            ListView listView = new ListView(activity);
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(activity, Android.Resource.Layout.SimpleListItemSingleChoice,
+                new string[] {
+                    activity.GetString(Resource.String.select_interface_bt),
+                    activity.GetString(Resource.String.select_interface_enet)
+                });
+            listView.Adapter = adapter;
+            listView.ChoiceMode = ChoiceMode.Single;
+            switch (selectedInterface)
+            {
+                case InterfaceType.BLUETOOTH:
+                    listView.SetItemChecked(0, true);
+                    break;
+
+                case InterfaceType.ENET:
+                    listView.SetItemChecked(1, true);
+                    break;
+            }
+            builder.SetView(listView);
+            builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                {
+                    switch (listView.CheckedItemPosition)
+                    {
+                        case 0:
+                            selectedInterface = InterfaceType.BLUETOOTH;
+                            handler(sender, args);
+                            break;
+
+                        case 1:
+                            selectedInterface = InterfaceType.ENET;
+                            handler(sender, args);
+                            break;
+                    }
+                });
+            builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
+                {
+                });
+            builder.Show();
+        }
+
         public void EnableInterface()
         {
             switch (selectedInterface)

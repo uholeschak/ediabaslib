@@ -5,15 +5,17 @@
   <string name="button_disconnected">Getrennt</string>
   <string name="button_yes">Ja</string>
   <string name="button_no">Nein</string>
-  <string name="interface_activate">Aktivierung</string>
+  <string name="button_ok">Ok</string>
+  <string name="button_abort">Abbrechen</string>
+  <string name="interface_activate">Interface Aktivierung</string>
   <string name="bt_enable">Bluetooth ist nicht aktiviert. Wollen Sie es jetzt aktivieren?</string>
   <string name="wifi_enable">Wifi ist nicht aktiviert. Wollen Sie es jetzt aktivieren?</string>
   <string name="bt_not_available">Bluetooth ist nicht verfügbar.</string>
   <string name="wifi_not_available">Wifi ist nicht verfügbar.</string>
   <string name="config_select">Es ist keine gültige Konfiguration vorhanden. Wollen Sie jetzt eine Konfiguration auswählen?</string>
   <string name="config_select_title">Konfiguration</string>
-  <string name="device_select">Es wurde kein Bluetooth Gerät ausgewählt. Wollen Sie jetzt ein Gerät auswählen?</string>
-  <string name="device_select_title">Geräteauswahl</string>
+  <string name="bt_device_select_title">Bluetooth Gerät</string>
+  <string name="bt_device_select">Es wurde kein Bluetooth Gerät ausgewählt. Wollen Sie jetzt ein Gerät auswählen?</string>
 
   <!-- Compile -->
   <string name="compile_start">Anwendercode kompilieren</string>
@@ -44,15 +46,23 @@
   <string name="select_file">Datei wählen</string>
   <string name="access_dir_failed">Zugriff verweigert:</string>
 
+  <!-- Interface selection -->
+  <string name="select_interface">Interface auswählen</string>
+  <string name="select_interface_bt">Bluetooth</string>
+  <string name="select_interface_enet">ENET</string>
+
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas Tool</string>
   <string name="tool_select_sgbd">SGBD auswählen</string>
   <string name="tool_read_sgbd">SGBD Informationen lesen</string>
   <string name="tool_job_jobs">Jobs:</string>
+  <string name="tool_job_job">Job:</string>
   <string name="tool_job_arguments">Argumente:</string>
   <string name="tool_job_results">Ergebnisse:</string>
+  <string name="tool_job_result">Ergebnis:</string>
   <string name="tool_job_infos">Informationen:</string>
 
   <!-- Ediabas Tool Options Menu -->
+  <string name="menu_tool_sel_interface">Schnittstelle</string>
   <string name="menu_tool_sel_sgbd">SGBD</string>
 </resources>
