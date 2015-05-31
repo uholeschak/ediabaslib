@@ -88,10 +88,12 @@ namespace CarControlAndroid
             base.OnCreate(savedInstanceState);
 
             SupportActionBar.NavigationMode = Android.Support.V7.App.ActionBar.NavigationModeStandard;
+            SupportActionBar.SetHomeButtonEnabled(false);
+            SupportActionBar.SetDisplayShowHomeEnabled(true);
             SupportActionBar.SetDisplayShowCustomEnabled(true);
             SupportActionBar.SetDisplayUseLogoEnabled(false);
             SupportActionBar.SetDisplayShowTitleEnabled(false);
-            SupportActionBar.SetIcon(Android.Resource.Color.Transparent);   // hide icon
+            SupportActionBar.SetIcon(Resource.Drawable.icon);
             SetContentView(Resource.Layout.main);
 
             activityCommon = new ActivityCommon(this);
