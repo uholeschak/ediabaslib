@@ -131,8 +131,14 @@ namespace CarControlAndroid
 
         // Intent extra
         public const string EXTRA_INIT_DIR = "init_dir";
+        public const string EXTRA_INTERFACE = "interface";
+        public const string EXTRA_DEVICE_NAME = "device_name";
+        public const string EXTRA_DEVICE_ADDRESS = "device_address";
         public static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
 
+        private View barConnectView;
+        private Button buttonExecute;
+        private ToggleButton buttonConnect;
         private Spinner spinnerJobs;
         private JobListAdapter jobListAdapter;
         private EditText editTextArgs;
@@ -141,6 +147,7 @@ namespace CarControlAndroid
         private ListView listViewInfo;
         private ResultListAdapter infoListAdapter;
         private string initDirStart;
+        private bool autoStart = false;
         private ActivityCommon activityCommon;
         private EdiabasNet ediabas;
         private bool ediabasJobAbort = false;
@@ -158,11 +165,21 @@ namespace CarControlAndroid
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetDisplayShowCustomEnabled(true);
             SetContentView(Resource.Layout.ediabas_tool);
 
-            SetResult(Android.App.Result.Canceled);
+            barConnectView = LayoutInflater.Inflate(Resource.Layout.bar_tool_connect, null);
+            ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
+                ViewGroup.LayoutParams.MatchParent,
+                ViewGroup.LayoutParams.WrapContent);
+            barLayoutParams.Gravity = barLayoutParams.Gravity &
+                (int)(~(GravityFlags.HorizontalGravityMask | GravityFlags.VerticalGravityMask)) |
+                (int)(GravityFlags.Left | GravityFlags.CenterVertical);
+            SupportActionBar.SetCustomView(barConnectView, barLayoutParams);
+            buttonExecute = barConnectView.FindViewById<Button>(Resource.Id.buttonExecute);
+            buttonConnect = barConnectView.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
 
-            initDirStart = Intent.GetStringExtra(EXTRA_INIT_DIR);
+            SetResult(Android.App.Result.Canceled);
 
             spinnerJobs = FindViewById<Spinner>(Resource.Id.spinnerJobs);
             jobListAdapter = new JobListAdapter(this);
@@ -181,7 +198,6 @@ namespace CarControlAndroid
             }
 
             editTextArgs = FindViewById<EditText>(Resource.Id.editTextArgs);
-            editTextArgs.Enabled = false;
             editTextArgs.Click += (sender, args) =>
                 {
                     DisplayJobArguments();
@@ -217,9 +233,13 @@ namespace CarControlAndroid
             listViewInfo.Adapter = infoListAdapter;
 
             activityCommon = new ActivityCommon(this);
-            activityCommon.SelectedInterface = ActivityCommon.InterfaceType.NONE;
+            activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)Intent.GetIntExtra(EXTRA_INTERFACE, (int)ActivityCommon.InterfaceType.NONE);
+            initDirStart = Intent.GetStringExtra(EXTRA_INIT_DIR);
+            deviceName = Intent.GetStringExtra(EXTRA_DEVICE_NAME);
+            deviceAddress = Intent.GetStringExtra(EXTRA_DEVICE_ADDRESS);
 
             EdiabasClose();
+            UpdateDisplay();
 
             receiver = new Receiver(this);
             RegisterReceiver(receiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
@@ -272,7 +292,12 @@ namespace CarControlAndroid
                         deviceName = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_NAME);
                         deviceAddress = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
                         SupportInvalidateOptionsMenu();
+                        if (autoStart)
+                        {
+                            SelectSgbdFile();
+                        }
                     }
+                    autoStart = false;
                     break;
 
             }
@@ -344,11 +369,23 @@ namespace CarControlAndroid
                     return true;
 
                 case Resource.Id.menu_tool_sel_sgbd:
+                    autoStart = false;
+                    if (string.IsNullOrEmpty(deviceAddress))
+                    {
+                        if (!activityCommon.RequestBluetoothDeviceSelect((int)activityRequest.REQUEST_SELECT_DEVICE, (sender, args) =>
+                            {
+                                autoStart = true;
+                            }))
+                        {
+                            break;
+                        }
+                    }
                     SelectSgbdFile();
                     return true;
 
                 case Resource.Id.menu_scan:
-                    SelectBluetoothDevice();
+                    autoStart = false;
+                    activityCommon.SelectBluetoothDevice((int)activityRequest.REQUEST_SELECT_DEVICE);
                     return true;
             }
             return base.OnOptionsItemSelected(item);
@@ -356,21 +393,40 @@ namespace CarControlAndroid
 
         private void EdiabasClose()
         {
-            jobListAdapter.Items.Clear();
-            jobListAdapter.NotifyDataSetChanged();
-            resultSelectListAdapter.Items.Clear();
-            resultSelectListAdapter.NotifyDataSetChanged();
-            infoListAdapter.Items.Clear();
-            infoListAdapter.NotifyDataSetChanged();
-            editTextArgs.Enabled = false;
-            jobList.Clear();
-
             if (ediabas != null)
             {
                 ediabas.Dispose();
                 ediabas = null;
             }
+            UpdateDisplay();
+            jobList.Clear();    // clear job list after the adapters!
             SupportInvalidateOptionsMenu();
+        }
+
+        private void UpdateDisplay()
+        {
+            bool buttonConnectEnable = true;
+            if ((ediabas == null) || (jobList.Count == 0))
+            {
+                jobListAdapter.Items.Clear();
+                jobListAdapter.NotifyDataSetChanged();
+                resultSelectListAdapter.Items.Clear();
+                resultSelectListAdapter.NotifyDataSetChanged();
+                infoListAdapter.Items.Clear();
+                infoListAdapter.NotifyDataSetChanged();
+                editTextArgs.Enabled = false;
+                buttonConnectEnable = false;
+            }
+            else
+            {
+                if (!activityCommon.IsInterfaceAvailable())
+                {
+                    buttonConnectEnable = false;
+                }
+                editTextArgs.Enabled = true;
+            }
+            buttonExecute.Enabled = buttonConnectEnable;
+            buttonConnect.Enabled = buttonConnectEnable;
         }
 
         private void SelectSgbdFile()
@@ -411,22 +467,6 @@ namespace CarControlAndroid
             {
                 SupportInvalidateOptionsMenu();
             });
-        }
-
-        private bool SelectBluetoothDevice()
-        {
-            if (!activityCommon.IsInterfaceAvailable())
-            {
-                return false;
-            }
-            if (activityCommon.SelectedInterface != ActivityCommon.InterfaceType.BLUETOOTH)
-            {
-                return false;
-            }
-
-            Intent serverIntent = new Intent(this, typeof(DeviceListActivity));
-            StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_DEVICE);
-            return true;
         }
 
         private JobInfo GetSelectedJob()
@@ -773,7 +813,7 @@ namespace CarControlAndroid
                     }
                     jobListAdapter.NotifyDataSetChanged();
 
-                    editTextArgs.Enabled = jobList.Count > 0;
+                    UpdateDisplay();
                 });
             });
         }
@@ -803,6 +843,7 @@ namespace CarControlAndroid
                 if ((action == BluetoothAdapter.ActionStateChanged) ||
                     (action == ConnectivityManager.ConnectivityAction))
                 {
+                    activity.UpdateDisplay();
                     activity.SupportInvalidateOptionsMenu();
                 }
             }

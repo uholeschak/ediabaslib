@@ -261,6 +261,7 @@ namespace CarControlAndroid
                 {
                     activateRequest = false;
                     EnableInterface();
+                    handler(sender, args);
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
@@ -270,6 +271,49 @@ namespace CarControlAndroid
                 .SetMessage(resourceID)
                 .SetTitle(Resource.String.interface_activate)
                 .Show();
+        }
+
+        public bool RequestBluetoothDeviceSelect(int requestCode, EventHandler<DialogClickEventArgs> handler)
+        {
+            if (!IsInterfaceAvailable())
+            {
+                return true;
+            }
+            if (SelectedInterface != ActivityCommon.InterfaceType.BLUETOOTH)
+            {
+                return true;
+            }
+            new AlertDialog.Builder(activity)
+                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                {
+                    if (SelectBluetoothDevice(requestCode))
+                    {
+                        handler(sender, args);
+                    }
+                })
+                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                {
+                })
+                .SetCancelable(false)
+                .SetMessage(Resource.String.bt_device_select)
+                .SetTitle(Resource.String.bt_device_select_title)
+                .Show();
+            return false;
+        }
+
+        public bool SelectBluetoothDevice(int requestCode)
+        {
+            if (!IsInterfaceAvailable())
+            {
+                return false;
+            }
+            if (SelectedInterface != ActivityCommon.InterfaceType.BLUETOOTH)
+            {
+                return false;
+            }
+            Intent serverIntent = new Intent(activity, typeof(DeviceListActivity));
+            activity.StartActivityForResult(serverIntent, requestCode);
+            return true;
         }
 
         private static bool IsEmulator()

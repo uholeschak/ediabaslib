@@ -106,6 +106,9 @@
     <AndroidResource Include="Resources\layout\result_select_list.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\bar_tool_connect.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
     <None Include="Xml\Axis.ccpage" />
     <None Include="Xml\CarControl.xsd">
       <SubType>Designer</SubType>

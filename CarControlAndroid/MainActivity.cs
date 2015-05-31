@@ -287,7 +287,8 @@ namespace CarControlAndroid
             switch (item.ItemId)
             {
                 case Resource.Id.menu_scan:
-                    SelectBluetoothDevice();
+                    autoStart = false;
+                    activityCommon.SelectBluetoothDevice((int)activityRequest.REQUEST_SELECT_DEVICE);
                     break;
 
                 case Resource.Id.menu_sel_cfg:
@@ -323,10 +324,17 @@ namespace CarControlAndroid
         protected void ButtonConnectClick(object sender, EventArgs e)
         {
             autoStart = false;
-            if (!RequestBluetoothDeviceSelect())
+            if (string.IsNullOrEmpty(deviceAddress))
             {
-                return;
+                if (!activityCommon.RequestBluetoothDeviceSelect((int)activityRequest.REQUEST_SELECT_DEVICE, (s, args) =>
+                    {
+                        autoStart = true;
+                    }))
+                {
+                    return;
+                }
             }
+
             if (ediabasThread != null && ediabasThread.ThreadRunning())
             {
                 StopEdiabasThread(false);
@@ -397,7 +405,7 @@ namespace CarControlAndroid
                 {
                     traceDir = logDir;
                 }
-                JobReader.PageInfo pageInfo = GetSelectedDevice();
+                JobReader.PageInfo pageInfo = GetSelectedPage();
                 if (pageInfo != null)
                 {
                     string portName = string.Empty;
@@ -495,7 +503,7 @@ namespace CarControlAndroid
 
         private void DataUpdated(object sender, EventArgs e)
         {
-            RunOnUiThread(DataUpdatedMethode);
+            RunOnUiThread(UpdateDisplay);
         }
 
         private void ThreadTerminated(object sender, EventArgs e)
@@ -509,7 +517,7 @@ namespace CarControlAndroid
             UpdateDisplay();
         }
 
-        private JobReader.PageInfo GetSelectedDevice()
+        private JobReader.PageInfo GetSelectedPage()
         {
             JobReader.PageInfo pageInfo = null;
             if (SupportActionBar.SelectedTab != null)
@@ -530,7 +538,7 @@ namespace CarControlAndroid
                 return;
             }
 
-            JobReader.PageInfo newPageInfo = GetSelectedDevice();
+            JobReader.PageInfo newPageInfo = GetSelectedPage();
             if (newPageInfo == null)
             {
                 return;
@@ -549,11 +557,6 @@ namespace CarControlAndroid
         }
 
         private void UpdateDisplay()
-        {
-            DataUpdatedMethode();
-        }
-
-        private void DataUpdatedMethode()
         {
             bool dynamicValid = false;
             bool buttonConnectEnable = true;
@@ -587,7 +590,7 @@ namespace CarControlAndroid
             imageBackground.Visibility = dynamicValid ? ViewStates.Invisible : ViewStates.Visible;
 
             Fragment dynamicFragment = null;
-            JobReader.PageInfo pageInfo = GetSelectedDevice();
+            JobReader.PageInfo pageInfo = GetSelectedPage();
             if (pageInfo != null)
             {
                 dynamicFragment = (Fragment)pageInfo.InfoObject;
@@ -996,53 +999,6 @@ namespace CarControlAndroid
             StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_CONFIG);
         }
 
-        private bool RequestBluetoothDeviceSelect()
-        {
-            if (!activityCommon.IsInterfaceAvailable())
-            {
-                return true;
-            }
-            if (activityCommon.SelectedInterface != ActivityCommon.InterfaceType.BLUETOOTH)
-            {
-                return true;
-            }
-            if (!string.IsNullOrEmpty(deviceAddress))
-            {
-                return true;
-            }
-            new AlertDialog.Builder(this)
-                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                {
-                    if (SelectBluetoothDevice())
-                    {
-                        autoStart = true;
-                    }
-                })
-                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                {
-                })
-                .SetCancelable(false)
-                .SetMessage(Resource.String.bt_device_select)
-                .SetTitle(Resource.String.bt_device_select_title)
-                .Show();
-            return false;
-        }
-
-        private bool SelectBluetoothDevice()
-        {
-            if (!activityCommon.IsInterfaceAvailable())
-            {
-                return false;
-            }
-            if (activityCommon.SelectedInterface != ActivityCommon.InterfaceType.BLUETOOTH)
-            {
-                return false;
-            }
-            Intent serverIntent = new Intent(this, typeof(DeviceListActivity));
-            StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_DEVICE);
-            return true;
-        }
-
         private bool StartEdiabasTool()
         {
             Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
@@ -1058,6 +1014,9 @@ namespace CarControlAndroid
             {
             }
             serverIntent.PutExtra(EdiabasToolActivity.EXTRA_INIT_DIR, initDir);
+            serverIntent.PutExtra(EdiabasToolActivity.EXTRA_INTERFACE, (int)activityCommon.SelectedInterface);
+            serverIntent.PutExtra(EdiabasToolActivity.EXTRA_DEVICE_NAME, deviceName);
+            serverIntent.PutExtra(EdiabasToolActivity.EXTRA_DEVICE_ADDRESS, deviceAddress);
             StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_EDIABAS_TOOL);
             return true;
         }

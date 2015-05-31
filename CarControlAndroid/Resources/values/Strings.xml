@@ -61,6 +61,7 @@
   <string name="tool_job_results">Results:</string>
   <string name="tool_job_result">Result:</string>
   <string name="tool_job_infos">Informations:</string>
+  <string name="tool_button_execute">Execute</string>
 
   <!-- Ediabas Tool Options Menu -->
   <string name="menu_tool_sel_interface">Interface</string>
