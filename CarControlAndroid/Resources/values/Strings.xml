@@ -5,15 +5,17 @@
   <string name="button_disconnected">Disconnected</string>
   <string name="button_yes">Yes</string>
   <string name="button_no">No</string>
-  <string name="interface_activate">Activation</string>
+  <string name="button_ok">Ok</string>
+  <string name="button_abort">Abort</string>
+  <string name="interface_activate">Interface activation</string>
   <string name="bt_enable">Bluetooth is not enabled. Do you want to enable it now?</string>
   <string name="wifi_enable">Wifi is not enabled. Do you want to enable it now?</string>
   <string name="bt_not_available">Bluetooth is not available.</string>
   <string name="wifi_not_available">Wifi is not available.</string>
   <string name="config_select">No valid configuration is present. Do you want to select a configuration now?</string>
   <string name="config_select_title">Configuration</string>
-  <string name="device_select">No Bluetooth device has been selected. Do you want to select a device now?</string>
-  <string name="device_select_title">Device selection</string>
+  <string name="bt_device_select_title">Bluetooth device</string>
+  <string name="bt_device_select">No Bluetooth device has been selected. Do you want to select a device now?</string>
 
   <!-- Compile -->
   <string name="compile_start">Compiling user code</string>
@@ -44,15 +46,23 @@
   <string name="select_file">Select file</string>
   <string name="access_dir_failed">Access denied:</string>
 
+  <!-- Interface selection -->
+  <string name="select_interface">Select interface</string>
+  <string name="select_interface_bt">Bluetooth</string>
+  <string name="select_interface_enet">ENET</string>
+
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas tool</string>
   <string name="tool_select_sgbd">Select SGBD</string>
   <string name="tool_read_sgbd">Read SGBD information</string>
   <string name="tool_job_jobs">Jobs:</string>
+  <string name="tool_job_job">Job:</string>
   <string name="tool_job_arguments">Arguments:</string>
   <string name="tool_job_results">Results:</string>
+  <string name="tool_job_result">Result:</string>
   <string name="tool_job_infos">Informations:</string>
 
   <!-- Ediabas Tool Options Menu -->
+  <string name="menu_tool_sel_interface">Interface</string>
   <string name="menu_tool_sel_sgbd">SGBD</string>
 </resources>

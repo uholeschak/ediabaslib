@@ -1512,7 +1512,10 @@ namespace CarControlAndroid
 			public const int menu_sel_cfg = 2131230831;
 			
 			// aapt resource value: 0x7f080075
-			public const int menu_tool_sel_sgbd = 2131230837;
+			public const int menu_tool_sel_interface = 2131230837;
+			
+			// aapt resource value: 0x7f080076
+			public const int menu_tool_sel_sgbd = 2131230838;
 			
 			// aapt resource value: 0x7f080015
 			public const int middle = 2131230741;
@@ -1926,20 +1929,29 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0010
 			public const int abc_toolbar_collapse_description = 2131361808;
 			
-			// aapt resource value: 0x7f0a0032
-			public const int access_dir_failed = 2131361842;
+			// aapt resource value: 0x7f0a0034
+			public const int access_dir_failed = 2131361844;
 			
 			// aapt resource value: 0x7f0a0012
 			public const int app_name = 2131361810;
 			
-			// aapt resource value: 0x7f0a0018
-			public const int bt_enable = 2131361816;
+			// aapt resource value: 0x7f0a0021
+			public const int bt_device_select = 2131361825;
+			
+			// aapt resource value: 0x7f0a0020
+			public const int bt_device_select_title = 2131361824;
 			
 			// aapt resource value: 0x7f0a001a
-			public const int bt_not_available = 2131361818;
+			public const int bt_enable = 2131361818;
 			
-			// aapt resource value: 0x7f0a0029
-			public const int button_active = 2131361833;
+			// aapt resource value: 0x7f0a001c
+			public const int bt_not_available = 2131361820;
+			
+			// aapt resource value: 0x7f0a0018
+			public const int button_abort = 2131361816;
+			
+			// aapt resource value: 0x7f0a002b
+			public const int button_active = 2131361835;
 			
 			// aapt resource value: 0x7f0a0013
 			public const int button_connected = 2131361811;
@@ -1947,110 +1959,125 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0014
 			public const int button_disconnected = 2131361812;
 			
-			// aapt resource value: 0x7f0a002a
-			public const int button_inactive = 2131361834;
+			// aapt resource value: 0x7f0a002c
+			public const int button_inactive = 2131361836;
 			
 			// aapt resource value: 0x7f0a0016
 			public const int button_no = 2131361814;
 			
-			// aapt resource value: 0x7f0a0028
-			public const int button_scan = 2131361832;
+			// aapt resource value: 0x7f0a0017
+			public const int button_ok = 2131361815;
+			
+			// aapt resource value: 0x7f0a002a
+			public const int button_scan = 2131361834;
 			
 			// aapt resource value: 0x7f0a0015
 			public const int button_yes = 2131361813;
 			
-			// aapt resource value: 0x7f0a0021
-			public const int compile_ok_btn = 2131361825;
+			// aapt resource value: 0x7f0a0023
+			public const int compile_ok_btn = 2131361827;
 			
-			// aapt resource value: 0x7f0a0020
-			public const int compile_start = 2131361824;
-			
-			// aapt resource value: 0x7f0a001c
-			public const int config_select = 2131361820;
-			
-			// aapt resource value: 0x7f0a001d
-			public const int config_select_title = 2131361821;
+			// aapt resource value: 0x7f0a0022
+			public const int compile_start = 2131361826;
 			
 			// aapt resource value: 0x7f0a001e
-			public const int device_select = 2131361822;
+			public const int config_select = 2131361822;
 			
 			// aapt resource value: 0x7f0a001f
-			public const int device_select_title = 2131361823;
+			public const int config_select_title = 2131361823;
 			
-			// aapt resource value: 0x7f0a0017
-			public const int interface_activate = 2131361815;
+			// aapt resource value: 0x7f0a0019
+			public const int interface_activate = 2131361817;
 			
 			// aapt resource value: 0x7f0a0011
 			public const int library_name = 2131361809;
 			
-			// aapt resource value: 0x7f0a002b
-			public const int menu_device = 2131361835;
-			
 			// aapt resource value: 0x7f0a002d
-			public const int menu_ediabas_tool = 2131361837;
+			public const int menu_device = 2131361837;
 			
 			// aapt resource value: 0x7f0a002f
-			public const int menu_enable_datalog = 2131361839;
-			
-			// aapt resource value: 0x7f0a002e
-			public const int menu_enable_trace = 2131361838;
-			
-			// aapt resource value: 0x7f0a0030
-			public const int menu_exit = 2131361840;
-			
-			// aapt resource value: 0x7f0a002c
-			public const int menu_sel_cfg = 2131361836;
-			
-			// aapt resource value: 0x7f0a003a
-			public const int menu_tool_sel_sgbd = 2131361850;
-			
-			// aapt resource value: 0x7f0a0025
-			public const int none_found = 2131361829;
-			
-			// aapt resource value: 0x7f0a0024
-			public const int none_paired = 2131361828;
-			
-			// aapt resource value: 0x7f0a0022
-			public const int scanning = 2131361826;
-			
-			// aapt resource value: 0x7f0a0023
-			public const int select_device = 2131361827;
+			public const int menu_ediabas_tool = 2131361839;
 			
 			// aapt resource value: 0x7f0a0031
-			public const int select_file = 2131361841;
+			public const int menu_enable_datalog = 2131361841;
+			
+			// aapt resource value: 0x7f0a0030
+			public const int menu_enable_trace = 2131361840;
+			
+			// aapt resource value: 0x7f0a0032
+			public const int menu_exit = 2131361842;
+			
+			// aapt resource value: 0x7f0a002e
+			public const int menu_sel_cfg = 2131361838;
+			
+			// aapt resource value: 0x7f0a0041
+			public const int menu_tool_sel_interface = 2131361857;
+			
+			// aapt resource value: 0x7f0a0042
+			public const int menu_tool_sel_sgbd = 2131361858;
 			
 			// aapt resource value: 0x7f0a0027
-			public const int title_other_devices = 2131361831;
+			public const int none_found = 2131361831;
 			
 			// aapt resource value: 0x7f0a0026
-			public const int title_paired_devices = 2131361830;
+			public const int none_paired = 2131361830;
 			
-			// aapt resource value: 0x7f0a0037
-			public const int tool_job_arguments = 2131361847;
+			// aapt resource value: 0x7f0a0024
+			public const int scanning = 2131361828;
 			
-			// aapt resource value: 0x7f0a0039
-			public const int tool_job_infos = 2131361849;
-			
-			// aapt resource value: 0x7f0a0036
-			public const int tool_job_jobs = 2131361846;
-			
-			// aapt resource value: 0x7f0a0038
-			public const int tool_job_results = 2131361848;
-			
-			// aapt resource value: 0x7f0a0035
-			public const int tool_read_sgbd = 2131361845;
-			
-			// aapt resource value: 0x7f0a0034
-			public const int tool_select_sgbd = 2131361844;
+			// aapt resource value: 0x7f0a0025
+			public const int select_device = 2131361829;
 			
 			// aapt resource value: 0x7f0a0033
-			public const int tool_title = 2131361843;
+			public const int select_file = 2131361843;
 			
-			// aapt resource value: 0x7f0a0019
-			public const int wifi_enable = 2131361817;
+			// aapt resource value: 0x7f0a0035
+			public const int select_interface = 2131361845;
+			
+			// aapt resource value: 0x7f0a0036
+			public const int select_interface_bt = 2131361846;
+			
+			// aapt resource value: 0x7f0a0037
+			public const int select_interface_enet = 2131361847;
+			
+			// aapt resource value: 0x7f0a0029
+			public const int title_other_devices = 2131361833;
+			
+			// aapt resource value: 0x7f0a0028
+			public const int title_paired_devices = 2131361832;
+			
+			// aapt resource value: 0x7f0a003d
+			public const int tool_job_arguments = 2131361853;
+			
+			// aapt resource value: 0x7f0a0040
+			public const int tool_job_infos = 2131361856;
+			
+			// aapt resource value: 0x7f0a003c
+			public const int tool_job_job = 2131361852;
+			
+			// aapt resource value: 0x7f0a003b
+			public const int tool_job_jobs = 2131361851;
+			
+			// aapt resource value: 0x7f0a003f
+			public const int tool_job_result = 2131361855;
+			
+			// aapt resource value: 0x7f0a003e
+			public const int tool_job_results = 2131361854;
+			
+			// aapt resource value: 0x7f0a003a
+			public const int tool_read_sgbd = 2131361850;
+			
+			// aapt resource value: 0x7f0a0039
+			public const int tool_select_sgbd = 2131361849;
+			
+			// aapt resource value: 0x7f0a0038
+			public const int tool_title = 2131361848;
 			
 			// aapt resource value: 0x7f0a001b
-			public const int wifi_not_available = 2131361819;
+			public const int wifi_enable = 2131361819;
+			
+			// aapt resource value: 0x7f0a001d
+			public const int wifi_not_available = 2131361821;
 			
 			static String()
 			{

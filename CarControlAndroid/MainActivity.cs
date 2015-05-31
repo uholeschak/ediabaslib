@@ -1020,8 +1020,8 @@ namespace CarControlAndroid
                 {
                 })
                 .SetCancelable(false)
-                .SetMessage(Resource.String.device_select)
-                .SetTitle(Resource.String.device_select_title)
+                .SetMessage(Resource.String.bt_device_select)
+                .SetTitle(Resource.String.bt_device_select_title)
                 .Show();
             return false;
         }
