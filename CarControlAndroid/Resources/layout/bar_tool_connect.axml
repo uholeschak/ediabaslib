@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <Button
+        android:id="@+id/buttonExecute"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tool_button_execute"
+        android:layout_weight="1" />
+    <ToggleButton
+        android:id="@+id/buttonConnect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textOn="@string/button_connected"
+        android:textOff="@string/button_disconnected"
+        android:layout_weight="1" />
+</LinearLayout>
