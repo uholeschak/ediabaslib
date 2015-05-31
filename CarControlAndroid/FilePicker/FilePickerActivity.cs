@@ -5,7 +5,7 @@
     using Android.Views;
     using CarControlAndroid;
 
-    [Android.App.Activity(Label = "@string/select_file", Theme = "@style/Theme.AppCompat",
+    [Android.App.Activity(Label = "@string/select_file",
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                 Android.Content.PM.ConfigChanges.Orientation |
                 Android.Content.PM.ConfigChanges.ScreenSize)]
