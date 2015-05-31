@@ -1,5 +1,6 @@
 using Android.Bluetooth;
 using Android.Content;
+using Android.Content.Res;
 using Android.Net;
 using Android.OS;
 using Android.Support.V7.App;
@@ -207,14 +208,7 @@ namespace CarControlAndroid
             {
                 spinnerResults.ItemSelected += (sender, args) =>
                 {
-                    if (ignoreResultSelectLayoutChange > 0)
-                    {
-                        ignoreResultSelectLayoutChange--;
-                    }
-                    else
-                    {
-                        DisplayJobResult();
-                    }
+                    DisplayJobResult();
                 };
             }
 
@@ -825,12 +819,19 @@ namespace CarControlAndroid
                 }
             }
             private Android.App.Activity context;
+            private Android.Graphics.Color backgroundColor;
+            private Android.Graphics.Color textColor;
 
             public JobListAdapter(Android.App.Activity context)
                 : base()
             {
                 this.context = context;
                 this.items = new List<JobInfo>();
+
+                TypedArray typedArray = context.Theme.ObtainStyledAttributes(
+                    new int[] { Android.Resource.Attribute.ColorBackground, Android.Resource.Attribute.TextColorPrimary });
+                backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
+                textColor = typedArray.GetColor(1, 0x000000);
             }
 
             public override long GetItemId(int position)
@@ -855,7 +856,7 @@ namespace CarControlAndroid
                 View view = convertView;
                 if (view == null) // no view to re-use, create new
                     view = context.LayoutInflater.Inflate(Resource.Layout.job_list, null);
-                //view.SetBackgroundColor(Android.Graphics.Color.DarkGray);
+                view.SetBackgroundColor(backgroundColor);
                 TextView textName = view.FindViewById<TextView>(Resource.Id.textJobName);
                 TextView textDesc = view.FindViewById<TextView>(Resource.Id.textJobDesc);
                 textName.Text = item.Name;
@@ -888,6 +889,8 @@ namespace CarControlAndroid
                 }
             }
             private Android.App.Activity context;
+            private Android.Graphics.Color backgroundColor;
+            private Android.Graphics.Color textColor;
             private bool ignoreCheckEvent = false;
 
             public ResultSelectListAdapter(Android.App.Activity context)
@@ -895,6 +898,10 @@ namespace CarControlAndroid
             {
                 this.context = context;
                 this.items = new List<ExtraInfo>();
+                TypedArray typedArray = context.Theme.ObtainStyledAttributes(
+                    new int[] { Android.Resource.Attribute.ColorBackground, Android.Resource.Attribute.TextColorPrimary });
+                backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
+                textColor = typedArray.GetColor(1, 0x000000);
             }
 
             public override long GetItemId(int position)
@@ -919,7 +926,7 @@ namespace CarControlAndroid
                 View view = convertView;
                 if (view == null) // no view to re-use, create new
                     view = context.LayoutInflater.Inflate(Resource.Layout.result_select_list, null);
-                //view.SetBackgroundColor(Android.Graphics.Color.DarkGray);
+                view.SetBackgroundColor(backgroundColor);
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxResultSelect);
                 ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
