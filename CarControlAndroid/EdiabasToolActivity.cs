@@ -5,6 +5,7 @@ using Android.Net;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
+using Android.Views.InputMethods;
 using Android.Widget;
 using com.xamarin.recipes.filepicker;
 using EdiabasLib;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -136,6 +138,7 @@ namespace CarControlAndroid
         public const string EXTRA_DEVICE_ADDRESS = "device_address";
         public static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
 
+        private InputMethodManager imm;
         private View barConnectView;
         private Button buttonExecute;
         private ToggleButton buttonConnect;
@@ -150,7 +153,9 @@ namespace CarControlAndroid
         private bool autoStart = false;
         private ActivityCommon activityCommon;
         private EdiabasNet ediabas;
-        private bool ediabasJobAbort = false;
+        private Task jobTask;
+        private volatile bool runContinuous = false;
+        private volatile bool ediabasJobAbort = false;
         private int ignoreResultSelectLayoutChange = 0;
         private string sgbdFileName = string.Empty;
         private string deviceName = string.Empty;
@@ -168,6 +173,8 @@ namespace CarControlAndroid
             SupportActionBar.SetDisplayShowCustomEnabled(true);
             SetContentView(Resource.Layout.ediabas_tool);
 
+            imm = (InputMethodManager)GetSystemService(Context.InputMethodService);
+
             barConnectView = LayoutInflater.Inflate(Resource.Layout.bar_tool_connect, null);
             ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
                 ViewGroup.LayoutParams.MatchParent,
@@ -176,8 +183,26 @@ namespace CarControlAndroid
                 (int)(~(GravityFlags.HorizontalGravityMask | GravityFlags.VerticalGravityMask)) |
                 (int)(GravityFlags.Left | GravityFlags.CenterVertical);
             SupportActionBar.SetCustomView(barConnectView, barLayoutParams);
+
             buttonExecute = barConnectView.FindViewById<Button>(Resource.Id.buttonExecute);
+            buttonExecute.Click += (sender, args) =>
+                {
+                    ExecuteSelectedJob(false);
+                };
+
             buttonConnect = barConnectView.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
+            buttonConnect.Click += (sender, args) =>
+            {
+                if (buttonConnect.Checked)
+                {
+                    ExecuteSelectedJob(true);
+                }
+                else
+                {
+                    runContinuous = false;
+                    UpdateDisplay();
+                }
+            };
 
             SetResult(Android.App.Result.Canceled);
 
@@ -186,6 +211,7 @@ namespace CarControlAndroid
             spinnerJobs.Adapter = jobListAdapter;
             spinnerJobs.ItemSelected += (sender, args) =>
                 {
+                    HideKeyboard();
                     NewJobSelected();
                     DisplayJobComments();
                 };
@@ -206,6 +232,11 @@ namespace CarControlAndroid
             spinnerResults = FindViewById<Spinner>(Resource.Id.spinnerResults);
             resultSelectListAdapter = new ResultSelectListAdapter(this);
             spinnerResults.Adapter = resultSelectListAdapter;
+            spinnerResults.ItemSelected += (sender, args) =>
+            {
+                HideKeyboard();
+                DisplayJobResult();
+            };
             if (Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
             {
                 spinnerResults.LayoutChange += (sender, args) =>
@@ -220,13 +251,6 @@ namespace CarControlAndroid
                         }
                     };
             }
-            else
-            {
-                spinnerResults.ItemSelected += (sender, args) =>
-                {
-                    DisplayJobResult();
-                };
-            }
 
             listViewInfo = FindViewById<ListView>(Resource.Id.infoList);
             infoListAdapter = new ResultListAdapter(this);
@@ -234,6 +258,7 @@ namespace CarControlAndroid
 
             activityCommon = new ActivityCommon(this);
             activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)Intent.GetIntExtra(EXTRA_INTERFACE, (int)ActivityCommon.InterfaceType.NONE);
+
             initDirStart = Intent.GetStringExtra(EXTRA_INIT_DIR);
             deviceName = Intent.GetStringExtra(EXTRA_DEVICE_NAME);
             deviceAddress = Intent.GetStringExtra(EXTRA_DEVICE_ADDRESS);
@@ -267,7 +292,21 @@ namespace CarControlAndroid
             base.OnDestroy();
 
             UnregisterReceiver(receiver);
+            runContinuous = false;
+            ediabasJobAbort = true;
+            if (isJobRunning())
+            {
+                jobTask.Wait();
+            }
             EdiabasClose();
+        }
+
+        public override void OnBackPressed()
+        {
+            if (!isJobRunning())
+            {
+                base.OnBackPressed();
+            }
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
@@ -312,7 +351,7 @@ namespace CarControlAndroid
 
         public override bool OnPrepareOptionsMenu(IMenu menu)
         {
-            bool commActive = false;
+            bool commActive = isJobRunning();
             bool interfaceAvailable = activityCommon.IsInterfaceAvailable();
 
             IMenuItem selInterfaceMenu = menu.FindItem(Resource.Id.menu_tool_sel_interface);
@@ -358,6 +397,10 @@ namespace CarControlAndroid
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
+            if (isJobRunning())
+            {
+                return true;
+            }
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
@@ -391,8 +434,12 @@ namespace CarControlAndroid
             return base.OnOptionsItemSelected(item);
         }
 
-        private void EdiabasClose()
+        private bool EdiabasClose()
         {
+            if (isJobRunning())
+            {
+                return false;
+            }
             if (ediabas != null)
             {
                 ediabas.Dispose();
@@ -400,12 +447,38 @@ namespace CarControlAndroid
             }
             UpdateDisplay();
             jobList.Clear();    // clear job list after the adapters!
-            SupportInvalidateOptionsMenu();
+            return true;
+        }
+
+        private bool isJobRunning()
+        {
+            if (jobTask == null)
+            {
+                return false;
+            }
+            if (!jobTask.IsCompleted)
+            {
+                return true;
+            }
+            jobTask.Dispose();
+            jobTask = null;
+            runContinuous = false;
+            return false;
+        }
+
+        private void HideKeyboard()
+        {
+            if (imm != null)
+            {
+                imm.HideSoftInputFromWindow(editTextArgs.WindowToken, HideSoftInputFlags.None);
+            }
         }
 
         private void UpdateDisplay()
         {
+            bool buttonExecuteEnable = true;
             bool buttonConnectEnable = true;
+            bool inputsEnabled = true;
             if ((ediabas == null) || (jobList.Count == 0))
             {
                 jobListAdapter.Items.Clear();
@@ -414,7 +487,8 @@ namespace CarControlAndroid
                 resultSelectListAdapter.NotifyDataSetChanged();
                 infoListAdapter.Items.Clear();
                 infoListAdapter.NotifyDataSetChanged();
-                editTextArgs.Enabled = false;
+                inputsEnabled = false;
+                buttonExecuteEnable = false;
                 buttonConnectEnable = false;
             }
             else
@@ -423,10 +497,25 @@ namespace CarControlAndroid
                 {
                     buttonConnectEnable = false;
                 }
-                editTextArgs.Enabled = true;
             }
-            buttonExecute.Enabled = buttonConnectEnable;
+            if (isJobRunning())
+            {
+                buttonExecuteEnable = false;
+                buttonConnectEnable = runContinuous;
+                inputsEnabled = false;
+            }
+            buttonExecute.Enabled = buttonExecuteEnable;
             buttonConnect.Enabled = buttonConnectEnable;
+            if (!buttonConnectEnable)
+            {
+                buttonConnect.Checked = false;
+            }
+            spinnerJobs.Enabled = inputsEnabled;
+            editTextArgs.Enabled = inputsEnabled;
+            spinnerResults.Enabled = inputsEnabled;
+
+            HideKeyboard();
+            SupportInvalidateOptionsMenu();
         }
 
         private void SelectSgbdFile()
@@ -452,6 +541,10 @@ namespace CarControlAndroid
 
         private void SelectInterface()
         {
+            if (isJobRunning())
+            {
+                return;
+            }
             activityCommon.SelectInterface((sender, args) =>
             {
                 EdiabasClose();
@@ -490,7 +583,7 @@ namespace CarControlAndroid
             resultSelectListAdapter.Items.Clear();
             if (jobInfo != null)
             {
-                foreach (ExtraInfo result in jobInfo.Results)
+                foreach (ExtraInfo result in jobInfo.Results.OrderBy(x => x.Name))
                 {
                     resultSelectListAdapter.Items.Add(result);
                 }
@@ -534,7 +627,7 @@ namespace CarControlAndroid
             if (jobInfo != null)
             {
                 infoListAdapter.Items.Add(new TableResultItem(GetString(Resource.String.tool_job_arguments), null));
-                foreach (ExtraInfo info in jobInfo.Arguments)
+                foreach (ExtraInfo info in jobInfo.Arguments.OrderBy(x => x.Name))
                 {
                     StringBuilder stringBuilderComments = new StringBuilder();
                     stringBuilderComments.Append(info.Name + " (" + info.Type + "):");
@@ -582,7 +675,10 @@ namespace CarControlAndroid
             {
                 return;
             }
-            EdiabasClose();
+            if (!EdiabasClose())
+            {
+                return;
+            }
             ediabas = new EdiabasNet();
             if (activityCommon.SelectedInterface == ActivityCommon.InterfaceType.ENET)
             {
@@ -797,17 +893,20 @@ namespace CarControlAndroid
                 {
                     messageList.Add(EdiabasNet.GetExceptionText(ex));
                 }
+
                 RunOnUiThread(() =>
                 {
                     progress.Hide();
 
+                    infoListAdapter.Items.Clear();
                     foreach (string message in messageList)
                     {
                         infoListAdapter.Items.Add(new TableResultItem(message, null));
                     }
                     infoListAdapter.NotifyDataSetChanged();
 
-                    foreach (JobInfo job in jobList)
+                    jobListAdapter.Items.Clear();
+                    foreach (JobInfo job in jobList.OrderBy(x => x.Name))
                     {
                         jobListAdapter.Items.Add(job);
                     }
@@ -816,6 +915,164 @@ namespace CarControlAndroid
                     UpdateDisplay();
                 });
             });
+        }
+
+        private void ExecuteSelectedJob(bool continuous)
+        {
+            infoListAdapter.Items.Clear();
+            infoListAdapter.NotifyDataSetChanged();
+            if (ediabas == null)
+            {
+                return;
+            }
+            JobInfo jobInfo = GetSelectedJob();
+            if (jobInfo == null)
+            {
+                return;
+            }
+            if (isJobRunning())
+            {
+                return;
+            }
+
+            string jobName = jobInfo.Name;
+            string jobArgs = editTextArgs.Text;
+            StringBuilder stringBuilderResults = new StringBuilder();
+            foreach (ExtraInfo info in jobInfo.Results)
+            {
+                if (info.Selected)
+                {
+                    if (stringBuilderResults.Length > 0)
+                    {
+                        stringBuilderResults.Append(";");
+                    }
+                    stringBuilderResults.Append(info.Name);
+                }
+            }
+            string jobResults = stringBuilderResults.ToString();
+            runContinuous = continuous;
+
+            jobTask = Task.Factory.StartNew(() =>
+            {
+                for (; ; )
+                {
+                    List<string> messageList = new List<string>();
+                    try
+                    {
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
+
+                        ediabas.ArgString = jobArgs;
+                        ediabas.ArgBinaryStd = null;
+                        ediabas.ResultsRequests = jobResults;
+                        ediabas.ExecuteJob(jobName);
+
+                        resultSets = ediabas.ResultSets;
+                        PrintResults(messageList, resultSets);
+                    }
+                    catch (Exception ex)
+                    {
+                        messageList.Add(EdiabasNet.GetExceptionText(ex));
+                    }
+
+                    RunOnUiThread(() =>
+                    {
+                        infoListAdapter.Items.Clear();
+                        foreach (string message in messageList)
+                        {
+                            infoListAdapter.Items.Add(new TableResultItem(message, null));
+                        }
+                        infoListAdapter.NotifyDataSetChanged();
+                        UpdateDisplay();
+                    });
+
+                    if (!runContinuous)
+                    {
+                        break;
+                    }
+                }
+
+                RunOnUiThread(() =>
+                {
+                    if (isJobRunning())
+                    {
+                        jobTask.Wait();
+                    }
+                    UpdateDisplay();
+                });
+            });
+            UpdateDisplay();
+        }
+
+        private void PrintResults(List<string> messageList, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
+        {
+            int dataSet = 0;
+            if (resultSets != null)
+            {
+                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.Append(string.Format(culture, "DATASET: {0}", dataSet));
+                    foreach (string key in resultDict.Keys.OrderBy(x => x))
+                    {
+                        EdiabasNet.ResultData resultData = resultDict[key];
+                        string resultText = string.Empty;
+                        if (resultData.opData.GetType() == typeof(string))
+                        {
+                            resultText = (string)resultData.opData;
+                        }
+                        else if (resultData.opData.GetType() == typeof(Double))
+                        {
+                            resultText = string.Format(culture, "R: {0}", (Double)resultData.opData);
+                        }
+                        else if (resultData.opData.GetType() == typeof(Int64))
+                        {
+                            Int64 value = (Int64)resultData.opData;
+                            switch (resultData.type)
+                            {
+                                case EdiabasNet.ResultType.TypeB:  // 8 bit
+                                    resultText = string.Format(culture, "B: {0} 0x{1:X02}", value, (Byte)value);
+                                    break;
+
+                                case EdiabasNet.ResultType.TypeC:  // 8 bit char
+                                    resultText = string.Format(culture, "C: {0} 0x{1:X02}", value, (Byte)value);
+                                    break;
+
+                                case EdiabasNet.ResultType.TypeW:  // 16 bit
+                                    resultText = string.Format(culture, "W: {0} 0x{1:X04}", value, (UInt16)value);
+                                    break;
+
+                                case EdiabasNet.ResultType.TypeI:  // 16 bit signed
+                                    resultText = string.Format(culture, "I: {0} 0x{1:X04}", value, (UInt16)value);
+                                    break;
+
+                                case EdiabasNet.ResultType.TypeD:  // 32 bit
+                                    resultText = string.Format(culture, "D: {0} 0x{1:X08}", value, (UInt32)value);
+                                    break;
+
+                                case EdiabasNet.ResultType.TypeL:  // 32 bit signed
+                                    resultText = string.Format(culture, "L: {0} 0x{1:X08}", value, (UInt32)value);
+                                    break;
+
+                                default:
+                                    resultText = "?";
+                                    break;
+                            }
+                        }
+                        else if (resultData.opData.GetType() == typeof(byte[]))
+                        {
+                            byte[] data = (byte[])resultData.opData;
+                            foreach (byte value in data)
+                            {
+                                resultText += string.Format(culture, "{0:X02} ", value);
+                            }
+                        }
+                        stringBuilder.Append("\r\n");
+                        stringBuilder.Append(resultData.name + ": " + resultText);
+                    }
+                    messageList.Add(stringBuilder.ToString());
+                    dataSet++;
+                }
+            }
         }
 
         private bool AbortEdiabasJob()
@@ -844,7 +1101,6 @@ namespace CarControlAndroid
                     (action == ConnectivityManager.ConnectivityAction))
                 {
                     activity.UpdateDisplay();
-                    activity.SupportInvalidateOptionsMenu();
                 }
             }
         }
