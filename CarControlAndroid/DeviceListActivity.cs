@@ -32,7 +32,7 @@ namespace CarControlAndroid
     /// by the user, the MAC address of the device is sent back to the parent
     /// Activity in the result Intent.
     /// </summary>
-    [Android.App.Activity (Label = "@string/select_device", Theme = "@style/Theme.AppCompat",
+    [Android.App.Activity (Label = "@string/select_device",
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                 Android.Content.PM.ConfigChanges.Orientation |
                 Android.Content.PM.ConfigChanges.ScreenSize)]

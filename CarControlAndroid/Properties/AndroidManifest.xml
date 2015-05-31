@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="CarControlAndroid.CarControlAndroid" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="10" android:targetSdkVersion="21" />
-	<application android:label="Car Control" android:icon="@drawable/icon"></application>
+	<application android:label="Car Control" android:icon="@drawable/icon" android:theme="@style/Theme.AppCompat"></application>
 	<uses-permission android:name="android.permission.BLUETOOTH" />
 	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

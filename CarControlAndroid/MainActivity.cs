@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace CarControlAndroid
 {
-    [Android.App.Activity(Label = "@string/app_name", Theme = "@style/Theme.AppCompat", MainLauncher = true,
+    [Android.App.Activity(Label = "@string/app_name", MainLauncher = true,
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                 Android.Content.PM.ConfigChanges.Orientation |
                 Android.Content.PM.ConfigChanges.ScreenSize)]
