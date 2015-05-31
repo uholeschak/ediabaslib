@@ -3,17 +3,17 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <Button
-        android:id="@+id/buttonExecute"
+    <CheckBox
+        android:id="@+id/checkBoxContinuous"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/tool_button_execute"
+        android:layout_height="match_parent"
+        android:text="@string/tool_check_continuous"
         android:layout_gravity="center"
         android:layout_weight="1" />
     <ToggleButton
         android:id="@+id/buttonConnect"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:textOn="@string/button_connected"
         android:textOff="@string/button_disconnected"
         android:layout_gravity="center"

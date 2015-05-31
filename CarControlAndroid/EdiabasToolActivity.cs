@@ -140,7 +140,7 @@ namespace CarControlAndroid
 
         private InputMethodManager imm;
         private View barConnectView;
-        private Button buttonExecute;
+        private CheckBox checkBoxContinuous;
         private ToggleButton buttonConnect;
         private Spinner spinnerJobs;
         private JobListAdapter jobListAdapter;
@@ -184,18 +184,14 @@ namespace CarControlAndroid
                 (int)(GravityFlags.Left | GravityFlags.CenterVertical);
             SupportActionBar.SetCustomView(barConnectView, barLayoutParams);
 
-            buttonExecute = barConnectView.FindViewById<Button>(Resource.Id.buttonExecute);
-            buttonExecute.Click += (sender, args) =>
-                {
-                    ExecuteSelectedJob(false);
-                };
+            checkBoxContinuous = barConnectView.FindViewById<CheckBox>(Resource.Id.checkBoxContinuous);
 
             buttonConnect = barConnectView.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
             buttonConnect.Click += (sender, args) =>
             {
                 if (buttonConnect.Checked)
                 {
-                    ExecuteSelectedJob(true);
+                    ExecuteSelectedJob(checkBoxContinuous.Checked);
                 }
                 else
                 {
@@ -476,7 +472,7 @@ namespace CarControlAndroid
 
         private void UpdateDisplay()
         {
-            bool buttonExecuteEnable = true;
+            bool checkContinuousEnable = true;
             bool buttonConnectEnable = true;
             bool inputsEnabled = true;
             if ((ediabas == null) || (jobList.Count == 0))
@@ -488,7 +484,7 @@ namespace CarControlAndroid
                 infoListAdapter.Items.Clear();
                 infoListAdapter.NotifyDataSetChanged();
                 inputsEnabled = false;
-                buttonExecuteEnable = false;
+                checkContinuousEnable = false;
                 buttonConnectEnable = false;
             }
             else
@@ -500,11 +496,11 @@ namespace CarControlAndroid
             }
             if (isJobRunning())
             {
-                buttonExecuteEnable = false;
+                checkContinuousEnable = false;
                 buttonConnectEnable = runContinuous;
                 inputsEnabled = false;
             }
-            buttonExecute.Enabled = buttonExecuteEnable;
+            checkBoxContinuous.Enabled = checkContinuousEnable;
             buttonConnect.Enabled = buttonConnectEnable;
             if (!buttonConnectEnable)
             {

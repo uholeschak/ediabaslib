@@ -61,7 +61,7 @@
   <string name="tool_job_results">Ergebnisse:</string>
   <string name="tool_job_result">Ergebnis:</string>
   <string name="tool_job_infos">Informationen:</string>
-  <string name="tool_button_execute">Ausführen</string>
+  <string name="tool_check_continuous">Fortlaufend</string>
 
   <!-- Ediabas Tool Options Menu -->
   <string name="menu_tool_sel_interface">Schnittstelle</string>

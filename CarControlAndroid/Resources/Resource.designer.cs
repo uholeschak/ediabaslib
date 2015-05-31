@@ -1397,9 +1397,6 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f08004f
 			public const int buttonConnect = 2131230799;
 			
-			// aapt resource value: 0x7f080050
-			public const int buttonExecute = 2131230800;
-			
 			// aapt resource value: 0x7f080036
 			public const int buttonPanel = 2131230774;
 			
@@ -1408,6 +1405,9 @@ namespace CarControlAndroid
 			
 			// aapt resource value: 0x7f080056
 			public const int button_scan = 2131230806;
+			
+			// aapt resource value: 0x7f080050
+			public const int checkBoxContinuous = 2131230800;
 			
 			// aapt resource value: 0x7f080068
 			public const int checkBoxResultSelect = 2131230824;
@@ -2053,7 +2053,7 @@ namespace CarControlAndroid
 			public const int title_paired_devices = 2131361832;
 			
 			// aapt resource value: 0x7f0a0041
-			public const int tool_button_execute = 2131361857;
+			public const int tool_check_continuous = 2131361857;
 			
 			// aapt resource value: 0x7f0a003d
 			public const int tool_job_arguments = 2131361853;
