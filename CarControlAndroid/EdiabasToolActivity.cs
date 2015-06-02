@@ -156,7 +156,6 @@ namespace CarControlAndroid
         private Task jobTask;
         private volatile bool runContinuous = false;
         private volatile bool ediabasJobAbort = false;
-        private int ignoreResultSelectLayoutChange = 0;
         private string sgbdFileName = string.Empty;
         private string deviceName = string.Empty;
         private string deviceAddress = string.Empty;
@@ -213,43 +212,18 @@ namespace CarControlAndroid
                     NewJobSelected();
                     DisplayJobComments();
                 };
-            if (Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
-            {
-                spinnerJobs.LayoutChange += (sender, args) =>
-                {
-                    DisplayJobComments();
-                };
-            }
 
             editTextArgs = FindViewById<EditText>(Resource.Id.editTextArgs);
             editTextArgs.SetOnTouchListener(this);
-            editTextArgs.Click += (sender, args) =>
-                {
-                    DisplayJobArguments();
-                };
 
             spinnerResults = FindViewById<Spinner>(Resource.Id.spinnerResults);
             resultSelectListAdapter = new ResultSelectListAdapter(this);
             spinnerResults.Adapter = resultSelectListAdapter;
             spinnerResults.SetOnTouchListener(this);
             spinnerResults.ItemSelected += (sender, args) =>
-            {
-                DisplayJobResult();
-            };
-            if (Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
-            {
-                spinnerResults.LayoutChange += (sender, args) =>
-                    {
-                        if (ignoreResultSelectLayoutChange > 0)
-                        {
-                            ignoreResultSelectLayoutChange--;
-                        }
-                        else
-                        {
-                            DisplayJobResult();
-                        }
-                    };
-            }
+                {
+                    DisplayJobResult();
+                };
 
             listViewInfo = FindViewById<ListView>(Resource.Id.infoList);
             infoListAdapter = new ResultListAdapter(this);
@@ -440,8 +414,17 @@ namespace CarControlAndroid
             switch (e.Action)
             {
                 case MotionEventActions.Down:
-                    if (v == editTextArgs && editTextArgs.Enabled)
+                    if (v == spinnerJobs)
                     {
+                        DisplayJobComments();
+                    }
+                    else if (v == spinnerResults)
+                    {
+                        DisplayJobResult();
+                    }
+                    else if (v == editTextArgs)
+                    {
+                        DisplayJobArguments();
                         break;
                     }
                     HideKeyboard();
@@ -595,7 +578,6 @@ namespace CarControlAndroid
                 return;
             }
             JobInfo jobInfo = GetSelectedJob();
-            ignoreResultSelectLayoutChange = 1;
             resultSelectListAdapter.Items.Clear();
             if (jobInfo != null)
             {
@@ -671,7 +653,7 @@ namespace CarControlAndroid
                 infoListAdapter.Items.Add(new TableResultItem(GetString(Resource.String.tool_job_result), null));
                 if (spinnerResults.SelectedItemPosition >= 0)
                 {
-                    ExtraInfo info = jobInfo.Results[spinnerResults.SelectedItemPosition];
+                    ExtraInfo info = resultSelectListAdapter.Items[spinnerResults.SelectedItemPosition];
                     StringBuilder stringBuilderComments = new StringBuilder();
                     stringBuilderComments.Append(info.Name + " (" + info.Type + "):");
                     foreach (string comment in info.CommentList)
