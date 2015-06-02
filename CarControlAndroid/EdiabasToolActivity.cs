@@ -444,8 +444,8 @@ namespace CarControlAndroid
                 ediabas.Dispose();
                 ediabas = null;
             }
+            jobList.Clear();
             UpdateDisplay();
-            jobList.Clear();    // clear job list after the adapters!
             return true;
         }
 
@@ -673,21 +673,47 @@ namespace CarControlAndroid
             {
                 return;
             }
-            if (!EdiabasClose())
+            if (ediabas != null)
             {
-                return;
+                bool interfaceChanged = false;
+                if (activityCommon.SelectedInterface == ActivityCommon.InterfaceType.ENET)
+                {
+                    if (!(ediabas.EdInterfaceClass is EdInterfaceEnet))
+                    {
+                        interfaceChanged = true;
+                    }
+                }
+                else
+                {
+                    if (!(ediabas.EdInterfaceClass is EdInterfaceObd))
+                    {
+                        interfaceChanged = true;
+                    }
+                }
+                if (interfaceChanged)
+                {
+                    if (!EdiabasClose())
+                    {
+                        return;
+                    }
+                }
             }
-            ediabas = new EdiabasNet();
-            if (activityCommon.SelectedInterface == ActivityCommon.InterfaceType.ENET)
+            if (ediabas == null)
             {
-                ediabas.EdInterfaceClass = new EdInterfaceEnet();
+                ediabas = new EdiabasNet();
+                if (activityCommon.SelectedInterface == ActivityCommon.InterfaceType.ENET)
+                {
+                    ediabas.EdInterfaceClass = new EdInterfaceEnet();
+                }
+                else
+                {
+                    ediabas.EdInterfaceClass = new EdInterfaceObd();
+                }
+                ediabas.AbortJobFunc = AbortEdiabasJob;
+                ediabas.SetConfigProperty("EcuPath", Path.GetDirectoryName(sgbdFileName));
             }
-            else
-            {
-                ediabas.EdInterfaceClass = new EdInterfaceObd();
-            }
-            ediabas.AbortJobFunc = AbortEdiabasJob;
-            ediabas.SetConfigProperty("EcuPath", Path.GetDirectoryName(sgbdFileName));
+            jobList.Clear();
+            UpdateDisplay();
 
             if (ediabas.EdInterfaceClass is EdInterfaceObd)
             {
