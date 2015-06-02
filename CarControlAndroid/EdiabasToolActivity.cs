@@ -23,7 +23,7 @@ namespace CarControlAndroid
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                         Android.Content.PM.ConfigChanges.Orientation |
                         Android.Content.PM.ConfigChanges.ScreenSize)]
-    public class EdiabasToolActivity : AppCompatActivity
+    public class EdiabasToolActivity : AppCompatActivity, View.IOnTouchListener
     {
         private enum activityRequest
         {
@@ -185,8 +185,10 @@ namespace CarControlAndroid
             SupportActionBar.SetCustomView(barConnectView, barLayoutParams);
 
             checkBoxContinuous = barConnectView.FindViewById<CheckBox>(Resource.Id.checkBoxContinuous);
+            checkBoxContinuous.SetOnTouchListener(this);
 
             buttonConnect = barConnectView.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
+            buttonConnect.SetOnTouchListener(this);
             buttonConnect.Click += (sender, args) =>
             {
                 if (buttonConnect.Checked)
@@ -205,9 +207,9 @@ namespace CarControlAndroid
             spinnerJobs = FindViewById<Spinner>(Resource.Id.spinnerJobs);
             jobListAdapter = new JobListAdapter(this);
             spinnerJobs.Adapter = jobListAdapter;
+            spinnerJobs.SetOnTouchListener(this);
             spinnerJobs.ItemSelected += (sender, args) =>
                 {
-                    HideKeyboard();
                     NewJobSelected();
                     DisplayJobComments();
                 };
@@ -220,6 +222,7 @@ namespace CarControlAndroid
             }
 
             editTextArgs = FindViewById<EditText>(Resource.Id.editTextArgs);
+            editTextArgs.SetOnTouchListener(this);
             editTextArgs.Click += (sender, args) =>
                 {
                     DisplayJobArguments();
@@ -228,9 +231,9 @@ namespace CarControlAndroid
             spinnerResults = FindViewById<Spinner>(Resource.Id.spinnerResults);
             resultSelectListAdapter = new ResultSelectListAdapter(this);
             spinnerResults.Adapter = resultSelectListAdapter;
+            spinnerResults.SetOnTouchListener(this);
             spinnerResults.ItemSelected += (sender, args) =>
             {
-                HideKeyboard();
                 DisplayJobResult();
             };
             if (Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
@@ -251,6 +254,7 @@ namespace CarControlAndroid
             listViewInfo = FindViewById<ListView>(Resource.Id.infoList);
             infoListAdapter = new ResultListAdapter(this);
             listViewInfo.Adapter = infoListAdapter;
+            listViewInfo.SetOnTouchListener(this);
 
             activityCommon = new ActivityCommon(this);
             activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)Intent.GetIntExtra(EXTRA_INTERFACE, (int)ActivityCommon.InterfaceType.NONE);
@@ -393,6 +397,7 @@ namespace CarControlAndroid
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
+            HideKeyboard();
             if (isJobRunning())
             {
                 return true;
@@ -428,6 +433,21 @@ namespace CarControlAndroid
                     return true;
             }
             return base.OnOptionsItemSelected(item);
+        }
+
+        public bool OnTouch(View v, MotionEvent e)
+        {
+            switch (e.Action)
+            {
+                case MotionEventActions.Down:
+                    if (v == editTextArgs && editTextArgs.Enabled)
+                    {
+                        break;
+                    }
+                    HideKeyboard();
+                    break;
+            }
+            return false;
         }
 
         private bool EdiabasClose()
