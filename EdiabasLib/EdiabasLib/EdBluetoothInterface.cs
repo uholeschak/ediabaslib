@@ -135,12 +135,12 @@ namespace EdiabasLib
         {
             if (_bluetoothSocket == null)
             {
-                return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
+                return EdInterfaceObd.InterfaceErrorResult.ConfigError;
             }
             _currentBaudRate = baudRate;
             _currentWordLength = dataBits;
             _currentParity = parity;
-            return EdInterfaceObd.InterfaceErrorResult.NO_ERROR;
+            return EdInterfaceObd.InterfaceErrorResult.NoError;
         }
 
         public static bool InterfaceSetDtr(bool dtr)
@@ -246,7 +246,7 @@ namespace EdiabasLib
                     {
                         if (ediabasLog != null)
                         {
-                            ediabasLog.LogData(EdiabasNet.ED_LOG_LEVEL.IFH, receiveData, offset, recLen, "Rec ");
+                            ediabasLog.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, offset, recLen, "Rec ");
                         }
                         return false;
                     }

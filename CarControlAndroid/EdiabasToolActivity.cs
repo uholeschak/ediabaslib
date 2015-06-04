@@ -16,6 +16,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CarControlAndroid.FilePicker;
+// ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
+// ReSharper disable LoopCanBeConvertedToQuery
 
 namespace CarControlAndroid
 {
@@ -749,9 +751,9 @@ namespace CarControlAndroid
                             EdiabasNet.ResultData resultData;
                             if (resultDict.TryGetValue("JOBNAME", out resultData))
                             {
-                                if (resultData.opData is string)
+                                if (resultData.OpData is string)
                                 {
-                                    _jobList.Add(new JobInfo((string)resultData.opData));
+                                    _jobList.Add(new JobInfo((string)resultData.OpData));
                                 }
                             }
                             dictIndex++;
@@ -774,9 +776,9 @@ namespace CarControlAndroid
                                 EdiabasNet.ResultData resultData;
                                 if (resultDict.TryGetValue("JOBCOMMENT" + i.ToString(Culture), out resultData))
                                 {
-                                    if (resultData.opData is string)
+                                    if (resultData.OpData is string)
                                     {
-                                        job.Comments.Add((string)resultData.opData);
+                                        job.Comments.Add((string)resultData.OpData);
                                     }
                                 }
                                 else
@@ -811,25 +813,25 @@ namespace CarControlAndroid
                                 List<string> argCommentList = new List<string>();
                                 if (resultDict.TryGetValue("ARG", out resultData))
                                 {
-                                    if (resultData.opData is string)
+                                    if (resultData.OpData is string)
                                     {
-                                        arg = (string)resultData.opData;
+                                        arg = (string)resultData.OpData;
                                     }
                                 }
                                 if (resultDict.TryGetValue("ARGTYPE", out resultData))
                                 {
-                                    if (resultData.opData is string)
+                                    if (resultData.OpData is string)
                                     {
-                                        argType = (string)resultData.opData;
+                                        argType = (string)resultData.OpData;
                                     }
                                 }
                                 for (int i = 0; ; i++)
                                 {
                                     if (resultDict.TryGetValue("ARGCOMMENT" + i.ToString(Culture), out resultData))
                                     {
-                                        if (resultData.opData is string)
+                                        if (resultData.OpData is string)
                                         {
-                                            argCommentList.Add((string)resultData.opData);
+                                            argCommentList.Add((string)resultData.OpData);
                                         }
                                     }
                                     else
@@ -867,25 +869,25 @@ namespace CarControlAndroid
                                 List<string> resultCommentList = new List<string>();
                                 if (resultDict.TryGetValue("RESULT", out resultData))
                                 {
-                                    if (resultData.opData is string)
+                                    if (resultData.OpData is string)
                                     {
-                                        result = (string)resultData.opData;
+                                        result = (string)resultData.OpData;
                                     }
                                 }
                                 if (resultDict.TryGetValue("RESULTTYPE", out resultData))
                                 {
-                                    if (resultData.opData is string)
+                                    if (resultData.OpData is string)
                                     {
-                                        resultType = (string)resultData.opData;
+                                        resultType = (string)resultData.OpData;
                                     }
                                 }
                                 for (int i = 0; ; i++)
                                 {
                                     if (resultDict.TryGetValue("RESULTCOMMENT" + i.ToString(Culture), out resultData))
                                     {
-                                        if (resultData.opData is string)
+                                        if (resultData.OpData is string)
                                         {
-                                            resultCommentList.Add((string)resultData.opData);
+                                            resultCommentList.Add((string)resultData.OpData);
                                         }
                                     }
                                     else
@@ -1024,18 +1026,18 @@ namespace CarControlAndroid
                     {
                         EdiabasNet.ResultData resultData = resultDict[key];
                         string resultText = string.Empty;
-                        if (resultData.opData is string)
+                        if (resultData.OpData is string)
                         {
-                            resultText = (string)resultData.opData;
+                            resultText = (string)resultData.OpData;
                         }
-                        else if (resultData.opData is double)
+                        else if (resultData.OpData is double)
                         {
-                            resultText = string.Format(Culture, "R: {0}", (Double)resultData.opData);
+                            resultText = string.Format(Culture, "R: {0}", (Double)resultData.OpData);
                         }
-                        else if (resultData.opData is long)
+                        else if (resultData.OpData is long)
                         {
-                            Int64 value = (Int64)resultData.opData;
-                            switch (resultData.type)
+                            Int64 value = (Int64)resultData.OpData;
+                            switch (resultData.ResType)
                             {
                                 case EdiabasNet.ResultType.TypeB:  // 8 bit
                                     resultText = string.Format(Culture, "B: {0} 0x{1:X02}", value, (Byte)value);
@@ -1066,16 +1068,16 @@ namespace CarControlAndroid
                                     break;
                             }
                         }
-                        else if (resultData.opData.GetType() == typeof(byte[]))
+                        else if (resultData.OpData.GetType() == typeof(byte[]))
                         {
-                            byte[] data = (byte[])resultData.opData;
+                            byte[] data = (byte[])resultData.OpData;
                             foreach (byte value in data)
                             {
                                 resultText += string.Format(Culture, "{0:X02} ", value);
                             }
                         }
                         stringBuilder.Append("\r\n");
-                        stringBuilder.Append(resultData.name + ": " + resultText);
+                        stringBuilder.Append(resultData.Name + ": " + resultText);
                     }
                     messageList.Add(stringBuilder.ToString());
                     dataSet++;

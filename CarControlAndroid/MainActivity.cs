@@ -16,6 +16,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using CarControlAndroid.FilePicker;
+// ReSharper disable LoopCanBeConvertedToQuery
 
 namespace CarControlAndroid
 {
@@ -776,10 +777,10 @@ namespace CarControlAndroid
             EdiabasNet.ResultData resultData;
             if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
             {
-                if (resultData.opData is Int64)
+                if (resultData.OpData is Int64)
                 {
                     found = true;
-                    return (Int64)resultData.opData;
+                    return (Int64)resultData.OpData;
                 }
             }
             return 0;
@@ -791,10 +792,10 @@ namespace CarControlAndroid
             EdiabasNet.ResultData resultData;
             if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
             {
-                if (resultData.opData is Double)
+                if (resultData.OpData is Double)
                 {
                     found = true;
-                    return (Double)resultData.opData;
+                    return (Double)resultData.OpData;
                 }
             }
             return 0;
@@ -806,10 +807,11 @@ namespace CarControlAndroid
             EdiabasNet.ResultData resultData;
             if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
             {
-                if (resultData.opData is String)
+                // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
+                if (resultData.OpData is String)
                 {
                     found = true;
-                    return (String)resultData.opData;
+                    return (String)resultData.OpData;
                 }
             }
             return string.Empty;

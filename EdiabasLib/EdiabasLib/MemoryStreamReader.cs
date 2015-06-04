@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.IO.MemoryMappedFiles;
-using System.Runtime.InteropServices;
 
 namespace EdiabasLib
 {
@@ -13,18 +9,18 @@ namespace EdiabasLib
         public MemoryStreamReader(string path)
         {
             FileInfo fileInfo = new FileInfo(path);
-            this.fileLength = fileInfo.Length;
+            _fileLength = fileInfo.Length;
 
             FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.None);
             try
             {
-                mmFile = MemoryMappedFile.CreateFromFile(fs, null, 0, MemoryMappedFileAccess.Read, null, HandleInheritability.None, false);
-                mmStream = mmFile.CreateViewStream(0, 0, MemoryMappedFileAccess.Read);
+                _mmFile = MemoryMappedFile.CreateFromFile(fs, null, 0, MemoryMappedFileAccess.Read, null, HandleInheritability.None, false);
+                _mmStream = _mmFile.CreateViewStream(0, 0, MemoryMappedFileAccess.Read);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Close ();
-                throw ex;
+                CloseHandles();
+                throw;
             }
         }
 
@@ -61,7 +57,7 @@ namespace EdiabasLib
         {
             get
             {
-                return this.fileLength;
+                return _fileLength;
             }
         }
 
@@ -69,11 +65,11 @@ namespace EdiabasLib
         {
             get
             {
-                return mmStream.Position;
+                return _mmStream.Position;
             }
             set
             {
-                mmStream.Position = value;
+                _mmStream.Position = value;
             }
         }
 
@@ -103,41 +99,32 @@ namespace EdiabasLib
 
         public override void Flush()
         {
-            mmStream.Flush();
+            _mmStream.Flush();
         }
 
         public override void Close()
         {
-            if (mmStream != null)
-            {
-                mmStream.Dispose();
-                mmStream = null;
-            }
-            if (mmFile != null)
-            {
-                mmFile.Dispose();
-                mmFile = null;
-            }
+            CloseHandles();
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            long num = mmStream.Position;
-            long num2 = mmStream.Position + (long)count;
+            long num = _mmStream.Position;
+            long num2 = _mmStream.Position + count;
             if (num < 0L)
             {
-                throw new ArgumentOutOfRangeException("Attempt to read before the start of the stream");
+                throw new Exception("Attempt to read before the start of the stream");
             }
             int useCount = count;
-            if (num2 > this.fileLength)
+            if (num2 > _fileLength)
             {
-                useCount = (int)(this.fileLength - offset - mmStream.Position);
+                useCount = (int)(_fileLength - offset - _mmStream.Position);
                 if (useCount < 0)
                 {
                     useCount = 0;
                 }
             }
-            return mmStream.Read(buffer, offset, useCount);
+            return _mmStream.Read(buffer, offset, useCount);
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -151,23 +138,23 @@ namespace EdiabasLib
                     break;
 
                 case SeekOrigin.Current:
-                    newPos = mmStream.Position + offset;
+                    newPos = _mmStream.Position + offset;
                     break;
 
                 case SeekOrigin.End:
-                    newPos = fileLength + offset;
+                    newPos = _fileLength + offset;
                     break;
             }
             if (newPos < 0)
             {
-                throw new ArgumentOutOfRangeException("Attempt to seek before start of stream");
+                throw new Exception("Attempt to seek before start of stream");
             }
-            if (newPos >= fileLength)
+            if (newPos >= _fileLength)
             {
-                throw new ArgumentOutOfRangeException("Attempt to seek after end of stream");
+                throw new Exception("Attempt to seek after end of stream");
             }
-            mmStream.Position = newPos;
-            return mmStream.Position;
+            _mmStream.Position = newPos;
+            return _mmStream.Position;
         }
 
         public override void SetLength(long value)
@@ -200,8 +187,22 @@ namespace EdiabasLib
             throw new NotSupportedException();
         }
 
-        private MemoryMappedFile mmFile = null;
-        private MemoryMappedViewStream mmStream = null;
-        private long fileLength = 0;
+        private void CloseHandles()
+        {
+            if (_mmStream != null)
+            {
+                _mmStream.Dispose();
+                _mmStream = null;
+            }
+            if (_mmFile != null)
+            {
+                _mmFile.Dispose();
+                _mmFile = null;
+            }
+        }
+
+        private MemoryMappedFile _mmFile;
+        private MemoryMappedViewStream _mmStream;
+        private readonly long _fileLength;
     }
 }

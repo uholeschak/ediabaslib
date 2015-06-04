@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Ftdi
+namespace EdiabasLib
 {
     /// <summary>
     /// This class will deal with the USB communication
     /// </summary>
     /// Here we will cast all the ftd2xx.h functions and structure that we need
     /// and will add some other specific communaction protocols 
-    public class Ftd2xx
+    public class Ftd2Xx
     {
+        // ReSharper disable InconsistentNaming
         #region Stupid defines from the dll
 
         // FT_OpenEx Flags
@@ -135,7 +136,7 @@ namespace Ftdi
         /// <summary>
         /// List of FTDI device types
         /// </summary>
-        public enum FT_DEVICE : int
+        public enum FT_DEVICE
         {
             /// <summary>
             /// FT232B or FT245B device
@@ -179,6 +180,8 @@ namespace Ftdi
             FT_DEVICE_X_SERIES
         };
 
+        // ReSharper restore InconsistentNaming
+
         #endregion Stupid Marshals
 
         #region W32 Functions from the dll
@@ -202,13 +205,13 @@ namespace Ftdi
         public static extern FT_STATUS FT_Open(UInt32 uiPort, out IntPtr ftHandle);
 
         [DllImport("ftd2xx")]
-        public static extern FT_STATUS FT_OpenEx(IntPtr pArg1, UInt32 Flags, out IntPtr ftHandle);
+        public static extern FT_STATUS FT_OpenEx(IntPtr pArg1, UInt32 flags, out IntPtr ftHandle);
 
         [DllImport("ftd2xx")]
-        public static extern FT_STATUS FT_OpenEx(string pArg1, UInt32 Flags, out IntPtr ftHandle);
+        public static extern FT_STATUS FT_OpenEx(string pArg1, UInt32 flags, out IntPtr ftHandle);
 
         [DllImport("ftd2xx")]
-        public static extern FT_STATUS FT_ListDevices(ref IntPtr pArg1, ref IntPtr pArg2, UInt32 Flags);
+        public static extern FT_STATUS FT_ListDevices(ref IntPtr pArg1, ref IntPtr pArg2, UInt32 flags);
 
         [DllImport("ftd2xx")]
         public static extern FT_STATUS FT_Close(IntPtr ftHandle);
@@ -223,13 +226,13 @@ namespace Ftdi
         public static extern FT_STATUS FT_SetBaudRate(IntPtr ftHandle, UInt32 uBaudRate);
 
         [DllImport("ftd2xx")]
-        public static extern FT_STATUS FT_SetDivisor(IntPtr ftHandle, UInt16 Divisor);
+        public static extern FT_STATUS FT_SetDivisor(IntPtr ftHandle, UInt16 divisor);
 
         [DllImport("ftd2xx")]
         public static extern FT_STATUS FT_SetDataCharacteristics(IntPtr ftHandle, Byte uWordLength, Byte uStopBits, Byte uParity);
 
         [DllImport("ftd2xx")]
-        public static extern FT_STATUS FT_SetFlowControl(IntPtr ftHandle, UInt16 FlowControl, Byte XonChar, Byte XoffChar);
+        public static extern FT_STATUS FT_SetFlowControl(IntPtr ftHandle, UInt16 flowControl, Byte xonChar, Byte xoffChar);
 
         [DllImport("ftd2xx")]
         public static extern FT_STATUS FT_ResetDevice(IntPtr ftHandle);
@@ -250,10 +253,10 @@ namespace Ftdi
         public static extern FT_STATUS FT_GetModemStatus(IntPtr ftHandle, ref UInt32 pModemStatus);
 
         [DllImport("ftd2xx")]
-        public static extern FT_STATUS FT_Purge(IntPtr ftHandle, UInt32 Mask);
+        public static extern FT_STATUS FT_Purge(IntPtr ftHandle, UInt32 mask);
 
         [DllImport("ftd2xx")]
-        public static extern FT_STATUS FT_SetTimeouts(IntPtr ftHandle, UInt32 ReadTimeout, UInt32 WriteTimeout);
+        public static extern FT_STATUS FT_SetTimeouts(IntPtr ftHandle, UInt32 readTimeout, UInt32 writeTimeout);
 
         [DllImport("ftd2xx")]
         public static extern FT_STATUS FT_GetQueueStatus(IntPtr ftHandle, out UInt32 dwRxBytes);
@@ -283,7 +286,7 @@ namespace Ftdi
         public static extern FT_STATUS FT_SetUSBParameters(IntPtr ftHandle, UInt32 ulInTransferSize, UInt32 ulOutTransferSize);
 
         [DllImport("ftd2xx")]
-        public static extern FT_STATUS FT_GetDeviceInfo(IntPtr ftHandle, out FT_DEVICE pftType, out UInt32 lpdwID, byte[] pcSerialNumber, byte[] pcDescription, IntPtr pvDummy);
+        public static extern FT_STATUS FT_GetDeviceInfo(IntPtr ftHandle, out FT_DEVICE pftType, out UInt32 lpdwId, byte[] pcSerialNumber, byte[] pcDescription, IntPtr pvDummy);
 
         [DllImport("ftd2xx")]
         public static extern FT_STATUS FT_SetResetPipeRetryCount(IntPtr ftHandle, UInt32 dwCount);
@@ -298,7 +301,7 @@ namespace Ftdi
         public static extern FT_STATUS FT_ResetPort(IntPtr ftHandle);
 
         [DllImport("ftd2xx")]
-        public static extern FT_STATUS FT_GetDeviceInfoDetail(UInt32 dwIndex, out UInt32 lpdwFlags, out FT_DEVICE lpdwType, out UInt32 lpdwID, out UInt32 lpdwLocId, byte[] lpSerialNumber, byte[] lpDescription, out IntPtr pftHandle);
+        public static extern FT_STATUS FT_GetDeviceInfoDetail(UInt32 dwIndex, out UInt32 lpdwFlags, out FT_DEVICE lpdwType, out UInt32 lpdwId, out UInt32 lpdwLocId, byte[] lpSerialNumber, byte[] lpDescription, out IntPtr pftHandle);
 
         #endregion Normal Functions
 
@@ -306,7 +309,7 @@ namespace Ftdi
 
         public static FT_STATUS FT_ReadWrapper(IntPtr ftHandle, byte[] buffer, int bytesToRead, int offset, out UInt32 bytesReturned)
         {
-            FT_STATUS ftStatus = FT_STATUS.FT_OTHER_ERROR;
+            FT_STATUS ftStatus;
             IntPtr ptr = (IntPtr) 0;
 
             bytesReturned = 0;
@@ -332,7 +335,7 @@ namespace Ftdi
 
         public static FT_STATUS FT_WriteWrapper(IntPtr ftHandle, byte[] buffer, int bufferSize, int offset, out UInt32 bytesWritten)
         {
-            FT_STATUS ftStatus = FT_STATUS.FT_OTHER_ERROR;
+            FT_STATUS ftStatus;
             IntPtr ptr = (IntPtr) 0;
 
             bytesWritten = 0;
@@ -360,6 +363,7 @@ namespace Ftdi
        
         #region other defines and enumerations for the communication namespace
 
+        // ReSharper disable InconsistentNaming
         /// <summary>
         /// Enumaration containing the varios return status for the DLL functions.
         /// </summary>
@@ -386,6 +390,7 @@ namespace Ftdi
             FT_NOT_SUPPORTED,
             FT_OTHER_ERROR
         }
+        // ReSharper restore InconsistentNaming
 
         #endregion other defines and enumerations for the communication namespace
     }

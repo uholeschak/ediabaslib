@@ -142,9 +142,9 @@
                 EdiabasNet.ResultData resultData;
                 if (resultSets[1].TryGetValue("DONE", out resultData))
                 {
-                    if (resultData.opData is Int64)
+                    if (resultData.OpData is Int64)
                     {
-                        configResult = (int)((Int64)resultData.opData);
+                        configResult = (int)((Int64)resultData.OpData);
                     }
                 }
             }

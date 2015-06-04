@@ -251,9 +251,9 @@
                 EdiabasNet.ResultData resultData;
                 if (resultSets[1].TryGetValue("WERT", out resultData))
                 {
-                    if (resultData.opData is Int64)
+                    if (resultData.OpData is Int64)
                     {
-                        axisMode = (int)((Int64)resultData.opData);
+                        axisMode = (int)((Int64)resultData.OpData);
                     }
                 }
                 EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1], "MODE_CTRL_LESEN_");
@@ -314,9 +314,9 @@
                 EdiabasNet.ResultData resultData;
                 if (resultDict.TryGetValue("STATE_SPEED", out resultData))
                 {
-                    if (resultData.opData is Int64)
+                    if (resultData.OpData is Int64)
                     {
-                        speed = ((Int64)resultData.opData);
+                        speed = ((Int64)resultData.OpData);
                     }
                 }
                 currentSpeed = speed;
