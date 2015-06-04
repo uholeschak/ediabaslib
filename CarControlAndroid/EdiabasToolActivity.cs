@@ -709,7 +709,7 @@ namespace CarControlAndroid
             {
                 ((EdInterfaceObd)_ediabas.EdInterfaceClass).ComPort = "BLUETOOTH:" + _deviceAddress;
             }
-            if (_ediabas.EdInterfaceClass is EdInterfaceEnet)
+            else if (_ediabas.EdInterfaceClass is EdInterfaceEnet)
             {
                 string remoteHost = "auto";
                 if (_activityCommon.Emulator)

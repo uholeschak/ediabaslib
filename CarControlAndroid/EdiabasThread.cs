@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+// ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
 
 namespace CarControlAndroid
 {
@@ -122,7 +123,7 @@ namespace CarControlAndroid
                 {
                     ((EdInterfaceObd)_ediabas.EdInterfaceClass).ComPort = comPort;
                 }
-                if (_ediabas.EdInterfaceClass is EdInterfaceEnet)
+                else if (_ediabas.EdInterfaceClass is EdInterfaceEnet)
                 {
                     if (!string.IsNullOrEmpty(comPort))
                     {
