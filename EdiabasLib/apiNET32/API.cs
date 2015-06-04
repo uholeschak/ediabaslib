@@ -1,62 +1,45 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using EdiabasLib;
+// ReSharper disable InconsistentNaming
 
+// ReSharper disable once CheckNamespace
 namespace Ediabas
 {
     public class API
     {
         public class APIRESULTFIELD
         {
-            private uint apiResult;
-            private ApiInternal.APIRESULTFIELD apiResultField;
+            private uint _apiResult;
 
             public uint value
             {
                 get
                 {
-                    return this.apiResult;
+                    return _apiResult;
                 }
                 set
                 {
-                    this.apiResult = value;
+                    _apiResult = value;
                 }
             }
 
-            public ApiInternal.APIRESULTFIELD ApiResultField
-            {
-                get
-                {
-                    return this.apiResultField;
-                }
-                set
-                {
-                    this.apiResultField = value;
-                }
-            }
+            public ApiInternal.APIRESULTFIELD ApiResultField { get; set; }
 
             public APIRESULTFIELD(uint v)
             {
-                this.apiResult = v;
+                _apiResult = v;
             }
 
-            public static implicit operator API.APIRESULTFIELD(uint v)
+            public static implicit operator APIRESULTFIELD(uint v)
             {
-                return new API.APIRESULTFIELD(v);
+                return new APIRESULTFIELD(v);
             }
 
-            public static implicit operator uint(API.APIRESULTFIELD v)
+            public static implicit operator uint(APIRESULTFIELD v)
             {
-                return v.apiResult;
+                return v._apiResult;
             }
         }
 
-        private static ApiInternal apiInternal;
+        private static readonly ApiInternal _apiInternal;
 
         public const int APICOMPATIBILITYVERSION = 0x700;
         public const int APIBUSY = 0;
@@ -437,7 +420,7 @@ namespace Ediabas
 
         static API()
         {
-            apiInternal = new ApiInternal();
+            _apiInternal = new ApiInternal();
         }
 
         public static bool apiCheckVersion(int versionCompatibility, out string versionInfo)
@@ -447,179 +430,181 @@ namespace Ediabas
 
         public static bool apiInit()
         {
-            return apiInternal.apiInit();
+            return _apiInternal.apiInit();
         }
 
         public static bool apiInitExt(string ifh, string unit, string app, string config)
         {
-            return apiInternal.apiInitExt(ifh, unit, app, config);
+            return _apiInternal.apiInitExt(ifh, unit, app, config);
         }
 
         public static void apiEnd()
         {
-            apiInternal.apiEnd();
+            _apiInternal.apiEnd();
         }
 
         public static bool apiSwitchDevice(string unit, string app)
         {
-            return apiInternal.apiSwitchDevice(unit, app);
+            return _apiInternal.apiSwitchDevice(unit, app);
         }
 
         public static void apiJob(string ecu, string job, string para, string result)
         {
-            apiInternal.apiJob(ecu, job, para, result);
+            _apiInternal.apiJob(ecu, job, para, result);
         }
 
         public static void apiJobData(string ecu, string job, byte[] para, int paralen, string result)
         {
-            apiInternal.apiJobData(ecu, job, para, paralen, result);
+            _apiInternal.apiJobData(ecu, job, para, paralen, result);
         }
 
         public static void apiJobExt(string ecu, string job, byte[] stdpara, int stdparalen, byte[] para, int paralen, string result, int reserved)
         {
-            apiInternal.apiJobExt(ecu, job, stdpara, stdparalen, para, paralen, result, reserved);
+            _apiInternal.apiJobExt(ecu, job, stdpara, stdparalen, para, paralen, result, reserved);
         }
 
         public static int apiJobInfo(out string infoText)
         {
-            return apiInternal.apiJobInfo(out infoText);
+            return _apiInternal.apiJobInfo(out infoText);
         }
 
         public static bool apiResultChar(out char buffer, string result, ushort rset)
         {
-            return apiInternal.apiResultChar(out buffer, result, rset);
+            return _apiInternal.apiResultChar(out buffer, result, rset);
         }
 
         public static bool apiResultByte(out byte buffer, string result, ushort rset)
         {
-            return apiInternal.apiResultByte(out buffer, result, rset);
+            return _apiInternal.apiResultByte(out buffer, result, rset);
         }
 
         public static bool apiResultInt(out short buffer, string result, ushort rset)
         {
-            return apiInternal.apiResultInt(out buffer, result, rset);
+            return _apiInternal.apiResultInt(out buffer, result, rset);
         }
 
         public static bool apiResultWord(out ushort buffer, string result, ushort rset)
         {
-            return apiInternal.apiResultWord(out buffer, result, rset);
+            return _apiInternal.apiResultWord(out buffer, result, rset);
         }
 
         public static bool apiResultLong(out int buffer, string result, ushort rset)
         {
-            return apiInternal.apiResultLong(out buffer, result, rset);
+            return _apiInternal.apiResultLong(out buffer, result, rset);
         }
 
         public static bool apiResultDWord(out uint buffer, string result, ushort rset)
         {
-            return apiInternal.apiResultDWord(out buffer, result, rset);
+            return _apiInternal.apiResultDWord(out buffer, result, rset);
         }
 
         public static bool apiResultReal(out double buffer, string result, ushort rset)
         {
-            return apiInternal.apiResultReal(out buffer, result, rset);
+            return _apiInternal.apiResultReal(out buffer, result, rset);
         }
 
         public static bool apiResultText(out string buffer, string result, ushort rset, string format)
         {
-            return apiInternal.apiResultText(out buffer, result, rset, format);
+            return _apiInternal.apiResultText(out buffer, result, rset, format);
         }
 
         public static bool apiResultText(out char[] buffer, string result, ushort rset, string format)
         {
-            return apiInternal.apiResultText(out buffer, result, rset, format);
+            return _apiInternal.apiResultText(out buffer, result, rset, format);
         }
 
         public static bool apiResultBinary(out byte[] buffer, out ushort bufferLen, string result, ushort rset)
         {
-            return apiInternal.apiResultBinary(out buffer, out bufferLen, result, rset);
+            return _apiInternal.apiResultBinary(out buffer, out bufferLen, result, rset);
         }
 
         public static bool apiResultBinaryExt(out byte[] buffer, out uint bufferLen, uint bufferSize, string result, ushort rset)
         {
-            return apiInternal.apiResultBinaryExt(out buffer, out bufferLen, bufferSize, result, rset);
+            return _apiInternal.apiResultBinaryExt(out buffer, out bufferLen, bufferSize, result, rset);
         }
 
         public static bool apiResultFormat(out int buffer, string result, ushort rset)
         {
-            return apiInternal.apiResultFormat(out buffer, result, rset);
+            return _apiInternal.apiResultFormat(out buffer, result, rset);
         }
 
         public static bool apiResultNumber(out ushort buffer, ushort rset)
         {
-            return apiInternal.apiResultNumber(out buffer, rset);
+            return _apiInternal.apiResultNumber(out buffer, rset);
         }
 
         public static bool apiResultName(out string buffer, ushort index, ushort rset)
         {
-            return apiInternal.apiResultName(out buffer, index, rset);
+            return _apiInternal.apiResultName(out buffer, index, rset);
         }
 
         public static bool apiResultSets(out ushort rsets)
         {
-            return apiInternal.apiResultSets(out rsets);
+            return _apiInternal.apiResultSets(out rsets);
         }
 
         public static bool apiResultVar(out string var)
         {
-            return apiInternal.apiResultVar(out var);
+            return _apiInternal.apiResultVar(out var);
         }
 
-        public static API.APIRESULTFIELD apiResultsNew()
+        public static APIRESULTFIELD apiResultsNew()
         {
-            API.APIRESULTFIELD resultField = new APIRESULTFIELD(0);
-            resultField.ApiResultField = apiInternal.apiResultsNew();
+            APIRESULTFIELD resultField = new APIRESULTFIELD(0)
+            {
+                ApiResultField = _apiInternal.apiResultsNew()
+            };
             return resultField;
         }
 
-        public static void apiResultsScope(API.APIRESULTFIELD resultField)
+        public static void apiResultsScope(APIRESULTFIELD resultField)
         {
-            apiInternal.apiResultsScope(resultField.ApiResultField);
+            _apiInternal.apiResultsScope(resultField.ApiResultField);
         }
 
-        public static void apiResultsDelete(API.APIRESULTFIELD resultField)
+        public static void apiResultsDelete(APIRESULTFIELD resultField)
         {
-            apiInternal.apiResultsDelete(resultField.ApiResultField);
+            _apiInternal.apiResultsDelete(resultField.ApiResultField);
         }
 
         public static int apiState()
         {
-            return apiInternal.apiState();
+            return _apiInternal.apiState();
         }
 
         public static int apiStateExt(int suspendTime)
         {
-            return apiInternal.apiStateExt(suspendTime);
+            return _apiInternal.apiStateExt(suspendTime);
         }
 
         public static void apiBreak()
         {
-            apiInternal.apiBreak();
+            _apiInternal.apiBreak();
         }
 
         public static int apiErrorCode()
         {
-            return apiInternal.apiErrorCode();
+            return _apiInternal.apiErrorCode();
         }
 
         public static string apiErrorText()
         {
-            return apiInternal.apiErrorText();
+            return _apiInternal.apiErrorText();
         }
 
         public static bool apiSetConfig(string cfgName, string cfgValue)
         {
-            return apiInternal.apiSetConfig(cfgName, cfgValue);
+            return _apiInternal.apiSetConfig(cfgName, cfgValue);
         }
 
         public static bool apiGetConfig(string cfgName, out string cfgValue)
         {
-            return apiInternal.apiGetConfig(cfgName, out cfgValue);
+            return _apiInternal.apiGetConfig(cfgName, out cfgValue);
         }
 
         public static void apiTrace(string msg)
         {
-            apiInternal.apiTrace(msg);
+            _apiInternal.apiTrace(msg);
         }
 
         public static bool apiXSysSetConfig(string cfgName, string cfgValue)
