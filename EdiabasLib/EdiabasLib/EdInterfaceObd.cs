@@ -825,7 +825,7 @@ namespace EdiabasLib
             }
             else
 #else
-            if (this.comPort.ToUpper(culture).StartsWith(EdBluetoothInterface.PortID))
+            if (this.comPort.ToUpper(culture).StartsWith(EdBluetoothInterface.PortId))
             {   // automtatic hook of bluetooth functions
                 interfaceConnectFuncInt = EdBluetoothInterface.InterfaceConnect;
                 interfaceDisconnectFuncInt = EdBluetoothInterface.InterfaceDisconnect;
