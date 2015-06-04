@@ -6,53 +6,45 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using EdiabasLib;
+// ReSharper disable InconsistentNaming
 
+// ReSharper disable once CheckNamespace
 namespace Ediabas
 {
     public class ApiInternal
     {
         public class APIRESULTFIELD
         {
-            private List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
-
-            public List<Dictionary<string, EdiabasNet.ResultData>> ResultSets
-            {
-                get
-                {
-                    return this.resultSets;
-                }
-                set
-                {
-                    this.resultSets = value;
-                }
-            }
+            public List<Dictionary<string, EdiabasNet.ResultData>> ResultSets { get; set; }
 
             public APIRESULTFIELD(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
             {
-                this.resultSets = resultSets;
+                ResultSets = resultSets;
             }
         }
 
-        private static readonly Encoding encoding = Encoding.GetEncoding(1252);
-        private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
-        private static bool firstLog = true;
+        private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
+        private static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
+        private static bool _firstLog = true;
 
-        private volatile EdiabasNet ediabas;
-        private object apiLogLock = new object();
-        private StreamWriter swLog = null;
-        private int logLevelApi = -1;
-        private volatile int apiStateValue;
-        private volatile int localError;
-        private volatile Thread jobThread;
-        private volatile string jobName;
-        private volatile string jobEcuName;
-        private volatile bool abortJob;
-        private volatile List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
+        private volatile EdiabasNet _ediabas;
+        private readonly object _apiLogLock = new object();
+        private StreamWriter _swLog;
+        private int _logLevelApi = -1;
+        private volatile int _apiStateValue;
+        private volatile int _localError;
+        private volatile Thread _jobThread;
+        private volatile string _jobName;
+        private volatile string _jobEcuName;
+        private volatile bool _abortJob;
+        private volatile List<Dictionary<string, EdiabasNet.ResultData>> _resultSets;
 
-        private enum API_LOG_LEVEL : int
+        private enum ApiLogLevel
         {
-            OFF = 0,
-            NORMAL = 1,
+            // ReSharper disable UnusedMember.Local
+            Off = 0,
+            Normal = 1,
+            // ReSharper restore UnusedMember.Local
         };
 
         public const int APICOMPATIBILITYVERSION = 0x700;
@@ -434,14 +426,14 @@ namespace Ediabas
 
         public ApiInternal()
         {
-            ediabas = null;
-            apiStateValue = APIREADY;
-            localError = EDIABAS_ERR_NONE;
-            jobThread = null;
-            jobName = string.Empty;
-            jobEcuName = string.Empty;
-            abortJob = false;
-            resultSets = null;
+            _ediabas = null;
+            _apiStateValue = APIREADY;
+            _localError = EDIABAS_ERR_NONE;
+            _jobThread = null;
+            _jobName = string.Empty;
+            _jobEcuName = string.Empty;
+            _abortJob = false;
+            _resultSets = null;
         }
 
         public static bool apiCheckVersion(int versionCompatibility, out string versionInfo)
@@ -462,20 +454,20 @@ namespace Ediabas
 
         public bool apiInitExt(string ifh, string unit, string app, string config)
         {
-            if (ediabas != null)
+            if (_ediabas != null)
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "apiInitExt({0}, {1}, {2}, {3})", ifh, unit, app, config);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", true);
+                logFormat(ApiLogLevel.Normal, "apiInitExt({0}, {1}, {2}, {3})", ifh, unit, app, config);
+                logFormat(ApiLogLevel.Normal, "={0} ()", true);
                 return true;
             }
 
-            apiStateValue = APIREADY;
-            localError = EDIABAS_ERR_NONE;
-            jobThread = null;
-            jobName = string.Empty;
-            jobEcuName = string.Empty;
-            abortJob = false;
-            resultSets = null;
+            _apiStateValue = APIREADY;
+            _localError = EDIABAS_ERR_NONE;
+            _jobThread = null;
+            _jobName = string.Empty;
+            _jobEcuName = string.Empty;
+            _abortJob = false;
+            _resultSets = null;
 
             setLocalError(EDIABAS_ERR_NONE);
 
@@ -488,11 +480,11 @@ namespace Ediabas
                 }
             }
 
-            ediabas = new EdiabasNet(config);
+            _ediabas = new EdiabasNet(config);
 
             if (string.IsNullOrEmpty(ifh))
             {
-                ifh = ediabas.GetConfigProperty("Interface");
+                ifh = _ediabas.GetConfigProperty("Interface");
             }
             EdInterfaceBase edInterface = new EdInterfaceObd();
             if (!string.IsNullOrEmpty(ifh))
@@ -525,7 +517,7 @@ namespace Ediabas
                 if (edInterface == null)
                 {
                     setLocalError(EDIABAS_IFH_0027);
-                    ediabas.Dispose();
+                    _ediabas.Dispose();
                     return false;
                 }
             }
@@ -533,39 +525,39 @@ namespace Ediabas
             {
                 setLocalError(EDIABAS_API_0006);
                 edInterface.Dispose();
-                ediabas.Dispose();
+                _ediabas.Dispose();
                 return false;
             }
 
-            ediabas.EdInterfaceClass = edInterface;
+            _ediabas.EdInterfaceClass = edInterface;
 
-            ediabas.AbortJobFunc = abortJobFunc;
+            _ediabas.AbortJobFunc = abortJobFunc;
 
-            logFormat(API_LOG_LEVEL.NORMAL, "apiInitExt({0}, {1}, {2}, {3})", ifh, unit, app, config);
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", true);
+            logFormat(ApiLogLevel.Normal, "apiInitExt({0}, {1}, {2}, {3})", ifh, unit, app, config);
+            logFormat(ApiLogLevel.Normal, "={0} ()", true);
             return true;
         }
 
         public void apiEnd()
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiEnd()");
+            logFormat(ApiLogLevel.Normal, "apiEnd()");
 
-            if (ediabas != null)
+            if (_ediabas != null)
             {
-                abortJob = true;
-                while (jobThread != null)
+                _abortJob = true;
+                while (_jobThread != null)
                 {
                     Thread.Sleep(10);
                 }
                 closeLog();
-                ediabas.Dispose();
-                ediabas = null;
+                _ediabas.Dispose();
+                _ediabas = null;
             }
         }
 
         public bool apiSwitchDevice(string unit, string app)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiSwitchDevice({0}, {1})", unit, app);
+            logFormat(ApiLogLevel.Normal, "apiSwitchDevice({0}, {1})", unit, app);
 
             setLocalError(EDIABAS_ERR_NONE);
             if (!string.IsNullOrEmpty(unit))
@@ -581,54 +573,54 @@ namespace Ediabas
 
         public void apiJob(string ecu, string job, string para, string result)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiJob({0}, {1}, {2}, {3})", ecu, job, para, result);
+            logFormat(ApiLogLevel.Normal, "apiJob({0}, {1}, {2}, {3})", ecu, job, para, result);
 
-            byte[] paraBytes = encoding.GetBytes(para);
+            byte[] paraBytes = Encoding.GetBytes(para);
             executeJob(ecu, job, null, 0, paraBytes, paraBytes.Length, result);
         }
 
         public void apiJobData(string ecu, string job, byte[] para, int paralen, string result)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiJobData({0}, {1}, {2}, {3}, {4})", ecu, job, para, paralen, result);
+            logFormat(ApiLogLevel.Normal, "apiJobData({0}, {1}, {2}, {3}, {4})", ecu, job, para, paralen, result);
 
             executeJob(ecu, job, null, 0, para, paralen, result);
         }
 
         public void apiJobExt(string ecu, string job, byte[] stdpara, int stdparalen, byte[] para, int paralen, string result, int reserved)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiJobExt({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})", ecu, job, stdpara, stdparalen, para, paralen, result, reserved);
+            logFormat(ApiLogLevel.Normal, "apiJobExt({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})", ecu, job, stdpara, stdparalen, para, paralen, result, reserved);
 
             executeJob(ecu, job, stdpara, stdparalen, para, paralen, result);
         }
 
         public int apiJobInfo(out string infoText)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiJobInfo()");
+            logFormat(ApiLogLevel.Normal, "apiJobInfo()");
 
             int progressPercent = 0;
-            if (ediabas == null)
+            if (_ediabas == null)
             {
                 setLocalError(EDIABAS_API_0006);
                 infoText = string.Empty;
-                logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", progressPercent, infoText);
+                logFormat(ApiLogLevel.Normal, "={0} ({1})", progressPercent, infoText);
                 return progressPercent;
             }
-            infoText = ediabas.InfoProgressText;
+            infoText = _ediabas.InfoProgressText;
 
-            progressPercent = ediabas.InfoProgressPercent;
+            progressPercent = _ediabas.InfoProgressPercent;
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", progressPercent, infoText);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", progressPercent, infoText);
             return progressPercent;
         }
 
         public bool apiResultChar(out char buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultChar({0}, {1})", result, rset);
+            logFormat(ApiLogLevel.Normal, "apiResultChar({0}, {1})", result, rset);
 
             buffer = '\0';
             if (!waitJobFinish())
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
@@ -640,18 +632,18 @@ namespace Ediabas
             }
             buffer = (char)int64Buffer;
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
         }
 
         public bool apiResultByte(out byte buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultByte({0}, {1})", result, rset);
+            logFormat(ApiLogLevel.Normal, "apiResultByte({0}, {1})", result, rset);
 
             buffer = 0;
             if (!waitJobFinish())
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
@@ -663,18 +655,18 @@ namespace Ediabas
             }
             buffer = (byte)int64Buffer;
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
         }
 
         public bool apiResultInt(out short buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultInt({0}, {1})", result, rset);
+            logFormat(ApiLogLevel.Normal, "apiResultInt({0}, {1})", result, rset);
 
             buffer = 0;
             if (!waitJobFinish())
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
@@ -686,18 +678,18 @@ namespace Ediabas
             }
             buffer = (short)int64Buffer;
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
         }
 
         public bool apiResultWord(out ushort buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultWord({0}, {1})", result, rset);
+            logFormat(ApiLogLevel.Normal, "apiResultWord({0}, {1})", result, rset);
 
             buffer = 0;
             if (!waitJobFinish())
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
@@ -709,18 +701,18 @@ namespace Ediabas
             }
             buffer = (ushort)int64Buffer;
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
         }
 
         public bool apiResultLong(out int buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultLong({0}, {1})", result, rset);
+            logFormat(ApiLogLevel.Normal, "apiResultLong({0}, {1})", result, rset);
 
             buffer = 0;
             if (!waitJobFinish())
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
@@ -732,18 +724,18 @@ namespace Ediabas
             }
             buffer = (int)int64Buffer;
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
         }
 
         public bool apiResultDWord(out uint buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultDWord({0}, {1})", result, rset);
+            logFormat(ApiLogLevel.Normal, "apiResultDWord({0}, {1})", result, rset);
 
             buffer = 0;
             if (!waitJobFinish())
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
@@ -755,18 +747,18 @@ namespace Ediabas
             }
             buffer = (uint)int64Buffer;
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
         }
 
         public bool apiResultReal(out double buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultReal({0}, {1})", result, rset);
+            logFormat(ApiLogLevel.Normal, "apiResultReal({0}, {1})", result, rset);
 
             buffer = 0;
             if (!waitJobFinish())
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
@@ -774,37 +766,37 @@ namespace Ediabas
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
-            if ((resultData.OpData.GetType() == typeof(Int64)))
+            if ((resultData.OpData is long))
             {
                 Int64 value = (Int64)resultData.OpData;
-                buffer = (Double)value;
+                buffer = value;
             }
-            else if ((resultData.OpData.GetType() == typeof(Double)))
+            else if ((resultData.OpData is double))
             {
                 buffer = (Double)resultData.OpData;
             }
             else
             {
                 setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
         }
 
         public bool apiResultText(out string buffer, string result, ushort rset, string format)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultText({0}, {1}, {2})", result, rset, format);
+            logFormat(ApiLogLevel.Normal, "apiResultText({0}, {1}, {2})", result, rset, format);
 
             buffer = string.Empty;
             if (!waitJobFinish())
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
@@ -812,7 +804,7 @@ namespace Ediabas
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
@@ -820,23 +812,23 @@ namespace Ediabas
             if (value == null)
             {
                 setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
             buffer = value;
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
         }
 
         public bool apiResultText(out char[] buffer, string result, ushort rset, string format)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultText({0}, {1}, {2})", result, rset, format);
+            logFormat(ApiLogLevel.Normal, "apiResultText({0}, {1}, {2})", result, rset, format);
 
             buffer = null;
             if (!waitJobFinish())
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
@@ -844,7 +836,7 @@ namespace Ediabas
             string text;
             if (apiResultText(out text, result, rset, format))
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
             char[] charArray = text.ToCharArray();
@@ -852,19 +844,19 @@ namespace Ediabas
             charArray[charArray.Length - 1] = '\0';
             buffer = charArray;
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
         }
 
         public bool apiResultBinary(out byte[] buffer, out ushort bufferLen, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultText({0}, {1})", result, rset);
+            logFormat(ApiLogLevel.Normal, "apiResultText({0}, {1})", result, rset);
 
             buffer = null;
             bufferLen = 0;
             if (!waitJobFinish())
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
@@ -872,13 +864,13 @@ namespace Ediabas
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
             if ((resultData.ResType != EdiabasNet.ResultType.TypeY) || (resultData.OpData.GetType() != typeof(byte[])))
             {
                 setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
             byte[] value = (byte[])resultData.OpData;
@@ -891,19 +883,19 @@ namespace Ediabas
             Array.Copy(value, buffer, dataLength);
             bufferLen = (ushort)dataLength;
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, value);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, value);
             return true;
         }
 
         public bool apiResultBinaryExt(out byte[] buffer, out uint bufferLen, uint bufferSize, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultBinaryExt({0}, {1})", result, rset);
+            logFormat(ApiLogLevel.Normal, "apiResultBinaryExt({0}, {1})", result, rset);
 
             buffer = null;
             bufferLen = 0;
             if (!waitJobFinish())
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
@@ -911,13 +903,13 @@ namespace Ediabas
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
             if ((resultData.ResType != EdiabasNet.ResultType.TypeY) || (resultData.OpData.GetType() != typeof(byte[])))
             {
                 setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
             byte[] value = (byte[])resultData.OpData;
@@ -930,18 +922,18 @@ namespace Ediabas
             Array.Copy(value, buffer, dataLength);
             bufferLen = (ushort)dataLength;
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, value);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, value);
             return true;
         }
 
         public bool apiResultFormat(out int buffer, string result, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultFormat({0}, {1})", result, rset);
+            logFormat(ApiLogLevel.Normal, "apiResultFormat({0}, {1})", result, rset);
 
             buffer = 0;
             if (!waitJobFinish())
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
@@ -949,7 +941,7 @@ namespace Ediabas
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
@@ -996,218 +988,218 @@ namespace Ediabas
                     break;
             }
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
         }
 
         public bool apiResultNumber(out ushort buffer, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultNumber({0})", rset);
+            logFormat(ApiLogLevel.Normal, "apiResultNumber({0})", rset);
 
             buffer = 0;
             if (!waitJobFinish())
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
             setLocalError(EDIABAS_ERR_NONE);
-            if (resultSets == null)
+            if (_resultSets == null)
             {
                 setLocalError(EDIABAS_API_0014);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
-            if (rset > resultSets.Count)
+            if (rset > _resultSets.Count)
             {
                 setLocalError(EDIABAS_API_0014);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
-            buffer = (ushort)resultSets[rset].Count;
+            buffer = (ushort)_resultSets[rset].Count;
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
         }
 
         public bool apiResultName(out string buffer, ushort index, ushort rset)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultName({0}, {1})", index, rset);
+            logFormat(ApiLogLevel.Normal, "apiResultName({0}, {1})", index, rset);
 
             buffer = string.Empty;
             if (!waitJobFinish())
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
             setLocalError(EDIABAS_ERR_NONE);
-            if (resultSets == null)
+            if (_resultSets == null)
             {
                 setLocalError(EDIABAS_API_0014);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
-            if (rset > resultSets.Count)
+            if (rset > _resultSets.Count)
             {
                 setLocalError(EDIABAS_API_0014);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
-            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[rset];
+            Dictionary<string, EdiabasNet.ResultData> resultDict = _resultSets[rset];
             if ((index < 1) || (index > resultDict.Keys.Count))
             {
                 setLocalError(EDIABAS_API_0014);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
             buffer = resultDict.Keys.ElementAt(index - 1);
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, buffer);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
         }
 
         public bool apiResultSets(out ushort rsets)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultSets()");
+            logFormat(ApiLogLevel.Normal, "apiResultSets()");
 
             rsets = 0;
             if (!waitJobFinish())
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
 
             setLocalError(EDIABAS_ERR_NONE);
-            if (ediabas == null)
+            if (_ediabas == null)
             {
                 setLocalError(EDIABAS_API_0006);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
-            if (resultSets == null)
+            if (_resultSets == null)
             {
                 setLocalError(EDIABAS_API_0014);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
-            if (resultSets.Count < 1)
+            if (_resultSets.Count < 1)
             {
                 setLocalError(EDIABAS_API_0014);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
-            rsets = (ushort)(resultSets.Count - 1);
+            rsets = (ushort)(_resultSets.Count - 1);
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, rsets);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, rsets);
             return true;
         }
 
         public bool apiResultVar(out string var)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultSets()");
+            logFormat(ApiLogLevel.Normal, "apiResultSets()");
 
             bool result = apiResultText(out var, "VARIANTE", 0, string.Empty);
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", result, var);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", result, var);
             return result;
         }
 
         public APIRESULTFIELD apiResultsNew()
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultsNew()");
+            logFormat(ApiLogLevel.Normal, "apiResultsNew()");
 
             waitJobFinish();
-            APIRESULTFIELD resultField = new APIRESULTFIELD(resultSets);
+            APIRESULTFIELD resultField = new APIRESULTFIELD(_resultSets);
 
             return resultField;
         }
 
         public void apiResultsScope(APIRESULTFIELD resultField)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultsScope()");
+            logFormat(ApiLogLevel.Normal, "apiResultsScope()");
 
             waitJobFinish();
-            resultSets = resultField.ResultSets;
+            _resultSets = resultField.ResultSets;
         }
 
         public void apiResultsDelete(APIRESULTFIELD resultField)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiResultsDelete()");
+            logFormat(ApiLogLevel.Normal, "apiResultsDelete()");
 
             resultField.ResultSets = null;
         }
 
         public int apiState()
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiState()");
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", apiStateValue);
-            return apiStateValue;
+            logFormat(ApiLogLevel.Normal, "apiState()");
+            logFormat(ApiLogLevel.Normal, "={0} ()", _apiStateValue);
+            return _apiStateValue;
         }
 
         public int apiStateExt(int suspendTime)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiState({0})", suspendTime);
+            logFormat(ApiLogLevel.Normal, "apiState({0})", suspendTime);
 
-            int state = apiStateValue;
+            int state = _apiStateValue;
             if (state == APIBUSY)
             {
                 Thread.Sleep(suspendTime);
             }
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", apiStateValue);
+            logFormat(ApiLogLevel.Normal, "={0} ()", _apiStateValue);
             return state;
         }
 
         public void apiBreak()
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiBreak()");
+            logFormat(ApiLogLevel.Normal, "apiBreak()");
 
-            if (jobThread == null)
+            if (_jobThread == null)
             {
                 return;
             }
-            abortJob = true;
+            _abortJob = true;
         }
 
         public int apiErrorCode()
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiErrorCode()");
+            logFormat(ApiLogLevel.Normal, "apiErrorCode()");
 
-            if (localError != EDIABAS_ERR_NONE)
+            if (_localError != EDIABAS_ERR_NONE)
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", (EdiabasNet.ErrorCodes)localError);
-                return localError;
+                logFormat(ApiLogLevel.Normal, "={0} ()", (EdiabasNet.ErrorCodes)_localError);
+                return _localError;
             }
-            if (ediabas == null)
+            if (_ediabas == null)
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", EDIABAS_API_0006);
+                logFormat(ApiLogLevel.Normal, "={0} ()", EDIABAS_API_0006);
                 return EDIABAS_API_0006;
             }
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", ediabas.ErrorCodeLast);
-            return (int)ediabas.ErrorCodeLast;
+            logFormat(ApiLogLevel.Normal, "={0} ()", _ediabas.ErrorCodeLast);
+            return (int)_ediabas.ErrorCodeLast;
         }
 
         public string apiErrorText()
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiErrorText()");
+            logFormat(ApiLogLevel.Normal, "apiErrorText()");
 
             string errorText = EdiabasNet.GetErrorDescription((EdiabasNet.ErrorCodes)apiErrorCode());
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", errorText);
+            logFormat(ApiLogLevel.Normal, "={0} ()", errorText);
             return errorText;
         }
 
         public bool apiSetConfig(string cfgName, string cfgValue)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiSetConfig({0}, {1})", cfgName, cfgValue);
+            logFormat(ApiLogLevel.Normal, "apiSetConfig({0}, {1})", cfgName, cfgValue);
 
-            if (ediabas == null)
+            if (_ediabas == null)
             {
                 setLocalError(EDIABAS_API_0006);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", false);
+                logFormat(ApiLogLevel.Normal, "={0} ()", false);
                 return false;
             }
             bool setProperty = true;
@@ -1217,9 +1209,10 @@ namespace Ediabas
                 setProperty = false;
             }
 #endif
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (setProperty)
             {
-                ediabas.SetConfigProperty(cfgName, cfgValue);
+                _ediabas.SetConfigProperty(cfgName, cfgValue);
             }
             if (string.Compare(cfgName, "TracePath", StringComparison.OrdinalIgnoreCase) == 0)
             {
@@ -1234,34 +1227,34 @@ namespace Ediabas
                 closeLog();
             }
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", true);
+            logFormat(ApiLogLevel.Normal, "={0} ()", true);
             return true;
         }
 
         public bool apiGetConfig(string cfgName, out string cfgValue)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiGetConfig({0})", cfgName);
+            logFormat(ApiLogLevel.Normal, "apiGetConfig({0})", cfgName);
 
             cfgValue = string.Empty;
-            if (ediabas == null)
+            if (_ediabas == null)
             {
                 setLocalError(EDIABAS_API_0006);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0} ()", false);
+                logFormat(ApiLogLevel.Normal, "={0} ()", false);
                 return false;
             }
-            string prop = ediabas.GetConfigProperty(cfgName);
+            string prop = _ediabas.GetConfigProperty(cfgName);
             if (prop != null)
             {
                 cfgValue = prop;
             }
 
-            logFormat(API_LOG_LEVEL.NORMAL, "={0} ({1})", true, cfgValue);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, cfgValue);
             return true;
         }
 
         public void apiTrace(string msg)
         {
-            logFormat(API_LOG_LEVEL.NORMAL, "apiTrace({0})", msg);
+            logFormat(ApiLogLevel.Normal, "apiTrace({0})", msg);
         }
 
         public static bool apiXSysSetConfig(string cfgName, string cfgValue)
@@ -1291,37 +1284,37 @@ namespace Ediabas
         {
             if (error == EDIABAS_ERR_NONE)
             {
-                switch (localError)
+                switch (_localError)
                 {
                     case EDIABAS_API_0005:
                     case EDIABAS_API_0014:
-                        localError = error;
+                        _localError = error;
                         break;
                 }
             }
-            localError = error;
+            _localError = error;
         }
 
         private void setJobError(int error)
         {
             if (error == EDIABAS_ERR_NONE)
             {
-                localError = error;
-                apiStateValue = APIREADY;
+                _localError = error;
+                _apiStateValue = APIREADY;
                 return;
             }
 
-            localError = error;
-            apiStateValue = APIERROR;
+            _localError = error;
+            _apiStateValue = APIERROR;
         }
 
         private bool waitJobFinish()
         {
-            while (apiStateValue == APIBUSY)
+            while (_apiStateValue == APIBUSY)
             {
                 Thread.Sleep(10);
             }
-            if (apiStateValue != APIREADY)
+            if (_apiStateValue != APIREADY)
             {
                 return false;
             }
@@ -1330,18 +1323,18 @@ namespace Ediabas
 
         private EdiabasNet.ResultData getResultData(string result, ushort rset)
         {
-            if (resultSets == null)
+            if (_resultSets == null)
             {
                 setLocalError(EDIABAS_API_0014);
                 return null;
             }
-            if (rset > resultSets.Count)
+            if (rset > _resultSets.Count)
             {
                 setLocalError(EDIABAS_API_0014);
                 return null;
             }
 
-            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[rset];
+            Dictionary<string, EdiabasNet.ResultData> resultDict = _resultSets[rset];
             EdiabasNet.ResultData resultData;
             if (!resultDict.TryGetValue(result, out resultData))
             {
@@ -1357,14 +1350,14 @@ namespace Ediabas
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
-            if ((resultData.OpData.GetType() == typeof(Int64)))
+            if ((resultData.OpData is long))
             {
                 buffer = (Int64)resultData.OpData;
             }
-            else if ((resultData.OpData.GetType() == typeof(Double)))
+            else if ((resultData.OpData is double))
             {
                 Double value = (Double)resultData.OpData;
                 buffer = (Int64)value;
@@ -1372,7 +1365,7 @@ namespace Ediabas
             else
             {
                 setLocalError(EDIABAS_API_0005);
-                logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
+                logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
             return true;
@@ -1380,18 +1373,18 @@ namespace Ediabas
 
         private void executeJob(string ecu, string job, byte[] stdpara, int stdparalen, byte[] para, int paralen, string result)
         {
-            if (ediabas == null)
+            if (_ediabas == null)
             {
                 setJobError(EDIABAS_API_0006);
                 return;
             }
-            if (jobThread != null)
+            if (_jobThread != null)
             {
                 return;
             }
 
             setJobError(EDIABAS_ERR_NONE);
-            resultSets = null;
+            _resultSets = null;
 
             try
             {
@@ -1404,11 +1397,11 @@ namespace Ediabas
                         copyLen = para.Length;
                     }
                     Array.Copy(para, binData, copyLen);
-                    ediabas.ArgBinary = binData;
+                    _ediabas.ArgBinary = binData;
                 }
                 else
                 {
-                    ediabas.ArgBinary = para;
+                    _ediabas.ArgBinary = para;
                 }
 
                 if (stdpara != null && stdpara.Length != stdparalen)
@@ -1420,26 +1413,26 @@ namespace Ediabas
                         copyLen = stdpara.Length;
                     }
                     Array.Copy(stdpara, binData, copyLen);
-                    ediabas.ArgBinaryStd = binData;
+                    _ediabas.ArgBinaryStd = binData;
                 }
                 else
                 {
-                    ediabas.ArgBinaryStd = stdpara;
+                    _ediabas.ArgBinaryStd = stdpara;
                 }
 
-                ediabas.ResultsRequests = result;
+                _ediabas.ResultsRequests = result;
             }
             catch (Exception)
             {
                 setJobError(EDIABAS_SYS_0000);
                 return;
             }
-            jobName = job;
-            jobEcuName = ecu;
-            abortJob = false;
-            apiStateValue = APIBUSY;
-            jobThread = new Thread(jobThreadFunc);
-            jobThread.Start();
+            _jobName = job;
+            _jobEcuName = ecu;
+            _abortJob = false;
+            _apiStateValue = APIBUSY;
+            _jobThread = new Thread(jobThreadFunc);
+            _jobThread.Start();
         }
 
         private void jobThreadFunc()
@@ -1448,19 +1441,19 @@ namespace Ediabas
             {
                 try
                 {
-                    ediabas.ResolveSgbdFile(jobEcuName);
+                    _ediabas.ResolveSgbdFile(_jobEcuName);
                 }
                 catch (Exception)
                 {
-                    if (abortJob)
+                    if (_abortJob)
                     {
-                        apiStateValue = APIBREAK;
+                        _apiStateValue = APIBREAK;
                     }
                     else
                     {
-                        if (ediabas.ErrorCodeLast != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                        if (_ediabas.ErrorCodeLast != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                         {
-                            apiStateValue = APIERROR;
+                            _apiStateValue = APIERROR;
                         }
                         else
                         {
@@ -1470,21 +1463,21 @@ namespace Ediabas
                     return;
                 }
 
-                ediabas.ExecuteJob(jobName);
-                resultSets = ediabas.ResultSets;
-                apiStateValue = APIREADY;
+                _ediabas.ExecuteJob(_jobName);
+                _resultSets = _ediabas.ResultSets;
+                _apiStateValue = APIREADY;
             }
             catch (Exception)
             {
-                if (abortJob)
+                if (_abortJob)
                 {
-                    apiStateValue = APIBREAK;
+                    _apiStateValue = APIBREAK;
                 }
                 else
                 {
-                    if (ediabas.ErrorCodeLast != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                    if (_ediabas.ErrorCodeLast != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                     {
-                        apiStateValue = APIERROR;
+                        _apiStateValue = APIERROR;
                     }
                     else
                     {
@@ -1494,20 +1487,20 @@ namespace Ediabas
             }
             finally
             {
-                jobThread = null;
-                abortJob = false;
+                _jobThread = null;
+                _abortJob = false;
             }
         }
 
         private bool abortJobFunc()
         {
-            return abortJob;
+            return _abortJob;
         }
 
-        private void logFormat(API_LOG_LEVEL logLevel, string format, params object[] args)
+        private void logFormat(ApiLogLevel logLevel, string format, params object[] args)
         {
             updateLogLevel();
-            if ((int)logLevel > logLevelApi)
+            if ((int)logLevel > _logLevelApi)
             {
                 return;
             }
@@ -1518,7 +1511,7 @@ namespace Ediabas
                 {
                     continue;
                 }
-                if (args[i].GetType() == typeof(string))
+                if (args[i] is string)
                 {
                     args[i] = "'" + (string)args[i] + "'";
                 }
@@ -1526,36 +1519,35 @@ namespace Ediabas
                 {
                     byte[] argArray = (byte[])args[i];
                     StringBuilder stringBuilder = new StringBuilder(argArray.Length);
-                    for (int j = 0; j < argArray.Length; j++)
+                    foreach (byte arg in argArray)
                     {
-                        stringBuilder.Append(string.Format(culture, "{0:X02} ", argArray[j]));
+                        stringBuilder.Append(string.Format(Culture, "{0:X02} ", arg));
                     }
 
-                    args[i] = "[" + stringBuilder.ToString() +"]";
-                    continue;
+                    args[i] = "[" + stringBuilder +"]";
                 }
             }
             logString(logLevel, string.Format(format, args));
         }
 
-        private void logString(API_LOG_LEVEL logLevel, string info)
+        private void logString(ApiLogLevel logLevel, string info)
         {
             updateLogLevel();
-            if ((int)logLevel > logLevelApi)
+            if ((int)logLevel > _logLevelApi)
             {
                 return;
             }
 
             try
             {
-                lock (apiLogLock)
+                lock (_apiLogLock)
                 {
-                    if (swLog == null)
+                    if (_swLog == null)
                     {
-                        string tracePath = ediabas.GetConfigProperty("TracePath");
+                        string tracePath = _ediabas.GetConfigProperty("TracePath");
                         if (tracePath != null)
                         {
-                            string traceBuffering = ediabas.GetConfigProperty("TraceBuffering");
+                            string traceBuffering = _ediabas.GetConfigProperty("TraceBuffering");
                             Int64 buffering = 0;
                             if (traceBuffering != null)
                             {
@@ -1564,47 +1556,51 @@ namespace Ediabas
 
                             Directory.CreateDirectory(tracePath);
                             FileMode fileMode = FileMode.Append;
-                            if (firstLog)
+                            if (_firstLog)
                             {
-                                firstLog = false;
+                                _firstLog = false;
                                 fileMode = FileMode.Create;
                             }
-                            swLog = new StreamWriter(new FileStream(Path.Combine(tracePath, "api.trc"), fileMode, FileAccess.Write, FileShare.ReadWrite), encoding);
-                            swLog.AutoFlush = buffering == 0;
+                            _swLog = new StreamWriter(
+                                new FileStream(Path.Combine(tracePath, "api.trc"), fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding)
+                                {
+                                    AutoFlush = buffering == 0
+                                };
                         }
                     }
-                    if (swLog != null)
+                    if (_swLog != null)
                     {
-                        swLog.WriteLine(info);
+                        _swLog.WriteLine(info);
                     }
                 }
             }
             catch (Exception)
             {
+                // ignored
             }
         }
 
         private void closeLog()
         {
-            lock (apiLogLock)
+            lock (_apiLogLock)
             {
-                if (swLog != null)
+                if (_swLog != null)
                 {
-                    swLog.Dispose();
-                    swLog = null;
+                    _swLog.Dispose();
+                    _swLog = null;
                 }
-                logLevelApi = -1;
+                _logLevelApi = -1;
             }
         }
 
         private void updateLogLevel()
         {
-            if (logLevelApi < 0)
+            if (_logLevelApi < 0)
             {
-                lock (apiLogLock)
+                lock (_apiLogLock)
                 {
-                    string apiTrace = ediabas.GetConfigProperty("ApiTrace");
-                    logLevelApi = Convert.ToInt32(apiTrace);
+                    string apiTrace = _ediabas.GetConfigProperty("ApiTrace");
+                    _logLevelApi = Convert.ToInt32(apiTrace);
                 }
             }
         }
