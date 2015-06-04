@@ -288,7 +288,7 @@
             {
                 foreach (EdiabasErrorReport errorReport in errorReportList)
                 {
-                    string message = string.Format(ActivityMain.culture, "{0}: ", ActivityMain.GetPageString(pageInfo, errorReport.DeviceName));
+                    string message = string.Format(ActivityMain.Culture, "{0}: ", ActivityMain.GetPageString(pageInfo, errorReport.DeviceName));
                     if (errorReport.ErrorDict == null)
                     {
                         message += ActivityMain.GetPageString(pageInfo, "error_no_response");
