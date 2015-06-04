@@ -179,4 +179,7 @@
   <ItemGroup>
     <AndroidResource Include="Resources\menu\tool_menu.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\file_picker_menu.xml" />
+  </ItemGroup>
 </Project>

@@ -1361,8 +1361,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f080041
 			public const int action_context_bar = 2131230785;
 			
-			// aapt resource value: 0x7f08006e
-			public const int action_menu = 2131230830;
+			// aapt resource value: 0x7f08006f
+			public const int action_menu = 2131230831;
 			
 			// aapt resource value: 0x7f080002
 			public const int action_menu_divider = 2131230722;
@@ -1370,8 +1370,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f080003
 			public const int action_menu_presenter = 2131230723;
 			
-			// aapt resource value: 0x7f080075
-			public const int action_menu_tool = 2131230837;
+			// aapt resource value: 0x7f080076
+			public const int action_menu_tool = 2131230838;
 			
 			// aapt resource value: 0x7f08003d
 			public const int action_mode_bar = 2131230781;
@@ -1381,6 +1381,9 @@ namespace CarControlAndroid
 			
 			// aapt resource value: 0x7f080025
 			public const int action_mode_close_button = 2131230757;
+			
+			// aapt resource value: 0x7f08006e
+			public const int action_search = 2131230830;
 			
 			// aapt resource value: 0x7f080026
 			public const int activity_chooser_view_content = 2131230758;
@@ -1496,29 +1499,29 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f08002a
 			public const int list_item = 2131230762;
 			
-			// aapt resource value: 0x7f080071
-			public const int menu_ediabas_tool = 2131230833;
-			
-			// aapt resource value: 0x7f080073
-			public const int menu_enable_datalog = 2131230835;
-			
 			// aapt resource value: 0x7f080072
-			public const int menu_enable_trace = 2131230834;
+			public const int menu_ediabas_tool = 2131230834;
 			
 			// aapt resource value: 0x7f080074
-			public const int menu_exit = 2131230836;
+			public const int menu_enable_datalog = 2131230836;
 			
-			// aapt resource value: 0x7f08006f
-			public const int menu_scan = 2131230831;
+			// aapt resource value: 0x7f080073
+			public const int menu_enable_trace = 2131230835;
+			
+			// aapt resource value: 0x7f080075
+			public const int menu_exit = 2131230837;
 			
 			// aapt resource value: 0x7f080070
-			public const int menu_sel_cfg = 2131230832;
+			public const int menu_scan = 2131230832;
 			
-			// aapt resource value: 0x7f080076
-			public const int menu_tool_sel_interface = 2131230838;
+			// aapt resource value: 0x7f080071
+			public const int menu_sel_cfg = 2131230833;
 			
 			// aapt resource value: 0x7f080077
-			public const int menu_tool_sel_sgbd = 2131230839;
+			public const int menu_tool_sel_interface = 2131230839;
+			
+			// aapt resource value: 0x7f080078
+			public const int menu_tool_sel_sgbd = 2131230840;
 			
 			// aapt resource value: 0x7f080015
 			public const int middle = 2131230741;
@@ -1866,10 +1869,13 @@ namespace CarControlAndroid
 		{
 			
 			// aapt resource value: 0x7f0c0000
-			public const int option_menu = 2131492864;
+			public const int file_picker_menu = 2131492864;
 			
 			// aapt resource value: 0x7f0c0001
-			public const int tool_menu = 2131492865;
+			public const int option_menu = 2131492865;
+			
+			// aapt resource value: 0x7f0c0002
+			public const int tool_menu = 2131492866;
 			
 			static Menu()
 			{
@@ -1992,6 +1998,9 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a001f
 			public const int config_select_title = 2131361823;
 			
+			// aapt resource value: 0x7f0a0035
+			public const int file_picker_search = 2131361845;
+			
 			// aapt resource value: 0x7f0a0019
 			public const int interface_activate = 2131361817;
 			
@@ -2016,11 +2025,11 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a002e
 			public const int menu_sel_cfg = 2131361838;
 			
-			// aapt resource value: 0x7f0a0042
-			public const int menu_tool_sel_interface = 2131361858;
-			
 			// aapt resource value: 0x7f0a0043
-			public const int menu_tool_sel_sgbd = 2131361859;
+			public const int menu_tool_sel_interface = 2131361859;
+			
+			// aapt resource value: 0x7f0a0044
+			public const int menu_tool_sel_sgbd = 2131361860;
 			
 			// aapt resource value: 0x7f0a0027
 			public const int none_found = 2131361831;
@@ -2037,14 +2046,14 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0033
 			public const int select_file = 2131361843;
 			
-			// aapt resource value: 0x7f0a0035
-			public const int select_interface = 2131361845;
-			
 			// aapt resource value: 0x7f0a0036
-			public const int select_interface_bt = 2131361846;
+			public const int select_interface = 2131361846;
 			
 			// aapt resource value: 0x7f0a0037
-			public const int select_interface_enet = 2131361847;
+			public const int select_interface_bt = 2131361847;
+			
+			// aapt resource value: 0x7f0a0038
+			public const int select_interface_enet = 2131361848;
 			
 			// aapt resource value: 0x7f0a0029
 			public const int title_other_devices = 2131361833;
@@ -2052,35 +2061,35 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0028
 			public const int title_paired_devices = 2131361832;
 			
-			// aapt resource value: 0x7f0a0041
-			public const int tool_check_continuous = 2131361857;
-			
-			// aapt resource value: 0x7f0a003d
-			public const int tool_job_arguments = 2131361853;
-			
-			// aapt resource value: 0x7f0a0040
-			public const int tool_job_infos = 2131361856;
-			
-			// aapt resource value: 0x7f0a003c
-			public const int tool_job_job = 2131361852;
-			
-			// aapt resource value: 0x7f0a003b
-			public const int tool_job_jobs = 2131361851;
-			
-			// aapt resource value: 0x7f0a003f
-			public const int tool_job_result = 2131361855;
+			// aapt resource value: 0x7f0a0042
+			public const int tool_check_continuous = 2131361858;
 			
 			// aapt resource value: 0x7f0a003e
-			public const int tool_job_results = 2131361854;
+			public const int tool_job_arguments = 2131361854;
+			
+			// aapt resource value: 0x7f0a0041
+			public const int tool_job_infos = 2131361857;
+			
+			// aapt resource value: 0x7f0a003d
+			public const int tool_job_job = 2131361853;
+			
+			// aapt resource value: 0x7f0a003c
+			public const int tool_job_jobs = 2131361852;
+			
+			// aapt resource value: 0x7f0a0040
+			public const int tool_job_result = 2131361856;
+			
+			// aapt resource value: 0x7f0a003f
+			public const int tool_job_results = 2131361855;
+			
+			// aapt resource value: 0x7f0a003b
+			public const int tool_read_sgbd = 2131361851;
 			
 			// aapt resource value: 0x7f0a003a
-			public const int tool_read_sgbd = 2131361850;
+			public const int tool_select_sgbd = 2131361850;
 			
 			// aapt resource value: 0x7f0a0039
-			public const int tool_select_sgbd = 2131361849;
-			
-			// aapt resource value: 0x7f0a0038
-			public const int tool_title = 2131361848;
+			public const int tool_title = 2131361849;
 			
 			// aapt resource value: 0x7f0a001b
 			public const int wifi_enable = 2131361819;

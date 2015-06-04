@@ -7,6 +7,7 @@ using Android.OS;
 using Android.Support.V4.App;
 using Android.Views;
 using Android.Widget;
+// ReSharper disable LoopCanBeConvertedToQuery
 
 namespace CarControlAndroid.FilePicker
 {
@@ -22,6 +23,8 @@ namespace CarControlAndroid.FilePicker
         public string DefaultInitialDirectory = "/";
         private FileListAdapter _adapter;
         private List<string> _extensionList;
+        private IList<FileInfoEx> _visibleFiles;
+        private string _fileNameFilter;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -86,6 +89,29 @@ namespace CarControlAndroid.FilePicker
             base.OnListItemClick(l, v, position, id);
         }
 
+        public override void OnStart()
+        {
+            base.OnStart();
+
+            _fileNameFilter = null;
+            FilePickerActivity filePicker = Activity as FilePickerActivity;
+            if (filePicker != null)
+            {
+                filePicker.FilterEvent += NewFileFilter;
+            }
+        }
+
+        public override void OnStop()
+        {
+            base.OnStop();
+
+            FilePickerActivity filePicker = Activity as FilePickerActivity;
+            if (filePicker != null)
+            {
+                filePicker.FilterEvent -= NewFileFilter;
+            }
+        }
+
         public override void OnResume()
         {
             base.OnResume();
@@ -94,6 +120,7 @@ namespace CarControlAndroid.FilePicker
 
         public void RefreshFilesList(string directory)
         {
+            _visibleFiles = null;
             IList<FileInfoEx> visibleThings = new List<FileInfoEx>();
             DirectoryInfo dir = new DirectoryInfo(directory);
 
@@ -134,13 +161,27 @@ namespace CarControlAndroid.FilePicker
                 return;
             }
 
-            _adapter.AddDirectoryContents(visibleThings);
+            _visibleFiles = visibleThings;
+            RefreshFilterFileList();
+        }
+
+        protected void NewFileFilter(string fileNamefilter)
+        {
+            _fileNameFilter = fileNamefilter;
+            RefreshFilterFileList();
+        }
+
+        protected void RefreshFilterFileList()
+        {
+            if (_visibleFiles == null)
+            {
+                return;
+            }
+            _adapter.AddDirectoryContents(_visibleFiles, _fileNameFilter);
 
             // If we don't do this, then the ListView will not update itself when then data set 
             // in the adapter changes. It will appear to the user that nothing has happened.
             ListView.RefreshDrawableState();
-
-            //Log.Verbose("FileListFragment", "Displaying the contents of directory {0}.", directory);
         }
     }
 }
