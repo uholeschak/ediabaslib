@@ -7,7 +7,6 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
-using com.xamarin.recipes.filepicker;
 using EdiabasLib;
 using System;
 using System.Collections.Generic;
@@ -16,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CarControlAndroid.FilePicker;
 
 namespace CarControlAndroid
 {
@@ -222,7 +222,7 @@ namespace CarControlAndroid
             _activityCommon = new ActivityCommon(this)
             {
                 SelectedInterface = (ActivityCommon.InterfaceType)
-                    Intent.GetIntExtra(ExtraInterface, (int) ActivityCommon.InterfaceType.NONE)
+                    Intent.GetIntExtra(ExtraInterface, (int) ActivityCommon.InterfaceType.None)
             };
 
             _initDirStart = Intent.GetStringExtra(ExtraInitDir);
@@ -241,7 +241,7 @@ namespace CarControlAndroid
         {
             base.OnStart();
 
-            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.NONE)
+            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None)
             {
                 SelectInterface();
             }
@@ -278,7 +278,7 @@ namespace CarControlAndroid
                     // When FilePickerActivity returns with a file
                     if (resultCode == Android.App.Result.Ok)
                     {
-                        _sgbdFileName = data.Extras.GetString(FilePickerActivity.EXTRA_FILE_NAME);
+                        _sgbdFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
                         SupportInvalidateOptionsMenu();
                         ReadSgbd();
                     }
@@ -289,8 +289,8 @@ namespace CarControlAndroid
                     if (resultCode == Android.App.Result.Ok)
                     {
                         // Get the device MAC address
-                        _deviceName = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_NAME);
-                        _deviceAddress = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                        _deviceName = data.Extras.GetString(DeviceListActivity.ExtraDeviceName);
+                        _deviceAddress = data.Extras.GetString(DeviceListActivity.ExtraDeviceAddress);
                         SupportInvalidateOptionsMenu();
                         if (_autoStart)
                         {
@@ -321,11 +321,11 @@ namespace CarControlAndroid
                 string interfaceName = string.Empty;
                 switch (_activityCommon.SelectedInterface)
                 {
-                    case ActivityCommon.InterfaceType.BLUETOOTH:
+                    case ActivityCommon.InterfaceType.Bluetooth:
                         interfaceName = GetString(Resource.String.select_interface_bt);
                         break;
 
-                    case ActivityCommon.InterfaceType.ENET:
+                    case ActivityCommon.InterfaceType.Enet:
                         interfaceName = GetString(Resource.String.select_interface_enet);
                         break;
                 }
@@ -350,7 +350,7 @@ namespace CarControlAndroid
             {
                 scanMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_device), _deviceName));
                 scanMenu.SetEnabled(!commActive && interfaceAvailable);
-                scanMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.BLUETOOTH);
+                scanMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
             }
 
             return base.OnPrepareOptionsMenu(menu);
@@ -520,9 +520,9 @@ namespace CarControlAndroid
             {
                 initDir = _initDirStart;
             }
-            serverIntent.PutExtra(FilePickerActivity.EXTRA_TITLE, GetString(Resource.String.tool_select_sgbd));
-            serverIntent.PutExtra(FilePickerActivity.EXTRA_INIT_DIR, initDir);
-            serverIntent.PutExtra(FilePickerActivity.EXTRA_FILE_EXTENSIONS, ".grp;.prg");
+            serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.tool_select_sgbd));
+            serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
+            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".grp;.prg");
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSgbd);
         }
 
@@ -664,7 +664,7 @@ namespace CarControlAndroid
             if (_ediabas != null)
             {
                 bool interfaceChanged = false;
-                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.ENET)
+                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
                 {
                     if (!(_ediabas.EdInterfaceClass is EdInterfaceEnet))
                     {
@@ -689,7 +689,7 @@ namespace CarControlAndroid
             if (_ediabas == null)
             {
                 _ediabas = new EdiabasNet();
-                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.ENET)
+                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
                 {
                     _ediabas.EdInterfaceClass = new EdInterfaceEnet();
                 }
@@ -712,7 +712,7 @@ namespace CarControlAndroid
                 string remoteHost = "auto";
                 if (_activityCommon.Emulator)
                 {   // broadcast is not working with emulator
-                    remoteHost = ActivityCommon.EMULATOR_ENET_IP;
+                    remoteHost = ActivityCommon.EmulatorEnetIp;
                 }
                 ((EdInterfaceEnet)_ediabas.EdInterfaceClass).RemoteHost = remoteHost;
             }

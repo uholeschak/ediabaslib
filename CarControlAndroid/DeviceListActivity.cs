@@ -18,7 +18,6 @@ using Android.Bluetooth;
 using Android.Content;
 using Android.OS;
 using Android.Support.V7.App;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using System;
@@ -38,19 +37,15 @@ namespace CarControlAndroid
                 Android.Content.PM.ConfigChanges.ScreenSize)]
     public class DeviceListActivity : AppCompatActivity
     {
-        // Debugging
-        private const string TAG = "DeviceListActivity";
-        private const bool Debug = true;
-
         // Return Intent extra
-        public const string EXTRA_DEVICE_NAME = "device_name";
-        public const string EXTRA_DEVICE_ADDRESS = "device_address";
+        public const string ExtraDeviceName = "device_name";
+        public const string ExtraDeviceAddress = "device_address";
 
         // Member fields
-        private BluetoothAdapter btAdapter;
-        private static ArrayAdapter<string> pairedDevicesArrayAdapter;
-        private static ArrayAdapter<string> newDevicesArrayAdapter;
-        private Receiver receiver;
+        private BluetoothAdapter _btAdapter;
+        private static ArrayAdapter<string> _pairedDevicesArrayAdapter;
+        private static ArrayAdapter<string> _newDevicesArrayAdapter;
+        private Receiver _receiver;
 
         protected override void OnCreate (Bundle savedInstanceState)
         {
@@ -70,38 +65,39 @@ namespace CarControlAndroid
             scanButton.Click += (sender, e) =>
             {
                 DoDiscovery ();
-                (sender as View).Visibility = ViewStates.Gone;
+                var view = sender as View;
+                if (view != null) view.Visibility = ViewStates.Gone;
             };
 
             // Initialize array adapters. One for already paired devices and
             // one for newly discovered devices
-            pairedDevicesArrayAdapter = new ArrayAdapter<string> (this, Resource.Layout.device_name);
-            newDevicesArrayAdapter = new ArrayAdapter<string> (this, Resource.Layout.device_name);
+            _pairedDevicesArrayAdapter = new ArrayAdapter<string> (this, Resource.Layout.device_name);
+            _newDevicesArrayAdapter = new ArrayAdapter<string> (this, Resource.Layout.device_name);
 
             // Find and set up the ListView for paired devices
             var pairedListView = FindViewById<ListView> (Resource.Id.paired_devices);
-            pairedListView.Adapter = pairedDevicesArrayAdapter;
+            pairedListView.Adapter = _pairedDevicesArrayAdapter;
             pairedListView.ItemClick += DeviceListClick;
 
             // Find and set up the ListView for newly discovered devices
             var newDevicesListView = FindViewById<ListView> (Resource.Id.new_devices);
-            newDevicesListView.Adapter = newDevicesArrayAdapter;
+            newDevicesListView.Adapter = _newDevicesArrayAdapter;
             newDevicesListView.ItemClick += DeviceListClick;
 
             // Register for broadcasts when a device is discovered
-            receiver = new Receiver (this);
+            _receiver = new Receiver (this);
             var filter = new IntentFilter (BluetoothDevice.ActionFound);
-            RegisterReceiver (receiver, filter);
+            RegisterReceiver (_receiver, filter);
 
             // Register for broadcasts when discovery has finished
             filter = new IntentFilter (BluetoothAdapter.ActionDiscoveryFinished);
-            RegisterReceiver (receiver, filter);
+            RegisterReceiver (_receiver, filter);
 
             // Get the local Bluetooth adapter
-            btAdapter = BluetoothAdapter.DefaultAdapter;
+            _btAdapter = BluetoothAdapter.DefaultAdapter;
 
             // Get a set of currently paired devices
-            var pairedDevices = btAdapter.BondedDevices;
+            var pairedDevices = _btAdapter.BondedDevices;
 
             // If there are paired devices, add each one to the ArrayAdapter
             if (pairedDevices.Count > 0)
@@ -109,13 +105,13 @@ namespace CarControlAndroid
                 FindViewById<View> (Resource.Id.title_paired_devices).Visibility = ViewStates.Visible;
                 foreach (var device in pairedDevices)
                 {
-                    pairedDevicesArrayAdapter.Add (device.Name + "\n" + device.Address);
+                    _pairedDevicesArrayAdapter.Add (device.Name + "\n" + device.Address);
                 }
             }
             else
             {
                 String noDevices = Resources.GetText (Resource.String.none_paired);
-                pairedDevicesArrayAdapter.Add (noDevices);
+                _pairedDevicesArrayAdapter.Add (noDevices);
             }
         }
 
@@ -124,12 +120,12 @@ namespace CarControlAndroid
             base.OnDestroy ();
 
             // Make sure we're not doing discovery anymore
-            if (btAdapter != null) {
-                btAdapter.CancelDiscovery ();
+            if (_btAdapter != null) {
+                _btAdapter.CancelDiscovery ();
             }
 
             // Unregister broadcast listeners
-            UnregisterReceiver (receiver);
+            UnregisterReceiver (_receiver);
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
@@ -148,8 +144,7 @@ namespace CarControlAndroid
         /// </summary>
         private void DoDiscovery ()
         {
-            if (Debug)
-                Log.Debug (TAG, "doDiscovery()");
+            // Log.Debug (Tag, "doDiscovery()");
 
             // Indicate scanning in the title
             FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Visible;
@@ -159,13 +154,13 @@ namespace CarControlAndroid
             FindViewById<View> (Resource.Id.title_new_devices).Visibility = ViewStates.Visible;
 
             // If we're already discovering, stop it
-            if (btAdapter.IsDiscovering)
+            if (_btAdapter.IsDiscovering)
             {
-                btAdapter.CancelDiscovery ();
+                _btAdapter.CancelDiscovery ();
             }
 
             // Request discover from BluetoothAdapter
-            btAdapter.StartDiscovery ();
+            _btAdapter.StartDiscovery ();
         }
 
         /// <summary>
@@ -174,30 +169,34 @@ namespace CarControlAndroid
         void DeviceListClick (object sender, AdapterView.ItemClickEventArgs e)
         {
             // Cancel discovery because it's costly and we're about to connect
-            btAdapter.CancelDiscovery ();
+            _btAdapter.CancelDiscovery ();
 
-            string info = (e.View as TextView).Text.ToString ();
-            string[] parts = info.Split('\n');
-            if ((parts == null) || (parts.Length < 2))
+            TextView textView = e.View as TextView;
+            if (textView != null)
             {
-                return;
+                string info = textView.Text;
+                string[] parts = info.Split('\n');
+                if (parts.Length < 2)
+                {
+                    return;
+                }
+                string name = parts[0];
+                string address = parts[1];
+
+                // Create the result Intent and include the MAC address
+                Intent intent = new Intent ();
+                intent.PutExtra (ExtraDeviceName, name);
+                intent.PutExtra (ExtraDeviceAddress, address);
+
+                // Set result and finish this Activity
+                SetResult(Android.App.Result.Ok, intent);
             }
-            string name = parts[0];
-            string address = parts[1];
-
-            // Create the result Intent and include the MAC address
-            Intent intent = new Intent ();
-            intent.PutExtra (EXTRA_DEVICE_NAME, name);
-            intent.PutExtra (EXTRA_DEVICE_ADDRESS, address);
-
-            // Set result and finish this Activity
-            SetResult(Android.App.Result.Ok, intent);
             Finish ();
         }
 
         public class Receiver : BroadcastReceiver
         {
-            Android.App.Activity _chat;
+            readonly Android.App.Activity _chat;
 
             public Receiver(Android.App.Activity chat)
             {
@@ -216,7 +215,7 @@ namespace CarControlAndroid
                     // If it's already paired, skip it, because it's been listed already
                     if (device.BondState != Bond.Bonded)
                     {
-                        newDevicesArrayAdapter.Add (device.Name + "\n" + device.Address);
+                        _newDevicesArrayAdapter.Add (device.Name + "\n" + device.Address);
                     }
                     // When discovery is finished, change the Activity title
                 }
@@ -225,10 +224,10 @@ namespace CarControlAndroid
                     //_chat.SetProgressBarIndeterminateVisibility (false);
                     _chat.FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Invisible;
                     _chat.SetTitle (Resource.String.select_device);
-                    if (newDevicesArrayAdapter.Count == 0)
+                    if (_newDevicesArrayAdapter.Count == 0)
                     {
-                        var noDevices = _chat.Resources.GetText (Resource.String.none_found).ToString ();
-                        newDevicesArrayAdapter.Add (noDevices);
+                        var noDevices = _chat.Resources.GetText (Resource.String.none_found);
+                        _newDevicesArrayAdapter.Add (noDevices);
                     }
                 }
             }

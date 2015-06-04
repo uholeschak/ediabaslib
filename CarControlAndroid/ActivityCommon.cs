@@ -13,26 +13,26 @@ namespace CarControlAndroid
     {
         public enum InterfaceType
         {
-            NONE,
-            BLUETOOTH,
-            ENET,
+            None,
+            Bluetooth,
+            Enet,
         }
 
-        public const string EMULATOR_ENET_IP = "192.168.10.244";
+        public const string EmulatorEnetIp = "192.168.10.244";
 
-        private Activity activity;
-        private bool emulator;
-        private BluetoothAdapter btAdapter;
-        private WifiManager maWifi;
-        private ConnectivityManager maConnectivity;
-        private InterfaceType selectedInterface;
-        private bool activateRequest;
+        private readonly Activity _activity;
+        private readonly bool _emulator;
+        private readonly BluetoothAdapter _btAdapter;
+        private readonly WifiManager _maWifi;
+        private readonly ConnectivityManager _maConnectivity;
+        private InterfaceType _selectedInterface;
+        private bool _activateRequest;
 
         public bool Emulator
         {
             get
             {
-                return emulator;
+                return _emulator;
             }
         }
 
@@ -40,11 +40,11 @@ namespace CarControlAndroid
         {
             get
             {
-                return selectedInterface;
+                return _selectedInterface;
             }
             set
             {
-                selectedInterface = value;
+                _selectedInterface = value;
             }
         }
 
@@ -52,7 +52,7 @@ namespace CarControlAndroid
         {
             get
             {
-                return btAdapter;
+                return _btAdapter;
             }
         }
 
@@ -60,7 +60,7 @@ namespace CarControlAndroid
         {
             get
             {
-                return maWifi;
+                return _maWifi;
             }
         }
 
@@ -68,60 +68,60 @@ namespace CarControlAndroid
         {
             get
             {
-                return maConnectivity;
+                return _maConnectivity;
             }
         }
 
         public ActivityCommon(Activity activity)
         {
-            this.activity = activity;
-            emulator = IsEmulator();
+            _activity = activity;
+            _emulator = IsEmulator();
 
-            btAdapter = BluetoothAdapter.DefaultAdapter;
-            maWifi = (WifiManager)activity.GetSystemService(Context.WifiService);
-            maConnectivity = (ConnectivityManager)activity.GetSystemService(Context.ConnectivityService);
-            selectedInterface = InterfaceType.NONE;
-            activateRequest = false;
+            _btAdapter = BluetoothAdapter.DefaultAdapter;
+            _maWifi = (WifiManager)activity.GetSystemService(Context.WifiService);
+            _maConnectivity = (ConnectivityManager)activity.GetSystemService(Context.ConnectivityService);
+            _selectedInterface = InterfaceType.None;
+            _activateRequest = false;
         }
 
         public bool IsInterfaceEnabled()
         {
-            switch (selectedInterface)
+            switch (_selectedInterface)
             {
-                case InterfaceType.BLUETOOTH:
-                    if (btAdapter == null)
+                case InterfaceType.Bluetooth:
+                    if (_btAdapter == null)
                     {
                         return false;
                     }
-                    return btAdapter.IsEnabled;
+                    return _btAdapter.IsEnabled;
 
-                case InterfaceType.ENET:
-                    if (maWifi == null)
+                case InterfaceType.Enet:
+                    if (_maWifi == null)
                     {
                         return false;
                     }
-                    return maWifi.IsWifiEnabled;
+                    return _maWifi.IsWifiEnabled;
             }
             return false;
         }
 
         public bool IsInterfaceAvailable()
         {
-            switch (selectedInterface)
+            switch (_selectedInterface)
             {
-                case InterfaceType.BLUETOOTH:
-                    if (btAdapter == null)
+                case InterfaceType.Bluetooth:
+                    if (_btAdapter == null)
                     {
                         return false;
                     }
-                    return btAdapter.IsEnabled;
+                    return _btAdapter.IsEnabled;
 
-                case InterfaceType.ENET:
-                    if (maConnectivity == null)
+                case InterfaceType.Enet:
+                    if (_maConnectivity == null)
                     {
                         return false;
                     }
-                    NetworkInfo networkInfo = maConnectivity.ActiveNetworkInfo;
+                    NetworkInfo networkInfo = _maConnectivity.ActiveNetworkInfo;
                     if (networkInfo == null)
                     {
                         return false;
@@ -133,7 +133,7 @@ namespace CarControlAndroid
 
         public void ShowAlert(string message)
         {
-            new AlertDialog.Builder(activity)
+            new AlertDialog.Builder(_activity)
             .SetMessage(message)
             .SetNeutralButton(Resource.String.compile_ok_btn, (s, e) => { })
             .Show();
@@ -141,23 +141,23 @@ namespace CarControlAndroid
 
         public void SelectInterface(EventHandler<DialogClickEventArgs> handler)
         {
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
             builder.SetTitle(Resource.String.select_interface);
-            ListView listView = new ListView(activity);
-            ArrayAdapter<string> adapter = new ArrayAdapter<string>(activity, Android.Resource.Layout.SimpleListItemSingleChoice,
-                new string[] {
-                    activity.GetString(Resource.String.select_interface_bt),
-                    activity.GetString(Resource.String.select_interface_enet)
+            ListView listView = new ListView(_activity);
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity, Android.Resource.Layout.SimpleListItemSingleChoice,
+                new[] {
+                    _activity.GetString(Resource.String.select_interface_bt),
+                    _activity.GetString(Resource.String.select_interface_enet)
                 });
             listView.Adapter = adapter;
             listView.ChoiceMode = ChoiceMode.Single;
-            switch (selectedInterface)
+            switch (_selectedInterface)
             {
-                case InterfaceType.BLUETOOTH:
+                case InterfaceType.Bluetooth:
                     listView.SetItemChecked(0, true);
                     break;
 
-                case InterfaceType.ENET:
+                case InterfaceType.Enet:
                     listView.SetItemChecked(1, true);
                     break;
             }
@@ -167,12 +167,12 @@ namespace CarControlAndroid
                     switch (listView.CheckedItemPosition)
                     {
                         case 0:
-                            selectedInterface = InterfaceType.BLUETOOTH;
+                            _selectedInterface = InterfaceType.Bluetooth;
                             handler(sender, args);
                             break;
 
                         case 1:
-                            selectedInterface = InterfaceType.ENET;
+                            _selectedInterface = InterfaceType.Enet;
                             handler(sender, args);
                             break;
                     }
@@ -185,42 +185,44 @@ namespace CarControlAndroid
 
         public void EnableInterface()
         {
-            switch (selectedInterface)
+            switch (_selectedInterface)
             {
-                case ActivityCommon.InterfaceType.BLUETOOTH:
-                    if (btAdapter == null)
+                case InterfaceType.Bluetooth:
+                    if (_btAdapter == null)
                     {
-                        Toast.MakeText(activity, Resource.String.bt_not_available, ToastLength.Long).Show();
+                        Toast.MakeText(_activity, Resource.String.bt_not_available, ToastLength.Long).Show();
                         break;
                     }
-                    if (!btAdapter.IsEnabled)
+                    if (!_btAdapter.IsEnabled)
                     {
                         try
                         {
 #pragma warning disable 0618
-                            btAdapter.Enable();
+                            _btAdapter.Enable();
 #pragma warning restore 0618
                         }
                         catch (Exception)
                         {
+                            // ignored
                         }
                     }
                     break;
 
-                case ActivityCommon.InterfaceType.ENET:
-                    if (maWifi == null)
+                case InterfaceType.Enet:
+                    if (_maWifi == null)
                     {
-                        Toast.MakeText(activity, Resource.String.wifi_not_available, ToastLength.Long).Show();
+                        Toast.MakeText(_activity, Resource.String.wifi_not_available, ToastLength.Long).Show();
                         break;
                     }
-                    if (!maWifi.IsWifiEnabled)
+                    if (!_maWifi.IsWifiEnabled)
                     {
                         try
                         {
-                            maWifi.SetWifiEnabled(true);
+                            _maWifi.SetWifiEnabled(true);
                         }
                         catch (Exception)
                         {
+                            // ignored
                         }
                     }
                     break;
@@ -229,7 +231,7 @@ namespace CarControlAndroid
 
         public void RequestInterfaceEnable(EventHandler<DialogClickEventArgs> handler)
         {
-            if (activateRequest)
+            if (_activateRequest)
             {
                 return;
             }
@@ -241,34 +243,34 @@ namespace CarControlAndroid
             {
                 return;
             }
-            int resourceID;
-            switch (selectedInterface)
+            int resourceId;
+            switch (_selectedInterface)
             {
-                case ActivityCommon.InterfaceType.BLUETOOTH:
-                    resourceID = Resource.String.bt_enable;
+                case InterfaceType.Bluetooth:
+                    resourceId = Resource.String.bt_enable;
                     break;
 
-                case ActivityCommon.InterfaceType.ENET:
-                    resourceID = Resource.String.wifi_enable;
+                case InterfaceType.Enet:
+                    resourceId = Resource.String.wifi_enable;
                     break;
 
                 default:
                     return;
             }
-            activateRequest = true;
-            new AlertDialog.Builder(activity)
+            _activateRequest = true;
+            new AlertDialog.Builder(_activity)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
-                    activateRequest = false;
+                    _activateRequest = false;
                     EnableInterface();
                     handler(sender, args);
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
-                    activateRequest = false;
+                    _activateRequest = false;
                 })
                 .SetCancelable(false)
-                .SetMessage(resourceID)
+                .SetMessage(resourceId)
                 .SetTitle(Resource.String.interface_activate)
                 .Show();
         }
@@ -279,11 +281,11 @@ namespace CarControlAndroid
             {
                 return true;
             }
-            if (SelectedInterface != ActivityCommon.InterfaceType.BLUETOOTH)
+            if (SelectedInterface != InterfaceType.Bluetooth)
             {
                 return true;
             }
-            new AlertDialog.Builder(activity)
+            new AlertDialog.Builder(_activity)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
                     if (SelectBluetoothDevice(requestCode))
@@ -307,12 +309,12 @@ namespace CarControlAndroid
             {
                 return false;
             }
-            if (SelectedInterface != ActivityCommon.InterfaceType.BLUETOOTH)
+            if (SelectedInterface != InterfaceType.Bluetooth)
             {
                 return false;
             }
-            Intent serverIntent = new Intent(activity, typeof(DeviceListActivity));
-            activity.StartActivityForResult(serverIntent, requestCode);
+            Intent serverIntent = new Intent(_activity, typeof(DeviceListActivity));
+            _activity.StartActivityForResult(serverIntent, requestCode);
             return true;
         }
 

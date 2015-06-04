@@ -1,9 +1,8 @@
-namespace com.xamarin.recipes.filepicker
+using Android.Widget;
+using Java.Lang;
+
+namespace CarControlAndroid.FilePicker
 {
-    using Android.Widget;
-
-    using Java.Lang;
-
     /// <summary>
     ///   This class is used to hold references to the views contained in a list row.
     /// </summary>

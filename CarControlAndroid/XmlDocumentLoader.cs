@@ -2,7 +2,7 @@
 using System.IO;
 using System.Xml;
 
-namespace XmlGenSharp.Lib.Utility
+namespace CarControlAndroid
 {
   public class XmlDocumentLoader
   {
@@ -31,11 +31,11 @@ namespace XmlGenSharp.Lib.Utility
       {
         if (node.Name.ToLower() == "include")
         {
-          string filename = node.Attributes["filename"].Value as string;
+          string filename = node.Attributes["filename"].Value;
           if (!Path.IsPathRooted(filename))
             filename = Path.Combine(basePath, filename);
 
-          XmlDocument include = XmlDocumentLoader.LoadWithIncludes(filename);
+          XmlDocument include = LoadWithIncludes(filename);
 
           foreach (XmlNode inner in include.DocumentElement.ChildNodes)
           {

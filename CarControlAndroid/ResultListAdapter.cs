@@ -7,23 +7,22 @@ namespace CarControlAndroid
 {
     public class ResultListAdapter : BaseAdapter<TableResultItem>
     {
-        private List<TableResultItem> items;
+        private readonly List<TableResultItem> _items;
         public List<TableResultItem> Items
         {
             get
             {
-                return items;
+                return _items;
             }
         }
-        private Activity context;
-        private float textWeight;
+        private readonly Activity _context;
+        private readonly float _textWeight;
 
         public ResultListAdapter(Activity context, float textWeight)
-            : base()
         {
-            this.context = context;
-            this.items = new List<TableResultItem> ();
-            this.textWeight = textWeight;
+            _context = context;
+            _items = new List<TableResultItem> ();
+            _textWeight = textWeight;
         }
 
         public ResultListAdapter(Activity context) : this(context, -1)
@@ -37,21 +36,19 @@ namespace CarControlAndroid
 
         public override TableResultItem this[int position]
         {
-            get { return items[position]; }
+            get { return _items[position]; }
         }
 
         public override int Count
         {
-            get { return items.Count; }
+            get { return _items.Count; }
         }
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-            var item = items[position];
+            var item = _items[position];
 
-            View view = convertView;
-            if (view == null) // no view to re-use, create new
-                view = context.LayoutInflater.Inflate(Resource.Layout.result_list, null);
+            View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.result_list, null);
             TextView textView1 = view.FindViewById<TextView>(Resource.Id.ListText1);
             TextView textView2 = view.FindViewById<TextView>(Resource.Id.ListText2);
             textView1.Text = item.Text1;
@@ -63,10 +60,10 @@ namespace CarControlAndroid
             {
                 textView2.Visibility = ViewStates.Visible;
                 textView2.Text = item.Text2;
-                if (textWeight >= 0)
+                if (_textWeight >= 0)
                 {
                     LinearLayout.LayoutParams layoutPar = (LinearLayout.LayoutParams)textView2.LayoutParameters;
-                    layoutPar.Weight = textWeight;
+                    layoutPar.Weight = _textWeight;
                     textView2.LayoutParameters = layoutPar;
                 }
             }
@@ -77,20 +74,20 @@ namespace CarControlAndroid
 
     public class TableResultItem
     {
-        private string text1;
-        private string text2;
+        private readonly string _text1;
+        private readonly string _text2;
 
         public TableResultItem(string text1, string text2)
         {
-            this.text1 = text1;
-            this.text2 = text2;
+            _text1 = text1;
+            _text2 = text2;
         }
 
         public string Text1
         {
             get
             {
-                return text1;
+                return _text1;
             }
         }
 
@@ -98,7 +95,7 @@ namespace CarControlAndroid
         {
             get
             {
-                return text2;
+                return _text2;
             }
         }
     }

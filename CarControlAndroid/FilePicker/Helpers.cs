@@ -1,11 +1,10 @@
-namespace com.xamarin.recipes.filepicker
+using System.IO;
+using Android.Content;
+using Android.Runtime;
+using Android.Views;
+
+namespace CarControlAndroid.FilePicker
 {
-    using System.IO;
-
-    using Android.Content;
-    using Android.Runtime;
-    using Android.Views;
-
     public static class Helpers
     {
         /// <summary>
