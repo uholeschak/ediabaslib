@@ -1,4 +1,6 @@
 ﻿using Android.OS;
+using Android.Support.V4.App;
+using Android.Support.V4.View;
 using Android.Support.V7.App;
 using Android.Views;
 
@@ -15,6 +17,9 @@ namespace CarControlAndroid.FilePicker
         public const string ExtraInitDir = "init_dir";
         public const string ExtraFileName = "file_name";
         public const string ExtraFileExtensions = "file_extensions";
+
+        public delegate void FilterEventHandler(string fileNamefilter);
+        public event FilterEventHandler FilterEvent;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -34,6 +39,34 @@ namespace CarControlAndroid.FilePicker
             SetResult(Android.App.Result.Canceled);
         }
 
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            var inflater = MenuInflater;
+            inflater.Inflate(Resource.Menu.file_picker_menu, menu);
+            IMenuItem menuSearch = menu.FindItem(Resource.Id.action_search);
+            if (menuSearch != null)
+            {
+                menuSearch.SetActionView(new Android.Support.V7.Widget.SearchView(this));
+
+                View searchView = MenuItemCompat.GetActionView(menuSearch);
+                var searchViewV7 = searchView as Android.Support.V7.Widget.SearchView;
+                if (searchViewV7 != null)
+                {
+                    searchViewV7.QueryTextChange += (sender, e) =>
+                    {
+                        e.Handled = OnQueryTextChange(e.NewText);
+                    };
+
+                    searchViewV7.QueryTextSubmit += (sender, e) =>
+                    {
+                        e.Handled = OnQueryTextChange(e.Query);
+                    };
+                }
+            }
+
+            return true;
+        }
+
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             switch (item.ItemId)
@@ -43,6 +76,18 @@ namespace CarControlAndroid.FilePicker
                     return true;
             }
             return base.OnOptionsItemSelected(item);
+        }
+
+        private bool OnQueryTextChange(string text)
+        {
+            OnFilterEvent(text);
+            return true;
+        }
+
+        protected virtual void OnFilterEvent(string filter)
+        {
+            var handler = FilterEvent;
+            if (handler != null) handler(filter);
         }
     }
 }

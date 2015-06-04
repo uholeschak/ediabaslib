@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -49,7 +50,8 @@ namespace CarControlAndroid.FilePicker
         ///   We provide this method to get around some of the
         /// </summary>
         /// <param name="directoryContents"> </param>
-        public void AddDirectoryContents(IEnumerable<FileInfoEx> directoryContents)
+        /// <param name="filter">Filter expression</param>
+        public void AddDirectoryContents(IEnumerable<FileInfoEx> directoryContents, string filter)
         {
             Clear();
             // Notify the _adapter that things have changed or that there is nothing 
@@ -57,20 +59,25 @@ namespace CarControlAndroid.FilePicker
             IEnumerable<FileInfoEx> fileInfoExs = directoryContents as FileInfoEx[] ?? directoryContents.ToArray();
             if (fileInfoExs.Any())
             {
-#if false
-                // .AddAll was only introduced in API level 11 (Android 3.0). 
-                // If the "Minimum Android to Target" is set to Android 3.0 or 
-                // higher, then this code will be used.
-                AddAll(directoryContents.ToArray());
-#else
-                // This is the code to use if the "Minimum Android to Target" is
-                // set to a pre-Android 3.0 API (i.e. Android 2.3.3 or lower).
                 lock (this)
+                {
                     foreach (var fsi in fileInfoExs)
                     {
-                        Add(fsi);
+                        bool addFile = true;
+                        if (!string.IsNullOrEmpty(filter) && fsi.RootDir == null && !fsi.FileSysInfo.IsDirectory())
+                        {
+                            string baseName = Path.GetFileNameWithoutExtension(fsi.FileSysInfo.Name);
+                            if (baseName.IndexOf(filter, StringComparison.OrdinalIgnoreCase) < 0)
+                            {
+                                addFile = false;
+                            }
+                        }
+                        if (addFile)
+                        {
+                            Add(fsi);
+                        }
                     }
-#endif
+                }
 
                 NotifyDataSetChanged();
             }

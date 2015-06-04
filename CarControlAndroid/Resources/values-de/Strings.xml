@@ -45,6 +45,7 @@
   <!-- FilePicker -->
   <string name="select_file">Datei wählen</string>
   <string name="access_dir_failed">Zugriff verweigert:</string>
+  <string name="file_picker_search">Suchen</string>
 
   <!-- Interface selection -->
   <string name="select_interface">Interface auswählen</string>

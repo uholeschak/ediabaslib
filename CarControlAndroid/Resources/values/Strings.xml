@@ -45,6 +45,7 @@
   <!-- FilePicker -->
   <string name="select_file">Select file</string>
   <string name="access_dir_failed">Access denied:</string>
+  <string name="file_picker_search">Search</string>
 
   <!-- Interface selection -->
   <string name="select_interface">Select interface</string>
