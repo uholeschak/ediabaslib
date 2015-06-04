@@ -6,7 +6,6 @@ using Android.Support.V4.App;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
-using com.xamarin.recipes.filepicker;
 using EdiabasLib;
 using Java.Interop;
 using Mono.CSharp;
@@ -16,6 +15,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using CarControlAndroid.FilePicker;
 
 namespace CarControlAndroid
 {
@@ -202,8 +202,8 @@ namespace CarControlAndroid
                     if (resultCode == Android.App.Result.Ok)
                     {
                         // Get the device MAC address
-                        _deviceName = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_NAME);
-                        _deviceAddress = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                        _deviceName = data.Extras.GetString(DeviceListActivity.ExtraDeviceName);
+                        _deviceAddress = data.Extras.GetString(DeviceListActivity.ExtraDeviceAddress);
                         SupportInvalidateOptionsMenu();
                         if (_autoStart)
                         {
@@ -217,7 +217,7 @@ namespace CarControlAndroid
                     // When FilePickerActivity returns with a file
                     if (resultCode == Android.App.Result.Ok)
                     {
-                        _configFileName = data.Extras.GetString(FilePickerActivity.EXTRA_FILE_NAME);
+                        _configFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
                         ReadConfigFile();
                         SupportInvalidateOptionsMenu();
                     }
@@ -244,7 +244,7 @@ namespace CarControlAndroid
             {
                 scanMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_device), _deviceName));
                 scanMenu.SetEnabled(interfaceAvailable && !commActive);
-                scanMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.BLUETOOTH);
+                scanMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
             }
 
             IMenuItem selCfgMenu = menu.FindItem(Resource.Id.menu_sel_cfg);
@@ -405,14 +405,14 @@ namespace CarControlAndroid
                     string portName = string.Empty;
                     switch (_activityCommon.SelectedInterface)
                     {
-                        case ActivityCommon.InterfaceType.BLUETOOTH:
+                        case ActivityCommon.InterfaceType.Bluetooth:
                             portName = "BLUETOOTH:" + _deviceAddress;
                             break;
 
-                        case ActivityCommon.InterfaceType.ENET:
+                        case ActivityCommon.InterfaceType.Enet:
                             if (_activityCommon.Emulator)
                             {   // broadcast is not working with emulator
-                                portName = ActivityCommon.EMULATOR_ENET_IP;
+                                portName = ActivityCommon.EmulatorEnetIp;
                             }
                             break;
                     }
@@ -848,7 +848,7 @@ namespace CarControlAndroid
         private void ReadConfigFile()
         {
             _jobReader.ReadXml(_configFileName);
-            _activityCommon.SelectedInterface = (_jobReader.PageList.Count > 0) ? _jobReader.Interface : ActivityCommon.InterfaceType.NONE;
+            _activityCommon.SelectedInterface = (_jobReader.PageList.Count > 0) ? _jobReader.Interface : ActivityCommon.InterfaceType.None;
             RequestConfigSelect();
             CompileCode();
         }
@@ -977,8 +977,8 @@ namespace CarControlAndroid
             {
                 // ignored
             }
-            serverIntent.PutExtra(FilePickerActivity.EXTRA_INIT_DIR, initDir);
-            serverIntent.PutExtra(FilePickerActivity.EXTRA_FILE_EXTENSIONS, ".cccfg");
+            serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
+            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".cccfg");
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectConfig);
         }
 

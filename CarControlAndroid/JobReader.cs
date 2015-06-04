@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.XPath;
-using XmlGenSharp.Lib.Utility;
 
 namespace CarControlAndroid
 {
@@ -13,22 +12,22 @@ namespace CarControlAndroid
         {
             public DisplayInfo(string name, string result, string format, string logTag)
             {
-                this.name = name;
-                this.result = result;
-                this.format = format;
-                this.logTag = logTag;
+                _name = name;
+                _result = result;
+                _format = format;
+                _logTag = logTag;
             }
 
-            private string name;
-            private string result;
-            private string format;
-            private string logTag;
+            private readonly string _name;
+            private readonly string _result;
+            private readonly string _format;
+            private readonly string _logTag;
 
             public string Name
             {
                 get
                 {
-                    return name;
+                    return _name;
                 }
             }
 
@@ -36,7 +35,7 @@ namespace CarControlAndroid
             {
                 get
                 {
-                    return result;
+                    return _result;
                 }
             }
 
@@ -44,7 +43,7 @@ namespace CarControlAndroid
             {
                 get
                 {
-                    return format;
+                    return _format;
                 }
             }
 
@@ -52,7 +51,7 @@ namespace CarControlAndroid
             {
                 get
                 {
-                    return logTag;
+                    return _logTag;
                 }
             }
         }
@@ -61,18 +60,18 @@ namespace CarControlAndroid
         {
             public StringInfo(string lang, Dictionary<string, string> stringDict)
             {
-                this.lang = lang;
-                this.stringDict = stringDict;
+                _lang = lang;
+                _stringDict = stringDict;
             }
 
-            private string lang;
-            private Dictionary<string, string> stringDict;
+            private readonly string _lang;
+            private readonly Dictionary<string, string> _stringDict;
 
             public string Lang
             {
                 get
                 {
-                    return lang;
+                    return _lang;
                 }
             }
 
@@ -80,7 +79,7 @@ namespace CarControlAndroid
             {
                 get
                 {
-                    return stringDict;
+                    return _stringDict;
                 }
             }
         }
@@ -89,28 +88,28 @@ namespace CarControlAndroid
         {
             public JobInfo(string sgbd, bool activate, bool showWarnings, string name, string args, string results, string classCode)
             {
-                this.sgbd = sgbd;
-                this.activate = activate;
-                this.showWarnings = showWarnings;
-                this.name = name;
-                this.args = args;
-                this.results = results;
-                this.classCode = classCode;
+                _sgbd = sgbd;
+                _activate = activate;
+                _showWarnings = showWarnings;
+                _name = name;
+                _args = args;
+                _results = results;
+                _classCode = classCode;
             }
 
-            private string sgbd;
-            private bool activate;
-            private bool showWarnings;
-            private string name;
-            private string args;
-            private string results;
-            private string classCode;
+            private readonly string _sgbd;
+            private readonly bool _activate;
+            private readonly bool _showWarnings;
+            private readonly string _name;
+            private readonly string _args;
+            private readonly string _results;
+            private readonly string _classCode;
 
             public string Sgbd
             {
                 get
                 {
-                    return sgbd;
+                    return _sgbd;
                 }
             }
 
@@ -118,7 +117,7 @@ namespace CarControlAndroid
             {
                 get
                 {
-                    return activate;
+                    return _activate;
                 }
             }
 
@@ -126,7 +125,7 @@ namespace CarControlAndroid
             {
                 get
                 {
-                    return showWarnings;
+                    return _showWarnings;
                 }
             }
 
@@ -134,7 +133,7 @@ namespace CarControlAndroid
             {
                 get
                 {
-                    return name;
+                    return _name;
                 }
             }
 
@@ -142,7 +141,7 @@ namespace CarControlAndroid
             {
                 get
                 {
-                    return args;
+                    return _args;
                 }
             }
 
@@ -150,7 +149,7 @@ namespace CarControlAndroid
             {
                 get
                 {
-                    return results;
+                    return _results;
                 }
             }
 
@@ -158,7 +157,7 @@ namespace CarControlAndroid
             {
                 get
                 {
-                    return classCode;
+                    return _classCode;
                 }
             }
         }
@@ -167,30 +166,28 @@ namespace CarControlAndroid
         {
             public PageInfo(string name, float weight, string logFile, JobInfo jobInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
             {
-                this.name = name;
-                this.weight = weight;
-                this.logFile = logFile;
-                this.jobInfo = jobInfo;
-                this.displayList = displayList;
-                this.stringList = stringList;
-                this.infoObject = null;
-                this.classObject = null;
+                _name = name;
+                _weight = weight;
+                _logFile = logFile;
+                _jobInfo = jobInfo;
+                _displayList = displayList;
+                _stringList = stringList;
+                InfoObject = null;
+                ClassObject = null;
             }
 
-            private string name;
-            private float weight;
-            private string logFile;
-            private JobInfo jobInfo;
-            private List<DisplayInfo> displayList;
-            private List<StringInfo> stringList;
-            private object infoObject;
-            private dynamic classObject;
+            private readonly string _name;
+            private readonly float _weight;
+            private readonly string _logFile;
+            private readonly JobInfo _jobInfo;
+            private readonly List<DisplayInfo> _displayList;
+            private readonly List<StringInfo> _stringList;
 
             public string Name
             {
                 get
                 {
-                    return name;
+                    return _name;
                 }
             }
 
@@ -198,7 +195,7 @@ namespace CarControlAndroid
             {
                 get
                 {
-                    return weight;
+                    return _weight;
                 }
             }
 
@@ -206,7 +203,7 @@ namespace CarControlAndroid
             {
                 get
                 {
-                    return logFile;
+                    return _logFile;
                 }
             }
 
@@ -214,7 +211,7 @@ namespace CarControlAndroid
             {
                 get
                 {
-                    return jobInfo;
+                    return _jobInfo;
                 }
             }
 
@@ -222,7 +219,7 @@ namespace CarControlAndroid
             {
                 get
                 {
-                    return displayList;
+                    return _displayList;
                 }
             }
 
@@ -230,47 +227,27 @@ namespace CarControlAndroid
             {
                 get
                 {
-                    return stringList;
+                    return _stringList;
                 }
             }
 
-            public object InfoObject
-            {
-                get
-                {
-                    return infoObject;
-                }
-                set
-                {
-                    infoObject = value;
-                }
-            }
+            public object InfoObject { get; set; }
 
-            public dynamic ClassObject
-            {
-                get
-                {
-                    return classObject;
-                }
-                set
-                {
-                    classObject = value;
-                }
-            }
+            public dynamic ClassObject { get; set; }
         }
 
-        private List<PageInfo> pageList = new List<PageInfo>();
-        private string ecuPath = string.Empty;
-        private string logPath = string.Empty;
-        private bool appendLog = false;
-        private string interfaceName = string.Empty;
-        private ActivityCommon.InterfaceType interfaceType = ActivityCommon.InterfaceType.NONE;
+        private readonly List<PageInfo> _pageList = new List<PageInfo>();
+        private string _ecuPath = string.Empty;
+        private string _logPath = string.Empty;
+        private bool _appendLog;
+        private string _interfaceName = string.Empty;
+        private ActivityCommon.InterfaceType _interfaceType = ActivityCommon.InterfaceType.None;
 
         public List<PageInfo> PageList
         {
             get
             {
-                return pageList;
+                return _pageList;
             }
         }
 
@@ -278,7 +255,7 @@ namespace CarControlAndroid
         {
             get
             {
-                return ecuPath;
+                return _ecuPath;
             }
         }
 
@@ -286,7 +263,7 @@ namespace CarControlAndroid
         {
             get
             {
-                return logPath;
+                return _logPath;
             }
         }
 
@@ -294,7 +271,7 @@ namespace CarControlAndroid
         {
             get
             {
-                return appendLog;
+                return _appendLog;
             }
         }
 
@@ -302,7 +279,7 @@ namespace CarControlAndroid
         {
             get
             {
-                return interfaceName;
+                return _interfaceName;
             }
         }
 
@@ -310,7 +287,7 @@ namespace CarControlAndroid
         {
             get
             {
-                return interfaceType;
+                return _interfaceType;
             }
         }
 
@@ -325,7 +302,7 @@ namespace CarControlAndroid
 
         public bool ReadXml(string xmlName)
         {
-            pageList.Clear();
+            _pageList.Clear();
             if (string.IsNullOrEmpty(xmlName))
             {
                 return false;
@@ -334,9 +311,9 @@ namespace CarControlAndroid
             {
                 return false;
             }
-            ecuPath = Path.GetDirectoryName(xmlName);
-            logPath = string.Empty;
-            interfaceName = string.Empty;
+            _ecuPath = Path.GetDirectoryName(xmlName);
+            _logPath = string.Empty;
+            _interfaceName = string.Empty;
 
             try
             {
@@ -366,38 +343,38 @@ namespace CarControlAndroid
                         {
                             if (Path.IsPathRooted(attrib.Value))
                             {
-                                ecuPath = attrib.Value;
+                                _ecuPath = attrib.Value;
                             }
                             else
                             {
-                                ecuPath = Path.Combine(ecuPath, attrib.Value);
+                                _ecuPath = string.IsNullOrEmpty(_ecuPath) ? attrib.Value : Path.Combine(_ecuPath, attrib.Value);
                             }
                         }
 
                         attrib = xnodeGlobal.Attributes["log_path"];
                         if (attrib != null)
                         {
-                            logPath = attrib.Value;
+                            _logPath = attrib.Value;
                         }
 
                         attrib = xnodeGlobal.Attributes["append_log"];
                         if (attrib != null)
                         {
-                            appendLog = XmlConvert.ToBoolean(attrib.Value);
+                            _appendLog = XmlConvert.ToBoolean(attrib.Value);
                         }
 
                         attrib = xnodeGlobal.Attributes["interface"];
                         if (attrib != null)
                         {
-                            interfaceName = attrib.Value;
+                            _interfaceName = attrib.Value;
                         }
                     }
                 }
 
-                interfaceType = ActivityCommon.InterfaceType.BLUETOOTH;
-                if (string.Compare(interfaceName, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
+                _interfaceType = ActivityCommon.InterfaceType.Bluetooth;
+                if (string.Compare(_interfaceName, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    interfaceType = ActivityCommon.InterfaceType.ENET;
+                    _interfaceType = ActivityCommon.InterfaceType.Enet;
                 }
 
                 XmlNodeList xnodePages = xdocConfig.SelectNodes(string.Format("/{0}configuration/{0}pages/{0}page", prefix), namespaceManager);
@@ -419,7 +396,10 @@ namespace CarControlAndroid
                                 {
                                     pageWeight = XmlConvert.ToSingle(attrib.Value);
                                 }
-                                catch { }
+                                catch
+                                {
+                                    // ignored
+                                }
                             }
                             attrib = xnodePage.Attributes["logfile"];
                             if (attrib != null) logFile = attrib.Value;
@@ -512,7 +492,7 @@ namespace CarControlAndroid
                         if (!logEnabled) logFile = string.Empty;
                         if (string.IsNullOrEmpty(pageName) || (jobInfo == null)) continue;
 
-                        pageList.Add(new PageInfo(pageName, pageWeight, logFile, jobInfo, displayList, stringList));
+                        _pageList.Add(new PageInfo(pageName, pageWeight, logFile, jobInfo, displayList, stringList));
                     }
                 }
                 return true;

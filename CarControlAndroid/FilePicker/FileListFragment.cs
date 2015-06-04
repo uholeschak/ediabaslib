@@ -1,18 +1,15 @@
-namespace com.xamarin.recipes.filepicker
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Android.Content;
+using Android.OS;
+using Android.Support.V4.App;
+using Android.Views;
+using Android.Widget;
+
+namespace CarControlAndroid.FilePicker
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-
-    using Android.OS;
-    using Android.Support.V4.App;
-    using Android.Util;
-    using Android.Views;
-    using Android.Widget;
-    using CarControlAndroid;
-    using Android.Content;
-
     /// <summary>
     ///   A ListFragment that will show the files and subdirectories of a given directory.
     /// </summary>
@@ -24,13 +21,12 @@ namespace com.xamarin.recipes.filepicker
     {
         public string DefaultInitialDirectory = "/";
         private FileListAdapter _adapter;
-        private DirectoryInfo _directory;
         private List<string> _extensionList;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            string initDir = Activity.Intent.GetStringExtra(FilePickerActivity.EXTRA_INIT_DIR) ?? "/";
+            string initDir = Activity.Intent.GetStringExtra(FilePickerActivity.ExtraInitDir) ?? "/";
             if (Directory.Exists(initDir))
             {
                 try
@@ -41,11 +37,12 @@ namespace com.xamarin.recipes.filepicker
                 }
                 catch
                 {
+                    // ignored
                 }
             }
 
             _extensionList = new List<string>();
-            string fileExtensions = Activity.Intent.GetStringExtra(FilePickerActivity.EXTRA_FILE_EXTENSIONS);
+            string fileExtensions = Activity.Intent.GetStringExtra(FilePickerActivity.ExtraFileExtensions);
             if (!string.IsNullOrEmpty(fileExtensions))
             {
                 string[] extensions = fileExtensions.Split(';');
@@ -74,7 +71,7 @@ namespace com.xamarin.recipes.filepicker
                     // Do something with the file.  In this case we just pop some toast.
                     //Log.Verbose("FileListFragment", "The file {0} was clicked.", fileSystemInfo.FullName);
                     Intent intent = new Intent();
-                    intent.PutExtra(FilePickerActivity.EXTRA_FILE_NAME, fileSystemInfo.FileSysInfo.FullName);
+                    intent.PutExtra(FilePickerActivity.ExtraFileName, fileSystemInfo.FileSysInfo.FullName);
 
                     Activity.SetResult(Android.App.Result.Ok, intent);
                     Activity.Finish();
@@ -133,12 +130,9 @@ namespace com.xamarin.recipes.filepicker
             }
             catch (Exception)
             {
-                //Log.Error("FileListFragment", "Couldn't access the directory " + _directory.FullName + "; " + ex);
                 Toast.MakeText(Activity, GetString(Resource.String.access_dir_failed) + " " + directory, ToastLength.Long).Show();
                 return;
             }
-
-            _directory = dir;
 
             _adapter.AddDirectoryContents(visibleThings);
 

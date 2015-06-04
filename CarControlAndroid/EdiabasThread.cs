@@ -1,8 +1,6 @@
 ﻿using EdiabasLib;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Threading;
 
 namespace CarControlAndroid
@@ -46,37 +44,37 @@ namespace CarControlAndroid
         {
             get
             {
-                return ediabas;
+                return _ediabas;
             }
         }
 
         static public readonly Object DataLock = new Object();
 
-        private bool disposed = false;
+        private bool _disposed;
         private volatile bool _stopThread;
         private bool _threadRunning;
         private Thread _workerThread;
-        private EdiabasNet ediabas;
-        private bool ediabasInitReq;
-        private bool ediabasJobAbort;
+        private EdiabasNet _ediabas;
+        private bool _ediabasInitReq;
+        private bool _ediabasJobAbort;
 
         public EdiabasThread(string ecuPath, ActivityCommon.InterfaceType interfaceType)
         {
             _stopThread = false;
             _threadRunning = false;
             _workerThread = null;
-            ediabas = new EdiabasNet();
+            _ediabas = new EdiabasNet();
 
-            if (interfaceType == ActivityCommon.InterfaceType.ENET)
+            if (interfaceType == ActivityCommon.InterfaceType.Enet)
             {
-                ediabas.EdInterfaceClass = new EdInterfaceEnet();
+                _ediabas.EdInterfaceClass = new EdInterfaceEnet();
             }
             else
             {
-                ediabas.EdInterfaceClass = new EdInterfaceObd();
+                _ediabas.EdInterfaceClass = new EdInterfaceObd();
             }
-            ediabas.AbortJobFunc = AbortEdiabasJob;
-            ediabas.SetConfigProperty("EcuPath", ecuPath);
+            _ediabas.AbortJobFunc = AbortEdiabasJob;
+            _ediabas.SetConfigProperty("EcuPath", ecuPath);
 
             InitProperties();
         }
@@ -95,19 +93,19 @@ namespace CarControlAndroid
         protected virtual void Dispose(bool disposing)
         {
             // Check to see if Dispose has already been called.
-            if (!disposed)
+            if (!_disposed)
             {
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
                 if (disposing)
                 {
                     // Dispose managed resources.
-                    ediabas.Dispose();
-                    ediabas = null;
+                    _ediabas.Dispose();
+                    _ediabas = null;
                 }
 
                 // Note disposing has been done.
-                disposed = true;
+                _disposed = true;
             }
         }
 
@@ -120,25 +118,25 @@ namespace CarControlAndroid
             try
             {
                 _stopThread = false;
-                if (ediabas.EdInterfaceClass is EdInterfaceObd)
+                if (_ediabas.EdInterfaceClass is EdInterfaceObd)
                 {
-                    ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = comPort;
+                    ((EdInterfaceObd)_ediabas.EdInterfaceClass).ComPort = comPort;
                 }
-                if (ediabas.EdInterfaceClass is EdInterfaceEnet)
+                if (_ediabas.EdInterfaceClass is EdInterfaceEnet)
                 {
                     if (!string.IsNullOrEmpty(comPort))
                     {
-                        ((EdInterfaceEnet)ediabas.EdInterfaceClass).RemoteHost = comPort;
+                        ((EdInterfaceEnet)_ediabas.EdInterfaceClass).RemoteHost = comPort;
                     }
                 }
                 if (!string.IsNullOrEmpty(logDir))
                 {
-                    ediabas.SetConfigProperty("TracePath", logDir);
-                    ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.ED_LOG_LEVEL.ERROR));
+                    _ediabas.SetConfigProperty("TracePath", logDir);
+                    _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.ED_LOG_LEVEL.ERROR));
                 }
                 else
                 {
-                    ediabas.SetConfigProperty("IfhTrace", "0");
+                    _ediabas.SetConfigProperty("IfhTrace", "0");
                 }
                 InitProperties();
                 CommActive = commActive;
@@ -166,7 +164,7 @@ namespace CarControlAndroid
                     _workerThread = null;
                 }
             }
-            ediabas.SetConfigProperty("IfhTrace", "0");
+            _ediabas.SetConfigProperty("IfhTrace", "0");
         }
 
         public bool ThreadRunning()
@@ -223,7 +221,7 @@ namespace CarControlAndroid
         {
             if (pageInfo == null)
             {
-                lock (EdiabasThread.DataLock)
+                lock (DataLock)
                 {
                     EdiabasErrorMessage = "No Page info";
                 }
@@ -231,21 +229,21 @@ namespace CarControlAndroid
                 return false;
             }
             bool firstRequestCall = false;
-            if (ediabasInitReq)
+            if (_ediabasInitReq)
             {
                 firstRequestCall = true;
-                ediabasJobAbort = false;
+                _ediabasJobAbort = false;
 
                 if (!string.IsNullOrEmpty(pageInfo.JobInfo.Sgbd))
                 {
                     try
                     {
-                        ediabas.ResolveSgbdFile(pageInfo.JobInfo.Sgbd);
+                        _ediabas.ResolveSgbdFile(pageInfo.JobInfo.Sgbd);
                     }
                     catch (Exception ex)
                     {
                         string exText = EdiabasNet.GetExceptionText(ex);
-                        lock (EdiabasThread.DataLock)
+                        lock (DataLock)
                         {
                             EdiabasErrorMessage = exText;
                         }
@@ -254,7 +252,7 @@ namespace CarControlAndroid
                     }
                 }
 
-                ediabasInitReq = false;
+                _ediabasInitReq = false;
             }
 
             Dictionary<string, EdiabasNet.ResultData> resultDict = null;
@@ -262,12 +260,12 @@ namespace CarControlAndroid
             {
                 if (!string.IsNullOrEmpty(pageInfo.JobInfo.Name))
                 {
-                    ediabas.ArgString = pageInfo.JobInfo.Args;
-                    ediabas.ArgBinaryStd = null;
-                    ediabas.ResultsRequests = pageInfo.JobInfo.Results;
-                    ediabas.ExecuteJob(pageInfo.JobInfo.Name);
+                    _ediabas.ArgString = pageInfo.JobInfo.Args;
+                    _ediabas.ArgBinaryStd = null;
+                    _ediabas.ResultsRequests = pageInfo.JobInfo.Results;
+                    _ediabas.ExecuteJob(pageInfo.JobInfo.Name);
 
-                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                     if (resultSets != null && resultSets.Count >= 2)
                     {
                         MergeResultDictionarys(ref resultDict, resultSets[1]);
@@ -277,15 +275,15 @@ namespace CarControlAndroid
                 {
                     if (pageInfo.ClassObject != null)
                     {
-                        pageInfo.ClassObject.ExecuteJob(ediabas, ref resultDict, firstRequestCall);
+                        pageInfo.ClassObject.ExecuteJob(_ediabas, ref resultDict, firstRequestCall);
                     }
                 }
             }
             catch (Exception ex)
             {
-                ediabasInitReq = true;
+                _ediabasInitReq = true;
                 string exText = EdiabasNet.GetExceptionText(ex);
-                lock (EdiabasThread.DataLock)
+                lock (DataLock)
                 {
                     EdiabasResultDict = null;
                     EdiabasErrorMessage = exText;
@@ -294,7 +292,7 @@ namespace CarControlAndroid
                 return false;
             }
 
-            lock (EdiabasThread.DataLock)
+            lock (DataLock)
             {
                 EdiabasResultDict = resultDict;
                 EdiabasErrorMessage = string.Empty;
@@ -340,19 +338,14 @@ namespace CarControlAndroid
 
         private bool AbortEdiabasJob()
         {
-            if (ediabasJobAbort || _stopThread)
+            if (_ediabasJobAbort || _stopThread)
             {
                 return true;
             }
             return false;
         }
 
-        private void InitProperties()
-        {
-            InitProperties(false);
-        }
-
-        private void InitProperties(bool deviceChange)
+        private void InitProperties(bool deviceChange = false)
         {
             if (!deviceChange)
             {
@@ -362,8 +355,8 @@ namespace CarControlAndroid
             EdiabasResultDict = null;
             EdiabasErrorMessage = string.Empty;
 
-            ediabasInitReq = true;
-            ediabasJobAbort = deviceChange;
+            _ediabasInitReq = true;
+            _ediabasJobAbort = deviceChange;
         }
 
         private void DataUpdatedEvent()
