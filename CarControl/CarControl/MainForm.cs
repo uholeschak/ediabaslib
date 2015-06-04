@@ -6,7 +6,6 @@ using System.IO.Ports;
 using System.Reflection;
 using System.Windows.Forms;
 using EdiabasLib;
-using Ftdi;
 using NetworkFunctions;
 using OpenNETCF.Net.NetworkInformation;
 using PowerFunctions;
@@ -80,11 +79,11 @@ namespace CarControl
 
         private void UpdatePorts()
         {
-            Ftd2xx.FT_STATUS ftStatus;
+            Ftd2Xx.FT_STATUS ftStatus;
             IntPtr deviceCount = (IntPtr)0;
             IntPtr arg2 = (IntPtr)0;
-            ftStatus = Ftd2xx.FT_ListDevices(ref deviceCount, ref arg2, Ftd2xx.FT_LIST_NUMBER_ONLY);
-            if (ftStatus != Ftd2xx.FT_STATUS.FT_OK)
+            ftStatus = Ftd2Xx.FT_ListDevices(ref deviceCount, ref arg2, Ftd2Xx.FT_LIST_NUMBER_ONLY);
+            if (ftStatus != Ftd2Xx.FT_STATUS.FT_OK)
             {
                 deviceCount = (IntPtr)0;
             }
@@ -829,10 +828,10 @@ namespace CarControl
             EdiabasNet.ResultData resultData;
             if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
             {
-                if (resultData.opData.GetType() == typeof(Int64))
+                if (resultData.OpData.GetType() == typeof(Int64))
                 {
                     found = true;
-                    return (Int64)resultData.opData;
+                    return (Int64)resultData.OpData;
                 }
             }
             return 0;
@@ -844,10 +843,10 @@ namespace CarControl
             EdiabasNet.ResultData resultData;
             if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
             {
-                if (resultData.opData.GetType() == typeof(Double))
+                if (resultData.OpData.GetType() == typeof(Double))
                 {
                     found = true;
-                    return (Double)resultData.opData;
+                    return (Double)resultData.OpData;
                 }
             }
             return 0;
@@ -859,10 +858,10 @@ namespace CarControl
             EdiabasNet.ResultData resultData;
             if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
             {
-                if (resultData.opData.GetType() == typeof(String))
+                if (resultData.OpData.GetType() == typeof(String))
                 {
                     found = true;
-                    return (String)resultData.opData;
+                    return (String)resultData.OpData;
                 }
             }
             return string.Empty;

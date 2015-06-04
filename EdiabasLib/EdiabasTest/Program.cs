@@ -300,9 +300,9 @@ namespace EdiabasTest
                     EdiabasNet.ResultData resultData;
                     if (resultSets[0].TryGetValue("VARIANTE", out resultData))
                     {
-                        if (resultData.opData.GetType() == typeof(string))
+                        if (resultData.OpData.GetType() == typeof(string))
                         {
-                            outputWriter.WriteLine("Variant: " + (string)resultData.opData);
+                            outputWriter.WriteLine("Variant: " + (string)resultData.OpData);
                         }
                     }
                 }
@@ -314,18 +314,18 @@ namespace EdiabasTest
                     {
                         EdiabasNet.ResultData resultData = resultDict[key];
                         string resultText = string.Empty;
-                        if (resultData.opData.GetType() == typeof(string))
+                        if (resultData.OpData.GetType() == typeof(string))
                         {
-                            resultText = (string)resultData.opData;
+                            resultText = (string)resultData.OpData;
                         }
-                        else if (resultData.opData.GetType() == typeof(Double))
+                        else if (resultData.OpData.GetType() == typeof(Double))
                         {
-                            resultText = string.Format(culture, "R: {0}", (Double)resultData.opData);
+                            resultText = string.Format(culture, "R: {0}", (Double)resultData.OpData);
                         }
-                        else if (resultData.opData.GetType() == typeof(Int64))
+                        else if (resultData.OpData.GetType() == typeof(Int64))
                         {
-                            Int64 value = (Int64)resultData.opData;
-                            switch (resultData.type)
+                            Int64 value = (Int64)resultData.OpData;
+                            switch (resultData.ResType)
                             {
                                 case EdiabasNet.ResultType.TypeB:  // 8 bit
                                     resultText = string.Format(culture, "B: {0} 0x{1:X02}", value, (Byte)value);
@@ -356,9 +356,9 @@ namespace EdiabasTest
                                     break;
                             }
                         }
-                        else if (resultData.opData.GetType() == typeof(byte[]))
+                        else if (resultData.OpData.GetType() == typeof(byte[]))
                         {
-                            byte[] data = (byte[])resultData.opData;
+                            byte[] data = (byte[])resultData.OpData;
                             foreach (byte value in data)
                             {
                                 resultText += string.Format(culture, "{0:X02} ", value);
@@ -367,12 +367,12 @@ namespace EdiabasTest
 
                         if (printAllTypes)
                         {
-                            if ((resultData.opData.GetType() == typeof(Int64)) || (resultData.opData.GetType() == typeof(Double)))
+                            if ((resultData.OpData.GetType() == typeof(Int64)) || (resultData.OpData.GetType() == typeof(Double)))
                             {
                                 resultText += " ALL: ";
-                                if (resultData.opData.GetType() == typeof(Int64))
+                                if (resultData.OpData.GetType() == typeof(Int64))
                                 {
-                                    Int64 value = (Int64)resultData.opData;
+                                    Int64 value = (Int64)resultData.OpData;
                                     resultText += string.Format(culture, " {0}", (sbyte)value);
                                     resultText += string.Format(culture, " {0}", (byte)value);
                                     resultText += string.Format(culture, " {0}", (short)value);
@@ -381,9 +381,9 @@ namespace EdiabasTest
                                     resultText += string.Format(culture, " {0}", (uint)value);
                                     resultText += string.Format(culture, " {0}", (double)value);
                                 }
-                                else if (resultData.opData.GetType() == typeof(Double))
+                                else if (resultData.OpData.GetType() == typeof(Double))
                                 {
-                                    Double valueDouble = (Double)resultData.opData;
+                                    Double valueDouble = (Double)resultData.OpData;
                                     Int64 value = (Int64)valueDouble;
                                     resultText += string.Format(culture, " {0}", (sbyte)value);
                                     resultText += string.Format(culture, " {0}", (byte)value);
@@ -401,7 +401,7 @@ namespace EdiabasTest
                             string[] words = format.Split(new char[] { '=' }, 2);
                             if (words.Length == 2)
                             {
-                                if (string.Compare(words[0], resultData.name, StringComparison.OrdinalIgnoreCase) == 0)
+                                if (string.Compare(words[0], resultData.Name, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
                                     string resultString = EdiabasNet.FormatResult(resultData, words[1]);
                                     if (resultString != null)
@@ -416,7 +416,7 @@ namespace EdiabasTest
                             }
                         }
 
-                        outputWriter.WriteLine(resultData.name + ": " + resultText);
+                        outputWriter.WriteLine(resultData.Name + ": " + resultText);
                     }
                     dataSet++;
                 }

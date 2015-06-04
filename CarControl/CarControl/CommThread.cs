@@ -618,7 +618,7 @@ namespace CarControl
                 if (logFile != null)
                 {
                     ediabas.SetConfigProperty("TracePath", Path.GetDirectoryName(logFile));
-                    ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.ED_LOG_LEVEL.IFH));
+                    ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Ifh));
                 }
                 else
                 {
@@ -834,9 +834,9 @@ namespace CarControl
                     EdiabasNet.ResultData resultData;
                     if (resultSets[1].TryGetValue("WERT", out resultData))
                     {
-                        if (resultData.opData is Int64)
+                        if (resultData.OpData is Int64)
                         {
-                            axisMode = (int)((Int64)resultData.opData);
+                            axisMode = (int)((Int64)resultData.OpData);
                         }
                     }
                     MergeResultDictionarys(ref resultDict, resultSets[1], "MODE_CTRL_LESEN_");
@@ -1035,9 +1035,9 @@ namespace CarControl
                         EdiabasNet.ResultData resultData;
                         if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
                         {
-                            if (resultData.opData is string)
+                            if (resultData.OpData is string)
                             {   // read details
-                                string jobStatus = (string)resultData.opData;
+                                string jobStatus = (string)resultData.OpData;
                                 if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
                                 {
                                     jobOk = true;
@@ -1060,9 +1060,9 @@ namespace CarControl
                             EdiabasNet.ResultData resultData;
                             if (resultDict.TryGetValue("F_ORT_NR", out resultData))
                             {
-                                if (resultData.opData is Int64)
+                                if (resultData.OpData is Int64)
                                 {   // read details
-                                    ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.opData);
+                                    ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.OpData);
                                     ediabas.ArgBinaryStd = null;
                                     ediabas.ResultsRequests = "F_UW_KM";
 
@@ -1350,21 +1350,21 @@ namespace CarControl
                                 if (resultDict.TryGetValue(dataName, out resultData))
                                 {
                                     string valueText = string.Empty;
-                                    if (resultData.opData is string)
+                                    if (resultData.OpData is string)
                                     {
-                                        valueText = (string)resultData.opData;
+                                        valueText = (string)resultData.OpData;
                                     }
-                                    else if (resultData.opData is Double)
+                                    else if (resultData.OpData is Double)
                                     {
-                                        valueText = ((Double)resultData.opData).ToString ();
+                                        valueText = ((Double)resultData.OpData).ToString ();
                                     }
-                                    else if (resultData.opData is Int64)
+                                    else if (resultData.OpData is Int64)
                                     {
-                                        valueText = ((Int64)resultData.opData).ToString ();
+                                        valueText = ((Int64)resultData.OpData).ToString ();
                                     }
-                                    else if (resultData.opData is byte[])
+                                    else if (resultData.OpData is byte[])
                                     {
-                                        byte[] dataArray = (byte[])resultData.opData;
+                                        byte[] dataArray = (byte[])resultData.OpData;
                                         foreach (byte value in dataArray)
                                         {
                                             valueText += string.Format("{0:X02} ", value);

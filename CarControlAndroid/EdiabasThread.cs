@@ -132,7 +132,7 @@ namespace CarControlAndroid
                 if (!string.IsNullOrEmpty(logDir))
                 {
                     _ediabas.SetConfigProperty("TracePath", logDir);
-                    _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.ED_LOG_LEVEL.ERROR));
+                    _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
                 }
                 else
                 {

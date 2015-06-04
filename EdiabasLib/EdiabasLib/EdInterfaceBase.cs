@@ -5,29 +5,29 @@ namespace EdiabasLib
 {
     public abstract class EdInterfaceBase : IDisposable
     {
-        private bool disposed = false;
-        protected EdiabasNet ediabas;
-        protected static Mutex interfaceMutex;
-        protected bool mutexAquired = false;
-        protected UInt32 commRepeats = 0;
-        protected UInt32[] commParameter;
-        protected Int16[] commAnswerLen = new Int16[2];
+        private bool _disposed;
+        protected EdiabasNet EdiabasProtected;
+        protected static Mutex InterfaceMutex;
+        protected bool MutexAquired;
+        protected UInt32 CommRepeatsProtected;
+        protected UInt32[] CommParameterProtected;
+        protected Int16[] CommAnswerLenProtected = new Int16[2];
 
         public abstract bool IsValidInterfaceName(string name);
 
         public virtual bool InterfaceLock()
         {
-            if (interfaceMutex == null)
+            if (InterfaceMutex == null)
             {
                 return false;
             }
             try
             {
-                if (!interfaceMutex.WaitOne(0, false))
+                if (!InterfaceMutex.WaitOne(0, false))
                 {
                     return false;
                 }
-                mutexAquired = true;
+                MutexAquired = true;
             }
             catch (Exception)
             {
@@ -38,24 +38,24 @@ namespace EdiabasLib
 
         public virtual bool InterfaceUnlock()
         {
-            if (interfaceMutex == null)
+            if (InterfaceMutex == null)
             {
                 return true;
             }
-            if (mutexAquired)
+            if (MutexAquired)
             {
-                mutexAquired = false;
-                interfaceMutex.ReleaseMutex();
+                MutexAquired = false;
+                InterfaceMutex.ReleaseMutex();
             }
             return true;
         }
 
         public virtual bool InterfaceConnect()
         {
-            commRepeats = 0;
-            commParameter = null;
-            commAnswerLen[0] = 0;
-            commAnswerLen[1] = 0;
+            CommRepeatsProtected = 0;
+            CommParameterProtected = null;
+            CommAnswerLenProtected[0] = 0;
+            CommAnswerLenProtected[1] = 0;
             return true;
         }
 
@@ -74,101 +74,51 @@ namespace EdiabasLib
 
         public virtual EdiabasNet Ediabas
         {
-            get
-            {
-                return ediabas;
-            }
-            set
-            {
-                ediabas = value;
-            }
+            get { return EdiabasProtected; }
+            set { EdiabasProtected = value; }
         }
 
         public UInt32 CommRepeats
         {
-            get
-            {
-                return commRepeats;
-            }
-            set
-            {
-                commRepeats = value;
-            }
+            get { return CommRepeatsProtected; }
+            set { CommRepeatsProtected = value; }
         }
 
-        public virtual UInt32[] CommParameter
-        {
-            get;
-            set;
-        }
+        public virtual UInt32[] CommParameter { get; set; }
 
         public Int16[] CommAnswerLen
         {
-            get
-            {
-                return commAnswerLen;
-            }
+            get { return CommAnswerLenProtected; }
             set
             {
                 if (value != null && value.Length >= 2)
                 {
-                    commAnswerLen[0] = value[0];
-                    commAnswerLen[1] = value[1];
+                    CommAnswerLenProtected[0] = value[0];
+                    CommAnswerLenProtected[1] = value[1];
                 }
             }
         }
 
-        public abstract string InterfaceType
-        {
-            get;
-        }
+        public abstract string InterfaceType { get; }
 
-        public abstract UInt32 InterfaceVersion
-        {
-            get;
-        }
+        public abstract UInt32 InterfaceVersion { get; }
 
-        public abstract string InterfaceName
-        {
-            get;
-        }
+        public abstract string InterfaceName { get; }
 
         public virtual string InterfaceVerName
         {
-            get
-            {
-                return "IFH-STD Version 7.3.0";
-            }
+            get { return "IFH-STD Version 7.3.0"; }
         }
 
-        public abstract byte[] KeyBytes
-        {
-            get;
-        }
+        public abstract byte[] KeyBytes { get; }
 
-        public abstract byte[] State
-        {
-            get;
-        }
+        public abstract byte[] State { get; }
 
-        public abstract Int64 BatteryVoltage
-        {
-            get;
-        }
+        public abstract Int64 BatteryVoltage { get; }
 
-        public abstract Int64 IgnitionVoltage
-        {
-            get;
-        }
+        public abstract Int64 IgnitionVoltage { get; }
 
-        public abstract bool Connected
-        {
-            get;
-        }
-
-        protected EdInterfaceBase()
-        {
-        }
+        public abstract bool Connected { get; }
 
         public void Dispose()
         {
@@ -184,7 +134,7 @@ namespace EdiabasLib
         protected virtual void Dispose(bool disposing)
         {
             // Check to see if Dispose has already been called.
-            if (!this.disposed)
+            if (!_disposed)
             {
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
@@ -194,7 +144,7 @@ namespace EdiabasLib
                 }
 
                 // Note disposing has been done.
-                disposed = true;
+                _disposed = true;
             }
         }
 

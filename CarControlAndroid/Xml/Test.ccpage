@@ -177,21 +177,21 @@
                                 if (resultDictLocal.TryGetValue(dataName, out resultData))
                                 {
                                     string valueText = string.Empty;
-                                    if (resultData.opData is string)
+                                    if (resultData.OpData is string)
                                     {
-                                        valueText = (string)resultData.opData;
+                                        valueText = (string)resultData.OpData;
                                     }
-                                    else if (resultData.opData is Double)
+                                    else if (resultData.OpData is Double)
                                     {
-                                        valueText = ((Double)resultData.opData).ToString ();
+                                        valueText = ((Double)resultData.OpData).ToString ();
                                     }
-                                    else if (resultData.opData is Int64)
+                                    else if (resultData.OpData is Int64)
                                     {
-                                        valueText = ((Int64)resultData.opData).ToString ();
+                                        valueText = ((Int64)resultData.OpData).ToString ();
                                     }
-                                    else if (resultData.opData is byte[])
+                                    else if (resultData.OpData is byte[])
                                     {
-                                        byte[] dataArray = (byte[])resultData.opData;
+                                        byte[] dataArray = (byte[])resultData.OpData;
                                         foreach (byte value in dataArray)
                                         {
                                             valueText += string.Format("{0:X02} ", value);

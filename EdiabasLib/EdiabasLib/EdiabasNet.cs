@@ -6,6 +6,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
+// ReSharper disable IntroduceOptionalParameters.Local
+// ReSharper disable NotResolvedInText
+// ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
+// ReSharper disable LoopCanBeConvertedToQuery
+// ReSharper disable RedundantCast
 
 namespace EdiabasLib
 {
@@ -20,14 +25,15 @@ namespace EdiabasLib
         public delegate void ProgressJobDelegate(EdiabasNet ediabas);
         public delegate void ErrorRaisedDelegate(ErrorCodes error);
 
-        private static readonly int MAX_FILES = 5;
+        private static readonly int MaxFiles = 5;
 
         private class OpCode
         {
-            public byte oc;
-            public string pneumonic;
-            public OperationDelegate opFunc;
-            public bool arg0IsNearAddress;
+            // ReSharper disable once NotAccessedField.Local
+            private byte _oc;
+            public readonly string Pneumonic;
+            public readonly OperationDelegate OpFunc;
+            public readonly bool Arg0IsNearAddress;
 
             public OpCode(byte oc, string pneumonic, OperationDelegate opFunc)
                 : this(oc, pneumonic, opFunc, false)
@@ -36,10 +42,10 @@ namespace EdiabasLib
 
             public OpCode(byte oc, string pneumonic, OperationDelegate opFunc, bool arg0IsNearAddress)
             {
-                this.oc = oc;
-                this.pneumonic = pneumonic;
-                this.opFunc = opFunc;
-                this.arg0IsNearAddress = arg0IsNearAddress;
+                _oc = oc;
+                Pneumonic = pneumonic;
+                OpFunc = opFunc;
+                Arg0IsNearAddress = arg0IsNearAddress;
             }
         }
 
@@ -50,24 +56,28 @@ namespace EdiabasLib
             {
             }
 
+            // ReSharper disable once UnusedMember.Local
             public Operand(EdiabasNet ediabas, OpAddrMode opAddrMode)
                 : this(ediabas, opAddrMode, null, null, null)
             {
             }
 
+            // ReSharper disable once UnusedMember.Local
             public Operand(EdiabasNet ediabas, OpAddrMode opAddrMode, Object opData1)
                 : this(ediabas, opAddrMode, opData1, null, null)
             {
             }
 
+            // ReSharper disable once UnusedMember.Local
             public Operand(EdiabasNet ediabas, OpAddrMode opAddrMode, Object opData1, Object opData2)
                 : this(ediabas, opAddrMode, opData1, opData2, null)
             {
             }
 
+            // ReSharper disable once MemberCanBePrivate.Local
             public Operand(EdiabasNet ediabas, OpAddrMode opAddrMode, Object opData1, Object opData2, Object opData3)
             {
-                this.ediabas = ediabas;
+                _ediabas = ediabas;
                 Init(opAddrMode, opData1, opData2, opData3);
             }
 
@@ -88,15 +98,15 @@ namespace EdiabasLib
 
             public void Init(OpAddrMode opAddrMode, Object opData1, Object opData2, Object opData3)
             {
-                this.opAddrMode = opAddrMode;
-                this.opData1 = opData1;
-                this.opData2 = opData2;
-                this.opData3 = opData3;
+                _opAddrMode = opAddrMode;
+                OpData1 = opData1;
+                OpData2 = opData2;
+                OpData3 = opData3;
             }
 
             public Type GetDataType()
             {
-                switch (opAddrMode)
+                switch (_opAddrMode)
                 {
                     case OpAddrMode.RegS:
                     case OpAddrMode.ImmStr:
@@ -112,11 +122,13 @@ namespace EdiabasLib
                 return typeof(EdValueType);
             }
 
+            // ReSharper disable once MemberCanBePrivate.Local
             public EdValueType GetValueMask()
             {
                 return GetValueMask(0);
             }
 
+            // ReSharper disable once MemberCanBePrivate.Local
             public EdValueType GetValueMask(EdValueType dataLen)
             {
                 if (dataLen == 0)
@@ -146,13 +158,13 @@ namespace EdiabasLib
 
             public EdValueType GetDataLen(bool write)
             {
-                switch (opAddrMode)
+                switch (_opAddrMode)
                 {
                     case OpAddrMode.RegS:
                     case OpAddrMode.ImmStr:
                         return (EdValueType)GetArrayData().Length;
 
-                    case OpAddrMode.RegAB:
+                    case OpAddrMode.RegAb:
                         return 1;
 
                     case OpAddrMode.RegI:
@@ -190,18 +202,18 @@ namespace EdiabasLib
 
             public Object GetRawData()
             {
-                switch (opAddrMode)
+                switch (_opAddrMode)
                 {
                     case OpAddrMode.RegS:
-                    case OpAddrMode.RegAB:
+                    case OpAddrMode.RegAb:
                     case OpAddrMode.RegI:
                     case OpAddrMode.RegL:
                         {
-                            if (opData1.GetType() != typeof(Register))
+                            if (OpData1.GetType() != typeof(Register))
                             {
                                 throw new ArgumentOutOfRangeException("opData1", "Operand.GetRawData RegX: Invalid data type");
                             }
-                            Register arg1Data = (Register)opData1;
+                            Register arg1Data = (Register)OpData1;
                             return arg1Data.GetRawData();
                         }
 
@@ -210,57 +222,57 @@ namespace EdiabasLib
                     case OpAddrMode.Imm32:
                     case OpAddrMode.ImmStr:
                         {
-                            return opData1;
+                            return OpData1;
                         }
 
                     case OpAddrMode.IdxImm:
                     case OpAddrMode.IdxReg:
                     case OpAddrMode.IdxRegImm:
                         {
-                            if (opData1.GetType() != typeof(Register))
+                            if (OpData1.GetType() != typeof(Register))
                             {
                                 throw new ArgumentOutOfRangeException("opData1", "Operand.GetRawData IdxX: Invalid data type");
                             }
-                            Register arg1Data = (Register)opData1;
+                            Register arg1Data = (Register)OpData1;
                             byte[] dataArray = arg1Data.GetArrayData(true);
 
                             EdValueType index;
-                            if (opAddrMode == OpAddrMode.IdxImm)
+                            if (_opAddrMode == OpAddrMode.IdxImm)
                             {
-                                if (opData2.GetType() != typeof(EdValueType))
+                                if (OpData2.GetType() != typeof(EdValueType))
                                 {
                                     throw new ArgumentOutOfRangeException("opData2", "Operand.GetRawData IdxX: Invalid data type2");
                                 }
-                                index = (EdValueType)opData2;
+                                index = (EdValueType)OpData2;
                             }
                             else
                             {
-                                if (opData2.GetType() != typeof(Register))
+                                if (OpData2.GetType() != typeof(Register))
                                 {
                                     throw new ArgumentOutOfRangeException("opData2", "Operand.GetRawData IdxX: Invalid data type2");
                                 }
-                                Register arg2Data = (Register)opData2;
+                                Register arg2Data = (Register)OpData2;
                                 index = arg2Data.GetValueData();
                             }
 
-                            if (opAddrMode == OpAddrMode.IdxRegImm)
+                            if (_opAddrMode == OpAddrMode.IdxRegImm)
                             {
-                                if (opData3.GetType() != typeof(EdValueType))
+                                if (OpData3.GetType() != typeof(EdValueType))
                                 {
                                     throw new ArgumentOutOfRangeException("opData3", "Operand.GetRawData IdxX: Invalid data type3");
                                 }
-                                index += (EdValueType)opData3;
+                                index += (EdValueType)OpData3;
                             }
 
                             EdValueType requiredLength = index + 1;
-                            if (requiredLength > ediabas.ArrayMaxSize)
+                            if (requiredLength > _ediabas.ArrayMaxSize)
                             {
-                                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
-                                return EdiabasNet.byteArray0;
+                                _ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
+                                return ByteArray0;
                             }
                             if (dataArray.Length < requiredLength)
                             {
-                                return EdiabasNet.byteArray0;
+                                return ByteArray0;
                             }
 
                             byte[] resultArray = new byte[dataArray.Length - index];
@@ -273,62 +285,62 @@ namespace EdiabasLib
                     case OpAddrMode.IdxRegLenImm:
                     case OpAddrMode.IdxRegLenReg:
                         {
-                            if (opData1.GetType() != typeof(Register))
+                            if (OpData1.GetType() != typeof(Register))
                             {
                                 throw new ArgumentOutOfRangeException("opData1", "Operand.GetRawData IdxXLenX: Invalid data type");
                             }
-                            Register arg1Data = (Register)opData1;
+                            Register arg1Data = (Register)OpData1;
                             byte[] dataArray = arg1Data.GetArrayData(true);
 
                             EdValueType index;
-                            if ((opAddrMode == OpAddrMode.IdxImmLenImm) || (opAddrMode == OpAddrMode.IdxImmLenReg))
+                            if ((_opAddrMode == OpAddrMode.IdxImmLenImm) || (_opAddrMode == OpAddrMode.IdxImmLenReg))
                             {
-                                if (opData2.GetType() != typeof(EdValueType))
+                                if (OpData2.GetType() != typeof(EdValueType))
                                 {
                                     throw new ArgumentOutOfRangeException("opData2", "Operand.GetRawData IdxXLenX: Invalid data type");
                                 }
-                                index = (EdValueType)opData2;
+                                index = (EdValueType)OpData2;
                             }
                             else
                             {
-                                if (opData2.GetType() != typeof(Register))
+                                if (OpData2.GetType() != typeof(Register))
                                 {
                                     throw new ArgumentOutOfRangeException("opData2", "Operand.GetRawData IdxXLenX: Invalid data type");
                                 }
-                                Register arg2Data = (Register)opData2;
+                                Register arg2Data = (Register)OpData2;
                                 index = arg2Data.GetValueData();
                             }
 
-                            EdValueType len = 0;
-                            if ((opAddrMode == OpAddrMode.IdxImmLenImm) || (opAddrMode == OpAddrMode.IdxRegLenImm))
+                            EdValueType len;
+                            if ((_opAddrMode == OpAddrMode.IdxImmLenImm) || (_opAddrMode == OpAddrMode.IdxRegLenImm))
                             {
-                                if (opData3.GetType() != typeof(EdValueType))
+                                if (OpData3.GetType() != typeof(EdValueType))
                                 {
                                     throw new ArgumentOutOfRangeException("opData3", "Operand.GetRawData IdxXLenX: Invalid data type");
                                 }
-                                len = (EdValueType)opData3;
+                                len = (EdValueType)OpData3;
                             }
                             else
                             {
-                                if (opData1.GetType() != typeof(Register))
+                                if (OpData1.GetType() != typeof(Register))
                                 {
                                     throw new ArgumentOutOfRangeException("opData1", "Operand.GetRawData IdxXLenX: Invalid data type");
                                 }
-                                Register arg3Data = (Register)opData3;
+                                Register arg3Data = (Register)OpData3;
                                 len = arg3Data.GetValueData();
                             }
 
                             EdValueType requiredLength = index + len;
-                            if (requiredLength > ediabas.ArrayMaxSize)
+                            if (requiredLength > _ediabas.ArrayMaxSize)
                             {
-                                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
-                                return EdiabasNet.byteArray0;
+                                _ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
+                                return ByteArray0;
                             }
                             if (dataArray.Length < requiredLength)
                             {
                                 if (dataArray.Length <= index)
                                 {
-                                    return EdiabasNet.byteArray0;
+                                    return ByteArray0;
                                 }
                                 len = (EdValueType) (dataArray.Length - index);
                             }
@@ -408,7 +420,7 @@ namespace EdiabasLib
                         break;
                     }
                 }
-                return encoding.GetString(data, 0, length);
+                return Encoding.GetString(data, 0, length);
             }
 
             public void SetRawData(Object data)
@@ -418,28 +430,28 @@ namespace EdiabasLib
 
             public void SetRawData(Object data, EdValueType dataLen)
             {
-                switch (opAddrMode)
+                switch (_opAddrMode)
                 {
                     case OpAddrMode.RegS:
                         {
-                            if (opData1.GetType() != typeof(Register))
+                            if (OpData1.GetType() != typeof(Register))
                             {
                                 throw new ArgumentOutOfRangeException("opData1", "Operand.SetRawData RegS: Invalid data type");
                             }
-                            Register arg1Data = (Register)opData1;
+                            Register arg1Data = (Register)OpData1;
                             arg1Data.SetRawData(data);
                             return;
                         }
 
-                    case OpAddrMode.RegAB:
+                    case OpAddrMode.RegAb:
                     case OpAddrMode.RegI:
                     case OpAddrMode.RegL:
                         {
-                            if (opData1.GetType() != typeof(Register))
+                            if (OpData1.GetType() != typeof(Register))
                             {
                                 throw new ArgumentOutOfRangeException("opData1", "Operand.SetRawData RegX: Invalid data type");
                             }
-                            Register arg1Data = (Register)opData1;
+                            Register arg1Data = (Register)OpData1;
                             arg1Data.SetRawData(data);
                             return;
                         }
@@ -452,39 +464,39 @@ namespace EdiabasLib
                             {
                                 throw new ArgumentOutOfRangeException("data", "Operand.SetRawData IdxX: Invalid input data type");
                             }
-                            if (opData1.GetType() != typeof(Register))
+                            if (OpData1.GetType() != typeof(Register))
                             {
                                 throw new ArgumentOutOfRangeException("opData1", "Operand.SetRawData IdxX: Invalid data type");
                             }
-                            Register arg1Data = (Register)opData1;
+                            Register arg1Data = (Register)OpData1;
                             byte[] dataArray = arg1Data.GetArrayData();
 
                             EdValueType index;
-                            if (opAddrMode == OpAddrMode.IdxImm)
+                            if (_opAddrMode == OpAddrMode.IdxImm)
                             {
-                                if (opData2.GetType() != typeof(EdValueType))
+                                if (OpData2.GetType() != typeof(EdValueType))
                                 {
                                     throw new ArgumentOutOfRangeException("opData2", "Operand.SetRawData IdxX: Invalid data type");
                                 }
-                                index = (EdValueType)opData2;
+                                index = (EdValueType)OpData2;
                             }
                             else
                             {
-                                if (opData2.GetType() != typeof(Register))
+                                if (OpData2.GetType() != typeof(Register))
                                 {
                                     throw new ArgumentOutOfRangeException("opData2", "Operand.SetRawData IdxX: Invalid data type");
                                 }
-                                Register arg2Data = (Register)opData2;
+                                Register arg2Data = (Register)OpData2;
                                 index = arg2Data.GetValueData();
                             }
 
-                            if (opAddrMode == OpAddrMode.IdxRegImm)
+                            if (_opAddrMode == OpAddrMode.IdxRegImm)
                             {
-                                if (opData3.GetType() != typeof(EdValueType))
+                                if (OpData3.GetType() != typeof(EdValueType))
                                 {
                                     throw new ArgumentOutOfRangeException("opData3", "Operand.SetRawData IdxX: Invalid data type");
                                 }
-                                index += (EdValueType)opData3;
+                                index += (EdValueType)OpData3;
                             }
 
                             EdValueType len;
@@ -506,9 +518,9 @@ namespace EdiabasLib
                             }
 
                             EdValueType requiredLength = index + len;
-                            if (requiredLength > ediabas.ArrayMaxSize)
+                            if (requiredLength > _ediabas.ArrayMaxSize)
                             {
-                                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
+                                _ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
                                 return;
                             }
                             if (dataArray.Length < requiredLength)
@@ -526,21 +538,21 @@ namespace EdiabasLib
 
             public void SetArrayData(byte[] data)
             {
-                if (opData1.GetType() != typeof(Register))
+                if (OpData1.GetType() != typeof(Register))
                 {
                     throw new ArgumentOutOfRangeException("opAddrMode", "Operand.SetArrayData: Invalid data type");
                 }
-                if (opAddrMode != OpAddrMode.RegS)
+                if (_opAddrMode != OpAddrMode.RegS)
                 {
                     throw new ArgumentOutOfRangeException("opAddrMode", "Operand.SetArrayData: Invalid address mode");
                 }
-                Register arg1Data = (Register)opData1;
+                Register arg1Data = (Register)OpData1;
                 arg1Data.SetRawData(data);
             }
 
             public void SetStringData(string data)
             {
-                byte[] dataArray = encoding.GetBytes(data);
+                byte[] dataArray = Encoding.GetBytes(data);
                 int length = dataArray.Length;
                 if (length > 0 && dataArray[length - 1] != 0)
                 {
@@ -550,25 +562,26 @@ namespace EdiabasLib
                 SetArrayData(dataArray);
             }
 
-            private EdiabasNet ediabas;
-            private OpAddrMode opAddrMode;
+            private readonly EdiabasNet _ediabas;
+            private OpAddrMode _opAddrMode;
             public OpAddrMode AddrMode
             {
                 get
                 {
-                    return opAddrMode;
+                    return _opAddrMode;
                 }
             }
 
-            public Object opData1;
-            public Object opData2;
-            public Object opData3;
+            public Object OpData1;
+            public Object OpData2;
+            public Object OpData3;
         }
 
         public const int EdiabasVersion = 0x730;
 
         public enum ErrorCodes : uint
         {
+            // ReSharper disable InconsistentNaming
             EDIABAS_ERR_NONE = 0,
             EDIABAS_IFH_0000 = 10,
             EDIABAS_IFH_0001 = 11,
@@ -918,9 +931,10 @@ namespace EdiabasLib
             EDIABAS_RUN_0099 = 349,
             EDIABAS_RUN_LAST = 349,
             EDIABAS_ERROR_LAST = 349,
+            // ReSharper restore InconsistentNaming
         }
 
-        private static string[] ErrorDescription =
+        private static readonly string[] ErrorDescription =
         {
             "IFH-0000: INTERNAL ERROR",
             "IFH-0001: UART ERROR",
@@ -1279,7 +1293,7 @@ namespace EdiabasLib
 
         private enum RegisterType : byte
         {
-            RegAB,  // 8 bit
+            RegAb,  // 8 bit
             RegI,   // 16 bit
             RegL,   // 32 bit
             RegF,   // float
@@ -1290,7 +1304,7 @@ namespace EdiabasLib
         {
             None = 0,
             RegS = 1,
-            RegAB = 2,
+            RegAb = 2,
             RegI = 3,
             RegL = 4,
             Imm8 = 5,
@@ -1310,19 +1324,20 @@ namespace EdiabasLib
         {
             public StringData(EdiabasNet ediabas, EdValueType length)
             {
-                this.ediabas = ediabas;
-                this.length = 0;
-                this.data = new byte[length];
+                _ediabas = ediabas;
+                _length = 0;
+                _data = new byte[length];
             }
 
             public void NewArrayLength(EdValueType length)
             {
-                if (length > this.data.Length)
+                if (length > _data.Length)
                 {
-                    this.data = new byte[length];
+                    _data = new byte[length];
                 }
             }
 
+            // ReSharper disable once UnusedMember.Local
             public byte[] GetData()
             {
                 return GetData(false);
@@ -1332,94 +1347,82 @@ namespace EdiabasLib
             {
                 if (complete)
                 {
-                    return data;
+                    return _data;
                 }
-                byte[] result = new byte[length];
-                Array.Copy(data, 0, result, 0, (int)length);
+                byte[] result = new byte[_length];
+                Array.Copy(_data, 0, result, 0, (int)_length);
                 return result;
             }
 
             public void SetData(byte[] value, bool keepLength)
             {
-                if (value.Length > data.Length)
+                if (value.Length > _data.Length)
                 {
-                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
+                    _ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
                     return;
                 }
-                Array.Copy(value, 0, data, 0, value.Length);
+                Array.Copy(value, 0, _data, 0, value.Length);
                 if (!keepLength)
                 {
-                    length = (EdValueType)value.Length;
+                    _length = (EdValueType)value.Length;
                 }
             }
 
             public void ClearData()
             {
-                Array.Clear(data, 0, data.Length);
-                length = 0;
+                Array.Clear(_data, 0, _data.Length);
+                _length = 0;
             }
 
-            public EdValueType Length
-            {
-                get
-                {
-                    return length;
-                }
-                set
-                {
-                    length = value;
-                }
-            }
-
-            private EdiabasNet ediabas;
-            private EdValueType length;
-            private byte[] data;
+            private EdValueType _length;
+            private readonly EdiabasNet _ediabas;
+            private byte[] _data;
         }
 
         private class Register
         {
             public Register(byte opcode, RegisterType type, uint index)
             {
-                this.Opcode = opcode;
-                this.type = type;
-                this.index = index;
-                this.ediabas = null;
+                Opcode = opcode;
+                _regType = type;
+                _index = index;
+                _ediabas = null;
             }
 
             public void SetEdiabas(EdiabasNet ediabas)
             {
-                this.ediabas = ediabas;
+                _ediabas = ediabas;
             }
 
             public string GetName()
             {
-                switch (type)
+                switch (_regType)
                 {
-                    case RegisterType.RegAB:   // 8 bit
-                        if (index > 15)
+                    case RegisterType.RegAb:   // 8 bit
+                        if (_index > 15)
                         {
-                            return "A" + string.Format(culture, "{0:X}", index - 16);
+                            return "A" + string.Format(Culture, "{0:X}", _index - 16);
                         }
-                        return "B" + string.Format(culture, "{0:X}", index);
+                        return "B" + string.Format(Culture, "{0:X}", _index);
 
                     case RegisterType.RegI:   // 16 bit
-                        return "I" + string.Format(culture, "{0:X}", index);
+                        return "I" + string.Format(Culture, "{0:X}", _index);
 
                     case RegisterType.RegL:   // 32 bit
-                        return "L" + string.Format(culture, "{0:X}", index);
+                        return "L" + string.Format(Culture, "{0:X}", _index);
 
                     case RegisterType.RegF:
-                        return "F" + string.Format(culture, "{0:X}", index);
+                        return "F" + string.Format(Culture, "{0:X}", _index);
 
                     case RegisterType.RegS:
-                        return "S" + string.Format(culture, "{0:X}", index);
+                        return "S" + string.Format(Culture, "{0:X}", _index);
                 }
                 return string.Empty;
             }
 
             public Type GetDataType()
             {
-                switch (type)
+                switch (_regType)
                 {
                     case RegisterType.RegF:
                         return typeof(EdFloatType);
@@ -1430,6 +1433,7 @@ namespace EdiabasLib
                 return typeof(EdValueType);
             }
 
+            // ReSharper disable once UnusedMember.Local
             public EdValueType GetValueMask()
             {
                 switch (GetDataLen())
@@ -1448,11 +1452,12 @@ namespace EdiabasLib
                 }
             }
 
+            // ReSharper disable once MemberCanBePrivate.Local
             public EdValueType GetDataLen()
             {
-                switch (type)
+                switch (_regType)
                 {
-                    case RegisterType.RegAB:   // 8 bit
+                    case RegisterType.RegAb:   // 8 bit
                         return 1;
 
                     case RegisterType.RegI:   // 16 bit
@@ -1473,27 +1478,27 @@ namespace EdiabasLib
             public EdValueType GetValueData()
             {
                 EdValueType value;
-                switch (type)
+                switch (_regType)
                 {
-                    case RegisterType.RegAB:   // 8 bit
-                        value = ediabas.byteRegisters[index + 0];
+                    case RegisterType.RegAb:   // 8 bit
+                        value = _ediabas._byteRegisters[_index + 0];
                         break;
 
                     case RegisterType.RegI:   // 16 bit
                         {
-                            EdValueType offset = index << 1;
-                            value = ediabas.byteRegisters[offset + 0] +
-                                ((EdValueType)ediabas.byteRegisters[offset + 1] << 8);
+                            EdValueType offset = _index << 1;
+                            value = _ediabas._byteRegisters[offset + 0] +
+                                ((EdValueType)_ediabas._byteRegisters[offset + 1] << 8);
                             break;
                         }
 
                     case RegisterType.RegL:   // 32 bit
                         {
-                            EdValueType offset = index << 2;
-                            value = ediabas.byteRegisters[offset + 0] +
-                                ((EdValueType)ediabas.byteRegisters[offset + 1] << 8) +
-                                ((EdValueType)ediabas.byteRegisters[offset + 2] << 16) +
-                                ((EdValueType)ediabas.byteRegisters[offset + 3] << 24);
+                            EdValueType offset = _index << 2;
+                            value = _ediabas._byteRegisters[offset + 0] +
+                                ((EdValueType)_ediabas._byteRegisters[offset + 1] << 8) +
+                                ((EdValueType)_ediabas._byteRegisters[offset + 2] << 16) +
+                                ((EdValueType)_ediabas._byteRegisters[offset + 3] << 24);
                             break;
                         }
 
@@ -1505,9 +1510,9 @@ namespace EdiabasLib
 
             public object GetRawData()
             {
-                switch (type)
+                switch (_regType)
                 {
-                    case RegisterType.RegAB:   // 8 bit
+                    case RegisterType.RegAb:   // 8 bit
                     case RegisterType.RegI:   // 16 bit
                     case RegisterType.RegL:   // 32 bit
                         return GetValueData();
@@ -1523,9 +1528,10 @@ namespace EdiabasLib
                 }
             }
 
+            // ReSharper disable once MemberCanBePrivate.Local
             public EdFloatType GetFloatData()
             {
-                if (type != RegisterType.RegF)
+                if (_regType != RegisterType.RegF)
                 {
                     throw new ArgumentOutOfRangeException("type", "Register.GetFloatData: Invalid data type");
                 }
@@ -1533,7 +1539,7 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("GetDataLen", "Register.GetFloatData: Invalid data length");
                 }
-                return ediabas.floatRegisters[index];
+                return _ediabas._floatRegisters[_index];
             }
 
             public byte[] GetArrayData()
@@ -1543,16 +1549,16 @@ namespace EdiabasLib
 
             public byte[] GetArrayData(bool complete)
             {
-                if (type != RegisterType.RegS)
+                if (_regType != RegisterType.RegS)
                 {
                     throw new ArgumentOutOfRangeException("type", "Register.GetArrayData: Invalid data type");
                 }
-                return ediabas.stringRegisters[index].GetData(complete);
+                return _ediabas._stringRegisters[_index].GetData(complete);
             }
 
             public void SetRawData(object value)
             {
-                if (type == RegisterType.RegS)
+                if (_regType == RegisterType.RegS)
                 {
                     if (value.GetType() != typeof(byte[]))
                     {
@@ -1560,7 +1566,7 @@ namespace EdiabasLib
                     }
                     SetArrayData((byte[])value);
                 }
-                else if (type == RegisterType.RegF)
+                else if (_regType == RegisterType.RegF)
                 {
                     if (value.GetType() != typeof(EdFloatType))
                     {
@@ -1580,27 +1586,27 @@ namespace EdiabasLib
 
             public void SetValueData(EdValueType value)
             {
-                switch (type)
+                switch (_regType)
                 {
-                    case RegisterType.RegAB:   // 8 bit
-                        ediabas.byteRegisters[index] = (byte) value;
+                    case RegisterType.RegAb:   // 8 bit
+                        _ediabas._byteRegisters[_index] = (byte) value;
                         break;
 
                     case RegisterType.RegI:   // 16 bit
                         {
-                            EdValueType offset = index << 1;
-                            ediabas.byteRegisters[offset + 0] = (byte)value;
-                            ediabas.byteRegisters[offset + 1] = (byte)(value >> 8);
+                            EdValueType offset = _index << 1;
+                            _ediabas._byteRegisters[offset + 0] = (byte)value;
+                            _ediabas._byteRegisters[offset + 1] = (byte)(value >> 8);
                             break;
                         }
 
                     case RegisterType.RegL:   // 32 bit
                         {
-                            EdValueType offset = index << 2;
-                            ediabas.byteRegisters[offset + 0] = (byte)value;
-                            ediabas.byteRegisters[offset + 1] = (byte)(value >> 8);
-                            ediabas.byteRegisters[offset + 2] = (byte)(value >> 16);
-                            ediabas.byteRegisters[offset + 3] = (byte)(value >> 24);
+                            EdValueType offset = _index << 2;
+                            _ediabas._byteRegisters[offset + 0] = (byte)value;
+                            _ediabas._byteRegisters[offset + 1] = (byte)(value >> 8);
+                            _ediabas._byteRegisters[offset + 2] = (byte)(value >> 16);
+                            _ediabas._byteRegisters[offset + 3] = (byte)(value >> 24);
                             break;
                         }
 
@@ -1611,11 +1617,11 @@ namespace EdiabasLib
 
             public void SetFloatData(EdFloatType value)
             {
-                if (type != RegisterType.RegF)
+                if (_regType != RegisterType.RegF)
                 {
                     throw new ArgumentOutOfRangeException("type", "Register.SetFloatData: Invalid data type");
                 }
-                ediabas.floatRegisters[index] = value;
+                _ediabas._floatRegisters[_index] = value;
             }
 
             public void SetArrayData(byte[] value)
@@ -1625,20 +1631,20 @@ namespace EdiabasLib
 
             public void SetArrayData(byte[] value, bool keepLength)
             {
-                if (type != RegisterType.RegS)
+                if (_regType != RegisterType.RegS)
                 {
                     throw new ArgumentOutOfRangeException("type", "Register.SetArrayData: Invalid data type");
                 }
-                ediabas.stringRegisters[index].SetData(value, keepLength);
+                _ediabas._stringRegisters[_index].SetData(value, keepLength);
             }
 
             public void ClearData()
             {
-                if (type != RegisterType.RegS)
+                if (_regType != RegisterType.RegS)
                 {
                     throw new ArgumentOutOfRangeException("type", "Register.SetArrayData: Invalid data type");
                 }
-                ediabas.stringRegisters[index].ClearData();
+                _ediabas._stringRegisters[_index].ClearData();
             }
 
             public byte Opcode
@@ -1647,29 +1653,29 @@ namespace EdiabasLib
                 private set;
             }
 
-            private RegisterType type;
-            private uint index;
-            private EdiabasNet ediabas;
+            private readonly RegisterType _regType;
+            private readonly uint _index;
+            private EdiabasNet _ediabas;
         }
 
-        static private Register[] registerList = new []
+        static private readonly Register[] RegisterList =
         {
-            new Register(0x00, RegisterType.RegAB, 0),
-            new Register(0x01, RegisterType.RegAB, 1),
-            new Register(0x02, RegisterType.RegAB, 2),
-            new Register(0x03, RegisterType.RegAB, 3),
-            new Register(0x04, RegisterType.RegAB, 4),
-            new Register(0x05, RegisterType.RegAB, 5),
-            new Register(0x06, RegisterType.RegAB, 6),
-            new Register(0x07, RegisterType.RegAB, 7),
-            new Register(0x08, RegisterType.RegAB, 8),
-            new Register(0x09, RegisterType.RegAB, 9),
-            new Register(0x0A, RegisterType.RegAB, 10),
-            new Register(0x0B, RegisterType.RegAB, 11),
-            new Register(0x0C, RegisterType.RegAB, 12),
-            new Register(0x0D, RegisterType.RegAB, 13),
-            new Register(0x0E, RegisterType.RegAB, 14),
-            new Register(0x0F, RegisterType.RegAB, 15),
+            new Register(0x00, RegisterType.RegAb, 0),
+            new Register(0x01, RegisterType.RegAb, 1),
+            new Register(0x02, RegisterType.RegAb, 2),
+            new Register(0x03, RegisterType.RegAb, 3),
+            new Register(0x04, RegisterType.RegAb, 4),
+            new Register(0x05, RegisterType.RegAb, 5),
+            new Register(0x06, RegisterType.RegAb, 6),
+            new Register(0x07, RegisterType.RegAb, 7),
+            new Register(0x08, RegisterType.RegAb, 8),
+            new Register(0x09, RegisterType.RegAb, 9),
+            new Register(0x0A, RegisterType.RegAb, 10),
+            new Register(0x0B, RegisterType.RegAb, 11),
+            new Register(0x0C, RegisterType.RegAb, 12),
+            new Register(0x0D, RegisterType.RegAb, 13),
+            new Register(0x0E, RegisterType.RegAb, 14),
+            new Register(0x0F, RegisterType.RegAb, 15),
             new Register(0x10, RegisterType.RegI, 0),
             new Register(0x11, RegisterType.RegI, 1),
             new Register(0x12, RegisterType.RegI, 2),
@@ -1706,22 +1712,22 @@ namespace EdiabasLib
             new Register(0x31, RegisterType.RegS, 13),
             new Register(0x32, RegisterType.RegS, 14),
             new Register(0x33, RegisterType.RegS, 15),
-            new Register(0x80, RegisterType.RegAB, 16),
-            new Register(0x81, RegisterType.RegAB, 17),
-            new Register(0x82, RegisterType.RegAB, 18),
-            new Register(0x83, RegisterType.RegAB, 19),
-            new Register(0x84, RegisterType.RegAB, 20),
-            new Register(0x85, RegisterType.RegAB, 21),
-            new Register(0x86, RegisterType.RegAB, 22),
-            new Register(0x87, RegisterType.RegAB, 23),
-            new Register(0x88, RegisterType.RegAB, 24),
-            new Register(0x89, RegisterType.RegAB, 25),
-            new Register(0x8A, RegisterType.RegAB, 26),
-            new Register(0x8B, RegisterType.RegAB, 27),
-            new Register(0x8C, RegisterType.RegAB, 28),
-            new Register(0x8D, RegisterType.RegAB, 29),
-            new Register(0x8E, RegisterType.RegAB, 30),
-            new Register(0x8F, RegisterType.RegAB, 31),
+            new Register(0x80, RegisterType.RegAb, 16),
+            new Register(0x81, RegisterType.RegAb, 17),
+            new Register(0x82, RegisterType.RegAb, 18),
+            new Register(0x83, RegisterType.RegAb, 19),
+            new Register(0x84, RegisterType.RegAb, 20),
+            new Register(0x85, RegisterType.RegAb, 21),
+            new Register(0x86, RegisterType.RegAb, 22),
+            new Register(0x87, RegisterType.RegAb, 23),
+            new Register(0x88, RegisterType.RegAb, 24),
+            new Register(0x89, RegisterType.RegAb, 25),
+            new Register(0x8A, RegisterType.RegAb, 26),
+            new Register(0x8B, RegisterType.RegAb, 27),
+            new Register(0x8C, RegisterType.RegAb, 28),
+            new Register(0x8D, RegisterType.RegAb, 29),
+            new Register(0x8E, RegisterType.RegAb, 30),
+            new Register(0x8F, RegisterType.RegAb, 31),
             new Register(0x90, RegisterType.RegI, 8),
             new Register(0x91, RegisterType.RegI, 9),
             new Register(0x92, RegisterType.RegI, 10),
@@ -1736,170 +1742,170 @@ namespace EdiabasLib
             new Register(0x9B, RegisterType.RegL, 7),
         };
 
-        private static OpCode[] ocList = new []
+        private static readonly OpCode[] OcList =
         {
-            new OpCode(0x00, "move", new OperationDelegate(OpMove)),
-            new OpCode(0x01, "clear", new OperationDelegate(OpClear)),
-            new OpCode(0x02, "comp", new OperationDelegate(OpComp)),
-            new OpCode(0x03, "subb", new OperationDelegate(OpSubb)),
-            new OpCode(0x04, "adds", new OperationDelegate(OpAdds)),
-            new OpCode(0x05, "mult", new OperationDelegate(OpMult)),
-            new OpCode(0x06, "divs", new OperationDelegate(OpDivs)),
-            new OpCode(0x07, "and", new OperationDelegate(OpAnd)),
-            new OpCode(0x08, "or", new OperationDelegate(OpOr)),
-            new OpCode(0x09, "xor", new OperationDelegate(OpXor)),
-            new OpCode(0x0A, "not", new OperationDelegate(OpNot)),
-            new OpCode(0x0B, "jump", new OperationDelegate(OpJump), true),
+            new OpCode(0x00, "move", OpMove),
+            new OpCode(0x01, "clear", OpClear),
+            new OpCode(0x02, "comp", OpComp),
+            new OpCode(0x03, "subb", OpSubb),
+            new OpCode(0x04, "adds", OpAdds),
+            new OpCode(0x05, "mult", OpMult),
+            new OpCode(0x06, "divs", OpDivs),
+            new OpCode(0x07, "and", OpAnd),
+            new OpCode(0x08, "or", OpOr),
+            new OpCode(0x09, "xor", OpXor),
+            new OpCode(0x0A, "not", OpNot),
+            new OpCode(0x0B, "jump", OpJump, true),
             new OpCode(0x0C, "jtsr", null, true),
             new OpCode(0x0D, "ret", null),
-            new OpCode(0x0E, "jc", new OperationDelegate(OpJc), true),      // identical to jb
-            new OpCode(0x0F, "jae", new OperationDelegate(OpJae), true),    // identical to jnc
-            new OpCode(0x10, "jz", new OperationDelegate(OpJz), true),
-            new OpCode(0x11, "jnz", new OperationDelegate(OpJnz), true),
-            new OpCode(0x12, "jv", new OperationDelegate(OpJv), true),
-            new OpCode(0x13, "jnv", new OperationDelegate(OpJnv), true),
-            new OpCode(0x14, "jmi", new OperationDelegate(OpJmi), true),
-            new OpCode(0x15, "jpl", new OperationDelegate(OpJpl), true),
-            new OpCode(0x16, "clrc", new OperationDelegate(OpClrc)),
-            new OpCode(0x17, "setc", new OperationDelegate(OpSetc)),
-            new OpCode(0x18, "asr", new OperationDelegate(OpAsr)),
-            new OpCode(0x19, "lsl", new OperationDelegate(OpLsl)),
-            new OpCode(0x1A, "lsr", new OperationDelegate(OpLsr)),
-            new OpCode(0x1B, "asl", new OperationDelegate(OpAsl)),
-            new OpCode(0x1C, "nop", new OperationDelegate(OpNop)),
-            new OpCode(0x1D, "eoj", new OperationDelegate(OpEoj)),
-            new OpCode(0x1E, "push", new OperationDelegate(OpPush)),
-            new OpCode(0x1F, "pop", new OperationDelegate(OpPop)),
-            new OpCode(0x20, "scmp", new OperationDelegate(OpScmp)),
-            new OpCode(0x21, "scat", new OperationDelegate(OpScat)),
-            new OpCode(0x22, "scut", new OperationDelegate(OpScut)),
-            new OpCode(0x23, "slen", new OperationDelegate(OpSlen)),
-            new OpCode(0x24, "spaste", new OperationDelegate(OpSpaste)),
-            new OpCode(0x25, "serase", new OperationDelegate(OpSerase)),
-            new OpCode(0x26, "xconnect", new OperationDelegate(OpXconnect)),
-            new OpCode(0x27, "xhangup", new OperationDelegate(OpXhangup)),
-            new OpCode(0x28, "xsetpar", new OperationDelegate(OpXsetpar)),
-            new OpCode(0x29, "xawlen", new OperationDelegate(OpXawlen)),
-            new OpCode(0x2A, "xsend", new OperationDelegate(OpXsend)),
+            new OpCode(0x0E, "jc", OpJc, true),      // identical to jb
+            new OpCode(0x0F, "jae", OpJae, true),    // identical to jnc
+            new OpCode(0x10, "jz", OpJz, true),
+            new OpCode(0x11, "jnz", OpJnz, true),
+            new OpCode(0x12, "jv", OpJv, true),
+            new OpCode(0x13, "jnv", OpJnv, true),
+            new OpCode(0x14, "jmi", OpJmi, true),
+            new OpCode(0x15, "jpl", OpJpl, true),
+            new OpCode(0x16, "clrc", OpClrc),
+            new OpCode(0x17, "setc", OpSetc),
+            new OpCode(0x18, "asr", OpAsr),
+            new OpCode(0x19, "lsl", OpLsl),
+            new OpCode(0x1A, "lsr", OpLsr),
+            new OpCode(0x1B, "asl", OpAsl),
+            new OpCode(0x1C, "nop", OpNop),
+            new OpCode(0x1D, "eoj", OpEoj),
+            new OpCode(0x1E, "push", OpPush),
+            new OpCode(0x1F, "pop", OpPop),
+            new OpCode(0x20, "scmp", OpScmp),
+            new OpCode(0x21, "scat", OpScat),
+            new OpCode(0x22, "scut", OpScut),
+            new OpCode(0x23, "slen", OpSlen),
+            new OpCode(0x24, "spaste", OpSpaste),
+            new OpCode(0x25, "serase", OpSerase),
+            new OpCode(0x26, "xconnect", OpXconnect),
+            new OpCode(0x27, "xhangup", OpXhangup),
+            new OpCode(0x28, "xsetpar", OpXsetpar),
+            new OpCode(0x29, "xawlen", OpXawlen),
+            new OpCode(0x2A, "xsend", OpXsend),
             new OpCode(0x2B, "xsendf", null),
-            new OpCode(0x2C, "xrequf", new OperationDelegate(OpXrequf)),
-            new OpCode(0x2D, "xstopf", new OperationDelegate(OpXstopf)),
-            new OpCode(0x2E, "xkeyb", new OperationDelegate(OpXkeyb)),
-            new OpCode(0x2F, "xstate", new OperationDelegate(OpXstate)),
+            new OpCode(0x2C, "xrequf", OpXrequf),
+            new OpCode(0x2D, "xstopf", OpXstopf),
+            new OpCode(0x2E, "xkeyb", OpXkeyb),
+            new OpCode(0x2F, "xstate", OpXstate),
             new OpCode(0x30, "xboot", null),
-            new OpCode(0x31, "xreset", new OperationDelegate(OpXreset)),
-            new OpCode(0x32, "xtype", new OperationDelegate(OpXtype)),
-            new OpCode(0x33, "xvers", new OperationDelegate(OpXvers)),
-            new OpCode(0x34, "ergb", new OperationDelegate(OpErgb)),
-            new OpCode(0x35, "ergw", new OperationDelegate(OpErgw)),
-            new OpCode(0x36, "ergd", new OperationDelegate(OpErgd)),
-            new OpCode(0x37, "ergi", new OperationDelegate(OpErgi)),
-            new OpCode(0x38, "ergr", new OperationDelegate(OpErgr)),
-            new OpCode(0x39, "ergs", new OperationDelegate(OpErgs)),
-            new OpCode(0x3A, "a2flt", new OperationDelegate(OpA2flt)),
-            new OpCode(0x3B, "fadd", new OperationDelegate(OpFadd)),
-            new OpCode(0x3C, "fsub", new OperationDelegate(OpFsub)),
-            new OpCode(0x3D, "fmul", new OperationDelegate(OpFmul)),
-            new OpCode(0x3E, "fdiv", new OperationDelegate(OpFdiv)),
-            new OpCode(0x3F, "ergy", new OperationDelegate(OpErgy)),
-            new OpCode(0x40, "enewset", new OperationDelegate(OpEnewset)),
-            new OpCode(0x41, "etag", new OperationDelegate(OpEtag), true),
-            new OpCode(0x42, "xreps", new OperationDelegate(OpXreps)),
-            new OpCode(0x43, "gettmr", new OperationDelegate(OpGettmr)),
-            new OpCode(0x44, "settmr", new OperationDelegate(OpSettmr)),
-            new OpCode(0x45, "sett", new OperationDelegate(OpSett)),
-            new OpCode(0x46, "clrt", new OperationDelegate(OpClrt)),
-            new OpCode(0x47, "jt", new OperationDelegate(OpJt), true),
-            new OpCode(0x48, "jnt", new OperationDelegate(OpJnt), true),
-            new OpCode(0x49, "addc", new OperationDelegate(OpAddc)),
-            new OpCode(0x4A, "subc", new OperationDelegate(OpSubc)),
-            new OpCode(0x4B, "break", new OperationDelegate(OpBreak)),
-            new OpCode(0x4C, "clrv", new OperationDelegate(OpClrv)),
-            new OpCode(0x4D, "eerr", new OperationDelegate(OpEerr)),
-            new OpCode(0x4E, "popf", new OperationDelegate(OpPopf)),
-            new OpCode(0x4F, "pushf", new OperationDelegate(OpPushf)),
-            new OpCode(0x50, "atsp", new OperationDelegate(OpAtsp)),
-            new OpCode(0x51, "swap", new OperationDelegate(OpSwap)),
-            new OpCode(0x52, "setspc", new OperationDelegate(OpSetspc)),
-            new OpCode(0x53, "srevrs", new OperationDelegate(OpSrevrs)),
-            new OpCode(0x54, "stoken", new OperationDelegate(OpStoken)),
-            new OpCode(0x55, "parb", new OperationDelegate(OpParl)),
-            new OpCode(0x56, "parw", new OperationDelegate(OpParl)),
-            new OpCode(0x57, "parl", new OperationDelegate(OpParl)),
-            new OpCode(0x58, "pars", new OperationDelegate(OpPars)),
-            new OpCode(0x59, "fclose", new OperationDelegate(OpFclose)),
-            new OpCode(0x5A, "jg", new OperationDelegate(OpJg), true),
-            new OpCode(0x5B, "jge", new OperationDelegate(OpJge), true),
-            new OpCode(0x5C, "jl", new OperationDelegate(OpJl), true),
-            new OpCode(0x5D, "jle", new OperationDelegate(OpJle), true),
-            new OpCode(0x5E, "ja", new OperationDelegate(OpJa), true),
-            new OpCode(0x5F, "jbe", new OperationDelegate(OpJbe), true),
-            new OpCode(0x60, "fopen", new OperationDelegate(OpFopen)),
-            new OpCode(0x61, "fread", new OperationDelegate(OpFread)),
-            new OpCode(0x62, "freadln", new OperationDelegate(OpFreadln)),
-            new OpCode(0x63, "fseek", new OperationDelegate(OpFseek)),
-            new OpCode(0x64, "fseekln", new OperationDelegate(OpFseekln)),
-            new OpCode(0x65, "ftell", new OperationDelegate(OpFtell)),
-            new OpCode(0x66, "ftellln", new OperationDelegate(OpFtellln)),
-            new OpCode(0x67, "a2fix", new OperationDelegate(OpA2fix)),
-            new OpCode(0x68, "fix2flt", new OperationDelegate(OpFix2flt)),
-            new OpCode(0x69, "parr", new OperationDelegate(OpParr)),
-            new OpCode(0x6A, "test", new OperationDelegate(OpTest)),
-            new OpCode(0x6B, "wait", new OperationDelegate(OpWait)),
-            new OpCode(0x6C, "date", new OperationDelegate(OpDate)),
-            new OpCode(0x6D, "time", new OperationDelegate(OpTime)),
-            new OpCode(0x6E, "xbatt", new OperationDelegate(OpXbatt)),
+            new OpCode(0x31, "xreset", OpXreset),
+            new OpCode(0x32, "xtype", OpXtype),
+            new OpCode(0x33, "xvers", OpXvers),
+            new OpCode(0x34, "ergb", OpErgb),
+            new OpCode(0x35, "ergw", OpErgw),
+            new OpCode(0x36, "ergd", OpErgd),
+            new OpCode(0x37, "ergi", OpErgi),
+            new OpCode(0x38, "ergr", OpErgr),
+            new OpCode(0x39, "ergs", OpErgs),
+            new OpCode(0x3A, "a2flt", OpA2Flt),
+            new OpCode(0x3B, "fadd", OpFadd),
+            new OpCode(0x3C, "fsub", OpFsub),
+            new OpCode(0x3D, "fmul", OpFmul),
+            new OpCode(0x3E, "fdiv", OpFdiv),
+            new OpCode(0x3F, "ergy", OpErgy),
+            new OpCode(0x40, "enewset", OpEnewset),
+            new OpCode(0x41, "etag", OpEtag, true),
+            new OpCode(0x42, "xreps", OpXreps),
+            new OpCode(0x43, "gettmr", OpGettmr),
+            new OpCode(0x44, "settmr", OpSettmr),
+            new OpCode(0x45, "sett", OpSett),
+            new OpCode(0x46, "clrt", OpClrt),
+            new OpCode(0x47, "jt", OpJt, true),
+            new OpCode(0x48, "jnt", OpJnt, true),
+            new OpCode(0x49, "addc", OpAddc),
+            new OpCode(0x4A, "subc", OpSubc),
+            new OpCode(0x4B, "break", OpBreak),
+            new OpCode(0x4C, "clrv", OpClrv),
+            new OpCode(0x4D, "eerr", OpEerr),
+            new OpCode(0x4E, "popf", OpPopf),
+            new OpCode(0x4F, "pushf", OpPushf),
+            new OpCode(0x50, "atsp", OpAtsp),
+            new OpCode(0x51, "swap", OpSwap),
+            new OpCode(0x52, "setspc", OpSetspc),
+            new OpCode(0x53, "srevrs", OpSrevrs),
+            new OpCode(0x54, "stoken", OpStoken),
+            new OpCode(0x55, "parb", OpParl),
+            new OpCode(0x56, "parw", OpParl),
+            new OpCode(0x57, "parl", OpParl),
+            new OpCode(0x58, "pars", OpPars),
+            new OpCode(0x59, "fclose", OpFclose),
+            new OpCode(0x5A, "jg", OpJg, true),
+            new OpCode(0x5B, "jge", OpJge, true),
+            new OpCode(0x5C, "jl", OpJl, true),
+            new OpCode(0x5D, "jle", OpJle, true),
+            new OpCode(0x5E, "ja", OpJa, true),
+            new OpCode(0x5F, "jbe", OpJbe, true),
+            new OpCode(0x60, "fopen", OpFopen),
+            new OpCode(0x61, "fread", OpFread),
+            new OpCode(0x62, "freadln", OpFreadln),
+            new OpCode(0x63, "fseek", OpFseek),
+            new OpCode(0x64, "fseekln", OpFseekln),
+            new OpCode(0x65, "ftell", OpFtell),
+            new OpCode(0x66, "ftellln", OpFtellln),
+            new OpCode(0x67, "a2fix", OpA2Fix),
+            new OpCode(0x68, "fix2flt", OpFix2Flt),
+            new OpCode(0x69, "parr", OpParr),
+            new OpCode(0x6A, "test", OpTest),
+            new OpCode(0x6B, "wait", OpWait),
+            new OpCode(0x6C, "date", OpDate),
+            new OpCode(0x6D, "time", OpTime),
+            new OpCode(0x6E, "xbatt", OpXbatt),
             new OpCode(0x6F, "tosp", null),
             new OpCode(0x70, "xdownl", null),
             new OpCode(0x71, "xgetport", null),
-            new OpCode(0x72, "xignit", new OperationDelegate(OpXignit)),
+            new OpCode(0x72, "xignit", OpXignit),
             new OpCode(0x73, "xloopt", null),
             new OpCode(0x74, "xprog", null),
             new OpCode(0x75, "xraw", null),
             new OpCode(0x76, "xsetport", null),
             new OpCode(0x77, "xsireset", null),
             new OpCode(0x78, "xstoptr", null),
-            new OpCode(0x79, "fix2hex", new OperationDelegate(OpFix2hex)),
-            new OpCode(0x7A, "fix2dez", new OperationDelegate(OpFix2dez)),
-            new OpCode(0x7B, "tabset", new OperationDelegate(OpTabset)),
-            new OpCode(0x7C, "tabseek", new OperationDelegate(OpTabseek)),
-            new OpCode(0x7D, "tabget", new OperationDelegate(OpTabget)),
-            new OpCode(0x7E, "strcat", new OperationDelegate(OpStrcat)),
-            new OpCode(0x7F, "pary", new OperationDelegate(OpPary)),
-            new OpCode(0x80, "parn", new OperationDelegate(OpParn)),
-            new OpCode(0x81, "ergc", new OperationDelegate(OpErgc)),
-            new OpCode(0x82, "ergl", new OperationDelegate(OpErgl)),
-            new OpCode(0x83, "tabline", new OperationDelegate(OpTabline)),
+            new OpCode(0x79, "fix2hex", OpFix2Hex),
+            new OpCode(0x7A, "fix2dez", OpFix2Dez),
+            new OpCode(0x7B, "tabset", OpTabset),
+            new OpCode(0x7C, "tabseek", OpTabseek),
+            new OpCode(0x7D, "tabget", OpTabget),
+            new OpCode(0x7E, "strcat", OpStrcat),
+            new OpCode(0x7F, "pary", OpPary),
+            new OpCode(0x80, "parn", OpParn),
+            new OpCode(0x81, "ergc", OpErgc),
+            new OpCode(0x82, "ergl", OpErgl),
+            new OpCode(0x83, "tabline", OpTabline),
             new OpCode(0x84, "xsendr", null),
             new OpCode(0x85, "xrecv", null),
             new OpCode(0x86, "xinfo", null),
-            new OpCode(0x87, "flt2a", new OperationDelegate(OpFlt2a)),
-            new OpCode(0x88, "setflt", new OperationDelegate(OpSetflt)),
-            new OpCode(0x89, "cfgig", new OperationDelegate(OpCfgig)),
-            new OpCode(0x8A, "cfgsg", new OperationDelegate(OpCfgsg)),
-            new OpCode(0x8B, "cfgis", new OperationDelegate(OpCfgis)),
-            new OpCode(0x8C, "a2y", new OperationDelegate(OpA2y)),
+            new OpCode(0x87, "flt2a", OpFlt2A),
+            new OpCode(0x88, "setflt", OpSetflt),
+            new OpCode(0x89, "cfgig", OpCfgig),
+            new OpCode(0x8A, "cfgsg", OpCfgsg),
+            new OpCode(0x8B, "cfgis", OpCfgis),
+            new OpCode(0x8C, "a2y", OpA2Y),
             new OpCode(0x8D, "xparraw", null),
-            new OpCode(0x8E, "hex2y", new OperationDelegate(OpHex2y)),
-            new OpCode(0x8F, "strcmp", new OperationDelegate(OpStrcmp)),
-            new OpCode(0x90, "strlen", new OperationDelegate(OpStrlen)),
-            new OpCode(0x91, "y2bcd", new OperationDelegate(OpY2bcd)),
-            new OpCode(0x92, "y2hex", new OperationDelegate(OpY2hex)),
-            new OpCode(0x93, "shmset", new OperationDelegate(OpShmset)),
-            new OpCode(0x94, "shmget", new OperationDelegate(OpShmget)),
-            new OpCode(0x95, "ergsysi", new OperationDelegate(OpErgsysi)),
-            new OpCode(0x96, "flt2fix", new OperationDelegate(OpFlt2fix)),
-            new OpCode(0x97, "iupdate", new OperationDelegate(OpIupdate)),
-            new OpCode(0x98, "irange", new OperationDelegate(OpIrange)),
-            new OpCode(0x99, "iincpos", new OperationDelegate(OpIincpos)),
-            new OpCode(0x9A, "tabseeku", new OperationDelegate(OpTabseeku)),
-            new OpCode(0x9B, "flt2y4", new OperationDelegate(OpFlt2y4)),
-            new OpCode(0x9C, "flt2y8", new OperationDelegate(OpFlt2y8)),
-            new OpCode(0x9D, "y42flt", new OperationDelegate(OpY42flt)),
-            new OpCode(0x9E, "y82flt", new OperationDelegate(OpY82flt)),
+            new OpCode(0x8E, "hex2y", OpHex2Y),
+            new OpCode(0x8F, "strcmp", OpStrcmp),
+            new OpCode(0x90, "strlen", OpStrlen),
+            new OpCode(0x91, "y2bcd", OpY2Bcd),
+            new OpCode(0x92, "y2hex", OpY2Hex),
+            new OpCode(0x93, "shmset", OpShmset),
+            new OpCode(0x94, "shmget", OpShmget),
+            new OpCode(0x95, "ergsysi", OpErgsysi),
+            new OpCode(0x96, "flt2fix", OpFlt2Fix),
+            new OpCode(0x97, "iupdate", OpIupdate),
+            new OpCode(0x98, "irange", OpIrange),
+            new OpCode(0x99, "iincpos", OpIincpos),
+            new OpCode(0x9A, "tabseeku", OpTabseeku),
+            new OpCode(0x9B, "flt2y4", OpFlt2Y4),
+            new OpCode(0x9C, "flt2y8", OpFlt2Y8),
+            new OpCode(0x9D, "y42flt", OpY42Flt),
+            new OpCode(0x9E, "y82flt", OpY82Flt),
             new OpCode(0x9F, "plink", null),
             new OpCode(0xA0, "pcall", null),
-            new OpCode(0xA1, "fcomp", new OperationDelegate(OpFcomp)),
+            new OpCode(0xA1, "fcomp", OpFcomp),
             new OpCode(0xA2, "plinkv", null),
             new OpCode(0xA3, "ppush", null),
             new OpCode(0xA4, "ppop", null),
@@ -1908,44 +1914,44 @@ namespace EdiabasLib
             new OpCode(0xA7, "ppushy", null),
             new OpCode(0xA8, "ppopy", null),
             new OpCode(0xA9, "pjtsr", null),
-            new OpCode(0xAA, "tabsetex", new OperationDelegate(OpTabsetex)),
-            new OpCode(0xAB, "ufix2dez", new OperationDelegate(OpUfix2dez)),
-            new OpCode(0xAC, "generr", new OperationDelegate(OpGenerr)),
-            new OpCode(0xAD, "ticks", new OperationDelegate(OpTicks)),
-            new OpCode(0xAE, "waitex", new OperationDelegate(OpWaitex)),
+            new OpCode(0xAA, "tabsetex", OpTabsetex),
+            new OpCode(0xAB, "ufix2dez", OpUfix2Dez),
+            new OpCode(0xAC, "generr", OpGenerr),
+            new OpCode(0xAD, "ticks", OpTicks),
+            new OpCode(0xAE, "waitex", OpWaitex),
             new OpCode(0xAF, "xopen", null),
             new OpCode(0xB0, "xclose", null),
             new OpCode(0xB1, "xcloseex", null),
             new OpCode(0xB2, "xswitch", null),
             new OpCode(0xB3, "xsendex", null),
             new OpCode(0xB4, "xrecvex", null),
-            new OpCode(0xB5, "ssize", new OperationDelegate(OpSsize)),
-            new OpCode(0xB6, "tabcols", new OperationDelegate(OpTabcols)),
-            new OpCode(0xB7, "tabrows", new OperationDelegate(OpTabrows)),
+            new OpCode(0xB5, "ssize", OpSsize),
+            new OpCode(0xB6, "tabcols", OpTabcols),
+            new OpCode(0xB7, "tabrows", OpTabrows),
         };
 
-        private static VJobInfo[] vJobList = new []
+        private static readonly VJobInfo[] VJobList =
         {
-            new VJobInfo("_JOBS", new VJobDelegate(vJobJobs)),
-            new VJobInfo("_JOBCOMMENTS", new VJobDelegate(vJobJobComments)),
-            new VJobInfo("_ARGUMENTS", new VJobDelegate(vJobJobArgs)),
-            new VJobInfo("_RESULTS", new VJobDelegate(vJobJobResults)),
-            new VJobInfo("_VERSIONINFO", new VJobDelegate(vJobVerinfos)),
-            new VJobInfo("_TABLES", new VJobDelegate(vJobTables)),
-            new VJobInfo("_TABLE", new VJobDelegate(vJobTable)),
+            new VJobInfo("_JOBS", VJobJobs),
+            new VJobInfo("_JOBCOMMENTS", VJobJobComments),
+            new VJobInfo("_ARGUMENTS", VJobJobArgs),
+            new VJobInfo("_RESULTS", VJobJobResults),
+            new VJobInfo("_VERSIONINFO", VJobVerinfos),
+            new VJobInfo("_TABLES", VJobTables),
+            new VJobInfo("_TABLE", VJobTable),
         };
 
         public class ResultData
         {
             public ResultData(ResultType type, string name, object opData)
             {
-                this.type = type;
-                this.name = name;
-                this.opData = opData;
+                ResType = type;
+                Name = name;
+                OpData = opData;
             }
-            public ResultType type;
-            public string name;
-            public object opData;
+            public ResultType ResType { get; private set; }
+            public string Name { get; private set; }
+            public object OpData { get; private set; }
         }
 
         private class Flags
@@ -1956,10 +1962,10 @@ namespace EdiabasLib
             }
             public void Init()
             {
-                this.carry = false;
-                this.zero = false;
-                this.sign = false;
-                this.overflow = false;
+                Carry = false;
+                Zero = false;
+                Sign = false;
+                Overflow = false;
             }
 
             public void UpdateFlags(EdValueType value, EdValueType length)
@@ -1987,8 +1993,8 @@ namespace EdiabasLib
                     default:
                         throw new ArgumentOutOfRangeException("length", "Flags.UpdateFlags: Invalid length");
                 }
-                zero = (value & valueMask) == 0;
-                sign = (value & signMask) != 0;
+                Zero = (value & valueMask) == 0;
+                Sign = (value & signMask) != 0;
             }
 
             public void SetOverflow(UInt32 value1, UInt32 value2, UInt32 result, EdValueType length)
@@ -2014,15 +2020,15 @@ namespace EdiabasLib
                 }
                 if ((value1 & signMask) != (value2 & signMask))
                 {
-                    overflow = false;
+                    Overflow = false;
                 }
                 else if ((value1 & signMask) == (result & signMask))
                 {
-                    overflow = false;
+                    Overflow = false;
                 }
                 else
                 {
-                    overflow = true;
+                    Overflow = true;
                 }
             }
 
@@ -2047,483 +2053,240 @@ namespace EdiabasLib
                     default:
                         throw new ArgumentOutOfRangeException("length", "Flags.SetCarry: Invalid length");
                 }
-                carry = (value & carryMask) != 0;
+                Carry = (value & carryMask) != 0;
             }
 
             public EdValueType ToValue()
             {
                 EdValueType value = 0;
-                value |= (EdValueType)(carry ? 0x01 : 0x00);
-                value |= (EdValueType)(zero ? 0x02 : 0x00);
-                value |= (EdValueType)(sign ? 0x04 : 0x00);
-                value |= (EdValueType)(overflow ? 0x08 : 0x00);
+                value |= (EdValueType)(Carry ? 0x01 : 0x00);
+                value |= (EdValueType)(Zero ? 0x02 : 0x00);
+                value |= (EdValueType)(Sign ? 0x04 : 0x00);
+                value |= (EdValueType)(Overflow ? 0x08 : 0x00);
 
                 return value;
             }
 
             public void FromValue(EdValueType value)
             {
-                carry = (value & 0x01) != 0;
-                zero = (value & 0x02) != 0;
-                sign = (value & 0x04) != 0;
-                overflow = (value & 0x08) != 0;
+                Carry = (value & 0x01) != 0;
+                Zero = (value & 0x02) != 0;
+                Sign = (value & 0x04) != 0;
+                Overflow = (value & 0x08) != 0;
             }
 
-            public bool carry;
-            public bool zero;
-            public bool sign;
-            public bool overflow;
+            public bool Carry;
+            public bool Zero;
+            public bool Sign;
+            public bool Overflow;
         }
 
         private class ArgInfo
         {
             public ArgInfo()
             {
-                this.binData = null;
-                this.stringList = null;
+                _binData = null;
+                StringList = null;
             }
 
             public byte[] BinData
             {
                 get
                 {
-                    return binData;
+                    return _binData;
                 }
                 set
                 {
-                    binData = value;
-                    stringList = null;
+                    _binData = value;
+                    StringList = null;
                 }
             }
 
-            public List<string> StringList
-            {
-                get
-                {
-                    return stringList;
-                }
-                set
-                {
-                    stringList = value;
-                }
-            }
+            public List<string> StringList { get; set; }
 
-            private byte[] binData;
-            private List<string> stringList;
+            private byte[] _binData;
         }
 
         private class VJobInfo
         {
             public VJobInfo(string jobName, VJobDelegate jobDelegate)
             {
-                this.jobName = jobName;
-                this.jobDelegate = jobDelegate;
+                JobName = jobName;
+                JobDelegate = jobDelegate;
             }
 
-            public string JobName
-            {
-                get
-                {
-                    return jobName;
-                }
-            }
-
-            public VJobDelegate JobDelegate
-            {
-                get
-                {
-                    return jobDelegate;
-                }
-            }
-
-            private string jobName;
-            private VJobDelegate jobDelegate;
+            public string JobName { get; private set; }
+            public VJobDelegate JobDelegate { get; private set; }
         }
 
         private class JobInfo
         {
             public JobInfo(string jobName, UInt32 jobOffset, UInt32 jobSize, UInt32 arraySize, UsesInfo usesInfo)
             {
-                this.jobName = jobName;
-                this.jobOffset = jobOffset;
-                this.jobSize = jobSize;
-                this.arraySize = arraySize;
-                this.usesInfo = usesInfo;
+                JobName = jobName;
+                JobOffset = jobOffset;
+                JobSize = jobSize;
+                ArraySize = arraySize;
+                UsesInfo = usesInfo;
             }
 
-            public string JobName
-            {
-                get
-                {
-                    return jobName;
-                }
-            }
-
-            public UInt32 JobOffset
-            {
-                get
-                {
-                    return jobOffset;
-                }
-            }
-
-            public UInt32 JobSize
-            {
-                get
-                {
-                    return jobSize;
-                }
-            }
-
-            public UInt32 ArraySize
-            {
-                get
-                {
-                    return arraySize;
-                }
-            }
-
-            public UsesInfo UsesInfo
-            {
-                get
-                {
-                    return usesInfo;
-                }
-            }
-
-            private string jobName;
-            private UInt32 jobOffset;
-            private UInt32 jobSize;
-            private UInt32 arraySize;
-            private UsesInfo usesInfo;
+            public string JobName { get; private set; }
+            public UInt32 JobOffset { get; private set; }
+            // ReSharper disable once MemberCanBePrivate.Local
+            // ReSharper disable once UnusedAutoPropertyAccessor.Local
+            public UInt32 JobSize { get; private set; }
+            public UInt32 ArraySize { get; private set; }
+            public UsesInfo UsesInfo { get; private set; }
         }
 
         private class JobInfos
         {
-            public JobInfo[] JobInfoArray
-            {
-                get
-                {
-                    return jobInfoArray;
-                }
-                set
-                {
-                    jobInfoArray = value;
-                }
-            }
-
-            public Dictionary<string, UInt32> JobNameDict
-            {
-                get
-                {
-                    return jobNameDict;
-                }
-                set
-                {
-                    jobNameDict = value;
-                }
-            }
-
-            private JobInfo[] jobInfoArray;
-            private Dictionary<string, UInt32> jobNameDict;
+            public JobInfo[] JobInfoArray { get; set; }
+            public Dictionary<string, UInt32> JobNameDict { get; set; }
         }
 
         private class UsesInfo
         {
             public UsesInfo(string name)
             {
-                this.name = name;
+                Name = name;
             }
 
-            public string Name
-            {
-                get
-                {
-                    return name;
-                }
-            }
-
-            private string name;
+            public string Name { get; private set; }
         }
 
         private class UsesInfos
         {
-            public UsesInfo[] UsesInfoArray
-            {
-                get
-                {
-                    return usesInfoArray;
-                }
-                set
-                {
-                    usesInfoArray = value;
-                }
-            }
-
-            private UsesInfo[] usesInfoArray;
+            public UsesInfo[] UsesInfoArray { get; set; }
         }
 
         private class DescriptionInfos
         {
-            public List<string> GlobalComments
-            {
-                get
-                {
-                    return globalComments;
-                }
-                set
-                {
-                    globalComments = value;
-                }
-            }
-
-            public Dictionary<string, List<string>> JobComments
-            {
-                get
-                {
-                    return jobComments;
-                }
-                set
-                {
-                    jobComments = value;
-                }
-            }
-
-            private List<string> globalComments;
-            private Dictionary<string, List<string>> jobComments;
+            public List<string> GlobalComments { get; set; }
+            public Dictionary<string, List<string>> JobComments { get; set; }
         }
 
         private class TableInfo
         {
             public TableInfo(string name, UInt32 tableOffset, UInt32 tableColumnOffset, EdValueType columns, EdValueType rows)
             {
-                this.name = name;
-                this.tableOffset = tableOffset;
-                this.tableColumnOffset = tableColumnOffset;
-                this.columns = columns;
-                this.rows = rows;
+                Name = name;
+                TableOffset = tableOffset;
+                TableColumnOffset = tableColumnOffset;
+                Columns = columns;
+                Rows = rows;
             }
 
-            public string Name
-            {
-                get
-                {
-                    return name;
-                }
-            }
-
-            public UInt32 TableOffset
-            {
-                get
-                {
-                    return tableOffset;
-                }
-            }
-
-            public UInt32 TableColumnOffset
-            {
-                get
-                {
-                    return tableColumnOffset;
-                }
-            }
-
-            public EdValueType Columns
-            {
-                get
-                {
-                    return columns;
-                }
-            }
-
-            public EdValueType Rows
-            {
-                get
-                {
-                    return rows;
-                }
-            }
-
-            public Dictionary<string, UInt32> ColumnNameDict
-            {
-                get
-                {
-                    return columnNameDict;
-                }
-                set
-                {
-                    columnNameDict = value;
-                }
-            }
-
-            public Dictionary<string, UInt32>[] SeekColumnStringDicts
-            {
-                get
-                {
-                    return seekColumnStringDicts;
-                }
-                set
-                {
-                    seekColumnStringDicts = value;
-                }
-            }
-
-            public Dictionary<EdValueType, UInt32>[] SeekColumnValueDicts
-            {
-                get
-                {
-                    return seekColumnValueDicts;
-                }
-                set
-                {
-                    seekColumnValueDicts = value;
-                }
-            }
-
-            public EdValueType[][] TableEntries
-            {
-                get
-                {
-                    return tableEntries;
-                }
-                set
-                {
-                    tableEntries = value;
-                }
-            }
-
-            private string name;
-            private UInt32 tableOffset;
-            private UInt32 tableColumnOffset;
-            private EdValueType columns;
-            private EdValueType rows;
-            private Dictionary<string, UInt32> columnNameDict;
-            private Dictionary<string, UInt32>[] seekColumnStringDicts;
-            private Dictionary<EdValueType, UInt32>[] seekColumnValueDicts;
-            private EdValueType[][] tableEntries;
+            public string Name { get; private set; }
+            // ReSharper disable once MemberCanBePrivate.Local
+            // ReSharper disable once UnusedAutoPropertyAccessor.Local
+            public UInt32 TableOffset { get; private set; }
+            public UInt32 TableColumnOffset { get; private set; }
+            public EdValueType Columns { get; private set; }
+            public EdValueType Rows { get; private set; }
+            public Dictionary<string, UInt32> ColumnNameDict { get; set; }
+            public Dictionary<string, UInt32>[] SeekColumnStringDicts { get; set; }
+            public Dictionary<EdValueType, UInt32>[] SeekColumnValueDicts { get; set; }
+            public EdValueType[][] TableEntries { get; set; }
         }
 
         private class TableInfos
         {
-            public TableInfo[] TableInfoArray
-            {
-                get
-                {
-                    return tableInfoArray;
-                }
-                set
-                {
-                    tableInfoArray = value;
-                }
-            }
-
-            public Dictionary<string, UInt32> TableNameDict
-            {
-                get
-                {
-                    return tableNameDict;
-                }
-                set
-                {
-                    tableNameDict = value;
-                }
-            }
-
-            private TableInfo[] tableInfoArray;
-            private Dictionary<string, UInt32> tableNameDict;
+            public TableInfo[] TableInfoArray { get; set; }
+            public Dictionary<string, UInt32> TableNameDict { get; set; }
         }
 
-        private static readonly Encoding encoding = Encoding.GetEncoding(1252);
-        private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
-        private static readonly byte[] byteArray0 = new byte[0];
-        private static Dictionary<ErrorCodes, UInt32> trapBitDict;
-        private static bool firstLog = true;
+        private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
+        private static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
+        private static readonly byte[] ByteArray0 = new byte[0];
+        private static Dictionary<ErrorCodes, UInt32> _trapBitDict;
+        private static bool _firstLog = true;
 
-        private const string jobNameInit = "INITIALISIERUNG";
-        private const string jobNameExit = "ENDE";
-        private const string jobNameIdent = "IDENTIFIKATION";
+        private const string JobNameInit = "INITIALISIERUNG";
+        private const string JobNameExit = "ENDE";
+        private const string JobNameIdent = "IDENTIFIKATION";
 
-        public enum ED_LOG_LEVEL : int
+        public enum EdLogLevel
         {
-            OFF = 0,
-            IFH = 1,
-            ERROR = 2,
-            INFO = 3,
+            Off = 0,
+            Ifh = 1,
+            Error = 2,
+            Info = 3,
         };
 
-        private bool disposed = false;
-        private object apiLock = new object();
-        private bool jobRunning = false;
-        private bool jobStd = false;
-        private Stack<byte> stackList = new Stack<byte>();
-        private ArgInfo argInfo = new ArgInfo();
-        private ArgInfo argInfoStd = new ArgInfo();
-        private Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
-        private Dictionary<string, ResultData> resultSysDict = new Dictionary<string, ResultData>();
-        private Dictionary<string, bool> resultsRequestDict = new Dictionary<string, bool>();
-        private List<Dictionary<string, ResultData>> resultSets = null;
-        private List<Dictionary<string, ResultData>> resultSetsTemp = null;
-        private Dictionary<string, string> configDict = new Dictionary<string, string>();
-        private Dictionary<string, string> groupMappingDict = new Dictionary<string, string>();
-        private Dictionary<string, byte[]> sharedDataDict = new Dictionary<string, byte[]>();
-        private XmlDocument xdocConfig = null;
-        private long infoProgressRange;
-        private long infoProgressPos;
-        private string infoProgressText = string.Empty;
-        private string resultJobStatus = string.Empty;
-        private string sgbdFileName = string.Empty;
-        private string sgbdFileResolveLast = string.Empty;
-        private string ecuPath = string.Empty;
-        private EdInterfaceBase edInterfaceClass;
-        private static long timeMeas = 0;
-        private byte[] opArgBuffer = new byte[5];
-        private AbortJobDelegate abortJobFunc = null;
-        private ProgressJobDelegate progressJobFunc = null;
-        private ErrorRaisedDelegate errorRaisedFunc = null;
-        private StreamWriter swLog = null;
-        private object logLock = new object();
-        private int logLevelCached = -1;
-        private EdValueType arrayMaxBufSize = 1024;
-        private EdValueType errorTrapMask = 0;
-        private int errorTrapBitNr = -1;
-        private ErrorCodes errorCodeLast = ErrorCodes.EDIABAS_ERR_NONE;
-        private byte[] byteRegisters;
-        private EdFloatType[] floatRegisters;
-        private StringData[] stringRegisters;
-        private Flags flags = new Flags();
-        private Stream sgbdFs = null;
-        private Stream sgbdBaseFs = null;
-        private EdValueType pcCounter = 0;
-        private JobInfos jobInfos = null;
-        private UsesInfos usesInfos = null;
-        private DescriptionInfos descriptionInfos = null;
-        private TableInfos tableInfos = null;
-        private TableInfos tableInfosExt = null;
-        private Stream tableFs = null;
-        private Int32 tableIndex = -1;
-        private Int32 tableRowIndex = -1;
-        private Stream[] userFilesArray = new Stream[MAX_FILES];
-        private byte[] tableItemBuffer = new byte[1024];
-        private string tokenSeparator = string.Empty;
-        private EdValueType tokenIndex = 0;
-        private EdValueType floatPrecision = 4;
-        private bool jobEnd = false;
-        private bool requestInit = true;
+        private bool _disposed;
+        private readonly object _apiLock = new object();
+        private bool _jobRunning;
+        private bool _jobStd;
+        private readonly Stack<byte> _stackList = new Stack<byte>();
+        private readonly ArgInfo _argInfo = new ArgInfo();
+        private readonly ArgInfo _argInfoStd = new ArgInfo();
+        private readonly Dictionary<string, ResultData> _resultDict = new Dictionary<string, ResultData>();
+        private readonly Dictionary<string, ResultData> _resultSysDict = new Dictionary<string, ResultData>();
+        private readonly Dictionary<string, bool> _resultsRequestDict = new Dictionary<string, bool>();
+        private List<Dictionary<string, ResultData>> _resultSets;
+        private List<Dictionary<string, ResultData>> _resultSetsTemp;
+        private readonly Dictionary<string, string> _configDict = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _groupMappingDict = new Dictionary<string, string>();
+        private readonly Dictionary<string, byte[]> _sharedDataDict = new Dictionary<string, byte[]>();
+        private readonly XmlDocument _xdocConfig;
+        private long _infoProgressRange;
+        private long _infoProgressPos;
+        private string _infoProgressText = string.Empty;
+        private string _resultJobStatus = string.Empty;
+        private string _sgbdFileName = string.Empty;
+        private string _sgbdFileResolveLast = string.Empty;
+        private string _ecuPath = string.Empty;
+        private EdInterfaceBase _edInterfaceClass;
+        private static long _timeMeas;
+        private readonly byte[] _opArgBuffer = new byte[5];
+        private AbortJobDelegate _abortJobFunc;
+        private ProgressJobDelegate _progressJobFunc;
+        private ErrorRaisedDelegate _errorRaisedFunc;
+        private StreamWriter _swLog;
+        private readonly object _logLock = new object();
+        private int _logLevelCached = -1;
+        private EdValueType _arrayMaxBufSize = 1024;
+        private EdValueType _errorTrapMask;
+        private int _errorTrapBitNr = -1;
+        private ErrorCodes _errorCodeLast = ErrorCodes.EDIABAS_ERR_NONE;
+        private readonly byte[] _byteRegisters;
+        private readonly EdFloatType[] _floatRegisters;
+        private readonly StringData[] _stringRegisters;
+        private readonly Flags _flags = new Flags();
+        private Stream _sgbdFs;
+        private Stream _sgbdBaseFs;
+        private EdValueType _pcCounter;
+        private JobInfos _jobInfos;
+        private UsesInfos _usesInfos;
+        private DescriptionInfos _descriptionInfos;
+        private TableInfos _tableInfos;
+        private TableInfos _tableInfosExt;
+        private Stream _tableFs;
+        private Int32 _tableIndex = -1;
+        private Int32 _tableRowIndex = -1;
+        private readonly Stream[] _userFilesArray = new Stream[MaxFiles];
+        private readonly byte[] _tableItemBuffer = new byte[1024];
+        private string _tokenSeparator = string.Empty;
+        private EdValueType _tokenIndex;
+        private EdValueType _floatPrecision = 4;
+        private bool _jobEnd;
+        private bool _requestInit = true;
 
         public bool JobRunning
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    return jobRunning;
+                    return _jobRunning;
                 }
             }
             private set
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    jobRunning = value;
+                    _jobRunning = value;
                 }
             }
         }
@@ -2532,13 +2295,13 @@ namespace EdiabasLib
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    if (argInfo.BinData == null)
+                    if (_argInfo.BinData == null)
                     {
                         return string.Empty;
                     }
-                    return encoding.GetString(argInfo.BinData, 0, argInfo.BinData.Length);
+                    return Encoding.GetString(_argInfo.BinData, 0, _argInfo.BinData.Length);
                 }
             }
             set
@@ -2547,9 +2310,9 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ArgString: Job is running");
                 }
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    argInfo.BinData = encoding.GetBytes(value);
+                    _argInfo.BinData = Encoding.GetBytes(value);
                 }
             }
         }
@@ -2558,13 +2321,13 @@ namespace EdiabasLib
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    if (argInfo.BinData == null)
+                    if (_argInfo.BinData == null)
                     {
-                        return EdiabasNet.byteArray0;
+                        return ByteArray0;
                     }
-                    return argInfo.BinData;
+                    return _argInfo.BinData;
                 }
             }
             set
@@ -2573,9 +2336,9 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ArgBinary: Job is running");
                 }
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    argInfo.BinData = value;
+                    _argInfo.BinData = value;
                 }
             }
         }
@@ -2584,13 +2347,13 @@ namespace EdiabasLib
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    if (argInfoStd.BinData == null)
+                    if (_argInfoStd.BinData == null)
                     {
                         return string.Empty;
                     }
-                    return encoding.GetString(argInfoStd.BinData, 0, argInfoStd.BinData.Length);
+                    return Encoding.GetString(_argInfoStd.BinData, 0, _argInfoStd.BinData.Length);
                 }
             }
             set
@@ -2599,9 +2362,9 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ArgStringStd: Job is running");
                 }
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    argInfoStd.BinData = encoding.GetBytes(value);
+                    _argInfoStd.BinData = Encoding.GetBytes(value);
                 }
             }
         }
@@ -2610,13 +2373,13 @@ namespace EdiabasLib
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    if (argInfoStd.BinData == null)
+                    if (_argInfoStd.BinData == null)
                     {
-                        return EdiabasNet.byteArray0;
+                        return ByteArray0;
                     }
-                    return argInfoStd.BinData;
+                    return _argInfoStd.BinData;
                 }
             }
             set
@@ -2625,56 +2388,48 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ArgBinaryStd: Job is running");
                 }
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    argInfoStd.BinData = value;
+                    _argInfoStd.BinData = value;
                 }
             }
         }
 
-        private byte[] getActiveArgBinary()
+        private byte[] GetActiveArgBinary()
         {
-            if (jobStd)
+            if (_jobStd)
             {
                 return ArgBinaryStd;
             }
             return ArgBinary;
         }
 
-        private List<string> getActiveArgStrings()
+        private List<string> GetActiveArgStrings()
         {
-            string args;
-            if (jobStd)
-            {
-                args = ArgStringStd;
-            }
-            else
-            {
-                args = ArgString;
-            }
+            string args = _jobStd ? ArgStringStd : ArgString;
 
-            if (argInfo.StringList == null)
+            if (_argInfo.StringList == null)
             {
-                argInfo.StringList = new List<string>();
+                _argInfo.StringList = new List<string>();
                 if (args.Length > 0)
                 {
                     string[] words = args.Split(';');
                     foreach (string word in words)
                     {
-                        argInfo.StringList.Add(word);
+                        _argInfo.StringList.Add(word);
                     }
                 }
             }
-            return argInfo.StringList;
+            return _argInfo.StringList;
         }
 
         public List<Dictionary<string, ResultData>> ResultSets
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    return resultSets;
+                    return _resultSets;
                 }
             }
         }
@@ -2683,9 +2438,9 @@ namespace EdiabasLib
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    return resultsRequestDict;
+                    return _resultsRequestDict;
                 }
             }
         }
@@ -2695,9 +2450,9 @@ namespace EdiabasLib
             get
             {
                 string result = string.Empty;
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    foreach (string arg in resultsRequestDict.Keys)
+                    foreach (string arg in _resultsRequestDict.Keys)
                     {
                         if (result.Length > 0)
                         {
@@ -2710,9 +2465,9 @@ namespace EdiabasLib
             }
             set
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    resultsRequestDict.Clear();
+                    _resultsRequestDict.Clear();
                     if (value.Length > 0)
                     {
                         string[] words = value.Split(';');
@@ -2720,7 +2475,7 @@ namespace EdiabasLib
                         {
                             if (word.Length > 0)
                             {
-                                resultsRequestDict.Add(word.ToUpper(culture), true);
+                                _resultsRequestDict.Add(word.ToUpper(Culture), true);
                             }
                         }
                     }
@@ -2732,13 +2487,13 @@ namespace EdiabasLib
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    if ((infoProgressPos < 0) || (infoProgressRange <= 0))
+                    if ((_infoProgressPos < 0) || (_infoProgressRange <= 0))
                     {
                         return -1;
                     }
-                    return (int)(infoProgressPos * 100 / infoProgressRange);
+                    return (int)(_infoProgressPos * 100 / _infoProgressRange);
                 }
             }
         }
@@ -2747,9 +2502,9 @@ namespace EdiabasLib
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    return infoProgressText;
+                    return _infoProgressText;
                 }
             }
         }
@@ -2758,9 +2513,9 @@ namespace EdiabasLib
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    return abortJobFunc;
+                    return _abortJobFunc;
                 }
             }
             set
@@ -2769,9 +2524,9 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "AbortJobFunc: Job is running");
                 }
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    abortJobFunc = value;
+                    _abortJobFunc = value;
                 }
             }
         }
@@ -2780,9 +2535,9 @@ namespace EdiabasLib
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    return progressJobFunc;
+                    return _progressJobFunc;
                 }
             }
             set
@@ -2791,9 +2546,9 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ProgressJobFunc: Job is running");
                 }
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    progressJobFunc = value;
+                    _progressJobFunc = value;
                 }
             }
         }
@@ -2802,9 +2557,9 @@ namespace EdiabasLib
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    return errorRaisedFunc;
+                    return _errorRaisedFunc;
                 }
             }
             set
@@ -2813,9 +2568,9 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ErrorRaisedFunc: Job is running");
                 }
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    errorRaisedFunc = value;
+                    _errorRaisedFunc = value;
                 }
             }
         }
@@ -2824,7 +2579,7 @@ namespace EdiabasLib
         {
             get
             {
-                return arrayMaxBufSize - 1;
+                return _arrayMaxBufSize - 1;
             }
         }
 
@@ -2832,14 +2587,14 @@ namespace EdiabasLib
         {
             get
             {
-                return arrayMaxBufSize;
+                return _arrayMaxBufSize;
             }
             set
             {
-                arrayMaxBufSize = value;
-                for (int i = 0; i < stringRegisters.Length; i++)
+                _arrayMaxBufSize = value;
+                foreach (StringData data in _stringRegisters)
                 {
-                    stringRegisters[i].NewArrayLength(arrayMaxBufSize);
+                    data.NewArrayLength(_arrayMaxBufSize);
                 }
             }
         }
@@ -2848,9 +2603,9 @@ namespace EdiabasLib
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    return sgbdFileName;
+                    return _sgbdFileName;
                 }
             }
             set
@@ -2859,17 +2614,17 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "SgbdFileName: Job is running");
                 }
-                bool changed = false;
-                lock (apiLock)
+                bool changed;
+                lock (_apiLock)
                 {
-                    changed = sgbdFileName != value;
+                    changed = _sgbdFileName != value;
                 }
                 if (changed)
                 {
                     CloseSgbdFs();
-                    lock (apiLock)
+                    lock (_apiLock)
                     {
-                        sgbdFileName = value;
+                        _sgbdFileName = value;
                     }
                 }
             }
@@ -2879,9 +2634,9 @@ namespace EdiabasLib
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    return ecuPath;
+                    return _ecuPath;
                 }
             }
         }
@@ -2890,9 +2645,9 @@ namespace EdiabasLib
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    return edInterfaceClass;
+                    return _edInterfaceClass;
                 }
             }
             set
@@ -2901,12 +2656,12 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "EdInterfaceClass: Job is running");
                 }
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    edInterfaceClass = value;
-                    edInterfaceClass.Ediabas = this;
-                    SetConfigProperty("Interface", edInterfaceClass.InterfaceName);
-                    SetConfigProperty("IfhVersion", edInterfaceClass.InterfaceVerName);
+                    _edInterfaceClass = value;
+                    _edInterfaceClass.Ediabas = this;
+                    SetConfigProperty("Interface", _edInterfaceClass.InterfaceName);
+                    SetConfigProperty("IfhVersion", _edInterfaceClass.InterfaceVerName);
                 }
             }
         }
@@ -2915,11 +2670,11 @@ namespace EdiabasLib
         {
             get
             {
-                return timeMeas;
+                return _timeMeas;
             }
             set
             {
-                timeMeas = value;
+                _timeMeas = value;
             }
         }
 
@@ -2927,9 +2682,9 @@ namespace EdiabasLib
         {
             get
             {
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    return errorCodeLast;
+                    return _errorCodeLast;
                 }
             }
         }
@@ -2940,45 +2695,47 @@ namespace EdiabasLib
 
         public EdiabasNet(string config)
         {
-            if (trapBitDict == null)
+            if (_trapBitDict == null)
             {
-                trapBitDict = new Dictionary<ErrorCodes, UInt32>();
-                trapBitDict.Add(ErrorCodes.EDIABAS_BIP_0002, 2);
-                trapBitDict.Add(ErrorCodes.EDIABAS_BIP_0006, 6);
-                trapBitDict.Add(ErrorCodes.EDIABAS_BIP_0009, 9);
-                trapBitDict.Add(ErrorCodes.EDIABAS_BIP_0010, 10);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0001, 11);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0002, 12);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0003, 13);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0004, 14);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0005, 15);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0006, 16);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0007, 17);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0008, 18);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0009, 19);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0010, 20);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0011, 21);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0012, 22);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0013, 23);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0014, 24);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0015, 25);
-                trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0016, 26);
+                _trapBitDict = new Dictionary<ErrorCodes, UInt32>
+                {
+                    {ErrorCodes.EDIABAS_BIP_0002, 2},
+                    {ErrorCodes.EDIABAS_BIP_0006, 6},
+                    {ErrorCodes.EDIABAS_BIP_0009, 9},
+                    {ErrorCodes.EDIABAS_BIP_0010, 10},
+                    {ErrorCodes.EDIABAS_IFH_0001, 11},
+                    {ErrorCodes.EDIABAS_IFH_0002, 12},
+                    {ErrorCodes.EDIABAS_IFH_0003, 13},
+                    {ErrorCodes.EDIABAS_IFH_0004, 14},
+                    {ErrorCodes.EDIABAS_IFH_0005, 15},
+                    {ErrorCodes.EDIABAS_IFH_0006, 16},
+                    {ErrorCodes.EDIABAS_IFH_0007, 17},
+                    {ErrorCodes.EDIABAS_IFH_0008, 18},
+                    {ErrorCodes.EDIABAS_IFH_0009, 19},
+                    {ErrorCodes.EDIABAS_IFH_0010, 20},
+                    {ErrorCodes.EDIABAS_IFH_0011, 21},
+                    {ErrorCodes.EDIABAS_IFH_0012, 22},
+                    {ErrorCodes.EDIABAS_IFH_0013, 23},
+                    {ErrorCodes.EDIABAS_IFH_0014, 24},
+                    {ErrorCodes.EDIABAS_IFH_0015, 25},
+                    {ErrorCodes.EDIABAS_IFH_0016, 26}
+                };
             }
 
-            byteRegisters = new byte[32];
-            floatRegisters = new EdFloatType[16];
-            stringRegisters = new StringData[16];
+            _byteRegisters = new byte[32];
+            _floatRegisters = new EdFloatType[16];
+            _stringRegisters = new StringData[16];
 
-            for (int i = 0; i < stringRegisters.Length; i++)
+            for (int i = 0; i < _stringRegisters.Length; i++)
             {
-                stringRegisters[i] = new StringData(this, ArrayMaxBufSize);
+                _stringRegisters[i] = new StringData(this, ArrayMaxBufSize);
             }
-            foreach (Register arg in registerList)
+            foreach (Register arg in RegisterList)
             {
                 arg.SetEdiabas(this);
             }
 
-            jobRunning = false;
+            _jobRunning = false;
             SetConfigProperty("EdiabasVersion", "7.3.0");
             SetConfigProperty("Simulation", "0");
             SetConfigProperty("BipDebugLevel", "0");
@@ -2999,6 +2756,7 @@ namespace EdiabasLib
 #else
             string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 #endif
+            assemblyPath = assemblyPath ?? string.Empty;
             SetConfigProperty("EcuPath", assemblyPath);
 
             string tracePath = Path.Combine(assemblyPath, "Trace");
@@ -3014,16 +2772,16 @@ namespace EdiabasLib
 
             if (File.Exists(configFile))
             {
-                xdocConfig = new XmlDocument();
+                _xdocConfig = new XmlDocument();
                 try
                 {
-                    xdocConfig.Load(configFile);
+                    _xdocConfig.Load(configFile);
                     SetConfigProperty("EdiabasIniPath", Path.GetDirectoryName(configFile));
                     ReadAllSettingsProperties();
                 }
                 catch
                 {
-                    xdocConfig = null;
+                    _xdocConfig = null;
                 }
             }
 
@@ -3057,47 +2815,46 @@ namespace EdiabasLib
         protected virtual void Dispose(bool disposing)
         {
             // Check to see if Dispose has already been called.
-            if (!disposed)
+            if (!_disposed)
             {
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
                 if (disposing)
                 {
                     // Dispose managed resources.
-                    abortJobFunc = null;    // prevent abort of exitJob
+                    _abortJobFunc = null;    // prevent abort of exitJob
                     CloseSgbdFs();
                     CloseTableFs();
                     CloseAllUserFiles();
-                    closeLog();
-                    if (edInterfaceClass != null)
+                    CloseLog();
+                    if (_edInterfaceClass != null)
                     {
-                        edInterfaceClass.Dispose();
-                        edInterfaceClass = null;
+                        _edInterfaceClass.Dispose();
+                        _edInterfaceClass = null;
                     }
                 }
 
                 // Note disposing has been done.
-                disposed = true;
+                _disposed = true;
             }
         }
 
         public void ClearGroupMapping()
         {
-            lock (apiLock)
+            lock (_apiLock)
             {
-                sgbdFileResolveLast = string.Empty;
-                groupMappingDict.Clear();
+                _sgbdFileResolveLast = string.Empty;
+                _groupMappingDict.Clear();
             }
         }
 
         public void ReadAllSettingsProperties()
         {
-            string result = string.Empty;
             try
             {
-                if (xdocConfig != null)
+                if (_xdocConfig != null)
                 {
-                    XmlNode xnodes = xdocConfig.SelectSingleNode("/configuration/appSettings");
+                    XmlNode xnodes = _xdocConfig.SelectSingleNode("/configuration/appSettings");
 
                     if (xnodes != null)
                     {
@@ -3114,6 +2871,7 @@ namespace EdiabasLib
                             }
                             catch (Exception)
                             {
+                                // ignored
                             }
                         }
                     }
@@ -3121,16 +2879,17 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
+                // ignored
             }
         }
 
         public string GetConfigProperty(string name)
         {
-            string key = name.ToUpper(culture);
+            string key = name.ToUpper(Culture);
             string value;
-            lock (apiLock)
+            lock (_apiLock)
             {
-                if (!configDict.TryGetValue(key, out value))
+                if (!_configDict.TryGetValue(key, out value))
                 {
                     return null;
                 }
@@ -3140,23 +2899,23 @@ namespace EdiabasLib
 
         public void SetConfigProperty(string name, string value)
         {
-            string key = name.ToUpper(culture);
-            lock (apiLock)
+            string key = name.ToUpper(Culture);
+            lock (_apiLock)
             {
-                if (configDict.ContainsKey(key))
+                if (_configDict.ContainsKey(key))
                 {
                     if (!string.IsNullOrEmpty(value))
                     {
-                        configDict[key] = value;
+                        _configDict[key] = value;
                     }
                     else
                     {
-                        configDict.Remove(key);
+                        _configDict.Remove(key);
                     }
                 }
                 else
                 {
-                    configDict.Add(key, value);
+                    _configDict.Add(key, value);
                 }
             }
 
@@ -3166,28 +2925,28 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "SetConfigProperty: Job is running");
                 }
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    ecuPath = value;
+                    _ecuPath = value;
                 }
                 CloseSgbdFs();
             }
             if (string.Compare(key, "TRACEPATH", StringComparison.Ordinal) == 0)
             {
-                closeLog();
+                CloseLog();
             }
             if (string.Compare(key, "IFHTRACE", StringComparison.Ordinal) == 0)
             {
-                closeLog();
+                CloseLog();
             }
         }
 
         private JobInfo GetJobInfo(string jobName)
         {
             UInt32 jobIndex;
-            if (jobInfos.JobNameDict.TryGetValue(jobName.ToUpper(culture), out jobIndex))
+            if (_jobInfos.JobNameDict.TryGetValue(jobName.ToUpper(Culture), out jobIndex))
             {
-                return jobInfos.JobInfoArray[jobIndex];
+                return _jobInfos.JobInfoArray[jobIndex];
             }
             return null;
         }
@@ -3206,36 +2965,36 @@ namespace EdiabasLib
 
         private bool OpenSgbdFs()
         {
-            if (sgbdFs != null)
+            if (_sgbdFs != null)
             {
                 return true;
             }
             string fileName = Path.Combine(EcuPath, SgbdFileName);
             if (!File.Exists(fileName))
             {
-                LogString(ED_LOG_LEVEL.ERROR, "OpenSgbdFs file not found: " + fileName);
+                LogString(EdLogLevel.Error, "OpenSgbdFs file not found: " + fileName);
                 return false;
             }
             try
             {
-                sgbdFs = MemoryStreamReader.OpenRead(fileName);
+                _sgbdFs = MemoryStreamReader.OpenRead(fileName);
             }
             catch (Exception ex)
             {
-                LogString(ED_LOG_LEVEL.ERROR, "OpenSgbdFs exception: " + GetExceptionText(ex));
+                LogString(EdLogLevel.Error, "OpenSgbdFs exception: " + GetExceptionText(ex));
                 return false;
             }
-            usesInfos = ReadAllUses(sgbdFs);
-            descriptionInfos = null;
-            jobInfos = ReadAllJobs(sgbdFs);
-            tableInfos = ReadAllTables(sgbdFs);
-            requestInit = true;
+            _usesInfos = ReadAllUses(_sgbdFs);
+            _descriptionInfos = null;
+            _jobInfos = ReadAllJobs(_sgbdFs);
+            _tableInfos = ReadAllTables(_sgbdFs);
+            _requestInit = true;
             return true;
         }
 
         private void CloseSgbdFs()
         {
-            if (sgbdFs != null)
+            if (_sgbdFs != null)
             {
                 try
                 {
@@ -3243,59 +3002,59 @@ namespace EdiabasLib
                 }
                 catch (Exception ex)
                 {
-                    LogString(ED_LOG_LEVEL.ERROR, "CloseSgbdFs exception: " + GetExceptionText(ex));
+                    LogString(EdLogLevel.Error, "CloseSgbdFs exception: " + GetExceptionText(ex));
                 }
-                sgbdFs.Dispose();
-                sgbdFs = null;
+                _sgbdFs.Dispose();
+                _sgbdFs = null;
             }
         }
 
         private void CloseTableFs()
         {
-            if (tableFs != null)
+            if (_tableFs != null)
             {
-                if (tableFs != sgbdBaseFs)
+                if (_tableFs != _sgbdBaseFs)
                 {
-                    tableFs.Dispose();
+                    _tableFs.Dispose();
                 }
-                tableFs = null;
+                _tableFs = null;
             }
-            tableInfosExt = null;
-            tableIndex = -1;
-            tableRowIndex = -1;
+            _tableInfosExt = null;
+            _tableIndex = -1;
+            _tableRowIndex = -1;
         }
 
         private Stream GetTableFs()
         {
-            if (tableFs != null)
+            if (_tableFs != null)
             {
-                return tableFs;
+                return _tableFs;
             }
-            return sgbdFs;
+            return _sgbdFs;
         }
 
         private void SetTableFs(Stream fs)
         {
-            tableFs = fs;
-            tableInfosExt = ReadAllTables(fs);
+            _tableFs = fs;
+            _tableInfosExt = ReadAllTables(fs);
         }
 
         private TableInfos GetTableInfos(Stream fs)
         {
-            if (tableFs != null && tableFs == fs)
+            if (_tableFs != null && _tableFs == fs)
             {
-                return tableInfosExt;
+                return _tableInfosExt;
             }
-            return tableInfos;
+            return _tableInfos;
         }
 
         private int StoreUserFile(Stream fs)
         {
-            for (int i = 0; i < userFilesArray.Length; i++)
+            for (int i = 0; i < _userFilesArray.Length; i++)
             {
-                if (userFilesArray[i] == null)
+                if (_userFilesArray[i] == null)
                 {
-                    userFilesArray[i] = fs;
+                    _userFilesArray[i] = fs;
                     return i;
                 }
             }
@@ -3304,11 +3063,11 @@ namespace EdiabasLib
 
         private Stream GetUserFile(int index)
         {
-            if ((index < 0) || (index >= userFilesArray.Length))
+            if ((index < 0) || (index >= _userFilesArray.Length))
             {
                 return null;
             }
-            return userFilesArray[index];
+            return _userFilesArray[index];
         }
 
         private string ReadFileLine(Stream fs)
@@ -3345,7 +3104,6 @@ namespace EdiabasLib
 
         private long ReadFileLineLength(Stream fs)
         {
-            StringBuilder stringBuilder = new StringBuilder(100);
             int currByte;
             long lineLength = 0;
             for (; ; )
@@ -3378,72 +3136,72 @@ namespace EdiabasLib
 
         private bool CloseUserFile(int index)
         {
-            if ((index < 0) || (index >= userFilesArray.Length))
+            if ((index < 0) || (index >= _userFilesArray.Length))
             {
                 return false;
             }
-            if (userFilesArray[index] == null)
+            if (_userFilesArray[index] == null)
             {
                 return true;
             }
-            userFilesArray[index].Dispose();
-            userFilesArray[index] = null;
+            _userFilesArray[index].Dispose();
+            _userFilesArray[index] = null;
             return true;
         }
 
         private void CloseAllUserFiles()
         {
-            for (int i = 0; i < userFilesArray.Length; i++)
+            for (int i = 0; i < _userFilesArray.Length; i++)
             {
-                if (userFilesArray[i] != null)
+                if (_userFilesArray[i] != null)
                 {
-                    userFilesArray[i].Dispose();
-                    userFilesArray[i] = null;
+                    _userFilesArray[i].Dispose();
+                    _userFilesArray[i] = null;
                 }
             }
         }
 
         public void SetError(ErrorCodes error)
         {
-            LogFormat(ED_LOG_LEVEL.ERROR, "SetError: {0}", error);
+            LogFormat(EdLogLevel.Error, "SetError: {0}", error);
 
             if (error != ErrorCodes.EDIABAS_ERR_NONE)
             {
                 EdValueType bitNumber;
-                if (trapBitDict.TryGetValue(error, out bitNumber))
+                if (_trapBitDict.TryGetValue(error, out bitNumber))
                 {
-                    this.errorTrapBitNr = (int) bitNumber;
+                    _errorTrapBitNr = (int) bitNumber;
                 }
                 else
                 {
-                    this.errorTrapBitNr = 0;
+                    _errorTrapBitNr = 0;
                 }
 
-                EdValueType activeErrors = (EdValueType)((1 << this.errorTrapBitNr) & ~this.errorTrapMask);
+                EdValueType activeErrors = (EdValueType)((1 << _errorTrapBitNr) & ~_errorTrapMask);
                 if (activeErrors != 0)
                 {
                     RaiseError(error);
                 }
-                sgbdFileResolveLast = string.Empty;     // reset last file after error to force sgbd reload
+                _sgbdFileResolveLast = string.Empty;     // reset last file after error to force sgbd reload
             }
             else
             {
-                this.errorTrapBitNr = -1;
+                _errorTrapBitNr = -1;
             }
         }
 
         public void RaiseError(ErrorCodes error)
         {
-            lock (apiLock)
+            lock (_apiLock)
             {
-                this.errorCodeLast = error;
+                _errorCodeLast = error;
             }
             ErrorRaisedDelegate errorFunc = ErrorRaisedFunc;
             if (errorFunc != null)
             {
                 errorFunc(error);
             }
-            throw new Exception(string.Format(culture, "Error occured: {0}", error));
+            throw new Exception(string.Format(Culture, "Error occured: {0}", error));
         }
 
         public static string GetErrorDescription(ErrorCodes errorCode)
@@ -3537,18 +3295,18 @@ namespace EdiabasLib
             Double valueDouble = 0;
             string valueString = null;
 
-            if (resultData.opData is Int64)
+            if (resultData.OpData is Int64)
             {
-                valueInt64 = (Int64)resultData.opData;
+                valueInt64 = (Int64)resultData.OpData;
             }
-            else if (resultData.opData is Double)
+            else if (resultData.OpData is Double)
             {
-                valueDouble = (Double)resultData.opData;
+                valueDouble = (Double)resultData.OpData;
                 valueIsDouble = true;
             }
-            else if (resultData.opData is string)
+            else if (resultData.OpData is string)
             {
-                valueString = (string)resultData.opData;
+                valueString = (string)resultData.OpData;
             }
             else
             {
@@ -3658,14 +3416,7 @@ namespace EdiabasLib
                     {
                         return null;
                     }
-                    if (valueIsDouble)
-                    {
-                        convDouble = valueDouble;
-                    }
-                    else
-                    {
-                        convDouble = valueInt64;
-                    }
+                    convDouble = valueIsDouble ? valueDouble : valueInt64;
                     convIsDouble = true;
                     break;
 
@@ -3741,7 +3492,7 @@ namespace EdiabasLib
                         sb.Append("}");
 
                         string formatString = sb.ToString();
-                        string resultString = string.Format(culture, formatString, convDouble);
+                        string resultString = string.Format(Culture, formatString, convDouble);
 
                         if (length1 >= 0 && length1 > resultString.Length)
                         {
@@ -3769,7 +3520,7 @@ namespace EdiabasLib
                             {
                                 sb.Append("-");
                             }
-                            sb.Append(string.Format(culture, "{0}", length1));
+                            sb.Append(string.Format(Culture, "{0}", length1));
                         }
                         if (length2 > 0)
                         {
@@ -3779,7 +3530,7 @@ namespace EdiabasLib
                         sb.Insert(0, "{0");
                         sb.Append("}");
                         string formatString = sb.ToString();
-                        return string.Format(culture, formatString, convInt64);
+                        return string.Format(Culture, formatString, convInt64);
                     }
 
                     {
@@ -3792,16 +3543,16 @@ namespace EdiabasLib
                             {
                                 sb.Append("-");
                             }
-                            sb.Append(string.Format(culture, "{0}:X", length1));
+                            sb.Append(string.Format(Culture, "{0}:X", length1));
                             if (zeroPrexif)
                             {
-                                sb.Append(string.Format(culture, "0{0}", length1));
+                                sb.Append(string.Format(Culture, "0{0}", length1));
                             }
                         }
                         sb.Insert(0, "{0");
                         sb.Append("}");
                         string formatString = sb.ToString();
-                        return string.Format(culture, formatString, convInt64);
+                        return string.Format(Culture, formatString, convInt64);
                     }
                 }
                 else
@@ -3828,28 +3579,30 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
+                // ignored
             }
             return null;
         }
 
         private void SetResultData(ResultData resultData)
         {
-            string key = resultData.name;
-            if (resultDict.ContainsKey(key))
+            string key = resultData.Name;
+            if (_resultDict.ContainsKey(key))
             {
-                resultDict[key] = resultData;
+                _resultDict[key] = resultData;
             }
             else
             {
-                resultDict.Add(key, resultData);
+                _resultDict.Add(key, resultData);
             }
         }
 
+        // ReSharper disable once UnusedMember.Local
         private ResultData GetResultData(string name)
         {
             ResultData result;
 
-            if (resultDict.TryGetValue(name, out result))
+            if (_resultDict.TryGetValue(name, out result))
             {
                 return result;
             }
@@ -3858,14 +3611,14 @@ namespace EdiabasLib
 
         private void SetSysResultData(ResultData resultData)
         {
-            string key = resultData.name;
-            if (resultSysDict.ContainsKey(key))
+            string key = resultData.Name;
+            if (_resultSysDict.ContainsKey(key))
             {
-                resultSysDict[key] = resultData;
+                _resultSysDict[key] = resultData;
             }
             else
             {
-                resultSysDict.Add(key, resultData);
+                _resultSysDict.Add(key, resultData);
             }
         }
 
@@ -3886,22 +3639,22 @@ namespace EdiabasLib
                 sysResults = StringToValue(sysResultStr);
             }
 
-            resultDictSystem.Add("VARIANTE", new ResultData(ResultType.TypeS, "VARIANTE", Path.GetFileNameWithoutExtension(SgbdFileName).ToUpper(culture)));
+            resultDictSystem.Add("VARIANTE", new ResultData(ResultType.TypeS, "VARIANTE", Path.GetFileNameWithoutExtension(SgbdFileName ?? string.Empty).ToUpper(Culture)));
             resultDictSystem.Add("OBJECT", new ResultData(ResultType.TypeS, "OBJECT", objectName));
             resultDictSystem.Add("JOBNAME", new ResultData(ResultType.TypeS, "JOBNAME", jobInfo.JobName));
             resultDictSystem.Add("SAETZE", new ResultData(ResultType.TypeW, "SAETZE", (Int64)setCount));
             if (sysResults != 0)
             {
-                resultDictSystem.Add("JOBSTATUS", new ResultData(ResultType.TypeS, "JOBSTATUS", resultJobStatus));
+                resultDictSystem.Add("JOBSTATUS", new ResultData(ResultType.TypeS, "JOBSTATUS", _resultJobStatus));
                 resultDictSystem.Add("UBATTCURRENT", new ResultData(ResultType.TypeI, "UBATTCURRENT", (Int64)(-1)));
                 resultDictSystem.Add("UBATTHISTORY", new ResultData(ResultType.TypeI, "UBATTHISTORY", (Int64)(-1)));
                 resultDictSystem.Add("IGNITIONCURRENT", new ResultData(ResultType.TypeI, "IGNITIONCURRENT", (Int64)(-1)));
                 resultDictSystem.Add("IGNITIONHISTORY", new ResultData(ResultType.TypeI, "IGNITIONHISTORY", (Int64)(-1)));
             }
 
-            foreach (string key in resultSysDict.Keys)
+            foreach (string key in _resultSysDict.Keys)
             {
-                ResultData resultData = resultSysDict[key];
+                ResultData resultData = _resultSysDict[key];
                 if (!resultDictSystem.ContainsKey(key))
                 {
                     resultDictSystem.Add(key, resultData);
@@ -3939,15 +3692,15 @@ namespace EdiabasLib
                 return usesInfosLocal;
             }
             fs.Position = usesOffset;
-            int usesCount = readInt32(fs);
+            int usesCount = ReadInt32(fs);
 
             usesInfosLocal.UsesInfoArray = new UsesInfo[usesCount];
 
             byte[] usesBuffer = new byte[0x100];
             for (int i = 0; i < usesCount; i++)
             {
-                readAndDecryptBytes(fs, usesBuffer, 0, 0x100);
-                string usesName = encoding.GetString(usesBuffer, 0, 0x100).TrimEnd('\0');
+                ReadAndDecryptBytes(fs, usesBuffer, 0, 0x100);
+                string usesName = Encoding.GetString(usesBuffer, 0, 0x100).TrimEnd('\0');
                 usesInfosLocal.UsesInfoArray[i] = new UsesInfo(usesName);
             }
 
@@ -3966,14 +3719,16 @@ namespace EdiabasLib
             }
             Int32 descriptionOffset = BitConverter.ToInt32(buffer, 0);
 
-            DescriptionInfos descriptionInfosLocal = new DescriptionInfos();
-            descriptionInfosLocal.JobComments = new Dictionary<string, List<string>>();
+            DescriptionInfos descriptionInfosLocal = new DescriptionInfos
+            {
+                JobComments = new Dictionary<string, List<string>>()
+            };
             if (descriptionOffset < 0)
             {
                 return descriptionInfosLocal;
             }
             fs.Position = descriptionOffset;
-            int numBytes = readInt32(fs);
+            int numBytes = ReadInt32(fs);
 
             List<string> commentList = new List<string>();
             string previousJobName = null;
@@ -3982,7 +3737,7 @@ namespace EdiabasLib
             int recordOffset = 0;
             for (int i = 0; i < numBytes; i++)
             {
-                readAndDecryptBytes(fs, recordBuffer, recordOffset, 1);
+                ReadAndDecryptBytes(fs, recordBuffer, recordOffset, 1);
                 recordOffset += 1;
 
                 if (recordOffset >= 1098)
@@ -3991,7 +3746,7 @@ namespace EdiabasLib
                 if (recordBuffer[recordOffset - 1] == 10) //\n
                 {
                     recordBuffer[recordOffset] = 0;
-                    string comment = encoding.GetString(recordBuffer, 0, recordOffset - 1);
+                    string comment = Encoding.GetString(recordBuffer, 0, recordOffset - 1);
                     if (comment.StartsWith("JOBNAME:", StringComparison.OrdinalIgnoreCase))
                     {
                         if (previousJobName == null)
@@ -4033,9 +3788,9 @@ namespace EdiabasLib
         {
             List<JobInfo> jobListComplete = GetJobList(fs, null);
 
-            foreach (UsesInfo usesInfo in usesInfos.UsesInfoArray)
+            foreach (UsesInfo usesInfo in _usesInfos.UsesInfoArray)
             {
-                string fileName = Path.Combine(EcuPath, usesInfo.Name.ToLower(culture) + ".prg");
+                string fileName = Path.Combine(EcuPath, usesInfo.Name.ToLower(Culture) + ".prg");
                 if (File.Exists(fileName))
                 {
                     try
@@ -4048,25 +3803,27 @@ namespace EdiabasLib
                     }
                     catch (Exception ex)
                     {
-                        LogString(ED_LOG_LEVEL.ERROR, "ReadAllJobs exception: " + GetExceptionText(ex));
+                        LogString(EdLogLevel.Error, "ReadAllJobs exception: " + GetExceptionText(ex));
                     }
                 }
             }
 
             int numJobs = jobListComplete.Count;
-            JobInfos jobInfosLocal = new JobInfos();
-            jobInfosLocal.JobNameDict = new Dictionary<string, UInt32>();
-            jobInfosLocal.JobInfoArray = new JobInfo[numJobs];
+            JobInfos jobInfosLocal = new JobInfos
+            {
+                JobNameDict = new Dictionary<string, UInt32>(),
+                JobInfoArray = new JobInfo[numJobs]
+            };
 
             EdValueType index = 0;
             foreach (JobInfo jobInfo in jobListComplete)
             {
-                string key = jobInfo.JobName.ToUpper(culture);
+                string key = jobInfo.JobName.ToUpper(Culture);
                 bool addJob = true;
                 if (jobInfo.UsesInfo != null)
                 {
-                    if ((string.Compare(key, jobNameInit, StringComparison.OrdinalIgnoreCase) == 0) ||
-                        (string.Compare(key, jobNameExit, StringComparison.OrdinalIgnoreCase) == 0))
+                    if ((string.Compare(key, JobNameInit, StringComparison.OrdinalIgnoreCase) == 0) ||
+                        (string.Compare(key, JobNameExit, StringComparison.OrdinalIgnoreCase) == 0))
                     {
                         addJob = false;
                     }
@@ -4113,15 +3870,15 @@ namespace EdiabasLib
                 return jobList;
             }
             fs.Position = jobListOffset;
-            int numJobs = readInt32(fs);
+            int numJobs = ReadInt32(fs);
 
             byte[] jobBuffer = new byte[0x44];
             UInt32 jobStart = (UInt32)fs.Position;
             for (int i = 0; i < numJobs; i++)
             {
                 fs.Position = jobStart;
-                readAndDecryptBytes(fs, jobBuffer, 0, jobBuffer.Length);
-                string jobNameString = encoding.GetString(jobBuffer, 0, 0x40).TrimEnd('\0');
+                ReadAndDecryptBytes(fs, jobBuffer, 0, jobBuffer.Length);
+                string jobNameString = Encoding.GetString(jobBuffer, 0, 0x40).TrimEnd('\0');
                 UInt32 jobAddress = BitConverter.ToUInt32(jobBuffer, 0x40);
 #if false
                 //if (String.Compare(jobNameString, "STATUS_RAILDRUCK_IST", StringComparison.OrdinalIgnoreCase) == 0)
@@ -4177,8 +3934,10 @@ namespace EdiabasLib
             fs.Position = 0x84;
             fs.Read(buffer, 0, buffer.Length);
 
-            TableInfos tableInfosLocal = new TableInfos();
-            tableInfosLocal.TableNameDict = new Dictionary<string, UInt32>();
+            TableInfos tableInfosLocal = new TableInfos
+            {
+                TableNameDict = new Dictionary<string, UInt32>()
+            };
 
             if (!BitConverter.IsLittleEndian)
             {
@@ -4193,7 +3952,7 @@ namespace EdiabasLib
             fs.Position = tableOffset;
 
             byte[] tableCountBuffer = new byte[4];
-            readAndDecryptBytes(fs, tableCountBuffer, 0, tableCountBuffer.Length);
+            ReadAndDecryptBytes(fs, tableCountBuffer, 0, tableCountBuffer.Length);
             if (!BitConverter.IsLittleEndian)
             {
                 Array.Reverse(tableCountBuffer, 0, 4);
@@ -4206,7 +3965,7 @@ namespace EdiabasLib
             {
                 TableInfo tableInfo = ReadTable(fs, tableStart);
                 tableInfosLocal.TableInfoArray[i] = tableInfo;
-                tableInfosLocal.TableNameDict.Add(tableInfo.Name.ToUpper(culture), (UInt32)i);
+                tableInfosLocal.TableNameDict.Add(tableInfo.Name.ToUpper(Culture), (UInt32)i);
                 tableStart += 0x50;
             }
             return tableInfosLocal;
@@ -4217,8 +3976,8 @@ namespace EdiabasLib
             fs.Position = tableOffset;
 
             byte[] tableBuffer = new byte[0x50];
-            readAndDecryptBytes(fs, tableBuffer, 0, tableBuffer.Length);
-            string name = encoding.GetString(tableBuffer, 0, 0x40).TrimEnd('\0');
+            ReadAndDecryptBytes(fs, tableBuffer, 0, tableBuffer.Length);
+            string name = Encoding.GetString(tableBuffer, 0, 0x40).TrimEnd('\0');
 
             if (!BitConverter.IsLittleEndian)
             {
@@ -4257,15 +4016,15 @@ namespace EdiabasLib
                 {
                     tableRow[k] = (EdValueType)fs.Position;
                     int l;
-                    for (l = 0; l < tableItemBuffer.Length; l++)
+                    for (l = 0; l < _tableItemBuffer.Length; l++)
                     {
-                        readAndDecryptBytes(fs, tableItemBuffer, l, 1);
-                        if (tableItemBuffer[l] == 0)
+                        ReadAndDecryptBytes(fs, _tableItemBuffer, l, 1);
+                        if (_tableItemBuffer[l] == 0)
                             break;
                     }
                     if (j == 0)
                     {
-                        string columnName = encoding.GetString(tableItemBuffer, 0, l).ToUpper(culture);
+                        string columnName = Encoding.GetString(_tableItemBuffer, 0, l).ToUpper(Culture);
                         columnNameDict.Add(columnName, (UInt32)k);
                     }
                 }
@@ -4280,13 +4039,13 @@ namespace EdiabasLib
             fs.Position = stringOffset;
 
             int l;
-            for (l = 0; l < tableItemBuffer.Length; ++l)
+            for (l = 0; l < _tableItemBuffer.Length; ++l)
             {
-                readAndDecryptBytes(fs, tableItemBuffer, l, 1);
-                if (tableItemBuffer[l] == 0)
+                ReadAndDecryptBytes(fs, _tableItemBuffer, l, 1);
+                if (_tableItemBuffer[l] == 0)
                     break;
             }
-            return encoding.GetString(tableItemBuffer, 0, l);
+            return Encoding.GetString(_tableItemBuffer, 0, l);
         }
 
         private Int32 GetTableIndex(Stream fs, string tableName, out bool found)
@@ -4295,7 +4054,7 @@ namespace EdiabasLib
             TableInfos tableInfosLocal = GetTableInfos(fs);
 
             UInt32 tableIdx;
-            if (tableInfosLocal.TableNameDict.TryGetValue(tableName.ToUpper(culture), out tableIdx))
+            if (tableInfosLocal.TableNameDict.TryGetValue(tableName.ToUpper(Culture), out tableIdx))
             {
                 IndexTable(fs, tableInfosLocal.TableInfoArray[tableIdx]);
                 found = true;
@@ -4374,7 +4133,7 @@ namespace EdiabasLib
                 columnDict = table.SeekColumnStringDicts[columnIndex];
                 for (int i = 1; i < table.TableEntries.Length; i++)
                 {
-                    string rowStr = GetTableString(fs, table.TableEntries[i][columnIndex]).ToUpper(culture);
+                    string rowStr = GetTableString(fs, table.TableEntries[i][columnIndex]).ToUpper(Culture);
                     if (!columnDict.ContainsKey(rowStr))
                     {
                         columnDict.Add(rowStr, (UInt32)(i - 1));
@@ -4387,7 +4146,7 @@ namespace EdiabasLib
             }
 
             UInt32 selectedRow;
-            if (columnDict.TryGetValue(valueName.ToUpper(culture), out selectedRow))
+            if (columnDict.TryGetValue(valueName.ToUpper(Culture), out selectedRow))
             {
                 found = true;
                 return (Int32)selectedRow;
@@ -4448,10 +4207,11 @@ namespace EdiabasLib
             return (Int32)(table.Rows - 1); // select last line
         }
 
+        // ReSharper disable once UnusedParameter.Local
         private Int32 GetTableColumnIdx(Stream fs, TableInfo table, string columnName)
         {
             UInt32 column;
-            if (table.ColumnNameDict.TryGetValue(columnName.ToUpper(culture), out column))
+            if (table.ColumnNameDict.TryGetValue(columnName.ToUpper(Culture), out column))
             {
                 return (Int32)column;
             }
@@ -4483,40 +4243,40 @@ namespace EdiabasLib
 
         public void ResolveSgbdFile(string fileName)
         {
-            LogFormat(ED_LOG_LEVEL.INFO, "ResolveSgbdFile: {0}", fileName);
+            LogFormat(EdLogLevel.Info, "ResolveSgbdFile: {0}", fileName);
             if (JobRunning)
             {
                 throw new ArgumentOutOfRangeException("JobRunning", "ResolveSgbdFile: Job is running");
             }
-            string baseFileName = Path.GetFileNameWithoutExtension(fileName).ToLower(culture);
-            if (string.Compare(sgbdFileResolveLast, baseFileName, StringComparison.Ordinal) == 0)
+            string baseFileName = Path.GetFileNameWithoutExtension(fileName ?? String.Empty).ToLower(Culture);
+            if (string.Compare(_sgbdFileResolveLast, baseFileName, StringComparison.Ordinal) == 0)
             {   // same name specified
-                LogFormat(ED_LOG_LEVEL.INFO, "ResolveSgbdFile resolved: {0}", SgbdFileName);
+                LogFormat(EdLogLevel.Info, "ResolveSgbdFile resolved: {0}", SgbdFileName);
                 return;
             }
 
-            UInt32 fileType = GetFileType(Path.Combine(EcuPath, fileName));
+            UInt32 fileType = GetFileType(Path.Combine(EcuPath, fileName ?? String.Empty));
             if (fileType == 0)
             {       // group file
                 string key = baseFileName;
                 string variantName;
                 bool mappingFound;
-                lock (apiLock)
+                lock (_apiLock)
                 {
-                    mappingFound = groupMappingDict.TryGetValue(key, out variantName);
+                    mappingFound = _groupMappingDict.TryGetValue(key, out variantName);
                 }
                 if (!mappingFound)
                 {
                     SgbdFileName = baseFileName + ".grp";
-                    variantName = ExecuteIdentJob().ToLower(culture);
+                    variantName = ExecuteIdentJob().ToLower(Culture);
                     if (variantName.Length == 0)
                     {
-                        LogFormat(ED_LOG_LEVEL.ERROR, "ResolveSgbdFile: No variant found");
+                        LogFormat(EdLogLevel.Error, "ResolveSgbdFile: No variant found");
                         throw new ArgumentOutOfRangeException("variantName", "ResolveSgbdFile: No variant found");
                     }
-                    lock (apiLock)
+                    lock (_apiLock)
                     {
-                        groupMappingDict.Add(key, variantName);
+                        _groupMappingDict.Add(key, variantName);
                     }
                 }
                 SgbdFileName = variantName + ".prg";
@@ -4525,8 +4285,8 @@ namespace EdiabasLib
             {
                 SgbdFileName = baseFileName + ".prg";
             }
-            LogFormat(ED_LOG_LEVEL.INFO, "ResolveSgbdFile resolved: {0}", SgbdFileName);
-            sgbdFileResolveLast = baseFileName;
+            LogFormat(EdLogLevel.Info, "ResolveSgbdFile resolved: {0}", SgbdFileName);
+            _sgbdFileResolveLast = baseFileName;
         }
 
         public UInt32 GetFileType(string fileName)
@@ -4535,7 +4295,7 @@ namespace EdiabasLib
 
             string baseFileName = Path.GetFileNameWithoutExtension(fileName);
 
-            string dirName = Path.GetDirectoryName(fileName);
+            string dirName = Path.GetDirectoryName(fileName) ?? String.Empty;
             string localFileName = Path.Combine(dirName, baseFileName + ".grp");
             if (!File.Exists(localFileName))
             {
@@ -4544,7 +4304,7 @@ namespace EdiabasLib
 
             if (!File.Exists(localFileName))
             {
-                LogString(ED_LOG_LEVEL.ERROR, "GetFileType file not found: " + fileName);
+                LogString(EdLogLevel.Error, "GetFileType file not found: " + fileName);
                 throw new ArgumentOutOfRangeException(fileName, "GetFileType: File not found");
             }
             try
@@ -4564,7 +4324,7 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
-                LogString(ED_LOG_LEVEL.ERROR, "GetFileType file not found: " + fileName);
+                LogString(EdLogLevel.Error, "GetFileType file not found: " + fileName);
                 throw new ArgumentOutOfRangeException(fileName, "GetFileType: Unable to read file");
             }
             return fileType;
@@ -4573,44 +4333,41 @@ namespace EdiabasLib
         private void ExecuteInitJob()
         {
             bool jobRunningOld = JobRunning;
-            bool jobStdOld = jobStd;
+            bool jobStdOld = _jobStd;
             try
             {
                 JobRunning = true;
-                jobStd = true;
+                _jobStd = true;
 
                 try
                 {
-                    executeJob(jobNameInit);
+                    ExecuteJobPrivate(JobNameInit);
                 }
                 catch (Exception ex)
                 {
-                    LogString(ED_LOG_LEVEL.ERROR, "executeInitJob Exception: " + ex.Message);
+                    LogString(EdLogLevel.Error, "executeInitJob Exception: " + ex.Message);
                     SetError(ErrorCodes.EDIABAS_SYS_0010);
                     return;
                 }
-                if (resultSets.Count > 1)
+                if (_resultSets.Count > 1)
                 {
                     ResultData result;
-                    if (resultSets[1].TryGetValue("DONE", out result))
+                    if (_resultSets[1].TryGetValue("DONE", out result))
                     {
-                        if (result.opData is Int64)
+                        if (result.OpData as Int64? == 1)
                         {
-                            if ((Int64)result.opData == 1)
-                            {
-                                LogString(ED_LOG_LEVEL.INFO, "executeInitJob ok");
-                                return;
-                            }
+                            LogString(EdLogLevel.Info, "executeInitJob ok");
+                            return;
                         }
                     }
                 }
 
-                LogString(ED_LOG_LEVEL.ERROR, "executeInitJob failed");
+                LogString(EdLogLevel.Error, "executeInitJob failed");
                 SetError(ErrorCodes.EDIABAS_SYS_0010);
             }
             finally
             {
-                jobStd = jobStdOld;
+                _jobStd = jobStdOld;
                 JobRunning = jobRunningOld;
             }
         }
@@ -4618,28 +4375,28 @@ namespace EdiabasLib
         private void ExecuteExitJob()
         {
             bool jobRunningOld = JobRunning;
-            bool jobStdOld = jobStd;
+            bool jobStdOld = _jobStd;
             try
             {
                 JobRunning = true;
-                jobStd = true;
+                _jobStd = true;
 
                 try
                 {
-                    if (sgbdFs != null && GetJobInfo(jobNameExit) != null)
+                    if (_sgbdFs != null && GetJobInfo(JobNameExit) != null)
                     {
-                        executeJob(jobNameExit);
+                        ExecuteJobPrivate(JobNameExit);
                     }
                 }
                 catch (Exception ex)
                 {
-                    LogString(ED_LOG_LEVEL.ERROR, "ExecuteExitJob Exception: " + ex.Message);
+                    LogString(EdLogLevel.Error, "ExecuteExitJob Exception: " + ex.Message);
                     throw new Exception("ExecuteExitJob", ex);
                 }
             }
             finally
             {
-                jobStd = jobStdOld;
+                _jobStd = jobStdOld;
                 JobRunning = jobRunningOld;
             }
         }
@@ -4647,49 +4404,49 @@ namespace EdiabasLib
         private string ExecuteIdentJob()
         {
             bool jobRunningOld = JobRunning;
-            bool jobStdOld = jobStd;
+            bool jobStdOld = _jobStd;
             try
             {
                 JobRunning = true;
-                jobStd = true;
+                _jobStd = true;
 
-                resultDict.Clear();
+                _resultDict.Clear();
                 try
                 {
-                    executeJob(jobNameIdent);
+                    ExecuteJobPrivate(JobNameIdent);
                 }
                 catch (Exception ex)
                 {
-                    LogString(ED_LOG_LEVEL.ERROR, "executeIdentJob Exception: " + ex.Message);
+                    LogString(EdLogLevel.Error, "executeIdentJob Exception: " + ex.Message);
                     throw new Exception("executeIdentJob", ex);
                 }
-                if (resultSets.Count > 1)
+                if (_resultSets.Count > 1)
                 {
                     ResultData result;
-                    if (resultSets[1].TryGetValue("VARIANTE", out result))
+                    if (_resultSets[1].TryGetValue("VARIANTE", out result))
                     {
-                        if (result.opData is string)
+                        if (result.OpData is string)
                         {
-                            string variantName = (string)result.opData;
-                            LogString(ED_LOG_LEVEL.INFO, "executeIdentJob ok: " + variantName);
+                            string variantName = (string)result.OpData;
+                            LogString(EdLogLevel.Info, "executeIdentJob ok: " + variantName);
                             return variantName;
                         }
                     }
                 }
 
-                LogString(ED_LOG_LEVEL.ERROR, "executeIdentJob failed");
+                LogString(EdLogLevel.Error, "executeIdentJob failed");
             }
             finally
             {
-                jobStd = jobStdOld;
+                _jobStd = jobStdOld;
                 JobRunning = jobRunningOld;
             }
             return string.Empty;
         }
 
-        private void executeJob(string jobName)
+        private void ExecuteJobPrivate(string jobName)
         {
-            LogFormat(ED_LOG_LEVEL.INFO, "executeJob: {0}", jobName);
+            LogFormat(EdLogLevel.Info, "executeJob: {0}", jobName);
 
             if (!OpenSgbdFs())
             {
@@ -4698,21 +4455,22 @@ namespace EdiabasLib
             JobInfo jobInfo = GetJobInfo(jobName);
             if (jobInfo == null)
             {
-                foreach (VJobInfo vJobInfo in vJobList)
+                foreach (VJobInfo vJobInfo in VJobList)
                 {
                     if (string.Compare(vJobInfo.JobName, jobName, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        executeVJob(sgbdFs, vJobInfo);
-                        LogString(ED_LOG_LEVEL.INFO, "executeJob successfull");
+                        ExecuteVJob(_sgbdFs, vJobInfo);
+                        LogString(EdLogLevel.Info, "executeJob successfull");
                         return;
                     }
                 }
-                SetError(EdiabasNet.ErrorCodes.EDIABAS_SYS_0008);
+                SetError(ErrorCodes.EDIABAS_SYS_0008);
+                return;
             }
 
             if (jobInfo.UsesInfo != null)
             {
-                string fileName = Path.Combine(EcuPath, jobInfo.UsesInfo.Name.ToLower(culture) + ".prg");
+                string fileName = Path.Combine(EcuPath, jobInfo.UsesInfo.Name.ToLower(Culture) + ".prg");
                 if (!File.Exists(fileName))
                 {
                     throw new ArgumentOutOfRangeException("fileName", "ExecuteJobInternal: SGBD not found: " + fileName);
@@ -4721,26 +4479,26 @@ namespace EdiabasLib
                 {
                     using (Stream tempFs = MemoryStreamReader.OpenRead(fileName))
                     {
-                        sgbdBaseFs = tempFs;
-                        executeJob(tempFs, jobInfo);
+                        _sgbdBaseFs = tempFs;
+                        ExecuteJobPrivate(tempFs, jobInfo);
                     }
                 }
                 catch (Exception ex)
                 {
-                    LogString(ED_LOG_LEVEL.ERROR, "executeJob base job exception: " + GetExceptionText(ex));
+                    LogString(EdLogLevel.Error, "executeJob base job exception: " + GetExceptionText(ex));
                     throw new Exception("executeJob base job exception", ex);
                 }
                 finally
                 {
                     CloseTableFs();
-                    sgbdBaseFs = null;
+                    _sgbdBaseFs = null;
                 }
             }
             else
             {
-                executeJob(sgbdFs, jobInfo);
+                ExecuteJobPrivate(_sgbdFs, jobInfo);
             }
-            LogString(ED_LOG_LEVEL.INFO, "executeJob successfull");
+            LogString(EdLogLevel.Info, "executeJob successfull");
         }
 
         public void ExecuteJob(string jobName)
@@ -4752,82 +4510,82 @@ namespace EdiabasLib
             try
             {
                 JobRunning = true;
-                jobStd = false;
-                executeJob(jobName);
+                _jobStd = false;
+                ExecuteJobPrivate(jobName);
             }
             finally
             {
-                argInfo.BinData = null;
-                argInfoStd.BinData = null;
-                jobStd = false;
+                _argInfo.BinData = null;
+                _argInfoStd.BinData = null;
+                _jobStd = false;
                 JobRunning = false;
             }
         }
 
-        private void executeJob(Stream fs, JobInfo jobInfo)
+        private void ExecuteJobPrivate(Stream fs, JobInfo jobInfo)
         {
-            if (requestInit)
+            if (_requestInit)
             {
-                requestInit = false;
+                _requestInit = false;
                 ExecuteInitJob();
             }
 
             byte[] buffer = new byte[2];
 
-            resultSetsTemp = new List<Dictionary<string, ResultData>>();
-            lock (apiLock)
+            _resultSetsTemp = new List<Dictionary<string, ResultData>>();
+            lock (_apiLock)
             {
-                resultSets = null;
+                _resultSets = null;
             }
-            resultDict.Clear();
-            resultSysDict.Clear();
-            stackList.Clear();
+            _resultDict.Clear();
+            _resultSysDict.Clear();
+            _stackList.Clear();
             SetConfigProperty("BipEcuFile", Path.GetFileNameWithoutExtension(SgbdFileName));
-            flags.Init();
-            errorTrapBitNr = -1;
-            errorTrapMask = 0;
-            errorCodeLast = ErrorCodes.EDIABAS_ERR_NONE;
-            infoProgressRange = -1;
-            infoProgressPos = -1;
-            infoProgressText = string.Empty;
-            resultJobStatus = string.Empty;
+            _flags.Init();
+            _errorTrapBitNr = -1;
+            _errorTrapMask = 0;
+            _errorCodeLast = ErrorCodes.EDIABAS_ERR_NONE;
+            _infoProgressRange = -1;
+            _infoProgressPos = -1;
+            _infoProgressText = string.Empty;
+            _resultJobStatus = string.Empty;
 
             ArrayMaxBufSize = jobInfo.ArraySize;
-            pcCounter = jobInfo.JobOffset;
+            _pcCounter = jobInfo.JobOffset;
             CloseTableFs();
             CloseAllUserFiles();
-            jobEnd = false;
+            _jobEnd = false;
 
             Operand arg0 = new Operand(this);
             Operand arg1 = new Operand(this);
             try
             {
-                while (!jobEnd)
+                while (!_jobEnd)
                 {
                     //long startTime = Stopwatch.GetTimestamp();
-                    EdValueType pcCounterOld = pcCounter;
-                    fs.Position = pcCounter;
-                    readAndDecryptBytes(fs, buffer, 0, buffer.Length);
+                    EdValueType pcCounterOld = _pcCounter;
+                    fs.Position = _pcCounter;
+                    ReadAndDecryptBytes(fs, buffer, 0, buffer.Length);
 
                     byte opCodeVal = buffer[0];
                     byte opAddrMode = buffer[1];
                     OpAddrMode opAddrMode0 = (OpAddrMode)((opAddrMode & 0xF0) >> 4);
                     OpAddrMode opAddrMode1 = (OpAddrMode)((opAddrMode & 0x0F) >> 0);
 
-                    if (opCodeVal >= ocList.Length)
+                    if (opCodeVal >= OcList.Length)
                     {
                         throw new ArgumentOutOfRangeException("opCodeVal", "executeJob: Opcode out of range");
                     }
-                    OpCode oc = ocList[opCodeVal];
-                    getOpArg(fs, opAddrMode0, ref arg0);
-                    getOpArg(fs, opAddrMode1, ref arg1);
-                    pcCounter = (EdValueType)fs.Position;
+                    OpCode oc = OcList[opCodeVal];
+                    GetOpArg(fs, opAddrMode0, ref arg0);
+                    GetOpArg(fs, opAddrMode1, ref arg1);
+                    _pcCounter = (EdValueType)fs.Position;
 
                     //special near address arg0 opcode handling mainly for jumps
-                    if (oc.arg0IsNearAddress && (opAddrMode0 == OpAddrMode.Imm32))
+                    if (oc.Arg0IsNearAddress && (opAddrMode0 == OpAddrMode.Imm32))
                     {
-                        EdValueType labelAddress = pcCounter + (EdValueType)arg0.opData1;
-                        arg0.opData1 = labelAddress;
+                        EdValueType labelAddress = _pcCounter + (EdValueType)arg0.OpData1;
+                        arg0.OpData1 = labelAddress;
                     }
 
                     AbortJobDelegate abortFunc = AbortJobFunc;
@@ -4840,95 +4598,98 @@ namespace EdiabasLib
                     }
                     //timeMeas += Stopwatch.GetTimestamp() - startTime;
 
-                    if (oc.opFunc != null)
+                    if (oc.OpFunc != null)
                     {
-                        if ((ED_LOG_LEVEL)logLevelCached >= ED_LOG_LEVEL.INFO)
+                        if ((EdLogLevel)_logLevelCached >= EdLogLevel.Info)
                         {
-                            LogString(ED_LOG_LEVEL.INFO, ">" + getOpText(pcCounterOld, oc, arg0, arg1));
+                            LogString(EdLogLevel.Info, ">" + GetOpText(pcCounterOld, oc, arg0, arg1));
                         }
-                        oc.opFunc(this, oc, arg0, arg1);
-                        if ((ED_LOG_LEVEL)logLevelCached >= ED_LOG_LEVEL.INFO)
+                        oc.OpFunc(this, oc, arg0, arg1);
+                        if ((EdLogLevel)_logLevelCached >= EdLogLevel.Info)
                         {
-                            LogString(ED_LOG_LEVEL.INFO, "<" + getOpText(pcCounter, oc, arg0, arg1));
+                            LogString(EdLogLevel.Info, "<" + GetOpText(_pcCounter, oc, arg0, arg1));
                         }
                     }
                     else
                     {
-                        throw new ArgumentOutOfRangeException(oc.pneumonic, "executeJob: Function not implemented");
+                        throw new ArgumentOutOfRangeException(oc.Pneumonic, "executeJob: Function not implemented");
                     }
                 }
-                if (resultDict.Count > 0)
+                if (_resultDict.Count > 0)
                 {
-                    resultSetsTemp.Add(new Dictionary<string, ResultData>(resultDict));
+                    _resultSetsTemp.Add(new Dictionary<string, ResultData>(_resultDict));
                 }
-                resultDict.Clear();
+                _resultDict.Clear();
             }
             catch (Exception ex)
             {
-                LogString(ED_LOG_LEVEL.ERROR, "executeJob Exception: " + GetExceptionText(ex));
+                LogString(EdLogLevel.Error, "executeJob Exception: " + GetExceptionText(ex));
                 throw new Exception("executeJob", ex);
             }
             finally
             {
                 CloseTableFs();
                 CloseAllUserFiles();
-                Dictionary<string, ResultData> systemResultDict = CreateSystemResultDict(jobInfo, resultSetsTemp.Count);
+                Dictionary<string, ResultData> systemResultDict = CreateSystemResultDict(jobInfo, _resultSetsTemp.Count);
 
-                resultSetsTemp.Insert(0, systemResultDict);
-                lock (apiLock)
+                _resultSetsTemp.Insert(0, systemResultDict);
+                lock (_apiLock)
                 {
-                    resultSets = resultSetsTemp;
+                    _resultSets = _resultSetsTemp;
                 }
                 SetConfigProperty("BipEcuFile", null);
             }
         }
 
-        private void executeVJob(Stream fs, VJobInfo vJobInfo)
+        // ReSharper disable once UnusedParameter.Local
+        private void ExecuteVJob(Stream fs, VJobInfo vJobInfo)
         {
-            if (requestInit)
+            if (_requestInit)
             {
-                requestInit = false;
+                _requestInit = false;
                 ExecuteInitJob();
             }
 
-            resultSetsTemp = new List<Dictionary<string, ResultData>>();
-            lock (apiLock)
+            _resultSetsTemp = new List<Dictionary<string, ResultData>>();
+            lock (_apiLock)
             {
-                resultSets = null;
+                _resultSets = null;
             }
             SetConfigProperty("BipEcuFile", Path.GetFileNameWithoutExtension(SgbdFileName));
 
             try
             {
-                vJobInfo.JobDelegate(this, resultSetsTemp);
+                vJobInfo.JobDelegate(this, _resultSetsTemp);
             }
             catch (Exception ex)
             {
-                LogString(ED_LOG_LEVEL.ERROR, "executeVJob Exception: " + GetExceptionText(ex));
+                LogString(EdLogLevel.Error, "executeVJob Exception: " + GetExceptionText(ex));
                 throw new Exception("executeVJob", ex);
             }
             finally
             {
-                Dictionary<string, ResultData> systemResultDict = CreateSystemResultDict(new JobInfo(vJobInfo.JobName, 0, 0, 0, null), resultSetsTemp.Count);
+                Dictionary<string, ResultData> systemResultDict = CreateSystemResultDict(new JobInfo(vJobInfo.JobName, 0, 0, 0, null), _resultSetsTemp.Count);
 
-                resultSetsTemp.Insert(0, systemResultDict);
-                lock (apiLock)
+                _resultSetsTemp.Insert(0, systemResultDict);
+                lock (_apiLock)
                 {
-                    resultSets = resultSetsTemp;
+                    _resultSets = _resultSetsTemp;
                 }
                 SetConfigProperty("BipEcuFile", null);
             }
         }
 
-        static private void vJobJobs(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        static private void VJobJobs(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
             const string entryJobName = "JOBNAME";
-            foreach (JobInfo jobInfo in ediabas.jobInfos.JobInfoArray)
+            foreach (JobInfo jobInfo in ediabas._jobInfos.JobInfoArray)
             {
                 if (jobInfo.UsesInfo == null)
                 {
-                    Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
-                    resultDict.Add(entryJobName, new ResultData(ResultType.TypeS, entryJobName, jobInfo.JobName));
+                    Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>
+                    {
+                        {entryJobName, new ResultData(ResultType.TypeS, entryJobName, jobInfo.JobName)}
+                    };
                     if (resultDict.Count > 0)
                     {
                         resultSets.Add(new Dictionary<string, ResultData>(resultDict));
@@ -4937,27 +4698,27 @@ namespace EdiabasLib
             }
         }
 
-        static private void vJobJobComments(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        static private void VJobJobComments(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
-            Stream fs = ediabas.sgbdFs;
+            Stream fs = ediabas._sgbdFs;
 
-            List<string> argStrings = ediabas.getActiveArgStrings();
+            List<string> argStrings = ediabas.GetActiveArgStrings();
             if (argStrings.Count < 1)
             {
                 return;
             }
 
-            if (ediabas.descriptionInfos == null)
+            if (ediabas._descriptionInfos == null)
             {
-                ediabas.descriptionInfos = ediabas.ReadDescriptions(fs);
+                ediabas._descriptionInfos = ediabas.ReadDescriptions(fs);
             }
 
-            if (ediabas.descriptionInfos.JobComments == null)
+            if (ediabas._descriptionInfos.JobComments == null)
             {
                 return;
             }
             List<string> jobComments;
-            if (!ediabas.descriptionInfos.JobComments.TryGetValue(argStrings[0].ToUpper(culture), out jobComments))
+            if (!ediabas._descriptionInfos.JobComments.TryGetValue(argStrings[0].ToUpper(Culture), out jobComments))
             {
                 return;
             }
@@ -4972,7 +4733,7 @@ namespace EdiabasLib
                     string value = desc.Substring(colon + 1);
                     if (string.Compare(key, "JOBCOMMENT", StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        key += commentCount.ToString(culture);
+                        key += commentCount.ToString(Culture);
                         commentCount++;
                         if (!resultDict.ContainsKey(key))
                         {
@@ -4987,27 +4748,27 @@ namespace EdiabasLib
             }
         }
 
-        static private void vJobJobArgs(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        static private void VJobJobArgs(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
-            Stream fs = ediabas.sgbdFs;
+            Stream fs = ediabas._sgbdFs;
 
-            List<string> argStrings = ediabas.getActiveArgStrings();
+            List<string> argStrings = ediabas.GetActiveArgStrings();
             if (argStrings.Count < 1)
             {
                 return;
             }
 
-            if (ediabas.descriptionInfos == null)
+            if (ediabas._descriptionInfos == null)
             {
-                ediabas.descriptionInfos = ediabas.ReadDescriptions(fs);
+                ediabas._descriptionInfos = ediabas.ReadDescriptions(fs);
             }
 
-            if (ediabas.descriptionInfos.JobComments == null)
+            if (ediabas._descriptionInfos.JobComments == null)
             {
                 return;
             }
             List<string> jobComments;
-            if (!ediabas.descriptionInfos.JobComments.TryGetValue(argStrings[0].ToUpper(culture), out jobComments))
+            if (!ediabas._descriptionInfos.JobComments.TryGetValue(argStrings[0].ToUpper(Culture), out jobComments))
             {
                 return;
             }
@@ -5049,7 +4810,7 @@ namespace EdiabasLib
                         }
                         if (string.Compare(key, "ARGCOMMENT", StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            key += commentCount.ToString(culture);
+                            key += commentCount.ToString(Culture);
                             commentCount++;
                             if (!resultDict.ContainsKey(key))
                             {
@@ -5065,27 +4826,27 @@ namespace EdiabasLib
             }
         }
 
-        static private void vJobJobResults(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        static private void VJobJobResults(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
-            Stream fs = ediabas.sgbdFs;
+            Stream fs = ediabas._sgbdFs;
 
-            List<string> argStrings = ediabas.getActiveArgStrings();
+            List<string> argStrings = ediabas.GetActiveArgStrings();
             if (argStrings.Count < 1)
             {
                 return;
             }
 
-            if (ediabas.descriptionInfos == null)
+            if (ediabas._descriptionInfos == null)
             {
-                ediabas.descriptionInfos = ediabas.ReadDescriptions(fs);
+                ediabas._descriptionInfos = ediabas.ReadDescriptions(fs);
             }
 
-            if (ediabas.descriptionInfos.JobComments == null)
+            if (ediabas._descriptionInfos.JobComments == null)
             {
                 return;
             }
             List<string> jobComments;
-            if (!ediabas.descriptionInfos.JobComments.TryGetValue(argStrings[0].ToUpper(culture), out jobComments))
+            if (!ediabas._descriptionInfos.JobComments.TryGetValue(argStrings[0].ToUpper(Culture), out jobComments))
             {
                 return;
             }
@@ -5127,7 +4888,7 @@ namespace EdiabasLib
                         }
                         if (string.Compare(key, "RESULTCOMMENT", StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            key += commentCount.ToString(culture);
+                            key += commentCount.ToString(Culture);
                             commentCount++;
                             if (!resultDict.ContainsKey(key))
                             {
@@ -5143,13 +4904,13 @@ namespace EdiabasLib
             }
         }
 
-        static private void vJobVerinfos(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        static private void VJobVerinfos(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
-            Stream fs = ediabas.sgbdFs;
+            Stream fs = ediabas._sgbdFs;
 
-            if (ediabas.descriptionInfos == null)
+            if (ediabas._descriptionInfos == null)
             {
-                ediabas.descriptionInfos = ediabas.ReadDescriptions(fs);
+                ediabas._descriptionInfos = ediabas.ReadDescriptions(fs);
             }
 
             byte[] buffer = new byte[4];
@@ -5168,7 +4929,7 @@ namespace EdiabasLib
             fs.Position = infoOffset;
 
             byte[] infoBuffer = new byte[0x6C];
-            readAndDecryptBytes(fs, infoBuffer, 0, infoBuffer.Length);
+            ReadAndDecryptBytes(fs, infoBuffer, 0, infoBuffer.Length);
 
             Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
 
@@ -5176,7 +4937,7 @@ namespace EdiabasLib
             resultDict.Add(entryBipVersion, new ResultData(ResultType.TypeS, entryBipVersion, string.Format("{0}.{1}.{2}", infoBuffer[2], infoBuffer[1], infoBuffer[0])));
 
             const string entryAuthor = "AUTHOR";
-            resultDict.Add(entryAuthor, new ResultData(ResultType.TypeS, entryAuthor, encoding.GetString(infoBuffer, 0x08, 0x40).TrimEnd('\0')));
+            resultDict.Add(entryAuthor, new ResultData(ResultType.TypeS, entryAuthor, Encoding.GetString(infoBuffer, 0x08, 0x40).TrimEnd('\0')));
 
             if (!BitConverter.IsLittleEndian)
             {
@@ -5190,7 +4951,7 @@ namespace EdiabasLib
             resultDict.Add(entryRevision, new ResultData(ResultType.TypeS, entryRevision, string.Format("{0}.{1}", BitConverter.ToInt16(infoBuffer, 0x06), BitConverter.ToInt16(infoBuffer, 0x04))));
 
             const string entryFrom = "FROM";
-            resultDict.Add(entryFrom, new ResultData(ResultType.TypeS, entryFrom, encoding.GetString(infoBuffer, 0x48, 0x20).TrimEnd('\0')));
+            resultDict.Add(entryFrom, new ResultData(ResultType.TypeS, entryFrom, Encoding.GetString(infoBuffer, 0x48, 0x20).TrimEnd('\0')));
 
             if (!BitConverter.IsLittleEndian)
             {
@@ -5199,11 +4960,11 @@ namespace EdiabasLib
             const string entryPackage = "PACKAGE";
             resultDict.Add(entryPackage, new ResultData(ResultType.TypeL, entryPackage, (Int64)BitConverter.ToInt32(infoBuffer, 0x68)));
 
-            if (ediabas.descriptionInfos.GlobalComments != null)
+            if (ediabas._descriptionInfos.GlobalComments != null)
             {
                 int descCount = 0;
                 int usesCount = 0;
-                foreach (string desc in ediabas.descriptionInfos.GlobalComments)
+                foreach (string desc in ediabas._descriptionInfos.GlobalComments)
                 {
                     int colon = desc.IndexOf(':');
                     if (colon >= 0)
@@ -5212,12 +4973,12 @@ namespace EdiabasLib
                         string value = desc.Substring(colon + 1);
                         if (string.Compare(key, "ECUCOMMENT", StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            key += descCount.ToString(culture);
+                            key += descCount.ToString(Culture);
                             descCount++;
                         }
                         if (string.Compare(key, "USES", StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            key += usesCount.ToString(culture);
+                            key += usesCount.ToString(Culture);
                             usesCount++;
                         }
 
@@ -5234,13 +4995,15 @@ namespace EdiabasLib
             }
         }
 
-        static private void vJobTables(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        static private void VJobTables(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
             const string entryTableName = "TABLE";
-            foreach (TableInfo tableInfo in ediabas.tableInfos.TableInfoArray)
+            foreach (TableInfo tableInfo in ediabas._tableInfos.TableInfoArray)
             {
-                Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
-                resultDict.Add(entryTableName, new ResultData(ResultType.TypeS, entryTableName, tableInfo.Name));
+                Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>
+                {
+                    {entryTableName, new ResultData(ResultType.TypeS, entryTableName, tableInfo.Name)}
+                };
                 if (resultDict.Count > 0)
                 {
                     resultSets.Add(new Dictionary<string, ResultData>(resultDict));
@@ -5248,29 +5011,29 @@ namespace EdiabasLib
             }
         }
 
-        static private void vJobTable(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        static private void VJobTable(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
-            List<string> argStrings = ediabas.getActiveArgStrings();
+            List<string> argStrings = ediabas.GetActiveArgStrings();
             if (argStrings.Count < 1)
             {
                 return;
             }
 
             UInt32 tableIdx;
-            if (!ediabas.tableInfos.TableNameDict.TryGetValue(argStrings[0].ToUpper(culture), out tableIdx))
+            if (!ediabas._tableInfos.TableNameDict.TryGetValue(argStrings[0].ToUpper(Culture), out tableIdx))
             {
                 return;
             }
 
-            TableInfo tableInfo = ediabas.tableInfos.TableInfoArray[tableIdx];
-            ediabas.IndexTable(ediabas.sgbdFs, tableInfo);
-            for (int i = 0; i < tableInfo.TableEntries.Length; i++)
+            TableInfo tableInfo = ediabas._tableInfos.TableInfoArray[tableIdx];
+            ediabas.IndexTable(ediabas._sgbdFs, tableInfo);
+            foreach (uint[] entries in tableInfo.TableEntries)
             {
                 Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
                 for (int j = 0; j < tableInfo.Columns; j++)
                 {
-                    string rowStr = ediabas.GetTableString(ediabas.sgbdFs, tableInfo.TableEntries[i][j]);
-                    string entryName = "COLUMN" + j.ToString(culture);
+                    string rowStr = ediabas.GetTableString(ediabas._sgbdFs, entries[j]);
+                    string entryName = "COLUMN" + j.ToString(Culture);
                     resultDict.Add(entryName, new ResultData(ResultType.TypeS, entryName, rowStr));
                 }
                 if (resultDict.Count > 0)
@@ -5280,10 +5043,10 @@ namespace EdiabasLib
             }
         }
 
-        public void LogFormat(ED_LOG_LEVEL logLevel, string format, params object[] args)
+        public void LogFormat(EdLogLevel logLevel, string format, params object[] args)
         {
-            updateLogLevel();
-            if ((int)logLevel > logLevelCached)
+            UpdateLogLevel();
+            if ((int)logLevel > _logLevelCached)
             {
                 return;
             }
@@ -5302,114 +5065,114 @@ namespace EdiabasLib
                 {
                     byte[] argArray = (byte[])args[i];
                     StringBuilder stringBuilder = new StringBuilder(argArray.Length);
-                    for (int j = 0; j < argArray.Length; j++)
+                    foreach (byte arg in argArray)
                     {
-                        stringBuilder.Append(string.Format(culture, "{0:X02} ", argArray[j]));
+                        stringBuilder.Append(string.Format(Culture, "{0:X02} ", arg));
                     }
 
                     args[i] = "[" + stringBuilder + "]";
-                    continue;
                 }
             }
             LogString(logLevel, string.Format(format, args));
         }
 
-        public void LogString(ED_LOG_LEVEL logLevel, string info)
+        public void LogString(EdLogLevel logLevel, string info)
         {
-            updateLogLevel();
-            if ((int)logLevel > logLevelCached)
+            UpdateLogLevel();
+            if ((int)logLevel > _logLevelCached)
             {
                 return;
             }
 
             try
             {
-                lock (logLock)
+                lock (_logLock)
                 {
-                    if (swLog == null)
+                    if (_swLog == null)
                     {
                         string tracePath = GetConfigProperty("TracePath");
                         if (tracePath != null)
                         {
                             Directory.CreateDirectory(tracePath);
                             FileMode fileMode = FileMode.Append;
-                            if (firstLog)
+                            if (_firstLog)
                             {
-                                firstLog = false;
+                                _firstLog = false;
                                 fileMode = FileMode.Create;
                             }
-                            swLog = new StreamWriter(new FileStream(Path.Combine(tracePath, "ifh.trc"), fileMode, FileAccess.Write, FileShare.ReadWrite), encoding);
+                            _swLog = new StreamWriter(new FileStream(Path.Combine(tracePath, "ifh.trc"), fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding);
                         }
                     }
-                    if (swLog != null)
+                    if (_swLog != null)
                     {
-                        swLog.WriteLine(info);
+                        _swLog.WriteLine(info);
                     }
                 }
             }
             catch (Exception)
             {
+                // ignored
             }
         }
 
-        public void LogData(ED_LOG_LEVEL logLevel, byte[] data, int offset, int length, string info)
+        public void LogData(EdLogLevel logLevel, byte[] data, int offset, int length, string info)
         {
-            updateLogLevel();
-            if ((int)logLevel > logLevelCached)
+            UpdateLogLevel();
+            if ((int)logLevel > _logLevelCached)
             {
                 return;
             }
             StringBuilder stringBuilder = new StringBuilder(length);
             for (int i = 0; i < length; i++)
             {
-                stringBuilder.Append(string.Format(culture, "{0:X02} ", data[offset + i]));
+                stringBuilder.Append(string.Format(Culture, "{0:X02} ", data[offset + i]));
             }
 
             LogString(logLevel, " (" + info + "): " + stringBuilder);
         }
 
-        public void LogData(ED_LOG_LEVEL logLevel, UInt32[] data, int offset, int length, string info)
+        public void LogData(EdLogLevel logLevel, UInt32[] data, int offset, int length, string info)
         {
-            updateLogLevel();
-            if ((int)logLevel > logLevelCached)
+            UpdateLogLevel();
+            if ((int)logLevel > _logLevelCached)
             {
                 return;
             }
             StringBuilder stringBuilder = new StringBuilder(length);
             for (int i = 0; i < length; i++)
             {
-                stringBuilder.Append(string.Format(culture, "{0:X08} ", data[offset + i]));
+                stringBuilder.Append(string.Format(Culture, "{0:X08} ", data[offset + i]));
             }
 
             LogString(logLevel, " (" + info + "): " + stringBuilder);
         }
 
-        private void closeLog()
+        private void CloseLog()
         {
-            lock (logLock)
+            lock (_logLock)
             {
-                if (swLog != null)
+                if (_swLog != null)
                 {
-                    swLog.Dispose();
-                    swLog = null;
+                    _swLog.Dispose();
+                    _swLog = null;
                 }
-                logLevelCached = -1;
+                _logLevelCached = -1;
             }
         }
 
-        private void updateLogLevel()
+        private void UpdateLogLevel()
         {
-            if (logLevelCached < 0)
+            if (_logLevelCached < 0)
             {
-                lock (logLock)
+                lock (_logLock)
                 {
                     string ifhTrace = GetConfigProperty("IfhTrace");
-                    logLevelCached = (int)StringToValue(ifhTrace);
+                    _logLevelCached = (int)StringToValue(ifhTrace);
                 }
             }
         }
 
-        private void getOpArg(Stream fs, OpAddrMode opAddrMode, ref Operand oper)
+        private void GetOpArg(Stream fs, OpAddrMode opAddrMode, ref Operand oper)
         {
             try
             {
@@ -5420,145 +5183,145 @@ namespace EdiabasLib
                         return;
 
                     case OpAddrMode.RegS:
-                    case OpAddrMode.RegAB:
+                    case OpAddrMode.RegAb:
                     case OpAddrMode.RegI:
                     case OpAddrMode.RegL:
                         {
-                            readAndDecryptBytes(fs, opArgBuffer, 0, 1);
-                            Register oaReg = GetRegister(opArgBuffer[0]);
+                            ReadAndDecryptBytes(fs, _opArgBuffer, 0, 1);
+                            Register oaReg = GetRegister(_opArgBuffer[0]);
                             oper.Init(opAddrMode, oaReg);
                             return;
                         }
                     case OpAddrMode.Imm8:
                         {
-                            readAndDecryptBytes(fs, opArgBuffer, 0, 1);
-                            oper.Init(opAddrMode, (EdValueType)opArgBuffer[0]);
+                            ReadAndDecryptBytes(fs, _opArgBuffer, 0, 1);
+                            oper.Init(opAddrMode, (EdValueType)_opArgBuffer[0]);
                             // string.Format(culture, "#${0:X}.B", buffer[0]);
                             return;
                         }
                     case OpAddrMode.Imm16:
                         {
-                            readAndDecryptBytes(fs, opArgBuffer, 0, 2);
+                            ReadAndDecryptBytes(fs, _opArgBuffer, 0, 2);
                             if (!BitConverter.IsLittleEndian)
                             {
-                                Array.Reverse(opArgBuffer, 0, 2);
+                                Array.Reverse(_opArgBuffer, 0, 2);
                             }
-                            oper.Init(opAddrMode, (EdValueType)BitConverter.ToUInt16(opArgBuffer, 0));
+                            oper.Init(opAddrMode, (EdValueType)BitConverter.ToUInt16(_opArgBuffer, 0));
                             // string.Format(culture, "#${0:X}.I", BitConverter.ToInt16(buffer, 0));
                             return;
                         }
                     case OpAddrMode.Imm32:
                         {
-                            readAndDecryptBytes(fs, opArgBuffer, 0, 4);
+                            ReadAndDecryptBytes(fs, _opArgBuffer, 0, 4);
                             if (!BitConverter.IsLittleEndian)
                             {
-                                Array.Reverse(opArgBuffer, 0, 4);
+                                Array.Reverse(_opArgBuffer, 0, 4);
                             }
-                            oper.Init(opAddrMode, (EdValueType)BitConverter.ToUInt32(opArgBuffer, 0));
+                            oper.Init(opAddrMode, (EdValueType)BitConverter.ToUInt32(_opArgBuffer, 0));
                             // string.Format(culture, "#${0:X}.L", BitConverter.ToInt32(buffer, 0));
                             return;
                         }
                     case OpAddrMode.ImmStr:
                         {
-                            readAndDecryptBytes(fs, opArgBuffer, 0, 2);
+                            ReadAndDecryptBytes(fs, _opArgBuffer, 0, 2);
                             if (!BitConverter.IsLittleEndian)
                             {
-                                Array.Reverse(opArgBuffer, 0, 2);
+                                Array.Reverse(_opArgBuffer, 0, 2);
                             }
-                            short slen = BitConverter.ToInt16(opArgBuffer, 0);
+                            short slen = BitConverter.ToInt16(_opArgBuffer, 0);
                             byte[] buffer = new byte[slen];
-                            readAndDecryptBytes(fs, buffer, 0, slen);
+                            ReadAndDecryptBytes(fs, buffer, 0, slen);
                             oper.Init(opAddrMode, buffer);
                             return;
                         }
                     case OpAddrMode.IdxImm:
                         {
-                            readAndDecryptBytes(fs, opArgBuffer, 0, 3);
-                            Register oaReg = GetRegister(opArgBuffer[0]);
+                            ReadAndDecryptBytes(fs, _opArgBuffer, 0, 3);
+                            Register oaReg = GetRegister(_opArgBuffer[0]);
                             if (!BitConverter.IsLittleEndian)
                             {
-                                Array.Reverse(opArgBuffer, 1, 2);
+                                Array.Reverse(_opArgBuffer, 1, 2);
                             }
-                            EdValueType idx = BitConverter.ToUInt16(opArgBuffer, 1);
+                            EdValueType idx = BitConverter.ToUInt16(_opArgBuffer, 1);
                             oper.Init(opAddrMode, oaReg, (EdValueType)idx);
                             // string.Format(culture, "{0}[#${1:X}]", oaReg.name, idx);
                             return;
                         }
                     case OpAddrMode.IdxReg:
                         {
-                            readAndDecryptBytes(fs, opArgBuffer, 0, 2);
-                            Register oaReg0 = GetRegister(opArgBuffer[0]);
-                            Register oaReg1 = GetRegister(opArgBuffer[1]);
+                            ReadAndDecryptBytes(fs, _opArgBuffer, 0, 2);
+                            Register oaReg0 = GetRegister(_opArgBuffer[0]);
+                            Register oaReg1 = GetRegister(_opArgBuffer[1]);
                             oper.Init(opAddrMode, oaReg0, oaReg1);
                             // string.Format(culture, "{0}[{1}]", oaReg0.name, oaReg1.name);
                             return;
                         }
                     case OpAddrMode.IdxRegImm:
                         {
-                            readAndDecryptBytes(fs, opArgBuffer, 0, 4);
-                            Register oaReg0 = GetRegister(opArgBuffer[0]);
-                            Register oaReg1 = GetRegister(opArgBuffer[1]);
+                            ReadAndDecryptBytes(fs, _opArgBuffer, 0, 4);
+                            Register oaReg0 = GetRegister(_opArgBuffer[0]);
+                            Register oaReg1 = GetRegister(_opArgBuffer[1]);
                             if (!BitConverter.IsLittleEndian)
                             {
-                                Array.Reverse(opArgBuffer, 2, 2);
+                                Array.Reverse(_opArgBuffer, 2, 2);
                             }
-                            EdValueType inc = BitConverter.ToUInt16(opArgBuffer, 2);
+                            EdValueType inc = BitConverter.ToUInt16(_opArgBuffer, 2);
                             oper.Init(opAddrMode, oaReg0, oaReg1, (EdValueType)inc);
                             // string.Format(culture, "{0}[{1},#${2:X}]", oaReg0.name, oaReg1.name, inc);
                             return;
                         }
                     case OpAddrMode.IdxImmLenImm:
                         {
-                            readAndDecryptBytes(fs, opArgBuffer, 0, 5);
-                            Register oaReg = GetRegister(opArgBuffer[0]);
+                            ReadAndDecryptBytes(fs, _opArgBuffer, 0, 5);
+                            Register oaReg = GetRegister(_opArgBuffer[0]);
                             if (!BitConverter.IsLittleEndian)
                             {
-                                Array.Reverse(opArgBuffer, 1, 2);
+                                Array.Reverse(_opArgBuffer, 1, 2);
                             }
-                            EdValueType idx = BitConverter.ToUInt16(opArgBuffer, 1);
+                            EdValueType idx = BitConverter.ToUInt16(_opArgBuffer, 1);
                             if (!BitConverter.IsLittleEndian)
                             {
-                                Array.Reverse(opArgBuffer, 3, 2);
+                                Array.Reverse(_opArgBuffer, 3, 2);
                             }
-                            EdValueType len = BitConverter.ToUInt16(opArgBuffer, 3);
+                            EdValueType len = BitConverter.ToUInt16(_opArgBuffer, 3);
                             oper.Init(opAddrMode, oaReg, (EdValueType)idx, (EdValueType)len);
                             // string.Format(culture, "{0}[#${1:X}]#${2:X}", oaReg.name, idx, len);
                             return;
                         }
                     case OpAddrMode.IdxImmLenReg:
                         {
-                            readAndDecryptBytes(fs, opArgBuffer, 0, 4);
-                            Register oaReg = GetRegister(opArgBuffer[0]);
+                            ReadAndDecryptBytes(fs, _opArgBuffer, 0, 4);
+                            Register oaReg = GetRegister(_opArgBuffer[0]);
                             if (!BitConverter.IsLittleEndian)
                             {
-                                Array.Reverse(opArgBuffer, 1, 2);
+                                Array.Reverse(_opArgBuffer, 1, 2);
                             }
-                            EdValueType idx = BitConverter.ToUInt16(opArgBuffer, 1);
-                            Register oaLen = GetRegister(opArgBuffer[3]);
+                            EdValueType idx = BitConverter.ToUInt16(_opArgBuffer, 1);
+                            Register oaLen = GetRegister(_opArgBuffer[3]);
                             oper.Init(opAddrMode, oaReg, (EdValueType)idx, oaLen);
                             // string.Format(culture, "{0}[#${1:X}]{2}", oaReg.name, idx, oaLen.name);
                             return;
                         }
                     case OpAddrMode.IdxRegLenImm:
                         {
-                            readAndDecryptBytes(fs, opArgBuffer, 0, 4);
-                            Register oaReg = GetRegister(opArgBuffer[0]);
-                            Register oaIdx = GetRegister(opArgBuffer[1]);
+                            ReadAndDecryptBytes(fs, _opArgBuffer, 0, 4);
+                            Register oaReg = GetRegister(_opArgBuffer[0]);
+                            Register oaIdx = GetRegister(_opArgBuffer[1]);
                             if (!BitConverter.IsLittleEndian)
                             {
-                                Array.Reverse(opArgBuffer, 2, 2);
+                                Array.Reverse(_opArgBuffer, 2, 2);
                             }
-                            EdValueType len = BitConverter.ToUInt16(opArgBuffer, 2);
+                            EdValueType len = BitConverter.ToUInt16(_opArgBuffer, 2);
                             oper.Init(opAddrMode, oaReg, oaIdx, (EdValueType)len);
                             // string.Format(culture, "{0}[{1}]#${2:X}", oaReg.name, oaIdx.name, len);
                             return;
                         }
                     case OpAddrMode.IdxRegLenReg:
                         {
-                            readAndDecryptBytes(fs, opArgBuffer, 0, 3);
-                            Register oaReg = GetRegister(opArgBuffer[0]);
-                            Register oaIdx = GetRegister(opArgBuffer[1]);
-                            Register oaLen = GetRegister(opArgBuffer[2]);
+                            ReadAndDecryptBytes(fs, _opArgBuffer, 0, 3);
+                            Register oaReg = GetRegister(_opArgBuffer[0]);
+                            Register oaIdx = GetRegister(_opArgBuffer[1]);
+                            Register oaLen = GetRegister(_opArgBuffer[2]);
                             oper.Init(opAddrMode, oaReg, oaIdx, oaLen);
                             // string.Format(culture, "{0}[{1}]{2}", oaReg.name, oaIdx.name, oaLen.name);
                             return;
@@ -5578,16 +5341,16 @@ namespace EdiabasLib
             Register result;
             if (opcode <= 0x33)
             {
-                result = registerList[opcode];
+                result = RegisterList[opcode];
             }
             else if (opcode >= 0x80)
             {
                 int index = opcode - 0x80 + 0x34;
-                if (index >= registerList.Length)
+                if (index >= RegisterList.Length)
                 {
                     throw new ArgumentOutOfRangeException("opcode", "GetRegister: Opcode out of range");
                 }
-                result = registerList[index];
+                result = RegisterList[index];
             }
             else
             {
@@ -5600,12 +5363,12 @@ namespace EdiabasLib
             return result;
         }
 
-        private static string getOpText(EdValueType addr, OpCode oc, Operand arg0, Operand arg1)
+        private static string GetOpText(EdValueType addr, OpCode oc, Operand arg0, Operand arg1)
         {
-            string result = string.Format(culture, "{0:X08}: ", addr);
-            result += oc.pneumonic;
-            string text1 = getOpArgText(arg0);
-            string text2 = getOpArgText(arg1);
+            string result = string.Format(Culture, "{0:X08}: ", addr);
+            result += oc.Pneumonic;
+            string text1 = GetOpArgText(arg0);
+            string text2 = GetOpArgText(arg1);
             if (text1.Length > 0)
             {
                 result += " " + text1;
@@ -5617,28 +5380,28 @@ namespace EdiabasLib
             return result;
         }
 
-        private static string getOpArgText(Operand arg)
+        private static string GetOpArgText(Operand arg)
         {
             try
             {
                 string regName1 = string.Empty;
-                if (arg.opData1 != null && arg.opData1.GetType() == typeof(Register))
+                if (arg.OpData1 != null && arg.OpData1.GetType() == typeof(Register))
                 {
-                    Register argValue = (Register)arg.opData1;
+                    Register argValue = (Register)arg.OpData1;
                     regName1 = argValue.GetName();
                 }
 
                 string regName2 = string.Empty;
-                if (arg.opData2 != null && arg.opData2.GetType() == typeof(Register))
+                if (arg.OpData2 != null && arg.OpData2.GetType() == typeof(Register))
                 {
-                    Register argValue = (Register)arg.opData2;
+                    Register argValue = (Register)arg.OpData2;
                     regName2 = argValue.GetName();
                 }
 
                 string regName3 = string.Empty;
-                if (arg.opData3 != null && arg.opData3.GetType() == typeof(Register))
+                if (arg.OpData3 != null && arg.OpData3.GetType() == typeof(Register))
                 {
-                    Register argValue = (Register)arg.opData3;
+                    Register argValue = (Register)arg.OpData3;
                     regName3 = argValue.GetName();
                 }
 
@@ -5652,63 +5415,70 @@ namespace EdiabasLib
                             Object data = arg.GetRawData();
                             if (data is byte[])
                             {
-                                return regName1 + ": " + getStringText(arg.GetArrayData());
+                                return regName1 + ": " + GetStringText(arg.GetArrayData());
                             }
                             else if (data is EdFloatType)
                             {
-                                return regName1 + string.Format(culture, ": {0}", (EdFloatType)data);
+                                return regName1 + string.Format(Culture, ": {0}", (EdFloatType)data);
                             }
                             return string.Empty;
                         }
 
-                    case OpAddrMode.RegAB:
-                        return regName1 + string.Format(culture, ": ${0:X}", arg.GetValueData());
+                    case OpAddrMode.RegAb:
+                        return regName1 + string.Format(Culture, ": ${0:X}", arg.GetValueData());
 
                     case OpAddrMode.RegI:
-                        return regName1 + string.Format(culture, ": ${0:X}", arg.GetValueData());
+                        return regName1 + string.Format(Culture, ": ${0:X}", arg.GetValueData());
 
                     case OpAddrMode.RegL:
-                        return regName1 + string.Format(culture, ": ${0:X}", arg.GetValueData());
+                        return regName1 + string.Format(Culture, ": ${0:X}", arg.GetValueData());
 
                     case OpAddrMode.Imm8:
-                        return string.Format(culture, "#${0:X}.B", arg.GetValueData());
+                        return string.Format(Culture, "#${0:X}.B", arg.GetValueData());
 
                     case OpAddrMode.Imm16:
-                        return string.Format(culture, "#${0:X}.I", arg.GetValueData());
+                        return string.Format(Culture, "#${0:X}.I", arg.GetValueData());
 
                     case OpAddrMode.Imm32:
-                        return string.Format(culture, "#${0:X}.L", arg.GetValueData());
+                        return string.Format(Culture, "#${0:X}.L", arg.GetValueData());
 
                     case OpAddrMode.ImmStr:
-                        return "#" + getStringText(arg.GetArrayData());
+                        return "#" + GetStringText(arg.GetArrayData());
 
                     case OpAddrMode.IdxImm:
-                        return regName1 + string.Format(culture, "[#${0:X}]: ", (EdValueType)arg.opData2) +
-                            getStringText(arg.GetArrayData());
+                        if (arg.OpData2 == null) return String.Empty;
+                        return regName1 + string.Format(Culture, "[#${0:X}]: ", (EdValueType)arg.OpData2) +
+                            GetStringText(arg.GetArrayData());
 
                     case OpAddrMode.IdxReg:
-                        return regName1 + string.Format(culture, "[{0}: ${1:X}]: ", regName2, ((Register)arg.opData2).GetValueData()) +
-                            getStringText(arg.GetArrayData());
+                        if (arg.OpData2 == null) return String.Empty;
+                        return regName1 + string.Format(Culture, "[{0}: ${1:X}]: ", regName2, ((Register)arg.OpData2).GetValueData()) +
+                            GetStringText(arg.GetArrayData());
 
                     case OpAddrMode.IdxRegImm:
-                        return regName1 + string.Format(culture, "[{0}: ${1:X},#${2:X}]: ", regName2, ((Register)arg.opData2).GetValueData(), (EdValueType)arg.opData3) +
-                            getStringText(arg.GetArrayData());
+                        if ((arg.OpData2 == null) || (arg.OpData3 == null)) return String.Empty;
+                        return regName1 + string.Format(Culture, "[{0}: ${1:X},#${2:X}]: ", regName2, ((Register)arg.OpData2).GetValueData(), (EdValueType)arg.OpData3) +
+                            GetStringText(arg.GetArrayData());
 
                     case OpAddrMode.IdxImmLenImm:
-                        return regName1 + string.Format(culture, "[#{0:X}],#${1:X}: ", (EdValueType)arg.opData2, (EdValueType)arg.opData3) +
-                            getStringText(arg.GetArrayData());
+                        if ((arg.OpData2 == null) || (arg.OpData3 == null)) return String.Empty;
+                        return regName1 + string.Format(Culture, "[#{0:X}],#${1:X}: ", (EdValueType)arg.OpData2, (EdValueType)arg.OpData3) +
+                            GetStringText(arg.GetArrayData());
 
                     case OpAddrMode.IdxImmLenReg:
-                        return regName1 + string.Format(culture, "[#{0:X}],{1}: #${2:X}: ", (EdValueType)arg.opData2, regName3, ((Register)arg.opData3).GetValueData()) +
-                            getStringText(arg.GetArrayData());
+                        if ((arg.OpData2 == null) || (arg.OpData3 == null)) return String.Empty;
+                        return regName1 + string.Format(Culture, "[#{0:X}],{1}: #${2:X}: ", (EdValueType)arg.OpData2, regName3, ((Register)arg.OpData3).GetValueData()) +
+                            GetStringText(arg.GetArrayData());
 
                     case OpAddrMode.IdxRegLenImm:
-                        return regName1 + string.Format(culture, "[{0}: ${1:X}],#${2:X}: ", regName2, ((Register)arg.opData2).GetValueData(), (EdValueType)arg.opData3) +
-                            getStringText(arg.GetArrayData());
+                        if ((arg.OpData2 == null) || (arg.OpData3 == null)) return String.Empty;
+                        return regName1 + string.Format(Culture, "[{0}: ${1:X}],#${2:X}: ", regName2, ((Register)arg.OpData2).GetValueData(), (EdValueType)arg.OpData3) +
+                            GetStringText(arg.GetArrayData());
 
                     case OpAddrMode.IdxRegLenReg:
-                        return regName1 + string.Format(culture, "[{0}: ${1:X}],{2}: #${3:X}: ", regName2, ((Register)arg.opData2).GetValueData(), regName3, ((Register)arg.opData3).GetValueData()) +
-                            getStringText(arg.GetArrayData());
+                        if ((arg.OpData2 == null) || (arg.OpData3 == null)) return String.Empty;
+                        return regName1 + string.Format(Culture, "[{0}: ${1:X}],{2}: #${3:X}: ", regName2, ((Register)arg.OpData2).GetValueData(), regName3, ((Register)arg.OpData3).GetValueData()) +
+                            GetStringText(arg.GetArrayData());
                 }
             }
             catch (Exception ex)
@@ -5718,7 +5488,7 @@ namespace EdiabasLib
             return string.Empty;
         }
 
-        private static string getStringText(byte[] dataArray)
+        private static string GetStringText(byte[] dataArray)
         {
             bool printable = true;
             int length = dataArray.Length;
@@ -5727,14 +5497,14 @@ namespace EdiabasLib
                 return "{ }";
             }
             for (int i = 0; i < length - 1; ++i)
-                if (!isPrintable(dataArray[i]))
+                if (!IsPrintable(dataArray[i]))
                 {
                     printable = false;
                     break;
                 }
 
             if (printable && (dataArray[length - 1] == 0))
-                return "\"" + encoding.GetString(dataArray, 0, length - 1) + "\"";
+                return "\"" + Encoding.GetString(dataArray, 0, length - 1) + "\"";
 
             StringBuilder sb = new StringBuilder();
             sb.Append("{");
@@ -5745,19 +5515,19 @@ namespace EdiabasLib
             return sb.ToString();
         }
 
-        private static bool isPrintable(byte b)
+        private static bool IsPrintable(byte b)
         {
             return ((b == 9) || (b == 10) || (b == 13) || ((b >= 32) && (b < 127)));
         }
 
-        private static void readAndDecryptBytes(Stream fs, byte[] buffer, int offset, int count)
+        private static void ReadAndDecryptBytes(Stream fs, byte[] buffer, int offset, int count)
         {
             fs.Read(buffer, offset, count);
             for (int i = offset; i < (offset + count); ++i)
                 buffer[i] ^= 0xF7;
         }
 
-        private static int readInt32(Stream fs)
+        private static int ReadInt32(Stream fs)
         {
             byte[] buffer = new byte[4];
             fs.Read(buffer, 0, 4);
@@ -5770,6 +5540,7 @@ namespace EdiabasLib
 
         static double RoundToSignificantDigits(EdFloatType value, EdValueType digits)
         {
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
             if (value == 0)
                 return 0;
 
@@ -5785,7 +5556,7 @@ namespace EdiabasLib
             {
                 return value;
             }
-            string numberLower = numberLocal.ToLower(culture);
+            string numberLower = numberLocal.ToLower(Culture);
             try
             {
                 if (numberLower.StartsWith("0x", StringComparison.Ordinal))
@@ -5831,7 +5602,7 @@ namespace EdiabasLib
                 if (string.Compare(number, Encoding.ASCII.GetString(numberArray, 0, numberArray.Length), StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     number = number.Replace(",", ".");
-                    result = EdFloatType.Parse(number, culture);
+                    result = EdFloatType.Parse(number, Culture);
                 }
             }
             catch (Exception)
@@ -5853,7 +5624,7 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
-                result = byteArray0;
+                result = ByteArray0;
             }
 
             return result;
@@ -5872,7 +5643,7 @@ namespace EdiabasLib
             }
             else
             {
-                result += string.Format(culture, "{0:X}", part1);
+                result += string.Format(Culture, "{0:X}", part1);
             }
 
             if (part2 > 9)
@@ -5881,11 +5652,12 @@ namespace EdiabasLib
             }
             else
             {
-                result += string.Format(culture, "{0:X}", part2);
+                result += string.Format(Culture, "{0:X}", part2);
             }
             return result;
         }
 
+        // ReSharper disable once UnusedParameter.Local
         private static EdValueType GetArgsValueLength(Operand arg0, Operand arg1)
         {
             return arg0.GetDataLen(true);

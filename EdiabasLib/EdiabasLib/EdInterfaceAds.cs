@@ -14,10 +14,10 @@ namespace EdiabasLib
             {
                 base.Ediabas = value;
 
-                string prop = ediabas.GetConfigProperty("AdsComPort");
+                string prop = EdiabasProtected.GetConfigProperty("AdsComPort");
                 if (prop != null)
                 {
-                    comPort = prop;
+                    ComPortProtected = prop;
                 }
             }
         }
@@ -55,11 +55,7 @@ namespace EdiabasLib
             return false;
         }
 
-        public EdInterfaceAds()
-        {
-        }
-
-        protected override bool adapterEcho
+        protected override bool AdapterEcho
         {
             get
             {

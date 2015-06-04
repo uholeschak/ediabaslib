@@ -777,14 +777,14 @@ namespace Ediabas
                 logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            if ((resultData.opData.GetType() == typeof(Int64)))
+            if ((resultData.OpData.GetType() == typeof(Int64)))
             {
-                Int64 value = (Int64)resultData.opData;
+                Int64 value = (Int64)resultData.OpData;
                 buffer = (Double)value;
             }
-            else if ((resultData.opData.GetType() == typeof(Double)))
+            else if ((resultData.OpData.GetType() == typeof(Double)))
             {
-                buffer = (Double)resultData.opData;
+                buffer = (Double)resultData.OpData;
             }
             else
             {
@@ -875,13 +875,13 @@ namespace Ediabas
                 logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            if ((resultData.type != EdiabasNet.ResultType.TypeY) || (resultData.opData.GetType() != typeof(byte[])))
+            if ((resultData.ResType != EdiabasNet.ResultType.TypeY) || (resultData.OpData.GetType() != typeof(byte[])))
             {
                 setLocalError(EDIABAS_API_0005);
                 logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            byte[] value = (byte[])resultData.opData;
+            byte[] value = (byte[])resultData.OpData;
             buffer = new byte[APIMAXBINARY];
             int dataLength = value.Length;
             if (value.Length > buffer.Length)
@@ -914,13 +914,13 @@ namespace Ediabas
                 logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            if ((resultData.type != EdiabasNet.ResultType.TypeY) || (resultData.opData.GetType() != typeof(byte[])))
+            if ((resultData.ResType != EdiabasNet.ResultType.TypeY) || (resultData.OpData.GetType() != typeof(byte[])))
             {
                 setLocalError(EDIABAS_API_0005);
                 logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            byte[] value = (byte[])resultData.opData;
+            byte[] value = (byte[])resultData.OpData;
             buffer = new byte[APIMAXBINARYEXT];
             int dataLength = value.Length;
             if (value.Length > buffer.Length)
@@ -953,7 +953,7 @@ namespace Ediabas
                 return false;
             }
 
-            switch (resultData.type)
+            switch (resultData.ResType)
             {
                 case EdiabasNet.ResultType.TypeB:
                     buffer = APIFORMAT_BYTE;
@@ -1360,13 +1360,13 @@ namespace Ediabas
                 logFormat(API_LOG_LEVEL.NORMAL, "={0}", false);
                 return false;
             }
-            if ((resultData.opData.GetType() == typeof(Int64)))
+            if ((resultData.OpData.GetType() == typeof(Int64)))
             {
-                buffer = (Int64)resultData.opData;
+                buffer = (Int64)resultData.OpData;
             }
-            else if ((resultData.opData.GetType() == typeof(Double)))
+            else if ((resultData.OpData.GetType() == typeof(Double)))
             {
-                Double value = (Double)resultData.opData;
+                Double value = (Double)resultData.OpData;
                 buffer = (Int64)value;
             }
             else
