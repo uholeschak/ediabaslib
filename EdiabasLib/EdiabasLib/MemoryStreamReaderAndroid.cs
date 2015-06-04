@@ -18,40 +18,43 @@ namespace EdiabasLib
         [DllImport("libc")]
         static extern int munmap(IntPtr addr, IntPtr size);
 
-        const int DEFFILEMODE = 0x666;
-        const int O_RDONLY = 0x0;
-        const int O_WRONLY = 0x1;
-        const int O_RDWR = 0x2;
+        // ReSharper disable UnusedMember.Local
+        const int Deffilemode = 0x666;
+        const int ORdonly = 0x0;
+        const int OWronly = 0x1;
+        const int ORdwr = 0x2;
 
-        const int PROT_READ = 0x1;
-        const int PROT_WRITE = 0x2;
-        const int PROT_EXEC = 0x4;
+        const int ProtRead = 0x1;
+        const int ProtWrite = 0x2;
+        const int ProtExec = 0x4;
 
-        const int MAP_PRIVATE = 0x2;
-        const int MAP_SHARED = 0x1;
+        const int MapPrivate = 0x2;
+        const int MapShared = 0x1;
+        // ReSharper restore UnusedMember.Local
 
         public MemoryStreamReader(string path)
         {
-            this.filePos = 0;
-            this.fd = -1;
-            this.mapAddr = (IntPtr)(-1);
+            _filePos = 0;
+            _fileLength = 0;
+            _fd = -1;
+            _mapAddr = (IntPtr)(-1);
 
             FileInfo fileInfo = new FileInfo(path);
-            this.fileLength = fileInfo.Length;
+            _fileLength = fileInfo.Length;
 
             bool openSuccess = false;
-            fd = open(path, O_RDONLY, DEFFILEMODE);
-            if (fd != -1)
+            _fd = open(path, ORdonly, Deffilemode);
+            if (_fd != -1)
             {
-                this.mapAddr = mmap(IntPtr.Zero, (IntPtr)this.fileLength, PROT_READ, MAP_PRIVATE, fd, 0);
-                if (this.mapAddr != (IntPtr)(-1))
+                _mapAddr = mmap(IntPtr.Zero, (IntPtr)_fileLength, ProtRead, MapPrivate, _fd, 0);
+                if (_mapAddr != (IntPtr)(-1))
                 {
                     openSuccess = true;
                 }
             }
             if (!openSuccess)
             {
-                Close();
+                CloseHandles();
                 throw new FileNotFoundException();
             }
         }
@@ -89,7 +92,7 @@ namespace EdiabasLib
         {
             get
             {
-                return this.fileLength;
+                return _fileLength;
             }
         }
 
@@ -97,11 +100,11 @@ namespace EdiabasLib
         {
             get
             {
-                return filePos;
+                return _filePos;
             }
             set
             {
-                filePos = value;
+                _filePos = value;
             }
         }
 
@@ -135,37 +138,28 @@ namespace EdiabasLib
 
         public override void Close()
         {
-            if (this.mapAddr != (IntPtr)(-1))
-            {
-                munmap(this.mapAddr, (IntPtr)this.fileLength);
-                this.mapAddr = (IntPtr)(-1);
-            }
-            if (this.fd != -1)
-            {
-                close(this.fd);
-                this.fd = -1;
-            }
+            CloseHandles();
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            long num = this.filePos;
-            long num2 = this.filePos + (long)count;
+            long num = _filePos;
+            long num2 = _filePos + count;
             if (num < 0L)
             {
-                throw new ArgumentOutOfRangeException("Attempt to read before the start of the stream");
+                throw new Exception("Attempt to read before the start of the stream");
             }
             int useCount = count;
-            if (num2 > this.fileLength)
+            if (num2 > _fileLength)
             {
-                useCount = (int)(this.fileLength - offset - this.filePos);
+                useCount = (int)(_fileLength - offset - _filePos);
                 if (useCount < 0)
                 {
                     useCount = 0;
                 }
             }
-            Marshal.Copy(this.PosPtr, buffer, offset, useCount);
-            this.filePos += (long)useCount;
+            Marshal.Copy(PosPtr, buffer, offset, useCount);
+            _filePos += useCount;
             return count;
         }
 
@@ -180,23 +174,23 @@ namespace EdiabasLib
                     break;
 
                 case SeekOrigin.Current:
-                    newPos = this.filePos + offset;
+                    newPos = _filePos + offset;
                     break;
 
                 case SeekOrigin.End:
-                    newPos = fileLength + offset;
+                    newPos = _fileLength + offset;
                     break;
             }
             if (newPos < 0)
             {
-                throw new ArgumentOutOfRangeException("Attempt to seek before start of stream");
+                throw new Exception("Attempt to seek before start of stream");
             }
-            if (newPos >= fileLength)
+            if (newPos >= _fileLength)
             {
-                throw new ArgumentOutOfRangeException("Attempt to seek after end of stream");
+                throw new Exception("Attempt to seek after end of stream");
             }
-            this.filePos = newPos;
-            return this.filePos;
+            _filePos = newPos;
+            return _filePos;
         }
 
         public override void SetLength(long value)
@@ -233,13 +227,27 @@ namespace EdiabasLib
         {
             get
             {
-                return IntPtr.Add(this.mapAddr, (int)this.filePos);
+                return IntPtr.Add(_mapAddr, (int)_filePos);
             }
         }
 
-        private long filePos = 0;
-        private long fileLength = 0;
-        private int fd = -1;
-        private IntPtr mapAddr = (IntPtr)(-1);
+        private void CloseHandles()
+        {
+            if (_mapAddr != (IntPtr)(-1))
+            {
+                munmap(_mapAddr, (IntPtr)_fileLength);
+                _mapAddr = (IntPtr)(-1);
+            }
+            if (_fd != -1)
+            {
+                close(_fd);
+                _fd = -1;
+            }
+        }
+
+        private long _filePos;
+        private readonly long _fileLength;
+        private int _fd;
+        private IntPtr _mapAddr;
     }
 }

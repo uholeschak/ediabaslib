@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Threading;
 using Android.Bluetooth;
@@ -10,17 +9,17 @@ namespace EdiabasLib
 {
     static public class EdBluetoothInterface
     {
-        public const string PortID = "BLUETOOTH";
-        private static UUID SPP_UUID = UUID.FromString ("00001101-0000-1000-8000-00805F9B34FB");
-        private static readonly long tickResolMs = Stopwatch.Frequency / 1000;
-        private const int readTimeoutOffset = 1000;
+        public const string PortId = "BLUETOOTH";
+        private static readonly UUID SppUuid = UUID.FromString ("00001101-0000-1000-8000-00805F9B34FB");
+        private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
+        private const int ReadTimeoutOffset = 1000;
 
-        private static BluetoothSocket bluetoothSocket;
-        private static Stream bluetoothInStream;
-        private static Stream bluetoothOutStream;
-        private static int currentBaudRate = 0;
-        private static int currentWordLength = 0;
-        private static EdInterfaceObd.SerialParity currentParity = EdInterfaceObd.SerialParity.None;
+        private static BluetoothSocket _bluetoothSocket;
+        private static Stream _bluetoothInStream;
+        private static Stream _bluetoothOutStream;
+        private static int _currentBaudRate;
+        private static int _currentWordLength;
+        private static EdInterfaceObd.SerialParity _currentParity = EdInterfaceObd.SerialParity.None;
 
         static EdBluetoothInterface()
         {
@@ -28,26 +27,26 @@ namespace EdiabasLib
 
         public static int CurrentBaudRate
         {
-            get { return currentBaudRate; }
+            get { return _currentBaudRate; }
         }
 
         public static int CurrentWordLength
         {
-            get { return currentWordLength; }
+            get { return _currentWordLength; }
         }
 
         public static EdInterfaceObd.SerialParity CurrentParity
         {
-            get { return currentParity; }
+            get { return _currentParity; }
         }
 
         public static bool InterfaceConnect(string port)
         {
-            if (bluetoothSocket != null)
+            if (_bluetoothSocket != null)
             {
                 return true;
             }
-            if (!port.StartsWith(PortID, StringComparison.OrdinalIgnoreCase))
+            if (!port.StartsWith(PortId, StringComparison.OrdinalIgnoreCase))
             {
                 InterfaceDisconnect();
                 return false;
@@ -59,8 +58,8 @@ namespace EdiabasLib
             }
             try
             {
-                BluetoothDevice device = null;
-                string portData = port.Remove(0, PortID.Length);
+                BluetoothDevice device;
+                string portData = port.Remove(0, PortId.Length);
                 if ((portData.Length > 0) && (portData[0] == ':'))
                 {   // special id
                     string addr = portData.Remove(0, 1);
@@ -77,10 +76,10 @@ namespace EdiabasLib
                     return false;
                 }
                 bluetoothAdapter.CancelDiscovery();
-                bluetoothSocket = device.CreateRfcommSocketToServiceRecord (SPP_UUID);
-                bluetoothSocket.Connect();
-                bluetoothInStream = bluetoothSocket.InputStream;
-                bluetoothOutStream = bluetoothSocket.OutputStream;
+                _bluetoothSocket = device.CreateRfcommSocketToServiceRecord (SppUuid);
+                _bluetoothSocket.Connect();
+                _bluetoothInStream = _bluetoothSocket.InputStream;
+                _bluetoothOutStream = _bluetoothSocket.OutputStream;
             }
             catch (Exception)
             {
@@ -95,10 +94,10 @@ namespace EdiabasLib
             bool result = true;
             try
             {
-                if (bluetoothInStream != null)
+                if (_bluetoothInStream != null)
                 {
-                    bluetoothInStream.Close();
-                    bluetoothInStream = null;
+                    _bluetoothInStream.Close();
+                    _bluetoothInStream = null;
                 }
             }
             catch (Exception)
@@ -107,10 +106,10 @@ namespace EdiabasLib
             }
             try
             {
-                if (bluetoothOutStream != null)
+                if (_bluetoothOutStream != null)
                 {
-                    bluetoothOutStream.Close();
-                    bluetoothOutStream = null;
+                    _bluetoothOutStream.Close();
+                    _bluetoothOutStream = null;
                 }
             }
             catch (Exception)
@@ -119,10 +118,10 @@ namespace EdiabasLib
             }
             try
             {
-                if (bluetoothSocket != null)
+                if (_bluetoothSocket != null)
                 {
-                    bluetoothSocket.Close();
-                    bluetoothSocket = null;
+                    _bluetoothSocket.Close();
+                    _bluetoothSocket = null;
                 }
             }
             catch (Exception)
@@ -134,19 +133,19 @@ namespace EdiabasLib
 
         public static EdInterfaceObd.InterfaceErrorResult InterfaceSetConfig(int baudRate, int dataBits, EdInterfaceObd.SerialParity parity, bool allowBitBang)
         {
-            if (bluetoothSocket == null)
+            if (_bluetoothSocket == null)
             {
                 return EdInterfaceObd.InterfaceErrorResult.CONFIG_ERROR;
             }
-            currentBaudRate = baudRate;
-            currentWordLength = dataBits;
-            currentParity = parity;
+            _currentBaudRate = baudRate;
+            _currentWordLength = dataBits;
+            _currentParity = parity;
             return EdInterfaceObd.InterfaceErrorResult.NO_ERROR;
         }
 
         public static bool InterfaceSetDtr(bool dtr)
         {
-            if (bluetoothSocket == null)
+            if (_bluetoothSocket == null)
             {
                 return false;
             }
@@ -155,7 +154,7 @@ namespace EdiabasLib
 
         public static bool InterfaceSetRts(bool rts)
         {
-            if (bluetoothSocket == null)
+            if (_bluetoothSocket == null)
             {
                 return false;
             }
@@ -165,7 +164,7 @@ namespace EdiabasLib
         public static bool InterfaceGetDsr(out bool dsr)
         {
             dsr = true;
-            if (bluetoothSocket == null)
+            if (_bluetoothSocket == null)
             {
                 return false;
             }
@@ -179,16 +178,16 @@ namespace EdiabasLib
 
         public static bool InterfacePurgeInBuffer()
         {
-            if ((bluetoothSocket == null) || (bluetoothInStream == null))
+            if ((_bluetoothSocket == null) || (_bluetoothInStream == null))
             {
                 return false;
             }
             try
             {
-                bluetoothInStream.Flush ();
-                while (bluetoothInStream.IsDataAvailable())
+                _bluetoothInStream.Flush ();
+                while (_bluetoothInStream.IsDataAvailable())
                 {
-                    bluetoothInStream.ReadByte();
+                    _bluetoothInStream.ReadByte();
                 }
             }
             catch (Exception)
@@ -200,17 +199,17 @@ namespace EdiabasLib
 
         public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
         {
-            if ((bluetoothSocket == null) || (bluetoothOutStream == null))
+            if ((_bluetoothSocket == null) || (_bluetoothOutStream == null))
             {
                 return false;
             }
-            if ((currentBaudRate != 115200) || (currentWordLength != 8) || (currentParity != EdInterfaceObd.SerialParity.None))
+            if ((_currentBaudRate != 115200) || (_currentWordLength != 8) || (_currentParity != EdInterfaceObd.SerialParity.None))
             {
                 return false;
             }
             try
             {
-                bluetoothOutStream.Write (sendData, 0, length);
+                _bluetoothOutStream.Write (sendData, 0, length);
             }
             catch (Exception)
             {
@@ -221,12 +220,12 @@ namespace EdiabasLib
 
         public static bool InterfaceReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog)
         {
-            if ((bluetoothSocket == null) || (bluetoothInStream == null))
+            if ((_bluetoothSocket == null) || (_bluetoothInStream == null))
             {
                 return false;
             }
-            timeout += readTimeoutOffset;
-            timeoutTelEnd += readTimeoutOffset;
+            timeout += ReadTimeoutOffset;
+            timeoutTelEnd += ReadTimeoutOffset;
             try
             {
                 int recLen = 0;
@@ -234,16 +233,16 @@ namespace EdiabasLib
                 while (recLen < length)
                 {
                     int currTimeout = (recLen == 0) ? timeout : timeoutTelEnd;
-                    if (bluetoothInStream.IsDataAvailable())
+                    if (_bluetoothInStream.IsDataAvailable())
                     {
-                        int bytesRead = bluetoothInStream.Read (receiveData, offset + recLen, length - recLen);
-                        recLen += (int)bytesRead;
+                        int bytesRead = _bluetoothInStream.Read (receiveData, offset + recLen, length - recLen);
+                        recLen += bytesRead;
                     }
                     if (recLen >= length)
                     {
                         break;
                     }
-                    if ((Stopwatch.GetTimestamp() - startTime) > currTimeout * tickResolMs)
+                    if ((Stopwatch.GetTimestamp() - startTime) > currTimeout * TickResolMs)
                     {
                         if (ediabasLog != null)
                         {
