@@ -1,7 +1,6 @@
 using Android.Bluetooth;
 using Android.Content;
 using Android.Net;
-using Android.Net.Wifi;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Support.V7.App;
@@ -26,37 +25,37 @@ namespace CarControlAndroid
                 Android.Content.PM.ConfigChanges.ScreenSize)]
     public class ActivityMain : AppCompatActivity, ActionBar.ITabListener
     {
-        private enum activityRequest
+        private enum ActivityRequest
         {
-            REQUEST_SELECT_DEVICE,
-            REQUEST_SELECT_CONFIG,
-            REQUEST_EDIABAS_TOOL,
+            RequestSelectDevice,
+            RequestSelectConfig,
+            RequestEdiabasTool,
         }
 
-        public static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
-        private string deviceName = string.Empty;
-        private string deviceAddress = string.Empty;
-        private string configFileName = string.Empty;
-        private bool tracingActive = false;
-        private bool dataLogActive = false;
-        private bool activityStarted = false;
-        private bool createTabsPending = false;
-        private const string sharedAppName = "CarControl";
-        private string externalPath;
-        private string externalWritePath;
-        private bool autoStart = false;
-        private ActivityCommon activityCommon;
-        private JobReader jobReader;
-        private Handler updateHandler;
-        private EdiabasThread ediabasThread;
-        private StreamWriter swDataLog;
-        private string dataLogDir;
-        private List<Fragment> fragmentList;
-        private Fragment lastFragment;
-        private ToggleButton buttonConnect;
-        private ImageView imageBackground;
-        private View barConnectView;
-        private Receiver receiver;
+        public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
+        private string _deviceName = string.Empty;
+        private string _deviceAddress = string.Empty;
+        private string _configFileName = string.Empty;
+        private bool _tracingActive;
+        private bool _dataLogActive;
+        private bool _activityStarted;
+        private bool _createTabsPending;
+        private const string SharedAppName = "CarControl";
+        private string _externalPath;
+        private string _externalWritePath;
+        private bool _autoStart;
+        private ActivityCommon _activityCommon;
+        private JobReader _jobReader;
+        private Handler _updateHandler;
+        private EdiabasThread _ediabasThread;
+        private StreamWriter _swDataLog;
+        private string _dataLogDir;
+        private List<Fragment> _fragmentList;
+        private Fragment _lastFragment;
+        private ToggleButton _buttonConnect;
+        private ImageView _imageBackground;
+        private View _barConnectView;
+        private Receiver _receiver;
 
         public void OnTabReselected(ActionBar.Tab tab, FragmentTransaction ft)
         {
@@ -66,9 +65,9 @@ namespace CarControlAndroid
         public void OnTabSelected(ActionBar.Tab tab, FragmentTransaction ft)
         {
             //Log.Debug(Tag, "The tab {0} has been selected.", tab.Text);
-            Fragment frag = fragmentList[tab.Position];
+            Fragment frag = _fragmentList[tab.Position];
             ft.Replace(Resource.Id.tabFrameLayout, frag);
-            lastFragment = frag;
+            _lastFragment = frag;
             UpdateSelectedPage();
         }
 
@@ -76,10 +75,10 @@ namespace CarControlAndroid
         {
             // perform any extra work associated with saving fragment state here.
             //Log.Debug(Tag, "The tab {0} as been unselected.", tab.Text);
-            if (lastFragment != null)
+            if (_lastFragment != null)
             {
-                ft.Remove(lastFragment);
-                lastFragment = null;
+                ft.Remove(_lastFragment);
+                _lastFragment = null;
             }
         }
 
@@ -96,31 +95,31 @@ namespace CarControlAndroid
             SupportActionBar.SetIcon(Resource.Drawable.icon);
             SetContentView(Resource.Layout.main);
 
-            activityCommon = new ActivityCommon(this);
-            updateHandler = new Handler();
-            jobReader = new JobReader();
+            _activityCommon = new ActivityCommon(this);
+            _updateHandler = new Handler();
+            _jobReader = new JobReader();
             SetStoragePath();
             GetSettings();
 
-            barConnectView = LayoutInflater.Inflate(Resource.Layout.bar_connect, null);
+            _barConnectView = LayoutInflater.Inflate(Resource.Layout.bar_connect, null);
             ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
                 ViewGroup.LayoutParams.MatchParent,
                 ViewGroup.LayoutParams.WrapContent);
             barLayoutParams.Gravity = barLayoutParams.Gravity &
                 (int)(~(GravityFlags.HorizontalGravityMask | GravityFlags.VerticalGravityMask)) |
                 (int)(GravityFlags.Left | GravityFlags.CenterVertical);
-            SupportActionBar.SetCustomView(barConnectView, barLayoutParams);
+            SupportActionBar.SetCustomView(_barConnectView, barLayoutParams);
 
-            buttonConnect = barConnectView.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
-            imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
-            fragmentList = new List<Fragment>();
-            buttonConnect.Click += ButtonConnectClick;
+            _buttonConnect = _barConnectView.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
+            _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
+            _fragmentList = new List<Fragment>();
+            _buttonConnect.Click += ButtonConnectClick;
 
             ReadConfigFile();
 
-            receiver = new Receiver(this);
-            RegisterReceiver(receiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
-            RegisterReceiver(receiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
+            _receiver = new Receiver(this);
+            RegisterReceiver(_receiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
+            RegisterReceiver(_receiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
         }
 
         void AddTabToActionBar(string label)
@@ -133,26 +132,26 @@ namespace CarControlAndroid
 
         void CreateActionBarTabs()
         {
-            if (!activityStarted)
+            if (!_activityStarted)
             {
-                createTabsPending = true;
+                _createTabsPending = true;
                 return;
             }
-            createTabsPending = false;
+            _createTabsPending = false;
             SupportActionBar.RemoveAllTabs();
-            fragmentList.Clear();
+            _fragmentList.Clear();
             SupportActionBar.NavigationMode = Android.Support.V7.App.ActionBar.NavigationModeStandard;
-            foreach (JobReader.PageInfo pageInfo in jobReader.PageList)
+            foreach (JobReader.PageInfo pageInfo in _jobReader.PageList)
             {
                 int resourceId = Resource.Layout.tab_list;
                 if (pageInfo.JobInfo.Activate) resourceId = Resource.Layout.tab_activate;
 
                 Fragment fragmentPage = new TabContentFragment(this, resourceId, pageInfo);
-                fragmentList.Add(fragmentPage);
+                _fragmentList.Add(fragmentPage);
                 pageInfo.InfoObject = fragmentPage;
                 AddTabToActionBar(GetPageString(pageInfo, pageInfo.Name));
             }
-            SupportActionBar.NavigationMode = (jobReader.PageList.Count > 0) ? Android.Support.V7.App.ActionBar.NavigationModeTabs : Android.Support.V7.App.ActionBar.NavigationModeStandard;
+            SupportActionBar.NavigationMode = (_jobReader.PageList.Count > 0) ? Android.Support.V7.App.ActionBar.NavigationModeTabs : Android.Support.V7.App.ActionBar.NavigationModeStandard;
             UpdateDisplay();
         }
 
@@ -160,12 +159,12 @@ namespace CarControlAndroid
         {
             base.OnStart();
 
-            activityStarted = true;
-            if (createTabsPending)
+            _activityStarted = true;
+            if (_createTabsPending)
             {
                 CreateActionBarTabs();
             }
-            activityCommon.RequestInterfaceEnable((sender, args) =>
+            _activityCommon.RequestInterfaceEnable((sender, args) =>
                 {
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
@@ -176,8 +175,8 @@ namespace CarControlAndroid
         {
             base.OnStop();
 
-            activityStarted = false;
-            if (swDataLog == null)
+            _activityStarted = false;
+            if (_swDataLog == null)
             {
                 StopEdiabasThread(false);
             }
@@ -188,43 +187,43 @@ namespace CarControlAndroid
         {
             base.OnDestroy();
 
-            UnregisterReceiver(receiver);
+            UnregisterReceiver(_receiver);
             StopEdiabasThread(true);
             StoreSettings();
-            updateHandler.Dispose();
+            _updateHandler.Dispose();
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
         {
-            switch((activityRequest)requestCode)
+            switch((ActivityRequest)requestCode)
             {
-                case activityRequest.REQUEST_SELECT_DEVICE:
+                case ActivityRequest.RequestSelectDevice:
                     // When DeviceListActivity returns with a device to connect
                     if (resultCode == Android.App.Result.Ok)
                     {
                         // Get the device MAC address
-                        deviceName = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_NAME);
-                        deviceAddress = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                        _deviceName = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_NAME);
+                        _deviceAddress = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
                         SupportInvalidateOptionsMenu();
-                        if (autoStart)
+                        if (_autoStart)
                         {
-                            ButtonConnectClick(buttonConnect, new EventArgs());
+                            ButtonConnectClick(_buttonConnect, new EventArgs());
                         }
                     }
-                    autoStart = false;
+                    _autoStart = false;
                     break;
 
-                case activityRequest.REQUEST_SELECT_CONFIG:
+                case ActivityRequest.RequestSelectConfig:
                     // When FilePickerActivity returns with a file
                     if (resultCode == Android.App.Result.Ok)
                     {
-                        configFileName = data.Extras.GetString(FilePickerActivity.EXTRA_FILE_NAME);
+                        _configFileName = data.Extras.GetString(FilePickerActivity.EXTRA_FILE_NAME);
                         ReadConfigFile();
                         SupportInvalidateOptionsMenu();
                     }
                     break;
 
-                case activityRequest.REQUEST_EDIABAS_TOOL:
+                case ActivityRequest.RequestEdiabasTool:
                     break;
             }
         }
@@ -238,25 +237,25 @@ namespace CarControlAndroid
 
         public override bool OnPrepareOptionsMenu(IMenu menu)
         {
-            bool commActive = ediabasThread != null && ediabasThread.ThreadRunning();
-            bool interfaceAvailable = activityCommon.IsInterfaceAvailable();
+            bool commActive = _ediabasThread != null && _ediabasThread.ThreadRunning();
+            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
             IMenuItem scanMenu = menu.FindItem(Resource.Id.menu_scan);
             if (scanMenu != null)
             {
-                scanMenu.SetTitle(string.Format(culture, "{0}: {1}", GetString(Resource.String.menu_device), deviceName));
+                scanMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_device), _deviceName));
                 scanMenu.SetEnabled(interfaceAvailable && !commActive);
-                scanMenu.SetVisible(activityCommon.SelectedInterface == ActivityCommon.InterfaceType.BLUETOOTH);
+                scanMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.BLUETOOTH);
             }
 
             IMenuItem selCfgMenu = menu.FindItem(Resource.Id.menu_sel_cfg);
             if (selCfgMenu != null)
             {
                 string fileName = string.Empty;
-                if (!string.IsNullOrEmpty(configFileName))
+                if (!string.IsNullOrEmpty(_configFileName))
                 {
-                    fileName = Path.GetFileNameWithoutExtension(configFileName);
+                    fileName = Path.GetFileNameWithoutExtension(_configFileName);
                 }
-                selCfgMenu.SetTitle(string.Format(culture, "{0}: {1}", GetString(Resource.String.menu_sel_cfg), fileName));
+                selCfgMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_sel_cfg), fileName));
                 selCfgMenu.SetEnabled(!commActive);
             }
 
@@ -270,14 +269,14 @@ namespace CarControlAndroid
             if (traceMenu != null)
             {
                 traceMenu.SetEnabled(interfaceAvailable && !commActive);
-                traceMenu.SetChecked(tracingActive);
+                traceMenu.SetChecked(_tracingActive);
             }
 
             IMenuItem dataLogMenu = menu.FindItem(Resource.Id.menu_enable_datalog);
             if (dataLogMenu != null)
             {
                 dataLogMenu.SetEnabled(interfaceAvailable);
-                dataLogMenu.SetChecked(dataLogActive);
+                dataLogMenu.SetChecked(_dataLogActive);
             }
 
             return base.OnPrepareOptionsMenu(menu);
@@ -288,8 +287,8 @@ namespace CarControlAndroid
             switch (item.ItemId)
             {
                 case Resource.Id.menu_scan:
-                    autoStart = false;
-                    activityCommon.SelectBluetoothDevice((int)activityRequest.REQUEST_SELECT_DEVICE);
+                    _autoStart = false;
+                    _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice);
                     break;
 
                 case Resource.Id.menu_sel_cfg:
@@ -301,13 +300,13 @@ namespace CarControlAndroid
                     return true;
 
                 case Resource.Id.menu_enable_trace:
-                    tracingActive = !tracingActive;
+                    _tracingActive = !_tracingActive;
                     SupportInvalidateOptionsMenu();
                     return true;
 
                 case Resource.Id.menu_enable_datalog:
-                    dataLogActive = !dataLogActive;
-                    if (!dataLogActive)
+                    _dataLogActive = !_dataLogActive;
+                    if (!_dataLogActive)
                     {
                         CloseDataLog();
                     }
@@ -317,33 +316,35 @@ namespace CarControlAndroid
                 case Resource.Id.menu_exit:
                     OnDestroy();
                     System.Environment.Exit(0);
-                    return true;
+                    break;
             }
             return base.OnOptionsItemSelected(item);
         }
 
         protected void ButtonConnectClick(object sender, EventArgs e)
         {
-            autoStart = false;
-            if (string.IsNullOrEmpty(deviceAddress))
+            _autoStart = false;
+            if (string.IsNullOrEmpty(_deviceAddress))
             {
-                if (!activityCommon.RequestBluetoothDeviceSelect((int)activityRequest.REQUEST_SELECT_DEVICE, (s, args) =>
+                if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, (s, args) =>
                     {
-                        autoStart = true;
+                        _autoStart = true;
                     }))
                 {
                     return;
                 }
             }
 
-            if (ediabasThread != null && ediabasThread.ThreadRunning())
+            if (_ediabasThread != null && _ediabasThread.ThreadRunning())
             {
                 StopEdiabasThread(false);
             }
             else
             {
-                StartEdiabasThread();
-                UpdateSelectedPage();
+                if (StartEdiabasThread())
+                {
+                    UpdateSelectedPage();
+                }
             }
             UpdateDisplay();
         }
@@ -351,58 +352,50 @@ namespace CarControlAndroid
         [Export("onActiveClick")]
         public void OnActiveClick(View v)
         {
-            if (ediabasThread == null)
+            if (_ediabasThread == null)
             {
                 return;
             }
             ToggleButton button = v.FindViewById<ToggleButton>(Resource.Id.button_active);
-            ediabasThread.CommActive = button.Checked;
+            _ediabasThread.CommActive = button.Checked;
         }
 
         private bool StartEdiabasThread()
         {
-            autoStart = false;
+            _autoStart = false;
             try
             {
-                if (ediabasThread == null)
+                if (_ediabasThread == null)
                 {
-                    ediabasThread = new EdiabasThread(jobReader.EcuPath, activityCommon.SelectedInterface);
-                    ediabasThread.DataUpdated += DataUpdated;
-                    ediabasThread.ThreadTerminated += ThreadTerminated;
+                    _ediabasThread = new EdiabasThread(_jobReader.EcuPath, _activityCommon.SelectedInterface);
+                    _ediabasThread.DataUpdated += DataUpdated;
+                    _ediabasThread.ThreadTerminated += ThreadTerminated;
                 }
-                string logDir;
-                if (string.IsNullOrEmpty(externalWritePath))
+                string logDir = string.IsNullOrEmpty(_externalWritePath) ? Path.GetDirectoryName(_configFileName) : _externalWritePath;
+
+                if (!string.IsNullOrEmpty(logDir))
                 {
-                    logDir = Path.GetDirectoryName(configFileName);
+                    if (!string.IsNullOrEmpty(_jobReader.LogPath))
+                    {
+                        logDir = Path.IsPathRooted(_jobReader.LogPath) ? _jobReader.LogPath : Path.Combine(logDir, _jobReader.LogPath);
+                    }
+                    try
+                    {
+                        Directory.CreateDirectory(logDir);
+                    }
+                    catch (Exception)
+                    {
+                        logDir = string.Empty;
+                    }
                 }
                 else
                 {
-                    logDir = externalWritePath;
-                }
-
-                if (!string.IsNullOrEmpty(jobReader.LogPath))
-                {
-                    if (Path.IsPathRooted(jobReader.LogPath))
-                    {
-                        logDir = jobReader.LogPath;
-                    }
-                    else
-                    {
-                        logDir = Path.Combine(logDir, jobReader.LogPath);
-                    }
-                }
-                try
-                {
-                    Directory.CreateDirectory(logDir);
-                }
-                catch (Exception)
-                {
                     logDir = string.Empty;
                 }
-                dataLogDir = logDir;
+                _dataLogDir = logDir;
 
                 string traceDir = null;
-                if (tracingActive && !string.IsNullOrEmpty(configFileName))
+                if (_tracingActive && !string.IsNullOrEmpty(_configFileName))
                 {
                     traceDir = logDir;
                 }
@@ -410,20 +403,20 @@ namespace CarControlAndroid
                 if (pageInfo != null)
                 {
                     string portName = string.Empty;
-                    switch (activityCommon.SelectedInterface)
+                    switch (_activityCommon.SelectedInterface)
                     {
                         case ActivityCommon.InterfaceType.BLUETOOTH:
-                            portName = "BLUETOOTH:" + deviceAddress;
+                            portName = "BLUETOOTH:" + _deviceAddress;
                             break;
 
                         case ActivityCommon.InterfaceType.ENET:
-                            if (activityCommon.Emulator)
+                            if (_activityCommon.Emulator)
                             {   // broadcast is not working with emulator
                                 portName = ActivityCommon.EMULATOR_ENET_IP;
                             }
                             break;
                     }
-                    ediabasThread.StartThread(portName, traceDir, pageInfo, true);
+                    _ediabasThread.StartThread(portName, traceDir, pageInfo, true);
                 }
             }
             catch (Exception)
@@ -434,72 +427,69 @@ namespace CarControlAndroid
             return true;
         }
 
-        private bool StopEdiabasThread(bool wait)
+        private void StopEdiabasThread(bool wait)
         {
-            if (ediabasThread != null)
+            if (_ediabasThread != null)
             {
                 try
                 {
-                    ediabasThread.StopThread(wait);
+                    _ediabasThread.StopThread(wait);
                     if (wait)
                     {
-                        ediabasThread.DataUpdated -= DataUpdated;
-                        ediabasThread.ThreadTerminated -= ThreadTerminated;
-                        ediabasThread.Dispose();
-                        ediabasThread = null;
+                        _ediabasThread.DataUpdated -= DataUpdated;
+                        _ediabasThread.ThreadTerminated -= ThreadTerminated;
+                        _ediabasThread.Dispose();
+                        _ediabasThread = null;
                     }
                 }
                 catch (Exception)
                 {
-                    return false;
+                    return;
                 }
             }
             CloseDataLog();
             SupportInvalidateOptionsMenu();
-            return true;
         }
 
         private void CloseDataLog()
         {
-            if (swDataLog != null)
+            if (_swDataLog != null)
             {
-                swDataLog.Dispose();
-                swDataLog = null;
+                _swDataLog.Dispose();
+                _swDataLog = null;
             }
         }
 
-        private bool GetSettings()
+        private void GetSettings()
         {
             try
             {
-                ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(sharedAppName, FileCreationMode.Private);
-                deviceName = prefs.GetString("DeviceName", string.Empty);
-                deviceAddress = prefs.GetString("DeviceAddress", string.Empty);
-                configFileName = prefs.GetString("ConfigFile", string.Empty);
+                ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
+                _deviceName = prefs.GetString("DeviceName", string.Empty);
+                _deviceAddress = prefs.GetString("DeviceAddress", string.Empty);
+                _configFileName = prefs.GetString("ConfigFile", string.Empty);
             }
-            catch (Exception)
+            catch
             {
-                return false;
+                // ignored
             }
-            return true;
         }
 
-        private bool StoreSettings()
+        private void StoreSettings()
         {
             try
             {
-                ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(sharedAppName, FileCreationMode.Private);
+                ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
                 ISharedPreferencesEditor prefsEdit = prefs.Edit();
-                prefsEdit.PutString("DeviceName", deviceName);
-                prefsEdit.PutString("DeviceAddress", deviceAddress);
-                prefsEdit.PutString("ConfigFile", configFileName);
+                prefsEdit.PutString("DeviceName", _deviceName);
+                prefsEdit.PutString("DeviceAddress", _deviceAddress);
+                prefsEdit.PutString("ConfigFile", _configFileName);
                 prefsEdit.Commit();
             }
             catch (Exception)
             {
-                return false;
+                // ignored
             }
-            return true;
         }
 
         private void DataUpdated(object sender, EventArgs e)
@@ -524,9 +514,9 @@ namespace CarControlAndroid
             if (SupportActionBar.SelectedTab != null)
             {
                 int index = SupportActionBar.SelectedTab.Position;
-                if (index >= 0 && index < (jobReader.PageList.Count))
+                if (index >= 0 && index < (_jobReader.PageList.Count))
                 {
-                    pageInfo = jobReader.PageList[index];
+                    pageInfo = _jobReader.PageList[index];
                 }
             }
             return pageInfo;
@@ -534,7 +524,7 @@ namespace CarControlAndroid
 
         private void UpdateSelectedPage()
         {
-            if ((ediabasThread == null) || !ediabasThread.ThreadRunning())
+            if ((_ediabasThread == null) || !_ediabasThread.ThreadRunning())
             {
                 return;
             }
@@ -544,15 +534,11 @@ namespace CarControlAndroid
             {
                 return;
             }
-            bool newCommActive = true;
-            if (newPageInfo.JobInfo.Activate)
+            bool newCommActive = !newPageInfo.JobInfo.Activate;
+            if (_ediabasThread.JobPageInfo != newPageInfo)
             {
-                newCommActive = false;
-            }
-            if (ediabasThread.JobPageInfo != newPageInfo)
-            {
-                ediabasThread.CommActive = newCommActive;
-                ediabasThread.JobPageInfo = newPageInfo;
+                _ediabasThread.CommActive = newCommActive;
+                _ediabasThread.JobPageInfo = newPageInfo;
                 CloseDataLog();
             }
         }
@@ -563,9 +549,9 @@ namespace CarControlAndroid
             bool buttonConnectEnable = true;
             bool threadRunning = false;
 
-            if (ediabasThread != null && ediabasThread.ThreadRunning())
+            if (_ediabasThread != null && _ediabasThread.ThreadRunning())
             {
-                if (ediabasThread.ThreadStopping())
+                if (_ediabasThread.ThreadStopping())
                 {
                     buttonConnectEnable = false;
                 }
@@ -573,22 +559,22 @@ namespace CarControlAndroid
                 {
                     threadRunning = true;
                 }
-                if (ediabasThread.CommActive)
+                if (_ediabasThread.CommActive)
                 {
                     dynamicValid = true;
                 }
-                buttonConnect.Checked = true;
+                _buttonConnect.Checked = true;
             }
             else
             {
-                if (!activityCommon.IsInterfaceAvailable())
+                if (!_activityCommon.IsInterfaceAvailable())
                 {
                     buttonConnectEnable = false;
                 }
-                buttonConnect.Checked = false;
+                _buttonConnect.Checked = false;
             }
-            buttonConnect.Enabled = buttonConnectEnable;
-            imageBackground.Visibility = dynamicValid ? ViewStates.Invisible : ViewStates.Visible;
+            _buttonConnect.Enabled = buttonConnectEnable;
+            _imageBackground.Visibility = dynamicValid ? ViewStates.Invisible : ViewStates.Visible;
 
             Fragment dynamicFragment = null;
             JobReader.PageInfo pageInfo = GetSelectedPage();
@@ -613,30 +599,31 @@ namespace CarControlAndroid
 
                 if (dynamicValid)
                 {
-                    if (dataLogActive && threadRunning && swDataLog == null && !string.IsNullOrEmpty(pageInfo.LogFile))
+                    if (_dataLogActive && threadRunning && _swDataLog == null && !string.IsNullOrEmpty(pageInfo.LogFile))
                     {
                         try
                         {
                             FileMode fileMode;
-                            string fileName = Path.Combine(dataLogDir, pageInfo.LogFile);
+                            string fileName = Path.Combine(_dataLogDir, pageInfo.LogFile);
                             if (File.Exists(fileName))
                             {
-                                fileMode = jobReader.AppendLog ? FileMode.Append : FileMode.Create;
+                                fileMode = _jobReader.AppendLog ? FileMode.Append : FileMode.Create;
                             }
                             else
                             {
                                 fileMode = FileMode.Create;
                             }
-                            swDataLog = new StreamWriter(new FileStream(fileName, fileMode, FileAccess.Write, FileShare.ReadWrite));
+                            _swDataLog = new StreamWriter(new FileStream(fileName, fileMode, FileAccess.Write, FileShare.ReadWrite));
                         }
                         catch (Exception)
                         {
+                            // ignored
                         }
                     }
                     Dictionary<string, EdiabasNet.ResultData> resultDict;
                     lock (EdiabasThread.DataLock)
                     {
-                        resultDict = ediabasThread.EdiabasResultDict;
+                        resultDict = _ediabasThread.EdiabasResultDict;
                     }
                     resultListAdapter.Items.Clear();
 
@@ -649,9 +636,9 @@ namespace CarControlAndroid
                         updateResult = pageType.GetMethod("UpdateResultList") != null;
                     }
                     string currDateTime = string.Empty;
-                    if (dataLogActive)
+                    if (_dataLogActive)
                     {
-                        currDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", culture);
+                        currDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", Culture);
                     }
                     foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                     {
@@ -669,6 +656,7 @@ namespace CarControlAndroid
                                 }
                                 catch (Exception)
                                 {
+                                    // ignored
                                 }
                             }
                         }
@@ -679,14 +667,15 @@ namespace CarControlAndroid
                         if (result != null)
                         {
                             resultListAdapter.Items.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result));
-                            if (!string.IsNullOrEmpty(displayInfo.LogTag) && dataLogActive && swDataLog != null)
+                            if (!string.IsNullOrEmpty(displayInfo.LogTag) && _dataLogActive && _swDataLog != null)
                             {
                                 try
                                 {
-                                    swDataLog.Write(string.Format("{0}\t{1}\t{2}\r\n", displayInfo.LogTag, currDateTime, result));
+                                    _swDataLog.Write("{0}\t{1}\t{2}\r\n", displayInfo.LogTag, currDateTime, result);
                                 }
                                 catch (Exception)
                                 {
+                                    // ignored
                                 }
                             }
                         }
@@ -712,20 +701,21 @@ namespace CarControlAndroid
                         Type pageType = pageInfo.ClassObject.GetType();
                         if (string.IsNullOrEmpty(pageInfo.JobInfo.Name) && pageType.GetMethod("UpdateLayout") != null)
                         {
-                            pageInfo.ClassObject.UpdateLayout(pageInfo, dynamicValid, ediabasThread != null);
+                            pageInfo.ClassObject.UpdateLayout(pageInfo, dynamicValid, _ediabasThread != null);
                         }
                     }
                     catch (Exception)
                     {
+                        // ignored
                     }
                 }
 
                 if (buttonActive != null)
                 {
-                    if (ediabasThread != null && ediabasThread.ThreadRunning())
+                    if (_ediabasThread != null && _ediabasThread.ThreadRunning())
                     {
                         buttonActive.Enabled = true;
-                        buttonActive.Checked = ediabasThread.CommActive;
+                        buttonActive.Checked = _ediabasThread.CommActive;
                     }
                     else
                     {
@@ -742,7 +732,7 @@ namespace CarControlAndroid
             double value = GetResultDouble(resultDict, dataName, out found);
             if (found)
             {
-                return string.Format(culture, format, value);
+                return string.Format(Culture, format, value);
             }
             return string.Empty;
         }
@@ -753,7 +743,7 @@ namespace CarControlAndroid
             Int64 value = GetResultInt64(resultDict, dataName, out found);
             if (found)
             {
-                return string.Format(culture, format, value);
+                return string.Format(Culture, format, value);
             }
             return string.Empty;
         }
@@ -764,7 +754,7 @@ namespace CarControlAndroid
             string value = GetResultString(resultDict, dataName, out found);
             if (found)
             {
-                return string.Format(culture, format, value);
+                return string.Format(Culture, format, value);
             }
             return string.Empty;
         }
@@ -775,8 +765,7 @@ namespace CarControlAndroid
             EdiabasNet.ResultData resultData;
             if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
             {
-                result = EdiabasNet.FormatResult(resultData, format);
-                if (result == null) result = "?";
+                result = EdiabasNet.FormatResult(resultData, format) ?? "?";
             }
             return result;
         }
@@ -858,27 +847,17 @@ namespace CarControlAndroid
 
         private void ReadConfigFile()
         {
-            jobReader.ReadXml(configFileName);
-            if (jobReader.PageList.Count > 0)
-            {
-                activityCommon.SelectedInterface = jobReader.Interface;
-            }
-            else
-            {
-                activityCommon.SelectedInterface = ActivityCommon.InterfaceType.NONE;
-            }
+            _jobReader.ReadXml(_configFileName);
+            _activityCommon.SelectedInterface = (_jobReader.PageList.Count > 0) ? _jobReader.Interface : ActivityCommon.InterfaceType.NONE;
             RequestConfigSelect();
             CompileCode();
         }
 
         private void CompileCode()
         {
-            if (jobReader.PageList.Count == 0)
+            if (_jobReader.PageList.Count == 0)
             {
-                updateHandler.Post(() =>
-                {
-                    CreateActionBarTabs();
-                });
+                _updateHandler.Post(CreateActionBarTabs);
                 return;
             }
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
@@ -889,9 +868,10 @@ namespace CarControlAndroid
             Task.Factory.StartNew(() =>
             {
                 List<Task<string>> taskList = new List<Task<string>>();
-                foreach (JobReader.PageInfo pageInfo in jobReader.PageList)
+                foreach (JobReader.PageInfo pageInfo in _jobReader.PageList)
                 {
                     if (pageInfo.JobInfo.ClassCode == null) continue;
+                    JobReader.PageInfo infoLocal = pageInfo;
                     Task<string> compileTask = Task<string>.Factory.StartNew(() =>
                     {
                         string result = string.Empty;
@@ -911,12 +891,12 @@ namespace CarControlAndroid
                                 using System.Collections.Generic;
                                 using System.Diagnostics;
                                 using System.Threading;"
-                                + pageInfo.JobInfo.ClassCode;
+                                + infoLocal.JobInfo.ClassCode;
                             evaluator.Compile(classCode);
-                            pageInfo.ClassObject = evaluator.Evaluate("new PageClass()");
-                            if (string.IsNullOrEmpty(pageInfo.JobInfo.Name))
+                            infoLocal.ClassObject = evaluator.Evaluate("new PageClass()");
+                            if (string.IsNullOrEmpty(infoLocal.JobInfo.Name))
                             {
-                                Type pageType = pageInfo.ClassObject.GetType();
+                                Type pageType = infoLocal.ClassObject.GetType();
                                 if (pageType.GetMethod("ExecuteJob") == null)
                                 {
                                     throw new Exception("No ExecuteJob method");
@@ -930,9 +910,9 @@ namespace CarControlAndroid
                             {
                                 result = EdiabasNet.GetExceptionText(ex);
                             }
-                            result = GetPageString(pageInfo, pageInfo.Name) + ":\r\n" + result;
+                            result = GetPageString(infoLocal, infoLocal.Name) + ":\r\n" + result;
                         }
-                        if (pageInfo.JobInfo.ShowWarnings && string.IsNullOrEmpty(result))
+                        if (infoLocal.JobInfo.ShowWarnings && string.IsNullOrEmpty(result))
                         {
                             result = reportWriter.ToString();
                         }
@@ -941,6 +921,7 @@ namespace CarControlAndroid
                     });
                     taskList.Add(compileTask);
                 }
+                // ReSharper disable once CoVariantArrayConversion
                 Task.WaitAll(taskList.ToArray());
 
                 foreach (Task<string> task in taskList)
@@ -948,7 +929,7 @@ namespace CarControlAndroid
                     string result = task.Result;
                     if (!string.IsNullOrEmpty(result))
                     {
-                        RunOnUiThread(() => activityCommon.ShowAlert(result));
+                        RunOnUiThread(() => _activityCommon.ShowAlert(result));
                     }
                 }
 
@@ -962,7 +943,7 @@ namespace CarControlAndroid
 
         private void RequestConfigSelect()
         {
-            if (jobReader.PageList.Count > 0)
+            if (_jobReader.PageList.Count > 0)
             {
                 return;
             }
@@ -984,66 +965,67 @@ namespace CarControlAndroid
         {
             // Launch the FilePickerActivity to select a configuration
             Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
-            string initDir = externalPath;
+            string initDir = _externalPath;
             try
             {
-                if (!string.IsNullOrEmpty(configFileName))
+                if (!string.IsNullOrEmpty(_configFileName))
                 {
-                    initDir = Path.GetDirectoryName(configFileName);
+                    initDir = Path.GetDirectoryName(_configFileName);
                 }
             }
             catch (Exception)
             {
+                // ignored
             }
             serverIntent.PutExtra(FilePickerActivity.EXTRA_INIT_DIR, initDir);
             serverIntent.PutExtra(FilePickerActivity.EXTRA_FILE_EXTENSIONS, ".cccfg");
-            StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_SELECT_CONFIG);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectConfig);
         }
 
-        private bool StartEdiabasTool()
+        private void StartEdiabasTool()
         {
             Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
-            string initDir = externalPath;
+            string initDir = _externalPath;
             try
             {
-                if (!string.IsNullOrEmpty(configFileName))
+                if (!string.IsNullOrEmpty(_configFileName))
                 {
-                    initDir = Path.GetDirectoryName(configFileName);
+                    initDir = Path.GetDirectoryName(_configFileName);
                 }
             }
             catch (Exception)
             {
+                // ignored
             }
-            serverIntent.PutExtra(EdiabasToolActivity.EXTRA_INIT_DIR, initDir);
-            serverIntent.PutExtra(EdiabasToolActivity.EXTRA_INTERFACE, (int)activityCommon.SelectedInterface);
-            serverIntent.PutExtra(EdiabasToolActivity.EXTRA_DEVICE_NAME, deviceName);
-            serverIntent.PutExtra(EdiabasToolActivity.EXTRA_DEVICE_ADDRESS, deviceAddress);
-            StartActivityForResult(serverIntent, (int)activityRequest.REQUEST_EDIABAS_TOOL);
-            return true;
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, initDir);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _deviceName);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _deviceAddress);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEdiabasTool);
         }
 
         private void SetStoragePath()
         {
-            externalPath = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
-            externalWritePath = string.Empty;
-            if (Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+            _externalPath = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
+            _externalWritePath = string.Empty;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
             {   // writing to external disk is only allowed in special directories.
                 Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
                 if (externalFilesDirs.Length > 0)
                 {
                     // index 0 is the internal disk
-                    externalWritePath = externalFilesDirs.Length > 1 ? externalFilesDirs[1].AbsolutePath : externalFilesDirs[0].AbsolutePath;
+                    _externalWritePath = externalFilesDirs.Length > 1 ? externalFilesDirs[1].AbsolutePath : externalFilesDirs[0].AbsolutePath;
                 }
             }
         }
 
         public class Receiver : BroadcastReceiver
         {
-            ActivityMain activity;
+            readonly ActivityMain _activity;
 
             public Receiver(ActivityMain activity)
             {
-                this.activity = activity;
+                _activity = activity;
             }
 
             public override void OnReceive(Context context, Intent intent)
@@ -1053,23 +1035,23 @@ namespace CarControlAndroid
                 if ((action == BluetoothAdapter.ActionStateChanged) ||
                     (action == ConnectivityManager.ConnectivityAction))
                 {
-                    activity.SupportInvalidateOptionsMenu();
-                    activity.UpdateDisplay();
+                    _activity.SupportInvalidateOptionsMenu();
+                    _activity.UpdateDisplay();
                 }
             }
         }
 
         public class TabContentFragment : Fragment
         {
-            private ActivityMain activity;
-            private int resourceId;
-            private JobReader.PageInfo pageInfo;
+            private readonly ActivityMain _activity;
+            private readonly int _resourceId;
+            private readonly JobReader.PageInfo _pageInfo;
 
             public TabContentFragment(ActivityMain activity, int resourceId, JobReader.PageInfo pageInfo)
             {
-                this.activity = activity;
-                this.resourceId = resourceId;
-                this.pageInfo = pageInfo;
+                _activity = activity;
+                _resourceId = resourceId;
+                _pageInfo = pageInfo;
             }
 
             public TabContentFragment(ActivityMain activity, int resourceId)
@@ -1079,26 +1061,27 @@ namespace CarControlAndroid
 
             public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
             {
-                View view = inflater.Inflate(resourceId, null);
-                if (pageInfo != null && pageInfo.ClassObject != null)
+                View view = inflater.Inflate(_resourceId, null);
+                if (_pageInfo != null && _pageInfo.ClassObject != null)
                 {
                     try
                     {
-                        Type pageType = pageInfo.ClassObject.GetType();
-                        if (string.IsNullOrEmpty(pageInfo.JobInfo.Name) && pageType.GetMethod("CreateLayout") != null)
+                        Type pageType = _pageInfo.ClassObject.GetType();
+                        if (string.IsNullOrEmpty(_pageInfo.JobInfo.Name) && pageType.GetMethod("CreateLayout") != null)
                         {
                             LinearLayout pageLayout = view.FindViewById<LinearLayout>(Resource.Id.listLayout);
-                            pageInfo.ClassObject.CreateLayout(activity, pageInfo, pageLayout);
+                            _pageInfo.ClassObject.CreateLayout(_activity, _pageInfo, pageLayout);
                         }
                     }
                     catch (Exception)
                     {
+                        // ignored
                     }
                 }
 
-                activity.updateHandler.Post(() =>
+                _activity._updateHandler.Post(() =>
                 {
-                    activity.UpdateDisplay();
+                    _activity.UpdateDisplay();
                 });
                 return view;
             }
@@ -1107,18 +1090,19 @@ namespace CarControlAndroid
             {
                 base.OnDestroyView();
 
-                if (pageInfo != null && pageInfo.ClassObject != null)
+                if (_pageInfo != null && _pageInfo.ClassObject != null)
                 {
                     try
                     {
-                        Type pageType = pageInfo.ClassObject.GetType();
-                        if (string.IsNullOrEmpty(pageInfo.JobInfo.Name) && pageType.GetMethod("DestroyLayout") != null)
+                        Type pageType = _pageInfo.ClassObject.GetType();
+                        if (string.IsNullOrEmpty(_pageInfo.JobInfo.Name) && pageType.GetMethod("DestroyLayout") != null)
                         {
-                            pageInfo.ClassObject.DestroyLayout(pageInfo);
+                            _pageInfo.ClassObject.DestroyLayout(_pageInfo);
                         }
                     }
                     catch (Exception)
                     {
+                        // ignored
                     }
                 }
             }

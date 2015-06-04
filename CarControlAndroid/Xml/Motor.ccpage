@@ -106,7 +106,7 @@
             switch (resultName)
             {
                 case "STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT":
-                    result = string.Format(ActivityMain.culture, "{0,6:0.0}", ActivityMain.GetResultDouble(resultDict, resultName, out found) / 1000.0);
+                    result = string.Format(ActivityMain.Culture, "{0,6:0.0}", ActivityMain.GetResultDouble(resultDict, resultName, out found) / 1000.0);
                     if (!found) result = string.Empty;
                     break;
 

@@ -372,7 +372,7 @@
                     Int64 voltage = ActivityMain.GetResultInt64(resultDict, resultName, out found);
                     if (found)
                     {
-                        result = string.Format(ActivityMain.culture, "{0,6:0.00}", (double)voltage / 1000);
+                        result = string.Format(ActivityMain.Culture, "{0,6:0.00}", (double)voltage / 1000);
                     }
                     break;
                 }
@@ -380,7 +380,7 @@
                 case "STATUS_SIGNALE_NUMERISCH":
                     for (int channel = 0; channel < 4; channel++)
                     {
-                        result = ActivityMain.FormatResultInt64(resultDict, string.Format(ActivityMain.culture, "STATUS_SIGNALE_NUMERISCH{0}_WERT", channel), "{0}") + result;
+                        result = ActivityMain.FormatResultInt64(resultDict, string.Format(ActivityMain.Culture, "STATUS_SIGNALE_NUMERISCH{0}_WERT", channel), "{0}") + result;
                     }
                     break;
             }
