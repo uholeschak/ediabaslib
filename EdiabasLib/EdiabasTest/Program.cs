@@ -109,25 +109,31 @@ namespace EdiabasTest
                     {
                         ifhName = ediabas.GetConfigProperty("Interface");
                     }
-                    EdInterfaceBase edInterface = new EdInterfaceObd();
+
+                    EdInterfaceBase edInterface;
                     if (!string.IsNullOrEmpty(ifhName))
                     {
-                        if (!edInterface.IsValidInterfaceName(ifhName))
+                        if (EdInterfaceObd.IsValidInterfaceNameStatic(ifhName))
                         {
-                            edInterface.Dispose();
-                            edInterface = new EdInterfaceAds();
-                            if (!edInterface.IsValidInterfaceName(ifhName))
-                            {
-                                edInterface.Dispose();
-                                edInterface = new EdInterfaceEnet();
-                                if (!edInterface.IsValidInterfaceName(ifhName))
-                                {
-                                    edInterface.Dispose();
-                                    _outputWriter.WriteLine("Interface not valid");
-                                    return 1;
-                                }
-                            }
+                            edInterface = new EdInterfaceObd();
                         }
+                        else if (EdInterfaceAds.IsValidInterfaceNameStatic(ifhName))
+                        {
+                            edInterface = new EdInterfaceAds();
+                        }
+                        else if (EdInterfaceEnet.IsValidInterfaceNameStatic(ifhName))
+                        {
+                            edInterface = new EdInterfaceEnet();
+                        }
+                        else
+                        {
+                            _outputWriter.WriteLine("Interface not valid");
+                            return 1;
+                        }
+                    }
+                    else
+                    {
+                        edInterface = new EdInterfaceObd();
                     }
 
                     ediabas.EdInterfaceClass = edInterface;
@@ -136,6 +142,7 @@ namespace EdiabasTest
                     if (!string.IsNullOrEmpty(comPort))
                     {
                         // ReSharper disable ConditionIsAlwaysTrueOrFalse
+                        // ReSharper disable IsExpressionAlwaysTrue
                         // ReSharper disable HeuristicUnreachableCode
                         if (edInterface is EdInterfaceObd)
                         {
@@ -149,7 +156,8 @@ namespace EdiabasTest
                         {
                             ((EdInterfaceEnet)edInterface).RemoteHost = comPort;
                         }
-                        // ReSharper restore once ConditionIsAlwaysTrueOrFalse
+                        // ReSharper restore ConditionIsAlwaysTrueOrFalse
+                        // ReSharper restore once IsExpressionAlwaysTrue
                         // ReSharper restore once HeuristicUnreachableCode
                     }
 

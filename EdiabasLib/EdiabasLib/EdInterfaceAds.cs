@@ -48,6 +48,11 @@ namespace EdiabasLib
 
         public override bool IsValidInterfaceName(string name)
         {
+            return IsValidInterfaceNameStatic(name);
+        }
+
+        public static new bool IsValidInterfaceNameStatic(string name)
+        {
             if (string.Compare(name, "ADS", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return true;

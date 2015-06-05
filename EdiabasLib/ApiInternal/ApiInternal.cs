@@ -486,41 +486,36 @@ namespace Ediabas
             {
                 ifh = _ediabas.GetConfigProperty("Interface");
             }
-            EdInterfaceBase edInterface = new EdInterfaceObd();
+
+            EdInterfaceBase edInterface;
             if (!string.IsNullOrEmpty(ifh))
             {
-                if (!edInterface.IsValidInterfaceName (ifh))
+                if (EdInterfaceObd.IsValidInterfaceNameStatic(ifh))
                 {
-                    edInterface.Dispose ();
-                    edInterface = null;
+                    edInterface = new EdInterfaceObd();
                 }
 #if !Android
-                if (edInterface == null)
+                else if (EdInterfaceAds.IsValidInterfaceNameStatic(ifh))
                 {
                     edInterface = new EdInterfaceAds();
-                    if (!edInterface.IsValidInterfaceName(ifh))
-                    {
-                        edInterface.Dispose();
-                        edInterface = null;
-                    }
                 }
 #endif
-                if (edInterface == null)
+                else if (EdInterfaceEnet.IsValidInterfaceNameStatic(ifh))
                 {
                     edInterface = new EdInterfaceEnet();
-                    if (!edInterface.IsValidInterfaceName(ifh))
-                    {
-                        edInterface.Dispose();
-                        edInterface = null;
-                    }
                 }
-                if (edInterface == null)
+                else
                 {
                     setLocalError(EDIABAS_IFH_0027);
                     _ediabas.Dispose();
                     return false;
                 }
             }
+            else
+            {
+                edInterface = new EdInterfaceObd();
+            }
+
             if (!edInterface.InterfaceLock())
             {
                 setLocalError(EDIABAS_API_0006);
@@ -530,7 +525,6 @@ namespace Ediabas
             }
 
             _ediabas.EdInterfaceClass = edInterface;
-
             _ediabas.AbortJobFunc = abortJobFunc;
 
             logFormat(ApiLogLevel.Normal, "apiInitExt({0}, {1}, {2}, {3})", ifh, unit, app, config);
