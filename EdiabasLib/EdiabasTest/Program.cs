@@ -6,16 +6,18 @@ using System.Linq;
 using System.Text;
 using EdiabasLib;
 using NDesk.Options;
+// ReSharper disable LoopCanBeConvertedToQuery
+// ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
 
 namespace EdiabasTest
 {
     class Program
     {
-        private static readonly CultureInfo culture = CultureInfo.CreateSpecificCulture("en");
-        private static Encoding encoding = Encoding.GetEncoding(1252);
-        private static TextWriter outputWriter;
-        private static bool compareOutput = false;
-        private static List<List<Dictionary<string, EdiabasNet.ResultData>>> apiResultList;
+        private static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
+        private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
+        private static TextWriter _outputWriter;
+        private static bool _compareOutput;
+        private static List<List<Dictionary<string, EdiabasNet.ResultData>>> _apiResultList;
 
         static int Main(string[] args)
         {
@@ -29,7 +31,7 @@ namespace EdiabasTest
             bool printAllTypes = false;
             List<string> formatList = new List<string>();
             List<string> jobNames = new List<string>();
-            bool show_help = false;
+            bool showHelp = false;
 
             var p = new OptionSet()
             {
@@ -48,7 +50,7 @@ namespace EdiabasTest
                 { "store", "store results.",
                   v => storeResults = v != null },
                 { "c|compare", "compare output.",
-                  v => compareOutput = v != null },
+                  v => _compareOutput = v != null },
                 { "alltypes", "print all value types.",
                   v => printAllTypes = v != null },
                 { "f|format=", "format for specific result. <result name>=<format string>",
@@ -56,57 +58,49 @@ namespace EdiabasTest
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>#<standard job parameters semicolon separated>.\nFor binary job parameters prepend the hex string with| (e.g. |A3C2)",
                   v => jobNames.Add(v) },
                 { "h|help",  "show this message and exit", 
-                  v => show_help = v != null },
+                  v => showHelp = v != null },
             };
 
-            List<string> extra;
             try
             {
-                extra = p.Parse(args);
+                p.Parse(args);
             }
             catch (OptionException e)
             {
-                string thisName = Path.GetFileNameWithoutExtension(System.AppDomain.CurrentDomain.FriendlyName);
+                string thisName = Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName);
                 Console.Write(thisName + ": ");
                 Console.WriteLine(e.Message);
                 Console.WriteLine("Try `" + thisName + " --help' for more information.");
                 return 1;
             }
 
-            if (show_help)
+            if (showHelp)
             {
                 ShowHelp(p);
                 return 0;
             }
 
-            if (string.IsNullOrEmpty(outFile))
-            {
-                outputWriter = Console.Out;
-            }
-            else
-            {
-                outputWriter = new StreamWriter(outFile, appendFile, encoding);
-            }
+            _outputWriter = string.IsNullOrEmpty(outFile) ? Console.Out : new StreamWriter(outFile, appendFile, Encoding);
 
             try
             {
                 if (string.IsNullOrEmpty(sgbdFile))
                 {
-                    outputWriter.WriteLine("No sgbd file specified");
+                    _outputWriter.WriteLine("No sgbd file specified");
                     return 1;
                 }
 
                 if (jobNames.Count < 1)
                 {
-                    outputWriter.WriteLine("No jobs specified");
+                    _outputWriter.WriteLine("No jobs specified");
                     return 1;
                 }
 
-                outputWriter.WriteLine(string.Format("API Version: {0}.{1}.{2}", (EdiabasNet.EdiabasVersion >> 8) & 0xF, (EdiabasNet.EdiabasVersion >> 4) & 0xF, EdiabasNet.EdiabasVersion & 0xF));
+                _outputWriter.WriteLine("API Version: {0}.{1}.{2}", (EdiabasNet.EdiabasVersion >> 8) & 0xF, (EdiabasNet.EdiabasVersion >> 4) & 0xF, EdiabasNet.EdiabasVersion & 0xF);
 
                 if (storeResults)
                 {
-                    apiResultList = new List<List<Dictionary<string, EdiabasNet.ResultData>>>();
+                    _apiResultList = new List<List<Dictionary<string, EdiabasNet.ResultData>>>();
                 }
 
                 using (EdiabasNet ediabas = new EdiabasNet(cfgString))
@@ -129,7 +123,7 @@ namespace EdiabasTest
                                 if (!edInterface.IsValidInterfaceName(ifhName))
                                 {
                                     edInterface.Dispose();
-                                    outputWriter.WriteLine("Interface not valid");
+                                    _outputWriter.WriteLine("Interface not valid");
                                     return 1;
                                 }
                             }
@@ -141,6 +135,8 @@ namespace EdiabasTest
                     ediabas.ErrorRaisedFunc = ErrorRaisedFunc;
                     if (!string.IsNullOrEmpty(comPort))
                     {
+                        // ReSharper disable ConditionIsAlwaysTrueOrFalse
+                        // ReSharper disable HeuristicUnreachableCode
                         if (edInterface is EdInterfaceObd)
                         {
                             ((EdInterfaceObd)edInterface).ComPort = comPort;
@@ -153,6 +149,8 @@ namespace EdiabasTest
                         {
                             ((EdInterfaceEnet)edInterface).RemoteHost = comPort;
                         }
+                        // ReSharper restore once ConditionIsAlwaysTrueOrFalse
+                        // ReSharper restore once HeuristicUnreachableCode
                     }
 
                     ediabas.SetConfigProperty("EcuPath", Path.GetDirectoryName(sgbdFile));
@@ -161,7 +159,7 @@ namespace EdiabasTest
                     {
                         if (jobString.Length == 0)
                         {
-                            outputWriter.WriteLine("Empty job string");
+                            _outputWriter.WriteLine("Empty job string");
                             return 1;
                         }
 
@@ -171,7 +169,7 @@ namespace EdiabasTest
                         string[] parts = jobString.Split('#');
                         if ((parts.Length < 1) || (parts[0].Length == 0))
                         {
-                            outputWriter.WriteLine("Empty job name");
+                            _outputWriter.WriteLine("Empty job name");
                             return 1;
                         }
                         string jobName = parts[0];
@@ -210,55 +208,55 @@ namespace EdiabasTest
                         }
                         catch (Exception ex)
                         {
-                            outputWriter.WriteLine("ResolveSgbdFile failed: " + EdiabasNet.GetExceptionText(ex));
+                            _outputWriter.WriteLine("ResolveSgbdFile failed: " + EdiabasNet.GetExceptionText(ex));
                             return 1;
                         }
 
-                        outputWriter.WriteLine("JOB: " + jobName);
+                        _outputWriter.WriteLine("JOB: " + jobName);
                         try
                         {
                             ediabas.ExecuteJob(jobName);
                         }
                         catch (Exception ex)
                         {
-                            if (!compareOutput || ediabas.ErrorCodeLast == EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                            if (!_compareOutput || ediabas.ErrorCodeLast == EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                             {
-                                outputWriter.WriteLine("Job execution failed: " + EdiabasNet.GetExceptionText(ex));
+                                _outputWriter.WriteLine("Job execution failed: " + EdiabasNet.GetExceptionText(ex));
                             }
                             return 1;
                         }
 
                         List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
-                        if (apiResultList != null)
+                        if (_apiResultList != null)
                         {
-                            apiResultList.Add(resultSets);
+                            _apiResultList.Add(resultSets);
                         }
                         else
                         {
-                            PrintResults(ediabas, formatList, printAllTypes, resultSets);
+                            PrintResults(formatList, printAllTypes, resultSets);
                         }
 
                         //Console.WriteLine("Press Key to continue");
                         //Console.ReadKey(true);
                     }
 
-                    if (apiResultList != null)
+                    if (_apiResultList != null)
                     {
-                        foreach (List<Dictionary<string, EdiabasNet.ResultData>> resultSets in apiResultList)
+                        foreach (List<Dictionary<string, EdiabasNet.ResultData>> resultSets in _apiResultList)
                         {
-                            PrintResults(ediabas, formatList, printAllTypes, resultSets);
+                            PrintResults(formatList, printAllTypes, resultSets);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                outputWriter.WriteLine(ex.Message);
+                _outputWriter.WriteLine(ex.Message);
                 return 1;
             }
             finally
             {
-                outputWriter.Close();
+                _outputWriter.Close();
             }
 
             return 0;
@@ -280,17 +278,17 @@ namespace EdiabasTest
             }
             if (message.Length > 0)
             {
-                outputWriter.WriteLine("Progress: " + message);
+                _outputWriter.WriteLine("Progress: " + message);
             }
         }
 
         static void ErrorRaisedFunc(EdiabasNet.ErrorCodes error)
         {
             string errorText = EdiabasNet.GetErrorDescription(error);
-            outputWriter.WriteLine(string.Format(culture, "Error occured: 0x{0:X08} {1}", (UInt32)error, errorText));
+            _outputWriter.WriteLine(string.Format(Culture, "Error occured: 0x{0:X08} {1}", (UInt32)error, errorText));
         }
 
-        static void PrintResults(EdiabasNet ediabas, List<string> formatList, bool printAllTypes, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
+        static void PrintResults(List<string> formatList, bool printAllTypes, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
         {
             int dataSet = 0;
             if (resultSets != null)
@@ -300,55 +298,56 @@ namespace EdiabasTest
                     EdiabasNet.ResultData resultData;
                     if (resultSets[0].TryGetValue("VARIANTE", out resultData))
                     {
-                        if (resultData.OpData.GetType() == typeof(string))
+                        string data = resultData.OpData as string;
+                        if (data != null)
                         {
-                            outputWriter.WriteLine("Variant: " + (string)resultData.OpData);
+                            _outputWriter.WriteLine("Variant: " + data);
                         }
                     }
                 }
 
                 foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
                 {
-                    outputWriter.WriteLine(string.Format(culture, "DATASET: {0}", dataSet));
+                    _outputWriter.WriteLine(string.Format(Culture, "DATASET: {0}", dataSet));
                     foreach (string key in resultDict.Keys.OrderBy(x => x))
                     {
                         EdiabasNet.ResultData resultData = resultDict[key];
                         string resultText = string.Empty;
-                        if (resultData.OpData.GetType() == typeof(string))
+                        if (resultData.OpData is string)
                         {
                             resultText = (string)resultData.OpData;
                         }
-                        else if (resultData.OpData.GetType() == typeof(Double))
+                        else if (resultData.OpData is double)
                         {
-                            resultText = string.Format(culture, "R: {0}", (Double)resultData.OpData);
+                            resultText = string.Format(Culture, "R: {0}", (Double)resultData.OpData);
                         }
-                        else if (resultData.OpData.GetType() == typeof(Int64))
+                        else if (resultData.OpData is long)
                         {
                             Int64 value = (Int64)resultData.OpData;
                             switch (resultData.ResType)
                             {
                                 case EdiabasNet.ResultType.TypeB:  // 8 bit
-                                    resultText = string.Format(culture, "B: {0} 0x{1:X02}", value, (Byte)value);
+                                    resultText = string.Format(Culture, "B: {0} 0x{1:X02}", value, (Byte)value);
                                     break;
 
                                 case EdiabasNet.ResultType.TypeC:  // 8 bit char
-                                    resultText = string.Format(culture, "C: {0} 0x{1:X02}", value, (Byte)value);
+                                    resultText = string.Format(Culture, "C: {0} 0x{1:X02}", value, (Byte)value);
                                     break;
 
                                 case EdiabasNet.ResultType.TypeW:  // 16 bit
-                                    resultText = string.Format(culture, "W: {0} 0x{1:X04}", value, (UInt16)value);
+                                    resultText = string.Format(Culture, "W: {0} 0x{1:X04}", value, (UInt16)value);
                                     break;
 
                                 case EdiabasNet.ResultType.TypeI:  // 16 bit signed
-                                    resultText = string.Format(culture, "I: {0} 0x{1:X04}", value, (UInt16)value);
+                                    resultText = string.Format(Culture, "I: {0} 0x{1:X04}", value, (UInt16)value);
                                     break;
 
                                 case EdiabasNet.ResultType.TypeD:  // 32 bit
-                                    resultText = string.Format(culture, "D: {0} 0x{1:X08}", value, (UInt32)value);
+                                    resultText = string.Format(Culture, "D: {0} 0x{1:X08}", value, (UInt32)value);
                                     break;
 
                                 case EdiabasNet.ResultType.TypeL:  // 32 bit signed
-                                    resultText = string.Format(culture, "L: {0} 0x{1:X08}", value, (UInt32)value);
+                                    resultText = string.Format(Culture, "L: {0} 0x{1:X08}", value, (UInt32)value);
                                     break;
 
                                 default:
@@ -361,44 +360,44 @@ namespace EdiabasTest
                             byte[] data = (byte[])resultData.OpData;
                             foreach (byte value in data)
                             {
-                                resultText += string.Format(culture, "{0:X02} ", value);
+                                resultText += string.Format(Culture, "{0:X02} ", value);
                             }
                         }
 
                         if (printAllTypes)
                         {
-                            if ((resultData.OpData.GetType() == typeof(Int64)) || (resultData.OpData.GetType() == typeof(Double)))
+                            if ((resultData.OpData is long) || (resultData.OpData is double))
                             {
                                 resultText += " ALL: ";
-                                if (resultData.OpData.GetType() == typeof(Int64))
+                                if (resultData.OpData is long)
                                 {
                                     Int64 value = (Int64)resultData.OpData;
-                                    resultText += string.Format(culture, " {0}", (sbyte)value);
-                                    resultText += string.Format(culture, " {0}", (byte)value);
-                                    resultText += string.Format(culture, " {0}", (short)value);
-                                    resultText += string.Format(culture, " {0}", (ushort)value);
-                                    resultText += string.Format(culture, " {0}", (int)value);
-                                    resultText += string.Format(culture, " {0}", (uint)value);
-                                    resultText += string.Format(culture, " {0}", (double)value);
+                                    resultText += string.Format(Culture, " {0}", (sbyte)value);
+                                    resultText += string.Format(Culture, " {0}", (byte)value);
+                                    resultText += string.Format(Culture, " {0}", (short)value);
+                                    resultText += string.Format(Culture, " {0}", (ushort)value);
+                                    resultText += string.Format(Culture, " {0}", (int)value);
+                                    resultText += string.Format(Culture, " {0}", (uint)value);
+                                    resultText += string.Format(Culture, " {0}", (double)value);
                                 }
-                                else if (resultData.OpData.GetType() == typeof(Double))
+                                else
                                 {
                                     Double valueDouble = (Double)resultData.OpData;
                                     Int64 value = (Int64)valueDouble;
-                                    resultText += string.Format(culture, " {0}", (sbyte)value);
-                                    resultText += string.Format(culture, " {0}", (byte)value);
-                                    resultText += string.Format(culture, " {0}", (short)value);
-                                    resultText += string.Format(culture, " {0}", (ushort)value);
-                                    resultText += string.Format(culture, " {0}", (int)value);
-                                    resultText += string.Format(culture, " {0}", (uint)value);
-                                    resultText += string.Format(culture, " {0}", valueDouble);
+                                    resultText += string.Format(Culture, " {0}", (sbyte)value);
+                                    resultText += string.Format(Culture, " {0}", (byte)value);
+                                    resultText += string.Format(Culture, " {0}", (short)value);
+                                    resultText += string.Format(Culture, " {0}", (ushort)value);
+                                    resultText += string.Format(Culture, " {0}", (int)value);
+                                    resultText += string.Format(Culture, " {0}", (uint)value);
+                                    resultText += string.Format(Culture, " {0}", valueDouble);
                                 }
                             }
                         }
 
                         foreach (string format in formatList)
                         {
-                            string[] words = format.Split(new char[] { '=' }, 2);
+                            string[] words = format.Split(new[] { '=' }, 2);
                             if (words.Length == 2)
                             {
                                 if (string.Compare(words[0], resultData.Name, StringComparison.OrdinalIgnoreCase) == 0)
@@ -416,17 +415,17 @@ namespace EdiabasTest
                             }
                         }
 
-                        outputWriter.WriteLine(resultData.Name + ": " + resultText);
+                        _outputWriter.WriteLine(resultData.Name + ": " + resultText);
                     }
                     dataSet++;
                 }
-                outputWriter.WriteLine();
+                _outputWriter.WriteLine();
             }
         }
 
         static void ShowHelp(OptionSet p)
         {
-            Console.WriteLine("Usage: " + Path.GetFileNameWithoutExtension(System.AppDomain.CurrentDomain.FriendlyName) + " [OPTIONS]");
+            Console.WriteLine("Usage: " + Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName) + " [OPTIONS]");
             Console.WriteLine("EDIABAS simulator");
             Console.WriteLine();
             Console.WriteLine("Options:");
