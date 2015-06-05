@@ -790,7 +790,7 @@ namespace EdiabasLib
             }
 
 #if USE_SERIAL_PORT
-            if (this.ComPortProtected.ToUpper(Culture).StartsWith(EdFtdiInterface.PortId))
+            if (ComPortProtected.ToUpper(Culture).StartsWith(EdFtdiInterface.PortId))
             {   // automtatic hook of FTDI functions
                 InterfaceConnectFuncInt = EdFtdiInterface.InterfaceConnect;
                 InterfaceDisconnectFuncInt = EdFtdiInterface.InterfaceDisconnect;
@@ -849,7 +849,7 @@ namespace EdiabasLib
             }
 
 #if USE_SERIAL_PORT
-            if (this.ComPortProtected.Length == 0)
+            if (ComPortProtected.Length == 0)
             {
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0018);
                 return false;
@@ -860,7 +860,7 @@ namespace EdiabasLib
             }
             try
             {
-                SerialPort.PortName = this.ComPortProtected;
+                SerialPort.PortName = ComPortProtected;
                 SerialPort.BaudRate = 9600;
                 SerialPort.DataBits = 8;
                 SerialPort.Parity = System.IO.Ports.Parity.None;
@@ -871,7 +871,7 @@ namespace EdiabasLib
                 SerialPort.ReadTimeout = 1;
                 SerialPort.Open();
 
-                this.LastCommTick = DateTime.MinValue.Ticks;
+                LastCommTick = DateTime.MinValue.Ticks;
             }
             catch (Exception)
             {
@@ -1538,11 +1538,11 @@ namespace EdiabasLib
 #if USE_SERIAL_PORT
             try
             {
-                int bitCount = (this.CurrentParity == SerialParity.None) ? (this.CurrentDataBits + 2) : (this.CurrentDataBits + 3);
-                double byteTime = 1.0d / this.CurrentBaudRate * 1000 * bitCount;
+                int bitCount = (CurrentParity == SerialParity.None) ? (CurrentDataBits + 2) : (CurrentDataBits + 3);
+                double byteTime = 1.0d / CurrentBaudRate * 1000 * bitCount;
                 if (setDtr)
                 {
-                    long waitTime = (long)((this.DtrTimeCorrCom + byteTime * length) * TickResolMs);
+                    long waitTime = (long)((DtrTimeCorrCom + byteTime * length) * TickResolMs);
                     if (!keepInBuffer)
                     {
                         SerialPort.DiscardInBuffer();
