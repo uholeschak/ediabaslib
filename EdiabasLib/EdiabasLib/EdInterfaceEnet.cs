@@ -311,6 +311,11 @@ namespace EdiabasLib
 
         public override bool IsValidInterfaceName(string name)
         {
+            return IsValidInterfaceNameStatic(name);
+        }
+
+        public static bool IsValidInterfaceNameStatic(string name)
+        {
             if (string.Compare(name, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return true;
