@@ -14,6 +14,14 @@
         <item android:id="@+id/menu_scan"
               android:icon="@android:drawable/ic_menu_search"
               android:title="@string/menu_device" />
+        <item android:id="@+id/menu_enable_trace"
+              android:icon="@android:drawable/ic_menu_save"
+              android:title="@string/menu_enable_trace"
+              android:checkable="true" />
+        <item android:id="@+id/menu_enable_datalog"
+              android:icon="@android:drawable/ic_menu_save"
+              android:title="@string/menu_enable_datalog"
+              android:checkable="true" />
       </menu>
     </item>
 </menu>

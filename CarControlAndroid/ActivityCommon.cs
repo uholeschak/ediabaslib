@@ -1,9 +1,9 @@
-using Android.App;
 using Android.Bluetooth;
 using Android.Content;
 using Android.Net;
 using Android.Net.Wifi;
 using Android.OS;
+using Android.Support.V7.App;
 using Android.Widget;
 using System;
 
@@ -20,8 +20,10 @@ namespace CarControlAndroid
 
         public const string EmulatorEnetIp = "192.168.10.244";
 
-        private readonly Activity _activity;
+        private readonly Android.App.Activity _activity;
         private readonly bool _emulator;
+        private string _externalPath;
+        private string _externalWritePath;
         private readonly BluetoothAdapter _btAdapter;
         private readonly WifiManager _maWifi;
         private readonly ConnectivityManager _maConnectivity;
@@ -33,6 +35,22 @@ namespace CarControlAndroid
             get
             {
                 return _emulator;
+            }
+        }
+
+        public string ExternalPath
+        {
+            get
+            {
+                return _externalPath;
+            }
+        }
+
+        public string ExternalWritePath
+        {
+            get
+            {
+                return _externalWritePath;
             }
         }
 
@@ -72,10 +90,11 @@ namespace CarControlAndroid
             }
         }
 
-        public ActivityCommon(Activity activity)
+        public ActivityCommon(Android.App.Activity activity)
         {
             _activity = activity;
             _emulator = IsEmulator();
+            SetStoragePath();
 
             _btAdapter = BluetoothAdapter.DefaultAdapter;
             _maWifi = (WifiManager)activity.GetSystemService(Context.WifiService);
@@ -327,6 +346,21 @@ namespace CarControlAndroid
                 isEmulator = fing.Contains("vbox") || fing.Contains("generic");
             }
             return isEmulator;
+        }
+
+        private void SetStoragePath()
+        {
+            _externalPath = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
+            _externalWritePath = string.Empty;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+            {   // writing to external disk is only allowed in special directories.
+                Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
+                if (externalFilesDirs.Length > 0)
+                {
+                    // index 0 is the internal disk
+                    _externalWritePath = externalFilesDirs.Length > 1 ? externalFilesDirs[1].AbsolutePath : externalFilesDirs[0].AbsolutePath;
+                }
+            }
         }
     }
 }
