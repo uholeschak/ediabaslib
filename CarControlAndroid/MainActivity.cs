@@ -42,8 +42,6 @@ namespace CarControlAndroid
         private bool _activityStarted;
         private bool _createTabsPending;
         private const string SharedAppName = "CarControl";
-        private string _externalPath;
-        private string _externalWritePath;
         private bool _autoStart;
         private ActivityCommon _activityCommon;
         private JobReader _jobReader;
@@ -99,7 +97,6 @@ namespace CarControlAndroid
             _activityCommon = new ActivityCommon(this);
             _updateHandler = new Handler();
             _jobReader = new JobReader();
-            SetStoragePath();
             GetSettings();
 
             _barConnectView = LayoutInflater.Inflate(Resource.Layout.bar_connect, null);
@@ -372,7 +369,7 @@ namespace CarControlAndroid
                     _ediabasThread.DataUpdated += DataUpdated;
                     _ediabasThread.ThreadTerminated += ThreadTerminated;
                 }
-                string logDir = string.IsNullOrEmpty(_externalWritePath) ? Path.GetDirectoryName(_configFileName) : _externalWritePath;
+                string logDir = string.IsNullOrEmpty(_activityCommon.ExternalWritePath) ? Path.GetDirectoryName(_configFileName) : _activityCommon.ExternalWritePath;
 
                 if (!string.IsNullOrEmpty(logDir))
                 {
@@ -600,7 +597,8 @@ namespace CarControlAndroid
 
                 if (dynamicValid)
                 {
-                    if (_dataLogActive && threadRunning && _swDataLog == null && !string.IsNullOrEmpty(pageInfo.LogFile))
+                    if (_dataLogActive && threadRunning && _swDataLog == null &&
+                        !string.IsNullOrEmpty(_dataLogDir) && !string.IsNullOrEmpty(pageInfo.LogFile))
                     {
                         try
                         {
@@ -967,7 +965,7 @@ namespace CarControlAndroid
         {
             // Launch the FilePickerActivity to select a configuration
             Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
-            string initDir = _externalPath;
+            string initDir = _activityCommon.ExternalPath;
             try
             {
                 if (!string.IsNullOrEmpty(_configFileName))
@@ -987,7 +985,7 @@ namespace CarControlAndroid
         private void StartEdiabasTool()
         {
             Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
-            string initDir = _externalPath;
+            string initDir = _activityCommon.ExternalPath;
             try
             {
                 if (!string.IsNullOrEmpty(_configFileName))
@@ -1004,21 +1002,6 @@ namespace CarControlAndroid
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _deviceName);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _deviceAddress);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEdiabasTool);
-        }
-
-        private void SetStoragePath()
-        {
-            _externalPath = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
-            _externalWritePath = string.Empty;
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
-            {   // writing to external disk is only allowed in special directories.
-                Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
-                if (externalFilesDirs.Length > 0)
-                {
-                    // index 0 is the internal disk
-                    _externalWritePath = externalFilesDirs.Length > 1 ? externalFilesDirs[1].AbsolutePath : externalFilesDirs[0].AbsolutePath;
-                }
-            }
         }
 
         public class Receiver : BroadcastReceiver

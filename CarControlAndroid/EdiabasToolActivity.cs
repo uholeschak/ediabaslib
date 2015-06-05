@@ -144,12 +144,16 @@ namespace CarControlAndroid
         private bool _autoStart;
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
+        private StreamWriter _swDataLog;
+        private string _dataLogDir;
         private Task _jobTask;
         private volatile bool _runContinuous;
         private volatile bool _ediabasJobAbort;
         private string _sgbdFileName = string.Empty;
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
+        private bool _tracingActive;
+        private bool _dataLogActive;
         private Receiver _receiver;
         private readonly List<JobInfo> _jobList = new List<JobInfo>();
 
@@ -355,27 +359,49 @@ namespace CarControlAndroid
                 scanMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
             }
 
+            IMenuItem traceMenu = menu.FindItem(Resource.Id.menu_enable_trace);
+            if (traceMenu != null)
+            {
+                traceMenu.SetEnabled(interfaceAvailable && !commActive);
+                traceMenu.SetChecked(_tracingActive);
+            }
+
+            IMenuItem dataLogMenu = menu.FindItem(Resource.Id.menu_enable_datalog);
+            if (dataLogMenu != null)
+            {
+                dataLogMenu.SetEnabled(interfaceAvailable);
+                dataLogMenu.SetChecked(_dataLogActive);
+            }
+
             return base.OnPrepareOptionsMenu(menu);
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             HideKeyboard();
-            if (IsJobRunning())
-            {
-                return true;
-            }
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
+                    if (IsJobRunning())
+                    {
+                        return true;
+                    }
                     Finish();
                     return true;
 
                 case Resource.Id.menu_tool_sel_interface:
+                    if (IsJobRunning())
+                    {
+                        return true;
+                    }
                     SelectInterface();
                     return true;
 
                 case Resource.Id.menu_tool_sel_sgbd:
+                    if (IsJobRunning())
+                    {
+                        return true;
+                    }
                     _autoStart = false;
                     if (string.IsNullOrEmpty(_deviceAddress))
                     {
@@ -391,8 +417,32 @@ namespace CarControlAndroid
                     return true;
 
                 case Resource.Id.menu_scan:
+                    if (IsJobRunning())
+                    {
+                        return true;
+                    }
                     _autoStart = false;
                     _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice);
+                    return true;
+
+                case Resource.Id.menu_enable_trace:
+                    if (IsJobRunning())
+                    {
+                        return true;
+                    }
+                    _tracingActive = !_tracingActive;
+                    UpdateLogInfo();
+                    SupportInvalidateOptionsMenu();
+                    return true;
+
+                case Resource.Id.menu_enable_datalog:
+                    _dataLogActive = !_dataLogActive;
+                    if (!_dataLogActive)
+                    {
+                        CloseDataLog();
+                    }
+                    UpdateLogInfo();
+                    SupportInvalidateOptionsMenu();
                     return true;
             }
             return base.OnOptionsItemSelected(item);
@@ -434,8 +484,18 @@ namespace CarControlAndroid
                 _ediabas = null;
             }
             _jobList.Clear();
+            CloseDataLog();
             UpdateDisplay();
             return true;
+        }
+
+        private void CloseDataLog()
+        {
+            if (_swDataLog != null)
+            {
+                _swDataLog.Dispose();
+                _swDataLog = null;
+            }
         }
 
         private bool IsJobRunning()
@@ -503,7 +563,6 @@ namespace CarControlAndroid
             _spinnerResults.Enabled = inputsEnabled;
 
             HideKeyboard();
-            SupportInvalidateOptionsMenu();
         }
 
         private void SelectSgbdFile()
@@ -657,12 +716,56 @@ namespace CarControlAndroid
             _infoListAdapter.NotifyDataSetChanged();
         }
 
+        private void UpdateLogInfo()
+        {
+            if (_ediabas == null)
+            {
+                return;
+            }
+            string logDir = string.IsNullOrEmpty(_activityCommon.ExternalWritePath) ? Path.GetDirectoryName(_sgbdFileName) : _activityCommon.ExternalWritePath;
+
+            if (!string.IsNullOrEmpty(logDir))
+            {
+                logDir = Path.Combine(logDir, "LogTool");
+                try
+                {
+                    Directory.CreateDirectory(logDir);
+                }
+                catch (Exception)
+                {
+                    logDir = string.Empty;
+                }
+            }
+            else
+            {
+                logDir = string.Empty;
+            }
+            _dataLogDir = logDir;
+
+            string traceDir = null;
+            if (_tracingActive && !string.IsNullOrEmpty(_sgbdFileName))
+            {
+                traceDir = logDir;
+            }
+
+            if (!string.IsNullOrEmpty(traceDir))
+            {
+                _ediabas.SetConfigProperty("TracePath", traceDir);
+                _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
+            }
+            else
+            {
+                _ediabas.SetConfigProperty("IfhTrace", "0");
+            }
+        }
+
         private void ReadSgbd()
         {
             if (string.IsNullOrEmpty(_sgbdFileName))
             {
                 return;
             }
+            CloseDataLog();
             if (_ediabas != null)
             {
                 bool interfaceChanged = false;
@@ -718,6 +821,8 @@ namespace CarControlAndroid
                 }
                 ((EdInterfaceEnet)_ediabas.EdInterfaceClass).RemoteHost = remoteHost;
             }
+
+            UpdateLogInfo();
 
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
             progress.SetCancelable(false);
@@ -924,6 +1029,7 @@ namespace CarControlAndroid
                     }
                     _jobListAdapter.NotifyDataSetChanged();
 
+                    SupportInvalidateOptionsMenu();
                     UpdateDisplay();
                 });
             });
@@ -1007,9 +1113,11 @@ namespace CarControlAndroid
                     {
                         _jobTask.Wait();
                     }
+                    SupportInvalidateOptionsMenu();
                     UpdateDisplay();
                 });
             });
+            SupportInvalidateOptionsMenu();
             UpdateDisplay();
         }
 
@@ -1018,6 +1126,25 @@ namespace CarControlAndroid
             int dataSet = 0;
             if (resultSets != null)
             {
+                if (_ediabas != null && _dataLogActive && _swDataLog == null &&
+                    !string.IsNullOrEmpty(_dataLogDir) && !string.IsNullOrEmpty(_ediabas.SgbdFileName))
+                {
+                    try
+                    {
+                        string fileName = Path.Combine(_dataLogDir, _ediabas.SgbdFileName) + ".log";
+                        FileMode fileMode = File.Exists(fileName) ? FileMode.Append : FileMode.Create;
+                        _swDataLog = new StreamWriter(new FileStream(fileName, fileMode, FileAccess.Write, FileShare.ReadWrite));
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                if (_swDataLog != null)
+                {
+                    _swDataLog.WriteLine("----------------------------------------");
+                }
                 foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
                 {
                     StringBuilder stringBuilder = new StringBuilder();
@@ -1080,6 +1207,12 @@ namespace CarControlAndroid
                         stringBuilder.Append(resultData.Name + ": " + resultText);
                     }
                     messageList.Add(stringBuilder.ToString());
+                    if (_swDataLog != null)
+                    {
+                        _swDataLog.Write(stringBuilder.ToString());
+                        _swDataLog.WriteLine();
+                        _swDataLog.WriteLine();
+                    }
                     dataSet++;
                 }
             }
@@ -1110,6 +1243,7 @@ namespace CarControlAndroid
                 if ((action == BluetoothAdapter.ActionStateChanged) ||
                     (action == ConnectivityManager.ConnectivityAction))
                 {
+                    _activity.SupportInvalidateOptionsMenu();
                     _activity.UpdateDisplay();
                 }
             }
