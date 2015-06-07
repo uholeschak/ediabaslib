@@ -138,6 +138,7 @@ namespace CarControlAndroid
         private EditText _editTextArgs;
         private Spinner _spinnerResults;
         private ResultSelectListAdapter _resultSelectListAdapter;
+        private int _resultSelectLastItem;
         private ListView _listViewInfo;
         private ResultListAdapter _infoListAdapter;
         private string _initDirStart;
@@ -217,8 +218,13 @@ namespace CarControlAndroid
             _spinnerResults.SetOnTouchListener(this);
             _spinnerResults.ItemSelected += (sender, args) =>
                 {
-                    DisplayJobResult();
+                    if (_resultSelectLastItem != _spinnerResults.SelectedItemPosition)
+                    {
+                        DisplayJobResult();
+                    }
+                    _resultSelectLastItem = -1;
                 };
+            _resultSelectLastItem = -1;
 
             _listViewInfo = FindViewById<ListView>(Resource.Id.infoList);
             _infoListAdapter = new ResultListAdapter(this);
@@ -644,6 +650,7 @@ namespace CarControlAndroid
                 }
             }
             _resultSelectListAdapter.NotifyDataSetChanged();
+            _resultSelectLastItem = 0;
             _editTextArgs.Text = string.Empty;
         }
 
