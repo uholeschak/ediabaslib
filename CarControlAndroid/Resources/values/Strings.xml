@@ -59,10 +59,13 @@
   <string name="tool_job_jobs">Jobs:</string>
   <string name="tool_job_job">Job:</string>
   <string name="tool_job_arguments">Arguments:</string>
+  <string name="tool_job_arguments_error_detail">Without arguments all errors are read</string>
   <string name="tool_job_results">Results:</string>
   <string name="tool_job_result">Result:</string>
   <string name="tool_job_infos">Informations:</string>
   <string name="tool_check_continuous">Continuous</string>
+  <string name="tool_read_errors_failure">Reading errors failed</string>
+  <string name="tool_no_errors">No errors</string>
 
   <!-- Ediabas Tool Options Menu -->
   <string name="menu_tool_sel_interface">Interface</string>

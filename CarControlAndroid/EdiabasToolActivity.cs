@@ -674,6 +674,10 @@ namespace CarControlAndroid
             if (jobInfo != null)
             {
                 _infoListAdapter.Items.Add(new TableResultItem(GetString(Resource.String.tool_job_arguments), null));
+                if (string.Compare(jobInfo.Name, "FS_LESEN_DETAIL", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    _infoListAdapter.Items.Add(new TableResultItem(GetString(Resource.String.tool_job_arguments_error_detail), null));
+                }
                 foreach (ExtraInfo info in jobInfo.Arguments.OrderBy(x => x.Name))
                 {
                     StringBuilder stringBuilderComments = new StringBuilder();
@@ -1077,13 +1081,84 @@ namespace CarControlAndroid
                     List<string> messageList = new List<string>();
                     try
                     {
-                        _ediabas.ArgString = jobArgs;
-                        _ediabas.ArgBinaryStd = null;
-                        _ediabas.ResultsRequests = jobResults;
-                        _ediabas.ExecuteJob(jobName);
+                        if (string.Compare(jobName, "FS_LESEN_DETAIL", StringComparison.OrdinalIgnoreCase) == 0 &&
+                            string.IsNullOrEmpty(jobArgs))
+                        {
+                            _ediabas.ArgString = string.Empty;
+                            _ediabas.ArgBinaryStd = null;
+                            _ediabas.ResultsRequests = string.Empty;
+                            _ediabas.ExecuteJob("FS_LESEN");
 
-                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                        PrintResults(messageList, resultSets);
+                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+
+                            bool jobOk = false;
+                            if (resultSets != null && resultSets.Count > 1)
+                            {
+                                EdiabasNet.ResultData resultData;
+                                if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        // read details
+                                        string jobStatus = (string) resultData.OpData;
+                                        if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            jobOk = true;
+                                        }
+                                    }
+                                }
+                            }
+                            // read error details
+                            if (jobOk)
+                            {
+                                int dictIndex = 0;
+                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                                {
+                                    if (dictIndex == 0)
+                                    {
+                                        dictIndex++;
+                                        continue;
+                                    }
+
+                                    EdiabasNet.ResultData resultData;
+                                    if (resultDictLocal.TryGetValue("F_ORT_NR", out resultData))
+                                    {
+                                        if (resultData.OpData is Int64)
+                                        {
+                                            // read details
+                                            _ediabas.ArgString = string.Format("0x{0:X02}", (Int64) resultData.OpData);
+                                            _ediabas.ArgBinaryStd = null;
+                                            _ediabas.ResultsRequests = jobResults;
+
+                                            _ediabas.ExecuteJob("FS_LESEN_DETAIL");
+
+                                            List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail =
+                                                new List<Dictionary<string, EdiabasNet.ResultData>>(_ediabas.ResultSets);
+                                            PrintResults(messageList, resultSetsDetail);
+                                        }
+                                    }
+                                    dictIndex++;
+                                }
+                                if (messageList.Count == 0)
+                                {
+                                    messageList.Add(GetString(Resource.String.tool_no_errors));
+                                }
+                            }
+                            else
+                            {
+                                messageList.Add(GetString(Resource.String.tool_read_errors_failure));
+                            }
+                        }
+                        else
+                        {
+                            _ediabas.ArgString = jobArgs;
+                            _ediabas.ArgBinaryStd = null;
+                            _ediabas.ResultsRequests = jobResults;
+                            _ediabas.ExecuteJob(jobName);
+
+                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                            PrintResults(messageList, resultSets);
+                        }
                     }
                     catch (Exception ex)
                     {
