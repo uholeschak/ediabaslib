@@ -26,7 +26,8 @@
     <EditText
         android:id="@+id/editTextArgs"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:maxLines="1" />
     <TextView
         android:text="@+string/tool_job_results"
         android:id="@+id/textViewResukts"

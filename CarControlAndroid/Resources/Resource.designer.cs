@@ -2025,11 +2025,11 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a002e
 			public const int menu_sel_cfg = 2131361838;
 			
-			// aapt resource value: 0x7f0a0043
-			public const int menu_tool_sel_interface = 2131361859;
+			// aapt resource value: 0x7f0a0046
+			public const int menu_tool_sel_interface = 2131361862;
 			
-			// aapt resource value: 0x7f0a0044
-			public const int menu_tool_sel_sgbd = 2131361860;
+			// aapt resource value: 0x7f0a0047
+			public const int menu_tool_sel_sgbd = 2131361863;
 			
 			// aapt resource value: 0x7f0a0027
 			public const int none_found = 2131361831;
@@ -2061,14 +2061,17 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a0028
 			public const int title_paired_devices = 2131361832;
 			
-			// aapt resource value: 0x7f0a0042
-			public const int tool_check_continuous = 2131361858;
+			// aapt resource value: 0x7f0a0043
+			public const int tool_check_continuous = 2131361859;
 			
 			// aapt resource value: 0x7f0a003e
 			public const int tool_job_arguments = 2131361854;
 			
-			// aapt resource value: 0x7f0a0041
-			public const int tool_job_infos = 2131361857;
+			// aapt resource value: 0x7f0a003f
+			public const int tool_job_arguments_error_detail = 2131361855;
+			
+			// aapt resource value: 0x7f0a0042
+			public const int tool_job_infos = 2131361858;
 			
 			// aapt resource value: 0x7f0a003d
 			public const int tool_job_job = 2131361853;
@@ -2076,11 +2079,17 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f0a003c
 			public const int tool_job_jobs = 2131361852;
 			
-			// aapt resource value: 0x7f0a0040
-			public const int tool_job_result = 2131361856;
+			// aapt resource value: 0x7f0a0041
+			public const int tool_job_result = 2131361857;
 			
-			// aapt resource value: 0x7f0a003f
-			public const int tool_job_results = 2131361855;
+			// aapt resource value: 0x7f0a0040
+			public const int tool_job_results = 2131361856;
+			
+			// aapt resource value: 0x7f0a0045
+			public const int tool_no_errors = 2131361861;
+			
+			// aapt resource value: 0x7f0a0044
+			public const int tool_read_errors_failure = 2131361860;
 			
 			// aapt resource value: 0x7f0a003b
 			public const int tool_read_sgbd = 2131361851;

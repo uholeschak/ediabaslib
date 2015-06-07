@@ -59,10 +59,13 @@
   <string name="tool_job_jobs">Jobs:</string>
   <string name="tool_job_job">Job:</string>
   <string name="tool_job_arguments">Argumente:</string>
+  <string name="tool_job_arguments_error_detail">Ohne Argumente werden alle Fehler gelesen</string>
   <string name="tool_job_results">Ergebnisse:</string>
   <string name="tool_job_result">Ergebnis:</string>
   <string name="tool_job_infos">Informationen:</string>
   <string name="tool_check_continuous">Fortlaufend</string>
+  <string name="tool_read_errors_failure">Fehler lesen fehlgeschlagen</string>
+  <string name="tool_no_errors">Keine Fehler</string>
 
   <!-- Ediabas Tool Options Menu -->
   <string name="menu_tool_sel_interface">Schnittstelle</string>
