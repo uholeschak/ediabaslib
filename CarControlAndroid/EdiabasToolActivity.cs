@@ -339,16 +339,24 @@ namespace CarControlAndroid
                 selInterfaceMenu.SetEnabled(!commActive);
             }
 
-            IMenuItem selCfgMenu = menu.FindItem(Resource.Id.menu_tool_sel_sgbd);
-            if (selCfgMenu != null)
+            IMenuItem selSgbdMenu = menu.FindItem(Resource.Id.menu_tool_sel_sgbd);
+            if (selSgbdMenu != null)
             {
                 string fileName = string.Empty;
                 if (!string.IsNullOrEmpty(_sgbdFileName))
                 {
                     fileName = Path.GetFileNameWithoutExtension(_sgbdFileName);
+                    if (_ediabas != null && !string.IsNullOrEmpty(_ediabas.SgbdFileName))
+                    {
+                        string resolvedFile = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
+                        if (string.Compare(fileName, resolvedFile, StringComparison.OrdinalIgnoreCase) != 0)
+                        {
+                            fileName += " -> " + resolvedFile;
+                        }
+                    }
                 }
-                selCfgMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_tool_sel_sgbd), fileName));
-                selCfgMenu.SetEnabled(!commActive && interfaceAvailable);
+                selSgbdMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_tool_sel_sgbd), fileName));
+                selSgbdMenu.SetEnabled(!commActive && interfaceAvailable);
             }
 
             IMenuItem scanMenu = menu.FindItem(Resource.Id.menu_scan);
@@ -1206,7 +1214,7 @@ namespace CarControlAndroid
                 {
                     try
                     {
-                        string fileName = Path.Combine(_dataLogDir, _ediabas.SgbdFileName) + ".log";
+                        string fileName = Path.Combine(_dataLogDir, Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName)) + ".log";
                         FileMode fileMode = File.Exists(fileName) ? FileMode.Append : FileMode.Create;
                         _swDataLog = new StreamWriter(new FileStream(fileName, fileMode, FileAccess.Write, FileShare.ReadWrite));
                     }
