@@ -19,10 +19,12 @@
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
+// ReSharper disable InconsistentNaming
 
+// ReSharper disable once CheckNamespace
 namespace Peak.Can.Basic
 {    
-    using TPCANHandle = System.Byte;
+    using TPCANHandle = Byte;
 
     #region Enumerations
     /// <summary>
@@ -143,7 +145,7 @@ namespace Peak.Can.Basic
         /// </summary>
         PCAN_NONE = 0,
         /// <summary>
-        /// PCAN Non-Plug&Play devices. NOT USED WITHIN PCAN-Basic API
+        /// PCAN Non-Plug+Play devices. NOT USED WITHIN PCAN-Basic API
         /// </summary>
         PCAN_PEAKCAN = 1,
         /// <summary>
@@ -362,7 +364,7 @@ namespace Peak.Can.Basic
     }
 
     /// <summary>
-    /// Represents the type of PCAN (non plug&play) hardware to be initialized
+    /// Represents the type of PCAN (non plug+play) hardware to be initialized
     /// </summary>
     public enum TPCANType : byte
     {
@@ -597,7 +599,7 @@ namespace Peak.Can.Basic
         /// </summary>
         public const int PCAN_CHANNEL_UNAVAILABLE = 0;
         /// <summary>
-        /// The PCAN-Channel handle is available to be connected (Plug&Play Hardware: it means futhermore that the hardware is plugged-in)
+        /// The PCAN-Channel handle is available to be connected (Plug+Play Hardware: it means futhermore that the hardware is plugged-in)
         /// </summary>
         public const int PCAN_CHANNEL_AVAILABLE = 1;
         /// <summary>
@@ -662,9 +664,9 @@ namespace Peak.Can.Basic
         /// </summary>
         /// <param name="Channel">The handle of a PCAN Channel</param>
         /// <param name="Btr0Btr1">The speed for the communication (BTR0BTR1 code)</param>
-        /// <param name="HwType">NON PLUG&PLAY: The type of hardware and operation mode</param>
-        /// <param name="IOPort">NON PLUG&PLAY: The I/O address for the parallel port</param>
-        /// <param name="Interrupt">NON PLUG&PLAY: Interrupt number of the parallel por</param>
+        /// <param name="HwType">NON PLUG+PLAY: The type of hardware and operation mode</param>
+        /// <param name="IOPort">NON PLUG+PLAY: The I/O address for the parallel port</param>
+        /// <param name="Interrupt">NON PLUG+PLAY: Interrupt number of the parallel por</param>
         /// <returns>A TPCANStatus error code</returns>
         [DllImport("PCANBasic.dll", EntryPoint = "CAN_Initialize")]
         public static extern TPCANStatus Initialize(
@@ -687,7 +689,7 @@ namespace Peak.Can.Basic
             TPCANHandle Channel,
             TPCANBaudrate Btr0Btr1)
         {
-            return Initialize(Channel, Btr0Btr1, (TPCANType)0, 0, 0);
+            return Initialize(Channel, Btr0Btr1, 0, 0, 0);
         }
 
         /// <summary>

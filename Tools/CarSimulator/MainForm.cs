@@ -5,16 +5,17 @@ using System.IO;
 using System.IO.Ports;
 using System.Windows.Forms;
 using Peak.Can.Basic;
+// ReSharper disable LocalizableElement
 
 namespace CarSimulator
 {
     public partial class MainForm : Form
     {
-        private const string _stdResponseFile = "Response.txt";
-        private string responseDir;
-        private CommThread _commThread;
+        private const string StdResponseFile = "Response.txt";
+        private readonly string _responseDir;
+        private readonly CommThread _commThread;
         private int _lastPortCount;
-        private CommThread.ConfigData _configData;
+        private readonly CommThread.ConfigData _configData;
 
         public MainForm()
         {
@@ -22,7 +23,10 @@ namespace CarSimulator
             InitializeComponent();
 
             string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            responseDir = Path.Combine(appDir, "Response");
+            if (!string.IsNullOrEmpty(appDir))
+            {
+                _responseDir = Path.Combine(appDir, "Response");
+            }
 
             _lastPortCount = -1;
             _configData = new CommThread.ConfigData();
@@ -40,16 +44,12 @@ namespace CarSimulator
 
         private void UpdatePorts()
         {
-            string[] ports = SerialPort.GetPortNames();
-            if (ports == null)
-            {
-                ports = new string[0];
-            }
+            // ReSharper disable once ConstantNullCoalescingCondition
+            string[] ports = SerialPort.GetPortNames() ?? new string[0];
             if (_lastPortCount == ports.Length) return;
             listPorts.BeginUpdate();
             listPorts.Items.Clear();
-            int index = -1;
-            index = listPorts.Items.Add("ENET");
+            int index = listPorts.Items.Add("ENET");
             foreach (string port in ports)
             {
                 index = listPorts.Items.Add(port);
@@ -65,6 +65,7 @@ namespace CarSimulator
             }
             catch (Exception)
             {
+                // ignored
             }
             listPorts.SelectedIndex = index;
             listPorts.EndUpdate();
@@ -75,18 +76,21 @@ namespace CarSimulator
 
         private void UpdateResponseFiles()
         {
-            string[] files = Directory.GetFiles(responseDir, "*.txt");
+            string[] files = Directory.GetFiles(_responseDir, "*.txt");
             listBoxResponseFiles.BeginUpdate();
             listBoxResponseFiles.Items.Clear();
             string selectItem = null;
             foreach (string file in files)
             {
                 string baseFileName = Path.GetFileName(file);
-                if (string.Compare(baseFileName, _stdResponseFile, StringComparison.OrdinalIgnoreCase) == 0)
+                if (!string.IsNullOrEmpty(baseFileName))
                 {
-                    selectItem = baseFileName;
+                    if (string.Compare(baseFileName, StdResponseFile, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        selectItem = baseFileName;
+                    }
+                    listBoxResponseFiles.Items.Add(baseFileName);
                 }
-                listBoxResponseFiles.Items.Add(baseFileName);
             }
             if (selectItem != null)
             {
@@ -120,7 +124,7 @@ namespace CarSimulator
                         {
                             configList.Clear();
                             line = line.Substring(4);
-                            numberArray = line.Split(new char[] { ' ' });
+                            numberArray = line.Split(' ');
                             foreach (string number in numberArray)
                             {
                                 if (number.Length > 1)
@@ -132,13 +136,14 @@ namespace CarSimulator
                                     }
                                     catch
                                     {
+                                        // ignored
                                     }
                                 }
                             }
                             continue;
                         }
 
-                        numberArray = line.Split(new char[] { ' ' });
+                        numberArray = line.Split(' ');
                         bool responseData = false;
                         List<byte> listCompare = new List<byte>();
                         List<byte> listResponse = new List<byte>();
@@ -165,6 +170,7 @@ namespace CarSimulator
                                 }
                                 catch
                                 {
+                                    // ignored
                                 }
                             }
                         }
@@ -215,7 +221,7 @@ namespace CarSimulator
 
                 bool messageShown = false;
                 // split multi telegram responses
-                if (conceptType == CommThread.ConceptType.conceptIso9141)
+                if (conceptType == CommThread.ConceptType.ConceptIso9141)
                 {
                     foreach (CommThread.ResponseEntry responseEntry in responseList)
                     {
@@ -278,7 +284,7 @@ namespace CarSimulator
                         }
                     }
                 }
-                else if ((conceptType != CommThread.ConceptType.concept1) && (conceptType != CommThread.ConceptType.concept3))
+                else if ((conceptType != CommThread.ConceptType.Concept1) && (conceptType != CommThread.ConceptType.Concept3))
                 {
                     foreach (CommThread.ResponseEntry responseEntry in responseList)
                     {
@@ -367,14 +373,7 @@ namespace CarSimulator
 
         private void UpdateDisplay()
         {
-            if (_commThread.ThreadRunning())
-            {
-                buttonConnect.Text = "Disconnect";
-            }
-            else
-            {
-                buttonConnect.Text = "Connect";
-            }
+            buttonConnect.Text = _commThread.ThreadRunning() ? "Disconnect" : "Connect";
             if (_commThread.ThreadRunning())
             {
                 _commThread.Moving = checkBoxMoving.Checked;
@@ -394,24 +393,24 @@ namespace CarSimulator
                 if (listPorts.SelectedIndex < 0) return;
                 string selectedPort = listPorts.SelectedItem.ToString();
 
-                CommThread.ConceptType conceptType = CommThread.ConceptType.conceptBwmFast;
-                if (radioButtonKwp2000Bmw.Checked) conceptType = CommThread.ConceptType.conceptKwp2000Bmw;
-                if (radioButtonKwp2000S.Checked) conceptType = CommThread.ConceptType.conceptKwp2000S;
-                if (radioButtonDs2.Checked) conceptType = CommThread.ConceptType.conceptDs2;
-                if (radioButtonConcept1.Checked) conceptType = CommThread.ConceptType.concept1;
-                if (radioButtonIso9141.Checked) conceptType = CommThread.ConceptType.conceptIso9141;
-                if (radioButtonConcept3.Checked) conceptType = CommThread.ConceptType.concept3;
+                CommThread.ConceptType conceptType = CommThread.ConceptType.ConceptBwmFast;
+                if (radioButtonKwp2000Bmw.Checked) conceptType = CommThread.ConceptType.ConceptKwp2000Bmw;
+                if (radioButtonKwp2000S.Checked) conceptType = CommThread.ConceptType.ConceptKwp2000S;
+                if (radioButtonDs2.Checked) conceptType = CommThread.ConceptType.ConceptDs2;
+                if (radioButtonConcept1.Checked) conceptType = CommThread.ConceptType.Concept1;
+                if (radioButtonIso9141.Checked) conceptType = CommThread.ConceptType.ConceptIso9141;
+                if (radioButtonConcept3.Checked) conceptType = CommThread.ConceptType.Concept3;
 
                 string responseFile = (string)listBoxResponseFiles.SelectedItem;
                 bool e61Internal = true;
                 if (responseFile != null)
                 {
-                    if (string.Compare(responseFile, _stdResponseFile, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (string.Compare(responseFile, StdResponseFile, StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         e61Internal = false;
                     }
 
-                    if (!ReadResponseFile(Path.Combine(responseDir, responseFile), conceptType))
+                    if (!ReadResponseFile(Path.Combine(_responseDir, responseFile), conceptType))
                     {
                         MessageBox.Show("Reading response file failed!");
                     }

@@ -7,6 +7,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Peak.Can.Basic;
+// ReSharper disable RedundantAssignment
+// ReSharper disable RedundantCast
 
 namespace CarSimulator
 {
@@ -16,133 +18,134 @@ namespace CarSimulator
         {
             public ConfigData()
             {
-                configList = new List<byte>();
-                responseOnlyList = new List<byte[]>();
-                responseList = new List<ResponseEntry>();
+                _configList = new List<byte>();
+                _responseOnlyList = new List<byte[]>();
+                _responseList = new List<ResponseEntry>();
             }
             public List<byte> ConfigList
             {
-                get { return configList; }
+                get { return _configList; }
             }
             public List<byte[]> ResponseOnlyList
             {
-                get { return responseOnlyList; }
+                get { return _responseOnlyList; }
             }
-            public List<CommThread.ResponseEntry> ResponseList
+            public List<ResponseEntry> ResponseList
             {
-                get { return responseList; }
+                get { return _responseList; }
             }
 
-            private List<byte> configList;
-            private List<byte[]> responseOnlyList;
-            private List<CommThread.ResponseEntry> responseList;
+            private readonly List<byte> _configList;
+            private readonly List<byte[]> _responseOnlyList;
+            private readonly List<ResponseEntry> _responseList;
         }
 
         public class ResponseEntry
         {
-            private byte[] requestArray;
-            private byte[] responseArray;
-            private List<byte[]> responseList;
+            private readonly byte[] _requestArray;
+            private readonly byte[] _responseArray;
+            private readonly List<byte[]> _responseList;
 
             public ResponseEntry(byte[] request, byte[] response)
             {
-                this.requestArray = request;
-                this.responseArray = response;
-                this.responseList = new List<byte[]>();
+                _requestArray = request;
+                _responseArray = response;
+                _responseList = new List<byte[]>();
             }
 
             public byte[] Request
             {
-                get { return requestArray; }
+                get { return _requestArray; }
             }
             public byte[] Response
             {
-                get { return responseArray; }
+                get { return _responseArray; }
             }
             public List<byte[]> ResponseList
             {
-                get { return responseList; }
+                get { return _responseList; }
             }
         }
 
         public enum ConceptType
         {
-            conceptBwmFast,
-            conceptKwp2000Bmw,
-            conceptKwp2000S,
-            conceptDs2,
-            concept1,
-            conceptIso9141,     // Concept2
-            concept3,
+            ConceptBwmFast,
+            ConceptKwp2000Bmw,
+            ConceptKwp2000S,
+            ConceptDs2,
+            Concept1,
+            ConceptIso9141,     // Concept2
+            Concept3,
         };
 
-        private static readonly long tickResolMs = Stopwatch.Frequency / 1000;
-        private const byte      tcpTesterAddr = 0xF4;
-        private const int       enetDiagPort = 6801;
-        private const int       enetControlPort = 6811;
-        private volatile bool   _stopThread;
-        private bool            _threadRunning;
-        private Thread          _workerThread;
-        private string          _comPort;
-        private ConceptType     _conceptType;
-        private bool            _adsAdapter;
-        private bool            _e61Internal;
-        private ConfigData      _configData;
-        private byte            _pcanHandle;
-        private long            _lastCanSendTick;
-        private TcpListener     _tcpServerDiag;
-        private TcpClient       _tcpClientDiag;
-        private NetworkStream   _tcpClientDiagStream;
-        private TcpListener     _tcpServerControl;
-        private TcpClient       _tcpClientControl;
-        private NetworkStream   _tcpClientControlStream;
-        private UdpClient       _udpClient;
-        private Socket          _udpSocket;
-        private byte[]          _udpBuffer;
-        private bool            _udpError;
-        private long            _lastTcpDiagRecTick;
-        private SerialPort      _serialPort;
-        private AutoResetEvent  _serialReceiveEvent;
-        private AutoResetEvent  _pcanReceiveEvent;
-        private byte[]          _sendData;
-        private byte[]          _receiveData;
-        private byte[]          _receiveDataMotorBackup;
-        private int             _noResponseCount;
-        private Stopwatch[]     _timeValveWrite = new Stopwatch[4];
-        private byte            _mode;  // 2: conveyor, 4: transport
-        private int             _outputs;   // 0:left, 1:right, 2:down, 3:comp
-        private int             _axisPosPrescaler;
-        private int             _axisPosRaw;
-        private double          _axisPosFilt;
-        private int             _batteryVoltage;
-        private int             _speed;
-        private int             _compressorRunningTime;
-        private int             _idleSpeedControl;
-        private Stopwatch       _timeIdleSpeedControlWrite;
-        private Stopwatch       _receiveStopWatch;
+        private static readonly long TickResolMs = Stopwatch.Frequency/1000;
+        private const byte TcpTesterAddr = 0xF4;
+        private const int EnetDiagPort = 6801;
+        private const int EnetControlPort = 6811;
+        private volatile bool _stopThread;
+        private bool _threadRunning;
+        private Thread _workerThread;
+        private string _comPort;
+        private ConceptType _conceptType;
+        private bool _adsAdapter;
+        private bool _e61Internal;
+        private ConfigData _configData;
+        private byte _pcanHandle;
+        private long _lastCanSendTick;
+        private TcpListener _tcpServerDiag;
+        private TcpClient _tcpClientDiag;
+        private NetworkStream _tcpClientDiagStream;
+        private TcpListener _tcpServerControl;
+        private TcpClient _tcpClientControl;
+        private NetworkStream _tcpClientControlStream;
+        private UdpClient _udpClient;
+        private Socket _udpSocket;
+        private readonly byte[] _udpBuffer;
+        private bool _udpError;
+        private long _lastTcpDiagRecTick;
+        private readonly SerialPort _serialPort;
+        private readonly AutoResetEvent _serialReceiveEvent;
+        private readonly AutoResetEvent _pcanReceiveEvent;
+        private readonly byte[] _sendData;
+        private readonly byte[] _receiveData;
+        private readonly byte[] _receiveDataMotorBackup;
+        private int _noResponseCount;
+        private readonly Stopwatch[] _timeValveWrite = new Stopwatch[4];
+        private byte _mode; // 2: conveyor, 4: transport
+        private int _outputs; // 0:left, 1:right, 2:down, 3:comp
+        private int _axisPosPrescaler;
+        private int _axisPosRaw;
+        private double _axisPosFilt;
+        private int _batteryVoltage;
+        private int _speed;
+        private int _compressorRunningTime;
+        private int _idleSpeedControl;
+        private readonly Stopwatch _timeIdleSpeedControlWrite;
+        private readonly Stopwatch _receiveStopWatch;
 
-        private const double    _filterConst = 0.95;
-        private const int       _isoTimeout = 2000;
+        private const double FilterConst = 0.95;
+        private const int IsoTimeout = 2000;
 
+        // ReSharper disable InconsistentNaming
         // 0x38 EHC
-        private byte[] _response381802FFFF = new byte[] {
+        private readonly byte[] _response381802FFFF = {
             0x85, 0xF1, 0x38, 0x58, 0x01, 0x5F, 0xB4, 0x60};
 
-        private byte[] _response38175FB4 = new byte[] {
+        private readonly byte[] _response38175FB4 = {
             0x8F, 0xF1, 0x38, 0x57, 0x01, 0x5F, 0xB4, 0x60, 0x01, 0x28,
             0x44, 0x53, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-        private byte[] _response381A80 = new byte[] {
+        private readonly byte[] _response381A80 = {
             0x9F, 0xF1, 0x38, 0x5A, 0x80, 0x00, 0x00, 0x06, 0x78, 0x43,
             0x14, 0x04, 0x11, 0x02, 0xB0, 0x4E, 0x4C, 0x20, 0x07, 0x04,
             0x23, 0x66, 0x00, 0x10, 0x72, 0x06, 0x3F, 0x01, 0x03, 0x01,
             0x04, 0x00, 0x00, 0x00};
 
-        private byte[] _response3821C2 = new byte[] {
+        private readonly byte[] _response3821C2 = {
             0x90, 0xF1, 0x38, 0x61, 0xC2, 0x03, 0xA1, 0x04, 0x01, 0x01,
             0x01, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x00, 0x8A};
 
-        private byte[] _response382230 = new byte[] {
+        private readonly byte[] _response382230 = {
             0x80, 0xF1, 0x38, 0xA7, 0x62, 0x30, 0x00, 0x07, 0x11, 0x00,
             0x01, 0xF4, 0x01, 0xF4, 0x01, 0xF4, 0x01, 0xAC, 0x03, 0x72,
             0x06, 0xC2, 0x01, 0x26, 0x02, 0x04, 0xFF, 0xBC, 0x00, 0xBC,
@@ -162,7 +165,7 @@ namespace CarSimulator
             0xB4, 0x00, 0xFC, 0x04, 0xFC, 0x04, 0x01, 0xFF, 0x64, 0xDE,
             0x42};
 
-        private byte[] _response121A80 = new byte[] {
+        private readonly byte[] _response121A80 = {
             0xBC, 0xF1, 0x12, 0x5A, 0x80, 0x00, 0x00, 0x07, 0x80, 0x81,
             0x25, 0x00, 0x00, 0x00, 0x12, 0x4C, 0x50, 0x20, 0x08, 0x02,
             0x15, 0x08, 0x08, 0x02, 0x30, 0x39, 0x34, 0x37, 0x03, 0x03,
@@ -171,20 +174,20 @@ namespace CarSimulator
             0x30, 0x30, 0x30, 0x38, 0x39, 0x51, 0x39, 0x30, 0x41, 0x39,
             0x34, 0x37, 0x42};
 
-        private byte[] _response121A94 = new byte[] {
+        private readonly byte[] _response121A94 = {
             0x8C, 0xF1, 0x12, 0x5A, 0x94, 0x31, 0x30, 0x33, 0x37, 0x33,
             0x38, 0x39, 0x38, 0x38, 0x32};
 
-        private byte[] _response122120 = new byte[] {
+        private readonly byte[] _response122120 = {
             0x8C, 0xF1, 0x12, 0x61, 0x20, 0x4F, 0x5F, 0x46, 0x31, 0x52,
             0x39, 0x34, 0x37, 0x20, 0x20};
 
-        private byte[] _response12224021 = new byte[] {
+        private readonly byte[] _response12224021 = {
             0x97, 0xF1, 0x12, 0x62, 0x40, 0x21, 0x39, 0x31, 0x33, 0x32,
             0x32, 0x35, 0x30, 0x06, 0x39, 0xB9, 0x20, 0x04, 0x3C, 0x39,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-        private byte[] _response12224022 = new byte[] {
+        private readonly byte[] _response12224022 = {
             0x80, 0xF1, 0x12, 0x4D, 0x62, 0x40, 0x22, 0x00, 0x01, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
@@ -195,13 +198,13 @@ namespace CarSimulator
             0xFF, 0x00, 0x88, 0x4B, 0xFF, 0x00, 0x0E, 0x00, 0xF5, 0x00,
             0x00};
 
-        private byte[] _response12224023 = new byte[] {
+        private readonly byte[] _response12224023 = {
             0xA0, 0xF1, 0x12, 0x62, 0x40, 0x23, 0x5B, 0x00, 0xAA, 0x00,
             0x00, 0x01, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0x4D, 0x4F, 0xFF,
             0xFF, 0xFF, 0xFF, 0xAA, 0xB3, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
             0x00, 0x15, 0x00, 0x00, 0x00};
 
-        private byte[] _response12230000000740 = new byte[] {
+        private readonly byte[] _response12230000000740 = {
             0x80, 0xF1, 0x12, 0x41, 0x63, 0x40, 0x43, 0x5A, 0x34, 0x38,
             0x39, 0x36, 0x38, 0x20, 0x09, 0x01, 0x12, 0x00, 0x00, 0x07,
             0x81, 0x17, 0x42, 0x00, 0x00, 0x07, 0x81, 0x17, 0x48, 0x00,
@@ -210,7 +213,7 @@ namespace CarSimulator
             0x30, 0x41, 0x39, 0x34, 0x37, 0x42, 0x57, 0x42, 0x41, 0x50,
             0x58, 0x31, 0x31, 0x30, 0x35, 0x30, 0xFF, 0xFF, 0xFF};
 
-        private byte[] _response12230000400740 = new byte[] {
+        private readonly byte[] _response12230000400740 = {
             0x80, 0xF1, 0x12, 0x41, 0x63, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
             0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
             0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
@@ -219,68 +222,68 @@ namespace CarSimulator
             0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
             0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
-        private byte[] _response121802FFFF = new byte[] {
+        private readonly byte[] _response121802FFFF = {
             0x85, 0xF1, 0x12, 0x58, 0x01, 0x42, 0x32, 0x24};
 
-        private byte[] _response12174232 = new byte[] {
+        private readonly byte[] _response12174232 = {
             0xA2, 0xF1, 0x12, 0x57, 0x01, 0x42, 0x32, 0x24, 0x06, 0x00,
             0x00, 0x21, 0x28, 0x42, 0x3F, 0x1F, 0x43, 0x36, 0x2F, 0x51,
             0x64, 0x00, 0x58, 0x00, 0x93, 0x43, 0xD0, 0x1F, 0x43, 0x37,
             0x31, 0x51, 0x64, 0x00, 0x57, 0x00, 0x93};
 
-        private byte[] _response12222000 = new byte[] {
+        private readonly byte[] _response12222000 = {
             0x84, 0xF1, 0x12, 0x62, 0x20, 0x00, 0x00};
 
         // Device A0 CCCA
-        private byte[] _responseA01802FFFF = new byte[] {
+        private readonly byte[] _responseA01802FFFF = {
             0x82, 0xF1, 0xA0, 0x58, 0x00};
 
-        private byte[] _responseA01A80p1 = new byte[] {
+        private readonly byte[] _responseA01A80p1 = {
             0x83, 0xF1, 0xA0, 0x7F, 0x1A, 0x78};
 
-        private byte[] _responseA01A80p2 = new byte[] {
+        private readonly byte[] _responseA01A80p2 = {
             0x9F, 0xF1, 0xA0, 0x5A, 0x80, 0x00, 0x00, 0x09, 0x19, 0x38,
             0x71, 0xC4, 0x0C, 0x09, 0x30, 0x4B, 0x49, 0x20, 0x07, 0x05,
             0x28, 0x10, 0x00, 0x0A, 0x94, 0x08, 0x6A, 0x01, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00};
 
-        private byte[] _responseA0222000 = new byte[] {
+        private readonly byte[] _responseA0222000 = {
             0x84, 0xF1, 0xA0, 0x62, 0x20, 0x00, 0x00};
 
-        private byte[] _responseA022F121 = new byte[] {
+        private readonly byte[] _responseA022F121 = {
             0x89, 0xF1, 0xA0, 0x62, 0xF1, 0x21, 0x00, 0x01, 0x00, 0x00, 0x07, 0xF3};
 
-        private byte[] _responseA022F120p1 = new byte[] {
+        private readonly byte[] _responseA022F120p1 = {
             0x83, 0xF1, 0xA0, 0x7F, 0x22, 0x78};
 
-        private byte[] _responseA022F120p2 = new byte[] {
+        private readonly byte[] _responseA022F120p2 = {
             0x86, 0xF1, 0xA0, 0x62, 0xF1, 0x20, 0x00, 0x03, 0x01};
 
-        private byte[] _responseA022F122p1 = new byte[] {
+        private readonly byte[] _responseA022F122p1 = {
             0x83, 0xF1, 0xA0, 0x7F, 0x22, 0x78};
 
-        private byte[] _responseA022F122p2 = new byte[] {
+        private readonly byte[] _responseA022F122p2 = {
             0x85, 0xF1, 0xA0, 0x62, 0xF1, 0x22, 0x00, 0x00};
 
-        private byte[] _responseA022F123 = new byte[] {
+        private readonly byte[] _responseA022F123 = {
             0x97, 0xF1, 0xA0, 0x62, 0xF1, 0x23, 0x00, 0x23, 0x29, 0xC3,
             0x3F, 0x06, 0x12, 0x7E, 0xFE, 0x00, 0x00, 0x00, 0x66, 0x01,
             0x00, 0x00, 0x01, 0x00, 0x00, 0x01};
 
-        private byte[] _responseA022F124 = new byte[] {
+        private readonly byte[] _responseA022F124 = {
             0x97, 0xF1, 0xA0, 0x62, 0xF1, 0x24, 0x00, 0x23, 0x29, 0xFA,
             0x97, 0x06, 0x0F, 0xC8, 0x3B, 0x00, 0x00, 0x00, 0x5C, 0x01,
             0x00, 0x00, 0x01, 0x7E, 0xFF, 0x01};
 
-        private byte[] _responseA022F125 = new byte[] {
+        private readonly byte[] _responseA022F125 = {
             0x8A, 0xF1, 0xA0, 0x62, 0xF1, 0x25, 0x00, 0x00, 0xD6, 0x00,
             0x84, 0x00, 0xFB};
 
-        private byte[] _responseA022F127 = new byte[] {
+        private readonly byte[] _responseA022F127 = {
             0x8D, 0xF1, 0xA0, 0x62, 0xF1, 0x27, 0x00, 0xC6, 0xA4, 0x06,
             0x17, 0x20, 0x56, 0x46, 0x01, 0x01};
 
-        private byte[] _responseA022F128 = new byte[] {
+        private readonly byte[] _responseA022F128 = {
             0x80, 0xF1, 0xA0, 0x7E, 0x62, 0xF1, 0x28, 0x00, 0x0A, 0x0B,
             0x01, 0x11, 0x58, 0xBE, 0x93, 0x10, 0x5B, 0x01, 0x01, 0x01,
             0x03, 0x10, 0xF4, 0x84, 0x44, 0x31, 0x11, 0x01, 0x01, 0x01,
@@ -296,31 +299,31 @@ namespace CarSimulator
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
         // device 0x40 (CAS car access system)
-        private byte[] _response401A90 = new byte[] {
+        private readonly byte[] _response401A90 = {
             0x89, 0xF1, 0x40, 0x5A, 0x90, 0x43, 0x5A, 0x34, 0x38, 0x39,
             0x36, 0x38};
 
-        private byte[] _response401802FFFF = new byte[] {
+        private readonly byte[] _response401802FFFF = {
             0x85, 0xF1, 0x40, 0x58, 0x01, 0xA1, 0x17, 0x21};
 
         // device 0x60
-        private byte[] _response601A80 = new byte[] {
+        private readonly byte[] _response601A80 = {
             0x9F, 0xF1, 0x60, 0x5A, 0x80, 0x00, 0x00, 0x09, 0x19, 0x61,
             0x08, 0x03, 0x07, 0x06, 0xE0, 0x53, 0x59, 0x20, 0x07, 0x05,
             0x31, 0x10, 0x00, 0x15, 0xB1, 0x89, 0x51, 0x00, 0x03, 0x10,
             0x01, 0x00, 0x00, 0x00};
 
-        private byte[] _response60210B = new byte[] {
+        private readonly byte[] _response60210B = {
             0x86, 0xF1, 0x60, 0x61, 0x0B, 0x00, 0x02, 0x1F, 0x7E};
 
-        private byte[] _response602117 = new byte[] {
+        private readonly byte[] _response602117 = {
             0x83, 0xF1, 0x60, 0x61, 0x17, 0x0C};
 
         // device 0x70
-        private byte[] _response70221000 = new byte[] {
+        private readonly byte[] _response70221000 = {
             0x86, 0xF1, 0x70, 0x62, 0x10, 0x00, 0xAD, 0xE8, 0xD2};
 
-        private byte[] _response701A80 = new byte[] {
+        private readonly byte[] _response701A80 = {
             0xBC, 0xF1, 0x70, 0x5A, 0x80, 0x00, 0x00, 0x09, 0x20, 0x30,
             0x82, 0x08, 0x35, 0x0D, 0x60, 0x53, 0x52, 0x20, 0x07, 0x05,
             0x29, 0x09, 0x00, 0x10, 0x70, 0x04, 0x3C, 0x00, 0x04, 0x00,
@@ -329,80 +332,81 @@ namespace CarSimulator
             0x30, 0x30, 0x30, 0x39, 0x31, 0x42, 0x35, 0x30, 0x46, 0x34,
             0x35, 0x30, 0x41};
 
-        private byte[] _response701A90 = new byte[] {
+        private readonly byte[] _response701A90 = {
             0x89, 0xF1, 0x70, 0x5A, 0x90, 0x43, 0x5A, 0x34, 0x38, 0x39,
             0x36, 0x38};
 
-        private byte[] _response70230000000712 = new byte[] {
+        private readonly byte[] _response70230000000712 = {
             0x93, 0xF1, 0x70, 0x63, 0x12, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
             0xFF, 0xFF, 0x20, 0x07, 0x05, 0x29, 0x00, 0x00, 0x09, 0x15,
             0x32, 0x73};
 
-        private byte[] _response70230000120712 = new byte[] {
+        private readonly byte[] _response70230000120712 = {
             0x93, 0xF1, 0x70, 0x63, 0x01, 0x43, 0x5A, 0x34, 0x38, 0x39,
             0x36, 0x38, 0x20, 0x13, 0x03, 0x05, 0x00, 0x00, 0x09, 0x20,
             0x30, 0x82};
 
         // device 0x73 CID
-        private byte[] _response731A80 = new byte[] {
+        private readonly byte[] _response731A80 = {
             0x9F, 0xF1, 0x73, 0x5A, 0x80, 0x00, 0x00, 0x09, 0x15, 0x19,
             0x79, 0x17, 0x02, 0x0A, 0x30, 0x49, 0x41, 0x20, 0x07, 0x05,
             0x25, 0x17, 0x00, 0x0B, 0xF5, 0x06, 0x09, 0x00, 0x03, 0x03,
             0x00, 0x00, 0x00, 0x00};
 
-        private byte[] _response731802FFFF = new byte[] {
+        private readonly byte[] _response731802FFFF = {
             0x82, 0xF1, 0x73, 0x58, 0x00};
 
         // device 0x78 IHK2
-        private byte[] _response781A80 = new byte[] {
+        private readonly byte[] _response781A80 = {
             0x9F, 0xF1, 0x78, 0x5A, 0x80, 0x00, 0x00, 0x09, 0x24, 0x87,
             0x02, 0x15, 0x0D, 0x07, 0x92, 0x47, 0x4C, 0x20, 0x07, 0x05,
             0x25, 0x21, 0x00, 0x15, 0x06, 0x05, 0x3D, 0xFF, 0x03, 0x03,
             0x3C, 0x00, 0x00, 0x00};
 
-        private byte[] _response781802FFFF = new byte[] {
+        private readonly byte[] _response781802FFFF = {
             0x82, 0xF1, 0x78, 0x58, 0x00};
 
         // device 0x64 PDC
-        private byte[] _response641A80 = new byte[] {
+        private readonly byte[] _response641A80 = {
             0x9F, 0xF1, 0x64, 0x5A, 0x80, 0x00, 0x00, 0x09, 0x18, 0x51,
             0x39, 0x01, 0x02, 0x04, 0x21, 0x4C, 0x57, 0x20, 0x07, 0x05,
             0x31, 0x11, 0x00, 0x0C, 0x5F, 0x09, 0x0F, 0x00, 0x03, 0x03,
             0x1E, 0x00, 0x00, 0x00, 0x59};
 
-        private byte[] _response641802FFFF = new byte[] {
+        private readonly byte[] _response641802FFFF = {
             0x85, 0xF1, 0x64, 0x58, 0x01, 0xE2, 0x05, 0x24};
 
-        private byte[] _response6417E205 = new byte[] {
+        private readonly byte[] _response6417E205 = {
             0x8C, 0xF1, 0x64, 0x57, 0x01, 0xE2, 0x05, 0x24, 0x01, 0x44,
             0x4A, 0x7B, 0x00, 0x00, 0x00};
 
         // device 0x65 SZM
-        private byte[] _response651A80 = new byte[] {
+        private readonly byte[] _response651A80 = {
             0x9F, 0xF1, 0x65, 0x5A, 0x80, 0x00, 0x00, 0x09, 0x18, 0x32,
             0x33, 0x03, 0x04, 0x07, 0x18, 0x44, 0x55, 0x20, 0x06, 0x08,
             0x15, 0x05, 0x00, 0x15, 0x1A, 0x02, 0x05, 0x01, 0x03, 0x03,
             0x3C, 0x00, 0x00, 0x00};
 
-        private byte[] _response651802FFFF = new byte[] {
+        private readonly byte[] _response651802FFFF = {
             0x85, 0xF1, 0x65, 0x58, 0x01, 0x9F, 0xF1, 0x24};
 
-        private byte[] _response65179FF1 = new byte[] {
+        private readonly byte[] _response65179FF1 = {
             0x89, 0xF1, 0x65, 0x57, 0x01, 0x9F, 0xF1, 0x24, 0x00, 0x00,
             0x44, 0x0E};
 
-        private byte[] _response6521F907 = new byte[] {
+        private readonly byte[] _response6521F907 = {
             0x85, 0xF1, 0x65, 0x61, 0xF9, 0x07, 0x00, 0x00};
 
         // device 0x78 IHK
-        private byte[] _response78300201 = new byte[] {
+        private readonly byte[] _response78300201 = {
             0x9F, 0xF1, 0x78, 0x70, 0x02, 0x01, 0xC3, 0x28, 0x50, 0x64,
             0x69, 0x65, 0x3F, 0xFF, 0xFF, 0x0E, 0x10, 0x0E, 0x10, 0x59,
             0x53, 0x00, 0xAA, 0xAA, 0xC8, 0x00, 0x00, 0x00, 0xFF, 0xFB,
             0x00, 0x00, 0x00, 0x0F};
 
-        private byte[] _response78300601 = new byte[] {
+        private readonly byte[] _response78300601 = {
             0x86, 0xF1, 0x78, 0x70, 0x06, 0x01, 0x00, 0x00, 0x00};
+        // ReSharper restore InconsistentNaming
 
         public bool Moving
         {
@@ -441,7 +445,7 @@ namespace CarSimulator
             _udpError = false;
             _lastTcpDiagRecTick = DateTime.MinValue.Ticks;
             _serialPort = new SerialPort();
-            _serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
+            _serialPort.DataReceived += SerialDataReceived;
             _serialReceiveEvent = new AutoResetEvent(false);
             _pcanReceiveEvent = new AutoResetEvent(false);
             _sendData = new byte[260];
@@ -524,15 +528,15 @@ namespace CarSimulator
                     {
                         switch (_conceptType)
                         {
-                            case ConceptType.concept1:
+                            case ConceptType.Concept1:
                                 SerialConcept1Transmission();
                                 break;
 
-                            case ConceptType.conceptIso9141:
+                            case ConceptType.ConceptIso9141:
                                 SerialIso9141Transmission();
                                 break;
 
-                            case ConceptType.concept3:
+                            case ConceptType.Concept3:
                                 SerialConcept3Transmission();
                                 break;
 
@@ -560,16 +564,16 @@ namespace CarSimulator
                 {
                     switch (_conceptType)
                     {
-                        case ConceptType.conceptBwmFast:
+                        case ConceptType.ConceptBwmFast:
                             break;
 
                         default:
                             return false;
                     }
-                    _tcpServerDiag = new TcpListener(IPAddress.Any, enetDiagPort);
+                    _tcpServerDiag = new TcpListener(IPAddress.Any, EnetDiagPort);
                     _tcpServerDiag.Start();
 
-                    _tcpServerControl = new TcpListener(IPAddress.Any, enetControlPort);
+                    _tcpServerControl = new TcpListener(IPAddress.Any, EnetControlPort);
                     _tcpServerControl.Start();
 
                     UdpConnect();
@@ -584,18 +588,17 @@ namespace CarSimulator
             }
             if (_comPort.StartsWith("CAN", StringComparison.OrdinalIgnoreCase))
             {
-                TPCANStatus stsResult;
-                TPCANBaudrate baudRate = TPCANBaudrate.PCAN_BAUD_500K;
+                TPCANBaudrate baudRate;
                 switch (_conceptType)
                 {
-                    case ConceptType.conceptBwmFast:
+                    case ConceptType.ConceptBwmFast:
                         baudRate = TPCANBaudrate.PCAN_BAUD_500K;
                         break;
 
                     default:
                         return false;
                 }
-                stsResult = PCANBasic.Initialize(PCANBasic.PCAN_USBBUS1, baudRate, TPCANType.PCAN_TYPE_DNG, 0, 0);
+                TPCANStatus stsResult = PCANBasic.Initialize(PCANBasic.PCAN_USBBUS1, baudRate, TPCANType.PCAN_TYPE_DNG, 0, 0);
                 if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                 {
                     return false;
@@ -616,30 +619,30 @@ namespace CarSimulator
                 Parity parity = Parity.Even;
                 switch (_conceptType)
                 {
-                    case ConceptType.conceptBwmFast:
+                    case ConceptType.ConceptBwmFast:
                         baudRate = 115200;
                         parity = Parity.None;
                         break;
 
-                    case ConceptType.conceptKwp2000Bmw:
+                    case ConceptType.ConceptKwp2000Bmw:
                         baudRate = 10400;
                         parity = Parity.None;
                         break;
 
-                    case ConceptType.conceptKwp2000S:
-                    case ConceptType.conceptDs2:
-                    case ConceptType.concept1:
+                    case ConceptType.ConceptKwp2000S:
+                    case ConceptType.ConceptDs2:
+                    case ConceptType.Concept1:
                         baudRate = 9600;
                         parity = Parity.Even;
                         break;
 
-                    case ConceptType.conceptIso9141:
+                    case ConceptType.ConceptIso9141:
                         baudRate = 10400;
                         //baudRate = 9600;
                         parity = Parity.None;
                         break;
 
-                    case ConceptType.concept3:
+                    case ConceptType.Concept3:
                         baudRate = 9600;
                         parity = Parity.Even;
                         break;
@@ -663,7 +666,7 @@ namespace CarSimulator
             return true;
         }
 
-        private bool Disconnect()
+        private void Disconnect()
         {
             UdpDisconnect();
 
@@ -680,6 +683,7 @@ namespace CarSimulator
             }
             catch (Exception)
             {
+                // ignored
             }
 
             // control port
@@ -695,6 +699,7 @@ namespace CarSimulator
             }
             catch (Exception)
             {
+                // ignored
             }
             if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
             {
@@ -710,8 +715,8 @@ namespace CarSimulator
             }
             catch (Exception)
             {
+                // ignored
             }
-            return true;
         }
 
         private void UdpConnect()
@@ -725,7 +730,7 @@ namespace CarSimulator
             _udpSocket.Bind(ipUdp);
             StartUdpSocketListen();
 #else
-            _udpClient = new UdpClient(enetControlPort);
+            _udpClient = new UdpClient(EnetControlPort);
             StartUdpListen();
 #endif
         }
@@ -742,6 +747,7 @@ namespace CarSimulator
             }
             catch (Exception)
             {
+                // ignored
             }
 
             try
@@ -754,6 +760,7 @@ namespace CarSimulator
             }
             catch (Exception)
             {
+                // ignored
             }
         }
 
@@ -773,7 +780,7 @@ namespace CarSimulator
             }
         }
 
-        private bool UpdateOutState()
+        private void UpdateOutState()
         {
             try
             {
@@ -784,8 +791,8 @@ namespace CarSimulator
             }
             catch (Exception)
             {
+                // ignored
             }
-            return true;
         }
 
         private bool ReceiveWakeUp(out byte address)
@@ -854,7 +861,7 @@ namespace CarSimulator
                 UpdateOutState();
                 // wait for first byte
                 // for stable switching we always need 10ms, but then are problems with win CE client
-                int interByteTimeout = _conceptType == ConceptType.conceptBwmFast ? 30 : 10;
+                int interByteTimeout = _conceptType == ConceptType.ConceptBwmFast ? 30 : 10;
                 int lastBytesToRead = 0;
                 int recLen = 0;
                 _receiveStopWatch.Reset();
@@ -903,7 +910,7 @@ namespace CarSimulator
             try
             {
                 // wait for first byte
-                int lastBytesToRead = 0;
+                int lastBytesToRead;
                 _receiveStopWatch.Reset();
                 _receiveStopWatch.Start();
                 for (; ; )
@@ -963,12 +970,13 @@ namespace CarSimulator
             return true;
         }
 
-        private bool OBDSend(byte[] sendData)
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool ObdSend(byte[] sendData)
         {
             switch (_conceptType)
             {
-                case ConceptType.conceptBwmFast:
-                case ConceptType.conceptKwp2000Bmw:
+                case ConceptType.ConceptBwmFast:
+                case ConceptType.ConceptKwp2000Bmw:
                     if (_tcpServerDiag != null)
                     {
                         return SendEnet(sendData);
@@ -979,7 +987,7 @@ namespace CarSimulator
                     }
                     return SendBmwfast(sendData);
 
-                case ConceptType.conceptKwp2000S:
+                case ConceptType.ConceptKwp2000S:
                     {
                         byte[] tempArray = new byte[260];
                         // convert to KWP2000*
@@ -1000,7 +1008,7 @@ namespace CarSimulator
                         return SendKwp2000S(tempArray);
                     }
 
-                case ConceptType.conceptDs2:
+                case ConceptType.ConceptDs2:
                     {
                         byte[] tempArray = new byte[260];
                         // convert to DS2
@@ -1029,12 +1037,12 @@ namespace CarSimulator
             return false;
         }
 
-        private bool OBDReceive(byte[] receiveData)
+        private bool ObdReceive(byte[] receiveData)
         {
             switch (_conceptType)
             {
-                case ConceptType.conceptBwmFast:
-                case ConceptType.conceptKwp2000Bmw:
+                case ConceptType.ConceptBwmFast:
+                case ConceptType.ConceptKwp2000Bmw:
                     if (_tcpServerDiag != null)
                     {
                         UdpRecover();
@@ -1047,7 +1055,7 @@ namespace CarSimulator
                     }
                     return ReceiveBmwFast(receiveData);
 
-                case ConceptType.conceptKwp2000S:
+                case ConceptType.ConceptKwp2000S:
                     {
                         if (!ReceiveKwp2000S(receiveData))
                         {
@@ -1071,7 +1079,7 @@ namespace CarSimulator
                         return true;
                     }
 
-                case ConceptType.conceptDs2:
+                case ConceptType.ConceptDs2:
                     {
                         if (!ReceiveDs2(receiveData))
                         {
@@ -1176,8 +1184,8 @@ namespace CarSimulator
         private void StartUdpSocketListen()
         {
             IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
-            EndPoint tempRemoteEP = (EndPoint)ip;
-            _udpSocket.BeginReceiveFrom(_udpBuffer, 0, _udpBuffer.Length, SocketFlags.None, ref tempRemoteEP, UdpSocketReceiver, _udpSocket);
+            EndPoint tempRemoteEp = ip;
+            _udpSocket.BeginReceiveFrom(_udpBuffer, 0, _udpBuffer.Length, SocketFlags.None, ref tempRemoteEp, UdpSocketReceiver, _udpSocket);
         }
 
         private void UdpSocketReceiver(IAsyncResult ar)
@@ -1190,8 +1198,8 @@ namespace CarSimulator
                     return;
                 }
                 IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
-                EndPoint tempRemoteEP = (EndPoint)ip;
-                int recLen = udpSocketLocal.EndReceiveFrom(ar, ref tempRemoteEP);
+                EndPoint tempRemoteEp = ip;
+                int recLen = udpSocketLocal.EndReceiveFrom(ar, ref tempRemoteEp);
 #if false
                 if (recLen > 0)
                 {
@@ -1233,7 +1241,7 @@ namespace CarSimulator
                     {
                         identMessage[idx++] = (byte)('a' + i);
                     }
-                    udpSocketLocal.SendTo(identMessage, tempRemoteEP);
+                    udpSocketLocal.SendTo(identMessage, tempRemoteEp);
                 }
                 StartUdpSocketListen();
             }
@@ -1255,6 +1263,7 @@ namespace CarSimulator
             }
             catch (Exception)
             {
+                // ignored
             }
 
             try
@@ -1268,9 +1277,11 @@ namespace CarSimulator
             }
             catch (Exception)
             {
+                // ignored
             }
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool ReceiveEnetControl()
         {
             try
@@ -1340,6 +1351,7 @@ namespace CarSimulator
             }
             catch (Exception)
             {
+                // ignored
             }
 
             try
@@ -1353,6 +1365,7 @@ namespace CarSimulator
             }
             catch (Exception)
             {
+                // ignored
             }
         }
 
@@ -1382,7 +1395,7 @@ namespace CarSimulator
             {
                 if (_tcpClientDiagStream != null)
                 {
-                    if ((Stopwatch.GetTimestamp() - _lastTcpDiagRecTick) > 2000 * tickResolMs)
+                    if ((Stopwatch.GetTimestamp() - _lastTcpDiagRecTick) > 2000 * TickResolMs)
                     {
                         _lastTcpDiagRecTick = Stopwatch.GetTimestamp();
                         byte[] dataBuffer = new byte[6 + 2];
@@ -1401,6 +1414,7 @@ namespace CarSimulator
             }
             catch (Exception)
             {
+                // ignored
             }
 
             try
@@ -1459,7 +1473,7 @@ namespace CarSimulator
                     byte sourceAddr = dataBuffer[6];
                     byte targetAddr = dataBuffer[7];
                     int len;
-                    if (sourceAddr == tcpTesterAddr) sourceAddr = 0xF1;
+                    if (sourceAddr == TcpTesterAddr) sourceAddr = 0xF1;
                     if (dataLen > 0x3F)
                     {
                         receiveData[0] = 0x80;
@@ -1507,7 +1521,7 @@ namespace CarSimulator
             {
                 byte targetAddr = sendData[1];
                 byte sourceAddr = sendData[2];
-                if (targetAddr == 0xF1) targetAddr = tcpTesterAddr;
+                if (targetAddr == 0xF1) targetAddr = TcpTesterAddr;
                 int dataOffset = 3;
                 int dataLength = sendData[0] & 0x3F;
                 if (dataLength == 0)
@@ -1579,9 +1593,6 @@ namespace CarSimulator
 
         private bool ReceiveCan(byte[] receiveData)
         {
-            TPCANMsg CANMsg;
-            TPCANTimestamp CANTimeStamp;
-            TPCANStatus stsResult;
             int len;
             byte blockCount = 0;
             byte sourceAddr = 0;
@@ -1595,55 +1606,59 @@ namespace CarSimulator
             {
                 for (; ; )
                 {
-                    stsResult = PCANBasic.Read(_pcanHandle, out CANMsg, out CANTimeStamp);
+                    TPCANMsg canMsg;
+                    TPCANTimestamp canTimeStamp;
+                    TPCANStatus stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out canTimeStamp);
                     if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                     {
                         break;
                     }
                     _receiveStopWatch.Reset();
                     _receiveStopWatch.Start();
-                    if ((CANMsg.LEN != 8) || (CANMsg.MSGTYPE != TPCANMessageType.PCAN_MESSAGE_STANDARD) ||
-                        ((CANMsg.ID & 0xFF00) != 0x0600))
+                    if ((canMsg.LEN != 8) || (canMsg.MSGTYPE != TPCANMessageType.PCAN_MESSAGE_STANDARD) ||
+                        ((canMsg.ID & 0xFF00) != 0x0600))
                     {
                         _receiveStopWatch.Stop();
                         return false;
                     }
-                    byte frameType = (byte)((CANMsg.DATA[1] >> 4) & 0x0F);
+                    byte frameType = (byte)((canMsg.DATA[1] >> 4) & 0x0F);
                     if (recLen == 0)
                     {   // first telegram
-                        sourceAddr = (byte)(CANMsg.ID & 0xFF);
-                        targetAddr = CANMsg.DATA[0];
+                        sourceAddr = (byte)(canMsg.ID & 0xFF);
+                        targetAddr = canMsg.DATA[0];
                         switch (frameType)
                         {
                             case 0: // single frame
-                                len = CANMsg.DATA[1] & 0x0F;
+                                len = canMsg.DATA[1] & 0x0F;
                                 if (len > 6)
                                 {
                                     _receiveStopWatch.Stop();
                                     return false;
                                 }
-                                dataBuffer = new byte[CANMsg.DATA[1] & 0x0F];
-                                Array.Copy(CANMsg.DATA, 2, dataBuffer, 0, len);
+                                dataBuffer = new byte[canMsg.DATA[1] & 0x0F];
+                                Array.Copy(canMsg.DATA, 2, dataBuffer, 0, len);
                                 recLen = len;
                                 break;
 
                             case 1: // first frame
-                                len = (((int)CANMsg.DATA[1] & 0x0F) << 8) + CANMsg.DATA[2];
+                                len = (((int)canMsg.DATA[1] & 0x0F) << 8) + canMsg.DATA[2];
                                 dataBuffer = new byte[len];
-                                Array.Copy(CANMsg.DATA, 3, dataBuffer, 0, 5);
+                                Array.Copy(canMsg.DATA, 3, dataBuffer, 0, 5);
                                 recLen = 5;
                                 blockCount = 1;
                                 {
-                                    TPCANMsg SendMsg = new TPCANMsg();
-                                    SendMsg.DATA = new byte[8];
-                                    SendMsg.ID = (uint)(0x600 + targetAddr);
-                                    SendMsg.LEN = 8;
-                                    SendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
-                                    SendMsg.DATA[0] = sourceAddr;
-                                    SendMsg.DATA[1] = 0x30;  // FC
-                                    SendMsg.DATA[2] = 0x00;  // Block size (no control)
-                                    SendMsg.DATA[3] = 0x00;  // Min sep. Time
-                                    stsResult = PCANBasic.Write(_pcanHandle, ref SendMsg);
+                                    TPCANMsg sendMsg = new TPCANMsg
+                                    {
+                                        DATA = new byte[8],
+                                        ID = (uint) (0x600 + targetAddr),
+                                        LEN = 8,
+                                        MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD
+                                    };
+                                    sendMsg.DATA[0] = sourceAddr;
+                                    sendMsg.DATA[1] = 0x30;  // FC
+                                    sendMsg.DATA[2] = 0x00;  // Block size (no control)
+                                    sendMsg.DATA[3] = 0x00;  // Min sep. Time
+                                    stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
                                     if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                                     {
                                         _receiveStopWatch.Stop();
@@ -1664,10 +1679,14 @@ namespace CarSimulator
                             _receiveStopWatch.Stop();
                             return false;
                         }
-                        if ((sourceAddr != (CANMsg.ID & 0xFF)) || (targetAddr != CANMsg.DATA[0]) ||
-                            ((CANMsg.DATA[1] & 0x0F) != (blockCount & 0x0F)))
+                        if ((sourceAddr != (canMsg.ID & 0xFF)) || (targetAddr != canMsg.DATA[0]) ||
+                            ((canMsg.DATA[1] & 0x0F) != (blockCount & 0x0F)))
                         {
                             _receiveStopWatch.Stop();
+                            return false;
+                        }
+                        if (dataBuffer == null)
+                        {
                             return false;
                         }
                         len = dataBuffer.Length - recLen;
@@ -1675,10 +1694,11 @@ namespace CarSimulator
                         {
                             len = 6;
                         }
-                        Array.Copy(CANMsg.DATA, 2, dataBuffer, recLen, len);
+                        Array.Copy(canMsg.DATA, 2, dataBuffer, recLen, len);
                         recLen += len;
                         blockCount++;
                     }
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                     if (dataBuffer != null && recLen >= dataBuffer.Length)
                     {
                         break;
@@ -1729,14 +1749,13 @@ namespace CarSimulator
 
         private bool SendCan(byte[] sendData)
         {
-            TPCANMsg CANMsg;
-            TPCANTimestamp CANTimeStamp;
+            TPCANMsg canMsg;
+            TPCANTimestamp canTimeStamp;
             TPCANStatus stsResult;
-            TPCANMsg SendMsg = new TPCANMsg();
-            SendMsg.DATA = new byte[8];
-            int len;
-            bool waitForFC = false;
-            byte blockCount = 0;
+            TPCANMsg sendMsg = new TPCANMsg
+            {
+                DATA = new byte[8]
+            };
             byte blockSize = 0;
             byte sepTime = 0;
 
@@ -1750,24 +1769,24 @@ namespace CarSimulator
                 dataOffset = 4;
             }
 
-            if ((Stopwatch.GetTimestamp() - _lastCanSendTick) < 10 * tickResolMs)
+            if ((Stopwatch.GetTimestamp() - _lastCanSendTick) < 10 * TickResolMs)
             {
                 Thread.Sleep(10);   // required for multiple telegrams
             }
             // clear input buffer
-            while (PCANBasic.Read(_pcanHandle, out CANMsg, out CANTimeStamp) == TPCANStatus.PCAN_ERROR_OK)
+            while (PCANBasic.Read(_pcanHandle, out canMsg, out canTimeStamp) == TPCANStatus.PCAN_ERROR_OK)
             {
             }
 
             if (dataLength <= 6)
             {   // single frame
-                SendMsg.ID = (uint)(0x600 + sourceAddr);
-                SendMsg.LEN = 8;
-                SendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
-                SendMsg.DATA[0] = targetAddr;
-                SendMsg.DATA[1] = (byte)(0x00 | dataLength);  // SF
-                Array.Copy(sendData, dataOffset, SendMsg.DATA, 2, dataLength);
-                stsResult = PCANBasic.Write(_pcanHandle, ref SendMsg);
+                sendMsg.ID = (uint)(0x600 + sourceAddr);
+                sendMsg.LEN = 8;
+                sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                sendMsg.DATA[0] = targetAddr;
+                sendMsg.DATA[1] = (byte)(0x00 | dataLength);  // SF
+                Array.Copy(sendData, dataOffset, sendMsg.DATA, 2, dataLength);
+                stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
                 if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                 {
                     return false;
@@ -1776,36 +1795,36 @@ namespace CarSimulator
                 return true;
             }
             // first frame
-            SendMsg.ID = (uint)(0x600 + sourceAddr);
-            SendMsg.LEN = 8;
-            SendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
-            SendMsg.DATA[0] = targetAddr;
-            SendMsg.DATA[1] = (byte)(0x10 | ((dataLength >> 8) & 0xFF));  // FF
-            SendMsg.DATA[2] = (byte)dataLength;
-            len = 5;
-            Array.Copy(sendData, dataOffset, SendMsg.DATA, 3, len);
+            sendMsg.ID = (uint)(0x600 + sourceAddr);
+            sendMsg.LEN = 8;
+            sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+            sendMsg.DATA[0] = targetAddr;
+            sendMsg.DATA[1] = (byte)(0x10 | ((dataLength >> 8) & 0xFF));  // FF
+            sendMsg.DATA[2] = (byte)dataLength;
+            int len = 5;
+            Array.Copy(sendData, dataOffset, sendMsg.DATA, 3, len);
             dataLength -= len;
             dataOffset += len;
-            stsResult = PCANBasic.Write(_pcanHandle, ref SendMsg);
+            stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
             if (stsResult != TPCANStatus.PCAN_ERROR_OK)
             {
                 return false;
             }
-            waitForFC = true;
-            blockCount = 1;
+            bool waitForFc = true;
+            byte blockCount = 1;
 
             for (; ; )
             {
-                if (waitForFC)
+                if (waitForFc)
                 {
-                    bool wait = false;
+                    bool wait;
                     do
                     {
                         _receiveStopWatch.Reset();
                         _receiveStopWatch.Start();
                         for (; ; )
                         {
-                            stsResult = PCANBasic.Read(_pcanHandle, out CANMsg, out CANTimeStamp);
+                            stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out canTimeStamp);
                             if (stsResult == TPCANStatus.PCAN_ERROR_OK)
                             {
                                 break;
@@ -1817,17 +1836,17 @@ namespace CarSimulator
                             }
                         }
                         _receiveStopWatch.Stop();
-                        if ((CANMsg.LEN < 4) || (CANMsg.MSGTYPE != TPCANMessageType.PCAN_MESSAGE_STANDARD) ||
-                            ((CANMsg.ID & 0xFF00) != 0x0600))
+                        if ((canMsg.LEN < 4) || (canMsg.MSGTYPE != TPCANMessageType.PCAN_MESSAGE_STANDARD) ||
+                            ((canMsg.ID & 0xFF00) != 0x0600))
                         {
                             return false;
                         }
-                        if (((CANMsg.ID & 0xFF) != targetAddr) || (CANMsg.DATA[0] != sourceAddr) ||
-                            ((CANMsg.DATA[1] & 0xF0) != 0x30))
+                        if (((canMsg.ID & 0xFF) != targetAddr) || (canMsg.DATA[0] != sourceAddr) ||
+                            ((canMsg.DATA[1] & 0xF0) != 0x30))
                         {
                             return false;
                         }
-                        switch (CANMsg.DATA[1] & 0x0F)
+                        switch (canMsg.DATA[1] & 0x0F)
                         {
                             case 0: // CTS
                                 wait = false;
@@ -1840,26 +1859,26 @@ namespace CarSimulator
                             default:
                                 return false;
                         }
-                        blockSize = CANMsg.DATA[2];
-                        sepTime = CANMsg.DATA[3];
+                        blockSize = canMsg.DATA[2];
+                        sepTime = canMsg.DATA[3];
                     } while (wait);
                 }
                 // consecutive frame
-                SendMsg.ID = (uint)(0x600 + sourceAddr);
-                SendMsg.LEN = 8;
-                SendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
-                SendMsg.DATA[0] = targetAddr;
-                SendMsg.DATA[1] = (byte)(0x20 | (blockCount & 0x0F));  // CF
+                sendMsg.ID = (uint)(0x600 + sourceAddr);
+                sendMsg.LEN = 8;
+                sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                sendMsg.DATA[0] = targetAddr;
+                sendMsg.DATA[1] = (byte)(0x20 | (blockCount & 0x0F));  // CF
                 len = dataLength;
                 if (len > 6)
                 {
                     len = 6;
                 }
-                Array.Copy(sendData, dataOffset, SendMsg.DATA, 2, len);
+                Array.Copy(sendData, dataOffset, sendMsg.DATA, 2, len);
                 dataLength -= len;
                 dataOffset += len;
                 blockCount++;
-                stsResult = PCANBasic.Write(_pcanHandle, ref SendMsg);
+                stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
                 if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                 {
                     return false;
@@ -1869,16 +1888,16 @@ namespace CarSimulator
                     break;
                 }
 
-                waitForFC = false;
+                waitForFc = false;
                 if (blockSize > 0)
                 {
                     if (blockSize == 1)
                     {
-                        waitForFC = true;
+                        waitForFc = true;
                     }
                     blockSize--;
                 }
-                if (!waitForFC && sepTime > 0)
+                if (!waitForFc && sepTime > 0)
                 {
                     Thread.Sleep(sepTime);
                 }
@@ -2062,7 +2081,7 @@ namespace CarSimulator
                 {
                     return false;
                 }
-                if (!ReceiveData(buffer, 0, 1, _isoTimeout, _isoTimeout))
+                if (!ReceiveData(buffer, 0, 1, IsoTimeout, IsoTimeout))
                 {
                     return false;
                 }
@@ -2084,7 +2103,7 @@ namespace CarSimulator
         private bool ReceiveIso9141Block(byte[] recData)
         {
             // block length
-            if (!ReceiveData(recData, 0, 1, _isoTimeout, _isoTimeout))
+            if (!ReceiveData(recData, 0, 1, IsoTimeout, IsoTimeout))
             {
                 Debug.WriteLine("Nothing received");
                 return false;
@@ -2104,7 +2123,7 @@ namespace CarSimulator
                 {
                     return false;
                 }
-                if (!ReceiveData(recData, i + 1, 1, _isoTimeout, _isoTimeout))
+                if (!ReceiveData(recData, i + 1, 1, IsoTimeout, IsoTimeout))
                 {
                     Debug.WriteLine("Nothing received");
                     return false;
@@ -2165,7 +2184,7 @@ namespace CarSimulator
                 {
                     if (_axisPosRaw < 80) _axisPosRaw++;
                 }
-                _axisPosFilt = (_axisPosFilt * _filterConst) + ((double)_axisPosRaw * (1 - _filterConst));
+                _axisPosFilt = (_axisPosFilt * FilterConst) + ((double)_axisPosRaw * (1 - FilterConst));
             }
 
             if (VariableValues)
@@ -2202,14 +2221,14 @@ namespace CarSimulator
                 _compressorRunningTime = 0;
             }
 
-            if (!OBDReceive(_receiveData))
+            if (!ObdReceive(_receiveData))
             {
                 return;
             }
             if (!_adsAdapter && (_tcpServerDiag == null) && (_pcanHandle == PCANBasic.PCAN_NONEBUS))
             {
                 // send echo
-                OBDSend(_receiveData);
+                ObdSend(_receiveData);
             }
             if (_noResponseCount > 0)
             {   // no response requested
@@ -2231,7 +2250,7 @@ namespace CarSimulator
                 _sendData[i++] = 0xDF;  // key low
                 _sendData[i++] = 0x8F;  // key high
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
                 Debug.WriteLine("Start communication");
                 standardResponse = true;
             }
@@ -2246,7 +2265,7 @@ namespace CarSimulator
                 _sendData[i++] = _receiveData[1];
                 _sendData[i++] = 0x7E;
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
                 Debug.WriteLine("Tester present");
                 standardResponse = true;
             }
@@ -2261,7 +2280,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x00;
                 _sendData[i++] = (byte)(~_receiveData[3]);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
                 Debug.WriteLine("Program CAN adapter");
                 standardResponse = true;
             }
@@ -2299,7 +2318,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x00;
                 _sendData[i++] = 0x00;
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -2330,7 +2349,7 @@ namespace CarSimulator
 
                 _sendData[i++] = 0x4E;
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -2344,7 +2363,7 @@ namespace CarSimulator
                 // speed km/h
                 _sendData[12] = (byte)_speed;
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -2364,7 +2383,7 @@ namespace CarSimulator
                 _sendData[i++] = (byte)(_compressorRunningTime >> 8);
                 _sendData[i++] = 0x00;
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x86 &&
@@ -2384,7 +2403,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x00;
                 _sendData[i++] = _mode;
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] >= 0x83 &&
@@ -2405,7 +2424,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x00;
                 _sendData[i++] = (byte)(((_outputs & (1 << channel)) != 0x00) ? 0x01 : 0x00);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x86 &&
@@ -2427,7 +2446,7 @@ namespace CarSimulator
                 _sendData[i++] = _receiveData[7];
                 _sendData[i++] = _receiveData[8];
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
 
                 _timeValveWrite[channel].Reset();
                 _timeValveWrite[channel].Start();
@@ -2455,7 +2474,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x0C;
                 _sendData[i++] = _receiveData[5];
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
                 switch (_receiveData[5])
                 {
                     case 0x00:  // normal
@@ -2502,7 +2521,7 @@ namespace CarSimulator
             {   // read error memory for DIS
                 Array.Copy(_response381802FFFF, _sendData, _response381802FFFF.Length);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -2514,8 +2533,6 @@ namespace CarSimulator
             {
                 Array.Copy(_response38175FB4, _sendData, _response38175FB4.Length);
 
-                int intValue;
-
                 // Fehlerhäufigkeit
                 _sendData[8] = 3;
 
@@ -2524,7 +2541,7 @@ namespace CarSimulator
 
                 // Kilometerstand
                 // 0xFFFF: 524280 = 0x7FFF8 (Left shift 3)
-                intValue = (int)(123456 >> 3);
+                int intValue = (int)(123456 >> 3);
                 _sendData[10] = (byte)(intValue >> 8);
                 _sendData[11] = (byte)(intValue);
 
@@ -2541,7 +2558,7 @@ namespace CarSimulator
                 _sendData[16] = (byte)(intValue >> 8);
                 _sendData[17] = (byte)(intValue);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -2558,7 +2575,7 @@ namespace CarSimulator
                 _sendData[19] = 0x05;
                 _sendData[20] = 0x11;
 #endif
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -2569,7 +2586,7 @@ namespace CarSimulator
             {   // standard response 2230 for INPA
                 Array.Copy(_response382230, _sendData, _response382230.Length);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             // motor unit DDE6.0 for M47 TÜ2
             else if (
@@ -2591,7 +2608,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x85;
                 _sendData[i++] = (byte)_idleSpeedControl;
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 (_receiveData[0] & 0xC0) == 0x80 &&
@@ -2918,7 +2935,7 @@ namespace CarSimulator
                 }
                 _sendData[0] = (byte)(0x80 | (i - 3));
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x84 &&
@@ -2937,7 +2954,7 @@ namespace CarSimulator
                 _sendData[9] = 0x22;
                 _sendData[10] = 0x24;
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -2951,7 +2968,7 @@ namespace CarSimulator
                 // digit 4 = error type (2=disrupted)
                 Array.Copy(_response12174232, _sendData, _response12174232.Length);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -2964,8 +2981,6 @@ namespace CarSimulator
                 // digit 3 = zylinder numer
                 // digit 4 = error type (2=disrupted)
                 Array.Copy(_response12174232, _sendData, _response12174232.Length);
-
-                int intValue;
 
                 _sendData[6] = 0x22;
 
@@ -2998,7 +3013,7 @@ namespace CarSimulator
                 _sendData[8] = 0x07;
 
                 // Fehlerdetail
-                intValue = 0x1234;
+                int intValue = 0x1234;
                 _sendData[9] = (byte)(intValue >> 8);
                 _sendData[10] = (byte)(intValue);
 
@@ -3077,7 +3092,7 @@ namespace CarSimulator
                 _sendData[25] = (byte)(intValue >> 8);
                 _sendData[26] = (byte)(intValue);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -3089,7 +3104,7 @@ namespace CarSimulator
             {   // motor info log
                 Array.Copy(_response12222000, _sendData, _response12222000.Length);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -3100,7 +3115,7 @@ namespace CarSimulator
             {   // standard response 1A80 for INPA
                 Array.Copy(_response121A80, _sendData, _response121A80.Length);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -3111,7 +3126,7 @@ namespace CarSimulator
             {   // standard response 1A94 for DIS
                 Array.Copy(_response121A94, _sendData, _response121A94.Length);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -3122,7 +3137,7 @@ namespace CarSimulator
             {   // standard response 2120 for DIS
                 Array.Copy(_response122120, _sendData, _response122120.Length);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x86 &&
@@ -3137,7 +3152,7 @@ namespace CarSimulator
             {   // standard response 230000000740 for DIS
                 Array.Copy(_response12230000000740, _sendData, _response12230000000740.Length);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x86 &&
@@ -3152,7 +3167,7 @@ namespace CarSimulator
             {   // standard response 230000000740 for DIS
                 Array.Copy(_response12230000400740, _sendData, _response12230000400740.Length);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -3164,7 +3179,7 @@ namespace CarSimulator
             {   // PM ident
                 Array.Copy(_response12224021, _sendData, _response12224021.Length);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -3176,13 +3191,11 @@ namespace CarSimulator
             {   // PM info 1/3
                 Array.Copy(_response12224022, _sendData, _response12224022.Length);
 
-                int intValue;
-
                 // Batterieentladung gesamt Ah
                 // 0x0000 = 0
                 // 0xFFFF = 19088.16
                 // Bat [Ah] * 0xFFFF / 19088.16
-                intValue = (int)(1345.6 * 0xFFFF / 19088.16);
+                int intValue = (int)(1345.6 * 0xFFFF / 19088.16);
                 _sendData[7] = (byte)(intValue >> 8);
                 _sendData[8] = (byte)(intValue);
 
@@ -3337,7 +3350,7 @@ namespace CarSimulator
                 _sendData[79] = (byte)(intValue >> 8);
                 _sendData[80] = (byte)(intValue);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -3349,7 +3362,6 @@ namespace CarSimulator
             {   // PM info 2
                 Array.Copy(_response12224023, _sendData, _response12224023.Length);
 #if true
-                double value;
 
                 // Battery capacity
                 // 0x00 = 0
@@ -3363,7 +3375,7 @@ namespace CarSimulator
                 // 0xFF = -50
                 // bit 7 : 1= neg
                 // (SOH * 0x7F / 50.0) + ((SOH < 0) ? 0x80 : 0x00)
-                value = -45.0;
+                double value = -45.0;
                 _sendData[7] = (byte)((Math.Abs(value) * 0x7F / 50.0) + ((value < 0) ? 0x80 : 0x00));
 
                 // SOC Fit
@@ -3431,7 +3443,7 @@ namespace CarSimulator
                 // IBS error Bus Coll
                 _sendData[34] = 2;
 #endif
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x84 &&
@@ -3443,7 +3455,7 @@ namespace CarSimulator
                 _receiveData[6] == 0xFF)
             {   // read error memory
                 Array.Copy(_responseA01802FFFF, _sendData, _responseA01802FFFF.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -3453,10 +3465,10 @@ namespace CarSimulator
                 _receiveData[4] == 0x80)
             {   // CCC nav
                 Array.Copy(_responseA01A80p1, _sendData, _responseA01A80p1.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
 
                 Array.Copy(_responseA01A80p2, _sendData, _responseA01A80p2.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -3468,7 +3480,7 @@ namespace CarSimulator
             {   // CCC nav
                 Array.Copy(_responseA0222000, _sendData, _responseA0222000.Length);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -3480,14 +3492,12 @@ namespace CarSimulator
             {   // CCC nav tacho pulses
                 Array.Copy(_responseA022F121, _sendData, _responseA022F121.Length);
 
-                int intValue;
-
                 // GYRO status
                 // 0=OK
                 _sendData[6] = 0;
 
                 // tacho pulses
-                intValue = 312;
+                int intValue = 312;
                 _sendData[8] = (byte)(intValue >> 8);
                 _sendData[9] = (byte)(intValue);
 
@@ -3498,7 +3508,7 @@ namespace CarSimulator
                 _sendData[10] = (byte)(intValue >> 8);
                 _sendData[11] = (byte)(intValue);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -3509,7 +3519,7 @@ namespace CarSimulator
                 _receiveData[5] == 0x20)
             {   // CCC nav GPS status
                 Array.Copy(_responseA022F120p1, _sendData, _responseA022F120p1.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
 
                 Array.Copy(_responseA022F120p2, _sendData, _responseA022F120p2.Length);
 
@@ -3535,7 +3545,7 @@ namespace CarSimulator
                 // test for CarControl
                 //Thread.Sleep(750);
                 Thread.Sleep(300);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -3546,20 +3556,19 @@ namespace CarSimulator
                 _receiveData[5] == 0x22)
             {   // CCC nav, Self test GPS
                 Array.Copy(_responseA022F122p1, _sendData, _responseA022F122p1.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
 
                 Array.Copy(_responseA022F122p2, _sendData, _responseA022F122p2.Length);
 
-                int intValue;
                 // Self test GPS
                 // 0=OK
                 // 1=Not connected
                 // 2=Short circuit
-                intValue = 0;
+                int intValue = 0;
                 _sendData[6] = (byte)(intValue >> 8);
                 _sendData[7] = (byte)(intValue);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -3571,9 +3580,6 @@ namespace CarSimulator
             {   // CCC nav position
                 Array.Copy(_responseA022F123, _sendData, _responseA022F123.Length);
 
-                int intValue;
-                long longValue;
-
                 // GPS data valid
                 // 0=OK
                 _sendData[6] = 0;
@@ -3582,8 +3588,8 @@ namespace CarSimulator
                 // max = +0x7FFFFFFF;
                 // min = -0x7FFFFFFF;
                 // 180 Grad, 60 min, 60 sec, Rest ms (180 * 60 * 60 * 1000)
-                longValue = 45 * 60 * 60 * 1000 + 32 * 60 * 1000 + 56 * 1000 + 764;
-                intValue = (int)(longValue * 0x7FFFFFFF / (180 * 60 * 60 * 1000));
+                long longValue = 45 * 60 * 60 * 1000 + 32 * 60 * 1000 + 56 * 1000 + 764;
+                int intValue = (int)(longValue * 0x7FFFFFFF / (180 * 60 * 60 * 1000));
                 _sendData[7] = (byte)(intValue >> 24);
                 _sendData[8] = (byte)(intValue >> 16);
                 _sendData[9] = (byte)(intValue >> 8);
@@ -3607,7 +3613,7 @@ namespace CarSimulator
                 _sendData[17] = (byte)(intValue >> 8);
                 _sendData[18] = (byte)(intValue);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -3619,15 +3625,12 @@ namespace CarSimulator
             {   // CCC nav dr position
                 Array.Copy(_responseA022F124, _sendData, _responseA022F124.Length);
 
-                int intValue;
-                long longValue;
-
                 // Position latitude
                 // max = +0x7FFFFFFF;
                 // min = -0x7FFFFFFF;
                 // 180 Grad, 60 min, 60 sec, Rest ms (180 * 60 * 60 * 1000)
-                longValue = 45 * 60 * 60 * 1000 + 32 * 60 * 1000 + 56 * 1000 + 764;
-                intValue = (int)(longValue * 0x7FFFFFFF / (180 * 60 * 60 * 1000));
+                long longValue = 45 * 60 * 60 * 1000 + 32 * 60 * 1000 + 56 * 1000 + 764;
+                int intValue = (int)(longValue * 0x7FFFFFFF / (180 * 60 * 60 * 1000));
                 _sendData[7] = (byte)(intValue >> 24);
                 _sendData[8] = (byte)(intValue >> 16);
                 _sendData[9] = (byte)(intValue >> 8);
@@ -3675,7 +3678,7 @@ namespace CarSimulator
                 // Status Richtung 1 = OK
                 _sendData[25] = 1;
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -3687,10 +3690,8 @@ namespace CarSimulator
             {   // CCC nav resolution
                 Array.Copy(_responseA022F125, _sendData, _responseA022F125.Length);
 
-                int intValue;
-
                 // Vertikale Auflösung
-                intValue = 1234;
+                int intValue = 1234;
                 _sendData[7] = (byte)(intValue >> 8);
                 _sendData[8] = (byte)(intValue);
 
@@ -3704,7 +3705,7 @@ namespace CarSimulator
                 _sendData[11] = (byte)(intValue >> 8);
                 _sendData[12] = (byte)(intValue);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -3731,7 +3732,7 @@ namespace CarSimulator
                     _sendData[13] = IntToBcd(dateTime.Second);  // sec
                 }
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -3746,7 +3747,7 @@ namespace CarSimulator
                 _sendData[8] = 20;   // verfolgbare satelliten
                 _sendData[9] = 22;   // empfangbare satelliten
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             // device 0x040
             else if (
@@ -3757,7 +3758,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x90)
             {
                 Array.Copy(_response401A90, _sendData, _response401A90.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x84 &&
@@ -3773,7 +3774,7 @@ namespace CarSimulator
                 _sendData[0] = 0x82;
                 _sendData[4] = 0x00;
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             // device 0x60
             else if (
@@ -3784,7 +3785,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x80)
             {
                 Array.Copy(_response601A80, _sendData, _response601A80.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -3794,7 +3795,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x0B)
             {
                 Array.Copy(_response60210B, _sendData, _response60210B.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -3804,7 +3805,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x17)
             {
                 Array.Copy(_response602117, _sendData, _response602117.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             // device 0x70
             else if (
@@ -3816,7 +3817,7 @@ namespace CarSimulator
                 _receiveData[5] == 0x00)
             {
                 Array.Copy(_response70221000, _sendData, _response70221000.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -3826,7 +3827,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x80)
             {
                 Array.Copy(_response701A80, _sendData, _response701A80.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -3836,7 +3837,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x90)
             {
                 Array.Copy(_response701A90, _sendData, _response701A90.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x86 &&
@@ -3850,7 +3851,7 @@ namespace CarSimulator
                 _receiveData[8] == 0x12)
             {
                 Array.Copy(_response70230000000712, _sendData, _response70230000000712.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x86 &&
@@ -3864,7 +3865,7 @@ namespace CarSimulator
                 _receiveData[8] == 0x12)
             {
                 Array.Copy(_response70230000120712, _sendData, _response70230000120712.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             // device 0x73 CID
             else if (
@@ -3875,7 +3876,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x80)
             {
                 Array.Copy(_response731A80, _sendData, _response731A80.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x84 &&
@@ -3887,7 +3888,7 @@ namespace CarSimulator
                 _receiveData[6] == 0xFF)
             {
                 Array.Copy(_response731802FFFF, _sendData, _response731802FFFF.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             // device 0x78 IHK2
             else if (
@@ -3898,7 +3899,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x80)
             {
                 Array.Copy(_response781A80, _sendData, _response781A80.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x84 &&
@@ -3910,7 +3911,7 @@ namespace CarSimulator
                 _receiveData[6] == 0xFF)
             {
                 Array.Copy(_response781802FFFF, _sendData, _response781802FFFF.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             // device 0x64 PDC
             else if (
@@ -3921,7 +3922,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x80)
             {
                 Array.Copy(_response641A80, _sendData, _response641A80.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x84 &&
@@ -3933,7 +3934,7 @@ namespace CarSimulator
                 _receiveData[6] == 0xFF)
             {
                 Array.Copy(_response641802FFFF, _sendData, _response641802FFFF.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -3945,14 +3946,12 @@ namespace CarSimulator
             {
                 Array.Copy(_response6417E205, _sendData, _response6417E205.Length);
 
-                int intValue;
-
                 // Fehlerhäufigkeit
                 _sendData[8] = 5;
 
                 // Kilometerstand
                 // 0xFFFF: 524280 = 0x7FFF8 (Left shift 3)
-                intValue = (int)(123456 >> 3);
+                int intValue = (int)(123456 >> 3);
                 _sendData[9] = (byte)(intValue >> 8);
                 _sendData[10] = (byte)(intValue);
 
@@ -3980,7 +3979,7 @@ namespace CarSimulator
                 intValue = (int)((80.0 + 40.00) * 0xFF / 127.5);
                 _sendData[14] = (byte)intValue;
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             // device 0x65 SZM
             else if (
@@ -3991,7 +3990,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x80)
             {
                 Array.Copy(_response651A80, _sendData, _response651A80.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x84 &&
@@ -4003,7 +4002,7 @@ namespace CarSimulator
                 _receiveData[6] == 0xFF)
             {
                 Array.Copy(_response651802FFFF, _sendData, _response651802FFFF.Length);
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -4014,8 +4013,6 @@ namespace CarSimulator
                 _receiveData[5] == 0xF1)
             {
                 Array.Copy(_response65179FF1, _sendData, _response65179FF1.Length);
-
-                int intValue;
 
                 // Fehlerart
                 // Bit 0-3:
@@ -4041,7 +4038,7 @@ namespace CarSimulator
 
                 // Kilometerstand
                 // 0xFFFF: 524280 = 0x7FFF8 (Left shift 3)
-                intValue = (int)(123456 >> 3);
+                int intValue = (int)(123456 >> 3);
                 _sendData[8] = (byte)(intValue >> 8);
                 _sendData[9] = (byte)(intValue);
 
@@ -4049,7 +4046,7 @@ namespace CarSimulator
                 _sendData[10] = (byte)(intValue >> 8);
                 _sendData[11] = (byte)(intValue);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -4073,7 +4070,7 @@ namespace CarSimulator
                 // Bit 6: Aktivsitz rechts
                 _sendData[7] = 0x00;
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             // device 0x78 IHK
             else if (
@@ -4086,13 +4083,11 @@ namespace CarSimulator
             {   // Status Regler
                 Array.Copy(_response78300201, _sendData, _response78300201.Length);
 
-                int intValue;
-
                 // Sollwert Basis
                 // 0x00: 0 °C
                 // 0xFF: 127.5 °C
                 // (temp [C]) * 0xFF / 127.5
-                intValue = (int)(15.0 * 0xFF / 127.5);
+                int intValue = (int)(15.0 * 0xFF / 127.5);
                 _sendData[7] = (byte)(intValue);
 
                 // Aussenwert
@@ -4183,7 +4178,7 @@ namespace CarSimulator
                 intValue = (int)((1000.0) * 0xFF / 12750);
                 _sendData[33] = (byte)(intValue);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -4195,7 +4190,7 @@ namespace CarSimulator
             {   // Status Digital
                 Array.Copy(_response78300601, _sendData, _response78300601.Length);
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             // for all devices
             else if (
@@ -4212,7 +4207,7 @@ namespace CarSimulator
                 _sendData[3] = 0x58;
                 _sendData[4] = 0x00;
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -4228,7 +4223,7 @@ namespace CarSimulator
                 _sendData[4] = 0xFF;
                 _sendData[5] = 0xFF;
 
-                OBDSend(_sendData);
+                ObdSend(_sendData);
             }
             else
             {   // nothing matched, check response list
@@ -4269,7 +4264,7 @@ namespace CarSimulator
 #else
                         foreach (byte[] responseTel in responseEntry.ResponseList)
                         {
-                            OBDSend(responseTel);
+                            ObdSend(responseTel);
                         }
 #endif
                         break;
@@ -4348,11 +4343,10 @@ namespace CarSimulator
         private void SerialIso9141Transmission()
         {
             bool initOk;
-            byte wakeAddress;
             do
             {
                 initOk = false;
-                wakeAddress = 0x00;
+                byte wakeAddress = 0x00;
                 if (!ReceiveWakeUp(out wakeAddress))
                 {
                     break;
@@ -4496,13 +4490,12 @@ namespace CarSimulator
         private void SerialConcept3Transmission()
         {
             bool initOk;
-            byte wakeAddress;
             do
             {
                 initOk = false;
                 _serialPort.DataBits = 8;
                 _serialPort.Parity = Parity.None;
-                wakeAddress = 0x00;
+                byte wakeAddress = 0x00;
                 if (!ReceiveWakeUp(out wakeAddress))
                 {
                     break;
