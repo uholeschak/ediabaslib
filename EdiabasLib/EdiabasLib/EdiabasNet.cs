@@ -2246,6 +2246,7 @@ namespace EdiabasLib
         private StreamWriter _swLog;
         private readonly object _logLock = new object();
         private int _logLevelCached = -1;
+        private readonly bool _lockTrace;
         private EdValueType _arrayMaxBufSize = 1024;
         private EdValueType _errorTrapMask;
         private int _errorTrapBitNr = -1;
@@ -2736,12 +2737,14 @@ namespace EdiabasLib
             }
 
             _jobRunning = false;
+            _lockTrace = false;
             SetConfigProperty("EdiabasVersion", "7.3.0");
             SetConfigProperty("Simulation", "0");
             SetConfigProperty("BipDebugLevel", "0");
             SetConfigProperty("ApiTrace", "0");
             SetConfigProperty("IfhTrace", "0");
             SetConfigProperty("TraceBuffering", "0");
+            SetConfigProperty("LockTrace", "0");
 
             SetConfigProperty("UbattHandling", "0");
             SetConfigProperty("IgnitionHandling", "0");
@@ -2782,6 +2785,15 @@ namespace EdiabasLib
                 catch
                 {
                     _xdocConfig = null;
+                }
+            }
+
+            string lockTrace = GetConfigProperty("LockTrace");
+            if (lockTrace != null)
+            {
+                if (StringToValue(lockTrace) != 0)
+                {
+                    _lockTrace = true;
                 }
             }
 
@@ -2864,9 +2876,14 @@ namespace EdiabasLib
                             {
                                 if (xnn.Attributes != null)
                                 {
-                                    string key = xnn.Attributes["key"].Value;
-                                    string value = xnn.Attributes["value"].Value;
-                                    SetConfigProperty(key, value);
+                                    XmlAttribute attribKey = xnn.Attributes["key"];
+                                    XmlAttribute attribValue = xnn.Attributes["value"];
+                                    if (attribKey != null && attribValue != null)
+                                    {
+                                        string key = attribKey.Value;
+                                        string value = attribValue.Value;
+                                        SetConfigProperty(key, value);
+                                    }
                                 }
                             }
                             catch (Exception)
@@ -2900,6 +2917,26 @@ namespace EdiabasLib
         public void SetConfigProperty(string name, string value)
         {
             string key = name.ToUpper(Culture);
+            if (_lockTrace)
+            {
+                if (string.Compare(key, "APITRACE", StringComparison.Ordinal) == 0)
+                {
+                    return;
+                }
+                if (string.Compare(key, "IFHTRACE", StringComparison.Ordinal) == 0)
+                {
+                    return;
+                }
+                if (string.Compare(key, "TRACEPATH", StringComparison.Ordinal) == 0)
+                {
+                    return;
+                }
+                if (string.Compare(key, "TRACEBUFFERING", StringComparison.Ordinal) == 0)
+                {
+                    return;
+                }
+            }
+
             lock (_apiLock)
             {
                 if (_configDict.ContainsKey(key))
