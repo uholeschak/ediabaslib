@@ -97,99 +97,13 @@ namespace LogfileConverter
                 {
                     foreach (string inputFile in inputFiles)
                     {
-                        using (StreamReader streamReader = new StreamReader(inputFile))
+                        if (string.Compare(Path.GetExtension(inputFile), ".trc", StringComparison.OrdinalIgnoreCase) == 0)
+                        {   // trace file
+                            ConvertTraceFile(inputFile, streamWriter);
+                        }
+                        else
                         {
-                            string line;
-                            string readString = string.Empty;
-                            string writeString = string.Empty;
-                            while ((line = streamReader.ReadLine()) != null)
-                            {
-                                if (line.Length > 0)
-                                {
-                                    if (!Regex.IsMatch(line, @"^\[\\\\"))
-                                    {
-                                        line = Regex.Replace(line, @"^[\d]+[\s]+[\d\.]+[\s]+[\w\.]+[\s]*", String.Empty);
-                                        if (Regex.IsMatch(line, @"IRP_MJ_WRITE"))
-                                        {
-                                            line = Regex.Replace(line, @"^IRP_MJ_WRITE.*\:[\s]*", String.Empty);
-                                            List<byte> lineValues = NumberString2List(line);
-                                            if ((lineValues.Count > 1) && (lineValues[1] == 0x56))
-                                            {
-                                                line = string.Empty;
-                                            }
-                                            if (line.Length > 0)
-                                            {
-                                                bool validWrite = ChecksumValid(lineValues);
-                                                if (_responseFile)
-                                                {
-                                                    if (validWrite)
-                                                    {
-                                                        if (writeString.Length > 0 && readString.Length > 0)
-                                                        {
-                                                            List<byte> writeValues = NumberString2List(writeString);
-                                                            List<byte> readValues = NumberString2List(readString);
-                                                            if (ValidResponse(writeValues, readValues))
-                                                            {
-                                                                streamWriter.Write(NumberString2String(writeString, _responseFile || !_cFormat));
-                                                                StoreReadString(streamWriter, readString);
-                                                            }
-                                                        }
-                                                        writeString = NumberString2String(line, _responseFile || !_cFormat);
-                                                    }
-                                                    else
-                                                    {
-                                                        writeString = string.Empty;
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    StoreReadString(streamWriter, readString);
-                                                    if (validWrite)
-                                                    {
-                                                        line = "w: " + NumberString2String(line, _responseFile || !_cFormat);
-                                                    }
-                                                    else
-                                                    {
-                                                        line = "w (Invalid): " + NumberString2String(line, _responseFile || !_cFormat);
-                                                    }
-                                                }
-                                                readString = string.Empty;
-                                            }
-                                        }
-                                        else if (Regex.IsMatch(line, @"^Length 1:"))
-                                        {
-                                            line = Regex.Replace(line, @"^Length 1:[\s]*", String.Empty);
-                                            readString += line;
-                                            line = string.Empty;
-                                        }
-                                        else
-                                        {
-                                            line = string.Empty;
-                                        }
-                                        if (!_responseFile && line.Length > 0)
-                                        {
-                                            streamWriter.WriteLine(line);
-                                        }
-                                    }
-                                }
-                            }
-                            if (_responseFile)
-                            {
-                                if (writeString.Length > 0 && readString.Length > 0)
-                                {
-                                    List<byte> writeValues = NumberString2List(writeString);
-                                    List<byte> readValues = NumberString2List(readString);
-                                    if (ValidResponse(writeValues, readValues))
-                                    {
-                                        streamWriter.Write(NumberString2String(writeString, _responseFile || !_cFormat));
-                                        StoreReadString(streamWriter, readString);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                StoreReadString(streamWriter, readString);
-                            }
+                            ConvertPortLogFile(inputFile, streamWriter);
                         }
                     }
                 }
@@ -199,6 +113,202 @@ namespace LogfileConverter
                 return false;
             }
             return true;
+        }
+
+        private static void ConvertPortLogFile(string inputFile, StreamWriter streamWriter)
+        {
+            using (StreamReader streamReader = new StreamReader(inputFile))
+            {
+                string line;
+                string readString = string.Empty;
+                string writeString = string.Empty;
+                while ((line = streamReader.ReadLine()) != null)
+                {
+                    if (line.Length > 0)
+                    {
+                        if (!Regex.IsMatch(line, @"^\[\\\\"))
+                        {
+                            line = Regex.Replace(line, @"^[\d]+[\s]+[\d\.]+[\s]+[\w\.]+[\s]*", String.Empty);
+                            if (Regex.IsMatch(line, @"IRP_MJ_WRITE"))
+                            {
+                                line = Regex.Replace(line, @"^IRP_MJ_WRITE.*\:[\s]*", String.Empty);
+                                List<byte> lineValues = NumberString2List(line);
+#if false
+                                if ((lineValues.Count > 1) && (lineValues[1] == 0x56))
+                                {
+                                    line = string.Empty;
+                                }
+#endif
+                                if (line.Length > 0)
+                                {
+                                    bool validWrite = ChecksumValid(lineValues);
+                                    if (_responseFile)
+                                    {
+                                        if (validWrite)
+                                        {
+                                            if (writeString.Length > 0 && readString.Length > 0)
+                                            {
+                                                List<byte> writeValues = NumberString2List(writeString);
+                                                List<byte> readValues = NumberString2List(readString);
+                                                if (ValidResponse(writeValues, readValues))
+                                                {
+                                                    streamWriter.Write(NumberString2String(writeString, _responseFile || !_cFormat));
+                                                    StoreReadString(streamWriter, readString);
+                                                }
+                                            }
+                                            writeString = NumberString2String(line, _responseFile || !_cFormat);
+                                        }
+                                        else
+                                        {
+                                            writeString = string.Empty;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        StoreReadString(streamWriter, readString);
+                                        if (validWrite)
+                                        {
+                                            line = "w: " + NumberString2String(line, _responseFile || !_cFormat);
+                                        }
+                                        else
+                                        {
+                                            line = "w (Invalid): " + NumberString2String(line, _responseFile || !_cFormat);
+                                        }
+                                    }
+                                    readString = string.Empty;
+                                }
+                            }
+                            else if (Regex.IsMatch(line, @"^Length 1:"))
+                            {
+                                line = Regex.Replace(line, @"^Length 1:[\s]*", String.Empty);
+                                readString += line;
+                                line = string.Empty;
+                            }
+                            else
+                            {
+                                line = string.Empty;
+                            }
+                            if (!_responseFile && line.Length > 0)
+                            {
+                                streamWriter.WriteLine(line);
+                            }
+                        }
+                    }
+                }
+                if (_responseFile)
+                {
+                    if (writeString.Length > 0 && readString.Length > 0)
+                    {
+                        List<byte> writeValues = NumberString2List(writeString);
+                        List<byte> readValues = NumberString2List(readString);
+                        if (ValidResponse(writeValues, readValues))
+                        {
+                            streamWriter.Write(NumberString2String(writeString, _responseFile || !_cFormat));
+                            StoreReadString(streamWriter, readString);
+                        }
+                    }
+                }
+                else
+                {
+                    StoreReadString(streamWriter, readString);
+                }
+            }
+        }
+
+        private static void ConvertTraceFile(string inputFile, StreamWriter streamWriter)
+        {
+            using (StreamReader streamReader = new StreamReader(inputFile))
+            {
+                string line;
+                string readString = string.Empty;
+                string writeString = string.Empty;
+                while ((line = streamReader.ReadLine()) != null)
+                {
+                    if (line.Length > 0)
+                    {
+                        if (Regex.IsMatch(line, @"^ \((Send|Resp)\):"))
+                        {
+                            bool send = Regex.IsMatch(line, @"^ \(Send\):");
+                            line = Regex.Replace(line, @"^.*\:[\s]*", String.Empty);
+
+                            List<byte> lineValues = NumberString2List(line);
+                            if (line.Length > 0)
+                            {
+                                if (send)
+                                {
+                                    bool validWrite = ChecksumValid(lineValues);
+                                    if (_responseFile)
+                                    {
+                                        if (validWrite)
+                                        {
+                                            if (writeString.Length > 0 && readString.Length > 0)
+                                            {
+                                                List<byte> writeValues = NumberString2List(writeString);
+                                                List<byte> readValues = NumberString2List(readString);
+                                                if (ValidResponse(writeValues, readValues))
+                                                {
+                                                    streamWriter.Write(NumberString2String(writeString,
+                                                        _responseFile || !_cFormat));
+                                                    StoreReadString(streamWriter, readString);
+                                                }
+                                            }
+                                            writeString = NumberString2String(line, _responseFile || !_cFormat);
+                                        }
+                                        else
+                                        {
+                                            writeString = string.Empty;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        StoreReadString(streamWriter, readString);
+                                        if (validWrite)
+                                        {
+                                            line = "w: " + NumberString2String(line, _responseFile || !_cFormat);
+                                        }
+                                        else
+                                        {
+                                            line = "w (Invalid): " +
+                                                   NumberString2String(line, _responseFile || !_cFormat);
+                                        }
+                                    }
+                                    readString = string.Empty;
+                                }
+                                else
+                                {   // receive
+                                    readString += line;
+                                    line = string.Empty;
+                                }
+                            }
+                            else
+                            {
+                                readString = string.Empty;
+                            }
+                            if (!_responseFile && line.Length > 0)
+                            {
+                                streamWriter.WriteLine(line);
+                            }
+                        }
+                    }
+                }
+                if (_responseFile)
+                {
+                    if (writeString.Length > 0 && readString.Length > 0)
+                    {
+                        List<byte> writeValues = NumberString2List(writeString);
+                        List<byte> readValues = NumberString2List(readString);
+                        if (ValidResponse(writeValues, readValues))
+                        {
+                            streamWriter.Write(NumberString2String(writeString, _responseFile || !_cFormat));
+                            StoreReadString(streamWriter, readString);
+                        }
+                    }
+                }
+                else
+                {
+                    StoreReadString(streamWriter, readString);
+                }
+            }
         }
 
         private static int LineComparer(string x, string y)
