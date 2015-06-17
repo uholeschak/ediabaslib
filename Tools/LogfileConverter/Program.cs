@@ -1,23 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 using NDesk.Options;
-using System.Diagnostics;
 
 namespace LogfileConverter
 {
     class Program
     {
-        static bool responseFile = false;
-        static bool cFormat = false;
+        static bool _responseFile;
+        static bool _cFormat;
 
         static int Main(string[] args)
         {
             bool sortFile = false;
-            bool show_help = false;
+            bool showHelp = false;
             List<string> inputFiles = new List<string>();
             string outputFile = null;
 
@@ -28,30 +25,29 @@ namespace LogfileConverter
                 { "o|output=", "output file (if omitted '.conv' is appended to input file).",
                   v => outputFile = v },
                 { "c|cformat", "c format for hex values", 
-                  v => cFormat = v != null },
+                  v => _cFormat = v != null },
                 { "r|response", "create reponse file", 
-                  v => responseFile = v != null },
+                  v => _responseFile = v != null },
                 { "s|sort", "sort reponse file", 
                   v => sortFile = v != null },
                 { "h|help",  "show this message and exit", 
-                  v => show_help = v != null },
+                  v => showHelp = v != null },
             };
 
-            List<string> extra;
             try
             {
-                extra = p.Parse(args);
+                p.Parse(args);
             }
             catch (OptionException e)
             {
-                string thisName = Path.GetFileNameWithoutExtension(System.AppDomain.CurrentDomain.FriendlyName);
+                string thisName = Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName);
                 Console.Write(thisName + ": ");
                 Console.WriteLine(e.Message);
                 Console.WriteLine("Try `" + thisName + " --help' for more information.");
                 return 1;
             }
 
-            if (show_help)
+            if (showHelp)
             {
                 ShowHelp(p);
                 return 0;
@@ -71,7 +67,7 @@ namespace LogfileConverter
             {
                 if (!File.Exists(inputFile))
                 {
-                    Console.WriteLine(string.Format("Input file '{0}' not found", inputFile));
+                    Console.WriteLine("Input file '{0}' not found", inputFile);
                     return 1;
                 }
             }
@@ -81,7 +77,7 @@ namespace LogfileConverter
                 Console.WriteLine("Conversion failed");
                 return 1;
             }
-            if (sortFile && responseFile)
+            if (sortFile && _responseFile)
             {
                 if (!SortLines(outputFile))
                 {
@@ -124,7 +120,7 @@ namespace LogfileConverter
                                             if (line.Length > 0)
                                             {
                                                 bool validWrite = ChecksumValid(lineValues);
-                                                if (responseFile)
+                                                if (_responseFile)
                                                 {
                                                     if (validWrite)
                                                     {
@@ -134,11 +130,11 @@ namespace LogfileConverter
                                                             List<byte> readValues = NumberString2List(readString);
                                                             if (ValidResponse(writeValues, readValues))
                                                             {
-                                                                streamWriter.Write(NumberString2String(writeString, responseFile || !cFormat));
+                                                                streamWriter.Write(NumberString2String(writeString, _responseFile || !_cFormat));
                                                                 StoreReadString(streamWriter, readString);
                                                             }
                                                         }
-                                                        writeString = NumberString2String(line, responseFile || !cFormat);
+                                                        writeString = NumberString2String(line, _responseFile || !_cFormat);
                                                     }
                                                     else
                                                     {
@@ -150,11 +146,11 @@ namespace LogfileConverter
                                                     StoreReadString(streamWriter, readString);
                                                     if (validWrite)
                                                     {
-                                                        line = "w: " + NumberString2String(line, responseFile || !cFormat);
+                                                        line = "w: " + NumberString2String(line, _responseFile || !_cFormat);
                                                     }
                                                     else
                                                     {
-                                                        line = "w (Invalid): " + NumberString2String(line, responseFile || !cFormat);
+                                                        line = "w (Invalid): " + NumberString2String(line, _responseFile || !_cFormat);
                                                     }
                                                 }
                                                 readString = string.Empty;
@@ -170,14 +166,14 @@ namespace LogfileConverter
                                         {
                                             line = string.Empty;
                                         }
-                                        if (!responseFile && line.Length > 0)
+                                        if (!_responseFile && line.Length > 0)
                                         {
                                             streamWriter.WriteLine(line);
                                         }
                                     }
                                 }
                             }
-                            if (responseFile)
+                            if (_responseFile)
                             {
                                 if (writeString.Length > 0 && readString.Length > 0)
                                 {
@@ -185,7 +181,7 @@ namespace LogfileConverter
                                     List<byte> readValues = NumberString2List(readString);
                                     if (ValidResponse(writeValues, readValues))
                                     {
-                                        streamWriter.Write(NumberString2String(writeString, responseFile || !cFormat));
+                                        streamWriter.Write(NumberString2String(writeString, _responseFile || !_cFormat));
                                         StoreReadString(streamWriter, readString);
                                     }
                                 }
@@ -210,7 +206,7 @@ namespace LogfileConverter
             string lineX = x.Substring(3);
             string lineY = y.Substring(3);
 
-            return lineX.CompareTo(lineY);
+            return String.Compare(lineX, lineY, StringComparison.Ordinal);
         }
 
         static private bool SortLines(string fileName)
@@ -239,7 +235,7 @@ namespace LogfileConverter
             return true;
         }
 
-        static private bool StoreReadString(StreamWriter streamWriter, string readString)
+        static private void StoreReadString(StreamWriter streamWriter, string readString)
         {
             try
             {
@@ -247,11 +243,11 @@ namespace LogfileConverter
                 {
                     List<byte> lineValues = NumberString2List(readString);
                     bool valid = ChecksumValid(lineValues);
-                    if (responseFile)
+                    if (_responseFile)
                     {
                         if (valid)
                         {
-                            streamWriter.WriteLine(" : " + NumberString2String(readString, responseFile || !cFormat));
+                            streamWriter.WriteLine(" : " + NumberString2String(readString, _responseFile || !_cFormat));
                         }
                         else
                         {
@@ -262,25 +258,25 @@ namespace LogfileConverter
                     {
                         if (valid)
                         {
-                            streamWriter.WriteLine("r: " + NumberString2String(readString, responseFile || !cFormat));
+                            streamWriter.WriteLine("r: " + NumberString2String(readString, _responseFile || !_cFormat));
                         }
                         else
                         {
-                            streamWriter.WriteLine("r (Invalid): " + NumberString2String(readString, responseFile || !cFormat));
+                            streamWriter.WriteLine("r (Invalid): " + NumberString2String(readString, _responseFile || !_cFormat));
                         }
                     }
                 }
             }
             catch
             {
+                // ignored
             }
-            return true;
         }
 
         static private List<byte> NumberString2List(string numberString)
         {
             List<byte> values = new List<byte>();
-            string[] numberArray = numberString.Split(new char[] { ' ' });
+            string[] numberArray = numberString.Split(' ');
             foreach (string number in numberArray)
             {
                 if (number.Length > 0)
@@ -292,6 +288,7 @@ namespace LogfileConverter
                     }
                     catch
                     {
+                        // ignored
                     }
                 }
             }
@@ -394,7 +391,7 @@ namespace LogfileConverter
 
         static void ShowHelp(OptionSet p)
         {
-            Console.WriteLine("Usage: " + Path.GetFileNameWithoutExtension(System.AppDomain.CurrentDomain.FriendlyName) + " [OPTIONS]");
+            Console.WriteLine("Usage: " + Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName) + " [OPTIONS]");
             Console.WriteLine("Convert BMW ODB log files");
             Console.WriteLine();
             Console.WriteLine("Options:");
