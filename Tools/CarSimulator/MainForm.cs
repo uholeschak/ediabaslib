@@ -199,14 +199,8 @@ namespace CarSimulator
                                 }
                                 if (equal)
                                 {       // entry found
-                                    if (responseEntry.Response.Length < listResponse.Count)
-                                    {
-                                        responseList.Remove(responseEntry);
-                                    }
-                                    else
-                                    {
-                                        addEntry = false;
-                                    }
+                                    responseEntry.ResponseList.Add(listResponse.ToArray());
+                                    addEntry = false;
                                     break;
                                 }
                             }
@@ -248,14 +242,15 @@ namespace CarSimulator
                             }
                         }
 
+                        byte[] response = responseEntry.ResponseList[0];
                         int telOffset = 0;
-                        while ((telOffset + 1) < responseEntry.Response.Length)
+                        while ((telOffset + 1) < response.Length)
                         {
-                            if ((responseEntry.Response.Length - telOffset) < 3)
+                            if ((response.Length - telOffset) < 3)
                             {
                                 break;
                             }
-                            int telLength = responseEntry.Response[telOffset + 0];
+                            int telLength = response[telOffset + 0];
                             if (telLength < 3)
                             {
                                 if (!messageShown)
@@ -265,16 +260,16 @@ namespace CarSimulator
                                 }
                                 break;
                             }
-                            if (telOffset + telLength > responseEntry.Response.Length)
+                            if (telOffset + telLength > response.Length)
                             {
                                 break;
                             }
                             byte[] responseTel = new byte[telLength];
-                            Array.Copy(responseEntry.Response, telOffset, responseTel, 0, telLength);
-                            responseEntry.ResponseList.Add(responseTel);
+                            Array.Copy(response, telOffset, responseTel, 0, telLength);
+                            responseEntry.ResponseMultiList.Add(responseTel);
                             telOffset += telLength;
                         }
-                        if (telOffset != responseEntry.Response.Length)
+                        if (telOffset != response.Length)
                         {
                             if (!messageShown)
                             {
@@ -319,17 +314,18 @@ namespace CarSimulator
                             }
                         }
 
+                        byte[] response = responseEntry.ResponseList[0];
                         int telOffset = 0;
-                        while ((telOffset + 1) < responseEntry.Response.Length)
+                        while ((telOffset + 1) < response.Length)
                         {
-                            if ((responseEntry.Response.Length - telOffset) < 4)
+                            if ((response.Length - telOffset) < 4)
                             {
                                 break;
                             }
-                            int telLength = responseEntry.Response[telOffset + 0] & 0x3F;
+                            int telLength = response[telOffset + 0] & 0x3F;
                             if (telLength == 0)
                             {   // with length byte
-                                telLength = responseEntry.Response[telOffset + 3] + 5;
+                                telLength = response[telOffset + 3] + 5;
                             }
                             else
                             {
@@ -344,16 +340,16 @@ namespace CarSimulator
                                 }
                                 break;
                             }
-                            if (telOffset + telLength > responseEntry.Response.Length)
+                            if (telOffset + telLength > response.Length)
                             {
                                 break;
                             }
                             byte[] responseTel = new byte[telLength];
-                            Array.Copy(responseEntry.Response, telOffset, responseTel, 0, telLength);
-                            responseEntry.ResponseList.Add(responseTel);
+                            Array.Copy(response, telOffset, responseTel, 0, telLength);
+                            responseEntry.ResponseMultiList.Add(responseTel);
                             telOffset += telLength;
                         }
-                        if (telOffset != responseEntry.Response.Length)
+                        if (telOffset != response.Length)
                         {
                             if (!messageShown)
                             {

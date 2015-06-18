@@ -43,27 +43,48 @@ namespace CarSimulator
         public class ResponseEntry
         {
             private readonly byte[] _requestArray;
-            private readonly byte[] _responseArray;
+            private readonly List<byte[]> _responseMultiList;
             private readonly List<byte[]> _responseList;
+            private int _responseIndex;
 
             public ResponseEntry(byte[] request, byte[] response)
             {
                 _requestArray = request;
-                _responseArray = response;
-                _responseList = new List<byte[]>();
+                _responseMultiList = new List<byte[]>();
+                _responseList = new List<byte[]> {response};
+                _responseIndex = 0;
+            }
+
+            public void Reset()
+            {
+                _responseIndex = 0;
             }
 
             public byte[] Request
             {
                 get { return _requestArray; }
             }
-            public byte[] Response
+
+            public byte[] ResponseDyn
             {
-                get { return _responseArray; }
+                get
+                {
+                    if (_responseIndex >= _responseList.Count)
+                    {
+                        _responseIndex = 0;
+                    }
+                    return _responseList[_responseIndex++];
+                }
             }
+
             public List<byte[]> ResponseList
             {
                 get { return _responseList; }
+            }
+
+            public List<byte[]> ResponseMultiList
+            {
+                get { return _responseMultiList; }
             }
         }
 
@@ -483,6 +504,10 @@ namespace CarSimulator
                 _adsAdapter = adsAdapter;
                 _e61Internal = e61Internal;
                 _configData = configData;
+                foreach (ResponseEntry responseEntry in _configData.ResponseList)
+                {
+                    responseEntry.Reset();
+                }
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
                 _workerThread.Priority = ThreadPriority.Highest;
@@ -4262,9 +4287,16 @@ namespace CarSimulator
 #if false
                         SendData(responseEntry.Response, responseEntry.Response.Length);
 #else
-                        foreach (byte[] responseTel in responseEntry.ResponseList)
+                        if (responseEntry.ResponseMultiList.Count > 1)
                         {
-                            ObdSend(responseTel);
+                            foreach (byte[] responseTel in responseEntry.ResponseMultiList)
+                            {
+                                ObdSend(responseTel);
+                            }
+                        }
+                        else
+                        {
+                            ObdSend(responseEntry.ResponseDyn);
                         }
 #endif
                         break;
@@ -4319,10 +4351,11 @@ namespace CarSimulator
                 if (equal)
                 {       // entry found
                     found = true;
-                    int responseLen = responseEntry.Response.Length;
+                    byte[] response = responseEntry.ResponseList[0];
+                    int responseLen = response.Length;
                     if (responseLen > 0)
                     {
-                        Array.Copy(responseEntry.Response, _sendData, responseLen);
+                        Array.Copy(response, _sendData, responseLen);
                         _sendData[responseLen - 1] = CalcChecksumXor(_sendData, responseLen - 1);
                         SendData(_sendData, responseLen);
                     }
@@ -4415,13 +4448,13 @@ namespace CarSimulator
 
                 if (activeResponse != null)
                 {
-                    if (telBlockIndex < activeResponse.ResponseList.Count)
+                    if (telBlockIndex < activeResponse.ResponseMultiList.Count)
                     {
-                        byte[] responseTel = activeResponse.ResponseList[telBlockIndex];
+                        byte[] responseTel = activeResponse.ResponseMultiList[telBlockIndex];
                         Array.Copy(responseTel, _sendData, responseTel.Length);
                         telBlockIndex++;
                     }
-                    if (telBlockIndex >= activeResponse.ResponseList.Count)
+                    if (telBlockIndex >= activeResponse.ResponseMultiList.Count)
                     {
                         activeResponse = null;
                     }
