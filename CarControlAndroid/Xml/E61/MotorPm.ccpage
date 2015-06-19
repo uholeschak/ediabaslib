@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<fragment xmlns="http://www.holeschak.de/CarControl/2015/CarControl.xsd">
+<fragment xmlns="http://www.holeschak.de/CarControl"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/CarControl ../CarControl.xsd">
   <page name ="tab_motor_pm">
     <display name="label_motor_pm_bat_cap" result="STAT_BATTERIE_KAPAZITAET_WERT" format="3.0R" />
     <display name="label_motor_pm_soh" result="STAT_SOH_WERT" format="5.1R" />
