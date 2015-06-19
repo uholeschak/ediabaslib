@@ -4483,7 +4483,7 @@ namespace EdiabasLib
 
         private void ExecuteJobPrivate(string jobName)
         {
-            LogFormat(EdLogLevel.Info, "executeJob: {0}", jobName);
+            LogFormat(EdLogLevel.Ifh, "executeJob({0}): {1}", SgbdFileName, jobName);
 
             if (!OpenSgbdFs())
             {
