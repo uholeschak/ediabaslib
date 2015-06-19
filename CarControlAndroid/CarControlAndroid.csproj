@@ -109,7 +109,7 @@
     <AndroidResource Include="Resources\layout\bar_tool_connect.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <None Include="Xml\Axis.ccpage" />
+    <None Include="Xml\E61\Axis.ccpage" />
     <None Include="Xml\CarControl.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -152,20 +152,20 @@
     <AndroidResource Include="Resources\drawable-xhdpi\folder.png" />
     <AndroidResource Include="Resources\drawable\file.png" />
     <AndroidResource Include="Resources\drawable\folder.png" />
-    <None Include="Xml\E61Bt.cccfg">
+    <None Include="Xml\E61\E61Bt.cccfg">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Xml\Adapter.ccpage" />
-    <None Include="Xml\Ccc.ccpage" />
-    <None Include="Xml\E61.ccpages" />
-    <None Include="Xml\E61Enet.cccfg" />
-    <None Include="Xml\Ihk.ccpage" />
-    <None Include="Xml\Errors.ccpage" />
-    <None Include="Xml\Motor.ccpage" />
-    <None Include="Xml\MotorIrregular.ccpage" />
-    <None Include="Xml\MotorPm.ccpage" />
-    <None Include="Xml\MotorUneven.ccpage" />
-    <None Include="Xml\Test.ccpage" />
+    <None Include="Xml\E61\Adapter.ccpage" />
+    <None Include="Xml\E61\Ccc.ccpage" />
+    <None Include="Xml\E61\E61.ccpages" />
+    <None Include="Xml\E61\E61Enet.cccfg" />
+    <None Include="Xml\E61\Ihk.ccpage" />
+    <None Include="Xml\E61\Errors.ccpage" />
+    <None Include="Xml\E61\Motor.ccpage" />
+    <None Include="Xml\E61\MotorIrregular.ccpage" />
+    <None Include="Xml\E61\MotorPm.ccpage" />
+    <None Include="Xml\E61\MotorUneven.ccpage" />
+    <None Include="Xml\E61\Test.ccpage" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\EdiabasLibAndroid.csproj">
