@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<fragment xmlns="http://www.holeschak.de/CarControl/2015/CarControl.xsd">
+<fragment xmlns="http://www.holeschak.de/CarControl"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/CarControl ../CarControl.xsd">
   <page name ="tab_motor_uneven_running">
     <display name="label_motor_quant_corr_c1" result="STAT_LAUFUNRUHE_LLR_MENGE_ZYL1_WERT" format="5.2R" />
     <display name="label_motor_quant_corr_c2" result="STAT_LAUFUNRUHE_LLR_MENGE_ZYL2_WERT" format="5.2R" />

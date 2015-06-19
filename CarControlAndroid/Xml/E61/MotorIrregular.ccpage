@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<fragment xmlns="http://www.holeschak.de/CarControl/2015/CarControl.xsd">
+<fragment xmlns="http://www.holeschak.de/CarControl"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/CarControl ../CarControl.xsd">
   <page name ="tab_motor_rot_irregular">
     <display name="label_motor_rpm_c1" result="STAT_LAUFUNRUHE_DREHZAHL_ZYL1_WERT" format="7.2R" />
     <display name="label_motor_rpm_c1" result="STAT_LAUFUNRUHE_DREHZAHL_ZYL2_WERT" format="7.2R" />

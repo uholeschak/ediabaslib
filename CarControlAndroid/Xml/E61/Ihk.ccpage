@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<fragment xmlns="http://www.holeschak.de/CarControl/2015/CarControl.xsd">
+<fragment xmlns="http://www.holeschak.de/CarControl"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/CarControl ../CarControl.xsd">
   <page name ="tab_ihk">
     <display name="label_ihk_in_temp" result="STAT_TINNEN_WERT" format="6.1R" />
     <display name="label_ihk_in_temp_delay" result="STAT_TINNEN_VERZOEGERT_WERT" format="6.1R" />
