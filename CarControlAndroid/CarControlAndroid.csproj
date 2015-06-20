@@ -155,7 +155,7 @@
     <None Include="Xml\E61\E61Bt.cccfg">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Xml\E61\Adapter.ccpage" />
+    <None Include="Xml\Adapter.ccpage" />
     <None Include="Xml\E61\Ccc.ccpage" />
     <None Include="Xml\E61\E61.ccpages" />
     <None Include="Xml\E61\E61Enet.cccfg" />
