@@ -113,6 +113,12 @@
     <None Include="Xml\CarControl.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Xml\E90\E90Bt.cccfg">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Xml\E90\E90Enet.cccfg" />
+    <None Include="Xml\E90\E90.ccpages" />
+    <None Include="Xml\E90\Errors.ccpage" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\device_list.axml" />

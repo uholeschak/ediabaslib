@@ -1,0 +1,311 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/CarControl"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/CarControl ../CarControl.xsd">
+  <page name ="tab_errors">
+    <strings>
+      <string name="tab_errors">Errors</string>
+      <string name="error_no_error">No errors present</string>
+      <string name="error_no_response">No response</string>
+
+      <string name="errorNameACSM">ACSM Crash security module</string>
+      <string name="errorNameCAS">CAS Car access system</string>
+      <string name="errorNameCCCBO">CCC-BO Front panel</string>
+      <string name="errorNameCCCGW">CCC-GW Gateway</string>
+      <string name="errorNameDDE">DDE Diesel elektronic</string>
+      <string name="errorNameDSC">DSC Dynamic stability control</string>
+      <string name="errorNameEKPS">EKPS Fuel pump control</string>
+      <string name="errorNameIHK">IHK Integrated heating climate automatic</string>
+      <string name="errorNameKBM">KBM Chassis basic module</string>
+      <string name="errorNameKGM">KGM Chassis gateway module</string>
+      <string name="errorNameKOMBI">KOMBI Combination instrument</string>
+      <string name="errorNamePDC">PDC Park distance control</string>
+      <string name="errorNameRLS">RLS Rain main beam sensor</string>
+      <string name="errorNameEPS">EPS Electric power steering</string>
+      <string name="errorNameULF">ULF Universal hands-free system</string>
+      <string name="errorNameFZD">FZD Roof switch unit</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_errors">Fehler</string>
+      <string name="error_no_error">Keine Fehler vorhanden</string>
+      <string name="error_no_response">Keine Antwort</string>
+
+      <string name="errorNameACSM">ACSM Crash-Sicherheits-Modul</string>
+      <string name="errorNameCAS">CAS Car Access System</string>
+      <string name="errorNameCCCBO">CCC-BO Bedienoberfläche</string>
+      <string name="errorNameCCCGW">CCC-GW Gateway</string>
+      <string name="errorNameDDE">DDE Diesel Elektronik</string>
+      <string name="errorNameDSC">DSC Dynamische Stabilitätskontrolle</string>
+      <string name="errorNameEKPS">EKPS Kraftstoffpumpensteuerung</string>
+      <string name="errorNameIHK">IHK Integrierte Heiz-Klima-Automatik</string>
+      <string name="errorNameKBM">KBM Karosserie-Basismodul</string>
+      <string name="errorNameKGM">KGM Karosserie-Gateway-Modul</string>
+      <string name="errorNameKOMBI">KOMBI Instrumentenkombination</string>
+      <string name="errorNamePDC">PDC Park-Distance-Control</string>
+      <string name="errorNameRLS">RLS Regen-Fahrlicht-Sensor</string>
+      <string name="errorNameEPS">EPS Elektromechanische Servolenkung</string>
+      <string name="errorNameULF">ULF Universale Ladefreisprechelektronik</string>
+      <string name="errorNameFZD">FZD Funtionszentrum Dach</string>
+    </strings>
+    <job show_warnigs="true">
+      <![CDATA[
+    class PageClass
+    {
+        private class EdiabasErrorRequest
+        {
+            private string deviceName;
+            private string sgbdFile;
+
+            public EdiabasErrorRequest(string deviceName, string sgbdFile)
+            {
+                this.deviceName = deviceName;
+                this.sgbdFile = sgbdFile;
+            }
+
+            public string DeviceName
+            {
+                get { return deviceName; }
+            }
+            public string SgbdFile
+            {
+                get { return sgbdFile; }
+            }
+        }
+
+        public class EdiabasErrorReport
+        {
+            private string deviceName;
+            private Dictionary<string, EdiabasNet.ResultData> errorDict;
+            private List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet;
+            private string execptionText;
+
+            public EdiabasErrorReport(string deviceName, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet) :
+                this(deviceName, errorDict, errorDetailSet, string.Empty)
+            {
+            }
+
+            public EdiabasErrorReport(string deviceName, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet, string execptionText)
+            {
+                this.deviceName = deviceName;
+                this.errorDict = errorDict;
+                this.errorDetailSet = errorDetailSet;
+                this.execptionText = execptionText;
+            }
+
+            public string DeviceName
+            {
+                get
+                {
+                    return deviceName;
+                }
+            }
+
+            public Dictionary<string, EdiabasNet.ResultData> ErrorDict
+            {
+                get
+                {
+                    return errorDict;
+                }
+            }
+
+            public List<Dictionary<string, EdiabasNet.ResultData>> ErrorDetailSet
+            {
+                get
+                {
+                    return errorDetailSet;
+                }
+            }
+
+            public string ExecptionText
+            {
+                get
+                {
+                    return execptionText;
+                }
+            }
+        }
+
+        static private readonly EdiabasErrorRequest[] EdiabasErrorRequestList =
+        {
+            new EdiabasErrorRequest("errorNameCAS", "d_cas"),
+            new EdiabasErrorRequest("errorNameDDE", "d_motor"),
+            new EdiabasErrorRequest("errorNameEKPS", "d_ekp"),
+            new EdiabasErrorRequest("errorNameDSC", "d_dsc"),
+            new EdiabasErrorRequest("errorNameACSM", "d_sim"),
+            new EdiabasErrorRequest("errorNameCCCBO", "d_mmi"),
+            new EdiabasErrorRequest("errorNameCCCGW", "d_mostgw"),
+            new EdiabasErrorRequest("errorNameIHK", "d_klima"),
+            new EdiabasErrorRequest("errorNameKBM", "d_kbm"),
+            new EdiabasErrorRequest("errorNameKGM", "d_zgm"),
+            new EdiabasErrorRequest("errorNameKOMBI", "d_kombi"),
+            new EdiabasErrorRequest("errorNamePDC", "d_pdc"),
+            new EdiabasErrorRequest("errorNameRLS", "d_rls"),
+            new EdiabasErrorRequest("errorNameEPS", "d_eps"),
+            new EdiabasErrorRequest("errorNameULF", "d_ispb"),
+            new EdiabasErrorRequest("errorNameFZD", "d_fzd"),
+        };
+
+        List<EdiabasErrorReport> errorReportListStore;
+
+        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
+        {
+            if (firstCall)
+            {
+                lock (EdiabasThread.DataLock)
+                {
+                    errorReportListStore = null;
+                }
+            }
+
+            List<EdiabasErrorReport> errorReportList = new List<EdiabasErrorReport>();
+
+            foreach (EdiabasErrorRequest errorRequest in EdiabasErrorRequestList)
+            {
+                try
+                {
+                    ediabas.ResolveSgbdFile(errorRequest.SgbdFile);
+                }
+                catch (Exception ex)
+                {
+                    string exText = EdiabasNet.GetExceptionText(ex);
+                    errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, null, null, exText));
+                    continue;
+                }
+
+                ediabas.ArgString = string.Empty;
+                ediabas.ArgBinaryStd = null;
+                ediabas.ResultsRequests = "JOB_STATUS;F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT";
+
+                try
+                {
+                    ediabas.ExecuteJob("FS_LESEN");
+
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(ediabas.ResultSets);
+
+                    bool jobOk = false;
+                    if (resultSets != null && resultSets.Count > 1)
+                    {
+                        EdiabasNet.ResultData resultData;
+                        if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
+                        {
+                            if (resultData.OpData is string)
+                            {   // read details
+                                string jobStatus = (string)resultData.OpData;
+                                if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    jobOk = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if (jobOk)
+                    {
+                        int dictIndex = 0;
+                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                        {
+                            if (dictIndex == 0)
+                            {
+                                dictIndex++;
+                                continue;
+                            }
+
+                            EdiabasNet.ResultData resultData;
+                            if (resultDictLocal.TryGetValue("F_ORT_NR", out resultData))
+                            {
+                                if (resultData.OpData is Int64)
+                                {   // read details
+                                    ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.OpData);
+                                    ediabas.ArgBinaryStd = null;
+                                    ediabas.ResultsRequests = "F_UW_KM";
+
+                                    ediabas.ExecuteJob("FS_LESEN_DETAIL");
+
+                                    List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail = new List<Dictionary<string, EdiabasNet.ResultData>>(ediabas.ResultSets);
+                                    if (resultSetsDetail != null)
+                                    {
+                                        errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, resultDictLocal,
+                                            new List<Dictionary<string, EdiabasNet.ResultData>>(resultSetsDetail)));
+                                    }
+                                }
+                            }
+                            dictIndex++;
+                        }
+                    }
+                    else
+                    {
+                        errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, null, null));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    string exText = EdiabasNet.GetExceptionText(ex);
+                    errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, null, null, exText));
+                    continue;
+                }
+                Thread.Sleep(10);
+            }
+
+            lock (EdiabasThread.DataLock)
+            {
+                errorReportListStore = errorReportList;
+            }
+        }
+
+        public void UpdateResultList(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, ResultListAdapter resultListAdapter)
+        {
+            List<EdiabasErrorReport> errorReportList;
+            lock (EdiabasThread.DataLock)
+            {
+                errorReportList = errorReportListStore;
+            }
+            if (errorReportList != null)
+            {
+                foreach (EdiabasErrorReport errorReport in errorReportList)
+                {
+                    string message = string.Format(ActivityMain.Culture, "{0}: ", ActivityMain.GetPageString(pageInfo, errorReport.DeviceName));
+                    if (errorReport.ErrorDict == null)
+                    {
+                        message += ActivityMain.GetPageString(pageInfo, "error_no_response");
+                    }
+                    else
+                    {
+                        message += "\r\n";
+                        message += ActivityMain.FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
+                        message += ", ";
+                        message += ActivityMain.FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
+                        string detailText = string.Empty;
+                        foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
+                        {
+                            string kmText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
+                            if (kmText.Length > 0)
+                            {
+                                if (detailText.Length > 0)
+                                {
+                                    detailText += ", ";
+                                }
+                                detailText += kmText + "km";
+                            }
+                        }
+                        if (detailText.Length > 0)
+                        {
+                            message += "\r\n" + detailText;
+                        }
+                    }
+
+                    if (message.Length > 0)
+                    {
+                        resultListAdapter.Items.Add(new TableResultItem(message, null));
+                    }
+                }
+                if (resultListAdapter.Items.Count == 0)
+                {
+                    resultListAdapter.Items.Add(new TableResultItem(ActivityMain.GetPageString(pageInfo, "error_no_error"), null));
+                }
+            }
+        }
+    }
+        ]]>
+    </job>
+  </page>
+</fragment>
