@@ -4348,7 +4348,6 @@ namespace CarSimulator
             return true;
         }
 
-        static int test = 0;
         private bool ResponseE90()
         {
             if (
@@ -4391,7 +4390,7 @@ namespace CarSimulator
                             resultBytes = 1;
                             break;
 
-                        case 0x0010:    // Luftmasse von HFM
+                        case 0x0010:    // Luftmasse von HFM (OBD_PID10_AFS_dmSens)
                             // (air * 0.010000);
                             itemValue = (long)(355.0 / 0.010000);
                             break;
@@ -4473,7 +4472,7 @@ namespace CarSimulator
                             itemValue = (long)(1027.0 / 0.045777);
                             break;
 
-                        case 0x0708:    // Luftmasse
+                        case 0x0708:    // Luftmasse (ILMKG)
                             // (air * 0.100000);
                             itemValue = (long)(350.0 / 0.100000);
                             break;
