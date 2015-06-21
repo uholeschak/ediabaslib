@@ -986,16 +986,9 @@ namespace CarControlAndroid
         {
             Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
             string initDir = _activityCommon.ExternalPath;
-            try
+            if (!string.IsNullOrEmpty(_configFileName) && !string.IsNullOrEmpty(_jobReader.EcuPath))
             {
-                if (!string.IsNullOrEmpty(_configFileName))
-                {
-                    initDir = Path.GetDirectoryName(_configFileName);
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
+                initDir = _jobReader.EcuPath;
             }
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, initDir);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);

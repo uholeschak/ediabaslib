@@ -1521,7 +1521,10 @@ namespace CarControlAndroid
 			public const int menu_tool_sel_interface = 2131230839;
 			
 			// aapt resource value: 0x7f080078
-			public const int menu_tool_sel_sgbd = 2131230840;
+			public const int menu_tool_sel_sgbd_grp = 2131230840;
+			
+			// aapt resource value: 0x7f080079
+			public const int menu_tool_sel_sgbd_prg = 2131230841;
 			
 			// aapt resource value: 0x7f080015
 			public const int middle = 2131230741;
@@ -2029,7 +2032,10 @@ namespace CarControlAndroid
 			public const int menu_tool_sel_interface = 2131361862;
 			
 			// aapt resource value: 0x7f0a0047
-			public const int menu_tool_sel_sgbd = 2131361863;
+			public const int menu_tool_sel_sgbd_grp = 2131361863;
+			
+			// aapt resource value: 0x7f0a0048
+			public const int menu_tool_sel_sgbd_prg = 2131361864;
 			
 			// aapt resource value: 0x7f0a0027
 			public const int none_found = 2131361831;
