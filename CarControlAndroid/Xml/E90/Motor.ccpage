@@ -4,9 +4,9 @@
           xsi:schemaLocation="http://www.holeschak.de/CarControl ../CarControl.xsd">
   <page name ="tab_motor" logfile="motor.log">
     <display name="label_motor_bat_voltage" result="STAT_UBATT2_WERT" />
-    <display name="label_motor_refrig_temp" result="STAT_KUEHLMITTELTEMPERATUR_WERT" format="6.2R" />
+    <display name="label_motor_refrig_temp" result="STAT_CEngDsT_tSens_WERT" format="6.2R" />
     <display name="label_motor_temp" result="STAT_MOTORTEMPERATUR_WERT" format="6.2R" />
-    <display name="label_motor_air_mass" result="STAT_LUFTMASSE_WERT" format="7.2R" />
+    <display name="label_motor_air_mass" result="STAT_AFS_dmSens_WERT" format="7.2R" />
     <display name="label_motor_intake_air_temp" result="STAT_LADELUFTTEMPERATUR_WERT" format="6.2R" />
     <display name="label_motor_ambient_temp" result="STAT_UMGEBUNGSTEMPERATUR_WERT" format="6.2R" />
     <display name="label_motor_boost_press_set" result="STAT_LADEDRUCK_SOLL_WERT" format="6.2R" />
@@ -84,7 +84,7 @@
     {
         public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
         {
-            string argString = "IUBAT2;ITKUM;ITMOT;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;PFltRgn_numRgn;CoEOM_stOpModeAct;ISRBF;ISOED;PCBS_lDistanceOut";
+            string argString = "IUBAT2;OBD_PID05_CEngDsT_tSens;ITMOT;ITKRS;OBD_PID10_AFS_dmSens;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;PFltRgn_numRgn;CoEOM_stOpModeAct;ISRBF;ISOED;PCBS_lDistanceOut";
             if (firstCall)
             {
                 argString = "JA;" + argString;
