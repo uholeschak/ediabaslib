@@ -4384,156 +4384,43 @@ namespace CarSimulator
                     int resultBytes = 2;
                     switch (itemAddr)
                     {
-                        //case 0x0005:    // motor / refrigerant temp
-                        case 0x0AF1:    // motor / refrigerant temp
-                            // temp [C] + 41.08
-                            itemValue = (long)(50 + 41.08);
+                        case 0x0005:    // refrigerant temp (sensor)
+                            // temp [C] * 1.000000 -40.000000
+                            itemValue = (long)(50.0 + 40.000000);
+                            resultBytes = 1;
                             break;
 
-                        //case 0x0080:    // Luftmasse
-                        case 0x0708:    // Luftmasse
-                            // 0x0000 == -1600
-                            // 0x7FFF == 0
-                            // 0xFFFF == +1600
-                            // (air * 10 * 0xFFFF / 3200) + 0x7FFF;
-                            itemValue = (350 * 0xFFFF / 3200) + 0x7FFF;
+                        case 0x0010:    // Luftmasse von HFM
+                            // (air * 0.010000);
+                            itemValue = (long)(355.0 / 0.010000);
                             break;
 
-                        //case 0x0081:    // Luftmasse ist
-                        case 0x0709:    // Luftmasse ist
-                            // 0x0000 == -1600
-                            // 0x8000 == 0
-                            // 0xFFFF == 1600
-                            // (lm [mg] + 1600) * 0xFFFF / 3200
-                            itemValue = (527 + 1600) * 0xFFFF / 3200;
-                            break;
-
-                        //case 0x008B:    // Umgebungsdruck
-                        case 0x0C1C:    // Umgebungsdruck
-                            // 0x0000 == 0 mbar
-                            // 0x8000 == 4096 mbar
-                            // Druck [mbar] * 0x8000 / 4096
-                            itemValue = (long)(935 * 0x8000 / 4096);
-                            break;
-
-                        //case 0x008D:    // Luftmasse soll
-                        case 0x079E:    // Luftmasse soll
-                            // 0x0000 == -1600
-                            // 0x8000 == 0
-                            // 0xFFFF == 1600
-                            // (lm [mg] + 1600) * 0xFFFF / 3200
-                            itemValue = (523 + 1600) * 0xFFFF / 3200;
-                            break;
-
-                        //case 0x0091:    // Ladedruck ist
-                        case 0x076D:    // Ladedruck ist
-                            // 0x0000 == 0
-                            // 0x8000 == 4096
-                            // Druck [mbar] * 0x8000 / 4096
-                            itemValue = (long)(1935 * 0x8000 / 4096);
-                            break;
-
-                        //case 0x0093:    // battery voltage
                         case 0x0042:    // battery voltage
-                            // bat * 0.001000
+                            // bat [V] * 0.001000
                             itemValue = (long)(_batteryVoltage / 100.0 / 0.001000);
                             break;
 
                         case 0x012C: // Batteriespannung korrigiert
-                            // bat * 0.389105
-                            itemValue = (long)(_batteryVoltage / 100.0 / 0.389105);
+                            // bat [mV] * 0.389105
+                            itemValue = (long)(_batteryVoltage * 10.0 / 0.389105);
                             break;
 
-                        //case 0x0095:    // refrigerant temp
-                        case 0x0547:    // refrigerant temp
-                            // temp [C] + 41.08
-                            // 0x0000 == -50.1
-                            // 0x8000 == 499.9
-                            // (temp [C] + 50.1) * 0x8000 / 550.0
-                            itemValue = (long)((50.0 + 50.1) * 0x8000 / 550.0);
-                            break;
-
-                        case 0x009B:    // Partikelfilter Status Regeneration
-                            // 0,1 == inaktiv
-                            // >=2 == aktiv
-                            itemValue = 0x0002;
-                            break;
-
-                        case 0x009E:    // motor rpm
-                            // rpm * 8
-                            itemValue = 400 * 8;
-                            break;
-
-                        //case 0x00A0:    // Kraftstofftemperatur
-                        case 0x0385:    // Kraftstofftemperatur
-                            // 0x0000 == -50.1
-                            // 0x8000 == 499.9
-                            // (temp [C] + 50.1) * 0x8000 / 550.0
-                            itemValue = (long)((40.3 + 50.1) * 0x8000 / 550.0);
-                            break;
-
-                        case 0x00AD:    // intake air temp
-                            // 0x0000 == -50.1
-                            // 0x8000 == 499.9
-                            // (temp [C] + 50.1) * 0x8000 / 550.0
-                            itemValue = (long)((80 + 50.1) * 0x8000 / 550.0);
-                            break;
-
-                        //case 0x00AE:    // Ladelufttemp
-                        case 0x076F:    // Ladelufttemp
-                            // 0x0000 == -50.1
-                            // 0x8000 == 499.9
-                            // (temp [C] + 50.1) * 0x8000 / 550.0
-                            itemValue = (long)((60.1 + 50.1) * 0x8000 / 550.0);
-                            break;
-
-                        //case 0x00C6:    // Ladedruck soll
                         case 0x01F4:    // Ladedruck soll
-                            // 0x0000 == 0
-                            // 0x8000 == 4096
-                            // Druck [mbar] * 0x8000 / 4096
-                            itemValue = (long)(1938 * 0x8000 / 4096);
+                            // Druck [mbar] * 0.091554
+                            itemValue = (long)(1938.0 / 0.091554);
                             break;
 
-                        //case 0x00BF:    // Öldruckschalter
-                        case 0x0ABE:    // Öldruckschalter
-                            itemValue = 0x0001;
+                        case 0x0385:    // Kraftstofftemperatur
+                            // (temp [C] * 0.010000) -50.000000
+                            itemValue = (long)((40.3 + 50.000000) / 0.010000);
                             break;
 
-                        //case 0x00C2:    // Abgastemp vor Kat
-                        case 0x041E:    // Abgastemp vor Kat
-                            // 0x0000 == -51.1
-                            // 0x8000 == 32724.9
-                            // (temp [C] + 51.1) * 0x8000 / 32776.0
-                            itemValue = (long)((175.3 + 51.1) * 0x8000 / 32776);
-                            break;
-
-                        //case 0x00CA:    // Abgastemp vor Partikelfilter
-                        case 0x041B:    // Abgastemp vor Partikelfilter
-                            // 0x0000 == -51.1
-                            // 0x8000 == 32724.9
-                            // (temp [C] + 51.1) * 0x8000 / 32776.0
-                            itemValue = (long)((165.3 + 51.1) * 0x8000 / 32776);
-                            break;
-
-                        //case 0x00D1:    // Partikelfilter Strecke seit Regeneration
                         case 0x03EB:    // Partikelfilter Strecke seit Regeneration
-                            // 0x00 == 0m
-                            // 0xFF == 32640m
-                            // Strecke [m] >> 7
-                            itemValue = 145678 >> 7;
+                            // Strecke [m]
+                            itemValue = 145678;
                             resultBytes = 4;
                             break;
 
-                        //case 0x00D8:    // Abgasgegendruck
-                        case 0x0424:    // Abgasgegendruck
-                            // 0 == 0m
-                            // 0x8000 == 4096 mbar
-                            // Druck [mbar] * 0x8000 / 4096
-                            itemValue = (long)(2943 * 0x8000 / 4096);
-                            break;
-
-                        //case 0x00DD:    // Partikelfilter Freigabe Regeneration
                         case 0x03EE:    // Partikelfilter Freigabe Regeneration
                             // 0 == freigegeben
                             // 1 == gesperrt
@@ -4541,127 +4428,107 @@ namespace CarSimulator
                             resultBytes = 1;
                             break;
 
-                        //case 0x00DF:    // Raildruck ist
-                        case 0x0672:    // Raildruck ist
-                            // 0x0000 == 0
-                            // 0x8000 == 1000
-                            // Druck [mbar] * 0x8000 / 1000
-                            itemValue = (long)(1027 * 0x8000 / 1000);
-                            break;
-
-                        //case 0x00E1:    // Raildruck soll
-                        case 0x0641:    // Raildruck soll
-                            // 0x0000 == 0
-                            // 0x8000 == 1000
-                            // Druck [mbar] * 0x8000 / 1000
-                            itemValue = (long)(1024 * 0x8000 / 1000);
-                            break;
-
-                        //case 0x15E5:    // Umgebungstemperatur
-                        case 0x0FD2:    // Umgebungstemperatur
-                            // 0x0000 == -50.1
-                            // 0x8000 == 499.9
-                            // (temp [C] + 50.1) * 0x8000 / 550.0
-                            itemValue = (long)((35.4 + 50.1) * 0x8000 / 550.0);
-                            break;
-
-                        case 0x1770:    // Drehung Zylinder 1
-                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x01))
-                            {
-                                break;
-                            }
-                            // 0x0000 = 0
-                            // 0xFFFF = 8192
-                            // (speed [rpm] -100) * 0xFFFF / 8192
-                            itemValue = (long)(123.4 * 0xFFFF / 8192);
-                            break;
-
-                        case 0x1771:    // Drehung Zylinder 2
-                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x01))
-                            {
-                                break;
-                            }
-                            // 0x0000 = 0
-                            // 0xFFFF = 8192
-                            // (speed [rpm] -100) * 0xFFFF / 8192
-                            itemValue = (long)(234.5 * 0xFFFF / 8192);
-                            break;
-
-                        case 0x1772:    // Drehung Zylinder 3
-                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x01))
-                            {
-                                break;
-                            }
-                            // 0x0000 = 0
-                            // 0xFFFF = 8192
-                            // (speed [rpm] -100) * 0xFFFF / 8192
-                            itemValue = (long)(345.6 * 0xFFFF / 8192);
-                            break;
-
-                        case 0x1773:    // Drehung Zylinder 4
-                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x01))
-                            {
-                                break;
-                            }
-                            // 0x0000 = 0
-                            // 0xFFFF = 8192
-                            // (speed [rpm] -100) * 0xFFFF / 8192
-                            itemValue = (long)(456.7 * 0xFFFF / 8192);
-                            break;
-
-                        case 0x177A:    // Mengenkorrektur Zylinder 1
-                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x00))
-                            {
-                                break;
-                            }
-                            // 0x0000 = -100
-                            // 0xFFFF = 100
-                            // (Mkorr [mg/Hub] + 100) * 0xFFFF / 200
-                            itemValue = (long)((3.45 + 100) * 0xFFFF / 200);
-                            break;
-
-                        case 0x177B:    // Mengenkorrektur Zylinder 2
-                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x00))
-                            {
-                                break;
-                            }
-                            // 0x0000 = -100
-                            // 0xFFFF = 100
-                            // (Mkorr [mg/Hub] + 100) * 0xFFFF / 200
-                            itemValue = (long)((1.23 + 100) * 0xFFFF / 200);
-                            break;
-
-                        case 0x177C:    // Mengenkorrektur Zylinder 3
-                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x00))
-                            {
-                                break;
-                            }
-                            // 0x0000 = -100
-                            // 0xFFFF = 100
-                            // (Mkorr [mg/Hub] + 100) * 0xFFFF / 200
-                            itemValue = (long)((-4.56 + 100) * 0xFFFF / 200);
-                            break;
-
-                        case 0x177D:    // Mengenkorrektur Zylinder 4
-                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x00))
-                            {
-                                break;
-                            }
-                            // 0x0000 = -100
-                            // 0xFFFF = 100
-                            // (Mkorr [mg/Hub] + 100) * 0xFFFF / 200
-                            itemValue = (long)((-1.45 + 100) * 0xFFFF / 200);
-                            break;
-
-                        case 0x1952:    // Partikelfilter Anforderung Regeneration
+                        case 0x0404:    // Partikelfilter Anforderung Regeneration (PFltRgn_numRgn)
                             // 0 == angefordert
                             // 1 == nicht angefordert
                             itemValue = 0x0000;
+                            resultBytes = 1;
+                            break;
+
+                        case 0x041B:    // Abgastemp vor Partikelfilter
+                            // (temp [C] * 0.031281) -50.000000
+                            itemValue = (long)((165.3 + 50.000000) / 0.031281);
+                            break;
+
+                        case 0x041E:    // Abgastemp vor Kat
+                            // (temp [C] * 0.031281) -50.000000
+                            itemValue = (long)((175.3 + 50.000000) / 0.031281);
+                            break;
+
+                        case 0x0424:    // Abgasgegendruck
+                            // Druck [mbar]
+                            itemValue = (long)(2943);
+                            break;
+
+                        case 0x0547:    // refrigerant temp
+                            // temp [C] * 0.010000 -100.000000
+                            itemValue = (long)((50.0 + 100.000000) / 0.010000);
+                            break;
+
+                        case 0x05AA:    // Partikelfilter Status Regeneration (CoEOM_stOpModeAct)
+                            // 0,1 == inaktiv
+                            // >=2 == aktiv
+                            itemValue = 0x0002;
+                            resultBytes = 4;
+                            break;
+
+                        case 0x0641:    // Raildruck soll
+                            // Druck [mbar] * 0.045777
+                            itemValue = (long)(1024.0 / 0.045777);
+                            break;
+
+                        case 0x0672:    // Raildruck ist
+                            // Druck [mbar] * 0.045777
+                            itemValue = (long)(1027.0 / 0.045777);
+                            break;
+
+                        case 0x0708:    // Luftmasse
+                            // (air * 0.100000);
+                            itemValue = (long)(350.0 / 0.100000);
+                            break;
+
+                        case 0x0709:    // Luftmasse ist
+                            // (lm [mg] * 0.024414)
+                            itemValue = (long)(527.0 / 0.024414 );
+                            break;
+
+                        case 0x076D:    // Ladedruck ist
+                            // Druck [mbar] * 0.091554
+                            itemValue = (long)(1935.0 / 0.091554);
+                            break;
+
+                        case 0x076F:    // Ladelufttemp
+                            // (temp [C] * 0.010000) -100.000000
+                            itemValue = (long)((60.1 + 100.000000) / 0.010000);
+                            break;
+
+                        case 0x0772:    // intake air temp
+                            // (temp [C] * 0.100000) -273.140000
+                            itemValue = (long)((80.0 + 273.140000) / 0.100000);
+                            break;
+
+                        case 0x079E:    // Luftmasse soll
+                            // (lm [mg] * 0.030518)
+                            itemValue = (long)(523.0 / 0.030518);
+                            break;
+
+                        case 0x0ABE:    // Öldruckschalter
+                            itemValue = 0x0001;
+                            break;
+
+                        case 0x0AF1:    // motor temp
+                            // temp [C] * 0.100000 -273.140000
+                            itemValue = (long)((50.0 + 273.140000) / 0.100000);
                             break;
 
                         case 0x0BA4:    // Partikelfilter Restlaufstrecke
                             // dist * 10
                             itemValue = (long)(100000d / 10);
+                            break;
+
+                        case 0x0C1C:    // Umgebungsdruck
+                            // Druck [mbar] * 0.030518
+                            itemValue = (long)(935.0 / 0.030518);
+                            break;
+
+                        case 0x0FD2:    // Umgebungstemperatur
+                            // (temp [C] * 0.100000) -273.140000
+                            itemValue = (long)((35.4 + 273.140000) / 0.100000);
+                            break;
+
+                        case 0x1881:    // motor rpm
+                            // rpm * 0.500000
+                            itemValue = (long)(400.0 / 0.500000);
                             break;
                     }
                     if (resultBytes >= 4) _sendData[i++] = (byte)(itemValue >> 24);
