@@ -99,6 +99,13 @@ namespace CarSimulator
             Concept3,
         };
 
+        public enum ResponseType
+        {
+            Standard,
+            E61,
+            E90,
+        };
+
         private static readonly long TickResolMs = Stopwatch.Frequency/1000;
         private const byte TcpTesterAddr = 0xF4;
         private const int EnetDiagPort = 6801;
@@ -109,7 +116,7 @@ namespace CarSimulator
         private string _comPort;
         private ConceptType _conceptType;
         private bool _adsAdapter;
-        private bool _e61Internal;
+        private ResponseType _responseType;
         private ConfigData _configData;
         private byte _pcanHandle;
         private long _lastCanSendTick;
@@ -493,7 +500,7 @@ namespace CarSimulator
             IgnitionOk = false;
         }
 
-        public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, bool e61Internal, ConfigData configData)
+        public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, ResponseType responseType, ConfigData configData)
         {
             try
             {
@@ -502,7 +509,7 @@ namespace CarSimulator
                 _comPort = comPort;
                 _conceptType = conceptType;
                 _adsAdapter = adsAdapter;
-                _e61Internal = e61Internal;
+                _responseType = responseType;
                 _configData = configData;
                 foreach (ResponseEntry responseEntry in _configData.ResponseList)
                 {
@@ -2315,12 +2322,93 @@ namespace CarSimulator
             {
                 useResponseList = false;
             }
-            else if (!_e61Internal)
+            else
             {
-                useResponseList = true;
+                switch (_responseType)
+                {
+                   case ResponseType.E61:
+                        if (!ResponseE61())
+                        {
+                            useResponseList = true;
+                        }
+                        break;
+
+                    case ResponseType.E90:
+                        if (!ResponseE90())
+                        {
+                            useResponseList = true;
+                        }
+                        break;
+
+                    default:
+                        useResponseList = true;
+                        break;
+                }
             }
+
+            if (useResponseList)
+            {
+                int recLength = _receiveData[0] & 0x3F;
+                if (recLength == 0)
+                {   // with length byte
+                    recLength = _receiveData[3] + 4;
+                }
+                else
+                {
+                    recLength += 3;
+                }
+                recLength += 1; // checksum
+
+                bool found = false;
+                foreach (ResponseEntry responseEntry in _configData.ResponseList)
+                {
+                    if (recLength != responseEntry.Request.Length) continue;
+                    bool equal = true;
+                    for (int i = 0; i < recLength - 1; i++)
+                    {   // don't compare checksum
+                        if (_receiveData[i] != responseEntry.Request[i])
+                        {
+                            equal = false;
+                            break;
+                        }
+                    }
+                    if (equal)
+                    {       // entry found
+                        found = true;
+#if false
+                        SendData(responseEntry.Response, responseEntry.Response.Length);
+#else
+                        if (responseEntry.ResponseMultiList.Count > 1)
+                        {
+                            foreach (byte[] responseTel in responseEntry.ResponseMultiList)
+                            {
+                                ObdSend(responseTel);
+                            }
+                        }
+                        else
+                        {
+                            ObdSend(responseEntry.ResponseDyn);
+                        }
+#endif
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    string text = string.Empty;
+                    for (int i = 0; i < recLength; i++)
+                    {
+                        text += string.Format("{0:X02} ", _receiveData[i]);
+                    }
+                    Debug.WriteLine("Not found: " + text);
+                }
+            }
+        }
+
+        private bool ResponseE61()
+        {
             // axis unit
-            else if (
+            if (
                 _receiveData[0] == 0x82 &&
                 _receiveData[1] == 0x38 &&
                 _receiveData[2] == 0xF1 &&
@@ -2665,12 +2753,13 @@ namespace CarSimulator
                 for (int j = 0; j < items; j++)
                 {
                     int itemAddr = ((int)_receiveData[5 + j * 2] << 8) + _receiveData[6 + j * 2];
-                    int itemValue = 0x000;
+                    long itemValue = 0x000;
+                    int resultBytes = 2;
                     switch (itemAddr)
                     {
                         case 0x0005:    // motor / refrigerant temp
                             // temp [C] + 41.08
-                            itemValue = (int)(50 + 41.08);
+                            itemValue = (long)(50 + 41.08);
                             break;
 
                         case 0x0080:    // Luftmasse
@@ -2693,21 +2782,21 @@ namespace CarSimulator
                             // 0x0000 == 0 V
                             // 0x1FFF == 5 V
                             // pwg [V] * 0x1FFF / 5
-                            itemValue = (int)(3.5 * 0x1FFF / 5);
+                            itemValue = (long)(3.5 * 0x1FFF / 5);
                             break;
 
                         case 0x008A:    // PWG 2 (Pedalwertgeber)
                             // 0x0000 == 0 V
                             // 0x1FFF == 5 V
                             // pwg [V] * 0x1FFF / 5
-                            itemValue = (int)(1.3 * 0x1FFF / 5);
+                            itemValue = (long)(1.3 * 0x1FFF / 5);
                             break;
 
                         case 0x008B:    // Umgebungsdruck
                             // 0x0000 == 0 mbar
                             // 0x8000 == 4096 mbar
                             // Druck [mbar] * 0x8000 / 4096
-                            itemValue = (int)(935 * 0x8000 / 4096);
+                            itemValue = (long)(935 * 0x8000 / 4096);
                             break;
 
                         case 0x008D:    // Luftmasse soll
@@ -2722,7 +2811,7 @@ namespace CarSimulator
                             // 0x0000 == 0
                             // 0x8000 == 4096
                             // Druck [mbar] * 0x8000 / 4096
-                            itemValue = (int)(1935 * 0x8000 / 4096);
+                            itemValue = (long)(1935 * 0x8000 / 4096);
                             break;
 
                         case 0x0093:    // battery voltage
@@ -2736,7 +2825,7 @@ namespace CarSimulator
                             // 0x0000 == -50.1
                             // 0x8000 == 499.9
                             // (temp [C] + 50.1) * 0x8000 / 550.0
-                            itemValue = (int)((50.0 + 50.1) * 0x8000 / 550.0);
+                            itemValue = (long)((50.0 + 50.1) * 0x8000 / 550.0);
                             break;
 
                         case 0x009B:    // Partikelfilter Status Regeneration
@@ -2754,28 +2843,28 @@ namespace CarSimulator
                             // 0x0000 == -50.1
                             // 0x8000 == 499.9
                             // (temp [C] + 50.1) * 0x8000 / 550.0
-                            itemValue = (int)((40.3 + 50.1) * 0x8000 / 550.0);
+                            itemValue = (long)((40.3 + 50.1) * 0x8000 / 550.0);
                             break;
 
                         case 0x00AD:    // intake air temp
                             // 0x0000 == -50.1
                             // 0x8000 == 499.9
                             // (temp [C] + 50.1) * 0x8000 / 550.0
-                            itemValue = (int)((80 + 50.1) * 0x8000 / 550.0);
+                            itemValue = (long)((80 + 50.1) * 0x8000 / 550.0);
                             break;
 
                         case 0x00AE:    // Ladelufttemp
                             // 0x0000 == -50.1
                             // 0x8000 == 499.9
                             // (temp [C] + 50.1) * 0x8000 / 550.0
-                            itemValue = (int)((60.1 + 50.1) * 0x8000 / 550.0);
+                            itemValue = (long)((60.1 + 50.1) * 0x8000 / 550.0);
                             break;
 
                         case 0x00C6:    // Ladedruck soll
                             // 0x0000 == 0
                             // 0x8000 == 4096
                             // Druck [mbar] * 0x8000 / 4096
-                            itemValue = (int)(1938 * 0x8000 / 4096);
+                            itemValue = (long)(1938 * 0x8000 / 4096);
                             break;
 
                         case 0x00BF:    // Öldruckschalter
@@ -2786,14 +2875,14 @@ namespace CarSimulator
                             // 0x0000 == -51.1
                             // 0x8000 == 32724.9
                             // (temp [C] + 51.1) * 0x8000 / 32776.0
-                            itemValue = (int)((175.3 + 51.1) * 0x8000 / 32776);
+                            itemValue = (long)((175.3 + 51.1) * 0x8000 / 32776);
                             break;
 
                         case 0x00CA:    // Abgastemp vor Partikelfilter
                             // 0x0000 == -51.1
                             // 0x8000 == 32724.9
                             // (temp [C] + 51.1) * 0x8000 / 32776.0
-                            itemValue = (int)((165.3 + 51.1) * 0x8000 / 32776);
+                            itemValue = (long)((165.3 + 51.1) * 0x8000 / 32776);
                             break;
 
                         case 0x00D1:    // Partikelfilter Strecke seit Regeneration
@@ -2807,7 +2896,7 @@ namespace CarSimulator
                             // 0 == 0m
                             // 0x8000 == 4096 mbar
                             // Druck [mbar] * 0x8000 / 4096
-                            itemValue = (int)(2943 * 0x8000 / 4096);
+                            itemValue = (long)(2943 * 0x8000 / 4096);
                             break;
 
                         case 0x00DD:    // Partikelfilter Freigabe Regeneration
@@ -2820,14 +2909,14 @@ namespace CarSimulator
                             // 0x0000 == 0
                             // 0x8000 == 1000
                             // Druck [mbar] * 0x8000 / 1000
-                            itemValue = (int)(1027 * 0x8000 / 1000);
+                            itemValue = (long)(1027 * 0x8000 / 1000);
                             break;
 
                         case 0x00E1:    // Raildruck soll
                             // 0x0000 == 0
                             // 0x8000 == 1000
                             // Druck [mbar] * 0x8000 / 1000
-                            itemValue = (int)(1024 * 0x8000 / 1000);
+                            itemValue = (long)(1024 * 0x8000 / 1000);
                             break;
 
                         case 0x13EC:    // Bremslichtschalter
@@ -2854,7 +2943,7 @@ namespace CarSimulator
                             // 0x0000 == -50.1
                             // 0x8000 == 499.9
                             // (temp [C] + 50.1) * 0x8000 / 550.0
-                            itemValue = (int)((35.4 + 50.1) * 0x8000 / 550.0);
+                            itemValue = (long)((35.4 + 50.1) * 0x8000 / 550.0);
                             break;
 
                         case 0x1645:    // Getriebeart
@@ -2869,7 +2958,7 @@ namespace CarSimulator
                             // 0x0000 = 0
                             // 0xFFFF = 8192
                             // (speed [rpm] -100) * 0xFFFF / 8192
-                            itemValue = (int)(123.4 * 0xFFFF / 8192);
+                            itemValue = (long)(123.4 * 0xFFFF / 8192);
                             break;
 
                         case 0x1771:    // Drehung Zylinder 2
@@ -2880,7 +2969,7 @@ namespace CarSimulator
                             // 0x0000 = 0
                             // 0xFFFF = 8192
                             // (speed [rpm] -100) * 0xFFFF / 8192
-                            itemValue = (int)(234.5 * 0xFFFF / 8192);
+                            itemValue = (long)(234.5 * 0xFFFF / 8192);
                             break;
 
                         case 0x1772:    // Drehung Zylinder 3
@@ -2891,7 +2980,7 @@ namespace CarSimulator
                             // 0x0000 = 0
                             // 0xFFFF = 8192
                             // (speed [rpm] -100) * 0xFFFF / 8192
-                            itemValue = (int)(345.6 * 0xFFFF / 8192);
+                            itemValue = (long)(345.6 * 0xFFFF / 8192);
                             break;
 
                         case 0x1773:    // Drehung Zylinder 4
@@ -2902,7 +2991,7 @@ namespace CarSimulator
                             // 0x0000 = 0
                             // 0xFFFF = 8192
                             // (speed [rpm] -100) * 0xFFFF / 8192
-                            itemValue = (int)(456.7 * 0xFFFF / 8192);
+                            itemValue = (long)(456.7 * 0xFFFF / 8192);
                             break;
 
                         case 0x177A:    // Mengenkorrektur Zylinder 1
@@ -2913,7 +3002,7 @@ namespace CarSimulator
                             // 0x0000 = -100
                             // 0xFFFF = 100
                             // (Mkorr [mg/Hub] + 100) * 0xFFFF / 200
-                            itemValue = (int)((3.45 + 100) * 0xFFFF / 200);
+                            itemValue = (long)((3.45 + 100) * 0xFFFF / 200);
                             break;
 
                         case 0x177B:    // Mengenkorrektur Zylinder 2
@@ -2924,7 +3013,7 @@ namespace CarSimulator
                             // 0x0000 = -100
                             // 0xFFFF = 100
                             // (Mkorr [mg/Hub] + 100) * 0xFFFF / 200
-                            itemValue = (int)((1.23 + 100) * 0xFFFF / 200);
+                            itemValue = (long)((1.23 + 100) * 0xFFFF / 200);
                             break;
 
                         case 0x177C:    // Mengenkorrektur Zylinder 3
@@ -2935,7 +3024,7 @@ namespace CarSimulator
                             // 0x0000 = -100
                             // 0xFFFF = 100
                             // (Mkorr [mg/Hub] + 100) * 0xFFFF / 200
-                            itemValue = (int)((-4.56 + 100) * 0xFFFF / 200);
+                            itemValue = (long)((-4.56 + 100) * 0xFFFF / 200);
                             break;
 
                         case 0x177D:    // Mengenkorrektur Zylinder 4
@@ -2946,7 +3035,7 @@ namespace CarSimulator
                             // 0x0000 = -100
                             // 0xFFFF = 100
                             // (Mkorr [mg/Hub] + 100) * 0xFFFF / 200
-                            itemValue = (int)((-1.45 + 100) * 0xFFFF / 200);
+                            itemValue = (long)((-1.45 + 100) * 0xFFFF / 200);
                             break;
 
                         case 0x1952:    // Partikelfilter Anforderung Regeneration
@@ -2955,8 +3044,10 @@ namespace CarSimulator
                             itemValue = 0x0000;
                             break;
                     }
-                    _sendData[i++] = (byte)(itemValue >> 8);
-                    _sendData[i++] = (byte)(itemValue);
+                    if (resultBytes >= 4) _sendData[i++] = (byte)(itemValue >> 24);
+                    if (resultBytes >= 3) _sendData[i++] = (byte)(itemValue >> 16);
+                    if (resultBytes >= 2) _sendData[i++] = (byte)(itemValue >> 8);
+                    if (resultBytes >= 1) _sendData[i++] = (byte)(itemValue);
                 }
                 _sendData[0] = (byte)(0x80 | (i - 3));
 
@@ -4252,66 +4343,341 @@ namespace CarSimulator
             }
             else
             {   // nothing matched, check response list
-                useResponseList = true;
+                return false;
             }
+            return true;
+        }
 
-            if (useResponseList)
-            {
-                int recLength = _receiveData[0] & 0x3F;
-                if (recLength == 0)
-                {   // with length byte
-                    recLength = _receiveData[3] + 4;
+        private bool ResponseE90()
+        {
+            if (
+                (_receiveData[0] & 0xC0) == 0x80 &&
+                _receiveData[1] == 0x12 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x2C &&
+                _receiveData[4] == 0x10)
+            {   // request list
+                int i = 0;
+                _sendData[i++] = 0x82;
+                _sendData[i++] = 0xF1;
+                _sendData[i++] = 0x12;
+                _sendData[i++] = 0x6C;
+                _sendData[i++] = 0x10;
+
+                int items = ((_receiveData[0] & 0x3F) - 2) / 2;
+                if (items == 0)
+                {   // use last request data
+                    if (_receiveDataMotorBackup[1] == 0x12)
+                    {
+                        _receiveDataMotorBackup.CopyTo(_receiveData, 0);
+                        items = ((_receiveData[0] & 0x3F) - 2) / 2;
+                    }
                 }
                 else
                 {
-                    recLength += 3;
+                    _receiveData.CopyTo(_receiveDataMotorBackup, 0);
                 }
-                recLength += 1; // checksum
-
-                bool found = false;
-                foreach (ResponseEntry responseEntry in _configData.ResponseList)
+                for (int j = 0; j < items; j++)
                 {
-                    if (recLength != responseEntry.Request.Length) continue;
-                    bool equal = true;
-                    for (int i = 0; i < recLength - 1; i++)
-                    {   // don't compare checksum
-                        if (_receiveData[i] != responseEntry.Request[i])
-                        {
-                            equal = false;
-                            break;
-                        }
-                    }
-                    if (equal)
-                    {       // entry found
-                        found = true;
-#if false
-                        SendData(responseEntry.Response, responseEntry.Response.Length);
-#else
-                        if (responseEntry.ResponseMultiList.Count > 1)
-                        {
-                            foreach (byte[] responseTel in responseEntry.ResponseMultiList)
-                            {
-                                ObdSend(responseTel);
-                            }
-                        }
-                        else
-                        {
-                            ObdSend(responseEntry.ResponseDyn);
-                        }
-#endif
-                        break;
-                    }
-                }
-                if (!found)
-                {
-                    string text = string.Empty;
-                    for (int i = 0; i < recLength; i++)
+                    int itemAddr = ((int)_receiveData[5 + j * 2] << 8) + _receiveData[6 + j * 2];
+                    long itemValue = 0x000;
+                    int resultBytes = 2;
+                    switch (itemAddr)
                     {
-                        text += string.Format("{0:X02} ", _receiveData[i]);
+                        //case 0x0005:    // motor / refrigerant temp
+                        case 0x0AF1:    // motor / refrigerant temp
+                            // temp [C] + 41.08
+                            itemValue = (long)(50 + 41.08);
+                            break;
+
+                        //case 0x0080:    // Luftmasse
+                        case 0x0708:    // Luftmasse
+                            // 0x0000 == -1600
+                            // 0x7FFF == 0
+                            // 0xFFFF == +1600
+                            // (air * 10 * 0xFFFF / 3200) + 0x7FFF;
+                            itemValue = (350 * 0xFFFF / 3200) + 0x7FFF;
+                            break;
+
+                        //case 0x0081:    // Luftmasse ist
+                        case 0x0709:    // Luftmasse ist
+                            // 0x0000 == -1600
+                            // 0x8000 == 0
+                            // 0xFFFF == 1600
+                            // (lm [mg] + 1600) * 0xFFFF / 3200
+                            itemValue = (527 + 1600) * 0xFFFF / 3200;
+                            break;
+
+                        //case 0x008B:    // Umgebungsdruck
+                        case 0x0C1C:    // Umgebungsdruck
+                            // 0x0000 == 0 mbar
+                            // 0x8000 == 4096 mbar
+                            // Druck [mbar] * 0x8000 / 4096
+                            itemValue = (long)(935 * 0x8000 / 4096);
+                            break;
+
+                        //case 0x008D:    // Luftmasse soll
+                        case 0x079E:    // Luftmasse soll
+                            // 0x0000 == -1600
+                            // 0x8000 == 0
+                            // 0xFFFF == 1600
+                            // (lm [mg] + 1600) * 0xFFFF / 3200
+                            itemValue = (523 + 1600) * 0xFFFF / 3200;
+                            break;
+
+                        //case 0x0091:    // Ladedruck ist
+                        case 0x076D:    // Ladedruck ist
+                            // 0x0000 == 0
+                            // 0x8000 == 4096
+                            // Druck [mbar] * 0x8000 / 4096
+                            itemValue = (long)(1935 * 0x8000 / 4096);
+                            break;
+
+                        //case 0x0093:    // battery voltage
+                        case 0x0042:    // battery voltage
+                            // bat * 0.001000
+                            itemValue = (long)(_batteryVoltage / 100.0 / 0.001000);
+                            break;
+
+                        case 0x012C: // Batteriespannung korrigiert
+                            // bat * 0.389105
+                            itemValue = (long)(_batteryVoltage / 100.0 / 0.389105);
+                            break;
+
+                        //case 0x0095:    // refrigerant temp
+                        case 0x0547:    // refrigerant temp
+                            // temp [C] + 41.08
+                            // 0x0000 == -50.1
+                            // 0x8000 == 499.9
+                            // (temp [C] + 50.1) * 0x8000 / 550.0
+                            itemValue = (long)((50.0 + 50.1) * 0x8000 / 550.0);
+                            break;
+
+                        case 0x009B:    // Partikelfilter Status Regeneration
+                            // 0,1 == inaktiv
+                            // >=2 == aktiv
+                            itemValue = 0x0002;
+                            break;
+
+                        case 0x009E:    // motor rpm
+                            // rpm * 8
+                            itemValue = 400 * 8;
+                            break;
+
+                        //case 0x00A0:    // Kraftstofftemperatur
+                        case 0x0385:    // Kraftstofftemperatur
+                            // 0x0000 == -50.1
+                            // 0x8000 == 499.9
+                            // (temp [C] + 50.1) * 0x8000 / 550.0
+                            itemValue = (long)((40.3 + 50.1) * 0x8000 / 550.0);
+                            break;
+
+                        case 0x00AD:    // intake air temp
+                            // 0x0000 == -50.1
+                            // 0x8000 == 499.9
+                            // (temp [C] + 50.1) * 0x8000 / 550.0
+                            itemValue = (long)((80 + 50.1) * 0x8000 / 550.0);
+                            break;
+
+                        //case 0x00AE:    // Ladelufttemp
+                        case 0x076F:    // Ladelufttemp
+                            // 0x0000 == -50.1
+                            // 0x8000 == 499.9
+                            // (temp [C] + 50.1) * 0x8000 / 550.0
+                            itemValue = (long)((60.1 + 50.1) * 0x8000 / 550.0);
+                            break;
+
+                        //case 0x00C6:    // Ladedruck soll
+                        case 0x01F4:    // Ladedruck soll
+                            // 0x0000 == 0
+                            // 0x8000 == 4096
+                            // Druck [mbar] * 0x8000 / 4096
+                            itemValue = (long)(1938 * 0x8000 / 4096);
+                            break;
+
+                        //case 0x00BF:    // Öldruckschalter
+                        case 0x0ABE:    // Öldruckschalter
+                            itemValue = 0x0001;
+                            break;
+
+                        //case 0x00C2:    // Abgastemp vor Kat
+                        case 0x041E:    // Abgastemp vor Kat
+                            // 0x0000 == -51.1
+                            // 0x8000 == 32724.9
+                            // (temp [C] + 51.1) * 0x8000 / 32776.0
+                            itemValue = (long)((175.3 + 51.1) * 0x8000 / 32776);
+                            break;
+
+                        //case 0x00CA:    // Abgastemp vor Partikelfilter
+                        case 0x041B:    // Abgastemp vor Partikelfilter
+                            // 0x0000 == -51.1
+                            // 0x8000 == 32724.9
+                            // (temp [C] + 51.1) * 0x8000 / 32776.0
+                            itemValue = (long)((165.3 + 51.1) * 0x8000 / 32776);
+                            break;
+
+                        //case 0x00D1:    // Partikelfilter Strecke seit Regeneration
+                        case 0x03EB:    // Partikelfilter Strecke seit Regeneration
+                            // 0x00 == 0m
+                            // 0xFF == 32640m
+                            // Strecke [m] >> 7
+                            itemValue = 145678 >> 7;
+                            resultBytes = 4;
+                            break;
+
+                        //case 0x00D8:    // Abgasgegendruck
+                        case 0x0424:    // Abgasgegendruck
+                            // 0 == 0m
+                            // 0x8000 == 4096 mbar
+                            // Druck [mbar] * 0x8000 / 4096
+                            itemValue = (long)(2943 * 0x8000 / 4096);
+                            break;
+
+                        //case 0x00DD:    // Partikelfilter Freigabe Regeneration
+                        case 0x03EE:    // Partikelfilter Freigabe Regeneration
+                            // 0 == freigegeben
+                            // 1 == gesperrt
+                            itemValue = 0x0000;
+                            resultBytes = 1;
+                            break;
+
+                        //case 0x00DF:    // Raildruck ist
+                        case 0x0672:    // Raildruck ist
+                            // 0x0000 == 0
+                            // 0x8000 == 1000
+                            // Druck [mbar] * 0x8000 / 1000
+                            itemValue = (long)(1027 * 0x8000 / 1000);
+                            break;
+
+                        //case 0x00E1:    // Raildruck soll
+                        case 0x0641:    // Raildruck soll
+                            // 0x0000 == 0
+                            // 0x8000 == 1000
+                            // Druck [mbar] * 0x8000 / 1000
+                            itemValue = (long)(1024 * 0x8000 / 1000);
+                            break;
+
+                        //case 0x15E5:    // Umgebungstemperatur
+                        case 0x0FD2:    // Umgebungstemperatur
+                            // 0x0000 == -50.1
+                            // 0x8000 == 499.9
+                            // (temp [C] + 50.1) * 0x8000 / 550.0
+                            itemValue = (long)((35.4 + 50.1) * 0x8000 / 550.0);
+                            break;
+
+                        case 0x1770:    // Drehung Zylinder 1
+                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x01))
+                            {
+                                break;
+                            }
+                            // 0x0000 = 0
+                            // 0xFFFF = 8192
+                            // (speed [rpm] -100) * 0xFFFF / 8192
+                            itemValue = (long)(123.4 * 0xFFFF / 8192);
+                            break;
+
+                        case 0x1771:    // Drehung Zylinder 2
+                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x01))
+                            {
+                                break;
+                            }
+                            // 0x0000 = 0
+                            // 0xFFFF = 8192
+                            // (speed [rpm] -100) * 0xFFFF / 8192
+                            itemValue = (long)(234.5 * 0xFFFF / 8192);
+                            break;
+
+                        case 0x1772:    // Drehung Zylinder 3
+                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x01))
+                            {
+                                break;
+                            }
+                            // 0x0000 = 0
+                            // 0xFFFF = 8192
+                            // (speed [rpm] -100) * 0xFFFF / 8192
+                            itemValue = (long)(345.6 * 0xFFFF / 8192);
+                            break;
+
+                        case 0x1773:    // Drehung Zylinder 4
+                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x01))
+                            {
+                                break;
+                            }
+                            // 0x0000 = 0
+                            // 0xFFFF = 8192
+                            // (speed [rpm] -100) * 0xFFFF / 8192
+                            itemValue = (long)(456.7 * 0xFFFF / 8192);
+                            break;
+
+                        case 0x177A:    // Mengenkorrektur Zylinder 1
+                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x00))
+                            {
+                                break;
+                            }
+                            // 0x0000 = -100
+                            // 0xFFFF = 100
+                            // (Mkorr [mg/Hub] + 100) * 0xFFFF / 200
+                            itemValue = (long)((3.45 + 100) * 0xFFFF / 200);
+                            break;
+
+                        case 0x177B:    // Mengenkorrektur Zylinder 2
+                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x00))
+                            {
+                                break;
+                            }
+                            // 0x0000 = -100
+                            // 0xFFFF = 100
+                            // (Mkorr [mg/Hub] + 100) * 0xFFFF / 200
+                            itemValue = (long)((1.23 + 100) * 0xFFFF / 200);
+                            break;
+
+                        case 0x177C:    // Mengenkorrektur Zylinder 3
+                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x00))
+                            {
+                                break;
+                            }
+                            // 0x0000 = -100
+                            // 0xFFFF = 100
+                            // (Mkorr [mg/Hub] + 100) * 0xFFFF / 200
+                            itemValue = (long)((-4.56 + 100) * 0xFFFF / 200);
+                            break;
+
+                        case 0x177D:    // Mengenkorrektur Zylinder 4
+                            if (!_timeIdleSpeedControlWrite.IsRunning || (_idleSpeedControl != 0x00))
+                            {
+                                break;
+                            }
+                            // 0x0000 = -100
+                            // 0xFFFF = 100
+                            // (Mkorr [mg/Hub] + 100) * 0xFFFF / 200
+                            itemValue = (long)((-1.45 + 100) * 0xFFFF / 200);
+                            break;
+
+                        case 0x1952:    // Partikelfilter Anforderung Regeneration
+                            // 0 == angefordert
+                            // 1 == nicht angefordert
+                            itemValue = 0x0000;
+                            break;
+
+                        case 0x0BA4:    // Partikelfilter Restlaufstrecke
+                            // dist * 10
+                            itemValue = (long)(100000d / 10);
+                            break;
                     }
-                    Debug.WriteLine("Not found: " + text);
+                    if (resultBytes >= 4) _sendData[i++] = (byte)(itemValue >> 24);
+                    if (resultBytes >= 3) _sendData[i++] = (byte)(itemValue >> 16);
+                    if (resultBytes >= 2) _sendData[i++] = (byte)(itemValue >> 8);
+                    if (resultBytes >= 1) _sendData[i++] = (byte)(itemValue);
                 }
+                _sendData[0] = (byte)(0x80 | (i - 3));
+
+                ObdSend(_sendData);
             }
+            else
+            {   // nothing matched, check response list
+                return false;
+            }
+            return true;
         }
 
         private void SerialConcept1Transmission()

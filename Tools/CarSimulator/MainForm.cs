@@ -11,7 +11,7 @@ namespace CarSimulator
 {
     public partial class MainForm : Form
     {
-        private const string StdResponseFile = "Response.txt";
+        private const string StdResponseFile = "e61.txt";
         private readonly string _responseDir;
         private readonly CommThread _commThread;
         private int _lastPortCount;
@@ -398,12 +398,16 @@ namespace CarSimulator
                 if (radioButtonConcept3.Checked) conceptType = CommThread.ConceptType.Concept3;
 
                 string responseFile = (string)listBoxResponseFiles.SelectedItem;
-                bool e61Internal = true;
+                CommThread.ResponseType responseType = CommThread.ResponseType.Standard;
                 if (responseFile != null)
                 {
-                    if (string.Compare(responseFile, StdResponseFile, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (string.Compare(responseFile, StdResponseFile, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        e61Internal = false;
+                        responseType = CommThread.ResponseType.E61;
+                    }
+                    if (string.Compare(responseFile, "e90.txt", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        responseType = CommThread.ResponseType.E90;
                     }
 
                     if (!ReadResponseFile(Path.Combine(_responseDir, responseFile), conceptType))
@@ -412,7 +416,7 @@ namespace CarSimulator
                     }
                 }
 
-                _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, e61Internal, _configData);
+                _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, responseType, _configData);
             }
 
             UpdateDisplay();

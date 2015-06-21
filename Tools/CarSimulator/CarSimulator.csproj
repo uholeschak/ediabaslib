@@ -124,7 +124,7 @@
     <Content Include="Response\msd85.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Response\Response.txt">
+    <Content Include="Response\e61.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Response\vnc.txt">
