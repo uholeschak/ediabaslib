@@ -84,7 +84,6 @@
     {
         public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
         {
-            //string argString = "IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED";
             string argString = "IUBAT2;ITKUM;ITMOT;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;PFltRgn_numRgn;CoEOM_stOpModeAct;ISRBF;ISOED;PCBS_lDistanceOut";
             if (firstCall)
             {
@@ -129,15 +128,21 @@
                     if (!found) result = string.Empty;
                     break;
 
-                case "STAT_PFltRgn_numRgn_WERT":
-                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) > 0.5) && found) ? "1" : "0";
+                case "STAT_PFltRgn_numRgn_WERT":  // Regenerationsanforderung
+                {
+                    double tempValue = ActivityMain.GetResultDouble (resultDict, resultName, out found);
+                    result = ((tempValue > 3.5) && (tempValue < 6.5) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
                     break;
+                }
 
-                case "STAT_CoEOM_stOpModeAct_WERT":
-                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) > 1.5) && found) ? "1" : "0";
+                case "STAT_CoEOM_stOpModeAct_WERT":   // Regenerationsstatus
+                {
+                    double tempValue = ActivityMain.GetResultDouble (resultDict, resultName, out found);
+                    result = ((((int)(tempValue + 0.5) & 0x02) != 0) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
                     break;
+                }
 
                 case "STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT":
                     result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) < 0.5) && found) ? "1" : "0";

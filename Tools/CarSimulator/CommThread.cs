@@ -4348,6 +4348,7 @@ namespace CarSimulator
             return true;
         }
 
+        static int test = 0;
         private bool ResponseE90()
         {
             if (
@@ -4415,23 +4416,23 @@ namespace CarSimulator
                             itemValue = (long)((40.3 + 50.000000) / 0.010000);
                             break;
 
-                        case 0x03EB:    // Partikelfilter Strecke seit Regeneration
+                        case 0x03EB:    // Partikelfilter Strecke seit Regeneration (IDSLRE)
                             // Strecke [m]
                             itemValue = 145678;
                             resultBytes = 4;
                             break;
 
-                        case 0x03EE:    // Partikelfilter Freigabe Regeneration
+                        case 0x03EE:    // Partikelfilter Freigabe Regeneration (ISRBF)
                             // 0 == freigegeben
                             // 1 == gesperrt
-                            itemValue = 0x0000;
+                            itemValue = 0;
                             resultBytes = 1;
                             break;
 
                         case 0x0404:    // Partikelfilter Anforderung Regeneration (PFltRgn_numRgn)
-                            // 0 == angefordert
-                            // 1 == nicht angefordert
-                            itemValue = 0x0000;
+                            // 4 - 6 == angefordert
+                            // other: nicht angefordert
+                            itemValue = 4;
                             resultBytes = 1;
                             break;
 
@@ -4456,9 +4457,9 @@ namespace CarSimulator
                             break;
 
                         case 0x05AA:    // Partikelfilter Status Regeneration (CoEOM_stOpModeAct)
-                            // 0,1 == inaktiv
-                            // >=2 == aktiv
-                            itemValue = 0x0002;
+                            // bit1 set == aktiv
+                            // other == inaktiv
+                            itemValue = 0x02;
                             resultBytes = 4;
                             break;
 
