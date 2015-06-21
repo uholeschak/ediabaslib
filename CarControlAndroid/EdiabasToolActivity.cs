@@ -143,6 +143,7 @@ namespace CarControlAndroid
         private ResultListAdapter _infoListAdapter;
         private string _initDirStart;
         private bool _autoStart;
+        private int _autoStartItemId;
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
         private StreamWriter _swDataLog;
@@ -306,7 +307,7 @@ namespace CarControlAndroid
                         SupportInvalidateOptionsMenu();
                         if (_autoStart)
                         {
-                            SelectSgbdFile();
+                            SelectSgbdFile(_autoStartItemId == Resource.Id.menu_tool_sel_sgbd_grp);
                         }
                     }
                     _autoStart = false;
@@ -345,24 +346,35 @@ namespace CarControlAndroid
                 selInterfaceMenu.SetEnabled(!commActive);
             }
 
-            IMenuItem selSgbdMenu = menu.FindItem(Resource.Id.menu_tool_sel_sgbd);
-            if (selSgbdMenu != null)
+            IMenuItem selSgbdGrpMenu = menu.FindItem(Resource.Id.menu_tool_sel_sgbd_grp);
+            if (selSgbdGrpMenu != null)
             {
                 string fileName = string.Empty;
                 if (!string.IsNullOrEmpty(_sgbdFileName))
                 {
-                    fileName = Path.GetFileNameWithoutExtension(_sgbdFileName);
-                    if (_ediabas != null && !string.IsNullOrEmpty(_ediabas.SgbdFileName))
+                    bool groupFile = string.Compare(Path.GetExtension(_sgbdFileName), ".grp", StringComparison.OrdinalIgnoreCase) == 0;
+                    if (groupFile)
                     {
-                        string resolvedFile = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
-                        if (string.Compare(fileName, resolvedFile, StringComparison.OrdinalIgnoreCase) != 0)
-                        {
-                            fileName += " -> " + resolvedFile;
-                        }
+                        fileName = Path.GetFileNameWithoutExtension(_sgbdFileName);
                     }
                 }
-                selSgbdMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_tool_sel_sgbd), fileName));
-                selSgbdMenu.SetEnabled(!commActive && interfaceAvailable);
+                selSgbdGrpMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_tool_sel_sgbd_grp), fileName));
+                selSgbdGrpMenu.SetEnabled(!commActive && interfaceAvailable);
+            }
+
+            IMenuItem selSgbdPrgMenu = menu.FindItem(Resource.Id.menu_tool_sel_sgbd_prg);
+            if (selSgbdPrgMenu != null)
+            {
+                string fileName = string.Empty;
+                if (!string.IsNullOrEmpty(_sgbdFileName))
+                {
+                    if (_ediabas != null && !string.IsNullOrEmpty(_ediabas.SgbdFileName))
+                    {
+                        fileName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
+                    }
+                }
+                selSgbdPrgMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_tool_sel_sgbd_prg), fileName));
+                selSgbdPrgMenu.SetEnabled(!commActive && interfaceAvailable);
             }
 
             IMenuItem scanMenu = menu.FindItem(Resource.Id.menu_scan);
@@ -411,7 +423,8 @@ namespace CarControlAndroid
                     SelectInterface();
                     return true;
 
-                case Resource.Id.menu_tool_sel_sgbd:
+                case Resource.Id.menu_tool_sel_sgbd_grp:
+                case Resource.Id.menu_tool_sel_sgbd_prg:
                     if (IsJobRunning())
                     {
                         return true;
@@ -422,12 +435,13 @@ namespace CarControlAndroid
                         if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, (sender, args) =>
                             {
                                 _autoStart = true;
+                                _autoStartItemId = item.ItemId;
                             }))
                         {
                             break;
                         }
                     }
-                    SelectSgbdFile();
+                    SelectSgbdFile(item.ItemId == Resource.Id.menu_tool_sel_sgbd_grp);
                     return true;
 
                 case Resource.Id.menu_scan:
@@ -579,7 +593,7 @@ namespace CarControlAndroid
             HideKeyboard();
         }
 
-        private void SelectSgbdFile()
+        private void SelectSgbdFile(bool groupFile)
         {
             // Launch the FilePickerActivity to select a sgbd file
             Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
@@ -597,7 +611,7 @@ namespace CarControlAndroid
             }
             serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.tool_select_sgbd));
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
-            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".grp;.prg");
+            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, groupFile ? ".grp" : ".prg");
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSgbd);
         }
 

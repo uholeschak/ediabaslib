@@ -8,9 +8,12 @@
         <item android:id="@+id/menu_tool_sel_interface"
               android:icon="@android:drawable/ic_menu_manage"
               android:title="@string/menu_tool_sel_interface" />
-        <item android:id="@+id/menu_tool_sel_sgbd"
+        <item android:id="@+id/menu_tool_sel_sgbd_grp"
               android:icon="@android:drawable/ic_menu_manage"
-              android:title="@string/menu_tool_sel_sgbd" />
+              android:title="@string/menu_tool_sel_sgbd_grp" />
+        <item android:id="@+id/menu_tool_sel_sgbd_prg"
+              android:icon="@android:drawable/ic_menu_manage"
+              android:title="@string/menu_tool_sel_sgbd_prg" />
         <item android:id="@+id/menu_scan"
               android:icon="@android:drawable/ic_menu_search"
               android:title="@string/menu_device" />
