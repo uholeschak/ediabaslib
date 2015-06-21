@@ -3,6 +3,7 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/CarControl ../CarControl.xsd">
   <pages>
+    <include filename="Motor.ccpage"/>
     <include filename="Errors.ccpage"/>
     <include filename="../Adapter.ccpage"/>
   </pages>
