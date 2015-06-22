@@ -39,6 +39,21 @@ namespace EdiabasLib
             _fd = -1;
             _mapAddr = (IntPtr)(-1);
 
+            if (!File.Exists(path))
+            {   // try to use lower and upper case filenames
+                string fileName = Path.GetFileName(path) ?? string.Empty;
+                string dirName = Path.GetDirectoryName(path) ?? string.Empty;
+                path = Path.Combine(dirName, fileName.ToLowerInvariant());
+                if (!File.Exists(path))
+                {
+                    path = Path.Combine(dirName, fileName.ToUpperInvariant());
+                    if (!File.Exists(path))
+                    {
+                        throw new FileNotFoundException();
+                    }
+                }
+            }
+
             FileInfo fileInfo = new FileInfo(path);
             _fileLength = fileInfo.Length;
 
