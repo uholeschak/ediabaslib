@@ -4450,6 +4450,11 @@ namespace CarSimulator
                             itemValue = (long)(2943);
                             break;
 
+                        case 0x0458:    // oil temp
+                            // temp [C] * 0.010000 -100.000000
+                            itemValue = (long)((60.0 + 100.000000) / 0.010000);
+                            break;
+
                         case 0x0547:    // refrigerant temp
                             // temp [C] * 0.010000 -100.000000
                             itemValue = (long)((50.0 + 100.000000) / 0.010000);
