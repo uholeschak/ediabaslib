@@ -1706,16 +1706,23 @@ namespace CarSimulator
                     }
                     else
                     {
+                        if (frameType == 1)
+                        {   // buggy converters send tel twice!
+                            continue;
+                        }
                         if (frameType != 2)
                         {   // consecutive frame
                             _receiveStopWatch.Stop();
                             return false;
                         }
-                        if ((sourceAddr != (canMsg.ID & 0xFF)) || (targetAddr != canMsg.DATA[0]) ||
-                            ((canMsg.DATA[1] & 0x0F) != (blockCount & 0x0F)))
+                        if ((sourceAddr != (canMsg.ID & 0xFF)) || (targetAddr != canMsg.DATA[0]))
                         {
                             _receiveStopWatch.Stop();
                             return false;
+                        }
+                        if ((canMsg.DATA[1] & 0x0F) != (blockCount & 0x0F))
+                        {   // buggy converters send tel twice!
+                            continue;
                         }
                         if (dataBuffer == null)
                         {
@@ -1859,6 +1866,10 @@ namespace CarSimulator
                             stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out canTimeStamp);
                             if (stsResult == TPCANStatus.PCAN_ERROR_OK)
                             {
+                                if ((canMsg.DATA[1] & 0xF0) != 0x30)
+                                {   // buggy converters send tel twice!
+                                    continue;
+                                }
                                 break;
                             }
                             if (_receiveStopWatch.ElapsedMilliseconds > 1000)
@@ -1931,7 +1942,7 @@ namespace CarSimulator
                 }
                 if (!waitForFc && sepTime > 0)
                 {
-                    Thread.Sleep(sepTime);
+                    Thread.Sleep(sepTime + 2);  // +2 for buggy converters
                 }
             }
             _lastCanSendTick = Stopwatch.GetTimestamp();
