@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "can-lib", "can-lib\can-lib.cproj", "{EFF6AE3A-EF07-4F2C-AC6D-CAA7E7F31513}"
+EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "CanAdapter", "CanAdapter\CanAdapter.cproj", "{FEEB0B70-7895-49CD-945E-01873622AA66}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EFF6AE3A-EF07-4F2C-AC6D-CAA7E7F31513} = {EFF6AE3A-EF07-4F2C-AC6D-CAA7E7F31513}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EFF6AE3A-EF07-4F2C-AC6D-CAA7E7F31513}.Debug|AVR.ActiveCfg = Debug|AVR
+		{EFF6AE3A-EF07-4F2C-AC6D-CAA7E7F31513}.Debug|AVR.Build.0 = Debug|AVR
+		{EFF6AE3A-EF07-4F2C-AC6D-CAA7E7F31513}.Release|AVR.ActiveCfg = Release|AVR
+		{EFF6AE3A-EF07-4F2C-AC6D-CAA7E7F31513}.Release|AVR.Build.0 = Release|AVR
+		{FEEB0B70-7895-49CD-945E-01873622AA66}.Debug|AVR.ActiveCfg = Debug|AVR
+		{FEEB0B70-7895-49CD-945E-01873622AA66}.Debug|AVR.Build.0 = Debug|AVR
+		{FEEB0B70-7895-49CD-945E-01873622AA66}.Release|AVR.ActiveCfg = Release|AVR
+		{FEEB0B70-7895-49CD-945E-01873622AA66}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

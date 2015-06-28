@@ -1942,7 +1942,7 @@ namespace CarSimulator
                 }
                 if (!waitForFc && sepTime > 0)
                 {
-                    Thread.Sleep(sepTime + 2);  // +2 for buggy converters
+                    Thread.Sleep(sepTime);
                 }
             }
             _lastCanSendTick = Stopwatch.GetTimestamp();

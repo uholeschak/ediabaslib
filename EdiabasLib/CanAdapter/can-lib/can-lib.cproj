@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>6.2</ProjectVersion>
+    <ToolchainName>com.Atmel.AVRGCC8.C</ToolchainName>
+    <ProjectGuid>{eff6ae3a-ef07-4f2c-ac6d-caa7e7f31513}</ProjectGuid>
+    <avrdevice>ATmega162</avrdevice>
+    <avrdeviceseries>none</avrdeviceseries>
+    <OutputType>StaticLibrary</OutputType>
+    <Language>C</Language>
+    <OutputFileName>lib$(MSBuildProjectName)</OutputFileName>
+    <OutputFileExtension>.a</OutputFileExtension>
+    <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
+    <AvrGccProjectExtensions>
+    </AvrGccProjectExtensions>
+    <AssemblyName>can-lib</AssemblyName>
+    <Name>can-lib</Name>
+    <RootNamespace>can-lib</RootNamespace>
+    <ToolchainFlavour>Native</ToolchainFlavour>
+    <KeepTimersRunning>true</KeepTimersRunning>
+    <OverrideVtor>false</OverrideVtor>
+    <CacheFlash>true</CacheFlash>
+    <ProgFlashFromRam>true</ProgFlashFromRam>
+    <RamSnippetAddress />
+    <UncachedRange />
+    <preserveEEPROM>true</preserveEEPROM>
+    <OverrideVtorValue />
+    <BootSegment>2</BootSegment>
+    <eraseonlaunchrule>1</eraseonlaunchrule>
+    <AsfFrameworkConfig>
+      <framework-data xmlns="">
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.24.2" />
+        </dependencies>
+      </framework-data>
+    </AsfFrameworkConfig>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <ToolchainSettings>
+      <AvrGcc>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+      </AvrGcc>
+    </ToolchainSettings>
+    <UsesExternalMakeFile>True</UsesExternalMakeFile>
+    <OutputDirectory>src</OutputDirectory>
+    <BuildTarget>all</BuildTarget>
+    <CleanTarget>clean</CleanTarget>
+    <ExternalMakeFilePath>src\makefile</ExternalMakeFilePath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <ToolchainSettings>
+      <AvrGcc>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>DEBUG</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+      </AvrGcc>
+    </ToolchainSettings>
+    <UsesExternalMakeFile>True</UsesExternalMakeFile>
+    <OutputDirectory>src</OutputDirectory>
+    <BuildTarget>all</BuildTarget>
+    <CleanTarget>clean</CleanTarget>
+    <ExternalMakeFilePath>src\makefile</ExternalMakeFilePath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="can.h">
+      <SubType>compile</SubType>
+      <Link>can.h</Link>
+    </Compile>
+    <Compile Include="src\can_buffer.c">
+      <SubType>compile</SubType>
+      <Link>can_buffer.c</Link>
+    </Compile>
+    <Compile Include="src\can_buffer.h">
+      <SubType>compile</SubType>
+      <Link>can_buffer.h</Link>
+    </Compile>
+    <Compile Include="src\can_private.h">
+      <SubType>compile</SubType>
+      <Link>can_private.h</Link>
+    </Compile>
+    <Compile Include="src\config.h">
+      <SubType>compile</SubType>
+      <Link>config.h</Link>
+    </Compile>
+    <Compile Include="src\mcp2515.c">
+      <SubType>compile</SubType>
+      <Link>mcp2515.c</Link>
+    </Compile>
+    <Compile Include="src\mcp2515_buffer.c">
+      <SubType>compile</SubType>
+      <Link>mcp2515_buffer.c</Link>
+    </Compile>
+    <Compile Include="src\mcp2515_defs.h">
+      <SubType>compile</SubType>
+      <Link>mcp2515_defs.h</Link>
+    </Compile>
+    <Compile Include="src\mcp2515_error_register.c">
+      <SubType>compile</SubType>
+      <Link>mcp2515_error_register.c</Link>
+    </Compile>
+    <Compile Include="src\mcp2515_get_dyn_filter.c">
+      <SubType>compile</SubType>
+      <Link>mcp2515_get_dyn_filter.c</Link>
+    </Compile>
+    <Compile Include="src\mcp2515_get_message.c">
+      <SubType>compile</SubType>
+      <Link>mcp2515_get_message.c</Link>
+    </Compile>
+    <Compile Include="src\mcp2515_private.h">
+      <SubType>compile</SubType>
+      <Link>mcp2515_private.h</Link>
+    </Compile>
+    <Compile Include="src\mcp2515_read_id.c">
+      <SubType>compile</SubType>
+      <Link>mcp2515_read_id.c</Link>
+    </Compile>
+    <Compile Include="src\mcp2515_regdump.c">
+      <SubType>compile</SubType>
+      <Link>mcp2515_regdump.c</Link>
+    </Compile>
+    <Compile Include="src\mcp2515_send_message.c">
+      <SubType>compile</SubType>
+      <Link>mcp2515_send_message.c</Link>
+    </Compile>
+    <Compile Include="src\mcp2515_set_dyn_filter.c">
+      <SubType>compile</SubType>
+      <Link>mcp2515_set_dyn_filter.c</Link>
+    </Compile>
+    <Compile Include="src\mcp2515_set_mode.c">
+      <SubType>compile</SubType>
+      <Link>mcp2515_set_mode.c</Link>
+    </Compile>
+    <Compile Include="src\mcp2515_sleep.c">
+      <SubType>compile</SubType>
+      <Link>mcp2515_sleep.c</Link>
+    </Compile>
+    <Compile Include="src\mcp2515_static_filter.c">
+      <SubType>compile</SubType>
+      <Link>mcp2515_static_filter.c</Link>
+    </Compile>
+    <Compile Include="src\mcp2515_write_id.c">
+      <SubType>compile</SubType>
+      <Link>mcp2515_write_id.c</Link>
+    </Compile>
+    <Compile Include="src\spi.c">
+      <SubType>compile</SubType>
+      <Link>spi.c</Link>
+    </Compile>
+    <Compile Include="src\spi.h">
+      <SubType>compile</SubType>
+      <Link>spi.h</Link>
+    </Compile>
+    <Compile Include="src\utils.h">
+      <SubType>compile</SubType>
+      <Link>utils.h</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\makefile">
+      <SubType>compile</SubType>
+      <Link>makefile</Link>
+    </None>
+  </ItemGroup>
+  <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
+</Project>
