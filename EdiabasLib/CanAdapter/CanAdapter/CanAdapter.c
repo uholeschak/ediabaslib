@@ -45,6 +45,7 @@
 #define CAN_RES             4       // CAN reset (low active)
 #define CAN_BLOCK_SIZE      0x0F    // 0 is disabled
 #define CAN_MIN_SEP_TIME    2       // min separation time (ms)
+#define CAN_TIMEOUT         100     // can receive timeout (10ms)
 
 // receiver state machine
 typedef enum
@@ -56,6 +57,7 @@ typedef enum
 } rec_states;
 
 volatile uint8_t time_tick;
+volatile uint8_t time_tick_10;  // time tick 10 ms
 volatile rec_states rec_state;
 volatile uint16_t rec_len;
 volatile uint8_t rec_timeout;
@@ -69,16 +71,18 @@ volatile uint8_t send_buffer[260];
 
 uint8_t temp_buffer[260];
 
-can_t msg;
+can_t msg_send;
+can_t msg_rec;
 // can receiver variables
-uint8_t *can_buffer_offset;
-uint8_t can_source_addr;
-uint8_t can_target_addr;
-uint8_t can_block_count;
-uint8_t can_fc_count;
-uint16_t can_rec_len;
-uint16_t can_data_len;
-bool can_tel_valid;
+uint8_t *can_rec_buffer_offset;
+uint8_t can_rec_source_addr;
+uint8_t can_rec_target_addr;
+uint8_t can_rec_block_count;
+uint8_t can_rec_fc_count;
+uint8_t can_rec_time;
+uint16_t can_rec_rec_len;
+uint16_t can_rec_data_len;
+bool can_rec_tel_valid;
 
 const uint8_t can_filter[] PROGMEM =
 {
@@ -149,7 +153,7 @@ uint16_t uart_receive(uint8_t *buffer)
 
 void update_led()
 {
-    if (time_tick & 0x40)
+    if (time_tick_10 & 0x20)
     {
         PORTE |= (1<<LED_RED);
     }
@@ -159,123 +163,161 @@ void update_led()
     }
 }
 
-void can_receiver()
+void can_sender(bool new_can_msg)
 {
-    if (can_check_message())
+    uint16_t len = uart_receive(temp_buffer);
+    if (len > 0)
     {
-        if (can_get_message(&msg))
+        uint8_t *data_offset = &temp_buffer[3];
+        uint8_t data_len = temp_buffer[0] & 0x3F;
+        if (data_len == 0)
         {
-            if (((msg.id & 0xFF00) == 0x0600) && (msg.length == 8))
+            data_len = temp_buffer[3];
+            data_offset = &temp_buffer[4];
+        }
+        if (data_len <= 6)
+        {
+            memset(&msg_send, 0x00, sizeof(msg_send));
+            msg_send.id = 0x600 | temp_buffer[2];    // source address
+            msg_send.flags.rtr = 0;
+            msg_send.length = 8;
+            msg_send.data[0] = temp_buffer[1];       // target address
+            msg_send.data[1] = 0x00 | data_len;      // single frame + length
+            memcpy(msg_send.data + 2, data_offset, data_len);
+
+            can_send_message(&msg_send);
+        }
+    }
+}
+
+void can_receiver(bool new_can_msg)
+{
+    if (new_can_msg)
+    {
+        if (((msg_rec.id & 0xFF00) == 0x0600) && (msg_rec.length == 8))
+        {
+            uint8_t frame_type = (msg_rec.data[1] >> 4) & 0x0F;
+            switch (frame_type)
             {
-                uint8_t frame_type = (msg.data[1] >> 4) & 0x0F;
-                switch (frame_type)
+                case 0:     // single frame
+                    can_rec_source_addr = msg_rec.id & 0xFF;
+                    can_rec_target_addr = msg_rec.data[0];
+                    can_rec_data_len = msg_rec.data[1] & 0x0F;
+                    if (can_rec_data_len > 6)
+                    {   // invalid length
+                        can_rec_tel_valid = false;
+                        break;
+                    }
+                    memcpy(temp_buffer + 3, msg_rec.data + 2, can_rec_data_len);
+                    can_rec_tel_valid = true;
+                    can_rec_rec_len = can_rec_data_len;
+                    can_rec_time = time_tick_10;
+                    break;
+
+                case 1:     // first frame
+                    can_rec_source_addr = msg_rec.id & 0xFF;
+                    can_rec_target_addr = msg_rec.data[0];
+                    can_rec_data_len = (((uint16_t) msg_rec.data[1] & 0x0F) << 8) + msg_rec.data[2];
+                    if (can_rec_data_len > 0xFF)
+                    {   // too long
+                        can_rec_tel_valid = false;
+                        break;
+                    }
+                    if (can_rec_data_len > 0x3F)
+                    {
+                        can_rec_buffer_offset = temp_buffer + 4;
+                    }
+                    else
+                    {
+                        can_rec_buffer_offset = temp_buffer + 3;
+                    }
+                    memcpy(can_rec_buffer_offset, msg_rec.data + 3, 5);
+                    can_rec_rec_len = 5;
+                    can_rec_block_count = 1;
+
+                    memset(&msg_send, 0x00, sizeof(msg_send));
+                    msg_send.id = 0x600 | can_rec_target_addr;
+                    msg_send.flags.rtr = 0;
+                    msg_send.length = 8;
+                    msg_send.data[0] = can_rec_source_addr;
+                    msg_send.data[1] = 0x30;     // FC
+                    msg_send.data[2] = CAN_BLOCK_SIZE;       // block size
+                    msg_send.data[3] = CAN_MIN_SEP_TIME;     // min sep. time
+                    can_rec_fc_count = CAN_BLOCK_SIZE;
+
+                    can_send_message(&msg_send);
+                    can_rec_tel_valid = true;
+                    can_rec_time = time_tick_10;
+                    break;
+
+                case 2:
+                    if (can_rec_tel_valid &&
+                        (can_rec_source_addr == (msg_rec.id & 0xFF)) &&
+                        (can_rec_target_addr == msg_rec.data[0]) &&
+                        ((msg_rec.data[1] & 0x0F) == (can_rec_block_count & 0x0F))
+                    )
+                    {
+                        uint16_t copy_len = can_rec_data_len - can_rec_rec_len;
+                        if (copy_len > 6)
+                        {
+                            copy_len = 6;
+                        }
+                        memcpy(can_rec_buffer_offset + can_rec_rec_len, msg_rec.data + 2, copy_len);
+                        can_rec_rec_len += copy_len;
+                        can_rec_block_count++;
+
+                        if (can_rec_fc_count > 0)
+                        {
+                            can_rec_fc_count--;
+                            if (can_rec_fc_count == 0)
+                            {
+                                memset(&msg_send, 0x00, sizeof(msg_send));
+                                msg_send.id = 0x600 | can_rec_target_addr;
+                                msg_send.flags.rtr = 0;
+                                msg_send.length = 8;
+                                msg_send.data[0] = can_rec_source_addr;
+                                msg_send.data[1] = 0x30;     // FC
+                                msg_send.data[2] = CAN_BLOCK_SIZE;       // block size
+                                msg_send.data[3] = CAN_MIN_SEP_TIME;     // min sep. time
+                                can_rec_fc_count = CAN_BLOCK_SIZE;
+
+                                can_send_message(&msg_send);
+                            }
+                        }
+                        can_rec_time = time_tick_10;
+                    }
+                    break;
+            }
+        }
+        else
+        {
+            if (can_rec_tel_valid)
+            {   // check for timeout
+                if ((uint8_t) (time_tick_10 - can_rec_time) > CAN_TIMEOUT)
                 {
-                    case 0:     // single frame
-                        can_source_addr = msg.id & 0xFF;
-                        can_target_addr = msg.data[0];
-                        can_data_len = msg.data[1] & 0x0F;
-                        if (can_data_len > 6)
-                        {   // invalid length
-                            can_tel_valid = false;
-                            break;
-                        }
-                        memcpy(temp_buffer + 3, msg.data + 2, can_data_len);
-                        can_tel_valid = true;
-                        can_rec_len = can_data_len;
-                        break;
-
-                    case 1:     // first frame
-                        can_source_addr = msg.id & 0xFF;
-                        can_target_addr = msg.data[0];
-                        can_data_len = (((uint16_t) msg.data[1] & 0x0F) << 8) + msg.data[2];
-                        if (can_data_len > 0xFF)
-                        {   // too long
-                            can_tel_valid = false;
-                            break;
-                        }
-                        if (can_data_len > 0x3F)
-                        {
-                            can_buffer_offset = temp_buffer + 4;
-                        }
-                        else
-                        {
-                            can_buffer_offset = temp_buffer + 3;
-                        }
-                        memcpy(can_buffer_offset, msg.data + 3, 5);
-                        can_rec_len = 5;
-                        can_block_count = 1;
-
-                        memset(&msg, 0x00, sizeof(msg));
-                        msg.id = 0x600 | can_target_addr;
-                        msg.flags.rtr = 0;
-                        msg.length = 8;
-                        msg.data[0] = can_source_addr;
-                        msg.data[1] = 0x30;     // FC
-                        msg.data[2] = CAN_BLOCK_SIZE;       // block size
-                        msg.data[3] = CAN_MIN_SEP_TIME;     // min sep. time
-                        can_fc_count = CAN_BLOCK_SIZE;
-
-                        can_send_message(&msg);
-                        can_tel_valid = true;
-                        break;
-
-                    case 2:
-                        if (can_tel_valid &&
-                            (can_source_addr == (msg.id & 0xFF)) &&
-                            (can_target_addr == msg.data[0]) &&
-                            ((msg.data[1] & 0x0F) == (can_block_count & 0x0F))
-                        )
-                        {
-                            uint16_t copy_len = can_data_len - can_rec_len;
-                            if (copy_len > 6)
-                            {
-                                copy_len = 6;
-                            }
-                            memcpy(can_buffer_offset + can_rec_len, msg.data + 2, copy_len);
-                            can_rec_len += copy_len;
-                            can_block_count++;
-                        }
-                        if (can_fc_count > 0)
-                        {
-                            can_fc_count--;
-                            if (can_fc_count == 0)
-                            {
-                                memset(&msg, 0x00, sizeof(msg));
-                                msg.id = 0x600 | can_target_addr;
-                                msg.flags.rtr = 0;
-                                msg.length = 8;
-                                msg.data[0] = can_source_addr;
-                                msg.data[1] = 0x30;     // FC
-                                msg.data[2] = CAN_BLOCK_SIZE;       // block size
-                                msg.data[3] = CAN_MIN_SEP_TIME;     // min sep. time
-                                can_fc_count = CAN_BLOCK_SIZE;
-
-                                can_send_message(&msg);
-                            }
-                        }
-                        break;
+                    can_rec_tel_valid = false;
                 }
             }
         }
 
-        if (can_tel_valid && can_rec_len >= can_data_len)
+        if (can_rec_tel_valid && can_rec_rec_len >= can_rec_data_len)
         {
             uint16_t len;
             // create BMW-FAST telegram
-            if (can_data_len > 0x3F)
+            if (can_rec_data_len > 0x3F)
             {
                 temp_buffer[0] = 0x80;
-                temp_buffer[1] = can_target_addr;
-                temp_buffer[2] = can_source_addr;
-                temp_buffer[3] = can_data_len;
-                len = can_data_len + 4;
+                temp_buffer[1] = can_rec_target_addr;
+                temp_buffer[2] = can_rec_source_addr;
+                temp_buffer[3] = can_rec_data_len;
+                len = can_rec_data_len + 4;
             }
             else
             {
-                temp_buffer[0] = 0x80 | can_data_len;
-                temp_buffer[1] = can_target_addr;
-                temp_buffer[2] = can_source_addr;
-                len = can_data_len + 3;
+                temp_buffer[0] = 0x80 | can_rec_data_len;
+                temp_buffer[1] = can_rec_target_addr;
+                temp_buffer[2] = can_rec_source_addr;
+                len = can_rec_data_len + 3;
             }
 
             uint8_t sum = 0;
@@ -286,7 +328,11 @@ void can_receiver()
             temp_buffer[len++] = sum;
             if (uart_send(temp_buffer, len))
             {
-                can_tel_valid = false;
+                can_rec_tel_valid = false;
+            }
+            else
+            {   // send failed, keep message alive
+                can_rec_time = time_tick_10;
             }
         }
     }
@@ -295,6 +341,7 @@ void can_receiver()
 int main(void)
 {
     time_tick = 0;
+    time_tick_10 = 0;
     rec_state = rec_state_idle;
     rec_len = 0;
     rec_timeout = 0;
@@ -302,7 +349,7 @@ int main(void)
     send_get_idx = 0;
     send_len = 0;
 
-    can_tel_valid = false;
+    can_rec_tel_valid = false;
 
     // config ports
     DDRA = 0x7F;
@@ -344,31 +391,17 @@ int main(void)
 
     for (;;)
     {
-        uint16_t len = uart_receive(temp_buffer);
-        if (len > 0)
+        bool new_can_msg = false;
+        if (can_check_message())
         {
-            uint8_t *data_offset = &temp_buffer[3];
-            uint8_t data_len = temp_buffer[0] & 0x3F;
-            if (data_len == 0)
+            if (can_get_message(&msg_rec))
             {
-                data_len = temp_buffer[3];
-                data_offset = &temp_buffer[4];
-            }
-            if (data_len <= 6)
-            {
-                memset(&msg, 0x00, sizeof(msg));
-                msg.id = 0x600 | temp_buffer[2];    // source address
-                msg.flags.rtr = 0;
-                msg.length = 8;
-                msg.data[0] = temp_buffer[1];       // target address
-                msg.data[1] = 0x00 | data_len;      // single frame + length
-                memcpy(msg.data + 2, data_offset, data_len);
-
-                can_send_message(&msg);
+                new_can_msg = true;
             }
         }
 
-        can_receiver();
+        can_receiver(new_can_msg);
+        can_sender(new_can_msg);
         update_led();
     }
 }
@@ -376,6 +409,11 @@ int main(void)
 ISR(TIMER0_COMP_vect)
 {
     time_tick++;
+    if (time_tick >= 10)
+    {
+        time_tick = 0;
+        time_tick_10++;
+    }
     if (rec_timeout > 0)
     {
         rec_timeout--;
