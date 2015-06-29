@@ -44,6 +44,8 @@
  */
 #define	MCP2515_CS				D,5
 #define	MCP2515_INT				C,2
+#define	MCP2515_RX0BF			C,3
+#define	MCP2515_RX1BF			C,4
 
 // -----------------------------------------------------------------------------
 // Setting for SJA1000
