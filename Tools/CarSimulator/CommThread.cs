@@ -1,4 +1,7 @@
 ﻿//#define USE_UDP_SOCKET
+#if DEBUG
+#define CAN_DEBUG
+#endif
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -1625,6 +1628,12 @@ namespace CarSimulator
 
         private bool ReceiveCan(byte[] receiveData)
         {
+#if CAN_DEBUG
+            long lastReceiveTime = Stopwatch.GetTimestamp();
+#endif
+            const byte blocksize = 0;
+            const byte sepTime = 0;
+            byte fc_count = 0;
             int len;
             byte blockCount = 0;
             byte sourceAddr = 0;
@@ -1654,6 +1663,12 @@ namespace CarSimulator
                         return false;
                     }
                     byte frameType = (byte)((canMsg.DATA[1] >> 4) & 0x0F);
+#if CAN_DEBUG
+                    long receiveTime = Stopwatch.GetTimestamp();
+                    long timeDiff = (receiveTime - lastReceiveTime) / TickResolMs;
+                    lastReceiveTime = receiveTime;
+                    Debug.WriteLine(string.Format("Rec({0}): {1}", frameType, timeDiff));
+#endif
                     if (recLen == 0)
                     {   // first telegram
                         sourceAddr = (byte)(canMsg.ID & 0xFF);
@@ -1688,8 +1703,9 @@ namespace CarSimulator
                                     };
                                     sendMsg.DATA[0] = sourceAddr;
                                     sendMsg.DATA[1] = 0x30;  // FC
-                                    sendMsg.DATA[2] = 0x00;  // Block size (no control)
-                                    sendMsg.DATA[3] = 0x00;  // Min sep. Time
+                                    sendMsg.DATA[2] = blocksize;    // Block size
+                                    sendMsg.DATA[3] = sepTime;      // Min sep. Time
+                                    fc_count = blocksize;
                                     stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
                                     if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                                     {
@@ -1736,6 +1752,35 @@ namespace CarSimulator
                         Array.Copy(canMsg.DATA, 2, dataBuffer, recLen, len);
                         recLen += len;
                         blockCount++;
+
+                        if (fc_count > 0 && recLen < dataBuffer.Length)
+                        {
+                            fc_count--;
+                            if (fc_count == 0)
+                            {
+#if CAN_DEBUG
+                                Debug.WriteLine("Send FC");
+#endif
+                                TPCANMsg sendMsg = new TPCANMsg
+                                {
+                                    DATA = new byte[8],
+                                    ID = (uint) (0x600 + targetAddr),
+                                    LEN = 8,
+                                    MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD
+                                };
+                                sendMsg.DATA[0] = sourceAddr;
+                                sendMsg.DATA[1] = 0x30; // FC
+                                sendMsg.DATA[2] = blocksize;    // Block size
+                                sendMsg.DATA[3] = sepTime;      // Min sep. Time
+                                fc_count = blocksize;
+                                stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
+                                if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                                {
+                                    _receiveStopWatch.Stop();
+                                    return false;
+                                }
+                            }
+                        }
                     }
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                     if (dataBuffer != null && recLen >= dataBuffer.Length)
