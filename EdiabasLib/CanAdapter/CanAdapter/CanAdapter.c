@@ -473,7 +473,7 @@ void can_receiver(bool new_can_msg)
                         can_rec_rec_len += copy_len;
                         can_rec_block_count++;
 
-                        if (can_rec_fc_count > 0)
+                        if (can_rec_fc_count > 0 && (can_rec_rec_len < can_rec_data_len))
                         {
                             can_rec_fc_count--;
                             if (can_rec_fc_count == 0)
