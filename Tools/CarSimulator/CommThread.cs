@@ -1633,7 +1633,7 @@ namespace CarSimulator
 #endif
             const byte blocksize = 0;
             const byte sepTime = 0;
-            byte fc_count = 0;
+            byte fcCount = 0;
             int len;
             byte blockCount = 0;
             byte sourceAddr = 0;
@@ -1705,7 +1705,7 @@ namespace CarSimulator
                                     sendMsg.DATA[1] = 0x30;  // FC
                                     sendMsg.DATA[2] = blocksize;    // Block size
                                     sendMsg.DATA[3] = sepTime;      // Min sep. Time
-                                    fc_count = blocksize;
+                                    fcCount = blocksize;
                                     stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
                                     if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                                     {
@@ -1753,10 +1753,10 @@ namespace CarSimulator
                         recLen += len;
                         blockCount++;
 
-                        if (fc_count > 0 && recLen < dataBuffer.Length)
+                        if (fcCount > 0 && recLen < dataBuffer.Length)
                         {
-                            fc_count--;
-                            if (fc_count == 0)
+                            fcCount--;
+                            if (fcCount == 0)
                             {
 #if CAN_DEBUG
                                 Debug.WriteLine("Send FC");
@@ -1772,7 +1772,7 @@ namespace CarSimulator
                                 sendMsg.DATA[1] = 0x30; // FC
                                 sendMsg.DATA[2] = blocksize;    // Block size
                                 sendMsg.DATA[3] = sepTime;      // Min sep. Time
-                                fc_count = blocksize;
+                                fcCount = blocksize;
                                 stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
                                 if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                                 {
