@@ -7,6 +7,7 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/sleep.h>
 #include <avr/pgmspace.h>
 #include <util/atomic.h>
 #include <stdint.h>
@@ -40,6 +41,10 @@
 
 #define LED_GREEN           0
 #define LED_RED             1
+#define LED_GREEN_ON()      { PORTE |= (1<<LED_GREEN); }
+#define LED_GREEN_OFF()       { PORTE &= ~(1<<LED_GREEN); }
+#define LED_RED_ON()        { PORTE |= (1<<LED_RED); }
+#define LED_RED_OFF()       { PORTE &= ~(1<<LED_RED); }
 
 #define CAN_RES             4       // CAN reset (low active)
 #define CAN_BLOCK_SIZE      0x0F    // 0 is disabled
@@ -66,6 +71,7 @@ typedef enum
 static volatile uint8_t time_prescaler;
 static volatile uint8_t time_tick_1;  // time tick 1 ms
 static volatile uint8_t time_tick_10;  // time tick 10 ms
+
 static volatile rec_states rec_state;
 static volatile uint16_t rec_len;
 static volatile uint8_t rec_timeout;
@@ -120,6 +126,34 @@ static const uint8_t can_filter[] PROGMEM =
     MCP2515_FILTER(0),      // Mask 1 (for group 1)
 };
 
+void do_idle()
+{
+    if (can_send_active &&
+        (can_send_wait_sep_time == wait_off) &&
+        !can_send_wait_for_fc)
+    {   // can sending active, don't sleep
+        return;
+    }
+    bool disable_timer = !can_send_active &&
+        !can_rec_tel_valid &&
+        (rec_state == rec_state_idle) &&
+        (send_len == 0);
+
+    sleep_enable();
+    GICR |= (1<<PCIE1);     // CAN pin change interrupt on
+    if (disable_timer)
+    {
+        TIMSK &= ~(1<<OCIE0);   // disable timer interrupt
+    }
+    if (!can_check_message())
+    {
+        sleep_cpu();
+    }
+    TIMSK |= (1<<OCIE0);    // enable timer interrupt
+    GICR &= ~(1<<PCIE1);    // CAN pin change interrupt off
+    sleep_disable();
+}
+
 bool uart_send(uint8_t *buffer, uint16_t count)
 {
     if (count == 0)
@@ -173,6 +207,7 @@ uint16_t uart_receive(uint8_t *buffer)
 
 void update_led()
 {
+#if 0
     if (time_tick_10 & 0x20)
     {
         PORTE |= (1<<LED_RED);
@@ -181,6 +216,24 @@ void update_led()
     {
         PORTE &= ~(1<<LED_RED);
     }
+#else
+    if (rec_state != rec_state_idle)
+    {
+        LED_RED_ON();
+    }
+    else
+    {
+        LED_RED_OFF();
+    }
+    if (send_len > 0)
+    {
+        LED_GREEN_ON();
+    }
+    else
+    {
+        LED_GREEN_OFF();
+    }
+#endif
 }
 
 void can_sender(bool new_can_msg)
@@ -507,6 +560,12 @@ int main(void)
     can_send_active = false;
     can_rec_tel_valid = false;
 
+    // disable AD converter (reduces power consumption)
+    ACSR |= (1<<ACD);
+
+    // pin change interrupt for CAN
+    PCMSK1 |= (1<<PCINT10); // can interrupt
+
     // config ports
     DDRA = 0x7F;
     PORTA = 0x00;   // enable K-line
@@ -514,8 +573,9 @@ int main(void)
     DDRD = (1<<CAN_RES);
     PORTD &= ~(1<<CAN_RES);
 
+    // led
     DDRE = (1<<LED_RED) | (1<<LED_GREEN);
-    PORTE = (1<<LED_GREEN);
+    LED_GREEN_ON();
 
     // config timer 0
     TCCR0 = (1<<WGM01); // CTC Modus
@@ -531,19 +591,29 @@ int main(void)
     UCSRB |= (1<<RXCIE);
     UCSRC = (1<<URSEL) | (1<<UCSZ1) | (1<<UCSZ0);    // 8N1 Async
 
+    set_sleep_mode(SLEEP_MODE_IDLE);
     sei();
 
     PORTD |= (1<<CAN_RES);
     DDRB = (1<<PB4);    // set SS as output, otherwise the SPI switches back to slave mode!
     if (!can_init(BITRATE_500_KBPS))
     {
-        PORTE |= (1<<LED_RED);
-        PORTE &= ~(1<<LED_GREEN);
+        LED_GREEN_OFF();
+        LED_RED_ON();
+        cli();
         for (;;)
         {
+            sleep_mode();
         }
     }
     can_static_filter(can_filter);
+
+    // show green led for 500ms.
+    while (time_tick_10 < 50)
+    {
+        sleep_mode();
+    }
+    LED_GREEN_OFF();
 
     for (;;)
     {
@@ -558,7 +628,9 @@ int main(void)
 
         can_receiver(new_can_msg);
         can_sender(new_can_msg);
+
         update_led();
+        do_idle();
     }
 }
 
@@ -593,7 +665,7 @@ ISR(TIMER0_COMP_vect)
 ISR(USART_RXC_vect)
 {
     uint8_t rec_data = UDR;
-    rec_timeout = 2;
+    rec_timeout = 3;    // +1 required for disabled timer in sleep mode
 
     switch (rec_state)
     {
@@ -655,4 +727,9 @@ ISR(USART_TXC_vect)
             send_get_idx = 0;
         }
     }
+}
+
+ISR(PCINT1_vect)
+{
+    sleep_disable();
 }
