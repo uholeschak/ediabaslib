@@ -334,14 +334,14 @@ void can_sender(bool new_can_msg)
         {
             if (can_send_wait_sep_time == wait_1ms)
             {
-                if ((uint8_t) (time_tick_1 - can_send_sep_time_start) < can_send_sep_time)
+                if ((uint8_t) (time_tick_1 - can_send_sep_time_start) <= can_send_sep_time)
                 {
                     return;
                 }
             }
             else
             {
-                if ((uint8_t) (time_tick_10 - can_send_sep_time_start) < (can_send_sep_time + 9) / 10)
+                if ((uint8_t) (time_tick_10 - can_send_sep_time_start) <= ((can_send_sep_time + 9) / 10))
                 {
                     return;
                 }
