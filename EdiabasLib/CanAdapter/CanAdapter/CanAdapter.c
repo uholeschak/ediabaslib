@@ -9,6 +9,7 @@
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
 #include <avr/pgmspace.h>
+#include <avr/eeprom.h>
 #include <util/atomic.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -51,6 +52,8 @@
 #define CAN_MIN_SEP_TIME    2       // min separation time (ms)
 #define CAN_TIMEOUT         100     // can receive timeout (10ms)
 
+#define EEP_ADDR_BAUD       0       // eeprom address for baud setting
+
 // receiver state machine
 typedef enum
 {
@@ -85,6 +88,7 @@ static volatile uint8_t send_buffer[260];
 
 static uint8_t temp_buffer[260];
 
+static bool can_enabled;
 static can_t msg_send;
 static can_t msg_rec;
 
@@ -236,13 +240,101 @@ void update_led()
 #endif
 }
 
+uint8_t calc_checkum(uint16_t len)
+{
+    uint8_t sum = 0;
+    for (uint16_t i = 0; i < len; i++)
+    {
+        sum += temp_buffer[i];
+    }
+    return sum;
+}
+
+void can_config()
+{
+    uint16_t baud_cfg = eeprom_read_word(EEP_ADDR_BAUD);
+    if (((baud_cfg >> 8) & 0xFF) != (baud_cfg & 0xFF))
+    {
+        baud_cfg = 0xFF;
+    }
+
+    can_bitrate_t bitrate = BITRATE_500_KBPS;
+    switch (baud_cfg & 0xFF)
+    {
+        case 0:     // can off
+            can_enabled = false;
+            break;
+
+        default:
+        case 1:     // can 500kb
+            bitrate = BITRATE_500_KBPS;
+            can_enabled = true;
+            break;
+
+        case 9:     // can 125kb
+            bitrate = BITRATE_125_KBPS;
+            can_enabled = true;
+            break;
+    }
+
+    can_send_active = false;
+    can_rec_tel_valid = false;
+
+    if (can_enabled)
+    {
+        PORTD |= (1<<CAN_RES);  // end can reset
+        DDRB = (1<<PB4);    // set SS as output, otherwise the SPI switches back to slave mode!
+        if (!can_init(bitrate))
+        {
+            LED_GREEN_OFF();
+            LED_RED_ON();
+            cli();
+            for (;;)
+            {
+                sleep_mode();
+            }
+        }
+        can_static_filter(can_filter);
+    }
+    else
+    {
+        PORTD &= ~(1<<CAN_RES);     // CAN reset
+    }
+}
+
+bool internal_telegram(uint16_t len)
+{
+    if ((len != 5) ||
+    (temp_buffer[0] != 0x81) ||
+    (temp_buffer[1] != 0x00) ||
+    (temp_buffer[2] != 0x00))
+    {
+        return false;
+    }
+    uint8_t cfg_value = temp_buffer[3];
+    eeprom_update_word(EEP_ADDR_BAUD, cfg_value | ((uint16_t) cfg_value << 8));
+    can_config();
+    temp_buffer[3] = ~cfg_value;
+    temp_buffer[4] = calc_checkum(4);
+    uart_send(temp_buffer, len);
+    return true;
+}
+
 void can_sender(bool new_can_msg)
 {
+    if (!can_enabled)
+    {
+        return;
+    }
     if (!can_send_active)
     {
         uint16_t len = uart_receive(temp_buffer);
         if (len > 0)
         {
+            if (internal_telegram(len))
+            {
+                return;
+            }
             can_send_active = true;
             can_send_wait_sep_time = wait_off;
             can_send_pos = 0;
@@ -399,6 +491,10 @@ void can_sender(bool new_can_msg)
 
 void can_receiver(bool new_can_msg)
 {
+    if (!can_enabled)
+    {
+        return;
+    }
     if (new_can_msg)
     {
         if (((msg_rec.id & 0xFF00) == 0x0600) && (msg_rec.length == 8))
@@ -527,12 +623,8 @@ void can_receiver(bool new_can_msg)
                 len = can_rec_data_len + 3;
             }
 
-            uint8_t sum = 0;
-            for (uint16_t i = 0; i < len; i++)
-            {
-                sum += temp_buffer[i];
-            }
-            temp_buffer[len++] = sum;
+            temp_buffer[len] = calc_checkum(len);
+            len++;
             if (uart_send(temp_buffer, len))
             {
                 can_rec_tel_valid = false;
@@ -594,19 +686,7 @@ int main(void)
     set_sleep_mode(SLEEP_MODE_IDLE);
     sei();
 
-    PORTD |= (1<<CAN_RES);
-    DDRB = (1<<PB4);    // set SS as output, otherwise the SPI switches back to slave mode!
-    if (!can_init(BITRATE_500_KBPS))
-    {
-        LED_GREEN_OFF();
-        LED_RED_ON();
-        cli();
-        for (;;)
-        {
-            sleep_mode();
-        }
-    }
-    can_static_filter(can_filter);
+    can_config();
 
     // show green led for 500ms.
     while (time_tick_10 < 50)
@@ -617,17 +697,28 @@ int main(void)
 
     for (;;)
     {
-        bool new_can_msg = false;
-        if (can_check_message())
+        if (can_enabled)
         {
-            if (can_get_message(&msg_rec))
+            bool new_can_msg = false;
+            if (can_check_message())
             {
-                new_can_msg = true;
+                if (can_get_message(&msg_rec))
+                {
+                    new_can_msg = true;
+                }
+            }
+
+            can_receiver(new_can_msg);
+            can_sender(new_can_msg);
+        }
+        else
+        {
+            uint16_t len = uart_receive(temp_buffer);
+            if (len > 0)
+            {
+                internal_telegram(len);
             }
         }
-
-        can_receiver(new_can_msg);
-        can_sender(new_can_msg);
 
         update_led();
         do_idle();
