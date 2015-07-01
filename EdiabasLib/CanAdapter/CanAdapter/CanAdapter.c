@@ -15,7 +15,10 @@
 #include <stdbool.h>
 #include <string.h>
 #include "can.h"
+#include "mcp2515_defs.h"
 #include "spi.h"
+
+extern uint8_t mcp2515_read_status(uint8_t type);
 
 /*** UART registers ***/
 #define UBRRL           UBRR0L           // UART Baud Rate Register Low
@@ -302,6 +305,20 @@ void can_config()
     }
 }
 
+void can_send_message_wait(const can_t *msg)
+{
+    // only use one send buffer to ensure the send order
+    for (;;)
+    {
+        uint8_t status = mcp2515_read_status(SPI_READ_STATUS);
+        if ((status & 0x54) == 0x00)
+        {   // no send buffer in
+            break;
+        }
+    }
+    can_send_message(msg);
+}
+
 bool internal_telegram(uint16_t len)
 {
     if ((len != 5) ||
@@ -363,7 +380,7 @@ void can_sender(bool new_can_msg)
                 msg_send.data[1] = 0x00 | data_len;      // single frame + length
                 memcpy(msg_send.data + 2, data_offset, data_len);
 
-                can_send_message(&msg_send);
+                can_send_message_wait(&msg_send);
                 can_send_active = false;
                 return;
             }
@@ -379,7 +396,7 @@ void can_sender(bool new_can_msg)
             memcpy(msg_send.data + 3, data_offset, len);
             can_send_pos += len;
 
-            can_send_message(&msg_send);
+            can_send_message_wait(&msg_send);
             can_send_wait_for_fc = true;
             can_send_block_count = 1;
             can_send_time = time_tick_10;
@@ -456,7 +473,7 @@ void can_sender(bool new_can_msg)
         can_send_pos += len;
         can_send_block_count++;
 
-        can_send_message(&msg_send);
+        can_send_message_wait(&msg_send);
 
         if (can_send_pos >= data_len)
         {   // all blocks transmitted
@@ -548,7 +565,7 @@ void can_receiver(bool new_can_msg)
                     msg_send.data[3] = CAN_MIN_SEP_TIME;     // min sep. time
                     can_rec_fc_count = CAN_BLOCK_SIZE;
 
-                    can_send_message(&msg_send);
+                    can_send_message_wait(&msg_send);
                     can_rec_tel_valid = true;
                     can_rec_time = time_tick_10;
                     break;
@@ -584,7 +601,7 @@ void can_receiver(bool new_can_msg)
                                 msg_send.data[3] = CAN_MIN_SEP_TIME;     // min sep. time
                                 can_rec_fc_count = CAN_BLOCK_SIZE;
 
-                                can_send_message(&msg_send);
+                                can_send_message_wait(&msg_send);
                             }
                         }
                         can_rec_time = time_tick_10;
