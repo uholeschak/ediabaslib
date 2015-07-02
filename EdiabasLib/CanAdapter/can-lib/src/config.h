@@ -47,6 +47,9 @@
 #define	MCP2515_RX0BF			C,3
 #define	MCP2515_RX1BF			C,4
 
+// [UH] Keep TX telegram order during sending (use only one buffer)
+#define KEEP_TX_ORDER
+
 // -----------------------------------------------------------------------------
 // Setting for SJA1000
 

@@ -57,7 +57,11 @@ bool mcp2515_check_free_buffer(void)
 {
 	uint8_t status = mcp2515_read_status(SPI_READ_STATUS);
 	
+#if defined(KEEP_TX_ORDER) // [UH]
+	if ((status & 0x54) != 0x00)
+#else
 	if ((status & 0x54) == 0x54)
+#endif
 		return false;		// all buffers used
 	else
 		return true;
