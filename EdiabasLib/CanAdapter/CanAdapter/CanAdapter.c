@@ -305,18 +305,18 @@ void can_config()
     }
 }
 
-void can_send_message_wait(const can_t *msg)
+bool can_send_message_wait(const can_t *msg)
 {
-    // only use one send buffer to ensure the send order
-    for (;;)
+    uint8_t start_tick = time_tick_10;
+    while (can_send_message(msg) == 0)
     {
-        uint8_t status = mcp2515_read_status(SPI_READ_STATUS);
-        if ((status & 0x54) == 0x00)
-        {   // no send buffer in
-            break;
+        update_led();
+        if ((uint8_t) (time_tick_10 - start_tick) > 25)
+        {
+            return false;
         }
     }
-    can_send_message(msg);
+    return true;
 }
 
 bool internal_telegram(uint16_t len)
