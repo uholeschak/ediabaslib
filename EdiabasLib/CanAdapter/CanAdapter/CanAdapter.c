@@ -5,6 +5,8 @@
  *  Author: Ulrich
  */ 
 
+#define F_CPU 7372800
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
@@ -15,10 +17,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "can.h"
-#include "mcp2515_defs.h"
 #include "spi.h"
-
-extern uint8_t mcp2515_read_status(uint8_t type);
 
 /*** UART registers ***/
 #define UBRRL           UBRR0L           // UART Baud Rate Register Low
@@ -46,13 +45,13 @@ extern uint8_t mcp2515_read_status(uint8_t type);
 #define LED_GREEN           0
 #define LED_RED             1
 #define LED_GREEN_ON()      { PORTE |= (1<<LED_GREEN); }
-#define LED_GREEN_OFF()       { PORTE &= ~(1<<LED_GREEN); }
+#define LED_GREEN_OFF()     { PORTE &= ~(1<<LED_GREEN); }
 #define LED_RED_ON()        { PORTE |= (1<<LED_RED); }
 #define LED_RED_OFF()       { PORTE &= ~(1<<LED_RED); }
 
 #define CAN_RES             4       // CAN reset (low active)
 #define CAN_BLOCK_SIZE      0x0F    // 0 is disabled
-#define CAN_MIN_SEP_TIME    2       // min separation time (ms)
+#define CAN_MIN_SEP_TIME    1       // min separation time (ms)
 #define CAN_TIMEOUT         100     // can receive timeout (10ms)
 
 #define EEP_ADDR_BAUD       0       // eeprom address for baud setting
@@ -130,7 +129,7 @@ static const uint8_t can_filter[] PROGMEM =
     MCP2515_FILTER(0),      // Filter 5
 
     MCP2515_FILTER(0),      // Mask 0 (for group 0)
-    MCP2515_FILTER(0),      // Mask 1 (for group 1)
+    MCP2515_FILTER(0x07FF), // Mask 1 (for group 1), disabled used for overflow
 };
 
 void do_idle()
