@@ -628,6 +628,7 @@ namespace CarSimulator
                 {
                     case ConceptType.ConceptBwmFast:
                         baudRate = TPCANBaudrate.PCAN_BAUD_500K;
+                        //baudRate = TPCANBaudrate.PCAN_BAUD_125K;
                         break;
 
                     default:
@@ -1794,6 +1795,9 @@ namespace CarSimulator
                 }
                 if (_receiveStopWatch.ElapsedMilliseconds > 1000)
                 {
+#if CAN_DEBUG
+                    Debug.WriteLine("Rec Timeout");
+#endif
                     _receiveStopWatch.Stop();
                     return false;
                 }
@@ -1805,6 +1809,9 @@ namespace CarSimulator
                 }
             }
             _receiveStopWatch.Stop();
+#if CAN_DEBUG
+            Debug.WriteLine("Rec OK");
+#endif
             // create BMW-FAST telegram
             if (dataBuffer.Length > 0x3F)
             {
