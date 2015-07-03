@@ -174,6 +174,8 @@ bool mcp2515_init(uint8_t bitrate)
 	if (bitrate >= 8)
 		return false;
 	
+	read_rx_buffer1 = 0;     // [UH]
+
 	SET(MCP2515_CS);
 	SET_OUTPUT(MCP2515_CS);
 	

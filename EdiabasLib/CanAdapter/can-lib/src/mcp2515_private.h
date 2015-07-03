@@ -165,6 +165,8 @@ extern uint8_t mcp2515_read_id( uint16_t *id );
 
 #endif	// USE_EXTENDED_CANID
 
+extern uint8_t read_rx_buffer1;  // [UH]
+
 #endif  // SUPPORT_FOR_MCP2515__
 
 #endif	// MCP2515_PRIVATE_H
