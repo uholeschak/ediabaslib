@@ -49,6 +49,8 @@
 
 // [UH] Keep TX telegram order during sending (use only one buffer)
 #define KEEP_TX_ORDER
+// [UH] Keep RX telegram order during receiving (disable second message filter required)
+#define KEEP_RX_ORDER
 
 // -----------------------------------------------------------------------------
 // Setting for SJA1000

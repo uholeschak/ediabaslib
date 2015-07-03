@@ -33,31 +33,70 @@
 
 // ----------------------------------------------------------------------------
 
+uint8_t read_rx_buffer1;     // [UH]
+
 uint8_t mcp2515_get_message(can_t *msg)
 {
 	uint8_t addr;
 	
 	#ifdef	RXnBF_FUNKTION
-		if (!IS_SET(MCP2515_RX0BF))
-			addr = SPI_READ_RX;
-		else if (!IS_SET(MCP2515_RX1BF))
+		if (read_rx_buffer1 && !IS_SET(MCP2515_RX1BF))
+		{
 			addr = SPI_READ_RX | 0x04;
+			read_rx_buffer1 = 0;
+		}
+		else if (!IS_SET(MCP2515_RX0BF))
+		{
+			addr = SPI_READ_RX;
+			read_rx_buffer1 = 0;
+			#if defined (KEEP_RX_ORDER)
+				if (!IS_SET(MCP2515_RX1BF))
+				{
+					read_rx_buffer1 = 1;
+				}
+			#endif
+		}
+		else if (!IS_SET(MCP2515_RX1BF))
+		{
+			addr = SPI_READ_RX | 0x04;
+			read_rx_buffer1 = 0;
+		}
 		else
+		{
+			read_rx_buffer1 = 0;
 			return 0;
+		}
 	#else
 		// read status
 		uint8_t status = mcp2515_read_status(SPI_RX_STATUS);
 		
-		if (_bit_is_set(status,6)) {
+		if (read_rx_buffer1 && _bit_is_set(status,7))
+		{
+			addr = SPI_READ_RX | 0x04;
+			read_rx_buffer1 = 0;
+		}
+		else if (_bit_is_set(status,6))
+		{
 			// message in buffer 0
 			addr = SPI_READ_RX;
+			read_rx_buffer1 = 0;
+			#if defined (KEEP_RX_ORDER)
+				if (_bit_is_set(status,7))
+				{
+					read_rx_buffer1 = 1;
+				}
+			#endif
 		}
-		else if (_bit_is_set(status,7)) {
+		else if (_bit_is_set(status,7))
+		{
 			// message in buffer 1
 			addr = SPI_READ_RX | 0x04;
+			read_rx_buffer1 = 0;
 		}
-		else {
+		else
+		{
 			// Error: no message available
+			read_rx_buffer1 = 0;
 			return 0;
 		}
 	#endif
@@ -73,14 +112,7 @@ uint8_t mcp2515_get_message(can_t *msg)
 		if (tmp & 0x01) {
 			// Nachrichten mit extended ID verwerfen
 			SET(MCP2515_CS);
-			#ifdef	RXnBF_FUNKTION
-			if (!IS_SET(MCP2515_RX0BF))
-			#else
-			if (_bit_is_set(status, 6))
-			#endif
-				mcp2515_bit_modify(CANINTF, (1<<RX0IF), 0);
-			else
-				mcp2515_bit_modify(CANINTF, (1<<RX1IF), 0);
+			// [UH] CS high clears the interrupt flag!
 			
 			return 0;
 		}
@@ -104,16 +136,7 @@ uint8_t mcp2515_get_message(can_t *msg)
 		msg->data[i] = spi_putc(0xff);
 	}
 	SET(MCP2515_CS);
-	
-	// clear interrupt flag
-	#ifdef RXnBF_FUNKTION
-	if (!IS_SET(MCP2515_RX0BF))
-	#else
-	if (_bit_is_set(status, 6))
-	#endif
-		mcp2515_bit_modify(CANINTF, (1<<RX0IF), 0);
-	else
-		mcp2515_bit_modify(CANINTF, (1<<RX1IF), 0);
+	// [UH] CS high clears the interrupt flag!
 	
 	CAN_INDICATE_RX_TRAFFIC_FUNCTION;
 	
