@@ -408,7 +408,8 @@ void can_sender(bool new_can_msg)
                 if (((msg_rec.id & 0xFF00) == 0x0600) &&
                     (msg_rec.length >= 4) &&
                     ((msg_rec.id & 0x00FF) == target_address) &&
-                    (msg_rec.data[0] == source_address)
+                    (msg_rec.data[0] == source_address) &&
+                    ((msg_rec.data[1] & 0xF0) == 0x30)  // FC
                     )
                 {
                     switch (msg_rec.data[1] & 0x0F)
