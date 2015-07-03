@@ -1634,6 +1634,7 @@ namespace CarSimulator
 #endif
             const byte blocksize = 0;
             const byte sepTime = 0;
+            const byte waitCount = 0;
             byte fcCount = 0;
             int len;
             byte blockCount = 0;
@@ -1769,8 +1770,35 @@ namespace CarSimulator
                                     LEN = 8,
                                     MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD
                                 };
+
+                                // sleep test
+                                for (int i = 0; i < waitCount; i++)
+                                {
+                                    Thread.Sleep(500);
+#if CAN_DEBUG
+                                    Debug.WriteLine("Send FC wait");
+#endif
+                                    sendMsg.DATA[0] = sourceAddr;
+                                    sendMsg.DATA[1] = 0x31;         // FC, wait
+                                    sendMsg.DATA[2] = blocksize;    // Block size
+                                    sendMsg.DATA[3] = sepTime;      // Min sep. Time
+                                    stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
+                                    if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                                    {
+                                        _receiveStopWatch.Stop();
+                                        return false;
+                                    }
+                                }
+                                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                                if (waitCount > 0)
+                                {
+                                    Thread.Sleep(500);
+                                }
+                                _receiveStopWatch.Reset();
+                                _receiveStopWatch.Start();
+
                                 sendMsg.DATA[0] = sourceAddr;
-                                sendMsg.DATA[1] = 0x30; // FC
+                                sendMsg.DATA[1] = 0x30;         // FC
                                 sendMsg.DATA[2] = blocksize;    // Block size
                                 sendMsg.DATA[3] = sepTime;      // Min sep. Time
                                 fcCount = blocksize;
