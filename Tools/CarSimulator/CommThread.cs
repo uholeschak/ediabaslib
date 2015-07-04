@@ -1792,6 +1792,7 @@ namespace CarSimulator
                                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                                 if (waitCount > 0)
                                 {
+                                    // ReSharper disable once HeuristicUnreachableCode
                                     Thread.Sleep(500);
                                 }
                                 _receiveStopWatch.Reset();
@@ -1985,6 +1986,9 @@ namespace CarSimulator
                         blockSize = canMsg.DATA[2];
                         sepTime = canMsg.DATA[3];
                     } while (wait);
+#if CAN_DEBUG
+                    Debug.WriteLine(string.Format("FC: BS={0} ST={1}", blockSize, sepTime));
+#endif
                 }
                 // consecutive frame
                 sendMsg.ID = (uint)(0x600 + sourceAddr);
