@@ -54,7 +54,9 @@
 #define CAN_MIN_SEP_TIME    1       // min separation time (ms)
 #define CAN_TIMEOUT         100     // can receive timeout (10ms)
 
-#define EEP_ADDR_BAUD       0       // eeprom address for baud setting
+#define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes, address is in word steps!)
+#define EEP_ADDR_BLOCKSIZE  0x01    // eeprom address for FC block size (2 bytes, address is in word steps!)
+#define EEP_ADDR_SEP_TIME   0x02    // eeprom address for FC separation time (2 bytes, address is in word steps!)
 
 // receiver state machine
 typedef enum
@@ -91,6 +93,8 @@ static volatile uint8_t send_buffer[260];
 static uint8_t temp_buffer[260];
 
 static bool can_enabled;
+static uint8_t can_blocksize;
+static uint8_t can_sep_time;
 static can_t msg_send;
 static can_t msg_rec;
 
@@ -252,16 +256,44 @@ uint8_t calc_checkum(uint16_t len)
     return sum;
 }
 
+void read_eeprom()
+{
+    uint16_t temp_value;
+
+    temp_value = eeprom_read_word((uint16_t *) EEP_ADDR_BLOCKSIZE);
+    can_blocksize = CAN_BLOCK_SIZE;
+    if (((temp_value >> 8) & 0xFF) == (temp_value & 0xFF))
+    {
+        can_blocksize = temp_value;
+    }
+    if (can_blocksize == 0xFF)
+    {
+        can_blocksize = CAN_BLOCK_SIZE;
+    }
+
+    temp_value = eeprom_read_word((uint16_t *) EEP_ADDR_SEP_TIME);
+    can_sep_time = CAN_MIN_SEP_TIME;
+    if (((temp_value >> 8) & 0xFF) == (temp_value & 0xFF))
+    {
+        can_sep_time = temp_value;
+    }
+    if (can_sep_time == 0xFF)
+    {
+        can_sep_time = CAN_MIN_SEP_TIME;
+    }
+}
+
 void can_config()
 {
-    uint16_t baud_cfg = eeprom_read_word(EEP_ADDR_BAUD);
-    if (((baud_cfg >> 8) & 0xFF) != (baud_cfg & 0xFF))
+    uint16_t temp_value = eeprom_read_word((uint16_t *) EEP_ADDR_BAUD);
+    uint8_t baud_cfg = 0xFF;
+    if (((temp_value >> 8) & 0xFF) == (temp_value & 0xFF))
     {
-        baud_cfg = 0xFF;
+        baud_cfg = temp_value;
     }
 
     can_bitrate_t bitrate = BITRATE_500_KBPS;
-    switch (baud_cfg & 0xFF)
+    switch (baud_cfg)
     {
         case 0:     // can off
             can_enabled = false;
@@ -320,20 +352,53 @@ bool can_send_message_wait(const can_t *msg)
 
 bool internal_telegram(uint16_t len)
 {
-    if ((len != 5) ||
-    (temp_buffer[0] != 0x81) ||
-    (temp_buffer[1] != 0x00) ||
-    (temp_buffer[2] != 0x00))
+    if ((len == 5) &&
+    (temp_buffer[0] == 0x81) &&
+    (temp_buffer[1] == 0x00) &&
+    (temp_buffer[2] == 0x00))
     {
-        return false;
+        uint8_t cfg_value = temp_buffer[3];
+        eeprom_update_word(EEP_ADDR_BAUD, cfg_value | ((uint16_t) cfg_value << 8));
+        can_config();
+        temp_buffer[3] = ~cfg_value;
+        temp_buffer[len - 1] = calc_checkum(len - 1);
+        uart_send(temp_buffer, len);
+        return true;
     }
-    uint8_t cfg_value = temp_buffer[3];
-    eeprom_update_word(EEP_ADDR_BAUD, cfg_value | ((uint16_t) cfg_value << 8));
-    can_config();
-    temp_buffer[3] = ~cfg_value;
-    temp_buffer[4] = calc_checkum(4);
-    uart_send(temp_buffer, len);
-    return true;
+
+    if ((len == 6) &&
+    (temp_buffer[0] == 0x82) &&
+    (temp_buffer[1] == 0x00) &&
+    (temp_buffer[2] == 0x00))
+    {
+        if ((temp_buffer[3] & 0x7F) == 0x00)
+        {      // block size
+            if ((temp_buffer[3] & 0x80) == 0x00)
+            {   // write
+                uint8_t cfg_value = temp_buffer[4];
+                eeprom_update_word((uint16_t *) EEP_ADDR_BLOCKSIZE, cfg_value | ((uint16_t) cfg_value << 8));
+                read_eeprom();
+            }
+            temp_buffer[4] = ~can_blocksize;
+            temp_buffer[len - 1] = calc_checkum(len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
+        if ((temp_buffer[3] & 0x7F) == 0x01)
+        {      // separation time
+            if ((temp_buffer[3] & 0x80) == 0x00)
+            {   // write
+                uint8_t cfg_value = temp_buffer[4];
+                eeprom_update_word((uint16_t *) EEP_ADDR_SEP_TIME, cfg_value | ((uint16_t) cfg_value << 8));
+                read_eeprom();
+            }
+            temp_buffer[4] = ~can_sep_time;
+            temp_buffer[len - 1] = calc_checkum(len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
+    }
+    return false;
 }
 
 void can_sender(bool new_can_msg)
@@ -561,9 +626,9 @@ void can_receiver(bool new_can_msg)
                     msg_send.length = 8;
                     msg_send.data[0] = can_rec_source_addr;
                     msg_send.data[1] = 0x30;     // FC
-                    msg_send.data[2] = CAN_BLOCK_SIZE;       // block size
-                    msg_send.data[3] = CAN_MIN_SEP_TIME;     // min sep. time
-                    can_rec_fc_count = CAN_BLOCK_SIZE;
+                    msg_send.data[2] = can_blocksize;       // block size
+                    msg_send.data[3] = can_sep_time;        // min sep. time
+                    can_rec_fc_count = can_blocksize;
 
                     can_send_message_wait(&msg_send);
                     can_rec_tel_valid = true;
@@ -597,9 +662,9 @@ void can_receiver(bool new_can_msg)
                                 msg_send.length = 8;
                                 msg_send.data[0] = can_rec_source_addr;
                                 msg_send.data[1] = 0x30;     // FC
-                                msg_send.data[2] = CAN_BLOCK_SIZE;       // block size
-                                msg_send.data[3] = CAN_MIN_SEP_TIME;     // min sep. time
-                                can_rec_fc_count = CAN_BLOCK_SIZE;
+                                msg_send.data[2] = can_blocksize;       // block size
+                                msg_send.data[3] = can_sep_time;        // min sep. time
+                                can_rec_fc_count = can_blocksize;
 
                                 can_send_message_wait(&msg_send);
                             }
@@ -703,6 +768,7 @@ int main(void)
     set_sleep_mode(SLEEP_MODE_IDLE);
     sei();
 
+    read_eeprom();
     can_config();
 
     // show green led for 500ms.
