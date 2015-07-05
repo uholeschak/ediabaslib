@@ -262,32 +262,24 @@ void read_eeprom()
 
     temp_value = eeprom_read_word((uint16_t *) EEP_ADDR_BLOCKSIZE);
     can_blocksize = CAN_BLOCK_SIZE;
-    if (((temp_value >> 8) & 0xFF) == (temp_value & 0xFF))
+    if (((~temp_value >> 8) & 0xFF) == (temp_value & 0xFF))
     {
         can_blocksize = temp_value;
-    }
-    if (can_blocksize == 0xFF)
-    {
-        can_blocksize = CAN_BLOCK_SIZE;
     }
 
     temp_value = eeprom_read_word((uint16_t *) EEP_ADDR_SEP_TIME);
     can_sep_time = CAN_MIN_SEP_TIME;
-    if (((temp_value >> 8) & 0xFF) == (temp_value & 0xFF))
+    if (((~temp_value >> 8) & 0xFF) == (temp_value & 0xFF))
     {
         can_sep_time = temp_value;
-    }
-    if (can_sep_time == 0xFF)
-    {
-        can_sep_time = CAN_MIN_SEP_TIME;
     }
 }
 
 void can_config()
 {
     uint16_t temp_value = eeprom_read_word((uint16_t *) EEP_ADDR_BAUD);
-    uint8_t baud_cfg = 0xFF;
-    if (((temp_value >> 8) & 0xFF) == (temp_value & 0xFF))
+    uint8_t baud_cfg = 1;   // 500kb
+    if (((~temp_value >> 8) & 0xFF) == (temp_value & 0xFF))
     {
         baud_cfg = temp_value;
     }
@@ -358,7 +350,7 @@ bool internal_telegram(uint16_t len)
     (temp_buffer[2] == 0x00))
     {
         uint8_t cfg_value = temp_buffer[3];
-        eeprom_update_word(EEP_ADDR_BAUD, cfg_value | ((uint16_t) cfg_value << 8));
+        eeprom_update_word(EEP_ADDR_BAUD, cfg_value | (((uint16_t) ~cfg_value << 8) & 0xFF00));
         can_config();
         temp_buffer[3] = ~cfg_value;
         temp_buffer[len - 1] = calc_checkum(len - 1);
@@ -376,7 +368,7 @@ bool internal_telegram(uint16_t len)
             if ((temp_buffer[3] & 0x80) == 0x00)
             {   // write
                 uint8_t cfg_value = temp_buffer[4];
-                eeprom_update_word((uint16_t *) EEP_ADDR_BLOCKSIZE, cfg_value | ((uint16_t) cfg_value << 8));
+                eeprom_update_word((uint16_t *) EEP_ADDR_BLOCKSIZE, cfg_value | (((uint16_t) ~cfg_value << 8) & 0xFF00));
                 read_eeprom();
             }
             temp_buffer[4] = ~can_blocksize;
@@ -389,7 +381,7 @@ bool internal_telegram(uint16_t len)
             if ((temp_buffer[3] & 0x80) == 0x00)
             {   // write
                 uint8_t cfg_value = temp_buffer[4];
-                eeprom_update_word((uint16_t *) EEP_ADDR_SEP_TIME, cfg_value | ((uint16_t) cfg_value << 8));
+                eeprom_update_word((uint16_t *) EEP_ADDR_SEP_TIME, cfg_value | (((uint16_t) ~cfg_value << 8) & 0xFF00));
                 read_eeprom();
             }
             temp_buffer[4] = ~can_sep_time;
