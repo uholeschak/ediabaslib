@@ -1789,12 +1789,16 @@ namespace CarSimulator
                                         return false;
                                     }
                                 }
-                                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                                // ReSharper disable ConditionIsAlwaysTrueOrFalse
+                                // ReSharper disable HeuristicUnreachableCode
+#pragma warning disable 162
                                 if (waitCount > 0)
                                 {
-                                    // ReSharper disable once HeuristicUnreachableCode
                                     Thread.Sleep(500);
                                 }
+#pragma warning restore 162
+                                // ReSharper restore HeuristicUnreachableCode
+                                // ReSharper restore ConditionIsAlwaysTrueOrFalse
                                 _receiveStopWatch.Reset();
                                 _receiveStopWatch.Start();
 
