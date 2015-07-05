@@ -585,6 +585,10 @@ void can_receiver(bool new_can_msg)
             switch (frame_type)
             {
                 case 0:     // single frame
+                    if (can_rec_tel_valid)
+                    {   // ignore new first frames during reception
+                        break;
+                    }
                     can_rec_source_addr = msg_rec.id & 0xFF;
                     can_rec_target_addr = msg_rec.data[0];
                     can_rec_data_len = msg_rec.data[1] & 0x0F;
@@ -600,6 +604,10 @@ void can_receiver(bool new_can_msg)
                     break;
 
                 case 1:     // first frame
+                    if (can_rec_tel_valid)
+                    {   // ignore new first frames during reception
+                        break;
+                    }
                     can_rec_source_addr = msg_rec.id & 0xFF;
                     can_rec_target_addr = msg_rec.data[0];
                     can_rec_data_len = (((uint16_t) msg_rec.data[1] & 0x0F) << 8) + msg_rec.data[2];
