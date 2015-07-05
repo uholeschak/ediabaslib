@@ -1994,6 +1994,57 @@ namespace CarSimulator
                     Debug.WriteLine(string.Format("FC: BS={0} ST={1}", blockSize, sepTime));
 #endif
                 }
+#if false
+                if (blockCount == 2)    // test telegram injection
+                {
+                    sendMsg.ID = (uint)(0x600 + sourceAddr + 1);
+                    sendMsg.LEN = 8;
+                    sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                    sendMsg.DATA[0] = targetAddr;
+                    sendMsg.DATA[1] = (byte)(0x00 | 6);  // SF
+                    sendMsg.DATA[2] = 0xFF;
+                    sendMsg.DATA[3] = 0xFF;
+                    sendMsg.DATA[4] = 0xFF;
+                    sendMsg.DATA[5] = 0xFF;
+                    sendMsg.DATA[6] = 0xFF;
+                    sendMsg.DATA[7] = 0xFF;
+                    stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
+                    if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                    {
+                        return false;
+                    }
+                }
+#endif
+#if false
+                if (blockCount == 2) // test telegram injection
+                {   // first frame
+                    sendMsg.ID = (uint) (0x600 + sourceAddr + 1);
+                    sendMsg.LEN = 8;
+                    sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                    sendMsg.DATA[0] = targetAddr;
+                    sendMsg.DATA[1] = (byte) (0x10 | 0); // FF
+                    sendMsg.DATA[2] = (byte) 10;    // length
+                    sendMsg.DATA[3] = 0xFF;
+                    sendMsg.DATA[4] = 0xFF;
+                    sendMsg.DATA[5] = 0xFF;
+                    sendMsg.DATA[6] = 0xFF;
+                    sendMsg.DATA[7] = 0xFF;
+                }
+                if (blockCount == 3) // test!
+                {   // consecutive frame
+                    sendMsg.ID = (uint)(0x600 + sourceAddr + 1);
+                    sendMsg.LEN = 8;
+                    sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                    sendMsg.DATA[0] = targetAddr;
+                    sendMsg.DATA[1] = (byte)(0x20 | 1);  // CF, block count
+                    sendMsg.DATA[2] = 0xFF;
+                    sendMsg.DATA[3] = 0xFF;
+                    sendMsg.DATA[4] = 0xFF;
+                    sendMsg.DATA[5] = 0xFF;
+                    sendMsg.DATA[6] = 0xFF;
+                    sendMsg.DATA[7] = 0xFF;
+                }
+#endif
                 // consecutive frame
                 sendMsg.ID = (uint)(0x600 + sourceAddr);
                 sendMsg.LEN = 8;
