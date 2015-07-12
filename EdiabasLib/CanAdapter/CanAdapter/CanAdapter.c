@@ -13,6 +13,7 @@
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
 #include <util/atomic.h>
+#include <avr/wdt.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
@@ -78,6 +79,7 @@ typedef enum
 static volatile uint8_t time_prescaler;
 static volatile uint8_t time_tick_1;  // time tick 1 ms
 static volatile uint8_t time_tick_10;  // time tick 10 ms
+static volatile bool start_indicator;  // show start indicator
 
 static volatile rec_states rec_state;
 static volatile uint16_t rec_len;
@@ -144,7 +146,8 @@ void do_idle()
     {   // can sending active, don't sleep
         return;
     }
-    bool disable_timer = !can_send_active &&
+    bool disable_timer = !start_indicator &&
+        !can_send_active &&
         !can_rec_tel_valid &&
         (rec_state == rec_state_idle) &&
         (send_len == 0);
@@ -215,18 +218,43 @@ uint16_t uart_receive(uint8_t *buffer)
     return data_len;
 }
 
+void soft_reset()
+{
+    wdt_enable(WDTO_15MS);
+    for (;;)
+    {
+        sleep_mode();
+    }
+}
+
 void update_led()
 {
 #if 0
+    start_indicator = false;
     if (time_tick_10 & 0x20)
     {
-        PORTE |= (1<<LED_RED);
+        LED_RED_ON();
+        LED_GREEN_OFF();
     }
     else
     {
-        PORTE &= ~(1<<LED_RED);
+        LED_RED_OFF();
+        LED_GREEN_OFF();
     }
 #else
+    if (start_indicator)
+    {
+        if (time_tick_10 > 50)
+        {
+            start_indicator = false;
+        }
+        else
+        {
+            LED_RED_OFF();
+            LED_GREEN_ON();
+            return;
+        }
+    }
     if (rec_state != rec_state_idle)
     {
         LED_RED_ON();
@@ -387,6 +415,11 @@ bool internal_telegram(uint16_t len)
             temp_buffer[4] = ~can_sep_time;
             temp_buffer[len - 1] = calc_checkum(len - 1);
             uart_send(temp_buffer, len);
+            return true;
+        }
+        if ((temp_buffer[3] == 0xFF) && (temp_buffer[4] == 0xFF))
+        {      // reset command
+            soft_reset();
             return true;
         }
     }
@@ -724,6 +757,7 @@ int main(void)
     time_prescaler = 0;
     time_tick_1 = 0;
     time_tick_10 = 0;
+    start_indicator = true;
     rec_state = rec_state_idle;
     rec_len = 0;
     rec_timeout = 0;
@@ -749,6 +783,7 @@ int main(void)
 
     // led
     DDRE = (1<<LED_RED) | (1<<LED_GREEN);
+    LED_RED_OFF();
     LED_GREEN_ON();
 
     // config timer 0
@@ -770,13 +805,6 @@ int main(void)
 
     read_eeprom();
     can_config();
-
-    // show green led for 500ms.
-    while (time_tick_10 < 50)
-    {
-        sleep_mode();
-    }
-    LED_GREEN_OFF();
 
     for (;;)
     {
