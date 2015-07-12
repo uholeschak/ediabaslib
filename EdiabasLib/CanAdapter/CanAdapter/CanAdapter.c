@@ -12,8 +12,9 @@
 #include <avr/sleep.h>
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
-#include <util/atomic.h>
 #include <avr/wdt.h>
+#include <avr/fuse.h>
+#include <util/atomic.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
@@ -58,6 +59,13 @@
 #define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes, address is in word steps!)
 #define EEP_ADDR_BLOCKSIZE  0x01    // eeprom address for FC block size (2 bytes, address is in word steps!)
 #define EEP_ADDR_SEP_TIME   0x02    // eeprom address for FC separation time (2 bytes, address is in word steps!)
+
+FUSES =
+{
+    .low = (FUSE_CKSEL1),   // 0xFD
+    .high = (FUSE_BOOTSZ0 & FUSE_BOOTRST & FUSE_SPIEN), // 0xDC
+    .extended = (FUSE_BODLEVEL0 & FUSE_BODLEVEL1),  // 0xF9
+};
 
 // receiver state machine
 typedef enum
