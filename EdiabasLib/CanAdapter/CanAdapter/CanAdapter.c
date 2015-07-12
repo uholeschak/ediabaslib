@@ -44,12 +44,16 @@
 
 #define BAUDRATEFACTOR      3            // Calculated baud rate factor: 115200bps @ 7.38 MHz
 
-#define LED_GREEN           0
-#define LED_RED             1
+#define IGNITION            PB4
+#define LED_GREEN           PE0
+#define LED_RED             PE1
+#define DSR_OUT             PE2
 #define LED_GREEN_ON()      { PORTE |= (1<<LED_GREEN); }
 #define LED_GREEN_OFF()     { PORTE &= ~(1<<LED_GREEN); }
 #define LED_RED_ON()        { PORTE |= (1<<LED_RED); }
 #define LED_RED_OFF()       { PORTE &= ~(1<<LED_RED); }
+#define DSR_ON()            { PORTE &= ~(1<<DSR_OUT); }     // inverted by FTDI
+#define DSR_OFF()           { PORTE |= (1<<DSR_OUT); }      // inverted by FTDI
 
 #define CAN_RES             4       // CAN reset (low active)
 #define CAN_BLOCK_SIZE      0x0F    // 0 is disabled
@@ -256,28 +260,30 @@ void update_led()
         {
             start_indicator = false;
         }
-        else
-        {
-            LED_RED_OFF();
-            LED_GREEN_ON();
-            return;
-        }
     }
-    if (rec_state != rec_state_idle)
-    {
-        LED_RED_ON();
-    }
-    else
+    if (start_indicator)
     {
         LED_RED_OFF();
-    }
-    if (send_len > 0)
-    {
         LED_GREEN_ON();
     }
     else
     {
-        LED_GREEN_OFF();
+        if (rec_state != rec_state_idle)
+        {
+            LED_RED_ON();
+        }
+        else
+        {
+            LED_RED_OFF();
+        }
+        if (send_len > 0)
+        {
+            LED_GREEN_ON();
+        }
+        else
+        {
+            LED_GREEN_OFF();
+        }
     }
 #endif
 }
@@ -345,7 +351,7 @@ void can_config()
     if (can_enabled)
     {
         PORTD |= (1<<CAN_RES);  // end can reset
-        DDRB = (1<<PB4);    // set SS as output, otherwise the SPI switches back to slave mode!
+        DDRB = (1<<PB4);        // set SS as output, otherwise the SPI switches back to slave mode!
         if (!can_init(bitrate))
         {
             LED_GREEN_OFF();
@@ -789,10 +795,11 @@ int main(void)
     DDRD = (1<<CAN_RES);
     PORTD &= ~(1<<CAN_RES);
 
-    // led
-    DDRE = (1<<LED_RED) | (1<<LED_GREEN);
+    // LED + DSR
+    DDRE = (1<<LED_RED) | (1<<LED_GREEN) | (1<<DSR_OUT);
     LED_RED_OFF();
     LED_GREEN_ON();
+    DSR_ON();
 
     // config timer 0
     TCCR0 = (1<<WGM01); // CTC Modus
