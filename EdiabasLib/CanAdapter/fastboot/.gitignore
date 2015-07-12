@@ -1,0 +1,8 @@
+*.o
+*.lst
+*.map
+*.elf
+*.hex
+/bootload.x
+/atmel_def.mak
+/atmel_def.h

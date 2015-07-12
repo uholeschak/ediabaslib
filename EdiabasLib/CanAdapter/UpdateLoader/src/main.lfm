@@ -1,0 +1,740 @@
+object MainWindow: TMainWindow
+  Left = 672
+  Height = 500
+  Top = 182
+  Width = 600
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'UpdateLoader'
+  ClientHeight = 500
+  ClientWidth = 600
+  Icon.Data = {
+    BE0C00000000010001002020000001001800A80C000016000000280000002000
+    000040000000010018000000000000000000B0040000B0040000000000000000
+    0000000000000000A2A2A21C1C1C2727273838382A2A2A2222222F2F2F9A9A9A
+    FDFDFD0000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000E4E4E42D2D2D292929D9D9D9EFEFEF9B9B9B6363637979799A9A9A4B4B4B
+    959595474747525252868686EDEDED000000000000000000000000000000E9E9
+    E9000000000000DCDCDCDCDCDC00000000000000000000000000000000000000
+    00003131318C8C8CF1F1F11E1E1E1616165656569A9A9A797979363636161616
+    929292989898B0B0B06262621A1A1A5151510000000000000000000000001F1F
+    1F1F1F1F2A2A2A313131313131191919A6A6A6F1F1F100000000000000000000
+    00002020200000008383830E0E0EDEDEDE000000000000000000000000C1C1C1
+    2323230000000000006868682222220303038C8C8C000000F9F9F90000006969
+    69868686000000898989777777121212676767121212B4B4B400000000000000
+    0000313131000000262626D3D3D3000000000000000000000000000000000000
+    2E2E2E8383837E7E7E3131310909091A1A1A0101011818183232322C2C2C3030
+    304A4A4A000000212121858585C8C8C8E8E8E84C4C4C79797900000000000000
+    0000131313B7B7B7232323000000000000000000000000000000000000000000
+    EDEDED272727080808000000000000010101000000C5C5C5000000000000FBFB
+    FB2D2D2D0000002B2B2B0000008B8B8B1D1D1D565656FBFBFB00000000000000
+    00009494940303039E9E9E000000000000000000000000000000000000000000
+    000000000000A0A0A01111110000000000000A0A0AEFEFEF000000000000B0B0
+    B05B5B5B0000002A2A2A0000008F8F8F77777700000000000000000000000000
+    0000000000363636E6E6E6000000000000000000000000000000000000000000
+    000000000000000000000000C8C8C8898989111111DEDEDE0000000000000000
+    000000000000002C2C2CEDEDED8282827F7F7F00000000000000000000000000
+    00000000004F4F4FB0B0B0000000000000000000000000000000000000000000
+    0000000000000000000000000000000000008E8E8E5757570000000000000000
+    000000000000005C5C5C9E9E9E676767A0A0A000000000000000000000000000
+    0000000000AAAAAA313131000000000000000000000000000000000000000000
+    000000000000000000000000000000000000D5D5D54242420000000000000000
+    00000000000000959595676767565656BABABA00000000000000000000000000
+    00000000000000002B2B2B707070000000000000000000000000000000000000
+    0000000000000000000000000000000000008C8C8C5E5E5E0000000000000000
+    00000000000000DEDEDE121212454545CCCCCC00000000000000000000000000
+    0000000000000000F7F7F72929293C3C3CDEDEDE000000000000000000000000
+    000000000000000000000000000000FBFBFB171717D9D9D90000000000000000
+    000000000000000000005858580F0F0F262626F3F3F300000000000000000000
+    00000000000000000000000000008B8B8B232323212121565656F3F3F3000000
+    000000000000000000000000D5D5D51E1E1E6C6C6C0000000000000000000000
+    0000000000000000000069696901010121212191919100000000000000000000
+    0000000000000000000000000000000000000000F5F5F5717171151515D1D1D1
+    000000000000DCDCDC2F2F2F1E1E1EA6A6A60000000000000000000000000000
+    00000000DEDEDEE4E4E41E1E1E31313169696982828200000000000000000000
+    0000000000000000000000000000000000000000000000000000B4B4B4101010
+    B5B5B5000000DCDCDCB5B5B50000000000000000000000000000000000000000
+    00E6E6E61A1A1A40404017171761616180808082828200000000000000000000
+    0000000000000000000000000000000000000000000000000000000000D1D1D1
+    131313959595000000000000000000000000000000000000000000000000B2B2
+    B21C1C1C0D0D0D1A1A1AEBEBEB6767678F8F8F39393900000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    E6E6E61818188888880000000000000000000000000000000000007B7B7B0C0C
+    0C989898060606444444CCCCCC181818CFCFCF1212122F2F2F00000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    000000EFEFEF161616B4B4B4000000000000000000000000000000171717F3F3
+    F30000000909091313136B6B6B7E7E7E1E1E1E0E0E0E0A0A0A00000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    000000000000D1D1D1121212E4E4E4000000000000000000C8C8C80B0B0BB0B0
+    B03434341515152020204646465D5D5D262626080808080808B2B2B200000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000009B9B9B1A1A1AF3F3F3000000C8C8C80808080505055C5C
+    5C2F2F2F2222222B2B2BA8A8A8CACACACFCFCF2F2F2F0404046D6D6D00000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000007E7E7E1C1C1C8383830404041111110F0F0F6161
+    612222220909092424240000000000000000005050500505052D2D2D00000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000005E5E5E0000004C4C4CFDFDFDA6A6A61313
+    13686868EBEBEB000000000000000000000000DEDEDE7777770909096D6D6D00
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000009292924F4F4FC8C8C89D9D9D1414143D3D
+    3D0000000000000000000000000000004A4A4A323232FBFBFB68686826262689
+    8989000000000000000000000000000000000000000000000000000000000000
+    000000000000000000000000000000E2E2E21818187F7F7F2E2E2E2E2E2E5050
+    500000009797979D9D9DC3C3C3000000B2B2B20000000000006868681515151A
+    1A1A000000000000000000000000000000000000000000000000000000000000
+    000000000000000000000000000000CACACA0C0C0C8282821B1B1B2A2A2A0000
+    000000000000000000008F8F8F000000929292A0A0A000000000000000000009
+    0909000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000009494945C5C5CFDFDFD1010100000003D3D
+    3DDEDEDE000000000000000000F3F3F30000000F0F0FC8C8C857575740404004
+    0404000000000000000000000000000000000000000000000000000000000000
+    000000000000000000000000000000F3F3F3121212ABABAB3A3A3A1010100000
+    00777777000000000000000000E0E0E00000000C0C0C2020207070702A2A2AFD
+    FDFD000000000000000000000000000000000000000000000000000000000000
+    000000000000000000000000000000000000D5D5D51E1E1E1515157575753B3B
+    3BD1D1D1D7D7D70303033333334D4D4D0B0B0B6B6B6B00000089898951515100
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000006767672424245454540808
+    080D0D0D151515AAAAAA212121979797252525000000646464050505E4E4E400
+    0000000000000000000000000000000000000000000000000000000000000000
+    000000000000000000000000000000000000000000FBFBFB5C5C5C1818180101
+    010000004343434E4E4E34343412121242424200000058585851515100000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    000000000000000000000000000000000000000000000000000000000000EFEF
+    EF7C7C7C101010020202080808151515C5C5C5424242282828FDFDFD00000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    00000000000000B2B2B21A1A1A2A2A2A2020204C4C4C00000000000000000000
+    0000C01FFFFF0001F67F0000F00F479852074FC002071FC032871FF0329F9FFC
+    3E1F9FFF3E1F9FFF3E1FCFFF3E1FC3FE3F0FF07C7F0FFC30FC0FFF13F80FFF8F
+    F00FFFC7E007FFE3E407FFF1C003FFF88003FFFC00E3FFFE01E1FFFE07C0FFFE
+    0458FFFE0F4EFFFE0380FFFE0380FFFF0009FFFF8011FFFF8013FFFFF003FFFF
+    FE0F
+  }
+  OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnShow = FormShow
+  ParentBiDiMode = False
+  Position = poScreenCenter
+  LCLVersion = '1.4.0.4'
+  object StatusBar: TStatusBar
+    Left = 0
+    Height = 23
+    Top = 477
+    Width = 600
+    Panels = <    
+      item
+        Width = 600
+      end>
+    SimplePanel = False
+    SizeGrip = False
+  end
+  object PageControl: TPageControl
+    Left = 5
+    Height = 320
+    Top = 5
+    Width = 590
+    ActivePage = TabSheet1
+    TabIndex = 0
+    TabOrder = 0
+    OnChanging = PageControlChanging
+    object TabSheet1: TTabSheet
+      Caption = 'Update'
+      ClientHeight = 292
+      ClientWidth = 582
+      object gpbConnection: TGroupBox
+        Left = 5
+        Height = 120
+        Top = 5
+        Width = 320
+        Caption = ' Verbindung '
+        ClientHeight = 100
+        ClientWidth = 316
+        TabOrder = 0
+        object cmbComPort: TComboBox
+          Left = 5
+          Height = 23
+          Top = 22
+          Width = 305
+          ItemHeight = 15
+          OnChange = cmbComPortChange
+          ParentShowHint = False
+          Style = csDropDownList
+          TabOrder = 0
+        end
+        object edtBootloaderPassword: TLabeledEdit
+          Left = 5
+          Height = 23
+          Top = 70
+          Width = 170
+          EditLabel.AnchorSideLeft.Control = edtBootloaderPassword
+          EditLabel.AnchorSideRight.Control = edtBootloaderPassword
+          EditLabel.AnchorSideRight.Side = asrBottom
+          EditLabel.AnchorSideBottom.Control = edtBootloaderPassword
+          EditLabel.Left = 5
+          EditLabel.Height = 15
+          EditLabel.Top = 52
+          EditLabel.Width = 170
+          EditLabel.Caption = 'Bootloader-Passwort'
+          EditLabel.ParentColor = False
+          MaxLength = 25
+          TabOrder = 1
+        end
+        object lblComPort: TLabel
+          Left = 5
+          Height = 15
+          Top = 3
+          Width = 22
+          Caption = 'Port'
+          ParentColor = False
+        end
+        object ckbAdvancedMode: TCheckBox
+          Left = 190
+          Height = 19
+          Top = 72
+          Width = 116
+          Caption = 'Erweiterter Modus'
+          OnChange = ckbAdvancedModeChange
+          TabOrder = 2
+        end
+      end
+      object gpbUpdate: TGroupBox
+        Left = 5
+        Height = 155
+        Top = 130
+        Width = 320
+        Caption = ' Firmware-Update '
+        ClientHeight = 135
+        ClientWidth = 316
+        TabOrder = 1
+        object edtFirmwareFilename: TLabeledEdit
+          Left = 5
+          Height = 23
+          Top = 23
+          Width = 225
+          EditLabel.AnchorSideLeft.Control = edtFirmwareFilename
+          EditLabel.AnchorSideRight.Control = edtFirmwareFilename
+          EditLabel.AnchorSideRight.Side = asrBottom
+          EditLabel.AnchorSideBottom.Control = edtFirmwareFilename
+          EditLabel.Left = 5
+          EditLabel.Height = 15
+          EditLabel.Top = 5
+          EditLabel.Width = 225
+          EditLabel.Caption = 'Firmware-Datei'
+          EditLabel.ParentColor = False
+          ReadOnly = True
+          TabOrder = 2
+          TabStop = False
+          OnChange = edtFirmwareFilenameChange
+        end
+        object btnUpdateControl: TButton
+          Left = 15
+          Height = 40
+          Top = 75
+          Width = 280
+          Caption = 'Update starten!'
+          Enabled = False
+          Font.Height = -18
+          OnClick = btnUpdateControlClick
+          ParentFont = False
+          TabOrder = 1
+        end
+        object btnSelectFirmwareFilename: TButton
+          Left = 240
+          Height = 23
+          Top = 23
+          Width = 70
+          Caption = 'Auswählen'
+          OnClick = btnSelectFirmwareFilenameClick
+          TabOrder = 0
+        end
+      end
+      object gpbInfo: TGroupBox
+        Left = 335
+        Height = 280
+        Top = 5
+        Width = 238
+        Caption = ' Informationen '
+        ClientHeight = 260
+        ClientWidth = 234
+        TabOrder = 2
+        object memUpdateLog: TMemo
+          Left = 5
+          Height = 210
+          Top = 45
+          Width = 225
+          ReadOnly = True
+          TabOrder = 0
+          TabStop = False
+        end
+        object lblFlashNotice: TLabel
+          Left = 80
+          Height = 25
+          Top = 9
+          Width = 67
+          Caption = 'Hinweis'
+          Font.Color = clRed
+          Font.Height = -18
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+          Visible = False
+        end
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Erweitert'
+      ClientHeight = 292
+      ClientWidth = 582
+      OnShow = TabSheet2Show
+      object gpbMemoryView: TGroupBox
+        Left = 5
+        Height = 155
+        Top = 130
+        Width = 568
+        Caption = ' Programm '
+        ClientHeight = 135
+        ClientWidth = 564
+        TabOrder = 1
+        object stgMemoryView: TStringGrid
+          Cursor = crHandPoint
+          Left = 5
+          Height = 125
+          Top = 5
+          Width = 552
+          AutoEdit = False
+          DefaultRowHeight = 18
+          ExtendedSelect = False
+          FixedCols = 0
+          Flat = True
+          Font.Height = -11
+          Font.Name = 'Lucida Console'
+          GridLineWidth = 0
+          ParentFont = False
+          ParentShowHint = False
+          RowCount = 1
+          ScrollBars = ssVertical
+          TabOrder = 0
+          TabStop = False
+          TitleFont.Height = -11
+          TitleFont.Name = 'Lucida Console'
+          TitleStyle = tsNative
+          OnDrawCell = stgMemoryViewDrawCell
+        end
+      end
+      object gpbAdvancedSettings: TGroupBox
+        Left = 5
+        Height = 120
+        Top = 5
+        Width = 568
+        Caption = ' Erweiterte Einstellungen '
+        ClientHeight = 100
+        ClientWidth = 564
+        TabOrder = 0
+        object cmbBaudRate: TComboBox
+          Left = 5
+          Height = 23
+          Top = 20
+          Width = 125
+          ItemHeight = 15
+          ItemIndex = 0
+          Items.Strings = (
+            '4800'
+            '9600'
+            '14400'
+            '19200'
+            '28800'
+            '38400'
+            '57600'
+            '115200'
+            '128000'
+          )
+          Style = csDropDownList
+          TabOrder = 0
+          Text = '4800'
+        end
+        object ckbProgramWrite: TCheckBox
+          Left = 180
+          Height = 19
+          Top = 12
+          Width = 103
+          Caption = 'Programmieren'
+          TabOrder = 2
+        end
+        object ckbProgramVerify: TCheckBox
+          Left = 180
+          Height = 19
+          Top = 32
+          Width = 80
+          Caption = 'Überprüfen'
+          TabOrder = 3
+        end
+        object ckbHideMessages: TCheckBox
+          Left = 345
+          Height = 19
+          Hint = 'Deaktiviert die Benutzerführung (Gerät jetzt ausschalten, ...) während dem Update-Vorgang'
+          Top = 12
+          Width = 145
+          Caption = 'Meldungen ausblenden'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+        end
+        object lblBaudRate: TLabel
+          Left = 5
+          Height = 15
+          Top = 3
+          Width = 47
+          Caption = 'Baudrate'
+          ParentColor = False
+        end
+        object edtConnectTries: TLabeledEdit
+          Left = 5
+          Height = 23
+          Top = 70
+          Width = 125
+          EditLabel.AnchorSideLeft.Control = edtConnectTries
+          EditLabel.AnchorSideRight.Control = edtConnectTries
+          EditLabel.AnchorSideRight.Side = asrBottom
+          EditLabel.AnchorSideBottom.Control = edtConnectTries
+          EditLabel.Left = 5
+          EditLabel.Height = 15
+          EditLabel.Top = 52
+          EditLabel.Width = 125
+          EditLabel.Caption = 'Verbindungsversuche'
+          EditLabel.ParentColor = False
+          MaxLength = 4
+          TabOrder = 1
+          OnChange = edtConnectTriesChange
+        end
+        object ckbReloadFile: TCheckBox
+          Left = 180
+          Height = 19
+          Hint = 'Vor dem Aufspielen die Hex-Datei neu von der Festplatte laden'
+          Top = 72
+          Width = 102
+          Caption = 'Datei neu laden'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+        end
+        object ckbShowMemory: TCheckBox
+          Left = 345
+          Height = 19
+          Top = 32
+          Width = 127
+          Caption = 'Programm anzeigen'
+          OnChange = ckbShowMemoryChange
+          TabOrder = 7
+        end
+        object ckbProgramStart: TCheckBox
+          Left = 180
+          Height = 19
+          Hint = 'Neu eingespielte Firmware nach dem Update starten'
+          Top = 52
+          Width = 116
+          Caption = 'Programm starten'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+        end
+        object ckbDetectOneWire: TCheckBox
+          Left = 345
+          Height = 19
+          Hint = 'Erkennung von Eindrahtverbindungen aktivieren'
+          Top = 52
+          Width = 115
+          Caption = '1-Wire Erkennung'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 8
+        end
+        object ckbSendResetCmd: TCheckBox
+          Left = 345
+          Height = 19
+          Hint = 'Sendet Reset-Kommando an die Applikation'
+          Top = 72
+          Width = 169
+          Caption = 'Reset an Applikation senden'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 9
+        end
+      end
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'Sonstiges'
+      ClientHeight = 292
+      ClientWidth = 582
+      object gpbAbout: TGroupBox
+        AnchorSideRight.Side = asrBottom
+        Left = 5
+        Height = 155
+        Top = 5
+        Width = 568
+        Caption = ' Über UpdateLoader '
+        ClientHeight = 135
+        ClientWidth = 564
+        TabOrder = 0
+        object lblCopyright: TLabel
+          Cursor = crHandPoint
+          Left = 5
+          Height = 17
+          Top = 115
+          Width = 406
+          Caption = '© 2012-2014 Leo-Andres Hofmann / Modifiziert von Ulrich Holeschak'
+          Font.Height = -13
+          ParentColor = False
+          ParentFont = False
+          OnClick = lblCopyrightClick
+        end
+        object lblLicense: TLabel
+          Left = 5
+          Height = 15
+          Top = 45
+          Width = 59
+          Caption = 'Lizenz: GPL'
+          ParentColor = False
+        end
+        object edtVersionInfo: TEdit
+          Left = 2
+          Height = 15
+          Top = 5
+          Width = 553
+          Anchors = [akTop, akLeft, akRight]
+          BorderStyle = bsNone
+          ReadOnly = True
+          TabOrder = 0
+          Text = 'UpdateLoader'
+        end
+        object lblInfo_1: TLabel
+          Left = 5
+          Height = 15
+          Top = 30
+          Width = 167
+          Caption = 'UpdateLoader ist freie Software!'
+          ParentColor = False
+        end
+        object lblInfo_2: TLabel
+          Left = 5
+          Height = 15
+          Top = 75
+          Width = 245
+          Caption = 'Kompatibel mit FastBoot von Peter Dannegger'
+          ParentColor = False
+        end
+        object lblBootloaderVersion: TLabel
+          Left = 5
+          Height = 15
+          Top = 90
+          Width = 39
+          Caption = 'Version'
+          ParentColor = False
+        end
+      end
+      object gpbSettingsFile: TGroupBox
+        Left = 5
+        Height = 120
+        Top = 165
+        Width = 568
+        Caption = ' Konfigurationsdatei '
+        ClientHeight = 100
+        ClientWidth = 564
+        TabOrder = 1
+        object ckbEnableDevMode: TCheckBox
+          Left = 5
+          Height = 19
+          Hint = 'Konfigurationsdatei für den Programmpaket-Modus konfigurieren'
+          Top = 5
+          Width = 153
+          Caption = 'Programmpaket erstellen'
+          OnChange = ckbEnableDevModeChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+        end
+        object ckbDevMiniGUI: TCheckBox
+          Left = 10
+          Height = 19
+          Top = 35
+          Width = 92
+          Caption = 'Minimale GUI'
+          OnChange = ckbDevMiniGUIChange
+          TabOrder = 2
+        end
+        object ckbDevOnTop: TCheckBox
+          Left = 10
+          Height = 19
+          Top = 55
+          Width = 126
+          Caption = 'Fenster immer oben'
+          TabOrder = 3
+        end
+        object ckbDevLockFile: TCheckBox
+          Left = 185
+          Height = 19
+          Hint = 'Dateiname schreibgeschützt'
+          Top = 35
+          Width = 119
+          Caption = 'Dateiname sperren'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+        end
+        object ckbDevLockPass: TCheckBox
+          Left = 185
+          Height = 19
+          Hint = 'Passwort schreibgeschützt'
+          Top = 55
+          Width = 109
+          Caption = 'Passwort sperren'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+        end
+        object ckbDevHidePass: TCheckBox
+          Left = 185
+          Height = 19
+          Hint = 'Passwort-Feld ausblenden'#13#10'Achtung: Das Passwort wird im Klartext in der Konfigurationsdatei abgelegt!'
+          Top = 75
+          Width = 131
+          Caption = 'Passwort ausblenden'
+          OnChange = ckbDevHidePassChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+        end
+        object btnClearSettings: TButton
+          Left = 355
+          Height = 25
+          Top = 5
+          Width = 200
+          Caption = 'Alle Einstellungen zurücksetzen'
+          OnClick = btnClearSettingsClick
+          TabOrder = 1
+        end
+        object btnSaveSettings: TButton
+          Left = 355
+          Height = 25
+          Top = 69
+          Width = 200
+          Caption = 'Konfiguration speichern'
+          OnClick = btnSaveSettingsClick
+          TabOrder = 8
+        end
+        object ckbDevHideAdv: TCheckBox
+          Left = 10
+          Height = 19
+          Hint = 'Reiter "Erweitert" deaktivieren'#13#10'Erweiterte Optionen werden weiterhin ausgewertet'
+          Top = 75
+          Width = 143
+          Caption = 'Erweitertes Ausblenden'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+        end
+      end
+    end
+  end
+  object gpbStatus: TGroupBox
+    Left = 5
+    Height = 140
+    Top = 330
+    Width = 590
+    Caption = ' Status '
+    ClientHeight = 120
+    ClientWidth = 586
+    TabOrder = 2
+    object memUpdateStatus: TMemo
+      Left = 315
+      Height = 110
+      Top = 5
+      Width = 264
+      ReadOnly = True
+      ScrollBars = ssVertical
+      TabOrder = 0
+      TabStop = False
+    end
+    object pgbProgramConnect: TProgressBar
+      Left = 5
+      Height = 15
+      Top = 20
+      Width = 300
+      Smooth = True
+      TabOrder = 1
+    end
+    object pgbProgramWrite: TProgressBar
+      Left = 5
+      Height = 15
+      Top = 55
+      Width = 145
+      Smooth = True
+      TabOrder = 2
+    end
+    object pgbUpdateProgress: TProgressBar
+      Left = 5
+      Height = 22
+      Top = 93
+      Width = 300
+      Smooth = True
+      TabOrder = 3
+    end
+    object pgbProgramVerify: TProgressBar
+      Left = 160
+      Height = 15
+      Top = 55
+      Width = 145
+      Smooth = True
+      TabOrder = 4
+    end
+    object lblProgramConnect: TLabel
+      Left = 5
+      Height = 15
+      Top = 3
+      Width = 54
+      Caption = 'Verbinden'
+      ParentColor = False
+    end
+    object lblProgramWrite: TLabel
+      Left = 5
+      Height = 15
+      Top = 38
+      Width = 83
+      Caption = 'Programmieren'
+      ParentColor = False
+    end
+    object lblProgramVerify: TLabel
+      Left = 160
+      Height = 15
+      Top = 38
+      Width = 60
+      Caption = 'Überprüfen'
+      ParentColor = False
+    end
+    object lblUpdateProgress: TLabel
+      Left = 5
+      Height = 15
+      Top = 76
+      Width = 54
+      Caption = 'Fortschritt'
+      ParentColor = False
+    end
+  end
+  object OpenDialog: TOpenDialog
+    Title = 'UpdateLoader - Firmware-Datei öffnen'
+    Filter = 'Firmware-Dateien (*.hex)|*.hex'
+    FilterIndex = 0
+    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofDontAddToRecent, ofViewDetail]
+    left = 344
+    top = 408
+  end
+  object tmrFlashNotice: TTimer
+    Enabled = False
+    OnTimer = tmrFlashNoticeTimer
+    left = 440
+    top = 408
+  end
+end
