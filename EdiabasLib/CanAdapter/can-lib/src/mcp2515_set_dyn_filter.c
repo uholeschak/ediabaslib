@@ -96,6 +96,9 @@ bool mcp2515_set_filter(uint8_t number, const can_filter_t *filter)
 	
 	if (mask_address)
 	{
+		#if defined (SPI_INIT)
+			SPI_INIT();
+		#endif
 		RESET(MCP2515_CS);
 		spi_putc(SPI_WRITE);
 		spi_putc(mask_address);
@@ -105,6 +108,9 @@ bool mcp2515_set_filter(uint8_t number, const can_filter_t *filter)
 			mcp2515_write_id(&filter->mask);
 		#endif
 		SET(MCP2515_CS);
+		#if defined (SPI_FINISH)
+			SPI_FINISH();
+		#endif
 		
 		_delay_us(1);
 	}
@@ -119,6 +125,9 @@ bool mcp2515_set_filter(uint8_t number, const can_filter_t *filter)
 		filter_address = RXF0SIDH;
 	}
 	
+	#if defined (SPI_INIT)
+		SPI_INIT();
+	#endif
 	RESET(MCP2515_CS);
 	spi_putc(SPI_WRITE);
 	spi_putc(filter_address | (number * 4));
@@ -128,6 +137,9 @@ bool mcp2515_set_filter(uint8_t number, const can_filter_t *filter)
 		mcp2515_write_id(&filter->id);
 	#endif
 	SET(MCP2515_CS);
+	#if defined (SPI_FINISH)
+		SPI_FINISH();
+	#endif
 	
 	_delay_us(1);
 	

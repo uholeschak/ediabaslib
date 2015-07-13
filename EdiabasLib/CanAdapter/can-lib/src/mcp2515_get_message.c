@@ -101,6 +101,9 @@ uint8_t mcp2515_get_message(can_t *msg)
 		}
 	#endif
 	
+	#if defined (SPI_INIT)
+		SPI_INIT();
+	#endif
 	RESET(MCP2515_CS);
 	spi_putc(addr);
 	
@@ -112,6 +115,9 @@ uint8_t mcp2515_get_message(can_t *msg)
 		if (tmp & 0x01) {
 			// Nachrichten mit extended ID verwerfen
 			SET(MCP2515_CS);
+			#if defined (SPI_FINISH)
+				SPI_FINISH();
+			#endif
 			// [UH] CS high clears the interrupt flag!
 			
 			return 0;
@@ -136,6 +142,9 @@ uint8_t mcp2515_get_message(can_t *msg)
 		msg->data[i] = spi_putc(0xff);
 	}
 	SET(MCP2515_CS);
+	#if defined (SPI_FINISH)
+		SPI_FINISH();
+	#endif
 	// [UH] CS high clears the interrupt flag!
 	
 	CAN_INDICATE_RX_TRAFFIC_FUNCTION;

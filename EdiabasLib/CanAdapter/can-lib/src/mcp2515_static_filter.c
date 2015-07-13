@@ -47,6 +47,9 @@ void mcp2515_static_filter(const uint8_t *filter)
 	uint8_t i, j;
 	for (i = 0; i < 0x30; i += 0x10)
 	{
+		#if defined (SPI_INIT)
+			SPI_INIT();
+		#endif
 		RESET(MCP2515_CS);
 		spi_putc(SPI_WRITE);
 		spi_putc(i);
@@ -59,6 +62,9 @@ void mcp2515_static_filter(const uint8_t *filter)
 			spi_putc(pgm_read_byte(filter++));
 		}
 		SET(MCP2515_CS);
+		#if defined (SPI_FINISH)
+			SPI_FINISH();
+		#endif
 	}
 	
 	mcp2515_bit_modify(CANCTRL, 0xe0, 0);

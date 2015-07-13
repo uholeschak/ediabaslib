@@ -43,11 +43,14 @@
 #define USART_TXC_vect  USART0_TXC_vect
 
 #define BAUDRATEFACTOR      3            // Calculated baud rate factor: 115200bps @ 7.38 MHz
+#define TIMER0_PRESCALE     ((1<<CS01) | (1<<CS00))     // prescaler 64
+#define TIMER0_RELOAD       (115-1)      // 1ms: ((7380000/64)/1000) = 115
 
 #define IGNITION            PB4
 #define LED_GREEN           PE0
 #define LED_RED             PE1
 #define DSR_OUT             PE2
+#define IGNITION_STATE()    ((PINB & (1<<IGNITION)) != 0)
 #define LED_GREEN_ON()      { PORTE |= (1<<LED_GREEN); }
 #define LED_GREEN_OFF()     { PORTE &= ~(1<<LED_GREEN); }
 #define LED_RED_ON()        { PORTE |= (1<<LED_RED); }
@@ -168,13 +171,18 @@ void do_idle()
     GICR |= (1<<PCIE1);     // CAN pin change interrupt on
     if (disable_timer)
     {
-        TIMSK &= ~(1<<OCIE0);   // disable timer interrupt
+        //TIMSK &= ~(1<<OCIE0);   // disable timer interrupt
+        TCCR0 = (1<<WGM01) | (1<<CS02) | (1<<CS00); // prescaler 1024
     }
     if (!can_check_message())
     {
         sleep_cpu();
     }
-    TIMSK |= (1<<OCIE0);    // enable timer interrupt
+    if (disable_timer)
+    {
+        //TIMSK |= (1<<OCIE0);    // enable timer interrupt
+        TCCR0 = (1<<WGM01) | TIMER0_PRESCALE; // standard time
+    }
     GICR &= ~(1<<PCIE1);    // CAN pin change interrupt off
     sleep_disable();
 }
@@ -286,6 +294,14 @@ void update_led()
         }
     }
 #endif
+    if (IGNITION_STATE())
+    {
+        DSR_ON();
+    }
+    else
+    {
+        DSR_OFF();
+    }
 }
 
 uint8_t calc_checkum(uint16_t len)
@@ -351,7 +367,6 @@ void can_config()
     if (can_enabled)
     {
         PORTD |= (1<<CAN_RES);  // end can reset
-        DDRB = (1<<PB4);        // set SS as output, otherwise the SPI switches back to slave mode!
         if (!can_init(bitrate))
         {
             LED_GREEN_OFF();
@@ -799,13 +814,11 @@ int main(void)
     DDRE = (1<<LED_RED) | (1<<LED_GREEN) | (1<<DSR_OUT);
     LED_RED_OFF();
     LED_GREEN_ON();
-    DSR_ON();
+    DSR_OFF();
 
     // config timer 0
-    TCCR0 = (1<<WGM01); // CTC Modus
-    TCCR0 |= (1<<CS01) | (1<<CS00); // prescaler 64
-    // ((7380000/64)/1000) = 115 (1ms)
-    OCR0 = 115-1;
+    TCCR0 = (1<<WGM01) | TIMER0_PRESCALE; // CTC Modus
+    OCR0 = TIMER0_RELOAD;
 
     // Allow compare interrupt
     TIMSK |= (1<<OCIE0);

@@ -56,7 +56,8 @@
 // ----------------------------------------------------------------------------
 
 #if (BUILD_FOR_MCP2515 == 1)
-	#if defined(__AVR_ATmega16__) || defined(__AVR_ATmega32__) || defined(__AVR_ATmega644__)
+	#if defined(__AVR_ATmega16__) || defined(__AVR_ATmega162__) || defined(__AVR_ATmega32__) || defined(__AVR_ATmega644__)
+		#define	P_SS	B,4
 		#define	P_MOSI	B,5
 		#define	P_MISO	B,6
 		#define	P_SCK	B,7
