@@ -82,6 +82,9 @@ uint8_t mcp2515_get_filter(uint8_t number, can_filter_t *filter)
 	#endif
 	
 	// read mask
+	#if defined (SPI_INIT)
+		SPI_INIT();
+	#endif
 	RESET(MCP2515_CS);
 	spi_putc(SPI_READ);
 	spi_putc(mask_address);
@@ -103,6 +106,9 @@ uint8_t mcp2515_get_filter(uint8_t number, can_filter_t *filter)
 	spi_putc(filter_address);
 	mcp2515_read_id(&filter->id);
 	SET(MCP2515_CS);
+	#if defined (SPI_FINISH)
+		SPI_FINISH();
+	#endif
 	
 	// restore previous mode
 	mcp2515_change_operation_mode( mode );

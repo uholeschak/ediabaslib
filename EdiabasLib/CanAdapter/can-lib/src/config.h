@@ -51,6 +51,10 @@
 #define KEEP_TX_ORDER
 // [UH] Keep RX telegram order during receiving (disable second message filter required)
 #define KEEP_RX_ORDER
+// [UH] Initialize SPI operation
+#define SPI_INIT() { SET_OUTPUT(P_SS); mcp2515_spi_init(); }
+// [UH] Finish SPI operation
+#define SPI_FINISH() { SPCR = 0x00; SET_INPUT(P_SS); }
 
 // -----------------------------------------------------------------------------
 // Setting for SJA1000

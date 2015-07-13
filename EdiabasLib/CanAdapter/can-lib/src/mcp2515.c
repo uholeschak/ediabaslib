@@ -69,6 +69,9 @@
 // -------------------------------------------------------------------------
 void mcp2515_write_register( uint8_t adress, uint8_t data )
 {
+	#if defined (SPI_INIT)
+		SPI_INIT();
+	#endif
 	RESET(MCP2515_CS);
 	
 	spi_putc(SPI_WRITE);
@@ -76,6 +79,9 @@ void mcp2515_write_register( uint8_t adress, uint8_t data )
 	spi_putc(data);
 	
 	SET(MCP2515_CS);
+	#if defined (SPI_FINISH)
+		SPI_FINISH();
+	#endif
 }
 
 // -------------------------------------------------------------------------
@@ -83,6 +89,9 @@ uint8_t mcp2515_read_register(uint8_t adress)
 {
 	uint8_t data;
 	
+	#if defined (SPI_INIT)
+		SPI_INIT();
+	#endif
 	RESET(MCP2515_CS);
 	
 	spi_putc(SPI_READ);
@@ -91,6 +100,9 @@ uint8_t mcp2515_read_register(uint8_t adress)
 	data = spi_putc(0xff);	
 	
 	SET(MCP2515_CS);
+	#if defined (SPI_FINISH)
+		SPI_FINISH();
+	#endif
 	
 	return data;
 }
@@ -98,6 +110,9 @@ uint8_t mcp2515_read_register(uint8_t adress)
 // -------------------------------------------------------------------------
 void mcp2515_bit_modify(uint8_t adress, uint8_t mask, uint8_t data)
 {
+	#if defined (SPI_INIT)
+		SPI_INIT();
+	#endif
 	RESET(MCP2515_CS);
 	
 	spi_putc(SPI_BIT_MODIFY);
@@ -106,6 +121,9 @@ void mcp2515_bit_modify(uint8_t adress, uint8_t mask, uint8_t data)
 	spi_putc(data);
 	
 	SET(MCP2515_CS);
+	#if defined (SPI_FINISH)
+		SPI_FINISH();
+	#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -113,12 +131,18 @@ uint8_t mcp2515_read_status(uint8_t type)
 {
 	uint8_t data;
 	
+	#if defined (SPI_INIT)
+		SPI_INIT();
+	#endif
 	RESET(MCP2515_CS);
 	
 	spi_putc(type);
 	data = spi_putc(0xff);
 	
 	SET(MCP2515_CS);
+	#if defined (SPI_FINISH)
+		SPI_FINISH();
+	#endif
 	
 	return data;
 }
@@ -189,7 +213,11 @@ bool mcp2515_init(uint8_t bitrate)
 	SET_INPUT(P_MISO);
 	
 	// SPI Einstellung setzen
-	mcp2515_spi_init();
+	#if defined (SPI_INIT)
+		SPI_INIT();
+	#else
+		mcp2515_spi_init();
+	#endif
 	
 	// MCP2515 per Software Reset zuruecksetzten,
 	// danach ist er automatisch im Konfigurations Modus
@@ -213,6 +241,9 @@ bool mcp2515_init(uint8_t bitrate)
 	// aktivieren/deaktivieren der Interrupts
 	spi_putc(MCP2515_INTERRUPTS);
 	SET(MCP2515_CS);
+	#if defined (SPI_FINISH)
+		SPI_FINISH();
+	#endif
 	
 	// TXnRTS Bits als Inputs schalten
 	mcp2515_write_register(TXRTSCTRL, 0);

@@ -64,6 +64,9 @@ uint8_t mcp2515_send_message(const can_t *msg)
 		return 0;
 	}
 	
+	#if defined (SPI_INIT)
+		SPI_INIT();
+	#endif
 	RESET(MCP2515_CS);
 	spi_putc(SPI_WRITE_TX | address);
 	#if SUPPORT_EXTENDED_CANID
@@ -103,6 +106,9 @@ uint8_t mcp2515_send_message(const can_t *msg)
 	address = (address == 0) ? 1 : address;
 	spi_putc(SPI_RTS | address);
 	SET(MCP2515_CS);
+	#if defined (SPI_FINISH)
+		SPI_FINISH();
+	#endif
 	
 	CAN_INDICATE_TX_TRAFFIC_FUNCTION;
 	
