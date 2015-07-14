@@ -446,6 +446,13 @@ bool internal_telegram(uint16_t len)
             uart_send(temp_buffer, len);
             return true;
         }
+        if ((temp_buffer[3] == 0xFE) && (temp_buffer[4] == 0xFE))
+        {      // read ignition state
+            temp_buffer[4] = IGNITION_STATE() ? 0xFF : 0x00;
+            temp_buffer[len - 1] = calc_checkum(len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
         if ((temp_buffer[3] == 0xFF) && (temp_buffer[4] == 0xFF))
         {      // reset command
             soft_reset();
