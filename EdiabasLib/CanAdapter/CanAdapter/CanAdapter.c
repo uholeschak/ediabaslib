@@ -62,6 +62,8 @@
 #define CAN_BLOCK_SIZE      0x0F    // 0 is disabled
 #define CAN_MIN_SEP_TIME    1       // min separation time (ms)
 #define CAN_TIMEOUT         100     // can receive timeout (10ms)
+//#define SER_REC_TIMEOUT     3       // serial receive timeout (ms) (+1 required for disabled timer in sleep mode)
+#define SER_REC_TIMEOUT     20      // serial receive timeout for bluetooth converter (ms)
 
 #define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes, address is in word steps!)
 #define EEP_ADDR_BLOCKSIZE  0x01    // eeprom address for FC block size (2 bytes, address is in word steps!)
@@ -902,7 +904,7 @@ ISR(TIMER0_COMP_vect)
 ISR(USART_RXC_vect)
 {
     uint8_t rec_data = UDR;
-    rec_timeout = 3;    // +1 required for disabled timer in sleep mode
+    rec_timeout = SER_REC_TIMEOUT;
 
     switch (rec_state)
     {
