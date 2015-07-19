@@ -9,7 +9,7 @@ Location None;
 Device   g16v8s;
 
 
-ORDER: enable_obd_rx, enable_ftdi_out2, enable_ftdi_obdtx, enable_ftdi_obd, enable_txd1_out2, enable_txd1_obdtx, ftdi_txd, cpu_txd1, cpu_txd0, obd_rx, cpu_rxd1, ftdi_rxd, cpu_rxd0, out2, obd_tx; 
+ORDER: enable_obd_rx, enable_ftdi_txout, enable_ftdi_obdtx, enable_ftdi_obd, enable_txd1_txout, enable_txd1_obdtx, ftdi_txd, cpu_txd1, cpu_txd0, obd_rx, cpu_rxd1, ftdi_rxd, cpu_rxd0, txout, obd_tx; 
 
 
 VECTORS:
