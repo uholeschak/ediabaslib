@@ -20,10 +20,10 @@ Device          g16v8s;
  */
 
 Pin 2 = enable_obd_rx;
-Pin 4 = enable_ftdi_out2;
+Pin 4 = enable_ftdi_txout;
 Pin 5 = enable_ftdi_obdtx;
 Pin 6 = enable_ftdi_obd;
-Pin 7 = enable_txd1_out2;
+Pin 7 = enable_txd1_txout;
 Pin 8 = enable_txd1_obdtx;
 Pin 9 = ftdi_txd;
 Pin 11 = cpu_txd1;
@@ -38,7 +38,7 @@ Pin 17 = obd_rx;
 Pin 12 = cpu_rxd1;
 Pin 13 = ftdi_rxd;
 Pin 15 = cpu_rxd0;
-Pin 16 = out2;
+Pin 16 = txout;
 Pin 18 = obd_tx;
 
 /*
@@ -52,4 +52,4 @@ ftdi_rxd = (cpu_txd0 & obd_rec) # enable_ftdi_obd;
 cpu_rxd1 = obd_rec;
 
 obd_tx = (ftdi_txd # enable_ftdi_obdtx # enable_ftdi_obd) & (cpu_txd1 # enable_txd1_obdtx);
-out2 = (ftdi_txd # enable_ftdi_out2) & (cpu_txd1 # enable_txd1_out2);
+txout = (ftdi_txd # enable_ftdi_txout) & (cpu_txd1 # enable_txd1_txout);
