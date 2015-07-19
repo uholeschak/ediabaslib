@@ -1,0 +1,55 @@
+Name            Converter;
+Partno          0001;
+Revision        01;
+Date            01/07/15;
+Designer        Ulrich Holeschak;
+Company         None;
+Location        None;
+Assembly        None;
+Device          g16v8s;
+
+/****************************************************************/
+/*                                                              */
+/*      This is a example to demonstrate how CUPL               */
+/*      compiles simple gates.                                  */
+/*                                                              */
+/****************************************************************/
+
+/*
+ * Inputs:
+ */
+
+Pin 2 = enable_obd_rx;
+Pin 4 = enable_ftdi_out2;
+Pin 5 = enable_ftdi_obdtx;
+Pin 6 = enable_ftdi_obd;
+Pin 7 = enable_txd1_out2;
+Pin 8 = enable_txd1_obdtx;
+Pin 9 = ftdi_txd;
+Pin 11 = cpu_txd1;
+Pin 14 = cpu_txd0;
+Pin 17 = obd_rx;
+
+/*
+ * Outputs:
+ *
+ */
+
+Pin 12 = cpu_rxd1;
+Pin 13 = ftdi_rxd;
+Pin 15 = cpu_rxd0;
+Pin 16 = out2;
+Pin 18 = obd_tx;
+
+/*
+ * Logic:
+ */
+
+obd_rec = obd_rx # enable_obd_rx;
+
+cpu_rxd0 = ftdi_txd;
+ftdi_rxd = (cpu_txd0 & obd_rec) # enable_ftdi_obd;
+cpu_rxd1 = obd_rec;
+
+obd_tx = (ftdi_txd # enable_ftdi_obdtx # enable_ftdi_obd) & (cpu_txd1 # enable_txd1_obdtx);
+out2 = (ftdi_txd # enable_ftdi_out2) & (cpu_txd1 # enable_txd1_out2);
