@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Peak.Can.Basic;
 // ReSharper disable LocalizableElement
@@ -50,9 +51,11 @@ namespace CarSimulator
             listPorts.BeginUpdate();
             listPorts.Items.Clear();
             int index = listPorts.Items.Add("ENET");
+            Regex rx = new Regex("(COM[0-9]+).*");
             foreach (string port in ports)
             {
-                index = listPorts.Items.Add(port);
+                string portFixed = rx.Replace(port, "$1");
+                index = listPorts.Items.Add(portFixed);
             }
             try
             {
