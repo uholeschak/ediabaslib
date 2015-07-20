@@ -62,8 +62,8 @@
 #define CAN_BLOCK_SIZE      0x0F    // 0 is disabled
 #define CAN_MIN_SEP_TIME    1       // min separation time (ms)
 #define CAN_TIMEOUT         100     // can receive timeout (10ms)
-//#define SER_REC_TIMEOUT     3       // serial receive timeout (ms) (+1 required for disabled timer in sleep mode)
-#define SER_REC_TIMEOUT     20      // serial receive timeout for bluetooth converter (ms)
+#define SER_REC_TIMEOUT     3       // serial receive timeout (ms) (+1 required for disabled timer in sleep mode)
+//#define SER_REC_TIMEOUT     20      // serial receive timeout for bluetooth converter (ms)
 
 #define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes, address is in word steps!)
 #define EEP_ADDR_BLOCKSIZE  0x01    // eeprom address for FC block size (2 bytes, address is in word steps!)
@@ -815,6 +815,13 @@ int main(void)
     // config ports
     DDRA = 0x7F;
     PORTA = 0x00;   // enable K-line
+    // bit 0: 0=ODBRX->FTDIRX, ODBRX->RDX1
+    // bit 1: not used
+    // bit 2: 0=FTDITX->TXOUT(PIN16)
+    // bit 3: 0=FTDITX->OBDTX
+    // bit 4: 0=FTDITX->OBDTX, ODBRX->FTDIRX
+    // bit 5: 0=TXD1->TXOUT(PIN16)
+    // bit 6: 0=TXD1->OBDTX
 
     DDRD = (1<<CAN_RES);
     PORTD &= ~(1<<CAN_RES);
@@ -836,6 +843,11 @@ int main(void)
     UCSRB = (1<<TXEN) | (1<<RXEN);
     UCSRB |= (1<<RXCIE);
     UCSRC = (1<<URSEL) | (1<<UCSZ1) | (1<<UCSZ0);    // 8N1 Async
+
+    // port for direct OBD communication, not used at the moment
+    UBRR1L = BAUDRATEFACTOR;
+    UCSR1B = (1<<TXEN1);
+    UCSR1C = (1<<URSEL1) | (1<<UCSZ11) | (1<<UCSZ10);    // 8N1 Async
 
     set_sleep_mode(SLEEP_MODE_IDLE);
     sei();
