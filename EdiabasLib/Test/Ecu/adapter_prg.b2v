@@ -149,7 +149,6 @@ job(  name      : ADAPTER_CMD;
             RESPONSE = response[4];
         }
     }
-    close_communication();                   // Disconnect
 }
 
 ////////////////////////////////////////////////////////////////////////
