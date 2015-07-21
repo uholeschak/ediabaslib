@@ -19,6 +19,7 @@ comment : Replacement for D-CAN.exe;
 long PARAMETER[] = {0x010F,115200,1200,20,10,2,5000};
 int AWLEN[] = {0,0};
 char TEL_PRG[] = { 0x81,0x00,0x00,0x00 };
+char TEL_CMD[] = { 0x82,0x00,0x00,0x00,0x00 };
 
 ////////////////////////////////////////////////////////////////////////
 //                              J O B S
@@ -48,6 +49,7 @@ job(  name      : ADAPTER_PRG;
         comment : 9: K-CAN 100 kbit/s;
         comment : Programming is only possible after power on of the adapter;
         comment : while the red LED is active!;
+        comment : This is always possible if using the adapter replacement firmware;
       result    : DONE;
         type    : int;
         defrslt : ;
@@ -66,19 +68,86 @@ job(  name      : ADAPTER_PRG;
 
     request=TEL_PRG;                        // create request
 
+    DONE = 0;
     if(exist(MODE))
-    {                                       // paramter is present
+    {                                       // parameter present
         request[3]=MODE;                    // set mode
+        set_trap_mask(0xffffffff);
+        send_and_receive(response,request);    
+        set_trap_mask(0x00000000);
+
+        // check response
+        if ((datalen(response) >= 5) && (request[3] == (~response[3] & 0xFF)))
+        {
+            DONE = 1;
+        }
     }
-    set_trap_mask(0xffffffff);
-    send_and_receive(response,request);    
-    set_trap_mask(0x00000000);
+    close_communication();                   // Disconnect
+}
+
+////////////////////////////////////////////////////////////////////////
+
+job(  name      : ADAPTER_CMD;
+      comment   : Send adapter command;
+      argument  : CMD;
+        type    : int;
+        defrslt : ;
+        comment : Command;
+        comment : 0x00: Write block size;
+        comment : 0x80: Read block size;
+        comment : 0x01: Write separation time;
+        comment : 0x81: Read separation time;
+        comment : 0xFE: Read ignition state;
+        comment : 0xFF: Adapter reset (no response);
+      argument  : VALUE;
+        type    : int;
+        defrslt : ;
+        comment : Value for command;
+        comment : Cmd 0x00: Block size;
+        comment : Cmd 0x80: Ignored;
+        comment : Cmd 0x01: Separation time;
+        comment : Cmd 0x81: Ignored;
+        comment : Cmd 0xFE: 0xFE;
+        comment : Cmd 0xFF: 0xFF;
+      result    : DONE;
+        type    : int;
+        defrslt : ;
+        comment : Werte: 0 = Error during communication;
+        comment : Werte: 1 = Communication ok;
+      result    : RESPONSE;
+        type    : int;
+        defrslt : ;
+        comment : Response value;
+   ) 
+{
+
+    unsigned char response[];               // Buffer for ECU response
+    unsigned char request[];                // Buffer for ECU request
+
+    open_communication();                   // Connect
+    set_repeat_counter(1);                  // Repeat counter
+    set_communication_pars(PARAMETER);
+    set_answer_length(AWLEN);
+
+    request=TEL_CMD;                        // create request
 
     DONE = 0;
-    // check response
-    if ((datalen(response) >= 5) && (request[3] == (~response[3] & 0xFF)))
-    {
-        DONE = 1;
+    if(exist(CMD) && exist(VALUE))
+    {                                       // parameters present
+        request[3]=CMD;                     // set mode
+        request[4]=VALUE;                   // set value
+
+        set_trap_mask(0xffffffff);
+        send_and_receive(response,request);    
+        set_trap_mask(0x00000000);
+
+        RESPONSE = 0;
+        // check response
+        if ((datalen(response) == 6) && (request[3] == response[3]))
+        {
+            DONE = 1;
+            RESPONSE = response[4];
+        }
     }
     close_communication();                   // Disconnect
 }
