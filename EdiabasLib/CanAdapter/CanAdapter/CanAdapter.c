@@ -59,6 +59,7 @@
 #define DSR_OFF()           { PORTE |= (1<<DSR_OUT); }      // inverted by FTDI
 
 #define CAN_RES             4       // CAN reset (low active)
+#define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0x0F    // 0 is disabled
 #define CAN_MIN_SEP_TIME    1       // min separation time (ms)
 #define CAN_TIMEOUT         100     // can receive timeout (10ms)
@@ -112,6 +113,7 @@ static volatile uint8_t send_buffer[260];
 static uint8_t temp_buffer[260];
 
 static bool can_enabled;
+static uint8_t can_mode;
 static uint8_t can_blocksize;
 static uint8_t can_sep_time;
 static can_t msg_send;
@@ -320,6 +322,13 @@ void read_eeprom()
 {
     uint16_t temp_value;
 
+    temp_value = eeprom_read_word((uint16_t *) EEP_ADDR_BAUD);
+    can_mode = CAN_MODE;
+    if (((~temp_value >> 8) & 0xFF) == (temp_value & 0xFF))
+    {
+        can_mode = temp_value;
+    }
+
     temp_value = eeprom_read_word((uint16_t *) EEP_ADDR_BLOCKSIZE);
     can_blocksize = CAN_BLOCK_SIZE;
     if (((~temp_value >> 8) & 0xFF) == (temp_value & 0xFF))
@@ -337,15 +346,8 @@ void read_eeprom()
 
 void can_config()
 {
-    uint16_t temp_value = eeprom_read_word((uint16_t *) EEP_ADDR_BAUD);
-    uint8_t baud_cfg = 1;   // 500kb
-    if (((~temp_value >> 8) & 0xFF) == (temp_value & 0xFF))
-    {
-        baud_cfg = temp_value;
-    }
-
     can_bitrate_t bitrate = BITRATE_500_KBPS;
-    switch (baud_cfg)
+    switch (can_mode)
     {
         case 0:     // can off
             can_enabled = false;
@@ -410,8 +412,9 @@ bool internal_telegram(uint16_t len)
     {
         uint8_t cfg_value = temp_buffer[3];
         eeprom_update_word(EEP_ADDR_BAUD, cfg_value | (((uint16_t) ~cfg_value << 8) & 0xFF00));
+        read_eeprom();
         can_config();
-        temp_buffer[3] = ~cfg_value;
+        temp_buffer[3] = ~can_mode;
         temp_buffer[len - 1] = calc_checkum(len - 1);
         uart_send(temp_buffer, len);
         return true;
@@ -444,6 +447,20 @@ bool internal_telegram(uint16_t len)
                 read_eeprom();
             }
             temp_buffer[4] = can_sep_time;
+            temp_buffer[len - 1] = calc_checkum(len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
+        if ((temp_buffer[3] & 0x7F) == 0x02)
+        {      // can mode
+            if ((temp_buffer[3] & 0x80) == 0x00)
+            {   // write
+                uint8_t cfg_value = temp_buffer[4];
+                eeprom_update_word((uint16_t *) EEP_ADDR_BAUD, cfg_value | (((uint16_t) ~cfg_value << 8) & 0xFF00));
+                read_eeprom();
+                can_config();
+            }
+            temp_buffer[4] = can_mode;
             temp_buffer[len - 1] = calc_checkum(len - 1);
             uart_send(temp_buffer, len);
             return true;
