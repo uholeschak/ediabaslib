@@ -131,23 +131,21 @@ job(  name      : ADAPTER_CMD;
 
     request=TEL_CMD;                        // create request
 
+    if(!exist(CMD) || !exist(VALUE))
+    {
+        make_error(10);
+    }
+    request[3]=CMD;                     // set mode
+    request[4]=VALUE;                   // set value
+
+    send_and_receive(response,request);
+
     DONE = 0;
-    if(exist(CMD) && exist(VALUE))
-    {                                       // parameters present
-        request[3]=CMD;                     // set mode
-        request[4]=VALUE;                   // set value
-
-        set_trap_mask(0xffffffff);
-        send_and_receive(response,request);    
-        set_trap_mask(0x00000000);
-
-        RESPONSE = 0;
-        // check response
-        if ((datalen(response) == 6) && (request[3] == response[3]))
-        {
-            DONE = 1;
-            RESPONSE = response[4];
-        }
+    // check response
+    if ((datalen(response) == 6) && (request[3] == response[3]))
+    {
+        DONE = 1;
+        RESPONSE = response[4];
     }
 }
 
