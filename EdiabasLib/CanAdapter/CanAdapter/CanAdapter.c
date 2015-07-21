@@ -430,7 +430,7 @@ bool internal_telegram(uint16_t len)
                 eeprom_update_word((uint16_t *) EEP_ADDR_BLOCKSIZE, cfg_value | (((uint16_t) ~cfg_value << 8) & 0xFF00));
                 read_eeprom();
             }
-            temp_buffer[4] = ~can_blocksize;
+            temp_buffer[4] = can_blocksize;
             temp_buffer[len - 1] = calc_checkum(len - 1);
             uart_send(temp_buffer, len);
             return true;
@@ -443,7 +443,7 @@ bool internal_telegram(uint16_t len)
                 eeprom_update_word((uint16_t *) EEP_ADDR_SEP_TIME, cfg_value | (((uint16_t) ~cfg_value << 8) & 0xFF00));
                 read_eeprom();
             }
-            temp_buffer[4] = ~can_sep_time;
+            temp_buffer[4] = can_sep_time;
             temp_buffer[len - 1] = calc_checkum(len - 1);
             uart_send(temp_buffer, len);
             return true;
