@@ -422,8 +422,8 @@ bool internal_telegram(uint16_t len)
 
     if ((len == 6) &&
     (temp_buffer[0] == 0x82) &&
-    (temp_buffer[1] == 0x00) &&
-    (temp_buffer[2] == 0x00))
+    (temp_buffer[1] == 0xF1) &&
+    (temp_buffer[2] == 0xF1))
     {
         if ((temp_buffer[3] & 0x7F) == 0x00)
         {      // block size
@@ -477,6 +477,7 @@ bool internal_telegram(uint16_t len)
             soft_reset();
             return true;
         }
+        return true;
     }
     return false;
 }
