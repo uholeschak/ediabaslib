@@ -628,7 +628,7 @@ namespace CarSimulator
                 {
                     case ConceptType.ConceptBwmFast:
                         baudRate = TPCANBaudrate.PCAN_BAUD_500K;
-                        //baudRate = TPCANBaudrate.PCAN_BAUD_125K;
+                        //baudRate = TPCANBaudrate.PCAN_BAUD_100K;
                         break;
 
                     default:

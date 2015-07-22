@@ -359,8 +359,8 @@ void can_config()
             can_enabled = true;
             break;
 
-        case 9:     // can 125kb
-            bitrate = BITRATE_125_KBPS;
+        case 9:     // can 100kb
+            bitrate = BITRATE_100_KBPS;
             can_enabled = true;
             break;
     }
