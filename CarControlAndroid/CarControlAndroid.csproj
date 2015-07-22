@@ -109,7 +109,9 @@
     <AndroidResource Include="Resources\layout\bar_tool_connect.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <None Include="Xml\Adapter2.ccpage" />
+    <None Include="Xml\Adapter2.ccpage">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Xml\E61\Axis.ccpage" />
     <None Include="Xml\CarControl.xsd">
       <SubType>Designer</SubType>
@@ -120,7 +122,9 @@
     <None Include="Xml\E90\E90Enet.cccfg" />
     <None Include="Xml\E90\E90.ccpages" />
     <None Include="Xml\E90\Errors.ccpage" />
-    <None Include="Xml\E90\Motor.ccpage" />
+    <None Include="Xml\E90\Motor.ccpage">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\device_list.axml" />
@@ -163,7 +167,9 @@
     <None Include="Xml\E61\E61Bt.cccfg">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Xml\Adapter.ccpage" />
+    <None Include="Xml\Adapter.ccpage">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Xml\E61\Ccc.ccpage" />
     <None Include="Xml\E61\E61.ccpages" />
     <None Include="Xml\E61\E61Enet.cccfg" />
