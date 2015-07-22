@@ -19,7 +19,7 @@ comment : Replacement for D-CAN.exe;
 long PARAMETER[] = {0x010F,115200,1200,20,10,2,5000};
 int AWLEN[] = {0,0};
 char TEL_PRG[] = { 0x81,0x00,0x00,0x00 };
-char TEL_CMD[] = { 0x82,0x00,0x00,0x00,0x00 };
+char TEL_CMD[] = { 0x82,0xF1,0xF1,0x00,0x00 };
 
 ////////////////////////////////////////////////////////////////////////
 //                              J O B S
