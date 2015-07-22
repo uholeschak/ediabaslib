@@ -66,9 +66,9 @@
 #define SER_REC_TIMEOUT     3       // serial receive timeout (ms) (+1 required for disabled timer in sleep mode)
 //#define SER_REC_TIMEOUT     20      // serial receive timeout for bluetooth converter (ms)
 
-#define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes, address is in word steps!)
-#define EEP_ADDR_BLOCKSIZE  0x01    // eeprom address for FC block size (2 bytes, address is in word steps!)
-#define EEP_ADDR_SEP_TIME   0x02    // eeprom address for FC separation time (2 bytes, address is in word steps!)
+#define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes)
+#define EEP_ADDR_BLOCKSIZE  0x02    // eeprom address for FC block size (2 bytes)
+#define EEP_ADDR_SEP_TIME   0x04    // eeprom address for FC separation time (2 bytes)
 
 FUSES =
 {
