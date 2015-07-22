@@ -11,7 +11,7 @@
     <include filename="Ccc.ccpage"/>
     <include filename="Ihk.ccpage"/>
     <include filename="Errors.ccpage"/>
-    <include filename="../Adapter.ccpage"/>
+    <include filename="../Adapter2.ccpage"/>
     <include filename="Test.ccpage"/>
   </pages>
 </fragment>
