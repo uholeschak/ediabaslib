@@ -5,6 +5,6 @@
   <pages>
     <include filename="Motor.ccpage"/>
     <include filename="Errors.ccpage"/>
-    <include filename="../Adapter.ccpage"/>
+    <include filename="../AdapterCustom.ccpage"/>
   </pages>
 </fragment>
