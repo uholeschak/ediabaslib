@@ -832,14 +832,14 @@ int main(void)
 
     // config ports
     DDRA = 0x7F;
-    PORTA = 0x00;   // enable K-line
-    // bit 0: 0=ODBRX->FTDIRX, ODBRX->RDX1
-    // bit 1: not used
-    // bit 2: 0=FTDITX->TXOUT(PIN16)
-    // bit 3: 0=FTDITX->OBDTX
-    // bit 4: 0=FTDITX->OBDTX, ODBRX->FTDIRX
-    // bit 5: 0=TXD1->TXOUT(PIN16)
-    // bit 6: 0=TXD1->OBDTX
+    PORTA = 0x00;   // enable K/L-line
+    // bit 0: 0=ODBRXK->FTDIRX, ODBRXK->RDX1
+    // bit 1: 0=ODBRXL->FTDIRX, ODBRXL->RDX1
+    // bit 2: 0=FTDITX->OBDTXL
+    // bit 3: 0=FTDITX->OBDTXK
+    // bit 4: 0=FTDITX->OBDTXK, 0=FTDITX->OBDTXL, ODBRX->FTDIRX
+    // bit 5: 0=TXD1->OBDTXL
+    // bit 6: 0=TXD1->OBDTXK
 
     DDRD = (1<<CAN_RES);
     PORTD &= ~(1<<CAN_RES);
