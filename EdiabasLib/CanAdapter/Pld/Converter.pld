@@ -18,16 +18,19 @@ Device          g16v8s;
  * Inputs:
  */
 
-Pin 2 = enable_obd_rx;
-Pin 4 = enable_ftdi_txout;
-Pin 5 = enable_ftdi_obdtx;
-Pin 6 = enable_ftdi_obd;
-Pin 7 = enable_txd1_txout;
-Pin 8 = enable_txd1_obdtx;
+Pin 2 = enable_obd_rxk;
+Pin 3 = enable_obd_rxl;
+Pin 4 = enable_ftdi_obd_txl;
+Pin 5 = enable_ftdi_obd_txk;
+Pin 6 = enable_ftdi_obd_rx;
+Pin 7 = enable_txd1_obd_txl;
+Pin 8 = enable_txd1_obd_txk;
 Pin 9 = ftdi_txd;
 Pin 11 = cpu_txd1;
 Pin 14 = cpu_txd0;
-Pin 17 = obd_rx;
+Pin 17 = obd_rxk;
+Pin 19 = obd_rxl;
+
 
 /*
  * Outputs:
@@ -37,18 +40,18 @@ Pin 17 = obd_rx;
 Pin 12 = cpu_rxd1;
 Pin 13 = ftdi_rxd;
 Pin 15 = cpu_rxd0;
-Pin 16 = txout;
-Pin 18 = obd_tx;
+Pin 16 = obd_txl;
+Pin 18 = obd_txk;
 
 /*
  * Logic:
  */
 
-obd_rec = obd_rx # enable_obd_rx;
+obd_rx = (obd_rxk # enable_obd_rxk) & (obd_rxl # enable_obd_rxl);
 
 cpu_rxd0 = ftdi_txd;
-ftdi_rxd = (cpu_txd0 & obd_rec) # enable_ftdi_obd;
-cpu_rxd1 = obd_rec;
+ftdi_rxd = cpu_txd0 & (obd_rx # enable_ftdi_obd_rx);
+cpu_rxd1 = obd_rx;
 
-obd_tx = (ftdi_txd # enable_ftdi_obdtx # enable_ftdi_obd) & (cpu_txd1 # enable_txd1_obdtx);
-txout = (ftdi_txd # enable_ftdi_txout) & (cpu_txd1 # enable_txd1_txout);
+obd_txk = (ftdi_txd # enable_ftdi_obd_txk) & (cpu_txd1 # enable_txd1_obd_txk);
+obd_txl = (ftdi_txd # enable_ftdi_obd_txl) & (cpu_txd1 # enable_txd1_obd_txl);
