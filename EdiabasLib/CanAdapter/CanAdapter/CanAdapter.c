@@ -46,6 +46,15 @@
 #define TIMER0_PRESCALE     ((1<<CS01) | (1<<CS00))     // prescaler 64
 #define TIMER0_RELOAD       (115-1)      // 1ms: ((7380000/64)/1000) = 115
 
+// pins for PLD control
+#define DISABLE_OBD_RXK         PA0     // 0=ODBRXK->FTDIRX, ODBRXK->RDX1
+#define DISABLE_OBD_RXL         PA1     // 0=ODBRXL->FTDIRX, ODBRXL->RDX1
+#define DISABLE_FTDI_OBD_TXL    PA2     // 0=FTDITX->OBDTXL
+#define DISABLE_FTDI_OBD_TXK    PA3     // 0=FTDITX->OBDTXK
+#define DISABLE_FTDI_OBD_RX     PA4     // 0=ODBRXK->FTDIRX, ODBRXL->FTDIRX
+#define DISABLE_TX1_OBD_TXL     PA5     // 0=TXD1->OBDTXL
+#define DISABLE_TX1_OBD_TXK     PA6     // 0=TXD1->OBDTXK
+
 #define IGNITION            PB4
 #define LED_GREEN           PE0
 #define LED_RED             PE1
@@ -62,6 +71,7 @@
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0x0F    // 0 is disabled
 #define CAN_MIN_SEP_TIME    1       // min separation time (ms)
+#define PLD_MODE            0x00    // default PLD mode (all enabled)
 #define CAN_TIMEOUT         100     // can receive timeout (10ms)
 #define SER_REC_TIMEOUT     3       // serial receive timeout (ms) (+1 required for disabled timer in sleep mode)
 //#define SER_REC_TIMEOUT     20      // serial receive timeout for bluetooth converter (ms)
@@ -69,6 +79,7 @@
 #define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes)
 #define EEP_ADDR_BLOCKSIZE  0x02    // eeprom address for FC block size (2 bytes)
 #define EEP_ADDR_SEP_TIME   0x04    // eeprom address for FC separation time (2 bytes)
+#define EEP_ADDR_PLD_MODE   0x06    // eeprom address for PLD mode
 
 FUSES =
 {
@@ -116,6 +127,7 @@ static bool can_enabled;
 static uint8_t can_mode;
 static uint8_t can_blocksize;
 static uint8_t can_sep_time;
+static uint8_t pld_mode;
 static can_t msg_send;
 static can_t msg_rec;
 
@@ -342,6 +354,14 @@ void read_eeprom()
     {
         can_sep_time = temp_value;
     }
+
+    temp_value = eeprom_read_word((uint16_t *) EEP_ADDR_PLD_MODE);
+    pld_mode = PLD_MODE;
+    if (((~temp_value >> 8) & 0xFF) == (temp_value & 0xFF))
+    {
+        pld_mode = temp_value;
+    }
+    PORTA = pld_mode;
 }
 
 void can_config()
@@ -461,6 +481,19 @@ bool internal_telegram(uint16_t len)
                 can_config();
             }
             temp_buffer[4] = can_mode;
+            temp_buffer[len - 1] = calc_checkum(len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
+        if ((temp_buffer[3] & 0x7F) == 0x03)
+        {      // PLD mode
+            if ((temp_buffer[3] & 0x80) == 0x00)
+            {   // write
+                uint8_t cfg_value = temp_buffer[4];
+                eeprom_update_word((uint16_t *) EEP_ADDR_PLD_MODE, cfg_value | (((uint16_t) ~cfg_value << 8) & 0xFF00));
+                read_eeprom();
+            }
+            temp_buffer[4] = pld_mode;
             temp_buffer[len - 1] = calc_checkum(len - 1);
             uart_send(temp_buffer, len);
             return true;
@@ -832,14 +865,7 @@ int main(void)
 
     // config ports
     DDRA = 0x7F;
-    PORTA = 0x00;   // enable K/L-line
-    // bit 0: 0=ODBRXK->FTDIRX, ODBRXK->RDX1
-    // bit 1: 0=ODBRXL->FTDIRX, ODBRXL->RDX1
-    // bit 2: 0=FTDITX->OBDTXL
-    // bit 3: 0=FTDITX->OBDTXK
-    // bit 4: 0=ODBRXK->FTDIRX, ODBRXL->FTDIRX
-    // bit 5: 0=TXD1->OBDTXL
-    // bit 6: 0=TXD1->OBDTXK
+    PORTA = PLD_MODE;
 
     DDRD = (1<<CAN_RES);
     PORTD &= ~(1<<CAN_RES);
