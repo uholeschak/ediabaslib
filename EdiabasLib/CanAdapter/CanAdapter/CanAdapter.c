@@ -837,7 +837,7 @@ int main(void)
     // bit 1: 0=ODBRXL->FTDIRX, ODBRXL->RDX1
     // bit 2: 0=FTDITX->OBDTXL
     // bit 3: 0=FTDITX->OBDTXK
-    // bit 4: 0=FTDITX->OBDTXK, 0=FTDITX->OBDTXL, ODBRX->FTDIRX
+    // bit 4: 0=FTDITX->OBDTXK, 0=FTDITX->OBDTXL, ODBRXK->FTDIRX, ODBRXL->FTDIRX
     // bit 5: 0=TXD1->OBDTXL
     // bit 6: 0=TXD1->OBDTXK
 
