@@ -58,7 +58,7 @@
 #define DSR_ON()            { PORTE &= ~(1<<DSR_OUT); }     // inverted by FTDI
 #define DSR_OFF()           { PORTE |= (1<<DSR_OUT); }      // inverted by FTDI
 
-#define CAN_RES             4       // CAN reset (low active)
+#define CAN_RES             PD4     // CAN reset (low active)
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0x0F    // 0 is disabled
 #define CAN_MIN_SEP_TIME    1       // min separation time (ms)
