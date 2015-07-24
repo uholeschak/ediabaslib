@@ -198,7 +198,7 @@ end;
 {$REGION 'Hauptfunktionen (Übertragen, Verbinden)'}
 function TBootloaderRoutines.connect(bootloaderPassword: string; var connectTries: integer; sendReset: boolean = true; detectOneWire: boolean = true; progressBar: TProgressBar = nil): integer;
 const
-   ResetCmd: array[1..6] of Byte = ($82, $00, $00, $FF, $FF, $80);
+   ResetCmd: array[1..6] of Byte = ($82, $F1, $F1, $FF, $FF, $62);
 var
   connectTry: integer;
   wireMode: byte;
