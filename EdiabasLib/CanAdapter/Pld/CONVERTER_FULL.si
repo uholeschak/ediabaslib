@@ -8,97 +8,15 @@ Assembly None;
 Location None;
 Device   g16v8s;
 
+FIELD inputs = [unused, enable_obd_rxk, enable_obd_rxl, enable_ftdi_obd_txl, enable_ftdi_obd_txk, enable_ftdi_obd_rx, enable_txd1_obd_txl, enable_txd1_obd_txk, ftdi_txd, cpu_txd1, cpu_txd0, obd_rxk, obd_rxl];
+FIELD outputs = [cpu_rxd1, ftdi_rxd, cpu_rxd0, obd_txl, obd_txk];
 
-ORDER: enable_obd_rxk, enable_obd_rxl, enable_ftdi_obd_txl, enable_ftdi_obd_txk, enable_ftdi_obd_rx, enable_txd1_obd_txl, enable_txd1_obd_txk, %1, ftdi_txd, cpu_txd1, cpu_txd0, obd_rxk, obd_rxl, %1, cpu_rxd1, ftdi_rxd, cpu_rxd0, obd_txl, obd_txk; 
-
+ORDER: inputs, %1, outputs;
 
 VECTORS:
-000000000000*****
-
-$for i = 1..4096 :
-$if obd_rxl = '1' :
-$set obd_rxl = '0';
-
-$if obd_rxk = '1' :
-$set obd_rxk = '0';
-
-$if cpu_txd0 = '1' :
-$set cpu_txd0 = '0';
-
-$if cpu_txd1 = '1' :
-$set cpu_txd1 = '0';
-
-$if ftdi_txd = '1' :
-$set ftdi_txd = '0';
-
-$if enable_txd1_obd_txk = '1' :
-$set enable_txd1_obd_txk = '0';
-
-$if enable_txd1_obd_txl = '1' :
-$set enable_txd1_obd_txl = '0';
-
-$if enable_ftdi_obd_rx = '1' :
-$set enable_ftdi_obd_rx = '0';
-
-$if enable_ftdi_obd_txk = '1' :
-$set enable_ftdi_obd_txk = '0';
-
-$if enable_ftdi_obd_txl = '1' :
-$set enable_ftdi_obd_txl = '0';
-
-$if enable_obd_rxl = '1' :
-$set enable_obd_rxl = '0';
-
-$if enable_obd_rxk = '1' :
-$set enable_obd_rxk = '0';
-
-$else :
-$set enable_obd_rxk = '1';
-$endif;
-
-$else :
-$set enable_obd_rxl = '1';
-$endif;
-
-$else :
-$set enable_ftdi_obd_txl = '1';
-$endif;
-
-$else :
-$set enable_ftdi_obd_txk = '1';
-$endif;
-
-$else :
-$set enable_ftdi_obd_rx = '1';
-$endif;
-
-$else :
-$set enable_txd1_obd_txl = '1';
-$endif;
-
-$else :
-$set enable_txd1_obd_txk = '1';
-$endif;
-
-$else :
-$set ftdi_txd = '1';
-$endif;
-
-$else :
-$set cpu_txd1 = '1';
-$endif;
-
-$else :
-$set cpu_txd0 = '1';
-$endif;
-
-$else :
-$set obd_rxk = '1';
-$endif;
-
-$else :
-$set obd_rxl = '1';
-$endif;
-
+$comp inputs = 0;
+$set outputs = *****;
+$for i = 1..8192 :
 $out;
+$comp inputs = inputs + 1;
 $endf;
