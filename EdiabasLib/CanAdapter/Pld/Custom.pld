@@ -1,4 +1,4 @@
-Name            Converter;
+Name            CAN Adapter Custom;
 Partno          0001;
 Revision        01;
 Date            01/07/15;
@@ -10,7 +10,7 @@ Device          g16v8s;
 
 /****************************************************************/
 /*                                                              */
-/*      CAN Converter                                           */
+/*      CAN Converter custom                                    */
 /*                                                              */
 /****************************************************************/
 
@@ -18,7 +18,7 @@ Device          g16v8s;
  * Inputs:
  */
 
-Pin 1 = unused;
+Pin 1 = bluetooth_txd;
 Pin 2 = enable_obd_rxk;
 Pin 3 = enable_obd_rxl;
 Pin 4 = enable_ftdi_obd_txl;
@@ -48,11 +48,12 @@ Pin 18 = obd_txk;
  * Logic:
  */
 
+ediabas_txd = ftdi_txd & bluetooth_txd;
 obd_rx = (obd_rxk # enable_obd_rxk) & (obd_rxl # enable_obd_rxl);
 
-cpu_rxd0 = ftdi_txd;
+cpu_rxd0 = ediabas_txd;
 ftdi_rxd = cpu_txd0 & (obd_rx # enable_ftdi_obd_rx);
 cpu_rxd1 = obd_rx;
 
-obd_txk = (ftdi_txd # enable_ftdi_obd_txk) & (cpu_txd1 # enable_txd1_obd_txk);
-obd_txl = (ftdi_txd # enable_ftdi_obd_txl) & (cpu_txd1 # enable_txd1_obd_txl);
+obd_txk = (ediabas_txd # enable_ftdi_obd_txk) & (cpu_txd1 # enable_txd1_obd_txk);
+obd_txl = (ediabas_txd # enable_ftdi_obd_txl) & (cpu_txd1 # enable_txd1_obd_txl);
