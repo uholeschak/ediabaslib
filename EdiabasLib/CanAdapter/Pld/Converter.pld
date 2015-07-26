@@ -18,6 +18,7 @@ Device          g16v8s;
  * Inputs:
  */
 
+Pin 1 = unused;
 Pin 2 = enable_obd_rxk;
 Pin 3 = enable_obd_rxl;
 Pin 4 = enable_ftdi_obd_txl;
