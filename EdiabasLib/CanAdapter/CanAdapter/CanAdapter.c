@@ -122,6 +122,7 @@ static volatile uint16_t send_len;
 static volatile uint8_t send_buffer[260];
 
 static uint8_t temp_buffer[260];
+static uint8_t temp_buffer_short[10];
 
 static bool can_enabled;
 static uint8_t can_mode;
@@ -699,23 +700,25 @@ void can_receiver(bool new_can_msg)
             switch (frame_type)
             {
                 case 0:     // single frame
-                    if (can_rec_tel_valid)
-                    {   // ignore new first frames during reception
-                        break;
-                    }
-                    can_rec_source_addr = msg_rec.id & 0xFF;
-                    can_rec_target_addr = msg_rec.data[0];
-                    can_rec_data_len = msg_rec.data[1] & 0x0F;
-                    if (can_rec_data_len > 6)
+                {
+                    uint8_t rec_source_addr = msg_rec.id & 0xFF;
+                    uint8_t rec_target_addr = msg_rec.data[0];
+                    uint8_t rec_data_len = msg_rec.data[1] & 0x0F;
+                    if (rec_data_len > 6)
                     {   // invalid length
-                        can_rec_tel_valid = false;
                         break;
                     }
-                    memcpy(temp_buffer + 3, msg_rec.data + 2, can_rec_data_len);
-                    can_rec_tel_valid = true;
-                    can_rec_rec_len = can_rec_data_len;
-                    can_rec_time = time_tick_10;
+                    temp_buffer_short[0] = 0x80 | rec_data_len;
+                    temp_buffer_short[1] = rec_target_addr;
+                    temp_buffer_short[2] = rec_source_addr;
+                    memcpy(temp_buffer_short + 3, msg_rec.data + 2, rec_data_len);
+                    uint8_t len = rec_data_len + 3;
+
+                    temp_buffer_short[len] = calc_checkum(len);
+                    len++;
+                    uart_send(temp_buffer_short, len);
                     break;
+                }
 
                 case 1:     // first frame
                     if (can_rec_tel_valid)
