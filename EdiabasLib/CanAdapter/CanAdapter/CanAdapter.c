@@ -321,12 +321,12 @@ void update_led()
     }
 }
 
-uint8_t calc_checkum(uint16_t len)
+uint8_t calc_checkum(uint8_t *buffer, uint16_t len)
 {
     uint8_t sum = 0;
     for (uint16_t i = 0; i < len; i++)
     {
-        sum += temp_buffer[i];
+        sum += buffer[i];
     }
     return sum;
 }
@@ -436,7 +436,7 @@ bool internal_telegram(uint16_t len)
         read_eeprom();
         can_config();
         temp_buffer[3] = ~can_mode;
-        temp_buffer[len - 1] = calc_checkum(len - 1);
+        temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
         uart_send(temp_buffer, len);
         return true;
     }
@@ -455,7 +455,7 @@ bool internal_telegram(uint16_t len)
                 read_eeprom();
             }
             temp_buffer[4] = can_blocksize;
-            temp_buffer[len - 1] = calc_checkum(len - 1);
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
         }
@@ -468,7 +468,7 @@ bool internal_telegram(uint16_t len)
                 read_eeprom();
             }
             temp_buffer[4] = can_sep_time;
-            temp_buffer[len - 1] = calc_checkum(len - 1);
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
         }
@@ -482,7 +482,7 @@ bool internal_telegram(uint16_t len)
                 can_config();
             }
             temp_buffer[4] = can_mode;
-            temp_buffer[len - 1] = calc_checkum(len - 1);
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
         }
@@ -495,14 +495,14 @@ bool internal_telegram(uint16_t len)
                 read_eeprom();
             }
             temp_buffer[4] = pld_mode;
-            temp_buffer[len - 1] = calc_checkum(len - 1);
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
         }
         if ((temp_buffer[3] == 0xFE) && (temp_buffer[4] == 0xFE))
         {      // read ignition state
             temp_buffer[4] = IGNITION_STATE() ? 0xFF : 0x00;
-            temp_buffer[len - 1] = calc_checkum(len - 1);
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
         }
@@ -714,7 +714,7 @@ void can_receiver(bool new_can_msg)
                     memcpy(temp_buffer_short + 3, msg_rec.data + 2, rec_data_len);
                     uint8_t len = rec_data_len + 3;
 
-                    temp_buffer_short[len] = calc_checkum(len);
+                    temp_buffer_short[len] = calc_checkum(temp_buffer_short, len);
                     len++;
                     uart_send(temp_buffer_short, len);
                     break;
@@ -830,7 +830,7 @@ void can_receiver(bool new_can_msg)
                 len = can_rec_data_len + 3;
             }
 
-            temp_buffer[len] = calc_checkum(len);
+            temp_buffer[len] = calc_checkum(temp_buffer, len);
             len++;
             if (uart_send(temp_buffer, len))
             {
