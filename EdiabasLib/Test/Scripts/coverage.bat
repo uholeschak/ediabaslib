@@ -12,13 +12,18 @@ set IFH=STD:OBD
 ) else (
 set IFH=%2
 )
+if "%3"=="" (
+set COMPORT=COM8
+) else (
+set COMPORT=%3
+)
 
 if "%1"=="lib" (
 set EDIABAS_TEST=!BATPATH!\..\..\EdiabasTest\bin\Debug\EdiabasTest.exe
 set OUTFILE=output_lib.log
-rem set ADD_ARGS=-p COM4 -o "!OUTFILE!" -a -c
+rem set ADD_ARGS=-p !COMPORT! -o "!OUTFILE!" -a -c
 set ADD_ARGS=--ifh="!IFH!" -o "!OUTFILE!" -a -c
-set ADD_ARGS=!ADD_ARGS! --cfg="ObdComPort=COM4"
+set ADD_ARGS=!ADD_ARGS! --cfg="ObdComPort=!COMPORT!;ObdAddRecTimeout=500"
 set FILTERS=+[EdiabasLib]*
 set COVERAGE=1
 goto argsok
@@ -28,7 +33,7 @@ set EDIABAS_TEST=!BATPATH!\..\EdiabasLibCall\bin\Debug\EdiabasLibCall.exe
 set OUTFILE=output_apilib.log
 set ADD_ARGS=-o !OUTFILE! --ifh="!IFH!" --device="_" -a -c
 rem set ADD_ARGS=!ADD_ARGS! --cfg="@!BATPATH!\EdiabasLib.config"
-set ADD_ARGS=!ADD_ARGS! --cfg="ObdComPort=COM4"
+set ADD_ARGS=!ADD_ARGS! --cfg="ObdComPort=!COMPORT!;ObdAddRecTimeout=500"
 set FILTERS=+[EdiabasLib]* +[apiNET32]*
 set COVERAGE=1
 goto argsok
