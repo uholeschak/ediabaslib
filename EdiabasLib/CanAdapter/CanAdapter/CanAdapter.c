@@ -71,6 +71,7 @@
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0x0F    // 0 is disabled
 #define CAN_MIN_SEP_TIME    1       // min separation time (ms)
+#define CAN_MIN_SEP_TIME_BF 1       // min separation time if send buffer is full (ms)
 #define PLD_MODE            0x00    // default PLD mode (all enabled)
 #define CAN_TIMEOUT         100     // can receive timeout (10ms)
 #define SER_REC_TIMEOUT     3       // serial receive timeout (ms) (+1 required for disabled timer in sleep mode)
@@ -119,7 +120,7 @@ static volatile uint8_t rec_buffer[260];
 static uint16_t send_set_idx;
 static uint16_t send_get_idx;
 static volatile uint16_t send_len;
-static volatile uint8_t send_buffer[260];
+static volatile uint8_t send_buffer[280];   // larger send buffer for multi responses
 
 static uint8_t temp_buffer[260];
 static uint8_t temp_buffer_short[10];
@@ -752,7 +753,14 @@ void can_receiver(bool new_can_msg)
                     msg_send.data[0] = can_rec_source_addr;
                     msg_send.data[1] = 0x30;     // FC
                     msg_send.data[2] = can_blocksize;       // block size
-                    msg_send.data[3] = can_sep_time;        // min sep. time
+                    if (can_sep_time < CAN_MIN_SEP_TIME_BF && send_len > 0)
+                    {
+                        msg_send.data[3] = CAN_MIN_SEP_TIME_BF;     // wait for send buffer to get empty
+                    }
+                    else
+                    {
+                        msg_send.data[3] = can_sep_time;    // min sep. time
+                    }
                     can_rec_fc_count = can_blocksize;
 
                     can_send_message_wait(&msg_send);
@@ -788,7 +796,14 @@ void can_receiver(bool new_can_msg)
                                 msg_send.data[0] = can_rec_source_addr;
                                 msg_send.data[1] = 0x30;     // FC
                                 msg_send.data[2] = can_blocksize;       // block size
-                                msg_send.data[3] = can_sep_time;        // min sep. time
+                                if (can_sep_time < CAN_MIN_SEP_TIME_BF && send_len > 0)
+                                {
+                                    msg_send.data[3] = CAN_MIN_SEP_TIME_BF;     // wait for send buffer to get empty
+                                }
+                                else
+                                {
+                                    msg_send.data[3] = can_sep_time;    // min sep. time
+                                }
                                 can_rec_fc_count = can_blocksize;
 
                                 can_send_message_wait(&msg_send);
