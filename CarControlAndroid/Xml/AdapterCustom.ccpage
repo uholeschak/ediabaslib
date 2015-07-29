@@ -13,8 +13,7 @@
       <string name="label_block_size">CAN block size:</string>
       <string name="label_sep_time">CAN separation time [ms]:</string>
       <string name="label_can_mode">CAN operation mode:</string>
-      <string name="button_adapter_config_block_size0">CAN block size 0</string>
-      <string name="button_adapter_config_block_size15">CAN block size 15</string>
+      <string name="button_adapter_config_block_size">CAN block size + 2</string>
       <string name="button_adapter_config_sep_time0">CAN separation time 0 ms</string>
       <string name="button_adapter_config_sep_time1">CAN separation time 1 ms</string>
       <string name="button_adapter_config_can_500">500 kbit/s D-CAN</string>

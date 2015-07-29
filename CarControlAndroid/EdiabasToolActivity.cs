@@ -154,7 +154,8 @@ namespace CarControlAndroid
         private string _sgbdFileName = string.Empty;
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
-        private bool _tracingActive;
+        private bool _traceActive;
+        private bool _traceAppend;
         private bool _dataLogActive;
         private Receiver _receiver;
         private readonly List<JobInfo> _jobList = new List<JobInfo>();
@@ -385,11 +386,18 @@ namespace CarControlAndroid
                 scanMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
             }
 
-            IMenuItem traceMenu = menu.FindItem(Resource.Id.menu_enable_trace);
-            if (traceMenu != null)
+            IMenuItem enableTraceMenu = menu.FindItem(Resource.Id.menu_enable_trace);
+            if (enableTraceMenu != null)
             {
-                traceMenu.SetEnabled(interfaceAvailable && !commActive);
-                traceMenu.SetChecked(_tracingActive);
+                enableTraceMenu.SetEnabled(interfaceAvailable && !commActive);
+                enableTraceMenu.SetChecked(_traceActive);
+            }
+
+            IMenuItem appendTraceMenu = menu.FindItem(Resource.Id.menu_append_trace);
+            if (appendTraceMenu != null)
+            {
+                appendTraceMenu.SetEnabled(interfaceAvailable && !commActive);
+                appendTraceMenu.SetChecked(_traceAppend);
             }
 
             IMenuItem dataLogMenu = menu.FindItem(Resource.Id.menu_enable_datalog);
@@ -458,7 +466,17 @@ namespace CarControlAndroid
                     {
                         return true;
                     }
-                    _tracingActive = !_tracingActive;
+                    _traceActive = !_traceActive;
+                    UpdateLogInfo();
+                    SupportInvalidateOptionsMenu();
+                    return true;
+
+                case Resource.Id.menu_append_trace:
+                    if (IsJobRunning())
+                    {
+                        return true;
+                    }
+                    _traceAppend = !_traceAppend;
                     UpdateLogInfo();
                     SupportInvalidateOptionsMenu();
                     return true;
@@ -776,7 +794,7 @@ namespace CarControlAndroid
             _dataLogDir = logDir;
 
             string traceDir = null;
-            if (_tracingActive && !string.IsNullOrEmpty(_sgbdFileName))
+            if (_traceActive && !string.IsNullOrEmpty(_sgbdFileName))
             {
                 traceDir = logDir;
             }
@@ -785,6 +803,7 @@ namespace CarControlAndroid
             {
                 _ediabas.SetConfigProperty("TracePath", traceDir);
                 _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
+                _ediabas.SetConfigProperty("AppendTrace", _traceAppend ? "1" : "0");
             }
             else
             {

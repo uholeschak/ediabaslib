@@ -37,7 +37,8 @@ namespace CarControlAndroid
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
         private string _configFileName = string.Empty;
-        private bool _tracingActive;
+        private bool _traceActive;
+        private bool _traceAppend;
         private bool _dataLogActive;
         private bool _activityStarted;
         private bool _createTabsPending;
@@ -263,11 +264,18 @@ namespace CarControlAndroid
                 ediabasToolMenu.SetEnabled(!commActive);
             }
 
-            IMenuItem traceMenu = menu.FindItem(Resource.Id.menu_enable_trace);
-            if (traceMenu != null)
+            IMenuItem enableTraceMenu = menu.FindItem(Resource.Id.menu_enable_trace);
+            if (enableTraceMenu != null)
             {
-                traceMenu.SetEnabled(interfaceAvailable && !commActive);
-                traceMenu.SetChecked(_tracingActive);
+                enableTraceMenu.SetEnabled(interfaceAvailable && !commActive);
+                enableTraceMenu.SetChecked(_traceActive);
+            }
+
+            IMenuItem appendTraceMenu = menu.FindItem(Resource.Id.menu_append_trace);
+            if (appendTraceMenu != null)
+            {
+                appendTraceMenu.SetEnabled(interfaceAvailable && !commActive);
+                appendTraceMenu.SetChecked(_traceAppend);
             }
 
             IMenuItem dataLogMenu = menu.FindItem(Resource.Id.menu_enable_datalog);
@@ -298,7 +306,12 @@ namespace CarControlAndroid
                     return true;
 
                 case Resource.Id.menu_enable_trace:
-                    _tracingActive = !_tracingActive;
+                    _traceActive = !_traceActive;
+                    SupportInvalidateOptionsMenu();
+                    return true;
+
+                case Resource.Id.menu_append_trace:
+                    _traceAppend = !_traceAppend;
                     SupportInvalidateOptionsMenu();
                     return true;
 
@@ -393,7 +406,7 @@ namespace CarControlAndroid
                 _dataLogDir = logDir;
 
                 string traceDir = null;
-                if (_tracingActive && !string.IsNullOrEmpty(_configFileName))
+                if (_traceActive && !string.IsNullOrEmpty(_configFileName))
                 {
                     traceDir = logDir;
                 }
@@ -414,7 +427,7 @@ namespace CarControlAndroid
                             }
                             break;
                     }
-                    _ediabasThread.StartThread(portName, traceDir, pageInfo, true);
+                    _ediabasThread.StartThread(portName, traceDir, _traceAppend, pageInfo, true);
                 }
             }
             catch (Exception)
