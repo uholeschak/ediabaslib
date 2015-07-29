@@ -69,8 +69,8 @@
 
 #define CAN_RES             PD4     // CAN reset (low active)
 #define CAN_MODE            1       // default can mode (1=500kb)
-#define CAN_BLOCK_SIZE      0x0F    // 0 is disabled
-#define CAN_MIN_SEP_TIME    1       // min separation time (ms)
+#define CAN_BLOCK_SIZE      0       // 0 is disabled
+#define CAN_MIN_SEP_TIME    0       // min separation time (ms)
 #define PLD_MODE            0x00    // default PLD mode (all enabled)
 #define CAN_TIMEOUT         100     // can receive timeout (10ms)
 #define SER_REC_TIMEOUT     3       // serial receive timeout (ms) (+1 required for disabled timer in sleep mode)
@@ -317,8 +317,8 @@ void update_led()
         }
     }
 #endif
-    if (IGNITION_STATE())
-    {
+    if ((can_mode != 0) || IGNITION_STATE())
+    {   // CAN interface don't support ignition state
         DSR_ON();
     }
     else
@@ -507,7 +507,8 @@ bool internal_telegram(uint16_t len)
         }
         if ((temp_buffer[3] == 0xFE) && (temp_buffer[4] == 0xFE))
         {      // read ignition state
-            temp_buffer[4] = IGNITION_STATE() ? 0xFF : 0x00;
+            temp_buffer[4] = IGNITION_STATE() ? 0x01 : 0x00;
+            temp_buffer[4] |= (can_mode != 0) ? 0x80 : 0x00;
             temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
