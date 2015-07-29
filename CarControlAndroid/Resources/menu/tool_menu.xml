@@ -21,6 +21,10 @@
               android:icon="@android:drawable/ic_menu_save"
               android:title="@string/menu_enable_trace"
               android:checkable="true" />
+        <item android:id="@+id/menu_append_trace"
+              android:icon="@android:drawable/ic_menu_save"
+              android:title="@string/menu_append_trace"
+              android:checkable="true" />
         <item android:id="@+id/menu_enable_datalog"
               android:icon="@android:drawable/ic_menu_save"
               android:title="@string/menu_enable_datalog"

@@ -2744,6 +2744,7 @@ namespace EdiabasLib
             SetConfigProperty("ApiTrace", "0");
             SetConfigProperty("IfhTrace", "0");
             SetConfigProperty("TraceBuffering", "0");
+            SetConfigProperty("AppendTrace", "0");
             SetConfigProperty("LockTrace", "0");
 
             SetConfigProperty("UbattHandling", "0");
@@ -5131,8 +5132,16 @@ namespace EdiabasLib
                         if (tracePath != null)
                         {
                             Directory.CreateDirectory(tracePath);
+
+                            int appendTrace = 0;
+                            string prop = GetConfigProperty("AppendTrace");
+                            if (prop != null)
+                            {
+                                appendTrace = (int)EdiabasNet.StringToValue(prop);
+                            }
+
                             FileMode fileMode = FileMode.Append;
-                            if (_firstLog)
+                            if (_firstLog && appendTrace == 0)
                             {
                                 _firstLog = false;
                                 fileMode = FileMode.Create;

@@ -39,6 +39,7 @@
   <string name="menu_sel_cfg">Configuration</string>
   <string name="menu_ediabas_tool">Ediabas tool</string>
   <string name="menu_enable_trace">Create trace file</string>
+  <string name="menu_append_trace">Append trace file</string>
   <string name="menu_enable_datalog">Log data</string>
   <string name="menu_exit">Exit app</string>
 

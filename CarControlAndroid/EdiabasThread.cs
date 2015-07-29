@@ -110,7 +110,7 @@ namespace CarControlAndroid
             }
         }
 
-        public bool StartThread(string comPort, string traceDir, JobReader.PageInfo pageInfo, bool commActive)
+        public bool StartThread(string comPort, string traceDir, bool traceAppend, JobReader.PageInfo pageInfo, bool commActive)
         {
             if (_workerThread != null)
             {
@@ -134,6 +134,7 @@ namespace CarControlAndroid
                 {
                     _ediabas.SetConfigProperty("TracePath", traceDir);
                     _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
+                    _ediabas.SetConfigProperty("AppendTrace", traceAppend ? "1" : "0");
                 }
                 else
                 {
