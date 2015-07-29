@@ -61,7 +61,8 @@ namespace CarSimulator
             {
                 UInt32 iBuffer;
                 TPCANStatus stsResult = PCANBasic.GetValue(PCANBasic.PCAN_USBBUS1, TPCANParameter.PCAN_CHANNEL_CONDITION, out iBuffer, sizeof(UInt32));
-                if ((stsResult == TPCANStatus.PCAN_ERROR_OK) && (iBuffer == PCANBasic.PCAN_CHANNEL_AVAILABLE))
+                //if ((stsResult == TPCANStatus.PCAN_ERROR_OK) && (iBuffer == PCANBasic.PCAN_CHANNEL_AVAILABLE))
+                if (stsResult == TPCANStatus.PCAN_ERROR_OK)
                 {
                     index = listPorts.Items.Add("CAN");
                 }
