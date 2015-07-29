@@ -23,8 +23,8 @@
       <string name="button_adapter_config_can_disp_500">500 kbit/s</string>
       <string name="button_adapter_config_can_disp_100">100 kbit/s</string>
       <string name="button_adapter_config_can_disp_off">CAN off</string>
-      <string name="adapter_config_off">Off</string>
-      <string name="adapter_config_on">On</string>
+      <string name="adapter_ignition_off">Off</string>
+      <string name="adapter_ignition_on">On</string>
     </strings>
     <strings lang="de">
       <string name="tab_adapter_config2">Adapter</string>
@@ -32,8 +32,7 @@
       <string name="label_block_size">CAN Blockgröße:</string>
       <string name="label_sep_time">CAN Telegrammabstand [ms]:</string>
       <string name="label_can_mode">CAN Betriebsart:</string>
-      <string name="button_adapter_config_block_size0">CAN Blockgröße 0</string>
-      <string name="button_adapter_config_block_size15">CAN Blockgröße 15</string>
+      <string name="button_adapter_config_block_size">CAN Blockgröße + 2</string>
       <string name="button_adapter_config_sep_time0">CAN Telegrammabstand 0 ms</string>
       <string name="button_adapter_config_sep_time1">CAN Telegrammabstand 1 ms</string>
       <string name="button_adapter_config_can_500">500 kbit/s D-CAN</string>
@@ -42,8 +41,8 @@
       <string name="button_adapter_config_can_disp_500">500 kbit/s</string>
       <string name="button_adapter_config_can_disp_100">100 kbit/s</string>
       <string name="button_adapter_config_can_disp_off">CAN aus</string>
-      <string name="adapter_config_off">Aus</string>
-      <string name="adapter_config_on">An</string>
+      <string name="adapter_ignition_off">Aus</string>
+      <string name="adapter_ignition_on">An</string>
     </strings>
     <job sgbd="adapter_prg" show_warnigs="true">
       <![CDATA[
@@ -107,8 +106,7 @@
                     ),
             };
 
-        private Button buttonBlockSize0;
-        private Button buttonBlockSize15;
+        private Button buttonBlockSize;
         private Button buttonSepTime0;
         private Button buttonSepTime1;
         private Button buttonCan500;
@@ -116,6 +114,7 @@
         private Button buttonCanOff;
         private int adapterCmd = -1;
         private int adapterValue;
+        private int blockSize = 0;
 
         public void CreateLayout(ActivityMain activity, JobReader.PageInfo pageInfo, LinearLayout pageLayout)
         {
@@ -127,23 +126,20 @@
                 ViewGroup.LayoutParams.WrapContent);
             buttonLayoutParams.Weight = 1;
 
-            buttonBlockSize0 = new Button(activity);
-            buttonBlockSize0.Text = ActivityMain.GetPageString(pageInfo, "button_adapter_config_block_size0");
-            buttonBlockSize0.Click += delegate
+            buttonBlockSize = new Button(activity);
+            buttonBlockSize.Text = string.Format("{0}: {1}", ActivityMain.GetPageString(pageInfo, "button_adapter_config_block_size"), blockSize);
+            buttonBlockSize.Click += delegate
             {
+                blockSize += 2;
+                if (blockSize > 8)
+                {
+                    blockSize = 0;
+                }
                 adapterCmd = 0x00;
-                adapterValue = 0x00;
+                adapterValue = blockSize;
+                buttonBlockSize.Text = string.Format("{0}: {1}", ActivityMain.GetPageString(pageInfo, "button_adapter_config_block_size"), blockSize);
             };
-            buttonLayout.AddView(buttonBlockSize0, buttonLayoutParams);
-
-            buttonBlockSize15 = new Button(activity);
-            buttonBlockSize15.Text = ActivityMain.GetPageString(pageInfo, "button_adapter_config_block_size15");
-            buttonBlockSize15.Click += delegate
-            {
-                adapterCmd = 0x00;
-                adapterValue = 0x0F;
-            };
-            buttonLayout.AddView(buttonBlockSize15, buttonLayoutParams);
+            buttonLayout.AddView(buttonBlockSize, buttonLayoutParams);
 
             buttonSepTime0 = new Button(activity);
             buttonSepTime0.Text = ActivityMain.GetPageString(pageInfo, "button_adapter_config_sep_time0");
@@ -200,15 +196,10 @@
 
         public void DestroyLayout(JobReader.PageInfo pageInfo)
         {
-            if (buttonBlockSize0 != null)
+            if (buttonBlockSize != null)
             {
-                buttonBlockSize0.Dispose();
-                buttonBlockSize0 = null;
-            }
-            if (buttonBlockSize15 != null)
-            {
-                buttonBlockSize15.Dispose();
-                buttonBlockSize15 = null;
+                buttonBlockSize.Dispose();
+                buttonBlockSize = null;
             }
             if (buttonSepTime0 != null)
             {
@@ -246,8 +237,7 @@
             }
 
             bool enabled = pageValid && threadActive;
-            buttonBlockSize0.Enabled = enabled;
-            buttonBlockSize15.Enabled = enabled;
+            buttonBlockSize.Enabled = enabled;
             buttonSepTime0.Enabled = enabled;
             buttonSepTime1.Enabled = enabled;
             buttonCan500.Enabled = enabled;
@@ -306,13 +296,17 @@
                     Int64 value = ActivityMain.GetResultInt64(resultDict, resultName, out found);
                     if (found)
                     {
-                        if (value > 0)
+                        if ((value & 0x01) != 0)
                         {
-                            result = ActivityMain.GetPageString(pageInfo, "adapter_config_on");
+                            result = ActivityMain.GetPageString(pageInfo, "adapter_ignition_on");
                         }
                         else
                         {
-                            result = ActivityMain.GetPageString(pageInfo, "adapter_config_off");
+                            result = ActivityMain.GetPageString(pageInfo, "adapter_ignition_off");
+                        }
+                        if ((value & 0x80) != 0)
+                        {
+                            result = "(" + result + ")";
                         }
                     }
                     break;
