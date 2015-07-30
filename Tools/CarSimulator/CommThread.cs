@@ -265,6 +265,10 @@ namespace CarSimulator
         private readonly byte[] _response12222000 = {
             0x84, 0xF1, 0x12, 0x62, 0x20, 0x00, 0x00};
 
+        // ReSharper disable once UnusedMember.Local
+        private readonly byte[] _response12Nr = {
+            0x83, 0xF1, 0x12, 0x7F, 0x1A, 0x78 };
+
         // Device A0 CCCA
         private readonly byte[] _responseA01802FFFF = {
             0x82, 0xF1, 0xA0, 0x58, 0x00};
@@ -3455,6 +3459,11 @@ namespace CarSimulator
                 _receiveData[4] == 0x40 &&
                 _receiveData[5] == 0x22)
             {   // PM info 1/3
+#if false
+                Array.Copy(_response12Nr, _sendData, _response12Nr.Length);
+                ObdSend(_sendData);
+                Thread.Sleep(1000);
+#endif
                 Array.Copy(_response12224022, _sendData, _response12224022.Length);
 
                 // Batterieentladung gesamt Ah
