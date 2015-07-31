@@ -1947,7 +1947,7 @@ namespace EdiabasLib
                 }
             }
 
-            for (;;)
+            for (; ; )
             {
                 int timeout = (NrDict.Count > 0) ? ParTimeoutNr : ParTimeoutStd;
                 //if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout: {0}", timeout);
@@ -2148,7 +2148,7 @@ namespace EdiabasLib
                 }
             }
 
-            for (;;)
+            for (; ; )
             {
                 int timeout = (NrDict.Count > 0) ? ParTimeoutNr : ParTimeoutStd;
                 //EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout: {0}", timeout);
