@@ -51,6 +51,7 @@ namespace EdiabasLib
         protected byte[] RecBuffer = new byte[TransBufferSize];
         protected byte[] DataBuffer = new byte[TransBufferSize];
         protected byte[] AckBuffer = new byte[TransBufferSize];
+        protected Dictionary<byte, int> NrDict = new Dictionary<byte, int>();
 
         protected TransmitDelegate ParTransmitFunc;
         protected int ParTimeoutStd;
@@ -121,6 +122,7 @@ namespace EdiabasLib
                 ParRegenTime = 0;
                 ParTimeoutNr = 0;
                 ParRetryNr = 0;
+                NrDict.Clear();
 
                 if (CommParameterProtected == null)
                 {   // clear parameter
@@ -996,6 +998,39 @@ namespace EdiabasLib
             return errorCode;
         }
 
+        private void NrDictAdd(byte deviceAddr, bool enableLogging)
+        {
+            int retries;
+            if (NrDict.TryGetValue(deviceAddr, out retries))
+            {
+                NrDict.Remove(deviceAddr);
+                retries++;
+                if (retries <= ParRetryNr)
+                {
+                    if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NR({0:X02}) count={1}", deviceAddr, retries);
+                    NrDict.Add(deviceAddr, retries);
+                }
+                else
+                {
+                    if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NR({0:X02}) exceeded", deviceAddr);
+                }
+            }
+            else
+            {
+                if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NR({0:X02}) added", deviceAddr);
+                NrDict.Add(deviceAddr, 0);
+            }
+        }
+
+        private void NrDictRemove(byte deviceAddr, bool enableLogging)
+        {
+            if (NrDict.ContainsKey(deviceAddr))
+            {
+                if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NR({0:X02}) removed", deviceAddr);
+                NrDict.Remove(deviceAddr);
+            }
+        }
+
         private EdiabasNet.ErrorCodes TransBmwFast(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
             return TransKwp2000(sendData, sendDataLength, ref receiveData, out receiveLength, true);
@@ -1007,6 +1042,7 @@ namespace EdiabasLib
 
             if (sendDataLength > 0)
             {
+                NrDict.Clear();
                 int sendLength = TelLengthBmwFast(sendData);
                 if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendLength, "Send");
 
@@ -1017,9 +1053,10 @@ namespace EdiabasLib
                 }
             }
 
-            int timeout = ParTimeoutStd;
-            for (int retry = 0; retry <= ParRetryNr; retry++)
+            for (; ; )
             {
+                int timeout = (NrDict.Count > 0) ? ParTimeoutNr : ParTimeoutStd;
+                //if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout: {0}", timeout);
                 if (!ReceiveData(receiveData, timeout))
                 {
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
@@ -1038,10 +1075,14 @@ namespace EdiabasLib
                 }
                 if ((dataLen == 3) && (receiveData[dataStart] == 0x7F) && (receiveData[dataStart + 2] == 0x78))
                 {   // negative response 0x78
-                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NR 0x78");
-                    timeout = ParTimeoutNr;
+                    NrDictAdd(receiveData[2], enableLogging);
                 }
                 else
+                {
+                    NrDictRemove(receiveData[2], enableLogging);
+                    break;
+                }
+                if (NrDict.Count == 0)
                 {
                     break;
                 }
