@@ -1266,7 +1266,7 @@ namespace CarControlAndroid
 
                 if (_swDataLog != null)
                 {
-                    _swDataLog.WriteLine("----------------------------------------");
+                    _swDataLog.Write("----------------------------------------\r\n");
                 }
                 foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
                 {
@@ -1333,8 +1333,8 @@ namespace CarControlAndroid
                     if (_swDataLog != null)
                     {
                         _swDataLog.Write(stringBuilder.ToString());
-                        _swDataLog.WriteLine();
-                        _swDataLog.WriteLine();
+                        _swDataLog.Write("\r\n");
+                        _swDataLog.Write("\r\n");
                     }
                     dataSet++;
                 }
