@@ -9,6 +9,7 @@ set PACKAGEPATH="!BATPATH!Package\"
 set EDIABASTESTPATH="!PACKAGEPATH!EdiabasTest\"
 set API32PATH="!PACKAGEPATH!Api32\"
 set APINET32PATH="!PACKAGEPATH!ApiNet32\"
+set CANADAPTERPATH="!PACKAGEPATH!CanAdapter\"
 if exist "!PACKAGEPATH!" rmdir /s /q "!PACKAGEPATH!"
 mkdir "!PACKAGEPATH!"
 
@@ -25,6 +26,10 @@ copy "!WINDIR!\System32\MSVCR120.DLL" "!API32PATH!"
 mkdir "!APINET32PATH!"
 copy "!BATPATH!apiNET32\bin\Release\*.dll" "!APINET32PATH!"
 copy "!BATPATH!apiNET32\bin\Release\*.config" "!APINET32PATH!"
+
+mkdir "!CANADAPTERPATH!"
+copy "!BATPATH!CanAdapter\CanAdapter\Release\*.hex" "!CANADAPTERPATH!"
+copy "!BATPATH!CanAdapter\Pld\*.jed" "!CANADAPTERPATH!"
 
 set PACKAGEZIP="!BATPATH!Binaries-!DATESTR!.zip"
 if exist "!PACKAGEZIP!" del /f /q "!PACKAGEZIP!"
