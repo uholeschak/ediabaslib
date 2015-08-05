@@ -41,6 +41,7 @@ namespace CarControlAndroid
         private bool _traceAppend;
         private bool _dataLogActive;
         private bool _activityStarted;
+        private bool _onStartExecuted;
         private bool _createTabsPending;
         private const string SharedAppName = "CarControl";
         private bool _autoStart;
@@ -114,8 +115,6 @@ namespace CarControlAndroid
             _fragmentList = new List<Fragment>();
             _buttonConnect.Click += ButtonConnectClick;
 
-            ReadConfigFile();
-
             _receiver = new Receiver(this);
             RegisterReceiver(_receiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
             RegisterReceiver(_receiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
@@ -158,6 +157,11 @@ namespace CarControlAndroid
         {
             base.OnStart();
 
+            if (!_onStartExecuted)
+            {
+                _onStartExecuted = true;
+                ReadConfigFile();
+            }
             _activityStarted = true;
             if (_createTabsPending)
             {
