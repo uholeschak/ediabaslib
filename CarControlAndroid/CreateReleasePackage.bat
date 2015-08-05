@@ -17,7 +17,7 @@ mkdir "!APKPATH!"
 copy "!BATPATH!CarControlAndroid.CarControlAndroid-Aligned.apk" "!APKPATH!"
 
 mkdir "!CONFIGPATH!"
-copy "!BATPATH!Xml\*.cc*" "!CONFIGPATH!"
+xcopy /y /e "!BATPATH!Xml\*.*" "!CONFIGPATH!"
 
 mkdir "!ECUPATH!"
 copy "!BATPATH!..\EdiabasLib\Test\Ecu\adapter_prg.prg" "!ECUPATH!"
