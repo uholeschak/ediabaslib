@@ -30,6 +30,7 @@ copy "!BATPATH!apiNET32\bin\Release\*.config" "!APINET32PATH!"
 mkdir "!CANADAPTERPATH!"
 copy "!BATPATH!CanAdapter\CanAdapter\Release\*.hex" "!CANADAPTERPATH!"
 copy "!BATPATH!CanAdapter\Pld\*.jed" "!CANADAPTERPATH!"
+copy "!BATPATH!CanAdapter\UpdateLoader\bin\*.exe" "!CANADAPTERPATH!"
 
 set PACKAGEZIP="!BATPATH!Binaries-!DATESTR!.zip"
 if exist "!PACKAGEZIP!" del /f /q "!PACKAGEZIP!"
