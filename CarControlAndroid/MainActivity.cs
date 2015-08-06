@@ -386,7 +386,7 @@ namespace CarControlAndroid
                     _ediabasThread.DataUpdated += DataUpdated;
                     _ediabasThread.ThreadTerminated += ThreadTerminated;
                 }
-                string logDir = string.IsNullOrEmpty(_activityCommon.ExternalWritePath) ? Path.GetDirectoryName(_configFileName) : _activityCommon.ExternalWritePath;
+                string logDir = string.IsNullOrEmpty(_activityCommon.ExternalWritePath) ? _jobReader.EcuPath : _activityCommon.ExternalWritePath;
 
                 if (!string.IsNullOrEmpty(logDir))
                 {
