@@ -40,7 +40,8 @@
       <string name="label_ccc_nav_res_vert">GPS vertikale Auflösung [m]:</string>
       <string name="label_ccc_nav_speed">Geschwindigkeit [km/h]:</string>
     </strings>
-    <job sgbd="d_ccc" show_warnigs="true">
+    <jobs sgbd="d_ccc" show_warnigs="true" />
+    <code>
       <![CDATA[
     class PageClass
     {
@@ -133,7 +134,7 @@
             return result;
         }
     }
-        ]]>
-    </job>
+      ]]>
+    </code>
   </page>
 </fragment>

@@ -21,7 +21,8 @@
       <string name="label_motor_quant_corr_c3">Mengenkorr. Zylinder 3 [mg/Hub]:</string>
       <string name="label_motor_quant_corr_c4">Mengenkorr. Zylinder 4 [mg/Hub]:</string>
     </strings>
-    <job sgbd="d_motor" activate="true" show_warnigs="true">
+    <jobs sgbd="d_motor" activate="true" show_warnigs="true" />
+    <code>
       <![CDATA[
     class PageClass
     {
@@ -46,7 +47,7 @@
             }
         }
     }
-        ]]>
-    </job>
+      ]]>
+    </code>
   </page>
 </fragment>

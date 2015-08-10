@@ -21,7 +21,8 @@
       <string name="label_motor_rpm_c3">Drehzahl Zylinder 3 [1/min]:</string>
       <string name="label_motor_rpm_c4">Drehzahl Zylinder 4 [1/min]:</string>
     </strings>
-    <job sgbd="d_motor" activate="true" show_warnigs="true">
+    <jobs sgbd="d_motor" activate="true" show_warnigs="true" />
+    <code>
       <![CDATA[
     class PageClass
     {
@@ -46,7 +47,7 @@
             }
         }
     }
-        ]]>
-    </job>
+      ]]>
+    </code>
   </page>
 </fragment>

@@ -236,11 +236,11 @@ namespace CarControlAndroid
                 firstRequestCall = true;
                 _ediabasJobAbort = false;
 
-                if (!string.IsNullOrEmpty(pageInfo.JobInfo.Sgbd))
+                if (!string.IsNullOrEmpty(pageInfo.JobsInfo.Sgbd))
                 {
                     try
                     {
-                        _ediabas.ResolveSgbdFile(pageInfo.JobInfo.Sgbd);
+                        _ediabas.ResolveSgbdFile(pageInfo.JobsInfo.Sgbd);
                     }
                     catch (Exception ex)
                     {
@@ -260,17 +260,23 @@ namespace CarControlAndroid
             Dictionary<string, EdiabasNet.ResultData> resultDict = null;
             try
             {
-                if (!string.IsNullOrEmpty(pageInfo.JobInfo.Name))
+                if (pageInfo.JobsInfo.JobList.Count > 0)
                 {
-                    _ediabas.ArgString = pageInfo.JobInfo.Args;
-                    _ediabas.ArgBinaryStd = null;
-                    _ediabas.ResultsRequests = pageInfo.JobInfo.Results;
-                    _ediabas.ExecuteJob(pageInfo.JobInfo.Name);
-
-                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                    if (resultSets != null && resultSets.Count >= 2)
+                    foreach (JobReader.JobInfo jobInfo in pageInfo.JobsInfo.JobList)
                     {
-                        MergeResultDictionarys(ref resultDict, resultSets[1]);
+                        if (!string.IsNullOrEmpty(jobInfo.Name))
+                        {
+                            _ediabas.ArgString = jobInfo.Args;
+                            _ediabas.ArgBinaryStd = null;
+                            _ediabas.ResultsRequests = jobInfo.Results;
+                            _ediabas.ExecuteJob(jobInfo.Name);
+
+                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                            if (resultSets != null && resultSets.Count >= 2)
+                            {
+                                MergeResultDictionarys(ref resultDict, resultSets[1], jobInfo.Name + "#");
+                            }
+                        }
                     }
                 }
                 else
