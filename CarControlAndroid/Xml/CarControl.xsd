@@ -146,18 +146,7 @@
   <xs:complexType name="job-type">
     <xs:annotation>
       <xs:documentation>
-        <![CDATA[
         Specifies the EDIABAS job to execute.
-        This block can contain C# user code that will be compiled after reading the xml.
-        The class for the code must be always named PageClass.
-        It can contain the following pre-defined functions:
-        public void CreateLayout(ActivityMain activity, JobReader.PageInfo pageInfo, LinearLayout pageLayout);
-        public void DestroyLayout(JobReader.PageInfo pageInfo);
-        public void UpdateLayout(JobReader.PageInfo pageInfo, bool pageValid, bool threadActive);
-        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData=""> resultDict, bool firstCall);
-        public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName);
-        public void UpdateResultList(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, ResultListAdapter resultListAdapter);
-        ]]>
       </xs:documentation>
     </xs:annotation>
     <xs:sequence>
@@ -168,6 +157,13 @@
         <xs:documentation>
           Name of the EDIABAS job to execute.
           If this element is used the function ExecuteJob() will not be called.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="args" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          A list of semicolon separated arguments for the EDIABAS job.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>

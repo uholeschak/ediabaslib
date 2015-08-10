@@ -3,10 +3,6 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/CarControl ../CarControl.xsd">
   <page name ="tab_motor_rot_irregular">
-    <display name="label_motor_rpm_c1" result="STAT_LAUFUNRUHE_DREHZAHL_ZYL1_WERT" format="7.2R" />
-    <display name="label_motor_rpm_c1" result="STAT_LAUFUNRUHE_DREHZAHL_ZYL2_WERT" format="7.2R" />
-    <display name="label_motor_rpm_c1" result="STAT_LAUFUNRUHE_DREHZAHL_ZYL3_WERT" format="7.2R" />
-    <display name="label_motor_rpm_c1" result="STAT_LAUFUNRUHE_DREHZAHL_ZYL4_WERT" format="7.2R" />
     <strings>
       <string name="tab_motor_rot_irregular">Rot. irregularity</string>
       <string name="label_motor_rpm_c1">Revolution cylinder 1 [1/min]:</string>
@@ -21,33 +17,15 @@
       <string name="label_motor_rpm_c3">Drehzahl Zylinder 3 [1/min]:</string>
       <string name="label_motor_rpm_c4">Drehzahl Zylinder 4 [1/min]:</string>
     </strings>
-    <jobs sgbd="d_motor" activate="true" show_warnigs="true" />
-    <code>
-      <![CDATA[
-    class PageClass
-    {
-        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
-        {
-            ediabas.ArgString = "LLR_AUS";
-            ediabas.ArgBinaryStd = null;
-            ediabas.ResultsRequests = "JOB_STATUS";
-
-            ediabas.ExecuteJob("START_SYSTEMCHECK_ZYL");
-
-            ediabas.ArgString = string.Empty;
-            ediabas.ArgBinaryStd = null;
-            ediabas.ResultsRequests = "STAT_LAUFUNRUHE_DREHZAHL_ZYL1_WERT;STAT_LAUFUNRUHE_DREHZAHL_ZYL2_WERT;STAT_LAUFUNRUHE_DREHZAHL_ZYL3_WERT;STAT_LAUFUNRUHE_DREHZAHL_ZYL4_WERT";
-
-            ediabas.ExecuteJob("STATUS_LAUFUNRUHE_DREHZAHL");
-
-            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
-            if (resultSets != null && resultSets.Count >= 2)
-            {
-                EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
-            }
-        }
-    }
-      ]]>
-    </code>
+    <jobs sgbd="d_motor" activate="true">
+      <job name="START_SYSTEMCHECK_ZYL" args="LLR_AUS" results="JOB_STATUS">
+      </job>
+      <job name="STATUS_LAUFUNRUHE_DREHZAHL" results="STAT_LAUFUNRUHE_DREHZAHL_ZYL1_WERT;STAT_LAUFUNRUHE_DREHZAHL_ZYL2_WERT;STAT_LAUFUNRUHE_DREHZAHL_ZYL3_WERT;STAT_LAUFUNRUHE_DREHZAHL_ZYL4_WERT">
+        <display name="label_motor_rpm_c1" result="STAT_LAUFUNRUHE_DREHZAHL_ZYL1_WERT" format="7.2R" />
+        <display name="label_motor_rpm_c1" result="STAT_LAUFUNRUHE_DREHZAHL_ZYL2_WERT" format="7.2R" />
+        <display name="label_motor_rpm_c1" result="STAT_LAUFUNRUHE_DREHZAHL_ZYL3_WERT" format="7.2R" />
+        <display name="label_motor_rpm_c1" result="STAT_LAUFUNRUHE_DREHZAHL_ZYL4_WERT" format="7.2R" />
+      </job>
+    </jobs>
   </page>
 </fragment>
