@@ -39,7 +39,8 @@
       <string name="label_axis_speed">Geschwindigkeit [km/h]:</string>
       <string name="label_axis_valve_state">Zustand Ausgänge:</string>
     </strings>
-    <job sgbd="d_ehc" show_warnigs="true">
+    <jobs sgbd="d_ehc" show_warnigs="true" />
+    <code>
       <![CDATA[
     class PageClass
     {
@@ -389,7 +390,7 @@
             return result;
         }
     }
-        ]]>
-    </job>
+      ]]>
+    </code>
   </page>
 </fragment>

@@ -47,7 +47,8 @@
       <string name="errorNameULF">ULF Universale Ladefreisprechelektronik</string>
       <string name="errorNameFZD">FZD Funtionszentrum Dach</string>
     </strings>
-    <job show_warnigs="true">
+    <jobs show_warnigs="true" />
+    <code>
       <![CDATA[
     class PageClass
     {
@@ -305,7 +306,7 @@
             }
         }
     }
-        ]]>
-    </job>
+      ]]>
+    </code>
   </page>
 </fragment>

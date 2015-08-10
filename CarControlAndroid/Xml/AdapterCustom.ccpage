@@ -43,8 +43,9 @@
       <string name="adapter_ignition_off">Aus</string>
       <string name="adapter_ignition_on">An</string>
     </strings>
-    <job sgbd="adapter_prg" show_warnigs="true">
-      <![CDATA[
+    <jobs sgbd="adapter_prg" show_warnigs="true" />
+      <code>
+        <![CDATA[
     class PageClass
     {
         private class EdiabasJob
@@ -341,7 +342,7 @@
             return result;
         }
     }
-        ]]>
-    </job>
+      ]]>
+    </code>
   </page>
 </fragment>

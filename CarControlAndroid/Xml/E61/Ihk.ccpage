@@ -60,7 +60,8 @@
       <string name="label_ihk_legroom">Fußraum [%]:</string>
       <string name="label_ihk_refrig_comp">Kältemittelverdichter [%]:</string>
     </strings>
-    <job sgbd="d_klima" show_warnigs="true">
+    <jobs sgbd="d_klima" show_warnigs="true" />
+    <code>
       <![CDATA[
     class PageClass
     {
@@ -140,7 +141,7 @@
             }
         }
     }
-        ]]>
-    </job>
+    ]]>
+    </code>
   </page>
 </fragment>

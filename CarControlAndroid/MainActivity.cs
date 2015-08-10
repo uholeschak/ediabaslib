@@ -143,7 +143,7 @@ namespace CarControlAndroid
             foreach (JobReader.PageInfo pageInfo in _jobReader.PageList)
             {
                 int resourceId = Resource.Layout.tab_list;
-                if (pageInfo.JobInfo.Activate) resourceId = Resource.Layout.tab_activate;
+                if (pageInfo.JobsInfo.Activate) resourceId = Resource.Layout.tab_activate;
 
                 Fragment fragmentPage = new TabContentFragment(this, resourceId, pageInfo);
                 _fragmentList.Add(fragmentPage);
@@ -550,7 +550,7 @@ namespace CarControlAndroid
             {
                 return;
             }
-            bool newCommActive = !newPageInfo.JobInfo.Activate;
+            bool newCommActive = !newPageInfo.JobsInfo.Activate;
             if (_ediabasThread.JobPageInfo != newPageInfo)
             {
                 _ediabasThread.CommActive = newCommActive;
@@ -608,7 +608,7 @@ namespace CarControlAndroid
                 }
                 ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult.Adapter;
                 ToggleButton buttonActive = null;
-                if (pageInfo.JobInfo.Activate)
+                if (pageInfo.JobsInfo.Activate)
                 {
                     buttonActive = dynamicFragment.View.FindViewById<ToggleButton>(Resource.Id.button_active);
                 }
@@ -716,7 +716,7 @@ namespace CarControlAndroid
                     try
                     {
                         Type pageType = pageInfo.ClassObject.GetType();
-                        if (string.IsNullOrEmpty(pageInfo.JobInfo.Name) && pageType.GetMethod("UpdateLayout") != null)
+                        if (pageType.GetMethod("UpdateLayout") != null)
                         {
                             pageInfo.ClassObject.UpdateLayout(pageInfo, dynamicValid, _ediabasThread != null);
                         }
@@ -888,7 +888,7 @@ namespace CarControlAndroid
                 List<Task<string>> taskList = new List<Task<string>>();
                 foreach (JobReader.PageInfo pageInfo in _jobReader.PageList)
                 {
-                    if (pageInfo.JobInfo.ClassCode == null) continue;
+                    if (pageInfo.ClassCode == null) continue;
                     JobReader.PageInfo infoLocal = pageInfo;
                     Task<string> compileTask = Task<string>.Factory.StartNew(() =>
                     {
@@ -909,10 +909,10 @@ namespace CarControlAndroid
                                 using System.Collections.Generic;
                                 using System.Diagnostics;
                                 using System.Threading;"
-                                + infoLocal.JobInfo.ClassCode;
+                                + infoLocal.ClassCode;
                             evaluator.Compile(classCode);
                             infoLocal.ClassObject = evaluator.Evaluate("new PageClass()");
-                            if (string.IsNullOrEmpty(infoLocal.JobInfo.Name))
+                            if (infoLocal.JobsInfo.JobList.Count == 0)
                             {
                                 Type pageType = infoLocal.ClassObject.GetType();
                                 if (pageType.GetMethod("ExecuteJob") == null)
@@ -930,7 +930,7 @@ namespace CarControlAndroid
                             }
                             result = GetPageString(infoLocal, infoLocal.Name) + ":\r\n" + result;
                         }
-                        if (infoLocal.JobInfo.ShowWarnings && string.IsNullOrEmpty(result))
+                        if (infoLocal.JobsInfo.ShowWarnings && string.IsNullOrEmpty(result))
                         {
                             result = reportWriter.ToString();
                         }
@@ -1064,7 +1064,7 @@ namespace CarControlAndroid
                     try
                     {
                         Type pageType = _pageInfo.ClassObject.GetType();
-                        if (string.IsNullOrEmpty(_pageInfo.JobInfo.Name) && pageType.GetMethod("CreateLayout") != null)
+                        if (pageType.GetMethod("CreateLayout") != null)
                         {
                             LinearLayout pageLayout = view.FindViewById<LinearLayout>(Resource.Id.listLayout);
                             _pageInfo.ClassObject.CreateLayout(_activity, _pageInfo, pageLayout);
@@ -1092,7 +1092,7 @@ namespace CarControlAndroid
                     try
                     {
                         Type pageType = _pageInfo.ClassObject.GetType();
-                        if (string.IsNullOrEmpty(_pageInfo.JobInfo.Name) && pageType.GetMethod("DestroyLayout") != null)
+                        if (pageType.GetMethod("DestroyLayout") != null)
                         {
                             _pageInfo.ClassObject.DestroyLayout(_pageInfo);
                         }

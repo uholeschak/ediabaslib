@@ -81,7 +81,8 @@
       <string name="label_motor_temp_before_cat">Temp. vor Katalysator [°C]:</string>
       <string name="label_motor_temp_before_filter">Temp. vor Partikelfilter [°C]:</string>
     </strings>
-    <job sgbd="d_motor" show_warnigs="true">
+    <jobs sgbd="d_motor" show_warnigs="true" />
+    <code>
       <![CDATA[
     class PageClass
     {
@@ -155,7 +156,7 @@
             return result;
         }
     }
-        ]]>
-    </job>
+      ]]>
+    </code>
   </page>
 </fragment>
