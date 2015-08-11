@@ -169,7 +169,10 @@ namespace CarControlAndroid
         void DeviceListClick (object sender, AdapterView.ItemClickEventArgs e)
         {
             // Cancel discovery because it's costly and we're about to connect
-            _btAdapter.CancelDiscovery ();
+            if (_btAdapter.IsDiscovering)
+            {
+                _btAdapter.CancelDiscovery();
+            }
 
             TextView textView = e.View as TextView;
             if (textView != null)
