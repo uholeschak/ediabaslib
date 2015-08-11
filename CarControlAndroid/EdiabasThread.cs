@@ -236,7 +236,7 @@ namespace CarControlAndroid
                 firstRequestCall = true;
                 _ediabasJobAbort = false;
 
-                if (!string.IsNullOrEmpty(pageInfo.JobsInfo.Sgbd))
+                if ((pageInfo.JobsInfo != null) && !string.IsNullOrEmpty(pageInfo.JobsInfo.Sgbd))
                 {
                     try
                     {
@@ -260,7 +260,7 @@ namespace CarControlAndroid
             Dictionary<string, EdiabasNet.ResultData> resultDict = null;
             try
             {
-                if (pageInfo.JobsInfo.JobList.Count > 0)
+                if ((pageInfo.JobsInfo != null) && (pageInfo.JobsInfo.JobList.Count > 0))
                 {
                     foreach (JobReader.JobInfo jobInfo in pageInfo.JobsInfo.JobList)
                     {

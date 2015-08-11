@@ -57,7 +57,7 @@
       <string name="label_motor_temp_before_cat">Temp. vor Katalysator [°C]:</string>
       <string name="label_motor_temp_before_filter">Temp. vor Partikelfilter [°C]:</string>
     </strings>
-    <jobs sgbd="d_motor" show_warnigs="true">
+    <jobs sgbd="d_motor">
       <job name="STATUS_MESSWERTBLOCK_LESEN"
            args_first="JA;IUBAT2;OBD_PID05_CEngDsT_tSens;ITMOT;ITOEL;ITKRS;OBD_PID10_AFS_dmSens;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;PFltRgn_numRgn;CoEOM_stOpModeAct;ISRBF;ISOED;PCBS_lDistanceOut"
            args="NEIN;IUBAT2;OBD_PID05_CEngDsT_tSens;ITMOT;ITOEL;ITKRS;OBD_PID10_AFS_dmSens;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;PFltRgn_numRgn;CoEOM_stOpModeAct;ISRBF;ISOED;PCBS_lDistanceOut">
@@ -87,7 +87,7 @@
         <display name="label_motor_part_filt_dist_remain" result="STAT_PCBS_lDistanceOut_WERT" format="6.0R"/>
       </job>
     </jobs>
-    <code>
+    <code show_warnigs="true">
       <![CDATA[
     class PageClass
     {

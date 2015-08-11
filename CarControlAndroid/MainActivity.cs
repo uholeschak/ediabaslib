@@ -143,7 +143,7 @@ namespace CarControlAndroid
             foreach (JobReader.PageInfo pageInfo in _jobReader.PageList)
             {
                 int resourceId = Resource.Layout.tab_list;
-                if (pageInfo.JobsInfo.Activate) resourceId = Resource.Layout.tab_activate;
+                if (pageInfo.JobActivate) resourceId = Resource.Layout.tab_activate;
 
                 Fragment fragmentPage = new TabContentFragment(this, resourceId, pageInfo);
                 _fragmentList.Add(fragmentPage);
@@ -550,7 +550,7 @@ namespace CarControlAndroid
             {
                 return;
             }
-            bool newCommActive = !newPageInfo.JobsInfo.Activate;
+            bool newCommActive = !newPageInfo.JobActivate;
             if (_ediabasThread.JobPageInfo != newPageInfo)
             {
                 _ediabasThread.CommActive = newCommActive;
@@ -608,7 +608,7 @@ namespace CarControlAndroid
                 }
                 ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult.Adapter;
                 ToggleButton buttonActive = null;
-                if (pageInfo.JobsInfo.Activate)
+                if (pageInfo.JobActivate)
                 {
                     buttonActive = dynamicFragment.View.FindViewById<ToggleButton>(Resource.Id.button_active);
                 }
@@ -912,7 +912,7 @@ namespace CarControlAndroid
                                 + infoLocal.ClassCode;
                             evaluator.Compile(classCode);
                             infoLocal.ClassObject = evaluator.Evaluate("new PageClass()");
-                            if (infoLocal.JobsInfo.JobList.Count == 0)
+                            if ((infoLocal.JobsInfo == null) || (infoLocal.JobsInfo.JobList.Count == 0))
                             {
                                 Type pageType = infoLocal.ClassObject.GetType();
                                 if (pageType.GetMethod("ExecuteJob") == null)
@@ -930,7 +930,7 @@ namespace CarControlAndroid
                             }
                             result = GetPageString(infoLocal, infoLocal.Name) + ":\r\n" + result;
                         }
-                        if (infoLocal.JobsInfo.ShowWarnings && string.IsNullOrEmpty(result))
+                        if (infoLocal.CodeShowWarnings && string.IsNullOrEmpty(result))
                         {
                             result = reportWriter.ToString();
                         }

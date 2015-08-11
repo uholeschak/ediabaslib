@@ -31,7 +31,7 @@
       <string name="label_ccc_nav_res_vert">GPS vertikale Auflösung [m]:</string>
       <string name="label_ccc_nav_speed">Geschwindigkeit [km/h]:</string>
     </strings>
-    <jobs sgbd="d_ccc" show_warnigs="true">
+    <jobs sgbd="d_ccc">
       <job name="STATUS_DR_POSITION" results="STAT_GPS_POSITION_BREITE;STAT_GPS_POSITION_HOEHE;STAT_GPS_POSITION_LAENGE;STAT_SPEED_VAL">
         <display name="label_ccc_nav_pos_lat" result="STAT_GPS_POSITION_BREITE" format="T" />
         <display name="label_ccc_nav_pos_long" result="STAT_GPS_POSITION_LAENGE" format="T" />
@@ -50,7 +50,7 @@
         <display name="label_ccc_nav_res_pos" result="STAT_POSITION_AUFLOES" format="T" />
       </job>
     </jobs>
-    <code>
+    <code show_warnigs="true">
       <![CDATA[
     class PageClass
     {
