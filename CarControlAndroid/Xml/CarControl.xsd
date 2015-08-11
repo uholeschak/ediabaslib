@@ -160,10 +160,18 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="args_first" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          A list of semicolon separated arguments for the first EDIABAS job call.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="args" type="xs:string" use="optional">
       <xs:annotation>
         <xs:documentation>
           A list of semicolon separated arguments for the EDIABAS job.
+          For the first call args_first will be used if present.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>

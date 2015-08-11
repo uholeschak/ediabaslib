@@ -266,7 +266,14 @@ namespace CarControlAndroid
                     {
                         if (!string.IsNullOrEmpty(jobInfo.Name))
                         {
-                            _ediabas.ArgString = jobInfo.Args;
+                            if (firstRequestCall && !string.IsNullOrEmpty(jobInfo.ArgsFirst))
+                            {
+                                _ediabas.ArgString = jobInfo.ArgsFirst;
+                            }
+                            else
+                            {
+                                _ediabas.ArgString = jobInfo.Args;
+                            }
                             _ediabas.ArgBinaryStd = null;
                             _ediabas.ResultsRequests = jobInfo.Results;
                             _ediabas.ExecuteJob(jobInfo.Name);

@@ -86,14 +86,16 @@ namespace CarControlAndroid
 
         public class JobInfo
         {
-            public JobInfo(string name, string args, string results)
+            public JobInfo(string name, string argsFirst, string args, string results)
             {
                 _name = name;
+                _argsFirst = argsFirst;
                 _args = args;
                 _results = results;
             }
 
             private readonly string _name;
+            private readonly string _argsFirst;
             private readonly string _args;
             private readonly string _results;
 
@@ -110,6 +112,14 @@ namespace CarControlAndroid
                 get
                 {
                     return _args;
+                }
+            }
+
+            public string ArgsFirst
+            {
+                get
+                {
+                    return _argsFirst;
                 }
             }
 
@@ -478,18 +488,21 @@ namespace CarControlAndroid
                                     if (string.Compare(xnodeJobsChild.Name, "job", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         string jobName = null;
+                                        string jobArgsFirst = string.Empty;
                                         string jobArgs = string.Empty;
                                         string jobResults = string.Empty;
                                         if (xnodeJobsChild.Attributes != null)
                                         {
                                             attrib = xnodeJobsChild.Attributes["name"];
                                             if (attrib != null) jobName = attrib.Value;
+                                            attrib = xnodeJobsChild.Attributes["args_first"];
+                                            if (attrib != null) jobArgsFirst = attrib.Value;
                                             attrib = xnodeJobsChild.Attributes["args"];
                                             if (attrib != null) jobArgs = attrib.Value;
                                             attrib = xnodeJobsChild.Attributes["results"];
                                             if (attrib != null) jobResults = attrib.Value;
                                         }
-                                        jobList.Add(new JobInfo(jobName, jobArgs, jobResults));
+                                        jobList.Add(new JobInfo(jobName, jobArgsFirst, jobArgs, jobResults));
                                         foreach (XmlNode xnodeJobChild in xnodeJobsChild.ChildNodes)
                                         {
                                             ReadDisplayNode(xnodeJobChild, displayList, jobName + "#", ref logEnabled);

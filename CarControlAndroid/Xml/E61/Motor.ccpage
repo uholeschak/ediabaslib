@@ -3,27 +3,6 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/CarControl ../CarControl.xsd">
   <page name ="tab_motor" logfile="motor.log">
-    <display name="label_motor_bat_voltage" result="STAT_UBATT_WERT" format="7.2R" />
-    <display name="label_motor_temp" result="STAT_CTSCD_tClntLin_WERT" format="6.2R" />
-    <display name="label_motor_air_mass" result="STAT_LUFTMASSE_WERT" format="7.2R" />
-    <display name="label_motor_intake_air_temp" result="STAT_LADELUFTTEMPERATUR_WERT" format="6.2R" />
-    <display name="label_motor_ambient_temp" result="STAT_UMGEBUNGSTEMPERATUR_WERT" format="6.2R" />
-    <display name="label_motor_boost_press_set" result="STAT_LADEDRUCK_SOLL_WERT" format="6.2R" />
-    <display name="label_motor_boost_press_act" result="STAT_LADEDRUCK_WERT" format="6.2R" />
-    <display name="label_motor_rail_press_set" result="STAT_RAILDRUCK_SOLL_WERT" format="6.2R" />
-    <display name="label_motor_rail_press_act" result="STAT_RAILDRUCK_WERT" format="6.2R" />
-    <display name="label_motor_air_mass_set" result="STAT_LUFTMASSE_SOLL_WERT" format="6.2R" />
-    <display name="label_motor_air_mass_act" result="STAT_LUFTMASSE_PRO_HUB_WERT" format="6.2R" />
-    <display name="label_motor_ambient_press" result="STAT_UMGEBUNGSDRUCK_WERT" format="6.2R" />
-    <display name="label_motor_fuel_temp" result="STAT_KRAFTSTOFFTEMPERATURK_WERT" format="6.2R" />
-    <display name="label_motor_temp_before_filter" result="STAT_ABGASTEMPERATUR_VOR_PARTIKELFILTER_1_WERT" format="6.2R" />
-    <display name="label_motor_temp_before_cat" result="STAT_ABGASTEMPERATUR_VOR_KATALYSATOR_WERT" format="6.2R" />
-    <display name="label_motor_part_filt_dist_since_regen" result="STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT" log_tag="part_filt_dist" />
-    <display name="label_motor_exhaust_press" result="STAT_DIFFERENZDRUCK_UEBER_PARTIKELFILTER_WERT" format="6.2R" />
-    <display name="label_motor_oil_press_switch" result="STAT_OELDRUCKSCHALTER_EIN_WERT" />
-    <display name="label_motor_part_filt_request" result="STAT_REGENERATIONSANFORDERUNG_WERT" log_tag="part_filt_requ" />
-    <display name="label_motor_part_filt_status" result="STAT_EGT_st_WERT" log_tag="part_filt_status" />
-    <display name="label_motor_part_filt_unblocked" result="STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT" log_tag="part_filt_unblocked" />
     <strings>
       <string name="tab_motor">Motor</string>
       <string name="label_motor_air_mass">Air mass [kg/h]:</string>
@@ -72,35 +51,37 @@
       <string name="label_motor_temp_before_cat">Temp. vor Katalysator [°C]:</string>
       <string name="label_motor_temp_before_filter">Temp. vor Partikelfilter [°C]:</string>
     </strings>
-    <jobs sgbd="d_motor" show_warnigs="true" />
+    <jobs sgbd="d_motor" show_warnigs="true">
+      <job name="STATUS_MESSWERTBLOCK_LESEN"
+           args_first="JA;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED"
+           args="NEIN;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED">
+        <display name="label_motor_bat_voltage" result="STAT_UBATT_WERT" format="7.2R" />
+        <display name="label_motor_temp" result="STAT_CTSCD_tClntLin_WERT" format="6.2R" />
+        <display name="label_motor_air_mass" result="STAT_LUFTMASSE_WERT" format="7.2R" />
+        <display name="label_motor_intake_air_temp" result="STAT_LADELUFTTEMPERATUR_WERT" format="6.2R" />
+        <display name="label_motor_ambient_temp" result="STAT_UMGEBUNGSTEMPERATUR_WERT" format="6.2R" />
+        <display name="label_motor_boost_press_set" result="STAT_LADEDRUCK_SOLL_WERT" format="6.2R" />
+        <display name="label_motor_boost_press_act" result="STAT_LADEDRUCK_WERT" format="6.2R" />
+        <display name="label_motor_rail_press_set" result="STAT_RAILDRUCK_SOLL_WERT" format="6.2R" />
+        <display name="label_motor_rail_press_act" result="STAT_RAILDRUCK_WERT" format="6.2R" />
+        <display name="label_motor_air_mass_set" result="STAT_LUFTMASSE_SOLL_WERT" format="6.2R" />
+        <display name="label_motor_air_mass_act" result="STAT_LUFTMASSE_PRO_HUB_WERT" format="6.2R" />
+        <display name="label_motor_ambient_press" result="STAT_UMGEBUNGSDRUCK_WERT" format="6.2R" />
+        <display name="label_motor_fuel_temp" result="STAT_KRAFTSTOFFTEMPERATURK_WERT" format="6.2R" />
+        <display name="label_motor_temp_before_filter" result="STAT_ABGASTEMPERATUR_VOR_PARTIKELFILTER_1_WERT" format="6.2R" />
+        <display name="label_motor_temp_before_cat" result="STAT_ABGASTEMPERATUR_VOR_KATALYSATOR_WERT" format="6.2R" />
+        <display name="label_motor_part_filt_dist_since_regen" result="STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT" log_tag="part_filt_dist" />
+        <display name="label_motor_exhaust_press" result="STAT_DIFFERENZDRUCK_UEBER_PARTIKELFILTER_WERT" format="6.2R" />
+        <display name="label_motor_oil_press_switch" result="STAT_OELDRUCKSCHALTER_EIN_WERT" />
+        <display name="label_motor_part_filt_request" result="STAT_REGENERATIONSANFORDERUNG_WERT" log_tag="part_filt_requ" />
+        <display name="label_motor_part_filt_status" result="STAT_EGT_st_WERT" log_tag="part_filt_status" />
+        <display name="label_motor_part_filt_unblocked" result="STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT" log_tag="part_filt_unblocked" />
+      </job>
+    </jobs>
     <code>
       <![CDATA[
     class PageClass
     {
-        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
-        {
-            string argString = "IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED";
-            if (firstCall)
-            {
-                argString = "JA;" + argString;
-            }
-            else
-            {
-                argString = "NEIN;" + argString;
-            }
-            ediabas.ArgString = argString;
-            ediabas.ArgBinaryStd = null;
-            ediabas.ResultsRequests = string.Empty;
-
-            ediabas.ExecuteJob("STATUS_MESSWERTBLOCK_LESEN");
-
-            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
-            if (resultSets != null && resultSets.Count >= 2)
-            {
-                EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
-            }
-        }
-
         public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName)
         {
             string result = string.Empty;
@@ -108,27 +89,27 @@
 
             switch (resultName)
             {
-                case "STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT":
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT":
                     result = string.Format(ActivityMain.Culture, "{0,6:0.0}", ActivityMain.GetResultDouble(resultDict, resultName, out found) / 1000.0);
                     if (!found) result = string.Empty;
                     break;
 
-                case "STAT_OELDRUCKSCHALTER_EIN_WERT":
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_OELDRUCKSCHALTER_EIN_WERT":
                     result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) > 0.5) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
                     break;
 
-                case "STAT_REGENERATIONSANFORDERUNG_WERT":
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_REGENERATIONSANFORDERUNG_WERT":
                     result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) < 0.5) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
                     break;
 
-                case "STAT_EGT_st_WERT":
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_EGT_st_WERT":
                     result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) > 1.5) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
                     break;
 
-                case "STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT":
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT":
                     result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) < 0.5) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
                     break;
