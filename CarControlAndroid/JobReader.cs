@@ -134,17 +134,13 @@ namespace CarControlAndroid
 
         public class JobsInfo
         {
-            public JobsInfo(string sgbd, bool activate, bool showWarnings, List<JobInfo> jobList)
+            public JobsInfo(string sgbd, List<JobInfo> jobList)
             {
                 _sgbd = sgbd;
-                _activate = activate;
-                _showWarnings = showWarnings;
                 _jobList = jobList;
             }
 
             private readonly string _sgbd;
-            private readonly bool _activate;
-            private readonly bool _showWarnings;
             private readonly List<JobInfo> _jobList;
 
             public string Sgbd
@@ -152,22 +148,6 @@ namespace CarControlAndroid
                 get
                 {
                     return _sgbd;
-                }
-            }
-
-            public bool Activate
-            {
-                get
-                {
-                    return _activate;
-                }
-            }
-
-            public bool ShowWarnings
-            {
-                get
-                {
-                    return _showWarnings;
                 }
             }
 
@@ -182,12 +162,14 @@ namespace CarControlAndroid
 
         public class PageInfo
         {
-            public PageInfo(string name, float weight, string logFile, string classCode, JobsInfo jobsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
+            public PageInfo(string name, float weight, string logFile, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
             {
                 _name = name;
                 _weight = weight;
                 _logFile = logFile;
+                _jobActivate = jobActivate;
                 _classCode = classCode;
+                _codeShowWarnings = codeShowWarnings;
                 _jobsInfo = jobsInfo;
                 _displayList = displayList;
                 _stringList = stringList;
@@ -198,7 +180,9 @@ namespace CarControlAndroid
             private readonly string _name;
             private readonly float _weight;
             private readonly string _logFile;
+            private readonly bool _jobActivate;
             private readonly string _classCode;
+            private readonly bool _codeShowWarnings;
             private readonly JobsInfo _jobsInfo;
             private readonly List<DisplayInfo> _displayList;
             private readonly List<StringInfo> _stringList;
@@ -227,11 +211,27 @@ namespace CarControlAndroid
                 }
             }
 
+            public bool JobActivate
+            {
+                get
+                {
+                    return _jobActivate;
+                }
+            }
+
             public string ClassCode
             {
                 get
                 {
                     return _classCode;
+                }
+            }
+
+            public bool CodeShowWarnings
+            {
+                get
+                {
+                    return _codeShowWarnings;
                 }
             }
 
@@ -413,6 +413,7 @@ namespace CarControlAndroid
                         string pageName = string.Empty;
                         float pageWeight = -1;
                         string logFile = string.Empty;
+                        bool jobActivate = false;
                         if (xnodePage.Attributes != null)
                         {
                             attrib = xnodePage.Attributes["name"];
@@ -431,6 +432,8 @@ namespace CarControlAndroid
                             }
                             attrib = xnodePage.Attributes["logfile"];
                             if (attrib != null) logFile = attrib.Value;
+                            attrib = xnodePage.Attributes["activate"];
+                            if (attrib != null) jobActivate = XmlConvert.ToBoolean(attrib.Value);
                         }
 
                         JobsInfo jobsInfo = null;
@@ -438,6 +441,7 @@ namespace CarControlAndroid
                         List<StringInfo> stringList = new List<StringInfo>();
                         bool logEnabled = false;
                         string classCode = null;
+                        bool codeShowWarnings = false;
                         foreach (XmlNode xnodePageChild in xnodePage.ChildNodes)
                         {
                             ReadDisplayNode(xnodePageChild, displayList, null, ref logEnabled);
@@ -471,17 +475,11 @@ namespace CarControlAndroid
                             if (string.Compare(xnodePageChild.Name, "jobs", StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 string sgbd = null;
-                                bool jobActivate = false;
-                                bool jobShowWarnings = false;
                                 List<JobInfo> jobList = new List<JobInfo>();
                                 if (xnodePageChild.Attributes != null)
                                 {
                                     attrib = xnodePageChild.Attributes["sgbd"];
                                     if (attrib != null) sgbd = attrib.Value;
-                                    attrib = xnodePageChild.Attributes["activate"];
-                                    if (attrib != null) jobActivate = XmlConvert.ToBoolean(attrib.Value);
-                                    attrib = xnodePageChild.Attributes["show_warnigs"];
-                                    if (attrib != null) jobShowWarnings = XmlConvert.ToBoolean(attrib.Value);
                                 }
                                 foreach (XmlNode xnodeJobsChild in xnodePageChild.ChildNodes)
                                 {
@@ -509,18 +507,20 @@ namespace CarControlAndroid
                                         }
                                     }
                                 }
-                                jobsInfo = new JobsInfo(sgbd, jobActivate, jobShowWarnings, jobList);
+                                jobsInfo = new JobsInfo(sgbd, jobList);
                             }
                             if (string.Compare(xnodePageChild.Name, "code", StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 classCode = xnodePageChild.InnerText;
+                                attrib = xnodePageChild.Attributes["show_warnigs"];
+                                if (attrib != null) codeShowWarnings = XmlConvert.ToBoolean(attrib.Value);
                             }
                         }
                         if (!logEnabled) logFile = string.Empty;
-                        if (string.IsNullOrEmpty(pageName) || (jobsInfo == null)) continue;
+                        if (string.IsNullOrEmpty(pageName)) continue;
                         if (string.IsNullOrWhiteSpace(classCode)) classCode = null;
 
-                        _pageList.Add(new PageInfo(pageName, pageWeight, logFile, classCode, jobsInfo, displayList, stringList));
+                        _pageList.Add(new PageInfo(pageName, pageWeight, logFile, jobActivate, classCode, codeShowWarnings, jobsInfo, displayList, stringList));
                     }
                 }
                 return true;

@@ -65,8 +65,7 @@
       <string name="errorNameSZM">SZM Schaltzentrum Mittelkonsole</string>
       <string name="errorNameTCU">TCU Telematic Control Unit</string>
     </strings>
-    <jobs show_warnigs="true" />
-    <code>
+    <code show_warnigs="true">
       <![CDATA[
     class PageClass
     {

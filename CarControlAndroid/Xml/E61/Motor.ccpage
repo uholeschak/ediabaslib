@@ -51,7 +51,7 @@
       <string name="label_motor_temp_before_cat">Temp. vor Katalysator [°C]:</string>
       <string name="label_motor_temp_before_filter">Temp. vor Partikelfilter [°C]:</string>
     </strings>
-    <jobs sgbd="d_motor" show_warnigs="true">
+    <jobs sgbd="d_motor">
       <job name="STATUS_MESSWERTBLOCK_LESEN"
            args_first="JA;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED"
            args="NEIN;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED">
@@ -78,7 +78,7 @@
         <display name="label_motor_part_filt_unblocked" result="STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT" log_tag="part_filt_unblocked" />
       </job>
     </jobs>
-    <code>
+    <code show_warnigs="true">
       <![CDATA[
     class PageClass
     {

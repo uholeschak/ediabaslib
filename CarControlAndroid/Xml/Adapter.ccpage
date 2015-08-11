@@ -19,8 +19,8 @@
       <string name="adapter_config_error">Konfiguration fehlgeschlagen</string>
       <string name="adapter_config_ok">Konfiguration erfolgreich</string>
     </strings>
-    <jobs sgbd="adapter_prg" show_warnigs="true" />
-    <code>
+    <jobs sgbd="adapter_prg" />
+    <code show_warnigs="true">
       <![CDATA[
     class PageClass
     {

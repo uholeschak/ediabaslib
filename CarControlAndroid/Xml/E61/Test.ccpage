@@ -9,8 +9,8 @@
     <strings lang="de">
       <string name="tab_test">Test</string>
     </strings>
-    <jobs show_warnigs="true" />
-    <code>
+    <jobs />
+    <code show_warnigs="true">
       <![CDATA[
     class PageClass
     {
