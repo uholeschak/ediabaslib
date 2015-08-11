@@ -3,15 +3,6 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/CarControl ../CarControl.xsd">
   <page name ="tab_ccc_nav" weight="1.8">
-    <display name="label_ccc_nav_pos_lat" result="STAT_GPS_POSITION_BREITE" format="T" />
-    <display name="label_ccc_nav_pos_long" result="STAT_GPS_POSITION_LAENGE" format="T" />
-    <display name="label_ccc_nav_pos_height" result="STAT_GPS_POSITION_HOEHE" format="T" />
-    <display name="label_ccc_nav_gps_date_time" result="STAT_TIME_DATE_VAL" />
-    <display name="label_ccc_nav_pos_type" result="STAT_GPS_TEXT" format="T" />
-    <display name="label_ccc_nav_speed" result="STAT_SPEED_VAL" format="T" />
-    <display name="label_ccc_nav_res_horz" result="STAT_HORIZONTALE_AUFLOES" format="T" />
-    <display name="label_ccc_nav_res_vert" result="STAT_VERTICALE_AUFLOES" format="T" />
-    <display name="label_ccc_nav_res_pos" result="STAT_POSITION_AUFLOES" format="T" />
     <strings>
       <string name="tab_ccc_nav">GPS</string>
       <string name="label_ccc_nav_almanach">Almanach status OK:</string>
@@ -40,94 +31,36 @@
       <string name="label_ccc_nav_res_vert">GPS vertikale Auflösung [m]:</string>
       <string name="label_ccc_nav_speed">Geschwindigkeit [km/h]:</string>
     </strings>
-    <jobs sgbd="d_ccc" show_warnigs="true" />
+    <jobs sgbd="d_ccc" show_warnigs="true">
+      <job name="STATUS_DR_POSITION" results="STAT_GPS_POSITION_BREITE;STAT_GPS_POSITION_HOEHE;STAT_GPS_POSITION_LAENGE;STAT_SPEED_VAL">
+        <display name="label_ccc_nav_pos_lat" result="STAT_GPS_POSITION_BREITE" format="T" />
+        <display name="label_ccc_nav_pos_long" result="STAT_GPS_POSITION_LAENGE" format="T" />
+        <display name="label_ccc_nav_pos_height" result="STAT_GPS_POSITION_HOEHE" format="T" />
+        <display name="label_ccc_nav_speed" result="STAT_SPEED_VAL" format="T" />
+      </job>
+      <job name="STATUS_GPS_TIME" results="STAT_TIME_DATE_VAL">
+        <display name="label_ccc_nav_gps_date_time" result="STAT_TIME_DATE_VAL" />
+      </job>
+      <job name="STATUS_GPS_TRACKING" results="STAT_GPS_TEXT">
+        <display name="label_ccc_nav_pos_type" result="STAT_GPS_TEXT" format="T" />
+      </job>
+      <job name="STATUS_GPS_DOP" results="STAT_HORIZONTALE_AUFLOES;STAT_VERTICALE_AUFLOES;STAT_POSITION_AUFLOES">
+        <display name="label_ccc_nav_res_horz" result="STAT_HORIZONTALE_AUFLOES" format="T" />
+        <display name="label_ccc_nav_res_vert" result="STAT_VERTICALE_AUFLOES" format="T" />
+        <display name="label_ccc_nav_res_pos" result="STAT_POSITION_AUFLOES" format="T" />
+      </job>
+    </jobs>
     <code>
       <![CDATA[
     class PageClass
     {
-        private class EdiabasJob
-        {
-            private string jobName;
-            private string jobArgs;
-            private string resultRequests;
-
-            public EdiabasJob(string jobName, string jobArgs, string resultRequests)
-            {
-                this.jobName = jobName;
-                this.jobArgs = jobArgs;
-                this.resultRequests = resultRequests;
-            }
-
-            public string JobName
-            {
-                get
-                {
-                    return jobName;
-                }
-            }
-
-            public string JobArgs
-            {
-                get
-                {
-                    return jobArgs;
-                }
-            }
-
-            public string ResultRequests
-            {
-                get
-                {
-                    return resultRequests;
-                }
-            }
-        }
-
-        static private readonly EdiabasJob[] jobArray =
-            {
-                new EdiabasJob("STATUS_GPS_TRACKING",
-                    string.Empty,
-                    "STAT_HIP_DRIVER;STAT_GPS;STAT_GPS_TEXT;STAT_ALMANACH"
-                    ),
-                new EdiabasJob("STATUS_DR_POSITION",
-                    string.Empty,
-                    "STAT_GPS_POSITION_BREITE;STAT_GPS_POSITION_HOEHE;STAT_GPS_POSITION_LAENGE;STAT_SPEED_VAL"
-                    ),
-                new EdiabasJob("STATUS_GPS_TIME",
-                    string.Empty,
-                    "STAT_TIME_DATE_VAL"
-                    ),
-                new EdiabasJob("STATUS_GPS_DOP",
-                    string.Empty,
-                    "STAT_HORIZONTALE_AUFLOES;STAT_VERTICALE_AUFLOES;STAT_POSITION_AUFLOES"
-                    ),
-            };
-
-        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
-        {
-            foreach (EdiabasJob job in jobArray)
-            {
-                ediabas.ArgString = job.JobArgs;
-                ediabas.ArgBinaryStd = null;
-                ediabas.ResultsRequests = job.ResultRequests;
-
-                ediabas.ExecuteJob(job.JobName);
-
-                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
-                if (resultSets != null && resultSets.Count >= 2)
-                {
-                    EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
-                }
-            }
-        }
-
         public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName)
         {
             string result = string.Empty;
 
             switch (resultName)
             {
-                case "STAT_TIME_DATE_VAL":
+                case "STATUS_GPS_TIME#STAT_TIME_DATE_VAL":
                     result = ActivityMain.FormatResultString(resultDict, resultName, "{0}").Replace (".*6*", ".201");
                     break;
             }

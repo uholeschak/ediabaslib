@@ -160,7 +160,7 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="args" type="string1-type" use="optional">
+    <xs:attribute name="args" type="xs:string" use="optional">
       <xs:annotation>
         <xs:documentation>
           A list of semicolon separated arguments for the EDIABAS job.
