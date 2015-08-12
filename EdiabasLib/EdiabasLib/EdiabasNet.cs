@@ -5137,7 +5137,7 @@ namespace EdiabasLib
                             string prop = GetConfigProperty("AppendTrace");
                             if (prop != null)
                             {
-                                appendTrace = (int)EdiabasNet.StringToValue(prop);
+                                appendTrace = (int)StringToValue(prop);
                             }
 
                             FileMode fileMode = FileMode.Append;

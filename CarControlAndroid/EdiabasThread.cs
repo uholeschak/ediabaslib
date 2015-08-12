@@ -8,6 +8,59 @@ namespace CarControlAndroid
 {
     public class EdiabasThread : IDisposable
     {
+        public class EdiabasErrorReport
+        {
+            public EdiabasErrorReport(string ecuName, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet) :
+                this(ecuName, errorDict, errorDetailSet, string.Empty)
+            {
+            }
+
+            public EdiabasErrorReport(string ecuName, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet, string execptionText)
+            {
+                _ecuName = ecuName;
+                _errorDict = errorDict;
+                _errorDetailSet = errorDetailSet;
+                _execptionText = execptionText;
+            }
+
+            private readonly string _ecuName;
+            private readonly Dictionary<string, EdiabasNet.ResultData> _errorDict;
+            private readonly List<Dictionary<string, EdiabasNet.ResultData>> _errorDetailSet;
+            private readonly string _execptionText;
+
+            public string EcuName
+            {
+                get
+                {
+                    return _ecuName;
+                }
+            }
+
+            public Dictionary<string, EdiabasNet.ResultData> ErrorDict
+            {
+                get
+                {
+                    return _errorDict;
+                }
+            }
+
+            public List<Dictionary<string, EdiabasNet.ResultData>> ErrorDetailSet
+            {
+                get
+                {
+                    return _errorDetailSet;
+                }
+            }
+
+            public string ExecptionText
+            {
+                get
+                {
+                    return _execptionText;
+                }
+            }
+        }
+
         public delegate void DataUpdatedEventHandler(object sender, EventArgs e);
         public event DataUpdatedEventHandler DataUpdated;
         public delegate void ThreadTerminatedEventHandler(object sender, EventArgs e);
@@ -30,11 +83,19 @@ namespace CarControlAndroid
             get;
             private set;
         }
+
+        public List<EdiabasErrorReport> EdiabasErrorReportList
+        {
+            get;
+            private set;
+        }
+
         public Dictionary<string, EdiabasNet.ResultData> EdiabasResultDict
         {
             get;
             private set;
         }
+
         public string EdiabasErrorMessage
         {
             get;
@@ -230,6 +291,118 @@ namespace CarControlAndroid
                 Thread.Sleep(1000);
                 return false;
             }
+
+            if (pageInfo.ErrorsInfo != null)
+            {   // read errors
+                if (_ediabasInitReq)
+                {
+                    lock (DataLock)
+                    {
+                        EdiabasErrorReportList = null;
+                    }
+                    _ediabasJobAbort = false;
+                    _ediabasInitReq = false;
+                }
+                List<EdiabasErrorReport> errorReportList = new List<EdiabasErrorReport>();
+
+                foreach (JobReader.EcuInfo ecuInfo in pageInfo.ErrorsInfo.EcuList)
+                {
+                    if (_ediabasJobAbort)
+                    {
+                        break;
+                    }
+                    try
+                    {
+                        _ediabas.ResolveSgbdFile(ecuInfo.Sgbd);
+                    }
+                    catch (Exception ex)
+                    {
+                        string exText = EdiabasNet.GetExceptionText(ex);
+                        errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, null, null, exText));
+                        Thread.Sleep(10);
+                        continue;
+                    }
+
+                    _ediabas.ArgString = string.Empty;
+                    _ediabas.ArgBinaryStd = null;
+                    _ediabas.ResultsRequests = "JOB_STATUS;F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT";
+
+                    try
+                    {
+                        _ediabas.ExecuteJob("FS_LESEN");
+
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(_ediabas.ResultSets);
+
+                        bool jobOk = false;
+                        if (resultSets.Count > 1)
+                        {
+                            EdiabasNet.ResultData resultData;
+                            if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {   // read details
+                                    string jobStatus = (string)resultData.OpData;
+                                    if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        jobOk = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (jobOk)
+                        {
+                            int dictIndex = 0;
+                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                            {
+                                if (dictIndex == 0)
+                                {
+                                    dictIndex++;
+                                    continue;
+                                }
+
+                                EdiabasNet.ResultData resultData;
+                                if (resultDictLocal.TryGetValue("F_ORT_NR", out resultData))
+                                {
+                                    if (resultData.OpData is Int64)
+                                    {   // read details
+                                        _ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.OpData);
+                                        _ediabas.ArgBinaryStd = null;
+                                        _ediabas.ResultsRequests = "F_UW_KM";
+
+                                        _ediabas.ExecuteJob("FS_LESEN_DETAIL");
+
+                                        List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail = new List<Dictionary<string, EdiabasNet.ResultData>>(_ediabas.ResultSets);
+                                        errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictLocal,
+                                            new List<Dictionary<string, EdiabasNet.ResultData>>(resultSetsDetail)));
+                                    }
+                                }
+                                dictIndex++;
+                            }
+                        }
+                        else
+                        {
+                            errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, null, null));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        string exText = EdiabasNet.GetExceptionText(ex);
+                        errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, null, null, exText));
+                        Thread.Sleep(10);
+                        continue;
+                    }
+                    Thread.Sleep(10);
+                }
+
+                lock (DataLock)
+                {
+                    EdiabasErrorReportList = errorReportList;
+                }
+                return true;
+            }
+            // execute jobs
+
             bool firstRequestCall = false;
             if (_ediabasInitReq)
             {

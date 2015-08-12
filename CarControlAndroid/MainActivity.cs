@@ -657,42 +657,104 @@ namespace CarControlAndroid
                     {
                         currDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", Culture);
                     }
-                    foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
-                    {
-                        string result = string.Empty;
-                        if (displayInfo.Format == null)
+
+                    if (pageInfo.ErrorsInfo != null)
+                    {   // read errors
+                        List<EdiabasThread.EdiabasErrorReport> errorReportList;
+                        lock (EdiabasThread.DataLock)
                         {
-                            if (resultDict != null)
+                            errorReportList = _ediabasThread.EdiabasErrorReportList;
+                        }
+                        if (errorReportList != null)
+                        {
+                            foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
                             {
-                                try
+                                string message = string.Format(Culture, "{0}: ",
+                                    GetPageString(pageInfo, errorReport.EcuName));
+                                if (errorReport.ErrorDict == null)
                                 {
-                                    if (formatResult)
+                                    message += GetString(Resource.String.error_no_response);
+                                }
+                                else
+                                {
+                                    message += "\r\n";
+                                    message += FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT",
+                                        "{0}");
+                                    message += ", ";
+                                    message += FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT",
+                                        "{0}");
+                                    string detailText = string.Empty;
+                                    foreach (
+                                        Dictionary<string, EdiabasNet.ResultData> errorDetail in
+                                            errorReport.ErrorDetailSet)
                                     {
-                                        result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result);
+                                        string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
+                                        if (kmText.Length > 0)
+                                        {
+                                            if (detailText.Length > 0)
+                                            {
+                                                detailText += ", ";
+                                            }
+                                            detailText += kmText + "km";
+                                        }
+                                    }
+                                    if (detailText.Length > 0)
+                                    {
+                                        message += "\r\n" + detailText;
                                     }
                                 }
-                                catch (Exception)
+
+                                if (message.Length > 0)
                                 {
-                                    // ignored
+                                    resultListAdapter.Items.Add(new TableResultItem(message, null));
                                 }
                             }
-                        }
-                        else
-                        {
-                            result = FormatResultEdiabas(resultDict, displayInfo.Result, displayInfo.Format);
-                        }
-                        if (result != null)
-                        {
-                            resultListAdapter.Items.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result));
-                            if (!string.IsNullOrEmpty(displayInfo.LogTag) && _dataLogActive && _swDataLog != null)
+                            if (resultListAdapter.Items.Count == 0)
                             {
-                                try
+                                resultListAdapter.Items.Add(
+                                    new TableResultItem(GetString(Resource.String.error_no_error), null));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
+                        {
+                            string result = string.Empty;
+                            if (displayInfo.Format == null)
+                            {
+                                if (resultDict != null)
                                 {
-                                    _swDataLog.Write("{0}\t{1}\t{2}\r\n", displayInfo.LogTag, currDateTime, result);
+                                    try
+                                    {
+                                        if (formatResult)
+                                        {
+                                            result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result);
+                                        }
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // ignored
+                                    }
                                 }
-                                catch (Exception)
+                            }
+                            else
+                            {
+                                result = FormatResultEdiabas(resultDict, displayInfo.Result, displayInfo.Format);
+                            }
+                            if (result != null)
+                            {
+                                resultListAdapter.Items.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result));
+                                if (!string.IsNullOrEmpty(displayInfo.LogTag) && _dataLogActive && _swDataLog != null)
                                 {
-                                    // ignored
+                                    try
+                                    {
+                                        _swDataLog.Write("{0}\t{1}\t{2}\r\n", displayInfo.LogTag, currDateTime, result);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // ignored
+                                    }
                                 }
                             }
                         }
@@ -912,7 +974,8 @@ namespace CarControlAndroid
                                 + infoLocal.ClassCode;
                             evaluator.Compile(classCode);
                             infoLocal.ClassObject = evaluator.Evaluate("new PageClass()");
-                            if ((infoLocal.JobsInfo == null) || (infoLocal.JobsInfo.JobList.Count == 0))
+                            if (((infoLocal.JobsInfo == null) || (infoLocal.JobsInfo.JobList.Count == 0)) &&
+                                ((infoLocal.ErrorsInfo == null) || (infoLocal.ErrorsInfo.EcuList.Count == 0)))
                             {
                                 Type pageType = infoLocal.ClassObject.GetType();
                                 if (pageType.GetMethod("ExecuteJob") == null)

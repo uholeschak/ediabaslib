@@ -16,6 +16,8 @@
   <string name="config_select_title">Konfiguration</string>
   <string name="bt_device_select_title">Bluetooth Gerät</string>
   <string name="bt_device_select">Es wurde kein Bluetooth Gerät ausgewählt. Wollen Sie jetzt ein Gerät auswählen?</string>
+  <string name="error_no_error">Keine Fehler vorhanden</string>
+  <string name="error_no_response">Keine Antwort</string>
 
   <!-- Compile -->
   <string name="compile_start">Anwendercode kompilieren</string>

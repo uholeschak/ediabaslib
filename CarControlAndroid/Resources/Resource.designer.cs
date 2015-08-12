@@ -2034,8 +2034,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f050010
 			public const int abc_toolbar_collapse_description = 2131034128;
 			
-			// aapt resource value: 0x7f050036
-			public const int access_dir_failed = 2131034166;
+			// aapt resource value: 0x7f050038
+			public const int access_dir_failed = 2131034168;
 			
 			// aapt resource value: 0x7f050013
 			public const int app_name = 2131034131;
@@ -2055,8 +2055,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f050019
 			public const int button_abort = 2131034137;
 			
-			// aapt resource value: 0x7f05002c
-			public const int button_active = 2131034156;
+			// aapt resource value: 0x7f05002e
+			public const int button_active = 2131034158;
 			
 			// aapt resource value: 0x7f050014
 			public const int button_connected = 2131034132;
@@ -2064,8 +2064,8 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f050015
 			public const int button_disconnected = 2131034133;
 			
-			// aapt resource value: 0x7f05002d
-			public const int button_inactive = 2131034157;
+			// aapt resource value: 0x7f05002f
+			public const int button_inactive = 2131034159;
 			
 			// aapt resource value: 0x7f050017
 			public const int button_no = 2131034135;
@@ -2073,17 +2073,17 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f050018
 			public const int button_ok = 2131034136;
 			
-			// aapt resource value: 0x7f05002b
-			public const int button_scan = 2131034155;
+			// aapt resource value: 0x7f05002d
+			public const int button_scan = 2131034157;
 			
 			// aapt resource value: 0x7f050016
 			public const int button_yes = 2131034134;
 			
-			// aapt resource value: 0x7f050024
-			public const int compile_ok_btn = 2131034148;
+			// aapt resource value: 0x7f050026
+			public const int compile_ok_btn = 2131034150;
 			
-			// aapt resource value: 0x7f050023
-			public const int compile_start = 2131034147;
+			// aapt resource value: 0x7f050025
+			public const int compile_start = 2131034149;
 			
 			// aapt resource value: 0x7f05001f
 			public const int config_select = 2131034143;
@@ -2091,8 +2091,14 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f050020
 			public const int config_select_title = 2131034144;
 			
-			// aapt resource value: 0x7f050037
-			public const int file_picker_search = 2131034167;
+			// aapt resource value: 0x7f050023
+			public const int error_no_error = 2131034147;
+			
+			// aapt resource value: 0x7f050024
+			public const int error_no_response = 2131034148;
+			
+			// aapt resource value: 0x7f050039
+			public const int file_picker_search = 2131034169;
 			
 			// aapt resource value: 0x7f05001a
 			public const int interface_activate = 2131034138;
@@ -2100,107 +2106,107 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f050012
 			public const int library_name = 2131034130;
 			
-			// aapt resource value: 0x7f050032
-			public const int menu_append_trace = 2131034162;
-			
-			// aapt resource value: 0x7f05002e
-			public const int menu_device = 2131034158;
+			// aapt resource value: 0x7f050034
+			public const int menu_append_trace = 2131034164;
 			
 			// aapt resource value: 0x7f050030
-			public const int menu_ediabas_tool = 2131034160;
+			public const int menu_device = 2131034160;
 			
-			// aapt resource value: 0x7f050033
-			public const int menu_enable_datalog = 2131034163;
-			
-			// aapt resource value: 0x7f050031
-			public const int menu_enable_trace = 2131034161;
-			
-			// aapt resource value: 0x7f050034
-			public const int menu_exit = 2131034164;
-			
-			// aapt resource value: 0x7f05002f
-			public const int menu_sel_cfg = 2131034159;
-			
-			// aapt resource value: 0x7f050048
-			public const int menu_tool_sel_interface = 2131034184;
-			
-			// aapt resource value: 0x7f050049
-			public const int menu_tool_sel_sgbd_grp = 2131034185;
-			
-			// aapt resource value: 0x7f05004a
-			public const int menu_tool_sel_sgbd_prg = 2131034186;
-			
-			// aapt resource value: 0x7f050028
-			public const int none_found = 2131034152;
-			
-			// aapt resource value: 0x7f050027
-			public const int none_paired = 2131034151;
-			
-			// aapt resource value: 0x7f050025
-			public const int scanning = 2131034149;
-			
-			// aapt resource value: 0x7f050026
-			public const int select_device = 2131034150;
+			// aapt resource value: 0x7f050032
+			public const int menu_ediabas_tool = 2131034162;
 			
 			// aapt resource value: 0x7f050035
-			public const int select_file = 2131034165;
+			public const int menu_enable_datalog = 2131034165;
 			
-			// aapt resource value: 0x7f050038
-			public const int select_interface = 2131034168;
+			// aapt resource value: 0x7f050033
+			public const int menu_enable_trace = 2131034163;
 			
-			// aapt resource value: 0x7f050039
-			public const int select_interface_bt = 2131034169;
+			// aapt resource value: 0x7f050036
+			public const int menu_exit = 2131034166;
+			
+			// aapt resource value: 0x7f050031
+			public const int menu_sel_cfg = 2131034161;
+			
+			// aapt resource value: 0x7f05004a
+			public const int menu_tool_sel_interface = 2131034186;
+			
+			// aapt resource value: 0x7f05004b
+			public const int menu_tool_sel_sgbd_grp = 2131034187;
+			
+			// aapt resource value: 0x7f05004c
+			public const int menu_tool_sel_sgbd_prg = 2131034188;
+			
+			// aapt resource value: 0x7f05002a
+			public const int none_found = 2131034154;
+			
+			// aapt resource value: 0x7f050029
+			public const int none_paired = 2131034153;
+			
+			// aapt resource value: 0x7f050027
+			public const int scanning = 2131034151;
+			
+			// aapt resource value: 0x7f050028
+			public const int select_device = 2131034152;
+			
+			// aapt resource value: 0x7f050037
+			public const int select_file = 2131034167;
 			
 			// aapt resource value: 0x7f05003a
-			public const int select_interface_enet = 2131034170;
+			public const int select_interface = 2131034170;
+			
+			// aapt resource value: 0x7f05003b
+			public const int select_interface_bt = 2131034171;
+			
+			// aapt resource value: 0x7f05003c
+			public const int select_interface_enet = 2131034172;
 			
 			// aapt resource value: 0x7f050011
 			public const int status_bar_notification_info_overflow = 2131034129;
 			
-			// aapt resource value: 0x7f05002a
-			public const int title_other_devices = 2131034154;
+			// aapt resource value: 0x7f05002c
+			public const int title_other_devices = 2131034156;
 			
-			// aapt resource value: 0x7f050029
-			public const int title_paired_devices = 2131034153;
-			
-			// aapt resource value: 0x7f050045
-			public const int tool_check_continuous = 2131034181;
-			
-			// aapt resource value: 0x7f050040
-			public const int tool_job_arguments = 2131034176;
-			
-			// aapt resource value: 0x7f050041
-			public const int tool_job_arguments_error_detail = 2131034177;
-			
-			// aapt resource value: 0x7f050044
-			public const int tool_job_infos = 2131034180;
-			
-			// aapt resource value: 0x7f05003f
-			public const int tool_job_job = 2131034175;
-			
-			// aapt resource value: 0x7f05003e
-			public const int tool_job_jobs = 2131034174;
-			
-			// aapt resource value: 0x7f050043
-			public const int tool_job_result = 2131034179;
-			
-			// aapt resource value: 0x7f050042
-			public const int tool_job_results = 2131034178;
+			// aapt resource value: 0x7f05002b
+			public const int title_paired_devices = 2131034155;
 			
 			// aapt resource value: 0x7f050047
-			public const int tool_no_errors = 2131034183;
+			public const int tool_check_continuous = 2131034183;
+			
+			// aapt resource value: 0x7f050042
+			public const int tool_job_arguments = 2131034178;
+			
+			// aapt resource value: 0x7f050043
+			public const int tool_job_arguments_error_detail = 2131034179;
 			
 			// aapt resource value: 0x7f050046
-			public const int tool_read_errors_failure = 2131034182;
+			public const int tool_job_infos = 2131034182;
+			
+			// aapt resource value: 0x7f050041
+			public const int tool_job_job = 2131034177;
+			
+			// aapt resource value: 0x7f050040
+			public const int tool_job_jobs = 2131034176;
+			
+			// aapt resource value: 0x7f050045
+			public const int tool_job_result = 2131034181;
+			
+			// aapt resource value: 0x7f050044
+			public const int tool_job_results = 2131034180;
+			
+			// aapt resource value: 0x7f050049
+			public const int tool_no_errors = 2131034185;
+			
+			// aapt resource value: 0x7f050048
+			public const int tool_read_errors_failure = 2131034184;
+			
+			// aapt resource value: 0x7f05003f
+			public const int tool_read_sgbd = 2131034175;
+			
+			// aapt resource value: 0x7f05003e
+			public const int tool_select_sgbd = 2131034174;
 			
 			// aapt resource value: 0x7f05003d
-			public const int tool_read_sgbd = 2131034173;
-			
-			// aapt resource value: 0x7f05003c
-			public const int tool_select_sgbd = 2131034172;
-			
-			// aapt resource value: 0x7f05003b
-			public const int tool_title = 2131034171;
+			public const int tool_title = 2131034173;
 			
 			// aapt resource value: 0x7f05001c
 			public const int wifi_enable = 2131034140;
