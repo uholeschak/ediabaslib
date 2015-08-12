@@ -5,334 +5,89 @@
   <page name ="tab_errors">
     <strings>
       <string name="tab_errors">Errors</string>
-      <string name="error_no_error">No errors present</string>
-      <string name="error_no_response">No response</string>
 
-      <string name="errorNameACSM">ACSM Crash security module</string>
-      <string name="errorNameAHM">AHM Trailer module</string>
-      <string name="errorNameCAS">CAS Car access system</string>
-      <string name="errorNameCCCA">CCC-A Applications</string>
-      <string name="errorNameCCCANT">CCC-ANT Antenna tuner</string>
-      <string name="errorNameCCCASK">CCC-ASK Audio system controller</string>
-      <string name="errorNameCCCBO">CCC-BO Front panel</string>
-      <string name="errorNameCCCGW">CCC-GW Gateway</string>
-      <string name="errorNameCDC">CDC CD disk charger</string>
-      <string name="errorNameCID">CID Central information display</string>
-      <string name="errorNameCON">CON Controller</string>
-      <string name="errorNameDDE">DDE Diesel elektronic</string>
-      <string name="errorNameDSC">DSC Dynamic stability control</string>
-      <string name="errorNameEHC">EHC Level control</string>
-      <string name="errorNameEKPS">EKPS Fuel pump control</string>
-      <string name="errorNameIHK">IHK Integrated heating climate automatic</string>
-      <string name="errorNameKBM">KBM Chassis basic module</string>
-      <string name="errorNameKGM">KGM Chassis gateway module</string>
-      <string name="errorNameKOMBI">KOMBI Combination instrument</string>
-      <string name="errorNameLM">LM Light module</string>
-      <string name="errorNamePDC">PDC Park distance control</string>
-      <string name="errorNameRLS">RLS Rain main beam sensor</string>
-      <string name="errorNameSZL">SZL Gearshift unit steering column</string>
-      <string name="errorNameSZM">SZM Gearshift unit center console</string>
-      <string name="errorNameTCU">TCU Telematic control unit</string>
+      <string name="ACSM">ACSM Crash security module</string>
+      <string name="AHM">AHM Trailer module</string>
+      <string name="CAS">CAS Car access system</string>
+      <string name="CCCA">CCC-A Applications</string>
+      <string name="CCCANT">CCC-ANT Antenna tuner</string>
+      <string name="CCCASK">CCC-ASK Audio system controller</string>
+      <string name="CCCBO">CCC-BO Front panel</string>
+      <string name="CCCGW">CCC-GW Gateway</string>
+      <string name="CDC">CDC CD disk charger</string>
+      <string name="CID">CID Central information display</string>
+      <string name="CON">CON Controller</string>
+      <string name="DDE">DDE Diesel elektronic</string>
+      <string name="DSC">DSC Dynamic stability control</string>
+      <string name="EHC">EHC Level control</string>
+      <string name="EKPS">EKPS Fuel pump control</string>
+      <string name="IHK">IHK Integrated heating climate automatic</string>
+      <string name="KBM">KBM Chassis basic module</string>
+      <string name="KGM">KGM Chassis gateway module</string>
+      <string name="KOMBI">KOMBI Combination instrument</string>
+      <string name="LM">LM Light module</string>
+      <string name="PDC">PDC Park distance control</string>
+      <string name="RLS">RLS Rain main beam sensor</string>
+      <string name="SZL">SZL Gearshift unit steering column</string>
+      <string name="SZM">SZM Gearshift unit center console</string>
+      <string name="TCU">TCU Telematic control unit</string>
     </strings>
     <strings lang="de">
       <string name="tab_errors">Fehler</string>
-      <string name="error_no_error">Keine Fehler vorhanden</string>
-      <string name="error_no_response">Keine Antwort</string>
 
-      <string name="errorNameACSM">ACSM Crash-Sicherheits-Modul</string>
-      <string name="errorNameAHM">AHM Anhängermodul</string>
-      <string name="errorNameCAS">CAS Car Access System</string>
-      <string name="errorNameCCCA">CCC-A Anwendungen</string>
-      <string name="errorNameCCCANT">CCC-ANT Antennentuner</string>
-      <string name="errorNameCCCASK">CCC-ASK Audiosystem-Kontroller</string>
-      <string name="errorNameCCCBO">CCC-BO Bedienoberfläche</string>
-      <string name="errorNameCCCGW">CCC-GW Gateway</string>
-      <string name="errorNameCDC">CDC CD-Wechsler</string>
-      <string name="errorNameCID">CID Central Information Display</string>
-      <string name="errorNameCON">CON Controller</string>
-      <string name="errorNameDDE">DDE Diesel Elektronik</string>
-      <string name="errorNameDSC">DSC Dynamische Stabilitätskontrolle</string>
-      <string name="errorNameEHC">EHC Höhenstands Control</string>
-      <string name="errorNameEKPS">EKPS Kraftstoffpumpensteuerung</string>
-      <string name="errorNameIHK">IHK Integrierte Heiz-Klima-Automatik</string>
-      <string name="errorNameKBM">KBM Karosserie-Basismodul</string>
-      <string name="errorNameKGM">KGM Karosserie-Gateway-Modul</string>
-      <string name="errorNameKOMBI">KOMBI Instrumentenkombination</string>
-      <string name="errorNameLM">LM Lichtmodul</string>
-      <string name="errorNamePDC">PDC Park-Distance-Control</string>
-      <string name="errorNameRLS">RLS Regen-Fahrlicht-Sensor</string>
-      <string name="errorNameSZL">SZL Schaltzentrum Lenksäule</string>
-      <string name="errorNameSZM">SZM Schaltzentrum Mittelkonsole</string>
-      <string name="errorNameTCU">TCU Telematic Control Unit</string>
+      <string name="ACSM">ACSM Crash-Sicherheits-Modul</string>
+      <string name="AHM">AHM Anhängermodul</string>
+      <string name="CAS">CAS Car Access System</string>
+      <string name="CCCA">CCC-A Anwendungen</string>
+      <string name="CCCANT">CCC-ANT Antennentuner</string>
+      <string name="CCCASK">CCC-ASK Audiosystem-Kontroller</string>
+      <string name="CCCBO">CCC-BO Bedienoberfläche</string>
+      <string name="CCCGW">CCC-GW Gateway</string>
+      <string name="CDC">CDC CD-Wechsler</string>
+      <string name="CID">CID Central Information Display</string>
+      <string name="CON">CON Controller</string>
+      <string name="DDE">DDE Diesel Elektronik</string>
+      <string name="DSC">DSC Dynamische Stabilitätskontrolle</string>
+      <string name="EHC">EHC Höhenstands Control</string>
+      <string name="EKPS">EKPS Kraftstoffpumpensteuerung</string>
+      <string name="IHK">IHK Integrierte Heiz-Klima-Automatik</string>
+      <string name="KBM">KBM Karosserie-Basismodul</string>
+      <string name="KGM">KGM Karosserie-Gateway-Modul</string>
+      <string name="KOMBI">KOMBI Instrumentenkombination</string>
+      <string name="LM">LM Lichtmodul</string>
+      <string name="PDC">PDC Park-Distance-Control</string>
+      <string name="RLS">RLS Regen-Fahrlicht-Sensor</string>
+      <string name="SZL">SZL Schaltzentrum Lenksäule</string>
+      <string name="SZM">SZM Schaltzentrum Mittelkonsole</string>
+      <string name="TCU">TCU Telematic Control Unit</string>
     </strings>
-    <code show_warnigs="true">
-      <![CDATA[
-    class PageClass
-    {
-        private class EdiabasErrorRequest
-        {
-            private string deviceName;
-            private string sgbdFile;
-
-            public EdiabasErrorRequest(string deviceName, string sgbdFile)
-            {
-                this.deviceName = deviceName;
-                this.sgbdFile = sgbdFile;
-            }
-
-            public string DeviceName
-            {
-                get { return deviceName; }
-            }
-            public string SgbdFile
-            {
-                get { return sgbdFile; }
-            }
-        }
-
-        public class EdiabasErrorReport
-        {
-            private string deviceName;
-            private Dictionary<string, EdiabasNet.ResultData> errorDict;
-            private List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet;
-            private string execptionText;
-
-            public EdiabasErrorReport(string deviceName, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet) :
-                this(deviceName, errorDict, errorDetailSet, string.Empty)
-            {
-            }
-
-            public EdiabasErrorReport(string deviceName, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet, string execptionText)
-            {
-                this.deviceName = deviceName;
-                this.errorDict = errorDict;
-                this.errorDetailSet = errorDetailSet;
-                this.execptionText = execptionText;
-            }
-
-            public string DeviceName
-            {
-                get
-                {
-                    return deviceName;
-                }
-            }
-
-            public Dictionary<string, EdiabasNet.ResultData> ErrorDict
-            {
-                get
-                {
-                    return errorDict;
-                }
-            }
-
-            public List<Dictionary<string, EdiabasNet.ResultData>> ErrorDetailSet
-            {
-                get
-                {
-                    return errorDetailSet;
-                }
-            }
-
-            public string ExecptionText
-            {
-                get
-                {
-                    return execptionText;
-                }
-            }
-        }
-
-        static private readonly EdiabasErrorRequest[] EdiabasErrorRequestList =
-        {
-            new EdiabasErrorRequest("errorNameCAS", "d_cas"),
-            new EdiabasErrorRequest("errorNameDDE", "d_motor"),
-            new EdiabasErrorRequest("errorNameEKPS", "d_ekp"),
-            new EdiabasErrorRequest("errorNameEHC", "d_ehc"),
-            new EdiabasErrorRequest("errorNameDSC", "d_dsc"),
-            new EdiabasErrorRequest("errorNameACSM", "d_sim"),
-            new EdiabasErrorRequest("errorNameAHM", "d_ahm"),
-            new EdiabasErrorRequest("errorNameCCCBO", "d_mmi"),
-            new EdiabasErrorRequest("errorNameCCCGW", "d_mostgw"),
-            new EdiabasErrorRequest("errorNameCCCA", "d_ccc"),
-            new EdiabasErrorRequest("errorNameCCCANT", "d_anttu"),
-            new EdiabasErrorRequest("errorNameCCCASK", "d_ask"),
-            new EdiabasErrorRequest("errorNameCDC", "d_cdc"),
-            new EdiabasErrorRequest("errorNameCID", "d_cid"),
-            new EdiabasErrorRequest("errorNameCON", "d_ec"),
-            new EdiabasErrorRequest("errorNameIHK", "d_klima"),
-            new EdiabasErrorRequest("errorNameKBM", "d_kbm"),
-            new EdiabasErrorRequest("errorNameKGM", "d_zgm"),
-            new EdiabasErrorRequest("errorNameKOMBI", "d_kombi"),
-            new EdiabasErrorRequest("errorNameLM", "d_lm"),
-            new EdiabasErrorRequest("errorNamePDC", "d_pdc"),
-            new EdiabasErrorRequest("errorNameRLS", "rlss70" /*"d_rls"*/),
-            new EdiabasErrorRequest("errorNameSZL", "d_szl"),
-            new EdiabasErrorRequest("errorNameSZM", "d_bzm"),
-            new EdiabasErrorRequest("errorNameTCU", "d_tel"),
-        };
-
-        List<EdiabasErrorReport> errorReportListStore;
-
-        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
-        {
-            if (firstCall)
-            {
-                lock (EdiabasThread.DataLock)
-                {
-                    errorReportListStore = null;
-                }
-            }
-
-            List<EdiabasErrorReport> errorReportList = new List<EdiabasErrorReport>();
-
-            foreach (EdiabasErrorRequest errorRequest in EdiabasErrorRequestList)
-            {
-                try
-                {
-                    ediabas.ResolveSgbdFile(errorRequest.SgbdFile);
-                }
-                catch (Exception ex)
-                {
-                    string exText = EdiabasNet.GetExceptionText(ex);
-                    errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, null, null, exText));
-                    continue;
-                }
-
-                ediabas.ArgString = string.Empty;
-                ediabas.ArgBinaryStd = null;
-                ediabas.ResultsRequests = "JOB_STATUS;F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT";
-
-                try
-                {
-                    ediabas.ExecuteJob("FS_LESEN");
-
-                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(ediabas.ResultSets);
-
-                    bool jobOk = false;
-                    if (resultSets != null && resultSets.Count > 1)
-                    {
-                        EdiabasNet.ResultData resultData;
-                        if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
-                        {
-                            if (resultData.OpData is string)
-                            {   // read details
-                                string jobStatus = (string)resultData.OpData;
-                                if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                                {
-                                    jobOk = true;
-                                }
-                            }
-                        }
-                    }
-
-                    if (jobOk)
-                    {
-                        int dictIndex = 0;
-                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
-                        {
-                            if (dictIndex == 0)
-                            {
-                                dictIndex++;
-                                continue;
-                            }
-
-                            EdiabasNet.ResultData resultData;
-                            if (resultDictLocal.TryGetValue("F_ORT_NR", out resultData))
-                            {
-                                if (resultData.OpData is Int64)
-                                {   // read details
-                                    ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.OpData);
-                                    ediabas.ArgBinaryStd = null;
-                                    ediabas.ResultsRequests = "F_UW_KM";
-
-                                    ediabas.ExecuteJob("FS_LESEN_DETAIL");
-
-                                    List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail = new List<Dictionary<string, EdiabasNet.ResultData>>(ediabas.ResultSets);
-                                    if (resultSetsDetail != null)
-                                    {
-                                        errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, resultDictLocal,
-                                            new List<Dictionary<string, EdiabasNet.ResultData>>(resultSetsDetail)));
-                                    }
-                                }
-                            }
-                            dictIndex++;
-                        }
-                    }
-                    else
-                    {
-                        errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, null, null));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    string exText = EdiabasNet.GetExceptionText(ex);
-                    errorReportList.Add(new EdiabasErrorReport(errorRequest.DeviceName, null, null, exText));
-                    continue;
-                }
-                Thread.Sleep(10);
-            }
-
-            lock (EdiabasThread.DataLock)
-            {
-                errorReportListStore = errorReportList;
-            }
-        }
-
-        public void UpdateResultList(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, ResultListAdapter resultListAdapter)
-        {
-            List<EdiabasErrorReport> errorReportList;
-            lock (EdiabasThread.DataLock)
-            {
-                errorReportList = errorReportListStore;
-            }
-            if (errorReportList != null)
-            {
-                foreach (EdiabasErrorReport errorReport in errorReportList)
-                {
-                    string message = string.Format(ActivityMain.Culture, "{0}: ", ActivityMain.GetPageString(pageInfo, errorReport.DeviceName));
-                    if (errorReport.ErrorDict == null)
-                    {
-                        message += ActivityMain.GetPageString(pageInfo, "error_no_response");
-                    }
-                    else
-                    {
-                        message += "\r\n";
-                        message += ActivityMain.FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
-                        message += ", ";
-                        message += ActivityMain.FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
-                        string detailText = string.Empty;
-                        foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
-                        {
-                            string kmText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
-                            if (kmText.Length > 0)
-                            {
-                                if (detailText.Length > 0)
-                                {
-                                    detailText += ", ";
-                                }
-                                detailText += kmText + "km";
-                            }
-                        }
-                        if (detailText.Length > 0)
-                        {
-                            message += "\r\n" + detailText;
-                        }
-                    }
-
-                    if (message.Length > 0)
-                    {
-                        resultListAdapter.Items.Add(new TableResultItem(message, null));
-                    }
-                }
-                if (resultListAdapter.Items.Count == 0)
-                {
-                    resultListAdapter.Items.Add(new TableResultItem(ActivityMain.GetPageString(pageInfo, "error_no_error"), null));
-                }
-            }
-        }
-    }
-      ]]>
-    </code>
+    <read_errors>
+      <ecu name="CAS" sgbd="d_cas" />
+      <ecu name="DDE" sgbd="d_motor" />
+      <ecu name="EKPS" sgbd="d_ekp" />
+      <ecu name="EHC" sgbd="d_ehc" />
+      <ecu name="DSC" sgbd="d_dsc" />
+      <ecu name="ACSM" sgbd="d_sim" />
+      <ecu name="AHM" sgbd="d_ahm" />
+      <ecu name="CCCBO" sgbd="d_mmi" />
+      <ecu name="CCCGW" sgbd="d_mostgw" />
+      <ecu name="CCCA" sgbd="d_ccc" />
+      <ecu name="CCCANT" sgbd="d_anttu" />
+      <ecu name="CCCASK" sgbd="d_ask" />
+      <ecu name="CDC" sgbd="d_cdc" />
+      <ecu name="CID" sgbd="d_cid" />
+      <ecu name="CON" sgbd="d_ec" />
+      <ecu name="IHK" sgbd="d_klima" />
+      <ecu name="KBM" sgbd="d_kbm" />
+      <ecu name="KGM" sgbd="d_zgm" />
+      <ecu name="KOMBI" sgbd="d_kombi" />
+      <ecu name="LM" sgbd="d_lm" />
+      <ecu name="PDC" sgbd="d_pdc" />
+      <!-- d_rls is too slow -->
+      <ecu name="RLS" sgbd="rlss70" />
+      <ecu name="SZL" sgbd="d_szl" />
+      <ecu name="SZM" sgbd="d_bzm" />
+      <ecu name="TCU" sgbd="d_tel" />
+    </read_errors>
   </page>
 </fragment>

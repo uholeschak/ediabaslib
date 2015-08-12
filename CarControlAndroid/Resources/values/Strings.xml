@@ -16,6 +16,8 @@
   <string name="config_select_title">Configuration</string>
   <string name="bt_device_select_title">Bluetooth device</string>
   <string name="bt_device_select">No Bluetooth device has been selected. Do you want to select a device now?</string>
+  <string name="error_no_error">No errors present</string>
+  <string name="error_no_response">No response</string>
 
   <!-- Compile -->
   <string name="compile_start">Compiling user code</string>

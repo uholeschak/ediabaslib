@@ -25,34 +25,22 @@ namespace CarControlAndroid
 
             public string Name
             {
-                get
-                {
-                    return _name;
-                }
+                get { return _name; }
             }
 
             public string Result
             {
-                get
-                {
-                    return _result;
-                }
+                get { return _result; }
             }
 
             public string Format
             {
-                get
-                {
-                    return _format;
-                }
+                get { return _format; }
             }
 
             public string LogTag
             {
-                get
-                {
-                    return _logTag;
-                }
+                get { return _logTag; }
             }
         }
 
@@ -69,18 +57,12 @@ namespace CarControlAndroid
 
             public string Lang
             {
-                get
-                {
-                    return _lang;
-                }
+                get { return _lang; }
             }
 
             public Dictionary<string, string> StringDict
             {
-                get
-                {
-                    return _stringDict;
-                }
+                get { return _stringDict; }
             }
         }
 
@@ -101,34 +83,22 @@ namespace CarControlAndroid
 
             public string Name
             {
-                get
-                {
-                    return _name;
-                }
+                get { return _name; }
             }
 
             public string Args
             {
-                get
-                {
-                    return _args;
-                }
+                get { return _args; }
             }
 
             public string ArgsFirst
             {
-                get
-                {
-                    return _argsFirst;
-                }
+                get { return _argsFirst; }
             }
 
             public string Results
             {
-                get
-                {
-                    return _results;
-                }
+                get { return _results; }
             }
         }
 
@@ -145,24 +115,55 @@ namespace CarControlAndroid
 
             public string Sgbd
             {
-                get
-                {
-                    return _sgbd;
-                }
+                get { return _sgbd; }
             }
 
             public List<JobInfo> JobList
             {
-                get
-                {
-                    return _jobList;
-                }
+                get { return _jobList; }
+            }
+        }
+
+        public class EcuInfo
+        {
+            public EcuInfo(string name, string sgbd)
+            {
+                _name = name;
+                _sgbd = sgbd;
+            }
+
+            private readonly string _name;
+            private readonly string _sgbd;
+
+            public string Name
+            {
+                get { return _name; }
+            }
+
+            public string Sgbd
+            {
+                get { return _sgbd; }
+            }
+        }
+
+        public class ErrorsInfo
+        {
+            public ErrorsInfo(List<EcuInfo> ecuList)
+            {
+                _ecuList = ecuList;
+            }
+
+            private readonly List<EcuInfo> _ecuList;
+
+            public List<EcuInfo> EcuList
+            {
+                get { return _ecuList; }
             }
         }
 
         public class PageInfo
         {
-            public PageInfo(string name, float weight, string logFile, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
+            public PageInfo(string name, float weight, string logFile, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, ErrorsInfo errorsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
             {
                 _name = name;
                 _weight = weight;
@@ -171,6 +172,7 @@ namespace CarControlAndroid
                 _classCode = classCode;
                 _codeShowWarnings = codeShowWarnings;
                 _jobsInfo = jobsInfo;
+                _errorsInfo = errorsInfo;
                 _displayList = displayList;
                 _stringList = stringList;
                 InfoObject = null;
@@ -184,6 +186,7 @@ namespace CarControlAndroid
             private readonly string _classCode;
             private readonly bool _codeShowWarnings;
             private readonly JobsInfo _jobsInfo;
+            private readonly ErrorsInfo _errorsInfo;
             private readonly List<DisplayInfo> _displayList;
             private readonly List<StringInfo> _stringList;
 
@@ -240,6 +243,14 @@ namespace CarControlAndroid
                 get
                 {
                     return _jobsInfo;
+                }
+            }
+
+            public ErrorsInfo ErrorsInfo
+            {
+                get
+                {
+                    return _errorsInfo;
                 }
             }
 
@@ -437,6 +448,7 @@ namespace CarControlAndroid
                         }
 
                         JobsInfo jobsInfo = null;
+                        ErrorsInfo errorsInfo = null;
                         List<DisplayInfo> displayList = new List<DisplayInfo>();
                         List<StringInfo> stringList = new List<StringInfo>();
                         bool logEnabled = false;
@@ -509,6 +521,27 @@ namespace CarControlAndroid
                                 }
                                 jobsInfo = new JobsInfo(sgbd, jobList);
                             }
+                            if (string.Compare(xnodePageChild.Name, "read_errors", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                List<EcuInfo> ecuList = new List<EcuInfo>();
+                                foreach (XmlNode xnodeErrorsChild in xnodePageChild.ChildNodes)
+                                {
+                                    if (string.Compare(xnodeErrorsChild.Name, "ecu", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        string ecuName = null;
+                                        string sgbd = string.Empty;
+                                        if (xnodeErrorsChild.Attributes != null)
+                                        {
+                                            attrib = xnodeErrorsChild.Attributes["name"];
+                                            if (attrib != null) ecuName = attrib.Value;
+                                            attrib = xnodeErrorsChild.Attributes["sgbd"];
+                                            if (attrib != null) sgbd = attrib.Value;
+                                        }
+                                        ecuList.Add(new EcuInfo(ecuName, sgbd));
+                                    }
+                                }
+                                errorsInfo = new ErrorsInfo(ecuList);
+                            }
                             if (string.Compare(xnodePageChild.Name, "code", StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 classCode = xnodePageChild.InnerText;
@@ -520,7 +553,7 @@ namespace CarControlAndroid
                         if (string.IsNullOrEmpty(pageName)) continue;
                         if (string.IsNullOrWhiteSpace(classCode)) classCode = null;
 
-                        _pageList.Add(new PageInfo(pageName, pageWeight, logFile, jobActivate, classCode, codeShowWarnings, jobsInfo, displayList, stringList));
+                        _pageList.Add(new PageInfo(pageName, pageWeight, logFile, jobActivate, classCode, codeShowWarnings, jobsInfo, errorsInfo, displayList, stringList));
                     }
                 }
                 return true;
