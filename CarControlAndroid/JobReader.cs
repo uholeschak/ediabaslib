@@ -126,14 +126,16 @@ namespace CarControlAndroid
 
         public class EcuInfo
         {
-            public EcuInfo(string name, string sgbd)
+            public EcuInfo(string name, string sgbd, string results)
             {
                 _name = name;
                 _sgbd = sgbd;
+                _results = results;
             }
 
             private readonly string _name;
             private readonly string _sgbd;
+            private readonly string _results;
 
             public string Name
             {
@@ -143,6 +145,11 @@ namespace CarControlAndroid
             public string Sgbd
             {
                 get { return _sgbd; }
+            }
+
+            public string Results
+            {
+                get { return _results; }
             }
         }
 
@@ -530,14 +537,17 @@ namespace CarControlAndroid
                                     {
                                         string ecuName = null;
                                         string sgbd = string.Empty;
+                                        string results = "F_UW_KM";
                                         if (xnodeErrorsChild.Attributes != null)
                                         {
                                             attrib = xnodeErrorsChild.Attributes["name"];
                                             if (attrib != null) ecuName = attrib.Value;
                                             attrib = xnodeErrorsChild.Attributes["sgbd"];
                                             if (attrib != null) sgbd = attrib.Value;
+                                            attrib = xnodeErrorsChild.Attributes["results"];
+                                            if (attrib != null) results = attrib.Value;
                                         }
-                                        ecuList.Add(new EcuInfo(ecuName, sgbd));
+                                        ecuList.Add(new EcuInfo(ecuName, sgbd, results));
                                     }
                                 }
                                 errorsInfo = new ErrorsInfo(ecuList);

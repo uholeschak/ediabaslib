@@ -645,11 +645,13 @@ namespace CarControlAndroid
                     resultListAdapter.Items.Clear();
 
                     bool formatResult = false;
+                    bool formatErrorResult = false;
                     bool updateResult = false;
                     if (pageInfo.ClassObject != null)
                     {
                         Type pageType = pageInfo.ClassObject.GetType();
                         formatResult = pageType.GetMethod("FormatResult") != null;
+                        formatErrorResult = pageType.GetMethod("FormatErrorResult") != null;
                         updateResult = pageType.GetMethod("UpdateResultList") != null;
                     }
                     string currDateTime = string.Empty;
@@ -678,15 +680,11 @@ namespace CarControlAndroid
                                 else
                                 {
                                     message += "\r\n";
-                                    message += FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT",
-                                        "{0}");
+                                    message += FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
                                     message += ", ";
-                                    message += FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT",
-                                        "{0}");
+                                    message += FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
                                     string detailText = string.Empty;
-                                    foreach (
-                                        Dictionary<string, EdiabasNet.ResultData> errorDetail in
-                                            errorReport.ErrorDetailSet)
+                                    foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
                                     {
                                         string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
                                         if (kmText.Length > 0)
@@ -695,7 +693,7 @@ namespace CarControlAndroid
                                             {
                                                 detailText += ", ";
                                             }
-                                            detailText += kmText + "km";
+                                            detailText += kmText + " km";
                                         }
                                     }
                                     if (detailText.Length > 0)
@@ -703,8 +701,19 @@ namespace CarControlAndroid
                                         message += "\r\n" + detailText;
                                     }
                                 }
+                                if (formatErrorResult)
+                                {
+                                    try
+                                    {
+                                        message = pageInfo.ClassObject.FormatErrorResult(pageInfo, errorReport, message);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // ignored
+                                    }
+                                }
 
-                                if (message.Length > 0)
+                                if (!string.IsNullOrEmpty(message))
                                 {
                                     resultListAdapter.Items.Add(new TableResultItem(message, null));
                                 }
