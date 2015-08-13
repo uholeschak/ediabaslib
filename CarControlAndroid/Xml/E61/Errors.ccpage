@@ -63,7 +63,7 @@
     </strings>
     <read_errors>
       <ecu name="CAS" sgbd="d_cas" />
-      <ecu name="DDE" sgbd="d_motor" />
+      <ecu name="DDE" sgbd="d_motor" results="F_UW_KM;F_UW_ANZ" />
       <ecu name="EKPS" sgbd="d_ekp" />
       <ecu name="EHC" sgbd="d_ehc" />
       <ecu name="DSC" sgbd="d_dsc" />
@@ -89,5 +89,40 @@
       <ecu name="SZM" sgbd="d_bzm" />
       <ecu name="TCU" sgbd="d_tel" />
     </read_errors>
-  </page>
+    <code show_warnigs="true">
+      <![CDATA[
+    class PageClass
+    {
+        public string FormatErrorResult(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, string defaultMessage)
+        {
+            string message = defaultMessage;
+            switch (errorReport.EcuName)
+            {
+                case "DDE":
+                {
+                    string detailText = string.Empty;
+                    foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
+                    {
+                        string rpmText = ActivityMain.FormatResultDouble(errorDetail, "F_UW1_WERT", "{0,6:0.0}");
+                        if (rpmText.Length > 0)
+                        {
+                            if (detailText.Length == 0)
+                            {
+                                detailText += rpmText + " 1/min";
+                            }
+                        }
+                    }
+                    if (detailText.Length > 0)
+                    {
+                        message += "\r\n" + detailText;
+                    }
+                    break;
+                }
+            }
+            return message;
+        }
+    }
+      ]]>
+  </code>
+</page>
 </fragment>

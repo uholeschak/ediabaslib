@@ -325,7 +325,7 @@ namespace CarControlAndroid
 
                     _ediabas.ArgString = string.Empty;
                     _ediabas.ArgBinaryStd = null;
-                    _ediabas.ResultsRequests = "JOB_STATUS;F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT";
+                    _ediabas.ResultsRequests = "";
 
                     try
                     {
@@ -368,7 +368,7 @@ namespace CarControlAndroid
                                     {   // read details
                                         _ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.OpData);
                                         _ediabas.ArgBinaryStd = null;
-                                        _ediabas.ResultsRequests = "F_UW_KM";
+                                        _ediabas.ResultsRequests = ecuInfo.Results;
 
                                         _ediabas.ExecuteJob("FS_LESEN_DETAIL");
 

@@ -225,6 +225,14 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="results" type="xs:string" use="optional" default="F_UW_KM">
+      <xs:annotation>
+        <xs:documentation>
+          A list of semicolon separated results for the FS_LESEN_DETAIL job.
+          If omitted only F_UW_KM result will be generated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="read-errors-type">
