@@ -1010,7 +1010,6 @@ namespace CarControlAndroid
                         return result;
                     });
                     taskList.Add(compileTask);
-                    Thread.Sleep(100);  // if all threads start at the same time, the compiler sometimes crashes
                 }
                 // ReSharper disable once CoVariantArrayConversion
                 Task.WaitAll(taskList.ToArray());
