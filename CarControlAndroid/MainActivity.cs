@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using CarControlAndroid.FilePicker;
 // ReSharper disable LoopCanBeConvertedToQuery
