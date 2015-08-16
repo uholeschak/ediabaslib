@@ -305,6 +305,7 @@ namespace CarControlAndroid
                         // Get the device MAC address
                         _deviceName = data.Extras.GetString(DeviceListActivity.ExtraDeviceName);
                         _deviceAddress = data.Extras.GetString(DeviceListActivity.ExtraDeviceAddress);
+                        EdiabasClose();
                         SupportInvalidateOptionsMenu();
                         if (_autoStart)
                         {
