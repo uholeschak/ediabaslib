@@ -1531,8 +1531,8 @@ namespace CarSimulator
                         Array.Copy(dataBuffer, 8, receiveData, 3, dataLen);
                         len = dataLen + 3;
                     }
-                    if (targetAddr == 0xEF)
-                    {   // broadcast
+                    if ((targetAddr == 0xED) || (targetAddr == 0xEF))
+                    {   // functional address
                         receiveData[0] |= 0xC0;
                     }
                     receiveData[len] = CalcChecksumBmwFast(receiveData, len);
@@ -1867,8 +1867,8 @@ namespace CarSimulator
                 Array.Copy(dataBuffer, 0, receiveData, 3, dataBuffer.Length);
                 len = dataBuffer.Length + 3;
             }
-            if (targetAddr == 0xEF)
-            {   // broadcast
+            if ((targetAddr == 0xED) || (targetAddr == 0xEF))
+            {   // functional address
                 receiveData[0] |= 0xC0;
             }
             receiveData[len] = CalcChecksumBmwFast(receiveData, len);
