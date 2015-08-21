@@ -974,6 +974,30 @@ namespace CarControlAndroid
                 foreach (JobReader.PageInfo pageInfo in _jobReader.PageList)
                 {
                     if (pageInfo.ClassCode == null) continue;
+                    // limit number of active tasks
+                    for (; ; )
+                    {
+                        int activeTasks = 0;
+                        foreach (Task<string> task in taskList)
+                        {
+                            switch (task.Status)
+                            {
+                                case TaskStatus.RanToCompletion:
+                                case TaskStatus.Faulted:
+                                    break;
+
+                                default:
+                                    activeTasks++;
+                                    break;
+                            }
+                        }
+                        if (activeTasks < 4)
+                        {
+                            break;
+                        }
+                        Thread.Sleep(200);
+                    }
+
                     JobReader.PageInfo infoLocal = pageInfo;
                     Task<string> compileTask = Task<string>.Factory.StartNew(() =>
                     {
@@ -1023,7 +1047,6 @@ namespace CarControlAndroid
 
                         return result;
                     });
-                    Thread.Sleep(100);
                     taskList.Add(compileTask);
                 }
                 // ReSharper disable once CoVariantArrayConversion
