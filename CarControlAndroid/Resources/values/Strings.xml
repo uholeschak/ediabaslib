@@ -39,6 +39,7 @@
   <!-- Options Menu -->
   <string name="menu_device">Device</string>
   <string name="menu_sel_cfg">Configuration</string>
+  <string name="menu_xml_tool">XML generator</string>
   <string name="menu_ediabas_tool">Ediabas tool</string>
   <string name="menu_enable_trace">Create trace file</string>
   <string name="menu_append_trace">Append trace file</string>
@@ -74,4 +75,16 @@
   <string name="menu_tool_sel_interface">Interface</string>
   <string name="menu_tool_sel_sgbd_grp">SGBD (grp)</string>
   <string name="menu_tool_sel_sgbd_prg">SGBD (prg)</string>
+
+  <!-- XML Tool Activity -->
+  <string name="xml_tool_title">XML generator</string>
+  <string name="button_xml_tool_read">Read</string>
+  <string name="xml_tool_analyze">Analyzing vehicle</string>
+  <string name="xml_tool_analyze_failed">Analyzing failed</string>
+  <string name="xml_tool_info_sgbd">SGBD</string>
+  <string name="xml_tool_info_grp">Group</string>
+  <string name="xml_tool_info_vin">VIN</string>
+
+  <!-- XML Tool Options Menu -->
+  <string name="menu_xml_tool_sel_sgbd">SGBD</string>
 </resources>

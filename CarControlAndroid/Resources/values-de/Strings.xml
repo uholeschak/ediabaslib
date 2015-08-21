@@ -39,6 +39,7 @@
   <!-- Options Menu -->
   <string name="menu_device">Gerät</string>
   <string name="menu_sel_cfg">Konfiguration</string>
+  <string name="menu_xml_tool">XML Generator</string>
   <string name="menu_ediabas_tool">Ediabas Tool</string>
   <string name="menu_enable_trace">Tracefile erzeugen</string>
   <string name="menu_append_trace">Tracefile anhängen</string>
@@ -74,4 +75,16 @@
   <string name="menu_tool_sel_interface">Schnittstelle</string>
   <string name="menu_tool_sel_sgbd_grp">SGBD (grp)</string>
   <string name="menu_tool_sel_sgbd_prg">SGBD (prg)</string>
+
+  <!-- XML Tool Activity -->
+  <string name="xml_tool_title">XML Generator</string>
+  <string name="button_xml_tool_read">Lesen</string>
+  <string name="xml_tool_analyze">Fahrzeug analysieren</string>
+  <string name="xml_tool_analyze_failed">Analysieren fehlgeschlagen</string>
+  <string name="xml_tool_info_sgbd">SGBD</string>
+  <string name="xml_tool_info_grp">Gruppe</string>
+  <string name="xml_tool_info_vin">FG-NR</string>
+
+  <!-- XML Tool Options Menu -->
+  <string name="menu_xml_tool_sel_sgbd">SGBD</string>
 </resources>

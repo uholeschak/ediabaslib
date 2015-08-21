@@ -4099,7 +4099,7 @@ namespace EdiabasLib
                 return (Int32)tableIdx;
             }
 
-            return tableInfosLocal.TableInfoArray.Count() - 1;
+            return tableInfosLocal.TableInfoArray.Length - 1;
         }
 
         private UInt32 GetTableColumns(Stream fs, Int32 tableIdx)

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+  <item android:id="@+id/action_menu_tool"
+        android:icon="@android:drawable/ic_menu_preferences"
+        app:showAsAction="ifRoom">
+    <menu>
+      <item android:id="@+id/menu_tool_sel_interface"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="@string/menu_tool_sel_interface" />
+      <item android:id="@+id/menu_xml_tool_sel_sgbd"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="@string/menu_xml_tool_sel_sgbd" />
+      <item android:id="@+id/menu_scan"
+            android:icon="@android:drawable/ic_menu_search"
+            android:title="@string/menu_device" />
+      <item android:id="@+id/menu_enable_trace"
+            android:icon="@android:drawable/ic_menu_save"
+            android:title="@string/menu_enable_trace"
+            android:checkable="true" />
+      <item android:id="@+id/menu_append_trace"
+            android:icon="@android:drawable/ic_menu_save"
+            android:title="@string/menu_append_trace"
+            android:checkable="true" />
+    </menu>
+  </item>
+</menu>

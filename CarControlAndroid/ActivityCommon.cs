@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Support.V7.App;
 using Android.Widget;
 using System;
+using EdiabasLib;
 
 namespace CarControlAndroid
 {
@@ -335,6 +336,24 @@ namespace CarControlAndroid
             Intent serverIntent = new Intent(_activity, typeof(DeviceListActivity));
             _activity.StartActivityForResult(serverIntent, requestCode);
             return true;
+        }
+
+        public void SetEdiabasInterface(EdiabasNet ediabas, string btDeviceAddress)
+        {
+            // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
+            if (ediabas.EdInterfaceClass is EdInterfaceObd)
+            {
+                ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "BLUETOOTH:" + btDeviceAddress;
+            }
+            else if (ediabas.EdInterfaceClass is EdInterfaceEnet)
+            {
+                string remoteHost = "auto";
+                if (Emulator)
+                {   // broadcast is not working with emulator
+                    remoteHost = EmulatorEnetIp;
+                }
+                ((EdInterfaceEnet)ediabas.EdInterfaceClass).RemoteHost = remoteHost;
+            }
         }
 
         private static bool IsEmulator()

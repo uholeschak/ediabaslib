@@ -130,7 +130,7 @@ namespace CarControlAndroid
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
 
         private InputMethodManager _imm;
-        private View _barConnectView;
+        private View _barView;
         private CheckBox _checkBoxContinuous;
         private ToggleButton _buttonConnect;
         private Spinner _spinnerJobs;
@@ -172,19 +172,19 @@ namespace CarControlAndroid
 
             _imm = (InputMethodManager)GetSystemService(InputMethodService);
 
-            _barConnectView = LayoutInflater.Inflate(Resource.Layout.bar_tool_connect, null);
+            _barView = LayoutInflater.Inflate(Resource.Layout.bar_ediabas_tool, null);
             ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
                 ViewGroup.LayoutParams.MatchParent,
                 ViewGroup.LayoutParams.WrapContent);
             barLayoutParams.Gravity = barLayoutParams.Gravity &
                 (int)(~(GravityFlags.HorizontalGravityMask | GravityFlags.VerticalGravityMask)) |
                 (int)(GravityFlags.Left | GravityFlags.CenterVertical);
-            SupportActionBar.SetCustomView(_barConnectView, barLayoutParams);
+            SupportActionBar.SetCustomView(_barView, barLayoutParams);
 
-            _checkBoxContinuous = _barConnectView.FindViewById<CheckBox>(Resource.Id.checkBoxContinuous);
+            _checkBoxContinuous = _barView.FindViewById<CheckBox>(Resource.Id.checkBoxContinuous);
             _checkBoxContinuous.SetOnTouchListener(this);
 
-            _buttonConnect = _barConnectView.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
+            _buttonConnect = _barView.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
             _buttonConnect.SetOnTouchListener(this);
             _buttonConnect.Click += (sender, args) =>
             {
@@ -321,7 +321,7 @@ namespace CarControlAndroid
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             var inflater = MenuInflater;
-            inflater.Inflate(Resource.Menu.tool_menu, menu);
+            inflater.Inflate(Resource.Menu.ediabas_tool_menu, menu);
             return true;
         }
 
@@ -519,6 +519,7 @@ namespace CarControlAndroid
             return false;
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool EdiabasClose()
         {
             if (IsJobRunning())
@@ -819,31 +820,6 @@ namespace CarControlAndroid
                 return;
             }
             CloseDataLog();
-            if (_ediabas != null)
-            {
-                bool interfaceChanged = false;
-                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
-                {
-                    if (!(_ediabas.EdInterfaceClass is EdInterfaceEnet))
-                    {
-                        interfaceChanged = true;
-                    }
-                }
-                else
-                {
-                    if (!(_ediabas.EdInterfaceClass is EdInterfaceObd))
-                    {
-                        interfaceChanged = true;
-                    }
-                }
-                if (interfaceChanged)
-                {
-                    if (!EdiabasClose())
-                    {
-                        return;
-                    }
-                }
-            }
             if (_ediabas == null)
             {
                 _ediabas = new EdiabasNet();
@@ -861,19 +837,7 @@ namespace CarControlAndroid
             _jobList.Clear();
             UpdateDisplay();
 
-            if (_ediabas.EdInterfaceClass is EdInterfaceObd)
-            {
-                ((EdInterfaceObd)_ediabas.EdInterfaceClass).ComPort = "BLUETOOTH:" + _deviceAddress;
-            }
-            else if (_ediabas.EdInterfaceClass is EdInterfaceEnet)
-            {
-                string remoteHost = "auto";
-                if (_activityCommon.Emulator)
-                {   // broadcast is not working with emulator
-                    remoteHost = ActivityCommon.EmulatorEnetIp;
-                }
-                ((EdInterfaceEnet)_ediabas.EdInterfaceClass).RemoteHost = remoteHost;
-            }
+            _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
 
             UpdateLogInfo();
 
@@ -1067,6 +1031,7 @@ namespace CarControlAndroid
                 RunOnUiThread(() =>
                 {
                     progress.Hide();
+                    progress.Dispose();
 
                     _infoListAdapter.Items.Clear();
                     foreach (string message in messageList)
