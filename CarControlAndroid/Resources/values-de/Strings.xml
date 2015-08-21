@@ -81,10 +81,14 @@
   <string name="button_xml_tool_read">Lesen</string>
   <string name="xml_tool_analyze">Fahrzeug analysieren</string>
   <string name="xml_tool_analyze_failed">Analysieren fehlgeschlagen</string>
+  <string name="xml_tool_read_jobs_failed">Jobs lesen fehlgeschlagen</string>
   <string name="xml_tool_info_sgbd">SGBD</string>
   <string name="xml_tool_info_grp">Gruppe</string>
   <string name="xml_tool_info_vin">FG-NR</string>
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_sel_sgbd">SGBD</string>
+
+  <!-- XML Tool Ecu Activity -->
+  <string name="xml_tool_ecu_title">Jobs für ECU: {0}</string>
 </resources>

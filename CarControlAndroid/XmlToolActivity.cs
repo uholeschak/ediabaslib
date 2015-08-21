@@ -30,6 +30,7 @@ namespace CarControlAndroid
         {
             RequestSelectSgbd,
             RequestSelectDevice,
+            RequestSelectJobs,
         }
 
         private class EcuInfo
@@ -121,6 +122,12 @@ namespace CarControlAndroid
         private string _statusText = string.Empty;
         private string _vin = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
+        private static readonly List<XmlToolEcuActivity.JobInfo> JobListPrivate = new List<XmlToolEcuActivity.JobInfo>();
+
+        public static List<XmlToolEcuActivity.JobInfo> JobList
+        {
+            get { return JobListPrivate; }
+        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -153,6 +160,14 @@ namespace CarControlAndroid
             ListView listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
             _ecuListAdapter = new EcuListAdapter(this);
             listViewEcu.Adapter = _ecuListAdapter;
+            listViewEcu.ItemClick += (sender, args) =>
+            {
+                int pos = args.Position;
+                if (pos >= 0)
+                {
+                    ExecuteJobsRead(_ecuList[pos].Name, _ecuList[pos].Sgbd);
+                }
+            };
 
             _activityCommon = new ActivityCommon(this)
             {
@@ -235,6 +250,8 @@ namespace CarControlAndroid
                     _autoStart = false;
                     break;
 
+                case ActivityRequest.RequestSelectJobs:
+                    break;
             }
         }
 
@@ -501,6 +518,13 @@ namespace CarControlAndroid
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSgbd);
         }
 
+        private void SelectJobs(string ecuName)
+        {
+            Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
+            serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuName);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectJobs);
+        }
+
         private void SelectInterface()
         {
             if (IsJobRunning())
@@ -559,7 +583,7 @@ namespace CarControlAndroid
             progress.Show();
 
             _ediabasJobAbort = false;
-            Task.Factory.StartNew(() =>
+            _jobTask = Task.Factory.StartNew(() =>
             {
                 try
                 {
@@ -704,6 +728,141 @@ namespace CarControlAndroid
 
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
+                });
+            });
+        }
+
+        private void ExecuteJobsRead(string ecuName, string sgbd)
+        {
+            if (_ediabas == null)
+            {
+                return;
+            }
+            JobList.Clear();
+            _statusText = GetString(Resource.String.xml_tool_info_vin) + ": " + _vin;
+
+            UpdateDisplay();
+
+            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
+            progress.SetCancelable(false);
+            progress.SetMessage(GetString(Resource.String.xml_tool_analyze));
+            progress.Show();
+
+            bool readFailed = false;
+            _ediabasJobAbort = false;
+            _jobTask = Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    _ediabas.ResolveSgbdFile(sgbd);
+
+                    _ediabas.ArgString = string.Empty;
+                    _ediabas.ArgBinaryStd = null;
+                    _ediabas.ResultsRequests = string.Empty;
+                    _ediabas.ExecuteJob("_JOBS");
+
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        int dictIndex = 0;
+                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                        {
+                            if (dictIndex == 0)
+                            {
+                                dictIndex++;
+                                continue;
+                            }
+                            EdiabasNet.ResultData resultData;
+                            if (resultDict.TryGetValue("JOBNAME", out resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    JobList.Add(new XmlToolEcuActivity.JobInfo((string)resultData.OpData));
+                                }
+                            }
+                            dictIndex++;
+                        }
+                    }
+
+                    foreach (XmlToolEcuActivity.JobInfo job in JobList)
+                    {
+                        _ediabas.ArgString = job.Name;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob("_JOBCOMMENTS");
+
+                        resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                            for (int i = 0; ; i++)
+                            {
+                                EdiabasNet.ResultData resultData;
+                                if (resultDict.TryGetValue("JOBCOMMENT" + i.ToString(Culture), out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        job.Comments.Add((string)resultData.OpData);
+                                    }
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    foreach (XmlToolEcuActivity.JobInfo job in JobList)
+                    {
+                        _ediabas.ArgString = job.Name;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob("_ARGUMENTS");
+
+                        resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            int dictIndex = 0;
+                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                            {
+                                if (dictIndex == 0)
+                                {
+                                    dictIndex++;
+                                    continue;
+                                }
+                                EdiabasNet.ResultData resultData;
+                                uint argCount = 0;
+                                if (resultDict.TryGetValue("ARG", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        argCount++;
+                                    }
+                                }
+                                job.ArgCount = argCount;
+                                dictIndex++;
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    readFailed = true;
+                    _statusText = GetString(Resource.String.xml_tool_read_jobs_failed);
+                }
+
+                RunOnUiThread(() =>
+                {
+                    progress.Hide();
+                    progress.Dispose();
+
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                    if (!readFailed && JobList.Count > 0)
+                    {
+                        SelectJobs(ecuName);
+                    }
                 });
             });
         }
