@@ -94,6 +94,7 @@
     <Compile Include="DeviceListActivity.cs" />
     <Compile Include="ResultListAdapter.cs" />
     <Compile Include="XmlDocumentLoader.cs" />
+    <Compile Include="XmlToolEcuActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -119,6 +120,12 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\bar_xml_tool.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\xml_tool_ecu.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\job_select_list.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <None Include="Xml\AdapterCustom.ccpage">

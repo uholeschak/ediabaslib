@@ -16,6 +16,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using CarControlAndroid.FilePicker;
+using System.Threading;
 // ReSharper disable LoopCanBeConvertedToQuery
 
 namespace CarControlAndroid
@@ -1022,6 +1023,7 @@ namespace CarControlAndroid
 
                         return result;
                     });
+                    Thread.Sleep(100);
                     taskList.Add(compileTask);
                 }
                 // ReSharper disable once CoVariantArrayConversion
