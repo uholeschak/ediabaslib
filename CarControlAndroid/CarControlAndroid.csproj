@@ -87,6 +87,7 @@
     <Compile Include="FilePicker\FilePickerActivity.cs" />
     <Compile Include="FilePicker\Helpers.cs" />
     <Compile Include="JobReader.cs" />
+    <Compile Include="XmlToolActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MainActivity.cs" />
@@ -108,7 +109,16 @@
     <AndroidResource Include="Resources\layout\result_select_list.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\bar_tool_connect.axml">
+    <AndroidResource Include="Resources\layout\bar_ediabas_tool.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\ecu_select_list.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\xml_tool.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\bar_xml_tool.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <None Include="Xml\AdapterCustom.ccpage">
@@ -193,9 +203,12 @@
     <AndroidResource Include="Resources\drawable\background.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\menu\tool_menu.xml" />
+    <AndroidResource Include="Resources\menu\ediabas_tool_menu.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\menu\file_picker_menu.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\xml_tool_menu.xml" />
   </ItemGroup>
 </Project>

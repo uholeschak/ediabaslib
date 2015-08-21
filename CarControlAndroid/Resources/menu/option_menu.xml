@@ -25,6 +25,9 @@
           <item android:id="@+id/menu_sel_cfg"
                 android:icon="@android:drawable/ic_menu_manage"
                 android:title="@string/menu_sel_cfg" />
+          <item android:id="@+id/menu_xml_tool"
+                android:icon="@android:drawable/ic_menu_manage"
+                android:title="@string/menu_xml_tool" />
           <item android:id="@+id/menu_ediabas_tool"
                 android:icon="@android:drawable/ic_menu_manage"
                 android:title="@string/menu_ediabas_tool" />

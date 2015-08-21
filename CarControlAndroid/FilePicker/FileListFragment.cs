@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
@@ -23,6 +24,7 @@ namespace CarControlAndroid.FilePicker
         public string DefaultInitialDirectory = "/";
         private FileListAdapter _adapter;
         private List<string> _extensionList;
+        private Regex _fileNameRegex;
         private IList<FileInfoEx> _visibleFiles;
         private string _fileNameFilter;
 
@@ -53,6 +55,13 @@ namespace CarControlAndroid.FilePicker
                 {
                     _extensionList.Add(extension);
                 }
+            }
+
+            string fileFilter = Activity.Intent.GetStringExtra(FilePickerActivity.ExtraFileRegex);
+            _fileNameRegex = null;
+            if (!string.IsNullOrEmpty(fileFilter))
+            {
+                _fileNameRegex = new Regex(fileFilter, RegexOptions.IgnoreCase);
             }
 
             _adapter = new FileListAdapter(Activity, new FileInfoEx[0]);
@@ -146,6 +155,13 @@ namespace CarControlAndroid.FilePicker
                                     add = true;
                                     break;
                                 }
+                            }
+                        }
+                        if (_fileNameRegex != null)
+                        {
+                            if (!_fileNameRegex.IsMatch(item.Name))
+                            {
+                                add = false;
                             }
                         }
                     }

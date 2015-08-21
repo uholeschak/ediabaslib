@@ -30,6 +30,7 @@ namespace CarControlAndroid
         {
             RequestSelectDevice,
             RequestSelectConfig,
+            RequestXmlTool,
             RequestEdiabasTool,
         }
 
@@ -55,7 +56,7 @@ namespace CarControlAndroid
         private Fragment _lastFragment;
         private ToggleButton _buttonConnect;
         private ImageView _imageBackground;
-        private View _barConnectView;
+        private View _barView;
         private Receiver _receiver;
 
         public void OnTabReselected(ActionBar.Tab tab, FragmentTransaction ft)
@@ -101,16 +102,16 @@ namespace CarControlAndroid
             _jobReader = new JobReader();
             GetSettings();
 
-            _barConnectView = LayoutInflater.Inflate(Resource.Layout.bar_connect, null);
+            _barView = LayoutInflater.Inflate(Resource.Layout.bar_connect, null);
             ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
                 ViewGroup.LayoutParams.MatchParent,
                 ViewGroup.LayoutParams.WrapContent);
             barLayoutParams.Gravity = barLayoutParams.Gravity &
                 (int)(~(GravityFlags.HorizontalGravityMask | GravityFlags.VerticalGravityMask)) |
                 (int)(GravityFlags.Left | GravityFlags.CenterVertical);
-            SupportActionBar.SetCustomView(_barConnectView, barLayoutParams);
+            SupportActionBar.SetCustomView(_barView, barLayoutParams);
 
-            _buttonConnect = _barConnectView.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
+            _buttonConnect = _barView.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
             _fragmentList = new List<Fragment>();
             _buttonConnect.Click += ButtonConnectClick;
@@ -226,6 +227,9 @@ namespace CarControlAndroid
                     }
                     break;
 
+                case ActivityRequest.RequestXmlTool:
+                    break;
+
                 case ActivityRequest.RequestEdiabasTool:
                     break;
             }
@@ -260,6 +264,12 @@ namespace CarControlAndroid
                 }
                 selCfgMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_sel_cfg), fileName));
                 selCfgMenu.SetEnabled(!commActive);
+            }
+
+            IMenuItem xmlToolMenu = menu.FindItem(Resource.Id.menu_xml_tool);
+            if (xmlToolMenu != null)
+            {
+                xmlToolMenu.SetEnabled(!commActive);
             }
 
             IMenuItem ediabasToolMenu = menu.FindItem(Resource.Id.menu_ediabas_tool);
@@ -303,6 +313,10 @@ namespace CarControlAndroid
 
                 case Resource.Id.menu_sel_cfg:
                     SelectConfigFile();
+                    return true;
+
+                case Resource.Id.menu_xml_tool:
+                    StartXmlTool();
                     return true;
 
                 case Resource.Id.menu_ediabas_tool:
@@ -1026,6 +1040,7 @@ namespace CarControlAndroid
                 {
                     CreateActionBarTabs();
                     progress.Hide();
+                    progress.Dispose();
                 });
             });
         }
@@ -1069,6 +1084,21 @@ namespace CarControlAndroid
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
             serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".cccfg");
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectConfig);
+        }
+
+        private void StartXmlTool()
+        {
+            Intent serverIntent = new Intent(this, typeof(XmlToolActivity));
+            string initDir = _activityCommon.ExternalPath;
+            if (!string.IsNullOrEmpty(_configFileName) && !string.IsNullOrEmpty(_jobReader.EcuPath))
+            {
+                initDir = _jobReader.EcuPath;
+            }
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, initDir);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _deviceName);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _deviceAddress);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestXmlTool);
         }
 
         private void StartEdiabasTool()
