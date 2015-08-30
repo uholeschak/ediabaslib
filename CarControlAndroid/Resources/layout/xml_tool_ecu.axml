@@ -9,16 +9,55 @@
         android:layout_height="match_parent"
         android:layout_weight="1" />
     <LinearLayout
-        android:id="@+id/layoutJobs"
+        android:id="@+id/layoutJobConfig"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+        <View
+            android:id="@+id/primerdivisor"
+            android:layout_height="2dp"
+            android:layout_width="fill_parent"
+            android:background="#666" />
         <TextView
-            android:id="@+id/textViewJobInfo"
-            android:text="Text"
+            android:id="@+id/textViewJobConfig"
+            android:text="test"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/textViewFormat"
+            android:text="@+string/xml_tool_ecu_format"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#666"
             android:textColor="#fff" />
+        <LinearLayout
+            android:id="@+id/layoutFormat"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right">
+            <Spinner
+                android:id="@+id/spinnerFormatPos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Spinner
+                android:id="@+id/spinnerFormatLength1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/textViewFormatDot"
+                android:text="."
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Spinner
+                android:id="@+id/spinnerFormatLength2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Spinner
+                android:id="@+id/spinnerFormatType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

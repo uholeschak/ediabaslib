@@ -91,4 +91,8 @@
 
   <!-- XML Tool Ecu Activity -->
   <string name="xml_tool_ecu_title">Jobs for ECU: {0}</string>
+  <string name="xml_tool_ecu_job_config">Configuration for job: {0}</string>
+  <string name="xml_tool_ecu_format">Output format</string>
+  <string name="xml_tool_ecu_format_right">Right</string>
+  <string name="xml_tool_ecu_format_left">Left</string>
 </resources>
