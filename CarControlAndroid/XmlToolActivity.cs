@@ -126,8 +126,6 @@ namespace CarControlAndroid
         private string _vin = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
 
-        public static List<XmlToolEcuActivity.JobInfo> JobListEcu { get; private set; }
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -523,7 +521,7 @@ namespace CarControlAndroid
             {
                 return;
             }
-            JobListEcu = ecuInfo.JobList;
+            XmlToolEcuActivity.IntentJobList = ecuInfo.JobList;
             Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
             serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectJobs);
