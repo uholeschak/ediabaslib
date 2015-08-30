@@ -1484,9 +1484,9 @@ namespace CarControlAndroid
                     TagInfo tagInfo = (TagInfo)checkBox.Tag;
                     if (tagInfo.Info.Selected != args.IsChecked)
                     {
+                        tagInfo.Info.Selected = args.IsChecked;
                         NotifyDataSetChanged();
                     }
-                    tagInfo.Info.Selected = args.IsChecked;
                 }
             }
 

@@ -6,6 +6,7 @@ using Android.Widget;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Android.Content.Res;
 using Android.Views.InputMethods;
 
 namespace CarControlAndroid
@@ -16,18 +17,54 @@ namespace CarControlAndroid
                                Android.Content.PM.ConfigChanges.ScreenSize)]
     public class XmlToolEcuActivity : AppCompatActivity, View.IOnTouchListener
     {
+        public class ResultInfo
+        {
+            public ResultInfo(string name, string type, List<string> comments )
+            {
+                _name = name;
+                _type = type;
+                _comments = comments;
+                Selected = false;
+                Format = string.Empty;
+            }
+
+            private readonly string _name;
+            private readonly string _type;
+            private readonly List<string> _comments;
+
+            public string Name
+            {
+                get { return _name; }
+            }
+
+            public string Type
+            {
+                get { return _type; }
+            }
+
+            public List<string> Comments
+            {
+                get { return _comments; }
+            }
+
+            public bool Selected { get; set; }
+        
+            public string Format { get; set; }
+        }
+
         public class JobInfo
         {
             public JobInfo(string name)
             {
                 _name = name;
                 _comments = new List<string>();
+                _results = new List<ResultInfo>();
                 Selected = false;
-                Format = string.Empty;
             }
 
             private readonly string _name;
             private readonly List<string> _comments;
+            private readonly List<ResultInfo> _results;
 
             public string Name
             {
@@ -42,11 +79,17 @@ namespace CarControlAndroid
                 }
             }
 
+            public List<ResultInfo> Results
+            {
+                get
+                {
+                    return _results;
+                }
+            }
+
             public uint ArgCount { get; set; }
 
             public bool Selected { get; set; }
-
-            public string Format { get; set; }
         }
 
         // Intent extra
@@ -57,6 +100,8 @@ namespace CarControlAndroid
         private ListView _listViewJobs;
         private JobListAdapter _jobListAdapter;
         private LinearLayout _layoutJobConfig;
+        private Spinner _spinnerJobResults;
+        private ResultListAdapter _spinnerJobResultsAdapter;
         private TextView _textViewJobConfig;
         private TextView _textViewFormatDot;
         private EditText _editTextFormat;
@@ -70,6 +115,7 @@ namespace CarControlAndroid
         private ArrayAdapter<string> _spinnerFormatTypeAdapter;
         private List<JobInfo> _jobList;
         private JobInfo _selectedJob;
+        private ResultInfo _selectedResult;
         private bool _ignoreFormatSelection;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -95,23 +141,49 @@ namespace CarControlAndroid
             _listViewJobs.SetOnTouchListener(this);
             _listViewJobs.ItemClick += (sender, args) =>
             {
+                _spinnerJobResultsAdapter.Items.Clear();
+                int selection = -1;
                 int pos = args.Position;
                 if (pos >= 0)
                 {
                     _selectedJob = _jobListAdapter.Items[pos];
                     _layoutJobConfig.Visibility = ViewStates.Visible;
+                    foreach (ResultInfo result in _selectedJob.Results.OrderBy(x => x.Name))
+                    {
+                        _spinnerJobResultsAdapter.Items.Add(result);
+                        if (result.Selected && selection < 0)
+                        {
+                            selection = _spinnerJobResultsAdapter.Items.Count - 1;
+                        }
+                    }
+                    if (_spinnerJobResultsAdapter.Items.Count > 0 && selection < 0)
+                    {
+                        selection = 0;
+                    }
+
                     _textViewJobConfig.Text = string.Format(GetString(Resource.String.xml_tool_ecu_job_config), _selectedJob.Name);
-                    UpdateFormatFields(_selectedJob, false, true);
                 }
                 else
                 {
                     _selectedJob = null;
                     _layoutJobConfig.Visibility = ViewStates.Gone;
                 }
+                _spinnerJobResultsAdapter.NotifyDataSetChanged();
+                _spinnerJobResults.SetSelection(selection);
+                ResultSelected(selection);
             };
 
             _layoutJobConfig = FindViewById<LinearLayout>(Resource.Id.layoutJobConfig);
             _layoutJobConfig.SetOnTouchListener(this);
+
+            _spinnerJobResults = FindViewById<Spinner>(Resource.Id.spinnerJobResults);
+            _spinnerJobResultsAdapter = new ResultListAdapter(this);
+            _spinnerJobResults.Adapter = _spinnerJobResultsAdapter;
+            _spinnerJobResults.ItemSelected += (sender, args) =>
+            {
+                ResultSelected(args.Position);
+            };
+
             _textViewJobConfig = FindViewById<TextView>(Resource.Id.textViewJobConfig);
             _textViewFormatDot = FindViewById<TextView>(Resource.Id.textViewFormatDot);
             _editTextFormat = FindViewById<EditText>(Resource.Id.editTextFormat);
@@ -162,7 +234,7 @@ namespace CarControlAndroid
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             HideKeyboard();
-            UpdateFormatString(_selectedJob);
+            UpdateFormatString(_selectedResult);
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
@@ -177,7 +249,7 @@ namespace CarControlAndroid
             switch (e.Action)
             {
                 case MotionEventActions.Down:
-                    UpdateFormatString(_selectedJob);
+                    UpdateFormatString(_selectedResult);
                     HideKeyboard();
                     break;
             }
@@ -197,9 +269,9 @@ namespace CarControlAndroid
             _jobListAdapter.NotifyDataSetChanged();
         }
 
-        private void UpdateFormatFields(JobInfo jobInfo, bool userFormat, bool initialCall = false)
+        private void UpdateFormatFields(ResultInfo resultInfo, bool userFormat, bool initialCall = false)
         {
-            string format = jobInfo.Format;
+            string format = resultInfo.Format;
             string parseString = format;
             Int32 length1 = -1;
             Int32 length2 = -1;
@@ -393,20 +465,48 @@ namespace CarControlAndroid
             return stringBuilder.ToString();
         }
 
-        private void UpdateFormatString(JobInfo jobInfo)
+        private void UpdateFormatString(ResultInfo resultInfo)
         {
-            if ((jobInfo == null) || _ignoreFormatSelection)
+            if ((resultInfo == null) || _ignoreFormatSelection)
             {
                 return;
             }
-            jobInfo.Format = GetFormatString();
-            UpdateFormatFields(jobInfo, _spinnerFormatType.SelectedItemPosition == 1);
+            resultInfo.Format = GetFormatString();
+            UpdateFormatFields(resultInfo, _spinnerFormatType.SelectedItemPosition == 1);
         }
 
         private void FormatItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
             HideKeyboard();
-            UpdateFormatString(_selectedJob);
+            UpdateFormatString(_selectedResult);
+        }
+
+        private void ResultSelected(int pos)
+        {
+            if (pos >= 0)
+            {
+                _selectedResult = _spinnerJobResultsAdapter.Items[pos];
+                UpdateFormatFields(_selectedResult, false, true);
+            }
+            else
+            {
+                _selectedResult = null;
+            }
+        }
+
+        private void ResultCheckChanged()
+        {
+            if ((_selectedJob == null) || (_selectedResult == null))
+            {
+                return;
+            }
+            int selectCount = _selectedJob.Results.Count(resultInfo => resultInfo.Selected);
+            bool selectJob = selectCount > 0;
+            if (_selectedJob.Selected != selectJob)
+            {
+                _selectedJob.Selected = selectJob;
+                _jobListAdapter.NotifyDataSetChanged();
+            }
         }
 
         private void HideKeyboard()
@@ -490,9 +590,9 @@ namespace CarControlAndroid
                     TagInfo tagInfo = (TagInfo) checkBox.Tag;
                     if (tagInfo.Info.Selected != args.IsChecked)
                     {
+                        tagInfo.Info.Selected = args.IsChecked;
                         NotifyDataSetChanged();
                     }
-                    tagInfo.Info.Selected = args.IsChecked;
                 }
             }
 
@@ -506,6 +606,107 @@ namespace CarControlAndroid
                 private readonly JobInfo _info;
 
                 public JobInfo Info
+                {
+                    get { return _info; }
+                }
+            }
+        }
+
+        private class ResultListAdapter : BaseAdapter<ResultInfo>
+        {
+            private readonly List<ResultInfo> _items;
+
+            public List<ResultInfo> Items
+            {
+                get { return _items; }
+            }
+
+            private readonly XmlToolEcuActivity _context;
+            private readonly Android.Graphics.Color _backgroundColor;
+            private bool _ignoreCheckEvent;
+
+            public ResultListAdapter(XmlToolEcuActivity context)
+            {
+                _context = context;
+                _items = new List<ResultInfo>();
+                TypedArray typedArray = context.Theme.ObtainStyledAttributes(
+                    new[] { Android.Resource.Attribute.ColorBackground });
+                _backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
+            }
+
+            public override long GetItemId(int position)
+            {
+                return position;
+            }
+
+            public override ResultInfo this[int position]
+            {
+                get { return _items[position]; }
+            }
+
+            public override int Count
+            {
+                get { return _items.Count; }
+            }
+
+            public override View GetView(int position, View convertView, ViewGroup parent)
+            {
+                var item = _items[position];
+
+                View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.job_select_list, null);
+                view.SetBackgroundColor(_backgroundColor);
+                CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxJobSelect);
+                _ignoreCheckEvent = true;
+                checkBoxSelect.Checked = item.Selected;
+                _ignoreCheckEvent = false;
+
+                checkBoxSelect.Tag = new TagInfo(item);
+                checkBoxSelect.CheckedChange -= OnCheckChanged;
+                checkBoxSelect.CheckedChange += OnCheckChanged;
+
+                TextView textJobName = view.FindViewById<TextView>(Resource.Id.textJobName);
+                TextView textJobDesc = view.FindViewById<TextView>(Resource.Id.textJobDesc);
+                textJobName.Text = item.Name + " (" + item.Type + ")";
+
+                StringBuilder stringBuilderComments = new StringBuilder();
+                foreach (string comment in item.Comments)
+                {
+                    if (stringBuilderComments.Length > 0)
+                    {
+                        stringBuilderComments.Append("; ");
+                    }
+                    stringBuilderComments.Append(comment);
+                }
+                textJobDesc.Text = stringBuilderComments.ToString();
+
+                return view;
+            }
+
+            private void OnCheckChanged(object sender, CompoundButton.CheckedChangeEventArgs args)
+            {
+                if (!_ignoreCheckEvent)
+                {
+                    CheckBox checkBox = (CheckBox)sender;
+                    TagInfo tagInfo = (TagInfo)checkBox.Tag;
+                    if (tagInfo.Info.Selected != args.IsChecked)
+                    {
+                        tagInfo.Info.Selected = args.IsChecked;
+                        NotifyDataSetChanged();
+                        _context.ResultCheckChanged();
+                    }
+                }
+            }
+
+            private class TagInfo : Java.Lang.Object
+            {
+                public TagInfo(ResultInfo info)
+                {
+                    _info = info;
+                }
+
+                private readonly ResultInfo _info;
+
+                public ResultInfo Info
                 {
                     get { return _info; }
                 }

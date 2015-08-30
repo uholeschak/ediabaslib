@@ -852,6 +852,63 @@ namespace CarControlAndroid
                             }
                         }
                     }
+
+                    foreach (XmlToolEcuActivity.JobInfo job in jobList)
+                    {
+                        _ediabas.ArgString = job.Name;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob("_RESULTS");
+
+                        resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            int dictIndex = 0;
+                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                            {
+                                if (dictIndex == 0)
+                                {
+                                    dictIndex++;
+                                    continue;
+                                }
+                                EdiabasNet.ResultData resultData;
+                                string result = string.Empty;
+                                string resultType = string.Empty;
+                                List<string> resultCommentList = new List<string>();
+                                if (resultDict.TryGetValue("RESULT", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        result = (string) resultData.OpData;
+                                    }
+                                }
+                                if (resultDict.TryGetValue("RESULTTYPE", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        resultType = (string) resultData.OpData;
+                                    }
+                                }
+                                for (int i = 0; ; i++)
+                                {
+                                    if (resultDict.TryGetValue("RESULTCOMMENT" + i.ToString(Culture), out resultData))
+                                    {
+                                        if (resultData.OpData is string)
+                                        {
+                                            resultCommentList.Add((string)resultData.OpData);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                }
+                                job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, resultType, resultCommentList));
+                                dictIndex++;
+                            }
+                        }
+                    }
+
                     ecuInfo.JobList = jobList;
                 }
                 catch (Exception)
@@ -989,9 +1046,9 @@ namespace CarControlAndroid
                     TagInfo tagInfo = (TagInfo)checkBox.Tag;
                     if (tagInfo.Info.Selected != args.IsChecked)
                     {
+                        tagInfo.Info.Selected = args.IsChecked;
                         NotifyDataSetChanged();
                     }
-                    tagInfo.Info.Selected = args.IsChecked;
                 }
             }
 
