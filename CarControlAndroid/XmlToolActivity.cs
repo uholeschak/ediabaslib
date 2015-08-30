@@ -43,6 +43,7 @@ namespace CarControlAndroid
                 _sgbd = sgbd;
                 _grp = grp;
                 Selected = false;
+                JobList = null;
             }
 
             private readonly string _name;
@@ -94,6 +95,8 @@ namespace CarControlAndroid
             public string Vin { get; set; }
 
             public bool Selected { get; set; }
+
+            public List<XmlToolEcuActivity.JobInfo> JobList { get; set; }
         }
 
         // Intent extra
@@ -122,12 +125,8 @@ namespace CarControlAndroid
         private string _statusText = string.Empty;
         private string _vin = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
-        private static readonly List<XmlToolEcuActivity.JobInfo> JobListPrivate = new List<XmlToolEcuActivity.JobInfo>();
 
-        public static List<XmlToolEcuActivity.JobInfo> JobList
-        {
-            get { return JobListPrivate; }
-        }
+        public static List<XmlToolEcuActivity.JobInfo> JobListEcu { get; private set; }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -165,7 +164,7 @@ namespace CarControlAndroid
                 int pos = args.Position;
                 if (pos >= 0)
                 {
-                    ExecuteJobsRead(_ecuList[pos].Name, _ecuList[pos].Sgbd);
+                    ExecuteJobsRead(_ecuList[pos]);
                 }
             };
 
@@ -518,10 +517,15 @@ namespace CarControlAndroid
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSgbd);
         }
 
-        private void SelectJobs(string ecuName)
+        private void SelectJobs(EcuInfo ecuInfo)
         {
+            if (ecuInfo.JobList == null)
+            {
+                return;
+            }
+            JobListEcu = ecuInfo.JobList;
             Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
-            serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuName);
+            serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectJobs);
         }
 
@@ -732,13 +736,17 @@ namespace CarControlAndroid
             });
         }
 
-        private void ExecuteJobsRead(string ecuName, string sgbd)
+        private void ExecuteJobsRead(EcuInfo ecuInfo)
         {
             if (_ediabas == null)
             {
                 return;
             }
-            JobList.Clear();
+            if (ecuInfo.JobList != null)
+            {
+                SelectJobs(ecuInfo);
+                return;
+            }
             _statusText = GetString(Resource.String.xml_tool_info_vin) + ": " + _vin;
 
             UpdateDisplay();
@@ -754,13 +762,14 @@ namespace CarControlAndroid
             {
                 try
                 {
-                    _ediabas.ResolveSgbdFile(sgbd);
+                    _ediabas.ResolveSgbdFile(ecuInfo.Sgbd);
 
                     _ediabas.ArgString = string.Empty;
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
                     _ediabas.ExecuteJob("_JOBS");
 
+                    List<XmlToolEcuActivity.JobInfo> jobList = new List<XmlToolEcuActivity.JobInfo>();
                     List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                     if (resultSets != null && resultSets.Count >= 2)
                     {
@@ -777,14 +786,14 @@ namespace CarControlAndroid
                             {
                                 if (resultData.OpData is string)
                                 {
-                                    JobList.Add(new XmlToolEcuActivity.JobInfo((string)resultData.OpData));
+                                    jobList.Add(new XmlToolEcuActivity.JobInfo((string)resultData.OpData));
                                 }
                             }
                             dictIndex++;
                         }
                     }
 
-                    foreach (XmlToolEcuActivity.JobInfo job in JobList)
+                    foreach (XmlToolEcuActivity.JobInfo job in jobList)
                     {
                         _ediabas.ArgString = job.Name;
                         _ediabas.ArgBinaryStd = null;
@@ -813,7 +822,7 @@ namespace CarControlAndroid
                         }
                     }
 
-                    foreach (XmlToolEcuActivity.JobInfo job in JobList)
+                    foreach (XmlToolEcuActivity.JobInfo job in jobList)
                     {
                         _ediabas.ArgString = job.Name;
                         _ediabas.ArgBinaryStd = null;
@@ -845,6 +854,7 @@ namespace CarControlAndroid
                             }
                         }
                     }
+                    ecuInfo.JobList = jobList;
                 }
                 catch (Exception)
                 {
@@ -859,9 +869,9 @@ namespace CarControlAndroid
 
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
-                    if (!readFailed && JobList.Count > 0)
+                    if (!readFailed && ecuInfo.JobList.Count > 0)
                     {
-                        SelectJobs(ecuName);
+                        SelectJobs(ecuInfo);
                     }
                 });
             });
