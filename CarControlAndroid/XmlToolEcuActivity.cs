@@ -6,6 +6,7 @@ using Android.Widget;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Android.Views.InputMethods;
 
 namespace CarControlAndroid
 {
@@ -13,7 +14,7 @@ namespace CarControlAndroid
         ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                                Android.Content.PM.ConfigChanges.Orientation |
                                Android.Content.PM.ConfigChanges.ScreenSize)]
-    public class XmlToolEcuActivity : AppCompatActivity
+    public class XmlToolEcuActivity : AppCompatActivity, View.IOnTouchListener
     {
         public class JobInfo
         {
@@ -52,9 +53,13 @@ namespace CarControlAndroid
         public const string ExtraEcuName = "ecu_name";
 
         public static List<JobInfo> IntentJobList { get; set; }
+        private InputMethodManager _imm;
+        private ListView _listViewJobs;
         private JobListAdapter _jobListAdapter;
         private LinearLayout _layoutJobConfig;
         private TextView _textViewJobConfig;
+        private TextView _textViewFormatDot;
+        private EditText _editTextFormat;
         private Spinner _spinnerFormatPos;
         private ArrayAdapter<string> _spinnerFormatPosAdapter;
         private Spinner _spinnerFormatLength1;
@@ -65,7 +70,7 @@ namespace CarControlAndroid
         private ArrayAdapter<string> _spinnerFormatTypeAdapter;
         private List<JobInfo> _jobList;
         private JobInfo _selectedJob;
-        private bool _ignoreJobSelection;
+        private bool _ignoreFormatSelection;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -78,14 +83,17 @@ namespace CarControlAndroid
             SupportActionBar.Title = string.Format(GetString(Resource.String.xml_tool_ecu_title), Intent.GetStringExtra(ExtraEcuName) ?? string.Empty);
             SetContentView(Resource.Layout.xml_tool_ecu);
 
+            _imm = (InputMethodManager)GetSystemService(InputMethodService);
+
             SetResult(Android.App.Result.Canceled);
 
             _jobList = IntentJobList;
 
-            ListView listViewJobs = FindViewById<ListView>(Resource.Id.listJobs);
+            _listViewJobs = FindViewById<ListView>(Resource.Id.listJobs);
             _jobListAdapter = new JobListAdapter(this);
-            listViewJobs.Adapter = _jobListAdapter;
-            listViewJobs.ItemClick += (sender, args) =>
+            _listViewJobs.Adapter = _jobListAdapter;
+            _listViewJobs.SetOnTouchListener(this);
+            _listViewJobs.ItemClick += (sender, args) =>
             {
                 int pos = args.Position;
                 if (pos >= 0)
@@ -93,7 +101,7 @@ namespace CarControlAndroid
                     _selectedJob = _jobListAdapter.Items[pos];
                     _layoutJobConfig.Visibility = ViewStates.Visible;
                     _textViewJobConfig.Text = string.Format(GetString(Resource.String.xml_tool_ecu_job_config), _selectedJob.Name);
-                    UpdateFormatFields(_selectedJob);
+                    UpdateFormatFields(_selectedJob, false, true);
                 }
                 else
                 {
@@ -101,8 +109,12 @@ namespace CarControlAndroid
                     _layoutJobConfig.Visibility = ViewStates.Gone;
                 }
             };
+
             _layoutJobConfig = FindViewById<LinearLayout>(Resource.Id.layoutJobConfig);
+            _layoutJobConfig.SetOnTouchListener(this);
             _textViewJobConfig = FindViewById<TextView>(Resource.Id.textViewJobConfig);
+            _textViewFormatDot = FindViewById<TextView>(Resource.Id.textViewFormatDot);
+            _editTextFormat = FindViewById<EditText>(Resource.Id.editTextFormat);
 
             _spinnerFormatPos = FindViewById<Spinner>(Resource.Id.spinnerFormatPos);
             _spinnerFormatPosAdapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem);
@@ -135,6 +147,7 @@ namespace CarControlAndroid
             _spinnerFormatTypeAdapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem);
             _spinnerFormatType.Adapter = _spinnerFormatTypeAdapter;
             _spinnerFormatTypeAdapter.Add("--");
+            _spinnerFormatTypeAdapter.Add(GetString(Resource.String.xml_tool_ecu_user_format));
             _spinnerFormatTypeAdapter.Add("(R)eal");
             _spinnerFormatTypeAdapter.Add("(L)ong");
             _spinnerFormatTypeAdapter.Add("(D)ouble");
@@ -148,6 +161,8 @@ namespace CarControlAndroid
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
+            HideKeyboard();
+            UpdateFormatString(_selectedJob);
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
@@ -155,6 +170,18 @@ namespace CarControlAndroid
                     return true;
             }
             return base.OnOptionsItemSelected(item);
+        }
+
+        public bool OnTouch(View v, MotionEvent e)
+        {
+            switch (e.Action)
+            {
+                case MotionEventActions.Down:
+                    UpdateFormatString(_selectedJob);
+                    HideKeyboard();
+                    break;
+            }
+            return false;
         }
 
         private void UpdateDisplay()
@@ -170,7 +197,7 @@ namespace CarControlAndroid
             _jobListAdapter.NotifyDataSetChanged();
         }
 
-        private void UpdateFormatFields(JobInfo jobInfo)
+        private void UpdateFormatFields(JobInfo jobInfo, bool userFormat, bool initialCall = false)
         {
             string format = jobInfo.Format;
             string parseString = format;
@@ -218,26 +245,35 @@ namespace CarControlAndroid
                 }
             }
 
-            _ignoreJobSelection = true;
-            int selection = 0;
+            _ignoreFormatSelection = true;
+            int selection = 1;
             switch (convertType)
             {
-                case 'R':
-                    selection = 1;
+                case '\0':
+                    selection = 0;
                     break;
 
-                case 'L':
+                case 'R':
                     selection = 2;
                     break;
 
-                case 'D':
+                case 'L':
                     selection = 3;
                     break;
 
-                case 'T':
+                case 'D':
                     selection = 4;
                     break;
+
+                case 'T':
+                    selection = 5;
+                    break;
             }
+            if (userFormat)
+            {
+                selection = 1;
+            }
+
             _spinnerFormatType.SetSelection(selection);
 
             if (selection > 0)
@@ -280,10 +316,36 @@ namespace CarControlAndroid
                 _spinnerFormatLength2.Enabled = false;
                 _spinnerFormatLength2.SetSelection(0);
             }
-            _ignoreJobSelection = false;
+
+            if (initialCall)
+            {
+                if (GetFormatString() != format)
+                {
+                    selection = 1;
+                    _spinnerFormatType.SetSelection(selection);
+                }
+            }
+            _editTextFormat.Text = format;
+            _ignoreFormatSelection = false;
+
+            ViewStates viewState;
+            if (selection == 1)
+            {
+                _editTextFormat.Visibility = ViewStates.Visible;
+                viewState = ViewStates.Gone;
+            }
+            else
+            {
+                _editTextFormat.Visibility = ViewStates.Gone;
+                viewState = ViewStates.Visible;
+            }
+            _spinnerFormatPos.Visibility = viewState;
+            _spinnerFormatLength1.Visibility = viewState;
+            _textViewFormatDot.Visibility = viewState;
+            _spinnerFormatLength2.Visibility = viewState;
         }
 
-        private void SetFormatString(JobInfo jobInfo)
+        private string GetFormatString()
         {
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -291,18 +353,22 @@ namespace CarControlAndroid
             switch (_spinnerFormatType.SelectedItemPosition)
             {
                 case 1:
-                    convertType = "R";
+                    stringBuilder.Append(_editTextFormat.Text);
                     break;
 
                 case 2:
-                    convertType = "L";
+                    convertType = "R";
                     break;
 
                 case 3:
-                    convertType = "D";
+                    convertType = "L";
                     break;
 
                 case 4:
+                    convertType = "D";
+                    break;
+
+                case 5:
                     convertType = "T";
                     break;
             }
@@ -324,19 +390,30 @@ namespace CarControlAndroid
                 stringBuilder.Append(convertType);
             }
 
-            string format = stringBuilder.ToString();
-            if (format != jobInfo.Format)
+            return stringBuilder.ToString();
+        }
+
+        private void UpdateFormatString(JobInfo jobInfo)
+        {
+            if ((jobInfo == null) || _ignoreFormatSelection)
             {
-                jobInfo.Format = format;
-                UpdateFormatFields(jobInfo);
+                return;
             }
+            jobInfo.Format = GetFormatString();
+            UpdateFormatFields(jobInfo, _spinnerFormatType.SelectedItemPosition == 1);
         }
 
         private void FormatItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
-            if (!_ignoreJobSelection && _selectedJob != null)
+            HideKeyboard();
+            UpdateFormatString(_selectedJob);
+        }
+
+        private void HideKeyboard()
+        {
+            if (_imm != null)
             {
-                SetFormatString(_selectedJob);
+                _imm.HideSoftInputFromWindow(_editTextFormat.WindowToken, HideSoftInputFlags.None);
             }
         }
 
