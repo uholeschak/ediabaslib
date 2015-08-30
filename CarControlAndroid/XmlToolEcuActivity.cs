@@ -65,7 +65,7 @@ namespace CarControlAndroid
 
             SetResult(Android.App.Result.Canceled);
 
-            _jobList = XmlToolActivity.JobList;
+            _jobList = XmlToolActivity.JobListEcu;
 
             ListView listViewJobs = FindViewById<ListView>(Resource.Id.listJobs);
             _jobListAdapter = new JobListAdapter(this);
