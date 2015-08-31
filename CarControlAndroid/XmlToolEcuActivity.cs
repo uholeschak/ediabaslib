@@ -98,11 +98,14 @@ namespace CarControlAndroid
         public static List<JobInfo> IntentJobList { get; set; }
         private InputMethodManager _imm;
         private ListView _listViewJobs;
+        private TextView _textViewJobCommentsTitle;
+        private TextView _textViewJobComments;
         private JobListAdapter _jobListAdapter;
         private LinearLayout _layoutJobConfig;
         private Spinner _spinnerJobResults;
         private ResultListAdapter _spinnerJobResultsAdapter;
-        private TextView _textViewJobConfig;
+        private TextView _textViewResultCommentsTitle;
+        private TextView _textViewResultComments;
         private TextView _textViewFormatDot;
         private EditText _editTextFormat;
         private Spinner _spinnerFormatPos;
@@ -161,7 +164,18 @@ namespace CarControlAndroid
                         selection = 0;
                     }
 
-                    _textViewJobConfig.Text = string.Format(GetString(Resource.String.xml_tool_ecu_job_config), _selectedJob.Name);
+                    _textViewJobCommentsTitle.Text = string.Format(GetString(Resource.String.xml_tool_ecu_job_comments), _selectedJob.Name);
+
+                    StringBuilder stringBuilderComments = new StringBuilder();
+                    foreach (string comment in _selectedJob.Comments)
+                    {
+                        if (stringBuilderComments.Length > 0)
+                        {
+                            stringBuilderComments.Append("\r\n");
+                        }
+                        stringBuilderComments.Append(comment);
+                    }
+                    _textViewJobComments.Text = stringBuilderComments.ToString();
                 }
                 else
                 {
@@ -176,6 +190,9 @@ namespace CarControlAndroid
             _layoutJobConfig = FindViewById<LinearLayout>(Resource.Id.layoutJobConfig);
             _layoutJobConfig.SetOnTouchListener(this);
 
+            _textViewJobCommentsTitle = FindViewById<TextView>(Resource.Id.textViewJobCommentsTitle);
+            _textViewJobComments = FindViewById<TextView>(Resource.Id.textViewJobComments);
+
             _spinnerJobResults = FindViewById<Spinner>(Resource.Id.spinnerJobResults);
             _spinnerJobResultsAdapter = new ResultListAdapter(this);
             _spinnerJobResults.Adapter = _spinnerJobResultsAdapter;
@@ -184,7 +201,9 @@ namespace CarControlAndroid
                 ResultSelected(args.Position);
             };
 
-            _textViewJobConfig = FindViewById<TextView>(Resource.Id.textViewJobConfig);
+            _textViewResultCommentsTitle = FindViewById<TextView>(Resource.Id.textViewResultCommentsTitle);
+            _textViewResultComments = FindViewById<TextView>(Resource.Id.textViewResultComments);
+
             _textViewFormatDot = FindViewById<TextView>(Resource.Id.textViewFormatDot);
             _editTextFormat = FindViewById<EditText>(Resource.Id.editTextFormat);
 
@@ -227,7 +246,6 @@ namespace CarControlAndroid
             _spinnerFormatType.ItemSelected += FormatItemSelected;
 
             _layoutJobConfig.Visibility = ViewStates.Gone;
-            _textViewJobConfig.Text = string.Empty;
             UpdateDisplay();
         }
 
@@ -486,11 +504,26 @@ namespace CarControlAndroid
             if (pos >= 0)
             {
                 _selectedResult = _spinnerJobResultsAdapter.Items[pos];
+
+                _textViewResultCommentsTitle.Text = string.Format(GetString(Resource.String.xml_tool_ecu_result_comments), _selectedResult.Name);
+
+                StringBuilder stringBuilderComments = new StringBuilder();
+                foreach (string comment in _selectedResult.Comments)
+                {
+                    if (stringBuilderComments.Length > 0)
+                    {
+                        stringBuilderComments.Append("\r\n");
+                    }
+                    stringBuilderComments.Append(comment);
+                }
+                _textViewResultComments.Text = stringBuilderComments.ToString();
+
                 UpdateFormatFields(_selectedResult, false, true);
             }
             else
             {
                 _selectedResult = null;
+                _textViewResultComments.Text = string.Empty;
             }
         }
 
