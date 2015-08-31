@@ -108,6 +108,7 @@ namespace CarControlAndroid
             </fragment>";
 
         private const string PageExtension = ".ccpage";
+        private const string DisplayNamePrefix = "!JOB_";
 
         // Intent extra
         public const string ExtraInitDir = "init_dir";
@@ -1092,13 +1093,22 @@ namespace CarControlAndroid
                         else
                         {
                             XAttribute attr = displayNode.Attribute("name");
-                            if (attr != null) attr.Remove();
+                            if (attr != null)
+                            {
+                                if (attr.Value.StartsWith(DisplayNamePrefix, StringComparison.Ordinal))
+                                {
+                                    attr.Remove();
+                                }
+                            }
                             attr = displayNode.Attribute("result");
                             if (attr != null) attr.Remove();
                             attr = displayNode.Attribute("format");
                             if (attr != null) attr.Remove();
                         }
-                        displayNode.Add(new XAttribute("name", "!JOB_" + job.Name + "_" + result.Name));
+                        if (displayNode.Attribute("name") == null)
+                        {
+                            displayNode.Add(new XAttribute("name", DisplayNamePrefix + job.Name + "#" + result.Name));
+                        }
                         displayNode.Add(new XAttribute("result", result.Name));
                         displayNode.Add(new XAttribute("format", result.Format));
                     }
