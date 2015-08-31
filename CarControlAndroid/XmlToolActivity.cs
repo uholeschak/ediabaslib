@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Android.Bluetooth;
 using Android.Content;
 using Android.Net;
@@ -99,8 +100,18 @@ namespace CarControlAndroid
             public List<XmlToolEcuActivity.JobInfo> JobList { get; set; }
         }
 
+        private const string XmlDocumentFragment =
+            @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+            <fragment xmlns=""http://www.holeschak.de/CarControl""
+            xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
+            xsi:schemaLocation=""http://www.holeschak.de/CarControl ../CarControl.xsd"">
+            </fragment>";
+
+        private const string PageExtension = ".ccpage";
+
         // Intent extra
         public const string ExtraInitDir = "init_dir";
+        public const string ExtraXmlDir = "xml_dir";
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
@@ -111,6 +122,7 @@ namespace CarControlAndroid
         private EcuListAdapter _ecuListAdapter;
         private TextView _textViewCarInfo;
         private string _initDirStart;
+        private string _xmlDir;
         private string _sgbdFileName = string.Empty;
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
@@ -174,6 +186,7 @@ namespace CarControlAndroid
             };
 
             _initDirStart = Intent.GetStringExtra(ExtraInitDir);
+            _xmlDir = Intent.GetStringExtra(ExtraXmlDir);
             _deviceName = Intent.GetStringExtra(ExtraDeviceName);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
 
@@ -335,6 +348,7 @@ namespace CarControlAndroid
                     {
                         return true;
                     }
+                    StoreAllXml();
                     Finish();
                     return true;
 
@@ -918,6 +932,21 @@ namespace CarControlAndroid
                     }
 
                     ecuInfo.JobList = jobList;
+                    if (!string.IsNullOrEmpty(_xmlDir))
+                    {
+                        string xmlFile = Path.Combine(_xmlDir, _vin, ecuInfo.Name + PageExtension);
+                        if (File.Exists(xmlFile))
+                        {
+                            try
+                            {
+                                ReadPageXml(ecuInfo, XDocument.Load(xmlFile));
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+                    }
                 }
                 catch (Exception)
                 {
@@ -947,6 +976,204 @@ namespace CarControlAndroid
                 return true;
             }
             return false;
+        }
+
+        private void ReadPageXml(EcuInfo ecuInfo, XDocument document)
+        {
+            if (document.Root == null)
+            {
+                return;
+            }
+            XNamespace ns = document.Root.GetDefaultNamespace();
+            XElement pageNode = document.Root.Element(ns + "page");
+            if (pageNode == null)
+            {
+                return;
+            }
+            XElement jobsNode = pageNode.Element(ns + "jobs");
+            if (jobsNode == null)
+            {
+                return;
+            }
+
+            foreach (XmlToolEcuActivity.JobInfo job in ecuInfo.JobList)
+            {
+                XElement jobNode = GetJobNode(job, ns, jobsNode);
+                if (jobNode != null)
+                {
+                    job.Selected = true;
+                    foreach (XmlToolEcuActivity.ResultInfo result in job.Results)
+                    {
+                        XElement displayNode = GetDisplayNode(result, ns, jobNode);
+                        if (displayNode != null)
+                        {
+                            result.Selected = true;
+                            XAttribute formatAttr = displayNode.Attribute("format");
+                            if (formatAttr != null)
+                            {
+                                result.Format = formatAttr.Value;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private XDocument GeneratePageXml(EcuInfo ecuInfo, XDocument documentOld)
+        {
+            try
+            {
+                if (ecuInfo.JobList == null)
+                {
+                    return null;
+                }
+                XDocument document = documentOld;
+                if ((document == null) || (document.Root == null))
+                {
+                    document = XDocument.Parse(XmlDocumentFragment);
+                }
+                if (document.Root == null)
+                {
+                    return null;
+                }
+                XNamespace ns = document.Root.GetDefaultNamespace();
+                XElement pageNode = document.Root.Element(ns + "page");
+                if (pageNode == null)
+                {
+                    pageNode = new XElement(ns + "page");
+                    document.Root.Add(pageNode);
+                }
+                XElement jobsNode = pageNode.Element(ns + "jobs");
+                if (jobsNode == null)
+                {
+                    jobsNode = new XElement(ns + "jobs");
+                    pageNode.Add(jobsNode);
+                }
+
+                foreach (XmlToolEcuActivity.JobInfo job in ecuInfo.JobList)
+                {
+                    XElement jobNode = GetJobNode(job, ns, jobsNode);
+                    if (!job.Selected)
+                    {
+                        if (jobNode != null)
+                        {
+                            jobNode.Remove();
+                        }
+                        continue;
+                    }
+                    if (jobNode == null)
+                    {
+                        jobNode = new XElement(ns + "job");
+                        jobsNode.Add(jobNode);
+                    }
+                    else
+                    {
+                        XAttribute attr = jobNode.Attribute("name");
+                        if (attr != null) attr.Remove();
+                    }
+                    jobNode.Add(new XAttribute("name", job.Name));
+
+                    foreach (XmlToolEcuActivity.ResultInfo result in job.Results)
+                    {
+                        XElement displayNode = GetDisplayNode(result, ns, jobNode);
+                        if (!result.Selected)
+                        {
+                            if (displayNode != null)
+                            {
+                                displayNode.Remove();
+                            }
+                            continue;
+                        }
+                        if (displayNode == null)
+                        {
+                            displayNode = new XElement(ns + "display");
+                            jobNode.Add(displayNode);
+                        }
+                        else
+                        {
+                            XAttribute attr = displayNode.Attribute("name");
+                            if (attr != null) attr.Remove();
+                            attr = displayNode.Attribute("result");
+                            if (attr != null) attr.Remove();
+                            attr = displayNode.Attribute("format");
+                            if (attr != null) attr.Remove();
+                        }
+                        displayNode.Add(new XAttribute("name", "!JOB_" + job.Name + "_" + result.Name));
+                        displayNode.Add(new XAttribute("result", result.Name));
+                        displayNode.Add(new XAttribute("format", result.Format));
+                    }
+                }
+
+                return document;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool StoreAllXml()
+        {
+            if (string.IsNullOrEmpty(_xmlDir))
+            {
+                return false;
+            }
+            try
+            {
+                string xmlDir = Path.Combine(_xmlDir, _vin);
+                Directory.CreateDirectory(xmlDir);
+                foreach (EcuInfo ecuInfo in _ecuList)
+                {
+                    if (ecuInfo.JobList == null) continue;
+                    string xmlFile = Path.Combine(xmlDir, ecuInfo.Name + PageExtension);
+                    XDocument document = null;
+                    if (File.Exists(xmlFile))
+                    {
+                        try
+                        {
+                            document = XDocument.Load(xmlFile);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                    XDocument documentNew = GeneratePageXml(ecuInfo, document);
+                    if (documentNew != null)
+                    {
+                        try
+                        {
+                            documentNew.Save(xmlFile);
+                        }
+                        catch (Exception)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private XElement GetJobNode(XmlToolEcuActivity.JobInfo job, XNamespace ns, XElement jobsNode)
+        {
+            return (from node in jobsNode.Elements(ns + "job")
+                    let nameAttrib = node.Attribute("name")
+                    where nameAttrib != null
+                    where string.Compare(nameAttrib.Value, job.Name, StringComparison.OrdinalIgnoreCase) == 0 select node).FirstOrDefault();
+        }
+
+        private XElement GetDisplayNode(XmlToolEcuActivity.ResultInfo result, XNamespace ns, XElement jobNode)
+        {
+            return (from node in jobNode.Elements(ns + "display")
+                    let nameAttrib = node.Attribute("result")
+                    where nameAttrib != null
+                    where string.Compare(nameAttrib.Value, result.Name, StringComparison.OrdinalIgnoreCase) == 0 select node).FirstOrDefault();
         }
 
         public class Receiver : BroadcastReceiver
