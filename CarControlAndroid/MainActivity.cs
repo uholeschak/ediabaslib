@@ -1119,10 +1119,17 @@ namespace CarControlAndroid
             {
                 initDir = _jobReader.EcuPath;
             }
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, initDir);
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _deviceName);
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _deviceAddress);
+            string xmlDir = _activityCommon.ExternalWritePath;
+            if (string.IsNullOrEmpty(xmlDir))
+            {
+                xmlDir = Path.Combine(_activityCommon.ExternalPath, "CarControl");
+            }
+            xmlDir = Path.Combine(_activityCommon.ExternalPath, "Xml");
+            serverIntent.PutExtra(XmlToolActivity.ExtraInitDir, initDir);
+            serverIntent.PutExtra(XmlToolActivity.ExtraXmlDir, xmlDir);
+            serverIntent.PutExtra(XmlToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+            serverIntent.PutExtra(XmlToolActivity.ExtraDeviceName, _deviceName);
+            serverIntent.PutExtra(XmlToolActivity.ExtraDeviceAddress, _deviceAddress);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestXmlTool);
         }
 
