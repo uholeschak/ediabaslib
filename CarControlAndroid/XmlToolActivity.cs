@@ -124,6 +124,7 @@ namespace CarControlAndroid
         private Receiver _receiver;
         private string _statusText = string.Empty;
         private string _vin = string.Empty;
+        private EcuInfo _intentEcuInfo;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -248,6 +249,12 @@ namespace CarControlAndroid
                     break;
 
                 case ActivityRequest.RequestSelectJobs:
+                    if (_intentEcuInfo.JobList != null)
+                    {
+                        int selectCount = _intentEcuInfo.JobList.Count(job => job.Selected);
+                        _intentEcuInfo.Selected = selectCount > 0;
+                        _ecuListAdapter.NotifyDataSetChanged();
+                    }
                     break;
             }
         }
@@ -521,6 +528,7 @@ namespace CarControlAndroid
             {
                 return;
             }
+            _intentEcuInfo = ecuInfo;
             XmlToolEcuActivity.IntentJobList = ecuInfo.JobList;
             Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
             serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
