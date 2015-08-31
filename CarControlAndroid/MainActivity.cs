@@ -1124,7 +1124,7 @@ namespace CarControlAndroid
             {
                 xmlDir = Path.Combine(_activityCommon.ExternalPath, "CarControl");
             }
-            xmlDir = Path.Combine(_activityCommon.ExternalPath, "Xml");
+            xmlDir = Path.Combine(xmlDir, "Xml");
             serverIntent.PutExtra(XmlToolActivity.ExtraInitDir, initDir);
             serverIntent.PutExtra(XmlToolActivity.ExtraXmlDir, xmlDir);
             serverIntent.PutExtra(XmlToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
