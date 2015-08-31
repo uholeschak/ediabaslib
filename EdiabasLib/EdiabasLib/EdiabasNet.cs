@@ -3215,12 +3215,12 @@ namespace EdiabasLib
                     _errorTrapBitNr = 0;
                 }
 
+                _sgbdFileResolveLast = string.Empty;     // reset last file after error to force sgbd reload
                 EdValueType activeErrors = (EdValueType)((1 << _errorTrapBitNr) & ~_errorTrapMask);
                 if (activeErrors != 0)
                 {
                     RaiseError(error);
                 }
-                _sgbdFileResolveLast = string.Empty;     // reset last file after error to force sgbd reload
             }
             else
             {
@@ -4384,6 +4384,7 @@ namespace EdiabasLib
                 catch (Exception ex)
                 {
                     LogString(EdLogLevel.Error, "executeInitJob Exception: " + ex.Message);
+                    CloseSgbdFs();  // close file to force a reload
                     SetError(ErrorCodes.EDIABAS_SYS_0010);
                     return;
                 }
