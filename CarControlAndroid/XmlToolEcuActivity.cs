@@ -144,47 +144,8 @@ namespace CarControlAndroid
             _listViewJobs.SetOnTouchListener(this);
             _listViewJobs.ItemClick += (sender, args) =>
             {
-                _spinnerJobResultsAdapter.Items.Clear();
-                int selection = -1;
                 int pos = args.Position;
-                if (pos >= 0)
-                {
-                    _selectedJob = _jobListAdapter.Items[pos];
-                    _layoutJobConfig.Visibility = ViewStates.Visible;
-                    foreach (ResultInfo result in _selectedJob.Results.OrderBy(x => x.Name))
-                    {
-                        _spinnerJobResultsAdapter.Items.Add(result);
-                        if (result.Selected && selection < 0)
-                        {
-                            selection = _spinnerJobResultsAdapter.Items.Count - 1;
-                        }
-                    }
-                    if (_spinnerJobResultsAdapter.Items.Count > 0 && selection < 0)
-                    {
-                        selection = 0;
-                    }
-
-                    _textViewJobCommentsTitle.Text = string.Format(GetString(Resource.String.xml_tool_ecu_job_comments), _selectedJob.Name);
-
-                    StringBuilder stringBuilderComments = new StringBuilder();
-                    foreach (string comment in _selectedJob.Comments)
-                    {
-                        if (stringBuilderComments.Length > 0)
-                        {
-                            stringBuilderComments.Append("\r\n");
-                        }
-                        stringBuilderComments.Append(comment);
-                    }
-                    _textViewJobComments.Text = stringBuilderComments.ToString();
-                }
-                else
-                {
-                    _selectedJob = null;
-                    _layoutJobConfig.Visibility = ViewStates.Gone;
-                }
-                _spinnerJobResultsAdapter.NotifyDataSetChanged();
-                _spinnerJobResults.SetSelection(selection);
-                ResultSelected(selection);
+                JobSelected(args.Position >= 0 ? _jobListAdapter.Items[pos] : null);
             };
 
             _layoutJobConfig = FindViewById<LinearLayout>(Resource.Id.layoutJobConfig);
@@ -499,6 +460,49 @@ namespace CarControlAndroid
             UpdateFormatString(_selectedResult);
         }
 
+        private void JobSelected(JobInfo jobInfo)
+        {
+            _selectedJob = jobInfo;
+            _spinnerJobResultsAdapter.Items.Clear();
+            int selection = -1;
+            if (jobInfo != null)
+            {
+                _layoutJobConfig.Visibility = ViewStates.Visible;
+                foreach (ResultInfo result in _selectedJob.Results.OrderBy(x => x.Name))
+                {
+                    _spinnerJobResultsAdapter.Items.Add(result);
+                    if (result.Selected && selection < 0)
+                    {
+                        selection = _spinnerJobResultsAdapter.Items.Count - 1;
+                    }
+                }
+                if (_spinnerJobResultsAdapter.Items.Count > 0 && selection < 0)
+                {
+                    selection = 0;
+                }
+
+                _textViewJobCommentsTitle.Text = string.Format(GetString(Resource.String.xml_tool_ecu_job_comments), _selectedJob.Name);
+
+                StringBuilder stringBuilderComments = new StringBuilder();
+                foreach (string comment in _selectedJob.Comments)
+                {
+                    if (stringBuilderComments.Length > 0)
+                    {
+                        stringBuilderComments.Append("\r\n");
+                    }
+                    stringBuilderComments.Append(comment);
+                }
+                _textViewJobComments.Text = stringBuilderComments.ToString();
+            }
+            else
+            {
+                _layoutJobConfig.Visibility = ViewStates.Gone;
+            }
+            _spinnerJobResultsAdapter.NotifyDataSetChanged();
+            _spinnerJobResults.SetSelection(selection);
+            ResultSelected(selection);
+        }
+
         private void ResultSelected(int pos)
         {
             if (pos >= 0)
@@ -524,6 +528,14 @@ namespace CarControlAndroid
             {
                 _selectedResult = null;
                 _textViewResultComments.Text = string.Empty;
+            }
+        }
+
+        private void JobCheckChanged(JobInfo jobInfo)
+        {
+            if (jobInfo.Selected)
+            {
+                JobSelected(jobInfo);
             }
         }
 
@@ -559,10 +571,10 @@ namespace CarControlAndroid
                 get { return _items; }
             }
 
-            private readonly Android.App.Activity _context;
+            private readonly XmlToolEcuActivity _context;
             private bool _ignoreCheckEvent;
 
-            public JobListAdapter(Android.App.Activity context)
+            public JobListAdapter(XmlToolEcuActivity context)
             {
                 _context = context;
                 _items = new List<JobInfo>();
@@ -624,6 +636,7 @@ namespace CarControlAndroid
                     if (tagInfo.Info.Selected != args.IsChecked)
                     {
                         tagInfo.Info.Selected = args.IsChecked;
+                        _context.JobCheckChanged(tagInfo.Info);
                         NotifyDataSetChanged();
                     }
                 }

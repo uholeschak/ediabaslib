@@ -108,6 +108,7 @@ namespace CarControlAndroid
             </fragment>";
 
         private const string PageExtension = ".ccpage";
+        private const string PagesFileName = "Pages.ccpages";
         private const string DisplayNamePrefix = "!JOB_";
 
         // Intent extra
@@ -123,7 +124,7 @@ namespace CarControlAndroid
         private EcuListAdapter _ecuListAdapter;
         private TextView _textViewCarInfo;
         private string _initDirStart;
-        private string _xmlDir;
+        private string _xmlBaseDir;
         private string _sgbdFileName = string.Empty;
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
@@ -187,7 +188,7 @@ namespace CarControlAndroid
             };
 
             _initDirStart = Intent.GetStringExtra(ExtraInitDir);
-            _xmlDir = Intent.GetStringExtra(ExtraXmlDir);
+            _xmlBaseDir = Intent.GetStringExtra(ExtraXmlDir);
             _deviceName = Intent.GetStringExtra(ExtraDeviceName);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
 
@@ -740,6 +741,7 @@ namespace CarControlAndroid
                     // get vin
                     _vin = _ecuList.GroupBy(x => x.Vin).Where(x => !string.IsNullOrEmpty(x.Key)).OrderByDescending(x => x.Count()).First().Key;
                     _statusText = GetString(Resource.String.xml_tool_info_vin) + ": " + _vin;
+                    ReadAllXml();
                 }
                 catch (Exception)
                 {
@@ -933,9 +935,11 @@ namespace CarControlAndroid
                     }
 
                     ecuInfo.JobList = jobList;
-                    if (!string.IsNullOrEmpty(_xmlDir))
+
+                    string xmlFileDir = XmlFileDir();
+                    if (xmlFileDir != null)
                     {
-                        string xmlFile = Path.Combine(_xmlDir, _vin, ecuInfo.Name + PageExtension);
+                        string xmlFile = Path.Combine(xmlFileDir, ecuInfo.Name + PageExtension);
                         if (File.Exists(xmlFile))
                         {
                             try
@@ -968,6 +972,14 @@ namespace CarControlAndroid
                     }
                 });
             });
+        }
+
+        private void EcuCheckChanged(EcuInfo ecuInfo)
+        {
+            if (ecuInfo.Selected)
+            {
+                ExecuteJobsRead(ecuInfo);
+            }
         }
 
         private bool AbortEdiabasJob()
@@ -1122,44 +1134,184 @@ namespace CarControlAndroid
             }
         }
 
+        private void ReadPagesXml(XDocument document)
+        {
+            string xmlFileDir = XmlFileDir();
+            if (xmlFileDir == null)
+            {
+                return;
+            }
+            if (document.Root == null)
+            {
+                return;
+            }
+            XNamespace ns = document.Root.GetDefaultNamespace();
+            XElement pagesNode = document.Root.Element(ns + "pages");
+            if (pagesNode == null)
+            {
+                return;
+            }
+
+            foreach (EcuInfo ecuInfo in _ecuList)
+            {
+                string fileName = ecuInfo.Name + PageExtension;
+                XElement fileNode = GetFileNode(fileName, ns, pagesNode);
+                if (fileNode != null && File.Exists(Path.Combine(xmlFileDir, fileName)))
+                {
+                    ecuInfo.Selected = true;
+                }
+            }
+        }
+
+        private XDocument GeneratePagesXml(XDocument documentOld)
+        {
+            string xmlFileDir = XmlFileDir();
+            if (xmlFileDir == null)
+            {
+                return null;
+            }
+            try
+            {
+                XDocument document = documentOld;
+                if ((document == null) || (document.Root == null))
+                {
+                    document = XDocument.Parse(XmlDocumentFragment);
+                }
+                if (document.Root == null)
+                {
+                    return null;
+                }
+                XNamespace ns = document.Root.GetDefaultNamespace();
+                XElement pagesNode = document.Root.Element(ns + "pages");
+                if (pagesNode == null)
+                {
+                    pagesNode = new XElement(ns + "pages");
+                    document.Root.Add(pagesNode);
+                }
+
+                foreach (EcuInfo ecuInfo in _ecuList)
+                {
+                    string fileName = ecuInfo.Name + PageExtension;
+                    XElement fileNode = GetFileNode(fileName, ns, pagesNode);
+                    if (!ecuInfo.Selected || !File.Exists(Path.Combine(xmlFileDir, fileName)))
+                    {
+                        if (fileNode != null)
+                        {
+                            fileNode.Remove();
+                        }
+                        continue;
+                    }
+                    if (fileNode == null)
+                    {
+                        fileNode = new XElement(ns + "include");
+                        pagesNode.Add(fileNode);
+                    }
+                    else
+                    {
+                        XAttribute attr = fileNode.Attribute("filename");
+                        if (attr != null) attr.Remove();
+                    }
+
+                    fileNode.Add(new XAttribute("filename", fileName));
+                }
+
+                return document;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private void ReadAllXml()
+        {
+            string xmlFileDir = XmlFileDir();
+            if (xmlFileDir == null)
+            {
+                return;
+            }
+            string xmlPagesFile = Path.Combine(xmlFileDir, PagesFileName);
+            if (File.Exists(xmlPagesFile))
+            {
+                try
+                {
+                    XDocument documentPages = XDocument.Load(xmlPagesFile);
+                    ReadPagesXml(documentPages);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+        }
+
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool StoreAllXml()
         {
-            if (string.IsNullOrEmpty(_xmlDir))
+            string xmlFileDir = XmlFileDir();
+            if (xmlFileDir == null)
             {
                 return false;
             }
             try
             {
-                string xmlDir = Path.Combine(_xmlDir, _vin);
-                Directory.CreateDirectory(xmlDir);
+                Directory.CreateDirectory(xmlFileDir);
+                // page files
                 foreach (EcuInfo ecuInfo in _ecuList)
                 {
                     if (ecuInfo.JobList == null) continue;
-                    string xmlFile = Path.Combine(xmlDir, ecuInfo.Name + PageExtension);
-                    XDocument document = null;
-                    if (File.Exists(xmlFile))
+                    if (!ecuInfo.Selected) continue;
+                    string xmlPageFile = Path.Combine(xmlFileDir, ecuInfo.Name + PageExtension);
+                    XDocument documentPage = null;
+                    if (File.Exists(xmlPageFile))
                     {
                         try
                         {
-                            document = XDocument.Load(xmlFile);
+                            documentPage = XDocument.Load(xmlPageFile);
                         }
                         catch (Exception)
                         {
                             // ignored
                         }
                     }
-                    XDocument documentNew = GeneratePageXml(ecuInfo, document);
-                    if (documentNew != null)
+                    XDocument documentPageNew = GeneratePageXml(ecuInfo, documentPage);
+                    if (documentPageNew != null)
                     {
                         try
                         {
-                            documentNew.Save(xmlFile);
+                            documentPageNew.Save(xmlPageFile);
                         }
                         catch (Exception)
                         {
                             return false;
                         }
+                    }
+                }
+
+                // pages file
+                string xmlPagesFile = Path.Combine(xmlFileDir, PagesFileName);
+                XDocument documentPages = null;
+                if (File.Exists(xmlPagesFile))
+                {
+                    try
+                    {
+                        documentPages = XDocument.Load(xmlPagesFile);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+                XDocument documentPagesNew = GeneratePagesXml(documentPages);
+                if (documentPagesNew != null)
+                {
+                    try
+                    {
+                        documentPagesNew.Save(xmlPagesFile);
+                    }
+                    catch (Exception)
+                    {
+                        return false;
                     }
                 }
             }
@@ -1184,6 +1336,35 @@ namespace CarControlAndroid
                     let nameAttrib = node.Attribute("result")
                     where nameAttrib != null
                     where string.Compare(nameAttrib.Value, result.Name, StringComparison.OrdinalIgnoreCase) == 0 select node).FirstOrDefault();
+        }
+
+        private XElement GetFileNode(string fileName, XNamespace ns, XElement pagesNode)
+        {
+            return (from node in pagesNode.Elements(ns + "include")
+                    let fileAttrib = node.Attribute("filename")
+                    where fileAttrib != null
+                    where string.Compare(fileAttrib.Value, fileName, StringComparison.OrdinalIgnoreCase) == 0
+                    select node).FirstOrDefault();
+        }
+
+        private string XmlFileDir()
+        {
+            if (string.IsNullOrEmpty(_xmlBaseDir))
+            {
+                return null;
+            }
+            if (string.IsNullOrEmpty(_vin))
+            {
+                return null;
+            }
+            try
+            {
+                return Path.Combine(_xmlBaseDir, _vin);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public class Receiver : BroadcastReceiver
@@ -1218,10 +1399,10 @@ namespace CarControlAndroid
                     return _items;
                 }
             }
-            private readonly Android.App.Activity _context;
+            private readonly XmlToolActivity _context;
             private bool _ignoreCheckEvent;
 
-            public EcuListAdapter(Android.App.Activity context)
+            public EcuListAdapter(XmlToolActivity context)
             {
                 _context = context;
                 _items = new List<EcuInfo>();
@@ -1292,6 +1473,7 @@ namespace CarControlAndroid
                     if (tagInfo.Info.Selected != args.IsChecked)
                     {
                         tagInfo.Info.Selected = args.IsChecked;
+                        _context.EcuCheckChanged(tagInfo.Info);
                         NotifyDataSetChanged();
                     }
                 }
