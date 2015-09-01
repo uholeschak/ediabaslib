@@ -130,6 +130,7 @@ namespace CarControlAndroid
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
 
         private InputMethodManager _imm;
+        private View _contentView;
         private View _barView;
         private CheckBox _checkBoxContinuous;
         private ToggleButton _buttonConnect;
@@ -171,6 +172,7 @@ namespace CarControlAndroid
             SetContentView(Resource.Layout.ediabas_tool);
 
             _imm = (InputMethodManager)GetSystemService(InputMethodService);
+            _contentView = FindViewById<View>(Android.Resource.Id.Content);
 
             _barView = LayoutInflater.Inflate(Resource.Layout.bar_ediabas_tool, null);
             ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
@@ -566,7 +568,7 @@ namespace CarControlAndroid
         {
             if (_imm != null)
             {
-                _imm.HideSoftInputFromWindow(_editTextArgs.WindowToken, HideSoftInputFlags.None);
+                _imm.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
             }
         }
 

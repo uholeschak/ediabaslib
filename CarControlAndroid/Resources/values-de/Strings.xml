@@ -98,4 +98,5 @@
   <string name="xml_tool_ecu_format_right">Rechts</string>
   <string name="xml_tool_ecu_format_left">Links</string>
   <string name="xml_tool_ecu_results">Job Ergebnis</string>
+  <string name="xml_tool_ecu_display_text">Anzeigetext</string>
 </resources>
