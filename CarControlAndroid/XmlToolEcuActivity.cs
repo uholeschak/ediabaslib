@@ -48,8 +48,10 @@ namespace CarControlAndroid
             }
 
             public bool Selected { get; set; }
-        
+
             public string Format { get; set; }
+
+            public string DisplayText { get; set; }
         }
 
         public class JobInfo
@@ -97,6 +99,7 @@ namespace CarControlAndroid
 
         public static List<JobInfo> IntentJobList { get; set; }
         private InputMethodManager _imm;
+        private View _contentView;
         private ListView _listViewJobs;
         private TextView _textViewJobCommentsTitle;
         private TextView _textViewJobComments;
@@ -106,6 +109,7 @@ namespace CarControlAndroid
         private ResultListAdapter _spinnerJobResultsAdapter;
         private TextView _textViewResultCommentsTitle;
         private TextView _textViewResultComments;
+        private EditText _editTextDisplayText;
         private TextView _textViewFormatDot;
         private EditText _editTextFormat;
         private Spinner _spinnerFormatPos;
@@ -133,6 +137,7 @@ namespace CarControlAndroid
             SetContentView(Resource.Layout.xml_tool_ecu);
 
             _imm = (InputMethodManager)GetSystemService(InputMethodService);
+            _contentView = FindViewById<View>(Android.Resource.Id.Content);
 
             SetResult(Android.App.Result.Canceled);
 
@@ -164,6 +169,7 @@ namespace CarControlAndroid
 
             _textViewResultCommentsTitle = FindViewById<TextView>(Resource.Id.textViewResultCommentsTitle);
             _textViewResultComments = FindViewById<TextView>(Resource.Id.textViewResultComments);
+            _editTextDisplayText = FindViewById<EditText>(Resource.Id.editTextDisplayText);
 
             _textViewFormatDot = FindViewById<TextView>(Resource.Id.textViewFormatDot);
             _editTextFormat = FindViewById<EditText>(Resource.Id.editTextFormat);
@@ -213,7 +219,7 @@ namespace CarControlAndroid
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             HideKeyboard();
-            UpdateFormatString(_selectedResult);
+            UpdateResultSettings(_selectedResult);
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
@@ -228,7 +234,7 @@ namespace CarControlAndroid
             switch (e.Action)
             {
                 case MotionEventActions.Down:
-                    UpdateFormatString(_selectedResult);
+                    UpdateResultSettings(_selectedResult);
                     HideKeyboard();
                     break;
             }
@@ -444,6 +450,15 @@ namespace CarControlAndroid
             return stringBuilder.ToString();
         }
 
+        private void UpdateResultSettings(ResultInfo resultInfo)
+        {
+            if (resultInfo != null)
+            {
+                resultInfo.DisplayText = _editTextDisplayText.Text;
+            }
+            UpdateFormatString(resultInfo);
+        }
+
         private void UpdateFormatString(ResultInfo resultInfo)
         {
             if ((resultInfo == null) || _ignoreFormatSelection)
@@ -505,6 +520,7 @@ namespace CarControlAndroid
 
         private void ResultSelected(int pos)
         {
+            UpdateResultSettings(_selectedResult);
             if (pos >= 0)
             {
                 _selectedResult = _spinnerJobResultsAdapter.Items[pos];
@@ -521,6 +537,8 @@ namespace CarControlAndroid
                     stringBuilderComments.Append(comment);
                 }
                 _textViewResultComments.Text = stringBuilderComments.ToString();
+
+                _editTextDisplayText.Text = _selectedResult.DisplayText;
 
                 UpdateFormatFields(_selectedResult, false, true);
             }
@@ -558,7 +576,7 @@ namespace CarControlAndroid
         {
             if (_imm != null)
             {
-                _imm.HideSoftInputFromWindow(_editTextFormat.WindowToken, HideSoftInputFlags.None);
+                _imm.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
             }
         }
 

@@ -137,7 +137,7 @@
         <xs:documentation>
           Name of the language (culture).
           This could be either the short form e.g. 'de' or the long one 'de-DE'.
-          If omitted this is the default languge of no other language tag matches.
+          If omitted this is the default languge if no other language tag matches.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>

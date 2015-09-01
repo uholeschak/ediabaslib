@@ -1005,6 +1005,7 @@ namespace CarControlAndroid
             {
                 return;
             }
+            XElement stringsNode = GetDefaultStringsNode(ns, pageNode);
             XElement jobsNode = pageNode.Element(ns + "jobs");
             if (jobsNode == null)
             {
@@ -1027,6 +1028,15 @@ namespace CarControlAndroid
                             if (formatAttr != null)
                             {
                                 result.Format = formatAttr.Value;
+                            }
+                        }
+                        if (stringsNode != null)
+                        {
+                            string displayTag = DisplayNamePrefix + job.Name + "#" + result.Name;
+                            string displayText = GetStringEntry(displayTag, ns, stringsNode);
+                            if (displayText != null)
+                            {
+                                result.DisplayText = displayText;
                             }
                         }
                     }
@@ -1062,6 +1072,24 @@ namespace CarControlAndroid
                 if (pageNameAttr == null)
                 {
                     pageNode.Add(new XAttribute("name", ecuInfo.Name));
+                }
+
+                XElement stringsNode = GetDefaultStringsNode(ns, pageNode);
+                if (stringsNode == null)
+                {
+                    stringsNode = new XElement(ns + "strings");
+                    pageNode.Add(stringsNode);
+                }
+                else
+                {   // remove all generated entries
+                    List<XElement> removeList =
+                        (from node in stringsNode.Elements(ns + "string")
+                         let nameAttr = node.Attribute("name")
+                         where nameAttr != null && nameAttr.Value.StartsWith(DisplayNamePrefix, StringComparison.Ordinal) select node).ToList();
+                    foreach (XElement node in removeList)
+                    {
+                        node.Remove();
+                    }
                 }
 
                 XElement jobsNode = pageNode.Element(ns + "jobs");
@@ -1132,12 +1160,18 @@ namespace CarControlAndroid
                             attr = displayNode.Attribute("format");
                             if (attr != null) attr.Remove();
                         }
+                        string displayTag = DisplayNamePrefix + job.Name + "#" + result.Name;
                         if (displayNode.Attribute("name") == null)
                         {
-                            displayNode.Add(new XAttribute("name", DisplayNamePrefix + job.Name + "#" + result.Name));
+                            displayNode.Add(new XAttribute("name", displayTag));
                         }
                         displayNode.Add(new XAttribute("result", result.Name));
                         displayNode.Add(new XAttribute("format", result.Format));
+
+                        XElement stringNode = XElement.Parse("<string>" + result.DisplayText + "</string>");
+                        stringNode.Name = ns + stringNode.Name.LocalName;
+                        stringNode.Add(new XAttribute("name", displayTag));
+                        stringsNode.Add(stringNode);
                     }
                 }
 
@@ -1448,6 +1482,19 @@ namespace CarControlAndroid
                     where fileAttrib != null
                     where string.Compare(fileAttrib.Value, fileName, StringComparison.OrdinalIgnoreCase) == 0
                     select node).FirstOrDefault();
+        }
+
+        private XElement GetDefaultStringsNode(XNamespace ns, XElement pageNode)
+        {
+            return pageNode.Elements(ns + "strings").FirstOrDefault(node => node.Attribute("lang") == null);
+        }
+
+        private string GetStringEntry(string entryName, XNamespace ns, XElement stringsNode)
+        {
+            return (from node in stringsNode.Elements(ns + "string")
+                    let nameAttr = node.Attribute("name")
+                    where nameAttr != null
+                    where string.Compare(nameAttr.Value, entryName, StringComparison.Ordinal) == 0 select node.FirstNode).OfType<XText>().Select(text => text.Value).FirstOrDefault();
         }
 
         private string XmlFileDir()
