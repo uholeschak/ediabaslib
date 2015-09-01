@@ -145,7 +145,7 @@ namespace CarControlAndroid
             _listViewJobs.ItemClick += (sender, args) =>
             {
                 int pos = args.Position;
-                JobSelected(args.Position >= 0 ? _jobListAdapter.Items[pos] : null);
+                JobSelected(pos >= 0 ? _jobListAdapter.Items[pos] : null);
             };
 
             _layoutJobConfig = FindViewById<LinearLayout>(Resource.Id.layoutJobConfig);
