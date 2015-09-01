@@ -7,6 +7,7 @@ using Android.Support.V7.App;
 using Android.Widget;
 using System;
 using EdiabasLib;
+using System.IO;
 
 namespace CarControlAndroid
 {
@@ -354,6 +355,32 @@ namespace CarControlAndroid
                 }
                 ((EdInterfaceEnet)ediabas.EdInterfaceClass).RemoteHost = remoteHost;
             }
+        }
+
+        public static string MakeRelativePath(string fromPath, string toPath)
+        {
+            if (string.IsNullOrEmpty(fromPath))
+            {
+                return string.Empty;
+            }
+            if (string.IsNullOrEmpty(toPath))
+            {
+                return fromPath;
+            }
+            System.Uri fromUri = new System.Uri(fromPath);
+            System.Uri toUri = new System.Uri(toPath);
+
+            if (fromUri.Scheme != toUri.Scheme) { return toPath; } // path can't be made relative.
+
+            System.Uri relativeUri = fromUri.MakeRelativeUri(toUri);
+            String relativePath = System.Uri.UnescapeDataString(relativeUri.ToString());
+
+            if (toUri.Scheme.ToUpperInvariant() == "FILE")
+            {
+                relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            }
+
+            return relativePath;
         }
 
         private static bool IsEmulator()

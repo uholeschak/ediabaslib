@@ -100,15 +100,17 @@ namespace CarControlAndroid
             public List<XmlToolEcuActivity.JobInfo> JobList { get; set; }
         }
 
-        private const string XmlDocumentFragment =
+        private const string XmlDocumentFrame =
             @"<?xml version=""1.0"" encoding=""utf-8"" ?>
-            <fragment xmlns=""http://www.holeschak.de/CarControl""
+            <{0} xmlns=""http://www.holeschak.de/CarControl""
             xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
             xsi:schemaLocation=""http://www.holeschak.de/CarControl ../CarControl.xsd"">
-            </fragment>";
+            </{0}>";
 
         private const string PageExtension = ".ccpage";
         private const string PagesFileName = "Pages.ccpages";
+        private const string ConfigFileNameBt = "Bluetooth.cccfg";
+        private const string ConfigFileNameEnet = "Enet.cccfg";
         private const string DisplayNamePrefix = "!JOB_";
 
         // Intent extra
@@ -1043,7 +1045,7 @@ namespace CarControlAndroid
                 XDocument document = documentOld;
                 if ((document == null) || (document.Root == null))
                 {
-                    document = XDocument.Parse(XmlDocumentFragment);
+                    document = XDocument.Parse(string.Format(XmlDocumentFrame, "fragment"));
                 }
                 if (document.Root == null)
                 {
@@ -1056,12 +1058,25 @@ namespace CarControlAndroid
                     pageNode = new XElement(ns + "page");
                     document.Root.Add(pageNode);
                 }
+                XAttribute pageNameAttr = pageNode.Attribute("name");
+                if (pageNameAttr == null)
+                {
+                    pageNode.Add(new XAttribute("name", ecuInfo.Name));
+                }
+
                 XElement jobsNode = pageNode.Element(ns + "jobs");
                 if (jobsNode == null)
                 {
                     jobsNode = new XElement(ns + "jobs");
                     pageNode.Add(jobsNode);
                 }
+                else
+                {
+                    XAttribute attr = jobsNode.Attribute("sgbd");
+                    if (attr != null) attr.Remove();
+                }
+
+                jobsNode.Add(new XAttribute("sgbd", ecuInfo.Sgbd));
 
                 foreach (XmlToolEcuActivity.JobInfo job in ecuInfo.JobList)
                 {
@@ -1175,7 +1190,7 @@ namespace CarControlAndroid
                 XDocument document = documentOld;
                 if ((document == null) || (document.Root == null))
                 {
-                    document = XDocument.Parse(XmlDocumentFragment);
+                    document = XDocument.Parse(string.Format(XmlDocumentFrame, "fragment"));
                 }
                 if (document.Root == null)
                 {
@@ -1215,6 +1230,66 @@ namespace CarControlAndroid
                     fileNode.Add(new XAttribute("filename", fileName));
                 }
 
+                return document;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private XDocument GenerateConfigXml(XDocument documentOld)
+        {
+            string xmlFileDir = XmlFileDir();
+            if (xmlFileDir == null)
+            {
+                return null;
+            }
+            try
+            {
+                XDocument document = documentOld;
+                if ((document == null) || (document.Root == null))
+                {
+                    document = XDocument.Parse(string.Format(XmlDocumentFrame, "configuration"));
+                }
+                if (document.Root == null)
+                {
+                    return null;
+                }
+                XNamespace ns = document.Root.GetDefaultNamespace();
+                XElement globalNode = document.Root.Element(ns + "global");
+                if (globalNode == null)
+                {
+                    globalNode = new XElement(ns + "global");
+                    document.Root.Add(globalNode);
+                }
+                else
+                {
+                    XAttribute attr = globalNode.Attribute("ecu_path");
+                    if (attr != null) attr.Remove();
+                    attr = globalNode.Attribute("interface");
+                    if (attr != null) attr.Remove();
+                }
+
+                string ecuDir = Path.GetDirectoryName(_sgbdFileName) ?? string.Empty;
+                globalNode.Add(new XAttribute("ecu_path", ActivityCommon.MakeRelativePath(xmlFileDir + Path.DirectorySeparatorChar, ecuDir + Path.DirectorySeparatorChar)));
+
+                XAttribute logPathAttr = globalNode.Attribute("log_path");
+                if (logPathAttr == null)
+                {
+                    globalNode.Add(new XAttribute("log_path", "Log"));
+                }
+
+                globalNode.Add(new XAttribute("interface",
+                    (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet) ? "ENET" : "BLUETOOTH"));
+
+                XElement includeNode = document.Root.Element(ns + "include");
+                if (includeNode == null)
+                {
+                    includeNode = new XElement(ns + "include");
+                    document.Root.Add(includeNode);
+                    includeNode.Add(new XAttribute("filename", PagesFileName));
+                }
                 return document;
             }
             catch (Exception)
@@ -1308,6 +1383,34 @@ namespace CarControlAndroid
                     try
                     {
                         documentPagesNew.Save(xmlPagesFile);
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
+                }
+
+                // config file
+                string xmlConfigFile = Path.Combine(xmlFileDir,
+                    (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet) ? ConfigFileNameEnet : ConfigFileNameBt);
+                XDocument documentConfig = null;
+                if (File.Exists(xmlConfigFile))
+                {
+                    try
+                    {
+                        documentConfig = XDocument.Load(xmlConfigFile);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+                XDocument documentConfigNew = GenerateConfigXml(documentConfig);
+                if (documentConfigNew != null)
+                {
+                    try
+                    {
+                        documentConfigNew.Save(xmlConfigFile);
                     }
                     catch (Exception)
                     {
