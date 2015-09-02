@@ -117,13 +117,13 @@ namespace CarControlAndroid
         private TextView _textViewFormatDot;
         private EditText _editTextFormat;
         private Spinner _spinnerFormatPos;
-        private ArrayAdapter<string> _spinnerFormatPosAdapter;
+        private StringAdapter _spinnerFormatPosAdapter;
         private Spinner _spinnerFormatLength1;
-        private ArrayAdapter<string> _spinnerFormatLength1Adapter;
+        private StringAdapter _spinnerFormatLength1Adapter;
         private Spinner _spinnerFormatLength2;
-        private ArrayAdapter<string> _spinnerFormatLength2Adapter;
+        private StringAdapter _spinnerFormatLength2Adapter;
         private Spinner _spinnerFormatType;
-        private ArrayAdapter<string> _spinnerFormatTypeAdapter;
+        private StringAdapter _spinnerFormatTypeAdapter;
         private XmlToolActivity.EcuInfo _ecuInfo;
         private JobInfo _selectedJob;
         private ResultInfo _selectedResult;
@@ -188,41 +188,45 @@ namespace CarControlAndroid
             _editTextFormat = FindViewById<EditText>(Resource.Id.editTextFormat);
 
             _spinnerFormatPos = FindViewById<Spinner>(Resource.Id.spinnerFormatPos);
-            _spinnerFormatPosAdapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem);
+            _spinnerFormatPosAdapter = new StringAdapter(this);
             _spinnerFormatPos.Adapter = _spinnerFormatPosAdapter;
-            _spinnerFormatPosAdapter.Add(GetString(Resource.String.xml_tool_ecu_format_right));
-            _spinnerFormatPosAdapter.Add(GetString(Resource.String.xml_tool_ecu_format_left));
+            _spinnerFormatPosAdapter.Items.Add(GetString(Resource.String.xml_tool_ecu_format_right));
+            _spinnerFormatPosAdapter.Items.Add(GetString(Resource.String.xml_tool_ecu_format_left));
+            _spinnerFormatPosAdapter.NotifyDataSetChanged();
             _spinnerFormatPos.ItemSelected += FormatItemSelected;
 
             _spinnerFormatLength1 = FindViewById<Spinner>(Resource.Id.spinnerFormatLength1);
-            _spinnerFormatLength1Adapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem);
+            _spinnerFormatLength1Adapter = new StringAdapter(this);
             _spinnerFormatLength1.Adapter = _spinnerFormatLength1Adapter;
-            _spinnerFormatLength1Adapter.Add("--");
+            _spinnerFormatLength1Adapter.Items.Add("--");
             for (int i = 0; i <= 10; i++)
             {
-                _spinnerFormatLength1Adapter.Add(i.ToString());
+                _spinnerFormatLength1Adapter.Items.Add(i.ToString());
             }
+            _spinnerFormatLength1Adapter.NotifyDataSetChanged();
             _spinnerFormatLength1.ItemSelected += FormatItemSelected;
 
             _spinnerFormatLength2 = FindViewById<Spinner>(Resource.Id.spinnerFormatLength2);
-            _spinnerFormatLength2Adapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem);
+            _spinnerFormatLength2Adapter = new StringAdapter(this);
             _spinnerFormatLength2.Adapter = _spinnerFormatLength2Adapter;
-            _spinnerFormatLength2Adapter.Add("--");
+            _spinnerFormatLength2Adapter.Items.Add("--");
             for (int i = 0; i <= 10; i++)
             {
-                _spinnerFormatLength2Adapter.Add(i.ToString());
+                _spinnerFormatLength2Adapter.Items.Add(i.ToString());
             }
+            _spinnerFormatLength2Adapter.NotifyDataSetChanged();
             _spinnerFormatLength2.ItemSelected += FormatItemSelected;
 
             _spinnerFormatType = FindViewById<Spinner>(Resource.Id.spinnerFormatType);
-            _spinnerFormatTypeAdapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem);
+            _spinnerFormatTypeAdapter = new StringAdapter(this);
             _spinnerFormatType.Adapter = _spinnerFormatTypeAdapter;
-            _spinnerFormatTypeAdapter.Add("--");
-            _spinnerFormatTypeAdapter.Add(GetString(Resource.String.xml_tool_ecu_user_format));
-            _spinnerFormatTypeAdapter.Add("(R)eal");
-            _spinnerFormatTypeAdapter.Add("(L)ong");
-            _spinnerFormatTypeAdapter.Add("(D)ouble");
-            _spinnerFormatTypeAdapter.Add("(T)ext");
+            _spinnerFormatTypeAdapter.Items.Add("--");
+            _spinnerFormatTypeAdapter.Items.Add(GetString(Resource.String.xml_tool_ecu_user_format));
+            _spinnerFormatTypeAdapter.Items.Add("(R)eal");
+            _spinnerFormatTypeAdapter.Items.Add("(L)ong");
+            _spinnerFormatTypeAdapter.Items.Add("(D)ouble");
+            _spinnerFormatTypeAdapter.Items.Add("(T)ext");
+            _spinnerFormatTypeAdapter.NotifyDataSetChanged();
             _spinnerFormatType.ItemSelected += FormatItemSelected;
 
             _layoutJobConfig.Visibility = ViewStates.Gone;
@@ -793,6 +797,56 @@ namespace CarControlAndroid
                 {
                     get { return _info; }
                 }
+            }
+        }
+
+        private class StringAdapter : BaseAdapter<string>
+        {
+            private readonly List<string> _items;
+
+            public List<string> Items
+            {
+                get { return _items; }
+            }
+
+            private readonly XmlToolEcuActivity _context;
+            private readonly Android.Graphics.Color _backgroundColor;
+
+            public StringAdapter(XmlToolEcuActivity context)
+            {
+                _context = context;
+                _items = new List<string>();
+                TypedArray typedArray = context.Theme.ObtainStyledAttributes(
+                    new[] { Android.Resource.Attribute.ColorBackground });
+                _backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
+            }
+
+            public override long GetItemId(int position)
+            {
+                return position;
+            }
+
+            public override string this[int position]
+            {
+                get { return _items[position]; }
+            }
+
+            public override int Count
+            {
+                get { return _items.Count; }
+            }
+
+            public override View GetView(int position, View convertView, ViewGroup parent)
+            {
+                var item = _items[position];
+
+                View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.string_list, null);
+                view.SetBackgroundColor(_backgroundColor);
+
+                TextView textView = view.FindViewById<TextView>(Resource.Id.textStringEntry);
+                textView.Text = item;
+
+                return view;
             }
         }
     }
