@@ -39,7 +39,7 @@
   <!-- Options Menu -->
   <string name="menu_device">Gerät</string>
   <string name="menu_sel_cfg">Konfiguration</string>
-  <string name="menu_xml_tool">XML Generator</string>
+  <string name="menu_xml_tool">Konfigurationsgenerator</string>
   <string name="menu_ediabas_tool">Ediabas Tool</string>
   <string name="menu_enable_trace">Tracefile erzeugen</string>
   <string name="menu_append_trace">Tracefile anhängen</string>
@@ -77,13 +77,15 @@
   <string name="menu_tool_sel_sgbd_prg">SGBD (prg)</string>
 
   <!-- XML Tool Activity -->
-  <string name="xml_tool_title">XML Generator</string>
+  <string name="xml_tool_title">Konfigurationsgenerator</string>
   <string name="button_xml_tool_read">Lesen</string>
-  <string name="button_xml_tool_save">XML speichern</string>
+  <string name="button_xml_tool_save">Speichern</string>
   <string name="xml_tool_analyze">Fahrzeug analysieren</string>
   <string name="xml_tool_analyze_failed">Analysieren fehlgeschlagen</string>
   <string name="xml_tool_read_jobs_failed">Jobs lesen fehlgeschlagen</string>
-  <string name="xml_tool_save_xml_failed">XML speichern fehlgeschlagen</string>
+  <string name="xml_tool_save_xml_failed">Konfiguration speichern fehlgeschlagen</string>
+  <string name="xml_tool_title_config">Konfiguration speichern</string>
+  <string name="xml_tool_msg_save_config">Wollen Sie die Konfiguration speichern?</string>
   <string name="xml_tool_info_sgbd">SGBD</string>
   <string name="xml_tool_info_grp">Gruppe</string>
   <string name="xml_tool_info_vin">FG-NR</string>
