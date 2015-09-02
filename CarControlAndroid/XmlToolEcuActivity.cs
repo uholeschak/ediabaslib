@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Android.Content.Res;
-using Android.Text.Method;
 using Android.Views.InputMethods;
 
 namespace CarControlAndroid
@@ -102,12 +101,11 @@ namespace CarControlAndroid
         public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
         private InputMethodManager _imm;
         private View _contentView;
-        private LinearLayout _layoutPageName;
         private EditText _editTextPageName;
-        private ListView _listViewJobs;
+        private Spinner _spinnerJobs;
+        private JobListAdapter _spinnerJobsAdapter;
         private TextView _textViewJobCommentsTitle;
         private TextView _textViewJobComments;
-        private JobListAdapter _jobListAdapter;
         private LinearLayout _layoutJobConfig;
         private Spinner _spinnerJobResults;
         private ResultListAdapter _spinnerJobResultsAdapter;
@@ -147,19 +145,17 @@ namespace CarControlAndroid
 
             _ecuInfo = IntentEcuInfo;
 
-            _layoutPageName = FindViewById<LinearLayout>(Resource.Id.layoutPageName);
-            _layoutPageName.SetOnTouchListener(this);
             _editTextPageName = FindViewById<EditText>(Resource.Id.editTextPageName);
             _editTextPageName.Text = _ecuInfo.PageName;
 
-            _listViewJobs = FindViewById<ListView>(Resource.Id.listJobs);
-            _jobListAdapter = new JobListAdapter(this);
-            _listViewJobs.Adapter = _jobListAdapter;
-            _listViewJobs.SetOnTouchListener(this);
-            _listViewJobs.ItemClick += (sender, args) =>
+            _spinnerJobs = FindViewById<Spinner>(Resource.Id.listJobs);
+            _spinnerJobsAdapter = new JobListAdapter(this);
+            _spinnerJobs.Adapter = _spinnerJobsAdapter;
+            _spinnerJobs.SetOnTouchListener(this);
+            _spinnerJobs.ItemSelected += (sender, args) =>
             {
                 int pos = args.Position;
-                JobSelected(pos >= 0 ? _jobListAdapter.Items[pos] : null);
+                JobSelected(pos >= 0 ? _spinnerJobsAdapter.Items[pos] : null);
             };
 
             _layoutJobConfig = FindViewById<LinearLayout>(Resource.Id.layoutJobConfig);
@@ -167,8 +163,6 @@ namespace CarControlAndroid
 
             _textViewJobCommentsTitle = FindViewById<TextView>(Resource.Id.textViewJobCommentsTitle);
             _textViewJobComments = FindViewById<TextView>(Resource.Id.textViewJobComments);
-            _textViewJobComments.MovementMethod = new ScrollingMovementMethod();
-            _textViewJobComments.SetOnTouchListener(this);
 
             _spinnerJobResults = FindViewById<Spinner>(Resource.Id.spinnerJobResults);
             _spinnerJobResultsAdapter = new ResultListAdapter(this);
@@ -180,8 +174,6 @@ namespace CarControlAndroid
 
             _textViewResultCommentsTitle = FindViewById<TextView>(Resource.Id.textViewResultCommentsTitle);
             _textViewResultComments = FindViewById<TextView>(Resource.Id.textViewResultComments);
-            _textViewResultComments.MovementMethod = new ScrollingMovementMethod();
-            _textViewResultComments.SetOnTouchListener(this);
             _editTextDisplayText = FindViewById<EditText>(Resource.Id.editTextDisplayText);
 
             _textViewFormatDot = FindViewById<TextView>(Resource.Id.textViewFormatDot);
@@ -267,15 +259,24 @@ namespace CarControlAndroid
 
         private void UpdateDisplay()
         {
-            _jobListAdapter.Items.Clear();
+            _spinnerJobsAdapter.Items.Clear();
             foreach (JobInfo job in _ecuInfo.JobList.OrderBy(x => x.Name))
             {
                 if (job.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase) && job.ArgCount == 0)
                 {
-                    _jobListAdapter.Items.Add(job);
+                    _spinnerJobsAdapter.Items.Add(job);
                 }
             }
-            _jobListAdapter.NotifyDataSetChanged();
+            _spinnerJobsAdapter.NotifyDataSetChanged();
+            if (_spinnerJobsAdapter.Items.Count > 0)
+            {
+                _spinnerJobs.SetSelection(0);
+                JobSelected(_spinnerJobsAdapter.Items[0]);
+            }
+            else
+            {
+                JobSelected(null);
+            }
         }
 
         private void UpdateFormatFields(ResultInfo resultInfo, bool userFormat, bool initialCall = false)
@@ -552,12 +553,12 @@ namespace CarControlAndroid
                 _textViewResultCommentsTitle.Text = string.Format(GetString(Resource.String.xml_tool_ecu_result_comments), _selectedResult.Name);
 
                 StringBuilder stringBuilderComments = new StringBuilder();
+                stringBuilderComments.Append(GetString(Resource.String.xml_tool_ecu_result_type));
+                stringBuilderComments.Append(": ");
+                stringBuilderComments.Append(_selectedResult.Type);
                 foreach (string comment in _selectedResult.Comments)
                 {
-                    if (stringBuilderComments.Length > 0)
-                    {
-                        stringBuilderComments.Append("\r\n");
-                    }
+                    stringBuilderComments.Append("\r\n");
                     stringBuilderComments.Append(comment);
                 }
                 _textViewResultComments.Text = stringBuilderComments.ToString();
@@ -591,7 +592,7 @@ namespace CarControlAndroid
             if (_selectedJob.Selected != selectJob)
             {
                 _selectedJob.Selected = selectJob;
-                _jobListAdapter.NotifyDataSetChanged();
+                _spinnerJobsAdapter.NotifyDataSetChanged();
             }
         }
 
@@ -613,12 +614,16 @@ namespace CarControlAndroid
             }
 
             private readonly XmlToolEcuActivity _context;
+            private readonly Android.Graphics.Color _backgroundColor;
             private bool _ignoreCheckEvent;
 
             public JobListAdapter(XmlToolEcuActivity context)
             {
                 _context = context;
                 _items = new List<JobInfo>();
+                TypedArray typedArray = context.Theme.ObtainStyledAttributes(
+                    new[] { Android.Resource.Attribute.ColorBackground });
+                _backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
             }
 
             public override long GetItemId(int position)
@@ -641,6 +646,7 @@ namespace CarControlAndroid
                 var item = _items[position];
 
                 View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.job_select_list, null);
+                view.SetBackgroundColor(_backgroundColor);
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxJobSelect);
                 _ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
