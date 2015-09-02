@@ -229,6 +229,13 @@ namespace CarControlAndroid
                     break;
 
                 case ActivityRequest.RequestXmlTool:
+                    // When XML tool returns with a file
+                    if (resultCode == Android.App.Result.Ok)
+                    {
+                        _configFileName = data.Extras.GetString(XmlToolActivity.ExtraFileName);
+                        ReadConfigFile();
+                        SupportInvalidateOptionsMenu();
+                    }
                     break;
 
                 case ActivityRequest.RequestEdiabasTool:

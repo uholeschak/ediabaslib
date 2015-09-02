@@ -79,9 +79,11 @@
   <!-- XML Tool Activity -->
   <string name="xml_tool_title">XML generator</string>
   <string name="button_xml_tool_read">Read</string>
+  <string name="button_xml_tool_save">Save XML</string>
   <string name="xml_tool_analyze">Analyzing vehicle</string>
   <string name="xml_tool_analyze_failed">Analyzing failed</string>
   <string name="xml_tool_read_jobs_failed">Reading jobs failed</string>
+  <string name="xml_tool_save_xml_failed">Saving XML failed</string>
   <string name="xml_tool_info_sgbd">SGBD</string>
   <string name="xml_tool_info_grp">Group</string>
   <string name="xml_tool_info_vin">VIN</string>
