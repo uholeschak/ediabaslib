@@ -168,7 +168,7 @@ namespace CarControlAndroid
             _buttonRead = _barView.FindViewById<Button>(Resource.Id.buttonXmlRead);
             _buttonRead.Click += (sender, args) =>
             {
-                ExecuteAnalyzeJob();
+                PerformAnalyze();
             };
 
             SetResult(Android.App.Result.Canceled);
@@ -309,18 +309,6 @@ namespace CarControlAndroid
                 selInterfaceMenu.SetEnabled(!commActive);
             }
 
-            IMenuItem selSgbdPrgMenu = menu.FindItem(Resource.Id.menu_xml_tool_sel_sgbd);
-            if (selSgbdPrgMenu != null)
-            {
-                string fileName = string.Empty;
-                if (!string.IsNullOrEmpty(_sgbdFileName))
-                {
-                    fileName = Path.GetFileNameWithoutExtension(_sgbdFileName);
-                }
-                selSgbdPrgMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_tool_sel_sgbd_prg), fileName));
-                selSgbdPrgMenu.SetEnabled(!commActive && interfaceAvailable);
-            }
-
             IMenuItem scanMenu = menu.FindItem(Resource.Id.menu_scan);
             if (scanMenu != null)
             {
@@ -365,25 +353,6 @@ namespace CarControlAndroid
                         return true;
                     }
                     SelectInterface();
-                    return true;
-
-                case Resource.Id.menu_xml_tool_sel_sgbd:
-                    if (IsJobRunning())
-                    {
-                        return true;
-                    }
-                    _autoStart = false;
-                    if (string.IsNullOrEmpty(_deviceAddress))
-                    {
-                        if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, (sender, args) =>
-                        {
-                            _autoStart = true;
-                        }))
-                        {
-                            break;
-                        }
-                    }
-                    SelectSgbdFile();
                     return true;
 
                 case Resource.Id.menu_scan:
@@ -452,26 +421,21 @@ namespace CarControlAndroid
         private void UpdateDisplay()
         {
             _ecuListAdapter.Items.Clear();
-            bool buttonReadEnable = true;
             if ((_ediabas == null) || (_ecuList.Count == 0))
             {
                 if (_ediabas == null) _statusText = string.Empty;
                 _vin = string.Empty;
                 _ecuList.Clear();
-                buttonReadEnable = false;
             }
             else
             {
-                if (!_activityCommon.IsInterfaceAvailable())
-                {
-                    buttonReadEnable = false;
-                }
                 foreach (EcuInfo ecu in _ecuList)
                 {
                     _ecuListAdapter.Items.Add(ecu);
                 }
             }
-            _buttonRead.Enabled = buttonReadEnable;
+
+            _buttonRead.Enabled = _activityCommon.IsInterfaceAvailable();
             _ecuListAdapter.NotifyDataSetChanged();
 
             _textViewCarInfo.Text = _statusText;
@@ -576,6 +540,26 @@ namespace CarControlAndroid
             {
                 SupportInvalidateOptionsMenu();
             });
+        }
+
+        private void PerformAnalyze()
+        {
+            if (IsJobRunning())
+            {
+                return;
+            }
+            _autoStart = false;
+            if (string.IsNullOrEmpty(_deviceAddress))
+            {
+                if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, (sender, args) =>
+                {
+                    _autoStart = true;
+                }))
+                {
+                    return;
+                }
+            }
+            SelectSgbdFile();
         }
 
         private void ExecuteAnalyzeJob()

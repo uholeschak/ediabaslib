@@ -86,9 +86,6 @@
   <string name="xml_tool_info_grp">Group</string>
   <string name="xml_tool_info_vin">VIN</string>
 
-  <!-- XML Tool Options Menu -->
-  <string name="menu_xml_tool_sel_sgbd">SGBD</string>
-
   <!-- XML Tool Ecu Activity -->
   <string name="xml_tool_ecu_title">Jobs for ECU: {0}</string>
   <string name="xml_tool_ecu_job_comments">Comments for job: {0}</string>
