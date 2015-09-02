@@ -34,7 +34,7 @@ namespace CarControlAndroid
             RequestSelectJobs,
         }
 
-        private class EcuInfo
+        public class EcuInfo
         {
             public EcuInfo(string name, Int64 address, string description, string sgbd, string grp)
             {
@@ -44,6 +44,7 @@ namespace CarControlAndroid
                 _sgbd = sgbd;
                 _grp = grp;
                 Selected = false;
+                PageName = name;
                 JobList = null;
             }
 
@@ -97,6 +98,8 @@ namespace CarControlAndroid
 
             public bool Selected { get; set; }
 
+            public string PageName { get; set; }
+
             public List<XmlToolEcuActivity.JobInfo> JobList { get; set; }
         }
 
@@ -111,7 +114,8 @@ namespace CarControlAndroid
         private const string PagesFileName = "Pages.ccpages";
         private const string ConfigFileNameBt = "Bluetooth.cccfg";
         private const string ConfigFileNameEnet = "Enet.cccfg";
-        private const string DisplayNamePrefix = "!JOB_";
+        private const string DisplayNamePage = "!PAGE_NAME";
+        private const string DisplayNamePrefix = "!JOB#";
 
         // Intent extra
         public const string ExtraInitDir = "init_dir";
@@ -140,7 +144,6 @@ namespace CarControlAndroid
         private Receiver _receiver;
         private string _statusText = string.Empty;
         private string _vin = string.Empty;
-        private EcuInfo _intentEcuInfo;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -266,10 +269,10 @@ namespace CarControlAndroid
                     break;
 
                 case ActivityRequest.RequestSelectJobs:
-                    if (_intentEcuInfo.JobList != null)
+                    if (XmlToolEcuActivity.IntentEcuInfo.JobList != null)
                     {
-                        int selectCount = _intentEcuInfo.JobList.Count(job => job.Selected);
-                        _intentEcuInfo.Selected = selectCount > 0;
+                        int selectCount = XmlToolEcuActivity.IntentEcuInfo.JobList.Count(job => job.Selected);
+                        XmlToolEcuActivity.IntentEcuInfo.Selected = selectCount > 0;
                         _ecuListAdapter.NotifyDataSetChanged();
                     }
                     break;
@@ -546,8 +549,7 @@ namespace CarControlAndroid
             {
                 return;
             }
-            _intentEcuInfo = ecuInfo;
-            XmlToolEcuActivity.IntentJobList = ecuInfo.JobList;
+            XmlToolEcuActivity.IntentEcuInfo = ecuInfo;
             Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
             serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectJobs);
@@ -941,7 +943,7 @@ namespace CarControlAndroid
                     string xmlFileDir = XmlFileDir();
                     if (xmlFileDir != null)
                     {
-                        string xmlFile = Path.Combine(xmlFileDir, ecuInfo.Name + PageExtension);
+                        string xmlFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
                         if (File.Exists(xmlFile))
                         {
                             try
@@ -1012,6 +1014,15 @@ namespace CarControlAndroid
                 return;
             }
 
+            if (stringsNode != null)
+            {
+                string pageName = GetStringEntry(DisplayNamePage, ns, stringsNode);
+                if (pageName != null)
+                {
+                    ecuInfo.PageName = pageName;
+                }
+            }
+
             foreach (XmlToolEcuActivity.JobInfo job in ecuInfo.JobList)
             {
                 XElement jobNode = GetJobNode(job, ns, jobsNode);
@@ -1071,7 +1082,7 @@ namespace CarControlAndroid
                 XAttribute pageNameAttr = pageNode.Attribute("name");
                 if (pageNameAttr == null)
                 {
-                    pageNode.Add(new XAttribute("name", ecuInfo.Name));
+                    pageNode.Add(new XAttribute("name", DisplayNamePage));
                 }
 
                 XElement stringsNode = GetDefaultStringsNode(ns, pageNode);
@@ -1085,12 +1096,18 @@ namespace CarControlAndroid
                     List<XElement> removeList =
                         (from node in stringsNode.Elements(ns + "string")
                          let nameAttr = node.Attribute("name")
-                         where nameAttr != null && nameAttr.Value.StartsWith(DisplayNamePrefix, StringComparison.Ordinal) select node).ToList();
+                         where nameAttr != null &&
+                         (nameAttr.Value.StartsWith(DisplayNamePrefix, StringComparison.Ordinal) || string.Compare(nameAttr.Value, DisplayNamePage, StringComparison.Ordinal) == 0)
+                         select node).ToList();
                     foreach (XElement node in removeList)
                     {
                         node.Remove();
                     }
                 }
+
+                XElement stringNodePage = new XElement(ns + "string", ecuInfo.PageName);
+                stringNodePage.Add(new XAttribute("name", DisplayNamePage));
+                stringsNode.Add(stringNodePage);
 
                 XElement jobsNode = pageNode.Element(ns + "jobs");
                 if (jobsNode == null)
@@ -1168,8 +1185,7 @@ namespace CarControlAndroid
                         displayNode.Add(new XAttribute("result", result.Name));
                         displayNode.Add(new XAttribute("format", result.Format));
 
-                        XElement stringNode = XElement.Parse("<string>" + result.DisplayText + "</string>");
-                        stringNode.Name = ns + stringNode.Name.LocalName;
+                        XElement stringNode = new XElement(ns + "string", result.DisplayText);
                         stringNode.Add(new XAttribute("name", displayTag));
                         stringsNode.Add(stringNode);
                     }
@@ -1203,7 +1219,7 @@ namespace CarControlAndroid
 
             foreach (EcuInfo ecuInfo in _ecuList)
             {
-                string fileName = ecuInfo.Name + PageExtension;
+                string fileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
                 XElement fileNode = GetFileNode(fileName, ns, pagesNode);
                 if (fileNode != null && File.Exists(Path.Combine(xmlFileDir, fileName)))
                 {
@@ -1240,7 +1256,7 @@ namespace CarControlAndroid
 
                 foreach (EcuInfo ecuInfo in _ecuList)
                 {
-                    string fileName = ecuInfo.Name + PageExtension;
+                    string fileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
                     XElement fileNode = GetFileNode(fileName, ns, pagesNode);
                     if (!ecuInfo.Selected || !File.Exists(Path.Combine(xmlFileDir, fileName)))
                     {
@@ -1370,7 +1386,7 @@ namespace CarControlAndroid
                 {
                     if (ecuInfo.JobList == null) continue;
                     if (!ecuInfo.Selected) continue;
-                    string xmlPageFile = Path.Combine(xmlFileDir, ecuInfo.Name + PageExtension);
+                    string xmlPageFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
                     XDocument documentPage = null;
                     if (File.Exists(xmlPageFile))
                     {
