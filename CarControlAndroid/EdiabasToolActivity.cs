@@ -449,7 +449,7 @@ namespace CarControlAndroid
                                 _autoStartItemId = item.ItemId;
                             }))
                         {
-                            break;
+                            return true;
                         }
                     }
                     SelectSgbdFile(item.ItemId == Resource.Id.menu_tool_sel_sgbd_grp);
