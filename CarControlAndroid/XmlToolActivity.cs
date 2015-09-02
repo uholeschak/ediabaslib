@@ -1557,13 +1557,14 @@ namespace CarControlAndroid
             {
                 return null;
             }
-            if (string.IsNullOrEmpty(_vin))
+            string vin = _vin;
+            if (string.IsNullOrEmpty(vin))
             {
-                return null;
+                vin = "Unknown";
             }
             try
             {
-                return Path.Combine(_xmlBaseDir, _vin);
+                return Path.Combine(_xmlBaseDir, ActivityCommon.CreateValidFileName(vin));
             }
             catch (Exception)
             {

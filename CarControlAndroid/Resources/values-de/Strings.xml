@@ -80,8 +80,8 @@
   <string name="xml_tool_title">Konfigurationsgenerator</string>
   <string name="button_xml_tool_read">Lesen</string>
   <string name="button_xml_tool_save">Speichern</string>
-  <string name="xml_tool_analyze">Fahrzeug analysieren</string>
-  <string name="xml_tool_analyze_failed">Analysieren fehlgeschlagen</string>
+  <string name="xml_tool_analyze">Fahrzeugdaten lesen</string>
+  <string name="xml_tool_analyze_failed">Daten lesen fehlgeschlagen</string>
   <string name="xml_tool_read_jobs_failed">Jobs lesen fehlgeschlagen</string>
   <string name="xml_tool_save_xml_failed">Konfiguration speichern fehlgeschlagen</string>
   <string name="xml_tool_title_config">Konfiguration speichern</string>
