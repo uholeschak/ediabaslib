@@ -123,10 +123,12 @@ namespace CarControlAndroid
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
+        public const string ExtraFileName = "file_name";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
 
         private View _barView;
         private Button _buttonRead;
+        private Button _buttonSafe;
         private EcuListAdapter _ecuListAdapter;
         private TextView _textViewCarInfo;
         private string _initDirStart;
@@ -169,6 +171,28 @@ namespace CarControlAndroid
             _buttonRead.Click += (sender, args) =>
             {
                 PerformAnalyze();
+            };
+            _buttonSafe = _barView.FindViewById<Button>(Resource.Id.buttonXmlSafe);
+            _buttonSafe.Click += (sender, args) =>
+            {
+                if (IsJobRunning())
+                {
+                    return;
+                }
+                string xmlFileName = SaveAllXml();
+                if (xmlFileName == null)
+                {
+                    _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_save_xml_failed));
+                }
+                else
+                {
+                    Intent intent = new Intent();
+                    intent.PutExtra(ExtraFileName, xmlFileName);
+
+                    // Set result and finish this Activity
+                    SetResult(Android.App.Result.Ok, intent);
+                    Finish();
+                }
             };
 
             SetResult(Android.App.Result.Canceled);
@@ -343,7 +367,6 @@ namespace CarControlAndroid
                     {
                         return true;
                     }
-                    StoreAllXml();
                     Finish();
                     return true;
 
@@ -436,6 +459,7 @@ namespace CarControlAndroid
             }
 
             _buttonRead.Enabled = _activityCommon.IsInterfaceAvailable();
+            _buttonSafe.Enabled = _ecuList.Count > 0;
             _ecuListAdapter.NotifyDataSetChanged();
 
             _textViewCarInfo.Text = _statusText;
@@ -1354,13 +1378,12 @@ namespace CarControlAndroid
             }
         }
 
-        // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool StoreAllXml()
+        private string SaveAllXml()
         {
             string xmlFileDir = XmlFileDir();
             if (xmlFileDir == null)
             {
-                return false;
+                return null;
             }
             try
             {
@@ -1392,7 +1415,7 @@ namespace CarControlAndroid
                         }
                         catch (Exception)
                         {
-                            return false;
+                            return null;
                         }
                     }
                 }
@@ -1420,7 +1443,7 @@ namespace CarControlAndroid
                     }
                     catch (Exception)
                     {
-                        return false;
+                        return null;
                     }
                 }
 
@@ -1448,15 +1471,15 @@ namespace CarControlAndroid
                     }
                     catch (Exception)
                     {
-                        return false;
+                        return null;
                     }
                 }
+                return xmlConfigFile;
             }
             catch (Exception)
             {
-                return false;
+                return null;
             }
-            return true;
         }
 
         private XElement GetJobNode(XmlToolEcuActivity.JobInfo job, XNamespace ns, XElement jobsNode)
