@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Android.Content.Res;
+using Android.Text.Method;
 using Android.Views.InputMethods;
 
 namespace CarControlAndroid
@@ -26,6 +27,7 @@ namespace CarControlAndroid
                 _comments = comments;
                 Selected = false;
                 Format = string.Empty;
+                DisplayText = name;
             }
 
             private readonly string _name;
@@ -97,9 +99,11 @@ namespace CarControlAndroid
         // Intent extra
         public const string ExtraEcuName = "ecu_name";
 
-        public static List<JobInfo> IntentJobList { get; set; }
+        public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
         private InputMethodManager _imm;
         private View _contentView;
+        private LinearLayout _layoutPageName;
+        private EditText _editTextPageName;
         private ListView _listViewJobs;
         private TextView _textViewJobCommentsTitle;
         private TextView _textViewJobComments;
@@ -120,7 +124,7 @@ namespace CarControlAndroid
         private ArrayAdapter<string> _spinnerFormatLength2Adapter;
         private Spinner _spinnerFormatType;
         private ArrayAdapter<string> _spinnerFormatTypeAdapter;
-        private List<JobInfo> _jobList;
+        private XmlToolActivity.EcuInfo _ecuInfo;
         private JobInfo _selectedJob;
         private ResultInfo _selectedResult;
         private bool _ignoreFormatSelection;
@@ -141,7 +145,12 @@ namespace CarControlAndroid
 
             SetResult(Android.App.Result.Canceled);
 
-            _jobList = IntentJobList;
+            _ecuInfo = IntentEcuInfo;
+
+            _layoutPageName = FindViewById<LinearLayout>(Resource.Id.layoutPageName);
+            _layoutPageName.SetOnTouchListener(this);
+            _editTextPageName = FindViewById<EditText>(Resource.Id.editTextPageName);
+            _editTextPageName.Text = _ecuInfo.PageName;
 
             _listViewJobs = FindViewById<ListView>(Resource.Id.listJobs);
             _jobListAdapter = new JobListAdapter(this);
@@ -158,6 +167,8 @@ namespace CarControlAndroid
 
             _textViewJobCommentsTitle = FindViewById<TextView>(Resource.Id.textViewJobCommentsTitle);
             _textViewJobComments = FindViewById<TextView>(Resource.Id.textViewJobComments);
+            _textViewJobComments.MovementMethod = new ScrollingMovementMethod();
+            _textViewJobComments.SetOnTouchListener(this);
 
             _spinnerJobResults = FindViewById<Spinner>(Resource.Id.spinnerJobResults);
             _spinnerJobResultsAdapter = new ResultListAdapter(this);
@@ -169,6 +180,8 @@ namespace CarControlAndroid
 
             _textViewResultCommentsTitle = FindViewById<TextView>(Resource.Id.textViewResultCommentsTitle);
             _textViewResultComments = FindViewById<TextView>(Resource.Id.textViewResultComments);
+            _textViewResultComments.MovementMethod = new ScrollingMovementMethod();
+            _textViewResultComments.SetOnTouchListener(this);
             _editTextDisplayText = FindViewById<EditText>(Resource.Id.editTextDisplayText);
 
             _textViewFormatDot = FindViewById<TextView>(Resource.Id.textViewFormatDot);
@@ -216,6 +229,13 @@ namespace CarControlAndroid
             UpdateDisplay();
         }
 
+        protected override void OnStop()
+        {
+            base.OnStop();
+            UpdateResultSettings(_selectedResult);
+            _ecuInfo.PageName = _editTextPageName.Text;
+        }
+
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             HideKeyboard();
@@ -244,7 +264,7 @@ namespace CarControlAndroid
         private void UpdateDisplay()
         {
             _jobListAdapter.Items.Clear();
-            foreach (JobInfo job in _jobList.OrderBy(x => x.Name))
+            foreach (JobInfo job in _ecuInfo.JobList.OrderBy(x => x.Name))
             {
                 if (job.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase) && job.ArgCount == 0)
                 {
@@ -537,7 +557,6 @@ namespace CarControlAndroid
                     stringBuilderComments.Append(comment);
                 }
                 _textViewResultComments.Text = stringBuilderComments.ToString();
-
                 _editTextDisplayText.Text = _selectedResult.DisplayText;
 
                 UpdateFormatFields(_selectedResult, false, true);

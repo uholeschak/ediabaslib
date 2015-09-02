@@ -2,7 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+    <LinearLayout
+        android:id="@+id/layoutPageName"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/textViewPageNameTitle"
+            android:text="@+string/xml_tool_ecu_page_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <EditText
+            android:id="@+id/editTextPageName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLines="1" />
+    </LinearLayout>
     <ListView
         android:id="@+id/listJobs"
         android:layout_width="match_parent"
@@ -22,7 +44,9 @@
         <TextView
             android:id="@+id/textViewJobComments"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:maxLines="4"
+            android:scrollbars="vertical" />
         <TextView
             android:id="@+id/textViewJobResults"
             android:text="@+string/xml_tool_ecu_results"
@@ -43,7 +67,9 @@
         <TextView
             android:id="@+id/textViewResultComments"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:maxLines="4"
+            android:scrollbars="vertical" />
         <TextView
             android:id="@+id/textViewDisplayTextTitle"
             android:text="@+string/xml_tool_ecu_display_text"

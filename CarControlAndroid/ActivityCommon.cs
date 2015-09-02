@@ -8,6 +8,7 @@ using Android.Widget;
 using System;
 using EdiabasLib;
 using System.IO;
+using System.Linq;
 
 namespace CarControlAndroid
 {
@@ -381,6 +382,13 @@ namespace CarControlAndroid
             }
 
             return relativePath;
+        }
+
+        public static string CreateValidFileName(string s, char replaceChar = '_', char[] includeChars = null)
+        {
+            char[] invalid = Path.GetInvalidFileNameChars();
+            if (includeChars != null) invalid = invalid.Union(includeChars).ToArray();
+            return string.Join(string.Empty, s.ToCharArray().Select(o => invalid.Contains(o) ? replaceChar : o));
         }
 
         private static bool IsEmulator()
