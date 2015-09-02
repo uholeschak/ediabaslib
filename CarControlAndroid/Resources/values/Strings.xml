@@ -80,8 +80,8 @@
   <string name="xml_tool_title">Configuration generator</string>
   <string name="button_xml_tool_read">Read</string>
   <string name="button_xml_tool_save">Save</string>
-  <string name="xml_tool_analyze">Analyzing vehicle</string>
-  <string name="xml_tool_analyze_failed">Analyzing failed</string>
+  <string name="xml_tool_analyze">Reading vehicle data</string>
+  <string name="xml_tool_analyze_failed">Reading data failed</string>
   <string name="xml_tool_read_jobs_failed">Reading jobs failed</string>
   <string name="xml_tool_save_xml_failed">Saving configuration failed</string>
   <string name="xml_tool_title_config">Save sonfiguration</string>
