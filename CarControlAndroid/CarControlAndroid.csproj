@@ -129,6 +129,9 @@
     <AndroidResource Include="Resources\layout\job_select_list.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\string_list.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
     <None Include="Xml\AdapterCustom.ccpage">
       <SubType>Designer</SubType>
     </None>
