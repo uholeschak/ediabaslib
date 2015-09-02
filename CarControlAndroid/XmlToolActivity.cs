@@ -175,22 +175,8 @@ namespace CarControlAndroid
             _buttonSafe = _barView.FindViewById<Button>(Resource.Id.buttonXmlSafe);
             _buttonSafe.Click += (sender, args) =>
             {
-                if (IsJobRunning())
+                if (SaveConfiguration())
                 {
-                    return;
-                }
-                string xmlFileName = SaveAllXml();
-                if (xmlFileName == null)
-                {
-                    _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_save_xml_failed));
-                }
-                else
-                {
-                    Intent intent = new Intent();
-                    intent.PutExtra(ExtraFileName, xmlFileName);
-
-                    // Set result and finish this Activity
-                    SetResult(Android.App.Result.Ok, intent);
                     Finish();
                 }
             };
@@ -298,6 +284,7 @@ namespace CarControlAndroid
                         int selectCount = XmlToolEcuActivity.IntentEcuInfo.JobList.Count(job => job.Selected);
                         XmlToolEcuActivity.IntentEcuInfo.Selected = selectCount > 0;
                         _ecuListAdapter.NotifyDataSetChanged();
+                        UpdateDisplay();
                     }
                     break;
             }
@@ -367,7 +354,29 @@ namespace CarControlAndroid
                     {
                         return true;
                     }
-                    Finish();
+                    UpdateDisplay();
+                    if (_buttonSafe.Enabled)
+                    {
+                        new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                            {
+                                if (SaveConfiguration())
+                                {
+                                    Finish();
+                                }
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                            {
+                                Finish();
+                            })
+                            .SetMessage(Resource.String.xml_tool_msg_save_config)
+                            .SetTitle(Resource.String.xml_tool_title_config)
+                            .Show();
+                    }
+                    else
+                    {
+                        Finish();
+                    }
                     return true;
 
                 case Resource.Id.menu_tool_sel_interface:
@@ -459,7 +468,8 @@ namespace CarControlAndroid
             }
 
             _buttonRead.Enabled = _activityCommon.IsInterfaceAvailable();
-            _buttonSafe.Enabled = _ecuList.Count > 0;
+            int selectedCount = _ecuList.Count(ecuInfo => ecuInfo.Selected);
+            _buttonSafe.Enabled = selectedCount > 0;
             _ecuListAdapter.NotifyDataSetChanged();
 
             _textViewCarInfo.Text = _statusText;
@@ -992,6 +1002,7 @@ namespace CarControlAndroid
             {
                 ExecuteJobsRead(ecuInfo);
             }
+            UpdateDisplay();
         }
 
         private bool AbortEdiabasJob()
@@ -1480,6 +1491,26 @@ namespace CarControlAndroid
             {
                 return null;
             }
+        }
+
+        private bool SaveConfiguration()
+        {
+            if (IsJobRunning())
+            {
+                return false;
+            }
+            string xmlFileName = SaveAllXml();
+            if (xmlFileName == null)
+            {
+                _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_save_xml_failed));
+                return false;
+            }
+            Intent intent = new Intent();
+            intent.PutExtra(ExtraFileName, xmlFileName);
+
+            // Set result and finish this Activity
+            SetResult(Android.App.Result.Ok, intent);
+            return true;
         }
 
         private XElement GetJobNode(XmlToolEcuActivity.JobInfo job, XNamespace ns, XElement jobsNode)
