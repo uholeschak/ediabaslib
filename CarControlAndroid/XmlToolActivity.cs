@@ -44,6 +44,7 @@ namespace CarControlAndroid
                 _sgbd = sgbd;
                 _grp = grp;
                 Selected = false;
+                Vin = null;
                 PageName = name;
                 JobList = null;
             }
@@ -144,7 +145,6 @@ namespace CarControlAndroid
         private EdiabasNet _ediabas;
         private Task _jobTask;
         private Receiver _receiver;
-        private string _statusText = string.Empty;
         private string _vin = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
 
@@ -455,7 +455,6 @@ namespace CarControlAndroid
             _ecuListAdapter.Items.Clear();
             if ((_ediabas == null) || (_ecuList.Count == 0))
             {
-                if (_ediabas == null) _statusText = string.Empty;
                 _vin = string.Empty;
                 _ecuList.Clear();
             }
@@ -472,7 +471,16 @@ namespace CarControlAndroid
             _buttonSafe.Enabled = selectedCount > 0;
             _ecuListAdapter.NotifyDataSetChanged();
 
-            _textViewCarInfo.Text = _statusText;
+            string statusText = string.Empty;
+            if (_ecuList.Count > 0)
+            {
+                statusText = GetString(Resource.String.xml_tool_ecu_list);
+                if (!string.IsNullOrEmpty(_vin))
+                {
+                    statusText += " (" + GetString(Resource.String.xml_tool_info_vin) + ": " + _vin + ")";
+                }
+            }
+            _textViewCarInfo.Text = statusText;
         }
 
         private void UpdateLogInfo()
@@ -616,7 +624,6 @@ namespace CarControlAndroid
                 _ediabas.AbortJobFunc = AbortEdiabasJob;
                 _ediabas.SetConfigProperty("EcuPath", Path.GetDirectoryName(_sgbdFileName));
             }
-            _statusText = string.Empty;
             _vin = string.Empty;
             _ecuList.Clear();
             UpdateDisplay();
@@ -633,6 +640,8 @@ namespace CarControlAndroid
             _ediabasJobAbort = false;
             _jobTask = Task.Factory.StartNew(() =>
             {
+                int invalidEcuCount = 0;
+                bool noResponse = false;
                 try
                 {
                     _ediabas.ResolveSgbdFile(_sgbdFileName);
@@ -654,6 +663,7 @@ namespace CarControlAndroid
                                 dictIndex++;
                                 continue;
                             }
+                            bool ecuDataPresent = false;
                             string ecuName = string.Empty;
                             Int64 ecuAdr = -1;
                             string ecuDesc = string.Empty;
@@ -683,6 +693,7 @@ namespace CarControlAndroid
                             }
                             if (resultDict.TryGetValue("ECU_SGBD", out resultData))
                             {
+                                ecuDataPresent = true;
                                 if (resultData.OpData is string)
                                 {
                                     ecuSgbd = (string)resultData.OpData;
@@ -690,6 +701,7 @@ namespace CarControlAndroid
                             }
                             if (resultDict.TryGetValue("ECU_GRUPPE", out resultData))
                             {
+                                ecuDataPresent = true;
                                 if (resultData.OpData is string)
                                 {
                                     ecuGroup = (string)resultData.OpData;
@@ -698,6 +710,16 @@ namespace CarControlAndroid
                             if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
                             {
                                 ecuList.Add(new EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup));
+                            }
+                            else
+                            {
+                                if (ecuDataPresent)
+                                {
+                                    if (!ecuName.StartsWith("VIRT", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        invalidEcuCount++;
+                                    }
+                                }
                             }
                             dictIndex++;
                         }
@@ -761,13 +783,16 @@ namespace CarControlAndroid
                     }
 
                     // get vin
-                    _vin = _ecuList.GroupBy(x => x.Vin).Where(x => !string.IsNullOrEmpty(x.Key)).OrderByDescending(x => x.Count()).First().Key;
-                    _statusText = GetString(Resource.String.xml_tool_info_vin) + ": " + _vin;
+                    var vinInfo = _ecuList.GroupBy(x => x.Vin)
+                        .Where(x => !string.IsNullOrEmpty(x.Key))
+                        .OrderByDescending(x => x.Count())
+                        .FirstOrDefault();
+                    _vin = vinInfo != null ? vinInfo.Key : string.Empty;
                     ReadAllXml();
                 }
                 catch (Exception)
                 {
-                    _statusText = GetString(Resource.String.xml_tool_analyze_failed);
+                    noResponse = true;
                 }
 
                 RunOnUiThread(() =>
@@ -777,6 +802,31 @@ namespace CarControlAndroid
 
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
+
+                    if (noResponse)
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_no_response));
+                    }
+                    else
+                    {
+                        if (invalidEcuCount > 0)
+                        {
+                            new AlertDialog.Builder(this)
+                                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                {
+                                    if (SaveConfiguration())
+                                    {
+                                        PerformAnalyze();
+                                    }
+                                })
+                                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                {
+                                })
+                                .SetMessage(Resource.String.xml_tool_msg_ecu_error)
+                                .SetTitle(Resource.String.xml_tool_title_ecu_error)
+                                .Show();
+                        }
+                    }
                 });
             });
         }
@@ -792,7 +842,6 @@ namespace CarControlAndroid
                 SelectJobs(ecuInfo);
                 return;
             }
-            _statusText = GetString(Resource.String.xml_tool_info_vin) + ": " + _vin;
 
             UpdateDisplay();
 
@@ -978,7 +1027,6 @@ namespace CarControlAndroid
                 catch (Exception)
                 {
                     readFailed = true;
-                    _statusText = GetString(Resource.String.xml_tool_read_jobs_failed);
                 }
 
                 RunOnUiThread(() =>
@@ -988,7 +1036,11 @@ namespace CarControlAndroid
 
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
-                    if (!readFailed && ecuInfo.JobList.Count > 0)
+                    if (readFailed || (ecuInfo.JobList.Count == 0))
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_jobs_failed));
+                    }
+                    else
                     {
                         SelectJobs(ecuInfo);
                     }
