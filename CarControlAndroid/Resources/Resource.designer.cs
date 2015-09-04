@@ -2340,41 +2340,44 @@ namespace CarControlAndroid
 			// aapt resource value: 0x7f050051
 			public const int xml_tool_analyze = 2131034193;
 			
-			// aapt resource value: 0x7f050067
-			public const int xml_tool_ecu_display_text = 2131034215;
-			
-			// aapt resource value: 0x7f050062
-			public const int xml_tool_ecu_format = 2131034210;
-			
-			// aapt resource value: 0x7f050064
-			public const int xml_tool_ecu_format_left = 2131034212;
+			// aapt resource value: 0x7f050068
+			public const int xml_tool_ecu_display_text = 2131034216;
 			
 			// aapt resource value: 0x7f050063
-			public const int xml_tool_ecu_format_right = 2131034211;
+			public const int xml_tool_ecu_format = 2131034211;
 			
-			// aapt resource value: 0x7f05005e
-			public const int xml_tool_ecu_job_comments = 2131034206;
+			// aapt resource value: 0x7f050065
+			public const int xml_tool_ecu_format_left = 2131034213;
+			
+			// aapt resource value: 0x7f050064
+			public const int xml_tool_ecu_format_right = 2131034212;
+			
+			// aapt resource value: 0x7f05005f
+			public const int xml_tool_ecu_job_comments = 2131034207;
 			
 			// aapt resource value: 0x7f050059
 			public const int xml_tool_ecu_list = 2131034201;
 			
-			// aapt resource value: 0x7f050065
-			public const int xml_tool_ecu_page_name = 2131034213;
-			
-			// aapt resource value: 0x7f05005f
-			public const int xml_tool_ecu_result_comments = 2131034207;
+			// aapt resource value: 0x7f050066
+			public const int xml_tool_ecu_page_name = 2131034214;
 			
 			// aapt resource value: 0x7f050060
-			public const int xml_tool_ecu_result_type = 2131034208;
-			
-			// aapt resource value: 0x7f050066
-			public const int xml_tool_ecu_results = 2131034214;
-			
-			// aapt resource value: 0x7f05005d
-			public const int xml_tool_ecu_title = 2131034205;
+			public const int xml_tool_ecu_result_comments = 2131034208;
 			
 			// aapt resource value: 0x7f050061
-			public const int xml_tool_ecu_user_format = 2131034209;
+			public const int xml_tool_ecu_result_type = 2131034209;
+			
+			// aapt resource value: 0x7f050067
+			public const int xml_tool_ecu_results = 2131034215;
+			
+			// aapt resource value: 0x7f05005e
+			public const int xml_tool_ecu_title = 2131034206;
+			
+			// aapt resource value: 0x7f050062
+			public const int xml_tool_ecu_user_format = 2131034210;
+			
+			// aapt resource value: 0x7f05005d
+			public const int xml_tool_errors_page = 2131034205;
 			
 			// aapt resource value: 0x7f05005b
 			public const int xml_tool_info_grp = 2131034203;

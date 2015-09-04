@@ -92,6 +92,7 @@
   <string name="xml_tool_info_sgbd">SGBD</string>
   <string name="xml_tool_info_grp">Gruppe</string>
   <string name="xml_tool_info_vin">FG-NR</string>
+  <string name="xml_tool_errors_page">Fehler</string>
 
   <!-- XML Tool Ecu Activity -->
   <string name="xml_tool_ecu_title">Jobs für ECU: {0}</string>
