@@ -1462,29 +1462,28 @@ namespace CarControlAndroid
                     return null;
                 }
                 XNamespace ns = document.Root.GetDefaultNamespace();
-                XElement pagesNode = document.Root.Element(ns + "pages");
-                if (pagesNode == null)
-                {
-                    pagesNode = new XElement(ns + "pages");
-                    document.Root.Add(pagesNode);
-                }
+                XElement pagesNodeOld = document.Root.Element(ns + "pages");
+                XElement pagesNodeNew = new XElement(ns + "pages");
 
                 foreach (EcuInfo ecuInfo in _ecuList)
                 {
                     string fileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
-                    XElement fileNode = GetFileNode(fileName, ns, pagesNode);
                     if (!ecuInfo.Selected || !File.Exists(Path.Combine(xmlFileDir, fileName)))
                     {
+                        continue;
+                    }
+                    XElement fileNode = null;
+                    if (pagesNodeOld != null)
+                    {
+                        fileNode = GetFileNode(fileName, ns, pagesNodeOld);
                         if (fileNode != null)
                         {
-                            fileNode.Remove();
+                            fileNode = new XElement(fileNode);
                         }
-                        continue;
                     }
                     if (fileNode == null)
                     {
                         fileNode = new XElement(ns + "include");
-                        pagesNode.Add(fileNode);
                     }
                     else
                     {
@@ -1493,25 +1492,26 @@ namespace CarControlAndroid
                     }
 
                     fileNode.Add(new XAttribute("filename", fileName));
+                    pagesNodeNew.Add(fileNode);
                 }
 
                 {
                     // errors file
                     string fileName = ErrorsFileName;
-                    XElement fileNode = GetFileNode(fileName, ns, pagesNode);
-                    if (!_addErrorsPage || !File.Exists(Path.Combine(xmlFileDir, fileName)))
+                    if (_addErrorsPage && File.Exists(Path.Combine(xmlFileDir, fileName)))
                     {
-                        if (fileNode != null)
+                        XElement fileNode = null;
+                        if (pagesNodeOld != null)
                         {
-                            fileNode.Remove();
+                            fileNode = GetFileNode(fileName, ns, pagesNodeOld);
+                            if (fileNode != null)
+                            {
+                                fileNode = new XElement(fileNode);
+                            }
                         }
-                    }
-                    else
-                    {
                         if (fileNode == null)
                         {
                             fileNode = new XElement(ns + "include");
-                            pagesNode.Add(fileNode);
                         }
                         else
                         {
@@ -1519,8 +1519,14 @@ namespace CarControlAndroid
                             if (attr != null) attr.Remove();
                         }
                         fileNode.Add(new XAttribute("filename", fileName));
+                        pagesNodeNew.Add(fileNode);
                     }
                 }
+                if (pagesNodeOld != null)
+                {
+                    pagesNodeOld.Remove();
+                }
+                document.Root.Add(pagesNodeNew);
 
                 return document;
             }
