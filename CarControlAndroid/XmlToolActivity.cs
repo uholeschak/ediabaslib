@@ -142,6 +142,7 @@ namespace CarControlAndroid
         private string _sgbdFileName = string.Empty;
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
+        private bool _addErrorsPage = true;
         private bool _traceActive;
         private bool _traceAppend;
         private volatile bool _ediabasJobAbort;
@@ -333,6 +334,13 @@ namespace CarControlAndroid
                 scanMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
             }
 
+            IMenuItem addErrorsMenu = menu.FindItem(Resource.Id.menu_xml_tool_add_errors_page);
+            if (addErrorsMenu != null)
+            {
+                addErrorsMenu.SetEnabled(_ecuList.Count > 0);
+                addErrorsMenu.SetChecked(_addErrorsPage);
+            }
+
             IMenuItem enableTraceMenu = menu.FindItem(Resource.Id.menu_enable_trace);
             if (enableTraceMenu != null)
             {
@@ -399,6 +407,12 @@ namespace CarControlAndroid
                     }
                     _autoStart = false;
                     _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice);
+                    return true;
+
+                case Resource.Id.menu_xml_tool_add_errors_page:
+                    _addErrorsPage = !_addErrorsPage;
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
                     return true;
 
                 case Resource.Id.menu_enable_trace:
@@ -473,7 +487,7 @@ namespace CarControlAndroid
 
             _buttonRead.Enabled = _activityCommon.IsInterfaceAvailable();
             int selectedCount = _ecuList.Count(ecuInfo => ecuInfo.Selected);
-            _buttonSafe.Enabled = selectedCount > 0;
+            _buttonSafe.Enabled = _addErrorsPage || (selectedCount > 0);
             _ecuListAdapter.NotifyDataSetChanged();
 
             string statusText = string.Empty;
@@ -1419,6 +1433,14 @@ namespace CarControlAndroid
                     ecuInfo.Selected = true;
                 }
             }
+            {
+                string fileName = ErrorsFileName;
+                XElement fileNode = GetFileNode(fileName, ns, pagesNode);
+                if ((fileNode == null) || !File.Exists(Path.Combine(xmlFileDir, fileName)))
+                {
+                    _addErrorsPage = false;
+                }
+            }
         }
 
         private XDocument GeneratePagesXml(XDocument documentOld)
@@ -1477,7 +1499,7 @@ namespace CarControlAndroid
                     // errors file
                     string fileName = ErrorsFileName;
                     XElement fileNode = GetFileNode(fileName, ns, pagesNode);
-                    if (!File.Exists(Path.Combine(xmlFileDir, fileName)))
+                    if (!_addErrorsPage || !File.Exists(Path.Combine(xmlFileDir, fileName)))
                     {
                         if (fileNode != null)
                         {
@@ -1570,6 +1592,7 @@ namespace CarControlAndroid
 
         private void ReadAllXml()
         {
+            _addErrorsPage = true;
             string xmlFileDir = XmlFileDir();
             if (xmlFileDir == null)
             {

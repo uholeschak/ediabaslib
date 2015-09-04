@@ -11,6 +11,10 @@
       <item android:id="@+id/menu_scan"
             android:icon="@android:drawable/ic_menu_search"
             android:title="@string/menu_device" />
+      <item android:id="@+id/menu_xml_tool_add_errors_page"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="@string/menu_xml_tool_add_errors_page"
+            android:checkable="true" />
       <item android:id="@+id/menu_enable_trace"
             android:icon="@android:drawable/ic_menu_save"
             android:title="@string/menu_enable_trace"

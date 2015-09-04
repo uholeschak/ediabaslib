@@ -94,6 +94,9 @@
   <string name="xml_tool_info_vin">VIN</string>
   <string name="xml_tool_errors_page">Errors</string>
 
+  <!-- XML Tool Options Menu -->
+  <string name="menu_xml_tool_add_errors_page">Add errors page</string>
+
   <!-- XML Tool Ecu Activity -->
   <string name="xml_tool_ecu_title">Jobs for ECU: {0}</string>
   <string name="xml_tool_ecu_job_comments">Comments for job: {0}</string>
