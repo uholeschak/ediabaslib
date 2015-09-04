@@ -46,6 +46,7 @@ namespace CarControlAndroid
                 Selected = false;
                 Vin = null;
                 PageName = name;
+                EcuName = name;
                 JobList = null;
             }
 
@@ -100,6 +101,8 @@ namespace CarControlAndroid
             public bool Selected { get; set; }
 
             public string PageName { get; set; }
+
+            public string EcuName { get; set; }
 
             public List<XmlToolEcuActivity.JobInfo> JobList { get; set; }
         }
@@ -1263,6 +1266,43 @@ namespace CarControlAndroid
             }
         }
 
+        private void ReadErrorsXml(XDocument document)
+        {
+            if (document.Root == null)
+            {
+                return;
+            }
+            XNamespace ns = document.Root.GetDefaultNamespace();
+            XElement pageNode = document.Root.Element(ns + "page");
+            if (pageNode == null)
+            {
+                return;
+            }
+            XElement stringsNode = GetDefaultStringsNode(ns, pageNode);
+            XElement errorsNode = pageNode.Element(ns + "read_errors");
+            if (errorsNode == null)
+            {
+                return;
+            }
+
+            foreach (EcuInfo ecuInfo in _ecuList)
+            {
+                XElement ecuNode = GetEcuNode(ecuInfo, ns, errorsNode);
+                if (ecuNode != null)
+                {
+                    if (stringsNode != null)
+                    {
+                        string displayTag = DisplayNameEcuPrefix + ecuInfo.Name;
+                        string displayText = GetStringEntry(displayTag, ns, stringsNode);
+                        if (displayText != null)
+                        {
+                            ecuInfo.EcuName = displayText;
+                        }
+                    }
+                }
+            }
+        }
+
         private XDocument GenerateErrorsXml(XDocument documentOld)
         {
             try
@@ -1313,6 +1353,10 @@ namespace CarControlAndroid
                     if (errorsNodeOld != null)
                     {
                         ecuNode = GetEcuNode(ecuInfo, ns, errorsNodeOld);
+                        if (ecuNode != null)
+                        {
+                            ecuNode = new XElement(ecuNode);
+                        }
                     }
                     if (ecuNode == null)
                     {
@@ -1330,7 +1374,7 @@ namespace CarControlAndroid
                     ecuNode.Add(new XAttribute("name", displayTag));
                     ecuNode.Add(new XAttribute("sgbd", ecuInfo.Sgbd));
 
-                    XElement stringNode = new XElement(ns + "string", ecuInfo.Name);
+                    XElement stringNode = new XElement(ns + "string", ecuInfo.EcuName);
                     stringNode.Add(new XAttribute("name", displayTag));
                     stringsNode.Add(stringNode);
                 }
@@ -1544,6 +1588,19 @@ namespace CarControlAndroid
                     // ignored
                 }
             }
+            string xmlErrorsFile = Path.Combine(xmlFileDir, ErrorsFileName);
+            if (File.Exists(xmlErrorsFile))
+            {
+                try
+                {
+                    XDocument documentPages = XDocument.Load(xmlErrorsFile);
+                    ReadErrorsXml(documentPages);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
         }
 
         private string SaveAllXml()
@@ -1727,9 +1784,9 @@ namespace CarControlAndroid
         private XElement GetEcuNode(EcuInfo ecuInfo, XNamespace ns, XElement errorsNode)
         {
             return (from node in errorsNode.Elements(ns + "ecu")
-                    let nameAttrib = node.Attribute("name")
+                    let nameAttrib = node.Attribute("sgbd")
                     where nameAttrib != null
-                    where string.Compare(nameAttrib.Value, ecuInfo.Name, StringComparison.OrdinalIgnoreCase) == 0
+                    where string.Compare(nameAttrib.Value, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) == 0
                     select node).FirstOrDefault();
         }
 
