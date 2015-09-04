@@ -104,6 +104,7 @@
   <string name="xml_tool_ecu_format_right">Right</string>
   <string name="xml_tool_ecu_format_left">Left</string>
   <string name="xml_tool_ecu_page_name">Page name</string>
+  <string name="xml_tool_ecu_ecu_name">ECU name</string>
   <string name="xml_tool_ecu_results">Job result</string>
   <string name="xml_tool_ecu_display_text">Display text</string>
 </resources>
