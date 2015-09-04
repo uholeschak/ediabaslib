@@ -102,6 +102,7 @@ namespace CarControlAndroid
         private InputMethodManager _imm;
         private View _contentView;
         private EditText _editTextPageName;
+        private EditText _editTextEcuName;
         private Spinner _spinnerJobs;
         private JobListAdapter _spinnerJobsAdapter;
         private TextView _textViewJobCommentsTitle;
@@ -147,6 +148,9 @@ namespace CarControlAndroid
 
             _editTextPageName = FindViewById<EditText>(Resource.Id.editTextPageName);
             _editTextPageName.Text = _ecuInfo.PageName;
+
+            _editTextEcuName = FindViewById<EditText>(Resource.Id.editTextEcuName);
+            _editTextEcuName.Text = _ecuInfo.EcuName;
 
             _spinnerJobs = FindViewById<Spinner>(Resource.Id.listJobs);
             _spinnerJobsAdapter = new JobListAdapter(this);
@@ -230,6 +234,7 @@ namespace CarControlAndroid
             base.OnStop();
             UpdateResultSettings(_selectedResult);
             _ecuInfo.PageName = _editTextPageName.Text;
+            _ecuInfo.EcuName = _editTextEcuName.Text;
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
