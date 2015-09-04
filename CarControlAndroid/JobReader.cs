@@ -504,7 +504,7 @@ namespace CarControlAndroid
                                 {
                                     if (string.Compare(xnodeJobsChild.Name, "job", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
-                                        string jobName = null;
+                                        string jobName = string.Empty;
                                         string jobArgsFirst = string.Empty;
                                         string jobArgs = string.Empty;
                                         string jobResults = string.Empty;
@@ -535,7 +535,7 @@ namespace CarControlAndroid
                                 {
                                     if (string.Compare(xnodeErrorsChild.Name, "ecu", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
-                                        string ecuName = null;
+                                        string ecuName = string.Empty;
                                         string sgbd = string.Empty;
                                         string results = "F_UW_KM";
                                         if (xnodeErrorsChild.Attributes != null)
