@@ -112,11 +112,13 @@ namespace CarControlAndroid
             </{0}>";
 
         private const string PageExtension = ".ccpage";
+        private const string ErrorsFileName = "Errors.ccpage";
         private const string PagesFileName = "Pages.ccpages";
         private const string ConfigFileNameBt = "Bluetooth.cccfg";
         private const string ConfigFileNameEnet = "Enet.cccfg";
         private const string DisplayNamePage = "!PAGE_NAME";
-        private const string DisplayNamePrefix = "!JOB#";
+        private const string DisplayNameJobPrefix = "!JOB#";
+        private const string DisplayNameEcuPrefix = "!ECU#";
 
         // Intent extra
         public const string ExtraInitDir = "init_dir";
@@ -1114,7 +1116,7 @@ namespace CarControlAndroid
                         }
                         if (stringsNode != null)
                         {
-                            string displayTag = DisplayNamePrefix + job.Name + "#" + result.Name;
+                            string displayTag = DisplayNameJobPrefix + job.Name + "#" + result.Name;
                             string displayText = GetStringEntry(displayTag, ns, stringsNode);
                             if (displayText != null)
                             {
@@ -1163,17 +1165,8 @@ namespace CarControlAndroid
                     pageNode.Add(stringsNode);
                 }
                 else
-                {   // remove all generated entries
-                    List<XElement> removeList =
-                        (from node in stringsNode.Elements(ns + "string")
-                         let nameAttr = node.Attribute("name")
-                         where nameAttr != null &&
-                         (nameAttr.Value.StartsWith(DisplayNamePrefix, StringComparison.Ordinal) || string.Compare(nameAttr.Value, DisplayNamePage, StringComparison.Ordinal) == 0)
-                         select node).ToList();
-                    foreach (XElement node in removeList)
-                    {
-                        node.Remove();
-                    }
+                {
+                    RemoveGeneratedStringEntries(ns, stringsNode);
                 }
 
                 XElement stringNodePage = new XElement(ns + "string", ecuInfo.PageName);
@@ -1238,7 +1231,7 @@ namespace CarControlAndroid
                             XAttribute attr = displayNode.Attribute("name");
                             if (attr != null)
                             {
-                                if (attr.Value.StartsWith(DisplayNamePrefix, StringComparison.Ordinal))
+                                if (attr.Value.StartsWith(DisplayNameJobPrefix, StringComparison.Ordinal))
                                 {
                                     attr.Remove();
                                 }
@@ -1248,7 +1241,7 @@ namespace CarControlAndroid
                             attr = displayNode.Attribute("format");
                             if (attr != null) attr.Remove();
                         }
-                        string displayTag = DisplayNamePrefix + job.Name + "#" + result.Name;
+                        string displayTag = DisplayNameJobPrefix + job.Name + "#" + result.Name;
                         if (displayNode.Attribute("name") == null)
                         {
                             displayNode.Add(new XAttribute("name", displayTag));
@@ -1261,6 +1254,91 @@ namespace CarControlAndroid
                         stringsNode.Add(stringNode);
                     }
                 }
+
+                return document;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private XDocument GenerateErrorsXml(XDocument documentOld)
+        {
+            try
+            {
+                XDocument document = documentOld;
+                if ((document == null) || (document.Root == null))
+                {
+                    document = XDocument.Parse(string.Format(XmlDocumentFrame, "fragment"));
+                }
+                if (document.Root == null)
+                {
+                    return null;
+                }
+                XNamespace ns = document.Root.GetDefaultNamespace();
+                XElement pageNode = document.Root.Element(ns + "page");
+                if (pageNode == null)
+                {
+                    pageNode = new XElement(ns + "page");
+                    document.Root.Add(pageNode);
+                }
+                XAttribute pageNameAttr = pageNode.Attribute("name");
+                if (pageNameAttr == null)
+                {
+                    pageNode.Add(new XAttribute("name", DisplayNamePage));
+                }
+
+                XElement stringsNode = GetDefaultStringsNode(ns, pageNode);
+                if (stringsNode == null)
+                {
+                    stringsNode = new XElement(ns + "strings");
+                    pageNode.Add(stringsNode);
+                }
+                else
+                {
+                    RemoveGeneratedStringEntries(ns, stringsNode);
+                }
+
+                XElement stringNodePage = new XElement(ns + "string", GetString(Resource.String.xml_tool_errors_page));
+                stringNodePage.Add(new XAttribute("name", DisplayNamePage));
+                stringsNode.Add(stringNodePage);
+
+                XElement errorsNodeOld = pageNode.Element(ns + "read_errors");
+                XElement errorsNodeNew = new XElement(ns + "read_errors");
+
+                foreach (EcuInfo ecuInfo in _ecuList)
+                {
+                    XElement ecuNode = null;
+                    if (errorsNodeOld != null)
+                    {
+                        ecuNode = GetEcuNode(ecuInfo, ns, errorsNodeOld);
+                    }
+                    if (ecuNode == null)
+                    {
+                        ecuNode = new XElement(ns + "ecu");
+                    }
+                    else
+                    {
+                        XAttribute attr = ecuNode.Attribute("name");
+                        if (attr != null) attr.Remove();
+                        attr = ecuNode.Attribute("sgbd");
+                        if (attr != null) attr.Remove();
+                    }
+                    string displayTag = DisplayNameEcuPrefix + ecuInfo.Name;
+                    errorsNodeNew.Add(ecuNode);
+                    ecuNode.Add(new XAttribute("name", displayTag));
+                    ecuNode.Add(new XAttribute("sgbd", ecuInfo.Sgbd));
+
+                    XElement stringNode = new XElement(ns + "string", ecuInfo.Name);
+                    stringNode.Add(new XAttribute("name", displayTag));
+                    stringsNode.Add(stringNode);
+                }
+                if (errorsNodeOld != null)
+                {
+                    errorsNodeOld.Remove();
+                }
+                pageNode.Add(errorsNodeNew);
 
                 return document;
             }
@@ -1349,6 +1427,33 @@ namespace CarControlAndroid
                     }
 
                     fileNode.Add(new XAttribute("filename", fileName));
+                }
+
+                {
+                    // errors file
+                    string fileName = ErrorsFileName;
+                    XElement fileNode = GetFileNode(fileName, ns, pagesNode);
+                    if (!File.Exists(Path.Combine(xmlFileDir, fileName)))
+                    {
+                        if (fileNode != null)
+                        {
+                            fileNode.Remove();
+                        }
+                    }
+                    else
+                    {
+                        if (fileNode == null)
+                        {
+                            fileNode = new XElement(ns + "include");
+                            pagesNode.Add(fileNode);
+                        }
+                        else
+                        {
+                            XAttribute attr = fileNode.Attribute("filename");
+                            if (attr != null) attr.Remove();
+                        }
+                        fileNode.Add(new XAttribute("filename", fileName));
+                    }
                 }
 
                 return document;
@@ -1483,6 +1588,35 @@ namespace CarControlAndroid
                     }
                 }
 
+                {
+                    // errors file
+                    string xmlErrorsFile = Path.Combine(xmlFileDir, ErrorsFileName);
+                    XDocument documentPage = null;
+                    if (File.Exists(xmlErrorsFile))
+                    {
+                        try
+                        {
+                            documentPage = XDocument.Load(xmlErrorsFile);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                    XDocument documentPageNew = GenerateErrorsXml(documentPage);
+                    if (documentPageNew != null)
+                    {
+                        try
+                        {
+                            documentPageNew.Save(xmlErrorsFile);
+                        }
+                        catch (Exception)
+                        {
+                            return null;
+                        }
+                    }
+                }
+
                 // pages file
                 string xmlPagesFile = Path.Combine(xmlFileDir, PagesFileName);
                 XDocument documentPages = null;
@@ -1590,6 +1724,15 @@ namespace CarControlAndroid
                     select node).FirstOrDefault();
         }
 
+        private XElement GetEcuNode(EcuInfo ecuInfo, XNamespace ns, XElement errorsNode)
+        {
+            return (from node in errorsNode.Elements(ns + "ecu")
+                    let nameAttrib = node.Attribute("name")
+                    where nameAttrib != null
+                    where string.Compare(nameAttrib.Value, ecuInfo.Name, StringComparison.OrdinalIgnoreCase) == 0
+                    select node).FirstOrDefault();
+        }
+
         private XElement GetDefaultStringsNode(XNamespace ns, XElement pageNode)
         {
             return pageNode.Elements(ns + "strings").FirstOrDefault(node => node.Attribute("lang") == null);
@@ -1601,6 +1744,22 @@ namespace CarControlAndroid
                     let nameAttr = node.Attribute("name")
                     where nameAttr != null
                     where string.Compare(nameAttr.Value, entryName, StringComparison.Ordinal) == 0 select node.FirstNode).OfType<XText>().Select(text => text.Value).FirstOrDefault();
+        }
+
+        private void RemoveGeneratedStringEntries(XNamespace ns, XElement stringsNode)
+        {
+            List<XElement> removeList =
+                (from node in stringsNode.Elements(ns + "string")
+                    let nameAttr = node.Attribute("name")
+                    where nameAttr != null &&
+                          (nameAttr.Value.StartsWith(DisplayNameJobPrefix, StringComparison.Ordinal) ||
+                           nameAttr.Value.StartsWith(DisplayNameEcuPrefix, StringComparison.Ordinal) ||
+                           string.Compare(nameAttr.Value, DisplayNamePage, StringComparison.Ordinal) == 0)
+                    select node).ToList();
+            foreach (XElement node in removeList)
+            {
+                node.Remove();
+            }
         }
 
         private string XmlFileDir()
