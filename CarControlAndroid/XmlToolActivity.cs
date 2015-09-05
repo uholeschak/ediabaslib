@@ -117,8 +117,7 @@ namespace CarControlAndroid
         private const string PageExtension = ".ccpage";
         private const string ErrorsFileName = "Errors.ccpage";
         private const string PagesFileName = "Pages.ccpages";
-        private const string ConfigFileNameBt = "Bluetooth.cccfg";
-        private const string ConfigFileNameEnet = "Enet.cccfg";
+        private const string ConfigFileExtension = ".cccfg";
         private const string DisplayNamePage = "!PAGE_NAME";
         private const string DisplayNameJobPrefix = "!JOB#";
         private const string DisplayNameEcuPrefix = "!ECU#";
@@ -512,7 +511,7 @@ namespace CarControlAndroid
 
             if (!string.IsNullOrEmpty(logDir))
             {
-                logDir = Path.Combine(logDir, "LogXmlTool");
+                logDir = Path.Combine(logDir, "LogConfigTool");
                 try
                 {
                     Directory.CreateDirectory(logDir);
@@ -1741,7 +1740,7 @@ namespace CarControlAndroid
 
                 // config file
                 string xmlConfigFile = Path.Combine(xmlFileDir,
-                    (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet) ? ConfigFileNameEnet : ConfigFileNameBt);
+                    ActivityCommon.CreateValidFileName(_vin) + ((_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet) ? "_Enet" : "_Bt") + ConfigFileExtension);
                 XDocument documentConfig = null;
                 if (File.Exists(xmlConfigFile))
                 {
