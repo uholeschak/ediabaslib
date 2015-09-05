@@ -487,7 +487,7 @@ namespace CarControlAndroid
 
             _buttonRead.Enabled = _activityCommon.IsInterfaceAvailable();
             int selectedCount = _ecuList.Count(ecuInfo => ecuInfo.Selected);
-            _buttonSafe.Enabled = _addErrorsPage || (selectedCount > 0);
+            _buttonSafe.Enabled = (_ecuList.Count > 0) && (_addErrorsPage || (selectedCount > 0));
             _ecuListAdapter.NotifyDataSetChanged();
 
             string statusText = string.Empty;
@@ -1194,9 +1194,7 @@ namespace CarControlAndroid
                 XElement jobsNodeNew = new XElement(ns + "jobs");
                 if (jobsNodeOld != null)
                 {
-                    jobsNodeNew.ReplaceAttributes(from el in jobsNodeOld.Attributes() select new XAttribute(el));
-                    XAttribute attr = jobsNodeNew.Attribute("sgbd");
-                    if (attr != null) attr.Remove();
+                    jobsNodeNew.ReplaceAttributes(from el in jobsNodeOld.Attributes() where el.Name != "sgbd" select new XAttribute(el));
                 }
 
                 jobsNodeNew.Add(new XAttribute("sgbd", ecuInfo.Sgbd));
@@ -1207,70 +1205,67 @@ namespace CarControlAndroid
                     {
                         continue;
                     }
-                    XElement jobNode = null;
+                    XElement jobNodeOld = null;
+                    XElement jobNodeNew = new XElement(ns + "job");
                     if (jobsNodeOld != null)
                     {
-                        jobNode = GetJobNode(job, ns, jobsNodeOld);
-                        if (jobNode != null)
+                        jobNodeOld = GetJobNode(job, ns, jobsNodeOld);
+                        if (jobNodeOld != null)
                         {
-                            jobNode = new XElement(jobNode);
+                            jobNodeNew.ReplaceAttributes(from el in jobNodeOld.Attributes() where el.Name != "name" select new XAttribute(el));
                         }
                     }
-                    if (jobNode == null)
-                    {
-                        jobNode = new XElement(ns + "job");
-                    }
-                    else
-                    {
-                        XAttribute attr = jobNode.Attribute("name");
-                        if (attr != null) attr.Remove();
-                    }
-                    jobNode.Add(new XAttribute("name", job.Name));
+
+                    jobNodeNew.Add(new XAttribute("name", job.Name));
 
                     foreach (XmlToolEcuActivity.ResultInfo result in job.Results)
                     {
-                        XElement displayNode = GetDisplayNode(result, ns, jobNode);
                         if (!result.Selected)
                         {
-                            if (displayNode != null)
-                            {
-                                displayNode.Remove();
-                            }
                             continue;
                         }
-                        if (displayNode == null)
+                        XElement displayNodeOld = null;
+                        XElement displayNodeNew = new XElement(ns + "display");
+                        if (jobNodeOld != null)
                         {
-                            displayNode = new XElement(ns + "display");
-                            jobNode.Add(displayNode);
-                        }
-                        else
-                        {
-                            XAttribute attr = displayNode.Attribute("name");
-                            if (attr != null)
+                            displayNodeOld = GetDisplayNode(result, ns, jobNodeOld);
+                            if (displayNodeOld != null)
                             {
-                                if (attr.Value.StartsWith(DisplayNameJobPrefix, StringComparison.Ordinal))
-                                {
-                                    attr.Remove();
-                                }
+                                displayNodeNew.ReplaceAttributes(from el in displayNodeOld.Attributes() where el.Name != "result" && el.Name != "format" select new XAttribute(el));
                             }
-                            attr = displayNode.Attribute("result");
-                            if (attr != null) attr.Remove();
-                            attr = displayNode.Attribute("format");
-                            if (attr != null) attr.Remove();
                         }
-                        string displayTag = DisplayNameJobPrefix + job.Name + "#" + result.Name;
-                        if (displayNode.Attribute("name") == null)
+                        XAttribute nameAttr = displayNodeNew.Attribute("name");
+                        if (nameAttr != null)
                         {
-                            displayNode.Add(new XAttribute("name", displayTag));
+                            if (nameAttr.Value.StartsWith(DisplayNameJobPrefix, StringComparison.Ordinal))
+                            {
+                                nameAttr.Remove();
+                            }
                         }
-                        displayNode.Add(new XAttribute("result", result.Name));
-                        displayNode.Add(new XAttribute("format", result.Format));
+
+                        string displayTag = DisplayNameJobPrefix + job.Name + "#" + result.Name;
+                        if (displayNodeNew.Attribute("name") == null)
+                        {
+                            displayNodeNew.Add(new XAttribute("name", displayTag));
+                        }
+                        displayNodeNew.Add(new XAttribute("result", result.Name));
+                        displayNodeNew.Add(new XAttribute("format", result.Format));
 
                         XElement stringNode = new XElement(ns + "string", result.DisplayText);
                         stringNode.Add(new XAttribute("name", displayTag));
                         stringsNode.Add(stringNode);
+
+                        if (displayNodeOld != null)
+                        {
+                            displayNodeOld.Remove();
+                        }
+                        jobNodeNew.Add(displayNodeNew);
                     }
-                    jobsNodeNew.Add(jobNode);
+                    if (jobNodeOld != null)
+                    {
+                        jobNodeOld.Remove();
+                    }
+                    jobsNodeNew.Add(jobNodeNew);
                 }
                 if (jobsNodeOld != null)
                 {
