@@ -1190,35 +1190,35 @@ namespace CarControlAndroid
                 stringNodePage.Add(new XAttribute("name", DisplayNamePage));
                 stringsNode.Add(stringNodePage);
 
-                XElement jobsNode = pageNode.Element(ns + "jobs");
-                if (jobsNode == null)
+                XElement jobsNodeOld = pageNode.Element(ns + "jobs");
+                XElement jobsNodeNew = new XElement(ns + "jobs");
+                if (jobsNodeOld != null)
                 {
-                    jobsNode = new XElement(ns + "jobs");
-                    pageNode.Add(jobsNode);
-                }
-                else
-                {
-                    XAttribute attr = jobsNode.Attribute("sgbd");
+                    jobsNodeNew.ReplaceAttributes(from el in jobsNodeOld.Attributes() select new XAttribute(el));
+                    XAttribute attr = jobsNodeNew.Attribute("sgbd");
                     if (attr != null) attr.Remove();
                 }
 
-                jobsNode.Add(new XAttribute("sgbd", ecuInfo.Sgbd));
+                jobsNodeNew.Add(new XAttribute("sgbd", ecuInfo.Sgbd));
 
                 foreach (XmlToolEcuActivity.JobInfo job in ecuInfo.JobList)
                 {
-                    XElement jobNode = GetJobNode(job, ns, jobsNode);
                     if (!job.Selected)
                     {
+                        continue;
+                    }
+                    XElement jobNode = null;
+                    if (jobsNodeOld != null)
+                    {
+                        jobNode = GetJobNode(job, ns, jobsNodeOld);
                         if (jobNode != null)
                         {
-                            jobNode.Remove();
+                            jobNode = new XElement(jobNode);
                         }
-                        continue;
                     }
                     if (jobNode == null)
                     {
                         jobNode = new XElement(ns + "job");
-                        jobsNode.Add(jobNode);
                     }
                     else
                     {
@@ -1270,7 +1270,13 @@ namespace CarControlAndroid
                         stringNode.Add(new XAttribute("name", displayTag));
                         stringsNode.Add(stringNode);
                     }
+                    jobsNodeNew.Add(jobNode);
                 }
+                if (jobsNodeOld != null)
+                {
+                    jobsNodeOld.Remove();
+                }
+                pageNode.Add(jobsNodeNew);
 
                 return document;
             }
@@ -1360,6 +1366,10 @@ namespace CarControlAndroid
 
                 XElement errorsNodeOld = pageNode.Element(ns + "read_errors");
                 XElement errorsNodeNew = new XElement(ns + "read_errors");
+                if (errorsNodeOld != null)
+                {
+                    errorsNodeNew.ReplaceAttributes(from el in errorsNodeOld.Attributes() select new XAttribute(el));
+                }
 
                 foreach (EcuInfo ecuInfo in _ecuList)
                 {
@@ -1464,6 +1474,10 @@ namespace CarControlAndroid
                 XNamespace ns = document.Root.GetDefaultNamespace();
                 XElement pagesNodeOld = document.Root.Element(ns + "pages");
                 XElement pagesNodeNew = new XElement(ns + "pages");
+                if (pagesNodeOld != null)
+                {
+                    pagesNodeNew.ReplaceAttributes(from el in pagesNodeOld.Attributes() select new XAttribute(el));
+                }
 
                 foreach (EcuInfo ecuInfo in _ecuList)
                 {
