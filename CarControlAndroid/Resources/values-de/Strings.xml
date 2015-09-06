@@ -23,6 +23,12 @@
   <string name="compile_start">Anwendercode kompilieren</string>
   <string name="compile_ok_btn">OK</string>
 
+  <!-- Download -->
+  <string name="downloading_file">Datei herunterladen</string>
+  <string name="download_failed">Herunterladen fehlgeschlagen</string>
+  <string name="extract_file">Datei entpacken</string>
+  <string name="extract_failed">Entpacken fehlgeschlagen</string>
+
   <!--  DeviceListActivity -->
   <string name="scanning">Nach Geräten suchen ...</string>
   <string name="select_device">Gerät auswählen</string>

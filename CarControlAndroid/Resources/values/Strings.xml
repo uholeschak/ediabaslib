@@ -23,6 +23,12 @@
   <string name="compile_start">Compiling user code</string>
   <string name="compile_ok_btn">OK</string>
 
+  <!-- Download -->
+  <string name="downloading_file">Downloading file</string>
+  <string name="download_failed">Download failed</string>
+  <string name="extract_file">Extracting file</string>
+  <string name="extract_failed">Extracting file failed</string>
+
   <!--  DeviceListActivity -->
   <string name="scanning">Scanning for devices ...</string>
   <string name="select_device">Select a device</string>
