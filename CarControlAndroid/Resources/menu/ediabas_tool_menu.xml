@@ -17,6 +17,9 @@
         <item android:id="@+id/menu_scan"
               android:icon="@android:drawable/ic_menu_search"
               android:title="@string/menu_device" />
+        <item android:id="@+id/menu_can_adapter_config"
+              android:icon="@android:drawable/ic_menu_manage"
+              android:title="@string/menu_can_adapter_config" />
         <item android:id="@+id/menu_enable_trace"
               android:icon="@android:drawable/ic_menu_save"
               android:title="@string/menu_enable_trace"

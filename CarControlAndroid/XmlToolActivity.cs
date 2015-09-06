@@ -31,6 +31,7 @@ namespace CarControlAndroid
         {
             RequestSelectSgbd,
             RequestSelectDevice,
+            RequestCanAdapterConfig,
             RequestSelectJobs,
         }
 
@@ -172,6 +173,8 @@ namespace CarControlAndroid
                 (int)(GravityFlags.Left | GravityFlags.CenterVertical);
             SupportActionBar.SetCustomView(_barView, barLayoutParams);
 
+            SetResult(Android.App.Result.Canceled);
+
             _buttonRead = _barView.FindViewById<Button>(Resource.Id.buttonXmlRead);
             _buttonRead.Click += (sender, args) =>
             {
@@ -185,8 +188,6 @@ namespace CarControlAndroid
                     Finish();
                 }
             };
-
-            SetResult(Android.App.Result.Canceled);
 
             _textViewCarInfo = FindViewById<TextView>(Resource.Id.textViewCarInfo);
             ListView listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
@@ -283,6 +284,9 @@ namespace CarControlAndroid
                     _autoStart = false;
                     break;
 
+                case ActivityRequest.RequestCanAdapterConfig:
+                    break;
+
                 case ActivityRequest.RequestSelectJobs:
                     if (XmlToolEcuActivity.IntentEcuInfo.JobList != null)
                     {
@@ -331,6 +335,13 @@ namespace CarControlAndroid
                 scanMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_device), _deviceName));
                 scanMenu.SetEnabled(!commActive && interfaceAvailable);
                 scanMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
+            }
+
+            IMenuItem canAdapterMenu = menu.FindItem(Resource.Id.menu_can_adapter_config);
+            if (canAdapterMenu != null)
+            {
+                canAdapterMenu.SetEnabled(interfaceAvailable && !commActive);
+                canAdapterMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
             }
 
             IMenuItem addErrorsMenu = menu.FindItem(Resource.Id.menu_xml_tool_add_errors_page);
@@ -408,6 +419,10 @@ namespace CarControlAndroid
                     _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice);
                     return true;
 
+                case Resource.Id.menu_can_adapter_config:
+                    CanAdapterConfig();
+                    return true;
+
                 case Resource.Id.menu_xml_tool_add_errors_page:
                     _addErrorsPage = !_addErrorsPage;
                     SupportInvalidateOptionsMenu();
@@ -450,6 +465,7 @@ namespace CarControlAndroid
                 _ediabas = null;
             }
             UpdateDisplay();
+            SupportInvalidateOptionsMenu();
             return true;
         }
 
@@ -602,6 +618,14 @@ namespace CarControlAndroid
             });
         }
 
+        private void CanAdapterConfig()
+        {
+            EdiabasClose();
+            Intent serverIntent = new Intent(this, typeof(CanAdapterActivity));
+            serverIntent.PutExtra(CanAdapterActivity.ExtraDeviceAddress, _deviceAddress);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestCanAdapterConfig);
+        }
+
         private void PerformAnalyze()
         {
             if (IsJobRunning())
@@ -687,6 +711,7 @@ namespace CarControlAndroid
                             string ecuDesc = string.Empty;
                             string ecuSgbd = string.Empty;
                             string ecuGroup = string.Empty;
+                            Int64 dateYear = -1;
                             EdiabasNet.ResultData resultData;
                             if (resultDict.TryGetValue("ECU_GROBNAME", out resultData))
                             {
@@ -725,18 +750,22 @@ namespace CarControlAndroid
                                     ecuGroup = (string)resultData.OpData;
                                 }
                             }
+                            if (resultDict.TryGetValue("ID_DATUM_JAHR", out resultData))
+                            {
+                                if (resultData.OpData is Int64)
+                                {
+                                    dateYear = (Int64)resultData.OpData;
+                                }
+                            }
                             if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
                             {
                                 ecuList.Add(new EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup));
                             }
                             else
                             {
-                                if (ecuDataPresent)
+                                if (ecuDataPresent && dateYear != 0)
                                 {
-                                    if (!ecuName.StartsWith("VIRT", StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        invalidEcuCount++;
-                                    }
+                                    invalidEcuCount++;
                                 }
                             }
                             dictIndex++;
@@ -832,10 +861,7 @@ namespace CarControlAndroid
                             new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
-                                    if (SaveConfiguration())
-                                    {
-                                        PerformAnalyze();
-                                    }
+                                    PerformAnalyze();
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {

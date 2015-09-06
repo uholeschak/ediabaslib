@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActivityCommon.cs" />
+    <Compile Include="CanAdapterActivity.cs" />
     <Compile Include="EdiabasThread.cs" />
     <Compile Include="EdiabasToolActivity.cs" />
     <Compile Include="FilePicker\FileListAdapter.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="FilePicker\FilePickerActivity.cs" />
     <Compile Include="FilePicker\Helpers.cs" />
     <Compile Include="JobReader.cs" />
+    <Compile Include="StringAdapter.cs" />
     <Compile Include="XmlToolActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -130,6 +132,12 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\string_list.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\can_adapter_config.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\bar_can_adapter.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <None Include="Xml\AdapterCustom.ccpage">
@@ -220,6 +228,8 @@
     <AndroidResource Include="Resources\menu\file_picker_menu.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\menu\xml_tool_menu.xml" />
+    <AndroidResource Include="Resources\menu\xml_tool_menu.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
 </Project>
