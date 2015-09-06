@@ -11,12 +11,15 @@ using Java.Interop;
 using Mono.CSharp;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using CarControlAndroid.FilePicker;
 using System.Threading;
+
 // ReSharper disable LoopCanBeConvertedToQuery
 
 namespace CarControlAndroid
@@ -36,6 +39,9 @@ namespace CarControlAndroid
             RequestEdiabasTool,
         }
 
+        private const string SharedAppName = "CarControl";
+        private const string AppFolderName = "CarControl";
+
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
@@ -46,7 +52,6 @@ namespace CarControlAndroid
         private bool _activityStarted;
         private bool _onStartExecuted;
         private bool _createTabsPending;
-        private const string SharedAppName = "CarControl";
         private bool _autoStart;
         private ActivityCommon _activityCommon;
         private JobReader _jobReader;
@@ -59,6 +64,8 @@ namespace CarControlAndroid
         private ToggleButton _buttonConnect;
         private ImageView _imageBackground;
         private View _barView;
+        private WebClient _webClient;
+        private Android.App.ProgressDialog _downloadProgress;
         private Receiver _receiver;
 
         public void OnTabReselected(ActionBar.Tab tab, FragmentTransaction ft)
@@ -117,6 +124,10 @@ namespace CarControlAndroid
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
             _fragmentList = new List<Fragment>();
             _buttonConnect.Click += ButtonConnectClick;
+
+            _webClient = new WebClient();
+            _webClient.DownloadProgressChanged += DownloadProgressChanged;
+            _webClient.DownloadFileCompleted += DownloadCompleted;
 
             _receiver = new Receiver(this);
             RegisterReceiver(_receiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
@@ -197,6 +208,7 @@ namespace CarControlAndroid
             StopEdiabasThread(true);
             StoreSettings();
             _updateHandler.Dispose();
+            _webClient.Dispose();
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
@@ -331,8 +343,19 @@ namespace CarControlAndroid
                     break;
 
                 case Resource.Id.menu_can_adapter_config:
+                {
                     CanAdapterConfig();
+#if false
+                    string fileName = _activityCommon.ExternalWritePath;
+                    if (string.IsNullOrEmpty(fileName))
+                    {
+                        fileName = Path.Combine(_activityCommon.ExternalPath, AppFolderName);
+                    }
+                    fileName = Path.Combine(fileName, "Download", "Ecu.zip");
+                    DownloadFile("http://www.holeschak.de/CarControl/Ecu.zip", fileName);
+#endif
                     return true;
+                }
 
                 case Resource.Id.menu_sel_cfg:
                     SelectConfigFile();
@@ -1092,6 +1115,149 @@ namespace CarControlAndroid
             });
         }
 
+        private void DownloadFile(string url, string fileName)
+        {
+            string dirName = Path.GetDirectoryName(fileName);
+            if (dirName == null)
+            {
+                _activityCommon.ShowAlert(GetString(Resource.String.download_failed));
+                return;
+            }
+            try
+            {
+                Directory.CreateDirectory(dirName);
+            }
+            catch (Exception)
+            {
+                _activityCommon.ShowAlert(GetString(Resource.String.download_failed));
+                return;
+            }
+
+            _downloadProgress = new Android.App.ProgressDialog(this);
+            _downloadProgress.SetCancelable(true);
+            _downloadProgress.SetMessage(GetString(Resource.String.downloading_file));
+            _downloadProgress.CancelEvent += (sender, args) =>
+            {
+                _webClient.CancelAsync();
+            };
+            _downloadProgress.Show();
+
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    _webClient.DownloadFileAsync(new System.Uri(url), fileName, fileName);
+                }
+                catch (Exception)
+                {
+                    RunOnUiThread(() =>
+                    {
+                        _downloadProgress.Hide();
+                        _downloadProgress.Dispose();
+                        _downloadProgress = null;
+                        _activityCommon.ShowAlert(GetString(Resource.String.download_failed));
+                    });
+                }
+            });
+        }
+
+        private void DownloadCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            RunOnUiThread(() =>
+            {
+                if (_downloadProgress != null)
+                {
+                    _downloadProgress.Hide();
+                    _downloadProgress.Dispose();
+                    _downloadProgress = null;
+                    if (!e.Cancelled && e.Error != null)
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.download_failed));
+                    }
+                    if (e.Error == null)
+                    {
+                        string fileName = e.UserState as string;
+                        if (fileName != null)
+                        {
+                            ExtractZipFile(fileName, Path.Combine(Path.GetDirectoryName(fileName) ?? string.Empty, "Ecu"), true);
+                        }
+                    }
+                }
+            });
+        }
+
+        private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            RunOnUiThread(() =>
+            {
+                if (_downloadProgress != null)
+                {
+                    _downloadProgress.SetMessage(GetString(Resource.String.downloading_file) + string.Format(": {0}%", e.ProgressPercentage));
+                }
+            });
+        }
+
+        private void ExtractZipFile(string fileName, string targetDirectory, bool removeFile = false)
+        {
+            try
+            {
+                if (Directory.Exists(targetDirectory))
+                {
+                    Directory.Delete(targetDirectory, true);
+                }
+                Directory.CreateDirectory(targetDirectory);
+            }
+            catch (Exception)
+            {
+                _activityCommon.ShowAlert(GetString(Resource.String.extract_failed));
+                return;
+            }
+
+            bool extractCanceled = false;
+            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
+            progress.SetCancelable(true);
+            progress.SetMessage(GetString(Resource.String.extract_file));
+            progress.CancelEvent += (sender, args) =>
+            {
+                extractCanceled = true;
+            };
+            progress.Show();
+
+            Task.Factory.StartNew(() =>
+            {
+                bool extractFailed = false;
+                try
+                {
+                    ActivityCommon.ExtractZipFile(fileName, targetDirectory,
+                        percent =>
+                        {
+                            RunOnUiThread(() =>
+                            {
+                                progress.SetMessage(GetString(Resource.String.extract_file) + string.Format(": {0}%", percent));
+                            });
+                            return extractCanceled;
+                        });
+                    if (removeFile)
+                    {
+                        File.Delete(fileName);
+                    }
+                }
+                catch (Exception)
+                {
+                    extractFailed = true;
+                }
+                RunOnUiThread(() =>
+                {
+                    progress.Hide();
+                    progress.Dispose();
+                    if (extractFailed)
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.extract_failed));
+                    }
+                });
+            });
+        }
+
         private void RequestConfigSelect()
         {
             if (_jobReader.PageList.Count > 0)
@@ -1151,7 +1317,7 @@ namespace CarControlAndroid
             string xmlDir = _activityCommon.ExternalWritePath;
             if (string.IsNullOrEmpty(xmlDir))
             {
-                xmlDir = Path.Combine(_activityCommon.ExternalPath, "CarControl");
+                xmlDir = Path.Combine(_activityCommon.ExternalPath, AppFolderName);
             }
             xmlDir = Path.Combine(xmlDir, "Configurations");
             serverIntent.PutExtra(XmlToolActivity.ExtraInitDir, initDir);
