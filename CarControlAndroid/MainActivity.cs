@@ -30,6 +30,7 @@ namespace CarControlAndroid
         private enum ActivityRequest
         {
             RequestSelectDevice,
+            RequestCanAdapterConfig,
             RequestSelectConfig,
             RequestXmlTool,
             RequestEdiabasTool,
@@ -218,6 +219,9 @@ namespace CarControlAndroid
                     _autoStart = false;
                     break;
 
+                case ActivityRequest.RequestCanAdapterConfig:
+                    break;
+
                 case ActivityRequest.RequestSelectConfig:
                     // When FilePickerActivity returns with a file
                     if (resultCode == Android.App.Result.Ok)
@@ -260,6 +264,13 @@ namespace CarControlAndroid
                 scanMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_device), _deviceName));
                 scanMenu.SetEnabled(interfaceAvailable && !commActive);
                 scanMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
+            }
+
+            IMenuItem canAdapterMenu = menu.FindItem(Resource.Id.menu_can_adapter_config);
+            if (canAdapterMenu != null)
+            {
+                canAdapterMenu.SetEnabled(interfaceAvailable && !commActive);
+                canAdapterMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
             }
 
             IMenuItem selCfgMenu = menu.FindItem(Resource.Id.menu_sel_cfg);
@@ -318,6 +329,10 @@ namespace CarControlAndroid
                     _autoStart = false;
                     _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice);
                     break;
+
+                case Resource.Id.menu_can_adapter_config:
+                    CanAdapterConfig();
+                    return true;
 
                 case Resource.Id.menu_sel_cfg:
                     SelectConfigFile();
@@ -1095,6 +1110,13 @@ namespace CarControlAndroid
                 .SetMessage(Resource.String.config_select)
                 .SetTitle(Resource.String.config_select_title)
                 .Show();
+        }
+
+        private void CanAdapterConfig()
+        {
+            Intent serverIntent = new Intent(this, typeof(CanAdapterActivity));
+            serverIntent.PutExtra(CanAdapterActivity.ExtraDeviceAddress, _deviceAddress);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestCanAdapterConfig);
         }
 
         private void SelectConfigFile()

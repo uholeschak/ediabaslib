@@ -36,7 +36,7 @@
             android:inputType="text"
             android:maxLines="1" />
         <Spinner
-            android:id="@+id/listJobs"
+            android:id="@+id/spinnerJobs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <LinearLayout

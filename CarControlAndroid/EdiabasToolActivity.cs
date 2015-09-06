@@ -31,6 +31,7 @@ namespace CarControlAndroid
         {
             RequestSelectSgbd,
             RequestSelectDevice,
+            RequestCanAdapterConfig,
         }
 
         private class ExtraInfo
@@ -183,6 +184,8 @@ namespace CarControlAndroid
                 (int)(GravityFlags.Left | GravityFlags.CenterVertical);
             SupportActionBar.SetCustomView(_barView, barLayoutParams);
 
+            SetResult(Android.App.Result.Canceled);
+
             _checkBoxContinuous = _barView.FindViewById<CheckBox>(Resource.Id.checkBoxContinuous);
             _checkBoxContinuous.SetOnTouchListener(this);
 
@@ -200,8 +203,6 @@ namespace CarControlAndroid
                     UpdateDisplay();
                 }
             };
-
-            SetResult(Android.App.Result.Canceled);
 
             _spinnerJobs = FindViewById<Spinner>(Resource.Id.spinnerJobs);
             _jobListAdapter = new JobListAdapter(this);
@@ -317,6 +318,8 @@ namespace CarControlAndroid
                     _autoStart = false;
                     break;
 
+                case ActivityRequest.RequestCanAdapterConfig:
+                    break;
             }
         }
 
@@ -387,6 +390,13 @@ namespace CarControlAndroid
                 scanMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_device), _deviceName));
                 scanMenu.SetEnabled(!commActive && interfaceAvailable);
                 scanMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
+            }
+
+            IMenuItem canAdapterMenu = menu.FindItem(Resource.Id.menu_can_adapter_config);
+            if (canAdapterMenu != null)
+            {
+                canAdapterMenu.SetEnabled(interfaceAvailable && !commActive);
+                canAdapterMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
             }
 
             IMenuItem enableTraceMenu = menu.FindItem(Resource.Id.menu_enable_trace);
@@ -464,6 +474,14 @@ namespace CarControlAndroid
                     _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice);
                     return true;
 
+                case Resource.Id.menu_can_adapter_config:
+                    if (IsJobRunning())
+                    {
+                        return true;
+                    }
+                    CanAdapterConfig();
+                    return true;
+
                 case Resource.Id.menu_enable_trace:
                     if (IsJobRunning())
                     {
@@ -536,6 +554,7 @@ namespace CarControlAndroid
             _jobList.Clear();
             CloseDataLog();
             UpdateDisplay();
+            SupportInvalidateOptionsMenu();
             return true;
         }
 
@@ -658,6 +677,14 @@ namespace CarControlAndroid
             {
                 SupportInvalidateOptionsMenu();
             });
+        }
+
+        private void CanAdapterConfig()
+        {
+            EdiabasClose();
+            Intent serverIntent = new Intent(this, typeof(CanAdapterActivity));
+            serverIntent.PutExtra(CanAdapterActivity.ExtraDeviceAddress, _deviceAddress);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestCanAdapterConfig);
         }
 
         private JobInfo GetSelectedJob()
