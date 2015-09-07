@@ -48,6 +48,7 @@
   <string name="menu_sel_cfg">Konfiguration</string>
   <string name="menu_xml_tool">Konfigurationsgenerator</string>
   <string name="menu_ediabas_tool">Ediabas Tool</string>
+  <string name="menu_download_ecu">ECU Dateien herunterladen</string>
   <string name="menu_enable_trace">Tracefile erzeugen</string>
   <string name="menu_append_trace">Tracefile anhängen</string>
   <string name="menu_enable_datalog">Daten aufzeichnen</string>

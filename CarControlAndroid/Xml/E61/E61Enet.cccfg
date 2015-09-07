@@ -2,6 +2,6 @@
 <configuration xmlns="http://www.holeschak.de/CarControl"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/CarControl ../CarControl.xsd">
-  <global ecu_path="../Ecu" log_path="Log" append_log="true" interface="ENET" />
+  <global log_path="Log" append_log="true" interface="ENET" />
   <include filename="E61.ccpages"/>
 </configuration>

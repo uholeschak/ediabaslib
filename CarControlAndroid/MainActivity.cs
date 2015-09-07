@@ -20,8 +20,6 @@ using System.Threading.Tasks;
 using CarControlAndroid.FilePicker;
 using System.Threading;
 
-// ReSharper disable LoopCanBeConvertedToQuery
-
 namespace CarControlAndroid
 {
     [Android.App.Activity(Label = "@string/app_name", MainLauncher = true,
@@ -39,6 +37,28 @@ namespace CarControlAndroid
             RequestEdiabasTool,
         }
 
+        private class UnzipInfo
+        {
+            public UnzipInfo(string fileName, string targetDir)
+            {
+                _fileName = fileName;
+                _targetDir = targetDir;
+            }
+
+            private readonly string _fileName;
+            private readonly string _targetDir;
+
+            public string FileName
+            {
+                get { return _fileName; }
+            }
+
+            public string TargetDir
+            {
+                get { return _targetDir; }
+            }
+        }
+
         private const string SharedAppName = "CarControl";
         private const string AppFolderName = "CarControl";
 
@@ -46,6 +66,8 @@ namespace CarControlAndroid
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
         private string _configFileName = string.Empty;
+        private string _appDataPath = String.Empty;
+        private string _ecuPath = String.Empty;
         private bool _traceActive;
         private bool _traceAppend;
         private bool _dataLogActive;
@@ -106,7 +128,9 @@ namespace CarControlAndroid
             SupportActionBar.SetIcon(Resource.Drawable.icon);
             SetContentView(Resource.Layout.main);
 
-            _activityCommon = new ActivityCommon(this);
+            _activityCommon = new ActivityCommon(this);            
+            _appDataPath = string.IsNullOrEmpty(_activityCommon.ExternalWritePath) ? Path.Combine(_activityCommon.ExternalPath, AppFolderName) : _activityCommon.ExternalWritePath;
+            _ecuPath = Path.Combine(_appDataPath, "Ecu");
             _updateHandler = new Handler();
             _jobReader = new JobReader();
             GetSettings();
@@ -270,6 +294,7 @@ namespace CarControlAndroid
         {
             bool commActive = _ediabasThread != null && _ediabasThread.ThreadRunning();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
+
             IMenuItem scanMenu = menu.FindItem(Resource.Id.menu_scan);
             if (scanMenu != null)
             {
@@ -309,6 +334,12 @@ namespace CarControlAndroid
                 ediabasToolMenu.SetEnabled(!commActive);
             }
 
+            IMenuItem downloadEcu = menu.FindItem(Resource.Id.menu_download_ecu);
+            if (downloadEcu != null)
+            {
+                downloadEcu.SetEnabled(!commActive);
+            }
+
             IMenuItem enableTraceMenu = menu.FindItem(Resource.Id.menu_enable_trace);
             if (enableTraceMenu != null)
             {
@@ -340,22 +371,11 @@ namespace CarControlAndroid
                 case Resource.Id.menu_scan:
                     _autoStart = false;
                     _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice);
-                    break;
+                    return true;
 
                 case Resource.Id.menu_can_adapter_config:
-                {
                     CanAdapterConfig();
-#if false
-                    string fileName = _activityCommon.ExternalWritePath;
-                    if (string.IsNullOrEmpty(fileName))
-                    {
-                        fileName = Path.Combine(_activityCommon.ExternalPath, AppFolderName);
-                    }
-                    fileName = Path.Combine(fileName, "Download", "Ecu.zip");
-                    DownloadFile("http://www.holeschak.de/CarControl/Ecu.zip", fileName);
-#endif
                     return true;
-                }
 
                 case Resource.Id.menu_sel_cfg:
                     SelectConfigFile();
@@ -367,6 +387,10 @@ namespace CarControlAndroid
 
                 case Resource.Id.menu_ediabas_tool:
                     StartEdiabasTool();
+                    return true;
+
+                case Resource.Id.menu_download_ecu:
+                    DownloadFile("http://www.holeschak.de/CarControl/Ecu.zip", Path.Combine(_appDataPath, "Download", "Ecu.zip"), _ecuPath);
                     return true;
 
                 case Resource.Id.menu_enable_trace:
@@ -442,18 +466,14 @@ namespace CarControlAndroid
             {
                 if (_ediabasThread == null)
                 {
-                    _ediabasThread = new EdiabasThread(_jobReader.EcuPath, _activityCommon.SelectedInterface);
+                    _ediabasThread = new EdiabasThread(string.IsNullOrEmpty(_jobReader.EcuPath) ? _ecuPath : _jobReader.EcuPath, _activityCommon.SelectedInterface);
                     _ediabasThread.DataUpdated += DataUpdated;
                     _ediabasThread.ThreadTerminated += ThreadTerminated;
                 }
-                string logDir = string.IsNullOrEmpty(_activityCommon.ExternalWritePath) ? _jobReader.EcuPath : _activityCommon.ExternalWritePath;
-
-                if (!string.IsNullOrEmpty(logDir))
+                string logDir = string.Empty;
+                if (!string.IsNullOrEmpty(_jobReader.LogPath))
                 {
-                    if (!string.IsNullOrEmpty(_jobReader.LogPath))
-                    {
-                        logDir = Path.IsPathRooted(_jobReader.LogPath) ? _jobReader.LogPath : Path.Combine(logDir, _jobReader.LogPath);
-                    }
+                    logDir = Path.IsPathRooted(_jobReader.LogPath) ? _jobReader.LogPath : Path.Combine(_appDataPath, _jobReader.LogPath);
                     try
                     {
                         Directory.CreateDirectory(logDir);
@@ -462,10 +482,6 @@ namespace CarControlAndroid
                     {
                         logDir = string.Empty;
                     }
-                }
-                else
-                {
-                    logDir = string.Empty;
                 }
                 _dataLogDir = logDir;
 
@@ -1115,7 +1131,7 @@ namespace CarControlAndroid
             });
         }
 
-        private void DownloadFile(string url, string fileName)
+        private void DownloadFile(string url, string fileName, string unzipTargetDir = null)
         {
             string dirName = Path.GetDirectoryName(fileName);
             if (dirName == null)
@@ -1136,17 +1152,22 @@ namespace CarControlAndroid
             _downloadProgress = new Android.App.ProgressDialog(this);
             _downloadProgress.SetCancelable(true);
             _downloadProgress.SetMessage(GetString(Resource.String.downloading_file));
-            _downloadProgress.CancelEvent += (sender, args) =>
-            {
-                _webClient.CancelAsync();
-            };
+            _downloadProgress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
+            _downloadProgress.Progress = 0;
+            _downloadProgress.Max = 100;
+            _downloadProgress.CancelEvent += DownloadProgressCancel;
             _downloadProgress.Show();
 
             Task.Factory.StartNew(() =>
             {
                 try
                 {
-                    _webClient.DownloadFileAsync(new System.Uri(url), fileName, fileName);
+                    UnzipInfo unzipInfo = null;
+                    if (!string.IsNullOrEmpty(unzipTargetDir))
+                    {
+                        unzipInfo = new UnzipInfo(fileName, unzipTargetDir);
+                    }
+                    _webClient.DownloadFileAsync(new System.Uri(url), fileName, unzipInfo);
                 }
                 catch (Exception)
                 {
@@ -1167,19 +1188,24 @@ namespace CarControlAndroid
             {
                 if (_downloadProgress != null)
                 {
-                    _downloadProgress.Hide();
-                    _downloadProgress.Dispose();
-                    _downloadProgress = null;
-                    if (!e.Cancelled && e.Error != null)
-                    {
-                        _activityCommon.ShowAlert(GetString(Resource.String.download_failed));
-                    }
+                    _downloadProgress.SetCancelable(false);
                     if (e.Error == null)
                     {
-                        string fileName = e.UserState as string;
-                        if (fileName != null)
+                        UnzipInfo unzipInfo = e.UserState as UnzipInfo;
+                        if (unzipInfo != null)
                         {
-                            ExtractZipFile(fileName, Path.Combine(Path.GetDirectoryName(fileName) ?? string.Empty, "Ecu"), true);
+                            _downloadProgress.CancelEvent -= DownloadProgressCancel;
+                            ExtractZipFile(unzipInfo.FileName, unzipInfo.TargetDir, true);
+                        }
+                    }
+                    else
+                    {
+                        _downloadProgress.Hide();
+                        _downloadProgress.Dispose();
+                        _downloadProgress = null;
+                        if (!e.Cancelled && e.Error != null)
+                        {
+                            _activityCommon.ShowAlert(GetString(Resource.String.download_failed));
                         }
                     }
                 }
@@ -1192,9 +1218,17 @@ namespace CarControlAndroid
             {
                 if (_downloadProgress != null)
                 {
-                    _downloadProgress.SetMessage(GetString(Resource.String.downloading_file) + string.Format(": {0}%", e.ProgressPercentage));
+                    _downloadProgress.Progress = e.ProgressPercentage;
                 }
             });
+        }
+
+        private void DownloadProgressCancel(object sender, EventArgs e)
+        {
+            if (_webClient.IsBusy)
+            {
+                _webClient.CancelAsync();
+            }
         }
 
         private void ExtractZipFile(string fileName, string targetDirectory, bool removeFile = false)
@@ -1209,19 +1243,28 @@ namespace CarControlAndroid
             }
             catch (Exception)
             {
+                if (_downloadProgress != null)
+                {
+                    _downloadProgress.Hide();
+                    _downloadProgress.Dispose();
+                    _downloadProgress = null;
+                }
                 _activityCommon.ShowAlert(GetString(Resource.String.extract_failed));
                 return;
             }
 
             bool extractCanceled = false;
-            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
-            progress.SetCancelable(true);
-            progress.SetMessage(GetString(Resource.String.extract_file));
-            progress.CancelEvent += (sender, args) =>
+            if (_downloadProgress == null)
             {
-                extractCanceled = true;
-            };
-            progress.Show();
+                _downloadProgress = new Android.App.ProgressDialog(this);
+            }
+            _downloadProgress.SetCancelable(true);
+            _downloadProgress.SetMessage(GetString(Resource.String.extract_file));
+            _downloadProgress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
+            _downloadProgress.Progress = 0;
+            _downloadProgress.Max = 100;
+            _downloadProgress.CancelEvent += (sender, args) => extractCanceled = true;
+            _downloadProgress.Show();
 
             Task.Factory.StartNew(() =>
             {
@@ -1233,7 +1276,7 @@ namespace CarControlAndroid
                         {
                             RunOnUiThread(() =>
                             {
-                                progress.SetMessage(GetString(Resource.String.extract_file) + string.Format(": {0}%", percent));
+                                _downloadProgress.Progress = percent;
                             });
                             return extractCanceled;
                         });
@@ -1248,8 +1291,9 @@ namespace CarControlAndroid
                 }
                 RunOnUiThread(() =>
                 {
-                    progress.Hide();
-                    progress.Dispose();
+                    _downloadProgress.Hide();
+                    _downloadProgress.Dispose();
+                    _downloadProgress = null;
                     if (extractFailed)
                     {
                         _activityCommon.ShowAlert(GetString(Resource.String.extract_failed));
@@ -1309,19 +1353,8 @@ namespace CarControlAndroid
         private void StartXmlTool()
         {
             Intent serverIntent = new Intent(this, typeof(XmlToolActivity));
-            string initDir = _activityCommon.ExternalPath;
-            if (!string.IsNullOrEmpty(_configFileName) && !string.IsNullOrEmpty(_jobReader.EcuPath))
-            {
-                initDir = _jobReader.EcuPath;
-            }
-            string xmlDir = _activityCommon.ExternalWritePath;
-            if (string.IsNullOrEmpty(xmlDir))
-            {
-                xmlDir = Path.Combine(_activityCommon.ExternalPath, AppFolderName);
-            }
-            xmlDir = Path.Combine(xmlDir, "Configurations");
-            serverIntent.PutExtra(XmlToolActivity.ExtraInitDir, initDir);
-            serverIntent.PutExtra(XmlToolActivity.ExtraXmlDir, xmlDir);
+            serverIntent.PutExtra(XmlToolActivity.ExtraInitDir, _ecuPath);
+            serverIntent.PutExtra(XmlToolActivity.ExtraConfigDir, Path.Combine(_appDataPath, "Configurations"));
             serverIntent.PutExtra(XmlToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
             serverIntent.PutExtra(XmlToolActivity.ExtraDeviceName, _deviceName);
             serverIntent.PutExtra(XmlToolActivity.ExtraDeviceAddress, _deviceAddress);
@@ -1331,12 +1364,7 @@ namespace CarControlAndroid
         private void StartEdiabasTool()
         {
             Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
-            string initDir = _activityCommon.ExternalPath;
-            if (!string.IsNullOrEmpty(_configFileName) && !string.IsNullOrEmpty(_jobReader.EcuPath))
-            {
-                initDir = _jobReader.EcuPath;
-            }
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, initDir);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _ecuPath);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _deviceName);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _deviceAddress);
