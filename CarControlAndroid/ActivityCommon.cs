@@ -23,7 +23,7 @@ namespace CarControlAndroid
             Enet,
         }
 
-        public delegate bool ProgressZipDelegate(long percent);
+        public delegate bool ProgressZipDelegate(int percent);
         public const string EmulatorEnetIp = "192.168.10.244";
 
         private readonly Android.App.Activity _activity;
@@ -399,7 +399,7 @@ namespace CarControlAndroid
                 {
                     if (progressHandler != null)
                     {
-                        if (progressHandler(100 * index / zf.Count))
+                        if (progressHandler((int)(100 * index / zf.Count)))
                         {
                             return;
                         }

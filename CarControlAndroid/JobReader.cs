@@ -357,7 +357,8 @@ namespace CarControlAndroid
             {
                 return false;
             }
-            _ecuPath = Path.GetDirectoryName(xmlName);
+            string xmlDir = Path.GetDirectoryName(xmlName);
+            _ecuPath = string.Empty;
             _logPath = string.Empty;
             _interfaceName = string.Empty;
 
@@ -393,7 +394,7 @@ namespace CarControlAndroid
                             }
                             else
                             {
-                                _ecuPath = string.IsNullOrEmpty(_ecuPath) ? attrib.Value : Path.Combine(_ecuPath, attrib.Value);
+                                _ecuPath = string.IsNullOrEmpty(xmlDir) ? attrib.Value : Path.Combine(xmlDir, attrib.Value);
                             }
                         }
 

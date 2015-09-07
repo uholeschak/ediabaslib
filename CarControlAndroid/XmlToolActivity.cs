@@ -125,7 +125,7 @@ namespace CarControlAndroid
 
         // Intent extra
         public const string ExtraInitDir = "init_dir";
-        public const string ExtraXmlDir = "xml_dir";
+        public const string ExtraConfigDir = "config_dir";
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
@@ -138,7 +138,7 @@ namespace CarControlAndroid
         private EcuListAdapter _ecuListAdapter;
         private TextView _textViewCarInfo;
         private string _initDirStart;
-        private string _xmlBaseDir;
+        private string _configBaseDir;
         private string _sgbdFileName = string.Empty;
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
@@ -209,7 +209,7 @@ namespace CarControlAndroid
             };
 
             _initDirStart = Intent.GetStringExtra(ExtraInitDir);
-            _xmlBaseDir = Intent.GetStringExtra(ExtraXmlDir);
+            _configBaseDir = Intent.GetStringExtra(ExtraConfigDir);
             _deviceName = Intent.GetStringExtra(ExtraDeviceName);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
 
@@ -1603,9 +1603,6 @@ namespace CarControlAndroid
                     if (attr != null) attr.Remove();
                 }
 
-                string ecuDir = Path.GetDirectoryName(_sgbdFileName) ?? string.Empty;
-                globalNode.Add(new XAttribute("ecu_path", ActivityCommon.MakeRelativePath(xmlFileDir + Path.DirectorySeparatorChar, ecuDir + Path.DirectorySeparatorChar)));
-
                 XAttribute logPathAttr = globalNode.Attribute("log_path");
                 if (logPathAttr == null)
                 {
@@ -1884,7 +1881,7 @@ namespace CarControlAndroid
 
         private string XmlFileDir()
         {
-            if (string.IsNullOrEmpty(_xmlBaseDir))
+            if (string.IsNullOrEmpty(_configBaseDir))
             {
                 return null;
             }
@@ -1895,7 +1892,7 @@ namespace CarControlAndroid
             }
             try
             {
-                return Path.Combine(_xmlBaseDir, ActivityCommon.CreateValidFileName(vin));
+                return Path.Combine(_configBaseDir, ActivityCommon.CreateValidFileName(vin));
             }
             catch (Exception)
             {
