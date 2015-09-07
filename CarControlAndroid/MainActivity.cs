@@ -128,7 +128,7 @@ namespace CarControlAndroid
             SupportActionBar.SetIcon(Resource.Drawable.icon);
             SetContentView(Resource.Layout.main);
 
-            _activityCommon = new ActivityCommon(this);            
+            _activityCommon = new ActivityCommon(this);
             _appDataPath = string.IsNullOrEmpty(_activityCommon.ExternalWritePath) ? Path.Combine(_activityCommon.ExternalPath, AppFolderName) : _activityCommon.ExternalWritePath;
             _ecuPath = Path.Combine(_appDataPath, "Ecu");
             _updateHandler = new Handler();
