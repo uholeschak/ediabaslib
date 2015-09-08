@@ -8,14 +8,16 @@
   <string name="button_ok">Ok</string>
   <string name="button_abort">Abbrechen</string>
   <string name="interface_activate">Interface Aktivierung</string>
-  <string name="bt_enable">Bluetooth ist nicht aktiviert. Wollen Sie es jetzt aktivieren?</string>
-  <string name="wifi_enable">Wifi ist nicht aktiviert. Wollen Sie es jetzt aktivieren?</string>
+  <string name="bt_enable">Bluetooth ist nicht aktiviert.\nWollen Sie es jetzt aktivieren?</string>
+  <string name="wifi_enable">Wifi ist nicht aktiviert.\nWollen Sie es jetzt aktivieren?</string>
   <string name="bt_not_available">Bluetooth ist nicht verfügbar.</string>
   <string name="wifi_not_available">Wifi ist nicht verfügbar.</string>
-  <string name="config_select">Es ist keine gültige Konfiguration vorhanden. Wollen Sie jetzt eine Konfiguration auswählen?</string>
+  <string name="config_select">Es ist keine gültige Konfiguration vorhanden.\nWollen Sie jetzt eine Konfiguration auswählen?</string>
   <string name="config_select_title">Konfiguration</string>
   <string name="bt_device_select_title">Bluetooth Gerät</string>
-  <string name="bt_device_select">Es wurde kein Bluetooth Gerät ausgewählt. Wollen Sie jetzt ein Gerät auswählen?</string>
+  <string name="bt_device_select">Es wurde kein Bluetooth Gerät ausgewählt.\nWollen Sie jetzt ein Gerät auswählen?</string>
+  <string name="ecu_download_title">ECU herunterladen</string>
+  <string name="ecu_download">Es wurden keine ECU Dateien gefunden.\nWollen Sie jetzt die ECU Dateien herunterladen (Dateigröße ca. 100MB)?</string>
   <string name="error_no_error">Keine Fehler vorhanden</string>
   <string name="error_no_response">Keine Antwort</string>
 
@@ -95,7 +97,7 @@
   <string name="xml_tool_title_config">Konfiguration speichern</string>
   <string name="xml_tool_msg_save_config">Wollen Sie die Konfiguration speichern?</string>
   <string name="xml_tool_title_ecu_error">ECU Lesefehler</string>
-  <string name="xml_tool_msg_ecu_error">Für einige ECUs konnten keine Information ermittelt werden. Wollen Sie den Vorgang mit einem anderen Modelltyp wiederholen?</string>
+  <string name="xml_tool_msg_ecu_error">Für einige ECUs konnten keine Information ermittelt werden.\nWollen Sie den Vorgang mit einem anderen Modelltyp wiederholen?</string>
   <string name="xml_tool_ecu_list">Erkannte ECUs</string>
   <string name="xml_tool_info_sgbd">SGBD</string>
   <string name="xml_tool_info_grp">Gruppe</string>

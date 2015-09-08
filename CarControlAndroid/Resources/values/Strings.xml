@@ -8,14 +8,16 @@
   <string name="button_ok">Ok</string>
   <string name="button_abort">Abort</string>
   <string name="interface_activate">Interface activation</string>
-  <string name="bt_enable">Bluetooth is not enabled. Do you want to enable it now?</string>
-  <string name="wifi_enable">Wifi is not enabled. Do you want to enable it now?</string>
+  <string name="bt_enable">Bluetooth is not enabled.\nDo you want to enable it now?</string>
+  <string name="wifi_enable">Wifi is not enabled.\nDo you want to enable it now?</string>
   <string name="bt_not_available">Bluetooth is not available.</string>
   <string name="wifi_not_available">Wifi is not available.</string>
-  <string name="config_select">No valid configuration is present. Do you want to select a configuration now?</string>
+  <string name="config_select">No valid configuration is present.\nDo you want to select a configuration now?</string>
   <string name="config_select_title">Configuration</string>
   <string name="bt_device_select_title">Bluetooth device</string>
-  <string name="bt_device_select">No Bluetooth device has been selected. Do you want to select a device now?</string>
+  <string name="bt_device_select">No Bluetooth device has been selected.\nDo you want to select a device now?</string>
+  <string name="ecu_download_title">ECU download</string>
+  <string name="ecu_download">No ECU files have been found.\nDo you want to download the ECU files now (File size approx. 100MB)?</string>
   <string name="error_no_error">No errors present</string>
   <string name="error_no_response">No response</string>
 
@@ -95,7 +97,7 @@
   <string name="xml_tool_title_config">Save configuration</string>
   <string name="xml_tool_msg_save_config">Do you want to save the configuration?</string>
   <string name="xml_tool_title_ecu_error">ECU read error</string>
-  <string name="xml_tool_msg_ecu_error">Unable to get valid informations for some ECUs. Do you want to try again with another model type?</string>
+  <string name="xml_tool_msg_ecu_error">Unable to get valid informations for some ECUs.\nDo you want to try again with another model type?</string>
   <string name="xml_tool_ecu_list">Detected ECUs</string>
   <string name="xml_tool_info_sgbd">SGBD</string>
   <string name="xml_tool_info_grp">Group</string>
