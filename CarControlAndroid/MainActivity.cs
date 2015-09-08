@@ -62,6 +62,7 @@ namespace CarControlAndroid
 
         private const string SharedAppName = "CarControl";
         private const string AppFolderName = "CarControl";
+        private const string EcuDirName = "Ecu";
 
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         private string _deviceName = string.Empty;
@@ -131,7 +132,11 @@ namespace CarControlAndroid
 
             _activityCommon = new ActivityCommon(this);
             _appDataPath = string.IsNullOrEmpty(_activityCommon.ExternalWritePath) ? Path.Combine(_activityCommon.ExternalPath, AppFolderName) : _activityCommon.ExternalWritePath;
-            _ecuPath = Path.Combine(_appDataPath, "Ecu");
+            _ecuPath = Path.Combine(_appDataPath, "../../../..", AppFolderName, EcuDirName);
+            if (!ValidEcuFiles(_ecuPath))
+            {
+                _ecuPath = Path.Combine(_appDataPath, EcuDirName);
+            }
             _updateHandler = new Handler();
             _jobReader = new JobReader();
             GetSettings();
@@ -1310,7 +1315,7 @@ namespace CarControlAndroid
 
         private void DownloadEcuFiles()
         {
-            DownloadFile("http://www.holeschak.de/CarControl/Ecu.zip", Path.Combine(_appDataPath, "Download", "Ecu.zip"), _ecuPath);
+            DownloadFile("http://www.holeschak.de/CarControl/Ecu.zip", Path.Combine(_appDataPath, "Download", "Ecu.zip"), Path.Combine(_appDataPath, EcuDirName));
         }
 
         private bool CheckForEcuFiles()
