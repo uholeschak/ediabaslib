@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -390,7 +391,7 @@ namespace CarControlAndroid
                     return true;
 
                 case Resource.Id.menu_download_ecu:
-                    DownloadFile("http://www.holeschak.de/CarControl/Ecu.zip", Path.Combine(_appDataPath, "Download", "Ecu.zip"), _ecuPath);
+                    DownloadEcuFiles();
                     return true;
 
                 case Resource.Id.menu_enable_trace:
@@ -422,6 +423,11 @@ namespace CarControlAndroid
 
         protected void ButtonConnectClick(object sender, EventArgs e)
         {
+            if (!CheckForEcuFiles())
+            {
+                UpdateDisplay();
+                return;
+            }
             _autoStart = false;
             if (string.IsNullOrEmpty(_deviceAddress))
             {
@@ -1302,6 +1308,48 @@ namespace CarControlAndroid
             });
         }
 
+        private void DownloadEcuFiles()
+        {
+            DownloadFile("http://www.holeschak.de/CarControl/Ecu.zip", Path.Combine(_appDataPath, "Download", "Ecu.zip"), _ecuPath);
+        }
+
+        private bool CheckForEcuFiles()
+        {
+            if (ValidEcuFiles(_ecuPath))
+            {
+                return true;
+            }
+            new AlertDialog.Builder(this)
+                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                {
+                    DownloadEcuFiles();
+                })
+                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                {
+                })
+                .SetCancelable(true)
+                .SetMessage(Resource.String.ecu_download)
+                .SetTitle(Resource.String.ecu_download_title)
+                .Show();
+            return false;
+        }
+
+        private bool ValidEcuFiles(string path)
+        {
+            try
+            {
+                if (!Directory.Exists(path))
+                {
+                    return false;
+                }
+                return Directory.EnumerateFiles(path, "*.prg").Any();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private void RequestConfigSelect()
         {
             if (_jobReader.PageList.Count > 0)
@@ -1324,6 +1372,10 @@ namespace CarControlAndroid
 
         private void CanAdapterConfig()
         {
+            if (!CheckForEcuFiles())
+            {
+                return;
+            }
             Intent serverIntent = new Intent(this, typeof(CanAdapterActivity));
             serverIntent.PutExtra(CanAdapterActivity.ExtraDeviceAddress, _deviceAddress);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestCanAdapterConfig);
@@ -1331,6 +1383,10 @@ namespace CarControlAndroid
 
         private void SelectConfigFile()
         {
+            if (!CheckForEcuFiles())
+            {
+                return;
+            }
             // Launch the FilePickerActivity to select a configuration
             Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
             string initDir = _activityCommon.ExternalPath;
@@ -1352,6 +1408,10 @@ namespace CarControlAndroid
 
         private void StartXmlTool()
         {
+            if (!CheckForEcuFiles())
+            {
+                return;
+            }
             Intent serverIntent = new Intent(this, typeof(XmlToolActivity));
             serverIntent.PutExtra(XmlToolActivity.ExtraInitDir, _ecuPath);
             serverIntent.PutExtra(XmlToolActivity.ExtraConfigDir, Path.Combine(_appDataPath, "Configurations"));
@@ -1363,6 +1423,10 @@ namespace CarControlAndroid
 
         private void StartEdiabasTool()
         {
+            if (!CheckForEcuFiles())
+            {
+                return;
+            }
             Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _ecuPath);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
