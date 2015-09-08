@@ -1315,7 +1315,23 @@ namespace CarControlAndroid
 
         private void DownloadEcuFiles()
         {
-            DownloadFile("http://www.holeschak.de/CarControl/Ecu.zip", Path.Combine(_appDataPath, "Download", "Ecu.zip"), Path.Combine(_appDataPath, EcuDirName));
+            string ecuPath = Path.Combine(_appDataPath, EcuDirName);
+            try
+            {
+                ActivityCommon.FileSystemBlockInfo blockInfo = ActivityCommon.GetFileSystemBlockInfo(_appDataPath);
+                long ecuDirSize = ActivityCommon.GetDirectorySize(ecuPath);
+                double freeSpace = blockInfo.AvailableSizeBytes + ecuDirSize;
+                if (freeSpace < 1500000000)
+                {
+                    _activityCommon.ShowAlert(GetString(Resource.String.ecu_download_free_space));
+                    return;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            DownloadFile("http://www.holeschak.de/CarControl/Ecu.zip", Path.Combine(_appDataPath, "Download", "Ecu.zip"), ecuPath);
         }
 
         private bool CheckForEcuFiles()

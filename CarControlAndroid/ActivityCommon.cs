@@ -16,6 +16,34 @@ namespace CarControlAndroid
 {
     public class ActivityCommon
     {
+        public class FileSystemBlockInfo
+        {
+            /// <summary>
+            /// The path you asked to check file allocation blocks for
+            /// </summary>
+            public string Path { get; set; }
+
+            /// <summary>
+            /// The file system block size, in bytes, for the given path
+            /// </summary>
+            public double BlockSizeBytes { get; set; }
+
+            /// <summary>
+            /// Total size of the file system at the given path
+            /// </summary>
+            public double TotalSizeBytes { get; set; }
+
+            /// <summary>
+            /// Available size of the file system at the given path
+            /// </summary>
+            public double AvailableSizeBytes { get; set; }
+
+            /// <summary>
+            /// Total free size of the file system at the given path
+            /// </summary>
+            public double FreeSizeBytes { get; set; }
+        }
+        
         public enum InterfaceType
         {
             None,
@@ -475,6 +503,47 @@ namespace CarControlAndroid
                     _externalWritePath = externalFilesDirs.Length > 1 ? externalFilesDirs[1].AbsolutePath : externalFilesDirs[0].AbsolutePath;
                 }
             }
+        }
+
+        public static FileSystemBlockInfo GetFileSystemBlockInfo(string path)
+        {
+            var statFs = new StatFs(path);
+            var fsbi = new FileSystemBlockInfo();
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.JellyBeanMr2)
+            {
+                fsbi.Path = path;
+                fsbi.BlockSizeBytes = statFs.BlockSizeLong;
+                fsbi.TotalSizeBytes = statFs.BlockCountLong * statFs.BlockSizeLong;
+                fsbi.AvailableSizeBytes = statFs.AvailableBlocksLong * statFs.BlockSizeLong;
+                fsbi.FreeSizeBytes = statFs.FreeBlocksLong * statFs.BlockSizeLong;
+            }
+            else // this was deprecated in API level 18 (Android 4.3), so if your device is below level 18, this is what will be used instead.
+            {
+                fsbi.Path = path;
+                // you may want to disable warning about obsoletes, earlier versions of Android are using the deprecated versions
+#pragma warning disable 618
+                fsbi.BlockSizeBytes = statFs.BlockSize;
+                fsbi.TotalSizeBytes = statFs.BlockCount * (long)statFs.BlockSize;
+                fsbi.FreeSizeBytes = statFs.FreeBlocks * (long)statFs.BlockSize;
+                fsbi.AvailableSizeBytes = statFs.AvailableBlocks * (long)statFs.BlockSize;
+#pragma warning restore 618
+            }
+            return fsbi;
+        }
+
+        public static long GetDirectorySize(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                return 0;
+            }
+            // 1.
+            // Get array of all file names.
+            string[] a = Directory.GetFiles(path, "*.*");
+
+            // 2.
+            // Calculate total bytes of all files in a loop.
+            return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
         }
     }
 }
