@@ -16,6 +16,7 @@
   <string name="config_select_title">Configuration</string>
   <string name="bt_device_select_title">Bluetooth device</string>
   <string name="bt_device_select">No Bluetooth device has been selected.\nDo you want to select a device now?</string>
+  <string name="ecu_download_free_space">There is not enough free space on the device for storing the ECU files.</string>
   <string name="ecu_download_title">ECU download</string>
   <string name="ecu_download">No ECU files have been found.\nDo you want to download the ECU files now (File size approx. 100MB)?</string>
   <string name="error_no_error">No errors present</string>
