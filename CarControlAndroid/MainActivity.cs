@@ -131,10 +131,20 @@ namespace CarControlAndroid
             SetContentView(Resource.Layout.main);
 
             _activityCommon = new ActivityCommon(this);
+            _appDataPath = string.Empty;
+            _ecuPath = string.Empty;
             if (string.IsNullOrEmpty(_activityCommon.ExternalWritePath))
             {
-                _appDataPath = Path.Combine(_activityCommon.ExternalPath, AppFolderName);
-                _ecuPath = Path.Combine(_appDataPath, EcuDirName);
+                if (string.IsNullOrEmpty(_activityCommon.ExternalPath))
+                {
+                    Toast.MakeText(this, GetString(Resource.String.no_ext_storage), ToastLength.Long).Show();
+                    Finish();
+                }
+                else
+                {
+                    _appDataPath = Path.Combine(_activityCommon.ExternalPath, AppFolderName);
+                    _ecuPath = Path.Combine(_appDataPath, EcuDirName);
+                }
             }
             else
             {

@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Support.V7.App;
 using Android.Widget;
 using System;
+using System.Collections.Generic;
 using EdiabasLib;
 using System.IO;
 using System.Linq;
@@ -503,6 +504,57 @@ namespace CarControlAndroid
                     _externalWritePath = externalFilesDirs.Length > 1 ? externalFilesDirs[1].AbsolutePath : externalFilesDirs[0].AbsolutePath;
                 }
             }
+            else
+            {
+                string procMounts = ReadProcMounts();
+                string sdCardEntry = ParseProcMounts(procMounts, _externalPath);
+                if (!string.IsNullOrEmpty(sdCardEntry))
+                {
+                    _externalPath = sdCardEntry;
+                }
+            }
+        }
+
+        private static string ReadProcMounts()
+        {
+            try
+            {
+                string contents = File.ReadAllText("/proc/mounts");
+                return contents;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            return string.Empty;
+        }
+
+        private static string ParseProcMounts(string procMounts, string externalPath)
+        {
+            string sdCardEntry = string.Empty;
+            if (!string.IsNullOrWhiteSpace(procMounts))
+            {
+                List<string> procMountEntries = procMounts.Split('\n', '\r').ToList();
+                foreach (string entry in procMountEntries)
+                {
+                    string[] sdCardEntries = entry.Split(' ');
+                    if (sdCardEntries.Length > 2)
+                    {
+                        string storageType = sdCardEntries[2];
+                        if (storageType.IndexOf("fat", StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            string path = sdCardEntries[1];
+                            if (path.StartsWith(externalPath, StringComparison.OrdinalIgnoreCase) &&
+                                string.Compare(path, externalPath, StringComparison.OrdinalIgnoreCase) != 0)
+                            {
+                                sdCardEntry = path;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return sdCardEntry;
         }
 
         public static FileSystemBlockInfo GetFileSystemBlockInfo(string path)
