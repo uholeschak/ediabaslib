@@ -27,6 +27,7 @@ namespace CarControlAndroid.FilePicker
         private Regex _fileNameRegex;
         private IList<FileInfoEx> _visibleFiles;
         private string _fileNameFilter;
+        private bool _allowDirChange;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -63,6 +64,8 @@ namespace CarControlAndroid.FilePicker
             {
                 _fileNameRegex = new Regex(fileFilter, RegexOptions.IgnoreCase);
             }
+
+            _allowDirChange = Activity.Intent.GetBooleanExtra(FilePickerActivity.ExtraDirChange, true);
 
             _adapter = new FileListAdapter(Activity, new FileInfoEx[0]);
             ListAdapter = _adapter;
@@ -135,14 +138,17 @@ namespace CarControlAndroid.FilePicker
 
             try
             {
-                string rootDir = Path.GetDirectoryName(directory);
-                if (!string.IsNullOrEmpty(rootDir))
+                if (_allowDirChange)
                 {
-                    visibleThings.Add(new FileInfoEx(null, rootDir));
+                    string rootDir = Path.GetDirectoryName(directory);
+                    if (!string.IsNullOrEmpty(rootDir))
+                    {
+                        visibleThings.Add(new FileInfoEx(null, rootDir));
+                    }
                 }
                 foreach (var item in dir.GetFileSystemInfos().Where(item => item.IsVisible()))
                 {
-                    bool add = true;
+                    bool add = _allowDirChange;
                     if (item.IsFile())
                     {
                         if (_extensionList.Count > 0)

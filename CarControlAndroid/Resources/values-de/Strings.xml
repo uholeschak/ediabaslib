@@ -93,6 +93,7 @@
   <string name="button_xml_tool_read">Lesen</string>
   <string name="button_xml_tool_save">Speichern</string>
   <string name="xml_tool_analyze">Fahrzeugdaten lesen</string>
+  <string name="xml_tool_select_sgbd">Fahrzeugtyp auswählen</string>
   <string name="xml_tool_no_response">Keine Antwort vom Fahrzeug</string>
   <string name="xml_tool_read_jobs_failed">Jobs lesen fehlgeschlagen</string>
   <string name="xml_tool_save_xml_failed">Konfiguration speichern fehlgeschlagen</string>

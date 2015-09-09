@@ -567,10 +567,11 @@ namespace CarControlAndroid
             {
                 initDir = _initDirStart;
             }
-            serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.tool_select_sgbd));
+            serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.xml_tool_select_sgbd));
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
             serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".prg");
             serverIntent.PutExtra(FilePickerActivity.ExtraFileRegex, @"^([efmr]|rr)[0-9]{2}[^_].");
+            serverIntent.PutExtra(FilePickerActivity.ExtraDirChange, false);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSgbd);
         }
 
