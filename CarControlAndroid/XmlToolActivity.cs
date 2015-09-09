@@ -523,21 +523,12 @@ namespace CarControlAndroid
             {
                 return;
             }
-            string logDir = string.IsNullOrEmpty(_activityCommon.ExternalWritePath) ? Path.GetDirectoryName(_sgbdFileName) : _activityCommon.ExternalWritePath;
-
-            if (!string.IsNullOrEmpty(logDir))
+            string logDir = Path.Combine(_configBaseDir, "LogConfigTool");
+            try
             {
-                logDir = Path.Combine(logDir, "LogConfigTool");
-                try
-                {
-                    Directory.CreateDirectory(logDir);
-                }
-                catch (Exception)
-                {
-                    logDir = string.Empty;
-                }
+                Directory.CreateDirectory(logDir);
             }
-            else
+            catch (Exception)
             {
                 logDir = string.Empty;
             }

@@ -1458,6 +1458,7 @@ namespace CarControlAndroid
             }
             Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _ecuPath);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _appDataPath);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _deviceName);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _deviceAddress);

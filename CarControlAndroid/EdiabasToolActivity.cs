@@ -125,6 +125,7 @@ namespace CarControlAndroid
 
         // Intent extra
         public const string ExtraInitDir = "init_dir";
+        public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
@@ -144,6 +145,7 @@ namespace CarControlAndroid
         private ListView _listViewInfo;
         private ResultListAdapter _infoListAdapter;
         private string _initDirStart;
+        private string _appDataDir;
         private bool _autoStart;
         private int _autoStartItemId;
         private ActivityCommon _activityCommon;
@@ -243,6 +245,7 @@ namespace CarControlAndroid
             };
 
             _initDirStart = Intent.GetStringExtra(ExtraInitDir);
+            _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _deviceName = Intent.GetStringExtra(ExtraDeviceName);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
 
@@ -804,21 +807,13 @@ namespace CarControlAndroid
             {
                 return;
             }
-            string logDir = string.IsNullOrEmpty(_activityCommon.ExternalWritePath) ? Path.GetDirectoryName(_sgbdFileName) : _activityCommon.ExternalWritePath;
 
-            if (!string.IsNullOrEmpty(logDir))
+            string logDir = Path.Combine(_appDataDir, "LogEdiabasTool");
+            try
             {
-                logDir = Path.Combine(logDir, "LogTool");
-                try
-                {
-                    Directory.CreateDirectory(logDir);
-                }
-                catch (Exception)
-                {
-                    logDir = string.Empty;
-                }
+                Directory.CreateDirectory(logDir);
             }
-            else
+            catch (Exception)
             {
                 logDir = string.Empty;
             }
