@@ -7,7 +7,7 @@
   <string name="button_no">Nein</string>
   <string name="button_ok">Ok</string>
   <string name="button_abort">Abbrechen</string>
-  <string name="no_ext_storage">No external storage available</string>
+  <string name="no_ext_storage">Kein externer Speicher verfügbar</string>
   <string name="interface_activate">Interface Aktivierung</string>
   <string name="bt_enable">Bluetooth ist nicht aktiviert.\nWollen Sie es jetzt aktivieren?</string>
   <string name="wifi_enable">Wifi ist nicht aktiviert.\nWollen Sie es jetzt aktivieren?</string>
