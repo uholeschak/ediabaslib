@@ -131,11 +131,19 @@ namespace CarControlAndroid
             SetContentView(Resource.Layout.main);
 
             _activityCommon = new ActivityCommon(this);
-            _appDataPath = string.IsNullOrEmpty(_activityCommon.ExternalWritePath) ? Path.Combine(_activityCommon.ExternalPath, AppFolderName) : _activityCommon.ExternalWritePath;
-            _ecuPath = Path.Combine(_appDataPath, "../../../..", AppFolderName, EcuDirName);
-            if (!ValidEcuFiles(_ecuPath))
+            if (string.IsNullOrEmpty(_activityCommon.ExternalWritePath))
             {
+                _appDataPath = Path.Combine(_activityCommon.ExternalPath, AppFolderName);
                 _ecuPath = Path.Combine(_appDataPath, EcuDirName);
+            }
+            else
+            {
+                _appDataPath = _activityCommon.ExternalWritePath;
+                _ecuPath = Path.Combine(_appDataPath, "../../../..", AppFolderName, EcuDirName);
+                if (!ValidEcuFiles(_ecuPath))
+                {
+                    _ecuPath = Path.Combine(_appDataPath, EcuDirName);
+                }
             }
             _updateHandler = new Handler();
             _jobReader = new JobReader();
