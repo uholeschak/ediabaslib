@@ -1443,7 +1443,7 @@ namespace CarControlAndroid
             }
             Intent serverIntent = new Intent(this, typeof(XmlToolActivity));
             serverIntent.PutExtra(XmlToolActivity.ExtraInitDir, _ecuPath);
-            serverIntent.PutExtra(XmlToolActivity.ExtraConfigDir, Path.Combine(_appDataPath, "Configurations"));
+            serverIntent.PutExtra(XmlToolActivity.ExtraAppDataDir, _appDataPath);
             serverIntent.PutExtra(XmlToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
             serverIntent.PutExtra(XmlToolActivity.ExtraDeviceName, _deviceName);
             serverIntent.PutExtra(XmlToolActivity.ExtraDeviceAddress, _deviceAddress);
