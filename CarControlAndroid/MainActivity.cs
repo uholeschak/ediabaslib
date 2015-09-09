@@ -60,8 +60,8 @@ namespace CarControlAndroid
             }
         }
 
-        private const string SharedAppName = "CarControl";
-        private const string AppFolderName = "CarControl";
+        private const string SharedAppName = "de.holeschak.bmwdiagnostics";
+        private const string AppFolderName = "de.holeschak.bmwdiagnostics";
         private const string EcuDirName = "Ecu";
 
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
