@@ -17,6 +17,7 @@ namespace CarControlAndroid.FilePicker
         public const string ExtraFileName = "file_name";
         public const string ExtraFileExtensions = "file_extensions";
         public const string ExtraFileRegex = "file_regex";
+        public const string ExtraDirChange = "dir_change";
 
         public delegate void FilterEventHandler(string fileNamefilter);
         public event FilterEventHandler FilterEvent;
