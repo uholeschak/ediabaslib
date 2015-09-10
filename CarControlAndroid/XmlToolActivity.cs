@@ -572,6 +572,7 @@ namespace BmwDiagnostics
             serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".prg");
             serverIntent.PutExtra(FilePickerActivity.ExtraFileRegex, @"^([efmr]|rr)[0-9]{2}[^_].");
             serverIntent.PutExtra(FilePickerActivity.ExtraDirChange, false);
+            serverIntent.PutExtra(FilePickerActivity.ExtraShowExtension, false);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSgbd);
         }
 
