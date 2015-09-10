@@ -350,7 +350,7 @@ namespace BmwDiagnostics
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
                 })
-                .SetCancelable(false)
+                .SetCancelable(true)
                 .SetMessage(Resource.String.bt_device_select)
                 .SetTitle(Resource.String.bt_device_select_title)
                 .Show();
