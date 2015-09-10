@@ -7,13 +7,15 @@
   <string name="button_no">No</string>
   <string name="button_ok">Ok</string>
   <string name="button_abort">Abort</string>
+  <string name="button_select">Select</string>
+  <string name="button_generate">Generate</string>
   <string name="no_ext_storage">No external storage available</string>
   <string name="interface_activate">Interface activation</string>
   <string name="bt_enable">Bluetooth is not enabled.\nDo you want to enable it now?</string>
   <string name="wifi_enable">Wifi is not enabled.\nDo you want to enable it now?</string>
   <string name="bt_not_available">Bluetooth is not available.</string>
   <string name="wifi_not_available">Wifi is not available.</string>
-  <string name="config_select">No valid configuration is present.\nDo you want to select a configuration now?</string>
+  <string name="config_select">No valid configuration is present.\nDo you want to generate or selecta configuration now?</string>
   <string name="config_select_title">Configuration</string>
   <string name="bt_device_select_title">Bluetooth device</string>
   <string name="bt_device_select">No Bluetooth device has been selected.\nDo you want to select a device now?</string>
