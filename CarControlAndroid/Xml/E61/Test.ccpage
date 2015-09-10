@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns="http://www.holeschak.de/CarControl"
+<fragment xmlns="http://www.holeschak.de/BmwDiagnostics"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://www.holeschak.de/CarControl ../CarControl.xsd">
+          xsi:schemaLocation="http://www.holeschak.de/BmwDiagnostics ../BmwDiagnostics.xsd">
   <page name ="tab_test">
     <strings>
       <string name="tab_test">Test</string>

@@ -3,7 +3,7 @@ using Android.Content.Res;
 using Android.Views;
 using Android.Widget;
 
-namespace CarControlAndroid
+namespace BmwDiagnostics
 {
     public class StringAdapter : BaseAdapter<string>
     {

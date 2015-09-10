@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Android.Bluetooth;
 using Android.Content;
 using Android.Net;
@@ -5,15 +9,11 @@ using Android.Net.Wifi;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Widget;
-using System;
-using System.Collections.Generic;
 using EdiabasLib;
-using System.IO;
-using System.Linq;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 
-namespace CarControlAndroid
+namespace BmwDiagnostics
 {
     public class ActivityCommon
     {

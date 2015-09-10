@@ -1,15 +1,15 @@
 using System;
-using Android.OS;
-using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Android.Content.Res;
+using Android.OS;
+using Android.Support.V7.App;
+using Android.Views;
 using Android.Views.InputMethods;
+using Android.Widget;
 
-namespace CarControlAndroid
+namespace BmwDiagnostics
 {
     [Android.App.Activity(
         ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |

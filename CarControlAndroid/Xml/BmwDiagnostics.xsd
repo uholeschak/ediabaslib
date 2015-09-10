@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema targetNamespace="http://www.holeschak.de/CarControl"
+<xs:schema targetNamespace="http://www.holeschak.de/BmwDiagnostics"
     elementFormDefault="qualified"
-    xmlns="http://www.holeschak.de/CarControl"
-    xmlns:mstns="http://www.holeschak.de/CarControl"
+    xmlns="http://www.holeschak.de/BmwDiagnostics"
+    xmlns:mstns="http://www.holeschak.de/BmwDiagnostics"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
 

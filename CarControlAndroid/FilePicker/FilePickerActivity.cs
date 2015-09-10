@@ -3,7 +3,7 @@ using Android.Support.V4.View;
 using Android.Support.V7.App;
 using Android.Views;
 
-namespace CarControlAndroid.FilePicker
+namespace BmwDiagnostics.FilePicker
 {
     [Android.App.Activity(Label = "@string/select_file",
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |

@@ -3,7 +3,7 @@ using Android.App;
 using Android.Views;
 using Android.Widget;
 
-namespace CarControlAndroid
+namespace BmwDiagnostics
 {
     public class ResultListAdapter : BaseAdapter<TableResultItem>
     {

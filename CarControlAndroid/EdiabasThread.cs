@@ -1,10 +1,11 @@
-﻿using EdiabasLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using EdiabasLib;
+
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
 
-namespace CarControlAndroid
+namespace BmwDiagnostics
 {
     public class EdiabasThread : IDisposable
     {

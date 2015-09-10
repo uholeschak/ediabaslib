@@ -9,9 +9,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: global::Android.Runtime.ResourceDesignerAttribute("CarControlAndroid.Resource", IsApplication=true)]
+[assembly: global::Android.Runtime.ResourceDesignerAttribute("BmwDiagnostics.Resource", IsApplication=true)]
 
-namespace CarControlAndroid
+namespace BmwDiagnostics
 {
 	
 	
@@ -26,7 +26,7 @@ namespace CarControlAndroid
 		
 		public static void UpdateIdValues()
 		{
-			global::EdiabasLibAndroid.Resource.String.library_name = global::CarControlAndroid.Resource.String.library_name;
+			global::EdiabasLibAndroid.Resource.String.library_name = global::BmwDiagnostics.Resource.String.library_name;
 		}
 		
 		public partial class Animation

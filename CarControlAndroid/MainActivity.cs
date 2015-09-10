@@ -1,14 +1,3 @@
-using Android.Bluetooth;
-using Android.Content;
-using Android.Net;
-using Android.OS;
-using Android.Support.V4.App;
-using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
-using EdiabasLib;
-using Java.Interop;
-using Mono.CSharp;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,11 +6,22 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Threading.Tasks;
-using CarControlAndroid.FilePicker;
 using System.Threading;
+using System.Threading.Tasks;
+using Android.Bluetooth;
+using Android.Content;
+using Android.Net;
+using Android.OS;
+using Android.Support.V4.App;
+using Android.Support.V7.App;
+using Android.Views;
+using Android.Widget;
+using BmwDiagnostics.FilePicker;
+using EdiabasLib;
+using Java.Interop;
+using Mono.CSharp;
 
-namespace CarControlAndroid
+namespace BmwDiagnostics
 {
     [Android.App.Activity(Label = "@string/app_name", MainLauncher = true,
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
@@ -1103,7 +1103,7 @@ namespace CarControlAndroid
                                 using Android.Views;
                                 using Android.Widget;
                                 using EdiabasLib;
-                                using CarControlAndroid;
+                                using BmwDiagnostics;
                                 using System;
                                 using System.Collections.Generic;
                                 using System.Diagnostics;
@@ -1349,7 +1349,7 @@ namespace CarControlAndroid
             {
                 // ignored
             }
-            DownloadFile("http://www.holeschak.de/CarControl/Ecu.zip", Path.Combine(_appDataPath, "Download", "Ecu.zip"), ecuPath);
+            DownloadFile("http://www.holeschak.de/BwmDiagnostics/Ecu1.zip", Path.Combine(_appDataPath, "Download", "Ecu.zip"), ecuPath);
         }
 
         private bool CheckForEcuFiles()

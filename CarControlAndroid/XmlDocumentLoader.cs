@@ -2,7 +2,7 @@
 using System.IO;
 using System.Xml;
 
-namespace CarControlAndroid
+namespace BmwDiagnostics
 {
   public class XmlDocumentLoader
   {

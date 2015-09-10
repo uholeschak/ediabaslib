@@ -1,3 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Android.Bluetooth;
 using Android.Content;
 using Android.Content.Res;
@@ -7,19 +14,13 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
+using BmwDiagnostics.FilePicker;
 using EdiabasLib;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CarControlAndroid.FilePicker;
+
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
 // ReSharper disable LoopCanBeConvertedToQuery
 
-namespace CarControlAndroid
+namespace BmwDiagnostics
 {
     [Android.App.Activity(Label = "@string/tool_title",
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |

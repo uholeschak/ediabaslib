@@ -1,13 +1,13 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using EdiabasLib;
-using System.Threading;
 
-namespace CarControlAndroid
+namespace BmwDiagnostics
 {
     [Android.App.Activity(Label = "@string/can_adapter_title",
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |

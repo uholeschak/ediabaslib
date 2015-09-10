@@ -1,7 +1,7 @@
 using Android.Widget;
 using Java.Lang;
 
-namespace CarControlAndroid.FilePicker
+namespace BmwDiagnostics.FilePicker
 {
     /// <summary>
     ///   This class is used to hold references to the views contained in a list row.

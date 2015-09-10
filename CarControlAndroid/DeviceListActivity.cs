@@ -14,15 +14,15 @@
 * limitations under the License.
 */
 
+using System;
 using Android.Bluetooth;
 using Android.Content;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
-using System;
 
-namespace CarControlAndroid
+namespace BmwDiagnostics
 {
 
     /// <summary>

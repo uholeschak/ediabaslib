@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarControlAndroid", "CarControlAndroid.csproj", "{5FC5723C-A88B-46E3-957C-FF24F9D8212F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BmwDiagnostics", "BmwDiagnostics.csproj", "{5FC5723C-A88B-46E3-957C-FF24F9D8212F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLibAndroid", "..\EdiabasLib\EdiabasLibAndroid\EdiabasLibAndroid.csproj", "{FEDD5F23-F769-44D2-9F06-39D532008197}"
 EndProject
@@ -28,6 +28,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = CarControlAndroid.csproj
+		StartupItem = BmwDiagnostics.csproj
 	EndGlobalSection
 EndGlobal

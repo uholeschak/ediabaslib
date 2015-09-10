@@ -1,7 +1,4 @@
 using System;
-using Android.OS;
-using Android.Support.V7.App;
-using Android.Views;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -13,13 +10,16 @@ using System.Xml.Linq;
 using Android.Bluetooth;
 using Android.Content;
 using Android.Net;
+using Android.OS;
+using Android.Support.V7.App;
+using Android.Views;
 using Android.Widget;
-using CarControlAndroid.FilePicker;
+using BmwDiagnostics.FilePicker;
 using EdiabasLib;
 
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
 
-namespace CarControlAndroid
+namespace BmwDiagnostics
 {
     [Android.App.Activity(Label = "@string/xml_tool_title",
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
@@ -110,9 +110,9 @@ namespace CarControlAndroid
 
         private const string XmlDocumentFrame =
             @"<?xml version=""1.0"" encoding=""utf-8"" ?>
-            <{0} xmlns=""http://www.holeschak.de/CarControl""
+            <{0} xmlns=""http://www.holeschak.de/BmwDiagnostics""
             xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
-            xsi:schemaLocation=""http://www.holeschak.de/CarControl ../CarControl.xsd"">
+            xsi:schemaLocation=""http://www.holeschak.de/BmwDiagnostics ../BmwDiagnostics.xsd"">
             </{0}>";
 
         private const string PageExtension = ".ccpage";

@@ -8,9 +8,10 @@ using Android.OS;
 using Android.Support.V4.App;
 using Android.Views;
 using Android.Widget;
+
 // ReSharper disable LoopCanBeConvertedToQuery
 
-namespace CarControlAndroid.FilePicker
+namespace BmwDiagnostics.FilePicker
 {
     /// <summary>
     ///   A ListFragment that will show the files and subdirectories of a given directory.

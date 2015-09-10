@@ -3,7 +3,7 @@ using Android.Content;
 using Android.Runtime;
 using Android.Views;
 
-namespace CarControlAndroid.FilePicker
+namespace BmwDiagnostics.FilePicker
 {
     public static class Helpers
     {
