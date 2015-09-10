@@ -859,6 +859,7 @@ namespace BmwDiagnostics
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {
                                 })
+                                .SetCancelable(true)
                                 .SetMessage(Resource.String.xml_tool_msg_ecu_error)
                                 .SetTitle(Resource.String.xml_tool_title_ecu_error)
                                 .Show();

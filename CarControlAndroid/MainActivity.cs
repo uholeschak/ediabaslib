@@ -1396,14 +1396,18 @@ namespace BmwDiagnostics
                 return;
             }
             new AlertDialog.Builder(this)
-                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                .SetPositiveButton(Resource.String.button_select, (sender, args) =>
                 {
                     SelectConfigFile();
                 })
-                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                .SetNegativeButton(Resource.String.button_generate, (sender, args) =>
+                {
+                    StartXmlTool();
+                })
+                .SetNeutralButton(Resource.String.button_abort, (sender, args) =>
                 {
                 })
-                .SetCancelable(false)
+                .SetCancelable(true)
                 .SetMessage(Resource.String.config_select)
                 .SetTitle(Resource.String.config_select_title)
                 .Show();
