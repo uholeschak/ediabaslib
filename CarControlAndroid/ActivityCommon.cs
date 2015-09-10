@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Android.Bluetooth;
 using Android.Content;
 using Android.Net;
@@ -489,6 +490,20 @@ namespace BmwDiagnostics
                 isEmulator = fing.Contains("vbox") || fing.Contains("generic");
             }
             return isEmulator;
+        }
+
+        public static void WriteResourceToFile(string resourceName, string fileName)
+        {
+            using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+            {
+                if (resource != null)
+                {
+                    using (var file = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                    {
+                        resource.CopyTo(file);
+                    }
+                }
+            }
         }
 
         private void SetStoragePath()
