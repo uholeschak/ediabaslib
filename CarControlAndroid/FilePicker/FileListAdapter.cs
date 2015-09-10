@@ -10,13 +10,15 @@ namespace BmwDiagnostics.FilePicker
 {
     public class FileInfoEx
     {
-        public FileInfoEx(FileSystemInfo fileSystemInfo, string rootDir)
+        public FileInfoEx(FileSystemInfo fileSystemInfo, string displayName, string rootDir)
         {
             _fileSystemInfo = fileSystemInfo;
+            _displayName = displayName;
             _rootDir = rootDir;
         }
 
         private readonly FileSystemInfo _fileSystemInfo;
+        private readonly string _displayName;
         private readonly string _rootDir;
 
         public FileSystemInfo FileSysInfo
@@ -24,6 +26,14 @@ namespace BmwDiagnostics.FilePicker
             get
             {
                 return _fileSystemInfo;
+            }
+        }
+
+        public string DisplayName
+        {
+            get
+            {
+                return _displayName;
             }
         }
 
@@ -106,11 +116,11 @@ namespace BmwDiagnostics.FilePicker
             }
             if (fileSystemEntry.RootDir != null)
             {
-                viewHolder.Update("..", Resource.Drawable.folder);
+                viewHolder.Update(fileSystemEntry.DisplayName, Resource.Drawable.folder);
             }
             else
             {
-                viewHolder.Update(fileSystemEntry.FileSysInfo.Name, fileSystemEntry.FileSysInfo.IsDirectory() ? Resource.Drawable.folder : Resource.Drawable.file);
+                viewHolder.Update(fileSystemEntry.DisplayName, fileSystemEntry.FileSysInfo.IsDirectory() ? Resource.Drawable.folder : Resource.Drawable.file);
             }
 
             return row;

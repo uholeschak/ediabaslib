@@ -29,6 +29,7 @@ namespace BmwDiagnostics.FilePicker
         private IList<FileInfoEx> _visibleFiles;
         private string _fileNameFilter;
         private bool _allowDirChange;
+        private bool _showFileExtensions;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -67,6 +68,7 @@ namespace BmwDiagnostics.FilePicker
             }
 
             _allowDirChange = Activity.Intent.GetBooleanExtra(FilePickerActivity.ExtraDirChange, true);
+            _showFileExtensions = Activity.Intent.GetBooleanExtra(FilePickerActivity.ExtraShowExtension, true);
 
             _adapter = new FileListAdapter(Activity, new FileInfoEx[0]);
             ListAdapter = _adapter;
@@ -144,14 +146,19 @@ namespace BmwDiagnostics.FilePicker
                     string rootDir = Path.GetDirectoryName(directory);
                     if (!string.IsNullOrEmpty(rootDir))
                     {
-                        visibleThings.Add(new FileInfoEx(null, rootDir));
+                        visibleThings.Add(new FileInfoEx(null, "..", rootDir));
                     }
                 }
                 foreach (var item in dir.GetFileSystemInfos().Where(item => item.IsVisible()))
                 {
                     bool add = _allowDirChange;
+                    string displayName = item.Name;
                     if (item.IsFile())
                     {
+                        if (!_showFileExtensions)
+                        {
+                            displayName = Path.GetFileNameWithoutExtension(item.Name);
+                        }
                         if (_extensionList.Count > 0)
                         {
                             add = false;
@@ -174,7 +181,7 @@ namespace BmwDiagnostics.FilePicker
                     }
                     if (add)
                     {
-                        visibleThings.Add(new FileInfoEx(item, null));
+                        visibleThings.Add(new FileInfoEx(item, displayName, null));
                     }
                 }
             }

@@ -18,6 +18,7 @@ namespace BmwDiagnostics.FilePicker
         public const string ExtraFileExtensions = "file_extensions";
         public const string ExtraFileRegex = "file_regex";
         public const string ExtraDirChange = "dir_change";
+        public const string ExtraShowExtension = "show_extension";
 
         public delegate void FilterEventHandler(string fileNamefilter);
         public event FilterEventHandler FilterEvent;
