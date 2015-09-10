@@ -112,8 +112,9 @@ namespace BmwDiagnostics
             @"<?xml version=""1.0"" encoding=""utf-8"" ?>
             <{0} xmlns=""http://www.holeschak.de/BmwDiagnostics""
             xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
-            xsi:schemaLocation=""http://www.holeschak.de/BmwDiagnostics ../BmwDiagnostics.xsd"">
+            xsi:schemaLocation=""http://www.holeschak.de/BmwDiagnostics BmwDiagnostics.xsd"">
             </{0}>";
+        private const string XsdFileName = "BmwDiagnostics.xsd";
 
         private const string PageExtension = ".ccpage";
         private const string ErrorsFileName = "Errors.ccpage";
@@ -1782,6 +1783,7 @@ namespace BmwDiagnostics
                         return null;
                     }
                 }
+                ActivityCommon.WriteResourceToFile(typeof(XmlToolActivity).Namespace + ".Xml." + XsdFileName, Path.Combine(xmlFileDir, XsdFileName));
                 return xmlConfigFile;
             }
             catch (Exception)

@@ -148,13 +148,15 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Xml\E61\Axis.ccpage" />
-    <None Include="Xml\BmwDiagnostics.xsd">
+    <EmbeddedResource Include="Xml\BmwDiagnostics.xsd">
       <SubType>Designer</SubType>
-    </None>
+    </EmbeddedResource>
     <None Include="Xml\E90\E90Bt.cccfg">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Xml\E90\E90Enet.cccfg" />
+    <None Include="Xml\E90\E90Enet.cccfg">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Xml\E90\E90.ccpages" />
     <None Include="Xml\E90\Errors.ccpage" />
     <None Include="Xml\E90\Motor.ccpage">
