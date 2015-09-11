@@ -284,19 +284,19 @@ namespace BmwDiagnostics
             }
         }
 
-        public void RequestInterfaceEnable(EventHandler<DialogClickEventArgs> handler)
+        public bool RequestInterfaceEnable(EventHandler<DialogClickEventArgs> handler)
         {
             if (_activateRequest)
             {
-                return;
+                return false;
             }
             if (IsInterfaceAvailable())
             {
-                return;
+                return false;
             }
             if (IsInterfaceEnabled())
             {
-                return;
+                return false;
             }
             int resourceId;
             switch (_selectedInterface)
@@ -310,7 +310,7 @@ namespace BmwDiagnostics
                     break;
 
                 default:
-                    return;
+                    return false;
             }
             _activateRequest = true;
             new AlertDialog.Builder(_activity)
@@ -323,11 +323,13 @@ namespace BmwDiagnostics
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
                     _activateRequest = false;
+                    handler(sender, args);
                 })
                 .SetCancelable(false)
                 .SetMessage(resourceId)
                 .SetTitle(Resource.String.interface_activate)
                 .Show();
+            return true;
         }
 
         public bool RequestBluetoothDeviceSelect(int requestCode, EventHandler<DialogClickEventArgs> handler)
