@@ -8,6 +8,7 @@ using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Android.Bluetooth;
 using Android.Content;
 using Android.Net;
@@ -40,14 +41,16 @@ namespace BmwDiagnostics
 
         private class UnzipInfo
         {
-            public UnzipInfo(string fileName, string targetDir)
+            public UnzipInfo(string fileName, string targetDir, XElement infoXml = null)
             {
                 _fileName = fileName;
                 _targetDir = targetDir;
+                _infoXml = infoXml;
             }
 
             private readonly string _fileName;
             private readonly string _targetDir;
+            private readonly XElement _infoXml;
 
             public string FileName
             {
@@ -58,11 +61,18 @@ namespace BmwDiagnostics
             {
                 get { return _targetDir; }
             }
+
+            public XElement InfoXml
+            {
+                get { return _infoXml; }
+            }
         }
 
         private const string SharedAppName = "de.holeschak.bmwdiagnostics";
         private const string AppFolderName = "de.holeschak.bmwdiagnostics";
         private const string EcuDirName = "Ecu";
+        private const string EcuDownloadUrl = @"http://www.holeschak.de/BwmDiagnostics/Ecu1.zip";
+        private const string InfoXmlName = "Info.xml";
 
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         private string _deviceName = string.Empty;
@@ -70,6 +80,7 @@ namespace BmwDiagnostics
         private string _configFileName = string.Empty;
         private string _appDataPath = String.Empty;
         private string _ecuPath = String.Empty;
+        private bool _userEcuFiles;
         private bool _traceActive;
         private bool _traceAppend;
         private bool _dataLogActive;
@@ -133,6 +144,7 @@ namespace BmwDiagnostics
             _activityCommon = new ActivityCommon(this);
             _appDataPath = string.Empty;
             _ecuPath = string.Empty;
+            _userEcuFiles = false;
             if (string.IsNullOrEmpty(_activityCommon.ExternalWritePath))
             {
                 if (string.IsNullOrEmpty(_activityCommon.ExternalPath))
@@ -149,10 +161,15 @@ namespace BmwDiagnostics
             else
             {
                 _appDataPath = _activityCommon.ExternalWritePath;
-                _ecuPath = Path.Combine(_appDataPath, "../../../..", AppFolderName, EcuDirName);
+                _ecuPath = Path.Combine(_appDataPath, EcuDirName);
                 if (!ValidEcuFiles(_ecuPath))
                 {
-                    _ecuPath = Path.Combine(_appDataPath, EcuDirName);
+                    string userEcuPath = Path.Combine(_appDataPath, "../../../..", AppFolderName, EcuDirName);
+                    if (ValidEcuFiles(userEcuPath))
+                    {
+                        _ecuPath = userEcuPath;
+                        _userEcuFiles = true;
+                    }
                 }
             }
             _updateHandler = new Handler();
@@ -219,6 +236,7 @@ namespace BmwDiagnostics
         {
             base.OnStart();
 
+            bool firstStart = !_onStartExecuted;
             if (!_onStartExecuted)
             {
                 _onStartExecuted = true;
@@ -229,11 +247,21 @@ namespace BmwDiagnostics
             {
                 CreateActionBarTabs();
             }
-            _activityCommon.RequestInterfaceEnable((sender, args) =>
+            if (!_activityCommon.RequestInterfaceEnable((sender, args) =>
+            {
+                SupportInvalidateOptionsMenu();
+                UpdateDisplay();
+                if (firstStart)
                 {
-                    SupportInvalidateOptionsMenu();
-                    UpdateDisplay();
-                });
+                    CheckForEcuFiles(true);
+                }
+            }))
+            {
+                if (firstStart)
+                {
+                    CheckForEcuFiles(true);
+                }
+            }
         }
 
         protected override void OnStop()
@@ -1194,7 +1222,10 @@ namespace BmwDiagnostics
                     UnzipInfo unzipInfo = null;
                     if (!string.IsNullOrEmpty(unzipTargetDir))
                     {
-                        unzipInfo = new UnzipInfo(fileName, unzipTargetDir);
+                        XElement xmlInfo = new XElement("Info");
+                        xmlInfo.Add(new XAttribute("Url", url));
+                        xmlInfo.Add(new XAttribute("Name", Path.GetFileName(url)??string.Empty));
+                        unzipInfo = new UnzipInfo(fileName, unzipTargetDir, xmlInfo);
                     }
                     _webClient.DownloadFileAsync(new System.Uri(url), fileName, unzipInfo);
                 }
@@ -1224,7 +1255,7 @@ namespace BmwDiagnostics
                         if (unzipInfo != null)
                         {
                             _downloadProgress.CancelEvent -= DownloadProgressCancel;
-                            ExtractZipFile(unzipInfo.FileName, unzipInfo.TargetDir, true);
+                            ExtractZipFile(unzipInfo.FileName, unzipInfo.TargetDir, unzipInfo.InfoXml, true);
                         }
                     }
                     else
@@ -1260,7 +1291,7 @@ namespace BmwDiagnostics
             }
         }
 
-        private void ExtractZipFile(string fileName, string targetDirectory, bool removeFile = false)
+        private void ExtractZipFile(string fileName, string targetDirectory, XElement infoXml, bool removeFile = false)
         {
             try
             {
@@ -1313,6 +1344,10 @@ namespace BmwDiagnostics
                     {
                         File.Delete(fileName);
                     }
+                    if (infoXml != null)
+                    {
+                        infoXml.Save(Path.Combine(targetDirectory, InfoXmlName));
+                    }
                 }
                 catch (Exception)
                 {
@@ -1349,28 +1384,50 @@ namespace BmwDiagnostics
             {
                 // ignored
             }
-            DownloadFile("http://www.holeschak.de/BwmDiagnostics/Ecu1.zip", Path.Combine(_appDataPath, "Download", "Ecu.zip"), ecuPath);
+            DownloadFile(EcuDownloadUrl, Path.Combine(_appDataPath, "Download", "Ecu.zip"), ecuPath);
         }
 
-        private bool CheckForEcuFiles()
+        private bool CheckForEcuFiles(bool checkPackage = false)
         {
-            if (ValidEcuFiles(_ecuPath))
+            if (!ValidEcuFiles(_ecuPath))
             {
-                return true;
+                string message = GetString(Resource.String.ecu_not_found) + "\n" + GetString(Resource.String.ecu_download);
+
+                new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        DownloadEcuFiles();
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                    })
+                    .SetCancelable(true)
+                    .SetMessage(message)
+                    .SetTitle(Resource.String.ecu_download_title)
+                    .Show();
+                return false;
             }
-            new AlertDialog.Builder(this)
-                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+            if (checkPackage && !_userEcuFiles)
+            {
+                if (!ValidEcuPackage(_ecuPath))
                 {
-                    DownloadEcuFiles();
-                })
-                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                {
-                })
-                .SetCancelable(true)
-                .SetMessage(Resource.String.ecu_download)
-                .SetTitle(Resource.String.ecu_download_title)
-                .Show();
-            return false;
+                    string message = GetString(Resource.String.ecu_package) + "\n" + GetString(Resource.String.ecu_download);
+
+                    new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                        {
+                            DownloadEcuFiles();
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(message)
+                        .SetTitle(Resource.String.ecu_download_title)
+                        .Show();
+                }
+            }
+            return true;
         }
 
         private bool ValidEcuFiles(string path)
@@ -1382,6 +1439,41 @@ namespace BmwDiagnostics
                     return false;
                 }
                 return Directory.EnumerateFiles(path, "*.prg").Any();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool ValidEcuPackage(string path)
+        {
+            try
+            {
+                if (!Directory.Exists(path))
+                {
+                    return false;
+                }
+                string xmlInfoName = Path.Combine(path, InfoXmlName);
+                if (!File.Exists(xmlInfoName))
+                {
+                    return false;
+                }
+                XDocument xmlInfo = XDocument.Load(xmlInfoName);
+                if (xmlInfo.Root == null)
+                {
+                    return false;
+                }
+                XAttribute nameAttr = xmlInfo.Root.Attribute("Name");
+                if (nameAttr == null)
+                {
+                    return false;
+                }
+                if (string.Compare(nameAttr.Value, Path.GetFileName(EcuDownloadUrl), StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    return false;
+                }
+                return true;
             }
             catch (Exception)
             {
@@ -1404,7 +1496,7 @@ namespace BmwDiagnostics
                 {
                     StartXmlTool();
                 })
-                .SetNeutralButton(Resource.String.button_abort, (sender, args) =>
+                .SetNeutralButton(Resource.String.button_ignore, (sender, args) =>
                 {
                 })
                 .SetCancelable(true)
