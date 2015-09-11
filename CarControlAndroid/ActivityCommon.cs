@@ -518,7 +518,14 @@ namespace BmwDiagnostics
                 if (externalFilesDirs.Length > 0)
                 {
                     // index 0 is the internal disk
-                    _externalWritePath = externalFilesDirs.Length > 1 ? externalFilesDirs[1].AbsolutePath : externalFilesDirs[0].AbsolutePath;
+                    if (externalFilesDirs.Length > 1 && externalFilesDirs[1] != null)
+                    {
+                        _externalWritePath = externalFilesDirs[1].AbsolutePath;
+                    }
+                    else if (externalFilesDirs[0] != null)
+                    {
+                        _externalWritePath = externalFilesDirs[0].AbsolutePath;
+                    }
                 }
             }
             else
