@@ -1496,9 +1496,6 @@ namespace BmwDiagnostics
                 {
                     StartXmlTool();
                 })
-                .SetNeutralButton(Resource.String.button_ignore, (sender, args) =>
-                {
-                })
                 .SetCancelable(true)
                 .SetMessage(Resource.String.config_select)
                 .SetTitle(Resource.String.config_select_title)

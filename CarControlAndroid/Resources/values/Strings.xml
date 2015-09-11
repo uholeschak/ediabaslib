@@ -7,7 +7,6 @@
   <string name="button_no">No</string>
   <string name="button_ok">Ok</string>
   <string name="button_abort">Abort</string>
-  <string name="button_ignore">Ignore</string>
   <string name="button_select">Select</string>
   <string name="button_generate">Generate</string>
   <string name="no_ext_storage">No external storage available</string>
