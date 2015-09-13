@@ -29,7 +29,7 @@
     <AndroidLinkMode>None</AndroidLinkMode>
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
     <AndroidLinkSkip />
-    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <BundleAssemblies>False</BundleAssemblies>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
     <AndroidSupportedAbis>armeabi,armeabi-v7a,x86</AndroidSupportedAbis>
@@ -166,7 +166,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\device_list.axml" />
-    <AndroidResource Include="Resources\menu\option_menu.xml" />
+    <AndroidResource Include="Resources\menu\option_menu.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <AndroidResource Include="Resources\layout\device_name.axml" />
     <AndroidResource Include="Resources\drawable-ldpi\icon.png" />
     <AndroidResource Include="Resources\drawable-mdpi\icon.png" />
@@ -221,6 +223,10 @@
     <None Include="Xml\E61\Test.ccpage" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\D2XXBinding\D2XXBinding.csproj">
+      <Project>{f7dfa085-6be8-4468-931f-880ed0453146}</Project>
+      <Name>D2XXBinding</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\EdiabasLibAndroid.csproj">
       <Project>{fedd5f23-f769-44d2-9f06-39d532008197}</Project>
       <Name>EdiabasLibAndroid</Name>

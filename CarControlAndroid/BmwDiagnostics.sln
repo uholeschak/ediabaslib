@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BmwDiagnostics", "BmwDiagno
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLibAndroid", "..\EdiabasLib\EdiabasLibAndroid\EdiabasLibAndroid.csproj", "{FEDD5F23-F769-44D2-9F06-39D532008197}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D2XXBinding", "..\EdiabasLib\EdiabasLibAndroid\D2XXBinding\D2XXBinding.csproj", "{F7DFA085-6BE8-4468-931F-880ED0453146}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{FEDD5F23-F769-44D2-9F06-39D532008197}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEDD5F23-F769-44D2-9F06-39D532008197}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEDD5F23-F769-44D2-9F06-39D532008197}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7DFA085-6BE8-4468-931F-880ED0453146}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7DFA085-6BE8-4468-931F-880ED0453146}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7DFA085-6BE8-4468-931F-880ED0453146}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7DFA085-6BE8-4468-931F-880ED0453146}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

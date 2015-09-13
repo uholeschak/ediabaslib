@@ -172,7 +172,7 @@ namespace BmwDiagnostics
             }
         }
 
-        public bool StartThread(string comPort, string traceDir, bool traceAppend, JobReader.PageInfo pageInfo, bool commActive)
+        public bool StartThread(string comPort, object connectParameter, string traceDir, bool traceAppend, JobReader.PageInfo pageInfo, bool commActive)
         {
             if (_workerThread != null)
             {
@@ -192,6 +192,7 @@ namespace BmwDiagnostics
                         ((EdInterfaceEnet)_ediabas.EdInterfaceClass).RemoteHost = comPort;
                     }
                 }
+                _ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
                 if (!string.IsNullOrEmpty(traceDir))
                 {
                     _ediabas.SetConfigProperty("TracePath", traceDir);

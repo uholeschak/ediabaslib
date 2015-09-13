@@ -30,8 +30,27 @@
 
   <xs:simpleType name="interface-type">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="BLUETOOTH"/>
-      <xs:enumeration value="ENET"/>
+      <xs:enumeration value="BLUETOOTH">
+        <xs:annotation>
+          <xs:documentation>
+            Bluetooth interface
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="ENET">
+        <xs:annotation>
+          <xs:documentation>
+            Ethernet interface
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="FTDI">
+        <xs:annotation>
+          <xs:documentation>
+            FTDI USB device
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
     </xs:restriction>
   </xs:simpleType>
 

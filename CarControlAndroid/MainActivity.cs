@@ -16,6 +16,7 @@ using Android.OS;
 using Android.Support.V4.App;
 using Android.Support.V4.View;
 using Android.Support.V7.App;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using BmwDiagnostics.FilePicker;
@@ -428,6 +429,18 @@ namespace BmwDiagnostics
                     return true;
 
                 case Resource.Id.menu_sel_cfg:
+#if true
+                    int devices = _activityCommon.D2XxManager.CreateDeviceInfoList(this);
+                    if (devices > 0)
+                    {
+                        Com.Ftdi.J2xx.FT_Device device = _activityCommon.D2XxManager.OpenByIndex(this, 0);
+                        if (device != null)
+                        {
+                            Log.Info("test", "device is open!");
+                            device.Close();
+                        }
+                    }
+#endif
                     SelectConfigFile();
                     return true;
 
@@ -546,6 +559,7 @@ namespace BmwDiagnostics
                     traceDir = logDir;
                 }
                 JobReader.PageInfo pageInfo = GetSelectedPage();
+                object connectParameter = null;
                 if (pageInfo != null)
                 {
                     string portName = string.Empty;
@@ -561,8 +575,13 @@ namespace BmwDiagnostics
                                 portName = ActivityCommon.EmulatorEnetIp;
                             }
                             break;
+
+                        case ActivityCommon.InterfaceType.Ftdi:
+                            portName = "FTDI0";
+                            connectParameter = new EdFtdiInterface.ConnectParameter(this, _activityCommon.D2XxManager);
+                            break;
                     }
-                    _ediabasThread.StartThread(portName, traceDir, _traceAppend, pageInfo, true);
+                    _ediabasThread.StartThread(portName, connectParameter, traceDir, _traceAppend, pageInfo, true);
                 }
             }
             catch (Exception)

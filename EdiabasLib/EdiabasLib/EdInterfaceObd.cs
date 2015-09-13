@@ -36,7 +36,7 @@ namespace EdiabasLib
             DeviceTypeError,
         }
 
-        public delegate bool InterfaceConnectDelegate(string port);
+        public delegate bool InterfaceConnectDelegate(string port, object parameter);
         public delegate bool InterfaceDisconnectDelegate();
         public delegate InterfaceErrorResult InterfaceSetConfigDelegate(int baudRate, int dataBits, SerialParity parity, bool allowBitBang);
         public delegate bool InterfaceSetDtrDelegate(bool dtr);
@@ -796,7 +796,6 @@ namespace EdiabasLib
                 return false;
             }
 
-#if USE_SERIAL_PORT
             if (ComPortProtected.ToUpper(Culture).StartsWith(EdFtdiInterface.PortId))
             {   // automtatic hook of FTDI functions
                 InterfaceConnectFuncInt = EdFtdiInterface.InterfaceConnect;
@@ -810,9 +809,8 @@ namespace EdiabasLib
                 InterfaceSendDataFuncInt = EdFtdiInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdFtdiInterface.InterfaceReceiveData;
             }
-            else
-#else
-            if (ComPortProtected.ToUpper(Culture).StartsWith(EdBluetoothInterface.PortId))
+#if Android
+            else if (ComPortProtected.ToUpper(Culture).StartsWith(EdBluetoothInterface.PortId))
             {   // automtatic hook of bluetooth functions
                 InterfaceConnectFuncInt = EdBluetoothInterface.InterfaceConnect;
                 InterfaceDisconnectFuncInt = EdBluetoothInterface.InterfaceDisconnect;
@@ -825,8 +823,8 @@ namespace EdiabasLib
                 InterfaceSendDataFuncInt = EdBluetoothInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdBluetoothInterface.InterfaceReceiveData;
             }
-            else
 #endif
+            else
             {
                 InterfaceConnectFuncInt = null;
                 InterfaceDisconnectFuncInt = null;
@@ -847,7 +845,7 @@ namespace EdiabasLib
 
             if (UseExtInterfaceFunc)
             {
-                ConnectedProtected = InterfaceConnectFuncUse(ComPortProtected);
+                ConnectedProtected = InterfaceConnectFuncUse(ComPortProtected, ConnectParameterProtected);
                 if (!ConnectedProtected)
                 {
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0018);

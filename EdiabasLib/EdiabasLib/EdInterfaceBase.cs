@@ -7,6 +7,7 @@ namespace EdiabasLib
     {
         private bool _disposed;
         protected EdiabasNet EdiabasProtected;
+        protected object ConnectParameterProtected;
         protected static Mutex InterfaceMutex;
         protected bool MutexAquired;
         protected UInt32 CommRepeatsProtected;
@@ -76,6 +77,12 @@ namespace EdiabasLib
         {
             get { return EdiabasProtected; }
             set { EdiabasProtected = value; }
+        }
+
+        public virtual object ConnectParameter
+        {
+            get { return ConnectParameterProtected; }
+            set { ConnectParameterProtected = value; }
         }
 
         public UInt32 CommRepeats
