@@ -144,6 +144,7 @@
     <AndroidResource Include="Resources\layout\bar_can_adapter.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\connect_action_provider.axml" />
     <None Include="Xml\AdapterCustom.ccpage">
       <SubType>Designer</SubType>
     </None>
@@ -180,7 +181,6 @@
     <AndroidResource Include="Resources\layout\tab_list.axml" />
     <AndroidResource Include="Resources\layout\tab_activate.axml" />
     <AndroidResource Include="Resources\layout\main.axml" />
-    <AndroidResource Include="Resources\layout\bar_connect.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
@@ -207,7 +207,9 @@
     <None Include="Xml\Adapter.ccpage">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Xml\E61\Ccc.ccpage" />
+    <None Include="Xml\E61\Ccc.ccpage">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Xml\E61\E61.ccpages" />
     <None Include="Xml\E61\E61Enet.cccfg" />
     <None Include="Xml\E61\Ihk.ccpage" />

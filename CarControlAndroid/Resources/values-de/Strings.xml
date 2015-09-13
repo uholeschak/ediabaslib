@@ -51,6 +51,7 @@
   <string name="button_inactive">Inaktiv</string>
 
   <!-- Options Menu -->
+  <string name="menu_connect">Verbinden</string>
   <string name="menu_device">Gerät</string>
   <string name="menu_can_adapter_config">CAN Adapter Konfiguration</string>
   <string name="menu_sel_cfg">Konfiguration</string>
