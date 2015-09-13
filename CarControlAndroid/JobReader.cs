@@ -418,10 +418,17 @@ namespace BmwDiagnostics
                     }
                 }
 
-                _interfaceType = ActivityCommon.InterfaceType.Bluetooth;
                 if (string.Compare(_interfaceName, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _interfaceType = ActivityCommon.InterfaceType.Enet;
+                }
+                else if (string.Compare(_interfaceName, "FTDI", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    _interfaceType = ActivityCommon.InterfaceType.Ftdi;
+                }
+                else
+                {
+                    _interfaceType = ActivityCommon.InterfaceType.Bluetooth;
                 }
 
                 XmlNodeList xnodePages = xdocConfig.SelectNodes(string.Format("/{0}configuration/{0}pages/{0}page", prefix), namespaceManager);

@@ -45,6 +45,9 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\EdiabasLib\EdFtdiInterfaceAndroid.cs">
+      <Link>EdFtdiInterfaceAndroid.cs</Link>
+    </Compile>
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="..\EdiabasLib\EdBluetoothInterface.cs">
       <Link>EdBluetoothInterface.cs</Link>
@@ -73,6 +76,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\Strings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="D2XXBinding\D2XXBinding.csproj">
+      <Project>{f7dfa085-6be8-4468-931f-880ed0453146}</Project>
+      <Name>D2XXBinding</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
 </Project>

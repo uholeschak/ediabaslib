@@ -10,6 +10,7 @@ using Android.Net.Wifi;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Widget;
+using Com.Ftdi.J2xx;
 using EdiabasLib;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
@@ -51,6 +52,7 @@ namespace BmwDiagnostics
             None,
             Bluetooth,
             Enet,
+            Ftdi,
         }
 
         public delegate bool ProgressZipDelegate(int percent);
@@ -63,6 +65,7 @@ namespace BmwDiagnostics
         private readonly BluetoothAdapter _btAdapter;
         private readonly WifiManager _maWifi;
         private readonly ConnectivityManager _maConnectivity;
+        private D2xxManager _d2XxManager;
         private InterfaceType _selectedInterface;
         private bool _activateRequest;
 
@@ -126,6 +129,11 @@ namespace BmwDiagnostics
             }
         }
 
+        public D2xxManager D2XxManager
+        {
+            get { return _d2XxManager ?? (_d2XxManager = D2xxManager.GetInstance(_activity)); }
+        }
+
         public ActivityCommon(Android.App.Activity activity)
         {
             _activity = activity;
@@ -135,8 +143,25 @@ namespace BmwDiagnostics
             _btAdapter = BluetoothAdapter.DefaultAdapter;
             _maWifi = (WifiManager)activity.GetSystemService(Context.WifiService);
             _maConnectivity = (ConnectivityManager)activity.GetSystemService(Context.ConnectivityService);
+            _d2XxManager = null;
             _selectedInterface = InterfaceType.None;
             _activateRequest = false;
+        }
+
+        public string InterfaceName()
+        {
+            switch (_selectedInterface)
+            {
+                case InterfaceType.Bluetooth:
+                    return _activity.GetString(Resource.String.select_interface_bt);
+
+                case InterfaceType.Enet:
+                    return _activity.GetString(Resource.String.select_interface_enet);
+
+                case InterfaceType.Ftdi:
+                    return _activity.GetString(Resource.String.select_interface_ftdi);
+            }
+            return string.Empty;
         }
 
         public bool IsInterfaceEnabled()
@@ -156,6 +181,9 @@ namespace BmwDiagnostics
                         return false;
                     }
                     return _maWifi.IsWifiEnabled;
+
+                case InterfaceType.Ftdi:
+                    return true;
             }
             return false;
         }
@@ -182,6 +210,14 @@ namespace BmwDiagnostics
                         return false;
                     }
                     return networkInfo.IsConnected;
+
+                case InterfaceType.Ftdi:
+                    int devices = D2XxManager.CreateDeviceInfoList(_activity);
+                    if (devices <= 0)
+                    {
+                        return false;
+                    }
+                    return true;
             }
             return false;
         }
@@ -202,7 +238,8 @@ namespace BmwDiagnostics
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity, Android.Resource.Layout.SimpleListItemSingleChoice,
                 new[] {
                     _activity.GetString(Resource.String.select_interface_bt),
-                    _activity.GetString(Resource.String.select_interface_enet)
+                    _activity.GetString(Resource.String.select_interface_enet),
+                    _activity.GetString(Resource.String.select_interface_ftdi)
                 });
             listView.Adapter = adapter;
             listView.ChoiceMode = ChoiceMode.Single;
@@ -214,6 +251,10 @@ namespace BmwDiagnostics
 
                 case InterfaceType.Enet:
                     listView.SetItemChecked(1, true);
+                    break;
+
+                case InterfaceType.Ftdi:
+                    listView.SetItemChecked(2, true);
                     break;
             }
             builder.SetView(listView);
@@ -228,6 +269,11 @@ namespace BmwDiagnostics
 
                         case 1:
                             _selectedInterface = InterfaceType.Enet;
+                            handler(sender, args);
+                            break;
+
+                        case 2:
+                            _selectedInterface = InterfaceType.Ftdi;
                             handler(sender, args);
                             break;
                     }
@@ -378,9 +424,18 @@ namespace BmwDiagnostics
         public void SetEdiabasInterface(EdiabasNet ediabas, string btDeviceAddress)
         {
             // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
+            object connectParameter = null;
             if (ediabas.EdInterfaceClass is EdInterfaceObd)
             {
-                ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "BLUETOOTH:" + btDeviceAddress;
+                if (SelectedInterface == InterfaceType.Ftdi)
+                {
+                    ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "FTDI0";
+                    connectParameter = new EdFtdiInterface.ConnectParameter(_activity, D2XxManager);
+                }
+                else
+                {
+                    ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "BLUETOOTH:" + btDeviceAddress;
+                }
             }
             else if (ediabas.EdInterfaceClass is EdInterfaceEnet)
             {
@@ -391,6 +446,7 @@ namespace BmwDiagnostics
                 }
                 ((EdInterfaceEnet)ediabas.EdInterfaceClass).RemoteHost = remoteHost;
             }
+            ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }
 
         public static string MakeRelativePath(string fromPath, string toPath)

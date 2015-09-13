@@ -81,7 +81,7 @@ namespace EdiabasLib
             get { return _currentParity; }
         }
 
-        public static bool InterfaceConnect(string port)
+        public static bool InterfaceConnect(string port, object parameter)
         {
             if (_handleFtdi != (IntPtr)0)
             {

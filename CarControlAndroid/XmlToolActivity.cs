@@ -315,18 +315,7 @@ namespace BmwDiagnostics
             IMenuItem selInterfaceMenu = menu.FindItem(Resource.Id.menu_tool_sel_interface);
             if (selInterfaceMenu != null)
             {
-                string interfaceName = string.Empty;
-                switch (_activityCommon.SelectedInterface)
-                {
-                    case ActivityCommon.InterfaceType.Bluetooth:
-                        interfaceName = GetString(Resource.String.select_interface_bt);
-                        break;
-
-                    case ActivityCommon.InterfaceType.Enet:
-                        interfaceName = GetString(Resource.String.select_interface_enet);
-                        break;
-                }
-                selInterfaceMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_tool_sel_interface), interfaceName));
+                selInterfaceMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_tool_sel_interface), _activityCommon.InterfaceName()));
                 selInterfaceMenu.SetEnabled(!commActive);
             }
 
@@ -1604,8 +1593,22 @@ namespace BmwDiagnostics
                     globalNode.Add(new XAttribute("log_path", "Log"));
                 }
 
-                globalNode.Add(new XAttribute("interface",
-                    (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet) ? "ENET" : "BLUETOOTH"));
+                string interfaceName = string.Empty;
+                switch (_activityCommon.SelectedInterface)
+                {
+                    case ActivityCommon.InterfaceType.Bluetooth:
+                        interfaceName = "BLUETOOTH";
+                        break;
+
+                    case ActivityCommon.InterfaceType.Enet:
+                        interfaceName = "ENET";
+                        break;
+
+                    case ActivityCommon.InterfaceType.Ftdi:
+                        interfaceName = "FTDI";
+                        break;
+                }
+                globalNode.Add(new XAttribute("interface", interfaceName));
 
                 XElement includeNode = document.Root.Element(ns + "include");
                 if (includeNode == null)
