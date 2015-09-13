@@ -14,6 +14,7 @@ using Android.Content;
 using Android.Net;
 using Android.OS;
 using Android.Support.V4.App;
+using Android.Support.V4.View;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
@@ -98,7 +99,6 @@ namespace BmwDiagnostics
         private Fragment _lastFragment;
         private ToggleButton _buttonConnect;
         private ImageView _imageBackground;
-        private View _barView;
         private WebClient _webClient;
         private Android.App.ProgressDialog _downloadProgress;
         private Receiver _receiver;
@@ -135,9 +135,8 @@ namespace BmwDiagnostics
             SupportActionBar.NavigationMode = Android.Support.V7.App.ActionBar.NavigationModeStandard;
             SupportActionBar.SetHomeButtonEnabled(false);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
-            SupportActionBar.SetDisplayShowCustomEnabled(true);
             SupportActionBar.SetDisplayUseLogoEnabled(false);
-            SupportActionBar.SetDisplayShowTitleEnabled(false);
+            SupportActionBar.SetDisplayShowTitleEnabled(true);
             SupportActionBar.SetIcon(Resource.Drawable.icon);
             SetContentView(Resource.Layout.main);
 
@@ -176,19 +175,8 @@ namespace BmwDiagnostics
             _jobReader = new JobReader();
             GetSettings();
 
-            _barView = LayoutInflater.Inflate(Resource.Layout.bar_connect, null);
-            ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
-                ViewGroup.LayoutParams.MatchParent,
-                ViewGroup.LayoutParams.WrapContent);
-            barLayoutParams.Gravity = barLayoutParams.Gravity &
-                (int)(~(GravityFlags.HorizontalGravityMask | GravityFlags.VerticalGravityMask)) |
-                (int)(GravityFlags.Left | GravityFlags.CenterVertical);
-            SupportActionBar.SetCustomView(_barView, barLayoutParams);
-
-            _buttonConnect = _barView.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
             _fragmentList = new List<Fragment>();
-            _buttonConnect.Click += ButtonConnectClick;
 
             _webClient = new WebClient();
             _webClient.DownloadProgressChanged += DownloadProgressChanged;
@@ -346,6 +334,16 @@ namespace BmwDiagnostics
         {
             bool commActive = _ediabasThread != null && _ediabasThread.ThreadRunning();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
+
+            IMenuItem actionProviderConnect = menu.FindItem(Resource.Id.menu_action_provider_connect);
+            if (actionProviderConnect != null)
+            {
+                Android.Support.V4.View.ActionProvider actionProvider = MenuItemCompat.GetActionProvider(actionProviderConnect);
+                if (actionProvider == null)
+                {
+                    MenuItemCompat.SetActionProvider(actionProviderConnect, new ConnectActionProvider(this));
+                }
+            }
 
             IMenuItem scanMenu = menu.FindItem(Resource.Id.menu_scan);
             if (scanMenu != null)
@@ -711,7 +709,7 @@ namespace BmwDiagnostics
                 {
                     dynamicValid = true;
                 }
-                _buttonConnect.Checked = true;
+                if (_buttonConnect != null) _buttonConnect.Checked = true;
             }
             else
             {
@@ -719,9 +717,9 @@ namespace BmwDiagnostics
                 {
                     buttonConnectEnable = false;
                 }
-                _buttonConnect.Checked = false;
+                if (_buttonConnect != null) _buttonConnect.Checked = false;
             }
-            _buttonConnect.Enabled = buttonConnectEnable;
+            if (_buttonConnect != null) _buttonConnect.Enabled = buttonConnectEnable;
             _imageBackground.Visibility = dynamicValid ? ViewStates.Invisible : ViewStates.Visible;
 
             Fragment dynamicFragment = null;
@@ -1654,6 +1652,37 @@ namespace BmwDiagnostics
                         // ignored
                     }
                 }
+            }
+        }
+
+        public class ConnectActionProvider : Android.Support.V4.View.ActionProvider
+        {
+            public ConnectActionProvider(Context context)
+                : base(context)
+            {
+            }
+
+            public override View OnCreateActionView()
+            {
+                // Inflate the action view to be shown on the action bar.
+                LayoutInflater layoutInflater = LayoutInflater.From(Context);
+                View view = layoutInflater.Inflate(Resource.Layout.connect_action_provider, null);
+                ToggleButton button = view.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
+                button.Click += (sender, args) =>
+                {
+                    ((ActivityMain)Context).ButtonConnectClick(sender, args);
+                };
+                ((ActivityMain)Context)._buttonConnect = button;
+
+                return view;
+            }
+
+            public override bool OnPerformDefaultAction()
+            {
+                // This is called if the host menu item placed in the overflow menu of the
+                // action bar is clicked and the host activity did not handle the click.
+                ((ActivityMain)Context).ButtonConnectClick(((ActivityMain)Context)._buttonConnect, new EventArgs());
+                return true;
             }
         }
     }
