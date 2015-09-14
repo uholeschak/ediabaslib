@@ -67,23 +67,30 @@ namespace EdiabasLib
                     InterfaceDisconnect();
                     return false;
                 }
+
+                D2xxManager.DriverParameters driverParameters = new D2xxManager.DriverParameters();
+                driverParameters.SetBufferNumber(16);
+                driverParameters.SetMaxBufferSize(0x4000);
+                driverParameters.SetMaxTransferSize(0x1000);
+                driverParameters.SetReadTimeout(100);
+
                 string portData = port.Remove(0, PortId.Length);
                 if ((portData.Length > 0) && (portData[0] == ':'))
                 {   // special id
                     if (portData.StartsWith(":SER=", StringComparison.OrdinalIgnoreCase))
                     {   // serial number
                         string id = portData.Remove(0, 5);
-                        _ftDevice = connectParameter.Manager.OpenBySerialNumber(connectParameter.ParentContext, id);
+                        _ftDevice = connectParameter.Manager.OpenBySerialNumber(connectParameter.ParentContext, id, driverParameters);
                     }
                     else if (portData.StartsWith(":DESC=", StringComparison.OrdinalIgnoreCase))
                     {   // description
                         string id = portData.Remove(0, 6);
-                        _ftDevice = connectParameter.Manager.OpenByDescription(connectParameter.ParentContext, id);
+                        _ftDevice = connectParameter.Manager.OpenByDescription(connectParameter.ParentContext, id, driverParameters);
                     }
                     else if (portData.StartsWith(":LOC=", StringComparison.OrdinalIgnoreCase))
                     {   // location
                         long loc = EdiabasNet.StringToValue(portData.Remove(0, 5));
-                        _ftDevice = connectParameter.Manager.OpenByLocation(connectParameter.ParentContext, (int)loc);
+                        _ftDevice = connectParameter.Manager.OpenByLocation(connectParameter.ParentContext, (int)loc, driverParameters);
                     }
                     else
                     {
@@ -100,7 +107,7 @@ namespace EdiabasLib
                 {
                     int usbIndex = Convert.ToInt32(port.Remove(0, PortId.Length));
 
-                    _ftDevice = connectParameter.Manager.OpenByIndex(connectParameter.ParentContext, usbIndex);
+                    _ftDevice = connectParameter.Manager.OpenByIndex(connectParameter.ParentContext, usbIndex, driverParameters);
                     if (_ftDevice == null)
                     {
                         InterfaceDisconnect();
@@ -175,6 +182,7 @@ namespace EdiabasLib
                 {
                     _ftDevice.SetBitMode(0x00, D2xxManager.FtBitmodeReset);
                     _ftDevice.Close();
+                    _ftDevice.Dispose();
                     _ftDevice = null;
                 }
             }
@@ -390,25 +398,12 @@ namespace EdiabasLib
                         return false;
                     }
                     long startTime = Stopwatch.GetTimestamp();
-#if WindowsCE
-                    const int sendBlockSize = 4;
-                    for (int i = 0; i < length; i += sendBlockSize)
-                    {
-                        int sendLength = length - i;
-                        if (sendLength > sendBlockSize) sendLength = sendBlockSize;
-                        ftStatus = Ftd2Xx.FT_WriteWrapper(_handleFtdi, sendData, sendLength, i, out bytesWritten);
-                        if (ftStatus != Ftd2Xx.FT_STATUS.FT_OK)
-                        {
-                            return false;
-                        }
-                    }
-#else
+
                     bytesWritten = _ftDevice.Write(sendData, length);
                     if (bytesWritten != length)
                     {
                         return false;
                     }
-#endif
                     while ((Stopwatch.GetTimestamp() - startTime) < waitTime)
                     {
                     }
@@ -420,25 +415,12 @@ namespace EdiabasLib
                 else
                 {
                     long waitTime = (long)(byteTime * length);
-#if WindowsCE
-                    const int sendBlockSize = 4;
-                    for (int i = 0; i < length; i += sendBlockSize)
-                    {
-                        int sendLength = length - i;
-                        if (sendLength > sendBlockSize) sendLength = sendBlockSize;
-                        ftStatus = Ftd2Xx.FT_WriteWrapper(_handleFtdi, sendData, sendLength, i, out bytesWritten);
-                        if (ftStatus != Ftd2Xx.FT_STATUS.FT_OK)
-                        {
-                            return false;
-                        }
-                    }
-#else
+
                     bytesWritten = _ftDevice.Write(sendData, length);
                     if (bytesWritten != length)
                     {
                         return false;
                     }
-#endif
                     if (waitTime > 10)
                     {
                         Thread.Sleep((int)waitTime);
@@ -473,11 +455,12 @@ namespace EdiabasLib
             {
                 byte[] buffer = new byte[length];
 
-                int recLen = _ftDevice.Read(receiveData, 1, timeout);
+                int recLen = _ftDevice.Read(buffer, 1, timeout);
                 if (recLen < 1)
                 {
                     return false;
                 }
+                Array.Copy(buffer, 0, receiveData, offset, recLen);
                 if (recLen < length)
                 {
                     while (recLen < length)
