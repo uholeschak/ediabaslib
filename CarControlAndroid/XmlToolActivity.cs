@@ -1760,8 +1760,23 @@ namespace BmwDiagnostics
                 }
 
                 // config file
+                string interfaceType = string.Empty;
+                switch (_activityCommon.SelectedInterface)
+                {
+                    case ActivityCommon.InterfaceType.Bluetooth:
+                        interfaceType = "Bt";
+                        break;
+
+                    case ActivityCommon.InterfaceType.Enet:
+                        interfaceType = "Enet";
+                        break;
+
+                    case ActivityCommon.InterfaceType.Ftdi:
+                        interfaceType = "Ftdi";
+                        break;
+                }
                 string xmlConfigFile = Path.Combine(xmlFileDir,
-                    ActivityCommon.CreateValidFileName(_vin) + ((_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet) ? "_Enet" : "_Bt") + ConfigFileExtension);
+                    ActivityCommon.CreateValidFileName(_vin) + "_" + interfaceType + ConfigFileExtension);
                 XDocument documentConfig = null;
                 if (File.Exists(xmlConfigFile))
                 {
