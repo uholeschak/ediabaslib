@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLibAndroid", "..\Edi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D2XXBinding", "..\EdiabasLib\EdiabasLibAndroid\D2XXBinding\D2XXBinding.csproj", "{F7DFA085-6BE8-4468-931F-880ED0453146}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsbSerialBinding", "..\EdiabasLib\EdiabasLibAndroid\UsbSerialBinding\UsbSerialBinding.csproj", "{C70078EC-34D9-46A7-A04A-4412CFE27509}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{F7DFA085-6BE8-4468-931F-880ED0453146}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7DFA085-6BE8-4468-931F-880ED0453146}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7DFA085-6BE8-4468-931F-880ED0453146}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C70078EC-34D9-46A7-A04A-4412CFE27509}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C70078EC-34D9-46A7-A04A-4412CFE27509}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C70078EC-34D9-46A7-A04A-4412CFE27509}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C70078EC-34D9-46A7-A04A-4412CFE27509}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

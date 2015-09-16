@@ -5,13 +5,14 @@ using System.Linq;
 using System.Reflection;
 using Android.Bluetooth;
 using Android.Content;
+using Android.Hardware.Usb;
 using Android.Net;
 using Android.Net.Wifi;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Widget;
-using Com.Ftdi.J2xx;
 using EdiabasLib;
+using Hoho.Android.UsbSerial.Driver;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -65,7 +66,7 @@ namespace BmwDiagnostics
         private readonly BluetoothAdapter _btAdapter;
         private readonly WifiManager _maWifi;
         private readonly ConnectivityManager _maConnectivity;
-        private D2xxManager _d2XxManager;
+        private UsbManager _usbManager;
         private InterfaceType _selectedInterface;
         private bool _activateRequest;
 
@@ -129,9 +130,9 @@ namespace BmwDiagnostics
             }
         }
 
-        public D2xxManager D2XxManager
+        public UsbManager UsbManager
         {
-            get { return _d2XxManager ?? (_d2XxManager = D2xxManager.GetInstance(_activity)); }
+            get { return _usbManager; }
         }
 
         public ActivityCommon(Android.App.Activity activity)
@@ -143,7 +144,7 @@ namespace BmwDiagnostics
             _btAdapter = BluetoothAdapter.DefaultAdapter;
             _maWifi = (WifiManager)activity.GetSystemService(Context.WifiService);
             _maConnectivity = (ConnectivityManager)activity.GetSystemService(Context.ConnectivityService);
-            _d2XxManager = null;
+            _usbManager = activity.GetSystemService(Context.UsbService) as UsbManager;
             _selectedInterface = InterfaceType.None;
             _activateRequest = false;
         }
@@ -212,12 +213,14 @@ namespace BmwDiagnostics
                     return networkInfo.IsConnected;
 
                 case InterfaceType.Ftdi:
-                    int devices = D2XxManager.CreateDeviceInfoList(_activity);
-                    if (devices <= 0)
+                {
+                    IList<IUsbSerialDriver> availableDrivers = UsbSerialProber.DefaultProber.FindAllDrivers(_usbManager);
+                    if (availableDrivers.Count <= 0)
                     {
                         return false;
                     }
                     return true;
+                }
             }
             return false;
         }
@@ -430,7 +433,7 @@ namespace BmwDiagnostics
                 if (SelectedInterface == InterfaceType.Ftdi)
                 {
                     ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "FTDI0";
-                    connectParameter = new EdFtdiInterface.ConnectParameter(_activity, D2XxManager);
+                    connectParameter = new EdFtdiInterface.ConnectParameter(_activity, _usbManager);
                 }
                 else
                 {

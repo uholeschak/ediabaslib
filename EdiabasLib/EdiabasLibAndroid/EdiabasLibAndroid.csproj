@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{FEDD5F23-F769-44D2-9F06-39D532008197}</ProjectGuid>
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
@@ -17,7 +15,6 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>EdiabasLibAndroid.snk</AssemblyOriginatorKeyFile>
     <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
-    <AndroidUseLatestPlatformSdk />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,6 +36,7 @@
     <DefineConstants>Android</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Android.Export" />
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -78,9 +76,9 @@
     <AndroidResource Include="Resources\values\Strings.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="D2XXBinding\D2XXBinding.csproj">
-      <Project>{f7dfa085-6be8-4468-931f-880ed0453146}</Project>
-      <Name>D2XXBinding</Name>
+    <ProjectReference Include="UsbSerialBinding\UsbSerialBinding.csproj">
+      <Project>{c70078ec-34d9-46a7-a04a-4412cfe27509}</Project>
+      <Name>UsbSerialBinding</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />

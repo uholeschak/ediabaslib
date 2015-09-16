@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Android.Bluetooth;
 using Android.Content;
+using Android.Hardware.Usb;
 using Android.Net;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Support.V4.View;
 using Android.Support.V7.App;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using BmwDiagnostics.FilePicker;
@@ -24,12 +24,16 @@ using EdiabasLib;
 using Java.Interop;
 using Mono.CSharp;
 
+[assembly: Android.App.UsesFeature("android.hardware.usb.host")]
+
 namespace BmwDiagnostics
 {
     [Android.App.Activity(Label = "@string/app_name", MainLauncher = true,
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                 Android.Content.PM.ConfigChanges.Orientation |
                 Android.Content.PM.ConfigChanges.ScreenSize)]
+    [Android.App.IntentFilter(new[] { UsbManager.ActionUsbDeviceAttached })]
+    [Android.App.MetaData(UsbManager.ActionUsbDeviceAttached, Resource = "@xml/device_filter")]
     public class ActivityMain : AppCompatActivity, ActionBar.ITabListener
     {
         private enum ActivityRequest
@@ -429,18 +433,6 @@ namespace BmwDiagnostics
                     return true;
 
                 case Resource.Id.menu_sel_cfg:
-#if true
-                    int devices = _activityCommon.D2XxManager.CreateDeviceInfoList(this);
-                    if (devices > 0)
-                    {
-                        Com.Ftdi.J2xx.FT_Device device = _activityCommon.D2XxManager.OpenByIndex(this, 0);
-                        if (device != null)
-                        {
-                            Log.Info("test", "device is open!");
-                            device.Close();
-                        }
-                    }
-#endif
                     SelectConfigFile();
                     return true;
 
@@ -578,7 +570,7 @@ namespace BmwDiagnostics
 
                         case ActivityCommon.InterfaceType.Ftdi:
                             portName = "FTDI0";
-                            connectParameter = new EdFtdiInterface.ConnectParameter(this, _activityCommon.D2XxManager);
+                            connectParameter = new EdFtdiInterface.ConnectParameter(this, _activityCommon.UsbManager);
                             break;
                     }
                     _ediabasThread.StartThread(portName, connectParameter, traceDir, _traceAppend, pageInfo, true);
