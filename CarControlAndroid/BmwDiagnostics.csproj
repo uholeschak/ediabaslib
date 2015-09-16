@@ -223,13 +223,13 @@
     <None Include="Xml\E61\Test.ccpage" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\D2XXBinding\D2XXBinding.csproj">
-      <Project>{f7dfa085-6be8-4468-931f-880ed0453146}</Project>
-      <Name>D2XXBinding</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\EdiabasLibAndroid.csproj">
       <Project>{fedd5f23-f769-44d2-9f06-39d532008197}</Project>
       <Name>EdiabasLibAndroid</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\UsbSerialBinding\UsbSerialBinding.csproj">
+      <Project>{c70078ec-34d9-46a7-a04a-4412cfe27509}</Project>
+      <Name>UsbSerialBinding</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -245,5 +245,8 @@
     <AndroidResource Include="Resources\menu\xml_tool_menu.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\xml\device_filter.xml" />
   </ItemGroup>
 </Project>
