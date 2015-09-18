@@ -26,6 +26,8 @@ namespace EdiabasLib
         public const string PortId = "FTDI";
         private const int WriteTimeout = 500;
         private const int MinReadTimeout = 1000;
+        private const int UsbBlockSize = 0x4000;
+        private const int LatencyTime = 50;     // large value required to prevent data loss
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private static IUsbSerialPort _usbPort;
         private static SerialInputOutputManager _serialIoManager;
@@ -126,6 +128,16 @@ namespace EdiabasLib
                 _usbPort = driver.Ports[0];
                 _usbPort.Open(connection);
                 _usbPort.SetParameters(9600, 8, StopBits.One, Parity.None);
+                FtdiSerialDriver.FtdiSerialPort ftdiPort = _usbPort as FtdiSerialDriver.FtdiSerialPort;
+                if (ftdiPort != null)
+                {
+                    ftdiPort.LatencyTimer = LatencyTime;
+                    if (ftdiPort.LatencyTimer != LatencyTime)
+                    {
+                        InterfaceDisconnect();
+                        return false;
+                    }
+                }
                 _currentWordLength = 8;
                 _currentParity = EdInterfaceObd.SerialParity.None;
 
@@ -148,7 +160,7 @@ namespace EdiabasLib
                         DataReceiveEvent.Set();
                     }
                 };
-                _serialIoManager.Start();
+                _serialIoManager.Start(UsbBlockSize);
             }
             catch (Exception)
             {
