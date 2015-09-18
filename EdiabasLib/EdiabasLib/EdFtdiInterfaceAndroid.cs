@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using Android.Hardware.Usb;
 using Hoho.Android.UsbSerial.Driver;
+using Hoho.Android.UsbSerial.Util;
 
 namespace EdiabasLib
 {
@@ -24,10 +25,13 @@ namespace EdiabasLib
 
         public const string PortId = "FTDI";
         private const int WriteTimeout = 500;
+        private const int MinReadTimeout = 1000;
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
-        private static readonly byte[] ReadBuffer = new byte[0x1000];
         private static IUsbSerialPort _usbPort;
+        private static SerialInputOutputManager _serialIoManager;
+        private static readonly AutoResetEvent DataReceiveEvent = new AutoResetEvent(false);
         private static readonly Queue<byte> ReadQueue = new Queue<byte>();
+        private static readonly object QueueLock = new object();
         private static int _currentBaudRate;
         private static int _currentWordLength;
         private static EdInterfaceObd.SerialParity _currentParity = EdInterfaceObd.SerialParity.None;
@@ -120,25 +124,31 @@ namespace EdiabasLib
                     return false;
                 }
                 _usbPort = driver.Ports[0];
-                CommonUsbSerialPort commonPort = _usbPort as CommonUsbSerialPort;
-                if (commonPort != null)
-                {
-                    commonPort.SetReadBufferSize(16 * 1024);
-                    commonPort.SetWriteBufferSize(16 * 1024);
-                }
                 _usbPort.Open(connection);
-
                 _usbPort.SetParameters(9600, 8, StopBits.One, Parity.None);
                 _currentWordLength = 8;
                 _currentParity = EdInterfaceObd.SerialParity.None;
 
                 _usbPort.DTR = false;
                 _usbPort.RTS = false;
-                if (!_usbPort.PurgeHwBuffers(true, true))
+                lock (QueueLock)
                 {
-                    InterfaceDisconnect();
+                    ReadQueue.Clear();
                 }
-                ReadQueue.Clear();
+
+                _serialIoManager = new SerialInputOutputManager(_usbPort);
+                _serialIoManager.DataReceived += (sender, e) =>
+                {
+                    lock (QueueLock)
+                    {
+                        foreach (byte value in e.Data)
+                        {
+                            ReadQueue.Enqueue(value);
+                        }
+                        DataReceiveEvent.Set();
+                    }
+                };
+                _serialIoManager.Start();
             }
             catch (Exception)
             {
@@ -152,13 +162,22 @@ namespace EdiabasLib
         {
             try
             {
+                if (_serialIoManager != null)
+                {
+                    _serialIoManager.Stop();
+                    _serialIoManager.Dispose();
+                    _serialIoManager = null;
+                }
                 if (_usbPort != null)
                 {
                     _usbPort.Close();
                     _usbPort.Dispose();
                     _usbPort = null;
                 }
-                ReadQueue.Clear();
+                lock (QueueLock)
+                {
+                    ReadQueue.Clear();
+                }
             }
             catch (Exception)
             {
@@ -207,12 +226,14 @@ namespace EdiabasLib
                 }
 
                 _usbPort.SetParameters(baudRate, dataBits, StopBits.One, parityLocal);
-
                 if (!_usbPort.PurgeHwBuffers(true, true))
                 {
                     return EdInterfaceObd.InterfaceErrorResult.ConfigError;
                 }
-                ReadQueue.Clear();
+                lock (QueueLock)
+                {
+                    ReadQueue.Clear();
+                }
             }
             catch (Exception)
             {
@@ -298,7 +319,10 @@ namespace EdiabasLib
                 {
                     return false;
                 }
-                ReadQueue.Clear();
+                lock (QueueLock)
+                {
+                    ReadQueue.Clear();
+                }
             }
             catch (Exception)
             {
@@ -314,17 +338,23 @@ namespace EdiabasLib
             {
                 return false;
             }
+            if ((_serialIoManager == null) || !_serialIoManager.IsStarted)
+            {
+                return false;
+            }
             try
             {
                 int bytesWritten;
                 byte[] sendBuffer = new byte[length];
                 Array.Copy(sendData, sendBuffer, sendBuffer.Length);
 
-                int bitCount = (_currentParity == EdInterfaceObd.SerialParity.None) ? (_currentWordLength + 2) : (_currentWordLength + 3);
-                double byteTime = 1.0d / _currentBaudRate * 1000 * bitCount;
+                int bitCount = (_currentParity == EdInterfaceObd.SerialParity.None)
+                    ? (_currentWordLength + 2)
+                    : (_currentWordLength + 3);
+                double byteTime = 1.0d/_currentBaudRate*1000*bitCount;
                 if (setDtr)
                 {
-                    long waitTime = (long)((dtrTimeCorr + byteTime * length) * TickResolMs);
+                    long waitTime = (long) ((dtrTimeCorr + byteTime*length)*TickResolMs);
                     _usbPort.DTR = true;
                     long startTime = Stopwatch.GetTimestamp();
 
@@ -340,7 +370,7 @@ namespace EdiabasLib
                 }
                 else
                 {
-                    long waitTime = (long)(byteTime * length);
+                    long waitTime = (long) (byteTime*length);
 
                     bytesWritten = _usbPort.Write(sendBuffer, WriteTimeout);
                     if (bytesWritten != length)
@@ -349,7 +379,7 @@ namespace EdiabasLib
                     }
                     if (waitTime > 10)
                     {
-                        Thread.Sleep((int)waitTime);
+                        Thread.Sleep((int) waitTime);
                     }
                 }
             }
@@ -367,9 +397,21 @@ namespace EdiabasLib
             {
                 return false;
             }
+            if ((_serialIoManager == null) || !_serialIoManager.IsStarted)
+            {
+                return false;
+            }
             if (length <= 0)
             {
                 return true;
+            }
+            if (timeout < MinReadTimeout)
+            {
+                timeout = MinReadTimeout;
+            }
+            if (timeoutTelEnd < MinReadTimeout)
+            {
+                timeoutTelEnd = MinReadTimeout;
             }
 
             try
@@ -405,6 +447,10 @@ namespace EdiabasLib
             {
                 return false;
             }
+            if ((_serialIoManager == null) || !_serialIoManager.IsStarted)
+            {
+                return false;
+            }
             if (buffer.Length < offset + length)
             {
                 return false;
@@ -415,39 +461,29 @@ namespace EdiabasLib
             }
             try
             {
-                for (;;)
-                {
-                    int bytesRead = _usbPort.Read(ReadBuffer, timeout);
-                    if (bytesRead == 0)
-                    {
-                        break;
-                    }
-                    for (int i = 0; i < bytesRead; i++)
-                    {
-                        ReadQueue.Enqueue(ReadBuffer[i]);
-                    }
-                }
-
                 int recLen = 0;
                 for (;;)
                 {
-                    while (ReadQueue.Count > 0)
+                    lock (QueueLock)
                     {
-                        buffer[offset + recLen] = ReadQueue.Dequeue();
-                        recLen++;
-                        if (recLen >= length)
+                        while (ReadQueue.Count > 0)
                         {
-                            return true;
+                            buffer[offset + recLen] = ReadQueue.Dequeue();
+                            recLen++;
+                            if (recLen >= length)
+                            {
+                                return true;
+                            }
                         }
+                        DataReceiveEvent.Reset();
                     }
-                    int bytesRead = _usbPort.Read(ReadBuffer, timeout);
-                    if (bytesRead == 0)
+                    DataReceiveEvent.WaitOne(timeout, false);
+                    lock (QueueLock)
                     {
-                        return false;
-                    }
-                    for (int i = 0; i < bytesRead; i++)
-                    {
-                        ReadQueue.Enqueue(ReadBuffer[i]);
+                        if (ReadQueue.Count == 0)
+                        {
+                            return false;
+                        }
                     }
                 }
             }
