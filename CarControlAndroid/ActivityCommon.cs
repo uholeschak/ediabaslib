@@ -298,12 +298,18 @@ namespace BmwDiagnostics
             AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
             builder.SetTitle(Resource.String.select_interface);
             ListView listView = new ListView(_activity);
-            ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity, Android.Resource.Layout.SimpleListItemSingleChoice,
-                new[] {
-                    _activity.GetString(Resource.String.select_interface_bt),
-                    _activity.GetString(Resource.String.select_interface_enet),
-                    _activity.GetString(Resource.String.select_interface_ftdi)
-                });
+
+            List<string> interfaceNames = new List<string>
+            {
+                _activity.GetString(Resource.String.select_interface_bt),
+                _activity.GetString(Resource.String.select_interface_enet)
+            };
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.HoneycombMr1)
+            {
+                interfaceNames.Add(_activity.GetString(Resource.String.select_interface_ftdi));
+            }
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity,
+                Android.Resource.Layout.SimpleListItemSingleChoice, interfaceNames.ToArray());
             listView.Adapter = adapter;
             listView.ChoiceMode = ChoiceMode.Single;
             switch (_selectedInterface)
