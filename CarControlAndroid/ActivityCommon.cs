@@ -270,8 +270,12 @@ namespace BmwDiagnostics
 
                 case InterfaceType.Ftdi:
                 {
-                    IList<IUsbSerialDriver> availableDrivers = UsbSerialProber.DefaultProber.FindAllDrivers(_usbManager);
+                    List<IUsbSerialDriver> availableDrivers = EdFtdiInterface.GetDriverList(_usbManager);
                     if (availableDrivers.Count <= 0)
+                    {
+                        return false;
+                    }
+                    if (!_usbManager.HasPermission(availableDrivers[0].Device))
                     {
                         return false;
                     }
@@ -478,18 +482,6 @@ namespace BmwDiagnostics
             Intent serverIntent = new Intent(_activity, typeof(DeviceListActivity));
             _activity.StartActivityForResult(serverIntent, requestCode);
             return true;
-        }
-
-        public static bool IsValidUsbDevice(UsbDevice usbDevice)
-        {
-            if (usbDevice != null)
-            {
-                if (usbDevice.VendorId == 0x0403 && usbDevice.ProductId == 0x6001)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         public void RequestUsbPermission(UsbDevice usbDevice)
@@ -785,7 +777,7 @@ namespace BmwDiagnostics
                     case UsbManager.ActionUsbDeviceAttached:
                         {
                             UsbDevice usbDevice = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;
-                            if (IsValidUsbDevice(usbDevice))
+                            if (EdFtdiInterface.IsValidUsbDevice(usbDevice))
                             {
                                 _activityCommon.RequestUsbPermission(usbDevice);
                                 if (_activityCommon._bcReceiverUpdateDisplayHandler != null)
@@ -799,7 +791,7 @@ namespace BmwDiagnostics
                     case UsbManager.ActionUsbDeviceDetached:
                         {
                             UsbDevice usbDevice = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;
-                            if (IsValidUsbDevice(usbDevice))
+                            if (EdFtdiInterface.IsValidUsbDevice(usbDevice))
                             {
                                 if (_activityCommon._bcReceiverUpdateDisplayHandler != null)
                                 {
