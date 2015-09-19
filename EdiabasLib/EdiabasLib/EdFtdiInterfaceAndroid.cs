@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using Android.Hardware.Usb;
 using Hoho.Android.UsbSerial.Driver;
@@ -77,7 +78,7 @@ namespace EdiabasLib
                     return false;
                 }
 
-                IList<IUsbSerialDriver> availableDrivers = UsbSerialProber.DefaultProber.FindAllDrivers(connectParameter.UsbManager);
+                List<IUsbSerialDriver> availableDrivers = GetDriverList(connectParameter.UsbManager);
                 if (availableDrivers.Count <= 0)
                 {
                     InterfaceDisconnect();
@@ -503,6 +504,24 @@ namespace EdiabasLib
             {
                 return false;
             }
+        }
+
+        public static bool IsValidUsbDevice(UsbDevice usbDevice)
+        {
+            if (usbDevice != null)
+            {
+                if (usbDevice.VendorId == 0x0403 && usbDevice.ProductId == 0x6001)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static List<IUsbSerialDriver> GetDriverList(UsbManager usbManager)
+        {
+            IList<IUsbSerialDriver> availableDrivers = UsbSerialProber.DefaultProber.FindAllDrivers(usbManager);
+            return availableDrivers.Where(driver => IsValidUsbDevice(driver.Device)).ToList();
         }
     }
 }
