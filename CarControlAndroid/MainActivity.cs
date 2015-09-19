@@ -155,8 +155,11 @@ namespace BmwDiagnostics
 
             _activityCommon = new ActivityCommon(this, () =>
             {
-                SupportInvalidateOptionsMenu();
-                UpdateDisplay();
+                if (_activityStarted)
+                {
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                }
             });
             _appDataPath = string.Empty;
             _ecuPath = string.Empty;
@@ -241,6 +244,7 @@ namespace BmwDiagnostics
             if (!_onStartExecuted)
             {
                 _onStartExecuted = true;
+                _activityCommon.RequestUsbPermission(null);
                 ReadConfigFile();
             }
             _activityStarted = true;
