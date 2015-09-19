@@ -30,11 +30,12 @@ namespace Hoho.Android.UsbSerial.Util
     public class SerialInputOutputManager : IDisposable
     {
         private static readonly string Tag = typeof (SerialInputOutputManager).Name;
-        private const int ReadTimeout = 1000;
+        private const int DefaultReadTimeout = 1000;
         private const int DefaultBuffersize = 0x1000;
 
         private readonly IUsbSerialPort _port;
         private byte[] _buffer;
+        private int _readTimeout;
         private Thread _commThread;
         private bool _terminateThread;
 
@@ -47,7 +48,7 @@ namespace Hoho.Android.UsbSerial.Util
 
         public event EventHandler<UnhandledExceptionEventArgs> ErrorReceived;
 
-        public void Start(int bufferSize = DefaultBuffersize)
+        public void Start(int bufferSize = DefaultBuffersize, int readTimeout = DefaultReadTimeout)
         {
             if (_disposed)
                 throw new ObjectDisposedException(GetType().Name);
@@ -56,6 +57,7 @@ namespace Hoho.Android.UsbSerial.Util
                 return;
             }
             _buffer = new byte[bufferSize];
+            _readTimeout = readTimeout;
 
             _terminateThread = false;
             _commThread = new Thread(CommThreadFunc)
@@ -105,7 +107,7 @@ namespace Hoho.Android.UsbSerial.Util
         private void Step()
         {
             // handle incoming data.
-            var len = _port.Read(_buffer, ReadTimeout);
+            var len = _port.Read(_buffer, _readTimeout);
             if (len > 0 && DataReceived != null)
             {
                 Log.Debug(Tag, "Read data len=" + len);
