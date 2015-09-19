@@ -76,6 +76,13 @@ namespace BmwDiagnostics
             }
         }
 
+        class ConnectButtonInfo
+        {
+            public ToggleButton Button { get; set; }
+            public bool Enabled { get; set; }
+            public bool Checked { get; set; }
+        }
+
         private const string SharedAppName = "de.holeschak.bmwdiagnostics";
         private const string AppFolderName = "de.holeschak.bmwdiagnostics";
         private const string EcuDirName = "Ecu";
@@ -104,7 +111,7 @@ namespace BmwDiagnostics
         private string _dataLogDir;
         private List<Fragment> _fragmentList;
         private Fragment _lastFragment;
-        private ToggleButton _buttonConnect;
+        private readonly ConnectButtonInfo _connectButtonInfo = new ConnectButtonInfo();
         private ImageView _imageBackground;
         private WebClient _webClient;
         private Android.App.ProgressDialog _downloadProgress;
@@ -256,6 +263,7 @@ namespace BmwDiagnostics
                     CheckForEcuFiles(true);
                 }
             }
+            UpdateDisplay();
         }
 
         protected override void OnStop()
@@ -295,7 +303,7 @@ namespace BmwDiagnostics
                         SupportInvalidateOptionsMenu();
                         if (_autoStart)
                         {
-                            ButtonConnectClick(_buttonConnect, new EventArgs());
+                            ButtonConnectClick(_connectButtonInfo.Button, new EventArgs());
                         }
                     }
                     _autoStart = false;
@@ -704,14 +712,14 @@ namespace BmwDiagnostics
         private void UpdateDisplay()
         {
             bool dynamicValid = false;
-            bool buttonConnectEnable = true;
             bool threadRunning = false;
 
+            _connectButtonInfo.Enabled = true;
             if (_ediabasThread != null && _ediabasThread.ThreadRunning())
             {
                 if (_ediabasThread.ThreadStopping())
                 {
-                    buttonConnectEnable = false;
+                    _connectButtonInfo.Enabled = false;
                 }
                 else
                 {
@@ -721,17 +729,18 @@ namespace BmwDiagnostics
                 {
                     dynamicValid = true;
                 }
-                if (_buttonConnect != null) _buttonConnect.Checked = true;
+                _connectButtonInfo.Checked = true;
             }
             else
             {
                 if (!_activityCommon.IsInterfaceAvailable())
                 {
-                    buttonConnectEnable = false;
+                    _connectButtonInfo.Enabled = false;
                 }
-                if (_buttonConnect != null) _buttonConnect.Checked = false;
+                _connectButtonInfo.Checked = false;
             }
-            if (_buttonConnect != null) _buttonConnect.Enabled = buttonConnectEnable;
+            if (_connectButtonInfo.Button != null) _connectButtonInfo.Button.Enabled = _connectButtonInfo.Checked;
+            if (_connectButtonInfo.Button != null) _connectButtonInfo.Button.Enabled = _connectButtonInfo.Enabled;
             _imageBackground.Visibility = dynamicValid ? ViewStates.Invisible : ViewStates.Visible;
 
             Fragment dynamicFragment = null;
@@ -1655,15 +1664,18 @@ namespace BmwDiagnostics
 
             public override View OnCreateActionView()
             {
+                ActivityMain activityMain = (ActivityMain) Context;
                 // Inflate the action view to be shown on the action bar.
                 LayoutInflater layoutInflater = LayoutInflater.From(Context);
                 View view = layoutInflater.Inflate(Resource.Layout.connect_action_provider, null);
                 ToggleButton button = view.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
                 button.Click += (sender, args) =>
                 {
-                    ((ActivityMain)Context).ButtonConnectClick(sender, args);
+                    activityMain.ButtonConnectClick(sender, args);
                 };
-                ((ActivityMain)Context)._buttonConnect = button;
+                button.Checked = activityMain._connectButtonInfo.Checked;
+                button.Enabled = activityMain._connectButtonInfo.Enabled;
+                activityMain._connectButtonInfo.Button = button;
 
                 return view;
             }
@@ -1672,7 +1684,7 @@ namespace BmwDiagnostics
             {
                 // This is called if the host menu item placed in the overflow menu of the
                 // action bar is clicked and the host activity did not handle the click.
-                ((ActivityMain)Context).ButtonConnectClick(((ActivityMain)Context)._buttonConnect, new EventArgs());
+                ((ActivityMain)Context).ButtonConnectClick(((ActivityMain)Context)._connectButtonInfo.Button, new EventArgs());
                 return true;
             }
         }

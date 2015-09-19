@@ -439,11 +439,11 @@ namespace BmwDiagnostics
 
         public bool RequestBluetoothDeviceSelect(int requestCode, EventHandler<DialogClickEventArgs> handler)
         {
-            if (!IsInterfaceAvailable())
+            if (SelectedInterface != InterfaceType.Bluetooth)
             {
                 return true;
             }
-            if (SelectedInterface != InterfaceType.Bluetooth)
+            if (!IsInterfaceAvailable())
             {
                 return true;
             }
