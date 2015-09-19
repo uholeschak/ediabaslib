@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Android.Hardware.Usb;
+using Android.OS;
 using Hoho.Android.UsbSerial.Driver;
 using Hoho.Android.UsbSerial.Util;
 
@@ -520,6 +521,10 @@ namespace EdiabasLib
 
         public static List<IUsbSerialDriver> GetDriverList(UsbManager usbManager)
         {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.HoneycombMr1)
+            {
+                return new List<IUsbSerialDriver>();
+            }
             IList<IUsbSerialDriver> availableDrivers = UsbSerialProber.DefaultProber.FindAllDrivers(usbManager);
             return availableDrivers.Where(driver => IsValidUsbDevice(driver.Device)).ToList();
         }
