@@ -96,9 +96,10 @@ namespace Hoho.Android.UsbSerial.Util
                 catch (Exception ex)
                 {
                     Log.Warn(Tag, "USB task exception: " + ex.Message, ex);
-                    if (ErrorReceived != null)
+                    EventHandler<UnhandledExceptionEventArgs> handler = Volatile.Read(ref ErrorReceived);
+                    if (handler != null)
                     {
-                        ErrorReceived(this, new UnhandledExceptionEventArgs(ex, false));
+                        handler(this, new UnhandledExceptionEventArgs(ex, false));
                     }
                 }
             }
@@ -114,7 +115,11 @@ namespace Hoho.Android.UsbSerial.Util
 
                 var data = new byte[len];
                 Array.Copy(_buffer, data, len);
-                DataReceived(this, new SerialDataReceivedArgs(data));
+                EventHandler<SerialDataReceivedArgs> handler = Volatile.Read(ref DataReceived);
+                if (handler != null)
+                {
+                    handler(this, new SerialDataReceivedArgs(data));
+                }
             }
         }
 
