@@ -7,9 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Android.Bluetooth;
 using Android.Content;
-using Android.Net;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
@@ -151,7 +149,6 @@ namespace BmwDiagnostics
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
         private Task _jobTask;
-        private Receiver _receiver;
         private string _vin = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
 
@@ -203,7 +200,11 @@ namespace BmwDiagnostics
                 }
             };
 
-            _activityCommon = new ActivityCommon(this)
+            _activityCommon = new ActivityCommon(this, () =>
+            {
+                SupportInvalidateOptionsMenu();
+                UpdateDisplay();
+            })
             {
                 SelectedInterface = (ActivityCommon.InterfaceType)
                     Intent.GetIntExtra(ExtraInterface, (int)ActivityCommon.InterfaceType.None)
@@ -216,10 +217,6 @@ namespace BmwDiagnostics
 
             EdiabasClose();
             UpdateDisplay();
-
-            _receiver = new Receiver(this);
-            RegisterReceiver(_receiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
-            RegisterReceiver(_receiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
         }
 
         protected override void OnStart()
@@ -237,13 +234,13 @@ namespace BmwDiagnostics
         {
             base.OnDestroy();
 
-            UnregisterReceiver(_receiver);
             _ediabasJobAbort = true;
             if (IsJobRunning())
             {
                 _jobTask.Wait();
             }
             EdiabasClose();
+            _activityCommon.Dispose();
         }
 
         public override void OnBackPressed()
@@ -1912,28 +1909,6 @@ namespace BmwDiagnostics
             catch (Exception)
             {
                 return null;
-            }
-        }
-
-        public class Receiver : BroadcastReceiver
-        {
-            readonly XmlToolActivity _activity;
-
-            public Receiver(XmlToolActivity activity)
-            {
-                _activity = activity;
-            }
-
-            public override void OnReceive(Context context, Intent intent)
-            {
-                string action = intent.Action;
-
-                if ((action == BluetoothAdapter.ActionStateChanged) ||
-                    (action == ConnectivityManager.ConnectivityAction))
-                {
-                    _activity.SupportInvalidateOptionsMenu();
-                    _activity.UpdateDisplay();
-                }
             }
         }
 

@@ -18,7 +18,7 @@ using ICSharpCode.SharpZipLib.Zip;
 
 namespace BmwDiagnostics
 {
-    public class ActivityCommon
+    public class ActivityCommon : IDisposable
     {
         public class FileSystemBlockInfo
         {
@@ -57,16 +57,23 @@ namespace BmwDiagnostics
         }
 
         public delegate bool ProgressZipDelegate(int percent);
+        public delegate void BcReceiverUpdateDisplayDelegate();
+        public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
         public const string EmulatorEnetIp = "192.168.10.244";
+        public const string ActionUsbPermission = "de.holeschak.bmwdiagnostics.USB_PERMISSION";
 
+        private bool _disposed;
         private readonly Android.App.Activity _activity;
+        private readonly BcReceiverUpdateDisplayDelegate _bcReceiverUpdateDisplayHandler;
+        private readonly BcReceiverReceivedDelegate _bcReceiverReceivedHandler;
         private readonly bool _emulator;
         private string _externalPath;
         private string _externalWritePath;
         private readonly BluetoothAdapter _btAdapter;
         private readonly WifiManager _maWifi;
         private readonly ConnectivityManager _maConnectivity;
-        private UsbManager _usbManager;
+        private readonly UsbManager _usbManager;
+        private Receiver _bcReceiver;
         private InterfaceType _selectedInterface;
         private bool _activateRequest;
 
@@ -135,9 +142,16 @@ namespace BmwDiagnostics
             get { return _usbManager; }
         }
 
-        public ActivityCommon(Android.App.Activity activity)
+        public Receiver BcReceiver
+        {
+            get { return _bcReceiver; }
+        }
+
+        public ActivityCommon(Android.App.Activity activity, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null, BcReceiverReceivedDelegate bcReceiverReceivedHandler = null)
         {
             _activity = activity;
+            _bcReceiverUpdateDisplayHandler = bcReceiverUpdateDisplayHandler;
+            _bcReceiverReceivedHandler = bcReceiverReceivedHandler;
             _emulator = IsEmulator();
             SetStoragePath();
 
@@ -147,6 +161,48 @@ namespace BmwDiagnostics
             _usbManager = activity.GetSystemService(Context.UsbService) as UsbManager;
             _selectedInterface = InterfaceType.None;
             _activateRequest = false;
+
+            if ((_bcReceiverUpdateDisplayHandler != null) || (_bcReceiverReceivedHandler != null))
+            {
+                _bcReceiver = new Receiver(this);
+                activity.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
+                activity.RegisterReceiver(_bcReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
+                activity.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceAttached));
+                activity.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
+                activity.RegisterReceiver(_bcReceiver, new IntentFilter(ActionUsbPermission));
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            // This object will be cleaned up by the Dispose method.
+            // Therefore, you should call GC.SupressFinalize to
+            // take this object off the finalization queue
+            // and prevent finalization code for this object
+            // from executing a second time.
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            // Check to see if Dispose has already been called.
+            if (!_disposed)
+            {
+                // If disposing equals true, dispose all managed
+                // and unmanaged resources.
+                if (disposing)
+                {
+                    if (_activity != null && _bcReceiver != null)
+                    {
+                        _activity.UnregisterReceiver(_bcReceiver);
+                        _bcReceiver = null;
+                    }
+                }
+
+                // Note disposing has been done.
+                _disposed = true;
+            }
         }
 
         public string InterfaceName()
@@ -424,10 +480,28 @@ namespace BmwDiagnostics
             return true;
         }
 
+        public static bool IsValidUsbDevice(UsbDevice usbDevice)
+        {
+            if (usbDevice != null)
+            {
+                if (usbDevice.VendorId == 0x0403 && usbDevice.ProductId == 0x6001)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void RequestUsbPermission(UsbDevice usbDevice)
+        {
+            Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_activity, 0, new Intent(ActionUsbPermission), 0);
+            _usbManager.RequestPermission(usbDevice, intent);
+        }
+
         public void SetEdiabasInterface(EdiabasNet ediabas, string btDeviceAddress)
         {
-            // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
             object connectParameter = null;
+            // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
             if (ediabas.EdInterfaceClass is EdInterfaceObd)
             {
                 if (SelectedInterface == InterfaceType.Ftdi)
@@ -679,6 +753,73 @@ namespace BmwDiagnostics
             // 2.
             // Calculate total bytes of all files in a loop.
             return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
+        }
+
+        public class Receiver : BroadcastReceiver
+        {
+            readonly ActivityCommon _activityCommon;
+
+            public Receiver(ActivityCommon activityCommon)
+            {
+                _activityCommon = activityCommon;
+            }
+
+            public override void OnReceive(Context context, Intent intent)
+            {
+                string action = intent.Action;
+
+                if (_activityCommon._bcReceiverReceivedHandler != null)
+                {
+                    _activityCommon._bcReceiverReceivedHandler(context, intent);
+                }
+                switch (action)
+                {
+                    case BluetoothAdapter.ActionStateChanged:
+                    case ConnectivityManager.ConnectivityAction:
+                        if (_activityCommon._bcReceiverUpdateDisplayHandler != null)
+                        {
+                            _activityCommon._bcReceiverUpdateDisplayHandler();
+                        }
+                        break;
+
+                    case UsbManager.ActionUsbDeviceAttached:
+                        {
+                            UsbDevice usbDevice = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;
+                            if (IsValidUsbDevice(usbDevice))
+                            {
+                                _activityCommon.RequestUsbPermission(usbDevice);
+                                if (_activityCommon._bcReceiverUpdateDisplayHandler != null)
+                                {
+                                    _activityCommon._bcReceiverUpdateDisplayHandler();
+                                }
+                            }
+                            break;
+                        }
+
+                    case UsbManager.ActionUsbDeviceDetached:
+                        {
+                            UsbDevice usbDevice = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;
+                            if (IsValidUsbDevice(usbDevice))
+                            {
+                                if (_activityCommon._bcReceiverUpdateDisplayHandler != null)
+                                {
+                                    _activityCommon._bcReceiverUpdateDisplayHandler();
+                                }
+                            }
+                            break;
+                        }
+
+                    case ActionUsbPermission:
+                        if (intent.GetBooleanExtra(UsbManager.ExtraPermissionGranted, false))
+                        {
+                            if (_activityCommon._bcReceiverUpdateDisplayHandler != null)
+                            {
+                                _activityCommon._bcReceiverUpdateDisplayHandler();
+                            }
+                        }
+                        break;
+                }
+            }
         }
     }
 }

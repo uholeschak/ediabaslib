@@ -120,6 +120,7 @@ namespace BmwDiagnostics
                 _adapterTask.Wait();
             }
             EdiabasClose();
+            _activityCommon.Dispose();
         }
 
         public override void OnBackPressed()

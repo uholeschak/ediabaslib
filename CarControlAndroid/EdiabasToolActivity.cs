@@ -5,10 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Android.Bluetooth;
 using Android.Content;
 using Android.Content.Res;
-using Android.Net;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
@@ -162,7 +160,6 @@ namespace BmwDiagnostics
         private bool _traceActive;
         private bool _traceAppend;
         private bool _dataLogActive;
-        private Receiver _receiver;
         private readonly List<JobInfo> _jobList = new List<JobInfo>();
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -239,7 +236,11 @@ namespace BmwDiagnostics
             _listViewInfo.Adapter = _infoListAdapter;
             _listViewInfo.SetOnTouchListener(this);
 
-            _activityCommon = new ActivityCommon(this)
+            _activityCommon = new ActivityCommon(this, () =>
+            {
+                SupportInvalidateOptionsMenu();
+                UpdateDisplay();
+            })
             {
                 SelectedInterface = (ActivityCommon.InterfaceType)
                     Intent.GetIntExtra(ExtraInterface, (int) ActivityCommon.InterfaceType.None)
@@ -252,10 +253,6 @@ namespace BmwDiagnostics
 
             EdiabasClose();
             UpdateDisplay();
-
-            _receiver = new Receiver(this);
-            RegisterReceiver(_receiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
-            RegisterReceiver(_receiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
         }
 
         protected override void OnStart()
@@ -273,7 +270,6 @@ namespace BmwDiagnostics
         {
             base.OnDestroy();
 
-            UnregisterReceiver(_receiver);
             _runContinuous = false;
             _ediabasJobAbort = true;
             if (IsJobRunning())
@@ -281,6 +277,7 @@ namespace BmwDiagnostics
                 _jobTask.Wait();
             }
             EdiabasClose();
+            _activityCommon.Dispose();
         }
 
         public override void OnBackPressed()
@@ -1328,28 +1325,6 @@ namespace BmwDiagnostics
                 return true;
             }
             return false;
-        }
-
-        public class Receiver : BroadcastReceiver
-        {
-            readonly EdiabasToolActivity _activity;
-
-            public Receiver(EdiabasToolActivity activity)
-            {
-                _activity = activity;
-            }
-
-            public override void OnReceive(Context context, Intent intent)
-            {
-                string action = intent.Action;
-
-                if ((action == BluetoothAdapter.ActionStateChanged) ||
-                    (action == ConnectivityManager.ConnectivityAction))
-                {
-                    _activity.SupportInvalidateOptionsMenu();
-                    _activity.UpdateDisplay();
-                }
-            }
         }
 
         private class JobListAdapter : BaseAdapter<JobInfo>
