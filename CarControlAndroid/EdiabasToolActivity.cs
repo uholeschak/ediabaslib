@@ -160,6 +160,7 @@ namespace BmwDiagnostics
         private bool _traceActive;
         private bool _traceAppend;
         private bool _dataLogActive;
+        private bool _activityStarted;
         private readonly List<JobInfo> _jobList = new List<JobInfo>();
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -238,8 +239,11 @@ namespace BmwDiagnostics
 
             _activityCommon = new ActivityCommon(this, () =>
             {
-                SupportInvalidateOptionsMenu();
-                UpdateDisplay();
+                if (_activityStarted)
+                {
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                }
             })
             {
                 SelectedInterface = (ActivityCommon.InterfaceType)
@@ -259,11 +263,19 @@ namespace BmwDiagnostics
         {
             base.OnStart();
 
+            _activityStarted = true;
             if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None)
             {
                 SelectInterface();
             }
             SelectInterfaceEnable();
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+
+            _activityStarted = false;
         }
 
         protected override void OnDestroy()

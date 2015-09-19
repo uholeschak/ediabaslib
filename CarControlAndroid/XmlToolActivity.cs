@@ -144,6 +144,7 @@ namespace BmwDiagnostics
         private bool _addErrorsPage = true;
         private bool _traceActive;
         private bool _traceAppend;
+        private bool _activityStarted;
         private volatile bool _ediabasJobAbort;
         private bool _autoStart;
         private ActivityCommon _activityCommon;
@@ -202,8 +203,11 @@ namespace BmwDiagnostics
 
             _activityCommon = new ActivityCommon(this, () =>
             {
-                SupportInvalidateOptionsMenu();
-                UpdateDisplay();
+                if (_activityStarted)
+                {
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                }
             })
             {
                 SelectedInterface = (ActivityCommon.InterfaceType)
@@ -223,11 +227,19 @@ namespace BmwDiagnostics
         {
             base.OnStart();
 
+            _activityStarted = true;
             if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None)
             {
                 SelectInterface();
             }
             SelectInterfaceEnable();
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+
+            _activityStarted = false;
         }
 
         protected override void OnDestroy()

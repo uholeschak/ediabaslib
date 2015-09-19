@@ -486,8 +486,23 @@ namespace BmwDiagnostics
 
         public void RequestUsbPermission(UsbDevice usbDevice)
         {
-            Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_activity, 0, new Intent(ActionUsbPermission), 0);
-            _usbManager.RequestPermission(usbDevice, intent);
+            if (usbDevice == null)
+            {
+                List<IUsbSerialDriver> availableDrivers = EdFtdiInterface.GetDriverList(_usbManager);
+                if (availableDrivers.Count > 0)
+                {
+                    UsbDevice device = availableDrivers[0].Device;
+                    if (!_usbManager.HasPermission(device))
+                    {
+                        usbDevice = device;
+                    }
+                }
+            }
+            if (usbDevice != null)
+            {
+                Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_activity, 0, new Intent(ActionUsbPermission), 0);
+                _usbManager.RequestPermission(usbDevice, intent);
+            }
         }
 
         public void SetEdiabasInterface(EdiabasNet ediabas, string btDeviceAddress)
