@@ -1,3 +1,4 @@
+//#define APP_USB_FILTER
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,10 +10,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Android.Bluetooth;
 using Android.Content;
-using Android.Hardware.Usb;
-using Android.Net;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Support.V4.View;
@@ -24,7 +22,9 @@ using EdiabasLib;
 using Java.Interop;
 using Mono.CSharp;
 
+#if APP_USB_FILTER
 [assembly: Android.App.UsesFeature("android.hardware.usb.host")]
+#endif
 
 namespace BmwDiagnostics
 {
@@ -32,8 +32,10 @@ namespace BmwDiagnostics
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                 Android.Content.PM.ConfigChanges.Orientation |
                 Android.Content.PM.ConfigChanges.ScreenSize)]
+#if APP_USB_FILTER
     [Android.App.IntentFilter(new[] { UsbManager.ActionUsbDeviceAttached })]
     [Android.App.MetaData(UsbManager.ActionUsbDeviceAttached, Resource = "@xml/device_filter")]
+#endif
     public class ActivityMain : AppCompatActivity, ActionBar.ITabListener
     {
         private enum ActivityRequest
@@ -106,7 +108,6 @@ namespace BmwDiagnostics
         private ImageView _imageBackground;
         private WebClient _webClient;
         private Android.App.ProgressDialog _downloadProgress;
-        private Receiver _receiver;
 
         public void OnTabReselected(ActionBar.Tab tab, FragmentTransaction ft)
         {
@@ -145,7 +146,11 @@ namespace BmwDiagnostics
             SupportActionBar.SetIcon(Resource.Drawable.icon);
             SetContentView(Resource.Layout.main);
 
-            _activityCommon = new ActivityCommon(this);
+            _activityCommon = new ActivityCommon(this, () =>
+            {
+                SupportInvalidateOptionsMenu();
+                UpdateDisplay();
+            });
             _appDataPath = string.Empty;
             _ecuPath = string.Empty;
             _userEcuFiles = false;
@@ -186,10 +191,6 @@ namespace BmwDiagnostics
             _webClient = new WebClient();
             _webClient.DownloadProgressChanged += DownloadProgressChanged;
             _webClient.DownloadFileCompleted += DownloadCompleted;
-
-            _receiver = new Receiver(this);
-            RegisterReceiver(_receiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
-            RegisterReceiver(_receiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
         }
 
         void AddTabToActionBar(string label)
@@ -273,9 +274,9 @@ namespace BmwDiagnostics
         {
             base.OnDestroy();
 
-            UnregisterReceiver(_receiver);
             StopEdiabasThread(true);
             StoreSettings();
+            _activityCommon.Dispose();
             _updateHandler.Dispose();
             _webClient.Dispose();
         }
@@ -1236,6 +1237,7 @@ namespace BmwDiagnostics
                         xmlInfo.Add(new XAttribute("Name", Path.GetFileName(url)??string.Empty));
                         unzipInfo = new UnzipInfo(fileName, unzipTargetDir, xmlInfo);
                     }
+                    // ReSharper disable once RedundantNameQualifier
                     _webClient.DownloadFileAsync(new System.Uri(url), fileName, unzipInfo);
                 }
                 catch (Exception)
@@ -1575,28 +1577,6 @@ namespace BmwDiagnostics
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _deviceName);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _deviceAddress);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEdiabasTool);
-        }
-
-        public class Receiver : BroadcastReceiver
-        {
-            readonly ActivityMain _activity;
-
-            public Receiver(ActivityMain activity)
-            {
-                _activity = activity;
-            }
-
-            public override void OnReceive(Context context, Intent intent)
-            {
-                string action = intent.Action;
-
-                if ((action == BluetoothAdapter.ActionStateChanged) ||
-                    (action == ConnectivityManager.ConnectivityAction))
-                {
-                    _activity.SupportInvalidateOptionsMenu();
-                    _activity.UpdateDisplay();
-                }
-            }
         }
 
         public class TabContentFragment : Fragment
