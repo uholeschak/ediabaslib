@@ -73,7 +73,7 @@
   <string name="select_interface">Select interface</string>
   <string name="select_interface_bt">Bluetooth</string>
   <string name="select_interface_enet">ENET</string>
-  <string name="select_interface_ftdi">FTDI USB</string>
+  <string name="select_interface_ftdi">USB (FTDI)</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas tool</string>
