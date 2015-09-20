@@ -2223,20 +2223,20 @@ namespace BmwDiagnostics
 			// aapt resource value: 0x7f06003a
 			public const int button_active = 2131099706;
 			
-			// aapt resource value: 0x7f060088
-			public const int button_can_adapter_can_100 = 2131099784;
-			
-			// aapt resource value: 0x7f060087
-			public const int button_can_adapter_can_500 = 2131099783;
-			
 			// aapt resource value: 0x7f060089
-			public const int button_can_adapter_can_off = 2131099785;
+			public const int button_can_adapter_can_100 = 2131099785;
 			
-			// aapt resource value: 0x7f060085
-			public const int button_can_adapter_read = 2131099781;
+			// aapt resource value: 0x7f060088
+			public const int button_can_adapter_can_500 = 2131099784;
+			
+			// aapt resource value: 0x7f06008a
+			public const int button_can_adapter_can_off = 2131099786;
 			
 			// aapt resource value: 0x7f060086
-			public const int button_can_adapter_write = 2131099782;
+			public const int button_can_adapter_read = 2131099782;
+			
+			// aapt resource value: 0x7f060087
+			public const int button_can_adapter_write = 2131099783;
 			
 			// aapt resource value: 0x7f060014
 			public const int button_connected = 2131099668;
@@ -2277,11 +2277,14 @@ namespace BmwDiagnostics
 			// aapt resource value: 0x7f060081
 			public const int can_adapter_comm_error = 2131099777;
 			
-			// aapt resource value: 0x7f060083
-			public const int can_adapter_ignition_off = 2131099779;
-			
 			// aapt resource value: 0x7f060082
-			public const int can_adapter_ignition_on = 2131099778;
+			public const int can_adapter_comm_error_std = 2131099778;
+			
+			// aapt resource value: 0x7f060084
+			public const int can_adapter_ignition_off = 2131099780;
+			
+			// aapt resource value: 0x7f060083
+			public const int can_adapter_ignition_on = 2131099779;
 			
 			// aapt resource value: 0x7f060080
 			public const int can_adapter_ignition_state = 2131099776;
@@ -2292,8 +2295,8 @@ namespace BmwDiagnostics
 			// aapt resource value: 0x7f06007e
 			public const int can_adapter_sep_time = 2131099774;
 			
-			// aapt resource value: 0x7f060084
-			public const int can_adapter_text_off = 2131099780;
+			// aapt resource value: 0x7f060085
+			public const int can_adapter_text_off = 2131099781;
 			
 			// aapt resource value: 0x7f06007c
 			public const int can_adapter_title = 2131099772;
