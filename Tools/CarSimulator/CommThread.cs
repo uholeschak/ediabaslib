@@ -2455,6 +2455,7 @@ namespace CarSimulator
                 Debug.WriteLine("Tester present");
                 standardResponse = true;
             }
+#if false
             else if (
                 _receiveData[0] == 0x81 &&
                 _receiveData[1] == 0x00 &&
@@ -2470,7 +2471,7 @@ namespace CarSimulator
                 Debug.WriteLine("Program CAN adapter");
                 standardResponse = true;
             }
-
+#endif
             bool useResponseList = false;
             if (standardResponse)
             {

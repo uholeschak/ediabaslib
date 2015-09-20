@@ -17,16 +17,20 @@ namespace BmwDiagnostics
     {
         // Intent extra
         public const string ExtraDeviceAddress = "device_address";
+        public const string ExtraInterfaceType = "interface_type";
 
         private View _barView;
         private Button _buttonRead;
         private Button _buttonWrite;
         private Spinner _spinnerCanAdapterMode;
         private StringAdapter _spinnerCanAdapterModeAdapter;
+        private TextView _textViewCanAdapterSepTimeTitle;
         private Spinner _spinnerCanAdapterSepTime;
         private StringAdapter _spinnerCanAdapterSepTimeAdapter;
+        private TextView _textViewCanAdapterBlockSizeTitle;
         private Spinner _spinnerCanAdapterBlockSize;
         private StringAdapter _spinnerCanAdapterBlockSizeAdapter;
+        private TextView _textViewCanAdapterIgnitionStateTitle;
         private TextView _textViewIgnitionState;
         private string _deviceAddress = string.Empty;
         private int _blockSize = -1;
@@ -58,11 +62,17 @@ namespace BmwDiagnostics
 
             SetResult(Android.App.Result.Canceled);
 
+            _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
+            ActivityCommon.InterfaceType interfaceType = (ActivityCommon.InterfaceType) Intent.GetIntExtra(ExtraInterfaceType,
+                (int) ActivityCommon.InterfaceType.Bluetooth);
+            ViewStates visibility = interfaceType == ActivityCommon.InterfaceType.Bluetooth ? ViewStates.Visible : ViewStates.Gone;
+
             _buttonRead = _barView.FindViewById<Button>(Resource.Id.buttonAdapterRead);
             _buttonRead.Click += (sender, args) =>
             {
                 PerformRead();
             };
+            _buttonRead.Visibility = visibility;
 
             _buttonWrite = _barView.FindViewById<Button>(Resource.Id.buttonAdapterWrite);
             _buttonWrite.Click += (sender, args) =>
@@ -78,6 +88,9 @@ namespace BmwDiagnostics
             _spinnerCanAdapterModeAdapter.Items.Add(GetString(Resource.String.button_can_adapter_can_off));
             _spinnerCanAdapterModeAdapter.NotifyDataSetChanged();
 
+            _textViewCanAdapterSepTimeTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterSepTimeTitle);
+            _textViewCanAdapterSepTimeTitle.Visibility = visibility;
+
             _spinnerCanAdapterSepTime = FindViewById<Spinner>(Resource.Id.spinnerCanAdapterSepTime);
             _spinnerCanAdapterSepTimeAdapter = new StringAdapter(this);
             _spinnerCanAdapterSepTime.Adapter = _spinnerCanAdapterSepTimeAdapter;
@@ -87,6 +100,10 @@ namespace BmwDiagnostics
                 _spinnerCanAdapterSepTimeAdapter.Items.Add(i.ToString());
             }
             _spinnerCanAdapterSepTimeAdapter.NotifyDataSetChanged();
+            _spinnerCanAdapterSepTime.Visibility = visibility;
+
+            _textViewCanAdapterBlockSizeTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterBlockSizeTitle);
+            _textViewCanAdapterBlockSizeTitle.Visibility = visibility;
 
             _spinnerCanAdapterBlockSize = FindViewById<Spinner>(Resource.Id.spinnerCanAdapterBlockSize);
             _spinnerCanAdapterBlockSizeAdapter = new StringAdapter(this);
@@ -97,15 +114,18 @@ namespace BmwDiagnostics
                 _spinnerCanAdapterBlockSizeAdapter.Items.Add(i.ToString());
             }
             _spinnerCanAdapterBlockSizeAdapter.NotifyDataSetChanged();
+            _spinnerCanAdapterBlockSize.Visibility = visibility;
+
+            _textViewCanAdapterIgnitionStateTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterIgnitionStateTitle);
+            _textViewCanAdapterIgnitionStateTitle.Visibility = visibility;
 
             _textViewIgnitionState = FindViewById<TextView>(Resource.Id.textViewCanAdapterIgnitionState);
+            _textViewIgnitionState.Visibility = visibility;
 
             _activityCommon = new ActivityCommon(this)
             {
-                SelectedInterface = ActivityCommon.InterfaceType.Bluetooth
+                SelectedInterface = interfaceType
             };
-
-            _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
 
             UpdateDisplay();
             PerformRead(true);
@@ -215,13 +235,16 @@ namespace BmwDiagnostics
             _spinnerCanAdapterBlockSize.Enabled = bEnabled;
             if (bEnabled)
             {
-                if ((_canMode < 0) || (_canMode >= _spinnerCanAdapterModeAdapter.Items.Count))
+                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
                 {
-                    _spinnerCanAdapterMode.SetSelection(0);
-                }
-                else
-                {
-                    _spinnerCanAdapterMode.SetSelection(_canMode);
+                    if ((_canMode < 0) || (_canMode >= _spinnerCanAdapterModeAdapter.Items.Count))
+                    {
+                        _spinnerCanAdapterMode.SetSelection(0);
+                    }
+                    else
+                    {
+                        _spinnerCanAdapterMode.SetSelection(_canMode);
+                    }
                 }
 
                 if ((_separationTime < 0) || (_separationTime >= _spinnerCanAdapterSepTimeAdapter.Items.Count))
@@ -256,6 +279,11 @@ namespace BmwDiagnostics
 
         private void PerformRead(bool wait = false)
         {
+            if (_activityCommon.SelectedInterface != ActivityCommon.InterfaceType.Bluetooth)
+            {
+                UpdateDisplay();
+                return;
+            }
             EdiabasInit();
             _adapterTask = Task.Factory.StartNew(() =>
             {
@@ -384,28 +412,42 @@ namespace BmwDiagnostics
                 try
                 {
                     commFailed = !InterfacePrepare();
-                    // block size
-                    if (!commFailed)
+                    if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
                     {
-                        if (AdapterCommand(0x00, (byte)blockSize) < 0)
+                        // block size
+                        if (!commFailed)
                         {
-                            commFailed = true;
+                            if (AdapterCommand(0x00, (byte)blockSize) < 0)
+                            {
+                                commFailed = true;
+                            }
+                        }
+                        // separation time
+                        if (!commFailed)
+                        {
+                            if (AdapterCommand(0x01, (byte)separationTime) < 0)
+                            {
+                                commFailed = true;
+                            }
+                        }
+                        // CAN mode
+                        if (!commFailed)
+                        {
+                            if (AdapterCommand(0x02, mode) < 0)
+                            {
+                                commFailed = true;
+                            }
                         }
                     }
-                    // separation time
-                    if (!commFailed)
+                    else
                     {
-                        if (AdapterCommand(0x01, (byte)separationTime) < 0)
+                        // CAN mode
+                        if (!commFailed)
                         {
-                            commFailed = true;
-                        }
-                    }
-                    // CAN mode
-                    if (!commFailed)
-                    {
-                        if (AdapterCommand(0x02, mode) < 0)
-                        {
-                            commFailed = true;
+                            if (!AdapterCommandStd(mode))
+                            {
+                                commFailed = true;
+                            }
                         }
                     }
                 }
@@ -422,7 +464,9 @@ namespace BmwDiagnostics
                     }
                     if (commFailed)
                     {
-                        _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_comm_error));
+                        _activityCommon.ShowAlert(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth
+                            ? GetString(Resource.String.can_adapter_comm_error)
+                            : GetString(Resource.String.can_adapter_comm_error_std));
                         EdiabasClose();
                     }
                     else
@@ -446,6 +490,20 @@ namespace BmwDiagnostics
                 return -1;
             }
             return response[4];
+        }
+
+        private bool AdapterCommandStd(byte command)
+        {
+            byte[] response;
+            if (!_ediabas.EdInterfaceClass.TransmitData(new byte[] { 0x81, 0x00, 0x00, command }, out response))
+            {
+                return false;
+            }
+            if ((response.Length != 5) || (response[3] != (byte)(~command)))
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

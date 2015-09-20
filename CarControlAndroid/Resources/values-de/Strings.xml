@@ -32,9 +32,9 @@
   <string name="compile_ok_btn">OK</string>
 
   <!-- Download -->
-  <string name="downloading_file">Datei herunterladen</string>
+  <string name="downloading_file">Dateien herunterladen</string>
   <string name="download_failed">Herunterladen fehlgeschlagen</string>
-  <string name="extract_file">Datei entpacken</string>
+  <string name="extract_file">Dateien entpacken</string>
   <string name="extract_failed">Entpacken fehlgeschlagen</string>
 
   <!--  DeviceListActivity -->
@@ -137,6 +137,7 @@
   <string name="can_adapter_block_size">Blockgröße</string>
   <string name="can_adapter_ignition_state">Zündung</string>
   <string name="can_adapter_comm_error">Es ist ein Kommunikationsfehler aufgetreten</string>
+  <string name="can_adapter_comm_error_std">Es ist ein Kommunikationsfehler aufgetreten.\nDie Adapterkonfiguration ist nur möglich,\nwenn die Adapter LED nach dem Einschalten aktiv ist.</string>
   <string name="can_adapter_ignition_on">Zündung an</string>
   <string name="can_adapter_ignition_off">Zündung aus</string>
   <string name="can_adapter_text_off">0: Aus</string>

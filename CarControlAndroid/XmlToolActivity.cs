@@ -340,7 +340,7 @@ namespace BmwDiagnostics
             if (canAdapterMenu != null)
             {
                 canAdapterMenu.SetEnabled(interfaceAvailable && !commActive);
-                canAdapterMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
+                canAdapterMenu.SetVisible((_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth) || (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Ftdi));
             }
 
             IMenuItem addErrorsMenu = menu.FindItem(Resource.Id.menu_xml_tool_add_errors_page);
@@ -615,6 +615,7 @@ namespace BmwDiagnostics
             EdiabasClose();
             Intent serverIntent = new Intent(this, typeof(CanAdapterActivity));
             serverIntent.PutExtra(CanAdapterActivity.ExtraDeviceAddress, _deviceAddress);
+            serverIntent.PutExtra(CanAdapterActivity.ExtraInterfaceType, (int)_activityCommon.SelectedInterface);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestCanAdapterConfig);
         }
 
