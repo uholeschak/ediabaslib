@@ -21,7 +21,8 @@
           app:showAsAction="always" />
     <item android:id="@+id/action_menu"
           android:icon="@android:drawable/ic_menu_preferences"
-          app:showAsAction="ifRoom">
+          android:title="@string/menu_settings"
+          app:showAsAction="always">
         <menu>
           <item android:id="@+id/menu_scan"
                 android:icon="@android:drawable/ic_menu_search"
