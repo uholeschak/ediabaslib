@@ -31,9 +31,11 @@ using Hoho.Android.UsbSerial.Driver;
 namespace BmwDiagnostics
 {
     [Android.App.Activity(Label = "@string/app_name", MainLauncher = true,
+            UiOptions=Android.Content.PM.UiOptions.SplitActionBarWhenNarrow,
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                 Android.Content.PM.ConfigChanges.Orientation |
                 Android.Content.PM.ConfigChanges.ScreenSize)]
+    [Android.App.MetaData("android.support.UI_OPTIONS", Value = "splitActionBarWhenNarrow")]
 #if APP_USB_FILTER
     [Android.App.IntentFilter(new[] { UsbManager.ActionUsbDeviceAttached })]
     [Android.App.MetaData(UsbManager.ActionUsbDeviceAttached, Resource = "@xml/device_filter")]
