@@ -167,9 +167,10 @@ namespace BmwDiagnostics
                 _bcReceiver = new Receiver(this);
                 activity.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
                 activity.RegisterReceiver(_bcReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
-                activity.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceAttached));
-                activity.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
-                activity.RegisterReceiver(_bcReceiver, new IntentFilter(ActionUsbPermission));
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.HoneycombMr1)
+                {   // usb handling
+                    activity.RegisterReceiver(_bcReceiver, new IntentFilter(ActionUsbPermission));
+                }
             }
         }
 
@@ -492,6 +493,10 @@ namespace BmwDiagnostics
 
         public void RequestUsbPermission(UsbDevice usbDevice)
         {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.HoneycombMr1)
+            {
+                return;
+            }
             if (usbDevice == null)
             {
                 List<IUsbSerialDriver> availableDrivers = EdFtdiInterface.GetDriverList(_usbManager);
@@ -794,33 +799,6 @@ namespace BmwDiagnostics
                             _activityCommon._bcReceiverUpdateDisplayHandler();
                         }
                         break;
-
-                    case UsbManager.ActionUsbDeviceAttached:
-                        {
-                            UsbDevice usbDevice = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;
-                            if (EdFtdiInterface.IsValidUsbDevice(usbDevice))
-                            {
-                                _activityCommon.RequestUsbPermission(usbDevice);
-                                if (_activityCommon._bcReceiverUpdateDisplayHandler != null)
-                                {
-                                    _activityCommon._bcReceiverUpdateDisplayHandler();
-                                }
-                            }
-                            break;
-                        }
-
-                    case UsbManager.ActionUsbDeviceDetached:
-                        {
-                            UsbDevice usbDevice = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;
-                            if (EdFtdiInterface.IsValidUsbDevice(usbDevice))
-                            {
-                                if (_activityCommon._bcReceiverUpdateDisplayHandler != null)
-                                {
-                                    _activityCommon._bcReceiverUpdateDisplayHandler();
-                                }
-                            }
-                            break;
-                        }
 
                     case ActionUsbPermission:
                         if (intent.GetBooleanExtra(UsbManager.ExtraPermissionGranted, false))

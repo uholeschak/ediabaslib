@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Android.Content;
+using Android.Hardware.Usb;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Support.V4.View;
@@ -21,6 +22,7 @@ using BmwDiagnostics.FilePicker;
 using EdiabasLib;
 using Java.Interop;
 using Mono.CSharp;
+using Hoho.Android.UsbSerial.Driver;
 
 #if APP_USB_FILTER
 [assembly: Android.App.UsesFeature("android.hardware.usb.host")]
@@ -104,6 +106,8 @@ namespace BmwDiagnostics
         private bool _createTabsPending;
         private bool _autoStart;
         private ActivityCommon _activityCommon;
+        private Timer _usbCheckTimer;
+        private int _usbDeviceDetectCount;
         private JobReader _jobReader;
         private Handler _updateHandler;
         private EdiabasThread _ediabasThread;
@@ -160,7 +164,17 @@ namespace BmwDiagnostics
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
                 }
-            });
+            }, BroadcastReceived);
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.HoneycombMr1)
+            {   // usb handling
+                RegisterReceiver(_activityCommon.BcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
+                RegisterReceiver(_activityCommon.BcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceAttached));
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
+                {   // attached event fails
+                    _usbCheckTimer = new Timer(UsbCheckEvent, null, 2000, 2000);
+                }
+            }
+
             _appDataPath = string.Empty;
             _ecuPath = string.Empty;
             _userEcuFiles = false;
@@ -288,6 +302,11 @@ namespace BmwDiagnostics
 
             StopEdiabasThread(true);
             StoreSettings();
+            if (_usbCheckTimer != null)
+            {
+                _usbCheckTimer.Dispose();
+                _usbCheckTimer = null;
+            }
             _activityCommon.Dispose();
             _updateHandler.Dispose();
             _webClient.Dispose();
@@ -660,6 +679,55 @@ namespace BmwDiagnostics
             {
                 // ignored
             }
+        }
+
+        private void BroadcastReceived(Context context, Intent intent)
+        {
+            string action = intent.Action;
+            switch (action)
+            {
+                case UsbManager.ActionUsbDeviceAttached:
+                    {
+                        UsbDevice usbDevice = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;
+                        if (EdFtdiInterface.IsValidUsbDevice(usbDevice))
+                        {
+                            _activityCommon.RequestUsbPermission(usbDevice);
+                            SupportInvalidateOptionsMenu();
+                            UpdateDisplay();
+                        }
+                        break;
+                    }
+
+                case UsbManager.ActionUsbDeviceDetached:
+                    {
+                        UsbDevice usbDevice = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;
+                        if (EdFtdiInterface.IsValidUsbDevice(usbDevice))
+                        {
+                            SupportInvalidateOptionsMenu();
+                            UpdateDisplay();
+                        }
+                        break;
+                    }
+            }
+        }
+
+        private void UsbCheckEvent(Object state)
+        {
+            if (_usbCheckTimer == null)
+            {
+                return;
+            }
+            RunOnUiThread(() =>
+            {
+                List<IUsbSerialDriver> availableDrivers = EdFtdiInterface.GetDriverList(_activityCommon.UsbManager);
+                if (availableDrivers.Count > _usbDeviceDetectCount)
+                {   // device attached
+                    _activityCommon.RequestUsbPermission(null);
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                }
+                _usbDeviceDetectCount = availableDrivers.Count;
+            });
         }
 
         private void DataUpdated(object sender, EventArgs e)
