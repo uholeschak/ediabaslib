@@ -1179,7 +1179,7 @@ namespace BmwDiagnostics
             progress.SetMessage(GetString(Resource.String.compile_start));
             progress.Show();
 
-            Task.Factory.StartNew(() =>
+            Thread compileThread = new Thread(() =>
             {
                 List<Task<string>> taskList = new List<Task<string>>();
                 foreach (JobReader.PageInfo pageInfo in _jobReader.PageList)
@@ -1279,6 +1279,7 @@ namespace BmwDiagnostics
                     progress.Dispose();
                 });
             });
+            compileThread.Start();
         }
 
         private void DownloadFile(string url, string fileName, string unzipTargetDir = null)
@@ -1308,7 +1309,7 @@ namespace BmwDiagnostics
             _downloadProgress.CancelEvent += DownloadProgressCancel;
             _downloadProgress.Show();
 
-            Task.Factory.StartNew(() =>
+            Thread downloadThread = new Thread(() =>
             {
                 try
                 {
@@ -1334,6 +1335,7 @@ namespace BmwDiagnostics
                     });
                 }
             });
+            downloadThread.Start();
         }
 
         private void DownloadCompleted(object sender, AsyncCompletedEventArgs e)
@@ -1420,7 +1422,7 @@ namespace BmwDiagnostics
             _downloadProgress.CancelEvent += (sender, args) => extractCanceled = true;
             _downloadProgress.Show();
 
-            Task.Factory.StartNew(() =>
+            Thread extractThread = new Thread(() =>
             {
                 bool extractFailed = false;
                 try
@@ -1458,6 +1460,7 @@ namespace BmwDiagnostics
                     }
                 });
             });
+            extractThread.Start();
         }
 
         private void DownloadEcuFiles()
