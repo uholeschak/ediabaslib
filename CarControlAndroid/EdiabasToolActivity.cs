@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using Android.Content;
 using Android.Content.Res;
 using Android.OS;
@@ -151,7 +151,7 @@ namespace BmwDiagnostics
         private EdiabasNet _ediabas;
         private StreamWriter _swDataLog;
         private string _dataLogDir;
-        private Task _jobTask;
+        private Thread _jobThread;
         private volatile bool _runContinuous;
         private volatile bool _ediabasJobAbort;
         private string _sgbdFileName = string.Empty;
@@ -286,7 +286,7 @@ namespace BmwDiagnostics
             _ediabasJobAbort = true;
             if (IsJobRunning())
             {
-                _jobTask.Wait();
+                _jobThread.Join();
             }
             EdiabasClose();
             _activityCommon.Dispose();
@@ -571,16 +571,15 @@ namespace BmwDiagnostics
 
         private bool IsJobRunning()
         {
-            if (_jobTask == null)
+            if (_jobThread == null)
             {
                 return false;
             }
-            if (!_jobTask.IsCompleted)
+            if (_jobThread.IsAlive)
             {
                 return true;
             }
-            _jobTask.Dispose();
-            _jobTask = null;
+            _jobThread = null;
             _runContinuous = false;
             return false;
         }
@@ -871,7 +870,7 @@ namespace BmwDiagnostics
             progress.Show();
 
             _ediabasJobAbort = false;
-            Task.Factory.StartNew(() =>
+            _jobThread = new Thread(() =>
             {
                 List<string> messageList = new List<string>();
                 try
@@ -1075,6 +1074,7 @@ namespace BmwDiagnostics
                     UpdateDisplay();
                 });
             });
+            _jobThread.Start();
         }
 
         private void ExecuteSelectedJob(bool continuous)
@@ -1112,7 +1112,7 @@ namespace BmwDiagnostics
             string jobResults = stringBuilderResults.ToString();
             _runContinuous = continuous;
 
-            _jobTask = Task.Factory.StartNew(() =>
+            _jobThread = new Thread(() =>
             {
                 for (; ; )
                 {
@@ -1224,12 +1224,13 @@ namespace BmwDiagnostics
                 {
                     if (IsJobRunning())
                     {
-                        _jobTask.Wait();
+                        _jobThread.Join();
                     }
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
                 });
             });
+            _jobThread.Start();
             SupportInvalidateOptionsMenu();
             UpdateDisplay();
         }
