@@ -8,7 +8,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using Android.Content;
 using Android.Hardware.Usb;
@@ -1179,30 +1178,18 @@ namespace BmwDiagnostics
             progress.SetMessage(GetString(Resource.String.compile_start));
             progress.Show();
 
-            Thread compileThread = new Thread(() =>
+            Thread compileThreadWrapper = new Thread(() =>
             {
-                List<Task<string>> taskList = new List<Task<string>>();
+                List<string> compileResultList = new List<string>();
+                List<Thread> threadList = new List<Thread>();
                 foreach (JobReader.PageInfo pageInfo in _jobReader.PageList)
                 {
                     if (pageInfo.ClassCode == null) continue;
                     // limit number of active tasks
                     for (; ; )
                     {
-                        int activeTasks = 0;
-                        foreach (Task<string> task in taskList)
-                        {
-                            switch (task.Status)
-                            {
-                                case TaskStatus.RanToCompletion:
-                                case TaskStatus.Faulted:
-                                    break;
-
-                                default:
-                                    activeTasks++;
-                                    break;
-                            }
-                        }
-                        if (activeTasks < 4)
+                        int activeThreads = threadList.Count(thread => thread.IsAlive);
+                        if (activeThreads < 4)
                         {
                             break;
                         }
@@ -1210,7 +1197,7 @@ namespace BmwDiagnostics
                     }
 
                     JobReader.PageInfo infoLocal = pageInfo;
-                    Task<string> compileTask = Task<string>.Factory.StartNew(() =>
+                    Thread compileThread = new Thread(() =>
                     {
                         string result = string.Empty;
                         StringWriter reportWriter = new StringWriter();
@@ -1256,20 +1243,27 @@ namespace BmwDiagnostics
                             result = reportWriter.ToString();
                         }
 
-                        return result;
+                        if (!string.IsNullOrEmpty(result))
+                        {
+                            lock (compileResultList)
+                            {
+                                compileResultList.Add(result);
+                            }
+                        }
                     });
-                    taskList.Add(compileTask);
+                    compileThread.Start();
+                    threadList.Add(compileThread);
                 }
-                // ReSharper disable once CoVariantArrayConversion
-                Task.WaitAll(taskList.ToArray());
 
-                foreach (Task<string> task in taskList)
+                foreach (Thread compileThread in threadList)
                 {
-                    string result = task.Result;
-                    if (!string.IsNullOrEmpty(result))
-                    {
-                        RunOnUiThread(() => _activityCommon.ShowAlert(result));
-                    }
+                    compileThread.Join();
+                }
+
+                foreach (string compileResult in compileResultList)
+                {
+                    string result = compileResult;
+                    RunOnUiThread(() => _activityCommon.ShowAlert(result));
                 }
 
                 RunOnUiThread(() =>
@@ -1279,7 +1273,7 @@ namespace BmwDiagnostics
                     progress.Dispose();
                 });
             });
-            compileThread.Start();
+            compileThreadWrapper.Start();
         }
 
         private void DownloadFile(string url, string fileName, string unzipTargetDir = null)
