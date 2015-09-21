@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
@@ -39,7 +38,7 @@ namespace BmwDiagnostics
         private int _ignitionState = -1;
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
-        private Task _adapterTask;
+        private Thread _adapterThread;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -137,7 +136,7 @@ namespace BmwDiagnostics
 
             if (IsJobRunning())
             {
-                _adapterTask.Wait();
+                _adapterThread.Join();
             }
             EdiabasClose();
             _activityCommon.Dispose();
@@ -212,16 +211,15 @@ namespace BmwDiagnostics
 
         private bool IsJobRunning()
         {
-            if (_adapterTask == null)
+            if (_adapterThread == null)
             {
                 return false;
             }
-            if (!_adapterTask.IsCompleted)
+            if (_adapterThread.IsAlive)
             {
                 return true;
             }
-            _adapterTask.Dispose();
-            _adapterTask = null;
+            _adapterThread = null;
             return false;
         }
 
@@ -285,7 +283,7 @@ namespace BmwDiagnostics
                 return;
             }
             EdiabasInit();
-            _adapterTask = Task.Factory.StartNew(() =>
+            _adapterThread = new Thread(() =>
             {
                 bool commFailed;
                 try
@@ -366,7 +364,7 @@ namespace BmwDiagnostics
                 {
                     if (IsJobRunning())
                     {
-                        _adapterTask.Wait();
+                        _adapterThread.Join();
                     }
                     UpdateDisplay();
                     if (commFailed)
@@ -376,6 +374,7 @@ namespace BmwDiagnostics
                     }
                 });
             });
+            _adapterThread.Start();
             UpdateDisplay();
         }
 
@@ -406,7 +405,7 @@ namespace BmwDiagnostics
                     break;
             }
 
-            _adapterTask = Task.Factory.StartNew(() =>
+            _adapterThread = new Thread(() =>
             {
                 bool commFailed;
                 try
@@ -460,7 +459,7 @@ namespace BmwDiagnostics
                 {
                     if (IsJobRunning())
                     {
-                        _adapterTask.Wait();
+                        _adapterThread.Join();
                     }
                     if (commFailed)
                     {
@@ -475,6 +474,7 @@ namespace BmwDiagnostics
                     }
                 });
             });
+            _adapterThread.Start();
             UpdateDisplay();
         }
 
