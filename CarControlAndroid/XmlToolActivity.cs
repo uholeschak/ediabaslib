@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Xml.Linq;
 using Android.Content;
 using Android.OS;
@@ -149,7 +149,7 @@ namespace BmwDiagnostics
         private bool _autoStart;
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
-        private Task _jobTask;
+        private Thread _jobThread;
         private string _vin = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
 
@@ -249,7 +249,7 @@ namespace BmwDiagnostics
             _ediabasJobAbort = true;
             if (IsJobRunning())
             {
-                _jobTask.Wait();
+                _jobThread.Join();
             }
             EdiabasClose();
             _activityCommon.Dispose();
@@ -470,16 +470,15 @@ namespace BmwDiagnostics
 
         private bool IsJobRunning()
         {
-            if (_jobTask == null)
+            if (_jobThread == null)
             {
                 return false;
             }
-            if (!_jobTask.IsCompleted)
+            if (_jobThread.IsAlive)
             {
                 return true;
             }
-            _jobTask.Dispose();
-            _jobTask = null;
+            _jobThread = null;
             return false;
         }
 
@@ -673,7 +672,7 @@ namespace BmwDiagnostics
             progress.Show();
 
             _ediabasJobAbort = false;
-            _jobTask = Task.Factory.StartNew(() =>
+            _jobThread = new Thread(() =>
             {
                 int invalidEcuCount = 0;
                 bool noResponse = false;
@@ -867,6 +866,7 @@ namespace BmwDiagnostics
                     }
                 });
             });
+            _jobThread.Start();
         }
 
         private void ExecuteJobsRead(EcuInfo ecuInfo)
@@ -890,7 +890,7 @@ namespace BmwDiagnostics
 
             bool readFailed = false;
             _ediabasJobAbort = false;
-            _jobTask = Task.Factory.StartNew(() =>
+            _jobThread = new Thread(() =>
             {
                 try
                 {
@@ -1084,6 +1084,7 @@ namespace BmwDiagnostics
                     }
                 });
             });
+            _jobThread.Start();
         }
 
         private void EcuCheckChanged(EcuInfo ecuInfo)
