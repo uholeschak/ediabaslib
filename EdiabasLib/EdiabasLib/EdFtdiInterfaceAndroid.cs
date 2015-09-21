@@ -27,7 +27,7 @@ namespace EdiabasLib
 
         public const string PortId = "FTDI";
         private const int WriteTimeout = 500;
-        private const int MinReadTimeout = 1000;
+        private const int ReadTimeoutOffset = 1000;
         private const int UsbBlockSize = 0x4000;
         private const int LatencyTime = 50;     // large value required to prevent data loss
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
@@ -419,14 +419,8 @@ namespace EdiabasLib
             {
                 return true;
             }
-            if (timeout < MinReadTimeout)
-            {
-                timeout = MinReadTimeout;
-            }
-            if (timeoutTelEnd < MinReadTimeout)
-            {
-                timeoutTelEnd = MinReadTimeout;
-            }
+            timeout += ReadTimeoutOffset;
+            timeoutTelEnd += ReadTimeoutOffset;
 
             try
             {
