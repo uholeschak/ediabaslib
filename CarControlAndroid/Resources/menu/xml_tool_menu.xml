@@ -19,14 +19,9 @@
             android:icon="@android:drawable/ic_menu_manage"
             android:title="@string/menu_xml_tool_add_errors_page"
             android:checkable="true" />
-      <item android:id="@+id/menu_enable_trace"
+      <item android:id="@+id/menu_submenu_log"
             android:icon="@android:drawable/ic_menu_save"
-            android:title="@string/menu_enable_trace"
-            android:checkable="true" />
-      <item android:id="@+id/menu_append_trace"
-            android:icon="@android:drawable/ic_menu_save"
-            android:title="@string/menu_append_trace"
-            android:checkable="true" />
+            android:title="@string/menu_submenu_log" />
     </menu>
   </item>
 </menu>
