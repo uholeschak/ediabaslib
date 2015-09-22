@@ -152,6 +152,7 @@
     <EmbeddedResource Include="Xml\BmwDiagnostics.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="Xml\E61\E61Ftdi.cccfg" />
     <None Include="Xml\E90\E90Bt.cccfg">
       <SubType>Designer</SubType>
     </None>
@@ -159,6 +160,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Xml\E90\E90.ccpages" />
+    <None Include="Xml\E90\E90Ftdi.cccfg" />
     <None Include="Xml\E90\Errors.ccpage" />
     <None Include="Xml\E90\Motor.ccpage">
       <SubType>Designer</SubType>
