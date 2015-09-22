@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using Android.Content;
 using Android.OS;
 using Android.Support.V7.App;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using BmwDiagnostics.FilePicker;
@@ -350,18 +351,10 @@ namespace BmwDiagnostics
                 addErrorsMenu.SetChecked(_addErrorsPage);
             }
 
-            IMenuItem enableTraceMenu = menu.FindItem(Resource.Id.menu_enable_trace);
-            if (enableTraceMenu != null)
+            IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
+            if (logSubMenu != null)
             {
-                enableTraceMenu.SetEnabled(interfaceAvailable && !commActive);
-                enableTraceMenu.SetChecked(_traceActive);
-            }
-
-            IMenuItem appendTraceMenu = menu.FindItem(Resource.Id.menu_append_trace);
-            if (appendTraceMenu != null)
-            {
-                appendTraceMenu.SetEnabled(interfaceAvailable && !commActive);
-                appendTraceMenu.SetChecked(_traceAppend);
+                logSubMenu.SetEnabled(interfaceAvailable && !commActive);
             }
 
             return base.OnPrepareOptionsMenu(menu);
@@ -428,24 +421,12 @@ namespace BmwDiagnostics
                     UpdateDisplay();
                     return true;
 
-                case Resource.Id.menu_enable_trace:
+                case Resource.Id.menu_submenu_log:
                     if (IsJobRunning())
                     {
                         return true;
                     }
-                    _traceActive = !_traceActive;
-                    UpdateLogInfo();
-                    SupportInvalidateOptionsMenu();
-                    return true;
-
-                case Resource.Id.menu_append_trace:
-                    if (IsJobRunning())
-                    {
-                        return true;
-                    }
-                    _traceAppend = !_traceAppend;
-                    UpdateLogInfo();
-                    SupportInvalidateOptionsMenu();
+                    SelectDataLogging();
                     return true;
             }
             return base.OnOptionsItemSelected(item);
@@ -607,6 +588,51 @@ namespace BmwDiagnostics
             {
                 SupportInvalidateOptionsMenu();
             });
+        }
+
+        private void SelectDataLogging()
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.SetTitle(Resource.String.menu_submenu_log);
+            ListView listView = new ListView(this);
+
+            List<string> logNames = new List<string>
+            {
+                GetString(Resource.String.datalog_enable_trace),
+                GetString(Resource.String.datalog_append_trace),
+            };
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
+                Android.Resource.Layout.SimpleListItemMultipleChoice, logNames.ToArray());
+            listView.Adapter = adapter;
+            listView.ChoiceMode = ChoiceMode.Multiple;
+            listView.SetItemChecked(0, _traceActive);
+            listView.SetItemChecked(1, _traceAppend);
+
+            builder.SetView(listView);
+            builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+            {
+                SparseBooleanArray sparseArray = listView.CheckedItemPositions;
+                for (int i = 0; i < sparseArray.Size(); i++)
+                {
+                    bool value = sparseArray.ValueAt(i);
+                    switch (sparseArray.KeyAt(i))
+                    {
+                        case 0:
+                            _traceActive = value;
+                            break;
+
+                        case 1:
+                            _traceAppend = value;
+                            break;
+                    }
+                }
+                UpdateLogInfo();
+                SupportInvalidateOptionsMenu();
+            });
+            builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
+            {
+            });
+            builder.Show();
         }
 
         private void CanAdapterConfig()

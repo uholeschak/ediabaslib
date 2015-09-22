@@ -21,18 +21,9 @@
         <item android:id="@+id/menu_can_adapter_config"
               android:icon="@android:drawable/ic_menu_manage"
               android:title="@string/menu_can_adapter_config" />
-        <item android:id="@+id/menu_enable_trace"
+        <item android:id="@+id/menu_submenu_log"
               android:icon="@android:drawable/ic_menu_save"
-              android:title="@string/menu_enable_trace"
-              android:checkable="true" />
-        <item android:id="@+id/menu_append_trace"
-              android:icon="@android:drawable/ic_menu_save"
-              android:title="@string/menu_append_trace"
-              android:checkable="true" />
-        <item android:id="@+id/menu_enable_datalog"
-              android:icon="@android:drawable/ic_menu_save"
-              android:title="@string/menu_enable_datalog"
-              android:checkable="true" />
+              android:title="@string/menu_submenu_log" />
       </menu>
     </item>
 </menu>

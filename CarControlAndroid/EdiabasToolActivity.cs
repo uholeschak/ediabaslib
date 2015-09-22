@@ -9,6 +9,7 @@ using Android.Content;
 using Android.Content.Res;
 using Android.OS;
 using Android.Support.V7.App;
+using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
@@ -401,25 +402,10 @@ namespace BmwDiagnostics
                 canAdapterMenu.SetVisible((_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth) || (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Ftdi));
             }
 
-            IMenuItem enableTraceMenu = menu.FindItem(Resource.Id.menu_enable_trace);
-            if (enableTraceMenu != null)
+            IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
+            if (logSubMenu != null)
             {
-                enableTraceMenu.SetEnabled(interfaceAvailable && !commActive);
-                enableTraceMenu.SetChecked(_traceActive);
-            }
-
-            IMenuItem appendTraceMenu = menu.FindItem(Resource.Id.menu_append_trace);
-            if (appendTraceMenu != null)
-            {
-                appendTraceMenu.SetEnabled(interfaceAvailable && !commActive);
-                appendTraceMenu.SetChecked(_traceAppend);
-            }
-
-            IMenuItem dataLogMenu = menu.FindItem(Resource.Id.menu_enable_datalog);
-            if (dataLogMenu != null)
-            {
-                dataLogMenu.SetEnabled(interfaceAvailable);
-                dataLogMenu.SetChecked(_dataLogActive);
+                logSubMenu.SetEnabled(interfaceAvailable && !commActive);
             }
 
             return base.OnPrepareOptionsMenu(menu);
@@ -484,34 +470,12 @@ namespace BmwDiagnostics
                     CanAdapterConfig();
                     return true;
 
-                case Resource.Id.menu_enable_trace:
+                case Resource.Id.menu_submenu_log:
                     if (IsJobRunning())
                     {
                         return true;
                     }
-                    _traceActive = !_traceActive;
-                    UpdateLogInfo();
-                    SupportInvalidateOptionsMenu();
-                    return true;
-
-                case Resource.Id.menu_append_trace:
-                    if (IsJobRunning())
-                    {
-                        return true;
-                    }
-                    _traceAppend = !_traceAppend;
-                    UpdateLogInfo();
-                    SupportInvalidateOptionsMenu();
-                    return true;
-
-                case Resource.Id.menu_enable_datalog:
-                    _dataLogActive = !_dataLogActive;
-                    if (!_dataLogActive)
-                    {
-                        CloseDataLog();
-                    }
-                    UpdateLogInfo();
-                    SupportInvalidateOptionsMenu();
+                    SelectDataLogging();
                     return true;
             }
             return base.OnOptionsItemSelected(item);
@@ -678,6 +642,61 @@ namespace BmwDiagnostics
             {
                 SupportInvalidateOptionsMenu();
             });
+        }
+
+        private void SelectDataLogging()
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.SetTitle(Resource.String.menu_submenu_log);
+            ListView listView = new ListView(this);
+
+            List<string> logNames = new List<string>
+            {
+                GetString(Resource.String.datalog_enable_trace),
+                GetString(Resource.String.datalog_append_trace),
+                GetString(Resource.String.datalog_enable_datalog),
+            };
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
+                Android.Resource.Layout.SimpleListItemMultipleChoice, logNames.ToArray());
+            listView.Adapter = adapter;
+            listView.ChoiceMode = ChoiceMode.Multiple;
+            listView.SetItemChecked(0, _traceActive);
+            listView.SetItemChecked(1, _traceAppend);
+            listView.SetItemChecked(2, _dataLogActive);
+
+            builder.SetView(listView);
+            builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+            {
+                SparseBooleanArray sparseArray = listView.CheckedItemPositions;
+                for (int i = 0; i < sparseArray.Size(); i++)
+                {
+                    bool value = sparseArray.ValueAt(i);
+                    switch (sparseArray.KeyAt(i))
+                    {
+                        case 0:
+                            _traceActive = value;
+                            break;
+
+                        case 1:
+                            _traceAppend = value;
+                            break;
+
+                        case 2:
+                            _dataLogActive = value;
+                            break;
+                    }
+                }
+                if (!_dataLogActive)
+                {
+                    CloseDataLog();
+                }
+                UpdateLogInfo();
+                SupportInvalidateOptionsMenu();
+            });
+            builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
+            {
+            });
+            builder.Show();
         }
 
         private void CanAdapterConfig()

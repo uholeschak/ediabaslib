@@ -1385,8 +1385,8 @@ namespace BmwDiagnostics
 			// aapt resource value: 0x7f0c007a
 			public const int action_divider = 2131492986;
 			
-			// aapt resource value: 0x7f0c00af
-			public const int action_menu = 2131493039;
+			// aapt resource value: 0x7f0c00ad
+			public const int action_menu = 2131493037;
 			
 			// aapt resource value: 0x7f0c0002
 			public const int action_menu_divider = 2131492866;
@@ -1406,8 +1406,8 @@ namespace BmwDiagnostics
 			// aapt resource value: 0x7f0c0025
 			public const int action_mode_close_button = 2131492901;
 			
-			// aapt resource value: 0x7f0c00ad
-			public const int action_search = 2131493037;
+			// aapt resource value: 0x7f0c00ab
+			public const int action_search = 2131493035;
 			
 			// aapt resource value: 0x7f0c0026
 			public const int activity_chooser_view_content = 2131492902;
@@ -1586,38 +1586,29 @@ namespace BmwDiagnostics
 			// aapt resource value: 0x7f0c0079
 			public const int media_actions = 2131492985;
 			
-			// aapt resource value: 0x7f0c00ae
-			public const int menu_action_provider_connect = 2131493038;
-			
-			// aapt resource value: 0x7f0c00ab
-			public const int menu_append_trace = 2131493035;
+			// aapt resource value: 0x7f0c00ac
+			public const int menu_action_provider_connect = 2131493036;
 			
 			// aapt resource value: 0x7f0c00a9
 			public const int menu_can_adapter_config = 2131493033;
 			
-			// aapt resource value: 0x7f0c00b3
-			public const int menu_download_ecu = 2131493043;
+			// aapt resource value: 0x7f0c00b1
+			public const int menu_download_ecu = 2131493041;
+			
+			// aapt resource value: 0x7f0c00b0
+			public const int menu_ediabas_tool = 2131493040;
 			
 			// aapt resource value: 0x7f0c00b2
-			public const int menu_ediabas_tool = 2131493042;
-			
-			// aapt resource value: 0x7f0c00ac
-			public const int menu_enable_datalog = 2131493036;
-			
-			// aapt resource value: 0x7f0c00aa
-			public const int menu_enable_trace = 2131493034;
-			
-			// aapt resource value: 0x7f0c00b5
-			public const int menu_exit = 2131493045;
+			public const int menu_exit = 2131493042;
 			
 			// aapt resource value: 0x7f0c00a8
 			public const int menu_scan = 2131493032;
 			
-			// aapt resource value: 0x7f0c00b0
-			public const int menu_sel_cfg = 2131493040;
+			// aapt resource value: 0x7f0c00ae
+			public const int menu_sel_cfg = 2131493038;
 			
-			// aapt resource value: 0x7f0c00b4
-			public const int menu_submenu_log = 2131493044;
+			// aapt resource value: 0x7f0c00aa
+			public const int menu_submenu_log = 2131493034;
 			
 			// aapt resource value: 0x7f0c00a5
 			public const int menu_tool_sel_interface = 2131493029;
@@ -1628,11 +1619,11 @@ namespace BmwDiagnostics
 			// aapt resource value: 0x7f0c00a7
 			public const int menu_tool_sel_sgbd_prg = 2131493031;
 			
-			// aapt resource value: 0x7f0c00b1
-			public const int menu_xml_tool = 2131493041;
+			// aapt resource value: 0x7f0c00af
+			public const int menu_xml_tool = 2131493039;
 			
-			// aapt resource value: 0x7f0c00b6
-			public const int menu_xml_tool_add_errors_page = 2131493046;
+			// aapt resource value: 0x7f0c00b3
+			public const int menu_xml_tool_add_errors_page = 2131493043;
 			
 			// aapt resource value: 0x7f0c0015
 			public const int middle = 2131492885;
@@ -2316,6 +2307,15 @@ namespace BmwDiagnostics
 			// aapt resource value: 0x7f060023
 			public const int config_select_title = 2131099683;
 			
+			// aapt resource value: 0x7f060047
+			public const int datalog_append_trace = 2131099719;
+			
+			// aapt resource value: 0x7f060048
+			public const int datalog_enable_datalog = 2131099720;
+			
+			// aapt resource value: 0x7f060046
+			public const int datalog_enable_trace = 2131099718;
+			
 			// aapt resource value: 0x7f060030
 			public const int download_failed = 2131099696;
 			
@@ -2358,9 +2358,6 @@ namespace BmwDiagnostics
 			// aapt resource value: 0x7f060012
 			public const int library_name = 2131099666;
 			
-			// aapt resource value: 0x7f060046
-			public const int menu_append_trace = 2131099718;
-			
 			// aapt resource value: 0x7f06003f
 			public const int menu_can_adapter_config = 2131099711;
 			
@@ -2376,14 +2373,8 @@ namespace BmwDiagnostics
 			// aapt resource value: 0x7f060042
 			public const int menu_ediabas_tool = 2131099714;
 			
-			// aapt resource value: 0x7f060047
-			public const int menu_enable_datalog = 2131099719;
-			
 			// aapt resource value: 0x7f060045
-			public const int menu_enable_trace = 2131099717;
-			
-			// aapt resource value: 0x7f060048
-			public const int menu_exit = 2131099720;
+			public const int menu_exit = 2131099717;
 			
 			// aapt resource value: 0x7f060040
 			public const int menu_sel_cfg = 2131099712;
