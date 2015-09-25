@@ -15,7 +15,7 @@ namespace EdiabasLib
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int ReadTimeoutOffset = 1000;
         private const int Elm327CommandTimeout = 2000;
-        private static readonly string[] Elm327InitCommands = { "AT D", "AT E0", "AT SH 6F1", "AT CAF0", "AT CF 600", "AT CM 700", "AT SP 6", "AT AL", "AT H1", "AT S0", "AT L0" };
+        private static readonly string[] Elm327InitCommands = { "ATD", "ATE0", "ATSH6F1", "ATCF600", "ATCM700", "ATPBC001", "ATSPB", "ATAT0", "ATSTFF", "ATAL", "ATH1", "ATS0", "ATL0" };
         private static BluetoothSocket _bluetoothSocket;
         private static Stream _bluetoothInStream;
         private static Stream _bluetoothOutStream;
