@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
+using System.Text;
 using System.Threading;
 using Android.Bluetooth;
 using Java.Util;
@@ -16,7 +16,6 @@ namespace EdiabasLib
         private const int ReadTimeoutOffset = 1000;
         private const int Elm327CommandTimeout = 2000;
         private static readonly string[] Elm327InitCommands = { "AT D", "AT E0", "AT SH 6F1", "AT CAF0", "AT CF 600", "AT CM 700", "AT SP 6", "AT AL", "AT H1", "AT S0", "AT L0" };
-
         private static BluetoothSocket _bluetoothSocket;
         private static Stream _bluetoothInStream;
         private static Stream _bluetoothOutStream;
@@ -215,11 +214,7 @@ namespace EdiabasLib
             }
             try
             {
-                _bluetoothInStream.Flush ();
-                while (_bluetoothInStream.IsDataAvailable())
-                {
-                    _bluetoothInStream.ReadByte();
-                }
+                FlushReceiveBuffer();
             }
             catch (Exception)
             {
@@ -299,6 +294,15 @@ namespace EdiabasLib
             return true;
         }
 
+        private static void FlushReceiveBuffer()
+        {
+            _bluetoothInStream.Flush();
+            while (_bluetoothInStream.IsDataAvailable())
+            {
+                _bluetoothInStream.ReadByte();
+            }
+        }
+
         private static bool Elm327Init()
         {
             bool firstCommand = true;
@@ -323,54 +327,74 @@ namespace EdiabasLib
 
         private static bool Elm327SendCommand(string command)
         {
-            byte[] sendData = System.Text.Encoding.UTF8.GetBytes(command + "\r");
-            _bluetoothOutStream.Write(sendData, 0, sendData.Length);
-
-            byte[] recData = new byte[100];
-            int recLen = 0;
-            bool answerReceived = false;
-            long startTime = Stopwatch.GetTimestamp();
-            for (;;)
+            try
             {
-                if (_bluetoothInStream.IsDataAvailable())
+                FlushReceiveBuffer();
+                byte[] sendData = Encoding.UTF8.GetBytes(command + "\r");
+                _bluetoothOutStream.Write(sendData, 0, sendData.Length);
+
+                string answer = Elm327ReceiveAnswer(Elm327CommandTimeout);
+                // check for OK
+                if (!answer.Contains("OK\r"))
                 {
-                    int bytesRead = _bluetoothInStream.Read(recData, recLen, recData.Length - recLen);
-                    recLen += bytesRead;
-                    for (int i = 0; i < recLen; i++)
-                    {
-                        if (recData[i] == 0x3E)
-                        {   // complete response received (prompt)
-                            answerReceived = true;
-                            break;
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+#if false
+        private static bool Elm327SendCanTelegram(byte[] canTelegram)
+        {
+            try
+            {
+                FlushReceiveBuffer();
+                StringBuilder stringBuilder = new StringBuilder();
+                foreach (byte data in canTelegram)
+                {
+                    stringBuilder.Append((string.Format("{0:X02}", data)));
+                }
+                stringBuilder.Append("\r");
+                byte[] sendData = Encoding.UTF8.GetBytes(stringBuilder.ToString());
+                _bluetoothOutStream.Write(sendData, 0, sendData.Length);
+
+                string answer = Elm327ReceiveAnswer(Elm327CommandTimeout);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+#endif
+        private static string Elm327ReceiveAnswer(int timeout)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            byte[] buffer = new byte[1];
+            long startTime = Stopwatch.GetTimestamp();
+            for (; ; )
+            {
+                while (_bluetoothInStream.IsDataAvailable())
+                {
+                    int bytesRead = _bluetoothInStream.Read(buffer, 0, 1);
+                    if (bytesRead > 0 && buffer[0] != 0x00)
+                    {   // remove 0x00
+                        stringBuilder.Append(Convert.ToChar(buffer[0]));
+                        if (buffer[0] == 0x3E)
+                        {
+                            return stringBuilder.ToString();
                         }
                     }
                 }
-                if (answerReceived)
+                if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
                 {
-                    break;
-                }
-                if (recLen == recData.Length)
-                {
-                    return false;
-                }
-                if ((Stopwatch.GetTimestamp() - startTime) > Elm327CommandTimeout * TickResolMs)
-                {
-                    return false;
+                    return string.Empty;
                 }
                 Thread.Sleep(10);
             }
-
-            // check for OK
-            byte[] okPattern = System.Text.Encoding.UTF8.GetBytes("OK\r");
-            for (int i = 0; i < recLen; i++)
-            {
-                if (recData.Skip(i).Take(okPattern.Length).SequenceEqual(okPattern))
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
     }
 }
