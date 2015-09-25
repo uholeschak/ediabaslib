@@ -21,6 +21,7 @@ using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using Java.Util;
 
 namespace BmwDiagnostics
 {
@@ -37,6 +38,8 @@ namespace BmwDiagnostics
                 Android.Content.PM.ConfigChanges.ScreenSize)]
     public class DeviceListActivity : AppCompatActivity
     {
+        private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
+
         // Return Intent extra
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
@@ -105,7 +108,11 @@ namespace BmwDiagnostics
                 FindViewById<View> (Resource.Id.title_paired_devices).Visibility = ViewStates.Visible;
                 foreach (var device in pairedDevices)
                 {
-                    _pairedDevicesArrayAdapter.Add (device.Name + "\n" + device.Address);
+                    ParcelUuid[] uuids = device.GetUuids();
+                    if ((uuids == null) || ((uuids.Length == 1) && (SppUuid.CompareTo(uuids[0].Uuid) == 0)))
+                    {
+                        _pairedDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
+                    }
                 }
             }
             else
@@ -218,7 +225,11 @@ namespace BmwDiagnostics
                     // If it's already paired, skip it, because it's been listed already
                     if (device.BondState != Bond.Bonded)
                     {
-                        _newDevicesArrayAdapter.Add (device.Name + "\n" + device.Address);
+                        ParcelUuid[] uuids = device.GetUuids();
+                        if ((uuids == null) || ((uuids.Length == 1) && (SppUuid.CompareTo(uuids[0].Uuid) == 0)))
+                        {
+                            _newDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
+                        }
                     }
                     // When discovery is finished, change the Activity title
                 }
