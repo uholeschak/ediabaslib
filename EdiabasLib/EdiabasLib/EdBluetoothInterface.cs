@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Android.Bluetooth;
 using Java.Util;
@@ -13,10 +14,13 @@ namespace EdiabasLib
         private static readonly UUID SppUuid = UUID.FromString ("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int ReadTimeoutOffset = 1000;
+        private const int Elm327CommandTimeout = 2000;
+        private static readonly string[] Elm327InitCommands = { "AT D", "AT E0", "AT SH 6F1", "AT CAF0", "AT CF 600", "AT CM 700", "AT SP 6", "AT AL", "AT H1", "AT S0", "AT L0" };
 
         private static BluetoothSocket _bluetoothSocket;
         private static Stream _bluetoothInStream;
         private static Stream _bluetoothOutStream;
+        private static bool _elm327Device;
         private static int _currentBaudRate;
         private static int _currentWordLength;
         private static EdInterfaceObd.SerialParity _currentParity = EdInterfaceObd.SerialParity.None;
@@ -56,6 +60,7 @@ namespace EdiabasLib
             {
                 return false;
             }
+            _elm327Device = false;
             try
             {
                 BluetoothDevice device;
@@ -63,7 +68,20 @@ namespace EdiabasLib
                 if ((portData.Length > 0) && (portData[0] == ':'))
                 {   // special id
                     string addr = portData.Remove(0, 1);
-                    device = bluetoothAdapter.GetRemoteDevice(addr);
+                    string[] stringList = addr.Split(';');
+                    if (stringList.Length == 0)
+                    {
+                        InterfaceDisconnect();
+                        return false;
+                    }
+                    device = bluetoothAdapter.GetRemoteDevice(stringList[0]);
+                    if (stringList.Length > 1)
+                    {
+                        if (string.Compare(stringList[1], "ELM327", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            _elm327Device = true;
+                        }
+                    }
                 }
                 else
                 {
@@ -80,6 +98,15 @@ namespace EdiabasLib
                 _bluetoothSocket.Connect();
                 _bluetoothInStream = _bluetoothSocket.InputStream;
                 _bluetoothOutStream = _bluetoothSocket.OutputStream;
+
+                if (_elm327Device)
+                {
+                    if (!Elm327Init())
+                    {
+                        InterfaceDisconnect();
+                        return false;
+                    }
+                }
             }
             catch (Exception)
             {
@@ -182,6 +209,10 @@ namespace EdiabasLib
             {
                 return false;
             }
+            if (_elm327Device)
+            {
+                return true;
+            }
             try
             {
                 _bluetoothInStream.Flush ();
@@ -207,6 +238,10 @@ namespace EdiabasLib
             {
                 return false;
             }
+            if (_elm327Device)
+            {
+                return true;
+            }
             try
             {
                 _bluetoothOutStream.Write (sendData, 0, length);
@@ -223,6 +258,10 @@ namespace EdiabasLib
             if ((_bluetoothSocket == null) || (_bluetoothInStream == null))
             {
                 return false;
+            }
+            if (_elm327Device)
+            {
+                return true;
             }
             timeout += ReadTimeoutOffset;
             timeoutTelEnd += ReadTimeoutOffset;
@@ -258,6 +297,80 @@ namespace EdiabasLib
                 return false;
             }
             return true;
+        }
+
+        private static bool Elm327Init()
+        {
+            bool firstCommand = true;
+            foreach (string command in Elm327InitCommands)
+            {
+                if (!Elm327SendCommand(command))
+                {
+                    if (!firstCommand)
+                    {
+                        return false;
+                    }
+                    if (!Elm327SendCommand(command))
+                    {
+                        return false;
+                    }
+                }
+                firstCommand = false;
+            }
+
+            return true;
+        }
+
+        private static bool Elm327SendCommand(string command)
+        {
+            byte[] sendData = System.Text.Encoding.UTF8.GetBytes(command + "\r");
+            _bluetoothOutStream.Write(sendData, 0, sendData.Length);
+
+            byte[] recData = new byte[100];
+            int recLen = 0;
+            bool answerReceived = false;
+            long startTime = Stopwatch.GetTimestamp();
+            for (;;)
+            {
+                if (_bluetoothInStream.IsDataAvailable())
+                {
+                    int bytesRead = _bluetoothInStream.Read(recData, recLen, recData.Length - recLen);
+                    recLen += bytesRead;
+                    for (int i = 0; i < recLen; i++)
+                    {
+                        if (recData[i] == 0x3E)
+                        {   // complete response received (prompt)
+                            answerReceived = true;
+                            break;
+                        }
+                    }
+                }
+                if (answerReceived)
+                {
+                    break;
+                }
+                if (recLen == recData.Length)
+                {
+                    return false;
+                }
+                if ((Stopwatch.GetTimestamp() - startTime) > Elm327CommandTimeout * TickResolMs)
+                {
+                    return false;
+                }
+                Thread.Sleep(10);
+            }
+
+            // check for OK
+            byte[] okPattern = System.Text.Encoding.UTF8.GetBytes("OK\r");
+            for (int i = 0; i < recLen; i++)
+            {
+                if (recData.Skip(i).Take(okPattern.Length).SequenceEqual(okPattern))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
