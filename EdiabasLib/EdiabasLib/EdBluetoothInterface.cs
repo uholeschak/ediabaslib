@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Android.Bluetooth;
 using Java.Util;
@@ -20,6 +22,7 @@ namespace EdiabasLib
         private static Stream _bluetoothInStream;
         private static Stream _bluetoothOutStream;
         private static bool _elm327Device;
+        private static bool _elm327DataMode;
         private static int _currentBaudRate;
         private static int _currentWordLength;
         private static EdInterfaceObd.SerialParity _currentParity = EdInterfaceObd.SerialParity.None;
@@ -154,6 +157,7 @@ namespace EdiabasLib
             {
                 result = false;
             }
+            _elm327DataMode = false;
             return result;
         }
 
@@ -321,23 +325,60 @@ namespace EdiabasLib
                 }
                 firstCommand = false;
             }
-
+#if false
+            if (!Elm327SendCanTelegram(new byte[] {0x12, 0x02, 0x01A, 0x80, 0x00, 0x00, 0x00, 0x00}))
+            {
+                return false;
+            }
+            int[] data = Elm327ReceiveCanTelegram(Elm327CommandTimeout);
+            if ((data == null) || (data.Length != 9))
+            {
+                return false;
+            }
+            if ((data[0] != 0x612) || (data[1] != 0xF1) || (data[2] != 0x10) || (data[3] != 0x3C))
+            {
+                return false;
+            }
+            if (!Elm327SendCanTelegram(new byte[] { 0x12, 0x30, 0x00, 0x00 }))
+            {
+                return false;
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                data = Elm327ReceiveCanTelegram(Elm327CommandTimeout);
+                if ((data == null) || (data.Length != 9))
+                {
+                    return false;
+                }
+                if ((data[0] != 0x612) || (data[1] != 0xF1) || (data[2] != (0x20 + ((i + 1) & 0x0F))))
+                {
+                    return false;
+                }
+            }
+#endif
             return true;
         }
 
-        private static bool Elm327SendCommand(string command)
+        private static bool Elm327SendCommand(string command, bool readAnswer = true)
         {
             try
             {
+                if (!Elm327LeaveDataMode(Elm327CommandTimeout))
+                {
+                    _elm327DataMode = false;
+                    return false;
+                }
                 FlushReceiveBuffer();
                 byte[] sendData = Encoding.UTF8.GetBytes(command + "\r");
                 _bluetoothOutStream.Write(sendData, 0, sendData.Length);
-
-                string answer = Elm327ReceiveAnswer(Elm327CommandTimeout);
-                // check for OK
-                if (!answer.Contains("OK\r"))
+                if (readAnswer)
                 {
-                    return false;
+                    string answer = Elm327ReceiveAnswer(Elm327CommandTimeout);
+                    // check for OK
+                    if (!answer.Contains("OK\r"))
+                    {
+                        return false;
+                    }
                 }
             }
             catch (Exception)
@@ -346,11 +387,16 @@ namespace EdiabasLib
             }
             return true;
         }
-#if false
+
         private static bool Elm327SendCanTelegram(byte[] canTelegram)
         {
             try
             {
+                if (!Elm327LeaveDataMode(Elm327CommandTimeout))
+                {
+                    _elm327DataMode = false;
+                    return false;
+                }
                 FlushReceiveBuffer();
                 StringBuilder stringBuilder = new StringBuilder();
                 foreach (byte data in canTelegram)
@@ -360,8 +406,7 @@ namespace EdiabasLib
                 stringBuilder.Append("\r");
                 byte[] sendData = Encoding.UTF8.GetBytes(stringBuilder.ToString());
                 _bluetoothOutStream.Write(sendData, 0, sendData.Length);
-
-                string answer = Elm327ReceiveAnswer(Elm327CommandTimeout);
+                _elm327DataMode = true;
             }
             catch (Exception)
             {
@@ -369,8 +414,91 @@ namespace EdiabasLib
             }
             return true;
         }
-#endif
-        private static string Elm327ReceiveAnswer(int timeout)
+
+        private static int[] Elm327ReceiveCanTelegram(int timeout)
+        {
+            List<int> resultList = new List<int>();
+            try
+            {
+                if (!_elm327DataMode)
+                {
+                    return null;
+                }
+                string answer = Elm327ReceiveAnswer(timeout, true);
+                if (!_elm327DataMode)
+                {   // switch to monitor mode
+                    if (!Elm327SendCommand("ATMA", false))
+                    {
+                        return null;
+                    }
+                    _elm327DataMode = true;
+                }
+                if (string.IsNullOrEmpty(answer))
+                {
+                    return null;
+                }
+                if ((answer.Length & 0x01) == 0)
+                {   // must be odd because of can header
+                    return null;
+                }
+                if (!Regex.IsMatch(answer, @"\A[0-9a-fA-F]{3,19}\Z"))
+                {
+                    return null;
+                }
+                resultList.Add(Convert.ToInt32(answer.Substring(0, 3), 16));
+                for (int i = 3; i < answer.Length; i += 2)
+                {
+                    resultList.Add(Convert.ToInt32(answer.Substring(i, 2), 16));
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            return resultList.ToArray();
+        }
+
+        private static bool Elm327LeaveDataMode(int timeout)
+        {
+            if (!_elm327DataMode)
+            {
+                return true;
+            }
+            byte[] buffer = new byte[1];
+            while (_bluetoothInStream.IsDataAvailable())
+            {
+                int bytesRead = _bluetoothInStream.Read(buffer, 0, 1);
+                if (bytesRead > 0 && buffer[0] == 0x3E)
+                {
+                    _elm327DataMode = false;
+                    return true;
+                }
+            }
+
+            buffer[0] = 0x20;   // space
+            _bluetoothOutStream.Write(buffer, 0, 1);
+
+            long startTime = Stopwatch.GetTimestamp();
+            for (;;)
+            {
+                while (_bluetoothInStream.IsDataAvailable())
+                {
+                    int bytesRead = _bluetoothInStream.Read(buffer, 0, 1);
+                    if (bytesRead > 0 && buffer[0] == 0x3E)
+                    {
+                        _elm327DataMode = false;
+                        return true;
+                    }
+                }
+                if ((timeout == 0) || ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs))
+                {
+                    return false;
+                }
+                Thread.Sleep(10);
+            }
+        }
+
+        private static string Elm327ReceiveAnswer(int timeout, bool canData = false)
         {
             StringBuilder stringBuilder = new StringBuilder();
             byte[] buffer = new byte[1];
@@ -380,16 +508,33 @@ namespace EdiabasLib
                 while (_bluetoothInStream.IsDataAvailable())
                 {
                     int bytesRead = _bluetoothInStream.Read(buffer, 0, 1);
-                    if (bytesRead > 0 && buffer[0] != 0x00)
+                    byte data = buffer[0];
+                    if (bytesRead > 0 && data != 0x00)
                     {   // remove 0x00
-                        stringBuilder.Append(Convert.ToChar(buffer[0]));
-                        if (buffer[0] == 0x3E)
+                        if (canData)
                         {
+                            if (data == '\r')
+                            {
+                                return stringBuilder.ToString();
+                            }
+                            stringBuilder.Append(Convert.ToChar(data));
+                        }
+                        else
+                        {
+                            stringBuilder.Append(Convert.ToChar(data));
+                        }
+                        if (data == 0x3E)
+                        {
+                            _elm327DataMode = false;
+                            if (canData)
+                            {
+                                return string.Empty;
+                            }
                             return stringBuilder.ToString();
                         }
                     }
                 }
-                if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
+                if ((timeout == 0) || ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs))
                 {
                     return string.Empty;
                 }
