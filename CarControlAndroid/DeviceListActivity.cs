@@ -22,6 +22,10 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using Java.Util;
+using System.IO;
+using System.Text;
+using System.Diagnostics;
+using System.Threading;
 
 namespace BmwDiagnostics
 {
@@ -39,6 +43,8 @@ namespace BmwDiagnostics
     public class DeviceListActivity : AppCompatActivity
     {
         private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
+        private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
+        private const int Elm327CommandTimeout = 2000;
 
         // Return Intent extra
         public const string ExtraDeviceName = "device_name";
@@ -171,9 +177,156 @@ namespace BmwDiagnostics
         }
 
         /// <summary>
+        /// Start adapter detection
+        /// </summary>
+        /// <param name="deviceAddress">Device Bluetooth address</param>
+        /// <param name="deviceName">Device Bleutooth name</param>
+        private void DetectAdapter(string deviceAddress, string deviceName)
+        {
+            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
+            progress.SetCancelable(false);
+            progress.SetMessage(GetString(Resource.String.detect_adapter));
+            progress.Show();
+
+            Thread detectThread = new Thread(() =>
+            {
+                string adapterType = null;
+                try
+                {
+                    BluetoothDevice device = _btAdapter.GetRemoteDevice(deviceAddress);
+                    if (device != null)
+                    {
+                        using (BluetoothSocket bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid))
+                        {
+                            bluetoothSocket.Connect();
+                            adapterType = AdapterTypeDetection(bluetoothSocket);
+                            bluetoothSocket.Close();
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
+                RunOnUiThread(() =>
+                {
+                    progress.Hide();
+                    progress.Dispose();
+                    if (string.IsNullOrEmpty(adapterType))
+                    {
+                        new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                            {
+                                ReturnDeviceType(deviceAddress, deviceName);
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                            {
+                            })
+                            .SetCancelable(true)
+                            .SetMessage(Resource.String.unknown_adapter_type)
+                            .SetTitle(Resource.String.adapter_type_title)
+                            .Show();
+                    }
+                    else
+                    {
+                        ReturnDeviceType(deviceAddress + ";" + adapterType, deviceName);
+                    }
+                });
+            })
+            {
+                Priority = System.Threading.ThreadPriority.Highest
+            };
+            detectThread.Start();
+        }
+
+        /// <summary>
+        /// Return specified device type to caller
+        /// </summary>
+        /// <param name="deviceAddress">Device Bluetooth address</param>
+        /// <param name="deviceName">Device Bleutooth name</param>
+        private void ReturnDeviceType(string deviceAddress, string deviceName)
+        {
+            // Create the result Intent and include the MAC address
+            Intent intent = new Intent();
+            intent.PutExtra(ExtraDeviceName, deviceName);
+            intent.PutExtra(ExtraDeviceAddress, deviceAddress);
+
+            // Set result and finish this Activity
+            SetResult(Android.App.Result.Ok, intent);
+            Finish();
+        }
+
+        /// <summary>
+        /// Detects the CAN adapter type
+        /// </summary>
+        /// <param name="bluetoothSocket">Bluetooth socket for communication</param>
+        /// <returns>Adapter type string</returns>
+        private string AdapterTypeDetection(BluetoothSocket bluetoothSocket)
+        {
+            try
+            {
+                Stream bluetoothInStream = bluetoothSocket.InputStream;
+                Stream bluetoothOutStream = bluetoothSocket.OutputStream;
+
+                for (int i = 0; i < 2; i++)
+                {
+                    bluetoothInStream.Flush();
+                    while (bluetoothInStream.IsDataAvailable())
+                    {
+                        bluetoothInStream.ReadByte();
+                    }
+                    byte[] sendData = Encoding.UTF8.GetBytes("ATI\r");
+                    bluetoothOutStream.Write(sendData, 0, sendData.Length);
+
+                    string response = null;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    long startTime = Stopwatch.GetTimestamp();
+                    for (;;)
+                    {
+                        while (bluetoothInStream.IsDataAvailable())
+                        {
+                            int data = bluetoothInStream.ReadByte();
+                            if (data >= 0 && data != 0x00)
+                            {
+                                // remove 0x00
+                                stringBuilder.Append(Convert.ToChar(data));
+                            }
+                            if (data == 0x3E)
+                            {
+                                // prompt
+                                response = stringBuilder.ToString();
+                            }
+                        }
+                        if (response != null)
+                        {
+                            break;
+                        }
+                        if ((Stopwatch.GetTimestamp() - startTime) > Elm327CommandTimeout*TickResolMs)
+                        {
+                            break;
+                        }
+                    }
+                    if (response != null)
+                    {
+                        if (response.Contains("ELM327"))
+                        {
+                            return "ELM327";
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+            return string.Empty;
+        }
+
+        /// <summary>
         /// The on-click listener for all devices in the ListViews
         /// </summary>
-        void DeviceListClick (object sender, AdapterView.ItemClickEventArgs e)
+        private void DeviceListClick(object sender, AdapterView.ItemClickEventArgs e)
         {
             // Cancel discovery because it's costly and we're about to connect
             if (_btAdapter.IsDiscovering)
@@ -193,15 +346,8 @@ namespace BmwDiagnostics
                 string name = parts[0];
                 string address = parts[1];
 
-                // Create the result Intent and include the MAC address
-                Intent intent = new Intent ();
-                intent.PutExtra (ExtraDeviceName, name);
-                intent.PutExtra (ExtraDeviceAddress, address);
-
-                // Set result and finish this Activity
-                SetResult(Android.App.Result.Ok, intent);
+                DetectAdapter(address, name);
             }
-            Finish ();
         }
 
         public class Receiver : BroadcastReceiver
