@@ -16,13 +16,25 @@ namespace EdiabasLib
         private static readonly UUID SppUuid = UUID.FromString ("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int ReadTimeoutOffset = 1000;
+        private const int Elm327ReadTimeoutOffset = 2000;
         private const int Elm327CommandTimeout = 2000;
+        private const int Elm327DataTimeout = 2000;
+        private const int Elm327CanBlockSize = 8;
+        private const int Elm327CanSepTime = 0;
         private static readonly string[] Elm327InitCommands = { "ATD", "ATE0", "ATSH6F1", "ATCF600", "ATCM700", "ATPBC001", "ATSPB", "ATAT0", "ATSTFF", "ATAL", "ATH1", "ATS0", "ATL0" };
         private static BluetoothSocket _bluetoothSocket;
         private static Stream _bluetoothInStream;
         private static Stream _bluetoothOutStream;
         private static bool _elm327Device;
         private static bool _elm327DataMode;
+        private static int _elm327CanHeader;
+        private static Thread _elm327Thread;
+        private static bool _elm327TerminateThread;
+        private static readonly AutoResetEvent Elm327RequEvent = new AutoResetEvent(false);
+        private static readonly AutoResetEvent Elm327RespEvent = new AutoResetEvent(false);
+        private static byte[] _elm327RequBuffer;
+        private static readonly Queue<byte> Elm327RespQueue = new Queue<byte>();
+        private static readonly Object Elm327BufferLock = new Object();
         private static int _currentBaudRate;
         private static int _currentWordLength;
         private static EdInterfaceObd.SerialParity _currentParity = EdInterfaceObd.SerialParity.None;
@@ -157,7 +169,7 @@ namespace EdiabasLib
             {
                 result = false;
             }
-            _elm327DataMode = false;
+            Elm327StopThread();
             return result;
         }
 
@@ -214,6 +226,10 @@ namespace EdiabasLib
             }
             if (_elm327Device)
             {
+                lock (Elm327BufferLock)
+                {
+                    Elm327RespQueue.Clear();
+                }
                 return true;
             }
             try
@@ -239,6 +255,29 @@ namespace EdiabasLib
             }
             if (_elm327Device)
             {
+                lock (Elm327BufferLock)
+                {
+                    if (_elm327RequBuffer != null)
+                    {
+                        return false;
+                    }
+                }
+                byte[] data = new byte[length];
+                Array.Copy(sendData, data, length);
+                lock (Elm327BufferLock)
+                {
+                    _elm327RequBuffer = data;
+                }
+                Elm327RequEvent.Set();
+                // create echo
+                lock (Elm327BufferLock)
+                {
+                    for (int i = 0; i < length; i++)
+                    {
+                        Elm327RespQueue.Enqueue(sendData[i]);
+                    }
+                }
+
                 return true;
             }
             try
@@ -260,6 +299,30 @@ namespace EdiabasLib
             }
             if (_elm327Device)
             {
+                timeout += Elm327ReadTimeoutOffset;
+                long startTime = Stopwatch.GetTimestamp();
+                for (;;)
+                {
+                    lock (Elm327BufferLock)
+                    {
+                        if (Elm327RespQueue.Count >= length)
+                        {
+                            break;
+                        }
+                    }
+                    if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
+                    {
+                        return false;
+                    }
+                    Elm327RespEvent.WaitOne(timeout, false);
+                }
+                lock (Elm327BufferLock)
+                {
+                    for (int i = 0; i < length; i++)
+                    {
+                        receiveData[i + offset] = Elm327RespQueue.Dequeue();
+                    }
+                }
                 return true;
             }
             timeout += ReadTimeoutOffset;
@@ -307,8 +370,24 @@ namespace EdiabasLib
             }
         }
 
+        static public byte CalcChecksumBmwFast(byte[] data, int length)
+        {
+            byte sum = 0;
+            for (int i = 0; i < length; i++)
+            {
+                sum += data[i];
+            }
+            return sum;
+        }
+
         private static bool Elm327Init()
         {
+            _elm327DataMode = false;
+            lock (Elm327BufferLock)
+            {
+                _elm327RequBuffer = null;
+                Elm327RespQueue.Clear();
+            }
             bool firstCommand = true;
             foreach (string command in Elm327InitCommands)
             {
@@ -325,38 +404,267 @@ namespace EdiabasLib
                 }
                 firstCommand = false;
             }
-#if false
-            if (!Elm327SendCanTelegram(new byte[] {0x12, 0x02, 0x01A, 0x80, 0x00, 0x00, 0x00, 0x00}))
-            {
-                return false;
-            }
-            int[] data = Elm327ReceiveCanTelegram(Elm327CommandTimeout);
-            if ((data == null) || (data.Length != 9))
-            {
-                return false;
-            }
-            if ((data[0] != 0x612) || (data[1] != 0xF1) || (data[2] != 0x10) || (data[3] != 0x3C))
-            {
-                return false;
-            }
-            if (!Elm327SendCanTelegram(new byte[] { 0x12, 0x30, 0x00, 0x00 }))
-            {
-                return false;
-            }
-            for (int i = 0; i < 10; i++)
-            {
-                data = Elm327ReceiveCanTelegram(Elm327CommandTimeout);
-                if ((data == null) || (data.Length != 9))
-                {
-                    return false;
-                }
-                if ((data[0] != 0x612) || (data[1] != 0xF1) || (data[2] != (0x20 + ((i + 1) & 0x0F))))
-                {
-                    return false;
-                }
-            }
-#endif
+            _elm327CanHeader = 0x6F1;
+            Elm327StartThread();
             return true;
+        }
+
+        private static void Elm327StartThread()
+        {
+            if (_elm327Thread != null)
+            {
+                return;
+            }
+            _elm327TerminateThread = false;
+            Elm327RequEvent.Reset();
+            Elm327RespEvent.Reset();
+            _elm327Thread = new Thread(Elm327ThreadFunc)
+            {
+                Priority = ThreadPriority.Highest
+            };
+            _elm327Thread.Start();
+        }
+
+        private static void Elm327StopThread()
+        {
+            if (_elm327Thread != null)
+            {
+                _elm327TerminateThread = true;
+                Elm327RequEvent.Set();
+                _elm327Thread.Join();
+                _elm327Thread = null;
+                _elm327RequBuffer = null;
+                Elm327RespQueue.Clear();
+            }
+        }
+
+        private static void Elm327ThreadFunc()
+        {
+            while (!_elm327TerminateThread)
+            {
+                Elm327CanSender();
+                Elm327CanReceiver();
+                Elm327RequEvent.WaitOne(10, false);
+            }
+        }
+
+        private static void Elm327CanSender()
+        {
+            byte[] requBuffer;
+            lock (Elm327BufferLock)
+            {
+                requBuffer = _elm327RequBuffer;
+            }
+            if (requBuffer != null && requBuffer.Length >= 4)
+            {
+                byte targetAddr = requBuffer[1];
+                byte sourceAddr = requBuffer[2];
+                int dataOffset = 3;
+                int dataLength = requBuffer[0] & 0x3F;
+                if (dataLength == 0)
+                {
+                    // with length byte
+                    dataLength = requBuffer[3];
+                    dataOffset = 4;
+                }
+                if (requBuffer.Length < (dataOffset + dataLength))
+                {
+                    return;
+                }
+
+                int canHeader = 0x600 | sourceAddr;
+                if (_elm327CanHeader != canHeader)
+                {
+                    if (!Elm327SendCommand("ATSH" + string.Format("{0:X03}", canHeader)))
+                    {
+                        return;
+                    }
+                    _elm327CanHeader = canHeader;
+                }
+                byte[] canSendBuffer = new byte[8];
+                if (dataLength <= 6)
+                {
+                    // single frame
+                    canSendBuffer[0] = targetAddr;
+                    canSendBuffer[1] = (byte) (0x00 | dataLength); // SF
+                    Array.Copy(requBuffer, dataOffset, canSendBuffer, 2, dataLength);
+                    Elm327SendCanTelegram(canSendBuffer);
+                }
+                else
+                {
+                    // first frame
+                    canSendBuffer[0] = targetAddr;
+                    canSendBuffer[1] = (byte)(0x10 | ((dataLength >> 8) & 0xFF));  // FF
+                    canSendBuffer[2] = (byte)dataLength;
+                    int telLen = 5;
+                    Array.Copy(requBuffer, dataOffset, canSendBuffer, 3, telLen);
+                    dataLength -= telLen;
+                    dataOffset += telLen;
+                    if (!Elm327SendCanTelegram(canSendBuffer))
+                    {
+                        return;
+                    }
+                }
+
+                lock (Elm327BufferLock)
+                {
+                    _elm327RequBuffer = null;
+                }
+            }
+        }
+
+        private static void Elm327CanReceiver()
+        {
+            byte blockCount = 0;
+            byte sourceAddr = 0;
+            byte targetAddr = 0;
+            byte fcCount = 0;
+            int recLen = 0;
+            byte[] recDataBuffer = null;
+            for (; ; )
+            {
+                int[] canRecData = Elm327ReceiveCanTelegram((recLen > 0) ? Elm327DataTimeout : 0);
+                if (canRecData != null && canRecData.Length >= 9)
+                {
+                    byte frameType = (byte)((canRecData[1 + 1] >> 4) & 0x0F);
+                    int telLen;
+                    if (recLen == 0)
+                    {
+                        // first telegram
+                        sourceAddr = (byte)(canRecData[0] & 0xFF);
+                        targetAddr = (byte)canRecData[1 + 0];
+                        switch (frameType)
+                        {
+                            case 0: // single frame
+                                telLen = canRecData[2] & 0x0F;
+                                if (telLen > 6)
+                                {
+                                    return;
+                                }
+                                recDataBuffer = new byte[telLen];
+                                for (int i = 0; i < telLen; i++)
+                                {
+                                    recDataBuffer[i] = (byte)canRecData[1 + 2 + i];
+                                }
+                                recLen = telLen;
+                                break;
+
+                            case 1: // first frame
+                            {
+                                telLen = ((canRecData[1 + 1] & 0x0F) << 8) + canRecData[1 + 2];
+                                recDataBuffer = new byte[telLen];
+                                recLen = 5;
+                                for (int i = 0; i < recLen; i++)
+                                {
+                                    recDataBuffer[i] = (byte)canRecData[1 + 3 + i];
+                                }
+                                blockCount = 1;
+
+                                byte[] canSendBuffer = new byte[8];
+                                canSendBuffer[0] = sourceAddr;
+                                canSendBuffer[1] = 0x30; // FC
+                                canSendBuffer[2] = Elm327CanBlockSize;
+                                canSendBuffer[3] = Elm327CanSepTime;
+                                fcCount = Elm327CanBlockSize;
+                                if (!Elm327SendCanTelegram(canSendBuffer))
+                                {
+                                    return;
+                                }
+                                break;
+                            }
+
+                            default:
+                                return;
+                        }
+                    }
+                    else
+                    {
+                        // next frame
+                        if (frameType == 2 && recDataBuffer != null &&
+                            (sourceAddr == (canRecData[0] & 0xFF)) && (targetAddr == canRecData[1 + 0]) &&
+                            (canRecData[1 + 1] & 0x0F) == (blockCount & 0x0F)
+                            )
+                        {
+                            telLen = recDataBuffer.Length - recLen;
+                            if (telLen > 6)
+                            {
+                                telLen = 6;
+                            }
+                            for (int i = 0; i < telLen; i++)
+                            {
+                                recDataBuffer[recLen + i] = (byte)canRecData[1 + 2 + i];
+                            }
+                            recLen += telLen;
+                            blockCount++;
+                            if (fcCount > 0 && recLen < recDataBuffer.Length)
+                            {
+                                fcCount--;
+                                if (fcCount == 0)
+                                {   // send FC
+                                    byte[] canSendBuffer = new byte[8];
+                                    canSendBuffer[0] = sourceAddr;
+                                    canSendBuffer[1] = 0x30; // FC
+                                    canSendBuffer[2] = Elm327CanBlockSize;
+                                    canSendBuffer[3] = Elm327CanSepTime;
+                                    fcCount = Elm327CanBlockSize;
+                                    if (!Elm327SendCanTelegram(canSendBuffer))
+                                    {
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (recDataBuffer != null && recLen >= recDataBuffer.Length)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    if (canRecData == null)
+                    {   // nothing received
+                        return;
+                    }
+                }
+                if (_elm327TerminateThread)
+                {
+                    return;
+                }
+            }
+
+            if (recLen >= recDataBuffer.Length)
+            {
+                byte[] responseTel;
+                // create BMW-FAST telegram
+                if (recDataBuffer.Length > 0x3F)
+                {
+                    responseTel = new byte[recDataBuffer.Length + 4];
+                    responseTel[0] = 0x80;
+                    responseTel[1] = targetAddr;
+                    responseTel[2] = sourceAddr;
+                    responseTel[3] = (byte)recDataBuffer.Length;
+                    Array.Copy(recDataBuffer, 0, responseTel, 4, recDataBuffer.Length);
+                }
+                else
+                {
+                    responseTel = new byte[recDataBuffer.Length + 3];
+                    responseTel[0] = (byte)(0x80 | recDataBuffer.Length);
+                    responseTel[1] = targetAddr;
+                    responseTel[2] = sourceAddr;
+                    Array.Copy(recDataBuffer, 0, responseTel, 3, recDataBuffer.Length);
+                }
+                byte checkSum = CalcChecksumBmwFast(responseTel, responseTel.Length);
+                lock (Elm327BufferLock)
+                {
+                    foreach (byte data in responseTel)
+                    {
+                        Elm327RespQueue.Enqueue(data);
+                    }
+                    Elm327RespQueue.Enqueue(checkSum);
+                }
+                Elm327RespEvent.Set();
+            }
         }
 
         private static bool Elm327SendCommand(string command, bool readAnswer = true)
@@ -464,6 +772,7 @@ namespace EdiabasLib
             {
                 return true;
             }
+            bool elmThread = _elm327Thread != null && Thread.CurrentThread == _elm327Thread;
             byte[] buffer = new byte[1];
             while (_bluetoothInStream.IsDataAvailable())
             {
@@ -494,12 +803,24 @@ namespace EdiabasLib
                 {
                     return false;
                 }
-                Thread.Sleep(10);
+                if (elmThread)
+                {
+                    if (_elm327TerminateThread)
+                    {
+                        return false;
+                    }
+                    Elm327RequEvent.WaitOne(10, false);
+                }
+                else
+                {
+                    Thread.Sleep(10);
+                }
             }
         }
 
         private static string Elm327ReceiveAnswer(int timeout, bool canData = false)
         {
+            bool elmThread = _elm327Thread != null && Thread.CurrentThread == _elm327Thread;
             StringBuilder stringBuilder = new StringBuilder();
             byte[] buffer = new byte[1];
             long startTime = Stopwatch.GetTimestamp();
@@ -538,7 +859,18 @@ namespace EdiabasLib
                 {
                     return string.Empty;
                 }
-                Thread.Sleep(10);
+                if (elmThread)
+                {
+                    if (_elm327TerminateThread)
+                    {
+                        return string.Empty;
+                    }
+                    Elm327RequEvent.WaitOne(10, false);
+                }
+                else
+                {
+                    Thread.Sleep(10);
+                }
             }
         }
     }
