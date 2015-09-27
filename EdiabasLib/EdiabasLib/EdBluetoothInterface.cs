@@ -133,6 +133,7 @@ namespace EdiabasLib
         public static bool InterfaceDisconnect()
         {
             bool result = true;
+            Elm327StopThread();
             try
             {
                 if (_bluetoothInStream != null)
@@ -169,7 +170,6 @@ namespace EdiabasLib
             {
                 result = false;
             }
-            Elm327StopThread();
             return result;
         }
 
@@ -312,6 +312,7 @@ namespace EdiabasLib
                     }
                     if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
                     {
+                        Android.Util.Log.Warn("InterfaceReceiveData", "Timeout");
                         return false;
                     }
                     Elm327RespEvent.WaitOne(timeout, false);
@@ -323,6 +324,7 @@ namespace EdiabasLib
                         receiveData[i + offset] = Elm327RespQueue.Dequeue();
                     }
                 }
+                Android.Util.Log.Warn("InterfaceReceiveData", "Received: " + length);
                 return true;
             }
             timeout += ReadTimeoutOffset;
@@ -454,6 +456,7 @@ namespace EdiabasLib
             lock (Elm327BufferLock)
             {
                 requBuffer = _elm327RequBuffer;
+                _elm327RequBuffer = null;
             }
             if (requBuffer != null && requBuffer.Length >= 4)
             {
@@ -493,9 +496,10 @@ namespace EdiabasLib
                 else
                 {
                     // first frame
+                    Android.Util.Log.Warn("Elm327CanSender", "FF");
                     canSendBuffer[0] = targetAddr;
-                    canSendBuffer[1] = (byte)(0x10 | ((dataLength >> 8) & 0xFF));  // FF
-                    canSendBuffer[2] = (byte)dataLength;
+                    canSendBuffer[1] = (byte) (0x10 | ((dataLength >> 8) & 0xFF)); // FF
+                    canSendBuffer[2] = (byte) dataLength;
                     int telLen = 5;
                     Array.Copy(requBuffer, dataOffset, canSendBuffer, 3, telLen);
                     dataLength -= telLen;
@@ -504,11 +508,95 @@ namespace EdiabasLib
                     {
                         return;
                     }
-                }
+                    byte blockSize = 0;
+                    byte sepTime = 0;
+                    bool waitForFc = true;
+                    byte blockCount = 1;
+                    for (;;)
+                    {
+                        if (waitForFc)
+                        {
+                            Android.Util.Log.Warn("Elm327CanSender", "Wait for fc");
+                            bool wait = false;
+                            do
+                            {
+                                int[] canRecData = Elm327ReceiveCanTelegram(Elm327DataTimeout);
+                                if (canRecData == null)
+                                {
+                                    Android.Util.Log.Warn("Elm327CanSender", "CAN Timeout");
+                                    return;
+                                }
+                                if (canRecData.Length >= 5 &&
+                                    ((canRecData[0] & 0xFF00) == 0x0600) &&
+                                    ((canRecData[0] & 0xFF) == targetAddr) && (canRecData[1 + 0] == sourceAddr) &&
+                                    ((canRecData[1 + 1] & 0xF0) == 0x30)
+                                    )
+                                {
+                                    switch (canRecData[1 + 1] & 0x0F)
+                                    {
+                                        case 0: // CTS
+                                            wait = false;
+                                            break;
 
-                lock (Elm327BufferLock)
-                {
-                    _elm327RequBuffer = null;
+                                        case 1: // Wait
+                                            wait = true;
+                                            break;
+
+                                        default:
+                                            return;
+                                    }
+                                    blockSize = (byte) canRecData[1 + 2];
+                                    sepTime = (byte) canRecData[1 + 3];
+                                }
+                                if (_elm327TerminateThread)
+                                {
+                                    return;
+                                }
+                            }
+                            while (wait);
+                        }
+
+                        Android.Util.Log.Warn("Elm327CanSender", "CF");
+                        // consecutive frame
+                        Array.Clear(canSendBuffer, 0, canSendBuffer.Length);
+                        canSendBuffer[0] = targetAddr;
+                        canSendBuffer[1] = (byte) (0x20 | (blockCount & 0x0F)); // CF
+                        telLen = dataLength;
+                        if (telLen > 6)
+                        {
+                            telLen = 6;
+                        }
+                        Array.Copy(requBuffer, dataOffset, canSendBuffer, 2, telLen);
+                        dataLength -= telLen;
+                        dataOffset += telLen;
+                        blockCount++;
+                        if (!Elm327SendCanTelegram(canSendBuffer))
+                        {
+                            return;
+                        }
+                        if (dataLength <= 0)
+                        {
+                            break;
+                        }
+
+                        waitForFc = false;
+                        if (blockSize > 0)
+                        {
+                            if (blockSize == 1)
+                            {
+                                waitForFc = true;
+                            }
+                            blockSize--;
+                        }
+                        if (!waitForFc && sepTime > 0)
+                        {
+                            Thread.Sleep(sepTime);
+                        }
+                        if (_elm327TerminateThread)
+                        {
+                            return;
+                        }
+                    }
                 }
             }
         }
@@ -523,7 +611,11 @@ namespace EdiabasLib
             byte[] recDataBuffer = null;
             for (; ; )
             {
-                int[] canRecData = Elm327ReceiveCanTelegram((recLen > 0) ? Elm327DataTimeout : 0);
+                if (recLen == 0 && !_bluetoothInStream.IsDataAvailable())
+                {
+                    return;
+                }
+                int[] canRecData = Elm327ReceiveCanTelegram(Elm327DataTimeout);
                 if (canRecData != null && canRecData.Length >= 9)
                 {
                     byte frameType = (byte)((canRecData[1 + 1] >> 4) & 0x0F);
@@ -635,6 +727,7 @@ namespace EdiabasLib
 
             if (recLen >= recDataBuffer.Length)
             {
+                Android.Util.Log.Warn("Elm327CanReceiver", "Received: " + recLen);
                 byte[] responseTel;
                 // create BMW-FAST telegram
                 if (recDataBuffer.Length > 0x3F)
@@ -679,6 +772,7 @@ namespace EdiabasLib
                 FlushReceiveBuffer();
                 byte[] sendData = Encoding.UTF8.GetBytes(command + "\r");
                 _bluetoothOutStream.Write(sendData, 0, sendData.Length);
+                Android.Util.Log.Warn("ELM Send", command + "\r");
                 if (readAnswer)
                 {
                     string answer = Elm327ReceiveAnswer(Elm327CommandTimeout);
@@ -714,7 +808,9 @@ namespace EdiabasLib
                 stringBuilder.Append("\r");
                 byte[] sendData = Encoding.UTF8.GetBytes(stringBuilder.ToString());
                 _bluetoothOutStream.Write(sendData, 0, sendData.Length);
+                Android.Util.Log.Warn("ELM Send", stringBuilder.ToString());
                 _elm327DataMode = true;
+                Thread.Sleep(10);
             }
             catch (Exception)
             {
@@ -779,6 +875,7 @@ namespace EdiabasLib
                 int bytesRead = _bluetoothInStream.Read(buffer, 0, 1);
                 if (bytesRead > 0 && buffer[0] == 0x3E)
                 {
+                    Android.Util.Log.Warn("ELM Rec", "Data mode terminated");
                     _elm327DataMode = false;
                     return true;
                 }
@@ -786,6 +883,7 @@ namespace EdiabasLib
 
             buffer[0] = 0x20;   // space
             _bluetoothOutStream.Write(buffer, 0, 1);
+            Android.Util.Log.Warn("ELM Send", "SPACE");
 
             long startTime = Stopwatch.GetTimestamp();
             for (;;)
@@ -795,12 +893,14 @@ namespace EdiabasLib
                     int bytesRead = _bluetoothInStream.Read(buffer, 0, 1);
                     if (bytesRead > 0 && buffer[0] == 0x3E)
                     {
+                        Android.Util.Log.Warn("ELM Rec", "Data mode terminated");
                         _elm327DataMode = false;
                         return true;
                     }
                 }
-                if ((timeout == 0) || ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs))
+                if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
                 {
+                    Android.Util.Log.Warn("ELM Rec", "Leave data mode timeout");
                     return false;
                 }
                 if (elmThread)
@@ -836,6 +936,7 @@ namespace EdiabasLib
                         {
                             if (data == '\r')
                             {
+                                Android.Util.Log.Warn("ELM Rec", stringBuilder.ToString());
                                 return stringBuilder.ToString();
                             }
                             stringBuilder.Append(Convert.ToChar(data));
@@ -849,14 +950,17 @@ namespace EdiabasLib
                             _elm327DataMode = false;
                             if (canData)
                             {
+                                Android.Util.Log.Warn("ELM Rec", "Data mode aborted");
                                 return string.Empty;
                             }
+                            Android.Util.Log.Warn("ELM Rec", stringBuilder.ToString());
                             return stringBuilder.ToString();
                         }
                     }
                 }
-                if ((timeout == 0) || ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs))
+                if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
                 {
+                    Android.Util.Log.Warn("ELM Rec", "Timeout");
                     return string.Empty;
                 }
                 if (elmThread)
