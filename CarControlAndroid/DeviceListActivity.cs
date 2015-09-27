@@ -15,6 +15,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using Android.Bluetooth;
 using Android.Content;
 using Android.OS;
@@ -25,6 +26,7 @@ using Java.Util;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 
 namespace BmwDiagnostics
@@ -42,9 +44,17 @@ namespace BmwDiagnostics
                 Android.Content.PM.ConfigChanges.ScreenSize)]
     public class DeviceListActivity : AppCompatActivity
     {
+        enum AdapterType
+        {
+            Unknown,        // unknown adapter
+            Elm327,         // ELM327
+            Custom,         // custom adapter
+            EchoOnly,       // only echo response
+        }
+
         private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
-        private const int Elm327CommandTimeout = 2000;
+        private const int ResponseTimeout = 1000;
 
         // Return Intent extra
         public const string ExtraDeviceName = "device_name";
@@ -190,7 +200,7 @@ namespace BmwDiagnostics
 
             Thread detectThread = new Thread(() =>
             {
-                string adapterType = null;
+                AdapterType adapterType = AdapterType.Unknown;
                 try
                 {
                     BluetoothDevice device = _btAdapter.GetRemoteDevice(deviceAddress);
@@ -213,7 +223,7 @@ namespace BmwDiagnostics
                 {
                     progress.Hide();
                     progress.Dispose();
-                    if (string.IsNullOrEmpty(adapterType))
+                    if (adapterType == AdapterType.Unknown)
                     {
                         new AlertDialog.Builder(this)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
@@ -230,7 +240,11 @@ namespace BmwDiagnostics
                     }
                     else
                     {
-                        ReturnDeviceType(deviceAddress + ";" + adapterType, deviceName);
+                        if (adapterType == AdapterType.Elm327)
+                        {
+                            deviceAddress += ";ELM327";
+                        }
+                        ReturnDeviceType(deviceAddress, deviceName);
                     }
                 });
             })
@@ -261,14 +275,73 @@ namespace BmwDiagnostics
         /// Detects the CAN adapter type
         /// </summary>
         /// <param name="bluetoothSocket">Bluetooth socket for communication</param>
-        /// <returns>Adapter type string</returns>
-        private string AdapterTypeDetection(BluetoothSocket bluetoothSocket)
+        /// <returns>Adapter type</returns>
+        private AdapterType AdapterTypeDetection(BluetoothSocket bluetoothSocket)
         {
+            byte[] customData = {0x82, 0xF1, 0xF1, 0x82, 0x00, 0xE6};
+            AdapterType adapterType = AdapterType.Unknown;
+
             try
             {
                 Stream bluetoothInStream = bluetoothSocket.InputStream;
                 Stream bluetoothOutStream = bluetoothSocket.OutputStream;
 
+                {
+                    // custom adapter
+                    bluetoothInStream.Flush();
+                    while (bluetoothInStream.IsDataAvailable())
+                    {
+                        bluetoothInStream.ReadByte();
+                    }
+                    bluetoothOutStream.Write(customData, 0, customData.Length);
+
+                    List<byte> responseList = new List<byte>();
+                    long startTime = Stopwatch.GetTimestamp();
+                    for (; ; )
+                    {
+                        while (bluetoothInStream.IsDataAvailable())
+                        {
+                            int data = bluetoothInStream.ReadByte();
+                            if (data >= 0)
+                            {
+                                responseList.Add((byte)data);
+                                startTime = Stopwatch.GetTimestamp();
+                            }
+                        }
+                        if (responseList.Count >= customData.Length*2)
+                        {
+                            bool validEcho = !customData.Where((t, i) => responseList[i] != t).Any();
+                            if (!validEcho)
+                            {
+                                break;
+                            }
+                            byte checkSum = 0x00;
+                            for (int i = 0; i < customData.Length - 1; i++)
+                            {
+                                checkSum += responseList[i + customData.Length];
+                            }
+                            if (checkSum != responseList[(customData.Length * 2) -1])
+                            {
+                                break;
+                            }
+                            return AdapterType.Custom;
+                        }
+                        if ((Stopwatch.GetTimestamp() - startTime) > ResponseTimeout * TickResolMs)
+                        {
+                            if (responseList.Count >= customData.Length)
+                            {
+                                bool validEcho = !customData.Where((t, i) => responseList[i] != t).Any();
+                                if (validEcho)
+                                {
+                                    adapterType = AdapterType.EchoOnly;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                // ELM327
                 for (int i = 0; i < 2; i++)
                 {
                     bluetoothInStream.Flush();
@@ -291,6 +364,7 @@ namespace BmwDiagnostics
                             {
                                 // remove 0x00
                                 stringBuilder.Append(Convert.ToChar(data));
+                                startTime = Stopwatch.GetTimestamp();
                             }
                             if (data == 0x3E)
                             {
@@ -302,7 +376,7 @@ namespace BmwDiagnostics
                         {
                             break;
                         }
-                        if ((Stopwatch.GetTimestamp() - startTime) > Elm327CommandTimeout*TickResolMs)
+                        if ((Stopwatch.GetTimestamp() - startTime) > ResponseTimeout * TickResolMs)
                         {
                             break;
                         }
@@ -311,16 +385,16 @@ namespace BmwDiagnostics
                     {
                         if (response.Contains("ELM327"))
                         {
-                            return "ELM327";
+                            return AdapterType.Elm327;
                         }
                     }
                 }
             }
             catch (Exception)
             {
-                return string.Empty;
+                return AdapterType.Unknown;
             }
-            return string.Empty;
+            return adapterType;
         }
 
         /// <summary>
