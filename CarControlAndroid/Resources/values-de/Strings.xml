@@ -29,7 +29,6 @@
 
   <!-- Compile -->
   <string name="compile_start">Anwendercode kompilieren</string>
-  <string name="compile_ok_btn">OK</string>
 
   <!-- Download -->
   <string name="downloading_file">Dateien herunterladen</string>
@@ -45,6 +44,9 @@
   <string name="title_paired_devices">Gekoppelte Geräte</string>
   <string name="title_other_devices">Andere verfügbare Geräte</string>
   <string name="button_scan">Nach Geräten suchen</string>
+  <string name="detect_adapter">Adaptertyp erkennen</string>
+  <string name="adapter_type_title">Adaptertyp</string>
+  <string name="unknown_adapter_type">Adaptertyp wurde nicht erkannt.\nWollen Sie trotzdem diesen Adapter verwenden?</string>
 
   <!-- tabs_activate -->
   <string name="button_active">Aktiv</string>

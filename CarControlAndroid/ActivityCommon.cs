@@ -290,7 +290,7 @@ namespace BmwDiagnostics
         {
             new AlertDialog.Builder(_activity)
             .SetMessage(message)
-            .SetNeutralButton(Resource.String.compile_ok_btn, (s, e) => { })
+            .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
             .Show();
         }
 

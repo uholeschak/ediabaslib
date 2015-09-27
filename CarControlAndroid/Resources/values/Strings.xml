@@ -29,7 +29,6 @@
 
   <!-- Compile -->
   <string name="compile_start">Compiling user code</string>
-  <string name="compile_ok_btn">OK</string>
 
   <!-- Download -->
   <string name="downloading_file">Downloading files</string>
@@ -45,6 +44,9 @@
   <string name="title_paired_devices">Paired devices</string>
   <string name="title_other_devices">Other available devices</string>
   <string name="button_scan">Scan for devices</string>
+  <string name="detect_adapter">Detecting adapter type</string>
+  <string name="adapter_type_title">Adapter type</string>
+  <string name="unknown_adapter_type">Adapter type not detected.\nDo you still want to use this adapter?</string>
 
   <!-- tabs_activate -->
   <string name="button_active">Active</string>
