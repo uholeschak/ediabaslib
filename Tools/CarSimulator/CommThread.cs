@@ -1688,7 +1688,7 @@ namespace CarSimulator
                                     _receiveStopWatch.Stop();
                                     return false;
                                 }
-                                dataBuffer = new byte[canMsg.DATA[1] & 0x0F];
+                                dataBuffer = new byte[len];
                                 Array.Copy(canMsg.DATA, 2, dataBuffer, 0, len);
                                 recLen = len;
                                 break;
