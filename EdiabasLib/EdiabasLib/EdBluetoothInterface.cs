@@ -891,8 +891,8 @@ namespace EdiabasLib
             byte[] buffer = new byte[1];
             while (_bluetoothInStream.IsDataAvailable())
             {
-                int bytesRead = _bluetoothInStream.Read(buffer, 0, 1);
-                if (bytesRead > 0 && buffer[0] == 0x3E)
+                int data = _bluetoothInStream.ReadByte();
+                if (data == 0x3E)
                 {
 #if ELM_DEBUG
                     Android.Util.Log.Info("ELM Rec", "Data mode terminated");
@@ -913,8 +913,8 @@ namespace EdiabasLib
             {
                 while (_bluetoothInStream.IsDataAvailable())
                 {
-                    int bytesRead = _bluetoothInStream.Read(buffer, 0, 1);
-                    if (bytesRead > 0 && buffer[0] == 0x3E)
+                    int data = _bluetoothInStream.ReadByte();
+                    if (data == 0x3E)
                     {
 #if ELM_DEBUG
                         Android.Util.Log.Info("ELM Rec", "Data mode terminated");
@@ -949,15 +949,13 @@ namespace EdiabasLib
         {
             bool elmThread = _elm327Thread != null && Thread.CurrentThread == _elm327Thread;
             StringBuilder stringBuilder = new StringBuilder();
-            byte[] buffer = new byte[1];
             long startTime = Stopwatch.GetTimestamp();
             for (; ; )
             {
                 while (_bluetoothInStream.IsDataAvailable())
                 {
-                    int bytesRead = _bluetoothInStream.Read(buffer, 0, 1);
-                    byte data = buffer[0];
-                    if (bytesRead > 0 && data != 0x00)
+                    int data = _bluetoothInStream.ReadByte();
+                    if (data >= 0 && data != 0x00)
                     {   // remove 0x00
                         if (canData)
                         {
