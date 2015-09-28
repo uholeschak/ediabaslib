@@ -14,11 +14,12 @@ namespace EdiabasLib
     static public class EdBluetoothInterface
     {
         public const string PortId = "BLUETOOTH";
-        private static readonly UUID SppUuid = UUID.FromString ("00001101-0000-1000-8000-00805F9B34FB");
+        public const string Elm327Tag = "ELM327";
+        private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int ReadTimeoutOffset = 1000;
         private const int Elm327ReadTimeoutOffset = 2000;
-        private const int Elm327CommandTimeout = 2000;
+        private const int Elm327CommandTimeout = 1500;
         private const int Elm327DataTimeout = 2000;
         private const int Elm327CanBlockSize = 8;
         private const int Elm327CanSepTime = 0;
@@ -92,7 +93,7 @@ namespace EdiabasLib
                     device = bluetoothAdapter.GetRemoteDevice(stringList[0]);
                     if (stringList.Length > 1)
                     {
-                        if (string.Compare(stringList[1], "ELM327", StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare(stringList[1], Elm327Tag, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             _elm327Device = true;
                         }
