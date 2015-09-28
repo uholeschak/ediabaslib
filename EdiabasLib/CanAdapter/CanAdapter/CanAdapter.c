@@ -505,6 +505,13 @@ bool internal_telegram(uint16_t len)
             uart_send(temp_buffer, len);
             return true;
         }
+        if ((temp_buffer[3] == 0xFD) && (temp_buffer[4] == 0xFD))
+        {      // read adapter type
+            temp_buffer[4] = 0x01;
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
         if ((temp_buffer[3] == 0xFE) && (temp_buffer[4] == 0xFE))
         {      // read ignition state
             temp_buffer[4] = IGNITION_STATE() ? 0x01 : 0x00;
