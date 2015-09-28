@@ -399,7 +399,7 @@ namespace BmwDiagnostics
             if (canAdapterMenu != null)
             {
                 canAdapterMenu.SetEnabled(interfaceAvailable && !commActive);
-                canAdapterMenu.SetVisible((_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth) || (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Ftdi));
+                canAdapterMenu.SetVisible(_activityCommon.AllowCanAdapterConfig(_deviceAddress));
             }
 
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
