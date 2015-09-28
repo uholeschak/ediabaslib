@@ -286,6 +286,33 @@ namespace BmwDiagnostics
             return false;
         }
 
+        public bool AllowCanAdapterConfig(string deviceAddress)
+        {
+            switch (_selectedInterface)
+            {
+                case InterfaceType.Bluetooth:
+                {
+                    if (string.IsNullOrEmpty(deviceAddress))
+                    {
+                        return false;
+                    }
+                    string[] stringList = deviceAddress.Split(';');
+                    if (stringList.Length > 1)
+                    {
+                        if (string.Compare(stringList[1], EdBluetoothInterface.Elm327Tag, StringComparison.OrdinalIgnoreCase) == 0)
+                        {   // ELM device
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+
+                case InterfaceType.Ftdi:
+                    return true;
+            }
+            return false;
+        }
+
         public void ShowAlert(string message)
         {
             new AlertDialog.Builder(_activity)
