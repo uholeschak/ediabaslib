@@ -293,7 +293,7 @@ namespace BmwDiagnostics
         /// <returns>Adapter type</returns>
         private AdapterType AdapterTypeDetection(BluetoothSocket bluetoothSocket)
         {
-            byte[] customData = {0x82, 0xF1, 0xF1, 0x82, 0x00, 0xE6};
+            byte[] customData = {0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E};
             AdapterType adapterType = AdapterType.Unknown;
 
             try
