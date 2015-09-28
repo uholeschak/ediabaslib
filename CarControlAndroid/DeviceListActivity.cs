@@ -28,6 +28,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using EdiabasLib;
 
 namespace BmwDiagnostics
 {
@@ -242,7 +243,7 @@ namespace BmwDiagnostics
                     {
                         if (adapterType == AdapterType.Elm327)
                         {
-                            deviceAddress += ";ELM327";
+                            deviceAddress += ";" + EdBluetoothInterface.Elm327Tag;
                         }
                         ReturnDeviceType(deviceAddress, deviceName);
                     }
@@ -370,6 +371,11 @@ namespace BmwDiagnostics
                             {
                                 // prompt
                                 response = stringBuilder.ToString();
+                                break;
+                            }
+                            if (stringBuilder.Length > 100)
+                            {
+                                break;
                             }
                         }
                         if (response != null)
