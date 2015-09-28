@@ -49,6 +49,7 @@ namespace BmwDiagnostics
         {
             Unknown,        // unknown adapter
             Elm327,         // ELM327
+            Elm327Invalid,  // ELM327 inavlid type
             Custom,         // custom adapter
             EchoOnly,       // only echo response
         }
@@ -224,28 +225,41 @@ namespace BmwDiagnostics
                 {
                     progress.Hide();
                     progress.Dispose();
-                    if (adapterType == AdapterType.Unknown)
+                    switch (adapterType)
                     {
-                        new AlertDialog.Builder(this)
-                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                            {
-                                ReturnDeviceType(deviceAddress, deviceName);
-                            })
-                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                            {
-                            })
-                            .SetCancelable(true)
-                            .SetMessage(Resource.String.unknown_adapter_type)
-                            .SetTitle(Resource.String.adapter_type_title)
-                            .Show();
-                    }
-                    else
-                    {
-                        if (adapterType == AdapterType.Elm327)
-                        {
-                            deviceAddress += ";" + EdBluetoothInterface.Elm327Tag;
-                        }
-                        ReturnDeviceType(deviceAddress, deviceName);
+                        case AdapterType.Unknown:
+                            new AlertDialog.Builder(this)
+                                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                {
+                                    ReturnDeviceType(deviceAddress, deviceName);
+                                })
+                                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                {
+                                })
+                                .SetCancelable(true)
+                                .SetMessage(Resource.String.unknown_adapter_type)
+                                .SetTitle(Resource.String.adapter_type_title)
+                                .Show();
+                            break;
+
+                        case AdapterType.Elm327:
+                            ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
+                            break;
+
+                        case AdapterType.Elm327Invalid:
+                            new AlertDialog.Builder(this)
+                                .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                                {
+                                })
+                                .SetCancelable(true)
+                                .SetMessage(Resource.String.invalid_adapter_type)
+                                .SetTitle(Resource.String.adapter_type_title)
+                                .Show();
+                            break;
+
+                        default:
+                            ReturnDeviceType(deviceAddress, deviceName);
+                            break;
                     }
                 });
             })
@@ -353,45 +367,38 @@ namespace BmwDiagnostics
                     byte[] sendData = Encoding.UTF8.GetBytes("ATI\r");
                     bluetoothOutStream.Write(sendData, 0, sendData.Length);
 
-                    string response = null;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    long startTime = Stopwatch.GetTimestamp();
-                    for (;;)
-                    {
-                        while (bluetoothInStream.IsDataAvailable())
-                        {
-                            int data = bluetoothInStream.ReadByte();
-                            if (data >= 0 && data != 0x00)
-                            {
-                                // remove 0x00
-                                stringBuilder.Append(Convert.ToChar(data));
-                                startTime = Stopwatch.GetTimestamp();
-                            }
-                            if (data == 0x3E)
-                            {
-                                // prompt
-                                response = stringBuilder.ToString();
-                                break;
-                            }
-                            if (stringBuilder.Length > 100)
-                            {
-                                break;
-                            }
-                        }
-                        if (response != null)
-                        {
-                            break;
-                        }
-                        if ((Stopwatch.GetTimestamp() - startTime) > ResponseTimeout * TickResolMs)
-                        {
-                            break;
-                        }
-                    }
+                    string response = GetElm327Reponse(bluetoothInStream);
                     if (response != null)
                     {
                         if (response.Contains("ELM327"))
                         {
-                            return AdapterType.Elm327;
+                            adapterType = AdapterType.Elm327;
+                            break;
+                        }
+                    }
+                }
+                if (adapterType == AdapterType.Elm327)
+                {
+                    foreach (string command in EdBluetoothInterface.Elm327InitCommands)
+                    {
+                        bluetoothInStream.Flush();
+                        while (bluetoothInStream.IsDataAvailable())
+                        {
+                            bluetoothInStream.ReadByte();
+                        }
+                        byte[] sendData = Encoding.UTF8.GetBytes(command + "\r");
+                        bluetoothOutStream.Write(sendData, 0, sendData.Length);
+
+                        string response = GetElm327Reponse(bluetoothInStream);
+                        if (response == null)
+                        {
+                            adapterType = AdapterType.Elm327Invalid;
+                            break;
+                        }
+                        if (!response.Contains("OK\r"))
+                        {
+                            adapterType = AdapterType.Elm327Invalid;
+                            break;
                         }
                     }
                 }
@@ -401,6 +408,50 @@ namespace BmwDiagnostics
                 return AdapterType.Unknown;
             }
             return adapterType;
+        }
+
+        /// <summary>
+        /// Get response from EL327
+        /// </summary>
+        /// <param name="bluetoothInStream">Bluetooth input stream</param>
+        /// <returns>Response string, null for no reponse</returns>
+        private string GetElm327Reponse(Stream bluetoothInStream)
+        {
+            string response = null;
+            StringBuilder stringBuilder = new StringBuilder();
+            long startTime = Stopwatch.GetTimestamp();
+            for (; ; )
+            {
+                while (bluetoothInStream.IsDataAvailable())
+                {
+                    int data = bluetoothInStream.ReadByte();
+                    if (data >= 0 && data != 0x00)
+                    {
+                        // remove 0x00
+                        stringBuilder.Append(Convert.ToChar(data));
+                        startTime = Stopwatch.GetTimestamp();
+                    }
+                    if (data == 0x3E)
+                    {
+                        // prompt
+                        response = stringBuilder.ToString();
+                        break;
+                    }
+                    if (stringBuilder.Length > 100)
+                    {
+                        break;
+                    }
+                }
+                if (response != null)
+                {
+                    break;
+                }
+                if ((Stopwatch.GetTimestamp() - startTime) > ResponseTimeout * TickResolMs)
+                {
+                    break;
+                }
+            }
+            return response;
         }
 
         /// <summary>
