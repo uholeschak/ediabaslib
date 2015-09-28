@@ -47,6 +47,7 @@
   <string name="detect_adapter">Detecting adapter type</string>
   <string name="adapter_type_title">Adapter type</string>
   <string name="unknown_adapter_type">Adapter type not detected.\nDo you still want to use this adapter?</string>
+  <string name="invalid_adapter_type">The ELM327 adapter is not supporting all required commands.\nPlease use a newer adapter type.</string>
 
   <!-- tabs_activate -->
   <string name="button_active">Active</string>

@@ -15,6 +15,7 @@ namespace EdiabasLib
     {
         public const string PortId = "BLUETOOTH";
         public const string Elm327Tag = "ELM327";
+        public static readonly string[] Elm327InitCommands = { "ATD", "ATE0", "ATSH6F1", "ATCF600", "ATCM700", "ATPBC001", "ATSPB", "ATAT0", "ATSTFF", "ATAL", "ATH1", "ATS0", "ATL0" };
         private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int ReadTimeoutOffset = 1000;
@@ -23,7 +24,6 @@ namespace EdiabasLib
         private const int Elm327DataTimeout = 2000;
         private const int Elm327CanBlockSize = 8;
         private const int Elm327CanSepTime = 0;
-        private static readonly string[] Elm327InitCommands = { "ATD", "ATE0", "ATSH6F1", "ATCF600", "ATCM700", "ATPBC001", "ATSPB", "ATAT0", "ATSTFF", "ATAL", "ATH1", "ATS0", "ATL0" };
         private static BluetoothSocket _bluetoothSocket;
         private static Stream _bluetoothInStream;
         private static Stream _bluetoothOutStream;
