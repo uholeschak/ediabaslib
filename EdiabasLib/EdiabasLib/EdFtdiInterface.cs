@@ -61,6 +61,8 @@ namespace EdiabasLib
 #endif
         }
 
+        public static EdiabasNet Ediabas { get; set; }
+
         public static IntPtr HandleFtdi
         {
             get { return _handleFtdi; }
