@@ -627,8 +627,8 @@ namespace EdiabasLib
                             }
                             blockSize--;
                         }
-                        if (!waitForFc && sepTime > 0)
-                        {
+                        if (!waitForFc && sepTime > 5)
+                        {   // data transport requires 4 ms + data mode abort
                             Thread.Sleep(sepTime);
                         }
                         if (_elm327TerminateThread)
