@@ -18,7 +18,7 @@ namespace EdiabasLib
         private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int ReadTimeoutOffset = 1000;
-        private const int Elm327ReadTimeoutOffset = 2000;
+        private const int Elm327ReadTimeoutOffset = 1000;
         private const int Elm327CommandTimeout = 1500;
         private const int Elm327DataTimeout = 2000;
         private const int Elm327CanBlockSize = 8;
@@ -27,6 +27,7 @@ namespace EdiabasLib
         private static Stream _bluetoothInStream;
         private static Stream _bluetoothOutStream;
         private static bool _elm327Device;
+        private static long _elm327ReceiveStartTime;
         private static bool _elm327DataMode;
         private static int _elm327CanHeader;
         private static Thread _elm327Thread;
@@ -304,7 +305,7 @@ namespace EdiabasLib
             if (_elm327Device)
             {
                 timeout += Elm327ReadTimeoutOffset;
-                long startTime = Stopwatch.GetTimestamp();
+                _elm327ReceiveStartTime = Stopwatch.GetTimestamp();
                 for (;;)
                 {
                     lock (Elm327BufferLock)
@@ -314,7 +315,7 @@ namespace EdiabasLib
                             break;
                         }
                     }
-                    if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
+                    if ((Stopwatch.GetTimestamp() - Volatile.Read(ref _elm327ReceiveStartTime)) > timeout * TickResolMs)
                     {
                         if (Ediabas != null)
                         {
@@ -583,6 +584,7 @@ namespace EdiabasLib
                                     }
                                     blockSize = (byte) canRecData[1 + 2];
                                     sepTime = (byte) canRecData[1 + 3];
+                                    _elm327ReceiveStartTime = Stopwatch.GetTimestamp();
                                     if (Ediabas != null)
                                     {
                                         Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BS={0} ST={1}", blockSize, sepTime);
@@ -686,6 +688,7 @@ namespace EdiabasLib
                                     recDataBuffer[i] = (byte)canRecData[1 + 2 + i];
                                 }
                                 recLen = telLen;
+                                _elm327ReceiveStartTime = Stopwatch.GetTimestamp();
                                 break;
 
                             case 1: // first frame
@@ -713,6 +716,7 @@ namespace EdiabasLib
                                 {
                                     return;
                                 }
+                                _elm327ReceiveStartTime = Stopwatch.GetTimestamp();
                                 break;
                             }
 
@@ -768,6 +772,7 @@ namespace EdiabasLib
                                     }
                                 }
                             }
+                            _elm327ReceiveStartTime = Stopwatch.GetTimestamp();
                         }
                     }
                     if (recDataBuffer != null && recLen >= recDataBuffer.Length)
