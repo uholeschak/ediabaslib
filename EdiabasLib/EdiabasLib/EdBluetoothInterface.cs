@@ -627,9 +627,9 @@ namespace EdiabasLib
                             }
                             blockSize--;
                         }
-                        if (!waitForFc && sepTime > 5)
-                        {   // data transport requires 4 ms + data mode abort
-                            Thread.Sleep(sepTime);
+                        if (!waitForFc)
+                        {   // we have to wait here, otherwise thread requires too much compuation time
+                            Thread.Sleep(sepTime < 10 ? 10 : sepTime);
                         }
                         if (_elm327TerminateThread)
                         {
@@ -882,7 +882,6 @@ namespace EdiabasLib
                 byte[] sendData = Encoding.UTF8.GetBytes(stringBuilder.ToString());
                 _bluetoothOutStream.Write(sendData, 0, sendData.Length);
                 _elm327DataMode = true;
-                Thread.Sleep(10);
             }
             catch (Exception)
             {
@@ -941,23 +940,29 @@ namespace EdiabasLib
                 return true;
             }
             bool elmThread = _elm327Thread != null && Thread.CurrentThread == _elm327Thread;
-            byte[] buffer = new byte[1];
+            StringBuilder stringBuilder = new StringBuilder();
             while (_bluetoothInStream.IsDataAvailable())
             {
                 int data = _bluetoothInStream.ReadByte();
-                if (data == 0x3E)
+                if (data >= 0)
                 {
-                    if (Ediabas != null)
+                    stringBuilder.Append(Convert.ToChar(data));
+                    if (data == 0x3E)
                     {
-                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM data mode already terminated");
+                        if (Ediabas != null)
+                        {
+                            Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM data mode already terminated");
+                        }
+                        _elm327DataMode = false;
+                        return true;
                     }
-                    _elm327DataMode = false;
-                    return true;
                 }
             }
 
-            buffer[0] = 0x20;   // space
-            _bluetoothOutStream.Write(buffer, 0, 1);
+            for (int i = 0; i < 4; i++)
+            {
+                _bluetoothOutStream.WriteByte(0x20);    // space
+            }
             if (Ediabas != null)
             {
                 Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM send SPACE");
@@ -969,14 +974,26 @@ namespace EdiabasLib
                 while (_bluetoothInStream.IsDataAvailable())
                 {
                     int data = _bluetoothInStream.ReadByte();
-                    if (data == 0x3E)
+                    if (data >= 0)
                     {
-                        if (Ediabas != null)
+                        stringBuilder.Append(Convert.ToChar(data));
+                        if (data == 0x3E)
                         {
-                            Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM data mode terminated");
+                            if (Ediabas != null)
+                            {
+                                string response = stringBuilder.ToString();
+                                if (!response.Contains("STOPPED\r"))
+                                {
+                                    Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM data mode not stopped: " + stringBuilder);
+                                }
+                                else
+                                {
+                                    Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM data mode terminated");
+                                }
+                            }
+                            _elm327DataMode = false;
+                            return true;
                         }
-                        _elm327DataMode = false;
-                        return true;
                     }
                 }
                 if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
