@@ -567,6 +567,10 @@ namespace EdiabasLib
                                             break;
 
                                         case 1: // Wait
+                                            if (Ediabas != null)
+                                            {
+                                                Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Wait for next FC");
+                                            }
                                             wait = true;
                                             break;
 
