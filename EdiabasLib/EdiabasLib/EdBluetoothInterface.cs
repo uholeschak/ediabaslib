@@ -1,5 +1,4 @@
-﻿//#define ELM_DEBUG
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -44,6 +43,8 @@ namespace EdiabasLib
         static EdBluetoothInterface()
         {
         }
+
+        public static EdiabasNet Ediabas { get; set; }
 
         public static int CurrentBaudRate
         {
@@ -136,6 +137,7 @@ namespace EdiabasLib
         {
             bool result = true;
             Elm327StopThread();
+            Elm327Exit();
             try
             {
                 if (_bluetoothInStream != null)
@@ -314,9 +316,10 @@ namespace EdiabasLib
                     }
                     if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
                     {
-#if ELM_DEBUG
-                        Android.Util.Log.Info("InterfaceReceiveData", "Timeout");
-#endif
+                        if (Ediabas != null)
+                        {
+                            Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receive timeout");
+                        }
                         return false;
                     }
                     Elm327RespEvent.WaitOne(timeout, false);
@@ -328,9 +331,6 @@ namespace EdiabasLib
                         receiveData[i + offset] = Elm327RespQueue.Dequeue();
                     }
                 }
-#if ELM_DEBUG
-                Android.Util.Log.Info("InterfaceReceiveData", "Received: " + length);
-#endif
                 return true;
             }
             timeout += ReadTimeoutOffset;
@@ -417,6 +417,14 @@ namespace EdiabasLib
             return true;
         }
 
+        private static void Elm327Exit()
+        {
+            if (_elm327Device)
+            {
+                Elm327LeaveDataMode(Elm327CommandTimeout);
+            }
+        }
+
         private static void Elm327StartThread()
         {
             if (_elm327Thread != null)
@@ -494,6 +502,10 @@ namespace EdiabasLib
                 if (dataLength <= 6)
                 {
                     // single frame
+                    if (Ediabas != null)
+                    {
+                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Send SF");
+                    }
                     canSendBuffer[0] = targetAddr;
                     canSendBuffer[1] = (byte) (0x00 | dataLength); // SF
                     Array.Copy(requBuffer, dataOffset, canSendBuffer, 2, dataLength);
@@ -502,9 +514,10 @@ namespace EdiabasLib
                 else
                 {
                     // first frame
-#if ELM_DEBUG
-                    Android.Util.Log.Info("Elm327CanSender", "FF");
-#endif
+                    if (Ediabas != null)
+                    {
+                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Send FF");
+                    }
                     canSendBuffer[0] = targetAddr;
                     canSendBuffer[1] = (byte) (0x10 | ((dataLength >> 8) & 0xFF)); // FF
                     canSendBuffer[2] = (byte) dataLength;
@@ -524,18 +537,20 @@ namespace EdiabasLib
                     {
                         if (waitForFc)
                         {
-#if ELM_DEBUG
-                            Android.Util.Log.Info("Elm327CanSender", "Wait for FC");
-#endif
+                            if (Ediabas != null)
+                            {
+                                Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Wait for FC");
+                            }
                             bool wait = false;
                             do
                             {
                                 int[] canRecData = Elm327ReceiveCanTelegram(Elm327DataTimeout);
                                 if (canRecData == null)
                                 {
-#if ELM_DEBUG
-                                    Android.Util.Log.Info("Elm327CanSender", "CAN Timeout");
-#endif
+                                    if (Ediabas != null)
+                                    {
+                                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "*** FC timeout");
+                                    }
                                     return;
                                 }
                                 if (canRecData.Length >= 5 &&
@@ -544,7 +559,8 @@ namespace EdiabasLib
                                     ((canRecData[1 + 1] & 0xF0) == 0x30)
                                     )
                                 {
-                                    switch (canRecData[1 + 1] & 0x0F)
+                                    byte frameControl = (byte)(canRecData[1 + 1] & 0x0F);
+                                    switch (frameControl)
                                     {
                                         case 0: // CTS
                                             wait = false;
@@ -555,10 +571,18 @@ namespace EdiabasLib
                                             break;
 
                                         default:
+                                            if (Ediabas != null)
+                                            {
+                                                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Invalid FC: {0:X01}", frameControl);
+                                            }
                                             return;
                                     }
                                     blockSize = (byte) canRecData[1 + 2];
                                     sepTime = (byte) canRecData[1 + 3];
+                                    if (Ediabas != null)
+                                    {
+                                        Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BS={0} ST={1}", blockSize, sepTime);
+                                    }
                                 }
                                 if (_elm327TerminateThread)
                                 {
@@ -568,9 +592,10 @@ namespace EdiabasLib
                             while (wait);
                         }
 
-#if ELM_DEBUG
-                        Android.Util.Log.Info("Elm327CanSender", "CF");
-#endif
+                        if (Ediabas != null)
+                        {
+                            Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Send CF");
+                        }
                         // consecutive frame
                         Array.Clear(canSendBuffer, 0, canSendBuffer.Length);
                         canSendBuffer[0] = targetAddr;
@@ -642,6 +667,10 @@ namespace EdiabasLib
                         switch (frameType)
                         {
                             case 0: // single frame
+                                if (Ediabas != null)
+                                {
+                                    Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Rec SF");
+                                }
                                 telLen = canRecData[2] & 0x0F;
                                 if (telLen > 6)
                                 {
@@ -657,6 +686,10 @@ namespace EdiabasLib
 
                             case 1: // first frame
                             {
+                                if (Ediabas != null)
+                                {
+                                    Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Rec FF");
+                                }
                                 telLen = ((canRecData[1 + 1] & 0x0F) << 8) + canRecData[1 + 2];
                                 recDataBuffer = new byte[telLen];
                                 recLen = 5;
@@ -680,6 +713,10 @@ namespace EdiabasLib
                             }
 
                             default:
+                                if (Ediabas != null)
+                                {
+                                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Rec invalid frame {0:X01}", frameType);
+                                }
                                 return;
                         }
                     }
@@ -691,6 +728,10 @@ namespace EdiabasLib
                             (canRecData[1 + 1] & 0x0F) == (blockCount & 0x0F)
                             )
                         {
+                            if (Ediabas != null)
+                            {
+                                Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Rec CF");
+                            }
                             telLen = recDataBuffer.Length - recLen;
                             if (telLen > 6)
                             {
@@ -707,6 +748,10 @@ namespace EdiabasLib
                                 fcCount--;
                                 if (fcCount == 0)
                                 {   // send FC
+                                    if (Ediabas != null)
+                                    {
+                                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "(Rec) Send FC");
+                                    }
                                     byte[] canSendBuffer = new byte[8];
                                     canSendBuffer[0] = sourceAddr;
                                     canSendBuffer[1] = 0x30; // FC
@@ -741,9 +786,10 @@ namespace EdiabasLib
 
             if (recLen >= recDataBuffer.Length)
             {
-#if ELM_DEBUG
-                Android.Util.Log.Info("Elm327CanReceiver", "Received: " + recLen);
-#endif
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Received length: {0}", recLen);
+                }
                 byte[] responseTel;
                 // create BMW-FAST telegram
                 if (recDataBuffer.Length > 0x3F)
@@ -788,15 +834,20 @@ namespace EdiabasLib
                 FlushReceiveBuffer();
                 byte[] sendData = Encoding.UTF8.GetBytes(command + "\r");
                 _bluetoothOutStream.Write(sendData, 0, sendData.Length);
-#if ELM_DEBUG
-                Android.Util.Log.Info("ELM Send", command + "\r");
-#endif
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CMD send: {0}", command);
+                }
                 if (readAnswer)
                 {
                     string answer = Elm327ReceiveAnswer(Elm327CommandTimeout);
                     // check for OK
                     if (!answer.Contains("OK\r"))
                     {
+                        if (Ediabas != null)
+                        {
+                            Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ELM invalid response: {0}", answer);
+                        }
                         return false;
                     }
                 }
@@ -823,12 +874,13 @@ namespace EdiabasLib
                 {
                     stringBuilder.Append((string.Format("{0:X02}", data)));
                 }
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN send: {0}", stringBuilder.ToString());
+                }
                 stringBuilder.Append("\r");
                 byte[] sendData = Encoding.UTF8.GetBytes(stringBuilder.ToString());
                 _bluetoothOutStream.Write(sendData, 0, sendData.Length);
-#if ELM_DEBUG
-                Android.Util.Log.Info("ELM Send", stringBuilder.ToString());
-#endif
                 _elm327DataMode = true;
                 Thread.Sleep(10);
             }
@@ -895,9 +947,10 @@ namespace EdiabasLib
                 int data = _bluetoothInStream.ReadByte();
                 if (data == 0x3E)
                 {
-#if ELM_DEBUG
-                    Android.Util.Log.Info("ELM Rec", "Data mode terminated");
-#endif
+                    if (Ediabas != null)
+                    {
+                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM data mode already terminated");
+                    }
                     _elm327DataMode = false;
                     return true;
                 }
@@ -905,9 +958,10 @@ namespace EdiabasLib
 
             buffer[0] = 0x20;   // space
             _bluetoothOutStream.Write(buffer, 0, 1);
-#if ELM_DEBUG
-            Android.Util.Log.Info("ELM Send", "SPACE");
-#endif
+            if (Ediabas != null)
+            {
+                Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM send SPACE");
+            }
 
             long startTime = Stopwatch.GetTimestamp();
             for (;;)
@@ -917,18 +971,20 @@ namespace EdiabasLib
                     int data = _bluetoothInStream.ReadByte();
                     if (data == 0x3E)
                     {
-#if ELM_DEBUG
-                        Android.Util.Log.Info("ELM Rec", "Data mode terminated");
-#endif
+                        if (Ediabas != null)
+                        {
+                            Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM data mode terminated");
+                        }
                         _elm327DataMode = false;
                         return true;
                     }
                 }
                 if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
                 {
-#if ELM_DEBUG
-                    Android.Util.Log.Info("ELM Rec", "Leave data mode timeout");
-#endif
+                    if (Ediabas != null)
+                    {
+                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "*** ELM leave data mode timeout");
+                    }
                     return false;
                 }
                 if (elmThread)
@@ -962,10 +1018,12 @@ namespace EdiabasLib
                         {
                             if (data == '\r')
                             {
-#if ELM_DEBUG
-                                Android.Util.Log.Info("ELM Rec", stringBuilder.ToString());
-#endif
-                                return stringBuilder.ToString();
+                                string answer = stringBuilder.ToString();
+                                if (Ediabas != null)
+                                {
+                                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN rec: {0}", answer);
+                                }
+                                return answer;
                             }
                             stringBuilder.Append(Convert.ToChar(data));
                         }
@@ -978,23 +1036,27 @@ namespace EdiabasLib
                             _elm327DataMode = false;
                             if (canData)
                             {
-#if ELM_DEBUG
-                                Android.Util.Log.Info("ELM Rec", "Data mode aborted");
-#endif
+                                if (Ediabas != null)
+                                {
+                                    Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM Data mode aborted");
+                                }
                                 return string.Empty;
                             }
-#if ELM_DEBUG
-                            Android.Util.Log.Info("ELM Rec", stringBuilder.ToString());
-#endif
-                            return stringBuilder.ToString();
+                            string answer = stringBuilder.ToString();
+                            if (Ediabas != null)
+                            {
+                                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CMD rec: {0}", answer);
+                            }
+                            return answer;
                         }
                     }
                 }
                 if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
                 {
-#if ELM_DEBUG
-                    Android.Util.Log.Info("ELM Rec", "Timeout");
-#endif
+                    if (Ediabas != null)
+                    {
+                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM rec timeout");
+                    }
                     return string.Empty;
                 }
                 if (elmThread)

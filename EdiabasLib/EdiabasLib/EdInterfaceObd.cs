@@ -798,6 +798,7 @@ namespace EdiabasLib
 
             if (ComPortProtected.ToUpper(Culture).StartsWith(EdFtdiInterface.PortId))
             {   // automtatic hook of FTDI functions
+                EdFtdiInterface.Ediabas = Ediabas;
                 InterfaceConnectFuncInt = EdFtdiInterface.InterfaceConnect;
                 InterfaceDisconnectFuncInt = EdFtdiInterface.InterfaceDisconnect;
                 InterfaceSetConfigFuncInt = EdFtdiInterface.InterfaceSetConfig;
@@ -812,6 +813,7 @@ namespace EdiabasLib
 #if Android
             else if (ComPortProtected.ToUpper(Culture).StartsWith(EdBluetoothInterface.PortId))
             {   // automtatic hook of bluetooth functions
+                EdBluetoothInterface.Ediabas = Ediabas;
                 InterfaceConnectFuncInt = EdBluetoothInterface.InterfaceConnect;
                 InterfaceDisconnectFuncInt = EdBluetoothInterface.InterfaceDisconnect;
                 InterfaceSetConfigFuncInt = EdBluetoothInterface.InterfaceSetConfig;

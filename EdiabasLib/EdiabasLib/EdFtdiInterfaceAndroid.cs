@@ -44,6 +44,8 @@ namespace EdiabasLib
         {
         }
 
+        public static EdiabasNet Ediabas { get; set; }
+
         public static int CurrentBaudRate
         {
             get { return _currentBaudRate; }
