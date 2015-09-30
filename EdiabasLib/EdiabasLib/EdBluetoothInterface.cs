@@ -911,7 +911,13 @@ namespace EdiabasLib
                 string answer = Elm327ReceiveAnswer(timeout, true);
                 if (!_elm327DataMode)
                 {   // switch to monitor mode
+#if DEBUG
+                    // monitor mode disables CAN ack,
+                    // for testing we send an invalid telegram to get back to monitoring mode
+                    if (!Elm327SendCanTelegram(new byte[] { 0x00 }))
+#else
                     if (!Elm327SendCommand("ATMA", false))
+#endif
                     {
                         return null;
                     }
