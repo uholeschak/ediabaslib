@@ -44,6 +44,11 @@ namespace BmwDiagnostics
             get { return _items.Count; }
         }
 
+        public override bool IsEnabled(int position)
+        {
+            return false;
+        }
+
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             var item = _items[position];
