@@ -34,7 +34,7 @@ namespace EdiabasLib
         private static bool _elm327TerminateThread;
         private static readonly AutoResetEvent Elm327RequEvent = new AutoResetEvent(false);
         private static readonly AutoResetEvent Elm327RespEvent = new AutoResetEvent(false);
-        private static byte[] _elm327RequBuffer;
+        private static volatile byte[] _elm327RequBuffer;
         private static readonly Queue<byte> Elm327RespQueue = new Queue<byte>();
         private static readonly Object Elm327BufferLock = new Object();
         private static int _currentBaudRate;
@@ -960,7 +960,7 @@ namespace EdiabasLib
                     {
                         if (Ediabas != null)
                         {
-                            Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM data mode already terminated");
+                            Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM data mode already terminated: " + stringBuilder);
                         }
                         _elm327DataMode = false;
                         return true;
