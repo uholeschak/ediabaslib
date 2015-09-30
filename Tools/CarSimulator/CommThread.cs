@@ -1660,13 +1660,10 @@ namespace CarSimulator
                     {
                         break;
                     }
-                    _receiveStopWatch.Reset();
-                    _receiveStopWatch.Start();
                     if ((canMsg.LEN != 8) || (canMsg.MSGTYPE != TPCANMessageType.PCAN_MESSAGE_STANDARD) ||
                         ((canMsg.ID & 0xFF00) != 0x0600))
                     {
-                        _receiveStopWatch.Stop();
-                        return false;
+                        continue;
                     }
                     byte frameType = (byte)((canMsg.DATA[1] >> 4) & 0x0F);
 #if CAN_DEBUG
@@ -1691,6 +1688,8 @@ namespace CarSimulator
                                 dataBuffer = new byte[len];
                                 Array.Copy(canMsg.DATA, 2, dataBuffer, 0, len);
                                 recLen = len;
+                                _receiveStopWatch.Reset();
+                                _receiveStopWatch.Start();
                                 break;
 
                             case 1: // first frame
@@ -1719,31 +1718,30 @@ namespace CarSimulator
                                         return false;
                                     }
                                 }
+                                _receiveStopWatch.Reset();
+                                _receiveStopWatch.Start();
                                 break;
 
                             default:
-                                _receiveStopWatch.Stop();
-                                return false;
+                                continue;
                         }
                     }
                     else
                     {
                         if (frameType == 1)
-                        {   // buggy converters send tel twice!
+                        {
                             continue;
                         }
                         if (frameType != 2)
                         {   // consecutive frame
-                            _receiveStopWatch.Stop();
-                            return false;
+                            continue;
                         }
                         if ((sourceAddr != (canMsg.ID & 0xFF)) || (targetAddr != canMsg.DATA[0]))
                         {
-                            _receiveStopWatch.Stop();
-                            return false;
+                            continue;
                         }
                         if ((canMsg.DATA[1] & 0x0F) != (blockCount & 0x0F))
-                        {   // buggy converters send tel twice!
+                        {
                             continue;
                         }
                         if (dataBuffer == null)
@@ -1758,6 +1756,8 @@ namespace CarSimulator
                         Array.Copy(canMsg.DATA, 2, dataBuffer, recLen, len);
                         recLen += len;
                         blockCount++;
+                        _receiveStopWatch.Reset();
+                        _receiveStopWatch.Start();
 
                         if (fcCount > 0 && recLen < dataBuffer.Length)
                         {
@@ -1955,11 +1955,13 @@ namespace CarSimulator
                             stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out canTimeStamp);
                             if (stsResult == TPCANStatus.PCAN_ERROR_OK)
                             {
-                                if ((canMsg.DATA[1] & 0xF0) != 0x30)
-                                {   // buggy converters send tel twice!
-                                    continue;
+                                if ((canMsg.LEN >= 4) && (canMsg.MSGTYPE == TPCANMessageType.PCAN_MESSAGE_STANDARD) &&
+                                    ((canMsg.ID & 0xFF00) == 0x0600) &&
+                                    ((canMsg.ID & 0xFF) == targetAddr) && (canMsg.DATA[0] == sourceAddr) &&
+                                    ((canMsg.DATA[1] & 0xF0) == 0x30))
+                                {
+                                    break;
                                 }
-                                break;
                             }
                             if (_receiveStopWatch.ElapsedMilliseconds > 1000)
                             {
@@ -1968,16 +1970,6 @@ namespace CarSimulator
                             }
                         }
                         _receiveStopWatch.Stop();
-                        if ((canMsg.LEN < 4) || (canMsg.MSGTYPE != TPCANMessageType.PCAN_MESSAGE_STANDARD) ||
-                            ((canMsg.ID & 0xFF00) != 0x0600))
-                        {
-                            return false;
-                        }
-                        if (((canMsg.ID & 0xFF) != targetAddr) || (canMsg.DATA[0] != sourceAddr) ||
-                            ((canMsg.DATA[1] & 0xF0) != 0x30))
-                        {
-                            return false;
-                        }
                         switch (canMsg.DATA[1] & 0x0F)
                         {
                             case 0: // CTS
