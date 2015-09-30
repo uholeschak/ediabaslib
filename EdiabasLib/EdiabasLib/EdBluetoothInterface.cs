@@ -413,6 +413,20 @@ namespace EdiabasLib
                 }
                 firstCommand = false;
             }
+            if (!Elm327SendCommand("ATCSM0"))
+            {
+                if (Ediabas != null)
+                {
+                    Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM disable silent monitoring not supported");
+                }
+            }
+            if (!Elm327SendCommand("ATCTM5"))
+            {
+                if (Ediabas != null)
+                {
+                    Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM timer multiplier 5 not supported");
+                }
+            }
             _elm327CanHeader = 0x6F1;
             Elm327StartThread();
             return true;
