@@ -3198,7 +3198,7 @@ namespace CarSimulator
                 }
                 _sendData[0] = (byte)(0x80 | (i - 3));
 
-                //Thread.Sleep(1800);
+                //Thread.Sleep(2000);
                 ObdSend(_sendData);
             }
             else if (
