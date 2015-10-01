@@ -46,9 +46,12 @@
   <string name="button_scan">Nach Geräten suchen</string>
   <string name="detect_adapter">Adaptertyp erkennen</string>
   <string name="adapter_type_title">Adaptertyp</string>
-  <string name="unknown_adapter_type">Adaptertyp wurde nicht erkannt.\nWollen Sie trotzdem diesen Adapter verwenden?</string>
-  <string name="invalid_adapter_type">Der ELM327 Adapter unterstützt nicht all notwenigen Kommandos.\nBitte verwenden Sie einen neueren Adaptertyp.</string>
+  <string name="unknown_adapter_type">Der Adaptertyp wurde nicht erkannt.\nWollen Sie trotzdem diesen Adapter verwenden (die Telegramme werden unverändert gesendet)?</string>
+  <string name="invalid_adapter_type">Der ELM327 Adapter unterstützt nicht all notwendigen Kommandos und ist inkompatibel mit dieser Software.</string>
+  <string name="fake_elm_adapter_type">The ELM327 Adapter ist eine gefälschte 2.1 Version und inkompatibel mit dieser Software.</string>
+  <string name="recommened_adapter_type">Es wird ein ELM327 v1.4b, v1.5 oder original v2.1 Adapter empfohlen.</string>
 
+  
   <!-- tabs_activate -->
   <string name="button_active">Aktiv</string>
   <string name="button_inactive">Inaktiv</string>
