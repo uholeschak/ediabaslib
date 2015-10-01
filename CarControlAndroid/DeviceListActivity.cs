@@ -49,7 +49,8 @@ namespace BmwDiagnostics
         {
             Unknown,        // unknown adapter
             Elm327,         // ELM327
-            Elm327Invalid,  // ELM327 inavlid type
+            Elm327Invalid,  // ELM327 invalid type
+            Elm327Fake21,   // ELM327 fake 2.1 version
             Custom,         // custom adapter
             EchoOnly,       // only echo response
         }
@@ -247,15 +248,23 @@ namespace BmwDiagnostics
                             break;
 
                         case AdapterType.Elm327Invalid:
+                        case AdapterType.Elm327Fake21:
+                        {
+                            string message =
+                                GetString(adapterType == AdapterType.Elm327Fake21
+                                    ? Resource.String.fake_elm_adapter_type
+                                    : Resource.String.invalid_adapter_type);
+                            message += "\n" + GetString(Resource.String.recommened_adapter_type);
                             new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
                                 {
                                 })
                                 .SetCancelable(true)
-                                .SetMessage(Resource.String.invalid_adapter_type)
+                                .SetMessage(message)
                                 .SetTitle(Resource.String.adapter_type_title)
                                 .Show();
                             break;
+                        }
 
                         default:
                             ReturnDeviceType(deviceAddress, deviceName);
@@ -357,6 +366,7 @@ namespace BmwDiagnostics
                 }
 
                 // ELM327
+                bool elmReports21 = false;
                 for (int i = 0; i < 2; i++)
                 {
                     bluetoothInStream.Flush();
@@ -372,6 +382,10 @@ namespace BmwDiagnostics
                     {
                         if (response.Contains("ELM327"))
                         {
+                            if (response.Contains("ELM327 v2.1"))
+                            {
+                                elmReports21 = true;
+                            }
                             adapterType = AdapterType.Elm327;
                             break;
                         }
@@ -400,6 +414,10 @@ namespace BmwDiagnostics
                             adapterType = AdapterType.Elm327Invalid;
                             break;
                         }
+                    }
+                    if (adapterType == AdapterType.Elm327Invalid && elmReports21)
+                    {
+                        adapterType = AdapterType.Elm327Fake21;
                     }
                 }
             }

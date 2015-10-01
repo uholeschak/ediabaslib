@@ -46,8 +46,10 @@
   <string name="button_scan">Scan for devices</string>
   <string name="detect_adapter">Detecting adapter type</string>
   <string name="adapter_type_title">Adapter type</string>
-  <string name="unknown_adapter_type">Adapter type not detected.\nDo you still want to use this adapter?</string>
-  <string name="invalid_adapter_type">The ELM327 adapter is not supporting all required commands.\nPlease use a newer adapter type.</string>
+  <string name="unknown_adapter_type">Adapter type detection failed.\nDo you still want to use this adapter (the telegrams will be send unmodified)?</string>
+  <string name="invalid_adapter_type">The ELM327 adapter is not supporting all required commands and is incompatible with this software.</string>
+  <string name="fake_elm_adapter_type">The ELM327 adapter is a fake 2.1 version and is incompatible with this software.</string>
+  <string name="recommened_adapter_type">Its recommended to use an ELM327 v1.4b, v1.5 or origin v2.1 adapter.</string>
 
   <!-- tabs_activate -->
   <string name="button_active">Active</string>
