@@ -46,6 +46,7 @@
   <string name="button_scan">Scan for devices</string>
   <string name="detect_adapter">Detecting adapter type</string>
   <string name="adapter_type_title">Adapter type</string>
+  <string name="adapter_connection_failed">Unable to connect to the adapter.\nDo you still want to use this adapter (the telegrams will be send unmodified)?</string>
   <string name="unknown_adapter_type">Adapter type detection failed.\nDo you still want to use this adapter (the telegrams will be send unmodified)?</string>
   <string name="invalid_adapter_type">The ELM327 adapter is not supporting all required commands and is incompatible with this software.</string>
   <string name="fake_elm_adapter_type">The ELM327 adapter is a fake 2.1 version and is incompatible with this software.</string>
