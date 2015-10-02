@@ -260,7 +260,21 @@ namespace BmwDiagnostics
         {
             if (!IsJobRunning())
             {
-                base.OnBackPressed();
+                new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        if (SaveConfiguration())
+                        {
+                            base.OnBackPressed();
+                        }
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                        base.OnBackPressed();
+                    })
+                    .SetMessage(Resource.String.xml_tool_msg_save_config)
+                    .SetTitle(Resource.String.xml_tool_title_config)
+                    .Show();
             }
         }
 
@@ -1176,6 +1190,11 @@ namespace BmwDiagnostics
                             {
                                 result.Format = formatAttr.Value;
                             }
+                            XAttribute logTagAttr = displayNode.Attribute("log_tag");
+                            if (logTagAttr != null)
+                            {
+                                result.LogTag = logTagAttr.Value;
+                            }
                         }
                         if (stringsNode != null)
                         {
@@ -1296,6 +1315,10 @@ namespace BmwDiagnostics
                         }
                         displayNodeNew.Add(new XAttribute("result", result.Name));
                         displayNodeNew.Add(new XAttribute("format", result.Format));
+                        if (!string.IsNullOrEmpty(result.LogTag))
+                        {
+                            displayNodeNew.Add(new XAttribute("log_tag", result.LogTag));
+                        }
 
                         XElement stringNode = new XElement(ns + "string", result.DisplayText);
                         stringNode.Add(new XAttribute("name", displayTag));

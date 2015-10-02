@@ -89,6 +89,19 @@
                 android:inputType="text"
                 android:maxLines="1" />
             <TextView
+                android:id="@+id/textViewLogTagTitle"
+                android:text="@+string/xml_tool_ecu_log_tag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#666"
+                android:textColor="#fff" />
+            <EditText
+                android:id="@+id/editTextLogTag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:maxLines="1" />
+            <TextView
                 android:id="@+id/textViewFormat"
                 android:text="@+string/xml_tool_ecu_format"
                 android:layout_width="match_parent"

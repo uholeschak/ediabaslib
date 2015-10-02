@@ -26,6 +26,7 @@ namespace BmwDiagnostics
                 _comments = comments;
                 Selected = false;
                 Format = string.Empty;
+                LogTag = string.Empty;
                 DisplayText = name;
             }
 
@@ -51,6 +52,8 @@ namespace BmwDiagnostics
             public bool Selected { get; set; }
 
             public string Format { get; set; }
+
+            public string LogTag { get; set; }
 
             public string DisplayText { get; set; }
         }
@@ -113,6 +116,7 @@ namespace BmwDiagnostics
         private TextView _textViewResultCommentsTitle;
         private TextView _textViewResultComments;
         private EditText _editTextDisplayText;
+        private EditText _editTextLogTag;
         private TextView _textViewFormatDot;
         private EditText _editTextFormat;
         private Spinner _spinnerFormatPos;
@@ -179,6 +183,7 @@ namespace BmwDiagnostics
             _textViewResultCommentsTitle = FindViewById<TextView>(Resource.Id.textViewResultCommentsTitle);
             _textViewResultComments = FindViewById<TextView>(Resource.Id.textViewResultComments);
             _editTextDisplayText = FindViewById<EditText>(Resource.Id.editTextDisplayText);
+            _editTextLogTag = FindViewById<EditText>(Resource.Id.editTextLogTag);
 
             _textViewFormatDot = FindViewById<TextView>(Resource.Id.textViewFormatDot);
             _editTextFormat = FindViewById<EditText>(Resource.Id.editTextFormat);
@@ -485,6 +490,7 @@ namespace BmwDiagnostics
             if (resultInfo != null)
             {
                 resultInfo.DisplayText = _editTextDisplayText.Text;
+                resultInfo.LogTag = _editTextLogTag.Text;
             }
             UpdateFormatString(resultInfo);
         }
@@ -568,6 +574,7 @@ namespace BmwDiagnostics
                 }
                 _textViewResultComments.Text = stringBuilderComments.ToString();
                 _editTextDisplayText.Text = _selectedResult.DisplayText;
+                _editTextLogTag.Text = _selectedResult.LogTag;
 
                 UpdateFormatFields(_selectedResult, false, true);
             }
