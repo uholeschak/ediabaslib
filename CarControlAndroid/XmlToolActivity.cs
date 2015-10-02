@@ -1239,6 +1239,11 @@ namespace BmwDiagnostics
                 {
                     pageNode.Add(new XAttribute("name", DisplayNamePage));
                 }
+                XAttribute pageLogFileAttr = pageNode.Attribute("logfile");
+                if (pageLogFileAttr == null)
+                {
+                    pageNode.Add(new XAttribute("logfile", ecuInfo.EcuName + ".log"));
+                }
 
                 XElement stringsNode = GetDefaultStringsNode(ns, pageNode);
                 if (stringsNode == null)
@@ -1296,7 +1301,9 @@ namespace BmwDiagnostics
                             displayNodeOld = GetDisplayNode(result, ns, jobNodeOld);
                             if (displayNodeOld != null)
                             {
-                                displayNodeNew.ReplaceAttributes(from el in displayNodeOld.Attributes() where el.Name != "result" && el.Name != "format" select new XAttribute(el));
+                                displayNodeNew.ReplaceAttributes(from el in displayNodeOld.Attributes()
+                                                                 where el.Name != "result" && el.Name != "format" && el.Name != "log_tag"
+                                                                 select new XAttribute(el));
                             }
                         }
                         XAttribute nameAttr = displayNodeNew.Attribute("name");
