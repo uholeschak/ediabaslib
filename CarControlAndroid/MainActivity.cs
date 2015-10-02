@@ -173,7 +173,7 @@ namespace BmwDiagnostics
                 RegisterReceiver(_activityCommon.BcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceAttached));
                 if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
                 {   // attached event fails
-                    _usbCheckTimer = new Timer(UsbCheckEvent, null, 2000, 2000);
+                    _usbCheckTimer = new Timer(UsbCheckEvent, null, 1000, 1000);
                 }
             }
 
