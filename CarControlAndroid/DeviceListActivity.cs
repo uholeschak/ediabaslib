@@ -47,12 +47,13 @@ namespace BmwDiagnostics
     {
         enum AdapterType
         {
-            Unknown,        // unknown adapter
-            Elm327,         // ELM327
-            Elm327Invalid,  // ELM327 invalid type
-            Elm327Fake21,   // ELM327 fake 2.1 version
-            Custom,         // custom adapter
-            EchoOnly,       // only echo response
+            ConnectionFailed,   // connection to adapter failed
+            Unknown,            // unknown adapter
+            Elm327,             // ELM327
+            Elm327Invalid,      // ELM327 invalid type
+            Elm327Fake21,       // ELM327 fake 2.1 version
+            Custom,             // custom adapter
+            EchoOnly,           // only echo response
         }
 
         private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -219,7 +220,7 @@ namespace BmwDiagnostics
                 }
                 catch (Exception)
                 {
-                    // ignored
+                    adapterType = AdapterType.ConnectionFailed;
                 }
 
                 RunOnUiThread(() =>
@@ -228,6 +229,21 @@ namespace BmwDiagnostics
                     progress.Dispose();
                     switch (adapterType)
                     {
+                        case AdapterType.ConnectionFailed:
+                            new AlertDialog.Builder(this)
+                                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                {
+                                    ReturnDeviceType(deviceAddress, deviceName);
+                                })
+                                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                {
+                                })
+                                .SetCancelable(true)
+                                .SetMessage(Resource.String.adapter_connection_failed)
+                                .SetTitle(Resource.String.adapter_type_title)
+                                .Show();
+                            break;
+
                         case AdapterType.Unknown:
                             new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
