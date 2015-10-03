@@ -350,9 +350,9 @@ namespace BmwDiagnostics
 
             _spinnerFormatTypeAdapter.Items.Clear();
             _spinnerFormatTypeAdapter.Items.Add(new StringObjType("--", FormatType.None));
-            _spinnerFormatTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_user_format), FormatType.User));
             if (!resultBinary)
             {
+                _spinnerFormatTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_user_format), FormatType.User));
                 if (!resultString)
                 {
                     _spinnerFormatTypeAdapter.Items.Add(new StringObjType("(R)eal", FormatType.Real));
