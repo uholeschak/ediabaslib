@@ -14,7 +14,7 @@ mkdir "!PACKAGEPATH!"
 copy "!BATPATH!ReadMe.txt" "!PACKAGEPATH!"
 
 mkdir "!APKPATH!"
-copy "!BATPATH!CarControlAndroid.CarControlAndroid-Aligned.apk" "!APKPATH!"
+copy "!BATPATH!de.holeschak.bmwdiagnostics-Aligned.apk" "!APKPATH!"
 
 mkdir "!CONFIGPATH!"
 xcopy /y /e "!BATPATH!Xml\*.*" "!CONFIGPATH!"
