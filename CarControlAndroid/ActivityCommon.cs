@@ -85,6 +85,14 @@ namespace BmwDiagnostics
             }
         }
 
+        public bool UsbSupport
+        {
+            get
+            {
+                return !Emulator && (Build.VERSION.SdkInt >= BuildVersionCodes.HoneycombMr1);
+            }
+        }
+
         public string ExternalPath
         {
             get
@@ -167,7 +175,7 @@ namespace BmwDiagnostics
                 _bcReceiver = new Receiver(this);
                 activity.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
                 activity.RegisterReceiver(_bcReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.HoneycombMr1)
+                if (UsbSupport)
                 {   // usb handling
                     activity.RegisterReceiver(_bcReceiver, new IntentFilter(ActionUsbPermission));
                 }
@@ -332,7 +340,7 @@ namespace BmwDiagnostics
                 _activity.GetString(Resource.String.select_interface_bt),
                 _activity.GetString(Resource.String.select_interface_enet)
             };
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.HoneycombMr1)
+            if (UsbSupport)
             {
                 interfaceNames.Add(_activity.GetString(Resource.String.select_interface_ftdi));
             }
@@ -520,7 +528,7 @@ namespace BmwDiagnostics
 
         public void RequestUsbPermission(UsbDevice usbDevice)
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.HoneycombMr1)
+            if (!UsbSupport)
             {
                 return;
             }
