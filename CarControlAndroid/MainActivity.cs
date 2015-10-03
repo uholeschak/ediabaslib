@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Xml.Linq;
 using Android.Content;
@@ -934,7 +935,8 @@ namespace BmwDiagnostics
                                     {
                                         if (formatResult)
                                         {
-                                            result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result);
+                                            result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict,
+                                                displayInfo.Result);
                                         }
                                     }
                                     catch (Exception)
@@ -1049,7 +1051,20 @@ namespace BmwDiagnostics
             EdiabasNet.ResultData resultData;
             if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
             {
-                result = EdiabasNet.FormatResult(resultData, format) ?? "?";
+                if (resultData.OpData.GetType() == typeof(byte[]))
+                {
+                    StringBuilder sb = new StringBuilder();
+                    byte[] data = (byte[])resultData.OpData;
+                    foreach (byte value in data)
+                    {
+                        sb.Append(string.Format(Culture, "{0:X02} ", value));
+                    }
+                    result = sb.ToString();
+                }
+                else
+                {
+                    result = EdiabasNet.FormatResult(resultData, format) ?? "?";
+                }
             }
             return result;
         }
