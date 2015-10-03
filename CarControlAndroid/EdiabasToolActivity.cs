@@ -1330,11 +1330,13 @@ namespace BmwDiagnostics
                         }
                         else if (resultData.OpData.GetType() == typeof(byte[]))
                         {
+                            StringBuilder sb = new StringBuilder();
                             byte[] data = (byte[])resultData.OpData;
                             foreach (byte value in data)
                             {
-                                resultText += string.Format(Culture, "{0:X02} ", value);
+                                sb.Append(string.Format(Culture, "{0:X02} ", value));
                             }
+                            resultText = sb.ToString();
                         }
                         stringBuilder.Append("\r\n");
                         stringBuilder.Append(resultData.Name + ": " + resultText);

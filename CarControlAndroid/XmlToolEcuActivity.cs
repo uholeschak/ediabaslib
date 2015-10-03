@@ -233,11 +233,6 @@ namespace BmwDiagnostics
             _spinnerFormatTypeAdapter = new StringObjAdapter(this);
             _spinnerFormatType.Adapter = _spinnerFormatTypeAdapter;
             _spinnerFormatTypeAdapter.Items.Add(new StringObjType("--", FormatType.None));
-            _spinnerFormatTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_user_format), FormatType.User));
-            _spinnerFormatTypeAdapter.Items.Add(new StringObjType("(R)eal", FormatType.Real));
-            _spinnerFormatTypeAdapter.Items.Add(new StringObjType("(L)ong", FormatType.Long));
-            _spinnerFormatTypeAdapter.Items.Add(new StringObjType("(D)ouble", FormatType.Double));
-            _spinnerFormatTypeAdapter.Items.Add(new StringObjType("(T)ext", FormatType.Text));
             _spinnerFormatTypeAdapter.NotifyDataSetChanged();
             _spinnerFormatType.ItemSelected += FormatItemSelected;
 
@@ -349,6 +344,25 @@ namespace BmwDiagnostics
             }
 
             _ignoreFormatSelection = true;
+
+            bool resultBinary = string.Compare(resultInfo.Type, "binary", StringComparison.OrdinalIgnoreCase) == 0;
+            bool resultString = string.Compare(resultInfo.Type, "string", StringComparison.OrdinalIgnoreCase) == 0;
+
+            _spinnerFormatTypeAdapter.Items.Clear();
+            _spinnerFormatTypeAdapter.Items.Add(new StringObjType("--", FormatType.None));
+            _spinnerFormatTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_user_format), FormatType.User));
+            if (!resultBinary)
+            {
+                if (!resultString)
+                {
+                    _spinnerFormatTypeAdapter.Items.Add(new StringObjType("(R)eal", FormatType.Real));
+                    _spinnerFormatTypeAdapter.Items.Add(new StringObjType("(L)ong", FormatType.Long));
+                    _spinnerFormatTypeAdapter.Items.Add(new StringObjType("(D)ouble", FormatType.Double));
+                }
+                _spinnerFormatTypeAdapter.Items.Add(new StringObjType("(T)ext", FormatType.Text));
+            }
+            _spinnerFormatTypeAdapter.NotifyDataSetChanged();
+
             FormatType formatType = FormatType.User;
             switch (convertType)
             {
