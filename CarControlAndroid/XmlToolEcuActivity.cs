@@ -110,7 +110,7 @@ namespace BmwDiagnostics
 
         // Intent extra
         public const string ExtraEcuName = "ecu_name";
-        private static int[] _lengthValues = {0, 1, 2, 3, 4, 5, 6, 8, 10, 15, 20, 25, 30, 35, 40};
+        private static readonly int[] LengthValues = {0, 1, 2, 3, 4, 5, 6, 8, 10, 15, 20, 25, 30, 35, 40};
 
         public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
         private InputMethodManager _imm;
@@ -211,7 +211,7 @@ namespace BmwDiagnostics
             _spinnerFormatLength1Adapter = new StringObjAdapter(this);
             _spinnerFormatLength1.Adapter = _spinnerFormatLength1Adapter;
             _spinnerFormatLength1Adapter.Items.Add(new StringObjType("--", -1));
-            foreach (int value in _lengthValues)
+            foreach (int value in LengthValues)
             {
                 _spinnerFormatLength1Adapter.Items.Add(new StringObjType(value.ToString(), value));
             }
@@ -222,7 +222,7 @@ namespace BmwDiagnostics
             _spinnerFormatLength2Adapter = new StringObjAdapter(this);
             _spinnerFormatLength2.Adapter = _spinnerFormatLength2Adapter;
             _spinnerFormatLength2Adapter.Items.Add(new StringObjType("--", -1));
-            foreach (int value in _lengthValues)
+            foreach (int value in LengthValues)
             {
                 _spinnerFormatLength2Adapter.Items.Add(new StringObjType(value.ToString(), value));
             }
