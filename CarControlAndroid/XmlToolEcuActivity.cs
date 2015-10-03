@@ -26,8 +26,8 @@ namespace BmwDiagnostics
                 _comments = comments;
                 Selected = false;
                 Format = string.Empty;
-                LogTag = string.Empty;
                 DisplayText = name;
+                LogTag = name;
             }
 
             private readonly string _name;
@@ -53,9 +53,9 @@ namespace BmwDiagnostics
 
             public string Format { get; set; }
 
-            public string LogTag { get; set; }
-
             public string DisplayText { get; set; }
+
+            public string LogTag { get; set; }
         }
 
         public class JobInfo
@@ -98,8 +98,19 @@ namespace BmwDiagnostics
             public bool Selected { get; set; }
         }
 
+        enum FormatType
+        {
+            None,
+            User,
+            Real,
+            Long,
+            Double,
+            Text,
+        }
+
         // Intent extra
         public const string ExtraEcuName = "ecu_name";
+        private static int[] _lengthValues = {0, 1, 2, 3, 4, 5, 6, 8, 10, 15, 20, 25, 30, 35, 40};
 
         public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
         private InputMethodManager _imm;
@@ -122,11 +133,11 @@ namespace BmwDiagnostics
         private Spinner _spinnerFormatPos;
         private StringAdapter _spinnerFormatPosAdapter;
         private Spinner _spinnerFormatLength1;
-        private StringAdapter _spinnerFormatLength1Adapter;
+        private StringObjAdapter _spinnerFormatLength1Adapter;
         private Spinner _spinnerFormatLength2;
-        private StringAdapter _spinnerFormatLength2Adapter;
+        private StringObjAdapter _spinnerFormatLength2Adapter;
         private Spinner _spinnerFormatType;
-        private StringAdapter _spinnerFormatTypeAdapter;
+        private StringObjAdapter _spinnerFormatTypeAdapter;
         private XmlToolActivity.EcuInfo _ecuInfo;
         private JobInfo _selectedJob;
         private ResultInfo _selectedResult;
@@ -197,36 +208,36 @@ namespace BmwDiagnostics
             _spinnerFormatPos.ItemSelected += FormatItemSelected;
 
             _spinnerFormatLength1 = FindViewById<Spinner>(Resource.Id.spinnerFormatLength1);
-            _spinnerFormatLength1Adapter = new StringAdapter(this);
+            _spinnerFormatLength1Adapter = new StringObjAdapter(this);
             _spinnerFormatLength1.Adapter = _spinnerFormatLength1Adapter;
-            _spinnerFormatLength1Adapter.Items.Add("--");
-            for (int i = 0; i <= 10; i++)
+            _spinnerFormatLength1Adapter.Items.Add(new StringObjType("--", -1));
+            foreach (int value in _lengthValues)
             {
-                _spinnerFormatLength1Adapter.Items.Add(i.ToString());
+                _spinnerFormatLength1Adapter.Items.Add(new StringObjType(value.ToString(), value));
             }
             _spinnerFormatLength1Adapter.NotifyDataSetChanged();
             _spinnerFormatLength1.ItemSelected += FormatItemSelected;
 
             _spinnerFormatLength2 = FindViewById<Spinner>(Resource.Id.spinnerFormatLength2);
-            _spinnerFormatLength2Adapter = new StringAdapter(this);
+            _spinnerFormatLength2Adapter = new StringObjAdapter(this);
             _spinnerFormatLength2.Adapter = _spinnerFormatLength2Adapter;
-            _spinnerFormatLength2Adapter.Items.Add("--");
-            for (int i = 0; i <= 10; i++)
+            _spinnerFormatLength2Adapter.Items.Add(new StringObjType("--", -1));
+            foreach (int value in _lengthValues)
             {
-                _spinnerFormatLength2Adapter.Items.Add(i.ToString());
+                _spinnerFormatLength2Adapter.Items.Add(new StringObjType(value.ToString(), value));
             }
             _spinnerFormatLength2Adapter.NotifyDataSetChanged();
             _spinnerFormatLength2.ItemSelected += FormatItemSelected;
 
             _spinnerFormatType = FindViewById<Spinner>(Resource.Id.spinnerFormatType);
-            _spinnerFormatTypeAdapter = new StringAdapter(this);
+            _spinnerFormatTypeAdapter = new StringObjAdapter(this);
             _spinnerFormatType.Adapter = _spinnerFormatTypeAdapter;
-            _spinnerFormatTypeAdapter.Items.Add("--");
-            _spinnerFormatTypeAdapter.Items.Add(GetString(Resource.String.xml_tool_ecu_user_format));
-            _spinnerFormatTypeAdapter.Items.Add("(R)eal");
-            _spinnerFormatTypeAdapter.Items.Add("(L)ong");
-            _spinnerFormatTypeAdapter.Items.Add("(D)ouble");
-            _spinnerFormatTypeAdapter.Items.Add("(T)ext");
+            _spinnerFormatTypeAdapter.Items.Add(new StringObjType("--", FormatType.None));
+            _spinnerFormatTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_user_format), FormatType.User));
+            _spinnerFormatTypeAdapter.Items.Add(new StringObjType("(R)eal", FormatType.Real));
+            _spinnerFormatTypeAdapter.Items.Add(new StringObjType("(L)ong", FormatType.Long));
+            _spinnerFormatTypeAdapter.Items.Add(new StringObjType("(D)ouble", FormatType.Double));
+            _spinnerFormatTypeAdapter.Items.Add(new StringObjType("(T)ext", FormatType.Text));
             _spinnerFormatTypeAdapter.NotifyDataSetChanged();
             _spinnerFormatType.ItemSelected += FormatItemSelected;
 
@@ -373,26 +384,24 @@ namespace BmwDiagnostics
                 _spinnerFormatPos.Enabled = true;
                 _spinnerFormatPos.SetSelection(leftAlign ? 1 : 0);
 
-                int index1 = length1 + 1;
-                if (length1 < 0)
+                int index1 = 0;
+                for (int i = 0; i < _spinnerFormatLength1Adapter.Count; i++)
                 {
-                    index1 = 0;
-                }
-                if (index1 > _spinnerFormatLength1Adapter.Count)
-                {
-                    index1 = 0;
+                    if ((int)_spinnerFormatLength1Adapter.Items[i].Data == length1)
+                    {
+                        index1 = i;
+                    }
                 }
                 _spinnerFormatLength1.Enabled = true;
                 _spinnerFormatLength1.SetSelection(index1);
 
-                int index2 = length2 + 1;
-                if (length2 < 0)
+                int index2 = 0;
+                for (int i = 0; i < _spinnerFormatLength2Adapter.Count; i++)
                 {
-                    index2 = 0;
-                }
-                if (index2 > _spinnerFormatLength2Adapter.Count)
-                {
-                    index2 = 0;
+                    if ((int)_spinnerFormatLength2Adapter.Items[i].Data == length2)
+                    {
+                        index2 = i;
+                    }
                 }
                 _spinnerFormatLength2.Enabled = true;
                 _spinnerFormatLength2.SetSelection(index2);
@@ -441,26 +450,32 @@ namespace BmwDiagnostics
         {
             StringBuilder stringBuilder = new StringBuilder();
 
-            string convertType = string.Empty;
-            switch (_spinnerFormatType.SelectedItemPosition)
+            FormatType formatType = FormatType.None;
+            if (_spinnerFormatType.SelectedItemPosition >= 0)
             {
-                case 1:
+                formatType = (FormatType)_spinnerFormatTypeAdapter.Items[_spinnerFormatType.SelectedItemPosition].Data;
+            }
+
+            string convertType = string.Empty;
+            switch (formatType)
+            {
+                case FormatType.User:
                     stringBuilder.Append(_editTextFormat.Text);
                     break;
 
-                case 2:
+                case FormatType.Real:
                     convertType = "R";
                     break;
 
-                case 3:
+                case FormatType.Long:
                     convertType = "L";
                     break;
 
-                case 4:
+                case FormatType.Double:
                     convertType = "D";
                     break;
 
-                case 5:
+                case FormatType.Text:
                     convertType = "T";
                     break;
             }
@@ -470,14 +485,22 @@ namespace BmwDiagnostics
                 {
                     stringBuilder.Append("-");
                 }
-                if (_spinnerFormatLength1.SelectedItemPosition > 0)
+                if (_spinnerFormatLength1.SelectedItemPosition >= 0)
                 {
-                    stringBuilder.Append((_spinnerFormatLength1.SelectedItemPosition - 1).ToString());
+                    int value = (int) _spinnerFormatLength1Adapter.Items[_spinnerFormatLength1.SelectedItemPosition].Data;
+                    if (value > 0)
+                    {
+                        stringBuilder.Append(value.ToString());
+                    }
                 }
-                if (_spinnerFormatLength2.SelectedItemPosition > 0)
+                if (_spinnerFormatLength2.SelectedItemPosition >= 0)
                 {
-                    stringBuilder.Append(".");
-                    stringBuilder.Append((_spinnerFormatLength2.SelectedItemPosition - 1).ToString());
+                    int value = (int)_spinnerFormatLength2Adapter.Items[_spinnerFormatLength2.SelectedItemPosition].Data;
+                    if (value > 0)
+                    {
+                        stringBuilder.Append(".");
+                        stringBuilder.Append(value.ToString());
+                    }
                 }
                 stringBuilder.Append(convertType);
             }
@@ -502,7 +525,13 @@ namespace BmwDiagnostics
                 return;
             }
             resultInfo.Format = GetFormatString();
-            UpdateFormatFields(resultInfo, _spinnerFormatType.SelectedItemPosition == 1);
+
+            FormatType formatType = FormatType.None;
+            if (_spinnerFormatType.SelectedItemPosition >= 0)
+            {
+                formatType = (FormatType)_spinnerFormatTypeAdapter.Items[_spinnerFormatType.SelectedItemPosition].Data;
+            }
+            UpdateFormatFields(resultInfo, formatType == FormatType.User);
         }
 
         private void FormatItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
