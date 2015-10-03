@@ -1242,7 +1242,7 @@ namespace BmwDiagnostics
                 XAttribute pageLogFileAttr = pageNode.Attribute("logfile");
                 if (pageLogFileAttr == null)
                 {
-                    pageNode.Add(new XAttribute("logfile", ecuInfo.EcuName + ".log"));
+                    pageNode.Add(new XAttribute("logfile", ActivityCommon.CreateValidFileName(ecuInfo.Name + ".log")));
                 }
 
                 XElement stringsNode = GetDefaultStringsNode(ns, pageNode);
