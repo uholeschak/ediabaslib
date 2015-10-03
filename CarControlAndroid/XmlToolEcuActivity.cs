@@ -349,34 +349,42 @@ namespace BmwDiagnostics
             }
 
             _ignoreFormatSelection = true;
-            int selection = 1;
+            FormatType formatType = FormatType.User;
             switch (convertType)
             {
                 case '\0':
-                    selection = 0;
+                    formatType = FormatType.None;
                     break;
 
                 case 'R':
-                    selection = 2;
+                    formatType = FormatType.Real;
                     break;
 
                 case 'L':
-                    selection = 3;
+                    formatType = FormatType.Long;
                     break;
 
                 case 'D':
-                    selection = 4;
+                    formatType = FormatType.Double;
                     break;
 
                 case 'T':
-                    selection = 5;
+                    formatType = FormatType.Text;
                     break;
             }
             if (userFormat)
             {
-                selection = 1;
+                formatType = FormatType.User;
             }
 
+            int selection = 0;
+            for (int i = 0; i < _spinnerFormatTypeAdapter.Count; i++)
+            {
+                if ((FormatType)_spinnerFormatTypeAdapter.Items[i].Data == formatType)
+                {
+                    selection = i;
+                }
+            }
             _spinnerFormatType.SetSelection(selection);
 
             if (selection > 0)
