@@ -168,7 +168,7 @@ namespace BmwDiagnostics
                     UpdateDisplay();
                 }
             }, BroadcastReceived);
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.HoneycombMr1)
+            if (_activityCommon.UsbSupport)
             {   // usb handling
                 RegisterReceiver(_activityCommon.BcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
                 RegisterReceiver(_activityCommon.BcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceAttached));
