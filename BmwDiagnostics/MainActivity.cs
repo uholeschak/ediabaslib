@@ -646,7 +646,7 @@ namespace BmwDiagnostics
                 prefsEdit.PutString("DeviceName", _deviceName);
                 prefsEdit.PutString("DeviceAddress", _deviceAddress);
                 prefsEdit.PutString("ConfigFile", _configFileName);
-                prefsEdit.PutString("Version", PackageManager.GetPackageInfo(PackageName, 0).VersionName);
+                prefsEdit.PutInt("VersionCode", PackageManager.GetPackageInfo(PackageName, 0).VersionCode);
                 prefsEdit.Commit();
             }
             catch (Exception)
