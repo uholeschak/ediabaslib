@@ -88,8 +88,8 @@ namespace BmwDiagnostics
             public bool Checked { get; set; }
         }
 
-        private const string SharedAppName = "de.holeschak.bmwdiagnostics";
-        private const string AppFolderName = "de.holeschak.bmwdiagnostics";
+        private const string SharedAppName = "de.holeschak.bmw_deep_obd";
+        private const string AppFolderName = "de.holeschak.bmw_deep_obd";
         private const string EcuDirName = "Ecu";
         private const string EcuDownloadUrl = @"http://www.holeschak.de/BwmDiagnostics/Ecu1.zip";
         private const string InfoXmlName = "Info.xml";
