@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema targetNamespace="http://www.holeschak.de/BmwDiagnostics"
+<xs:schema targetNamespace="http://www.holeschak.de/BmwDeepObd"
     elementFormDefault="qualified"
-    xmlns="http://www.holeschak.de/BmwDiagnostics"
-    xmlns:mstns="http://www.holeschak.de/BmwDiagnostics"
+    xmlns="http://www.holeschak.de/BmwDeepObd"
+    xmlns:mstns="http://www.holeschak.de/BmwDeepObd"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
 

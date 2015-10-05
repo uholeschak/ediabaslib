@@ -150,7 +150,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Xml\E61\Axis.ccpage" />
-    <EmbeddedResource Include="Xml\BmwDiagnostics.xsd">
+    <EmbeddedResource Include="Xml\BmwDeepObd.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Xml\E61\E61Ftdi.cccfg" />
