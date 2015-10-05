@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">BMW Diagnose</string>
+  <string name="app_name">BMW deep OBD</string>
   <string name="button_connected">Verbunden</string>
   <string name="button_disconnected">Getrennt</string>
   <string name="button_yes">Ja</string>
