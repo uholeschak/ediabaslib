@@ -60,7 +60,7 @@ namespace BmwDiagnostics
         public delegate void BcReceiverUpdateDisplayDelegate();
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
         public const string EmulatorEnetIp = "192.168.10.244";
-        public const string ActionUsbPermission = "de.holeschak.bmwdiagnostics.USB_PERMISSION";
+        public const string ActionUsbPermission = "de.holeschak.bmw_deep_obd.USB_PERMISSION";
 
         private bool _disposed;
         private readonly Android.App.Activity _activity;

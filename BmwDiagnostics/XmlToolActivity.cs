@@ -109,11 +109,11 @@ namespace BmwDiagnostics
 
         private const string XmlDocumentFrame =
             @"<?xml version=""1.0"" encoding=""utf-8"" ?>
-            <{0} xmlns=""http://www.holeschak.de/BmwDiagnostics""
+            <{0} xmlns=""http://www.holeschak.de/BmwDeepObd""
             xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
-            xsi:schemaLocation=""http://www.holeschak.de/BmwDiagnostics BmwDiagnostics.xsd"">
+            xsi:schemaLocation=""http://www.holeschak.de/BmwDeepObd BmwDeepObd.xsd"">
             </{0}>";
-        private const string XsdFileName = "BmwDiagnostics.xsd";
+        private const string XsdFileName = "BmwDeepObd.xsd";
 
         private const string PageExtension = ".ccpage";
         private const string ErrorsFileName = "Errors.ccpage";

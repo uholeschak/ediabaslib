@@ -91,7 +91,7 @@ namespace BmwDiagnostics
         private const string SharedAppName = "de.holeschak.bmw_deep_obd";
         private const string AppFolderName = "de.holeschak.bmw_deep_obd";
         private const string EcuDirName = "Ecu";
-        private const string EcuDownloadUrl = @"http://www.holeschak.de/BwmDiagnostics/Ecu1.zip";
+        private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Ecu1.zip";
         private const string InfoXmlName = "Info.xml";
 
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
