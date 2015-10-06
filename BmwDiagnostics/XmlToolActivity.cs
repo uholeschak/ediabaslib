@@ -258,24 +258,26 @@ namespace BmwDiagnostics
 
         public override void OnBackPressed()
         {
-            if (!IsJobRunning())
+            if (IsJobRunning() || !_buttonSafe.Enabled)
             {
-                new AlertDialog.Builder(this)
-                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                    {
-                        if (SaveConfiguration())
-                        {
-                            base.OnBackPressed();
-                        }
-                    })
-                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                base.OnBackPressed();
+                return;
+            }
+            new AlertDialog.Builder(this)
+                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                {
+                    if (SaveConfiguration())
                     {
                         base.OnBackPressed();
-                    })
-                    .SetMessage(Resource.String.xml_tool_msg_save_config)
-                    .SetTitle(Resource.String.xml_tool_title_config)
-                    .Show();
-            }
+                    }
+                })
+                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                {
+                    base.OnBackPressed();
+                })
+                .SetMessage(Resource.String.xml_tool_msg_save_config)
+                .SetTitle(Resource.String.xml_tool_title_config)
+                .Show();
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
@@ -441,6 +443,10 @@ namespace BmwDiagnostics
                         return true;
                     }
                     SelectDataLogging();
+                    return true;
+
+                case Resource.Id.menu_submenu_help:
+                    StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse("https://ediabaslib.codeplex.com/wikipage?title=BMW%20Diagnostics%20GUI#ConfigurationGenerator")));
                     return true;
             }
             return base.OnOptionsItemSelected(item);

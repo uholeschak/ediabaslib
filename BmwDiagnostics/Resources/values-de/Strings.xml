@@ -67,6 +67,7 @@
   <string name="menu_ediabas_tool">Ediabas Tool</string>
   <string name="menu_download_ecu">ECU Dateien herunterladen</string>
   <string name="menu_submenu_log">Datenaufzeichnung</string>
+  <string name="menu_submenu_help">Onlinehilfe</string>
   <string name="menu_exit">App beenden</string>
 
   <!-- Data logging -->
