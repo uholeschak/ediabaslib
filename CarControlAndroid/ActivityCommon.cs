@@ -435,7 +435,7 @@ namespace BmwDiagnostics
             }
         }
 
-        public bool RequestInterfaceEnable(EventHandler<DialogClickEventArgs> handler)
+        public bool RequestInterfaceEnable(EventHandler handler)
         {
             if (_activateRequest)
             {
@@ -464,22 +464,23 @@ namespace BmwDiagnostics
                     return false;
             }
             _activateRequest = true;
-            new AlertDialog.Builder(_activity)
+            AlertDialog builder = new AlertDialog.Builder(_activity)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
-                    _activateRequest = false;
                     EnableInterface();
-                    handler(sender, args);
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
-                    _activateRequest = false;
-                    handler(sender, args);
                 })
-                .SetCancelable(false)
+                .SetCancelable(true)
                 .SetMessage(resourceId)
                 .SetTitle(Resource.String.interface_activate)
                 .Show();
+            builder.DismissEvent += (sender, args) =>
+            {
+                _activateRequest = false;
+                handler(sender, args);
+            };
             return true;
         }
 

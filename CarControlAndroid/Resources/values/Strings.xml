@@ -26,6 +26,14 @@
   <string name="ecu_download">Do you want to download the ECU files now (File size approx. 100MB)?</string>
   <string name="error_no_error">No errors present</string>
   <string name="error_no_response">No response</string>
+  <string name="version_change_info_title">Information</string>
+  <string name="version_change_info_message">
+This open source project is hosted at:
+\n<a href="https://ediabaslib.codeplex.com">ediabaslib.codeplex.com</a>
+\nFeel free to contribute and to report problems.
+\nA detailed documentation could also be found on this web site.
+\n\nChanges in this version:
+\n- First release"</string>
 
   <!-- Compile -->
   <string name="compile_start">Compiling user code</string>
