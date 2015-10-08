@@ -16,6 +16,7 @@ using Android.OS;
 using Android.Support.V4.App;
 using Android.Support.V4.View;
 using Android.Support.V7.App;
+using Android.Text.Method;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -98,6 +99,8 @@ namespace BmwDiagnostics
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
         private string _configFileName = string.Empty;
+        private int _currentVersionCode;
+        private int _lastVersionCode;
         private string _appDataPath = String.Empty;
         private string _ecuPath = String.Empty;
         private bool _userEcuFiles;
@@ -122,6 +125,7 @@ namespace BmwDiagnostics
         private ImageView _imageBackground;
         private WebClient _webClient;
         private Android.App.ProgressDialog _downloadProgress;
+        private AlertDialog startAlertDialog;
 
         public void OnTabReselected(ActionBar.Tab tab, FragmentTransaction ft)
         {
@@ -263,26 +267,34 @@ namespace BmwDiagnostics
                 _onStartExecuted = true;
                 _activityCommon.RequestUsbPermission(null);
                 ReadConfigFile();
+                if (startAlertDialog == null && _currentVersionCode != _lastVersionCode)
+                {
+                    startAlertDialog = new AlertDialog.Builder(this)
+                        .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.version_change_info_message)
+                        .SetTitle(Resource.String.version_change_info_title)
+                        .Show();
+                    startAlertDialog.DismissEvent += (sender, args) =>
+                    {
+                        startAlertDialog = null;
+                        HandleStartDialogs(firstStart);
+                    };
+                    TextView messageView = startAlertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                    if (messageView != null)
+                    {
+                        messageView.MovementMethod = new LinkMovementMethod();
+                    }
+                }
             }
             _activityStarted = true;
             if (_createTabsPending)
             {
                 CreateActionBarTabs();
             }
-            if (!_activityCommon.RequestInterfaceEnable((sender, args) =>
+            if (startAlertDialog == null)
             {
-                SupportInvalidateOptionsMenu();
-                UpdateDisplay();
-                if (firstStart)
-                {
-                    CheckForEcuFiles(true);
-                }
-            }))
-            {
-                if (firstStart)
-                {
-                    CheckForEcuFiles(true);
-                }
+                HandleStartDialogs(firstStart);
             }
             UpdateDisplay();
         }
@@ -528,6 +540,25 @@ namespace BmwDiagnostics
             _ediabasThread.CommActive = button.Checked;
         }
 
+        private void HandleStartDialogs(bool firstStart)
+        {
+            if (!_activityCommon.RequestInterfaceEnable((sender, args) =>
+            {
+                SupportInvalidateOptionsMenu();
+                UpdateDisplay();
+                if (firstStart)
+                {
+                    CheckForEcuFiles(true);
+                }
+            }))
+            {
+                if (firstStart)
+                {
+                    CheckForEcuFiles(true);
+                }
+            }
+        }
+
         private bool StartEdiabasThread()
         {
             _autoStart = false;
@@ -630,10 +661,12 @@ namespace BmwDiagnostics
         {
             try
             {
+                _currentVersionCode = PackageManager.GetPackageInfo(PackageName, 0).VersionCode;
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
                 _deviceName = prefs.GetString("DeviceName", string.Empty);
                 _deviceAddress = prefs.GetString("DeviceAddress", string.Empty);
                 _configFileName = prefs.GetString("ConfigFile", string.Empty);
+                _lastVersionCode = prefs.GetInt("VersionCode", -1);
             }
             catch
             {
@@ -650,7 +683,7 @@ namespace BmwDiagnostics
                 prefsEdit.PutString("DeviceName", _deviceName);
                 prefsEdit.PutString("DeviceAddress", _deviceAddress);
                 prefsEdit.PutString("ConfigFile", _configFileName);
-                prefsEdit.PutInt("VersionCode", PackageManager.GetPackageInfo(PackageName, 0).VersionCode);
+                prefsEdit.PutInt("VersionCode", _currentVersionCode);
                 prefsEdit.Commit();
             }
             catch (Exception)
@@ -1632,9 +1665,7 @@ namespace BmwDiagnostics
                 }
                 SupportInvalidateOptionsMenu();
             });
-            builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
-            {
-            });
+            builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
             builder.Show();
         }
 
