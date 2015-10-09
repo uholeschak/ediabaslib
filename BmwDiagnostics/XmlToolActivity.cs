@@ -446,7 +446,7 @@ namespace BmwDiagnostics
                     return true;
 
                 case Resource.Id.menu_submenu_help:
-                    StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse("https://ediabaslib.codeplex.com/wikipage?title=BMW%20Diagnostics%20GUI#ConfigurationGenerator")));
+                    StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse("https://ediabaslib.codeplex.com/wikipage?title=Configuration Generator")));
                     return true;
             }
             return base.OnOptionsItemSelected(item);
