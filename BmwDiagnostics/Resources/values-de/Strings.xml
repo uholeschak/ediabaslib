@@ -27,10 +27,9 @@
   <string name="error_no_error">Keine Fehler vorhanden</string>
   <string name="error_no_response">Keine Antwort</string>
   <string name="version_change_info_title">Information</string>
-  <string name="version_change_info_message">
-Dieses Open Source Projekt wird gehostet auf:
+  <string name="version_change_info_message">Dieses Open Source Projekt wird gehostet auf:
 \n<a href="https://ediabaslib.codeplex.com">ediabaslib.codeplex.com</a>
-\nSie können gerne mitwirken und Probleme melden.
+\nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:
 \n- Erste Release</string>
