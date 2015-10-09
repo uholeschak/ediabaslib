@@ -479,7 +479,7 @@ namespace BmwDiagnostics
                     return true;
 
                 case Resource.Id.menu_submenu_help:
-                    StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse("https://ediabaslib.codeplex.com/wikipage?title=BMW%20Diagnostics%20GUI#EdiabasTool")));
+                    StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse("https://ediabaslib.codeplex.com/wikipage?title=Ediabas Tool")));
                     return true;
             }
             return base.OnOptionsItemSelected(item);
