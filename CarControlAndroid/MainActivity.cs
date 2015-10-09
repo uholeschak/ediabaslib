@@ -125,7 +125,8 @@ namespace BmwDiagnostics
         private ImageView _imageBackground;
         private WebClient _webClient;
         private Android.App.ProgressDialog _downloadProgress;
-        private AlertDialog startAlertDialog;
+        private AlertDialog _startAlertDialog;
+        private AlertDialog _downloadEcuAlertDialog;
 
         public void OnTabReselected(ActionBar.Tab tab, FragmentTransaction ft)
         {
@@ -267,20 +268,20 @@ namespace BmwDiagnostics
                 _onStartExecuted = true;
                 _activityCommon.RequestUsbPermission(null);
                 ReadConfigFile();
-                if (startAlertDialog == null && _currentVersionCode != _lastVersionCode)
+                if (_startAlertDialog == null && _currentVersionCode != _lastVersionCode)
                 {
-                    startAlertDialog = new AlertDialog.Builder(this)
+                    _startAlertDialog = new AlertDialog.Builder(this)
                         .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                         .SetCancelable(true)
                         .SetMessage(Resource.String.version_change_info_message)
                         .SetTitle(Resource.String.version_change_info_title)
                         .Show();
-                    startAlertDialog.DismissEvent += (sender, args) =>
+                    _startAlertDialog.DismissEvent += (sender, args) =>
                     {
-                        startAlertDialog = null;
+                        _startAlertDialog = null;
                         HandleStartDialogs(firstStart);
                     };
-                    TextView messageView = startAlertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                    TextView messageView = _startAlertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
                     if (messageView != null)
                     {
                         messageView.MovementMethod = new LinkMovementMethod();
@@ -292,7 +293,7 @@ namespace BmwDiagnostics
             {
                 CreateActionBarTabs();
             }
-            if (startAlertDialog == null)
+            if (_startAlertDialog == null)
             {
                 HandleStartDialogs(firstStart);
             }
@@ -1319,6 +1320,7 @@ namespace BmwDiagnostics
             }
 
             _downloadProgress = new Android.App.ProgressDialog(this);
+            _downloadProgress.DismissEvent += (sender, args) => { _downloadProgress = null; };
             _downloadProgress.SetCancelable(true);
             _downloadProgress.SetMessage(GetString(Resource.String.downloading_file));
             _downloadProgress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
@@ -1431,6 +1433,7 @@ namespace BmwDiagnostics
             if (_downloadProgress == null)
             {
                 _downloadProgress = new Android.App.ProgressDialog(this);
+                _downloadProgress.DismissEvent += (sender, args) => { _downloadProgress = null; };
             }
             _downloadProgress.SetCancelable(true);
             _downloadProgress.SetMessage(GetString(Resource.String.extract_file));
@@ -1504,11 +1507,16 @@ namespace BmwDiagnostics
 
         private bool CheckForEcuFiles(bool checkPackage = false)
         {
+            if (_downloadEcuAlertDialog != null)
+            {
+                return true;
+            }
+
             if (!ValidEcuFiles(_ecuPath))
             {
                 string message = GetString(Resource.String.ecu_not_found) + "\n" + GetString(Resource.String.ecu_download);
 
-                new AlertDialog.Builder(this)
+                _downloadEcuAlertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
                         DownloadEcuFiles();
@@ -1516,19 +1524,20 @@ namespace BmwDiagnostics
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
                     })
-                    .SetCancelable(true)
                     .SetMessage(message)
                     .SetTitle(Resource.String.ecu_download_title)
                     .Show();
+                _downloadEcuAlertDialog.DismissEvent += (sender, args) => { _downloadEcuAlertDialog = null; };
                 return false;
             }
+
             if (checkPackage && !_userEcuFiles)
             {
                 if (!ValidEcuPackage(_ecuPath))
                 {
                     string message = GetString(Resource.String.ecu_package) + "\n" + GetString(Resource.String.ecu_download);
 
-                    new AlertDialog.Builder(this)
+                    _downloadEcuAlertDialog = new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
                             DownloadEcuFiles();
@@ -1536,10 +1545,10 @@ namespace BmwDiagnostics
                         .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                         {
                         })
-                        .SetCancelable(true)
                         .SetMessage(message)
                         .SetTitle(Resource.String.ecu_download_title)
                         .Show();
+                    _downloadEcuAlertDialog.DismissEvent += (sender, args) => { _downloadEcuAlertDialog = null; };
                 }
             }
             return true;

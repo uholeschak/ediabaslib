@@ -75,7 +75,8 @@ namespace BmwDiagnostics
         private readonly UsbManager _usbManager;
         private Receiver _bcReceiver;
         private InterfaceType _selectedInterface;
-        private bool _activateRequest;
+        private AlertDialog _activateAlertDialog;
+        private AlertDialog _selectInterfaceAlertDialog;
 
         public bool Emulator
         {
@@ -168,7 +169,6 @@ namespace BmwDiagnostics
             _maConnectivity = (ConnectivityManager)activity.GetSystemService(Context.ConnectivityService);
             _usbManager = activity.GetSystemService(Context.UsbService) as UsbManager;
             _selectedInterface = InterfaceType.None;
-            _activateRequest = false;
 
             if ((_bcReceiverUpdateDisplayHandler != null) || (_bcReceiverReceivedHandler != null))
             {
@@ -331,6 +331,10 @@ namespace BmwDiagnostics
 
         public void SelectInterface(EventHandler<DialogClickEventArgs> handler)
         {
+            if (_selectInterfaceAlertDialog != null)
+            {
+                return;
+            }
             AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
             builder.SetTitle(Resource.String.select_interface);
             ListView listView = new ListView(_activity);
@@ -386,7 +390,8 @@ namespace BmwDiagnostics
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
                 {
                 });
-            builder.Show();
+            _selectInterfaceAlertDialog = builder.Show();
+            _selectInterfaceAlertDialog.DismissEvent += (sender, args) => { _selectInterfaceAlertDialog = null; };
         }
 
         public void EnableInterface()
@@ -437,9 +442,9 @@ namespace BmwDiagnostics
 
         public bool RequestInterfaceEnable(EventHandler handler)
         {
-            if (_activateRequest)
+            if (_activateAlertDialog != null)
             {
-                return false;
+                return true;
             }
             if (IsInterfaceAvailable())
             {
@@ -463,8 +468,7 @@ namespace BmwDiagnostics
                 default:
                     return false;
             }
-            _activateRequest = true;
-            AlertDialog builder = new AlertDialog.Builder(_activity)
+            _activateAlertDialog = new AlertDialog.Builder(_activity)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
                     EnableInterface();
@@ -476,9 +480,9 @@ namespace BmwDiagnostics
                 .SetMessage(resourceId)
                 .SetTitle(Resource.String.interface_activate)
                 .Show();
-            builder.DismissEvent += (sender, args) =>
+            _activateAlertDialog.DismissEvent += (sender, args) =>
             {
-                _activateRequest = false;
+                _activateAlertDialog = null;
                 handler(sender, args);
             };
             return true;
