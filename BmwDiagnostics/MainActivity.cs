@@ -323,9 +323,21 @@ namespace BmwDiagnostics
                 _usbCheckTimer.Dispose();
                 _usbCheckTimer = null;
             }
-            _activityCommon.Dispose();
-            _updateHandler.Dispose();
-            _webClient.Dispose();
+            if (_activityCommon != null)
+            {
+                _activityCommon.Dispose();
+                _activityCommon = null;
+            }
+            if (_updateHandler != null)
+            {
+                _updateHandler.Dispose();
+                _updateHandler = null;
+            }
+            if (_webClient != null)
+            {
+                _webClient.Dispose();
+                _webClient = null;
+            }
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
