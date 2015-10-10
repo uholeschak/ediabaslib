@@ -461,6 +461,12 @@ namespace BmwDiagnostics
                 logSubMenu.SetEnabled(interfaceAvailable && !commActive);
             }
 
+            IMenuItem exitSubMenu = menu.FindItem(Resource.Id.menu_exit);
+            if (exitSubMenu != null)
+            {
+                exitSubMenu.SetEnabled(!commActive);
+            }
+
             return base.OnPrepareOptionsMenu(menu);
         }
 
@@ -502,8 +508,7 @@ namespace BmwDiagnostics
                     return true;
 
                 case Resource.Id.menu_exit:
-                    StopEdiabasThread(true);
-                    StoreSettings();
+                    OnDestroy();
                     System.Environment.Exit(0);
                     break;
             }
