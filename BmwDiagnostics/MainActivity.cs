@@ -628,6 +628,7 @@ namespace BmwDiagnostics
                             break;
                     }
                     _ediabasThread.StartThread(portName, connectParameter, traceDir, _traceAppend, pageInfo, true);
+                    Window.AddFlags(WindowManagerFlags.KeepScreenOn);
                 }
             }
             catch (Exception)
@@ -658,6 +659,7 @@ namespace BmwDiagnostics
                     return;
                 }
             }
+            Window.ClearFlags(WindowManagerFlags.KeepScreenOn);
             CloseDataLog();
             SupportInvalidateOptionsMenu();
         }
