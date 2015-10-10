@@ -502,7 +502,8 @@ namespace BmwDiagnostics
                     return true;
 
                 case Resource.Id.menu_exit:
-                    OnDestroy();
+                    StopEdiabasThread(true);
+                    StoreSettings();
                     System.Environment.Exit(0);
                     break;
             }
