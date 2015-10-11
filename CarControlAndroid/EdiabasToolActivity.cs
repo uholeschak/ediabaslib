@@ -1134,6 +1134,14 @@ namespace BmwDiagnostics
             }
             string jobResults = stringBuilderResults.ToString();
             _runContinuous = continuous;
+            if (_dataLogActive)
+            {
+                _activityCommon.SetCpuLock(true);
+            }
+            else
+            {
+                _activityCommon.SetScreenLock(true);
+            }
 
             _jobThread = new Thread(() =>
             {
@@ -1249,6 +1257,8 @@ namespace BmwDiagnostics
                     {
                         _jobThread.Join();
                     }
+                    _activityCommon.SetScreenLock(false);
+                    _activityCommon.SetCpuLock(false);
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
                 });
