@@ -675,7 +675,7 @@ namespace EdiabasLib
                     return;
                 }
                 int[] canRecData = Elm327ReceiveCanTelegram(Elm327DataTimeout);
-                if (canRecData != null && canRecData.Length >= 9)
+                if (canRecData != null && canRecData.Length >= (1 + 2))
                 {
                     byte frameType = (byte)((canRecData[1 + 1] >> 4) & 0x0F);
                     int telLen;
@@ -692,9 +692,13 @@ namespace EdiabasLib
                                     Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Rec SF");
                                 }
                                 telLen = canRecData[2] & 0x0F;
-                                if (telLen > 6)
+                                if (telLen > (canRecData.Length - 1 - 2))
                                 {
-                                    return;
+                                    if (Ediabas != null)
+                                    {
+                                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Invalid length");
+                                    }
+                                    continue;
                                 }
                                 recDataBuffer = new byte[telLen];
                                 for (int i = 0; i < telLen; i++)
@@ -710,6 +714,14 @@ namespace EdiabasLib
                                 if (Ediabas != null)
                                 {
                                     Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Rec FF");
+                                }
+                                if (canRecData.Length < (1 + 8))
+                                {
+                                    if (Ediabas != null)
+                                    {
+                                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Invalid length");
+                                    }
+                                    continue;
                                 }
                                 telLen = ((canRecData[1 + 1] & 0x0F) << 8) + canRecData[1 + 2];
                                 recDataBuffer = new byte[telLen];
@@ -739,7 +751,7 @@ namespace EdiabasLib
                                 {
                                     Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Rec invalid frame {0:X01}", frameType);
                                 }
-                                return;
+                                continue;
                         }
                     }
                     else
@@ -758,6 +770,14 @@ namespace EdiabasLib
                             if (telLen > 6)
                             {
                                 telLen = 6;
+                            }
+                            if (telLen > (canRecData.Length - 1 - 2))
+                            {
+                                if (Ediabas != null)
+                                {
+                                    Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Invalid length");
+                                }
+                                continue;
                             }
                             for (int i = 0; i < telLen; i++)
                             {

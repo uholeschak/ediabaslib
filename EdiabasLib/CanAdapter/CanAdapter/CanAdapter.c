@@ -708,7 +708,7 @@ void can_receiver(bool new_can_msg)
     }
     if (new_can_msg)
     {
-        if (((msg_rec.id & 0xFF00) == 0x0600) && (msg_rec.length == 8))
+        if (((msg_rec.id & 0xFF00) == 0x0600) && (msg_rec.length >= 2))
         {
             uint8_t frame_type = (msg_rec.data[1] >> 4) & 0x0F;
             switch (frame_type)
@@ -718,7 +718,7 @@ void can_receiver(bool new_can_msg)
                     uint8_t rec_source_addr = msg_rec.id & 0xFF;
                     uint8_t rec_target_addr = msg_rec.data[0];
                     uint8_t rec_data_len = msg_rec.data[1] & 0x0F;
-                    if (rec_data_len > 6)
+                    if (rec_data_len > (msg_rec.length - 2))
                     {   // invalid length
                         break;
                     }
@@ -737,6 +737,10 @@ void can_receiver(bool new_can_msg)
                 case 1:     // first frame
                     if (can_rec_tel_valid)
                     {   // ignore new first frames during reception
+                        break;
+                    }
+                    if (msg_rec.length < 8)
+                    {   // invalid length
                         break;
                     }
                     can_rec_source_addr = msg_rec.id & 0xFF;
@@ -788,7 +792,7 @@ void can_receiver(bool new_can_msg)
                     can_rec_time = time_tick_10;
                     break;
 
-                case 2:
+                case 2:     // consecutive frame
                     if (can_rec_tel_valid &&
                         (can_rec_source_addr == (msg_rec.id & 0xFF)) &&
                         (can_rec_target_addr == msg_rec.data[0]) &&
@@ -799,6 +803,10 @@ void can_receiver(bool new_can_msg)
                         if (copy_len > 6)
                         {
                             copy_len = 6;
+                        }
+                        if (copy_len > (msg_rec.length - 2))
+                        {   // invalid length
+                            break;
                         }
                         memcpy(can_rec_buffer_offset + can_rec_rec_len, msg_rec.data + 2, copy_len);
                         can_rec_rec_len += copy_len;
