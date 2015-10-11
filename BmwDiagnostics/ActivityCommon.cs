@@ -73,6 +73,9 @@ namespace BmwDiagnostics
         private readonly WifiManager _maWifi;
         private readonly ConnectivityManager _maConnectivity;
         private readonly UsbManager _usbManager;
+        private readonly PowerManager _powerManager;
+        private PowerManager.WakeLock _wakeLockScreen;
+        private PowerManager.WakeLock _wakeLockCpu;
         private Receiver _bcReceiver;
         private InterfaceType _selectedInterface;
         private AlertDialog _activateAlertDialog;
@@ -151,6 +154,11 @@ namespace BmwDiagnostics
             get { return _usbManager; }
         }
 
+        public PowerManager PowerManager
+        {
+            get { return _powerManager; }
+        }
+
         public Receiver BcReceiver
         {
             get { return _bcReceiver; }
@@ -168,6 +176,15 @@ namespace BmwDiagnostics
             _maWifi = (WifiManager)activity.GetSystemService(Context.WifiService);
             _maConnectivity = (ConnectivityManager)activity.GetSystemService(Context.ConnectivityService);
             _usbManager = activity.GetSystemService(Context.UsbService) as UsbManager;
+            _powerManager = activity.GetSystemService(Context.PowerService) as PowerManager;
+            if (_powerManager != null)
+            {
+                _wakeLockScreen = _powerManager.NewWakeLock(WakeLockFlags.ScreenDim, "ScreenLock");
+                _wakeLockScreen.SetReferenceCounted(false);
+
+                _wakeLockCpu = _powerManager.NewWakeLock(WakeLockFlags.Partial, "PartialLock");
+                _wakeLockCpu.SetReferenceCounted(false);
+            }
             _selectedInterface = InterfaceType.None;
 
             if ((_bcReceiverUpdateDisplayHandler != null) || (_bcReceiverReceivedHandler != null))
@@ -206,6 +223,18 @@ namespace BmwDiagnostics
                     {
                         _activity.UnregisterReceiver(_bcReceiver);
                         _bcReceiver = null;
+                    }
+                    if (_wakeLockScreen != null)
+                    {
+                        _wakeLockScreen.Release();
+                        _wakeLockScreen.Dispose();
+                        _wakeLockScreen = null;
+                    }
+                    if (_wakeLockCpu != null)
+                    {
+                        _wakeLockCpu.Release();
+                        _wakeLockCpu.Dispose();
+                        _wakeLockCpu = null;
                     }
                 }
 
@@ -553,6 +582,50 @@ namespace BmwDiagnostics
             {
                 Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_activity, 0, new Intent(ActionUsbPermission), 0);
                 _usbManager.RequestPermission(usbDevice, intent);
+            }
+        }
+
+        public void SetScreenLock(bool enable)
+        {
+            if (_wakeLockScreen != null)
+            {
+                try
+                {
+                    if (enable)
+                    {
+                        _wakeLockScreen.Acquire();
+                    }
+                    else
+                    {
+                        _wakeLockScreen.Release();
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+        }
+
+        public void SetCpuLock(bool enable)
+        {
+            if (_wakeLockCpu != null)
+            {
+                try
+                {
+                    if (enable)
+                    {
+                        _wakeLockCpu.Acquire();
+                    }
+                    else
+                    {
+                        _wakeLockCpu.Release();
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
         }
 

@@ -464,6 +464,11 @@ namespace BmwDiagnostics
             IMenuItem exitSubMenu = menu.FindItem(Resource.Id.menu_exit);
             if (exitSubMenu != null)
             {
+#if DEBUG
+                exitSubMenu.SetVisible(true);
+#else
+                exitSubMenu.SetVisible(false);
+#endif
                 exitSubMenu.SetEnabled(!commActive);
             }
 
@@ -633,7 +638,14 @@ namespace BmwDiagnostics
                             break;
                     }
                     _ediabasThread.StartThread(portName, connectParameter, traceDir, _traceAppend, pageInfo, true);
-                    Window.AddFlags(WindowManagerFlags.KeepScreenOn);
+                    if (_dataLogActive)
+                    {
+                        _activityCommon.SetCpuLock(true);
+                    }
+                    else
+                    {
+                        _activityCommon.SetScreenLock(true);
+                    }
                 }
             }
             catch (Exception)
@@ -664,7 +676,8 @@ namespace BmwDiagnostics
                     return;
                 }
             }
-            Window.ClearFlags(WindowManagerFlags.KeepScreenOn);
+            _activityCommon.SetScreenLock(false);
+            _activityCommon.SetCpuLock(false);
             CloseDataLog();
             SupportInvalidateOptionsMenu();
         }
