@@ -1660,7 +1660,7 @@ namespace CarSimulator
                     {
                         break;
                     }
-                    if ((canMsg.LEN != 8) || (canMsg.MSGTYPE != TPCANMessageType.PCAN_MESSAGE_STANDARD) ||
+                    if ((canMsg.LEN < 2) || (canMsg.MSGTYPE != TPCANMessageType.PCAN_MESSAGE_STANDARD) ||
                         ((canMsg.ID & 0xFF00) != 0x0600))
                     {
                         continue;
@@ -1680,10 +1680,9 @@ namespace CarSimulator
                         {
                             case 0: // single frame
                                 len = canMsg.DATA[1] & 0x0F;
-                                if (len > 6)
+                                if (len > canMsg.LEN - 2)
                                 {
-                                    _receiveStopWatch.Stop();
-                                    return false;
+                                    continue;
                                 }
                                 dataBuffer = new byte[len];
                                 Array.Copy(canMsg.DATA, 2, dataBuffer, 0, len);
@@ -1693,6 +1692,10 @@ namespace CarSimulator
                                 break;
 
                             case 1: // first frame
+                                if (canMsg.LEN < 4)
+                                {
+                                    continue;
+                                }
                                 len = (((int)canMsg.DATA[1] & 0x0F) << 8) + canMsg.DATA[2];
                                 dataBuffer = new byte[len];
                                 Array.Copy(canMsg.DATA, 3, dataBuffer, 0, 5);
@@ -1752,6 +1755,10 @@ namespace CarSimulator
                         if (len > 6)
                         {
                             len = 6;
+                        }
+                        if (len > canMsg.LEN - 2)
+                        {
+                            continue;
                         }
                         Array.Copy(canMsg.DATA, 2, dataBuffer, recLen, len);
                         recLen += len;
