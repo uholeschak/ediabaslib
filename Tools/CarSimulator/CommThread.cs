@@ -2,6 +2,7 @@
 #if DEBUG
 #define CAN_DEBUG
 #endif
+#define CAN_DYN_LEN
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -1692,7 +1693,7 @@ namespace CarSimulator
                                 break;
 
                             case 1: // first frame
-                                if (canMsg.LEN < 4)
+                                if (canMsg.LEN < 8)
                                 {
                                     continue;
                                 }
@@ -1706,7 +1707,11 @@ namespace CarSimulator
                                     {
                                         DATA = new byte[8],
                                         ID = (uint) (0x600 + targetAddr),
+#if CAN_DYN_LEN
+                                        LEN = 4,
+#else
                                         LEN = 8,
+#endif
                                         MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD
                                     };
                                     sendMsg.DATA[0] = sourceAddr;
@@ -1778,7 +1783,11 @@ namespace CarSimulator
                                 {
                                     DATA = new byte[8],
                                     ID = (uint) (0x600 + targetAddr),
+#if CAN_DYN_LEN
+                                    LEN = 4,
+#else
                                     LEN = 8,
+#endif
                                     MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD
                                 };
 
@@ -1916,7 +1925,11 @@ namespace CarSimulator
             if (dataLength <= 6)
             {   // single frame
                 sendMsg.ID = (uint)(0x600 + sourceAddr);
+#if CAN_DYN_LEN
+                sendMsg.LEN = (byte)(2 + dataLength);
+#else
                 sendMsg.LEN = 8;
+#endif
                 sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
                 sendMsg.DATA[0] = targetAddr;
                 sendMsg.DATA[1] = (byte)(0x00 | dataLength);  // SF
@@ -2049,16 +2062,20 @@ namespace CarSimulator
                 }
 #endif
                 // consecutive frame
-                sendMsg.ID = (uint)(0x600 + sourceAddr);
-                sendMsg.LEN = 8;
-                sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
-                sendMsg.DATA[0] = targetAddr;
-                sendMsg.DATA[1] = (byte)(0x20 | (blockCount & 0x0F));  // CF
                 len = dataLength;
                 if (len > 6)
                 {
                     len = 6;
                 }
+                sendMsg.ID = (uint)(0x600 + sourceAddr);
+#if CAN_DYN_LEN
+                sendMsg.LEN = (byte)(2 + len);
+#else
+                sendMsg.LEN = 8;
+#endif
+                sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                sendMsg.DATA[0] = targetAddr;
+                sendMsg.DATA[1] = (byte)(0x20 | (blockCount & 0x0F));  // CF
                 Array.Copy(sendData, dataOffset, sendMsg.DATA, 2, len);
                 dataLength -= len;
                 dataOffset += len;
