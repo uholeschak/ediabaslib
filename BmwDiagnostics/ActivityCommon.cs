@@ -16,7 +16,7 @@ using Hoho.Android.UsbSerial.Driver;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 
-namespace BmwDiagnostics
+namespace BmwDeepObd
 {
     public class ActivityCommon : IDisposable
     {

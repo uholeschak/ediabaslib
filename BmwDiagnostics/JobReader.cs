@@ -4,7 +4,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace BmwDiagnostics
+namespace BmwDeepObd
 {
     public class JobReader
     {

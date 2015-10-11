@@ -16,21 +16,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
 using Android.Bluetooth;
 using Android.Content;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
-using Java.Util;
-using System.IO;
-using System.Text;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using EdiabasLib;
+using Java.Util;
 
-namespace BmwDiagnostics
+namespace BmwDeepObd
 {
 
     /// <summary>

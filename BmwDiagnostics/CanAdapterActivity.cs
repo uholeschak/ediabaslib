@@ -6,7 +6,7 @@ using Android.Views;
 using Android.Widget;
 using EdiabasLib;
 
-namespace BmwDiagnostics
+namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/can_adapter_title",
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |

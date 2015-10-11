@@ -6,7 +6,7 @@ using Android.Content;
 using Android.Views;
 using Android.Widget;
 
-namespace BmwDiagnostics.FilePicker
+namespace BmwDeepObd.FilePicker
 {
     public class FileInfoEx
     {

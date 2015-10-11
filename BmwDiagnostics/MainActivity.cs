@@ -1,4 +1,5 @@
 //#define APP_USB_FILTER
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,17 +21,17 @@ using Android.Text.Method;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using BmwDiagnostics.FilePicker;
+using BmwDeepObd.FilePicker;
 using EdiabasLib;
+using Hoho.Android.UsbSerial.Driver;
 using Java.Interop;
 using Mono.CSharp;
-using Hoho.Android.UsbSerial.Driver;
 
 #if APP_USB_FILTER
 [assembly: Android.App.UsesFeature("android.hardware.usb.host")]
 #endif
 
-namespace BmwDiagnostics
+namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/app_name", MainLauncher = true,
             UiOptions=Android.Content.PM.UiOptions.SplitActionBarWhenNarrow,
@@ -1269,7 +1270,7 @@ namespace BmwDiagnostics
                                 using Android.Views;
                                 using Android.Widget;
                                 using EdiabasLib;
-                                using BmwDiagnostics;
+                                using BmwDeepObd;
                                 using System;
                                 using System.Collections.Generic;
                                 using System.Diagnostics;

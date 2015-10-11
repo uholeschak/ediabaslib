@@ -2,7 +2,7 @@
 using System.IO;
 using System.Xml;
 
-namespace BmwDiagnostics
+namespace BmwDeepObd
 {
   public class XmlDocumentLoader
   {

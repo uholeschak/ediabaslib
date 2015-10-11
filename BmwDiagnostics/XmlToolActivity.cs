@@ -13,12 +13,12 @@ using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using BmwDiagnostics.FilePicker;
+using BmwDeepObd.FilePicker;
 using EdiabasLib;
 
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
 
-namespace BmwDiagnostics
+namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/xml_tool_title",
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |

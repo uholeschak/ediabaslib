@@ -13,13 +13,13 @@ using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
-using BmwDiagnostics.FilePicker;
+using BmwDeepObd.FilePicker;
 using EdiabasLib;
 
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
 // ReSharper disable LoopCanBeConvertedToQuery
 
-namespace BmwDiagnostics
+namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/tool_title",
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
@@ -1079,6 +1079,10 @@ namespace BmwDiagnostics
                     progress.Hide();
                     progress.Dispose();
 
+                    if (IsJobRunning())
+                    {
+                        _jobThread.Join();
+                    }
                     _infoListAdapter.Items.Clear();
                     foreach (string message in messageList)
                     {

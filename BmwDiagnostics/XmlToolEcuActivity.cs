@@ -9,7 +9,7 @@ using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 
-namespace BmwDiagnostics
+namespace BmwDeepObd
 {
     [Android.App.Activity(
         ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |

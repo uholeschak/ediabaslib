@@ -3,7 +3,7 @@ using Android.Content;
 using Android.Runtime;
 using Android.Views;
 
-namespace BmwDiagnostics.FilePicker
+namespace BmwDeepObd.FilePicker
 {
     public static class Helpers
     {

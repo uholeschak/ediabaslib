@@ -5,7 +5,7 @@ using EdiabasLib;
 
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
 
-namespace BmwDiagnostics
+namespace BmwDeepObd
 {
     public class EdiabasThread : IDisposable
     {
