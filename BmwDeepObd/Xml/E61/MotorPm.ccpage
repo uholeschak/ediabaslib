@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name ="tab_motor_pm">
+    <strings>
+      <string name="tab_motor_pm">Power management</string>
+      <string name="label_motor_pm_bat_cap">Battery capacity [Ah]:</string>
+      <string name="label_motor_pm_cal_events">Calibration Events:</string>
+      <string name="label_motor_pm_day1">Day 1:</string>
+      <string name="label_motor_pm_season_temp">Season Temperature [°C]:</string>
+      <string name="label_motor_pm_soc_fit">State of Charge (SoC Fit) [%]:</string>
+      <string name="label_motor_pm_soc_percent">State of Charge (SoC) [%]:</string>
+      <string name="label_motor_pm_soc_q">State of Charge (SoC) [Ah]:</string>
+      <string name="label_motor_pm_soh">State of Health (SoH) [+/-50]:</string>
+      <string name="label_motor_pm_start_cap">Start capability [%]:</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_motor_pm">Energiemanagement</string>
+      <string name="label_motor_pm_bat_cap">Batteriekapazität [Ah]:</string>
+      <string name="label_motor_pm_cal_events">Kalibierereignisse:</string>
+      <string name="label_motor_pm_day1">Tag 1:</string>
+      <string name="label_motor_pm_season_temp">Saison Temperatur [°C]:</string>
+      <string name="label_motor_pm_soc_fit">Ladezustand (SoC Fit) [%]:</string>
+      <string name="label_motor_pm_soc_percent">Ladezustand (SoC) [%]:</string>
+      <string name="label_motor_pm_soc_q">Ladezustand (SoC) [Ah]:</string>
+      <string name="label_motor_pm_soh">Gesundheitszustand (SoH) [+/-50]:</string>
+      <string name="label_motor_pm_start_cap">Startfähigkeit [%]:</string>
+    </strings>
+    <jobs sgbd="d_motor" >
+      <job name="STATUS_SYSTEMCHECK_PM_INFO_2" results="STAT_BATTERIE_KAPAZITAET_WERT;STAT_KALIBRIER_EVENT_CNT_WERT;STAT_LADUNGSZUSTAND_AKTUELL_WERT;STAT_LADUNGSZUSTAND_VOR_1_TAG_WERT;STAT_Q_SOC_AKTUELL_WERT;STAT_Q_SOC_VOR_1_TAG_WERT;STAT_SOC_FIT_WERT;STAT_SOH_WERT;STAT_STARTFAEHIGKEITSGRENZE_AKTUELL_WERT;STAT_STARTFAEHIGKEITSGRENZE_VOR_1_TAG_WERT;STAT_TEMP_SAISON_WERT">
+        <display name="label_motor_pm_bat_cap" result="STAT_BATTERIE_KAPAZITAET_WERT" format="3.0R" />
+        <display name="label_motor_pm_soh" result="STAT_SOH_WERT" format="5.1R" />
+        <display name="label_motor_pm_soc_fit" result="STAT_SOC_FIT_WERT" format="5.1R" />
+        <display name="label_motor_pm_season_temp" result="STAT_TEMP_SAISON_WERT" format="5.1R" />
+        <display name="label_motor_pm_cal_events" result="STAT_KALIBRIER_EVENT_CNT_WERT" format="3.0R" />
+        <display name="label_motor_pm_soc_q" result="STAT_Q_SOC_AKTUELL_WERT" format="6.1R" />
+        <display name="label_motor_pm_day1" result="STAT_Q_SOC_VOR_1_TAG_WERT" format="6.1R" />
+        <display name="label_motor_pm_start_cap" result="STAT_STARTFAEHIGKEITSGRENZE_AKTUELL_WERT" format="5.1R" />
+        <display name="label_motor_pm_day1" result="STAT_STARTFAEHIGKEITSGRENZE_VOR_1_TAG_WERT" format="5.1R" />
+        <display name="label_motor_pm_soc_percent" result="STAT_LADUNGSZUSTAND_AKTUELL_WERT" format="5.1R" />
+        <display name="label_motor_pm_day1" result="STAT_LADUNGSZUSTAND_VOR_1_TAG_WERT" format="5.1R" />
+      </job>
+    </jobs>
+  </page>
+</fragment>

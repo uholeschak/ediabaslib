@@ -1,0 +1,396 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name ="tab_axis">
+    <display name="label_axis_mode" result="MODE_CTRL_LESEN_WERT" />
+    <display name="label_axis_left" result="ORGFASTFILTER_RL" />
+    <display name="label_axis_right" result="ORGFASTFILTER_RR" />
+    <display name="label_axis_bat_volt" result="ANALOG_U_KL30" />
+    <display name="label_axis_speed" result="STATE_SPEED" format="4L" />
+    <display name="label_axis_valve_state" result="STATUS_SIGNALE_NUMERISCH" />
+    <strings>
+      <string name="tab_axis">Axis</string>
+      <string name="button_axis_up">Up</string>
+      <string name="button_axis_down">Down</string>
+      <string name="axis_mode_conveyor">Conveyor</string>
+      <string name="axis_mode_garage">Garage</string>
+      <string name="axis_mode_normal">Normal</string>
+      <string name="axis_mode_transport">Transport</string>
+      <string name="label_axis_mode">Axis mode:</string>
+      <string name="label_axis_left">Axis left:</string>
+      <string name="label_axis_right">Axis right:</string>
+      <string name="label_axis_bat_volt">Battery voltage [V]:</string>
+      <string name="label_axis_speed">Speed [km/h]:</string>
+      <string name="label_axis_valve_state">Output states:</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_axis">Achse</string>
+      <string name="button_axis_up">Aufwärts</string>
+      <string name="button_axis_down">Abwärts</string>
+      <string name="axis_mode_conveyor">Band</string>
+      <string name="axis_mode_garage">Werkstatt</string>
+      <string name="axis_mode_normal">Normal</string>
+      <string name="axis_mode_transport">Transport</string>
+      <string name="label_axis_mode">Achsenmodus:</string>
+      <string name="label_axis_left">Achse links:</string>
+      <string name="label_axis_right">Achse rechts:</string>
+      <string name="label_axis_bat_volt">Batteriespannung [V]:</string>
+      <string name="label_axis_speed">Geschwindigkeit [km/h]:</string>
+      <string name="label_axis_valve_state">Zustand Ausgänge:</string>
+    </strings>
+    <jobs sgbd="d_ehc" />
+    <code show_warnigs="true">
+      <![CDATA[
+    class PageClass
+    {
+        //private static int AxisModeNormal = 0x00;
+        private static int AxisModeConveyor = 0x02;
+        private static int AxisModeTransport = 0x04;
+        private static int AxisModeGarage = 0x40;
+        private static int AxisModeMask = 0x46;
+
+        private static int OpModeStatus = 0;
+        private static int OpModeUp = 1;
+        private static int OpModeDown = 2;
+
+        private ToggleButton buttonDown;
+        private ToggleButton buttonUp;
+        private int updateStep = 0;
+        private int opMode = OpModeStatus;
+        private Int64 currentSpeed = 0;
+        private Dictionary<string, EdiabasNet.ResultData> tempDict;
+        private Dictionary<string, EdiabasNet.ResultData> dynDict;
+
+        public void CreateLayout(ActivityMain activity, JobReader.PageInfo pageInfo, LinearLayout pageLayout)
+        {
+            LinearLayout buttonLayout = new LinearLayout(activity);
+            buttonLayout.Orientation = Orientation.Horizontal;
+
+            LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MatchParent,
+                ViewGroup.LayoutParams.WrapContent);
+            buttonLayoutParams.Weight = 1;
+
+            buttonDown = new ToggleButton(activity);
+            buttonDown.Text = ActivityMain.GetPageString(pageInfo, "button_axis_down");
+            buttonDown.TextOff = buttonDown.Text;
+            buttonDown.TextOn = buttonDown.Text;
+            buttonDown.Click += delegate
+            {
+                if (buttonDown.Checked)
+                {
+                    buttonUp.Checked = false;
+                    opMode = OpModeDown;
+                }
+                else
+                {
+                    opMode = OpModeStatus;
+                }
+            };
+            buttonLayout.AddView(buttonDown, buttonLayoutParams);
+
+            buttonUp = new ToggleButton(activity);
+            buttonUp.Text = ActivityMain.GetPageString(pageInfo, "button_axis_up");
+            buttonUp.TextOff = buttonUp.Text;
+            buttonUp.TextOn = buttonUp.Text;
+            buttonUp.Click += delegate
+            {
+                if (buttonUp.Checked)
+                {
+                    buttonDown.Checked = false;
+                    opMode = OpModeUp;
+                }
+                else
+                {
+                    opMode = OpModeStatus;
+                }
+            };
+            buttonLayout.AddView(buttonUp, buttonLayoutParams);
+
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MatchParent,
+                ViewGroup.LayoutParams.WrapContent);
+            pageLayout.AddView(buttonLayout, layoutParams);
+
+            updateStep = 0;
+            opMode = OpModeStatus;
+            currentSpeed = 0;
+        }
+
+        public void DestroyLayout(JobReader.PageInfo pageInfo)
+        {
+            if (buttonDown != null)
+            {
+                buttonDown.Dispose();
+                buttonDown = null;
+            }
+            if (buttonUp != null)
+            {
+                buttonUp.Dispose();
+                buttonUp = null;
+            }
+            //Android.Util.Log.Info("Custom", "Destroyed");
+        }
+
+        public void UpdateLayout(JobReader.PageInfo pageInfo, bool pageValid, bool threadActive)
+        {
+            if ((buttonDown == null) || (buttonUp == null))
+            {
+                return;
+            }
+
+            if (pageValid)
+            {
+                bool stopped = currentSpeed < 5;
+                buttonDown.Enabled = stopped;
+                buttonUp.Enabled = true;
+                if (!stopped)
+                {
+                    opMode = OpModeStatus;
+                }
+                if (opMode == OpModeDown)
+                {
+                    buttonDown.Checked = true;
+                    buttonUp.Checked = false;
+                }
+                else if (opMode == OpModeUp)
+                {
+                    buttonDown.Checked = false;
+                    buttonUp.Checked = true;
+                }
+                else
+                {
+                    buttonDown.Checked = false;
+                    buttonUp.Checked = false;
+                }
+            }
+            else
+            {
+                buttonDown.Checked = false;
+                buttonDown.Enabled = false;
+                buttonUp.Checked = false;
+                buttonUp.Enabled = false;
+            }
+        }
+
+        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
+        {
+            if (firstCall)
+            {
+                updateStep = 0;
+                opMode = OpModeStatus;
+                tempDict = null;
+                dynDict = null;
+            }
+            List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
+
+            switch (updateStep)
+            {
+                case 0:
+                    tempDict = null;
+                    ediabas.ArgString = string.Empty;
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = "STATE_SPEED";
+
+                    ediabas.ExecuteJob("LESEN_REGLERWERTE");
+
+                    resultSets = ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        EdiabasThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+                    }
+                    updateStep++;
+                    break;
+
+                case 1:
+                    ediabas.ArgString = string.Empty;
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = "ANALOG_U_KL30";
+
+                    ediabas.ExecuteJob("LESEN_ANALOGWERTE");
+
+                    resultSets = ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        EdiabasThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+                    }
+                    updateStep++;
+                    break;
+
+                case 2:
+                    ediabas.ArgString = string.Empty;
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = "ORGFASTFILTER_RL;ORGFASTFILTER_RR;FASTFILTER_RL;FASTFILTER_RR";
+
+                    ediabas.ExecuteJob("LESEN_FILTERWERTE");
+
+                    resultSets = ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        EdiabasThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+                    }
+                    dynDict = tempDict;
+                    updateStep = 0;
+                    break;
+
+                default:
+                    updateStep = 0;
+                    break;
+            }
+
+            resultDict = dynDict;
+
+            ediabas.ArgString = string.Empty;
+            ediabas.ArgBinaryStd = null;
+            ediabas.ResultsRequests = "WERT";
+
+            ediabas.ExecuteJob("MODE_CTRL_LESEN");
+
+            int axisMode = -1;
+            resultSets = ediabas.ResultSets;
+            if (resultSets != null && resultSets.Count >= 2)
+            {
+                EdiabasNet.ResultData resultData;
+                if (resultSets[1].TryGetValue("WERT", out resultData))
+                {
+                    if (resultData.OpData is Int64)
+                    {
+                        axisMode = (int)((Int64)resultData.OpData);
+                    }
+                }
+                EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1], "MODE_CTRL_LESEN_");
+            }
+
+            if (axisMode >= 0)
+            {
+                if ((opMode == OpModeUp) && (axisMode & AxisModeMask) != 0x00)
+                {   // set normal mode
+                    ediabas.ArgString = "aus;aus;aus";
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = "JOB_STATUS";
+
+                    ediabas.ExecuteJob("ENERGIESPARMODE");
+                }
+
+                if ((opMode == OpModeDown) && (axisMode & AxisModeConveyor) == 0x00)
+                {   // set conveyor mode
+                    ediabas.ArgString = "ein;aus;aus";
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = "JOB_STATUS";
+
+                    ediabas.ExecuteJob("ENERGIESPARMODE");
+                }
+
+                if ((opMode == OpModeDown) && (axisMode & AxisModeConveyor) != 0x00)
+                {   // manual down
+                    // read channel states
+                    for (int channel = 0; channel < 4; channel++)
+                    {
+                        ediabas.ArgString = string.Format("0x{0:X02}", 0x11 + channel);
+                        ediabas.ArgBinaryStd = null;
+                        ediabas.ResultsRequests = "WERT";
+
+                        ediabas.ExecuteJob("STATUS_SIGNALE_NUMERISCH");
+                        resultSets = ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1], string.Format("STATUS_SIGNALE_NUMERISCH{0}_", channel));
+                        }
+                    }
+
+                    // set channel states
+                    for (int channel = 0; channel < 3; channel++)
+                    {
+                        // longer timeout for bluetooth
+                        ediabas.ArgString = string.Format("0x{0:X02};0x01;0x0C", 0x11 + channel);
+                        ediabas.ArgBinaryStd = null;
+                        ediabas.ResultsRequests = "JOB_STATUS";
+
+                        ediabas.ExecuteJob("STEUERN_DIGITALSIGNALE");
+                    }
+                }
+            }
+
+            {
+                Int64 speed = 0;
+                EdiabasNet.ResultData resultData;
+                if (resultDict.TryGetValue("STATE_SPEED", out resultData))
+                {
+                    if (resultData.OpData is Int64)
+                    {
+                        speed = ((Int64)resultData.OpData);
+                    }
+                }
+                currentSpeed = speed;
+            }
+        }
+
+        public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName)
+        {
+            string result = string.Empty;
+            bool found;
+
+            switch (resultName)
+            {
+                case "MODE_CTRL_LESEN_WERT":
+                {
+                    Int64 axisMode = ActivityMain.GetResultInt64 (resultDict, resultName, out found);
+                    if (found)
+                    {
+                      if ((axisMode & AxisModeConveyor) != 0x00)
+                      {
+                          result = ActivityMain.GetPageString(pageInfo, "axis_mode_conveyor");
+                      }
+                      else if ((axisMode & AxisModeTransport) != 0x00)
+                      {
+                          result = ActivityMain.GetPageString(pageInfo, "axis_mode_transport");
+                      }
+                      else if ((axisMode & AxisModeGarage) != 0x00)
+                      {
+                          result = ActivityMain.GetPageString(pageInfo, "axis_mode_garage");
+                      }
+                      else
+                      {
+                          result = ActivityMain.GetPageString(pageInfo, "axis_mode_normal");
+                      }
+                    }
+                    break;
+                }
+
+                case "ORGFASTFILTER_RL":
+                    result = ActivityMain.FormatResultInt64(resultDict, resultName, "{0,4}");
+                    if (result.Length > 0) result += " / ";
+                    result += ActivityMain.FormatResultInt64(resultDict, "FASTFILTER_RL", "{0,4}");
+                    break;
+
+                case "ORGFASTFILTER_RR":
+                    result = ActivityMain.FormatResultInt64(resultDict, resultName, "{0,4}");
+                    if (result.Length > 0) result += " / ";
+                    result += ActivityMain.FormatResultInt64(resultDict, "FASTFILTER_RR", "{0,4}");
+                    break;
+
+                case "ANALOG_U_KL30":
+                {
+                    Int64 voltage = ActivityMain.GetResultInt64(resultDict, resultName, out found);
+                    if (found)
+                    {
+                        result = string.Format(ActivityMain.Culture, "{0,6:0.00}", (double)voltage / 1000);
+                    }
+                    break;
+                }
+
+                case "STATUS_SIGNALE_NUMERISCH":
+                    for (int channel = 0; channel < 4; channel++)
+                    {
+                        result = ActivityMain.FormatResultInt64(resultDict, string.Format(ActivityMain.Culture, "STATUS_SIGNALE_NUMERISCH{0}_WERT", channel), "{0}") + result;
+                    }
+                    break;
+            }
+            return result;
+        }
+    }
+      ]]>
+    </code>
+  </page>
+</fragment>

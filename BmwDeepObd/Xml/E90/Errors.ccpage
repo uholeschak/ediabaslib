@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name ="tab_errors">
+    <strings>
+      <string name="tab_errors">Errors</string>
+
+      <string name="ACSM">ACSM Crash security module</string>
+      <string name="CAS">CAS Car access system</string>
+      <string name="CCCBO">CCC-BO Front panel</string>
+      <string name="CCCGW">CCC-GW Gateway</string>
+      <string name="DDE">DDE Diesel elektronic</string>
+      <string name="DSC">DSC Dynamic stability control</string>
+      <string name="EKPS">EKPS Fuel pump control</string>
+      <string name="IHK">IHK Integrated heating climate automatic</string>
+      <string name="KBM">KBM Chassis basic module</string>
+      <string name="KGM">KGM Chassis gateway module</string>
+      <string name="KOMBI">KOMBI Combination instrument</string>
+      <string name="PDC">PDC Park distance control</string>
+      <string name="RLS">RLS Rain main beam sensor</string>
+      <string name="EPS">EPS Electric power steering</string>
+      <string name="ULF">ULF Universal hands-free system</string>
+      <string name="FZD">FZD Roof switch unit</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_errors">Fehler</string>
+
+      <string name="ACSM">ACSM Crash-Sicherheits-Modul</string>
+      <string name="CAS">CAS Car Access System</string>
+      <string name="CCCBO">CCC-BO Bedienoberfläche</string>
+      <string name="CCCGW">CCC-GW Gateway</string>
+      <string name="DDE">DDE Diesel Elektronik</string>
+      <string name="DSC">DSC Dynamische Stabilitätskontrolle</string>
+      <string name="EKPS">EKPS Kraftstoffpumpensteuerung</string>
+      <string name="IHK">IHK Integrierte Heiz-Klima-Automatik</string>
+      <string name="KBM">KBM Karosserie-Basismodul</string>
+      <string name="KGM">KGM Karosserie-Gateway-Modul</string>
+      <string name="KOMBI">KOMBI Instrumentenkombination</string>
+      <string name="PDC">PDC Park-Distance-Control</string>
+      <string name="RLS">RLS Regen-Fahrlicht-Sensor</string>
+      <string name="EPS">EPS Elektromechanische Servolenkung</string>
+      <string name="ULF">ULF Universale Ladefreisprechelektronik</string>
+      <string name="FZD">FZD Funtionszentrum Dach</string>
+    </strings>
+    <read_errors>
+      <ecu name="CAS" sgbd="d_cas" />
+      <ecu name="DDE" sgbd="d_motor" />
+      <ecu name="EKPS" sgbd="d_ekp" />
+      <ecu name="DSC" sgbd="d_dsc" />
+      <ecu name="ACSM" sgbd="d_sim" />
+      <ecu name="CCCBO" sgbd="d_mmi" />
+      <ecu name="CCCGW" sgbd="d_mostgw" />
+      <ecu name="IHK" sgbd="d_klima" />
+      <ecu name="KBM" sgbd="d_kbm" />
+      <ecu name="KGM" sgbd="d_zgm" />
+      <ecu name="KOMBI" sgbd="d_kombi" />
+      <ecu name="PDC" sgbd="d_pdc" />
+      <ecu name="RLS" sgbd="d_rls" />
+      <ecu name="EPS" sgbd="d_eps" />
+      <ecu name="ULF" sgbd="d_ispb" />
+      <ecu name="FZD" sgbd="d_fzd" />
+    </read_errors>
+  </page>
+</fragment>

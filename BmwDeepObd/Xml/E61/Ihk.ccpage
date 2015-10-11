@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name ="tab_ihk">
+    <strings>
+      <string name="tab_ihk">Climate</string>
+      <string name="label_ihk_in_temp">Indoor temperature [°C]:</string>
+      <string name="label_ihk_in_temp_delay">Indoor temperature delayed [°C]:</string>
+      <string name="label_ihk_out_temp">Outdoor temperature [°C]:</string>
+      <string name="label_ihk_setpoint">Setpoint [°C]:</string>
+      <string name="label_ihk_heat_ex_temp">Heat exchanger temperature [°C]:</string>
+      <string name="label_ihk_heat_ex_setpoint">Heat exchanger setpoint [°C]:</string>
+      <string name="label_ihk_heat_ex_actuator">Heat exchanger actuator [%]:</string>
+      <string name="label_ihk_main_actuator">Main actuator [%]:</string>
+      <string name="label_ihk_evap_temp">Evaporator temperature [°C]:</string>
+      <string name="label_ihk_press_sense">Pressure sensor [bar]:</string>
+      <string name="label_ihk_circ_air_left">Circulating air left [%]:</string>
+      <string name="label_ihk_circ_air_right">Circulating air right [%]:</string>
+      <string name="label_ihk_defrost">Defrost [%]:</string>
+      <string name="label_ihk_vent">Ventilation [%]:</string>
+      <string name="label_ihk_cold_air">Cold air [%]:</string>
+      <string name="label_ihk_legroom">Leg room [%]:</string>
+      <string name="label_ihk_refrig_comp">Refrigerating compressor [%]:</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_ihk">Klima</string>
+      <string name="label_ihk_in_temp">Innentemperatur [°C]:</string>
+      <string name="label_ihk_in_temp_delay">Innentemperatur verzögert [°C]:</string>
+      <string name="label_ihk_out_temp">Außentemperatur [°C]:</string>
+      <string name="label_ihk_setpoint">Sollwert [°C]:</string>
+      <string name="label_ihk_heat_ex_temp">Wärmetauschertemperatur [°C]:</string>
+      <string name="label_ihk_heat_ex_setpoint">Wärmetauschersollwert [°C]:</string>
+      <string name="label_ihk_heat_ex_actuator">Wärmetauscherstellgröße [%]:</string>
+      <string name="label_ihk_main_actuator">Hauptstellgröße [%]:</string>
+      <string name="label_ihk_evap_temp">Verdampfertemperatur [°C]:</string>
+      <string name="label_ihk_press_sense">Drucksensor [bar]:</string>
+      <string name="label_ihk_circ_air_left">Umluft links [%]:</string>
+      <string name="label_ihk_circ_air_right">Umluft rechts [%]:</string>
+      <string name="label_ihk_defrost">Abtauen [%]:</string>
+      <string name="label_ihk_vent">Belüftung [%]:</string>
+      <string name="label_ihk_cold_air">Kaltluft [%]:</string>
+      <string name="label_ihk_legroom">Fußraum [%]:</string>
+      <string name="label_ihk_refrig_comp">Kältemittelverdichter [%]:</string>
+    </strings>
+    <jobs sgbd="d_klima">
+      <job name="STATUS_REGLERGROESSEN" results="STAT_TINNEN_WERT;STAT_TINNEN_VERZOEGERT_WERT;STAT_TAUSSEN_WERT;STAT_SOLL_LI_KORRIGIERT_WERT;STAT_WT_RE_WERT;STAT_WTSOLL_RE_WERT;STAT_YWT_RE_WERT;STAT_Y_RE_WERT">
+        <display name="label_ihk_in_temp" result="STAT_TINNEN_WERT" format="6.1R" />
+        <display name="label_ihk_in_temp_delay" result="STAT_TINNEN_VERZOEGERT_WERT" format="6.1R" />
+        <display name="label_ihk_out_temp" result="STAT_TAUSSEN_WERT" format="6.1R" />
+        <display name="label_ihk_setpoint" result="STAT_SOLL_LI_KORRIGIERT_WERT" format="6.1R" />
+        <display name="label_ihk_heat_ex_temp" result="STAT_WT_RE_WERT" format="6.1R" />
+        <display name="label_ihk_heat_ex_setpoint" result="STAT_WTSOLL_RE_WERT" format="6.1R" />
+        <display name="label_ihk_heat_ex_actuator" result="STAT_YWT_RE_WERT" format="3L" />
+        <display name="label_ihk_main_actuator" result="STAT_Y_RE_WERT" format="3L" />
+      </job>
+      <job name="STATUS_ANALOGEINGAENGE" results="STAT_TEMP_VERDAMFER_WERT;STAT_DRUCKSENSOR_WERT">
+        <display name="label_ihk_evap_temp" result="STAT_TEMP_VERDAMFER_WERT" format="6.1R" />
+        <display name="label_ihk_press_sense" result="STAT_DRUCKSENSOR_WERT" format="6.1R" />
+      </job>
+      <job name="STATUS_MOTOR_KLAPPENPOSITION" results="STAT_FRISCHLUFT_UMLUFT_LI_WERT;STAT_FRISCHLUFT_UMLUFT_RE_WERT;STAT_DEFROST_WERT;STAT_BELUEFTUNG_WERT;STAT_KALTLUFT_WERT;STAT_FUSSRAUM_WERT">
+        <display name="label_ihk_circ_air_left" result="STAT_FRISCHLUFT_UMLUFT_LI_WERT" format="3L" />
+        <display name="label_ihk_circ_air_right" result="STAT_FRISCHLUFT_UMLUFT_RE_WERT" format="3L" />
+        <display name="label_ihk_defrost" result="STAT_DEFROST_WERT" format="3L" />
+        <display name="label_ihk_vent" result="STAT_BELUEFTUNG_WERT" format="3L" />
+        <display name="label_ihk_cold_air" result="STAT_KALTLUFT_WERT" format="3L" />
+        <display name="label_ihk_legroom" result="STAT_FUSSRAUM_WERT" format="3L" />
+      </job>
+      <job name="STATUS_IO" results="STAT_STEUERUNG_KMV_WERT">
+        <display name="label_ihk_refrig_comp" result="STAT_STEUERUNG_KMV_WERT" format="3L" />
+      </job>
+    </jobs>
+  </page>
+</fragment>

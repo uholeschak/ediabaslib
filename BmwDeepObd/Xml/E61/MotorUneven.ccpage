@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name ="tab_motor_uneven_running" activate="true">
+    <strings>
+      <string name="tab_motor_uneven_running">Uneven running</string>
+      <string name="label_motor_quant_corr_c1">Quant. corr. cylinder 1 [mg/pass]:</string>
+      <string name="label_motor_quant_corr_c2">Quant. corr. cylinder 2 [mg/pass]:</string>
+      <string name="label_motor_quant_corr_c3">Quant. corr. cylinder 3 [mg/pass]:</string>
+      <string name="label_motor_quant_corr_c4">Quant. corr. cylinder 4 [mg/pass]:</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_motor_uneven_running">Laufunruhe</string>
+      <string name="label_motor_quant_corr_c1">Mengenkorr. Zylinder 1 [mg/Hub]:</string>
+      <string name="label_motor_quant_corr_c2">Mengenkorr. Zylinder 2 [mg/Hub]:</string>
+      <string name="label_motor_quant_corr_c3">Mengenkorr. Zylinder 3 [mg/Hub]:</string>
+      <string name="label_motor_quant_corr_c4">Mengenkorr. Zylinder 4 [mg/Hub]:</string>
+    </strings>
+    <jobs sgbd="d_motor">
+      <job name="START_SYSTEMCHECK_ZYL" args="LLR_EIN" results="JOB_STATUS">
+      </job>
+      <job name="STATUS_LAUFUNRUHE_LLR_MENGE" results="STAT_LAUFUNRUHE_LLR_MENGE_ZYL1_WERT;STAT_LAUFUNRUHE_LLR_MENGE_ZYL2_WERT;STAT_LAUFUNRUHE_LLR_MENGE_ZYL3_WERT;STAT_LAUFUNRUHE_LLR_MENGE_ZYL4_WERT">
+        <display name="label_motor_quant_corr_c1" result="STAT_LAUFUNRUHE_LLR_MENGE_ZYL1_WERT" format="5.2R" />
+        <display name="label_motor_quant_corr_c2" result="STAT_LAUFUNRUHE_LLR_MENGE_ZYL2_WERT" format="5.2R" />
+        <display name="label_motor_quant_corr_c3" result="STAT_LAUFUNRUHE_LLR_MENGE_ZYL3_WERT" format="5.2R" />
+        <display name="label_motor_quant_corr_c4" result="STAT_LAUFUNRUHE_LLR_MENGE_ZYL4_WERT" format="5.2R" />
+      </job>
+    </jobs>
+  </page>
+</fragment>

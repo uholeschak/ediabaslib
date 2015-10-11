@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name ="tab_motor" logfile="motor.log">
+    <strings>
+      <string name="tab_motor">Motor</string>
+      <string name="label_motor_air_mass">Air mass [kg/h]:</string>
+      <string name="label_motor_air_mass_act">Air mass act [mg/pass]:</string>
+      <string name="label_motor_air_mass_set">Air mass set [mg/pass]:</string>
+      <string name="label_motor_ambient_press">Ambient pressure [mbar]:</string>
+      <string name="label_motor_ambient_temp">Ambient temp. [°C]:</string>
+      <string name="label_motor_bat_voltage">Battery voltage [V]:</string>
+      <string name="label_motor_boost_press_act">Boost pressure act [mbar]:</string>
+      <string name="label_motor_boost_press_set">Boost pressure set [mbar]:</string>
+      <string name="label_motor_exhaust_press">Exhaust back pressure [mbar]:</string>
+      <string name="label_motor_fuel_temp">Fuel temp. [°C]:</string>
+      <string name="label_motor_intake_air_temp">Intake air temp. [°C]:</string>
+      <string name="label_motor_part_filt_dist_remain">Part. filter remaining distance [km]:</string>
+      <string name="label_motor_part_filt_dist_since_regen">Part. filter dist. since regen. [km]:</string>
+      <string name="label_motor_part_filt_request">Part. filter regeneration request:</string>
+      <string name="label_motor_part_filt_status">Part. filter regeneration:</string>
+      <string name="label_motor_part_filt_unblocked">Part. filter unblock regeneration:</string>
+      <string name="label_motor_oil_press_switch">Oil pressure switch:</string>
+      <string name="label_motor_oil_temp">Oil temperature [°C]:</string>
+      <string name="label_motor_rail_press_act">Rail pressure act [bar]:</string>
+      <string name="label_motor_rail_press_set">Rail pressure set [bar]:</string>
+      <string name="label_motor_refrig_temp">Refrigerant temperature [°C]:</string>
+      <string name="label_motor_temp">Motor temperature [°C]:</string>
+      <string name="label_motor_temp_before_cat">Temp. before catalyst [°C]:</string>
+      <string name="label_motor_temp_before_filter">Temp. before part. filter [°C]:</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_motor">Motor</string>
+      <string name="label_motor_air_mass">Luftmasse [kg/h]:</string>
+      <string name="label_motor_air_mass_act">Luftmasse ist [mg/Hub]:</string>
+      <string name="label_motor_air_mass_set">Luftmasse soll [mg/Hub]:</string>
+      <string name="label_motor_ambient_press">Umgebungsdruck [mbar]:</string>
+      <string name="label_motor_ambient_temp">Umgebungstemperatur [°C]:</string>
+      <string name="label_motor_bat_voltage">Batteriespannung [V]:</string>
+      <string name="label_motor_boost_press_act">Ladedruck ist [mbar]:</string>
+      <string name="label_motor_boost_press_set">Ladedruck soll [mbar]:</string>
+      <string name="label_motor_exhaust_press">Abgasgegendruck [mbar]:</string>
+      <string name="label_motor_fuel_temp">Treibstofftemperatur [°C]:</string>
+      <string name="label_motor_intake_air_temp">Ansauglufttemp. [°C]:</string>
+      <string name="label_motor_part_filt_dist_remain">Partikelfilter Restlaufstrecke [km]:</string>
+      <string name="label_motor_part_filt_dist_since_regen">Partikelfilter Strecke seit Regen. [km]:</string>
+      <string name="label_motor_part_filt_request">Partikelfilter Anforderung Regen.:</string>
+      <string name="label_motor_part_filt_status">Partikelfilter Regeneration:</string>
+      <string name="label_motor_part_filt_unblocked">Partikelfilter Freigabe Regen.:</string>
+      <string name="label_motor_oil_press_switch">Öldruckschalter:</string>
+      <string name="label_motor_oil_temp">Öltemperatur [°C]:</string>
+      <string name="label_motor_rail_press_act">Raildruck ist [bar]:</string>
+      <string name="label_motor_rail_press_set">Raildruck soll [bar]:</string>
+      <string name="label_motor_refrig_temp">Kühlmitteltemperatur [°C]:</string>
+      <string name="label_motor_temp">Motortemperatur [°C]:</string>
+      <string name="label_motor_temp_before_cat">Temp. vor Katalysator [°C]:</string>
+      <string name="label_motor_temp_before_filter">Temp. vor Partikelfilter [°C]:</string>
+    </strings>
+    <jobs sgbd="d_motor">
+      <job name="STATUS_MESSWERTBLOCK_LESEN"
+           args_first="JA;IUBAT2;OBD_PID05_CEngDsT_tSens;ITMOT;ITOEL;ITKRS;OBD_PID10_AFS_dmSens;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;PFltRgn_numRgn;CoEOM_stOpModeAct;ISRBF;ISOED;PCBS_lDistanceOut"
+           args="NEIN;IUBAT2;OBD_PID05_CEngDsT_tSens;ITMOT;ITOEL;ITKRS;OBD_PID10_AFS_dmSens;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;PFltRgn_numRgn;CoEOM_stOpModeAct;ISRBF;ISOED;PCBS_lDistanceOut">
+        <display name="label_motor_bat_voltage" result="STAT_UBATT2_WERT" />
+        <display name="label_motor_refrig_temp" result="STAT_CEngDsT_tSens_WERT" format="6.2R" />
+        <display name="label_motor_temp" result="STAT_MOTORTEMPERATUR_WERT" format="6.2R" />
+        <display name="label_motor_oil_temp" result="STAT_MOTOROEL_TEMPERATUR_WERT" format="6.2R" />
+        <display name="label_motor_air_mass" result="STAT_AFS_dmSens_WERT" format="7.2R" />
+        <display name="label_motor_intake_air_temp" result="STAT_LADELUFTTEMPERATUR_WERT" format="6.2R" />
+        <display name="label_motor_ambient_temp" result="STAT_UMGEBUNGSTEMPERATUR_WERT" format="6.2R" />
+        <display name="label_motor_boost_press_set" result="STAT_LADEDRUCK_SOLL_WERT" format="6.2R" />
+        <display name="label_motor_boost_press_act" result="STAT_LADEDRUCK_WERT" format="6.2R" />
+        <display name="label_motor_rail_press_set" result="STAT_RAILDRUCK_SOLL_WERT" format="6.2R" />
+        <display name="label_motor_rail_press_act" result="STAT_RAILDRUCK_WERT" format="6.2R" />
+        <display name="label_motor_air_mass_set" result="STAT_LUFTMASSE_SOLL_WERT" format="6.2R" />
+        <display name="label_motor_air_mass_act" result="STAT_LUFTMASSE_PRO_HUB_WERT" format="6.2R" />
+        <display name="label_motor_ambient_press" result="STAT_UMGEBUNGSDRUCK_WERT" format="6.2R" />
+        <display name="label_motor_fuel_temp" result="STAT_KRAFTSTOFFTEMPERATUR_WERT" format="6.2R" />
+        <display name="label_motor_temp_before_filter" result="STAT_ABGASTEMPERATUR_VOR_PARTIKELFILTER_1_WERT" format="6.2R" />
+        <display name="label_motor_temp_before_cat" result="STAT_ABGASTEMPERATUR_VOR_KATALYSATOR_WERT" format="6.2R" />
+        <display name="label_motor_part_filt_dist_since_regen" result="STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT" log_tag="part_filt_dist" />
+        <display name="label_motor_exhaust_press" result="STAT_DIFFERENZDRUCK_UEBER_PARTIKELFILTER_WERT" format="6.2R" />
+        <display name="label_motor_oil_press_switch" result="STAT_OELDRUCKSCHALTER_EIN_WERT" />
+        <display name="label_motor_part_filt_request" result="STAT_PFltRgn_numRgn_WERT" log_tag="part_filt_requ" />
+        <display name="label_motor_part_filt_status" result="STAT_CoEOM_stOpModeAct_WERT" log_tag="part_filt_status" />
+        <display name="label_motor_part_filt_unblocked" result="STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT" log_tag="part_filt_unblocked" />
+        <display name="label_motor_part_filt_dist_remain" result="STAT_PCBS_lDistanceOut_WERT" format="6.0R"/>
+      </job>
+    </jobs>
+    <code show_warnigs="true">
+      <![CDATA[
+    class PageClass
+    {
+        public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName)
+        {
+            string result = string.Empty;
+            bool found;
+
+            switch (resultName)
+            {
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_UBATT2_WERT":
+                    result = string.Format(ActivityMain.Culture, "{0,7:0.00}", ActivityMain.GetResultDouble(resultDict, resultName, out found) / 1000.0);
+                    if (!found) result = string.Empty;
+                    break;
+
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT":
+                    result = string.Format(ActivityMain.Culture, "{0,6:0.0}", ActivityMain.GetResultDouble(resultDict, resultName, out found) / 1000.0);
+                    if (!found) result = string.Empty;
+                    break;
+
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_OELDRUCKSCHALTER_EIN_WERT":
+                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) > 0.5) && found) ? "1" : "0";
+                    if (!found) result = string.Empty;
+                    break;
+
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_PFltRgn_numRgn_WERT":  // Regenerationsanforderung
+                {
+                    double tempValue = ActivityMain.GetResultDouble (resultDict, resultName, out found);
+                    result = ((tempValue > 3.5) && (tempValue < 6.5) && found) ? "1" : "0";
+                    if (!found) result = string.Empty;
+                    break;
+                }
+
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_CoEOM_stOpModeAct_WERT":   // Regenerationsstatus
+                {
+                    double tempValue = ActivityMain.GetResultDouble (resultDict, resultName, out found);
+                    result = ((((int)(tempValue + 0.5) & 0x02) != 0) && found) ? "1" : "0";
+                    if (!found) result = string.Empty;
+                    break;
+                }
+
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT":
+                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) < 0.5) && found) ? "1" : "0";
+                    if (!found) result = string.Empty;
+                    break;
+            }
+            return result;
+        }
+    }
+      ]]>
+    </code>
+  </page>
+</fragment>

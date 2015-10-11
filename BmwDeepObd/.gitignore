@@ -1,0 +1,9 @@
+/bin/
+/obj/
+/packages/
+/Package/
+/*.userprefs
+/*.apk
+/*.user
+/*.suo
+/*.zip

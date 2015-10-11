@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <pages>
+    <include filename="Axis.ccpage"/>
+    <include filename="Motor.ccpage"/>
+    <include filename="MotorUneven.ccpage"/>
+    <include filename="MotorIrregular.ccpage"/>
+    <include filename="MotorPm.ccpage"/>
+    <include filename="Ccc.ccpage"/>
+    <include filename="Ihk.ccpage"/>
+    <include filename="Errors.ccpage"/>
+    <include filename="Test.ccpage"/>
+  </pages>
+</fragment>
