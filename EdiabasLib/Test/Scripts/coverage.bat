@@ -13,7 +13,7 @@ set IFH=STD:OBD
 set IFH=%2
 )
 if "%3"=="" (
-set COMPORT=COM8
+set COMPORT=COM4
 ) else (
 set COMPORT=%3
 )
