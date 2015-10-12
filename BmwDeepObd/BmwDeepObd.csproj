@@ -252,4 +252,9 @@
   <ItemGroup>
     <AndroidResource Include="Resources\xml\device_filter.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values\styles.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
 </Project>

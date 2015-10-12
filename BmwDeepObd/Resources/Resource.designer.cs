@@ -3070,6 +3070,9 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f080070
 			public const int Base_Widget_AppCompat_Toolbar_Button_Navigation = 2131230832;
 			
+			// aapt resource value: 0x7f08012a
+			public const int MyTheme = 2131231018;
+			
 			// aapt resource value: 0x7f08000f
 			public const int Platform_AppCompat = 2131230735;
 			
@@ -3138,6 +3141,9 @@ namespace BmwDeepObd
 			
 			// aapt resource value: 0x7f08002c
 			public const int RtlOverlay_Widget_AppCompat_SearchView_MagIcon = 2131230764;
+			
+			// aapt resource value: 0x7f08012b
+			public const int SpinnerDividerStyle = 2131231019;
 			
 			// aapt resource value: 0x7f0800a6
 			public const int TextAppearance_AppCompat = 2131230886;
