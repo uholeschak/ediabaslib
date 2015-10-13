@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="#666"
         android:textColor="#fff" />
-    <Spinner
+    <android.widget.Spinner
         android:id="@+id/spinnerJobs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:background="#666"
         android:textColor="#fff" />
-    <Spinner
+    <android.widget.Spinner
         android:id="@+id/spinnerResults"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <resources>
   <style name="MyTheme" parent="Theme.AppCompat">
-<!--
-    <item name="spinnerStyle">@android:style/Widget.Spinner</item>
--->
     <item name="dropDownListViewStyle">@style/SpinnerDividerStyle</item>
     <item name="android:dropDownListViewStyle">@style/SpinnerDividerStyle</item>
   </style>
