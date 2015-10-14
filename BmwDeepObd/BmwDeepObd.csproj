@@ -257,4 +257,7 @@
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values\attrs.xml" />
+  </ItemGroup>
 </Project>
