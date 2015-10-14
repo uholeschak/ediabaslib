@@ -161,7 +161,7 @@ namespace BmwDeepObd
         private bool _traceActive;
         private bool _traceAppend;
         private bool _dataLogActive;
-        private bool _activityStarted;
+        private bool _activityActive;
         private readonly List<JobInfo> _jobList = new List<JobInfo>();
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -240,7 +240,7 @@ namespace BmwDeepObd
 
             _activityCommon = new ActivityCommon(this, () =>
             {
-                if (_activityStarted)
+                if (_activityActive)
                 {
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
@@ -260,11 +260,11 @@ namespace BmwDeepObd
             UpdateDisplay();
         }
 
-        protected override void OnStart()
+        protected override void OnResume()
         {
-            base.OnStart();
+            base.OnResume();
 
-            _activityStarted = true;
+            _activityActive = true;
             if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None)
             {
                 SelectInterface();
@@ -272,11 +272,11 @@ namespace BmwDeepObd
             SelectInterfaceEnable();
         }
 
-        protected override void OnStop()
+        protected override void OnPause()
         {
-            base.OnStop();
+            base.OnPause();
 
-            _activityStarted = false;
+            _activityActive = false;
         }
 
         protected override void OnDestroy()

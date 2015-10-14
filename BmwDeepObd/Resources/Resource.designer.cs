@@ -3146,10 +3146,7 @@ namespace BmwDeepObd
 			public const int RtlOverlay_Widget_AppCompat_SearchView_MagIcon = 2131230764;
 			
 			// aapt resource value: 0x7f08012b
-			public const int SpinnerCustomStyle = 2131231019;
-			
-			// aapt resource value: 0x7f08012c
-			public const int SpinnerDividerStyle = 2131231020;
+			public const int SpinnerDividerStyle = 2131231019;
 			
 			// aapt resource value: 0x7f0800a6
 			public const int TextAppearance_AppCompat = 2131230886;

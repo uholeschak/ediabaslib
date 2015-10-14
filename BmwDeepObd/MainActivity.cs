@@ -108,8 +108,8 @@ namespace BmwDeepObd
         private bool _traceActive;
         private bool _traceAppend;
         private bool _dataLogActive;
-        private bool _activityStarted;
-        private bool _onStartExecuted;
+        private bool _activityActive;
+        private bool _onResumeExecuted;
         private bool _createTabsPending;
         private bool _autoStart;
         private ActivityCommon _activityCommon;
@@ -168,7 +168,7 @@ namespace BmwDeepObd
 
             _activityCommon = new ActivityCommon(this, () =>
             {
-                if (_activityStarted)
+                if (_activityActive)
                 {
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
@@ -236,7 +236,7 @@ namespace BmwDeepObd
 
         void CreateActionBarTabs()
         {
-            if (!_activityStarted)
+            if (!_activityActive)
             {
                 _createTabsPending = true;
                 return;
@@ -259,14 +259,21 @@ namespace BmwDeepObd
             UpdateDisplay();
         }
 
-        protected override void OnStart()
+        protected override void OnStop()
         {
-            base.OnStart();
+            base.OnStop();
 
-            bool firstStart = !_onStartExecuted;
-            if (!_onStartExecuted)
+            StoreSettings();
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+
+            bool firstStart = !_onResumeExecuted;
+            if (!_onResumeExecuted)
             {
-                _onStartExecuted = true;
+                _onResumeExecuted = true;
                 _activityCommon.RequestUsbPermission(null);
                 ReadConfigFile();
                 if (_startAlertDialog == null && _currentVersionCode != _lastVersionCode)
@@ -289,10 +296,10 @@ namespace BmwDeepObd
                     }
                 }
             }
-            _activityStarted = true;
+            _activityActive = true;
             if (_createTabsPending)
             {
-                CreateActionBarTabs();
+                _updateHandler.Post(CreateActionBarTabs);
             }
             if (_startAlertDialog == null)
             {
@@ -301,16 +308,15 @@ namespace BmwDeepObd
             UpdateDisplay();
         }
 
-        protected override void OnStop()
+        protected override void OnPause()
         {
-            base.OnStop();
+            base.OnPause();
 
-            _activityStarted = false;
+            _activityActive = false;
             if (_swDataLog == null)
             {
                 StopEdiabasThread(false);
             }
-            StoreSettings();
         }
 
         protected override void OnDestroy()
