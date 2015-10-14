@@ -67,6 +67,7 @@ namespace BmwDeepObd
         private readonly BcReceiverUpdateDisplayDelegate _bcReceiverUpdateDisplayHandler;
         private readonly BcReceiverReceivedDelegate _bcReceiverReceivedHandler;
         private readonly bool _emulator;
+        private bool? _usbSupport;
         private string _externalPath;
         private string _externalWritePath;
         private readonly BluetoothAdapter _btAdapter;
@@ -93,7 +94,18 @@ namespace BmwDeepObd
         {
             get
             {
-                return !Emulator && (Build.VERSION.SdkInt >= BuildVersionCodes.HoneycombMr1);
+                if (_usbSupport == null)
+                {
+                    try
+                    {
+                        _usbSupport = (_usbManager != null) && (_usbManager.DeviceList != null) && (Build.VERSION.SdkInt >= BuildVersionCodes.HoneycombMr1);
+                    }
+                    catch (Exception)
+                    {
+                        _usbSupport = false;
+                    }
+                }
+                return _usbSupport??false;
             }
         }
 
