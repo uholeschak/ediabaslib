@@ -189,6 +189,9 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0100a8
 			public const int alertDialogTheme = 2130772136;
 			
+			// aapt resource value: 0x7f0100cb
+			public const int android_widget_Spinner = 2130772171;
+			
 			// aapt resource value: 0x7f01002b
 			public const int arrowHeadLength = 2130772011;
 			
@@ -3143,7 +3146,10 @@ namespace BmwDeepObd
 			public const int RtlOverlay_Widget_AppCompat_SearchView_MagIcon = 2131230764;
 			
 			// aapt resource value: 0x7f08012b
-			public const int SpinnerDividerStyle = 2131231019;
+			public const int SpinnerCustomStyle = 2131231019;
+			
+			// aapt resource value: 0x7f08012c
+			public const int SpinnerDividerStyle = 2131231020;
 			
 			// aapt resource value: 0x7f0800a6
 			public const int TextAppearance_AppCompat = 2131230886;
@@ -4301,7 +4307,8 @@ namespace BmwDeepObd
 					2130772147,
 					2130772148,
 					2130772149,
-					2130772150};
+					2130772150,
+					2130772171};
 			
 			// aapt resource value: 23
 			public const int Theme_actionBarDivider = 23;
@@ -4407,6 +4414,9 @@ namespace BmwDeepObd
 			
 			// aapt resource value: 93
 			public const int Theme_alertDialogTheme = 93;
+			
+			// aapt resource value: 108
+			public const int Theme_android_widget_Spinner = 108;
 			
 			// aapt resource value: 1
 			public const int Theme_android_windowAnimationStyle = 1;

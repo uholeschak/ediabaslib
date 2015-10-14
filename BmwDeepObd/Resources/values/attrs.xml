@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+  <declare-styleable name="Theme">
+    <attr name="android.widget.Spinner" format="reference" />
+  </declare-styleable>
+</resources>
