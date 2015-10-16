@@ -11,7 +11,7 @@
             android:title="@string/menu_tool_sel_interface" />
       <item android:id="@+id/menu_scan"
             android:icon="@android:drawable/ic_menu_search"
-            android:title="@string/menu_device" />
+            android:title="@string/menu_adapter" />
       <item android:id="@+id/menu_can_adapter_config"
             android:icon="@android:drawable/ic_menu_manage"
             android:title="@string/menu_can_adapter_config" />

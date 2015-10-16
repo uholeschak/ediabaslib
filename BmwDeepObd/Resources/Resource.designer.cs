@@ -2418,14 +2418,14 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f060012
 			public const int library_name = 2131099666;
 			
+			// aapt resource value: 0x7f060046
+			public const int menu_adapter = 2131099718;
+			
 			// aapt resource value: 0x7f060047
 			public const int menu_can_adapter_config = 2131099719;
 			
 			// aapt resource value: 0x7f060045
 			public const int menu_connect = 2131099717;
-			
-			// aapt resource value: 0x7f060046
-			public const int menu_device = 2131099718;
 			
 			// aapt resource value: 0x7f06004b
 			public const int menu_download_ecu = 2131099723;
