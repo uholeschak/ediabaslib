@@ -84,6 +84,15 @@
 #define TIMER0_RELOAD (0x100-156)       // 10 ms
 #define TIMER1_RELOAD (0x10000-500)     // 1 ms
 
+#define CAN_MODE            1       // default can mode (1=500kb)
+#define CAN_BLOCK_SIZE      0       // 0 is disabled
+#define CAN_MIN_SEP_TIME    0       // min separation time (ms)
+
+#define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes)
+#define EEP_ADDR_BLOCKSIZE  0x02    // eeprom address for FC block size (2 bytes)
+#define EEP_ADDR_SEP_TIME   0x04    // eeprom address for FC separation time (2 bytes)
+#define EEP_ADDR_PLD_MODE   0x06    // eeprom address for PLD mode
+
 // receiver state machine
 typedef enum
 {
@@ -114,6 +123,10 @@ static volatile uint16_t send_len;
 static volatile uint8_t send_buffer[280];   // larger send buffer for multi responses
 
 static uint8_t temp_buffer[260];
+
+static uint8_t can_mode;
+static uint8_t can_blocksize;
+static uint8_t can_sep_time;
 
 bool uart_send(uint8_t *buffer, uint16_t count)
 {
@@ -159,6 +172,147 @@ uint16_t uart_receive(uint8_t *buffer)
     memcpy(buffer, (void *) rec_buffer, data_len);
     rec_state = rec_state_idle;
     return data_len;
+}
+
+uint8_t calc_checkum(uint8_t *buffer, uint16_t len)
+{
+    uint8_t sum = 0;
+    for (uint16_t i = 0; i < len; i++)
+    {
+        sum += buffer[i];
+    }
+    return sum;
+}
+
+void can_config()
+{
+}
+
+void read_eeprom()
+{
+    uint8_t temp_value1;
+    uint8_t temp_value2;
+
+      // wait for write to finish
+    while(WR) continue;
+
+    temp_value1 = eeprom_read(EEP_ADDR_BAUD);
+    temp_value2 = eeprom_read(EEP_ADDR_BAUD + 1);
+    can_mode = CAN_MODE;
+    if ((~temp_value1 & 0xFF) == temp_value2)
+    {
+        can_mode = temp_value1;
+    }
+
+    temp_value1 = eeprom_read(EEP_ADDR_BLOCKSIZE);
+    temp_value2 = eeprom_read(EEP_ADDR_BLOCKSIZE + 1);
+    can_blocksize = CAN_BLOCK_SIZE;
+    if ((~temp_value1 & 0xFF) == temp_value2)
+    {
+        can_blocksize = temp_value1;
+    }
+
+    temp_value1 = eeprom_read(EEP_ADDR_SEP_TIME);
+    temp_value2 = eeprom_read(EEP_ADDR_SEP_TIME + 1);
+    can_sep_time = CAN_MIN_SEP_TIME;
+    if ((~temp_value1 & 0xFF) == temp_value2)
+    {
+        can_sep_time = temp_value1;
+    }
+}
+
+bool internal_telegram(uint16_t len)
+{
+    if ((len == 5) &&
+    (temp_buffer[0] == 0x81) &&
+    (temp_buffer[1] == 0x00) &&
+    (temp_buffer[2] == 0x00))
+    {
+        uint8_t cfg_value = temp_buffer[3];
+        eeprom_write(EEP_ADDR_BAUD, cfg_value);
+        eeprom_write(EEP_ADDR_BAUD + 1, ~cfg_value);
+        while(WR)continue;
+        read_eeprom();
+        can_config();
+        temp_buffer[3] = ~can_mode;
+        temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
+        uart_send(temp_buffer, len);
+        return true;
+    }
+
+    if ((len == 6) &&
+    (temp_buffer[0] == 0x82) &&
+    (temp_buffer[1] == 0xF1) &&
+    (temp_buffer[2] == 0xF1))
+    {
+        if ((temp_buffer[3] & 0x7F) == 0x00)
+        {      // block size
+            if ((temp_buffer[3] & 0x80) == 0x00)
+            {   // write
+                uint8_t cfg_value = temp_buffer[4];
+                eeprom_write(EEP_ADDR_BLOCKSIZE, cfg_value);
+                eeprom_write(EEP_ADDR_BLOCKSIZE + 1, ~cfg_value);
+                read_eeprom();
+            }
+            temp_buffer[4] = can_blocksize;
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
+        if ((temp_buffer[3] & 0x7F) == 0x01)
+        {      // separation time
+            if ((temp_buffer[3] & 0x80) == 0x00)
+            {   // write
+                uint8_t cfg_value = temp_buffer[4];
+                eeprom_write(EEP_ADDR_SEP_TIME, cfg_value);
+                eeprom_write(EEP_ADDR_SEP_TIME + 1, ~cfg_value);
+                read_eeprom();
+            }
+            temp_buffer[4] = can_sep_time;
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
+        if ((temp_buffer[3] & 0x7F) == 0x02)
+        {      // can mode
+            if ((temp_buffer[3] & 0x80) == 0x00)
+            {   // write
+                uint8_t cfg_value = temp_buffer[4];
+                eeprom_write(EEP_ADDR_BAUD, cfg_value);
+                eeprom_write(EEP_ADDR_BAUD + 1, ~cfg_value);
+                read_eeprom();
+                can_config();
+            }
+            temp_buffer[4] = can_mode;
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
+        if ((temp_buffer[3] == 0xFD) && (temp_buffer[4] == 0xFD))
+        {      // read adapter type
+            temp_buffer[4] = 0x02;
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
+#if 0
+        if ((temp_buffer[3] == 0xFE) && (temp_buffer[4] == 0xFE))
+        {      // read ignition state
+            temp_buffer[4] = IGNITION_STATE() ? 0x01 : 0x00;
+            temp_buffer[4] |= (can_mode != 0) ? 0x80 : 0x00;
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
+#endif
+        if ((temp_buffer[3] == 0xFF) && (temp_buffer[4] == 0xFF))
+        {      // reset command
+            RESET();
+            return true;
+        }
+        return true;
+    }
+    return false;
 }
 
 void main(void)
@@ -234,6 +388,8 @@ void main(void)
     INTCONbits.GIEL = 1;    // enable low priority interrupts
     INTCONbits.GIEH = 1;    // enable high priority interrupts
 
+    read_eeprom();
+
     WDTCONbits.SWDTEN = 1;  // enable watchdog
     for (;;)
     {
@@ -241,7 +397,7 @@ void main(void)
         uint16_t len = uart_receive(temp_buffer);
         if (len > 0)
         {
-            uart_send(temp_buffer, len);
+            internal_telegram(len);
         }
 
         if (time_tick_10 & 0x10) LED_OBD_RX = 1;
