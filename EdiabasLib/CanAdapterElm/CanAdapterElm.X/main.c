@@ -208,17 +208,17 @@ void can_config()
     }
     if (can_enabled)
     {
-        // 100kb: SJW_1_TQ, BRP_FOSC_4, PSEG1T_8_TQ, PRGT_3_TQ, PSEG2T_8_TQ
+        // 100kb: SJW_2_TQ, BRP_FOSC_10, PSEG1T_6_TQ, PRGT_7_TQ, PSEG2T_2_TQ
         // 500kb: SJW_1_TQ, BRP_FOSC_2, PSEG1T_8_TQ, PRGT_1_TQ, PSEG2T_6_TQ
         if (bitrate == 1)
         {   // 100 kb
-            open_can(SJW_1_TQ, BRP_FOSC_4, PSEG1T_8_TQ, PRGT_3_TQ, PSEG2T_8_TQ,
+            open_can(SJW_2_TQ, BRP_FOSC_10, PSEG1T_6_TQ, PRGT_7_TQ, PSEG2T_2_TQ,
                 0x600, 0x700);
         }
         else
         {   // 500kb
             open_can(SJW_1_TQ, BRP_FOSC_2, PSEG1T_8_TQ, PRGT_1_TQ, PSEG2T_6_TQ,
-                0x600, 0x700);    // B
+                0x600, 0x700);
         }
     }
     else
