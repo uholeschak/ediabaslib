@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include "can.h"
 
 // #pragma config statements should precede project file includes.
 // Use project enums instead of #define for ON and OFF.
@@ -124,6 +125,7 @@ static volatile uint8_t send_buffer[280];   // larger send buffer for multi resp
 
 static uint8_t temp_buffer[260];
 
+static bool can_enabled;
 static uint8_t can_mode;
 static uint8_t can_blocksize;
 static uint8_t can_sep_time;
@@ -186,6 +188,43 @@ uint8_t calc_checkum(uint8_t *buffer, uint16_t len)
 
 void can_config()
 {
+    uint8_t bitrate = 5;
+    switch (can_mode)
+    {
+        case 0:     // can off
+            can_enabled = false;
+            break;
+
+        default:
+        case 1:     // can 500kb
+            bitrate = 5;
+            can_enabled = true;
+            break;
+
+        case 9:     // can 100kb
+            bitrate = 1;
+            can_enabled = true;
+            break;
+    }
+    if (can_enabled)
+    {
+        // 100kb: SJW_1_TQ, BRP_FOSC_4, PSEG1T_8_TQ, PRGT_3_TQ, PSEG2T_8_TQ
+        // 500kb: SJW_1_TQ, BRP_FOSC_2, PSEG1T_8_TQ, PRGT_1_TQ, PSEG2T_6_TQ
+        if (bitrate == 1)
+        {   // 100 kb
+            open_can(SJW_1_TQ, BRP_FOSC_4, PSEG1T_8_TQ, PRGT_3_TQ, PSEG2T_8_TQ,
+                0x600, 0x700);
+        }
+        else
+        {   // 500kb
+            open_can(SJW_1_TQ, BRP_FOSC_2, PSEG1T_8_TQ, PRGT_1_TQ, PSEG2T_6_TQ,
+                0x600, 0x700);    // B
+        }
+    }
+    else
+    {
+        close_can();
+    }
 }
 
 void read_eeprom()
@@ -231,7 +270,6 @@ bool internal_telegram(uint16_t len)
         uint8_t cfg_value = temp_buffer[3];
         eeprom_write(EEP_ADDR_BAUD, cfg_value);
         eeprom_write(EEP_ADDR_BAUD + 1, ~cfg_value);
-        while(WR)continue;
         read_eeprom();
         can_config();
         temp_buffer[3] = ~can_mode;
@@ -330,6 +368,9 @@ void main(void)
     TRISBbits.TRISB6 = 0;
     TRISBbits.TRISB7 = 0;
 
+    TRISBbits.TRISB3 = 1;   // CAN RX input
+    //TRISBbits.TRISB2 = 0;   // CAN TX output (set automatically)
+
     RCONbits.IPEN = 1;      // interrupt priority enable
 
     TRISCbits.TRISC6 = 0;   // TX output
@@ -389,6 +430,7 @@ void main(void)
     INTCONbits.GIEH = 1;    // enable high priority interrupts
 
     read_eeprom();
+    can_config();
 
     WDTCONbits.SWDTEN = 1;  // enable watchdog
     for (;;)
@@ -405,6 +447,17 @@ void main(void)
 
         if (time_tick_10 & 0x20) LED_OBD_TX = 1;
         else LED_OBD_TX = 0;
+
+        if (can_enabled)
+        {
+            if (readCAN())
+            {
+                static uint8_t test = 0;
+                memcpy(&can_out_msg, &can_in_msg, sizeof(can_out_msg));
+                can_out_msg.data[0] = test++;
+                writeCAN();
+            }
+        }
     }
 }
 
