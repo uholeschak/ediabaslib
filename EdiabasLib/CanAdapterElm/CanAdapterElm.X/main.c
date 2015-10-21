@@ -212,7 +212,7 @@ void can_config()
         // 500kb: SJW_1_TQ, BRP_FOSC_2, PSEG1T_8_TQ, PRGT_1_TQ, PSEG2T_6_TQ
         if (bitrate == 1)
         {   // 100 kb
-            open_can(SJW_2_TQ, BRP_FOSC_10, PSEG1T_6_TQ, PRGT_7_TQ, PSEG2T_2_TQ,
+            open_can(SJW_1_TQ, BRP_FOSC_10, PSEG1T_8_TQ, PRGT_1_TQ, PSEG2T_6_TQ,
                 0x600, 0x700);
         }
         else
@@ -455,7 +455,10 @@ void main(void)
                 static uint8_t test = 0;
                 memcpy(&can_out_msg, &can_in_msg, sizeof(can_out_msg));
                 can_out_msg.data[0] = test++;
-                writeCAN();
+                if (!writeCAN())
+                {
+                    readCAN();
+                }
             }
         }
     }
