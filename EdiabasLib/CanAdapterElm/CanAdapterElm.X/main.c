@@ -82,17 +82,18 @@
 #define LED_OBD_RX LATBbits.LATB6
 #define LED_OBD_TX LATBbits.LATB7
 
-#define TIMER0_RELOAD (0x100-156)       // 10 ms
+//#define TIMER0_RELOAD (0x100-156)       // 10 ms
+#define TIMER0_RELOAD (0x100-125)       // 1 ms
 #define TIMER1_RELOAD (0x10000-500)     // 1 ms
 
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
 #define CAN_MIN_SEP_TIME    0       // min separation time (ms)
+#define CAN_TIMEOUT         100     // can receive timeout (10ms)
 
 #define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes)
 #define EEP_ADDR_BLOCKSIZE  0x02    // eeprom address for FC block size (2 bytes)
 #define EEP_ADDR_SEP_TIME   0x04    // eeprom address for FC separation time (2 bytes)
-#define EEP_ADDR_PLD_MODE   0x06    // eeprom address for PLD mode
 
 // receiver state machine
 typedef enum
@@ -111,7 +112,9 @@ typedef enum
     wait_10ms,          // wait in 10ms units
 } wait_types;
 
-static volatile uint8_t time_tick_10;  // time tick 10 ms
+static volatile uint8_t time_prescaler;
+static volatile uint8_t time_tick_1;    // time tick 1 ms
+static volatile uint8_t time_tick_10;   // time tick 10 ms
 
 static volatile rec_states rec_state;
 static volatile uint16_t rec_len;
@@ -124,11 +127,39 @@ static volatile uint16_t send_len;
 static volatile uint8_t send_buffer[280];   // larger send buffer for multi responses
 
 static uint8_t temp_buffer[260];
+static uint8_t temp_buffer_short[10];
 
 static bool can_enabled;
 static uint8_t can_mode;
 static uint8_t can_blocksize;
 static uint8_t can_sep_time;
+
+// can sender variables
+static bool can_send_active;
+static bool can_send_wait_for_fc;
+static wait_types can_send_wait_sep_time;
+static uint16_t can_send_pos;
+static uint8_t can_send_block_count;
+static uint8_t can_send_block_size;
+static uint8_t can_send_sep_time;
+static uint8_t can_send_sep_time_start;
+static uint8_t can_send_time;
+
+// can receiver variables
+static uint8_t *can_rec_buffer_offset;
+static uint8_t can_rec_source_addr;
+static uint8_t can_rec_target_addr;
+static uint8_t can_rec_block_count;
+static uint8_t can_rec_fc_count;
+static uint8_t can_rec_time;
+static uint16_t can_rec_rec_len;
+static uint16_t can_rec_data_len;
+static bool can_rec_tel_valid;
+
+void do_idle()
+{
+    CLRWDT();
+}
 
 bool uart_send(uint8_t *buffer, uint16_t count)
 {
@@ -174,6 +205,34 @@ uint16_t uart_receive(uint8_t *buffer)
     memcpy(buffer, (void *) rec_buffer, data_len);
     rec_state = rec_state_idle;
     return data_len;
+}
+
+void update_led()
+{
+#if 0
+    if (time_tick_10 & 0x10) LED_OBD_RX = 1;
+    else LED_OBD_RX = 0;
+
+    if (time_tick_10 & 0x20) LED_OBD_TX = 1;
+    else LED_OBD_TX = 0;
+#else
+    if (rec_state != rec_state_idle)
+    {
+        LED_OBD_RX = 0; // on
+    }
+    else
+    {
+        LED_OBD_RX = 1; // off
+    }
+    if (send_len > 0)
+    {
+        LED_OBD_TX = 0; // on
+    }
+    else
+    {
+        LED_OBD_TX = 1; // off
+    }
+#endif
 }
 
 uint8_t calc_checkum(uint8_t *buffer, uint16_t len)
@@ -256,6 +315,20 @@ void read_eeprom()
     {
         can_sep_time = temp_value1;
     }
+}
+
+bool can_send_message_wait()
+{
+    uint8_t start_tick = time_tick_10;
+    while (!writeCAN())
+    {
+        update_led();
+        if ((uint8_t) (time_tick_10 - start_tick) > 25)
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool internal_telegram(uint16_t len)
@@ -351,9 +424,363 @@ bool internal_telegram(uint16_t len)
     return false;
 }
 
+void can_sender(bool new_can_msg)
+{
+    if (!can_enabled)
+    {
+        return;
+    }
+    if (!can_send_active)
+    {
+        uint16_t len = uart_receive(temp_buffer);
+        if (len > 0)
+        {
+            if (internal_telegram(len))
+            {
+                return;
+            }
+            can_send_active = true;
+            can_send_wait_sep_time = wait_off;
+            can_send_pos = 0;
+        }
+    }
+    if (can_send_active)
+    {
+        uint8_t *data_offset = &temp_buffer[3];
+        uint8_t data_len = temp_buffer[0] & 0x3F;
+        if (data_len == 0)
+        {
+            data_len = temp_buffer[3];
+            data_offset = &temp_buffer[4];
+        }
+        uint8_t target_address = temp_buffer[1];
+        uint8_t source_address = temp_buffer[2];
+        if (can_send_pos == 0)
+        {   // start sending
+            if (data_len <= 6)
+            {   // single frame
+                memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+                can_out_msg.sid = 0x600 | source_address;    // source address
+                can_out_msg.dlc.bits.count = 8;
+                can_out_msg.data[0] = target_address;
+                can_out_msg.data[1] = 0x00 | data_len;      // single frame + length
+                memcpy(can_out_msg.data + 2, data_offset, data_len);
+
+                can_send_message_wait();
+                can_send_active = false;
+                return;
+            }
+            // first frame
+            memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+            can_out_msg.sid = 0x600 | source_address;    // source address
+            can_out_msg.dlc.bits.count = 8;
+            can_out_msg.data[0] = target_address;
+            can_out_msg.data[1] = 0x10 | ((data_len >> 8) & 0xFF);      // first frame + length
+            can_out_msg.data[2] = data_len;
+            uint8_t len = 5;
+            memcpy(can_out_msg.data + 3, data_offset, len);
+            can_send_pos += len;
+
+            can_send_message_wait();
+            can_send_wait_for_fc = true;
+            can_send_block_count = 1;
+            can_send_time = time_tick_10;
+            return;
+        }
+        if (can_send_wait_for_fc)
+        {
+            if (new_can_msg)
+            {
+                if (((can_in_msg.sid & 0xFF00) == 0x0600) &&
+                    (can_in_msg.dlc.bits.count >= 4) &&
+                    ((can_in_msg.sid & 0x00FF) == target_address) &&
+                    (can_in_msg.data[0] == source_address) &&
+                    ((can_in_msg.data[1] & 0xF0) == 0x30)  // FC
+                    )
+                {
+                    switch (can_in_msg.data[1] & 0x0F)
+                    {
+                        case 0: // CTS
+                            can_send_wait_for_fc = false;
+                            break;
+
+                        case 1: // Wait
+                            can_send_time = time_tick_10;
+                            break;
+
+                        default:    // invalid
+                            break;
+                    }
+                    can_send_block_size = can_in_msg.data[2];
+                    can_send_sep_time = can_in_msg.data[3];
+                }
+            }
+            if (can_send_wait_for_fc)
+            {
+                if ((uint8_t) (time_tick_10 - can_send_time) > CAN_TIMEOUT)
+                {   // FC timeout
+                    can_send_active = false;
+                    return;
+                }
+            }
+            return;
+        }
+        if (can_send_wait_sep_time != wait_off)
+        {
+            if (can_send_wait_sep_time == wait_1ms)
+            {
+                if ((uint8_t) (time_tick_1 - can_send_sep_time_start) <= can_send_sep_time)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                if ((uint8_t) (time_tick_10 - can_send_sep_time_start) <= ((can_send_sep_time + 9) / 10))
+                {
+                    return;
+                }
+            }
+            can_send_wait_sep_time = wait_off;
+        }
+        // consecutive frame
+        memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+        can_out_msg.sid = 0x600 | source_address;    // source address
+        can_out_msg.dlc.bits.count = 8;
+        can_out_msg.data[0] = target_address;
+        can_out_msg.data[1] = 0x20 | (can_send_block_count & 0x0F);      // consecutive frame + block count
+        uint8_t len = data_len - can_send_pos;
+        if (len > 6)
+        {
+            len = 6;
+        }
+        memcpy(can_out_msg.data + 2, data_offset + can_send_pos, len);
+        can_send_pos += len;
+        can_send_block_count++;
+
+        can_send_message_wait();
+
+        if (can_send_pos >= data_len)
+        {   // all blocks transmitted
+            can_send_active = false;
+            return;
+        }
+        can_send_wait_for_fc = false;
+        if (can_send_block_size > 0)
+        {
+            if (can_send_block_size == 1)
+            {
+                can_send_wait_for_fc = true;
+                can_send_time = time_tick_10;
+            }
+            can_send_block_size--;
+        }
+        if (!can_send_wait_for_fc && can_send_sep_time > 0)
+        {
+            if (can_send_sep_time < 100)
+            {
+                can_send_wait_sep_time = wait_1ms;
+                can_send_sep_time_start = time_tick_1;
+            }
+            else
+            {
+                can_send_wait_sep_time = wait_10ms;
+                can_send_sep_time_start = time_tick_10;
+            }
+        }
+    }
+}
+
+void can_receiver(bool new_can_msg)
+{
+    if (!can_enabled)
+    {
+        return;
+    }
+    if (new_can_msg)
+    {
+        if (((can_in_msg.sid & 0xFF00) == 0x0600) && (can_in_msg.dlc.bits.count >= 2))
+        {
+            uint8_t frame_type = (can_in_msg.data[1] >> 4) & 0x0F;
+            switch (frame_type)
+            {
+                case 0:     // single frame
+                {
+                    uint8_t rec_source_addr = can_in_msg.sid & 0xFF;
+                    uint8_t rec_target_addr = can_in_msg.data[0];
+                    uint8_t rec_data_len = can_in_msg.data[1] & 0x0F;
+                    if (rec_data_len > (can_in_msg.dlc.bits.count - 2))
+                    {   // invalid length
+                        break;
+                    }
+                    temp_buffer_short[0] = 0x80 | rec_data_len;
+                    temp_buffer_short[1] = rec_target_addr;
+                    temp_buffer_short[2] = rec_source_addr;
+                    memcpy(temp_buffer_short + 3, can_in_msg.data + 2, rec_data_len);
+                    uint8_t len = rec_data_len + 3;
+
+                    temp_buffer_short[len] = calc_checkum(temp_buffer_short, len);
+                    len++;
+                    uart_send(temp_buffer_short, len);
+                    break;
+                }
+
+                case 1:     // first frame
+                    if (can_rec_tel_valid)
+                    {   // ignore new first frames during reception
+                        break;
+                    }
+                    if (can_in_msg.dlc.bits.count < 8)
+                    {   // invalid length
+                        break;
+                    }
+                    can_rec_source_addr = can_in_msg.sid & 0xFF;
+                    can_rec_target_addr = can_in_msg.data[0];
+                    can_rec_data_len = (((uint16_t) can_in_msg.data[1] & 0x0F) << 8) + can_in_msg.data[2];
+                    if (can_rec_data_len > 0xFF)
+                    {   // too long
+                        can_rec_tel_valid = false;
+                        break;
+                    }
+                    if (can_rec_data_len > 0x3F)
+                    {
+                        can_rec_buffer_offset = temp_buffer + 4;
+                    }
+                    else
+                    {
+                        can_rec_buffer_offset = temp_buffer + 3;
+                    }
+                    memcpy(can_rec_buffer_offset, can_in_msg.data + 3, 5);
+                    can_rec_rec_len = 5;
+                    can_rec_block_count = 1;
+
+                    memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+                    can_out_msg.sid = 0x600 | can_rec_target_addr;
+                    can_out_msg.dlc.bits.count = 8;
+                    can_out_msg.data[0] = can_rec_source_addr;
+                    can_out_msg.data[1] = 0x30;     // FC
+                    can_out_msg.data[2] = can_blocksize;       // block size
+                    can_out_msg.data[3] = can_sep_time;        // min sep. time
+                    can_rec_fc_count = can_blocksize;
+                    can_rec_tel_valid = true;
+
+                    // wait for free send buffer
+                    for (;;)
+                    {
+                        uint16_t volatile temp_len;
+                        di();
+                        temp_len = send_len;
+                        ei();
+                        if ((sizeof(send_buffer) - temp_len) >= (can_rec_data_len + 5))
+                        {
+                            break;
+                        }
+                        do_idle();
+                    }
+                    can_send_message_wait();
+                    can_rec_time = time_tick_10;
+                    break;
+
+                case 2:     // consecutive frame
+                    if (can_rec_tel_valid &&
+                        (can_rec_source_addr == (can_in_msg.sid & 0xFF)) &&
+                        (can_rec_target_addr == can_in_msg.data[0]) &&
+                        ((can_in_msg.data[1] & 0x0F) == (can_rec_block_count & 0x0F))
+                    )
+                    {
+                        uint16_t copy_len = can_rec_data_len - can_rec_rec_len;
+                        if (copy_len > 6)
+                        {
+                            copy_len = 6;
+                        }
+                        if (copy_len > (can_in_msg.dlc.bits.count - 2))
+                        {   // invalid length
+                            break;
+                        }
+                        memcpy(can_rec_buffer_offset + can_rec_rec_len, can_in_msg.data + 2, copy_len);
+                        can_rec_rec_len += copy_len;
+                        can_rec_block_count++;
+
+                        if (can_rec_fc_count > 0 && (can_rec_rec_len < can_rec_data_len))
+                        {
+                            can_rec_fc_count--;
+                            if (can_rec_fc_count == 0)
+                            {
+                                memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+                                can_out_msg.sid = 0x600 | can_rec_target_addr;
+                                can_out_msg.dlc.bits.count = 8;
+                                can_out_msg.data[0] = can_rec_source_addr;
+                                can_out_msg.data[1] = 0x30;     // FC
+                                can_out_msg.data[2] = can_blocksize;       // block size
+                                can_out_msg.data[3] = can_sep_time;        // min sep. time
+                                can_rec_fc_count = can_blocksize;
+
+                                can_send_message_wait();
+                            }
+                        }
+                        can_rec_time = time_tick_10;
+                    }
+                    break;
+            }
+        }
+        else
+        {
+            if (can_rec_tel_valid)
+            {   // check for timeout
+                if ((uint8_t) (time_tick_10 - can_rec_time) > CAN_TIMEOUT)
+                {
+                    can_rec_tel_valid = false;
+                }
+            }
+        }
+
+        if (can_rec_tel_valid && can_rec_rec_len >= can_rec_data_len)
+        {
+            uint16_t len;
+            // create BMW-FAST telegram
+            if (can_rec_data_len > 0x3F)
+            {
+                temp_buffer[0] = 0x80;
+                temp_buffer[1] = can_rec_target_addr;
+                temp_buffer[2] = can_rec_source_addr;
+                temp_buffer[3] = can_rec_data_len;
+                len = can_rec_data_len + 4;
+            }
+            else
+            {
+                temp_buffer[0] = 0x80 | can_rec_data_len;
+                temp_buffer[1] = can_rec_target_addr;
+                temp_buffer[2] = can_rec_source_addr;
+                len = can_rec_data_len + 3;
+            }
+
+            temp_buffer[len] = calc_checkum(temp_buffer, len);
+            len++;
+            if (uart_send(temp_buffer, len))
+            {
+                can_rec_tel_valid = false;
+            }
+            else
+            {   // send failed, keep message alive
+                can_rec_time = time_tick_10;
+            }
+        }
+    }
+}
+
 void main(void)
 {
+    time_prescaler = 0;
+    time_tick_1 = 0;
     time_tick_10 = 0;
+    rec_state = rec_state_idle;
+    rec_len = 0;
+    send_set_idx = 0;
+    send_get_idx = 0;
+    send_len = 0;
+
+    can_send_active = false;
+    can_rec_tel_valid = false;
 
     // LED on
     LED_RS_RX = 0;
@@ -390,7 +817,8 @@ void main(void)
     // timer 0
     T0CONbits.T08BIT = 1;   // 8 bit mode
     T0CONbits.T0CS = 0;     // clock internal
-    T0CONbits.T0PS = 7;     // prescaler 256 = 15625Hz
+    T0CONbits.T0PS = 4;     // prescaler 32 = 125000Hz
+    //T0CONbits.T0PS = 7;     // prescaler 256 = 15625Hz
     T0CONbits.PSA = 0;      // prescaler enabled
     TMR0L = TIMER0_RELOAD;
 
@@ -433,19 +861,21 @@ void main(void)
     WDTCONbits.SWDTEN = 1;  // enable watchdog
     for (;;)
     {
-        CLRWDT();
-        uint16_t len = uart_receive(temp_buffer);
-        if (len > 0)
+        if (can_enabled)
         {
-            internal_telegram(len);
+            bool new_can_msg = readCAN();
+            can_receiver(new_can_msg);
+            can_sender(new_can_msg);
         }
-
-        if (time_tick_10 & 0x10) LED_OBD_RX = 1;
-        else LED_OBD_RX = 0;
-
-        if (time_tick_10 & 0x20) LED_OBD_TX = 1;
-        else LED_OBD_TX = 0;
-
+        else
+        {
+            uint16_t len = uart_receive(temp_buffer);
+            if (len > 0)
+            {
+                internal_telegram(len);
+            }
+        }
+#if 0
         if (can_enabled)
         {
             if (readCAN())
@@ -459,6 +889,9 @@ void main(void)
                 }
             }
         }
+#endif
+        update_led();
+        do_idle();
     }
 }
 
@@ -469,7 +902,13 @@ void interrupt low_priority low_isr (void)
     {
         TMR0L = TIMER0_RELOAD - TMR0L;
         INTCONbits.TMR0IF = 0;
-        time_tick_10++;
+        time_tick_1++;
+        time_prescaler++;
+        if (time_prescaler >= 10)
+        {
+            time_prescaler = 0;
+            time_tick_10++;
+        }
         return;
     }
     if (PIR1bits.TMR2IF)
