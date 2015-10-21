@@ -115,7 +115,7 @@ extern void close_can(void);
 
 //---------------------------------------------------------------------------
 extern void set_standard_filter_RXB0(uint16_t sid, uint16_t mask);
-extern void writeCAN();
+extern bool writeCAN();
 extern bool readCAN();
 extern CAN_MSG can_in_msg;
 extern CAN_MSG can_out_msg;

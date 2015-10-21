@@ -93,10 +93,13 @@ void baudCAN(uint8_t sjw, uint8_t brp_fosz, uint8_t seg1tm, uint8_t prpgtm, uint
 }
 
 //------------------------------------------------------------------------------
-void writeCAN()
+bool writeCAN()
 {
     // wait for last transmission to finish
-    while (TXB0CONbits.TXREQ) { }
+    if (TXB0CONbits.TXREQ)
+    {
+        return false;
+    }
 
     switch(can_out_msg.dlc.bits.count)
     {
@@ -119,6 +122,7 @@ void writeCAN()
 
     // send message
     TXB0CONbits.TXREQ = 1;
+    return true;
 }
 
 //------------------------------------------------------------------------------
