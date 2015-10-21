@@ -77,6 +77,8 @@
 // CONFIG7H
 #pragma config EBTRB = OFF      // Table Read Protect Boot (Disabled)
 
+#define IGNITION_STATE()    1
+
 #define LED_RS_RX LATBbits.LATB4
 #define LED_RS_TX LATBbits.LATB5
 #define LED_OBD_RX LATBbits.LATB6
@@ -404,7 +406,6 @@ bool internal_telegram(uint16_t len)
             uart_send(temp_buffer, len);
             return true;
         }
-#if 0
         if ((temp_buffer[3] == 0xFE) && (temp_buffer[4] == 0xFE))
         {      // read ignition state
             temp_buffer[4] = IGNITION_STATE() ? 0x01 : 0x00;
@@ -413,7 +414,6 @@ bool internal_telegram(uint16_t len)
             uart_send(temp_buffer, len);
             return true;
         }
-#endif
         if ((temp_buffer[3] == 0xFF) && (temp_buffer[4] == 0xFF))
         {      // reset command
             RESET();
@@ -435,6 +435,7 @@ void can_sender(bool new_can_msg)
         uint16_t len = uart_receive(temp_buffer);
         if (len > 0)
         {
+            uart_send(temp_buffer, len);
             if (internal_telegram(len))
             {
                 return;
@@ -872,6 +873,7 @@ void main(void)
             uint16_t len = uart_receive(temp_buffer);
             if (len > 0)
             {
+                uart_send(temp_buffer, len);
                 internal_telegram(len);
             }
         }
