@@ -84,14 +84,13 @@
 #define LED_OBD_RX LATBbits.LATB6
 #define LED_OBD_TX LATBbits.LATB7
 
-//#define TIMER0_RELOAD (0x100-156)       // 10 ms
-#define TIMER0_RELOAD (0x100-125)       // 1 ms
-#define TIMER1_RELOAD (0x10000-500)     // 1 ms
+#define TIMER0_RESOL        15625           // 16526 Hz
+#define TIMER1_RELOAD       (0x10000-500)   // 1 ms
 
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
 #define CAN_MIN_SEP_TIME    0       // min separation time (ms)
-#define CAN_TIMEOUT         100     // can receive timeout (10ms)
+#define CAN_TIMEOUT         1000    // can receive timeout (1ms)
 
 #define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes)
 #define EEP_ADDR_BLOCKSIZE  0x02    // eeprom address for FC block size (2 bytes)
@@ -105,18 +104,6 @@ typedef enum
     rec_state_done,     // receive complete, ok
     rec_state_error,    // receive error
 } rec_states;
-
-// wait types
-typedef enum
-{
-    wait_off,           // no wait
-    wait_1ms,           // wait in 1ms units
-    wait_10ms,          // wait in 10ms units
-} wait_types;
-
-static volatile uint8_t time_prescaler;
-static volatile uint8_t time_tick_1;    // time tick 1 ms
-static volatile uint8_t time_tick_10;   // time tick 10 ms
 
 static volatile rec_states rec_state;
 static volatile uint16_t rec_len;
@@ -139,13 +126,13 @@ static uint8_t can_sep_time;
 // can sender variables
 static bool can_send_active;
 static bool can_send_wait_for_fc;
-static wait_types can_send_wait_sep_time;
+static bool can_send_wait_sep_time;
 static uint16_t can_send_pos;
 static uint8_t can_send_block_count;
 static uint8_t can_send_block_size;
 static uint8_t can_send_sep_time;
-static uint8_t can_send_sep_time_start;
-static uint8_t can_send_time;
+static uint16_t can_send_sep_time_start;
+static uint16_t can_send_time;
 
 // can receiver variables
 static uint8_t *can_rec_buffer_offset;
@@ -153,10 +140,18 @@ static uint8_t can_rec_source_addr;
 static uint8_t can_rec_target_addr;
 static uint8_t can_rec_block_count;
 static uint8_t can_rec_fc_count;
-static uint8_t can_rec_time;
+static uint16_t can_rec_time;
 static uint16_t can_rec_rec_len;
 static uint16_t can_rec_data_len;
 static bool can_rec_tel_valid;
+
+inline uint16_t get_systick()
+{
+    uint8_t low = TMR0L;
+    uint8_t high = TMR0H;
+
+    return (((uint16_t)high) << 8) | low;
+}
 
 void do_idle()
 {
@@ -321,11 +316,11 @@ void read_eeprom()
 
 bool can_send_message_wait()
 {
-    uint8_t start_tick = time_tick_10;
+    uint16_t start_tick = get_systick();
     while (!writeCAN())
     {
         update_led();
-        if ((uint8_t) (time_tick_10 - start_tick) > 25)
+        if ((uint16_t) (get_systick() - start_tick) > 250 * TIMER0_RESOL)
         {
             return false;
         }
@@ -430,7 +425,7 @@ void can_sender(bool new_can_msg)
     {
         return;
     }
-    if (!can_send_active)
+    if (!can_send_active && send_len == 0)
     {
         uint16_t len = uart_receive(temp_buffer);
         if (len > 0)
@@ -441,7 +436,7 @@ void can_sender(bool new_can_msg)
                 return;
             }
             can_send_active = true;
-            can_send_wait_sep_time = wait_off;
+            can_send_wait_sep_time = false;
             can_send_pos = 0;
         }
     }
@@ -485,7 +480,7 @@ void can_sender(bool new_can_msg)
             can_send_message_wait();
             can_send_wait_for_fc = true;
             can_send_block_count = 1;
-            can_send_time = time_tick_10;
+            can_send_time = get_systick();
             return;
         }
         if (can_send_wait_for_fc)
@@ -506,7 +501,7 @@ void can_sender(bool new_can_msg)
                             break;
 
                         case 1: // Wait
-                            can_send_time = time_tick_10;
+                            can_send_time = get_systick();
                             break;
 
                         default:    // invalid
@@ -518,7 +513,7 @@ void can_sender(bool new_can_msg)
             }
             if (can_send_wait_for_fc)
             {
-                if ((uint8_t) (time_tick_10 - can_send_time) > CAN_TIMEOUT)
+                if ((uint16_t) (get_systick() - can_send_time) > CAN_TIMEOUT * TIMER0_RESOL)
                 {   // FC timeout
                     can_send_active = false;
                     return;
@@ -526,23 +521,13 @@ void can_sender(bool new_can_msg)
             }
             return;
         }
-        if (can_send_wait_sep_time != wait_off)
+        if (can_send_wait_sep_time)
         {
-            if (can_send_wait_sep_time == wait_1ms)
+            if ((uint16_t) (get_systick() - can_send_sep_time_start) <= ((uint16_t) can_send_sep_time * TIMER0_RESOL))
             {
-                if ((uint8_t) (time_tick_1 - can_send_sep_time_start) <= can_send_sep_time)
-                {
-                    return;
-                }
+                return;
             }
-            else
-            {
-                if ((uint8_t) (time_tick_10 - can_send_sep_time_start) <= ((can_send_sep_time + 9) / 10))
-                {
-                    return;
-                }
-            }
-            can_send_wait_sep_time = wait_off;
+            can_send_wait_sep_time = false;
         }
         // consecutive frame
         memset(&can_out_msg, 0x00, sizeof(can_out_msg));
@@ -572,22 +557,14 @@ void can_sender(bool new_can_msg)
             if (can_send_block_size == 1)
             {
                 can_send_wait_for_fc = true;
-                can_send_time = time_tick_10;
+                can_send_time = get_systick();
             }
             can_send_block_size--;
         }
         if (!can_send_wait_for_fc && can_send_sep_time > 0)
         {
-            if (can_send_sep_time < 100)
-            {
-                can_send_wait_sep_time = wait_1ms;
-                can_send_sep_time_start = time_tick_1;
-            }
-            else
-            {
-                can_send_wait_sep_time = wait_10ms;
-                can_send_sep_time_start = time_tick_10;
-            }
+            can_send_wait_sep_time = true;
+            can_send_sep_time_start = get_systick();
         }
     }
 }
@@ -679,7 +656,7 @@ void can_receiver(bool new_can_msg)
                         do_idle();
                     }
                     can_send_message_wait();
-                    can_rec_time = time_tick_10;
+                    can_rec_time = get_systick();
                     break;
 
                 case 2:     // consecutive frame
@@ -719,7 +696,7 @@ void can_receiver(bool new_can_msg)
                                 can_send_message_wait();
                             }
                         }
-                        can_rec_time = time_tick_10;
+                        can_rec_time = get_systick();
                     }
                     break;
             }
@@ -728,7 +705,7 @@ void can_receiver(bool new_can_msg)
         {
             if (can_rec_tel_valid)
             {   // check for timeout
-                if ((uint8_t) (time_tick_10 - can_rec_time) > CAN_TIMEOUT)
+                if ((uint16_t) (get_systick() - can_rec_time) > CAN_TIMEOUT * TIMER0_RESOL)
                 {
                     can_rec_tel_valid = false;
                 }
@@ -763,7 +740,7 @@ void can_receiver(bool new_can_msg)
             }
             else
             {   // send failed, keep message alive
-                can_rec_time = time_tick_10;
+                can_rec_time = get_systick();
             }
         }
     }
@@ -771,9 +748,6 @@ void can_receiver(bool new_can_msg)
 
 void main(void)
 {
-    time_prescaler = 0;
-    time_tick_1 = 0;
-    time_tick_10 = 0;
     rec_state = rec_state_idle;
     rec_len = 0;
     send_set_idx = 0;
@@ -816,16 +790,16 @@ void main(void)
     RCSTA1bits.SPEN = 1;    // Enable Serial Port
 
     // timer 0
-    T0CONbits.T08BIT = 1;   // 8 bit mode
+    T0CONbits.T08BIT = 0;   // 16 bit mode
     T0CONbits.T0CS = 0;     // clock internal
-    T0CONbits.T0PS = 4;     // prescaler 32 = 125000Hz
-    //T0CONbits.T0PS = 7;     // prescaler 256 = 15625Hz
+    T0CONbits.T0PS = 7;     // prescaler 256 = 15625Hz
     T0CONbits.PSA = 0;      // prescaler enabled
-    TMR0L = TIMER0_RELOAD;
+    TMR0H = 0;
+    TMR0L = 0;
 
     INTCON2bits.T0IP = 0;   // low priority
     INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
-    INTCONbits.TMR0IE = 1;  // enable timer 0 interrupt
+    //INTCONbits.TMR0IE = 1;  // enable timer 0 interrupt
     T0CONbits.TMR0ON = 1;   // enable timer 0
 
     // timer 1
@@ -870,11 +844,14 @@ void main(void)
         }
         else
         {
-            uint16_t len = uart_receive(temp_buffer);
-            if (len > 0)
+            if (send_len == 0)
             {
-                uart_send(temp_buffer, len);
-                internal_telegram(len);
+                uint16_t len = uart_receive(temp_buffer);
+                if (len > 0)
+                {
+                    uart_send(temp_buffer, len);
+                    internal_telegram(len);
+                }
             }
         }
 #if 0
@@ -902,15 +879,7 @@ void interrupt low_priority low_isr (void)
 {
     if (INTCONbits.TMR0IF)
     {
-        TMR0L = TIMER0_RELOAD - TMR0L;
         INTCONbits.TMR0IF = 0;
-        time_tick_1++;
-        time_prescaler++;
-        if (time_prescaler >= 10)
-        {
-            time_prescaler = 0;
-            time_tick_10++;
-        }
         return;
     }
     if (PIR1bits.TMR2IF)
