@@ -693,16 +693,6 @@ void can_receiver(bool new_can_msg)
                     break;
             }
         }
-        else
-        {
-            if (can_rec_tel_valid)
-            {   // check for timeout
-                if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TIMEOUT * TIMER0_RESOL / 1000))
-                {
-                    can_rec_tel_valid = false;
-                }
-            }
-        }
 
         if (can_rec_tel_valid && can_rec_rec_len >= can_rec_data_len)
         {
@@ -733,6 +723,16 @@ void can_receiver(bool new_can_msg)
             else
             {   // send failed, keep message alive
                 can_rec_time = get_systick();
+            }
+        }
+    }
+    else
+    {
+        if (can_rec_tel_valid)
+        {   // check for timeout
+            if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TIMEOUT * TIMER0_RESOL / 1000))
+            {
+                can_rec_tel_valid = false;
             }
         }
     }
