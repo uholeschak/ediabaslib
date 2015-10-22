@@ -77,12 +77,13 @@
 // CONFIG7H
 #pragma config EBTRB = OFF      // Table Read Protect Boot (Disabled)
 
-#define IGNITION_STATE()    1
+#define IGNITION_STATE()    IGNITION
 
 #define LED_RS_RX LATBbits.LATB4
 #define LED_RS_TX LATBbits.LATB5
 #define LED_OBD_RX LATBbits.LATB6
 #define LED_OBD_TX LATBbits.LATB7
+#define IGNITION PORTCbits.RC4
 
 #define TIMER0_RESOL        15625ul         // 16526 Hz
 #define TIMER1_RELOAD       (0x10000-500)   // 1 ms
@@ -762,6 +763,8 @@ void main(void)
 
     TRISBbits.TRISB3 = 1;   // CAN RX input
     //TRISBbits.TRISB2 = 0;   // CAN TX output (set automatically)
+
+    TRISCbits.TRISC4 = 1;   // ignition state (input)
 
     RCONbits.IPEN = 1;      // interrupt priority enable
 
