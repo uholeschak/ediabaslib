@@ -835,16 +835,6 @@ void can_receiver(bool new_can_msg)
                     break;
             }
         }
-        else
-        {
-            if (can_rec_tel_valid)
-            {   // check for timeout
-                if ((uint8_t) (time_tick_10 - can_rec_time) > CAN_TIMEOUT)
-                {
-                    can_rec_tel_valid = false;
-                }
-            }
-        }
 
         if (can_rec_tel_valid && can_rec_rec_len >= can_rec_data_len)
         {
@@ -875,6 +865,16 @@ void can_receiver(bool new_can_msg)
             else
             {   // send failed, keep message alive
                 can_rec_time = time_tick_10;
+            }
+        }
+    }
+    else
+    {
+        if (can_rec_tel_valid)
+        {   // check for timeout
+            if ((uint8_t) (time_tick_10 - can_rec_time) > CAN_TIMEOUT)
+            {
+                can_rec_tel_valid = false;
             }
         }
     }
