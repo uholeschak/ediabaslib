@@ -84,7 +84,7 @@
 #define LED_OBD_RX LATBbits.LATB6
 #define LED_OBD_TX LATBbits.LATB7
 
-#define TIMER0_RESOL        15625           // 16526 Hz
+#define TIMER0_RESOL        15625ul         // 16526 Hz
 #define TIMER1_RELOAD       (0x10000-500)   // 1 ms
 
 #define CAN_MODE            1       // default can mode (1=500kb)
@@ -206,13 +206,6 @@ uint16_t uart_receive(uint8_t *buffer)
 
 void update_led()
 {
-#if 0
-    if (time_tick_10 & 0x10) LED_OBD_RX = 1;
-    else LED_OBD_RX = 0;
-
-    if (time_tick_10 & 0x20) LED_OBD_TX = 1;
-    else LED_OBD_TX = 0;
-#else
     if (rec_state != rec_state_idle)
     {
         LED_OBD_RX = 0; // on
@@ -229,7 +222,6 @@ void update_led()
     {
         LED_OBD_TX = 1; // off
     }
-#endif
 }
 
 uint8_t calc_checkum(uint8_t *buffer, uint16_t len)
@@ -320,7 +312,7 @@ bool can_send_message_wait()
     while (!writeCAN())
     {
         update_led();
-        if ((uint16_t) (get_systick() - start_tick) > 250 * TIMER0_RESOL)
+        if ((uint16_t) (get_systick() - start_tick) > (250 * TIMER0_RESOL / 1000))
         {
             return false;
         }
@@ -513,7 +505,7 @@ void can_sender(bool new_can_msg)
             }
             if (can_send_wait_for_fc)
             {
-                if ((uint16_t) (get_systick() - can_send_time) > CAN_TIMEOUT * TIMER0_RESOL)
+                if ((uint16_t) (get_systick() - can_send_time) > (CAN_TIMEOUT * TIMER0_RESOL / 1000))
                 {   // FC timeout
                     can_send_active = false;
                     return;
@@ -523,7 +515,7 @@ void can_sender(bool new_can_msg)
         }
         if (can_send_wait_sep_time)
         {
-            if ((uint16_t) (get_systick() - can_send_sep_time_start) <= ((uint16_t) can_send_sep_time * TIMER0_RESOL))
+            if ((uint16_t) (get_systick() - can_send_sep_time_start) <= ((uint16_t) (can_send_sep_time * TIMER0_RESOL / 1000)))
             {
                 return;
             }
@@ -705,7 +697,7 @@ void can_receiver(bool new_can_msg)
         {
             if (can_rec_tel_valid)
             {   // check for timeout
-                if ((uint16_t) (get_systick() - can_rec_time) > CAN_TIMEOUT * TIMER0_RESOL)
+                if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TIMEOUT * TIMER0_RESOL / 1000))
                 {
                     can_rec_tel_valid = false;
                 }
