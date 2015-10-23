@@ -106,6 +106,8 @@ typedef enum
     rec_state_error,    // receive error
 } rec_states;
 
+static volatile bool start_indicator;  // show start indicator
+
 static volatile rec_states rec_state;
 static volatile uint16_t rec_len;
 static uint8_t rec_chksum;
@@ -207,21 +209,42 @@ uint16_t uart_receive(uint8_t *buffer)
 
 void update_led()
 {
-    if (rec_state != rec_state_idle)
+    if (start_indicator)
     {
-        LED_OBD_RX = 0; // on
+        uint16_t tick = get_systick();
+        if (tick < 500 * TIMER0_RESOL / 1000)
+        {
+            LED_OBD_RX = 1; // off
+            LED_OBD_TX = 0; // on
+        }
+        else if (tick < 1000 * TIMER0_RESOL / 1000)
+        {
+            LED_OBD_RX = 0; // on
+            LED_OBD_TX = 1; // off
+        }
+        else
+        {
+            start_indicator = false;
+        }
     }
-    else
+    if (!start_indicator)
     {
-        LED_OBD_RX = 1; // off
-    }
-    if (send_len > 0)
-    {
-        LED_OBD_TX = 0; // on
-    }
-    else
-    {
-        LED_OBD_TX = 1; // off
+        if (rec_state != rec_state_idle)
+        {
+            LED_OBD_RX = 0; // on
+        }
+        else
+        {
+            LED_OBD_RX = 1; // off
+        }
+        if (send_len > 0)
+        {
+            LED_OBD_TX = 0; // on
+        }
+        else
+        {
+            LED_OBD_TX = 1; // off
+        }
     }
 }
 
@@ -391,7 +414,7 @@ bool internal_telegram(uint16_t len)
         {      // read Vbat
             ADCON0bits.GODONE = 1;
             while (ADCON0bits.GODONE) {}
-            temp_buffer[4] = (ADRES * 50ul * 6ul / 4096ul); // Voltage*10
+            temp_buffer[4] = (((int16_t) ADRES) * 50l * 6l / 4096l); // Voltage*10
             temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
@@ -406,7 +429,7 @@ bool internal_telegram(uint16_t len)
         if ((temp_buffer[3] == 0xFE) && (temp_buffer[4] == 0xFE))
         {      // read ignition state
             temp_buffer[4] = IGNITION_STATE() ? 0x01 : 0x00;
-            temp_buffer[4] |= (can_mode != 0) ? 0x80 : 0x00;
+            temp_buffer[4] |= 0x80;     // invalid mark
             temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
@@ -750,6 +773,7 @@ void can_receiver(bool new_can_msg)
 
 void main(void)
 {
+    start_indicator = true;
     rec_state = rec_state_idle;
     rec_len = 0;
     send_set_idx = 0;
@@ -759,11 +783,11 @@ void main(void)
     can_send_active = false;
     can_rec_tel_valid = false;
 
-    // LED on
-    LED_RS_RX = 0;
-    LED_RS_TX = 0;
-    LED_OBD_RX = 0;
-    LED_OBD_TX = 0;
+    // LED off
+    LED_RS_RX = 1;
+    LED_RS_TX = 1;
+    LED_OBD_RX = 1;
+    LED_OBD_TX = 1;
     // LED as output
     TRISBbits.TRISB4 = 0;
     TRISBbits.TRISB5 = 0;
