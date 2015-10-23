@@ -387,6 +387,15 @@ bool internal_telegram(uint16_t len)
             uart_send(temp_buffer, len);
             return true;
         }
+        if ((temp_buffer[3] == 0xFC) && (temp_buffer[4] == 0xFC))
+        {      // read Vbat
+            ADCON0bits.GODONE = 1;
+            while (ADCON0bits.GODONE) {}
+            temp_buffer[4] = (ADRES * 50ul * 6ul / 4096ul); // Voltage*10
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
         if ((temp_buffer[3] == 0xFD) && (temp_buffer[4] == 0xFD))
         {      // read adapter type
             temp_buffer[4] = 0x02;
@@ -768,6 +777,19 @@ void main(void)
 
     RCONbits.IPEN = 1;      // interrupt priority enable
 
+    // analog input
+    TRISAbits.TRISA0 = 1;   // AN0 input
+    ANCON0 = 0x01;          // AN0 analog
+    ANCON1 = 0x00;
+    ADCON0bits.CHS = 0;     // input AN0
+    ADCON1bits.CHSN = 0;    // negative input is GND
+    ADCON1bits.VNCFG = 0;   // VREF- is GND
+    ADCON1bits.VCFG = 1;    // VREF+ 5V
+    ADCON2bits.ADFM = 1;    // right justified
+    ADCON2bits.ACQT = 0;    // Aquisition 0 Tad
+    ADCON2bits.ADCS = 5;    // Fosc/16
+    ADCON0bits.ADON = 1;    // enable ADC
+
     TRISCbits.TRISC6 = 0;   // TX output
     TRISCbits.TRISC7 = 1;   // RX input
     SPBRG1 = 103;           // 38400 @ 16MHz
@@ -824,6 +846,8 @@ void main(void)
 
     INTCONbits.GIEL = 1;    // enable low priority interrupts
     INTCONbits.GIEH = 1;    // enable high priority interrupts
+
+    ADCON0bits.GODONE = 1;  // start first AD conversion
 
     read_eeprom();
     can_config();
