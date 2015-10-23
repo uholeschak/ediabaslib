@@ -79,6 +79,8 @@
 
 #define IGNITION_STATE()    IGNITION
 
+#define KLINE_OUT LATBbits.LATB0
+#define LLINE_OUT LATBbits.LATB1
 #define LED_RS_RX LATBbits.LATB4
 #define LED_RS_TX LATBbits.LATB5
 #define LED_OBD_RX LATBbits.LATB6
@@ -148,6 +150,8 @@ static uint16_t can_rec_rec_len;
 static uint16_t can_rec_data_len;
 static bool can_rec_tel_valid;
 
+void update_led();
+
 inline uint16_t get_systick()
 {
     uint8_t low = TMR0L;
@@ -159,6 +163,54 @@ inline uint16_t get_systick()
 void do_idle()
 {
     CLRWDT();
+}
+
+void kline_send(uint8_t *buffer, uint16_t count)
+{
+    uint8_t *ptr = buffer;
+
+    while (PIE1bits.TXIE)   // uart send active
+    {
+        do_idle();
+        update_led();
+    }
+    di();
+    T2CONbits.TMR2ON = 0;
+    TMR2 = 0x00;            // reset timer 2
+    PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
+    T2CONbits.TMR2ON = 1;   // enable timer 2
+    for (uint16_t i = 0; i < count; i++)
+    {
+        CLRWDT();
+        while (!PIR1bits.TMR2IF) {}
+        PIR1bits.TMR2IF = 0;
+        KLINE_OUT = 1;      // start bit
+
+        uint8_t out_data = *ptr++;
+        for (uint8_t j = 0; j < 8; j++)
+        {
+            while (!PIR1bits.TMR2IF) {}
+            PIR1bits.TMR2IF = 0;
+            if ((out_data & 0x01) != 0)
+            {
+                KLINE_OUT = 0;
+            }
+            else
+            {
+                KLINE_OUT = 1;
+            }
+            out_data >>= 1;
+        }
+        // 2 stop bits
+        while (!PIR1bits.TMR2IF) {}
+        PIR1bits.TMR2IF = 0;
+        KLINE_OUT = 0;
+        while (!PIR1bits.TMR2IF) {}
+        PIR1bits.TMR2IF = 0;
+    }
+    KLINE_OUT = 0;      // idle
+    T2CONbits.TMR2ON = 0;
+    ei();
 }
 
 bool uart_send(uint8_t *buffer, uint16_t count)
@@ -450,7 +502,7 @@ void can_sender(bool new_can_msg)
     {
         return;
     }
-    if (!can_send_active && send_len == 0)
+    if (!can_send_active && !PIE1bits.TXIE)
     {
         uint16_t len = uart_receive(temp_buffer);
         if (len > 0)
@@ -783,6 +835,11 @@ void main(void)
     can_send_active = false;
     can_rec_tel_valid = false;
 
+    // K/L line
+    KLINE_OUT = 0;  // idle
+    LLINE_OUT = 0;  // idle
+    TRISBbits.TRISB0 = 0;
+    TRISBbits.TRISB1 = 0;
     // LED off
     LED_RS_RX = 1;
     LED_RS_TX = 1;
@@ -856,16 +913,16 @@ void main(void)
 
     // timer 2
     T2CONbits.T2CKPS = 0;   // prescaler 1
-    T2CONbits.T2OUTPS = 0xF; // postscaler 16
+    T2CONbits.T2OUTPS = 0x0; // postscaler 1
     // fout = fclk / (4 * prescaler * PR2 * postscaler)
     // PR2 = fclk / (4 * prescaler * fout * postscaler)
-    // PR2 = 16000000 / (4 * 1 * 1000 * 16) = 250
+    // PR2 = 16000000 / (4 * 1 * 115200 * 1) = 34
     TMR2 = 0x00;            // timer 2 start value
-    PR2 = 250;              // timer 2 stop value
+    PR2 = 34;               // timer 2 stop value
 
     IPR1bits.TMR2IP = 0;    // timer 2 low prioriy
     PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
-    PIE1bits.TMR2IE = 1;    // enable timer 2 interrupt
+    //PIE1bits.TMR2IE = 1;    // enable timer 2 interrupt
     //T2CONbits.TMR2ON = 1;   // enable timer 2
 
     INTCONbits.GIEL = 1;    // enable low priority interrupts
@@ -887,13 +944,16 @@ void main(void)
         }
         else
         {
-            if (send_len == 0)
+            if (!PIE1bits.TXIE) // uart send active
             {
                 uint16_t len = uart_receive(temp_buffer);
                 if (len > 0)
                 {
                     uart_send(temp_buffer, len);
-                    internal_telegram(len);
+                    if (!internal_telegram(len))
+                    {
+                        kline_send(temp_buffer, len);
+                    }
                 }
             }
         }
