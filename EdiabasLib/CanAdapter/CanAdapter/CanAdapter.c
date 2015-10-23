@@ -505,6 +505,13 @@ bool internal_telegram(uint16_t len)
             uart_send(temp_buffer, len);
             return true;
         }
+        if ((temp_buffer[3] == 0xFC) && (temp_buffer[4] == 0xFC))
+        {      // read Vbat
+            temp_buffer[4] = 0x80;  // invalid
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
         if ((temp_buffer[3] == 0xFD) && (temp_buffer[4] == 0xFD))
         {      // read adapter type
             temp_buffer[4] = 0x01;
