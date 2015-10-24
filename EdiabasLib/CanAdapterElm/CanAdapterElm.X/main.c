@@ -94,7 +94,8 @@
 // PR2 = fclk / (4 * prescaler * fout * postscaler)
 // PR2 = 16000000 / (4 * 1 * 115200 * 1) = 34
 #define TIMER2_RELOAD       34              // 115200
-#define TIMER2_HALF         (TIMER2_RELOAD >> 1)     // half bit
+// half bit, includes detection delay
+#define TIMER2_HALF         ((TIMER2_RELOAD >> 1) - 9)
 
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
