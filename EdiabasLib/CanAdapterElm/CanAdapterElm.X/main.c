@@ -85,10 +85,16 @@
 #define LED_RS_TX LATBbits.LATB5
 #define LED_OBD_RX LATBbits.LATB6
 #define LED_OBD_TX LATBbits.LATB7
+#define KLINE_IN PORTCbits.RC1
 #define IGNITION PORTCbits.RC4
 
 #define TIMER0_RESOL        15625ul         // 16526 Hz
 #define TIMER1_RELOAD       (0x10000-500)   // 1 ms
+// fout = fclk / (4 * prescaler * PR2 * postscaler)
+// PR2 = fclk / (4 * prescaler * fout * postscaler)
+// PR2 = 16000000 / (4 * 1 * 115200 * 1) = 34
+#define TIMER2_RELOAD       34              // 115200
+#define TIMER2_HALF         (TIMER2_RELOAD >> 1)     // half bit
 
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
@@ -211,6 +217,87 @@ void kline_send(uint8_t *buffer, uint16_t count)
     KLINE_OUT = 0;      // idle
     T2CONbits.TMR2ON = 0;
     ei();
+}
+
+void kline_receive()
+{
+    uint8_t write_pos = 0;
+    uint8_t read_pos = 0;
+    uint8_t buffer_len = 0;
+
+    di();
+    T2CONbits.TMR2ON = 0;
+    TMR2 = TIMER2_HALF;     // half start bit
+    PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
+    for (;;)
+    {
+        // wait for start bit
+        for (;;)
+        {
+            if (KLINE_IN)
+            {
+                T2CONbits.TMR2ON = 1;   // enable timer 2
+                break;
+            }
+            CLRWDT();
+            if (PIR1bits.RCIF)
+            {   // start of new UART telegram
+                ei();
+                return;
+            }
+            if (buffer_len != 0)
+            {   // send data back to UART
+                if (TXSTA1bits.TRMT)
+                {   // transmitter empty
+                    if (KLINE_IN)
+                    {
+                        T2CONbits.TMR2ON = 1;   // enable timer 2
+                    }
+                    TXREG1 = temp_buffer[read_pos];
+                    if (KLINE_IN)
+                    {
+                        T2CONbits.TMR2ON = 1;   // enable timer 2
+                    }
+                    read_pos++;
+                }
+            }
+        }
+        while (!PIR1bits.TMR2IF) {}
+        PIR1bits.TMR2IF = 0;
+        uint8_t data = 0x00;
+        for (uint8_t i = 0; i < 8 ; i++)
+        {
+            while (!PIR1bits.TMR2IF) {}
+            PIR1bits.TMR2IF = 0;
+            if (KLINE_IN)
+            {
+                data <<= 1;
+                data |= 0x01;
+            }
+            else
+            {
+                data <<= 1;
+            }
+        }
+        if (buffer_len < 0xFF)
+        {
+            temp_buffer[write_pos++] = data;
+            buffer_len++;
+        }
+        T2CONbits.TMR2ON = 0;
+        TMR2 = TIMER2_HALF;     // half start bit
+        PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
+        // wait for stop bit
+        while (!KLINE_IN)
+        {
+            CLRWDT();
+            if (PIR1bits.RCIF)
+            {   // start of new UART telegram
+                ei();
+                return;
+            }
+        }
+    }
 }
 
 bool uart_send(uint8_t *buffer, uint16_t count)
@@ -838,8 +925,10 @@ void main(void)
     // K/L line
     KLINE_OUT = 0;  // idle
     LLINE_OUT = 0;  // idle
-    TRISBbits.TRISB0 = 0;
-    TRISBbits.TRISB1 = 0;
+    TRISBbits.TRISB0 = 0;   // K line out
+    TRISBbits.TRISB1 = 0;   // L line out
+    TRISCbits.TRISC1 = 1;   // K line in
+
     // LED off
     LED_RS_RX = 1;
     LED_RS_TX = 1;
@@ -914,11 +1003,8 @@ void main(void)
     // timer 2
     T2CONbits.T2CKPS = 0;   // prescaler 1
     T2CONbits.T2OUTPS = 0x0; // postscaler 1
-    // fout = fclk / (4 * prescaler * PR2 * postscaler)
-    // PR2 = fclk / (4 * prescaler * fout * postscaler)
-    // PR2 = 16000000 / (4 * 1 * 115200 * 1) = 34
     TMR2 = 0x00;            // timer 2 start value
-    PR2 = 34;               // timer 2 stop value
+    PR2 = TIMER2_RELOAD;    // timer 2 stop value
 
     IPR1bits.TMR2IP = 0;    // timer 2 low prioriy
     PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
@@ -953,6 +1039,7 @@ void main(void)
                     if (!internal_telegram(len))
                     {
                         kline_send(temp_buffer, len);
+                        kline_receive();
                     }
                 }
             }
