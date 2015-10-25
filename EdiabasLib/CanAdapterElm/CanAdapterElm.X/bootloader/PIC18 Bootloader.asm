@@ -214,7 +214,7 @@ BootloaderBreakCheck:
     btfss   RCON, RI            ; software reset
     bra     BootloadMode
     ; wait for stable input signal
-    movlw   b'00000011'         ; 1:16 prescaler (0.26ms)
+    movlw   b'00000100'         ; 1:16 prescaler (0.52s)
     movwf   T0CON
     clrf    TMR0H               ; reset timer count value
     clrf    TMR0L
