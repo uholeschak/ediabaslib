@@ -205,19 +205,20 @@ BootloaderStart:
 HighPriorityInterruptVector:
 	goto    AppHighIntVector    ; Re-map Interrupt vector
 
+	ORG	    0x0018
+LowPriorityInterruptVector:
+	goto    AppLowIntVector     ; Re-map Interrupt vector
+
 BootloaderBreakCheck:
-#if 1
     ; [UH] check for software reset
     btfss   RCON, RI            ; software reset
     bra     BootloadMode
-#else
 #ifdef INVERT_UART
     btfsc   RXPORT, RXPIN
     bra     BootloadMode
 #else
     btfss   RXPORT, RXPIN
     bra     BootloadMode
-#endif
 #endif
 CheckAppVector:
     ; Read instruction at the application reset vector location. 
@@ -226,13 +227,9 @@ CheckAppVector:
     movwf   TBLPTRL
     movlw   high(AppVector)
     movwf   TBLPTRH
-    bra     CheckAppVector2
+    ;bra     CheckAppVector2
 
-	ORG	    0x0018
-LowPriorityInterruptVector:
-	goto    AppLowIntVector     ; Re-map Interrupt vector
-
-CheckAppVector2:
+;CheckAppVector2:
     movlw   upper(AppVector)
     movwf   TBLPTRU     
     tblrd   *+                  ; read instruction from program memory
