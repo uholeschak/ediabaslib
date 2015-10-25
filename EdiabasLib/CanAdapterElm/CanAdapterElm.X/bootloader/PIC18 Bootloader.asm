@@ -486,8 +486,7 @@ CheckCommand:
     bra     DoAutoBaud          ; invalid command - reset baud generator to re-sync with host
 
     ; This jump table must exist entirely within one 256 byte block of program memory.
-;#if ($ & 0xFF) > (0xFF - .24)
-#if 0
+#if ($ & 0xFF) > (0xFF - .24)
     ; Too close to the end of a 256 byte boundary, push address forward to get code
     ; into the next 256 byte block.
     messg   "Wasting some code space to ensure jump table is aligned."
@@ -508,8 +507,7 @@ JUMPTABLE_BEGIN:
     bra     GotoAppVector       ; 22 08h
     reset                       ; 24 09h
 
-;#if (JUMPTABLE_BEGIN & 0xFF) > ($ & 0xFF)
-#if 0
+#if (JUMPTABLE_BEGIN & 0xFF) > ($ & 0xFF)
     error "Jump table is not aligned to fit within a single 256 byte address range."
 #endif
 ; *****************************************************************************
