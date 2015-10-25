@@ -221,6 +221,7 @@ BootloaderBreakCheck:
     bcf     INTCON, TMR0IF
     bsf     T0CON, TMR0ON       ; start timer
 StableWait:
+    clrwdt
     btfss   INTCON, TMR0IF      ; wait for TMR0 overflow
     bra     StableWait
 #ifdef BRG16
