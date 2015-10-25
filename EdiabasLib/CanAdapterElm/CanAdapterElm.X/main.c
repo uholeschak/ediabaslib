@@ -280,13 +280,13 @@ void kline_receive()
             }
             if (buffer_len != 0)
             {   // send data back to UART
-                if (TXSTA1bits.TRMT)
+                if (TXSTAbits.TRMT)
                 {   // transmitter empty
                     if (!KLINE_IN)
                     {
                         T2CONbits.TMR2ON = 1;   // enable timer 2
                     }
-                    TXREG1 = temp_buffer[read_pos];
+                    TXREG = temp_buffer[read_pos];
                     if (!KLINE_IN)
                     {
                         T2CONbits.TMR2ON = 1;   // enable timer 2
@@ -1002,19 +1002,19 @@ void main(void)
 
     TRISCbits.TRISC6 = 0;   // TX output
     TRISCbits.TRISC7 = 1;   // RX input
-    SPBRG1 = 103;           // 38400 @ 16MHz
-    TXSTA1bits.TXEN = 1;    // Enable transmit
-    TXSTA1bits.BRGH = 1;    // Select high baud rate
-    TXSTA1bits.SYNC = 0;    // async mode
+    SPBRG = 103;            // 38400 @ 16MHz
+    TXSTAbits.TXEN = 1;     // Enable transmit
+    TXSTAbits.BRGH = 1;     // Select high baud rate
+    TXSTAbits.SYNC = 0;     // async mode
     BAUDCON1bits.BRG16 = 1; // 16 bit counter
-    RCSTA1bits.CREN = 1;    // Enable continuous reception
+    RCSTAbits.CREN = 1;     // Enable continuous reception
 
     IPR1bits.RCIP = 1;      // UART interrupt high priority
     PIR1bits.RCIF = 0;      // Clear RCIF Interrupt Flag
     PIE1bits.RCIE = 1;      // Set RCIE Interrupt Enable
     PIR1bits.TXIF = 0;      // Clear TXIF Interrupt Flag
     PIE1bits.TXIE = 0;      // Set TXIE Interrupt disable
-    RCSTA1bits.SPEN = 1;    // Enable Serial Port
+    RCSTAbits.SPEN = 1;     // Enable Serial Port
 
     // timer 0
     T0CONbits.T08BIT = 0;   // 16 bit mode
@@ -1129,14 +1129,14 @@ void interrupt high_priority high_isr (void)
 {
     if (PIE1bits.RCIE && PIR1bits.RCIF)
     {   // receive interrupt
-        if (RCSTA1 & 0x06)
+        if (RCSTA & 0x06)
         {   // receive error -> reset flags
-            RCSTA1bits.CREN = 0;
-            RCSTA1bits.CREN = 1;
+            RCSTAbits.CREN = 0;
+            RCSTAbits.CREN = 1;
         }
         else
         {
-            uint8_t rec_data = RCREG1;
+            uint8_t rec_data = RCREG;
             // restart timeout timer
             TMR1H = TIMER1_RELOAD >> 8;
             TMR1L = TIMER1_RELOAD;
@@ -1198,7 +1198,7 @@ void interrupt high_priority high_isr (void)
         }
         else
         {
-            TXREG1 = send_buffer[send_get_idx++];
+            TXREG = send_buffer[send_get_idx++];
             send_len--;
             if (send_get_idx >= sizeof(send_buffer))
             {
