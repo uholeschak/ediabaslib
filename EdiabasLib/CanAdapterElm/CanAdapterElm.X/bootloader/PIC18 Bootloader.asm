@@ -213,6 +213,23 @@ BootloaderBreakCheck:
     ; [UH] check for software reset
     btfss   RCON, RI            ; software reset
     bra     BootloadMode
+    ; wait for stable input signal
+    movlw   b'00000011'         ; 1:16 prescaler (0.26ms)
+    movwf   T0CON
+    clrf    TMR0H               ; reset timer count value
+    clrf    TMR0L
+    bcf     INTCON, TMR0IF
+    bsf     T0CON, TMR0ON       ; start timer
+StableWait:
+    btfss   INTCON, TMR0IF      ; wait for TMR0 overflow
+    bra     StableWait
+#ifdef BRG16
+    movlw   b'00000010'         ; 1:8 prescaler - no division required later (but no rounding possible)
+#else
+    movlw   b'00000011'         ; 1:16 prescaler - thus we only have to divide by 2 later on.
+#endif
+    movwf   T0CON
+
 #ifdef INVERT_UART
     btfsc   RXPORT, RXPIN
     bra     BootloadMode
