@@ -1,0 +1,17 @@
+CREATE debug\libBootload.a
+ADDMOD debug\ImportExportHex.o
+ADDMOD debug\DeviceWriter.o
+ADDMOD debug\DeviceWritePlanner.o
+ADDMOD debug\DeviceVerifyPlanner.o
+ADDMOD debug\DeviceVerifier.o
+ADDMOD debug\DeviceSqlLoader.o
+ADDMOD debug\DeviceReader.o
+ADDMOD debug\DeviceData.o
+ADDMOD debug\Device.o
+ADDMOD debug\Crc.o
+ADDMOD debug\Comm.o
+ADDMOD debug\BootPackets.o
+ADDMOD debug\moc_DeviceWriter.o
+ADDMOD debug\moc_DeviceVerifier.o
+ADDMOD debug\moc_DeviceReader.o
+SAVE

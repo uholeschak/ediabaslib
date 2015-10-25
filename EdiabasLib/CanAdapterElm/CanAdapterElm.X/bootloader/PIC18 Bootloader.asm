@@ -217,8 +217,8 @@ BootloaderBreakCheck:
     btfsc   RXPORT, RXPIN
     bra     BootloadMode
 #else
-    btfss   RXPORT, RXPIN
-    bra     BootloadMode
+    ;btfss   RXPORT, RXPIN
+    ;bra     BootloadMode
 #endif
 CheckAppVector:
     ; Read instruction at the application reset vector location. 
@@ -227,9 +227,9 @@ CheckAppVector:
     movwf   TBLPTRL
     movlw   high(AppVector)
     movwf   TBLPTRH
-    ;bra     CheckAppVector2
+    bra     CheckAppVector2
 
-;CheckAppVector2:
+CheckAppVector2:
     movlw   upper(AppVector)
     movwf   TBLPTRU     
     tblrd   *+                  ; read instruction from program memory
