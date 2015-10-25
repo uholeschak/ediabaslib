@@ -116,6 +116,7 @@ typedef enum
 } rec_states;
 
 static volatile bool start_indicator;  // show start indicator
+static uint8_t idle_counter;
 
 static volatile rec_states rec_state;
 static volatile uint16_t rec_len;
@@ -170,6 +171,20 @@ inline uint16_t get_systick()
 void do_idle()
 {
     CLRWDT();
+    if (INTCONbits.TMR0IF)
+    {
+        INTCONbits.TMR0IF = 0;
+        idle_counter++;
+    }
+    if (idle_counter > 1)
+    {   // idle
+        idle_counter = 0;
+        WDTCONbits.SWDTEN = 0;  // disable watchdog
+        //LED_OBD_RX = 0;
+        SLEEP();
+        //LED_OBD_RX = 1;
+        WDTCONbits.SWDTEN = 1;  // enable watchdog
+    }
 }
 
 void kline_send(uint8_t *buffer, uint16_t count)
@@ -178,7 +193,6 @@ void kline_send(uint8_t *buffer, uint16_t count)
 
     while (PIE1bits.TXIE)   // uart send active
     {
-        do_idle();
         update_led();
     }
     di();
@@ -217,6 +231,8 @@ void kline_send(uint8_t *buffer, uint16_t count)
     }
     KLINE_OUT = 0;      // idle
     T2CONbits.TMR2ON = 0;
+    INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
+    idle_counter = 0;
     ei();
 }
 
@@ -230,12 +246,14 @@ void kline_receive()
     T2CONbits.TMR2ON = 0;
     TMR2 = TIMER2_HALF;     // half start bit
     PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
+    INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
+    idle_counter = 0;
     for (;;)
     {
         // wait for start bit
         for (;;)
         {
-            if (KLINE_IN)
+            if (!KLINE_IN)
             {
                 T2CONbits.TMR2ON = 1;   // enable timer 2
                 break;
@@ -246,16 +264,30 @@ void kline_receive()
                 ei();
                 return;
             }
+            if (INTCONbits.TMR0IF)
+            {
+                INTCONbits.TMR0IF = 0;
+                idle_counter++;
+                if (idle_counter > 1)
+                {   // idle -> leave loop
+                    ei();
+                    return;
+                }
+            }
+            if (!KLINE_IN)
+            {
+                T2CONbits.TMR2ON = 1;   // enable timer 2
+            }
             if (buffer_len != 0)
             {   // send data back to UART
                 if (TXSTA1bits.TRMT)
                 {   // transmitter empty
-                    if (KLINE_IN)
+                    if (!KLINE_IN)
                     {
                         T2CONbits.TMR2ON = 1;   // enable timer 2
                     }
                     TXREG1 = temp_buffer[read_pos];
-                    if (KLINE_IN)
+                    if (!KLINE_IN)
                     {
                         T2CONbits.TMR2ON = 1;   // enable timer 2
                     }
@@ -265,6 +297,7 @@ void kline_receive()
         }
         while (!PIR1bits.TMR2IF) {}
         PIR1bits.TMR2IF = 0;
+        LED_OBD_RX = 0; // on
         uint8_t data = 0x00;
         for (uint8_t i = 0; i < 8 ; i++)
         {
@@ -288,6 +321,7 @@ void kline_receive()
         T2CONbits.TMR2ON = 0;
         TMR2 = TIMER2_HALF;     // half start bit
         PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
+        LED_OBD_RX = 1; // off
         // wait for stop bit
         while (!KLINE_IN)
         {
@@ -309,6 +343,7 @@ bool uart_send(uint8_t *buffer, uint16_t count)
     {
         return true;
     }
+    idle_counter = 0;
     di();
     temp_len = send_len;
     ei();
@@ -340,6 +375,7 @@ uint16_t uart_receive(uint8_t *buffer)
     {
         return 0;
     }
+    idle_counter = 0;
 
     uint16_t data_len = rec_len;
     memcpy(buffer, (void *) rec_buffer, data_len);
@@ -607,6 +643,7 @@ void can_sender(bool new_can_msg)
     }
     if (can_send_active)
     {
+        idle_counter = 0;
         uint8_t *data_offset = &temp_buffer[3];
         uint8_t data_len = temp_buffer[0] & 0x3F;
         if (data_len == 0)
@@ -742,6 +779,7 @@ void can_receiver(bool new_can_msg)
     }
     if (new_can_msg)
     {
+        idle_counter = 0;
         if (((can_in_msg.sid & 0xFF00) == 0x0600) && (can_in_msg.dlc.bits.count >= 2))
         {
             uint8_t frame_type = (can_in_msg.data[1] >> 4) & 0x0F;
@@ -914,6 +952,7 @@ void can_receiver(bool new_can_msg)
 void main(void)
 {
     start_indicator = true;
+    idle_counter = 0;
     rec_state = rec_state_idle;
     rec_len = 0;
     send_set_idx = 0;
@@ -1017,10 +1056,15 @@ void main(void)
 
     ADCON0bits.GODONE = 1;  // start first AD conversion
 
+    OSCCONbits.IDLEN = 1;   // enable idle mode
+    WDTCONbits.SWDTEN = 1;  // enable watchdog
+    WDTCONbits.SRETEN = 1;  // ultra low power mode enabled
+    WDTCONbits.REGSLP = 1;  // regulator low power mode
+    CLRWDT();
+
     read_eeprom();
     can_config();
 
-    WDTCONbits.SWDTEN = 1;  // enable watchdog
     for (;;)
     {
         if (can_enabled)
