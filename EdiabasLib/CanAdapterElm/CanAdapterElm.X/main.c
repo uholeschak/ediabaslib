@@ -64,8 +64,8 @@
 #pragma config WRT3 = OFF       // Table Write Protect 06000-07FFF (Disabled)
 
 // CONFIG6H
-#pragma config WRTC = OFF       // Config. Write Protect (Disabled)
-#pragma config WRTB = OFF       // Table Write Protect Boot (Disabled)
+#pragma config WRTC = ON        // Config. Write Protect (Enabled)
+#pragma config WRTB = ON        // Table Write Protect Boot (Enabled)
 #pragma config WRTD = OFF       // Data EE Write Protect (Disabled)
 
 // CONFIG7L
@@ -1017,6 +1017,7 @@ void main(void)
     RCSTAbits.SPEN = 1;     // Enable Serial Port
 
     // timer 0
+    T0CONbits.TMR0ON = 0;   // stop timer 0
     T0CONbits.T08BIT = 0;   // 16 bit mode
     T0CONbits.T0CS = 0;     // clock internal
     T0CONbits.T0PS = 7;     // prescaler 256 = 15625Hz

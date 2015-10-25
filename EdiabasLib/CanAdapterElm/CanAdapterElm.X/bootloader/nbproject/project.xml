@@ -3,17 +3,15 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>CanAdapterElm</name>
-            <creation-uuid>6a5565b7-9da1-4c04-8960-3c1692448241</creation-uuid>
+            <name>bootloader</name>
+            <creation-uuid>b02ab601-76b2-4277-ac78-57b1ba2df6e0</creation-uuid>
             <make-project-type>0</make-project-type>
-            <c-extensions>c</c-extensions>
+            <c-extensions/>
             <cpp-extensions/>
-            <header-extensions>h</header-extensions>
-            <asminc-extensions/>
+            <header-extensions/>
+            <asminc-extensions>inc</asminc-extensions>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
-            <make-dep-projects>
-                <make-dep-project>bootloader</make-dep-project>
-            </make-dep-projects>
+            <make-dep-projects/>
         </data>
     </configuration>
 </project>

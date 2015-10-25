@@ -2080,6 +2080,7 @@ namespace CarSimulator
                 dataLength -= len;
                 dataOffset += len;
                 blockCount++;
+                //Thread.Sleep(900);    // timeout test
                 stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
                 if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                 {
