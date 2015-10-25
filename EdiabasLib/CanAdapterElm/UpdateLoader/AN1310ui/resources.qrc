@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/MainWindow">
+        <file>img/abort.png</file>
+        <file>img/execute.png</file>
+        <file>img/microchip.png</file>
+        <file>img/open.png</file>
+        <file>img/clear.png</file>
+        <file>img/readtqfp.png</file>
+        <file>img/writetqfp.png</file>
+        <file>img/erasetqfp.png</file>
+        <file>img/verify.png</file>
+        <file>img/stop.png</file>
+        <file>img/pause.png</file>
+        <file>img/record.png</file>
+        <file>img/save.png</file>
+    </qresource>
+</RCC>

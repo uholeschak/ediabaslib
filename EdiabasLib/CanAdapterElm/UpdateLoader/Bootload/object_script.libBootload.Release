@@ -1,0 +1,17 @@
+CREATE release\libBootload.a
+ADDMOD release\ImportExportHex.o
+ADDMOD release\DeviceWriter.o
+ADDMOD release\DeviceWritePlanner.o
+ADDMOD release\DeviceVerifyPlanner.o
+ADDMOD release\DeviceVerifier.o
+ADDMOD release\DeviceSqlLoader.o
+ADDMOD release\DeviceReader.o
+ADDMOD release\DeviceData.o
+ADDMOD release\Device.o
+ADDMOD release\Crc.o
+ADDMOD release\Comm.o
+ADDMOD release\BootPackets.o
+ADDMOD release\moc_DeviceWriter.o
+ADDMOD release\moc_DeviceVerifier.o
+ADDMOD release\moc_DeviceReader.o
+SAVE
