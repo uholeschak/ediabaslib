@@ -1862,12 +1862,12 @@ void MainWindow::on_action_Bootloader_Mode_triggered()
 
         // wait 5ms to allow MCLR and RXD to go to logic 0.
         elapsed.start();
-        while(elapsed.elapsed() < 5) // ms
+        while(elapsed.elapsed() < 600) // [UH] 600ms
         {
             QApplication::processEvents();
         }
 
-        qDebug("time(3.2): %fs", (double)totalTime.elapsed() / 1000);
+        //qDebug("time(3.2): %fs", (double)totalTime.elapsed() / 1000);
         //comm->releaseIntoBootloader();    // [UH]
 
         statusBar()->showMessage("Connecting...");

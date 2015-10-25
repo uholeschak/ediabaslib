@@ -133,11 +133,11 @@ int Bootload::Connect(void)
 
         // wait 5ms to allow MCLR and RXD to go to logic 0.
         elapsed.start();
-        while(elapsed.elapsed() < 5) // ms
+        while(elapsed.elapsed() < 600) // [UH] 600ms
         {
         }
 
-        qDebug("time(3.2): %fs", (double)totalTime.elapsed() / 1000);
+        //qDebug("time(3.2): %fs", (double)totalTime.elapsed() / 1000);
         //comm->releaseIntoBootloader();    // [UH]
 
         qDebug("time(3.3): %fs", (double)totalTime.elapsed() / 1000);
