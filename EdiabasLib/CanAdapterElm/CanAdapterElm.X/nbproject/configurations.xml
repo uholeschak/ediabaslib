@@ -43,6 +43,21 @@
         <archiverTool>
         </archiverTool>
         <loading>
+          <makeArtifact PL="bootloader"
+                        CT="1"
+                        CN="default"
+                        AC="true"
+                        BL="true"
+                        WD="bootloader"
+                        BC="${MAKE}  -f Makefile CONF=default"
+                        DBC="${MAKE}  -f Makefile CONF=default TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/default&quot; &quot;dist/default&quot;"
+                        OP="dist/default/production/bootloader.production.hex"
+                        DOP="dist/default/debug/bootloader.debug.cof"
+                        FL="dist/default/production/bootloader.production.hex"
+                        PD="dist/default/production/bootloader.production.cof"
+                        DD="dist/default/debug/bootloader.debug.cof">
+          </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
@@ -83,7 +98,7 @@
       </HI-TECH-COMP>
       <HI-TECH-LINK>
         <property key="additional-options-checksum" value=""/>
-        <property key="additional-options-code-offset" value=""/>
+        <property key="additional-options-code-offset" value="0x800"/>
         <property key="additional-options-command-line" value=""/>
         <property key="additional-options-errata" value=""/>
         <property key="additional-options-extend-address" value="false"/>

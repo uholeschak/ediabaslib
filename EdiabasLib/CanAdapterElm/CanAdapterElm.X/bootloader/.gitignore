@@ -1,0 +1,4 @@
+*.obj
+/build
+/dist
+/debug
