@@ -118,7 +118,7 @@
         <property key="voltagevalue" value="5.0"/>
       </PICkit3PlatformTool>
       <mpasmsuite>
-        <property key="absolute-mode" value="false"/>
+        <property key="absolute-mode" value="true"/>
         <property key="eeprom-width" value="8"/>
         <property key="extended-mode" value="false"/>
         <property key="extended-mode-mpasm" value="false"/>
