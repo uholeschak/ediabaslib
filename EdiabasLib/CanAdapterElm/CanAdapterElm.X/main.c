@@ -178,12 +178,18 @@ void do_idle()
     }
     if (idle_counter > 1)
     {   // idle
-        idle_counter = 0;
-        WDTCONbits.SWDTEN = 0;  // disable watchdog
-        //LED_OBD_RX = 0;
-        SLEEP();
-        //LED_OBD_RX = 1;
-        WDTCONbits.SWDTEN = 1;  // enable watchdog
+        PIR5 = 0x00;            // clear CAN interrupts
+        if (!COMSTATbits.FIFOEMPTY)
+        {   // no CAN message present
+            idle_counter = 0;
+            PIE5bits.RXBnIE = 1;    // enable CAN interrupt for wakeup
+            WDTCONbits.SWDTEN = 0;  // disable watchdog
+            //LED_OBD_RX = 0;
+            SLEEP();
+            //LED_OBD_RX = 1;
+            WDTCONbits.SWDTEN = 1;  // enable watchdog
+            PIE5bits.RXBnIE = 0;
+        }
     }
 }
 
@@ -962,6 +968,8 @@ void main(void)
     can_send_active = false;
     can_rec_tel_valid = false;
 
+    RCONbits.IPEN = 1;      // interrupt priority enable
+
     // K/L line
     KLINE_OUT = 0;  // idle
     LLINE_OUT = 0;  // idle
@@ -980,12 +988,13 @@ void main(void)
     TRISBbits.TRISB6 = 0;
     TRISBbits.TRISB7 = 0;
 
+    // CAN
     TRISBbits.TRISB3 = 1;   // CAN RX input
     //TRISBbits.TRISB2 = 0;   // CAN TX output (set automatically)
+    IPR5 = 0x00;            // CAN interrupt low priority
+    BIE0 = 0xFF;            // interrupt for all buffers
 
     TRISCbits.TRISC4 = 1;   // ignition state (input)
-
-    RCONbits.IPEN = 1;      // interrupt priority enable
 
     // analog input
     TRISAbits.TRISA0 = 1;   // AN0 input
@@ -1122,6 +1131,11 @@ void interrupt low_priority low_isr (void)
     {
         PIR1bits.TMR2IF = 0;
         return;
+    }
+    if (PIE5 != 0x00 && PIR5 != 0x00)
+    {   // CAN interrupt
+        PIE5 = 0x00;    // disable interrupt, only for wakeup
+        PIR5 = 0x00;
     }
 }
 
