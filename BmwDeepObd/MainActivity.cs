@@ -184,39 +184,11 @@ namespace BmwDeepObd
                 }
             }
 
-            _appDataPath = string.Empty;
-            _ecuPath = string.Empty;
-            _userEcuFiles = false;
-            if (string.IsNullOrEmpty(_activityCommon.ExternalWritePath))
-            {
-                if (string.IsNullOrEmpty(_activityCommon.ExternalPath))
-                {
-                    Toast.MakeText(this, GetString(Resource.String.no_ext_storage), ToastLength.Long).Show();
-                    Finish();
-                }
-                else
-                {
-                    _appDataPath = Path.Combine(_activityCommon.ExternalPath, AppFolderName);
-                    _ecuPath = Path.Combine(_appDataPath, EcuDirName);
-                }
-            }
-            else
-            {
-                _appDataPath = _activityCommon.ExternalWritePath;
-                _ecuPath = Path.Combine(_appDataPath, EcuDirName);
-                if (!ValidEcuFiles(_ecuPath))
-                {
-                    string userEcuPath = Path.Combine(_appDataPath, "../../../..", AppFolderName, EcuDirName);
-                    if (ValidEcuFiles(userEcuPath))
-                    {
-                        _ecuPath = userEcuPath;
-                        _userEcuFiles = true;
-                    }
-                }
-            }
+            GetSettings();
+            UpdateDirectories();
+
             _updateHandler = new Handler();
             _jobReader = new JobReader();
-            GetSettings();
 
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
             _fragmentList = new List<Fragment>();
@@ -744,6 +716,49 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 // ignored
+            }
+        }
+
+        private void UpdateDirectories()
+        {
+            CloseDataLog();
+            _appDataPath = string.Empty;
+            _ecuPath = string.Empty;
+            _userEcuFiles = false;
+            if (string.IsNullOrEmpty(_activityCommon.CustomStorageMedia))
+            {
+                if (string.IsNullOrEmpty(_activityCommon.ExternalWritePath))
+                {
+                    if (string.IsNullOrEmpty(_activityCommon.ExternalPath))
+                    {
+                        Toast.MakeText(this, GetString(Resource.String.no_ext_storage), ToastLength.Long).Show();
+                        Finish();
+                    }
+                    else
+                    {
+                        _appDataPath = Path.Combine(_activityCommon.ExternalPath, AppFolderName);
+                        _ecuPath = Path.Combine(_appDataPath, EcuDirName);
+                    }
+                }
+                else
+                {
+                    _appDataPath = _activityCommon.ExternalWritePath;
+                    _ecuPath = Path.Combine(_appDataPath, EcuDirName);
+                    if (!ValidEcuFiles(_ecuPath))
+                    {
+                        string userEcuPath = Path.Combine(_appDataPath, "../../../..", AppFolderName, EcuDirName);
+                        if (ValidEcuFiles(userEcuPath))
+                        {
+                            _ecuPath = userEcuPath;
+                            _userEcuFiles = true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                _appDataPath = Path.Combine(_activityCommon.ExternalPath, AppFolderName);
+                _ecuPath = Path.Combine(_appDataPath, EcuDirName);
             }
         }
 
@@ -1359,7 +1374,9 @@ namespace BmwDeepObd
         {
             _activityCommon.SelectMedia((sender, args) =>
             {
+                UpdateDirectories();
                 SupportInvalidateOptionsMenu();
+                CheckForEcuFiles();
             });
         }
 
