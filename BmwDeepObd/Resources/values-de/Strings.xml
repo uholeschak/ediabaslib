@@ -45,7 +45,7 @@
 
   <!--  DeviceListActivity -->
   <string name="scanning">Nach Geräten suchen ...</string>
-  <string name="select_device">Gerät auswählen</string>
+  <string name="select_device">Adapter auswählen</string>
   <string name="none_paired">Keine Geräte sind gekoppelt</string>
   <string name="none_found">Keine Geräte gefunden</string>
   <string name="title_paired_devices">Gekoppelte Geräte</string>
@@ -157,6 +157,7 @@
   <string name="can_adapter_sep_time">Telegrammabstand [ms]</string>
   <string name="can_adapter_block_size">Blockgröße</string>
   <string name="can_adapter_ignition_state">Zündung</string>
+  <string name="can_adapter_bat_voltage">Batteriespannung</string>
   <string name="can_adapter_comm_error">Es ist ein Kommunikationsfehler aufgetreten</string>
   <string name="can_adapter_comm_error_std">Es ist ein Kommunikationsfehler aufgetreten.\nDie Adapterkonfiguration ist nur möglich,\nwenn die Adapter LED nach dem Einschalten aktiv ist.</string>
   <string name="can_adapter_ignition_on">Zündung an</string>

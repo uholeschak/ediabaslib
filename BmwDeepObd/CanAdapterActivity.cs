@@ -31,11 +31,13 @@ namespace BmwDeepObd
         private StringAdapter _spinnerCanAdapterBlockSizeAdapter;
         private TextView _textViewCanAdapterIgnitionStateTitle;
         private TextView _textViewIgnitionState;
+        private TextView _textViewBatteryVoltage;
         private string _deviceAddress = string.Empty;
         private int _blockSize = -1;
         private int _separationTime = -1;
         private int _canMode = -1;
         private int _ignitionState = -1;
+        private int _batteryVoltage = -1;
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
         private Thread _adapterThread;
@@ -120,6 +122,9 @@ namespace BmwDeepObd
 
             _textViewIgnitionState = FindViewById<TextView>(Resource.Id.textViewCanAdapterIgnitionState);
             _textViewIgnitionState.Visibility = visibility;
+
+            _textViewBatteryVoltage = FindViewById<TextView>(Resource.Id.textViewCanAdapterBatVoltage);
+            _textViewBatteryVoltage.Visibility = visibility;
 
             _activityCommon = new ActivityCommon(this)
             {
@@ -262,6 +267,7 @@ namespace BmwDeepObd
                 {
                     _spinnerCanAdapterBlockSize.SetSelection(_blockSize);
                 }
+
                 string ignitionText = string.Empty;
                 if (_ignitionState >= 0)
                 {
@@ -272,6 +278,13 @@ namespace BmwDeepObd
                     }
                 }
                 _textViewIgnitionState.Text = ignitionText;
+
+                string voltageText = string.Empty;
+                if (_batteryVoltage >= 0)
+                {
+                    voltageText = _batteryVoltage == 0x80 ? "--" : string.Format("{0,4:0.0}V", _batteryVoltage / 10);
+                }
+                _textViewBatteryVoltage.Text = voltageText;
             }
         }
 
@@ -347,6 +360,15 @@ namespace BmwDeepObd
                             commFailed = true;
                         }
                     }
+                    // battery voltage
+                    if (!commFailed)
+                    {
+                        _batteryVoltage = AdapterCommand(0xFC, 0xFC);
+                        if (_batteryVoltage < 0)
+                        {
+                            commFailed = true;
+                        }
+                    }
                 }
                 catch (Exception)
                 {
@@ -358,6 +380,7 @@ namespace BmwDeepObd
                     _separationTime = -1;
                     _canMode = -1;
                     _ignitionState = -1;
+                    _batteryVoltage = -1;
                 }
 
                 RunOnUiThread(() =>
