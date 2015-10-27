@@ -68,8 +68,9 @@ namespace BmwDeepObd
         private readonly BcReceiverReceivedDelegate _bcReceiverReceivedHandler;
         private readonly bool _emulator;
         private bool? _usbSupport;
-        private string _externalPath;
-        private string _externalWritePath;
+        private static bool _externalPathSet = false;
+        private static string _externalPath;
+        private static string _externalWritePath;
         private readonly BluetoothAdapter _btAdapter;
         private readonly WifiManager _maWifi;
         private readonly ConnectivityManager _maConnectivity;
@@ -182,7 +183,11 @@ namespace BmwDeepObd
             _bcReceiverUpdateDisplayHandler = bcReceiverUpdateDisplayHandler;
             _bcReceiverReceivedHandler = bcReceiverReceivedHandler;
             _emulator = IsEmulator();
-            SetStoragePath();
+            if (!_externalPathSet)
+            {
+                SetStoragePath();
+                _externalPathSet = true;
+            }
 
             _btAdapter = BluetoothAdapter.DefaultAdapter;
             _maWifi = (WifiManager)activity.GetSystemService(Context.WifiService);
@@ -784,7 +789,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void SetStoragePath()
+        private static void SetStoragePath()
         {
             _externalPath = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
             _externalWritePath = string.Empty;
@@ -810,7 +815,10 @@ namespace BmwDeepObd
                 string sdCardEntry = ParseProcMounts(procMounts, _externalPath);
                 if (!string.IsNullOrEmpty(sdCardEntry))
                 {
-                    _externalPath = sdCardEntry;
+                    if (IsWritable(sdCardEntry))
+                    {
+                        _externalPath = sdCardEntry;
+                    }
                 }
             }
         }
@@ -827,6 +835,39 @@ namespace BmwDeepObd
                 // ignored
             }
             return string.Empty;
+        }
+
+        public static bool IsWritable(string pathToTest)
+        {
+            bool result = false;
+
+            if (!string.IsNullOrWhiteSpace(pathToTest))
+            {
+                const string testText = "test text";
+                string testFile = Guid.NewGuid() + ".txt";
+                string testPath = Path.Combine(pathToTest, testFile);
+                try
+                {
+                    File.WriteAllText(testPath, testText);
+                    // check for case insensitive file system
+                    if (File.Exists(Path.Combine(pathToTest, testFile.ToUpperInvariant())))
+                    {
+                        result = true;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                finally
+                {
+                    if (File.Exists(testPath))
+                    {
+                        File.Delete(testPath);
+                    }
+                }
+            }
+            return result;
         }
 
         private static string ParseProcMounts(string procMounts, string externalPath)
