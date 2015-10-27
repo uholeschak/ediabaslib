@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED="PIC18 Bootloader.asm"
+SOURCEFILES_QUOTED_IF_SPACED=PIC18Bootloader.asm
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED="${OBJECTDIR}/PIC18 Bootloader.o"
-POSSIBLE_DEPFILES="${OBJECTDIR}/PIC18 Bootloader.o.d"
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/PIC18Bootloader.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/PIC18Bootloader.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/PIC18\ Bootloader.o
+OBJECTFILES=${OBJECTDIR}/PIC18Bootloader.o
 
 # Source Files
-SOURCEFILES=PIC18 Bootloader.asm
+SOURCEFILES=PIC18Bootloader.asm
 
 
 CFLAGS=
@@ -82,30 +82,30 @@ MP_LINKER_DEBUG_OPTION=
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: assemble
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/PIC18\ Bootloader.o: PIC18\ Bootloader.asm  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/PIC18Bootloader.o: PIC18Bootloader.asm  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} "${OBJECTDIR}/PIC18 Bootloader.o".d 
-	@${RM} "${OBJECTDIR}/PIC18 Bootloader.o" 
-	@${FIXDEPS} dummy.d -e "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18 Bootloader.ERR" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG -d__MPLAB_DEBUGGER_PK3=1 -q -p$(MP_PROCESSOR_OPTION)  $(ASM_OPTIONS)   \"D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18 Bootloader.asm\" 
-	@${MV}  "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18 Bootloader".O "${OBJECTDIR}/PIC18 Bootloader.o"
-	@${MV}  "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18 Bootloader".ERR "${OBJECTDIR}/PIC18 Bootloader.o".err
-	@${MV}  "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18 Bootloader".LST "${OBJECTDIR}/PIC18 Bootloader.o".lst
-	@${RM}  "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18 Bootloader".HEX 
-	@${DEP_GEN} -d "${OBJECTDIR}/PIC18 Bootloader.o"
-	@${FIXDEPS} "${OBJECTDIR}/PIC18 Bootloader.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
+	@${RM} ${OBJECTDIR}/PIC18Bootloader.o.d 
+	@${RM} ${OBJECTDIR}/PIC18Bootloader.o 
+	@${FIXDEPS} dummy.d -e "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.ERR" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG -d__MPLAB_DEBUGGER_PK3=1 -q -p$(MP_PROCESSOR_OPTION)  $(ASM_OPTIONS)   \"D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.asm\" 
+	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.O ${OBJECTDIR}/PIC18Bootloader.o
+	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.ERR ${OBJECTDIR}/PIC18Bootloader.o.err
+	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.LST ${OBJECTDIR}/PIC18Bootloader.o.lst
+	@${RM}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.HEX 
+	@${DEP_GEN} -d "${OBJECTDIR}/PIC18Bootloader.o"
+	@${FIXDEPS} "${OBJECTDIR}/PIC18Bootloader.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	
 else
-${OBJECTDIR}/PIC18\ Bootloader.o: PIC18\ Bootloader.asm  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/PIC18Bootloader.o: PIC18Bootloader.asm  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} "${OBJECTDIR}/PIC18 Bootloader.o".d 
-	@${RM} "${OBJECTDIR}/PIC18 Bootloader.o" 
-	@${FIXDEPS} dummy.d -e "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18 Bootloader.ERR" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION)  $(ASM_OPTIONS)   \"D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18 Bootloader.asm\" 
-	@${MV}  "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18 Bootloader".O "${OBJECTDIR}/PIC18 Bootloader.o"
-	@${MV}  "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18 Bootloader".ERR "${OBJECTDIR}/PIC18 Bootloader.o".err
-	@${MV}  "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18 Bootloader".LST "${OBJECTDIR}/PIC18 Bootloader.o".lst
-	@${RM}  "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18 Bootloader".HEX 
-	@${DEP_GEN} -d "${OBJECTDIR}/PIC18 Bootloader.o"
-	@${FIXDEPS} "${OBJECTDIR}/PIC18 Bootloader.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
+	@${RM} ${OBJECTDIR}/PIC18Bootloader.o.d 
+	@${RM} ${OBJECTDIR}/PIC18Bootloader.o 
+	@${FIXDEPS} dummy.d -e "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.ERR" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION)  $(ASM_OPTIONS)   \"D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.asm\" 
+	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.O ${OBJECTDIR}/PIC18Bootloader.o
+	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.ERR ${OBJECTDIR}/PIC18Bootloader.o.err
+	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.LST ${OBJECTDIR}/PIC18Bootloader.o.lst
+	@${RM}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.HEX 
+	@${DEP_GEN} -d "${OBJECTDIR}/PIC18Bootloader.o"
+	@${FIXDEPS} "${OBJECTDIR}/PIC18Bootloader.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	
 endif
 
