@@ -456,6 +456,14 @@ namespace BmwDeepObd
                 ediabasToolMenu.SetEnabled(!commActive);
             }
 
+            IMenuItem selectMedia = menu.FindItem(Resource.Id.menu_sel_media);
+            if (selectMedia != null)
+            {
+                selectMedia.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_sel_media),
+                    (_activityCommon.CustomStorageMedia == null) ? GetString(Resource.String.default_media) : GetString(Resource.String.custom_media)));
+                selectMedia.SetEnabled(!commActive);
+            }
+
             IMenuItem downloadEcu = menu.FindItem(Resource.Id.menu_download_ecu);
             if (downloadEcu != null)
             {
@@ -505,6 +513,10 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_ediabas_tool:
                     StartEdiabasTool();
+                    return true;
+
+                case Resource.Id.menu_sel_media:
+                    SelectMedia();
                     return true;
 
                 case Resource.Id.menu_download_ecu:
@@ -1339,6 +1351,14 @@ namespace BmwDeepObd
                 });
             });
             compileThreadWrapper.Start();
+        }
+
+        private void SelectMedia()
+        {
+            _activityCommon.SelectMedia((sender, args) =>
+            {
+                SupportInvalidateOptionsMenu();
+            });
         }
 
         private void DownloadFile(string url, string fileName, string unzipTargetDir = null)
