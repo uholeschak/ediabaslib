@@ -282,7 +282,7 @@ namespace BmwDeepObd
                 string voltageText = string.Empty;
                 if (_batteryVoltage >= 0)
                 {
-                    voltageText = _batteryVoltage == 0x80 ? "--" : string.Format("{0,4:0.0}V", _batteryVoltage / 10);
+                    voltageText = _batteryVoltage == 0x80 ? "--" : string.Format(ActivityMain.Culture, "{0,4:0.0}V", _batteryVoltage / 10);
                 }
                 _textViewBatteryVoltage.Text = voltageText;
             }
