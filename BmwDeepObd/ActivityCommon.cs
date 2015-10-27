@@ -68,9 +68,10 @@ namespace BmwDeepObd
         private readonly BcReceiverReceivedDelegate _bcReceiverReceivedHandler;
         private readonly bool _emulator;
         private bool? _usbSupport;
-        private static bool _externalPathSet = false;
+        private static bool _externalPathSet;
         private static string _externalPath;
         private static string _externalWritePath;
+        private static string _customStorageMedia;
         private readonly BluetoothAdapter _btAdapter;
         private readonly WifiManager _maWifi;
         private readonly ConnectivityManager _maConnectivity;
@@ -81,6 +82,7 @@ namespace BmwDeepObd
         private Receiver _bcReceiver;
         private InterfaceType _selectedInterface;
         private AlertDialog _activateAlertDialog;
+        private AlertDialog _selectMediaAlertDialog;
         private AlertDialog _selectInterfaceAlertDialog;
 
         public bool Emulator
@@ -123,6 +125,14 @@ namespace BmwDeepObd
             get
             {
                 return _externalWritePath;
+            }
+        }
+
+        public string CustomStorageMedia
+        {
+            get
+            {
+                return _customStorageMedia;
             }
         }
 
@@ -373,6 +383,61 @@ namespace BmwDeepObd
             .SetMessage(message)
             .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
             .Show();
+        }
+
+        public void SelectMedia(EventHandler<DialogClickEventArgs> handler)
+        {
+            if (_selectMediaAlertDialog != null)
+            {
+                return;
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
+            builder.SetTitle(Resource.String.select_media);
+            ListView listView = new ListView(_activity);
+
+            List<string> mediaNames = GetAllStorageMedia();
+            int mediaIndex = 0;
+            if (!string.IsNullOrEmpty(_customStorageMedia))
+            {
+                int index = 0;
+                foreach (string name in mediaNames)
+                {
+                    if (string.CompareOrdinal(name, _customStorageMedia) == 0)
+                    {
+                        mediaIndex = index + 1;
+                        break;
+                    }
+                    index++;
+                }
+            }
+            mediaNames.Insert(0, _activity.GetString(Resource.String.default_media));
+
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity,
+                Android.Resource.Layout.SimpleListItemSingleChoice, mediaNames);
+            listView.Adapter = adapter;
+            listView.ChoiceMode = ChoiceMode.Single;
+            listView.SetItemChecked(mediaIndex, true);
+            builder.SetView(listView);
+            builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+            {
+                switch (listView.CheckedItemPosition)
+                {
+                    case 0:
+                        _customStorageMedia = null;
+                        handler(sender, args);
+                        break;
+
+                    default:
+                        _customStorageMedia = mediaNames[listView.CheckedItemPosition];
+                        handler(sender, args);
+                        break;
+                }
+            });
+            builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
+            {
+            });
+            _selectMediaAlertDialog = builder.Show();
+            _selectMediaAlertDialog.DismissEvent += (sender, args) => { _selectMediaAlertDialog = null; };
         }
 
         public void SelectInterface(EventHandler<DialogClickEventArgs> handler)
@@ -789,6 +854,12 @@ namespace BmwDeepObd
             }
         }
 
+        public static List<string> GetAllStorageMedia()
+        {
+            string procMounts = ReadProcMounts();
+            return ParseStorageMedia(procMounts);
+        }
+
         private static void SetStoragePath()
         {
             _externalPath = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
@@ -896,6 +967,33 @@ namespace BmwDeepObd
                 }
             }
             return sdCardEntry;
+        }
+
+        private static List<string> ParseStorageMedia(string procMounts)
+        {
+            List<string> sdCardList = new List<string>();
+            if (!string.IsNullOrWhiteSpace(procMounts))
+            {
+                List<string> procMountEntries = procMounts.Split('\n', '\r').ToList();
+                // ReSharper disable once LoopCanBeConvertedToQuery
+                foreach (string entry in procMountEntries)
+                {
+                    string[] sdCardEntries = entry.Split(' ');
+                    if (sdCardEntries.Length > 2)
+                    {
+                        string storageType = sdCardEntries[2];
+                        if (storageType.IndexOf("fat", StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            string path = sdCardEntries[1];
+                            if (IsWritable(path))
+                            {
+                                sdCardList.Add(path);
+                            }
+                        }
+                    }
+                }
+            }
+            return sdCardList;
         }
 
         public static FileSystemBlockInfo GetFileSystemBlockInfo(string path)
