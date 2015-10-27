@@ -1,2 +1,3 @@
 debug/
 release/
+*.pro.user
