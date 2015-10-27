@@ -460,7 +460,7 @@ namespace BmwDeepObd
             if (selectMedia != null)
             {
                 selectMedia.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_sel_media),
-                    (_activityCommon.CustomStorageMedia == null) ? GetString(Resource.String.default_media) : GetString(Resource.String.custom_media)));
+                    string.IsNullOrEmpty(_activityCommon.CustomStorageMedia) ? GetString(Resource.String.default_media) : GetString(Resource.String.custom_media)));
                 selectMedia.SetEnabled(!commActive);
             }
 
@@ -719,6 +719,7 @@ namespace BmwDeepObd
                 _deviceName = prefs.GetString("DeviceName", string.Empty);
                 _deviceAddress = prefs.GetString("DeviceAddress", string.Empty);
                 _configFileName = prefs.GetString("ConfigFile", string.Empty);
+                _activityCommon.CustomStorageMedia = prefs.GetString("StorageMedia", string.Empty);
                 _lastVersionCode = prefs.GetInt("VersionCode", -1);
             }
             catch
@@ -736,6 +737,7 @@ namespace BmwDeepObd
                 prefsEdit.PutString("DeviceName", _deviceName);
                 prefsEdit.PutString("DeviceAddress", _deviceAddress);
                 prefsEdit.PutString("ConfigFile", _configFileName);
+                prefsEdit.PutString("StorageMedia", _activityCommon.CustomStorageMedia ?? string.Empty);
                 prefsEdit.PutInt("VersionCode", _currentVersionCode);
                 prefsEdit.Commit();
             }

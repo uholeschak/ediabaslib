@@ -134,6 +134,9 @@ namespace BmwDeepObd
             {
                 return _customStorageMedia;
             }
+            set {
+                _customStorageMedia = IsWritable(value) ? value : null;
+            }
         }
 
         public InterfaceType SelectedInterface
