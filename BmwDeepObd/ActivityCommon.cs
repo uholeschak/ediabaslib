@@ -889,10 +889,7 @@ namespace BmwDeepObd
                 string sdCardEntry = ParseProcMounts(procMounts, _externalPath);
                 if (!string.IsNullOrEmpty(sdCardEntry))
                 {
-                    if (IsWritable(sdCardEntry))
-                    {
-                        _externalPath = sdCardEntry;
-                    }
+                    _externalPath = sdCardEntry;
                 }
             }
         }
@@ -955,12 +952,11 @@ namespace BmwDeepObd
                     string[] sdCardEntries = entry.Split(' ');
                     if (sdCardEntries.Length > 2)
                     {
-                        string storageType = sdCardEntries[2];
-                        if (storageType.IndexOf("fat", StringComparison.OrdinalIgnoreCase) >= 0)
+                        string path = sdCardEntries[1];
+                        if (path.StartsWith(externalPath, StringComparison.OrdinalIgnoreCase) &&
+                            string.Compare(path, externalPath, StringComparison.OrdinalIgnoreCase) != 0)
                         {
-                            string path = sdCardEntries[1];
-                            if (path.StartsWith(externalPath, StringComparison.OrdinalIgnoreCase) &&
-                                string.Compare(path, externalPath, StringComparison.OrdinalIgnoreCase) != 0)
+                            if (IsWritable(path))
                             {
                                 sdCardEntry = path;
                                 break;
@@ -984,14 +980,10 @@ namespace BmwDeepObd
                     string[] sdCardEntries = entry.Split(' ');
                     if (sdCardEntries.Length > 2)
                     {
-                        string storageType = sdCardEntries[2];
-                        if (storageType.IndexOf("fat", StringComparison.OrdinalIgnoreCase) >= 0)
+                        string path = sdCardEntries[1];
+                        if (IsWritable(path))
                         {
-                            string path = sdCardEntries[1];
-                            if (IsWritable(path))
-                            {
-                                sdCardList.Add(path);
-                            }
+                            sdCardList.Add(path);
                         }
                     }
                 }
