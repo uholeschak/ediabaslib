@@ -416,12 +416,17 @@ namespace BmwDeepObd
             List<string> displayNames = new List<string>();
             foreach (string name in mediaNames)
             {
+                const int maxLength = 40;
                 string displayName = name;
                 try
                 {
                     FileSystemBlockInfo blockInfo = GetFileSystemBlockInfo(name);
-                    displayName = String.Format(new FileSizeFormatProvider(), "{0} ({1:fs}/{2:fs} {3})",
+                    displayName = String.Format(new FileSizeFormatProvider(), "{0} ({1:fs1}/{2:fs1} {3})",
                         name, blockInfo.AvailableSizeBytes, blockInfo.TotalSizeBytes, _activity.GetString(Resource.String.free_space));
+                    if (displayName.Length > maxLength)
+                    {
+                        displayName = "..." + displayName.Substring(displayName.Length - maxLength);
+                    }
                 }
                 catch (Exception)
                 {
