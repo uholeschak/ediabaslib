@@ -92,6 +92,7 @@
   <string name="select_media">Speichermedium auswählen</string>
   <string name="default_media">Standard</string>
   <string name="custom_media">Anwender</string>
+  <string name="free_space">frei</string>
 
   <!-- Interface selection -->
   <string name="select_interface">Interface auswählen</string>
