@@ -128,7 +128,7 @@ static uint16_t send_get_idx;
 static volatile uint16_t send_len;
 static volatile uint8_t send_buffer[280];   // larger send buffer for multi responses
 
-static uint8_t temp_buffer[260];
+static uint8_t temp_buffer[0x200];
 static uint8_t temp_buffer_short[10];
 
 static bool can_enabled;
@@ -244,9 +244,9 @@ void kline_send(uint8_t *buffer, uint16_t count)
 
 void kline_receive()
 {
-    uint8_t write_pos = 0;
-    uint8_t read_pos = 0;
-    uint8_t buffer_len = 0;
+    uint16_t buffer_len = 0;
+    uint8_t *write_ptr = temp_buffer;
+    uint8_t *read_ptr = temp_buffer;
 
     di();
     T2CONbits.TMR2ON = 0;
@@ -280,24 +280,25 @@ void kline_receive()
                     return;
                 }
             }
-            if (!KLINE_IN)
-            {
-                T2CONbits.TMR2ON = 1;   // enable timer 2
-            }
+            if (!KLINE_IN) T2CONbits.TMR2ON = 1;
             if (buffer_len != 0)
             {   // send data back to UART
                 if (TXSTAbits.TRMT)
                 {   // transmitter empty
-                    if (!KLINE_IN)
+                    if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                    TXREG = *read_ptr;
+                    if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                    read_ptr++;
+                    if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                    uint8_t diff = *(((uint8_t *) &read_ptr) + 1) - *(((uint8_t *) &temp_buffer) + 1);
+                    if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                    if (diff == (sizeof(temp_buffer) >> 8))
                     {
-                        T2CONbits.TMR2ON = 1;   // enable timer 2
+                        if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                        read_ptr = temp_buffer;
                     }
-                    TXREG = temp_buffer[read_pos];
-                    if (!KLINE_IN)
-                    {
-                        T2CONbits.TMR2ON = 1;   // enable timer 2
-                    }
-                    read_pos++;
+                    if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                    buffer_len--;
                 }
             }
         }
@@ -319,9 +320,13 @@ void kline_receive()
                 data <<= 1;
             }
         }
-        if (buffer_len < 0xFF)
+        if (buffer_len < sizeof(temp_buffer))
         {
-            temp_buffer[write_pos++] = data;
+            *write_ptr++ = data;
+            if (*(((uint8_t *) &write_ptr) + 1) - *(((uint8_t *) &temp_buffer) + 1) == (sizeof(temp_buffer) >> 8))
+            {
+                write_ptr = temp_buffer;
+            }
             buffer_len++;
         }
         T2CONbits.TMR2ON = 0;
