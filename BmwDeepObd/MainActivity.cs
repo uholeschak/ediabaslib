@@ -1573,7 +1573,16 @@ namespace BmwDeepObd
                 double freeSpace = blockInfo.AvailableSizeBytes + ecuDirSize;
                 if (freeSpace < 1500000000)
                 {
-                    _activityCommon.ShowAlert(GetString(Resource.String.ecu_download_free_space));
+                    new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                        {
+                            SelectMedia();
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                        {
+                        })
+                        .SetMessage(Resource.String.ecu_download_free_space)
+                        .Show();
                     return;
                 }
             }

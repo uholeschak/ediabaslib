@@ -19,7 +19,7 @@
   <string name="config_select_title">Konfiguration</string>
   <string name="bt_device_select_title">Bluetooth Gerät</string>
   <string name="bt_device_select">Es wurde kein Bluetooth Gerät ausgewählt.\nWollen Sie jetzt ein Gerät auswählen?</string>
-  <string name="ecu_download_free_space">Es ist nicht genügend freier Speicher auf dem Gerät verfügbar um die ECU Dateien zu speichern.</string>
+  <string name="ecu_download_free_space">Es ist nicht genügend freier Speicher auf dem Gerät verfügbar, um die ECU Dateien zu abzulegen.\nWollen Sie ein anderes Speichermedium wählen?</string>
   <string name="ecu_download_title">ECU herunterladen</string>
   <string name="ecu_not_found">Es wurden keine ECU Dateien gefunden.</string>
   <string name="ecu_package">Es gibt andere ECU Dateien für diese Anwendung.</string>
