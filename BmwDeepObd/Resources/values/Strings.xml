@@ -91,6 +91,7 @@
   <string name="select_media">Select storage media</string>
   <string name="default_media">Default</string>
   <string name="custom_media">Custom</string>
+  <string name="free_space">free</string>
 
   <!-- Interface selection -->
   <string name="select_interface">Select interface</string>

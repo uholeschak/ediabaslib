@@ -413,10 +413,26 @@ namespace BmwDeepObd
                     index++;
                 }
             }
-            mediaNames.Insert(0, _activity.GetString(Resource.String.default_media));
+            List<string> displayNames = new List<string>();
+            foreach (string name in mediaNames)
+            {
+                string displayName = name;
+                try
+                {
+                    FileSystemBlockInfo blockInfo = GetFileSystemBlockInfo(name);
+                    displayName = String.Format(new FileSizeFormatProvider(), "{0} ({1:fs}/{2:fs} {3})",
+                        name, blockInfo.AvailableSizeBytes, blockInfo.TotalSizeBytes, _activity.GetString(Resource.String.free_space));
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                displayNames.Add(displayName);
+            }
+            displayNames.Insert(0, _activity.GetString(Resource.String.default_media));
 
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity,
-                Android.Resource.Layout.SimpleListItemSingleChoice, mediaNames);
+                Android.Resource.Layout.SimpleListItemSingleChoice, displayNames);
             listView.Adapter = adapter;
             listView.ChoiceMode = ChoiceMode.Single;
             listView.SetItemChecked(mediaIndex, true);
@@ -431,7 +447,7 @@ namespace BmwDeepObd
                         break;
 
                     default:
-                        _customStorageMedia = mediaNames[listView.CheckedItemPosition];
+                        _customStorageMedia = mediaNames[listView.CheckedItemPosition - 1];
                         handler(sender, args);
                         break;
                 }
@@ -1010,8 +1026,8 @@ namespace BmwDeepObd
 #pragma warning disable 618
                 fsbi.BlockSizeBytes = statFs.BlockSize;
                 fsbi.TotalSizeBytes = statFs.BlockCount * (long)statFs.BlockSize;
-                fsbi.FreeSizeBytes = statFs.FreeBlocks * (long)statFs.BlockSize;
                 fsbi.AvailableSizeBytes = statFs.AvailableBlocks * (long)statFs.BlockSize;
+                fsbi.FreeSizeBytes = statFs.FreeBlocks * (long)statFs.BlockSize;
 #pragma warning restore 618
             }
             return fsbi;
