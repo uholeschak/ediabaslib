@@ -982,6 +982,14 @@ void main(void)
     TRISBbits.TRISB1 = 0;   // L line out
     TRISCbits.TRISC1 = 1;   // K line in
 
+    // J1850
+    LATAbits.LATA1 = 0;     // power control
+    TRISAbits.TRISA1 = 0;   // out
+    LATAbits.LATA2 = 0;
+    TRISAbits.TRISA2 = 0;   // J1850+ out
+    LATCbits.LATC3 = 0;
+    TRISCbits.TRISC3 = 0;   // J1850- out
+
     // LED off
     LED_RS_RX = 1;
     LED_RS_TX = 1;
