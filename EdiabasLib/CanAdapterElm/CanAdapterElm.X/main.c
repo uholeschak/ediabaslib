@@ -975,6 +975,13 @@ void main(void)
 
     RCONbits.IPEN = 1;      // interrupt priority enable
 
+    // port configuration
+    TRISAbits.TRISA0 = 1;   // AN0 input
+    ANCON0 = 0x01;          // AN0 analog
+    ANCON1 = 0x00;
+    WPUB = 0x10;            // LED_RS_RX pullup
+    INTCON2bits.RBPU = 0;   // port B pull up
+
     // K/L line
     KLINE_OUT = 0;  // idle
     LLINE_OUT = 0;  // idle
@@ -996,7 +1003,7 @@ void main(void)
     LED_OBD_RX = 1;
     LED_OBD_TX = 1;
     // LED as output
-    TRISBbits.TRISB4 = 0;
+    //TRISBbits.TRISB4 = 0; // used by bootloader
     TRISBbits.TRISB5 = 0;
     TRISBbits.TRISB6 = 0;
     TRISBbits.TRISB7 = 0;
@@ -1010,9 +1017,6 @@ void main(void)
     TRISCbits.TRISC4 = 1;   // ignition state (input)
 
     // analog input
-    TRISAbits.TRISA0 = 1;   // AN0 input
-    ANCON0 = 0x01;          // AN0 analog
-    ANCON1 = 0x00;
     ADCON0bits.CHS = 0;     // input AN0
     ADCON1bits.CHSN = 0;    // negative input is GND
     ADCON1bits.VNCFG = 0;   // VREF- is GND
@@ -1022,6 +1026,7 @@ void main(void)
     ADCON2bits.ADCS = 5;    // Fosc/16
     ADCON0bits.ADON = 1;    // enable ADC
 
+    // UART
     TRISCbits.TRISC6 = 0;   // TX output
     TRISCbits.TRISC7 = 1;   // RX input
     SPBRG = 103;            // 38400 @ 16MHz
