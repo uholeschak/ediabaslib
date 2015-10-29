@@ -1283,7 +1283,7 @@ namespace BmwDeepObd
                     for (; ; )
                     {
                         int activeThreads = threadList.Count(thread => thread.IsAlive);
-                        if (activeThreads < 4)
+                        if (activeThreads < 3)
                         {
                             break;
                         }
