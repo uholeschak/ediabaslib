@@ -211,7 +211,20 @@ LowPriorityInterruptVector:
 
 BootloaderBreakCheck:
     ; [UH] check for software reset
-    btfss   RCON, RI            ; software reset
+    ; set digital ports
+    banksel ANCON0
+    movlw   b'00000001'
+    movwf   ANCON0, BANKED
+    banksel ANCON1
+    clrf    ANCON1, BANKED
+    ; enable port B pull up
+    banksel WPUB
+    movlw   b'00010000'
+    movwf   WPUB, BANKED
+    movlb   0x0F
+    bcf     INTCON2, RBPU
+    ; check for software reset
+    btfss   RCON, RI
     bra     BootloadMode
     ; wait for stable input signal
     movlw   b'00000100'         ; 1:16 prescaler (0.52s)
@@ -230,6 +243,9 @@ StableWait:
     movlw   b'00000011'         ; 1:16 prescaler - thus we only have to divide by 2 later on.
 #endif
     movwf   T0CON
+    ; test LED RS RX
+    btfss   PORTB, 4
+    bra     BootloadMode
 
 #ifdef INVERT_UART
     btfsc   RXPORT, RXPIN
