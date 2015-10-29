@@ -998,8 +998,8 @@ void main(void)
     TRISCbits.TRISC3 = 0;   // J1850- out
 
     // LED off
-    LED_RS_RX = 1;
-    LED_RS_TX = 1;
+    LED_RS_RX = 0;          // not present
+    LED_RS_TX = 0;          // not present
     LED_OBD_RX = 1;
     LED_OBD_TX = 1;
     // LED as output
