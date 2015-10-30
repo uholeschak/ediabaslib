@@ -94,8 +94,6 @@
 // PR2 = fclk / (4 * prescaler * fout * postscaler)
 // PR2 = 16000000 / (4 * 1 * 115200 * 1) = 34
 #define TIMER2_RELOAD       34              // 115200
-// half bit, includes detection delay
-#define TIMER2_HALF         ((TIMER2_RELOAD >> 1) - 9)
 
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
@@ -176,7 +174,7 @@ void do_idle()
         INTCONbits.TMR0IF = 0;
         idle_counter++;
     }
-    if (idle_counter > 1)
+    if (idle_counter > 2)
     {   // idle
         PIR5 = 0x00;            // clear CAN interrupts
         if (!COMSTATbits.FIFOEMPTY)
@@ -250,7 +248,7 @@ void kline_receive()
 
     di();
     T2CONbits.TMR2ON = 0;
-    TMR2 = TIMER2_HALF;     // half start bit
+    TMR2 = 0;               // reset timer
     PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
     INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
     idle_counter = 0;
@@ -259,12 +257,12 @@ void kline_receive()
         // wait for start bit
         for (;;)
         {
-            if (!KLINE_IN)
+            CLRWDT();
+            if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+            if (T2CONbits.TMR2ON)
             {
-                T2CONbits.TMR2ON = 1;   // enable timer 2
                 break;
             }
-            CLRWDT();
             if (PIR1bits.RCIF)
             {   // start of new UART telegram
                 ei();
@@ -274,7 +272,7 @@ void kline_receive()
             {
                 INTCONbits.TMR0IF = 0;
                 idle_counter++;
-                if (idle_counter > 1)
+                if (idle_counter > 2)
                 {   // idle -> leave loop
                     ei();
                     return;
@@ -302,47 +300,41 @@ void kline_receive()
                 }
             }
         }
-        while (!PIR1bits.TMR2IF) {}
-        PIR1bits.TMR2IF = 0;
         LED_OBD_RX = 0; // on
         uint8_t data = 0x00;
         for (uint8_t i = 0; i < 8 ; i++)
         {
             while (!PIR1bits.TMR2IF) {}
             PIR1bits.TMR2IF = 0;
+            LED_RS_TX = 1;
             if (KLINE_IN)
             {
                 data <<= 1;
-                data |= 0x01;
             }
             else
             {
                 data <<= 1;
+                data |= 0x01;
             }
+            LED_RS_TX = 0;
         }
+        LED_RS_TX = 1;
         if (buffer_len < sizeof(temp_buffer))
         {
-            *write_ptr++ = data;
-            if (*(((uint8_t *) &write_ptr) + 1) - *(((uint8_t *) &temp_buffer) + 1) == (sizeof(temp_buffer) >> 8))
+            *write_ptr = data;
+            write_ptr++;
+            buffer_len++;
+            uint8_t diff = *(((uint8_t *) &write_ptr) + 1) - *(((uint8_t *) &temp_buffer) + 1);
+            if (diff == (sizeof(temp_buffer) >> 8))
             {
                 write_ptr = temp_buffer;
             }
-            buffer_len++;
         }
         T2CONbits.TMR2ON = 0;
-        TMR2 = TIMER2_HALF;     // half start bit
+        TMR2 = 0;               // reset timer
         PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
         LED_OBD_RX = 1; // off
-        // wait for stop bit
-        while (!KLINE_IN)
-        {
-            CLRWDT();
-            if (PIR1bits.RCIF)
-            {   // start of new UART telegram
-                ei();
-                return;
-            }
-        }
+        LED_RS_TX = 0;
     }
 }
 
