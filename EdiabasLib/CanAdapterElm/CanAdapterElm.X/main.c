@@ -104,7 +104,7 @@
 #define EEP_ADDR_BLOCKSIZE  0x02    // eeprom address for FC block size (2 bytes)
 #define EEP_ADDR_SEP_TIME   0x04    // eeprom address for FC separation time (2 bytes)
 
-#define TEMP_BUF_SIZE       0x0600   // temp buffer size
+#define TEMP_BUF_SIZE       0x0600  // temp buffer size
 
 #if (TEMP_BUF_SIZE & 0xFF) != 0
 #error TEMP_BUF_SIZE must be divisible by 256
