@@ -126,7 +126,7 @@ static uint16_t send_get_idx;
 static volatile uint16_t send_len;
 static volatile uint8_t send_buffer[280];   // larger send buffer for multi responses
 
-static uint8_t temp_buffer[0x200];
+static uint8_t temp_buffer[0x400];
 static uint8_t temp_buffer_short[10];
 
 static bool can_enabled;
