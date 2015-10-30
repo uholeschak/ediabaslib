@@ -176,11 +176,22 @@ void do_idle()
     }
     if (idle_counter > 2)
     {   // idle
-        PIR5 = 0x00;            // clear CAN interrupts
-        if (!COMSTATbits.FIFOEMPTY)
-        {   // no CAN message present
+        bool enter_idle = true;
+        if (can_mode)
+        {
+            PIR5 = 0x00;            // clear CAN interrupts
+            if (COMSTATbits.FIFOEMPTY)
+            {   // CAN message present
+                enter_idle = false;
+            }
+            else
+            {
+                PIE5bits.RXBnIE = 1;    // enable CAN interrupt for wakeup
+            }
+        }
+        if (enter_idle)
+        {
             idle_counter = 0;
-            PIE5bits.RXBnIE = 1;    // enable CAN interrupt for wakeup
             WDTCONbits.SWDTEN = 0;  // disable watchdog
             //LED_OBD_RX = 0;
             SLEEP();
@@ -242,6 +253,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
 
 void kline_receive()
 {
+    uint8_t const temp_bufferh = (uint16_t) temp_buffer >> 8;
     uint16_t buffer_len = 0;
     uint8_t *write_ptr = temp_buffer;
     uint8_t *read_ptr = temp_buffer;
@@ -288,7 +300,7 @@ void kline_receive()
                     if (!KLINE_IN) T2CONbits.TMR2ON = 1;
                     read_ptr++;
                     if (!KLINE_IN) T2CONbits.TMR2ON = 1;
-                    uint8_t diff = *(((uint8_t *) &read_ptr) + 1) - *(((uint8_t *) &temp_buffer) + 1);
+                    uint8_t diff = *(((uint8_t *) &read_ptr) + 1) - temp_bufferh;
                     if (!KLINE_IN) T2CONbits.TMR2ON = 1;
                     if (diff == (sizeof(temp_buffer) >> 8))
                     {
@@ -300,6 +312,7 @@ void kline_receive()
                 }
             }
         }
+        idle_counter = 0;
         LED_OBD_RX = 0; // on
         uint8_t data = 0x00;
         for (uint8_t i = 0; i < 8 ; i++)
@@ -324,7 +337,7 @@ void kline_receive()
             *write_ptr = data;
             write_ptr++;
             buffer_len++;
-            uint8_t diff = *(((uint8_t *) &write_ptr) + 1) - *(((uint8_t *) &temp_buffer) + 1);
+            uint8_t diff = *(((uint8_t *) &write_ptr) + 1) - temp_bufferh;
             if (diff == (sizeof(temp_buffer) >> 8))
             {
                 write_ptr = temp_buffer;
