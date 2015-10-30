@@ -420,7 +420,7 @@ namespace CarSimulator
                     }
                 }
 
-                _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, responseType, _configData);
+                _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, checkBoxKLineResponder.Checked, responseType, _configData);
             }
 
             UpdateDisplay();

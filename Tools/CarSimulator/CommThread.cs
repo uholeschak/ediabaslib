@@ -120,6 +120,7 @@ namespace CarSimulator
         private string _comPort;
         private ConceptType _conceptType;
         private bool _adsAdapter;
+        private bool _klineResponder;
         private ResponseType _responseType;
         private ConfigData _configData;
         private byte _pcanHandle;
@@ -508,7 +509,7 @@ namespace CarSimulator
             IgnitionOk = false;
         }
 
-        public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, ResponseType responseType, ConfigData configData)
+        public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, bool klineResponder, ResponseType responseType, ConfigData configData)
         {
             try
             {
@@ -517,6 +518,7 @@ namespace CarSimulator
                 _comPort = comPort;
                 _conceptType = conceptType;
                 _adsAdapter = adsAdapter;
+                _klineResponder = klineResponder;
                 _responseType = responseType;
                 _configData = configData;
                 foreach (ResponseEntry responseEntry in _configData.ResponseList)
@@ -2126,6 +2128,11 @@ namespace CarSimulator
             {
                 return false;
             }
+            if (_klineResponder)
+            {   // remove echo
+                byte[] tempBuffer = new byte[sendLength];
+                ReceiveData(tempBuffer, 0, sendLength);
+            }
             return true;
         }
 
@@ -2428,7 +2435,7 @@ namespace CarSimulator
             {
                 return;
             }
-            if (!_adsAdapter && (_tcpServerDiag == null) && (_pcanHandle == PCANBasic.PCAN_NONEBUS))
+            if (!_adsAdapter && !_klineResponder && (_tcpServerDiag == null) && (_pcanHandle == PCANBasic.PCAN_NONEBUS))
             {
                 // send echo
                 ObdSend(_receiveData);
