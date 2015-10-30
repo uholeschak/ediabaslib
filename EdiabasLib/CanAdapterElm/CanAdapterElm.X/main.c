@@ -77,6 +77,9 @@
 // CONFIG7H
 #pragma config EBTRB = OFF      // Table Read Protect Boot (Disabled)
 
+#define ADAPTER_TYPE        0x02
+#define ADAPTER_VERSION     0x0001
+
 #define IGNITION_STATE()    IGNITION
 
 #define KLINE_OUT LATBbits.LATB0
@@ -618,8 +621,11 @@ bool internal_telegram(uint16_t len)
             return true;
         }
         if ((temp_buffer[3] == 0xFD) && (temp_buffer[4] == 0xFD))
-        {      // read adapter type
-            temp_buffer[4] = 0x02;
+        {      // read adapter type and version
+            temp_buffer[4] = ADAPTER_TYPE;
+            temp_buffer[5] = ADAPTER_VERSION >> 8;
+            temp_buffer[6] = ADAPTER_VERSION;
+            len = 8;
             temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
