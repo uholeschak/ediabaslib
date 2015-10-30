@@ -322,12 +322,12 @@ void kline_receive()
             LED_RS_TX = 1;
             if (KLINE_IN)
             {
-                data <<= 1;
+                data >>= 1;
+                data |= 0x80;
             }
             else
             {
-                data <<= 1;
-                data |= 0x01;
+                data >>= 1;
             }
             LED_RS_TX = 0;
         }
