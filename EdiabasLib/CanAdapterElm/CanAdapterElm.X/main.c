@@ -104,6 +104,12 @@
 #define EEP_ADDR_BLOCKSIZE  0x02    // eeprom address for FC block size (2 bytes)
 #define EEP_ADDR_SEP_TIME   0x04    // eeprom address for FC separation time (2 bytes)
 
+#define TEMP_BUF_SIZE       0x0600   // temp buffer size
+
+#if (TEMP_BUF_SIZE & 0xFF) != 0
+#error TEMP_BUF_SIZE must be divisible by 256
+#endif
+
 // receiver state machine
 typedef enum
 {
@@ -126,7 +132,7 @@ static uint16_t send_get_idx;
 static volatile uint16_t send_len;
 static volatile uint8_t send_buffer[280];   // larger send buffer for multi responses
 
-static uint8_t temp_buffer[0x400];
+static uint8_t temp_buffer[TEMP_BUF_SIZE];
 static uint8_t temp_buffer_short[10];
 
 static bool can_enabled;
