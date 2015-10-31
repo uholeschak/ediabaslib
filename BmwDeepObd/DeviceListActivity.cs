@@ -318,7 +318,8 @@ namespace BmwDeepObd
         /// <returns>Adapter type</returns>
         private AdapterType AdapterTypeDetection(BluetoothSocket bluetoothSocket)
         {
-            byte[] customData = {0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E};
+            const int versionRespLen = 8;
+            byte[] customData = { 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E };
             AdapterType adapterType = AdapterType.Unknown;
 
             try
@@ -348,7 +349,7 @@ namespace BmwDeepObd
                                 startTime = Stopwatch.GetTimestamp();
                             }
                         }
-                        if (responseList.Count >= customData.Length*2)
+                        if (responseList.Count >= customData.Length + versionRespLen)
                         {
                             bool validEcho = !customData.Where((t, i) => responseList[i] != t).Any();
                             if (!validEcho)
@@ -356,11 +357,11 @@ namespace BmwDeepObd
                                 break;
                             }
                             byte checkSum = 0x00;
-                            for (int i = 0; i < customData.Length - 1; i++)
+                            for (int i = 0; i < versionRespLen - 1; i++)
                             {
                                 checkSum += responseList[i + customData.Length];
                             }
-                            if (checkSum != responseList[(customData.Length * 2) -1])
+                            if (checkSum != responseList[customData.Length + versionRespLen - 1])
                             {
                                 break;
                             }
