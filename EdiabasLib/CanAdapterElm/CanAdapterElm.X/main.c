@@ -77,6 +77,11 @@
 // CONFIG7H
 #pragma config EBTRB = OFF      // Table Read Protect Boot (Disabled)
 
+#define DEBUG_PIN           0   // enable debug pin
+
+#define ADAPTER_TYPE        0x02
+#define ADAPTER_VERSION     0x0001
+
 #define IGNITION_STATE()    IGNITION
 
 #define KLINE_OUT LATBbits.LATB0
@@ -259,7 +264,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
 
 void kline_receive()
 {
-    uint8_t const temp_bufferh = (uint16_t) temp_buffer >> 8;
+    uint8_t const temp_bufferh = HIGH_BYTE((uint16_t) temp_buffer);
     uint16_t buffer_len = 0;
     uint8_t *write_ptr = temp_buffer;
     uint8_t *read_ptr = temp_buffer;
@@ -325,7 +330,9 @@ void kline_receive()
         {
             while (!PIR1bits.TMR2IF) {}
             PIR1bits.TMR2IF = 0;
+#if DEBUG_PIN
             LED_RS_TX = 1;
+#endif
             if (KLINE_IN)
             {
                 data >>= 1;
@@ -335,9 +342,13 @@ void kline_receive()
             {
                 data >>= 1;
             }
+#if DEBUG_PIN
             LED_RS_TX = 0;
+#endif
         }
+#if DEBUG_PIN
         LED_RS_TX = 1;
+#endif
         if (buffer_len < sizeof(temp_buffer))
         {
             *write_ptr = data;
@@ -353,7 +364,9 @@ void kline_receive()
         TMR2 = 0;               // reset timer
         PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
         LED_OBD_RX = 1; // off
+#if DEBUG_PIN
         LED_RS_TX = 0;
+#endif
     }
 }
 
@@ -618,8 +631,11 @@ bool internal_telegram(uint16_t len)
             return true;
         }
         if ((temp_buffer[3] == 0xFD) && (temp_buffer[4] == 0xFD))
-        {      // read adapter type
-            temp_buffer[4] = 0x02;
+        {      // read adapter type and version
+            temp_buffer[4] = ADAPTER_TYPE;
+            temp_buffer[5] = ADAPTER_VERSION >> 8;
+            temp_buffer[6] = ADAPTER_VERSION;
+            len = 8;
             temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
