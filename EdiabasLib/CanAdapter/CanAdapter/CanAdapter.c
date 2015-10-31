@@ -42,6 +42,9 @@
 #define USART_RXC_vect  USART0_RXC_vect
 #define USART_TXC_vect  USART0_TXC_vect
 
+#define ADAPTER_TYPE        0x01
+#define ADAPTER_VERSION     0x0001
+
 #define BAUDRATEFACTOR      3            // Calculated baud rate factor: 115200bps @ 7.38 MHz
 #define TIMER0_PRESCALE     ((1<<CS01) | (1<<CS00))     // prescaler 64
 #define TIMER0_RELOAD       (115-1)      // 1ms: ((7380000/64)/1000) = 115
@@ -513,8 +516,11 @@ bool internal_telegram(uint16_t len)
             return true;
         }
         if ((temp_buffer[3] == 0xFD) && (temp_buffer[4] == 0xFD))
-        {      // read adapter type
-            temp_buffer[4] = 0x01;
+        {      // read adapter type and version
+            temp_buffer[4] = ADAPTER_TYPE;
+            temp_buffer[5] = ADAPTER_VERSION >> 8;
+            temp_buffer[6] = ADAPTER_VERSION;
+            len = 8;
             temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
