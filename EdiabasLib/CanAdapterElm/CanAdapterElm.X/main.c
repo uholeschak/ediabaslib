@@ -1125,8 +1125,14 @@ void main(void)
         if (can_enabled)
         {
             bool new_can_msg = readCAN();
+#if DEBUG_PIN
+            if (new_can_msg) LED_RS_TX = 1;
+#endif
             can_receiver(new_can_msg);
             can_sender(new_can_msg);
+#if DEBUG_PIN
+            LED_RS_TX = 0;
+#endif
         }
         else
         {
