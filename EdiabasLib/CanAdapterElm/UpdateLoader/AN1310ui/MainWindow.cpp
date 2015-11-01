@@ -1918,6 +1918,7 @@ void MainWindow::on_action_Bootloader_Mode_triggered()
     device->endBootloader = bootInfo.endBootloader;
     device->commandMask = bootInfo.commandMask;
 
+#if 0
     int maxRead = (int)bootloadBaud;
     maxRead /= 8;
     maxRead -= maxRead % 0x100;
@@ -1925,6 +1926,9 @@ void MainWindow::on_action_Bootloader_Mode_triggered()
     {
         maxRead = 0x100;
     }
+#else
+    int maxRead = 0x100;
+#endif
     deviceReader->setMaxRequest(maxRead);
 
     if(deviceId.revision >= 0)
