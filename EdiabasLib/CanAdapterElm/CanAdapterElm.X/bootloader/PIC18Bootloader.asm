@@ -210,8 +210,7 @@ LowPriorityInterruptVector:
 	goto    AppLowIntVector     ; Re-map Interrupt vector
 
 BootloaderBreakCheck:
-    ; [UH] check for software reset
-    ; set digital ports
+    ; [UH] set digital ports
     banksel ANCON0
     movlw   b'00000001'
     movwf   ANCON0, BANKED
@@ -226,6 +225,8 @@ BootloaderBreakCheck:
     ; check for software reset
     btfss   RCON, RI
     bra     BootloadMode
+
+#if 0
     ; wait for stable input signal
     movlw   b'00000100'         ; 1:16 prescaler (0.52s)
     movwf   T0CON
@@ -243,9 +244,6 @@ StableWait:
     movlw   b'00000011'         ; 1:16 prescaler - thus we only have to divide by 2 later on.
 #endif
     movwf   T0CON
-    ; test LED RS RX
-    btfss   PORTB, 4
-    bra     BootloadMode
 
 #ifdef INVERT_UART
     btfsc   RXPORT, RXPIN
@@ -254,6 +252,51 @@ StableWait:
     btfss   RXPORT, RXPIN
     bra     BootloadMode
 #endif
+#endif
+    ; [UH] test if checkum is correct
+    movlw   low(AppVector)
+    movwf   TBLPTRL
+    movlw   high(AppVector)
+    movwf   TBLPTRH
+    movlw   upper(AppVector)
+    movwf   TBLPTRU
+
+    movlw   low(END_FLASH - AppVector - 2)
+    movwf   DATA_COUNTL
+    movlw   high(END_FLASH - AppVector - 2)
+    movwf   DATA_COUNTH
+
+    clrf    CRCL
+    clrf    CRCH
+CalcCheckum:
+    clrwdt
+    tblrd   *+                  ; read from FLASH memory into TABLAT
+    movf    TABLAT, w
+    addwf   CRCL, f
+    movlw   0
+    addwfc  CRCH, f
+
+    decf    DATA_COUNTL, f      ; decrement counter
+    movlw   0
+    subwfb  DATA_COUNTH, f
+
+    movf    DATA_COUNTL, w      ; DATA_COUNTH:DATA_COUNTH == 0?
+    iorwf   DATA_COUNTH, w
+    bnz     CalcCheckum         ; no, loop
+    ; compare checksum
+    tblrd   *+
+    movf    TABLAT, w
+    xorwf   CRCL, w
+    bnz    BootloadMode
+    tblrd   *+
+    movf    TABLAT, w
+    xorwf   CRCH, w
+    bnz    BootloadMode
+
+    ; test if LED RS RX is low
+    btfss   PORTB, 4
+    bra     BootloadMode
+
 CheckAppVector:
     ; Read instruction at the application reset vector location. 
     ; If we read 0xFFFF, assume that the application firmware has
