@@ -85,7 +85,7 @@ public:
     void assertBreak(void);
     void releaseBreak(void);
     void releaseIntoBootloader(void);
-    void ActivateBootlader(); // [UH]
+    void ActivateBootloader(); // [UH]
 
     ErrorCode GetPacket(QByteArray& packetData, int timeout = 1000);
     ErrorCode GetCrcData(QByteArray& packetData);

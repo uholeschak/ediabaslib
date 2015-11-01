@@ -206,7 +206,7 @@ void Comm::releaseIntoBootloader(void)
 }
 
 // [UH] enable bootloader mode
-void Comm::ActivateBootlader()
+void Comm::ActivateBootloader()
 {
     QByteArray resetCmd;
 
