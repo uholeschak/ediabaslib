@@ -1,10 +1,12 @@
 using System;
 using System.Threading;
+using Android.Bluetooth;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using EdiabasLib;
+using Java.Util;
 
 namespace BmwDeepObd
 {
@@ -17,6 +19,7 @@ namespace BmwDeepObd
         // Intent extra
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraInterfaceType = "interface_type";
+        private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
 
         private View _barView;
         private Button _buttonRead;
@@ -32,6 +35,7 @@ namespace BmwDeepObd
         private TextView _textViewCanAdapterIgnitionStateTitle;
         private TextView _textViewIgnitionState;
         private TextView _textViewBatteryVoltage;
+        private Button _buttonFwUpdate;
         private string _deviceAddress = string.Empty;
         private int _blockSize = -1;
         private int _separationTime = -1;
@@ -125,6 +129,12 @@ namespace BmwDeepObd
 
             _textViewBatteryVoltage = FindViewById<TextView>(Resource.Id.textViewCanAdapterBatVoltage);
             _textViewBatteryVoltage.Visibility = visibility;
+
+            _buttonFwUpdate = FindViewById<Button>(Resource.Id.buttonCanAdapterFwUpdate);
+            _buttonFwUpdate.Click += (sender, args) =>
+            {
+                PerformUpdate();
+            };
 
             _activityCommon = new ActivityCommon(this)
             {
@@ -236,6 +246,7 @@ namespace BmwDeepObd
             _spinnerCanAdapterMode.Enabled = bEnabled;
             _spinnerCanAdapterSepTime.Enabled = bEnabled;
             _spinnerCanAdapterBlockSize.Enabled = bEnabled;
+            _buttonFwUpdate.Enabled = bEnabled;
             if (bEnabled)
             {
                 if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
@@ -495,6 +506,50 @@ namespace BmwDeepObd
                     {
                         PerformRead();
                     }
+                });
+            });
+            _adapterThread.Start();
+            UpdateDisplay();
+        }
+
+        private void PerformUpdate()
+        {
+            EdiabasClose();
+            _adapterThread = new Thread(() =>
+            {
+                bool updateOk = false;
+                try
+                {
+                    string[] stringList = _deviceAddress.Split(';');
+                    if (stringList.Length > 0)
+                    {
+                        BluetoothDevice device = _activityCommon.BtAdapter.GetRemoteDevice(stringList[0]);
+                        if (device != null)
+                        {
+                            using (BluetoothSocket bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid))
+                            {
+                                bluetoothSocket.Connect();
+                                updateOk = PicBootloader.FwUpdate(bluetoothSocket);
+                                bluetoothSocket.Close();
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                RunOnUiThread(() =>
+                {
+                    if (IsJobRunning())
+                    {
+                        _adapterThread.Join();
+                    }
+                    string message = updateOk
+                        ? GetString(Resource.String.can_adapter_fw_update_ok)
+                        : GetString(Resource.String.can_adapter_fw_update_failed);
+                    _activityCommon.ShowAlert(message);
+                    UpdateDisplay();
                 });
             });
             _adapterThread.Start();
