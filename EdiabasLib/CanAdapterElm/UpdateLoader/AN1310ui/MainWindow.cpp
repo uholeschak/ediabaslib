@@ -1855,7 +1855,7 @@ void MainWindow::on_action_Bootloader_Mode_triggered()
         // try to force the device into Bootloader mode.
         //comm->assertBreak();          // [UH]
         //comm->assertReset();          // [UH]
-        comm->ActivateBootlader();      // [UH]
+        comm->ActivateBootloader();     // [UH]
         qDebug("time(assert reset): %fs", (double)totalTime.elapsed() / 1000);
 
         statusBar()->showMessage("Resetting device...");

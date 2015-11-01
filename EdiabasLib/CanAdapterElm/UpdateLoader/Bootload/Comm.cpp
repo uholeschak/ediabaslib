@@ -40,7 +40,7 @@
 #include <QTime>
 #include <QThread>
 
-const int Comm::SyncWaitTime = 50;
+const int Comm::SyncWaitTime = 100;  // [UH] 50 -> 100
 
 
 Comm::Comm()
@@ -206,7 +206,7 @@ void Comm::releaseIntoBootloader(void)
 }
 
 // [UH] enable bootloader mode
-void Comm::ActivateBootlader()
+void Comm::ActivateBootloader()
 {
     QByteArray resetCmd;
 

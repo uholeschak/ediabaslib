@@ -126,7 +126,7 @@ int Bootload::Connect(void)
         // try to force the device into Bootloader mode.
         //comm->assertBreak();          // [UH]
         //comm->assertReset();          // [UH]
-        comm->ActivateBootlader();      // [UH]
+        comm->ActivateBootloader();     // [UH]
         qDebug("time(assert reset): %fs", (double)totalTime.elapsed() / 1000);
 
         PrintMessage("Resetting device...");
