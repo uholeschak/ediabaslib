@@ -367,7 +367,7 @@ namespace BmwDeepObd
                             }
                             return AdapterType.Custom;
                         }
-                        if ((Stopwatch.GetTimestamp() - startTime) > ResponseTimeout * TickResolMs)
+                        if ((ulong)(Stopwatch.GetTimestamp() - startTime) > (ulong) (ResponseTimeout * TickResolMs))
                         {
                             if (responseList.Count >= customData.Length)
                             {
@@ -481,7 +481,7 @@ namespace BmwDeepObd
                 {
                     break;
                 }
-                if ((Stopwatch.GetTimestamp() - startTime) > ResponseTimeout * TickResolMs)
+                if ((ulong)(Stopwatch.GetTimestamp() - startTime) > (ulong)(ResponseTimeout * TickResolMs))
                 {
                     break;
                 }
