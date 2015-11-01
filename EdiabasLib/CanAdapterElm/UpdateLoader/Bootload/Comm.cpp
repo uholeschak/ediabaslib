@@ -40,7 +40,7 @@
 #include <QTime>
 #include <QThread>
 
-const int Comm::SyncWaitTime = 50;
+const int Comm::SyncWaitTime = 100;  // [UH] 50 -> 100
 
 
 Comm::Comm()
