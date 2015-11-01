@@ -94,6 +94,7 @@
     <Compile Include="FilePicker\Helpers.cs" />
     <Compile Include="FileSizeFormatProvider.cs" />
     <Compile Include="JobReader.cs" />
+    <Compile Include="PicBootloader.cs" />
     <Compile Include="StringAdapter.cs" />
     <Compile Include="StringObjAdapter.cs" />
     <Compile Include="XmlToolActivity.cs" />
