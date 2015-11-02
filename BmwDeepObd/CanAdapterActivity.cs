@@ -520,6 +520,7 @@ namespace BmwDeepObd
                 bool updateOk = false;
                 try
                 {
+                    Thread.Sleep(1000); // wait for interface to close
                     string[] stringList = _deviceAddress.Split(';');
                     if (stringList.Length > 0)
                     {
