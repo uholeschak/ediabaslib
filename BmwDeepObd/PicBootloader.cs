@@ -87,6 +87,7 @@ namespace BmwDeepObd
 
         public class DeviceData
         {
+            // ReSharper disable once NotAccessedField.Local
             private readonly Device _device;
 
             // ReSharper disable InconsistentNaming
@@ -1328,8 +1329,7 @@ namespace BmwDeepObd
                     // erase prior to writing FLASH memory
                     foreach (Device.MemoryRange range in eraseList)
                     {
-                        //result = EraseFlash((int)range.Start, (int)range.End);
-                        result = Comm.ErrorCode.Success;
+                        result = EraseFlash((int)range.Start, (int)range.End);
                         if (result != Comm.ErrorCode.Success)
                         {
                             return result;
@@ -1339,15 +1339,14 @@ namespace BmwDeepObd
 
                 foreach (Device.MemoryRange range in writeList)
                 {
-                    uint flashMemory = _device.FlashPointer(range.Start);
+                    uint flashOffset = _device.FlashPointer(range.Start);
 
                     if (_abortOperation)
                     {
                         return Comm.ErrorCode.Aborted;
                     }
 
-                    //result = WriteFlashMemory(flashMemory, range.Start, range.End, deviceData.Mac);
-                    result = Comm.ErrorCode.Success;
+                    result = WriteFlashMemory(deviceData.ProgramMemory, flashOffset, range.Start, range.End, deviceData.Mac);
                     switch (result)
                     {
                         case Comm.ErrorCode.Success:
@@ -1362,6 +1361,78 @@ namespace BmwDeepObd
                 }
 
                 return Comm.ErrorCode.Success;
+            }
+
+            public Comm.ErrorCode WriteFlashMemory(uint[] memory, uint memoryOffset, uint startAddress, uint endAddress, List<byte> macData)
+            {
+                int bytesPerWriteBlock = _device.WriteBlockSizeFlash;
+
+                WriteFlashPacket cmd = new WriteFlashPacket();
+                cmd.SetAddress(startAddress);
+                if (_device.Family == Device.Families.PIC32)
+                {
+                    // need to word align the data payload for PIC32 by stuffing two dummy bytes
+                    // at the beginning of each Write Flash packet.
+                    cmd.PacketData.Add(0x00);
+                    cmd.PacketData.Add(0x00);
+                }
+
+                for (uint j = startAddress; j < endAddress;)
+                {
+                    uint word = memory[memoryOffset++];
+                    cmd.PacketData.Add((byte)word);
+                    cmd.PacketData.Add((byte)(word >> 8));
+                    switch (_device.Family)
+                    {
+                        case Device.Families.PIC32:
+                            cmd.PacketData.Add((byte)(word >> 16));
+                            cmd.PacketData.Add((byte)(word >> 24));
+                            break;
+
+                        case Device.Families.PIC24:
+                            cmd.PacketData.Add((byte)(word >> 16));
+                            break;
+                    }
+                    _device.IncrementFlashAddressByInstructionWord(ref j);
+                    if (_device.HasEncryption())
+                    {
+                        if ((j%_device.WriteBlockSizeFlash) == 0)
+                        {
+                            // end of write block -- append message authentication code (MAC) data
+                            cmd.PacketData.Add(macData[(int)((j/_device.WriteBlockSizeFlash) - 1)]);
+                        }
+                    }
+                }
+
+                if (_device.Family == Device.Families.PIC24)
+                {
+                    cmd.SetBlocks((byte)((cmd.PayloadSize()/_device.BytesPerWordFlash*_device.BytesPerWordFlash)/
+                                  bytesPerWriteBlock));
+                }
+                else
+                {
+                    cmd.SetBlocks((byte)(cmd.PayloadSize()/(bytesPerWriteBlock*_device.BytesPerAddressFlash)));
+                }
+                List<byte> sendPacket = cmd.FramePacket();
+
+                if (_abortOperation)
+                {
+                    return Comm.ErrorCode.Aborted;
+                }
+
+                Comm.ErrorCode result = _comm.SendPacket(sendPacket);
+                if (result == Comm.ErrorCode.Success)
+                {
+                    List<byte> receivePacket = new List<byte>();
+
+                    // At really slow baud rates (19.2Kbps and below), writing an entire
+                    // write packet to the device might take a really long time, so we
+                    // don't want to timeout immediately when we don't get an immediate
+                    // response from the device.
+                    result = _comm.GetPacket(ref receivePacket, 2500);
+                }
+
+                return result;
             }
         }
 
@@ -1399,6 +1470,16 @@ namespace BmwDeepObd
 
             private readonly Stream _bluetoothInStream;
             private readonly Stream _bluetoothOutStream;
+
+            public Stream BluetoothInStream
+            {
+                get { return _bluetoothInStream; }
+            }
+
+            public Stream BluetoothOutStream
+            {
+                get { return _bluetoothOutStream; }
+            }
 
             public Comm(Stream bluetoothInStream, Stream bluetoothOutStream)
             {
@@ -1472,14 +1553,13 @@ namespace BmwDeepObd
                         int value = _bluetoothInStream.ReadByte();
                         if (value == DLE)
                         {
-                            if (!_bluetoothInStream.IsDataAvailable())
+                            while (!_bluetoothInStream.IsDataAvailable())
                             {
                                 if (Stopwatch.GetTimestamp() - startTime > timeout * TickResolMs)
                                 {
                                     return ErrorCode.ERROR_READ_TIMEOUT;
                                 }
                                 Thread.Sleep(10);
-                                continue;
                             }
                             value = _bluetoothInStream.ReadByte();
                         }
@@ -1533,7 +1613,7 @@ namespace BmwDeepObd
                 }
             }
 
-            ErrorCode SendPacket(List<byte> sendPacket)
+            public ErrorCode SendPacket(List<byte> sendPacket)
             {
                 try
                 {
@@ -1896,11 +1976,17 @@ namespace BmwDeepObd
                 return false;
             }
             DeviceWriter deviceWriter = new DeviceWriter(device, comm);
+#if false
             DeviceWritePlanner writePlan = new DeviceWritePlanner(device);
             List<Device.MemoryRange> eraseList = new List<Device.MemoryRange>();
             writePlan.PlanFlashErase(ref eraseList);
-            //deviceWriter.EraseFlash(eraseList);
+            deviceWriter.EraseFlash(eraseList);
+#endif
             DeviceData deviceData = new DeviceData(device);
+            for (int i = 0; i < 0x8000; i++)
+            {
+                deviceData.ProgramMemory[i] = (uint)(i * 2 + i);
+            }
             deviceWriter.WriteFlash(deviceData, 0x0000, 0x7FFF);
 
             Comm.ErrorCode errorCode = comm.RunApplication();
