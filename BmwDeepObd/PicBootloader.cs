@@ -85,6 +85,38 @@ namespace BmwDeepObd
             }
         }
 
+        public class DeviceData
+        {
+            private readonly Device _device;
+
+            // ReSharper disable InconsistentNaming
+            public const int MAX_MEM = 0x8000;
+            public const int MAX_EE = 0x400;
+            public const int MAX_CFG = 0x10;
+            public const int MAX_UID = 0x08;
+            // ReSharper restore InconsistentNaming
+
+            public DeviceData(Device newDevice)
+            {
+                _device = newDevice;
+            }
+
+            /*!
+            * FLASH program memory.
+            */
+            public uint[] ProgramMemory = new uint[MAX_MEM];
+            public uint[] EePromMemory = new uint[MAX_EE];
+            public uint[] ConfigWords = new uint[MAX_CFG];
+            public uint[] UserIDs = new uint[MAX_UID];
+            public uint Osccal;
+            public uint BandGap;
+
+            public List<byte> Mac = new List<byte>();
+
+            public bool Encrypted;
+            public uint Nonce;
+        }
+
         public class BootPacket
         {
             public enum Commands
@@ -468,7 +500,26 @@ namespace BmwDeepObd
                 }
             }
 
-            public void IncrementFlashAddressByInstructionWord(ref int address)
+            public uint FlashPointer(uint address)
+            {
+                switch(Family)
+                {
+                    case Families.PIC16:
+                        return address;
+
+                    case Families.PIC32:
+                        return address - StartFlash >> 2;
+
+                    default:
+                    case Families.PIC24:
+                    case Families.dsPIC30:
+                    case Families.dsPIC33:
+                    case Families.PIC18:
+                        return address >> 1;
+                }
+            }
+
+            public void IncrementFlashAddressByInstructionWord(ref uint address)
             {
                 switch (Family)
                 {
@@ -587,6 +638,91 @@ namespace BmwDeepObd
                 _device = newDevice;
             }
 
+            public void PlanFlashWrite(ref List<Device.MemoryRange> eraseList,
+                                        ref List<Device.MemoryRange> writeList,
+                                        uint start, uint end,
+                                        uint[] data)
+            {
+                uint address = start;
+                eraseList.Clear();
+                writeList.Clear();
+
+                while (address < end)
+                {
+                    Device.MemoryRange block = new Device.MemoryRange();
+                    address = SkipEmptyFlashPages(address, data);
+                    block.Start = address;
+                    if (address >= end)
+                    {
+                        break;
+                    }
+
+                    address = FindEndFlashWrite(address, data);
+                    if (address >= end)
+                    {
+                        address = end;
+                    }
+                    block.End = address;
+
+                    if (_device.Family == Device.Families.PIC16 && !_device.HasEraseFlashCommand())
+                    {
+                        // Certain PIC16 devices (such as PIC16F882) have a peculiar automatic erase
+                        // during write feature. To make that work, writes must be expanded to align
+                        // with Erase Block boundaries.
+                        block.Start -= (block.Start%_device.EraseBlockSizeFlash);
+                        if ((block.End%_device.EraseBlockSizeFlash) != 0)
+                        {
+                            block.End += _device.EraseBlockSizeFlash - (block.End%_device.EraseBlockSizeFlash);
+                            address = block.End;
+                        }
+                    }
+                    writeList.Add(block);
+
+                    address++;
+                }
+
+                if (_device.Family == Device.Families.PIC32)
+                {
+                    // Because PIC32 has Bulk Erase available for bootloader use,
+                    // it's faster to simply erase the entire FLASH memory space
+                    // than erasing specific erase blocks using an erase plan.
+                    Device.MemoryRange block = new Device.MemoryRange
+                    {
+                        Start = _device.StartFlash,
+                        End = _device.EndFlash
+                    };
+                    eraseList.Add(block);
+                }
+                else
+                {
+                    if (writeList.Count > 0)
+                    {
+                        if (_device.HasEraseFlashCommand())
+                        {
+                            FlashEraseList(ref eraseList, writeList, data);
+                        }
+
+                        EraseAppCheckFirst(ref eraseList);
+                        WriteAppCheckLast(ref writeList);
+
+                        if (WriteConfig)
+                        {
+                            EraseConfigPageLast(ref eraseList);
+                            WriteConfigPageFirst(ref writeList);
+                            DoNotEraseBootBlock(ref eraseList); // needed in case boot block resides on config page
+                        }
+                        else
+                        {
+                            DoNotEraseConfigPage(ref eraseList);
+                        }
+
+                        DoNotEraseInterruptVectorTable(ref eraseList);
+                    }
+                }
+
+                PacketSizeWriteList(ref writeList);
+            }
+
             public void PlanFlashErase(ref List<Device.MemoryRange> eraseList)
             {
                 Device.MemoryRange block = new Device.MemoryRange
@@ -614,6 +750,188 @@ namespace BmwDeepObd
                 DoNotEraseInterruptVectorTable(ref eraseList);
 
                 DoNotEraseBootBlock(ref eraseList);
+            }
+
+            public void FlashEraseList(ref List<Device.MemoryRange> eraseList, List<Device.MemoryRange> writeList, uint[] data)
+            {
+                int pages = (int)(_device.EndFlash/_device.EraseBlockSizeFlash);
+                bool[] flashPageErased = new bool[pages + 1];
+
+                for (int i = 0; i < flashPageErased.Length; i++)
+                {
+                    flashPageErased[i] = false;
+                }
+
+                foreach (Device.MemoryRange range in writeList)
+                {
+                    int pageStart = (int)(range.Start / _device.EraseBlockSizeFlash);
+                    int pageEnd = (int)(range.End / _device.EraseBlockSizeFlash);
+                    if ((range.End % _device.EraseBlockSizeFlash) != 0)
+                    {
+                        pageEnd++;
+                    }
+                    int eraseStart = -1;
+                    int eraseEnd = -1;
+                    for (int i = pageStart; i < pageEnd; i++)
+                    {
+                        if (flashPageErased[i] == false)
+                        {
+                            if (eraseStart == -1)
+                            {
+                                eraseStart = (int)(i*_device.EraseBlockSizeFlash);
+                            }
+                            eraseEnd = (int)((i + 1)*_device.EraseBlockSizeFlash);
+                            flashPageErased[i] = true;
+                        }
+                    }
+                    if (eraseStart != -1)
+                    {
+                        Device.MemoryRange block = new Device.MemoryRange
+                        {
+                            Start = (uint)eraseStart,
+                            End = (uint)eraseEnd
+                        };
+                        eraseList.Insert(0, block);
+                    }
+                }
+            }
+
+            public void PacketSizeWriteList(ref List<Device.MemoryRange> writeList)
+            {
+                int maxWritePacketData = _device.MaxPacketSize();
+                int bytesPerWriteBlock = _device.WriteBlockSizeFlash;
+
+                maxWritePacketData -= WriteFlashPacket.HeaderSize;
+                // ReSharper disable once AccessToStaticMemberViaDerivedType
+                maxWritePacketData -= WriteFlashPacket.FooterSize;
+
+                if (_device.Family == Device.Families.PIC16)
+                {
+                    // On PIC12/PIC16, writeBlockSizeFLASH only counts the number of instruction words per block.
+                    // Each instruction word requires two bytes of data to be transmitted in the command packet,
+                    // so we need to double bytesPerWriteBlock here.
+                    bytesPerWriteBlock <<= 1;
+                }
+                else if (_device.Family == Device.Families.PIC24)
+                {
+                    // On PIC24, writeBlockSizeFLASH only counts the two least significant bytes of the
+                    // instruction word, so we need to add 1/2 more here to count that special third byte.
+                    bytesPerWriteBlock = _device.WriteBlockSizeFlash + (_device.WriteBlockSizeFlash >> 1);
+                }
+
+                if (_device.HasEncryption())
+                {
+                    // each write block must be followed by 16 bytes of message authentication code (MAC) data
+                    bytesPerWriteBlock += 16;
+                }
+
+                if (maxWritePacketData/_device.WriteBlockSizeFlash >= 256)
+                {
+                    // Do not allow write transactions greater than 256 blocks.
+                    // AN1310 protocol only provides an 8-bit block count for Write FLASH commands.
+                    maxWritePacketData = bytesPerWriteBlock*256;
+                }
+
+                int i = 0;
+                while (i < writeList.Count)
+                {
+                    Device.MemoryRange range = writeList[i];
+                    int blocks = (int)((range.End - range.Start) / _device.WriteBlockSizeFlash);
+                    int bytes = blocks*bytesPerWriteBlock;
+
+                    if (bytes > maxWritePacketData)
+                    {
+                        // this write is too big, split it in half and then try again
+                        Device.MemoryRange firstHalf = new Device.MemoryRange
+                        {
+                            Start = range.Start,
+                            End = (uint) ((maxWritePacketData/bytesPerWriteBlock)*_device.WriteBlockSizeFlash)
+                        };
+                        // Round off packet size to nearest FLASH write block size.
+                        firstHalf.End -= (uint)(firstHalf.End%_device.WriteBlockSizeFlash);
+                        firstHalf.End += firstHalf.Start;
+                        range.Start = firstHalf.End;
+                        writeList.Insert(i, firstHalf);
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+            }
+
+            public void EraseConfigPageLast(ref List<Device.MemoryRange> eraseList)
+            {
+                if (DoNotEraseConfigPage(ref eraseList))
+                {
+                    // ABORT: this device does not store config bits in FLASH or
+                    // the existing eraseList does not intend to erase the config bits page anyway.
+                    return;
+                }
+
+                // make config page erase very last transaction
+                Device.MemoryRange configErase = new Device.MemoryRange
+                {
+                    Start = _device.EndFlash - _device.EraseBlockSizeFlash,
+                    End = _device.EndFlash
+                };
+                eraseList.Add(configErase);
+            }
+
+            public bool DoNotEraseConfigPage(ref List<Device.MemoryRange> eraseList)
+            {
+                if (!_device.HasConfigAsFlash())
+                {
+                    // ABORT: this device does not store config bits in FLASH, so no worries...
+                    return true;
+                }
+
+                Device.MemoryRange firstRange = eraseList[0];
+                if (firstRange.End <= _device.EndFlash - _device.EraseBlockSizeFlash)
+                {
+                    // ABORT: not planning to erase config bit page anyway, nothing to do here.
+                    return true;
+                }
+
+                firstRange.End -= _device.EraseBlockSizeFlash;
+                if (firstRange.End <= firstRange.Start)
+                {
+                    // after taking out the config page, this write transaction has nothing left in it.
+                    eraseList.RemoveAt(0);
+                }
+
+                return false;
+            }
+
+            public bool DoNotEraseInterruptVectorTable(ref List<Device.MemoryRange> eraseList)
+            {
+                if (_device.Family != Device.Families.PIC24)
+                {
+                    // ABORT: this device does not have a fixed interrupt vector table in FLASH, so no worries...
+                    return true;
+                }
+
+                Device.MemoryRange firstRange = eraseList[0];
+                uint endIvt = 0x200;
+                if (endIvt < _device.EraseBlockSizeFlash)
+                {
+                    endIvt = _device.EraseBlockSizeFlash;
+                }
+
+                if (firstRange.Start >= endIvt)
+                {
+                    // ABORT: not planning to erase IVT anyway, nothing to do here.
+                    return true;
+                }
+
+                firstRange.Start = endIvt;
+                if (firstRange.End <= firstRange.Start)
+                {
+                    // after taking out the IVT page, this write transaction has nothing left in it.
+                    eraseList.RemoveAt(0);
+                }
+
+                return false;
             }
 
             public void DoNotEraseBootBlock(ref List<Device.MemoryRange> eraseList)
@@ -673,78 +991,154 @@ namespace BmwDeepObd
                 }
             }
 
-            public bool DoNotEraseConfigPage(ref List<Device.MemoryRange> eraseList)
+            public void WriteConfigPageFirst(ref List<Device.MemoryRange> writeList)
             {
                 if (!_device.HasConfigAsFlash())
                 {
                     // ABORT: this device does not store config bits in FLASH, so no worries...
-                    return true;
-                }
-
-                Device.MemoryRange firstRange = eraseList[0];
-                if (firstRange.End <= _device.EndFlash - _device.EraseBlockSizeFlash)
-                {
-                    // ABORT: not planning to erase config bit page anyway, nothing to do here.
-                    return true;
-                }
-
-                firstRange.End -= _device.EraseBlockSizeFlash;
-                if (firstRange.End <= firstRange.Start)
-                {
-                    // after taking out the config page, this write transaction has nothing left in it.
-                    eraseList.RemoveAt(0);
-                }
-
-                return false;
-            }
-
-            public bool DoNotEraseInterruptVectorTable(ref List<Device.MemoryRange> eraseList)
-            {
-                if (_device.Family != Device.Families.PIC24)
-                {
-                    // ABORT: this device does not have a fixed interrupt vector table in FLASH, so no worries...
-                    return true;
-                }
-
-                Device.MemoryRange firstRange = eraseList[0];
-                uint endIVT = 0x200;
-                if (endIVT < _device.EraseBlockSizeFlash)
-                {
-                    endIVT = _device.EraseBlockSizeFlash;
-                }
-
-                if (firstRange.Start >= endIVT)
-                {
-                    // ABORT: not planning to erase IVT anyway, nothing to do here.
-                    return true;
-                }
-
-                firstRange.Start = endIVT;
-                if (firstRange.End <= firstRange.Start)
-                {
-                    // after taking out the IVT page, this write transaction has nothing left in it.
-                    eraseList.RemoveAt(0);
-                }
-
-                return false;
-            }
-
-            public void EraseConfigPageLast(ref List<Device.MemoryRange> eraseList)
-            {
-                if(DoNotEraseConfigPage(ref eraseList))
-                {
-                    // ABORT: this device does not store config bits in FLASH or
-                    // the existing eraseList does not intend to erase the config bits page anyway.
                     return;
                 }
 
-                // make config page erase very last transaction
-                Device.MemoryRange configErase = new Device.MemoryRange
+                Device.MemoryRange rangeLast = writeList[writeList.Count - 1];
+                if (rangeLast.End < _device.EndFlash - _device.WriteBlockSizeFlash)
                 {
-                    Start = _device.EndFlash - _device.EraseBlockSizeFlash,
+                    // ABORT: user is not planning to write to config bit page.
+                    return;
+                }
+
+                rangeLast.End -= (uint)_device.WriteBlockSizeFlash;
+                if (rangeLast.End <= rangeLast.Start)
+                {
+                    // after taking out the config page, this write transaction has nothing left in it.
+                    writeList.RemoveAt(writeList.Count - 1);
+                }
+
+                Device.MemoryRange configWrite = new Device.MemoryRange
+                {
+                    Start = (uint) (_device.EndFlash - _device.WriteBlockSizeFlash),
                     End = _device.EndFlash
                 };
-                eraseList.Add(configErase);
+                writeList.Insert(0, configWrite);
+            }
+
+            public uint FindEndFlashWrite(uint address, uint[] data)
+            {
+                while (address < _device.EndFlash)
+                {
+                    uint checkAddress = SkipEmptyFlashPages(address, data);
+                    if (checkAddress != address)
+                    {
+                        // the next page is empty, we've reached the end of the area we want to write
+                        return address;
+                    }
+
+                    address += (uint)_device.WriteBlockSizeFlash;
+                }
+
+                return _device.EndFlash;
+            }
+
+            public uint SkipBootloaderFlashPages(uint address)
+            {
+                if (address >= _device.StartBootloader && address < _device.EndBootloader)
+                {
+                    return _device.EndBootloader;
+                }
+
+                return address;
+            }
+
+            public uint SkipEmptyFlashPages(uint address, uint[] data)
+            {
+                uint readData = _device.FlashPointer(address);
+                while (address < _device.EndFlash)
+                {
+                    uint word = data[readData++];
+                    if ((word & _device.FlashWordMask) != (_device.BlankValue & _device.FlashWordMask))
+                    {
+                        // We found some non-empty data here. Make sure it's not the bootloader.
+                        uint addressSkip = SkipBootloaderFlashPages(address);
+                        if (addressSkip != address)
+                        {
+                            // skip over the bootloader and continue
+                            address = addressSkip;
+                            readData = _device.FlashPointer(address);
+                            continue;
+                        }
+                        else
+                        {
+                            // align address to FLASH write page and return result.
+                            address = (uint)(address - (address%_device.WriteBlockSizeFlash));
+                            return address;
+                        }
+                    }
+
+                    _device.IncrementFlashAddressByInstructionWord(ref address);
+                }
+
+                // couldn't find any data, return end of flash memory
+                return _device.EndFlash;
+            }
+
+            public void EraseAppCheckFirst(ref List<Device.MemoryRange> eraseList)
+            {
+                if (_device.Family != Device.Families.PIC24)
+                {
+                    // ABORT: only applies to PIC24
+                    return;
+                }
+
+                Device.MemoryRange range = eraseList[eraseList.Count - 1];
+                if (range.Start >= _device.EndBootloader + _device.EraseBlockSizeFlash)
+                {
+                    // ABORT: user is not planning to erase the application check page.
+                    return;
+                }
+
+                range.Start += _device.EraseBlockSizeFlash;
+                if (range.Start >= range.End)
+                {
+                    // after taking out the app check page, this erase transaction has nothing left in it.
+                    eraseList.RemoveAt(eraseList.Count - 1);
+                }
+
+                Device.MemoryRange appErase = new Device.MemoryRange
+                {
+                    Start = _device.EndBootloader,
+                    End = _device.EndBootloader + _device.EraseBlockSizeFlash
+                };
+                eraseList.Insert(0, appErase);
+            }
+
+            public void WriteAppCheckLast(ref List<Device.MemoryRange> writeList)
+            {
+                if (_device.Family != Device.Families.PIC24)
+                {
+                    // ABORT: only applies to PIC24
+                    return;
+                }
+
+                Device.MemoryRange firstRange = writeList[0];
+                if (firstRange.Start >= _device.EndBootloader + _device.WriteBlockSizeFlash)
+                {
+                    // ABORT: not planning to write Application Check row anyway, nothing to do here.
+                    return;
+                }
+
+                firstRange.Start += (uint)_device.WriteBlockSizeFlash;
+                if (firstRange.Start >= firstRange.End)
+                {
+                    // after taking out the app check row, this write transaction has nothing left in it.
+                    writeList.RemoveAt(0);
+                }
+
+                // make app check row write very last transaction
+                Device.MemoryRange appWrite = new Device.MemoryRange
+                {
+                    Start = _device.EndBootloader,
+                    End = (uint) (_device.EndBootloader + _device.WriteBlockSizeFlash)
+                };
+                writeList.Add(appWrite);
             }
         }
 
@@ -752,12 +1146,15 @@ namespace BmwDeepObd
         {
             private readonly Comm _comm;
             private readonly Device _device;
+            private readonly DeviceWritePlanner _writePlan;
             private bool _abortOperation;
+            public bool WriteConfig;
 
             public DeviceWriter(Device newDevice, Comm newComm)
             {
                 _device = newDevice;
                 _comm = newComm;
+                _writePlan = new DeviceWritePlanner(newDevice);
                 _abortOperation = false;
             }
 
@@ -908,6 +1305,64 @@ namespace BmwDeepObd
 
                 return Comm.ErrorCode.Success;
             }
+
+            public Comm.ErrorCode WriteFlash(DeviceData deviceData, uint startAddress, uint endAddress)
+            {
+                Comm.ErrorCode result;
+                List<Device.MemoryRange> writeList = new List<Device.MemoryRange>();
+                List<Device.MemoryRange> eraseList = new List<Device.MemoryRange>();
+
+                _abortOperation = false;
+
+                _writePlan.WriteConfig = WriteConfig;
+                _writePlan.PlanFlashWrite(ref eraseList, ref writeList, startAddress, endAddress, deviceData.ProgramMemory);
+
+                if (writeList.Count == 0 && eraseList.Count == 0)
+                {
+                    // nothing to do, we're done.
+                    return Comm.ErrorCode.Success;
+                }
+
+                if (_device.HasEraseFlashCommand())
+                {
+                    // erase prior to writing FLASH memory
+                    foreach (Device.MemoryRange range in eraseList)
+                    {
+                        //result = EraseFlash((int)range.Start, (int)range.End);
+                        result = Comm.ErrorCode.Success;
+                        if (result != Comm.ErrorCode.Success)
+                        {
+                            return result;
+                        }
+                    }
+                }
+
+                foreach (Device.MemoryRange range in writeList)
+                {
+                    uint flashMemory = _device.FlashPointer(range.Start);
+
+                    if (_abortOperation)
+                    {
+                        return Comm.ErrorCode.Aborted;
+                    }
+
+                    //result = WriteFlashMemory(flashMemory, range.Start, range.End, deviceData.Mac);
+                    result = Comm.ErrorCode.Success;
+                    switch (result)
+                    {
+                        case Comm.ErrorCode.Success:
+                            break;
+
+                        case Comm.ErrorCode.NoAcknowledgement:
+                            return result;
+
+                        default:
+                            return result;
+                    }
+                }
+
+                return Comm.ErrorCode.Success;
+            }
         }
 
         public class Comm
@@ -978,7 +1433,7 @@ namespace BmwDeepObd
                     {
                         if (!_bluetoothInStream.IsDataAvailable())
                         {
-                            if ((ulong)(Stopwatch.GetTimestamp() - startTime) > (ulong)(timeout * TickResolMs))
+                            if (Stopwatch.GetTimestamp() - startTime > timeout * TickResolMs)
                             {
                                 return ErrorCode.ERROR_READ_TIMEOUT;
                             }
@@ -1006,7 +1461,7 @@ namespace BmwDeepObd
                     {
                         if (!_bluetoothInStream.IsDataAvailable())
                         {
-                            if ((ulong)(Stopwatch.GetTimestamp() - startTime) > (ulong)(timeout * TickResolMs))
+                            if (Stopwatch.GetTimestamp() - startTime > timeout * TickResolMs)
                             {
                                 return ErrorCode.ERROR_READ_TIMEOUT;
                             }
@@ -1019,7 +1474,7 @@ namespace BmwDeepObd
                         {
                             if (!_bluetoothInStream.IsDataAvailable())
                             {
-                                if ((ulong)(Stopwatch.GetTimestamp() - startTime) > (ulong)(timeout * TickResolMs))
+                                if (Stopwatch.GetTimestamp() - startTime > timeout * TickResolMs)
                                 {
                                     return ErrorCode.ERROR_READ_TIMEOUT;
                                 }
@@ -1089,7 +1544,7 @@ namespace BmwDeepObd
                     long startTime = Stopwatch.GetTimestamp();
                     while (!_bluetoothInStream.IsDataAvailable())
                     {
-                        if ((ulong)(Stopwatch.GetTimestamp() - startTime) > (ulong)(SyncWaitTime * 100 * TickResolMs))
+                        if (Stopwatch.GetTimestamp() - startTime > SyncWaitTime * 100 * TickResolMs)
                         {
                             return ErrorCode.ERROR_READ_TIMEOUT;
                         }
@@ -1122,7 +1577,7 @@ namespace BmwDeepObd
                     long startTime = Stopwatch.GetTimestamp();
                     while (!_bluetoothInStream.IsDataAvailable())
                     {
-                        if ((ulong)(Stopwatch.GetTimestamp() - startTime) > (ulong)(SyncWaitTime * 100 * TickResolMs))
+                        if (Stopwatch.GetTimestamp() - startTime > SyncWaitTime * 100 * TickResolMs)
                         {
                             return ErrorCode.ERROR_READ_TIMEOUT;
                         }
@@ -1181,7 +1636,7 @@ namespace BmwDeepObd
                                 return bootInfo;
                             }
 
-                            if ((ulong)(Stopwatch.GetTimestamp() - startTime) > (ulong)(SyncWaitTime * TickResolMs))
+                            if (Stopwatch.GetTimestamp() - startTime > SyncWaitTime * TickResolMs)
                             {
                                 _bluetoothOutStream.WriteByte(STX);
                                 startTime = Stopwatch.GetTimestamp();
@@ -1445,6 +1900,8 @@ namespace BmwDeepObd
             List<Device.MemoryRange> eraseList = new List<Device.MemoryRange>();
             writePlan.PlanFlashErase(ref eraseList);
             //deviceWriter.EraseFlash(eraseList);
+            DeviceData deviceData = new DeviceData(device);
+            deviceWriter.WriteFlash(deviceData, 0x0000, 0x7FFF);
 
             Comm.ErrorCode errorCode = comm.RunApplication();
             if (errorCode != Comm.ErrorCode.Success)
