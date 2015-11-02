@@ -295,7 +295,7 @@ namespace BmwDeepObd
             public uint StartGpr;
             public uint EndGpr;
 
-            public struct MemoryRange
+            public class MemoryRange
             {
                 public uint Start;
                 public uint End;
@@ -309,7 +309,7 @@ namespace BmwDeepObd
                 SetUnknown();
             }
 
-            void SetUnknown()
+            public void SetUnknown()
             {
                 BytesPerWordEeprom = 1;
                 BlankValue = 0xFFFFFFFF;
@@ -589,10 +589,12 @@ namespace BmwDeepObd
 
             public void PlanFlashErase(ref List<Device.MemoryRange> eraseList)
             {
-                Device.MemoryRange block;
+                Device.MemoryRange block = new Device.MemoryRange
+                {
+                    Start = _device.StartFlash,
+                    End = _device.EndFlash
+                };
 
-                block.Start = _device.StartFlash;
-                block.End = _device.EndFlash;
                 eraseList.Clear();
                 eraseList.Add(block);
                 if (_device.Family == Device.Families.PIC32)
@@ -653,9 +655,11 @@ namespace BmwDeepObd
                             // 6. S  |   |  E     <- Erase transaction starts before and ends after the boot block
                             // split the transaction up into two transactions.
                             // the first transaction will erase data after the boot block
-                            Device.MemoryRange firstHalf;
-                            firstHalf.Start = _device.EndBootloader;
-                            firstHalf.End = range.End;
+                            Device.MemoryRange firstHalf = new Device.MemoryRange
+                            {
+                                Start = _device.EndBootloader,
+                                End = range.End
+                            };
                             if (firstHalf.Start < firstHalf.End)
                             {
                                 eraseList.Insert(i, firstHalf);
@@ -704,9 +708,11 @@ namespace BmwDeepObd
                 }
 
                 // make config page erase very last transaction
-                Device.MemoryRange configErase;
-                configErase.Start = _device.EndFlash - _device.EraseBlockSizeFlash;
-                configErase.End = _device.EndFlash;
+                Device.MemoryRange configErase = new Device.MemoryRange
+                {
+                    Start = _device.EndFlash - _device.EraseBlockSizeFlash,
+                    End = _device.EndFlash
+                };
                 eraseList.Add(configErase);
             }
         }
@@ -1287,6 +1293,71 @@ namespace BmwDeepObd
             }
         }
 
+        public static bool LoadDevice(Device device, int deviceId, Device.Families familyId)
+        {
+            device.SetUnknown();
+            device.Id = deviceId;
+            device.Family = familyId;
+            if (familyId != Device.Families.PIC18)
+            {
+                return false;
+            }
+            if (deviceId == 0x030C)
+            {
+                device.Name = "PIC18F25K80";
+                device.WriteBlockSizeFlash = 0x40;
+                device.EraseBlockSizeFlash = 0x40;
+                device.StartFlash  = 0x000000;
+                device.EndFlash    = 0x008000;
+                device.StartEeprom = 0xF00000;
+                device.EndEeprom   = 0xF00400;
+                device.StartUser   = 0x200000;
+                device.EndUser     = 0x200008;
+                device.StartConfig = 0x300000;
+                device.EndConfig   = 0x30000E;
+                device.StartGpr    = 0x000000;
+                device.EndGpr      = 0x000E41;
+                device.BytesPerWordFlash = 2;
+            }
+            else
+            {
+                return false;
+            }
+            switch(device.Family)
+            {
+                case Device.Families.PIC16:
+                    device.BytesPerAddressFlash = 2;
+                    device.BytesPerWordEeprom = 1;
+                    device.FlashWordMask = 0x3FFF;
+                    device.ConfigWordMask = 0xFF;
+                    break;
+
+                case Device.Families.PIC24:
+                    device.BytesPerAddressFlash = 2;
+                    device.BytesPerWordEeprom = 2;
+                    device.FlashWordMask = 0xFFFFFF;
+                    device.ConfigWordMask = 0xFFFF;
+                    device.WriteBlockSizeFlash *= 2;       // temporary
+                    device.EraseBlockSizeFlash *= 2;
+                    break;
+
+                case Device.Families.PIC32:
+                    device.FlashWordMask = 0xFFFFFFFF;
+                    device.ConfigWordMask = 0xFFFFFFFF;
+                    device.BytesPerAddressFlash = 1;
+                    break;
+
+                case Device.Families.PIC18:
+                default:
+                    device.FlashWordMask = 0xFFFF;
+                    device.ConfigWordMask = 0xFF;
+                    device.BytesPerAddressFlash = 1;
+                    device.BytesPerWordEeprom = 1;
+                    break;
+            }
+            return true;
+        }
+
         public static bool EnterBootloaderMode(Device device, Comm comm)
         {
             try
@@ -1313,11 +1384,11 @@ namespace BmwDeepObd
                 {
                     deviceId = comm.ReadDeviceId((Device.Families)bootInfo.FamilyId);
                 }
-                if (deviceId.Id == 0)
+
+                if (!LoadDevice(device, (int) deviceId.Id, (Device.Families) bootInfo.FamilyId))
                 {
                     return false;
                 }
-
                 device.StartBootloader = bootInfo.StartBootloader;
                 device.EndBootloader = bootInfo.EndBootloader;
                 device.CommandMask = bootInfo.CommandMask;
