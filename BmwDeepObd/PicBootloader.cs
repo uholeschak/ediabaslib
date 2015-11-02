@@ -611,7 +611,7 @@ namespace BmwDeepObd
                     DoNotEraseConfigPage(ref eraseList);
                 }
 
-                //doNotEraseInterruptVectorTable(eraseList);
+                DoNotEraseInterruptVectorTable(ref eraseList);
 
                 DoNotEraseBootBlock(ref eraseList);
             }
@@ -692,6 +692,37 @@ namespace BmwDeepObd
                 if (firstRange.End <= firstRange.Start)
                 {
                     // after taking out the config page, this write transaction has nothing left in it.
+                    eraseList.RemoveAt(0);
+                }
+
+                return false;
+            }
+
+            public bool DoNotEraseInterruptVectorTable(ref List<Device.MemoryRange> eraseList)
+            {
+                if (_device.Family != Device.Families.PIC24)
+                {
+                    // ABORT: this device does not have a fixed interrupt vector table in FLASH, so no worries...
+                    return true;
+                }
+
+                Device.MemoryRange firstRange = eraseList[0];
+                uint endIVT = 0x200;
+                if (endIVT < _device.EraseBlockSizeFlash)
+                {
+                    endIVT = _device.EraseBlockSizeFlash;
+                }
+
+                if (firstRange.Start >= endIVT)
+                {
+                    // ABORT: not planning to erase IVT anyway, nothing to do here.
+                    return true;
+                }
+
+                firstRange.Start = endIVT;
+                if (firstRange.End <= firstRange.Start)
+                {
+                    // after taking out the IVT page, this write transaction has nothing left in it.
                     eraseList.RemoveAt(0);
                 }
 
