@@ -247,6 +247,24 @@ namespace BmwDeepObd
             }
         }
 
+        public class ReadFlashCrcPacket : BootPacket
+        {
+            public ReadFlashCrcPacket()
+            {
+                for (int i = 0; i < 7; i++)
+                {
+                    PacketData.Add(0);
+                }
+                PacketData[0] = (byte)Commands.ReadFlashCrc;
+            }
+
+            public void SetBlocks(ushort blocks)
+            {
+                PacketData[5] = (byte)(blocks & 0xFF);
+                PacketData[6] = (byte)((blocks >> 8) & 0xFF);
+            }
+        }
+
         public class BootloaderInfoPacket : BootPacket
         {
             public BootloaderInfoPacket()
@@ -1180,6 +1198,108 @@ namespace BmwDeepObd
             }
         }
 
+        public class DeviceVerifyPlanner
+        {
+            private readonly Device _device;
+            public bool WriteConfig;
+
+            public DeviceVerifyPlanner(Device newDevice)
+            {
+                _device = newDevice;
+            }
+
+            public void PlanFlashVerify(ref List<Device.MemoryRange> verifyList, int start, int end)
+            {
+                Device.MemoryRange block = new Device.MemoryRange
+                {
+                    Start = (uint) start,
+                    End = (uint) end
+                };
+
+                verifyList.Clear();
+                verifyList.Add(block);
+
+                if (!WriteConfig)
+                {
+                    DoNotVerifyConfigPage(ref verifyList);
+                }
+
+                DoNotVerifyBootBlock(ref verifyList);
+            }
+
+            public void DoNotVerifyConfigPage(ref List<Device.MemoryRange> verifyList)
+            {
+                if (!_device.HasConfigAsFlash())
+                {
+                    // ABORT: this device does not store config bits in FLASH, so no worries...
+                    return;
+                }
+
+                Device.MemoryRange rangeFirst = verifyList[0];
+                if (rangeFirst.End <= _device.EndFlash - _device.EraseBlockSizeFlash)
+                {
+                    // ABORT: user is not planning to verify the config bit page.
+                    return;
+                }
+
+                rangeFirst.End -= _device.EraseBlockSizeFlash;
+                if (rangeFirst.End <= rangeFirst.Start)
+                {
+                    // after taking out the config page, this transaction has nothing left in it.
+                    verifyList.RemoveAt(0);
+                }
+            }
+
+            public void DoNotVerifyBootBlock(ref List<Device.MemoryRange> verifyList)
+            {
+                int i = 0;
+                while (i < verifyList.Count)
+                {
+                    Device.MemoryRange range = verifyList[i];
+                    //     S   E
+                    // S   |   E
+                    //     S   |  E
+                    // S   |   |  E
+                    //
+                    //     |   S  E
+                    // S   E   |
+                    if (!((range.Start <= _device.StartBootloader && range.End <= _device.StartBootloader) ||
+                          (range.Start >= _device.EndBootloader && range.End >= _device.EndBootloader)))
+                    {
+                        // This transaction would verify over bootloader memory, which may fail if
+                        // we haven't (or can't) read the device out.
+                        if (range.Start == _device.StartBootloader && range.End == _device.EndBootloader)
+                        {
+                            verifyList.RemoveAt(i);
+                            continue;
+                        }
+                        if (range.Start == _device.StartBootloader)
+                        {
+                            range.Start = _device.EndBootloader;
+                        }
+                        else if (range.End == _device.EndBootloader)
+                        {
+                            range.End = _device.StartBootloader;
+                        }
+                        else
+                        {
+                            Device.MemoryRange firstHalf = new Device.MemoryRange
+                            {
+                                Start = _device.EndBootloader,
+                                End = range.End
+                            };
+                            range.End = _device.StartBootloader;
+                            if (firstHalf.Start < firstHalf.End)
+                            {
+                                verifyList.Insert(i, firstHalf);
+                            }
+                        }
+                    }
+                    i++;
+                }
+            }
+        }
+
         public class DeviceWriter
         {
             private readonly Comm _comm;
@@ -1477,6 +1597,169 @@ namespace BmwDeepObd
             }
         }
 
+        public class DeviceVerifier
+        {
+            private readonly Comm _comm;
+            private readonly Device _device;
+            private readonly DeviceVerifyPlanner _verifyPlan;
+            public bool WriteConfig;
+            public List<Device.MemoryRange> EraseList = new List<Device.MemoryRange>();
+            public List<Device.MemoryRange> FailList = new List<Device.MemoryRange>();
+
+            public DeviceVerifier(Device newDevice, Comm newComm)
+            {
+                _device = newDevice;
+                _comm = newComm;
+                _verifyPlan = new DeviceVerifyPlanner(newDevice);
+            }
+
+            public Comm.ErrorCode VerifyFlash(uint[] memory, int startAddress, int endAddress)
+            {
+                int errors = 0;
+
+                List<byte> deviceCrc = new List<byte>();
+                List<byte> memoryCrc = new List<byte>();
+                List<byte> emptyCrc = new List<byte>();
+                List<Device.MemoryRange> verifyList = new List<Device.MemoryRange>();
+                ReadFlashCrcPacket cmd = new ReadFlashCrcPacket();
+                DeviceData emptyData = new DeviceData(_device);
+                emptyData.ClearAllData();
+                EraseList.Clear();
+                FailList.Clear();
+
+                _verifyPlan.WriteConfig = WriteConfig;
+                _verifyPlan.PlanFlashVerify(ref verifyList, startAddress, endAddress);
+
+                foreach (Device.MemoryRange range in verifyList)
+                {
+                    if (_device.Family == Device.Families.PIC32)
+                    {
+                        cmd.SetAddress(range.Start | 0x80000000);
+                    }
+                    else
+                    {
+                        cmd.SetAddress(range.Start);
+                    }
+
+                    // PIC18 device calculating CRC over 129024 bytes of data requires:
+                    // 6.812s at 2MHz
+                    // 13.532s at 1MHz
+                    // 26.984s at 500KHz
+                    // 107.673s at 125KHz
+                    // 215.346s at 62.5KHz
+                    // 410.611s at 32.768KHz
+                    //
+                    // Someday, we might want to break our block sizes down to accomodate more
+                    // GUI updates when verifying a slow running device.
+                    cmd.SetBlocks((ushort)((range.End - range.Start) / _device.EraseBlockSizeFlash));
+                    List<byte> sendPacket = cmd.FramePacket();
+                    Comm.ErrorCode result = _comm.SendPacket(sendPacket);
+                    if (result != Comm.ErrorCode.Success)
+                    {
+                        return result;
+                    }
+
+                    deviceCrc.Clear();
+
+                    result = _comm.GetCrcData(ref deviceCrc);
+                    if (result != Comm.ErrorCode.ERROR_BAD_CHKSUM && result != Comm.ErrorCode.Success)
+                    {
+                        return result;
+                    }
+#if false
+                    int expectedBytes = (int)((range.End - range.Start) / _device.EraseBlockSizeFlash * 2);
+                    if (deviceCrc.Count != expectedBytes)
+                    {
+                    }
+#endif
+                    // now we need to compute CRC's against the HEX file data we have in memory.
+                    memoryCrc.Clear();
+                    emptyCrc.Clear();
+                    CalculateCrc(memory, ref memoryCrc, range.Start, range.End, ref deviceCrc);
+                    CalculateCrc(emptyData.ProgramMemory, ref emptyCrc, range.Start, range.End, ref deviceCrc);
+
+                    int i = 0;
+                    while (i < memoryCrc.Count && i < deviceCrc.Count)
+                    {
+                        int address = (int)(range.Start + (i / 2 * _device.EraseBlockSizeFlash));
+                        if ((deviceCrc[i] != memoryCrc[i]) || (deviceCrc[i + 1] != memoryCrc[i + 1]))
+                        {
+                            Device.MemoryRange block = new Device.MemoryRange
+                            {
+                                Start = (uint) address,
+                                End = (uint) (address + _device.EraseBlockSizeFlash)
+                            };
+#if false
+                            ushort word1 = memoryCrc[i + 1];
+                            word1 <<= 8;
+                            word1 |= memoryCrc[i];
+                            ushort word2 = deviceCrc[i + 1];
+                            word2 <<= 8;
+                            word2 |= deviceCrc[i];
+#endif
+                            if (memoryCrc[i] == emptyCrc[i] && memoryCrc[i + 1] == emptyCrc[i + 1])
+                            {
+                                EraseList.Add(block);
+                            }
+                            else
+                            {
+                                FailList.Add(block);
+                            }
+
+                            errors++;
+                        }
+                        i += 2;
+                    }
+                }
+
+                if (errors > 0)
+                {
+                    return Comm.ErrorCode.ERROR_BAD_CHKSUM;
+                }
+
+                return Comm.ErrorCode.Success;
+            }
+
+            public void CalculateCrc(uint[] memory, ref List<byte> result, uint startAddress, uint endAddress, ref List<byte> deviceCrc)
+            {
+                uint flashOffset = _device.FlashPointer(startAddress);
+
+                uint i = startAddress;
+                int j = 0;
+                Crc crc = new Crc();
+                while (i < endAddress)
+                {
+                    uint word = memory[flashOffset++] & _device.FlashWordMask;
+                    crc.Add((byte)(word & 0xFF));
+                    crc.Add((byte)((word >> 8) & 0xFF));
+                    if (_device.Family == Device.Families.PIC24)
+                    {
+                        crc.Add((byte)((word >> 16) & 0xFF));
+                    }
+                    else if (_device.Family == Device.Families.PIC32)
+                    {
+                        crc.Add((byte)((word >> 16) & 0xFF));
+                        crc.Add((byte)((word >> 24) & 0xFF));
+                    }
+
+                    _device.IncrementFlashAddressByInstructionWord(ref i);
+
+                    if ((i%_device.EraseBlockSizeFlash) == 0)
+                    {
+                        result.Add(crc.Lsb());
+                        result.Add(crc.Msb());
+
+                        if (deviceCrc != null)
+                        {
+                            word = (uint)(deviceCrc[j++] & 0xFF);
+                            word |= (uint)((deviceCrc[j++] & 0xFF) << 8);
+                            crc = new Crc((ushort)word);
+                        }
+                    }
+                }
+            }
+        }
+
         public class Comm
         {
             public struct DeviceId
@@ -1651,6 +1934,93 @@ namespace BmwDeepObd
                 catch (Exception)
                 {
                     return ErrorCode.CouldNotTransmit;
+                }
+            }
+
+            public ErrorCode GetCrcData(ref List<byte> receivePacket)
+            {
+                int timeout = 4000; // maximum ms to wait between characters received before aborting as timed out
+                //QByteArray rawData;
+                int errorCount = 0;
+
+                // Scan for a start condition
+                int junkReceived = 0;
+                long startTime = Stopwatch.GetTimestamp();
+                for (;;)
+                {
+                    if (!_bluetoothInStream.IsDataAvailable())
+                    {
+                        if (Stopwatch.GetTimestamp() - startTime > timeout*TickResolMs)
+                        {
+                            return ErrorCode.ERROR_READ_TIMEOUT;
+                        }
+                        Thread.Sleep(10);
+                        continue;
+                    }
+
+                    int value = _bluetoothInStream.ReadByte();
+                    if (value == STX)
+                    {
+                        break;
+                    }
+
+                    junkReceived++;
+                    if (junkReceived > 100)
+                    {
+                        return ErrorCode.JunkInsteadOfSTX;
+                    }
+                }
+
+                // Get the data and unstuff when necessary
+                receivePacket.Clear();
+                startTime = Stopwatch.GetTimestamp();
+                for (;;)
+                {
+                    if (!_bluetoothInStream.IsDataAvailable())
+                    {
+                        if (Stopwatch.GetTimestamp() - startTime > timeout*TickResolMs)
+                        {
+                            return ErrorCode.ERROR_READ_TIMEOUT;
+                        }
+                        Thread.Sleep(10);
+                        continue;
+                    }
+                    int value = _bluetoothInStream.ReadByte();
+                    // we got some data, don't timeout
+                    startTime = Stopwatch.GetTimestamp();
+
+                    if (value == DLE)
+                    {
+                        while (!_bluetoothInStream.IsDataAvailable())
+                        {
+                            if (Stopwatch.GetTimestamp() - startTime > timeout*TickResolMs)
+                            {
+                                return ErrorCode.ERROR_READ_TIMEOUT;
+                            }
+                            Thread.Sleep(10);
+                        }
+                        value = _bluetoothInStream.ReadByte();
+                    }
+                    else
+                    {
+                        if (value == STX)
+                        {
+                            errorCount++;
+                            if (errorCount > 5)
+                            {
+                                return ErrorCode.ERROR_READ_TIMEOUT;
+                            }
+                            receivePacket.Clear();
+                            startTime = Stopwatch.GetTimestamp();
+                            continue;
+                        }
+
+                        if (value == ETX)
+                        {
+                            return ErrorCode.Success;
+                        }
+                    }
+                    receivePacket.Add((byte)value);
                 }
             }
 
@@ -2402,10 +2772,34 @@ namespace BmwDeepObd
         public static bool WriteDevice(Device device, DeviceData deviceData, Comm comm)
         {
             DeviceWriter deviceWriter = new DeviceWriter(device, comm);
+            deviceWriter.WriteConfig = true;
             Comm.ErrorCode errorCode = deviceWriter.WriteFlash(deviceData, device.StartFlash, device.EndFlash);
             if (errorCode != Comm.ErrorCode.Success)
             {
                 return false;
+            }
+            DeviceVerifier deviceVerifier = new DeviceVerifier(device, comm);
+            deviceVerifier.WriteConfig = true;
+            errorCode = deviceVerifier.VerifyFlash(deviceData.ProgramMemory, (int)device.StartFlash, (int)device.EndFlash);
+            if (errorCode != Comm.ErrorCode.Success)
+            {
+                if (deviceVerifier.EraseList.Count == 0 &&
+                    deviceVerifier.FailList.Count == 0)
+                {   // communication error
+                    return false;
+                }
+                if (deviceVerifier.FailList.Count != 0)
+                {
+                    return false;
+                }
+                if (deviceVerifier.EraseList.Count != 0)
+                {
+                    errorCode = deviceWriter.EraseFlash(deviceVerifier.EraseList);
+                    if (errorCode != Comm.ErrorCode.Success)
+                    {
+                        return false;
+                    }
+                }
             }
             return true;
         }
