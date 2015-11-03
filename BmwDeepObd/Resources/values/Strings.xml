@@ -169,7 +169,8 @@
   <string name="can_adapter_ignition_on">Ignition on</string>
   <string name="can_adapter_ignition_off">Ignition off</string>
   <string name="can_adapter_text_off">0: Off</string>
-  <string name="can_adapter_fw_update_active">Firmware update in progress.\nDon\'t interrupt communication.</string>
+  <string name="can_adapter_fw_update_active">Firmware update in progress.\nDo not interrupt communication.</string>
+  <string name="can_adapter_fw_update_conn_failed">Unable to connect to adapter</string>
   <string name="can_adapter_fw_update_failed">Firmware update failed</string>
   <string name="can_adapter_fw_update_ok">Firmware update successful</string>
   <string name="button_can_adapter_read">Read</string>
