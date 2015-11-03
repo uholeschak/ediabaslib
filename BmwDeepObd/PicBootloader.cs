@@ -87,7 +87,6 @@ namespace BmwDeepObd
 
         public class DeviceData
         {
-            // ReSharper disable once NotAccessedField.Local
             private readonly Device _device;
 
             // ReSharper disable InconsistentNaming
@@ -112,10 +111,43 @@ namespace BmwDeepObd
             public uint Osccal;
             public uint BandGap;
 
-            public List<byte> Mac = new List<byte>();
+            public byte[,] Mac;
 
             public bool Encrypted;
             public uint Nonce;
+
+            public void ClearAllData()
+            {
+                ClearProgramMemory(_device.BlankValue);
+                ClearEePromMemory(_device.BlankValue);
+                //ClearConfigWords();
+
+                //ClearUserIDs(numIDs, idBytes, memBlankVal);
+                //OSCCAL = OSCCALInit | 0xFF;
+                BandGap = _device.BlankValue;
+            }
+
+            public void ClearProgramMemory(uint memBlankVal)
+            {
+                for (uint i = 0; i < ProgramMemory.Length; i++)
+                {
+                    ProgramMemory[i] = memBlankVal & _device.FlashWordMask;
+                }
+            }
+
+            public void CopyProgramMemory(uint[] memory)
+            {
+                Array.Copy(ProgramMemory, memory, ProgramMemory.Length);
+            }
+
+            public void ClearEePromMemory(uint memBlankVal)
+            {
+                //init eeprom to blank
+                for (uint i = 0; i < EePromMemory.Length; i++)
+                {
+                    EePromMemory[i] = memBlankVal; // 8-bit eeprom will just use 8 LSBs
+                }
+            }
         }
 
         public class BootPacket
@@ -332,6 +364,11 @@ namespace BmwDeepObd
             {
                 public uint Start;
                 public uint End;
+
+                public MemoryRange Clone()
+                {
+                    return ((MemoryRange) MemberwiseClone());
+                }
             };
 
             public Device()
@@ -1363,7 +1400,7 @@ namespace BmwDeepObd
                 return Comm.ErrorCode.Success;
             }
 
-            public Comm.ErrorCode WriteFlashMemory(uint[] memory, uint memoryOffset, uint startAddress, uint endAddress, List<byte> macData)
+            public Comm.ErrorCode WriteFlashMemory(uint[] memory, uint memoryOffset, uint startAddress, uint endAddress, byte[,] macData)
             {
                 int bytesPerWriteBlock = _device.WriteBlockSizeFlash;
 
@@ -1399,7 +1436,11 @@ namespace BmwDeepObd
                         if ((j%_device.WriteBlockSizeFlash) == 0)
                         {
                             // end of write block -- append message authentication code (MAC) data
-                            cmd.PacketData.Add(macData[(int)((j/_device.WriteBlockSizeFlash) - 1)]);
+                            long index = (j/_device.WriteBlockSizeFlash) - 1;
+                            for (int i = 0; i < 16; i++)
+                            {
+                                cmd.PacketData.Add(macData[index, i]);
+                            }
                         }
                     }
                 }
@@ -1859,6 +1900,397 @@ namespace BmwDeepObd
             }
         }
 
+        public class HexImporter
+        {
+            public bool HasEndOfFileRecord;    // hex file does have an end of file record
+            public bool HasConfigBits;         // hex file has config bit settings
+            public bool FileExceedsFlash;      // hex file records exceed device memory constraints
+
+            public List<Device.MemoryRange> Ranges = new List<Device.MemoryRange>();
+            public List<Device.MemoryRange> Rawimport = new List<Device.MemoryRange>();
+
+            public bool ImportHexFile(Stream hexFile, DeviceData data, Device device)
+            {
+                try
+                {
+                    HasEndOfFileRecord = false;
+                    FileExceedsFlash = false;
+
+                    bool lineExceedsFlash = true;
+                    uint eepromBytesPerWord = 1;
+                    uint cfgBytesPerWord = 2;
+
+                    if (device.Family == Device.Families.PIC32)
+                    {
+                        cfgBytesPerWord = 4;
+                    }
+
+                    uint configWords = device.EndConfig - device.StartConfig;
+                    data.ClearAllData();
+                    uint segmentAddress = 0;
+
+                    Device.MemoryRange range = new Device.MemoryRange
+                    {
+                        Start = 0,
+                        End = 0
+                    };
+                    Ranges.Clear();
+                    Rawimport.Clear();
+                    HasConfigBits = false;
+                    data.Encrypted = false;
+                    data.Nonce = 0;
+                    data.Mac = new byte[(device.EndFlash - device.StartFlash)/device.BytesPerWordFlash + 1, 16];
+
+                    using (StreamReader srHexFile = new StreamReader(hexFile))
+                    {
+                        for (;;)
+                        {
+                            string line = srHexFile.ReadLine();
+                            if (line == null)
+                            {
+                                break;
+                            }
+                            if ((line[0] != ':') || (line.Length < 11))
+                            {
+                                // skip line if not hex line entry,or not minimum length ":BBAAAATTCC"
+                                continue;
+                            }
+
+                            uint byteCount = Convert.ToUInt32(line.Substring(1, 2), 16);
+                            uint lineAddress = segmentAddress + Convert.ToUInt32(line.Substring(3, 4), 16);
+                            int recordType = Convert.ToInt32(line.Substring(7, 2), 16);
+
+                            if (recordType == 1) // end of file record
+                            {
+                                HasEndOfFileRecord = true;
+                                break;
+                            }
+                            else
+                            {
+                                string lineString;
+                                if (recordType == 0x43) // nonce value record
+                                {
+                                    data.Encrypted = true;
+
+                                    // skip if line isn't long enough for bytecount.
+                                    if (line.Length >= (11 + (2*byteCount)))
+                                    {
+                                        lineString = line.Substring(9, 8);
+                                        data.Nonce = Convert.ToUInt32(lineString, 16);
+                                    }
+                                }
+                                else if (recordType == 0x40) // MAC data record
+                                {
+                                    data.Encrypted = true;
+
+                                    // skip if line isn't long enough for bytecount.
+                                    if (line.Length >= (11 + (2*byteCount)))
+                                    {
+                                        lineString = line.Substring(9, 16*2);
+                                        long index = lineAddress/device.WriteBlockSizeFlash;
+                                        for (int x = 0; x < 16; x++)
+                                        {
+                                            data.Mac[index, x] = Convert.ToByte(lineString.Substring(x * 2, 2), 16);
+                                        }
+                                    }
+                                }
+                                else if ((recordType == 2) || (recordType == 4)) // Segment address
+                                {
+                                    // skip if line isn't long enough for bytecount.
+                                    if (line.Length >= (11 + (2*byteCount)))
+                                    {
+                                        segmentAddress = Convert.ToUInt32(line.Substring(9, 4), 16);
+                                    }
+
+                                    if (recordType == 2)
+                                    {
+                                        segmentAddress <<= 4;
+                                    }
+                                    else
+                                    {
+                                        segmentAddress <<= 16;
+                                    }
+                                } // end if ((recordType == 2) || (recordType == 4))
+                                else if (recordType == 0) // Data Record
+                                {
+                                    if (line.Length < (11 + (2*byteCount)))
+                                    {
+                                        // skip if line isn't long enough for bytecount.
+                                        continue;
+                                    }
+
+                                    Device.MemoryRange rawRange = new Device.MemoryRange
+                                    {
+                                        Start = lineAddress,
+                                        End = lineAddress + byteCount
+                                    };
+                                    Rawimport.Add(rawRange);
+
+                                    bool error;
+                                    uint deviceAddress = device.FromHexAddress(lineAddress, out error);
+                                    if (error)
+                                    {
+                                        // don't do anything here, this address is outside of device memory space.
+                                    }
+                                    else if (range.Start == 0 && range.End == 0)
+                                    {
+                                        range.Start = deviceAddress;
+                                        range.End = device.FromHexAddress(lineAddress + byteCount, out error);
+                                        Ranges.Add(range.Clone());
+                                    }
+                                    else if (Ranges.Count > 0 && Ranges[Ranges.Count - 1].End == deviceAddress)
+                                    {
+                                        Ranges[Ranges.Count - 1].End = device.FromHexAddress(lineAddress + byteCount, out error);
+                                    }
+                                    else
+                                    {
+                                        range.Start = deviceAddress;
+                                        range.End = device.FromHexAddress(lineAddress + byteCount, out error);
+                                        Ranges.Add(range.Clone());
+                                    }
+
+                                    if (device.HasConfigAsFlash())
+                                    {
+                                        if ((range.Start <= device.StartConfig && range.End >= device.EndConfig) ||
+                                            (range.Start >= device.StartConfig && range.Start < device.EndConfig) ||
+                                            (range.End > device.StartConfig && range.End <= device.EndConfig))
+                                        {
+                                            HasConfigBits = true;
+                                        }
+                                    }
+
+                                    for (uint lineByte = 0; lineByte < byteCount; lineByte++)
+                                    {
+                                        uint byteAddress = lineAddress + lineByte;
+                                        uint bytePosition;
+                                        if (device.Family == Device.Families.PIC24)
+                                        {
+                                            // compute byte position within memory word
+                                            bytePosition = byteAddress%4;
+                                        }
+                                        else
+                                        {
+                                            // compute byte position within memory word
+                                            bytePosition = (uint) (byteAddress%device.BytesPerWordFlash);
+                                        }
+
+                                        // get the byte value from hex file
+                                        string hexByte = line.Substring((int) (9 + (2*lineByte)), 2);
+                                        uint wordByte = 0xFFFFFF00 | Convert.ToUInt32(hexByte, 16);
+                                        // shift the byte into its proper position in the word.
+                                        for (uint shift = 0; shift < bytePosition; shift++)
+                                        {
+                                            wordByte <<= 8;
+                                            wordByte |= 0xFF; // shift in ones.
+                                        }
+
+                                        lineExceedsFlash = true; // if not in any memory section, then error
+
+                                        // program memory section --------------------------------------------------
+                                        if (((byteAddress/device.BytesPerAddressFlash) < device.EndFlash) &&
+                                            ((byteAddress/device.BytesPerAddressFlash) >= device.StartFlash))
+                                        {
+                                            // compute array address from hex file address # bytes per memory location
+                                            uint arrayAddress;
+                                            if (device.Family == Device.Families.PIC24)
+                                            {
+                                                arrayAddress = (byteAddress - device.StartFlash)/4;
+                                            }
+                                            else
+                                            {
+                                                arrayAddress =
+                                                    (uint) ((byteAddress - device.StartFlash)/device.BytesPerWordFlash);
+                                            }
+
+                                            data.ProgramMemory[arrayAddress] &= wordByte; // add byte.
+                                            lineExceedsFlash = false;
+                                            //NOTE: program memory locations containing config words may get modified
+                                            // by the config section below that applies the config masks.
+                                        }
+
+                                        // EE data section ---------------------------------------------------------
+                                        if (device.Family == Device.Families.PIC16)
+                                        {
+                                            byteAddress >>= 1;
+                                        }
+
+                                        if (device.HasEeprom() && byteAddress >= device.StartEeprom)
+                                        {
+                                            uint eeAddress;
+
+                                            switch (device.Family)
+                                            {
+                                                case Device.Families.PIC24:
+                                                    eeAddress = (byteAddress >> 1) - device.StartEeprom;
+                                                    if (eeAddress < device.EndEeprom - device.StartEeprom)
+                                                    {
+                                                        data.EePromMemory[eeAddress >> 1] &= wordByte;
+
+                                                        lineExceedsFlash = false;
+                                                    }
+                                                    break;
+
+                                                case Device.Families.PIC16:
+                                                    if (byteAddress < device.EndEeprom)
+                                                    {
+                                                        eeAddress = (byteAddress - device.StartEeprom)/eepromBytesPerWord;
+                                                        data.EePromMemory[eeAddress] &= wordByte; // add byte.
+                                                        lineExceedsFlash = false;
+                                                    }
+                                                    break;
+
+                                                default:
+                                                case Device.Families.PIC18:
+                                                    if (byteAddress < device.EndEeprom)
+                                                    {
+                                                        eeAddress = (byteAddress - device.StartEeprom)/eepromBytesPerWord;
+                                                        int eeshift =
+                                                            (int) ((bytePosition/eepromBytesPerWord)*eepromBytesPerWord);
+                                                        for (int reshift = 0; reshift < eeshift; reshift++)
+                                                        {
+                                                            // shift byte into proper position
+                                                            wordByte >>= 8;
+                                                        }
+                                                        data.EePromMemory[eeAddress] &= wordByte; // add byte.
+                                                        lineExceedsFlash = false;
+                                                    }
+                                                    break;
+                                            }
+                                        }
+
+                                        // Config words section ----------------------------------------------------
+                                        if ((byteAddress >= device.StartConfig) && (configWords > 0))
+                                        {
+                                            uint configNum = (byteAddress - (device.StartConfig))/cfgBytesPerWord;
+                                            if (configNum < configWords)
+                                            {
+                                                lineExceedsFlash = false;
+                                                HasConfigBits = true;
+                                                if (cfgBytesPerWord == 4)
+                                                {
+                                                    data.ConfigWords[configNum] &= (wordByte & 0xFFFFFFFF);
+                                                }
+                                                else
+                                                {
+                                                    data.ConfigWords[configNum] &= (wordByte & 0xFFFF);
+                                                }
+                                            }
+                                        }
+                                    } // end for (lineByte = 0; lineByte < byteCount; lineByte++)
+
+                                    if (lineExceedsFlash)
+                                    {
+                                        FileExceedsFlash = true;
+                                    }
+                                } // end if (recordType == 0)
+                            }
+                        }
+                    }
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+
+            public byte ComputeChecksum(string fileLine)
+            {
+                int byteCount = ParseHex(fileLine, 1, 2);
+                if (fileLine.Length >= (9 + (2* byteCount)))
+                { // skip if line isn't long enough for bytecount.
+                    int checksum = byteCount;
+                    for(uint i = 0; i < (3 + byteCount); i++)
+                    {
+                        checksum += ParseHex(fileLine, (int)(3 + (2*i)), 2);
+                    }
+                    checksum = 0 - checksum;
+                    return (byte)(checksum & 0xFF);
+                }
+
+                return 0;
+            }
+
+            private int ParseHex(string characters, int offset, int length)
+            {
+                int integer = 0;
+
+                for (int i = 0; i < length; i++)
+                {
+                    integer *= 16;
+                    switch (characters[offset + i])
+                    {
+                        case '1':
+                            integer += 1;
+                            break;
+
+                        case '2':
+                            integer += 2;
+                            break;
+
+                        case '3':
+                            integer += 3;
+                            break;
+
+                        case '4':
+                            integer += 4;
+                            break;
+
+                        case '5':
+                            integer += 5;
+                            break;
+
+                        case '6':
+                            integer += 6;
+                            break;
+
+                        case '7':
+                            integer += 7;
+                            break;
+
+                        case '8':
+                            integer += 8;
+                            break;
+
+                        case '9':
+                            integer += 9;
+                            break;
+
+                        case 'A':
+                        case 'a':
+                            integer += 10;
+                            break;
+
+                        case 'B':
+                        case 'b':
+                            integer += 11;
+                            break;
+
+                        case 'C':
+                        case 'c':
+                            integer += 12;
+                            break;
+
+                        case 'D':
+                        case 'd':
+                            integer += 13;
+                            break;
+
+                        case 'E':
+                        case 'e':
+                            integer += 14;
+                            break;
+
+                        case 'F':
+                        case 'f':
+                            integer += 15;
+                            break;
+                    }
+                }
+                return integer;
+            }
+        }
+
         public static bool LoadDevice(Device device, int deviceId, Device.Families familyId)
         {
             device.SetUnknown();
@@ -1967,7 +2399,18 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool FwUpdate(BluetoothSocket bluetoothSocket)
+        public static bool WriteDevice(Device device, DeviceData deviceData, Comm comm)
+        {
+            DeviceWriter deviceWriter = new DeviceWriter(device, comm);
+            Comm.ErrorCode errorCode = deviceWriter.WriteFlash(deviceData, device.StartFlash, device.EndFlash);
+            if (errorCode != Comm.ErrorCode.Success)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool FwUpdate(BluetoothSocket bluetoothSocket, Stream hexFile)
         {
             Comm comm = new Comm(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
             Device device = new Device();
@@ -1975,20 +2418,23 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            DeviceWriter deviceWriter = new DeviceWriter(device, comm);
+            HexImporter hexImporter = new HexImporter();
+            DeviceData deviceData = new DeviceData(device);
+            if (!hexImporter.ImportHexFile(hexFile, deviceData, device))
+            {
+                comm.RunApplication();
+                return false;
+            }
 #if false
             DeviceWritePlanner writePlan = new DeviceWritePlanner(device);
             List<Device.MemoryRange> eraseList = new List<Device.MemoryRange>();
             writePlan.PlanFlashErase(ref eraseList);
             deviceWriter.EraseFlash(eraseList);
 #endif
-            DeviceData deviceData = new DeviceData(device);
-            for (int i = 0; i < 0x8000; i++)
+            if (!WriteDevice(device, deviceData, comm))
             {
-                deviceData.ProgramMemory[i] = (uint)(i * 2 + i);
+                return false;
             }
-            deviceWriter.WriteFlash(deviceData, 0x0000, 0x7FFF);
-
             Comm.ErrorCode errorCode = comm.RunApplication();
             if (errorCode != Comm.ErrorCode.Success)
             {

@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Reflection;
 using System.Threading;
 using Android.Bluetooth;
 using Android.OS;
@@ -515,6 +517,11 @@ namespace BmwDeepObd
         private void PerformUpdate()
         {
             EdiabasClose();
+            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
+            progress.SetCancelable(false);
+            progress.SetMessage(GetString(Resource.String.can_adapter_fw_update_active));
+            progress.Show();
+
             _adapterThread = new Thread(() =>
             {
                 bool updateOk = false;
@@ -527,11 +534,21 @@ namespace BmwDeepObd
                         BluetoothDevice device = _activityCommon.BtAdapter.GetRemoteDevice(stringList[0]);
                         if (device != null)
                         {
-                            using (BluetoothSocket bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid))
+                            using(Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
+                                typeof(XmlToolActivity).Namespace + ".HexFiles.CanAdapterElm.X.production.hex"))
                             {
-                                bluetoothSocket.Connect();
-                                updateOk = PicBootloader.FwUpdate(bluetoothSocket);
-                                bluetoothSocket.Close();
+                                if (stream != null)
+                                {
+                                    using (BluetoothSocket bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid))
+                                    {
+                                        if (bluetoothSocket != null)
+                                        {
+                                            bluetoothSocket.Connect();
+                                            updateOk = PicBootloader.FwUpdate(bluetoothSocket, stream);
+                                            bluetoothSocket.Close();
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -546,11 +563,17 @@ namespace BmwDeepObd
                     {
                         _adapterThread.Join();
                     }
+                    progress.Hide();
+                    progress.Dispose();
                     string message = updateOk
                         ? GetString(Resource.String.can_adapter_fw_update_ok)
                         : GetString(Resource.String.can_adapter_fw_update_failed);
                     _activityCommon.ShowAlert(message);
                     UpdateDisplay();
+                    if (updateOk)
+                    {
+                        PerformRead();
+                    }
                 });
             });
             _adapterThread.Start();
