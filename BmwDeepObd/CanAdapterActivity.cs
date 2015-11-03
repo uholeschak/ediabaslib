@@ -525,6 +525,7 @@ namespace BmwDeepObd
             _adapterThread = new Thread(() =>
             {
                 bool updateOk = false;
+                bool connectOk = false;
                 try
                 {
                     Thread.Sleep(1000); // wait for interface to close
@@ -544,6 +545,7 @@ namespace BmwDeepObd
                                         if (bluetoothSocket != null)
                                         {
                                             bluetoothSocket.Connect();
+                                            connectOk = true;
                                             updateOk = PicBootloader.FwUpdate(bluetoothSocket, stream);
                                             bluetoothSocket.Close();
                                         }
@@ -555,7 +557,7 @@ namespace BmwDeepObd
                 }
                 catch (Exception)
                 {
-                    // ignored
+                    updateOk = false;
                 }
                 RunOnUiThread(() =>
                 {
@@ -565,9 +567,17 @@ namespace BmwDeepObd
                     }
                     progress.Hide();
                     progress.Dispose();
-                    string message = updateOk
-                        ? GetString(Resource.String.can_adapter_fw_update_ok)
-                        : GetString(Resource.String.can_adapter_fw_update_failed);
+                    string message;
+                    if (updateOk)
+                    {
+                        message = GetString(Resource.String.can_adapter_fw_update_ok);
+                    }
+                    else
+                    {
+                        message = connectOk
+                            ? GetString(Resource.String.can_adapter_fw_update_failed)
+                            : GetString(Resource.String.can_adapter_fw_update_conn_failed);
+                    }
                     _activityCommon.ShowAlert(message);
                     UpdateDisplay();
                     if (updateOk)

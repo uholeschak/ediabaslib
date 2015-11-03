@@ -171,6 +171,7 @@
   <string name="can_adapter_ignition_off">Zündung aus</string>
   <string name="can_adapter_text_off">0: Aus</string>
   <string name="can_adapter_fw_update_active">Firmware Aktualisierung aktiv.\nBitte Kommunikation nicht unterbrechen.</string>
+  <string name="can_adapter_fw_update_conn_failed">Verbindung zum Adapter fehlgeschlagen</string>
   <string name="can_adapter_fw_update_failed">Firmware Aktualisierung fehlgeschlagen</string>
   <string name="can_adapter_fw_update_ok">Firmware Aktualisierung erfolgreich</string>
   <string name="button_can_adapter_read">Lesen</string>
