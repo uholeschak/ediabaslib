@@ -128,7 +128,7 @@
 
             string resultText = string.Format("Update: {0}\r\n", updateCount++);
             ediabas.TimeMeas = 0;
-            ulong timeDiff = 0;
+            long timeDiff = 0;
             foreach (EdiabasTestJob ediabasJob in testJobList)
             {
                 try
@@ -154,7 +154,7 @@
                 {
                     long startTime = Stopwatch.GetTimestamp();
                     ediabas.ExecuteJob(ediabasJob.JobName);
-                    timeDiff += (ulong) (Stopwatch.GetTimestamp() - startTime);
+                    timeDiff += Stopwatch.GetTimestamp() - startTime;
 
                     string lineText = string.Empty;
                     List<Dictionary<string, EdiabasNet.ResultData>> resultSets = ediabas.ResultSets;
@@ -224,7 +224,7 @@
                     return;
                 }
             }
-            resultText += string.Format("Zeit: {0}ms, Intern: {1}ms", (long)timeDiff / (Stopwatch.Frequency / 1000), ediabas.TimeMeas / (Stopwatch.Frequency / 1000));
+            resultText += string.Format("Zeit: {0}ms, Intern: {1}ms", timeDiff / (Stopwatch.Frequency / 1000), ediabas.TimeMeas / (Stopwatch.Frequency / 1000));
 
             lock (EdiabasThread.DataLock)
             {
