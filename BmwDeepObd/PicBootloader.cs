@@ -2771,15 +2771,19 @@ namespace BmwDeepObd
 
         public static bool WriteDevice(Device device, DeviceData deviceData, Comm comm)
         {
-            DeviceWriter deviceWriter = new DeviceWriter(device, comm);
-            deviceWriter.WriteConfig = true;
+            DeviceWriter deviceWriter = new DeviceWriter(device, comm)
+            {
+                WriteConfig = true
+            };
             Comm.ErrorCode errorCode = deviceWriter.WriteFlash(deviceData, device.StartFlash, device.EndFlash);
             if (errorCode != Comm.ErrorCode.Success)
             {
                 return false;
             }
-            DeviceVerifier deviceVerifier = new DeviceVerifier(device, comm);
-            deviceVerifier.WriteConfig = true;
+            DeviceVerifier deviceVerifier = new DeviceVerifier(device, comm)
+            {
+                WriteConfig = true
+            };
             errorCode = deviceVerifier.VerifyFlash(deviceData.ProgramMemory, (int)device.StartFlash, (int)device.EndFlash);
             if (errorCode != Comm.ErrorCode.Success)
             {
@@ -2820,6 +2824,14 @@ namespace BmwDeepObd
                 return false;
             }
 #if false
+            // flash fill test
+            for (int i = 0x0800; i < deviceData.ProgramMemory.Length; i++)
+            {
+                deviceData.ProgramMemory[i] = (uint)(i * 2 + i);
+            }
+#endif
+#if false
+            // flash erase test
             DeviceWritePlanner writePlan = new DeviceWritePlanner(device);
             List<Device.MemoryRange> eraseList = new List<Device.MemoryRange>();
             writePlan.PlanFlashErase(ref eraseList);
