@@ -8,7 +8,6 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using EdiabasLib;
-using Java.Util;
 
 namespace BmwDeepObd
 {
@@ -21,7 +20,6 @@ namespace BmwDeepObd
         // Intent extra
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraInterfaceType = "interface_type";
-        private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
 
         private View _barView;
         private Button _buttonRead;
@@ -516,7 +514,7 @@ namespace BmwDeepObd
 
         private void PerformUpdate()
         {
-            EdiabasClose();
+            EdiabasInit();
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
             progress.SetCancelable(false);
             progress.SetMessage(GetString(Resource.String.can_adapter_fw_update_active));
@@ -528,29 +526,20 @@ namespace BmwDeepObd
                 bool connectOk = false;
                 try
                 {
-                    Thread.Sleep(1000); // wait for interface to close
-                    string[] stringList = _deviceAddress.Split(';');
-                    if (stringList.Length > 0)
+                    connectOk = !InterfacePrepare();
+                    BluetoothSocket bluetoothSocket = EdBluetoothInterface.BluetoothSocket;
+                    if (bluetoothSocket == null)
                     {
-                        BluetoothDevice device = _activityCommon.BtAdapter.GetRemoteDevice(stringList[0]);
-                        if (device != null)
+                        connectOk = false;
+                    }
+                    else
+                    {
+                        using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
+                            typeof(XmlToolActivity).Namespace + ".HexFiles.CanAdapterElm.X.production.hex"))
                         {
-                            using(Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
-                                typeof(XmlToolActivity).Namespace + ".HexFiles.CanAdapterElm.X.production.hex"))
+                            if (stream != null)
                             {
-                                if (stream != null)
-                                {
-                                    using (BluetoothSocket bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid))
-                                    {
-                                        if (bluetoothSocket != null)
-                                        {
-                                            bluetoothSocket.Connect();
-                                            connectOk = true;
-                                            updateOk = PicBootloader.FwUpdate(bluetoothSocket, stream);
-                                            bluetoothSocket.Close();
-                                        }
-                                    }
-                                }
+                                updateOk = PicBootloader.FwUpdate(bluetoothSocket, stream);
                             }
                         }
                     }

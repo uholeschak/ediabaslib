@@ -47,6 +47,11 @@ namespace EdiabasLib
 
         public static EdiabasNet Ediabas { get; set; }
 
+        public static BluetoothSocket BluetoothSocket
+        {
+            get { return _bluetoothSocket; }
+        }
+
         public static int CurrentBaudRate
         {
             get { return _currentBaudRate; }
