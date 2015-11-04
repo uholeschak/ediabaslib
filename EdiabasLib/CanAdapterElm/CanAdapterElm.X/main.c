@@ -124,6 +124,10 @@ typedef enum
     rec_state_error,    // receive error
 } rec_states;
 
+// constants in rom
+static const uint16_t adapter_type @ _ROMSIZE - 4 = ADAPTER_TYPE;
+static const uint16_t adapter_version @ _ROMSIZE - 6 = ADAPTER_VERSION;
+
 static volatile bool start_indicator;  // show start indicator
 static uint8_t idle_counter;
 
