@@ -665,6 +665,8 @@ BootInfoBlock:
     db      0xFF, 0x84             ; command mask : family id 
     db      low(BootloaderStart), high(BootloaderStart)
     db      upper(BootloaderStart), 0 
+    db      0x00, 0x00             ; device id (reserved)
+    db      low(ADAPTER_TYPE), high(ADAPTER_TYPE)
 BootInfoBlockEnd:
 
 ; In:   <STX>[<0x00>]<CRCL><CRCH><ETX>
