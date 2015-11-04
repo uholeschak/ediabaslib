@@ -534,6 +534,7 @@ namespace BmwDeepObd
                     }
                     else
                     {
+                        connectOk = true;
                         using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
                             typeof(XmlToolActivity).Namespace + ".HexFiles.CanAdapterElm.X.production.hex"))
                         {
