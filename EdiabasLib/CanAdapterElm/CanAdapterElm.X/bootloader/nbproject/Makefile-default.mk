@@ -86,7 +86,7 @@ ${OBJECTDIR}/PIC18Bootloader.o: PIC18Bootloader.asm  nbproject/Makefile-${CND_CO
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/PIC18Bootloader.o.d 
 	@${RM} ${OBJECTDIR}/PIC18Bootloader.o 
-	@${FIXDEPS} dummy.d -e "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.ERR" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG -d__MPLAB_DEBUGGER_PK3=1 -q -p$(MP_PROCESSOR_OPTION)  $(ASM_OPTIONS)   \"D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.asm\" 
+	@${FIXDEPS} dummy.d -e "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.ERR" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG -d__MPLAB_DEBUGGER_PK3=1 -q -p$(MP_PROCESSOR_OPTION)  $(ASM_OPTIONS)-dADAPTER_TYPE=0x02   \"D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.asm\" 
 	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.O ${OBJECTDIR}/PIC18Bootloader.o
 	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.ERR ${OBJECTDIR}/PIC18Bootloader.o.err
 	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.LST ${OBJECTDIR}/PIC18Bootloader.o.lst
@@ -99,7 +99,7 @@ ${OBJECTDIR}/PIC18Bootloader.o: PIC18Bootloader.asm  nbproject/Makefile-${CND_CO
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/PIC18Bootloader.o.d 
 	@${RM} ${OBJECTDIR}/PIC18Bootloader.o 
-	@${FIXDEPS} dummy.d -e "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.ERR" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION)  $(ASM_OPTIONS)   \"D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.asm\" 
+	@${FIXDEPS} dummy.d -e "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.ERR" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION)  $(ASM_OPTIONS)-dADAPTER_TYPE=0x02   \"D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.asm\" 
 	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.O ${OBJECTDIR}/PIC18Bootloader.o
 	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.ERR ${OBJECTDIR}/PIC18Bootloader.o.err
 	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/bootloader/PIC18Bootloader.LST ${OBJECTDIR}/PIC18Bootloader.o.lst

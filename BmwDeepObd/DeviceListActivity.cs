@@ -318,7 +318,7 @@ namespace BmwDeepObd
         /// <returns>Adapter type</returns>
         private AdapterType AdapterTypeDetection(BluetoothSocket bluetoothSocket)
         {
-            const int versionRespLen = 8;
+            const int versionRespLen = 9;
             byte[] customData = { 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E };
             AdapterType adapterType = AdapterType.Unknown;
 

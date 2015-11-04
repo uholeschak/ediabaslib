@@ -517,10 +517,11 @@ bool internal_telegram(uint16_t len)
         }
         if ((temp_buffer[3] == 0xFD) && (temp_buffer[4] == 0xFD))
         {      // read adapter type and version
-            temp_buffer[4] = ADAPTER_TYPE;
-            temp_buffer[5] = ADAPTER_VERSION >> 8;
-            temp_buffer[6] = ADAPTER_VERSION;
-            len = 8;
+            temp_buffer[4] = ADAPTER_TYPE >> 8;
+            temp_buffer[5] = ADAPTER_TYPE;
+            temp_buffer[6] = ADAPTER_VERSION >> 8;
+            temp_buffer[7] = ADAPTER_VERSION;
+            len = 9;
             temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
