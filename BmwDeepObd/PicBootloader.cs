@@ -345,6 +345,7 @@ namespace BmwDeepObd
             public int Id;
             public Families Family;
             public uint CommandMask;
+            public uint AdapterType;
             public string Name;
 
             public int BytesPerWordEeprom;
@@ -1777,6 +1778,7 @@ namespace BmwDeepObd
                 public uint StartBootloader;
                 public uint EndBootloader;
                 public uint DeviceIdent;
+                public uint AdapterType;
             };
 
             // ReSharper disable InconsistentNaming
@@ -2168,6 +2170,11 @@ namespace BmwDeepObd
                     {
                         bootInfo.DeviceIdent  = response[10];
                         bootInfo.DeviceIdent += (uint)(response[11] << 8);
+                    }
+                    if (response.Count > 12)
+                    {   // [UH] added adapter type info
+                        bootInfo.AdapterType = response[12];
+                        bootInfo.AdapterType += (uint)(response[13] << 8);
                     }
                 }
                 catch (Exception)
@@ -2761,6 +2768,7 @@ namespace BmwDeepObd
                 device.StartBootloader = bootInfo.StartBootloader;
                 device.EndBootloader = bootInfo.EndBootloader;
                 device.CommandMask = bootInfo.CommandMask;
+                device.AdapterType = bootInfo.AdapterType;
 
                 return true;
             }
@@ -2820,6 +2828,20 @@ namespace BmwDeepObd
             HexImporter hexImporter = new HexImporter();
             DeviceData deviceData = new DeviceData(device);
             if (!hexImporter.ImportHexFile(hexFile, deviceData, device))
+            {
+                comm.RunApplication();
+                return false;
+            }
+            uint adapterType;
+            if (device.BytesPerWordFlash > 1)
+            {
+                adapterType = deviceData.ProgramMemory[(device.EndFlash - 4) / device.BytesPerWordFlash] & 0xFFFF;
+            }
+            else
+            {
+                adapterType = (deviceData.ProgramMemory[(device.EndFlash - 4)] & 0xFF) + ((deviceData.ProgramMemory[(device.EndFlash - 3)] & 0xFF) << 8);
+            }
+            if (adapterType != device.AdapterType)
             {
                 comm.RunApplication();
                 return false;
