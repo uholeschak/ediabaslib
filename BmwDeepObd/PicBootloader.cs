@@ -2311,6 +2311,7 @@ namespace BmwDeepObd
                     data.Nonce = 0;
                     data.Mac = new byte[(device.EndFlash - device.StartFlash)/device.BytesPerWordFlash + 1, 16];
 
+                    hexFile.Position = 0;
                     using (StreamReader srHexFile = new StreamReader(hexFile))
                     {
                         for (;;)
