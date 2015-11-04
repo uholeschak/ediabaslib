@@ -225,6 +225,21 @@ BootloaderBreakCheck:
     ; check for software reset
     btfss   RCON, RI
     bra     BootloadMode
+    ; check for adapter type
+    movlw   low(END_FLASH - 4)
+    movwf   TBLPTRL
+    movlw   high(END_FLASH - 4)
+    movwf   TBLPTRH
+    movlw   upper(END_FLASH - 4)
+    movwf   TBLPTRU
+    tblrd   *+
+    movlw   low(ADAPTER_TYPE)
+    xorwf   TABLAT, w
+    bnz     BootloadMode
+    tblrd   *+
+    movlw   high(ADAPTER_TYPE)
+    xorwf   TABLAT, w
+    bnz     BootloadMode
 
 #if 0
     ; wait for stable input signal
@@ -287,11 +302,11 @@ CalcCheckum:
     tblrd   *+
     movf    TABLAT, w
     xorwf   CRCL, w
-    bnz    BootloadMode
+    bnz     BootloadMode
     tblrd   *+
     movf    TABLAT, w
     xorwf   CRCH, w
-    bnz    BootloadMode
+    bnz     BootloadMode
 
     ; test if LED RS RX is low
     btfss   PORTB, 4
