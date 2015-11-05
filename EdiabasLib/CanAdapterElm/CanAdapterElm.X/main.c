@@ -635,6 +635,7 @@ bool internal_telegram(uint16_t len)
         }
         if ((temp_buffer[3] == 0xFD) && (temp_buffer[4] == 0xFD))
         {      // read adapter type and version
+            temp_buffer[0] = 0x85;
             temp_buffer[4] = ADAPTER_TYPE >> 8;
             temp_buffer[5] = ADAPTER_TYPE;
             temp_buffer[6] = ADAPTER_VERSION >> 8;
