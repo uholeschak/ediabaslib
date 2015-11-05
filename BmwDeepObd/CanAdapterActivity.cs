@@ -35,6 +35,7 @@ namespace BmwDeepObd
         private TextView _textViewCanAdapterIgnitionStateTitle;
         private TextView _textViewIgnitionState;
         private TextView _textViewBatteryVoltage;
+        private TextView _textViewFwVersion;
         private Button _buttonFwUpdate;
         private string _deviceAddress = string.Empty;
         private int _blockSize = -1;
@@ -42,6 +43,8 @@ namespace BmwDeepObd
         private int _canMode = -1;
         private int _ignitionState = -1;
         private int _batteryVoltage = -1;
+        private int _adapterType = -1;
+        private int _fwVersion = -1;
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
         private Thread _adapterThread;
@@ -129,6 +132,9 @@ namespace BmwDeepObd
 
             _textViewBatteryVoltage = FindViewById<TextView>(Resource.Id.textViewCanAdapterBatVoltage);
             _textViewBatteryVoltage.Visibility = visibility;
+
+            _textViewFwVersion = FindViewById<TextView>(Resource.Id.textViewCanAdapterFwVersion);
+            _textViewFwVersion.Visibility = visibility;
 
             _buttonFwUpdate = FindViewById<Button>(Resource.Id.buttonCanAdapterFwUpdate);
             _buttonFwUpdate.Click += (sender, args) =>
@@ -296,6 +302,13 @@ namespace BmwDeepObd
                     voltageText = _batteryVoltage == 0x80 ? "--" : string.Format(ActivityMain.Culture, "{0,4:0.0}V", (double)_batteryVoltage / 10);
                 }
                 _textViewBatteryVoltage.Text = voltageText;
+
+                string versionText = string.Empty;
+                if (_fwVersion >= 0)
+                {
+                    versionText = string.Format(ActivityMain.Culture, "{0}.{1}", (_fwVersion >> 8) & 0xFF, _fwVersion & 0xFF);
+                }
+                _textViewFwVersion.Text = versionText;
             }
         }
 
@@ -380,6 +393,20 @@ namespace BmwDeepObd
                             commFailed = true;
                         }
                     }
+                    // firmware version
+                    if (!commFailed)
+                    {
+                        byte[] result = AdapterCommandCustom(0xFD, 0xFD);
+                        if ((result == null) || (result.Length < 4))
+                        {
+                            commFailed = true;
+                        }
+                        else
+                        {
+                            _adapterType = result[1] + (result[0] << 8);
+                            _fwVersion = result[3] + (result[2] << 8);
+                        }
+                    }
                 }
                 catch (Exception)
                 {
@@ -392,6 +419,8 @@ namespace BmwDeepObd
                     _canMode = -1;
                     _ignitionState = -1;
                     _batteryVoltage = -1;
+                    _adapterType = -1;
+                    _fwVersion = -1;
                 }
 
                 RunOnUiThread(() =>
@@ -592,6 +621,22 @@ namespace BmwDeepObd
                 return -1;
             }
             return response[4];
+        }
+
+        private byte[] AdapterCommandCustom(byte command, byte data = 0x00)
+        {
+            byte[] response;
+            if (!_ediabas.EdInterfaceClass.TransmitData(new byte[] { 0x82, 0xF1, 0xF1, command, data }, out response))
+            {
+                return null;
+            }
+            if ((response.Length < 6) || (response[3] != command))
+            {
+                return null;
+            }
+            byte[] result = new byte[response.Length - 5];
+            Array.Copy(response, 4, result, 0, result.Length);
+            return result;
         }
 
         private bool AdapterCommandStd(byte command)
