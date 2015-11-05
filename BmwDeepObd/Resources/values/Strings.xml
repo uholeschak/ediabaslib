@@ -164,7 +164,7 @@
   <string name="can_adapter_block_size">Block size</string>
   <string name="can_adapter_ignition_state">Ignition</string>
   <string name="can_adapter_bat_voltage">Battery voltage</string>
-  <string name="can_adapter_fw_version">Firmware version</string>
+  <string name="can_adapter_fw_version">Firmware version (current / available)</string>
   <string name="can_adapter_comm_error">A communication error occured</string>
   <string name="can_adapter_comm_error_std">A communication error occured.\nAdapter configuration is only possible,\nif the adapter LED is active after power on.</string>
   <string name="can_adapter_ignition_on">Ignition on</string>

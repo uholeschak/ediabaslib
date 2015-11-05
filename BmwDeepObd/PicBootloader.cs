@@ -3,8 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using Android.Bluetooth;
 using System;
+using System.Linq;
 using System.Threading;
-
+using System.Reflection;
 // ReSharper disable RedundantCaseLabel
 
 namespace BmwDeepObd
@@ -17,6 +18,40 @@ namespace BmwDeepObd
         public const byte DLE = 0x05;
         // ReSharper restore InconsistentNaming
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
+        private static List<FirmwareDetail> _firmwareList;
+
+        private static readonly FirmwareInfo[] FirmwareInfos =
+        {
+            new FirmwareInfo("CanAdapterElm.X.production.hex", 0x030C, Device.Families.PIC18)
+        };
+
+        private class FirmwareInfo
+        {
+            public FirmwareInfo(string fileName, uint deviceId, Device.Families familyId)
+            {
+                FileName = fileName;
+                DeviceId = deviceId;
+                FamilyId = familyId;
+            }
+
+            public string FileName { get; private set; }
+            public uint DeviceId { get; private set; }
+            public Device.Families FamilyId { get; private set; }
+        }
+
+        private class FirmwareDetail
+        {
+            public FirmwareDetail(FirmwareInfo firmwareInfo, uint adapterType, uint adapterVersion)
+            {
+                FirmwareInfo = firmwareInfo;
+                AdapterType = adapterType;
+                AdapterVersion = adapterVersion;
+            }
+
+            public FirmwareInfo FirmwareInfo { get; private set; }
+            public uint AdapterType { get; private set; }
+            public uint AdapterVersion { get; private set; }
+        }
 
         private class Crc
         {
@@ -2817,57 +2852,136 @@ namespace BmwDeepObd
             return true;
         }
 
-        public static bool FwUpdate(BluetoothSocket bluetoothSocket, Stream hexFile)
+        public static void CreateFirmwareList()
         {
+            if (_firmwareList != null)
+            {
+                return;
+            }
+            _firmwareList = new List<FirmwareDetail>();
+            Device device = new Device();
+            DeviceData deviceData = new DeviceData(device);
+            HexImporter hexImporter = new HexImporter();
+            foreach (FirmwareInfo firmwareInfo in FirmwareInfos)
+            {
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
+                    typeof(XmlToolActivity).Namespace + ".HexFiles." + firmwareInfo.FileName))
+                {
+                    if (stream != null)
+                    {
+                        if (LoadDevice(device, (int)firmwareInfo.DeviceId, firmwareInfo.FamilyId))
+                        {
+                            if (hexImporter.ImportHexFile(stream, deviceData, device))
+                            {
+                                uint adapterType;
+                                if (device.BytesPerWordFlash > 1)
+                                {
+                                    adapterType = deviceData.ProgramMemory[(device.EndFlash - 4) / device.BytesPerWordFlash] & 0xFFFF;
+                                }
+                                else
+                                {
+                                    adapterType = (deviceData.ProgramMemory[(device.EndFlash - 4)] & 0xFF) + ((deviceData.ProgramMemory[(device.EndFlash - 3)] & 0xFF) << 8);
+                                }
+                                uint adapterVersion;
+                                if (device.BytesPerWordFlash > 1)
+                                {
+                                    adapterVersion = deviceData.ProgramMemory[(device.EndFlash - 6) / device.BytesPerWordFlash] & 0xFFFF;
+                                }
+                                else
+                                {
+                                    adapterVersion = (deviceData.ProgramMemory[(device.EndFlash - 6)] & 0xFF) + ((deviceData.ProgramMemory[(device.EndFlash - 5)] & 0xFF) << 8);
+                                }
+                                _firmwareList.Add(new FirmwareDetail(firmwareInfo, adapterType, adapterVersion));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static int GetFirmwareVersion(uint adapterType)
+        {
+            CreateFirmwareList();
+            foreach (FirmwareDetail firmwareDetail in _firmwareList)
+            {
+                if (firmwareDetail.AdapterType == adapterType)
+                {
+                    return (int)firmwareDetail.AdapterVersion;
+                }
+            }
+            return -1;
+        }
+
+        public static bool FwUpdate(BluetoothSocket bluetoothSocket)
+        {
+            CreateFirmwareList();
             Comm comm = new Comm(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
             Device device = new Device();
             if (!EnterBootloaderMode(device, comm))
             {
                 return false;
             }
-            HexImporter hexImporter = new HexImporter();
-            DeviceData deviceData = new DeviceData(device);
-            if (!hexImporter.ImportHexFile(hexFile, deviceData, device))
+            // get the firmware file
+            Stream hexFile = (from firmwareDetail in _firmwareList
+                              where firmwareDetail.AdapterType == device.AdapterType
+                              select Assembly.GetExecutingAssembly().GetManifestResourceStream(
+                              typeof (XmlToolActivity).Namespace + ".HexFiles." + firmwareDetail.FirmwareInfo.FileName)).FirstOrDefault();
+            if (hexFile == null)
             {
                 comm.RunApplication();
                 return false;
             }
-            uint adapterType;
-            if (device.BytesPerWordFlash > 1)
+            try
             {
-                adapterType = deviceData.ProgramMemory[(device.EndFlash - 4) / device.BytesPerWordFlash] & 0xFFFF;
-            }
-            else
-            {
-                adapterType = (deviceData.ProgramMemory[(device.EndFlash - 4)] & 0xFF) + ((deviceData.ProgramMemory[(device.EndFlash - 3)] & 0xFF) << 8);
-            }
-            if (adapterType != device.AdapterType)
-            {
-                comm.RunApplication();
-                return false;
-            }
+                HexImporter hexImporter = new HexImporter();
+                DeviceData deviceData = new DeviceData(device);
+                if (!hexImporter.ImportHexFile(hexFile, deviceData, device))
+                {
+                    comm.RunApplication();
+                    return false;
+                }
+                uint adapterType;
+                if (device.BytesPerWordFlash > 1)
+                {
+                    adapterType = deviceData.ProgramMemory[(device.EndFlash - 4) / device.BytesPerWordFlash] & 0xFFFF;
+                }
+                else
+                {
+                    adapterType = (deviceData.ProgramMemory[(device.EndFlash - 4)] & 0xFF) + ((deviceData.ProgramMemory[(device.EndFlash - 3)] & 0xFF) << 8);
+                }
+                if (adapterType != device.AdapterType)
+                {
+                    comm.RunApplication();
+                    return false;
+                }
 #if false
-            // flash fill test
-            for (int i = 0x0800; i < deviceData.ProgramMemory.Length; i++)
-            {
-                deviceData.ProgramMemory[i] = (uint)(i * 2 + i);
-            }
+                // flash fill test
+                for (int i = 0x0800; i < deviceData.ProgramMemory.Length; i++)
+                {
+                    deviceData.ProgramMemory[i] = (uint)(i * 2 + i);
+                }
 #endif
 #if false
-            // flash erase test
-            DeviceWritePlanner writePlan = new DeviceWritePlanner(device);
-            List<Device.MemoryRange> eraseList = new List<Device.MemoryRange>();
-            writePlan.PlanFlashErase(ref eraseList);
-            deviceWriter.EraseFlash(eraseList);
+                // flash erase test
+                DeviceWritePlanner writePlan = new DeviceWritePlanner(device);
+                List<Device.MemoryRange> eraseList = new List<Device.MemoryRange>();
+                writePlan.PlanFlashErase(ref eraseList);
+                deviceWriter.EraseFlash(eraseList);
 #endif
-            if (!WriteDevice(device, deviceData, comm))
-            {
-                return false;
+                if (!WriteDevice(device, deviceData, comm))
+                {
+                    return false;
+                }
+                Comm.ErrorCode errorCode = comm.RunApplication();
+                if (errorCode != Comm.ErrorCode.Success)
+                {
+                    return false;
+                }
             }
-            Comm.ErrorCode errorCode = comm.RunApplication();
-            if (errorCode != Comm.ErrorCode.Success)
+            finally
             {
-                return false;
+                hexFile.Close();
+                hexFile.Dispose();
             }
             return true;
         }
