@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using System.Reflection;
 using System.Threading;
 using Android.Bluetooth;
 using Android.OS;
@@ -137,6 +135,7 @@ namespace BmwDeepObd
             _textViewFwVersion.Visibility = visibility;
 
             _buttonFwUpdate = FindViewById<Button>(Resource.Id.buttonCanAdapterFwUpdate);
+            _buttonFwUpdate.Visibility = visibility;
             _buttonFwUpdate.Click += (sender, args) =>
             {
                 PerformUpdate();
@@ -247,12 +246,12 @@ namespace BmwDeepObd
         private void UpdateDisplay()
         {
             bool bEnabled = !IsJobRunning();
+            bool fwUpdateEnabled = bEnabled;
             _buttonRead.Enabled = bEnabled;
             _buttonWrite.Enabled = bEnabled;
             _spinnerCanAdapterMode.Enabled = bEnabled;
             _spinnerCanAdapterSepTime.Enabled = bEnabled;
             _spinnerCanAdapterBlockSize.Enabled = bEnabled;
-            _buttonFwUpdate.Enabled = bEnabled;
             if (bEnabled)
             {
                 if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
@@ -303,13 +302,25 @@ namespace BmwDeepObd
                 }
                 _textViewBatteryVoltage.Text = voltageText;
 
+                int fwUpdateVersion = -1;
                 string versionText = string.Empty;
-                if (_fwVersion >= 0)
+                if (_adapterType >= 0 && _fwVersion >= 0)
                 {
-                    versionText = string.Format(ActivityMain.Culture, "{0}.{1}", (_fwVersion >> 8) & 0xFF, _fwVersion & 0xFF);
+                    versionText = string.Format(ActivityMain.Culture, "{0}.{1} / ", (_fwVersion >> 8) & 0xFF, _fwVersion & 0xFF);
+                    fwUpdateVersion = PicBootloader.GetFirmwareVersion((uint)_adapterType);
+                    if (fwUpdateVersion >= 0)
+                    {
+                        versionText += string.Format(ActivityMain.Culture, "{0}.{1}", (fwUpdateVersion >> 8) & 0xFF, fwUpdateVersion & 0xFF);
+                    }
+                    else
+                    {
+                        versionText += "--";
+                    }
                 }
                 _textViewFwVersion.Text = versionText;
+                fwUpdateEnabled = fwUpdateVersion >= 0;
             }
+            _buttonFwUpdate.Enabled = fwUpdateEnabled;
         }
 
         private void PerformRead(bool wait = false)
@@ -564,14 +575,7 @@ namespace BmwDeepObd
                     else
                     {
                         connectOk = true;
-                        using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
-                            typeof(XmlToolActivity).Namespace + ".HexFiles.CanAdapterElm.X.production.hex"))
-                        {
-                            if (stream != null)
-                            {
-                                updateOk = PicBootloader.FwUpdate(bluetoothSocket, stream);
-                            }
-                        }
+                        updateOk = PicBootloader.FwUpdate(bluetoothSocket);
                     }
                 }
                 catch (Exception)
