@@ -58,6 +58,17 @@
         android:id="@+id/textViewCanAdapterBatVoltage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/textViewCanAdapterFwVersionTitle"
+        android:text="@+string/can_adapter_fw_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#666"
+        android:textColor="#fff" />
+    <TextView
+        android:id="@+id/textViewCanAdapterFwVersion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     <Button
         android:id="@+id/buttonCanAdapterFwUpdate"
         android:layout_width="match_parent"

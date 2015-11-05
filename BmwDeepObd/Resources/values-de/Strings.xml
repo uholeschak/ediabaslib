@@ -165,6 +165,7 @@
   <string name="can_adapter_block_size">Blockgröße</string>
   <string name="can_adapter_ignition_state">Zündung</string>
   <string name="can_adapter_bat_voltage">Batteriespannung</string>
+  <string name="can_adapter_fw_version">Firmwareversion</string>
   <string name="can_adapter_comm_error">Es ist ein Kommunikationsfehler aufgetreten</string>
   <string name="can_adapter_comm_error_std">Es ist ein Kommunikationsfehler aufgetreten.\nDie Adapterkonfiguration ist nur möglich,\nwenn die Adapter LED nach dem Einschalten aktiv ist.</string>
   <string name="can_adapter_ignition_on">Zündung an</string>
