@@ -136,7 +136,7 @@ dist/${CND_CONF}/${IMAGE_TYPE}/CanAdapterElm.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: $
 	${MP_CC} $(MP_EXTRA_LD_PRE) --chip=$(MP_PROCESSOR_OPTION) -G -mdist/${CND_CONF}/${IMAGE_TYPE}/CanAdapterElm.X.${IMAGE_TYPE}.map  --double=24 --float=24 --emi=wordwrite --opt=default,+asm,+asmfile,+speed,-space,-debug --addrqual=ignore --mode=pro -DADAPTER_TYPE=0x02 -P -N255 --warn=0 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --fill=0xFFFF@0x0800:0x7FFF --codeoffset=0x800 --checksum=0800-7FFD@7FFEw2 --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-download,+config,+clib,+plib --output=-mcof,+elf:multilocs --stack=compiled:auto:auto:auto "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"     -odist/${CND_CONF}/${IMAGE_TYPE}/CanAdapterElm.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}     
 	
 	@echo "Creating unified hex file"
-	@"C:/Program Files (x86)/Microchip/MPLABX/v3.10/mplab_ide/mplab_ide/modules/../../bin/hexmate" --edf="C:/Program Files (x86)/Microchip/MPLABX/v3.10/mplab_ide/mplab_ide/modules/../../dat/en_msgs.txt" dist/${CND_CONF}/${IMAGE_TYPE}/CanAdapterElm.X.${IMAGE_TYPE}.hex bootloader/dist/default/production/bootloader.production.hex -odist/${CND_CONF}/production/CanAdapterElm.X.production.unified.hex
+	@"C:/Program Files (x86)/Microchip/MPLABX/v3.15/mplab_ide/mplab_ide/modules/../../bin/hexmate" --edf="C:/Program Files (x86)/Microchip/MPLABX/v3.15/mplab_ide/mplab_ide/modules/../../dat/en_msgs.txt" dist/${CND_CONF}/${IMAGE_TYPE}/CanAdapterElm.X.${IMAGE_TYPE}.hex bootloader/dist/default/production/bootloader.production.hex -odist/${CND_CONF}/production/CanAdapterElm.X.production.unified.hex
 
 endif
 
