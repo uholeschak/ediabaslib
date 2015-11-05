@@ -36,7 +36,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.63</languageToolchainVersion>
+        <languageToolchainVersion>5.64</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
