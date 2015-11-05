@@ -302,12 +302,11 @@ namespace BmwDeepObd
                 }
                 _textViewBatteryVoltage.Text = voltageText;
 
-                int fwUpdateVersion = -1;
                 string versionText = string.Empty;
                 if (_adapterType >= 0 && _fwVersion >= 0)
                 {
                     versionText = string.Format(ActivityMain.Culture, "{0}.{1} / ", (_fwVersion >> 8) & 0xFF, _fwVersion & 0xFF);
-                    fwUpdateVersion = PicBootloader.GetFirmwareVersion((uint)_adapterType);
+                    int fwUpdateVersion = PicBootloader.GetFirmwareVersion((uint)_adapterType);
                     if (fwUpdateVersion >= 0)
                     {
                         versionText += string.Format(ActivityMain.Culture, "{0}.{1}", (fwUpdateVersion >> 8) & 0xFF, fwUpdateVersion & 0xFF);
@@ -316,9 +315,9 @@ namespace BmwDeepObd
                     {
                         versionText += "--";
                     }
+                    fwUpdateEnabled = fwUpdateVersion >= 0;
                 }
                 _textViewFwVersion.Text = versionText;
-                fwUpdateEnabled = fwUpdateVersion >= 0;
             }
             _buttonFwUpdate.Enabled = fwUpdateEnabled;
         }
