@@ -43,6 +43,7 @@ namespace BmwDeepObd
         private int _batteryVoltage = -1;
         private int _adapterType = -1;
         private int _fwVersion = -1;
+        private bool _fwUpdateShown = false;
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
         private Thread _adapterThread;
@@ -245,6 +246,7 @@ namespace BmwDeepObd
 
         private void UpdateDisplay()
         {
+            bool requestFwUpdate = false;
             bool bEnabled = !IsJobRunning();
             bool fwUpdateEnabled = bEnabled;
             _buttonRead.Enabled = bEnabled;
@@ -309,6 +311,10 @@ namespace BmwDeepObd
                     int fwUpdateVersion = PicBootloader.GetFirmwareVersion((uint)_adapterType);
                     if (fwUpdateVersion >= 0)
                     {
+                        if (!_fwUpdateShown && _fwVersion < fwUpdateVersion)
+                        {
+                            requestFwUpdate = true;
+                        }
                         versionText += string.Format(ActivityMain.Culture, "{0}.{1}", (fwUpdateVersion >> 8) & 0xFF, fwUpdateVersion & 0xFF);
                     }
                     else
@@ -320,6 +326,22 @@ namespace BmwDeepObd
                 _textViewFwVersion.Text = versionText;
             }
             _buttonFwUpdate.Enabled = fwUpdateEnabled;
+            if (requestFwUpdate)
+            {
+                _fwUpdateShown = true;
+                new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        PerformUpdate();
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                    })
+                    .SetCancelable(true)
+                    .SetMessage(Resource.String.can_adapter_fw_update_present)
+                    .SetTitle(Resource.String.alert_title_question)
+                    .Show();
+            }
         }
 
         private void PerformRead(bool wait = false)
