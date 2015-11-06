@@ -214,7 +214,14 @@ namespace BmwDeepObd
                     {
                         using (BluetoothSocket bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid))
                         {
-                            bluetoothSocket.Connect();
+                            try
+                            {
+                                bluetoothSocket.Connect();
+                            }
+                            catch (Exception)
+                            {   // sometimes connection failes in the first attempt
+                                bluetoothSocket.Connect();
+                            }
                             adapterType = AdapterTypeDetection(bluetoothSocket);
                             bluetoothSocket.Close();
                         }
