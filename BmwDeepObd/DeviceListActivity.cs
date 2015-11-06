@@ -53,6 +53,7 @@ namespace BmwDeepObd
             Elm327Invalid,      // ELM327 invalid type
             Elm327Fake21,       // ELM327 fake 2.1 version
             Custom,             // custom adapter
+            CustomUpdate,       // custom adapter with firmware update
             EchoOnly,           // only echo response
         }
 
@@ -63,6 +64,7 @@ namespace BmwDeepObd
         // Return Intent extra
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
+        public const string ExtraCallAdapterConfig = "adapter_configuration";
 
         // Member fields
         private BluetoothAdapter _btAdapter;
@@ -282,9 +284,28 @@ namespace BmwDeepObd
                             break;
                         }
 
+                        case AdapterType.Custom:
+                        case AdapterType.CustomUpdate:
+                            new AlertDialog.Builder(this)
+                                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                {
+                                    ReturnDeviceType(deviceAddress, deviceName, true);
+                                })
+                                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                {
+                                    ReturnDeviceType(deviceAddress, deviceName);
+                                })
+                                .SetCancelable(true)
+                                .SetMessage(adapterType == AdapterType.CustomUpdate ? Resource.String.adapter_fw_update : Resource.String.adapter_cfg_required)
+                                .SetTitle(Resource.String.alert_title_info)
+                                .Show();
+                            break;
+
                         default:
+                        {
                             ReturnDeviceType(deviceAddress, deviceName);
                             break;
+                        }
                     }
                 });
             })
@@ -299,12 +320,14 @@ namespace BmwDeepObd
         /// </summary>
         /// <param name="deviceAddress">Device Bluetooth address</param>
         /// <param name="deviceName">Device Bleutooth name</param>
-        private void ReturnDeviceType(string deviceAddress, string deviceName)
+        /// <param name="adapterConfig">Opend adapter configuration</param>
+        private void ReturnDeviceType(string deviceAddress, string deviceName, bool adapterConfig = false)
         {
             // Create the result Intent and include the MAC address
             Intent intent = new Intent();
             intent.PutExtra(ExtraDeviceName, deviceName);
             intent.PutExtra(ExtraDeviceAddress, deviceAddress);
+            intent.PutExtra(ExtraCallAdapterConfig, adapterConfig);
 
             // Set result and finish this Activity
             SetResult(Android.App.Result.Ok, intent);
@@ -364,6 +387,13 @@ namespace BmwDeepObd
                             if (checkSum != responseList[customData.Length + versionRespLen - 1])
                             {
                                 break;
+                            }
+                            int adapterTypeId = responseList[customData.Length + 5] + (responseList[customData.Length + 4] << 8);
+                            int fwVersion = responseList[customData.Length + 7] + (responseList[customData.Length + 6] << 8);
+                            int fwUpdateVersion = PicBootloader.GetFirmwareVersion((uint)adapterTypeId);
+                            if (fwUpdateVersion >= 0 && fwUpdateVersion > fwVersion)
+                            {
+                                return AdapterType.CustomUpdate;
                             }
                             return AdapterType.Custom;
                         }
