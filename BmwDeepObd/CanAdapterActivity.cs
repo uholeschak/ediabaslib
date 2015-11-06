@@ -148,7 +148,7 @@ namespace BmwDeepObd
             };
 
             UpdateDisplay();
-            PerformRead(true);
+            PerformRead();
         }
 
         protected override void OnDestroy()
@@ -344,7 +344,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void PerformRead(bool wait = false)
+        private void PerformRead()
         {
             if (_activityCommon.SelectedInterface != ActivityCommon.InterfaceType.Bluetooth)
             {
@@ -357,10 +357,6 @@ namespace BmwDeepObd
                 bool commFailed;
                 try
                 {
-                    if (wait)
-                    {
-                        Thread.Sleep(1000); // wait for interface to close
-                    }
                     commFailed = !InterfacePrepare();
                     // block size
                     if (!commFailed)

@@ -118,7 +118,14 @@ namespace EdiabasLib
                 }
                 bluetoothAdapter.CancelDiscovery();
                 _bluetoothSocket = device.CreateRfcommSocketToServiceRecord (SppUuid);
-                _bluetoothSocket.Connect();
+                try
+                {
+                    _bluetoothSocket.Connect();
+                }
+                catch (Exception)
+                {   // sometimes connection failes in the first attempt
+                    _bluetoothSocket.Connect();
+                }
                 _bluetoothInStream = _bluetoothSocket.InputStream;
                 _bluetoothOutStream = _bluetoothSocket.OutputStream;
 
