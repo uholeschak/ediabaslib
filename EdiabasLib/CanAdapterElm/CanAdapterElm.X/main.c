@@ -81,7 +81,10 @@
 // CONFIG7H
 #pragma config EBTRB = OFF      // Table Read Protect Boot (Disabled)
 
+//#pragma config IDLOC0 = 0x2, IDLOC1 = 0x4, IDLOC2 = 0x6, IDLOC3 = 0x8, IDLOC4 = 0xA, IDLOC5 = 0xC, IDLOC6 = 0xE, IDLOC7 = 0x0
+
 #define DEBUG_PIN           0   // enable debug pin
+#define ID_LOCATION         0x200000    // location of ID memory
 
 #define ADAPTER_VERSION     0x0001
 
@@ -624,6 +627,21 @@ bool internal_telegram(uint16_t len)
                 can_config();
             }
             temp_buffer[4] = can_mode;
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
+        if ((temp_buffer[3] == 0xFB) && (temp_buffer[4] == 0xFB))
+        {      // read id location
+            temp_buffer[0] = 0x85;
+            const uint8_t far *id_loc=(const uint8_t far *) ID_LOCATION;
+            for (uint8_t i = 0; i < 4; i++)
+            {
+                uint8_t value = (*id_loc++) << 4;
+                value |= (*id_loc++) & 0x0F;
+                temp_buffer[4 + i] = value;
+            }
+            len = 9;
             temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
