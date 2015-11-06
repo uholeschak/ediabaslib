@@ -139,7 +139,7 @@ namespace BmwDeepObd
             _buttonFwUpdate.Visibility = visibility;
             _buttonFwUpdate.Click += (sender, args) =>
             {
-                PerformUpdate();
+                PerformUpdateMessage();
             };
 
             _activityCommon = new ActivityCommon(this)
@@ -332,7 +332,7 @@ namespace BmwDeepObd
                 new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
-                        PerformUpdate();
+                        PerformUpdateMessage();
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
@@ -571,6 +571,22 @@ namespace BmwDeepObd
             });
             _adapterThread.Start();
             UpdateDisplay();
+        }
+
+        private void PerformUpdateMessage()
+        {
+            new AlertDialog.Builder(this)
+                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                {
+                    PerformUpdate();
+                })
+                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                {
+                })
+                .SetCancelable(true)
+                .SetMessage(Resource.String.can_adapter_fw_update_info)
+                .SetTitle(Resource.String.alert_title_warning)
+                .Show();
         }
 
         private void PerformUpdate()
