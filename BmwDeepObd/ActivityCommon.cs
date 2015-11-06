@@ -380,10 +380,11 @@ namespace BmwDeepObd
             return false;
         }
 
-        public void ShowAlert(string message)
+        public void ShowAlert(string message, int titleId)
         {
             new AlertDialog.Builder(_activity)
             .SetMessage(message)
+            .SetTitle(titleId)
             .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
             .Show();
         }
@@ -613,7 +614,7 @@ namespace BmwDeepObd
                 })
                 .SetCancelable(true)
                 .SetMessage(resourceId)
-                .SetTitle(Resource.String.interface_activate)
+                .SetTitle(Resource.String.alert_title_question)
                 .Show();
             _activateAlertDialog.DismissEvent += (sender, args) =>
             {
@@ -646,7 +647,7 @@ namespace BmwDeepObd
                 })
                 .SetCancelable(true)
                 .SetMessage(Resource.String.bt_device_select)
-                .SetTitle(Resource.String.bt_device_select_title)
+                .SetTitle(Resource.String.alert_title_question)
                 .Show();
             return false;
         }

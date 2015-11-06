@@ -10,29 +10,30 @@
   <string name="button_select">Select</string>
   <string name="button_generate">Generate</string>
   <string name="no_ext_storage">No external storage available</string>
-  <string name="interface_activate">Interface activation</string>
   <string name="bt_enable">Bluetooth is not enabled.\nDo you want to enable it now?</string>
   <string name="wifi_enable">Wifi is not enabled.\nDo you want to enable it now?</string>
   <string name="bt_not_available">Bluetooth is not available.</string>
   <string name="wifi_not_available">Wifi is not available.</string>
   <string name="config_select">No valid configuration is present.\nDo you want to generate or selecta configuration now?</string>
-  <string name="config_select_title">Configuration</string>
-  <string name="bt_device_select_title">Bluetooth device</string>
   <string name="bt_device_select">No Bluetooth device has been selected.\nDo you want to select a device now?</string>
   <string name="ecu_download_free_space">There is not enough free space on the device for storing the ECU files.\nDo you want to select a different storage media?</string>
-  <string name="ecu_download_title">ECU download</string>
   <string name="ecu_not_found">No ECU files have been found.</string>
   <string name="ecu_package">Different ECU files are available for this application.</string>
   <string name="ecu_download">Do you want to download the ECU files now (File size approx. 100MB)?</string>
   <string name="error_no_error">No errors present</string>
   <string name="error_no_response">No response</string>
-  <string name="version_change_info_title">Information</string>
   <string name="version_change_info_message">This open source project is hosted at:
 \n<a href="https://ediabaslib.codeplex.com">ediabaslib.codeplex.com</a>
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
 \n- First release"</string>
+
+  <!-- Alert titles -->
+  <string name="alert_title_info">Information</string>
+  <string name="alert_title_warning">Warning</string>
+  <string name="alert_title_error">Error</string>
+  <string name="alert_title_question">Question</string>
 
   <!-- Compile -->
   <string name="compile_start">Compiling user code</string>
@@ -52,7 +53,6 @@
   <string name="title_other_devices">Other available devices</string>
   <string name="button_scan">Scan for devices</string>
   <string name="detect_adapter">Detecting adapter type</string>
-  <string name="adapter_type_title">Adapter type</string>
   <string name="adapter_connection_failed">Unable to connect to the adapter.\nDo you still want to use this adapter (the telegrams will be send unmodified)?</string>
   <string name="unknown_adapter_type">Adapter type detection failed.\nDo you still want to use this adapter (the telegrams will be send unmodified)?</string>
   <string name="invalid_adapter_type">The ELM327 adapter is not supporting all required commands and is incompatible with this software.</string>
@@ -128,9 +128,7 @@
   <string name="xml_tool_no_response">No response from vehicle</string>
   <string name="xml_tool_read_jobs_failed">Reading jobs failed</string>
   <string name="xml_tool_save_xml_failed">Saving configuration failed</string>
-  <string name="xml_tool_title_config">Save configuration</string>
   <string name="xml_tool_msg_save_config">Do you want to save the configuration?</string>
-  <string name="xml_tool_title_ecu_error">ECU read error</string>
   <string name="xml_tool_msg_ecu_error">Unable to get valid informations for some ECUs.\nDo you want to try again with another model type?</string>
   <string name="xml_tool_ecu_list">Detected ECUs</string>
   <string name="xml_tool_info_sgbd">SGBD</string>

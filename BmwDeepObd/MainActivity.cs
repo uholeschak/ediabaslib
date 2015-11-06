@@ -254,7 +254,7 @@ namespace BmwDeepObd
                         .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                         .SetCancelable(true)
                         .SetMessage(Resource.String.version_change_info_message)
-                        .SetTitle(Resource.String.version_change_info_title)
+                        .SetTitle(Resource.String.alert_title_info)
                         .Show();
                     _startAlertDialog.DismissEvent += (sender, args) =>
                     {
@@ -1357,7 +1357,7 @@ namespace BmwDeepObd
                 foreach (string compileResult in compileResultList)
                 {
                     string result = compileResult;
-                    RunOnUiThread(() => _activityCommon.ShowAlert(result));
+                    RunOnUiThread(() => _activityCommon.ShowAlert(result, Resource.String.alert_title_error));
                 }
 
                 RunOnUiThread(() =>
@@ -1385,7 +1385,7 @@ namespace BmwDeepObd
             string dirName = Path.GetDirectoryName(fileName);
             if (dirName == null)
             {
-                _activityCommon.ShowAlert(GetString(Resource.String.download_failed));
+                _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
                 return;
             }
             try
@@ -1394,7 +1394,7 @@ namespace BmwDeepObd
             }
             catch (Exception)
             {
-                _activityCommon.ShowAlert(GetString(Resource.String.download_failed));
+                _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
                 return;
             }
 
@@ -1430,7 +1430,7 @@ namespace BmwDeepObd
                         _downloadProgress.Hide();
                         _downloadProgress.Dispose();
                         _downloadProgress = null;
-                        _activityCommon.ShowAlert(GetString(Resource.String.download_failed));
+                        _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
                     });
                 }
             });
@@ -1460,7 +1460,7 @@ namespace BmwDeepObd
                         _downloadProgress = null;
                         if (!e.Cancelled && e.Error != null)
                         {
-                            _activityCommon.ShowAlert(GetString(Resource.String.download_failed));
+                            _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
                         }
                     }
                 }
@@ -1504,7 +1504,7 @@ namespace BmwDeepObd
                     _downloadProgress.Dispose();
                     _downloadProgress = null;
                 }
-                _activityCommon.ShowAlert(GetString(Resource.String.extract_failed));
+                _activityCommon.ShowAlert(GetString(Resource.String.extract_failed), Resource.String.alert_title_error);
                 return;
             }
 
@@ -1556,7 +1556,7 @@ namespace BmwDeepObd
                     _downloadProgress = null;
                     if (extractFailed)
                     {
-                        _activityCommon.ShowAlert(GetString(Resource.String.extract_failed));
+                        _activityCommon.ShowAlert(GetString(Resource.String.extract_failed), Resource.String.alert_title_error);
                     }
                 });
             });
@@ -1582,6 +1582,7 @@ namespace BmwDeepObd
                         {
                         })
                         .SetMessage(Resource.String.ecu_download_free_space)
+                        .SetTitle(Resource.String.alert_title_warning)
                         .Show();
                     return;
                 }
@@ -1613,7 +1614,7 @@ namespace BmwDeepObd
                     {
                     })
                     .SetMessage(message)
-                    .SetTitle(Resource.String.ecu_download_title)
+                    .SetTitle(Resource.String.alert_title_question)
                     .Show();
                 _downloadEcuAlertDialog.DismissEvent += (sender, args) => { _downloadEcuAlertDialog = null; };
                 return false;
@@ -1634,7 +1635,7 @@ namespace BmwDeepObd
                         {
                         })
                         .SetMessage(message)
-                        .SetTitle(Resource.String.ecu_download_title)
+                        .SetTitle(Resource.String.alert_title_question)
                         .Show();
                     _downloadEcuAlertDialog.DismissEvent += (sender, args) => { _downloadEcuAlertDialog = null; };
                 }
@@ -1710,7 +1711,7 @@ namespace BmwDeepObd
                 })
                 .SetCancelable(true)
                 .SetMessage(Resource.String.config_select)
-                .SetTitle(Resource.String.config_select_title)
+                .SetTitle(Resource.String.alert_title_question)
                 .Show();
         }
 
