@@ -240,7 +240,7 @@ namespace BmwDeepObd
                                 })
                                 .SetCancelable(true)
                                 .SetMessage(Resource.String.adapter_connection_failed)
-                                .SetTitle(Resource.String.adapter_type_title)
+                                .SetTitle(Resource.String.alert_title_error)
                                 .Show();
                             break;
 
@@ -255,7 +255,7 @@ namespace BmwDeepObd
                                 })
                                 .SetCancelable(true)
                                 .SetMessage(Resource.String.unknown_adapter_type)
-                                .SetTitle(Resource.String.adapter_type_title)
+                                .SetTitle(Resource.String.alert_title_error)
                                 .Show();
                             break;
 
@@ -277,7 +277,7 @@ namespace BmwDeepObd
                                 })
                                 .SetCancelable(true)
                                 .SetMessage(message)
-                                .SetTitle(Resource.String.adapter_type_title)
+                                .SetTitle(Resource.String.alert_title_error)
                                 .Show();
                             break;
                         }

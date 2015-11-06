@@ -276,7 +276,7 @@ namespace BmwDeepObd
                     base.OnBackPressed();
                 })
                 .SetMessage(Resource.String.xml_tool_msg_save_config)
-                .SetTitle(Resource.String.xml_tool_title_config)
+                .SetTitle(Resource.String.alert_title_question)
                 .Show();
         }
 
@@ -401,7 +401,7 @@ namespace BmwDeepObd
                                 Finish();
                             })
                             .SetMessage(Resource.String.xml_tool_msg_save_config)
-                            .SetTitle(Resource.String.xml_tool_title_config)
+                            .SetTitle(Resource.String.alert_title_question)
                             .Show();
                     }
                     else
@@ -890,7 +890,7 @@ namespace BmwDeepObd
 
                     if (noResponse)
                     {
-                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_no_response));
+                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_no_response), Resource.String.alert_title_error);
                     }
                     else
                     {
@@ -906,7 +906,7 @@ namespace BmwDeepObd
                                 })
                                 .SetCancelable(true)
                                 .SetMessage(Resource.String.xml_tool_msg_ecu_error)
-                                .SetTitle(Resource.String.xml_tool_title_ecu_error)
+                                .SetTitle(Resource.String.alert_title_warning)
                                 .Show();
                         }
                     }
@@ -1122,7 +1122,7 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     if (readFailed || (ecuInfo.JobList.Count == 0))
                     {
-                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_jobs_failed));
+                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_jobs_failed), Resource.String.alert_title_error);
                     }
                     else
                     {
@@ -1892,7 +1892,7 @@ namespace BmwDeepObd
             string xmlFileName = SaveAllXml();
             if (xmlFileName == null)
             {
-                _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_save_xml_failed));
+                _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_save_xml_failed), Resource.String.alert_title_error);
                 return false;
             }
             Intent intent = new Intent();

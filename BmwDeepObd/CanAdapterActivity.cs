@@ -442,7 +442,7 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     if (commFailed)
                     {
-                        _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_comm_error));
+                        _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_comm_error), Resource.String.alert_title_error);
                         EdiabasClose();
                     }
                 });
@@ -538,7 +538,7 @@ namespace BmwDeepObd
                     {
                         _activityCommon.ShowAlert(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth
                             ? GetString(Resource.String.can_adapter_comm_error)
-                            : GetString(Resource.String.can_adapter_comm_error_std));
+                            : GetString(Resource.String.can_adapter_comm_error_std), Resource.String.alert_title_error);
                         EdiabasClose();
                     }
                     else
@@ -600,7 +600,7 @@ namespace BmwDeepObd
                             ? GetString(Resource.String.can_adapter_fw_update_failed)
                             : GetString(Resource.String.can_adapter_fw_update_conn_failed);
                     }
-                    _activityCommon.ShowAlert(message);
+                    _activityCommon.ShowAlert(message, updateOk ? Resource.String.alert_title_info : Resource.String.alert_title_error);
                     UpdateDisplay();
                     if (updateOk)
                     {
