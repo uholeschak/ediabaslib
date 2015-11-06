@@ -321,7 +321,7 @@ namespace BmwDeepObd
                     {
                         versionText += "--";
                     }
-                    fwUpdateEnabled = fwUpdateVersion >= 0;
+                    fwUpdateEnabled = fwUpdateVersion >= 0 && _fwVersion != fwUpdateVersion;
                 }
                 _textViewFwVersion.Text = versionText;
             }
