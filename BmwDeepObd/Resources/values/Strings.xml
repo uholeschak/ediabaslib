@@ -58,6 +58,8 @@
   <string name="invalid_adapter_type">The ELM327 adapter is not supporting all required commands and is incompatible with this software.</string>
   <string name="fake_elm_adapter_type">The ELM327 adapter is a fake 2.1 version and is incompatible with this software.</string>
   <string name="recommened_adapter_type">It\'s recommended to use an ELM327 v1.4b, v1.5 or origin v2.1 adapter,\nwhich is based on PIC18F2480 processor (no MCP2515 chip).</string>
+  <string name="adapter_cfg_required">The adapter may require configuration.\nDo you want to open the adapter configuration page?</string>
+  <string name="adapter_fw_update">There is a firmware update available for this adapter.\nDo you want to open the adapter configuration page for update installation?</string>
 
   <!-- tabs_activate -->
   <string name="button_active">Active</string>
@@ -67,7 +69,7 @@
   <string name="menu_settings">Settings</string>
   <string name="menu_connect">Connect</string>
   <string name="menu_adapter">Adapter</string>
-  <string name="menu_can_adapter_config">CAN adapter configuration</string>
+  <string name="menu_adapter_config">Adapter configuration</string>
   <string name="menu_sel_cfg">Configuration</string>
   <string name="menu_xml_tool">Configuration generator</string>
   <string name="menu_ediabas_tool">Ediabas tool</string>

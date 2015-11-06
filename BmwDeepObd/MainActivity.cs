@@ -48,7 +48,7 @@ namespace BmwDeepObd
         private enum ActivityRequest
         {
             RequestSelectDevice,
-            RequestCanAdapterConfig,
+            RequestAdapterConfig,
             RequestSelectConfig,
             RequestXmlTool,
             RequestEdiabasTool,
@@ -330,8 +330,13 @@ namespace BmwDeepObd
                         // Get the device MAC address
                         _deviceName = data.Extras.GetString(DeviceListActivity.ExtraDeviceName);
                         _deviceAddress = data.Extras.GetString(DeviceListActivity.ExtraDeviceAddress);
+                        bool callAdapterConfig = data.Extras.GetBoolean(DeviceListActivity.ExtraCallAdapterConfig, false);
                         SupportInvalidateOptionsMenu();
-                        if (_autoStart)
+                        if (callAdapterConfig)
+                        {
+                            AdapterConfig();
+                        }
+                        else if (_autoStart)
                         {
                             ButtonConnectClick(_connectButtonInfo.Button, new EventArgs());
                         }
@@ -339,7 +344,7 @@ namespace BmwDeepObd
                     _autoStart = false;
                     break;
 
-                case ActivityRequest.RequestCanAdapterConfig:
+                case ActivityRequest.RequestAdapterConfig:
                     break;
 
                 case ActivityRequest.RequestSelectConfig:
@@ -397,11 +402,11 @@ namespace BmwDeepObd
                 scanMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
             }
 
-            IMenuItem canAdapterMenu = menu.FindItem(Resource.Id.menu_can_adapter_config);
-            if (canAdapterMenu != null)
+            IMenuItem adapterConfigMenu = menu.FindItem(Resource.Id.menu_adapter_config);
+            if (adapterConfigMenu != null)
             {
-                canAdapterMenu.SetEnabled(interfaceAvailable && !commActive);
-                canAdapterMenu.SetVisible(_activityCommon.AllowCanAdapterConfig(_deviceAddress));
+                adapterConfigMenu.SetEnabled(interfaceAvailable && !commActive);
+                adapterConfigMenu.SetVisible(_activityCommon.AllowCanAdapterConfig(_deviceAddress));
             }
 
             IMenuItem selCfgMenu = menu.FindItem(Resource.Id.menu_sel_cfg);
@@ -471,8 +476,8 @@ namespace BmwDeepObd
                     _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice);
                     return true;
 
-                case Resource.Id.menu_can_adapter_config:
-                    CanAdapterConfig();
+                case Resource.Id.menu_adapter_config:
+                    AdapterConfig();
                     return true;
 
                 case Resource.Id.menu_sel_cfg:
@@ -1767,7 +1772,7 @@ namespace BmwDeepObd
             builder.Show();
         }
 
-        private void CanAdapterConfig()
+        private void AdapterConfig()
         {
             if (!CheckForEcuFiles())
             {
@@ -1776,7 +1781,7 @@ namespace BmwDeepObd
             Intent serverIntent = new Intent(this, typeof(CanAdapterActivity));
             serverIntent.PutExtra(CanAdapterActivity.ExtraDeviceAddress, _deviceAddress);
             serverIntent.PutExtra(CanAdapterActivity.ExtraInterfaceType, (int)_activityCommon.SelectedInterface);
-            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestCanAdapterConfig);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestAdapterConfig);
         }
 
         private void SelectConfigFile()

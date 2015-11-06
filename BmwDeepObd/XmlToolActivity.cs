@@ -301,9 +301,14 @@ namespace BmwDeepObd
                         // Get the device MAC address
                         _deviceName = data.Extras.GetString(DeviceListActivity.ExtraDeviceName);
                         _deviceAddress = data.Extras.GetString(DeviceListActivity.ExtraDeviceAddress);
+                        bool callAdapterConfig = data.Extras.GetBoolean(DeviceListActivity.ExtraCallAdapterConfig, false);
                         EdiabasClose();
                         SupportInvalidateOptionsMenu();
-                        if (_autoStart)
+                        if (callAdapterConfig)
+                        {
+                            AdapterConfig();
+                        }
+                        else if (_autoStart)
                         {
                             SelectSgbdFile();
                         }
@@ -353,11 +358,11 @@ namespace BmwDeepObd
                 scanMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
             }
 
-            IMenuItem canAdapterMenu = menu.FindItem(Resource.Id.menu_can_adapter_config);
-            if (canAdapterMenu != null)
+            IMenuItem adapterConfigMenu = menu.FindItem(Resource.Id.menu_adapter_config);
+            if (adapterConfigMenu != null)
             {
-                canAdapterMenu.SetEnabled(interfaceAvailable && !commActive);
-                canAdapterMenu.SetVisible(_activityCommon.AllowCanAdapterConfig(_deviceAddress));
+                adapterConfigMenu.SetEnabled(interfaceAvailable && !commActive);
+                adapterConfigMenu.SetVisible(_activityCommon.AllowCanAdapterConfig(_deviceAddress));
             }
 
             IMenuItem addErrorsMenu = menu.FindItem(Resource.Id.menu_xml_tool_add_errors_page);
@@ -427,8 +432,8 @@ namespace BmwDeepObd
                     _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice);
                     return true;
 
-                case Resource.Id.menu_can_adapter_config:
-                    CanAdapterConfig();
+                case Resource.Id.menu_adapter_config:
+                    AdapterConfig();
                     return true;
 
                 case Resource.Id.menu_xml_tool_add_errors_page:
@@ -655,7 +660,7 @@ namespace BmwDeepObd
             builder.Show();
         }
 
-        private void CanAdapterConfig()
+        private void AdapterConfig()
         {
             EdiabasClose();
             Intent serverIntent = new Intent(this, typeof(CanAdapterActivity));

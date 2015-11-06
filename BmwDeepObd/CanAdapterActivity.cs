@@ -43,7 +43,7 @@ namespace BmwDeepObd
         private int _batteryVoltage = -1;
         private int _adapterType = -1;
         private int _fwVersion = -1;
-        private bool _fwUpdateShown = false;
+        private bool _fwUpdateShown;
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
         private Thread _adapterThread;
