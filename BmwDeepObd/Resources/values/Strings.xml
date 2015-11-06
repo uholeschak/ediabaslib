@@ -169,6 +169,7 @@
   <string name="can_adapter_ignition_off">Ignition off</string>
   <string name="can_adapter_text_off">0: Off</string>
   <string name="can_adapter_fw_update_present">A firmware update for the adapter is available.\nDo you want to install the update now?</string>
+  <string name="can_adapter_fw_update_info">During the update the communication should be never interrupted.\nDo you want to continue?</string>
   <string name="can_adapter_fw_update_active">Firmware update in progress.\nDo not interrupt communication.</string>
   <string name="can_adapter_fw_update_conn_failed">Unable to connect to adapter</string>
   <string name="can_adapter_fw_update_failed">Firmware update failed</string>

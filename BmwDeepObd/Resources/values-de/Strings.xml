@@ -170,6 +170,7 @@
   <string name="can_adapter_ignition_off">Zündung aus</string>
   <string name="can_adapter_text_off">0: Aus</string>
   <string name="can_adapter_fw_update_present">Es ist ein Firmwareupdate für den Adpter vorhanden.\nWollen Sie das Update jetzt installieren?</string>
+  <string name="can_adapter_fw_update_info">Während des Updates darf die Kommunikation auf keinen Fall unterbrochen werden.\nWollen Sie fortfahren?</string>
   <string name="can_adapter_fw_update_active">Firmware Aktualisierung aktiv.\nBitte Kommunikation nicht unterbrechen.</string>
   <string name="can_adapter_fw_update_conn_failed">Verbindung zum Adapter fehlgeschlagen</string>
   <string name="can_adapter_fw_update_failed">Firmware Aktualisierung fehlgeschlagen</string>

@@ -2295,23 +2295,23 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f060040
 			public const int button_active = 2131099712;
 			
-			// aapt resource value: 0x7f06009e
-			public const int button_can_adapter_can_100 = 2131099806;
-			
-			// aapt resource value: 0x7f06009d
-			public const int button_can_adapter_can_500 = 2131099805;
-			
 			// aapt resource value: 0x7f06009f
-			public const int button_can_adapter_can_off = 2131099807;
+			public const int button_can_adapter_can_100 = 2131099807;
+			
+			// aapt resource value: 0x7f06009e
+			public const int button_can_adapter_can_500 = 2131099806;
 			
 			// aapt resource value: 0x7f0600a0
-			public const int button_can_adapter_fw_update = 2131099808;
+			public const int button_can_adapter_can_off = 2131099808;
 			
-			// aapt resource value: 0x7f06009b
-			public const int button_can_adapter_read = 2131099803;
+			// aapt resource value: 0x7f0600a1
+			public const int button_can_adapter_fw_update = 2131099809;
 			
 			// aapt resource value: 0x7f06009c
-			public const int button_can_adapter_write = 2131099804;
+			public const int button_can_adapter_read = 2131099804;
+			
+			// aapt resource value: 0x7f06009d
+			public const int button_can_adapter_write = 2131099805;
 			
 			// aapt resource value: 0x7f060014
 			public const int button_connected = 2131099668;
@@ -2358,17 +2358,20 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f060092
 			public const int can_adapter_comm_error_std = 2131099794;
 			
-			// aapt resource value: 0x7f060097
-			public const int can_adapter_fw_update_active = 2131099799;
-			
 			// aapt resource value: 0x7f060098
-			public const int can_adapter_fw_update_conn_failed = 2131099800;
+			public const int can_adapter_fw_update_active = 2131099800;
 			
 			// aapt resource value: 0x7f060099
-			public const int can_adapter_fw_update_failed = 2131099801;
+			public const int can_adapter_fw_update_conn_failed = 2131099801;
 			
 			// aapt resource value: 0x7f06009a
-			public const int can_adapter_fw_update_ok = 2131099802;
+			public const int can_adapter_fw_update_failed = 2131099802;
+			
+			// aapt resource value: 0x7f060097
+			public const int can_adapter_fw_update_info = 2131099799;
+			
+			// aapt resource value: 0x7f06009b
+			public const int can_adapter_fw_update_ok = 2131099803;
 			
 			// aapt resource value: 0x7f060096
 			public const int can_adapter_fw_update_present = 2131099798;
