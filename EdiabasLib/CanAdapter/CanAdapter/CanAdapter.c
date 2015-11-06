@@ -508,6 +508,13 @@ bool internal_telegram(uint16_t len)
             uart_send(temp_buffer, len);
             return true;
         }
+        if ((temp_buffer[3] == 0xFB) && (temp_buffer[4] == 0xFB))
+        {      // read id location
+            len = 5;    // no id data
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
         if ((temp_buffer[3] == 0xFC) && (temp_buffer[4] == 0xFC))
         {      // read Vbat
             temp_buffer[4] = 0x80;  // invalid
