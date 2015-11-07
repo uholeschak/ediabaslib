@@ -510,6 +510,7 @@ bool internal_telegram(uint16_t len)
         }
         if ((temp_buffer[3] == 0xFB) && (temp_buffer[4] == 0xFB))
         {      // read id location
+            temp_buffer[0] = 0x81;
             len = 5;    // no id data
             temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
