@@ -435,6 +435,15 @@ namespace BmwDeepObd
                             _fwVersion = result[3] + (result[2] << 8);
                         }
                     }
+                    // id
+                    if (!commFailed)
+                    {
+                        byte[] result = AdapterCommandCustom(0xFB, 0xFB);
+                        if (result == null)
+                        {
+                            commFailed = true;
+                        }
+                    }
                 }
                 catch (Exception)
                 {
@@ -667,7 +676,7 @@ namespace BmwDeepObd
             {
                 return null;
             }
-            if ((response.Length < 6) || (response[3] != command))
+            if ((response.Length < 5) || (response[3] != command))
             {
                 return null;
             }
