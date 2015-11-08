@@ -1669,6 +1669,7 @@ namespace BmwDeepObd
             private readonly Device _device;
             private readonly DeviceVerifyPlanner _verifyPlan;
             public bool WriteConfig;
+            public int MaxBlockCount;
             public List<Device.MemoryRange> EraseList = new List<Device.MemoryRange>();
             public List<Device.MemoryRange> FailList = new List<Device.MemoryRange>();
 
@@ -1677,6 +1678,7 @@ namespace BmwDeepObd
                 _device = newDevice;
                 _comm = newComm;
                 _verifyPlan = new DeviceVerifyPlanner(newDevice);
+                MaxBlockCount = 0x80;   // [UH] limit block count to prevent packet loss
             }
 
             public Comm.ErrorCode VerifyFlash(uint[] memory, int startAddress, int endAddress)
@@ -1694,7 +1696,7 @@ namespace BmwDeepObd
                 FailList.Clear();
 
                 _verifyPlan.WriteConfig = WriteConfig;
-                _verifyPlan.MaxBlockCount = 0x80;   // [UH] limit block count to prevent packet loss
+                _verifyPlan.MaxBlockCount = MaxBlockCount;
                 _verifyPlan.PlanFlashVerify(ref verifyList, startAddress, endAddress);
 
                 foreach (Device.MemoryRange range in verifyList)
