@@ -2273,6 +2273,7 @@ namespace BmwDeepObd
                     {
                         return ErrorCode.NoAcknowledgement;
                     }
+                    Thread.Sleep(500);  // wait for app start
                     return ErrorCode.Success;
                 }
                 catch (Exception)
