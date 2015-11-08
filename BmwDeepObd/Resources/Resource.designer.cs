@@ -2269,7 +2269,7 @@ namespace BmwDeepObd
 			public const int adapter_connection_failed = 2131099707;
 			
 			// aapt resource value: 0x7f060040
-			public const int adapter_elm_replacemt = 2131099712;
+			public const int adapter_elm_replacement = 2131099712;
 			
 			// aapt resource value: 0x7f060042
 			public const int adapter_fw_update = 2131099714;

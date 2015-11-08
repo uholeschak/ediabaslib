@@ -25,6 +25,7 @@ using Android.Bluetooth;
 using Android.Content;
 using Android.OS;
 using Android.Support.V7.App;
+using Android.Text;
 using Android.Views;
 using Android.Widget;
 using EdiabasLib;
@@ -286,7 +287,7 @@ namespace BmwDeepObd
                                     ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
                                 })
                                 .SetCancelable(true)
-                                .SetMessage(Resource.String.adapter_elm_replacemt)
+                                .SetMessage(Resource.String.adapter_elm_replacement)
                                 .SetTitle(Resource.String.alert_title_info)
                                 .Show();
                             _altertInfoDialog.DismissEvent += (sender, args) =>
@@ -308,14 +309,13 @@ namespace BmwDeepObd
                                 GetString(adapterType == AdapterType.Elm327Fake21
                                     ? Resource.String.fake_elm_adapter_type
                                     : Resource.String.invalid_adapter_type);
-                            message += "\n" + GetString(Resource.String.recommened_adapter_type);
-                            message += "\n" + GetString(Resource.String.adapter_elm_replacemt);
+                            message += "<br>" + GetString(Resource.String.recommened_adapter_type);
                             _altertInfoDialog = new AlertDialog.Builder(this)
                                 .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
                                 {
                                 })
                                 .SetCancelable(true)
-                                .SetMessage(message)
+                                .SetMessage(Html.FromHtml(message))
                                 .SetTitle(Resource.String.alert_title_error)
                                 .Show();
                             _altertInfoDialog.DismissEvent += (sender, args) =>
