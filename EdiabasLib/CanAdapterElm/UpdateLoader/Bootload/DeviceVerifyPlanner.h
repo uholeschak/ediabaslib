@@ -36,6 +36,7 @@ class DeviceVerifyPlanner
 {
 public:
     bool writeConfig;
+    int maxBlockCount;
 
     DeviceVerifyPlanner(Device* newDevice);
 
@@ -47,6 +48,7 @@ protected:
 
     void doNotVerifyConfigPage(QLinkedList<Device::MemoryRange>& verifyList);
     void doNotVerifyBootBlock(QLinkedList<Device::MemoryRange>& verifyList);
+    void limitVerifyBlockSize(QLinkedList<Device::MemoryRange>& verifyList);    // [UH]
 };
 
 #endif // DEVICEVERIFYPLANNER_H
