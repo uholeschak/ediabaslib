@@ -34,6 +34,7 @@
 DeviceVerifyPlanner::DeviceVerifyPlanner(Device* newDevice)
 {
     device = newDevice;
+    maxBlockCount = -1;
 }
 
 /*!
@@ -58,6 +59,7 @@ void DeviceVerifyPlanner::planFlashVerify(QLinkedList<Device::MemoryRange>& veri
     }
 
     doNotVerifyBootBlock(verifyList);
+    limitVerifyBlockSize(verifyList);
 }
 
 void DeviceVerifyPlanner::doNotVerifyConfigPage(QLinkedList<Device::MemoryRange>& verifyList)
@@ -128,3 +130,30 @@ void DeviceVerifyPlanner::doNotVerifyBootBlock(QLinkedList<Device::MemoryRange>&
         it++;
     }
 }
+
+// [UH] added
+void DeviceVerifyPlanner::limitVerifyBlockSize(QLinkedList<Device::MemoryRange>& verifyList)
+{
+    Device::MemoryRange firstHalf;
+    if (maxBlockCount <= 0)
+    {
+        return;
+    }
+    QLinkedList<Device::MemoryRange>::iterator it = verifyList.begin();
+    while(it != verifyList.end())
+    {
+        int blockCount = (it->end - it->start)/device->eraseBlockSizeFLASH;
+        if (blockCount > maxBlockCount)
+        {
+            firstHalf.start = it->start;
+            firstHalf.end = it->start + maxBlockCount * device->eraseBlockSizeFLASH;
+            it->start = firstHalf.end;
+            verifyList.insert(it, firstHalf);
+        }
+        else
+        {
+            it++;
+        }
+    }
+}
+

@@ -40,6 +40,7 @@ DeviceVerifier::DeviceVerifier(Device* newDevice, Comm* newComm)
     device = newDevice;
     comm = newComm;
     verifyPlan = new DeviceVerifyPlanner(device);
+    maxBlockCount = 0x80;
 }
 
 DeviceVerifier::~DeviceVerifier()
@@ -85,6 +86,7 @@ Comm::ErrorCode DeviceVerifier::VerifyFlash(unsigned int* memory, int startAddre
     failList.clear();
 
     verifyPlan->writeConfig = writeConfig;
+    verifyPlan->maxBlockCount = maxBlockCount;
     verifyPlan->planFlashVerify(verifyList, startAddress, endAddress);
 
     it = verifyList.begin();

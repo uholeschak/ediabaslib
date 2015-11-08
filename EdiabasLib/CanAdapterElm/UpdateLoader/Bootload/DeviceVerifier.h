@@ -50,6 +50,7 @@ public:
 
     bool writeConfig;
     bool failed;
+    int maxBlockCount;  // [UH]
 
     DeviceVerifier(Device* newDevice, Comm* newComm);
     ~DeviceVerifier();
