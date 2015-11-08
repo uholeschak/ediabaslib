@@ -28,7 +28,7 @@
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:
 \n- Auswahl des Speichermediums
-\n- Unterstützung der EL327 Ersatzfirmware"</string>
+\n- Unterstützung der ELM327 Ersatzfirmware"</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Information</string>
