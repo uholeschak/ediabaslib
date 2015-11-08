@@ -1432,9 +1432,12 @@ namespace BmwDeepObd
                 {
                     RunOnUiThread(() =>
                     {
-                        _downloadProgress.Hide();
-                        _downloadProgress.Dispose();
-                        _downloadProgress = null;
+                        if (_downloadProgress != null)
+                        {
+                            _downloadProgress.Hide();
+                            _downloadProgress.Dispose();
+                            _downloadProgress = null;
+                        }
                         _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
                     });
                 }
@@ -1537,7 +1540,10 @@ namespace BmwDeepObd
                         {
                             RunOnUiThread(() =>
                             {
-                                _downloadProgress.Progress = percent;
+                                if (_downloadProgress != null)
+                                {
+                                    _downloadProgress.Progress = percent;
+                                }
                             });
                             return extractCanceled;
                         });
@@ -1556,9 +1562,12 @@ namespace BmwDeepObd
                 }
                 RunOnUiThread(() =>
                 {
-                    _downloadProgress.Hide();
-                    _downloadProgress.Dispose();
-                    _downloadProgress = null;
+                    if (_downloadProgress != null)
+                    {
+                        _downloadProgress.Hide();
+                        _downloadProgress.Dispose();
+                        _downloadProgress = null;
+                    }
                     if (extractFailed)
                     {
                         _activityCommon.ShowAlert(GetString(Resource.String.extract_failed), Resource.String.alert_title_error);
