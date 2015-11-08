@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Reflection;
+
 // ReSharper disable RedundantCaseLabel
 
 namespace BmwDeepObd
@@ -1238,10 +1239,12 @@ namespace BmwDeepObd
         {
             private readonly Device _device;
             public bool WriteConfig;
+            public int MaxBlockCount;
 
             public DeviceVerifyPlanner(Device newDevice)
             {
                 _device = newDevice;
+                MaxBlockCount = -1;
             }
 
             public void PlanFlashVerify(ref List<Device.MemoryRange> verifyList, int start, int end)
@@ -1261,6 +1264,7 @@ namespace BmwDeepObd
                 }
 
                 DoNotVerifyBootBlock(ref verifyList);
+                LimitVerifyBlockSize(ref verifyList);
             }
 
             public void DoNotVerifyConfigPage(ref List<Device.MemoryRange> verifyList)
@@ -1330,6 +1334,32 @@ namespace BmwDeepObd
                                 verifyList.Insert(i, firstHalf);
                             }
                         }
+                    }
+                    i++;
+                }
+            }
+
+            // [UH] limit block count to prevent packet loss
+            public void LimitVerifyBlockSize(ref List<Device.MemoryRange> verifyList)
+            {
+                if (MaxBlockCount <= 0)
+                {
+                    return;
+                }
+                int i = 0;
+                while (i < verifyList.Count)
+                {
+                    Device.MemoryRange range = verifyList[i];
+                    uint blockCount = (range.End - range.Start)/_device.EraseBlockSizeFlash;
+                    if (blockCount > MaxBlockCount)
+                    {
+                        Device.MemoryRange firstHalf = new Device.MemoryRange
+                        {
+                            Start = range.Start,
+                            End = (uint) (range.Start + (MaxBlockCount * _device.EraseBlockSizeFlash))
+                        };
+                        range.Start = firstHalf.End;
+                        verifyList.Insert(i, firstHalf);
                     }
                     i++;
                 }
@@ -1664,6 +1694,7 @@ namespace BmwDeepObd
                 FailList.Clear();
 
                 _verifyPlan.WriteConfig = WriteConfig;
+                _verifyPlan.MaxBlockCount = 0x80;   // [UH] limit block count to prevent packet loss
                 _verifyPlan.PlanFlashVerify(ref verifyList, startAddress, endAddress);
 
                 foreach (Device.MemoryRange range in verifyList)
@@ -1702,12 +1733,14 @@ namespace BmwDeepObd
                     {
                         return result;
                     }
-#if false
+
                     int expectedBytes = (int)((range.End - range.Start) / _device.EraseBlockSizeFlash * 2);
                     if (deviceCrc.Count != expectedBytes)
                     {
+                        //Log.Error("Bootloader", string.Format("Expected={0}, Received={1}", expectedBytes, deviceCrc.Count));
+                        return Comm.ErrorCode.ERROR_BAD_CHKSUM;
                     }
-#endif
+
                     // now we need to compute CRC's against the HEX file data we have in memory.
                     memoryCrc.Clear();
                     emptyCrc.Clear();
@@ -2828,7 +2861,7 @@ namespace BmwDeepObd
             {
                 WriteConfig = true
             };
-            errorCode = deviceVerifier.VerifyFlash(deviceData.ProgramMemory, (int)device.StartFlash, (int)device.EndFlash);
+            errorCode = deviceVerifier.VerifyFlash(deviceData.ProgramMemory, (int) device.StartFlash, (int) device.EndFlash);
             if (errorCode != Comm.ErrorCode.Success)
             {
                 if (deviceVerifier.EraseList.Count == 0 &&
