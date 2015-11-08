@@ -225,6 +225,7 @@ BootloaderBreakCheck:
     ; check for software reset
     btfss   RCON, RI
     bra     BootloadMode
+CheckApplication:
     ; check for adapter type
     movlw   low(END_FLASH - 4)
     movwf   TBLPTRL
@@ -593,7 +594,7 @@ JUMPTABLE_BEGIN:
     bra     ReadEeprom          ; 16 05h
     bra     WriteEeprom         ; 18 06h
     bra     WriteConfig         ; 20 07h
-    bra     GotoAppVector       ; 22 08h
+    bra     CheckApplication    ; 22 08 [UH] replaced GotoAppVector
     reset                       ; 24 09h
 
 #if (JUMPTABLE_BEGIN & 0xFF) > ($ & 0xFF)
