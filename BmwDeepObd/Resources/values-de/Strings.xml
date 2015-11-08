@@ -27,7 +27,8 @@
 \nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:
-\n- Erste Release</string>
+\n- Auswahl des Speichermediums
+\n- Unterstützung der EL327 Ersatzfirmware"</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Information</string>
@@ -58,6 +59,7 @@
   <string name="invalid_adapter_type">Der ELM327 Adapter unterstützt nicht all notwendigen Kommandos und ist inkompatibel mit dieser Software.</string>
   <string name="fake_elm_adapter_type">The ELM327 Adapter ist eine gefälschte 2.1 Version und inkompatibel mit dieser Software.</string>
   <string name="recommened_adapter_type">Es wird ein ELM327 v1.4b, v1.5 oder original v2.1 Adapter empfohlen,\nwelcher auf einem PIC18F2480 Prozessor basiert (kein MCP2515 Chip).</string>
+  <string name="adapter_elm_replacemt">ELM327 Adapter sind langsam und die Kommunikation ist instabil.\nEine Ersatzfirware ist verfügbar unter\n<a href="https://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327">ediabaslib.codeplex.com</a>,\nwelche viele Verbesserungen aufweist.</string>
   <string name="adapter_cfg_required">Der Adapter muss unter Umständen noch konfigriert werden.\nWollen Sie die Adapter Konfiguration aufrufen?</string>
   <string name="adapter_fw_update">Es ist ein Firmwareupdate für diesen Adapter verfügbar.\nWollen Sie die Adapter Konfiguration aufrufen um das Update zu installieren?</string>
 

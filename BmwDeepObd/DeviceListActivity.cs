@@ -29,6 +29,7 @@ using Android.Views;
 using Android.Widget;
 using EdiabasLib;
 using Java.Util;
+using Android.Text.Method;
 
 namespace BmwDeepObd
 {
@@ -71,6 +72,7 @@ namespace BmwDeepObd
         private static ArrayAdapter<string> _pairedDevicesArrayAdapter;
         private static ArrayAdapter<string> _newDevicesArrayAdapter;
         private Receiver _receiver;
+        private AlertDialog _altertInfoDialog;
 
         protected override void OnCreate (Bundle savedInstanceState)
         {
@@ -239,7 +241,7 @@ namespace BmwDeepObd
                     switch (adapterType)
                     {
                         case AdapterType.ConnectionFailed:
-                            new AlertDialog.Builder(this)
+                            _altertInfoDialog = new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
                                     ReturnDeviceType(deviceAddress, deviceName);
@@ -251,10 +253,14 @@ namespace BmwDeepObd
                                 .SetMessage(Resource.String.adapter_connection_failed)
                                 .SetTitle(Resource.String.alert_title_error)
                                 .Show();
+                            _altertInfoDialog.DismissEvent += (sender, args) =>
+                            {
+                                _altertInfoDialog = null;
+                            };
                             break;
 
                         case AdapterType.Unknown:
-                            new AlertDialog.Builder(this)
+                            _altertInfoDialog = new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
                                     ReturnDeviceType(deviceAddress, deviceName);
@@ -266,11 +272,34 @@ namespace BmwDeepObd
                                 .SetMessage(Resource.String.unknown_adapter_type)
                                 .SetTitle(Resource.String.alert_title_error)
                                 .Show();
+                            _altertInfoDialog.DismissEvent += (sender, args) =>
+                            {
+                                _altertInfoDialog = null;
+                            };
                             break;
 
                         case AdapterType.Elm327:
-                            ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
+                        {
+                            _altertInfoDialog = new AlertDialog.Builder(this)
+                                .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
+                                {
+                                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
+                                })
+                                .SetCancelable(true)
+                                .SetMessage(Resource.String.adapter_elm_replacemt)
+                                .SetTitle(Resource.String.alert_title_info)
+                                .Show();
+                            _altertInfoDialog.DismissEvent += (sender, args) =>
+                            {
+                                _altertInfoDialog = null;
+                            };
+                            TextView messageView = _altertInfoDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                            if (messageView != null)
+                            {
+                                messageView.MovementMethod = new LinkMovementMethod();
+                            }
                             break;
+                        }
 
                         case AdapterType.Elm327Invalid:
                         case AdapterType.Elm327Fake21:
@@ -280,20 +309,30 @@ namespace BmwDeepObd
                                     ? Resource.String.fake_elm_adapter_type
                                     : Resource.String.invalid_adapter_type);
                             message += "\n" + GetString(Resource.String.recommened_adapter_type);
-                            new AlertDialog.Builder(this)
-                                .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                            message += "\n" + GetString(Resource.String.adapter_elm_replacemt);
+                            _altertInfoDialog = new AlertDialog.Builder(this)
+                                .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
                                 {
                                 })
                                 .SetCancelable(true)
                                 .SetMessage(message)
                                 .SetTitle(Resource.String.alert_title_error)
                                 .Show();
+                            _altertInfoDialog.DismissEvent += (sender, args) =>
+                            {
+                                _altertInfoDialog = null;
+                            };
+                            TextView messageView = _altertInfoDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                            if (messageView != null)
+                            {
+                                messageView.MovementMethod = new LinkMovementMethod();
+                            }
                             break;
                         }
 
                         case AdapterType.Custom:
                         case AdapterType.CustomUpdate:
-                            new AlertDialog.Builder(this)
+                            _altertInfoDialog = new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
                                     ReturnDeviceType(deviceAddress, deviceName, true);
@@ -306,6 +345,10 @@ namespace BmwDeepObd
                                 .SetMessage(adapterType == AdapterType.CustomUpdate ? Resource.String.adapter_fw_update : Resource.String.adapter_cfg_required)
                                 .SetTitle(Resource.String.alert_title_info)
                                 .Show();
+                            _altertInfoDialog.DismissEvent += (sender, args) =>
+                            {
+                                _altertInfoDialog = null;
+                            };
                             break;
 
                         default:
