@@ -32,7 +32,9 @@ namespace BmwDeepObd
         private StringAdapter _spinnerCanAdapterBlockSizeAdapter;
         private TextView _textViewCanAdapterIgnitionStateTitle;
         private TextView _textViewIgnitionState;
+        private TextView _textViewBatteryVoltageTitle;
         private TextView _textViewBatteryVoltage;
+        private TextView _textViewFwVersionTitle;
         private TextView _textViewFwVersion;
         private Button _buttonFwUpdate;
         private string _deviceAddress = string.Empty;
@@ -129,8 +131,14 @@ namespace BmwDeepObd
             _textViewIgnitionState = FindViewById<TextView>(Resource.Id.textViewCanAdapterIgnitionState);
             _textViewIgnitionState.Visibility = visibility;
 
+            _textViewBatteryVoltageTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterBatVoltageTitle);
+            _textViewBatteryVoltageTitle.Visibility = visibility;
+
             _textViewBatteryVoltage = FindViewById<TextView>(Resource.Id.textViewCanAdapterBatVoltage);
             _textViewBatteryVoltage.Visibility = visibility;
+
+            _textViewFwVersionTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterFwVersionTitle);
+            _textViewFwVersionTitle.Visibility = visibility;
 
             _textViewFwVersion = FindViewById<TextView>(Resource.Id.textViewCanAdapterFwVersion);
             _textViewFwVersion.Visibility = visibility;
