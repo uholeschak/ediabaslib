@@ -633,15 +633,13 @@ bool internal_telegram(uint16_t len)
         }
         if ((temp_buffer[3] == 0xFB) && (temp_buffer[4] == 0xFB))
         {      // read id location
-            temp_buffer[0] = 0x85;
+            temp_buffer[0] = 0x89;
             const uint8_t far *id_loc=(const uint8_t far *) ID_LOCATION;
-            for (uint8_t i = 0; i < 4; i++)
+            for (uint8_t i = 0; i < 8; i++)
             {
-                uint8_t value = (*id_loc++) << 4;
-                value |= (*id_loc++) & 0x0F;
-                temp_buffer[4 + i] = value;
+                temp_buffer[4 + i] = (*id_loc++);
             }
-            len = 9;
+            len = 13;
             temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
