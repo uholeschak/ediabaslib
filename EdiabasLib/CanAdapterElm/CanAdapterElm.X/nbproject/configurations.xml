@@ -211,7 +211,7 @@
         <property key="programoptions.preserveprogramrange" value="false"/>
         <property key="programoptions.preserveprogramrange.end" value="0x3fff"/>
         <property key="programoptions.preserveprogramrange.start" value="0x0"/>
-        <property key="programoptions.preserveuserid" value="false"/>
+        <property key="programoptions.preserveuserid" value="true"/>
         <property key="programoptions.programcalmem" value="false"/>
         <property key="programoptions.programuserotp" value="false"/>
         <property key="programoptions.testmodeentrymethod" value="VDDFirst"/>
