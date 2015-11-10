@@ -220,7 +220,14 @@ namespace BmwDeepObd
             foreach (JobReader.PageInfo pageInfo in _jobReader.PageList)
             {
                 int resourceId = Resource.Layout.tab_list;
-                if (pageInfo.JobActivate) resourceId = Resource.Layout.tab_activate;
+                if (pageInfo.ErrorsInfo != null)
+                {
+                    resourceId = Resource.Layout.tab_errors;
+                }
+                else if (pageInfo.JobActivate)
+                {
+                    resourceId = Resource.Layout.tab_activate;
+                }
 
                 Fragment fragmentPage = new TabContentFragment(this, resourceId, pageInfo);
                 _fragmentList.Add(fragmentPage);
@@ -558,6 +565,16 @@ namespace BmwDeepObd
             }
             ToggleButton button = v.FindViewById<ToggleButton>(Resource.Id.button_active);
             _ediabasThread.CommActive = button.Checked;
+        }
+
+        [Export("onErrorResetClick")]
+        public void OnErrorResetClick(View v)
+        {
+            if (_ediabasThread == null)
+            {
+                return;
+            }
+            Button button = v.FindViewById<Button>(Resource.Id.button_error_reset);
         }
 
         private void HandleStartDialogs(bool firstStart)
@@ -913,13 +930,18 @@ namespace BmwDeepObd
                 ListView listViewResult = dynamicFragment.View.FindViewById<ListView>(Resource.Id.resultList);
                 if (listViewResult.Adapter == null)
                 {
-                    listViewResult.Adapter = new ResultListAdapter(this, pageInfo.Weight);
+                    listViewResult.Adapter = new ResultListAdapter(this, pageInfo.Weight, pageInfo.ErrorsInfo != null);
                 }
                 ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult.Adapter;
                 ToggleButton buttonActive = null;
                 if (pageInfo.JobActivate)
                 {
                     buttonActive = dynamicFragment.View.FindViewById<ToggleButton>(Resource.Id.button_active);
+                }
+                Button buttonErrorReset = null;
+                if (pageInfo.ErrorsInfo != null)
+                {
+                    buttonErrorReset = dynamicFragment.View.FindViewById<Button>(Resource.Id.button_error_reset);
                 }
 
                 if (dynamicValid)
@@ -951,6 +973,11 @@ namespace BmwDeepObd
                     {
                         resultDict = _ediabasThread.EdiabasResultDict;
                     }
+                    List<TableResultItem> lastResultItems = null;
+                    if (pageInfo.ErrorsInfo != null)
+                    {
+                        lastResultItems = new List<TableResultItem>(resultListAdapter.Items);
+                    }
                     resultListAdapter.Items.Clear();
 
                     bool formatResult = false;
@@ -978,6 +1005,7 @@ namespace BmwDeepObd
                         }
                         if (errorReportList != null)
                         {
+                            string lastEcuName = null;
                             foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
                             {
                                 string message = string.Format(Culture, "{0}: ",
@@ -1024,8 +1052,18 @@ namespace BmwDeepObd
 
                                 if (!string.IsNullOrEmpty(message))
                                 {
-                                    resultListAdapter.Items.Add(new TableResultItem(message, null));
+                                    bool selected = (from resultItem in lastResultItems let ecuName = resultItem.Tag as string
+                                                     where ecuName != null && ecuName == errorReport.EcuName
+                                                     select resultItem.Selected).FirstOrDefault();
+                                    bool newEcu = (lastEcuName == null) || (lastEcuName != errorReport.EcuName);
+                                    TableResultItem newResultItem = new TableResultItem(message, null, newEcu ? errorReport.EcuName : null, selected);
+                                    newResultItem.CheckChangeEvent += item =>
+                                    {
+                                        UpdateButtonErrorReset(buttonErrorReset, resultListAdapter.Items);
+                                    };
+                                    resultListAdapter.Items.Add(newResultItem);
                                 }
+                                lastEcuName = errorReport.EcuName;
                             }
                             if (resultListAdapter.Items.Count == 0)
                             {
@@ -1033,6 +1071,7 @@ namespace BmwDeepObd
                                     new TableResultItem(GetString(Resource.String.error_no_error), null));
                             }
                         }
+                        UpdateButtonErrorReset(buttonErrorReset, resultListAdapter.Items);
                     }
                     else
                     {
@@ -1122,6 +1161,16 @@ namespace BmwDeepObd
                     }
                 }
             }
+        }
+
+        private void UpdateButtonErrorReset(Button buttonErrorReset, List<TableResultItem> resultItems)
+        {
+            if (buttonErrorReset == null)
+            {
+                return;
+            }
+            bool selected = resultItems.Any(resultItem => resultItem.Selected);
+            buttonErrorReset.Enabled = selected;
         }
 
         public static String FormatResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
