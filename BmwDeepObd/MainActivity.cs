@@ -574,7 +574,26 @@ namespace BmwDeepObd
             {
                 return;
             }
-            Button button = v.FindViewById<Button>(Resource.Id.button_error_reset);
+            View parent = v.Parent as View;
+            if (parent != null)
+            {
+                parent = parent.Parent as View;
+            }
+            if (parent != null)
+            {
+                ListView listViewResult = parent.FindViewById<ListView>(Resource.Id.resultList);
+                if (listViewResult != null)
+                {
+                    ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult.Adapter;
+                    if (resultListAdapter != null)
+                    {
+                        List<string> resetEcuList =
+                            (from resultItem in resultListAdapter.Items
+                             let ecuName = resultItem.Tag as string
+                             where ecuName != null && resultItem.Selected select ecuName).ToList();
+                    }
+                }
+            }
         }
 
         private void HandleStartDialogs(bool firstStart)
