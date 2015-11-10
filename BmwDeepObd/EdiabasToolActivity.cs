@@ -1492,7 +1492,7 @@ namespace BmwDeepObd
             {
                 var item = _items[position];
 
-                View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.result_select_list, null);
+                View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.ediabas_result_list, null);
                 view.SetBackgroundColor(_backgroundColor);
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxResultSelect);
                 _ignoreCheckEvent = true;

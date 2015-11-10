@@ -17,15 +17,24 @@ namespace BmwDeepObd
         }
         private readonly Activity _context;
         private readonly float _textWeight;
+        private readonly bool _showCheckBox;
+        private bool _ignoreCheckEvent;
 
-        public ResultListAdapter(Activity context, float textWeight)
+        public ResultListAdapter(Activity context, float textWeight, bool showCheckBox)
         {
             _context = context;
             _items = new List<TableResultItem> ();
             _textWeight = textWeight;
+            _showCheckBox = showCheckBox;
         }
 
-        public ResultListAdapter(Activity context) : this(context, -1)
+        public ResultListAdapter(Activity context, float textWeight)
+            : this(context, textWeight, false)
+        {
+        }
+
+        public ResultListAdapter(Activity context)
+            : this(context, -1, false)
         {
         }
 
@@ -54,6 +63,24 @@ namespace BmwDeepObd
             var item = _items[position];
 
             View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.result_list, null);
+            CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxResultSelect);
+
+            if (_showCheckBox)
+            {
+                checkBoxSelect.Visibility = item.Tag != null ? ViewStates.Visible : ViewStates.Invisible;
+            }
+            else
+            {
+                checkBoxSelect.Visibility = ViewStates.Gone;
+            }
+            _ignoreCheckEvent = true;
+            checkBoxSelect.Checked = item.Selected;
+            _ignoreCheckEvent = false;
+
+            checkBoxSelect.Tag = new TagInfo(item);
+            checkBoxSelect.CheckedChange -= OnCheckChanged;
+            checkBoxSelect.CheckedChange += OnCheckChanged;
+
             TextView textView1 = view.FindViewById<TextView>(Resource.Id.ListText1);
             TextView textView2 = view.FindViewById<TextView>(Resource.Id.ListText2);
             textView1.Text = item.Text1;
@@ -75,17 +102,65 @@ namespace BmwDeepObd
 
             return view;
         }
+
+        private void OnCheckChanged(object sender, CompoundButton.CheckedChangeEventArgs args)
+        {
+            if (!_ignoreCheckEvent)
+            {
+                CheckBox checkBox = (CheckBox)sender;
+                TagInfo tagInfo = (TagInfo)checkBox.Tag;
+                if (tagInfo.Info.Selected != args.IsChecked)
+                {
+                    tagInfo.Info.Selected = args.IsChecked;
+                    NotifyDataSetChanged();
+                }
+            }
+        }
+
+        private class TagInfo : Java.Lang.Object
+        {
+            public TagInfo(TableResultItem info)
+            {
+                _info = info;
+            }
+
+            private readonly TableResultItem _info;
+
+            public TableResultItem Info
+            {
+                get
+                {
+                    return _info;
+                }
+            }
+        }
     }
 
     public class TableResultItem
     {
         private readonly string _text1;
         private readonly string _text2;
+        private readonly object _tag;
+        private bool _selected;
+        public delegate void CheckChangeEventHandler(TableResultItem item);
+        public event CheckChangeEventHandler CheckChangeEvent;
 
-        public TableResultItem(string text1, string text2)
+        public TableResultItem(string text1, string text2, object tag, bool selected)
         {
             _text1 = text1;
             _text2 = text2;
+            _tag = tag;
+            _selected = selected;
+        }
+
+        public TableResultItem(string text1, string text2, object tag)
+            : this(text1, text2, tag, false)
+        {
+        }
+
+        public TableResultItem(string text1, string text2)
+            : this(text1, text2, null)
+        {
         }
 
         public string Text1
@@ -101,6 +176,28 @@ namespace BmwDeepObd
             get
             {
                 return _text2;
+            }
+        }
+
+        public object Tag
+        {
+            get
+            {
+                return _tag;
+            }
+        }
+
+        public bool Selected
+        {
+            get { return _selected; }
+            set
+            {
+                bool changed = _selected != value && CheckChangeEvent != null;
+                _selected = value;
+                if (changed)
+                {
+                    CheckChangeEvent(this);
+                }
             }
         }
     }

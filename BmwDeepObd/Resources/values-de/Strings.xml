@@ -67,6 +67,9 @@
   <string name="button_active">Aktiv</string>
   <string name="button_inactive">Inaktiv</string>
 
+  <!-- tabs_errors -->
+  <string name="button_error_reset">Fehler löschen</string>
+
   <!-- Options Menu -->
   <string name="menu_settings">Einstellungen</string>
   <string name="menu_connect">Verbinden</string>
