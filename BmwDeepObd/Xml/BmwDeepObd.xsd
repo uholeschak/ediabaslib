@@ -277,7 +277,7 @@
         public void UpdateLayout(JobReader.PageInfo pageInfo, bool pageValid, bool threadActive);
         public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData=""> resultDict, bool firstCall);
         public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName);
-        public void UpdateResultList(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, ResultListAdapter resultListAdapter);
+        public void UpdateResultList(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, List<TableResultItem> resultList);
         ]]>
       </xs:documentation>
     </xs:annotation>
@@ -293,20 +293,7 @@
   <xs:complexType name="page-type">
     <xs:annotation>
       <xs:documentation>
-        <![CDATA[
         Definition of one page.
-        This block can contain C# user code that will be compiled after reading the xml.
-        The class for the code must be always named PageClass.
-        It can contain the following pre-defined functions:
-        public void CreateLayout(ActivityMain activity, JobReader.PageInfo pageInfo, LinearLayout pageLayout);
-        public void DestroyLayout(JobReader.PageInfo pageInfo);
-        public void UpdateLayout(JobReader.PageInfo pageInfo, bool pageValid, bool threadActive);
-        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData="">
-          resultDict, bool firstCall);
-          public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData="">
-            resultDict, string resultName);
-            public void UpdateResultList(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData=""> resultDict, ResultListAdapter resultListAdapter);
-        ]]>
       </xs:documentation>
     </xs:annotation>
     <xs:sequence>

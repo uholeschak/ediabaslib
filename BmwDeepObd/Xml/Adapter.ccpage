@@ -153,17 +153,17 @@
             }
         }
 
-        public void UpdateResultList(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, ResultListAdapter resultListAdapter)
+        public void UpdateResultList(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, List<TableResultItem> resultList)
         {
             int result = configResult;
 
             if (result > 0)
             {
-                resultListAdapter.Items.Add(new TableResultItem(ActivityMain.GetPageString(pageInfo, "adapter_config_ok"), null));
+                resultList.Add(new TableResultItem(ActivityMain.GetPageString(pageInfo, "adapter_config_ok"), null));
             }
             else if (result == 0)
             {
-                resultListAdapter.Items.Add(new TableResultItem(ActivityMain.GetPageString(pageInfo, "adapter_config_error"), null));
+                resultList.Add(new TableResultItem(ActivityMain.GetPageString(pageInfo, "adapter_config_error"), null));
             }
         }
     }

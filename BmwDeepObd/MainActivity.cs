@@ -992,12 +992,6 @@ namespace BmwDeepObd
                     {
                         resultDict = _ediabasThread.EdiabasResultDict;
                     }
-                    List<TableResultItem> lastResultItems = null;
-                    if (pageInfo.ErrorsInfo != null)
-                    {
-                        lastResultItems = new List<TableResultItem>(resultListAdapter.Items);
-                    }
-                    resultListAdapter.Items.Clear();
 
                     bool formatResult = false;
                     bool formatErrorResult = false;
@@ -1015,6 +1009,7 @@ namespace BmwDeepObd
                         currDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", Culture);
                     }
 
+                    List<TableResultItem> tempResultList = new List<TableResultItem>();
                     if (pageInfo.ErrorsInfo != null)
                     {   // read errors
                         List<EdiabasThread.EdiabasErrorReport> errorReportList;
@@ -1071,7 +1066,8 @@ namespace BmwDeepObd
 
                                 if (!string.IsNullOrEmpty(message))
                                 {
-                                    bool selected = (from resultItem in lastResultItems let ecuName = resultItem.Tag as string
+                                    bool selected = (from resultItem in resultListAdapter.Items
+                                                     let ecuName = resultItem.Tag as string
                                                      where ecuName != null && ecuName == errorReport.EcuName
                                                      select resultItem.Selected).FirstOrDefault();
                                     bool newEcu = (lastEcuName == null) || (lastEcuName != errorReport.EcuName);
@@ -1080,17 +1076,17 @@ namespace BmwDeepObd
                                     {
                                         UpdateButtonErrorReset(buttonErrorReset, resultListAdapter.Items);
                                     };
-                                    resultListAdapter.Items.Add(newResultItem);
+                                    tempResultList.Add(newResultItem);
                                 }
                                 lastEcuName = errorReport.EcuName;
                             }
-                            if (resultListAdapter.Items.Count == 0)
+                            if (tempResultList.Count == 0)
                             {
-                                resultListAdapter.Items.Add(
+                                tempResultList.Add(
                                     new TableResultItem(GetString(Resource.String.error_no_error), null));
                             }
                         }
-                        UpdateButtonErrorReset(buttonErrorReset, resultListAdapter.Items);
+                        UpdateButtonErrorReset(buttonErrorReset, tempResultList);
                     }
                     else
                     {
@@ -1121,7 +1117,7 @@ namespace BmwDeepObd
                             }
                             if (result != null)
                             {
-                                resultListAdapter.Items.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result));
+                                tempResultList.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result));
                                 if (!string.IsNullOrEmpty(displayInfo.LogTag) && _dataLogActive && _swDataLog != null)
                                 {
                                     try
@@ -1139,15 +1135,48 @@ namespace BmwDeepObd
 
                     if (updateResult)
                     {
-                        pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict, resultListAdapter);
+                        pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict, tempResultList);
                     }
 
-                    resultListAdapter.NotifyDataSetChanged();
+                    // check if list has changed
+                    bool resultChanged = false;
+                    if (tempResultList.Count != resultListAdapter.Items.Count)
+                    {
+                        resultChanged = true;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < tempResultList.Count; i++)
+                        {
+                            TableResultItem resultNew = tempResultList[i];
+                            TableResultItem resultOld = resultListAdapter.Items[i];
+                            if (resultNew.Text1 != resultOld.Text1)
+                            {
+                                resultChanged = true;
+                                break;
+                            }
+                            if (resultNew.Text2 != resultOld.Text2)
+                            {
+                                resultChanged = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (resultChanged)
+                    {
+                        resultListAdapter.Items.Clear();
+                        foreach (TableResultItem resultItem in tempResultList)
+                        {
+                            resultListAdapter.Items.Add(resultItem);
+                        }
+                        resultListAdapter.NotifyDataSetChanged();
+                    }
                 }
                 else
                 {
                     resultListAdapter.Items.Clear();
                     resultListAdapter.NotifyDataSetChanged();
+                    UpdateButtonErrorReset(buttonErrorReset, null);
                 }
 
                 if (pageInfo.ClassObject != null)
@@ -1188,7 +1217,11 @@ namespace BmwDeepObd
             {
                 return;
             }
-            bool selected = resultItems.Any(resultItem => resultItem.Selected);
+            bool selected = false;
+            if (resultItems != null)
+            {
+                selected = resultItems.Any(resultItem => resultItem.Selected);
+            }
             buttonErrorReset.Enabled = selected;
         }
 
