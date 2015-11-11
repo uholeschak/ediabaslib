@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using EdiabasLib;
 
@@ -102,6 +103,8 @@ namespace BmwDeepObd
             get;
             private set;
         }
+
+        public List<string> ErrorResetList { get; set; }
 
         public EdiabasNet Ediabas
         {
@@ -305,6 +308,13 @@ namespace BmwDeepObd
                     _ediabasJobAbort = false;
                     _ediabasInitReq = false;
                 }
+                List<string> errorResetList;
+                lock (DataLock)
+                {
+                    errorResetList = ErrorResetList;
+                    ErrorResetList = null;
+                }
+
                 List<EdiabasErrorReport> errorReportList = new List<EdiabasErrorReport>();
 
                 foreach (JobReader.EcuInfo ecuInfo in pageInfo.ErrorsInfo.EcuList)
@@ -331,6 +341,18 @@ namespace BmwDeepObd
 
                     try
                     {
+                        try
+                        {
+                            if (errorResetList != null && errorResetList.Any(ecu => ecu == ecuInfo.Name))
+                            {   // error reset requested
+                                _ediabas.ExecuteJob("FS_LOESCHEN");
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
                         _ediabas.ExecuteJob("FS_LESEN");
 
                         List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(_ediabas.ResultSets);
@@ -544,6 +566,7 @@ namespace BmwDeepObd
 
             EdiabasResultDict = null;
             EdiabasErrorMessage = string.Empty;
+            ErrorResetList = null;
 
             _ediabasInitReq = true;
             _ediabasJobAbort = deviceChange;
