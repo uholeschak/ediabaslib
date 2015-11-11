@@ -343,7 +343,7 @@ namespace BmwDeepObd
                     {
                         try
                         {
-                            if (errorResetList != null && errorResetList.Any(ecu => ecu == ecuInfo.Name))
+                            if (errorResetList != null && errorResetList.Any(ecu => string.CompareOrdinal(ecu, ecuInfo.Name) == 0))
                             {   // error reset requested
                                 _ediabas.ExecuteJob("FS_LOESCHEN");
                             }

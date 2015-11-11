@@ -1156,12 +1156,12 @@ namespace BmwDeepObd
                         {
                             TableResultItem resultNew = tempResultList[i];
                             TableResultItem resultOld = resultListAdapter.Items[i];
-                            if ((resultNew.Text1 ?? string.Empty) != (resultOld.Text1 ?? string.Empty))
+                            if (string.CompareOrdinal(resultNew.Text1 ?? string.Empty, resultOld.Text1 ?? string.Empty) != 0)
                             {
                                 resultChanged = true;
                                 break;
                             }
-                            if ((resultNew.Text2 ?? string.Empty) != (resultOld.Text2 ?? string.Empty))
+                            if (string.CompareOrdinal(resultNew.Text2 ?? string.Empty, resultOld.Text2 ?? string.Empty) != 0)
                             {
                                 resultChanged = true;
                                 break;
