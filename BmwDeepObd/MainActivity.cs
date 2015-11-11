@@ -1071,7 +1071,8 @@ namespace BmwDeepObd
                                                      where ecuName != null && ecuName == errorReport.EcuName
                                                      select resultItem.Selected).FirstOrDefault();
                                     bool newEcu = (lastEcuName == null) || (lastEcuName != errorReport.EcuName);
-                                    TableResultItem newResultItem = new TableResultItem(message, null, newEcu ? errorReport.EcuName : null, selected);
+                                    bool validResponse = errorReport.ErrorDict != null;
+                                    TableResultItem newResultItem = new TableResultItem(message, null, newEcu && validResponse ? errorReport.EcuName : null, selected);
                                     newResultItem.CheckChangeEvent += item =>
                                     {
                                         UpdateButtonErrorReset(buttonErrorReset, resultListAdapter.Items);
@@ -1150,12 +1151,12 @@ namespace BmwDeepObd
                         {
                             TableResultItem resultNew = tempResultList[i];
                             TableResultItem resultOld = resultListAdapter.Items[i];
-                            if (resultNew.Text1 != resultOld.Text1)
+                            if ((resultNew.Text1 ?? string.Empty) != (resultOld.Text1 ?? string.Empty))
                             {
                                 resultChanged = true;
                                 break;
                             }
-                            if (resultNew.Text2 != resultOld.Text2)
+                            if ((resultNew.Text2 ?? string.Empty) != (resultOld.Text2 ?? string.Empty))
                             {
                                 resultChanged = true;
                                 break;
@@ -1220,7 +1221,7 @@ namespace BmwDeepObd
             bool selected = false;
             if (resultItems != null)
             {
-                selected = resultItems.Any(resultItem => resultItem.Selected);
+                selected = resultItems.Any(resultItem => resultItem.Tag != null && resultItem.Selected);
             }
             buttonErrorReset.Enabled = selected;
         }
