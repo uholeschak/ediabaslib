@@ -441,5 +441,10 @@ namespace CarSimulator
         {
             UpdateDisplay();
         }
+
+        private void buttonErrorReset_Click(object sender, EventArgs e)
+        {
+            _commThread.ErrorDefault = true;
+        }
     }
 }

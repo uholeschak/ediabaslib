@@ -153,6 +153,7 @@ namespace CarSimulator
         private int _speed;
         private int _compressorRunningTime;
         private int _idleSpeedControl;
+        private readonly List<byte> _ecuErrorResetList;
         private readonly Stopwatch _timeIdleSpeedControlWrite;
         private readonly Stopwatch _receiveStopWatch;
 
@@ -463,6 +464,12 @@ namespace CarSimulator
             set;
         }
 
+        public bool ErrorDefault
+        {
+            get;
+            set;
+        }
+
         public CommThread()
         {
             _stopThread = false;
@@ -502,6 +509,7 @@ namespace CarSimulator
             _speed = 0;
             _compressorRunningTime = 0;
             _idleSpeedControl = 0;
+            _ecuErrorResetList = new List<byte>();
             _timeIdleSpeedControlWrite = new Stopwatch();
             _receiveStopWatch = new Stopwatch();
             Moving = false;
@@ -564,8 +572,15 @@ namespace CarSimulator
                 }
                 _outputs = 0x00;
                 _noResponseCount = 0;
+                _ecuErrorResetList.Clear();
+                ErrorDefault = false;
                 while (!_stopThread)
                 {
+                    if (ErrorDefault)
+                    {
+                        ErrorDefault = false;
+                        _ecuErrorResetList.Clear();
+                    }
                     try
                     {
                         switch (_conceptType)
@@ -2479,6 +2494,47 @@ namespace CarSimulator
                 Debug.WriteLine("Tester present");
                 standardResponse = true;
             }
+            else if (
+                _receiveData[0] == 0x83 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x14 &&
+                _receiveData[4] == 0xFF &&
+                _receiveData[5] == 0xFF)
+            {   // error reset
+                _sendData[0] = 0x83;
+                _sendData[1] = 0xF1;
+                _sendData[2] = _receiveData[1];
+                _sendData[3] = 0x54;
+                _sendData[4] = 0xFF;
+                _sendData[5] = 0xFF;
+
+                if (!_ecuErrorResetList.Contains(_receiveData[1]))
+                {
+                    _ecuErrorResetList.Add(_receiveData[1]);
+                }
+                ObdSend(_sendData);
+                standardResponse = true;
+            }
+            else if (
+                _receiveData[0] == 0x84 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x18 &&
+                _receiveData[4] == 0x02 &&
+                _receiveData[5] == 0xFF &&
+                _receiveData[6] == 0xFF)
+            {   // error request
+                if (_ecuErrorResetList.Contains(_receiveData[1]))
+                {   // disable error response -> send dummy
+                    _sendData[0] = 0x82;
+                    _sendData[1] = 0xF1;
+                    _sendData[2] = _receiveData[1];
+                    _sendData[3] = 0x58;
+                    _sendData[4] = 0x00;
+
+                    ObdSend(_sendData);
+                    standardResponse = true;
+                }
+            }
 #if false
             else if (
                 _receiveData[0] == 0x81 &&
@@ -2572,6 +2628,29 @@ namespace CarSimulator
                         break;
                     }
                 }
+
+                if (!found)
+                {
+                    if (
+                        _receiveData[0] == 0x84 &&
+                        _receiveData[2] == 0xF1 &&
+                        _receiveData[3] == 0x18 &&
+                        _receiveData[4] == 0x02 &&
+                        _receiveData[5] == 0xFF &&
+                        _receiveData[6] == 0xFF)
+                    {
+                        // dummy error response for all devices
+                        _sendData[0] = 0x82;
+                        _sendData[1] = 0xF1;
+                        _sendData[2] = _receiveData[1];
+                        _sendData[3] = 0x58;
+                        _sendData[4] = 0x00;
+
+                        ObdSend(_sendData);
+                        found = true;
+                    }
+                }
+
                 if (!found)
                 {
                     string text = string.Empty;
@@ -4490,39 +4569,6 @@ namespace CarSimulator
                 _receiveData[5] == 0x01)
             {   // Status Digital
                 Array.Copy(_response78300601, _sendData, _response78300601.Length);
-
-                ObdSend(_sendData);
-            }
-            // for all devices
-            else if (
-                _receiveData[0] == 0x84 &&
-                _receiveData[2] == 0xF1 &&
-                _receiveData[3] == 0x18 &&
-                _receiveData[4] == 0x02 &&
-                _receiveData[5] == 0xFF &&
-                _receiveData[6] == 0xFF)
-            {   // dummy error response for all devices
-                _sendData[0] = 0x82;
-                _sendData[1] = 0xF1;
-                _sendData[2] = _receiveData[1];
-                _sendData[3] = 0x58;
-                _sendData[4] = 0x00;
-
-                ObdSend(_sendData);
-            }
-            else if (
-                _receiveData[0] == 0x83 &&
-                _receiveData[2] == 0xF1 &&
-                _receiveData[3] == 0x14 &&
-                _receiveData[4] == 0xFF &&
-                _receiveData[5] == 0xFF)
-            {   // dummy error reset for all devices
-                _sendData[0] = 0x83;
-                _sendData[1] = 0xF1;
-                _sendData[2] = _receiveData[1];
-                _sendData[3] = 0x54;
-                _sendData[4] = 0xFF;
-                _sendData[5] = 0xFF;
 
                 ObdSend(_sendData);
             }

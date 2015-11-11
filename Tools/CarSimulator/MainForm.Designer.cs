@@ -46,6 +46,7 @@
             this.checkBoxIgnitionOk = new System.Windows.Forms.CheckBox();
             this.checkBoxAdsAdapter = new System.Windows.Forms.CheckBox();
             this.checkBoxKLineResponder = new System.Windows.Forms.CheckBox();
+            this.buttonErrorDefault = new System.Windows.Forms.Button();
             this.groupBoxConcepts.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -229,11 +230,22 @@
             this.checkBoxKLineResponder.Text = "K-Line Resp.";
             this.checkBoxKLineResponder.UseVisualStyleBackColor = true;
             // 
+            // buttonErrorDefault
+            // 
+            this.buttonErrorDefault.Location = new System.Drawing.Point(224, 12);
+            this.buttonErrorDefault.Name = "buttonErrorDefault";
+            this.buttonErrorDefault.Size = new System.Drawing.Size(75, 23);
+            this.buttonErrorDefault.TabIndex = 1;
+            this.buttonErrorDefault.Text = "Error Default";
+            this.buttonErrorDefault.UseVisualStyleBackColor = true;
+            this.buttonErrorDefault.Click += new System.EventHandler(this.buttonErrorReset_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(443, 290);
+            this.Controls.Add(this.buttonErrorDefault);
             this.Controls.Add(this.checkBoxKLineResponder);
             this.Controls.Add(this.checkBoxAdsAdapter);
             this.Controls.Add(this.checkBoxIgnitionOk);
@@ -272,6 +284,7 @@
         private System.Windows.Forms.RadioButton radioButtonConcept3;
         private System.Windows.Forms.RadioButton radioButtonKwp2000Bmw;
         private System.Windows.Forms.CheckBox checkBoxKLineResponder;
+        private System.Windows.Forms.Button buttonErrorDefault;
 
     }
 }
