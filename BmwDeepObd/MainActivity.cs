@@ -570,7 +570,7 @@ namespace BmwDeepObd
         [Export("onErrorResetClick")]
         public void OnErrorResetClick(View v)
         {
-            if (_ediabasThread == null)
+            if ((_ediabasThread == null) || !_ediabasThread.ThreadRunning())
             {
                 return;
             }
@@ -584,13 +584,18 @@ namespace BmwDeepObd
                 ListView listViewResult = parent.FindViewById<ListView>(Resource.Id.resultList);
                 if (listViewResult != null)
                 {
-                    ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult.Adapter;
+                    ResultListAdapter resultListAdapter = (ResultListAdapter) listViewResult.Adapter;
                     if (resultListAdapter != null)
                     {
-                        List<string> resetEcuList =
+                        List<string> errorResetList =
                             (from resultItem in resultListAdapter.Items
-                             let ecuName = resultItem.Tag as string
-                             where ecuName != null && resultItem.Selected select ecuName).ToList();
+                                let ecuName = resultItem.Tag as string
+                                where ecuName != null && resultItem.Selected
+                                select ecuName).ToList();
+                        lock (EdiabasThread.DataLock)
+                        {
+                            _ediabasThread.ErrorResetList = errorResetList;
+                        }
                     }
                 }
             }
