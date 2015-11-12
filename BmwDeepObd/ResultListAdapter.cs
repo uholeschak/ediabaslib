@@ -67,7 +67,7 @@ namespace BmwDeepObd
 
             if (_showCheckBox)
             {
-                checkBoxSelect.Visibility = item.Tag != null ? ViewStates.Visible : ViewStates.Invisible;
+                checkBoxSelect.Visibility = item.CheckVisible ? ViewStates.Visible : ViewStates.Invisible;
             }
             else
             {
@@ -141,25 +141,27 @@ namespace BmwDeepObd
         private readonly string _text1;
         private readonly string _text2;
         private readonly object _tag;
+        private readonly bool _checkVisible;
         private bool _selected;
         public delegate void CheckChangeEventHandler(TableResultItem item);
         public event CheckChangeEventHandler CheckChangeEvent;
 
-        public TableResultItem(string text1, string text2, object tag, bool selected)
+        public TableResultItem(string text1, string text2, object tag, bool checkVisible, bool selected)
         {
             _text1 = text1;
             _text2 = text2;
             _tag = tag;
+            _checkVisible = checkVisible;
             _selected = selected;
         }
 
         public TableResultItem(string text1, string text2, object tag)
-            : this(text1, text2, tag, false)
+            : this(text1, text2, tag, false, false)
         {
         }
 
         public TableResultItem(string text1, string text2)
-            : this(text1, text2, null)
+            : this(text1, text2, null, false, false)
         {
         }
 
@@ -184,6 +186,14 @@ namespace BmwDeepObd
             get
             {
                 return _tag;
+            }
+        }
+
+        public bool CheckVisible
+        {
+            get
+            {
+                return _checkVisible;
             }
         }
 
