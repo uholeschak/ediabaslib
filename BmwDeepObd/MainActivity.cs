@@ -1640,6 +1640,7 @@ namespace BmwDeepObd
             Thread extractThread = new Thread(() =>
             {
                 bool extractFailed = false;
+                bool ioError = false;
                 try
                 {
                     ActivityCommon.ExtractZipFile(fileName, targetDirectory,
@@ -1663,9 +1664,13 @@ namespace BmwDeepObd
                         infoXml.Save(Path.Combine(targetDirectory, InfoXmlName));
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     extractFailed = true;
+                    if (ex is IOException)
+                    {
+                        ioError = true;
+                    }
                 }
                 RunOnUiThread(() =>
                 {
@@ -1677,7 +1682,7 @@ namespace BmwDeepObd
                     }
                     if (extractFailed)
                     {
-                        _activityCommon.ShowAlert(GetString(Resource.String.extract_failed), Resource.String.alert_title_error);
+                        _activityCommon.ShowAlert(GetString(ioError ? Resource.String.extract_failed_io : Resource.String.extract_failed), Resource.String.alert_title_error);
                     }
                 });
             });
