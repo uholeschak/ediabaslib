@@ -590,7 +590,7 @@ namespace BmwDeepObd
                         List<string> errorResetList =
                             (from resultItem in resultListAdapter.Items
                                 let ecuName = resultItem.Tag as string
-                                where ecuName != null && resultItem.Selected
+                                where ecuName != null && resultItem.CheckVisible && resultItem.Selected
                                 select ecuName).ToList();
                         lock (EdiabasThread.DataLock)
                         {
@@ -1077,7 +1077,7 @@ namespace BmwDeepObd
                                                      select resultItem.Selected).FirstOrDefault();
                                     bool newEcu = (lastEcuName == null) || (string.CompareOrdinal(lastEcuName, errorReport.EcuName) != 0);
                                     bool validResponse = errorReport.ErrorDict != null;
-                                    TableResultItem newResultItem = new TableResultItem(message, null, newEcu && validResponse ? errorReport.EcuName : null, selected);
+                                    TableResultItem newResultItem = new TableResultItem(message, null, errorReport.EcuName, newEcu && validResponse, selected);
                                     newResultItem.CheckChangeEvent += item =>
                                     {
                                         UpdateButtonErrorReset(buttonErrorReset, resultListAdapter.Items);
@@ -1226,7 +1226,7 @@ namespace BmwDeepObd
             bool selected = false;
             if (resultItems != null)
             {
-                selected = resultItems.Any(resultItem => resultItem.Tag != null && resultItem.Selected);
+                selected = resultItems.Any(resultItem => resultItem.CheckVisible && resultItem.Selected);
             }
             buttonErrorReset.Enabled = selected;
         }
