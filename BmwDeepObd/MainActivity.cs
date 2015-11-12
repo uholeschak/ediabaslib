@@ -1073,9 +1073,9 @@ namespace BmwDeepObd
                                 {
                                     bool selected = (from resultItem in resultListAdapter.Items
                                                      let ecuName = resultItem.Tag as string
-                                                     where ecuName != null && ecuName == errorReport.EcuName
+                                                     where ecuName != null && string.CompareOrdinal(ecuName, errorReport.EcuName) == 0
                                                      select resultItem.Selected).FirstOrDefault();
-                                    bool newEcu = (lastEcuName == null) || (lastEcuName != errorReport.EcuName);
+                                    bool newEcu = (lastEcuName == null) || (string.CompareOrdinal(lastEcuName, errorReport.EcuName) != 0);
                                     bool validResponse = errorReport.ErrorDict != null;
                                     TableResultItem newResultItem = new TableResultItem(message, null, newEcu && validResponse ? errorReport.EcuName : null, selected);
                                     newResultItem.CheckChangeEvent += item =>
