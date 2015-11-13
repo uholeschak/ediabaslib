@@ -1338,8 +1338,8 @@ namespace BmwDeepObd
 
         public static String GetPageString(JobReader.PageInfo pageInfo, string name)
         {
-            string lang = CultureInfo.CurrentUICulture.Name;
-            string langIso = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+            string lang = Java.Util.Locale.Default.Language;
+            string langIso = Java.Util.Locale.Default.ISO3Language;
             JobReader.StringInfo stringInfoDefault = null;
             JobReader.StringInfo stringInfoSel = null;
             foreach (JobReader.StringInfo stringInfo in pageInfo.StringList)
