@@ -715,8 +715,11 @@ namespace BmwDeepObd
                     return;
                 }
             }
-            _activityCommon.SetScreenLock(false);
-            _activityCommon.SetCpuLock(false);
+            if (_activityCommon != null)
+            {
+                _activityCommon.SetScreenLock(false);
+                _activityCommon.SetCpuLock(false);
+            }
             CloseDataLog();
             SupportInvalidateOptionsMenu();
         }
@@ -871,6 +874,10 @@ namespace BmwDeepObd
 
         private void ThreadTerminatedMethode()
         {
+            if (_activityCommon == null)
+            {   // OnDestroy already executed
+                return;
+            }
             StopEdiabasThread(true);
             UpdateDisplay();
         }
@@ -912,6 +919,10 @@ namespace BmwDeepObd
 
         private void UpdateDisplay()
         {
+            if (!_activityActive || (_activityCommon == null))
+            {   // OnDestroy already executed
+                return;
+            }
             bool dynamicValid = false;
             bool threadRunning = false;
 
