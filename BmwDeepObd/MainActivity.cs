@@ -95,6 +95,8 @@ namespace BmwDeepObd
         private const string EcuDirName = "Ecu";
         private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Ecu1.zip";
         private const string InfoXmlName = "Info.xml";
+        private const long EcuZipSize = 120000000;          // ecu zip file size
+        private const long EcuExtractSize = 1200000000;     // extracted ecu files size
 
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         private string _deviceName = string.Empty;
@@ -1556,16 +1558,17 @@ namespace BmwDeepObd
         {
             RunOnUiThread(() =>
             {
+                UnzipInfo unzipInfo = e.UserState as UnzipInfo;
                 if (_downloadProgress != null)
                 {
                     _downloadProgress.SetCancelable(false);
                     if (e.Error == null)
                     {
-                        UnzipInfo unzipInfo = e.UserState as UnzipInfo;
                         if (unzipInfo != null)
                         {
                             _downloadProgress.CancelEvent -= DownloadProgressCancel;
                             ExtractZipFile(unzipInfo.FileName, unzipInfo.TargetDir, unzipInfo.InfoXml, true);
+                            return;
                         }
                     }
                     else
@@ -1577,6 +1580,20 @@ namespace BmwDeepObd
                         {
                             _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
                         }
+                    }
+                }
+                if (unzipInfo != null)
+                {
+                    try
+                    {
+                        if (File.Exists(unzipInfo.FileName))
+                        {
+                            File.Delete(unzipInfo.FileName);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
                     }
                 }
             });
@@ -1619,6 +1636,17 @@ namespace BmwDeepObd
                     _downloadProgress.Dispose();
                     _downloadProgress = null;
                 }
+                if (removeFile)
+                {
+                    try
+                    {
+                        File.Delete(fileName);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
                 _activityCommon.ShowAlert(GetString(Resource.String.extract_failed), Resource.String.alert_title_error);
                 return;
             }
@@ -1655,10 +1683,6 @@ namespace BmwDeepObd
                             });
                             return extractCanceled;
                         });
-                    if (removeFile)
-                    {
-                        File.Delete(fileName);
-                    }
                     if (infoXml != null)
                     {
                         infoXml.Save(Path.Combine(targetDirectory, InfoXmlName));
@@ -1670,6 +1694,20 @@ namespace BmwDeepObd
                     if (ex is IOException)
                     {
                         ioError = true;
+                    }
+                }
+                finally
+                {
+                    if (removeFile)
+                    {
+                        try
+                        {
+                            File.Delete(fileName);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                     }
                 }
                 RunOnUiThread(() =>
@@ -1697,8 +1735,10 @@ namespace BmwDeepObd
                 ActivityCommon.FileSystemBlockInfo blockInfo = ActivityCommon.GetFileSystemBlockInfo(_appDataPath);
                 long ecuDirSize = ActivityCommon.GetDirectorySize(ecuPath);
                 double freeSpace = blockInfo.AvailableSizeBytes + ecuDirSize;
-                if (freeSpace < 1500000000)
+                long requiredSize = EcuExtractSize + EcuZipSize;
+                if (freeSpace < requiredSize)
                 {
+                    string message = string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download_free_space), requiredSize);
                     new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
@@ -1707,7 +1747,7 @@ namespace BmwDeepObd
                         .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                         {
                         })
-                        .SetMessage(Resource.String.ecu_download_free_space)
+                        .SetMessage(message)
                         .SetTitle(Resource.String.alert_title_warning)
                         .Show();
                     return;
@@ -1729,7 +1769,8 @@ namespace BmwDeepObd
 
             if (!ValidEcuFiles(_ecuPath))
             {
-                string message = GetString(Resource.String.ecu_not_found) + "\n" + GetString(Resource.String.ecu_download);
+                string message = GetString(Resource.String.ecu_not_found) + "\n" +
+                    string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download), EcuZipSize);
 
                 _downloadEcuAlertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
@@ -1750,7 +1791,8 @@ namespace BmwDeepObd
             {
                 if (!ValidEcuPackage(_ecuPath))
                 {
-                    string message = GetString(Resource.String.ecu_package) + "\n" + GetString(Resource.String.ecu_download);
+                    string message = GetString(Resource.String.ecu_package) + "\n" +
+                        string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download), EcuZipSize);
 
                     _downloadEcuAlertDialog = new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>

@@ -16,10 +16,10 @@
   <string name="wifi_not_available">Wifi is not available.</string>
   <string name="config_select">No valid configuration is present.\nDo you want to generate or selecta configuration now?</string>
   <string name="bt_device_select">No Bluetooth device has been selected.\nDo you want to select a device now?</string>
-  <string name="ecu_download_free_space">There is not enough free space on the device for storing the ECU files.\nDo you want to select a different storage media?</string>
+  <string name="ecu_download_free_space">There is not enough free space ({0:fs0}) on the device for storing the ECU files.\nDo you want to select a different storage media?</string>
   <string name="ecu_not_found">No ECU files have been found.</string>
   <string name="ecu_package">Different ECU files are available for this application.</string>
-  <string name="ecu_download">Do you want to download the ECU files now (File size approx. 100MB)?</string>
+  <string name="ecu_download">Do you want to download the ECU files now (File size approx. {0:fs0})?</string>
   <string name="error_no_error">No errors present</string>
   <string name="error_no_response">No response</string>
   <string name="version_change_info_message">This open source project is hosted at:
@@ -27,7 +27,8 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
-\n- Selection of storage media
+\n- Added selection of storage media
+\n- Added reset ECU error option
 \n- Support for ELM327 replacement firmware"</string>
 
   <!-- Alert titles -->
