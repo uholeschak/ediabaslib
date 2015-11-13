@@ -24,12 +24,12 @@
   <string name="error_no_response">Keine Antwort</string>
   <string name="version_change_info_message">Dieses Open Source Projekt wird gehostet auf:
 \n<a href='https://ediabaslib.codeplex.com'>ediabaslib.codeplex.com</a>
-    \nSie können gerne mitwirken oder Probleme melden.
-    \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
-    \n\nÄnderungen in dieser Version:
-    \n- Auswahl des Speichermediums hinzugefügt
-    \n- ECU Fehler zurücksetzen Option hinzugefügt
-    \n- Unterstützung der ELM327 Ersatzfirmware"</string>
+\nSie können gerne mitwirken oder Probleme melden.
+\nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
+\n\nÄnderungen in dieser Version:
+\n- Auswahl des Speichermediums hinzugefügt
+\n- ECU Fehler zurücksetzen Option hinzugefügt
+\n- Unterstützung der ELM327 Ersatzfirmware"</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Information</string>
