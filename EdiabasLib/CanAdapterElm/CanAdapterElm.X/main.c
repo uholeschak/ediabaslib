@@ -435,27 +435,8 @@ uint16_t uart_receive(uint8_t *buffer)
     uint16_t data_len;
     if (rec_buffer[0] == 0x00)
     {   // special mode
-        // convert to BMW-FAST telegram
-        uint8_t len = rec_buffer[7];
-        if (len > 0x3F)
-        {
-            buffer[0] = 0x80;
-            buffer[1] = rec_buffer[5];
-            buffer[2] = rec_buffer[6];
-            buffer[3] = len;
-            memcpy(buffer + 4, rec_buffer + 8, len);
-            data_len = len + 4;
-        }
-        else
-        {
-            buffer[0] = 0x80 | len;
-            buffer[1] = rec_buffer[5];
-            buffer[2] = rec_buffer[6];
-            memcpy(buffer + 3, rec_buffer + 8, len);
-            data_len = len + 3;
-        }
-        buffer[data_len] = calc_checkum(buffer, data_len);
-        data_len++;
+        data_len = ((uint16_t) rec_buffer[5] << 8) + rec_buffer[6];
+        memcpy(buffer, rec_buffer + 7, data_len);
     }
     else
     {
@@ -1282,19 +1263,17 @@ void interrupt high_priority high_isr (void)
                         if (rec_buffer[0] == 0x00)
                         {   // special mode:
                             // byte 1: telegram type
-                            // byte 2+3: baud rate / 2
+                            // byte 2+3: baud rate (high/low) / 2
                             // byte 4: parity + L-line
-                            // byte 5: target addr
-                            // byte 6: source addr
-                            // byte 7: telegram length
+                            // byte 5+6: telegram length (high/low)
                             if (rec_buffer[1] != 0x00)
                             {   // invalid telegram type
                                 rec_state = rec_state_error;
                                 break;
                             }
-                            if (rec_len >= 8)
+                            if (rec_len >= 7)
                             {
-                                tel_len = rec_buffer[7] + 9;
+                                tel_len = ((uint16_t) rec_buffer[5] << 8) + rec_buffer[6] + 8;
                             }
                             else
                             {
