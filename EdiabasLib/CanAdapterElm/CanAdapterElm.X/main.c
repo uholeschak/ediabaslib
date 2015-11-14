@@ -140,7 +140,7 @@ static uint8_t idle_counter;
 static volatile rec_states rec_state;
 static volatile uint16_t rec_len;
 static uint8_t rec_chksum;
-static volatile uint8_t rec_buffer[260];
+static volatile uint8_t rec_buffer[270];
 
 static uint16_t send_set_idx;
 static uint16_t send_get_idx;
@@ -380,6 +380,16 @@ void kline_receive()
     }
 }
 
+uint8_t calc_checkum(uint8_t *buffer, uint16_t len)
+{
+    uint8_t sum = 0;
+    for (uint16_t i = 0; i < len; i++)
+    {
+        sum += buffer[i];
+    }
+    return sum;
+}
+
 bool uart_send(uint8_t *buffer, uint16_t count)
 {
     uint16_t volatile temp_len;
@@ -422,8 +432,36 @@ uint16_t uart_receive(uint8_t *buffer)
     }
     idle_counter = 0;
 
-    uint16_t data_len = rec_len;
-    memcpy(buffer, (void *) rec_buffer, data_len);
+    uint16_t data_len;
+    if (rec_buffer[0] == 0x00)
+    {   // special mode
+        // convert to BMW-FAST telegram
+        uint8_t len = rec_buffer[7];
+        if (len > 0x3F)
+        {
+            buffer[0] = 0x80;
+            buffer[1] = rec_buffer[5];
+            buffer[2] = rec_buffer[6];
+            buffer[3] = len;
+            memcpy(buffer + 4, rec_buffer + 8, len);
+            data_len = len + 4;
+        }
+        else
+        {
+            buffer[0] = 0x80 | len;
+            buffer[1] = rec_buffer[5];
+            buffer[2] = rec_buffer[6];
+            memcpy(buffer + 3, rec_buffer + 8, len);
+            data_len = len + 3;
+        }
+        buffer[data_len] = calc_checkum(buffer, data_len);
+        data_len++;
+    }
+    else
+    {
+        data_len = rec_len;
+        memcpy(buffer, rec_buffer, data_len);
+    }
     rec_state = rec_state_idle;
     return data_len;
 }
@@ -467,16 +505,6 @@ void update_led()
             LED_OBD_TX = 1; // off
         }
     }
-}
-
-uint8_t calc_checkum(uint8_t *buffer, uint16_t len)
-{
-    uint8_t sum = 0;
-    for (uint16_t i = 0; i < len; i++)
-    {
-        sum += buffer[i];
-    }
-    return sum;
 }
 
 void can_config()
@@ -1250,16 +1278,43 @@ void interrupt high_priority high_isr (void)
                     }
                     if (rec_len >= 4)
                     {   // header received
-                        uint16_t tel_len = rec_buffer[0] & 0x3F;
-                        if (tel_len == 0)
-                        {
-                            tel_len = rec_buffer[3] + 5;
+                        uint16_t tel_len;
+                        if (rec_buffer[0] == 0x00)
+                        {   // special mode:
+                            // byte 1: telegram type
+                            // byte 2+3: baud rate / 2
+                            // byte 4: parity + L-line
+                            // byte 5: target addr
+                            // byte 6: source addr
+                            // byte 7: telegram length
+                            if (rec_buffer[1] != 0x00)
+                            {   // invalid telegram type
+                                rec_state = rec_state_error;
+                                break;
+                            }
+                            if (rec_len >= 8)
+                            {
+                                tel_len = rec_buffer[7] + 9;
+                            }
+                            else
+                            {
+                                tel_len = 0;
+                            }
                         }
                         else
                         {
-                            tel_len += 4;
+                            // standard mode
+                            tel_len = rec_buffer[0] & 0x3F;
+                            if (tel_len == 0)
+                            {
+                                tel_len = rec_buffer[3] + 5;
+                            }
+                            else
+                            {
+                                tel_len += 4;
+                            }
                         }
-                        if (rec_len >= tel_len)
+                        if (tel_len != 0 && rec_len >= tel_len)
                         {   // complete tel received
                             if (rec_chksum != rec_data)
                             {   // checksum error
