@@ -103,13 +103,15 @@
 #define TIMER1_RELOAD       (0x10000-500)   // 1 ms
 
 // K-Line flags
-#define KLINEF_PARITY_MASK  0x7
-#define KLINEF_PARITY_NONE  0x0
-#define KLINEF_PARITY_EVEN  0x1
-#define KLINEF_PARITY_ODD   0x2
-#define KLINEF_PARITY_MARK  0x3
-#define KLINEF_PARITY_SPACE 0x4
-#define KLINEF_SET_LLINE    0x08
+#define KLINEF_PARITY_MASK      0x7
+#define KLINEF_PARITY_NONE      0x0
+#define KLINEF_PARITY_EVEN      0x1
+#define KLINEF_PARITY_ODD       0x2
+#define KLINEF_PARITY_MARK      0x3
+#define KLINEF_PARITY_SPACE     0x4
+#define KLINEF_AUTO_LLINE       0x08
+#define KLINEF_SET_LLINE        0x10
+#define KLINEF_SET_KLINE        0x20
 
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
@@ -277,6 +279,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
         kline_baud_cfg();
         PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
         T2CONbits.TMR2ON = 1;   // enable timer 2
+        LLINE_OUT = 0;          // idle
         for (uint16_t i = 0; i < count; i++)
         {
             CLRWDT();
@@ -318,7 +321,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
     kline_baud_cfg();
     PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
     T2CONbits.TMR2ON = 1;   // enable timer 2
-    if ((kline_flags & KLINEF_SET_LLINE) != 0)
+    if ((kline_flags & (KLINEF_AUTO_LLINE | KLINEF_SET_LLINE)) != 0)
     {
         LLINE_OUT = 1;
     }
@@ -405,8 +408,22 @@ void kline_send(uint8_t *buffer, uint16_t count)
         while (!PIR1bits.TMR2IF) {}
         PIR1bits.TMR2IF = 0;
     }
-    KLINE_OUT = 0;      // idle
-    LLINE_OUT = 0;      // idle
+    if ((kline_flags & KLINEF_SET_KLINE) != 0)
+    {
+        KLINE_OUT = 1;
+    }
+    else
+    {
+        KLINE_OUT = 0;      // idle
+    }
+    if ((kline_flags & KLINEF_SET_LLINE) != 0)
+    {
+        LLINE_OUT = 1;
+    }
+    else
+    {
+        LLINE_OUT = 0;      // idle
+    }
     T2CONbits.TMR2ON = 0;
     INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
     idle_counter = 0;
