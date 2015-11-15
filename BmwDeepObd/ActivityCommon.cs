@@ -134,7 +134,8 @@ namespace BmwDeepObd
             {
                 return _customStorageMedia;
             }
-            set {
+            set
+            {
                 _customStorageMedia = IsWritable(value) ? value : null;
             }
         }
@@ -895,11 +896,13 @@ namespace BmwDeepObd
                 if (externalFilesDirs.Length > 0)
                 {
                     // index 0 is the internal disk
-                    if (externalFilesDirs.Length > 1 && externalFilesDirs[1] != null)
+                    if (externalFilesDirs.Length > 1 && externalFilesDirs[1] != null &&
+                        IsWritable(externalFilesDirs[1].AbsolutePath))
                     {
                         _externalWritePath = externalFilesDirs[1].AbsolutePath;
                     }
-                    else if (externalFilesDirs[0] != null)
+                    else if (externalFilesDirs[0] != null &&
+                        IsWritable(externalFilesDirs[0].AbsolutePath))
                     {
                         _externalWritePath = externalFilesDirs[0].AbsolutePath;
                     }
