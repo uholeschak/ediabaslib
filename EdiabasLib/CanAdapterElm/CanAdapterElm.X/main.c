@@ -250,12 +250,12 @@ void kline_baud_cfg()
     else
     {
         T2CONbits.TMR2ON = 0;
-        T2CONbits.T2CKPS = 0;       // prescaler 1
-        T2CONbits.T2OUTPS = 0x1;    // postscaler 2
+        T2CONbits.T2CKPS = 1;       // prescaler 4
+        T2CONbits.T2OUTPS = 0x0;    // postscaler 1
         TMR2 = 0x00;                // reset timer 2
-        PR2 = 16000000ul / 8 / kline_baud;
+        PR2 = 16000000ul / 16 / kline_baud;
         kline_bit_delay = 0;
-        uint8_t bit_delay = (PR2 >> 1) + 51;
+        uint8_t bit_delay = (PR2 >> 1) + 15;
         if (bit_delay < PR2)
         {
             kline_bit_delay = bit_delay;
