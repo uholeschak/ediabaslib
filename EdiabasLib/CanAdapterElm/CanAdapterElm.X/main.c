@@ -155,6 +155,7 @@ static volatile uint8_t send_buffer[280];   // larger send buffer for multi resp
 static uint32_t kline_baud;     // K-line baud rate, 0=115200 (BMW-FAST))
 static uint8_t kline_flags;     // K-line flags
 static uint8_t kline_interbyte; // K-line interbyte time [ms]
+static uint8_t kline_bit_delay; // K-line read bit delay
 
 static uint8_t temp_buffer[TEMP_BUF_SIZE];
 static uint8_t temp_buffer_short[10];
@@ -244,6 +245,7 @@ void kline_baud_cfg()
         TMR2 = 0x00;                // reset timer 2
         // PR2 = 16000000 / (4 * 1 * 115200 * 1) = 34
         PR2 = 34;                   // timer 2 stop value
+        kline_bit_delay = 0;
     }
     else
     {
@@ -252,6 +254,12 @@ void kline_baud_cfg()
         T2CONbits.T2OUTPS = 0x1;    // postscaler 2
         TMR2 = 0x00;                // reset timer 2
         PR2 = 16000000ul / 8 / kline_baud;
+        kline_bit_delay = 0;
+        uint8_t bit_delay = (PR2 >> 1) + 51;
+        if (bit_delay < PR2)
+        {
+            kline_bit_delay = bit_delay;
+        }
     }
 }
 
@@ -405,6 +413,24 @@ void kline_send(uint8_t *buffer, uint16_t count)
     ei();
 }
 
+void inline start_kline_rec_timer()
+{
+    if (!T2CONbits.TMR2ON && !KLINE_IN)
+    {
+        if (kline_bit_delay != 0)
+        {
+            TMR2 = kline_bit_delay;
+            T2CONbits.TMR2ON = 1;
+            while (!PIR1bits.TMR2IF) {}
+            PIR1bits.TMR2IF = 0;
+        }
+        else
+        {
+            T2CONbits.TMR2ON = 1;
+        }
+    }
+}
+
 void kline_receive()
 {
     uint8_t const temp_bufferh = HIGH_BYTE((uint16_t) temp_buffer);
@@ -412,9 +438,110 @@ void kline_receive()
     uint8_t *write_ptr = temp_buffer;
     uint8_t *read_ptr = temp_buffer;
 
+    if (kline_baud == 0)
+    {   // BMW-FAST
+        di();
+        kline_baud_cfg();
+        PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
+        INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
+        idle_counter = 0;
+        for (;;)
+        {
+            // wait for start bit
+            for (;;)
+            {
+                CLRWDT();
+                if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                if (T2CONbits.TMR2ON)
+                {
+                    break;
+                }
+                if (PIR1bits.RCIF)
+                {   // start of new UART telegram
+                    ei();
+                    return;
+                }
+                if (INTCONbits.TMR0IF)
+                {
+                    INTCONbits.TMR0IF = 0;
+                    idle_counter++;
+                    if (idle_counter > 2)
+                    {   // idle -> leave loop
+                        ei();
+                        return;
+                    }
+                }
+                if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                if (buffer_len != 0)
+                {   // send data back to UART
+                    if (TXSTAbits.TRMT)
+                    {   // transmitter empty
+                        if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                        TXREG = *read_ptr;
+                        if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                        read_ptr++;
+                        if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                        uint8_t diff = *(((uint8_t *) &read_ptr) + 1) - temp_bufferh;
+                        if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                        if (diff == (sizeof(temp_buffer) >> 8))
+                        {
+                            if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                            read_ptr = temp_buffer;
+                        }
+                        if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                        buffer_len--;
+                    }
+                }
+            }
+            idle_counter = 0;
+            LED_OBD_RX = 0; // on
+            uint8_t data = 0x00;
+            for (uint8_t i = 0; i < 8 ; i++)
+            {
+                while (!PIR1bits.TMR2IF) {}
+                PIR1bits.TMR2IF = 0;
+#if DEBUG_PIN
+                LED_RS_TX = 1;
+#endif
+                if (KLINE_IN)
+                {
+                    data >>= 1;
+                    data |= 0x80;
+                }
+                else
+                {
+                    data >>= 1;
+                }
+#if DEBUG_PIN
+                LED_RS_TX = 0;
+#endif
+            }
+#if DEBUG_PIN
+            LED_RS_TX = 1;
+#endif
+            if (buffer_len < sizeof(temp_buffer))
+            {
+                *write_ptr = data;
+                write_ptr++;
+                buffer_len++;
+                uint8_t diff = *(((uint8_t *) &write_ptr) + 1) - temp_bufferh;
+                if (diff == (sizeof(temp_buffer) >> 8))
+                {
+                    write_ptr = temp_buffer;
+                }
+            }
+            T2CONbits.TMR2ON = 0;
+            TMR2 = 0;               // reset timer
+            PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
+            LED_OBD_RX = 1; // off
+#if DEBUG_PIN
+            LED_RS_TX = 0;
+#endif
+        }
+    }
+    // dynamic baudrate
     di();
-    T2CONbits.TMR2ON = 0;
-    TMR2 = 0;               // reset timer
+    kline_baud_cfg();
     PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
     INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
     idle_counter = 0;
@@ -424,7 +551,7 @@ void kline_receive()
         for (;;)
         {
             CLRWDT();
-            if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+            start_kline_rec_timer();
             if (T2CONbits.TMR2ON)
             {
                 break;
@@ -438,30 +565,32 @@ void kline_receive()
             {
                 INTCONbits.TMR0IF = 0;
                 idle_counter++;
+#if 0
                 if (idle_counter > 2)
                 {   // idle -> leave loop
                     ei();
                     return;
                 }
+#endif
             }
-            if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+            start_kline_rec_timer();
             if (buffer_len != 0)
             {   // send data back to UART
                 if (TXSTAbits.TRMT)
                 {   // transmitter empty
-                    if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                    start_kline_rec_timer();
                     TXREG = *read_ptr;
-                    if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                    start_kline_rec_timer();
                     read_ptr++;
-                    if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                    start_kline_rec_timer();
                     uint8_t diff = *(((uint8_t *) &read_ptr) + 1) - temp_bufferh;
-                    if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                    start_kline_rec_timer();
                     if (diff == (sizeof(temp_buffer) >> 8))
                     {
-                        if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                        start_kline_rec_timer();
                         read_ptr = temp_buffer;
                     }
-                    if (!KLINE_IN) T2CONbits.TMR2ON = 1;
+                    start_kline_rec_timer();
                     buffer_len--;
                 }
             }
@@ -492,6 +621,11 @@ void kline_receive()
 #if DEBUG_PIN
         LED_RS_TX = 1;
 #endif
+        if ((kline_flags & KLINEF_PARITY_MASK) != KLINEF_PARITY_NONE)
+        {   // read parity bit
+            while (!PIR1bits.TMR2IF) {}
+            PIR1bits.TMR2IF = 0;
+        }
         if (buffer_len < sizeof(temp_buffer))
         {
             *write_ptr = data;
@@ -503,8 +637,12 @@ void kline_receive()
                 write_ptr = temp_buffer;
             }
         }
+        // read stop bit
+        while (!PIR1bits.TMR2IF) {}
+        PIR1bits.TMR2IF = 0;
+
         T2CONbits.TMR2ON = 0;
-        TMR2 = 0;               // reset timer
+        TMR2 = 0x00;
         PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
         LED_OBD_RX = 1; // off
 #if DEBUG_PIN
@@ -574,7 +712,7 @@ uint16_t uart_receive(uint8_t *buffer)
         // byte 5: interbyte time
         // byte 6+7: telegram length (high/low)
         kline_baud = (((uint32_t) rec_buffer[2] << 8) + rec_buffer[3]) << 1;
-        if ((kline_baud < 9600) || (kline_baud > 38400))
+        if ((kline_baud < 9600) || (kline_baud > 19200))
         {
             return 0;
         }
