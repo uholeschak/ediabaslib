@@ -101,10 +101,15 @@
 
 #define TIMER0_RESOL        15625ul         // 16526 Hz
 #define TIMER1_RELOAD       (0x10000-500)   // 1 ms
-// fout = fclk / (4 * prescaler * PR2 * postscaler)
-// PR2 = fclk / (4 * prescaler * fout * postscaler)
-// PR2 = 16000000 / (4 * 1 * 115200 * 1) = 34
-#define TIMER2_RELOAD       34              // 115200
+
+// K-Line flags
+#define KLINEF_PARITY_MASK  0x7
+#define KLINEF_PARITY_NONE  0x0
+#define KLINEF_PARITY_EVEN  0x1
+#define KLINEF_PARITY_ODD   0x2
+#define KLINEF_PARITY_MARK  0x3
+#define KLINEF_PARITY_SPACE 0x4
+#define KLINEF_SET_LLINE    0x08
 
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
@@ -146,6 +151,10 @@ static uint16_t send_set_idx;
 static uint16_t send_get_idx;
 static volatile uint16_t send_len;
 static volatile uint8_t send_buffer[280];   // larger send buffer for multi responses
+
+static uint32_t kline_baud;     // K-line baud rate, 0=115200 (BMW-FAST))
+static uint8_t kline_flags;     // K-line flags
+static uint8_t kline_interbyte; // K-line interbyte time [ms]
 
 static uint8_t temp_buffer[TEMP_BUF_SIZE];
 static uint8_t temp_buffer_short[10];
@@ -223,6 +232,29 @@ void do_idle()
     }
 }
 
+void kline_baud_cfg()
+{
+    // fout = fclk / (4 * prescaler * PR2 * postscaler)
+    // PR2 = fclk / (4 * prescaler * fout * postscaler)
+    if (kline_baud == 0)
+    {   // BMW-FAST
+        T2CONbits.TMR2ON = 0;
+        T2CONbits.T2CKPS = 0;       // prescaler 1
+        T2CONbits.T2OUTPS = 0x0;    // postscaler 1
+        TMR2 = 0x00;                // reset timer 2
+        // PR2 = 16000000 / (4 * 1 * 115200 * 1) = 34
+        PR2 = 34;                   // timer 2 stop value
+    }
+    else
+    {
+        T2CONbits.TMR2ON = 0;
+        T2CONbits.T2CKPS = 0;       // prescaler 1
+        T2CONbits.T2OUTPS = 0x1;    // postscaler 2
+        TMR2 = 0x00;                // reset timer 2
+        PR2 = 16000000ul / 8 / kline_baud;
+    }
+}
+
 void kline_send(uint8_t *buffer, uint16_t count)
 {
     uint8_t *ptr = buffer;
@@ -231,19 +263,78 @@ void kline_send(uint8_t *buffer, uint16_t count)
     {
         update_led();
     }
+    if (kline_baud == 0)
+    {   // BMW-FAST
+        di();
+        kline_baud_cfg();
+        PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
+        T2CONbits.TMR2ON = 1;   // enable timer 2
+        for (uint16_t i = 0; i < count; i++)
+        {
+            CLRWDT();
+            while (!PIR1bits.TMR2IF) {}
+            PIR1bits.TMR2IF = 0;
+            KLINE_OUT = 1;      // start bit
+
+            uint8_t out_data = *ptr++;
+            for (uint8_t j = 0; j < 8; j++)
+            {
+                while (!PIR1bits.TMR2IF) {}
+                PIR1bits.TMR2IF = 0;
+                if ((out_data & 0x01) != 0)
+                {
+                    KLINE_OUT = 0;
+                }
+                else
+                {
+                    KLINE_OUT = 1;
+                }
+                out_data >>= 1;
+            }
+            // 2 stop bits
+            while (!PIR1bits.TMR2IF) {}
+            PIR1bits.TMR2IF = 0;
+            KLINE_OUT = 0;
+            while (!PIR1bits.TMR2IF) {}
+            PIR1bits.TMR2IF = 0;
+        }
+        KLINE_OUT = 0;      // idle
+        T2CONbits.TMR2ON = 0;
+        INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
+        idle_counter = 0;
+        ei();
+        return;
+    }
+    // dynamic baudrate
     di();
-    T2CONbits.TMR2ON = 0;
-    TMR2 = 0x00;            // reset timer 2
+    kline_baud_cfg();
     PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
     T2CONbits.TMR2ON = 1;   // enable timer 2
+    if ((kline_flags & KLINEF_SET_LLINE) != 0)
+    {
+        LLINE_OUT = 1;
+    }
     for (uint16_t i = 0; i < count; i++)
     {
+        if (kline_interbyte != 0 && i != 0)
+        {
+            T2CONbits.TMR2ON = 0;   // disable timer 2
+            uint16_t start_tick = get_systick();
+            uint16_t compare_tick = kline_interbyte * TIMER0_RESOL / 1000;
+            while ((uint16_t) (get_systick() - start_tick) < compare_tick)
+            {
+                CLRWDT();
+            }
+            PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
+            T2CONbits.TMR2ON = 1;   // enable timer 2
+        }
         CLRWDT();
         while (!PIR1bits.TMR2IF) {}
         PIR1bits.TMR2IF = 0;
         KLINE_OUT = 1;      // start bit
 
         uint8_t out_data = *ptr++;
+        uint8_t parity = 0;
         for (uint8_t j = 0; j < 8; j++)
         {
             while (!PIR1bits.TMR2IF) {}
@@ -251,12 +342,53 @@ void kline_send(uint8_t *buffer, uint16_t count)
             if ((out_data & 0x01) != 0)
             {
                 KLINE_OUT = 0;
+                parity++;
             }
             else
             {
                 KLINE_OUT = 1;
             }
             out_data >>= 1;
+        }
+        switch (kline_flags & KLINEF_PARITY_MASK)
+        {
+            case KLINEF_PARITY_EVEN:
+                while (!PIR1bits.TMR2IF) {}
+                PIR1bits.TMR2IF = 0;
+                if ((parity & 0x01) != 0)
+                {
+                    KLINE_OUT = 0;
+                }
+                else
+                {
+                    KLINE_OUT = 1;
+                }
+                break;
+
+            case KLINEF_PARITY_ODD:
+                while (!PIR1bits.TMR2IF) {}
+                PIR1bits.TMR2IF = 0;
+                if ((parity & 0x01) != 0)
+                {
+                    KLINE_OUT = 1;
+                }
+                else
+                {
+                    KLINE_OUT = 0;
+                }
+                break;
+
+            case KLINEF_PARITY_MARK:
+                while (!PIR1bits.TMR2IF) {}
+                PIR1bits.TMR2IF = 0;
+                KLINE_OUT = 0;
+                break;
+
+            case KLINEF_PARITY_SPACE:
+                while (!PIR1bits.TMR2IF) {}
+                PIR1bits.TMR2IF = 0;
+                KLINE_OUT = 1;
+                break;
         }
         // 2 stop bits
         while (!PIR1bits.TMR2IF) {}
@@ -266,6 +398,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
         PIR1bits.TMR2IF = 0;
     }
     KLINE_OUT = 0;      // idle
+    LLINE_OUT = 0;      // idle
     T2CONbits.TMR2ON = 0;
     INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
     idle_counter = 0;
@@ -435,11 +568,26 @@ uint16_t uart_receive(uint8_t *buffer)
     uint16_t data_len;
     if (rec_buffer[0] == 0x00)
     {   // special mode
-        data_len = ((uint16_t) rec_buffer[5] << 8) + rec_buffer[6];
-        memcpy(buffer, rec_buffer + 7, data_len);
+        // byte 1: telegram type
+        // byte 2+3: baud rate (high/low) / 2
+        // byte 4: flags
+        // byte 5: interbyte time
+        // byte 6+7: telegram length (high/low)
+        kline_baud = (((uint32_t) rec_buffer[2] << 8) + rec_buffer[3]) << 1;
+        if ((kline_baud < 9600) || (kline_baud > 38400))
+        {
+            return 0;
+        }
+        kline_flags = rec_buffer[4];
+        kline_interbyte = rec_buffer[5];
+        data_len = ((uint16_t) rec_buffer[6] << 8) + rec_buffer[7];
+        memcpy(buffer, rec_buffer + 8, data_len);
     }
     else
     {
+        kline_baud = 0;
+        kline_flags = 0;
+        kline_interbyte = 0;
         data_len = rec_len;
         memcpy(buffer, rec_buffer, data_len);
     }
@@ -525,6 +673,9 @@ void can_config()
     {
         close_can();
     }
+    kline_baud = 0;
+    kline_flags = 0;
+    kline_interbyte = 0;
 }
 
 void read_eeprom()
@@ -1131,9 +1282,9 @@ void main(void)
 
     // timer 2
     T2CONbits.T2CKPS = 0;   // prescaler 1
-    T2CONbits.T2OUTPS = 0x0; // postscaler 1
+    T2CONbits.T2OUTPS = 0x0;// postscaler 1
     TMR2 = 0x00;            // timer 2 start value
-    PR2 = TIMER2_RELOAD;    // timer 2 stop value
+    PR2 = 34;               // timer 2 stop value
 
     IPR1bits.TMR2IP = 0;    // timer 2 low prioriy
     PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
@@ -1264,16 +1415,17 @@ void interrupt high_priority high_isr (void)
                         {   // special mode:
                             // byte 1: telegram type
                             // byte 2+3: baud rate (high/low) / 2
-                            // byte 4: parity + L-line
-                            // byte 5+6: telegram length (high/low)
+                            // byte 4: flags
+                            // byte 5: interbyte time
+                            // byte 6+7: telegram length (high/low)
                             if (rec_buffer[1] != 0x00)
                             {   // invalid telegram type
                                 rec_state = rec_state_error;
                                 break;
                             }
-                            if (rec_len >= 7)
+                            if (rec_len >= 8)
                             {
-                                tel_len = ((uint16_t) rec_buffer[5] << 8) + rec_buffer[6] + 8;
+                                tel_len = ((uint16_t) rec_buffer[6] << 8) + rec_buffer[7] + 9;
                             }
                             else
                             {
