@@ -112,6 +112,7 @@
 #define KLINEF_AUTO_LLINE       0x08
 #define KLINEF_SET_LLINE        0x10
 #define KLINEF_SET_KLINE        0x20
+#define KLINEF_NO_ECHO          0x40
 
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
@@ -729,14 +730,17 @@ uint16_t uart_receive(uint8_t *buffer)
         // byte 5: interbyte time
         // byte 6+7: telegram length (high/low)
         kline_baud = (((uint32_t) rec_buffer[2] << 8) + rec_buffer[3]) << 1;
-        if ((kline_baud < 9600) || (kline_baud > 19200))
+        if ((kline_baud != 0) && ((kline_baud < 9600) || (kline_baud > 19200)))
         {
-            return 0;
+            data_len = 0;
         }
-        kline_flags = rec_buffer[4];
-        kline_interbyte = rec_buffer[5];
-        data_len = ((uint16_t) rec_buffer[6] << 8) + rec_buffer[7];
-        memcpy(buffer, rec_buffer + 8, data_len);
+        else
+        {
+            kline_flags = rec_buffer[4];
+            kline_interbyte = rec_buffer[5];
+            data_len = ((uint16_t) rec_buffer[6] << 8) + rec_buffer[7];
+            memcpy(buffer, rec_buffer + 8, data_len);
+        }
     }
     else
     {
@@ -1009,7 +1013,10 @@ void can_sender(bool new_can_msg)
         uint16_t len = uart_receive(temp_buffer);
         if (len > 0)
         {
-            uart_send(temp_buffer, len);
+            if ((kline_flags & KLINEF_NO_ECHO) == 0)
+            {
+                uart_send(temp_buffer, len);
+            }
             if (internal_telegram(len))
             {
                 return;
@@ -1481,7 +1488,10 @@ void main(void)
                 uint16_t len = uart_receive(temp_buffer);
                 if (len > 0)
                 {
-                    uart_send(temp_buffer, len);
+                    if ((kline_flags & KLINEF_NO_ECHO) == 0)
+                    {
+                        uart_send(temp_buffer, len);
+                    }
                     if (!internal_telegram(len))
                     {
                         kline_send(temp_buffer, len);
@@ -1490,21 +1500,6 @@ void main(void)
                 }
             }
         }
-#if 0
-        if (can_enabled)
-        {
-            if (readCAN())
-            {
-                static uint8_t test = 0;
-                memcpy(&can_out_msg, &can_in_msg, sizeof(can_out_msg));
-                can_out_msg.data[0] = test++;
-                if (!writeCAN())
-                {
-                    readCAN();
-                }
-            }
-        }
-#endif
         update_led();
         do_idle();
     }
