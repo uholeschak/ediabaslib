@@ -10,7 +10,7 @@ using Java.Util;
 
 namespace EdiabasLib
 {
-    static public class EdBluetoothInterface
+    public class EdBluetoothInterface : EdBluetoothInterfaceBase
     {
         public const string PortId = "BLUETOOTH";
         public const string Elm327Tag = "ELM327";
@@ -37,9 +37,6 @@ namespace EdiabasLib
         private static volatile byte[] _elm327RequBuffer;
         private static readonly Queue<byte> Elm327RespQueue = new Queue<byte>();
         private static readonly Object Elm327BufferLock = new Object();
-        private static int _currentBaudRate;
-        private static int _currentWordLength;
-        private static EdInterfaceObd.SerialParity _currentParity = EdInterfaceObd.SerialParity.None;
 
         static EdBluetoothInterface()
         {
@@ -50,21 +47,6 @@ namespace EdiabasLib
         public static BluetoothSocket BluetoothSocket
         {
             get { return _bluetoothSocket; }
-        }
-
-        public static int CurrentBaudRate
-        {
-            get { return _currentBaudRate; }
-        }
-
-        public static int CurrentWordLength
-        {
-            get { return _currentWordLength; }
-        }
-
-        public static EdInterfaceObd.SerialParity CurrentParity
-        {
-            get { return _currentParity; }
         }
 
         public static bool InterfaceConnect(string port, object parameter)
@@ -196,9 +178,9 @@ namespace EdiabasLib
             {
                 return EdInterfaceObd.InterfaceErrorResult.ConfigError;
             }
-            _currentBaudRate = baudRate;
-            _currentWordLength = dataBits;
-            _currentParity = parity;
+            CurrentBaudRate = baudRate;
+            CurrentWordLength = dataBits;
+            CurrentParity = parity;
             return EdInterfaceObd.InterfaceErrorResult.NoError;
         }
 
@@ -266,7 +248,7 @@ namespace EdiabasLib
             {
                 return false;
             }
-            if ((_currentBaudRate != 115200) || (_currentWordLength != 8) || (_currentParity != EdInterfaceObd.SerialParity.None))
+            if ((CurrentBaudRate != 115200) || (CurrentWordLength != 8) || (CurrentParity != EdInterfaceObd.SerialParity.None))
             {
                 return false;
             }
