@@ -248,12 +248,12 @@ namespace EdiabasLib
             {
                 return false;
             }
-            if ((CurrentBaudRate != 115200) || (CurrentWordLength != 8) || (CurrentParity != EdInterfaceObd.SerialParity.None))
-            {
-                return false;
-            }
             if (_elm327Device)
             {
+                if ((CurrentBaudRate != 115200) || (CurrentWordLength != 8) || (CurrentParity != EdInterfaceObd.SerialParity.None))
+                {
+                    return false;
+                }
                 lock (Elm327BufferLock)
                 {
                     if (_elm327RequBuffer != null)
@@ -281,7 +281,19 @@ namespace EdiabasLib
             }
             try
             {
-                _bluetoothOutStream.Write (sendData, 0, length);
+                if (CurrentBaudRate == 115200)
+                {   // BMW-FAST
+                    _bluetoothOutStream.Write(sendData, 0, length);
+                }
+                else
+                {
+                    byte[] adapterTel = CreateAdapterTelegram(sendData, length, setDtr);
+                    if (adapterTel == null)
+                    {
+                        return false;
+                    }
+                    _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
+                }
             }
             catch (Exception)
             {
