@@ -44,6 +44,7 @@ namespace EdiabasLib
         public delegate bool InterfaceGetDsrDelegate(out bool dsr);
         public delegate bool InterfaceSetBreakDelegate(bool enable);
         public delegate bool InterfacePurgeInBufferDelegate();
+        public delegate bool InterfaceAdapterEchoDelegate();
         public delegate bool InterfaceSendDataDelegate(byte[] sendData, int length, bool setDtr, double dtrTimeCorr);
         public delegate bool InterfaceReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog);
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
@@ -91,6 +92,8 @@ namespace EdiabasLib
         protected InterfaceSetBreakDelegate InterfaceSetBreakFuncInt;
         protected InterfacePurgeInBufferDelegate InterfacePurgeInBufferFuncProtected;
         protected InterfacePurgeInBufferDelegate InterfacePurgeInBufferFuncInt;
+        protected InterfaceAdapterEchoDelegate InterfaceAdapterEchoFuncProtected;
+        protected InterfaceAdapterEchoDelegate InterfaceAdapterEchoFuncInt;
         protected InterfaceSendDataDelegate InterfaceSendDataFuncProtected;
         protected InterfaceSendDataDelegate InterfaceSendDataFuncInt;
         protected InterfaceReceiveDataDelegate InterfaceReceiveDataFuncProtected;
@@ -246,7 +249,7 @@ namespace EdiabasLib
                 switch (concept)
                 {
                     case 0x0001:    // Concept 1
-                        if (AdapterEcho)
+                        if (HasAdapterEcho)
                         {   // only with ADS adapter
                             EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                             return;
@@ -277,7 +280,7 @@ namespace EdiabasLib
                         break;
 
                     case 0x0002:    // Concept 2 ISO 9141
-                        if (AdapterEcho)
+                        if (HasAdapterEcho)
                         {   // only with ADS adapter
                             EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                             return;
@@ -311,7 +314,7 @@ namespace EdiabasLib
                         break;
 
                     case 0x0003:    // Concept 3
-                        if (AdapterEcho)
+                        if (HasAdapterEcho)
                         {   // only with ADS adapter
                             EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                             return;
@@ -373,7 +376,7 @@ namespace EdiabasLib
                         ParSendSetDtr = false;
                         if (concept == 6)
                         {   // DS2 uses DTR
-                            ParSendSetDtr = !AdapterEcho;
+                            ParSendSetDtr = !HasAdapterEcho;
                         }
                         ParAllowBitBang = EnableFtdiBitBang && ParSendSetDtr;
                         break;
@@ -429,7 +432,7 @@ namespace EdiabasLib
                                 ParStartCommTel[i] = (byte)CommParameterProtected[22 + i];
                             }
                         }
-                        ParSendSetDtr = !AdapterEcho;
+                        ParSendSetDtr = !HasAdapterEcho;
                         ParAllowBitBang = EnableFtdiBitBang && ParSendSetDtr;
                         break;
 
@@ -456,7 +459,7 @@ namespace EdiabasLib
                         ParInterbyteTime = (int)CommParameterProtected[5];
                         ParTimeoutNr = (int)CommParameterProtected[7];
                         ParRetryNr = (int)CommParameterProtected[6];
-                        ParSendSetDtr = !AdapterEcho;
+                        ParSendSetDtr = !HasAdapterEcho;
                         ParAllowBitBang = EnableFtdiBitBang && ParSendSetDtr;
                         break;
 
@@ -476,14 +479,14 @@ namespace EdiabasLib
                         }
                         baudRate = (int)CommParameterProtected[1];
                         parity = SerialParity.None;
-                        stateDtr = AdapterEcho;
+                        stateDtr = HasAdapterEcho;
                         ParTransmitFunc = TransBmwFast;
                         ParTimeoutStd = (int)CommParameterProtected[2];
                         ParRegenTime = (int)CommParameterProtected[3];
                         ParTimeoutTelEnd = (int)CommParameterProtected[4];
                         ParTimeoutNr = (int)CommParameterProtected[6];
                         ParRetryNr = (int)CommParameterProtected[5];
-                        ParSendSetDtr = !AdapterEcho;
+                        ParSendSetDtr = !HasAdapterEcho;
                         ParAllowBitBang = false;
                         break;
 
@@ -495,14 +498,14 @@ namespace EdiabasLib
                         }
                         baudRate = 115200;
                         parity = SerialParity.None;
-                        stateDtr = AdapterEcho;
+                        stateDtr = HasAdapterEcho;
                         ParTransmitFunc = TransBmwFast;
                         ParTimeoutStd = (int)CommParameterProtected[7];
                         ParTimeoutTelEnd = 10;
                         ParRegenTime = (int)CommParameterProtected[8];
                         ParTimeoutNr = (int)CommParameterProtected[9];
                         ParRetryNr = (int)CommParameterProtected[10];
-                        ParSendSetDtr = !AdapterEcho;
+                        ParSendSetDtr = !HasAdapterEcho;
                         ParAllowBitBang = false;
                         break;
 
@@ -807,6 +810,7 @@ namespace EdiabasLib
                 InterfaceGetDsrFuncInt = EdFtdiInterface.InterfaceGetDsr;
                 InterfaceSetBreakFuncInt = EdFtdiInterface.InterfaceSetBreak;
                 InterfacePurgeInBufferFuncInt = EdFtdiInterface.InterfacePurgeInBuffer;
+                InterfaceAdapterEchoFuncInt = null;
                 InterfaceSendDataFuncInt = EdFtdiInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdFtdiInterface.InterfaceReceiveData;
             }
@@ -822,6 +826,7 @@ namespace EdiabasLib
                 InterfaceGetDsrFuncInt = EdBluetoothInterface.InterfaceGetDsr;
                 InterfaceSetBreakFuncInt = EdBluetoothInterface.InterfaceSetBreak;
                 InterfacePurgeInBufferFuncInt = EdBluetoothInterface.InterfacePurgeInBuffer;
+                InterfaceAdapterEchoFuncInt = EdBluetoothInterface.InterfaceAdapterEcho;
                 InterfaceSendDataFuncInt = EdBluetoothInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdBluetoothInterface.InterfaceReceiveData;
             }
@@ -836,6 +841,7 @@ namespace EdiabasLib
                 InterfaceGetDsrFuncInt = null;
                 InterfaceSetBreakFuncInt = null;
                 InterfacePurgeInBufferFuncInt = null;
+                InterfaceAdapterEchoFuncInt = null;
                 InterfaceSendDataFuncInt = null;
                 InterfaceReceiveDataFuncInt = null;
             }
@@ -1210,6 +1216,27 @@ namespace EdiabasLib
             }
         }
 
+        public InterfaceAdapterEchoDelegate InterfaceAdapterEchoFunc
+        {
+            get
+            {
+                return InterfaceAdapterEchoFuncProtected;
+            }
+            set
+            {
+                InterfaceAdapterEchoFuncProtected = value;
+                UpdateUseExtInterfaceFunc();
+            }
+        }
+
+        protected InterfaceAdapterEchoDelegate InterfaceAdapterEchoFuncUse
+        {
+            get
+            {
+                return InterfaceAdapterEchoFuncProtected ?? InterfaceAdapterEchoFuncInt;
+            }
+        }
+
         public InterfaceSendDataDelegate InterfaceSendDataFunc
         {
             get
@@ -1252,6 +1279,19 @@ namespace EdiabasLib
             }
         }
 
+        protected bool HasAdapterEcho
+        {
+            get
+            {
+                InterfaceAdapterEchoDelegate adapterEcho = InterfaceAdapterEchoFuncUse;
+                if (adapterEcho != null)
+                {
+                    return adapterEcho();
+                }
+                return AdapterEcho;
+            }
+        }
+
         protected virtual bool AdapterEcho
         {
             get
@@ -1271,6 +1311,7 @@ namespace EdiabasLib
                 InterfaceGetDsrFuncUse != null &&
                 InterfaceSetBreakFuncUse != null &&
                 InterfacePurgeInBufferFuncUse != null &&
+                InterfaceAdapterEchoFuncUse != null &&
                 InterfaceSendDataFuncUse != null &&
                 InterfaceReceiveDataFuncUse != null;
         }
@@ -1925,7 +1966,7 @@ namespace EdiabasLib
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
-                if (AdapterEcho)
+                if (HasAdapterEcho)
                 {
                     // remove remote echo
                     if (!ReceiveData(receiveData, 0, sendLength, EchoTimeout, ParTimeoutTelEnd))
@@ -2126,7 +2167,7 @@ namespace EdiabasLib
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
-                if (AdapterEcho)
+                if (HasAdapterEcho)
                 {
                     // remove remote echo
                     if (!ReceiveData(receiveData, 0, sendLength, EchoTimeout, ParTimeoutTelEnd))
@@ -2229,7 +2270,7 @@ namespace EdiabasLib
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
-                if (AdapterEcho)
+                if (HasAdapterEcho)
                 {
                     // remove remote echo
                     if (!ReceiveData(receiveData, 0, sendLength, EchoTimeout, ParTimeoutTelEnd))

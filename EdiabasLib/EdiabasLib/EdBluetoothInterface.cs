@@ -18,6 +18,7 @@ namespace EdiabasLib
         private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int ReadTimeoutOffset = 1000;
+        protected const int EchoTimeout = 500;
         private const int Elm327ReadTimeoutOffset = 1000;
         private const int Elm327CommandTimeout = 1500;
         private const int Elm327DataTimeout = 2000;
@@ -242,6 +243,11 @@ namespace EdiabasLib
             return true;
         }
 
+        public static bool InterfaceAdapterEcho()
+        {
+            return false;
+        }
+
         public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
         {
             if ((_bluetoothSocket == null) || (_bluetoothOutStream == null))
@@ -268,14 +274,6 @@ namespace EdiabasLib
                     _elm327RequBuffer = data;
                 }
                 Elm327RequEvent.Set();
-                // create echo
-                lock (Elm327BufferLock)
-                {
-                    for (int i = 0; i < length; i++)
-                    {
-                        Elm327RespQueue.Enqueue(sendData[i]);
-                    }
-                }
 
                 return true;
             }
@@ -284,6 +282,19 @@ namespace EdiabasLib
                 if (CurrentBaudRate == 115200)
                 {   // BMW-FAST
                     _bluetoothOutStream.Write(sendData, 0, length);
+                    // remove echo
+                    byte[] receiveData = new byte[length];
+                    if (!InterfaceReceiveData(receiveData, 0, length, EchoTimeout, EchoTimeout, null))
+                    {
+                        return false;
+                    }
+                    for (int i = 0; i < length; i++)
+                    {
+                        if (receiveData[i] != sendData[i])
+                        {
+                            return false;
+                        }
+                    }
                 }
                 else
                 {

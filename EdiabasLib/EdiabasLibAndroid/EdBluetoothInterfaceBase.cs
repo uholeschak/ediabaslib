@@ -47,7 +47,7 @@ namespace EdiabasLib
             resultArray[1] = 0x00;   // telegram type
 
             uint baudHalf;
-            byte flags = 0x00;
+            byte flags = KLINEF_NO_ECHO;
             if (CurrentBaudRate == 115200)
             {
                 baudHalf = 0;
@@ -55,7 +55,6 @@ namespace EdiabasLib
             else
             {
                 baudHalf = (uint) (CurrentBaudRate >> 1);
-                flags |= KLINEF_NO_ECHO;
                 if (setDtr)
                 {
                     flags |= KLINEF_AUTO_LLINE;
