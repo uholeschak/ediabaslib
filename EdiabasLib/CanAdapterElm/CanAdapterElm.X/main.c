@@ -110,9 +110,8 @@
 #define KLINEF_PARITY_MARK      0x3
 #define KLINEF_PARITY_SPACE     0x4
 #define KLINEF_AUTO_LLINE       0x08
-#define KLINEF_SET_LLINE        0x10
-#define KLINEF_SET_KLINE        0x20
-#define KLINEF_NO_ECHO          0x40
+#define KLINEF_SEND_PULSE       0x10
+#define KLINEF_NO_ECHO          0x20
 
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
@@ -280,6 +279,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
         kline_baud_cfg();
         PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
         T2CONbits.TMR2ON = 1;   // enable timer 2
+        LED_OBD_TX = 0;         // on
         LLINE_OUT = 0;          // idle
         for (uint16_t i = 0; i < count; i++)
         {
@@ -311,6 +311,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
             PIR1bits.TMR2IF = 0;
         }
         KLINE_OUT = 0;      // idle
+        LED_OBD_TX = 1;     // off
         T2CONbits.TMR2ON = 0;
         INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
         idle_counter = 0;
@@ -319,10 +320,56 @@ void kline_send(uint8_t *buffer, uint16_t count)
     }
     // dynamic baudrate
     di();
+    if ((kline_flags & KLINEF_SEND_PULSE) != 0)
+    {   // send pulse with defined width
+        if (count >= 3)
+        {
+            uint16_t compare_tick = buffer[0] * TIMER0_RESOL / 1000;
+            uint8_t bit_count = buffer[1];
+            ptr = buffer + 2;
+            uint8_t out_data;
+            LED_OBD_TX = 0;         // on
+            if ((kline_flags & KLINEF_AUTO_LLINE) != 0)
+            {
+                LLINE_OUT = 1;
+            }
+            for (uint8_t i = 0; i < bit_count; i++)
+            {
+                CLRWDT();
+                if ((i & 0x07) == 0x00)
+                {   // start of new byte
+                    out_data = *ptr++;
+                }
+                if ((out_data & 0x01) != 0)
+                {
+                    KLINE_OUT = 0;
+                }
+                else
+                {
+                    KLINE_OUT = 1;
+                }
+                out_data >>= 1;
+                // wait for pulse width
+                uint16_t start_tick = get_systick();
+                while ((uint16_t) (get_systick() - start_tick) < compare_tick)
+                {
+                    CLRWDT();
+                }
+            }
+        }
+        KLINE_OUT = 0;      // idle
+        LLINE_OUT = 0;      // idle
+        LED_OBD_TX = 1;     // off
+        idle_counter = 0;
+        ei();
+        return;
+    }
+
     kline_baud_cfg();
     PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
     T2CONbits.TMR2ON = 1;   // enable timer 2
-    if ((kline_flags & (KLINEF_AUTO_LLINE | KLINEF_SET_LLINE)) != 0)
+    LED_OBD_TX = 0;         // on
+    if ((kline_flags & KLINEF_AUTO_LLINE) != 0)
     {
         LLINE_OUT = 1;
     }
@@ -409,22 +456,9 @@ void kline_send(uint8_t *buffer, uint16_t count)
         while (!PIR1bits.TMR2IF) {}
         PIR1bits.TMR2IF = 0;
     }
-    if ((kline_flags & KLINEF_SET_KLINE) != 0)
-    {
-        KLINE_OUT = 1;
-    }
-    else
-    {
-        KLINE_OUT = 0;      // idle
-    }
-    if ((kline_flags & KLINEF_SET_LLINE) != 0)
-    {
-        LLINE_OUT = 1;
-    }
-    else
-    {
-        LLINE_OUT = 0;      // idle
-    }
+    KLINE_OUT = 0;      // idle
+    LLINE_OUT = 0;      // idle
+    LED_OBD_TX = 1;     // off
     T2CONbits.TMR2ON = 0;
     INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
     idle_counter = 0;

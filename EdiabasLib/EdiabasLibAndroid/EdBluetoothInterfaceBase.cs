@@ -14,9 +14,8 @@ namespace EdiabasLib
         public static byte KLINEF_PARITY_MARK = 0x3;
         public static byte KLINEF_PARITY_SPACE = 0x4;
         public static byte KLINEF_AUTO_LLINE = 0x08;
-        public static byte KLINEF_SET_LLINE = 0x10;
-        public static byte KLINEF_SET_KLINE = 0x20;
-        public static byte KLINEF_NO_ECHO = 0x40;
+        public static byte KLINEF_SEND_PULSE = 0x10;
+        public static byte KLINEF_NO_ECHO = 0x20;
         // ReSharper restore InconsistentNaming
 
         public static int CurrentBaudRate { get; protected set; }
