@@ -43,6 +43,7 @@ namespace EdiabasLib
         public delegate bool InterfaceSetRtsDelegate(bool rts);
         public delegate bool InterfaceGetDsrDelegate(out bool dsr);
         public delegate bool InterfaceSetBreakDelegate(bool enable);
+        public delegate bool InterfaceSetInterByteTimeDelegate(int time);
         public delegate bool InterfacePurgeInBufferDelegate();
         public delegate bool InterfaceAdapterEchoDelegate();
         public delegate bool InterfaceSendDataDelegate(byte[] sendData, int length, bool setDtr, double dtrTimeCorr);
@@ -90,6 +91,8 @@ namespace EdiabasLib
         protected InterfaceGetDsrDelegate InterfaceGetDsrFuncInt;
         protected InterfaceSetBreakDelegate InterfaceSetBreakFuncProtected;
         protected InterfaceSetBreakDelegate InterfaceSetBreakFuncInt;
+        protected InterfaceSetInterByteTimeDelegate InterfaceSetInterByteTimeFuncProtected;
+        protected InterfaceSetInterByteTimeDelegate InterfaceSetInterByteTimeFuncInt;
         protected InterfacePurgeInBufferDelegate InterfacePurgeInBufferFuncProtected;
         protected InterfacePurgeInBufferDelegate InterfacePurgeInBufferFuncInt;
         protected InterfaceAdapterEchoDelegate InterfaceAdapterEchoFuncProtected;
@@ -809,6 +812,7 @@ namespace EdiabasLib
                 InterfaceSetRtsFuncInt = EdFtdiInterface.InterfaceSetRts;
                 InterfaceGetDsrFuncInt = EdFtdiInterface.InterfaceGetDsr;
                 InterfaceSetBreakFuncInt = EdFtdiInterface.InterfaceSetBreak;
+                InterfaceSetInterByteTimeFuncInt = null;
                 InterfacePurgeInBufferFuncInt = EdFtdiInterface.InterfacePurgeInBuffer;
                 InterfaceAdapterEchoFuncInt = null;
                 InterfaceSendDataFuncInt = EdFtdiInterface.InterfaceSendData;
@@ -825,6 +829,7 @@ namespace EdiabasLib
                 InterfaceSetRtsFuncInt = EdBluetoothInterface.InterfaceSetRts;
                 InterfaceGetDsrFuncInt = EdBluetoothInterface.InterfaceGetDsr;
                 InterfaceSetBreakFuncInt = EdBluetoothInterface.InterfaceSetBreak;
+                InterfaceSetInterByteTimeFuncInt = EdBluetoothInterface.InterfaceSetInterByteTime;
                 InterfacePurgeInBufferFuncInt = EdBluetoothInterface.InterfacePurgeInBuffer;
                 InterfaceAdapterEchoFuncInt = EdBluetoothInterface.InterfaceAdapterEcho;
                 InterfaceSendDataFuncInt = EdBluetoothInterface.InterfaceSendData;
@@ -840,6 +845,7 @@ namespace EdiabasLib
                 InterfaceSetRtsFuncInt = null;
                 InterfaceGetDsrFuncInt = null;
                 InterfaceSetBreakFuncInt = null;
+                InterfaceSetInterByteTimeFuncInt = null;
                 InterfacePurgeInBufferFuncInt = null;
                 InterfaceAdapterEchoFuncInt = null;
                 InterfaceSendDataFuncInt = null;
@@ -1195,6 +1201,27 @@ namespace EdiabasLib
             }
         }
 
+        public InterfaceSetInterByteTimeDelegate InterfaceSetInterByteTimeFunc
+        {
+            get
+            {
+                return InterfaceSetInterByteTimeFuncProtected;
+            }
+            set
+            {
+                InterfaceSetInterByteTimeFuncProtected = value;
+                UpdateUseExtInterfaceFunc();
+            }
+        }
+
+        protected InterfaceSetInterByteTimeDelegate InterfaceSetInterByteTimeFuncUse
+        {
+            get
+            {
+                return InterfaceSetInterByteTimeFuncProtected ?? InterfaceSetInterByteTimeFuncInt;
+            }
+        }
+
         public InterfacePurgeInBufferDelegate InterfacePurgeInBufferFunc
         {
             get
@@ -1283,10 +1310,10 @@ namespace EdiabasLib
         {
             get
             {
-                InterfaceAdapterEchoDelegate adapterEcho = InterfaceAdapterEchoFuncUse;
-                if (adapterEcho != null)
+                InterfaceAdapterEchoDelegate adapterEchoFunc = InterfaceAdapterEchoFuncUse;
+                if (adapterEchoFunc != null)
                 {
-                    return adapterEcho();
+                    return adapterEchoFunc();
                 }
                 return AdapterEcho;
             }
@@ -1310,6 +1337,7 @@ namespace EdiabasLib
                 InterfaceSetRtsFuncUse != null &&
                 InterfaceGetDsrFuncUse != null &&
                 InterfaceSetBreakFuncUse != null &&
+                InterfaceSetInterByteTimeFuncUse != null &&
                 InterfacePurgeInBufferFuncUse != null &&
                 InterfaceAdapterEchoFuncUse != null &&
                 InterfaceSendDataFuncUse != null &&
@@ -1503,7 +1531,12 @@ namespace EdiabasLib
             }
             try
             {
-                if (interbyteTime > 0)
+                InterfaceSetInterByteTimeDelegate setInterByteTimeFunc = InterfaceSetInterByteTimeFuncUse;
+                if (setInterByteTimeFunc != null)
+                {
+                    setInterByteTimeFunc(interbyteTime);
+                }
+                if (interbyteTime > 0 && setInterByteTimeFunc == null)
                 {
                     int bitCount = (CurrentParity == SerialParity.None) ? (CurrentDataBits + 2) : (CurrentDataBits + 3);
                     double byteTime = 1.0d / CurrentBaudRate * 1000 * bitCount;

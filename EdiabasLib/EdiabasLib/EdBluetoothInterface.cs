@@ -218,6 +218,12 @@ namespace EdiabasLib
             return false;
         }
 
+        public static bool InterfaceSetInterByteTime(int time)
+        {
+            InterByteTime = time;
+            return true;
+        }
+
         public static bool InterfacePurgeInBuffer()
         {
             if ((_bluetoothSocket == null) || (_bluetoothInStream == null))
