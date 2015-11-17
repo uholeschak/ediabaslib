@@ -42,6 +42,10 @@ namespace EdiabasLib
             {
                 return null;
             }
+            if ((InterByteTime < 0) || (InterByteTime > 255))
+            {
+                return null;
+            }
             byte[] resultArray = new byte[length + 9];
             resultArray[0] = 0x00;   // header
             resultArray[1] = 0x00;   // telegram type
