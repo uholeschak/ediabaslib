@@ -81,7 +81,7 @@ namespace EdiabasLib
             {
                 return null;
             }
-            if ((length < 0) || (length > 8))
+            if ((length < 0) || (length > 64))
             {
                 return null;
             }
