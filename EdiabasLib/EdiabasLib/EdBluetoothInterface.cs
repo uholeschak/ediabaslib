@@ -393,6 +393,32 @@ namespace EdiabasLib
             return true;
         }
 
+        public static bool InterfaceSendPulse(UInt64 dataBits, int length, int pulseWidth, bool setDtr)
+        {
+            if ((_bluetoothSocket == null) || (_bluetoothOutStream == null))
+            {
+                return false;
+            }
+            if (_elm327Device)
+            {
+                return false;
+            }
+            try
+            {
+                byte[] adapterTel = CreatePulseTelegram(dataBits, length, pulseWidth, setDtr);
+                if (adapterTel == null)
+                {
+                    return false;
+                }
+                _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         private static void FlushReceiveBuffer()
         {
             _bluetoothInStream.Flush();
@@ -400,16 +426,6 @@ namespace EdiabasLib
             {
                 _bluetoothInStream.ReadByte();
             }
-        }
-
-        static public byte CalcChecksumBmwFast(byte[] data, int length)
-        {
-            byte sum = 0;
-            for (int i = 0; i < length; i++)
-            {
-                sum += data[i];
-            }
-            return sum;
         }
 
         private static bool Elm327Init()
