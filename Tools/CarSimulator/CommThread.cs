@@ -4798,7 +4798,7 @@ namespace CarSimulator
             {
                 return;
             }
-            if (!_adsAdapter)
+            if (!_adsAdapter && !_klineResponder)
             {
                 // send echo
                 SendData(_receiveData, recLength);
