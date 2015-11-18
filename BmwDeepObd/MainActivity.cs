@@ -808,7 +808,7 @@ namespace BmwDeepObd
             }
             else
             {
-                _appDataPath = Path.Combine(_activityCommon.ExternalPath, AppFolderName);
+                _appDataPath = Path.Combine(_activityCommon.CustomStorageMedia, AppFolderName);
                 _ecuPath = Path.Combine(_appDataPath, EcuDirName);
             }
         }
