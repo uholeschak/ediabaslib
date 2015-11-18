@@ -1810,7 +1810,10 @@ namespace EdiabasLib
             {
                 if (InterfaceSendPulseFuncUse != null)
                 {
-                    InterfaceSendPulseFuncUse(0x02, 2, 25, setDtr);
+                    if (!InterfaceSendPulseFuncUse(0x02, 2, 25, setDtr))
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
@@ -1861,7 +1864,10 @@ namespace EdiabasLib
             {
                 if (InterfaceSendPulseFuncUse != null)
                 {
-                    InterfaceSendPulseFuncUse((UInt64)(((~value & 0xFF) << 1) | 0x0200), 10, 200, false);
+                    if (!InterfaceSendPulseFuncUse((UInt64) (((~value & 0xFF) << 1) | 0x0200), 10, 200, false))
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
