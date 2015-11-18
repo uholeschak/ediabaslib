@@ -48,6 +48,7 @@ namespace EdiabasLib
         public delegate bool InterfaceAdapterEchoDelegate();
         public delegate bool InterfaceSendDataDelegate(byte[] sendData, int length, bool setDtr, double dtrTimeCorr);
         public delegate bool InterfaceReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog);
+        public delegate bool InterfaceSendPulseDelegate(UInt64 dataBits, int length, int pulseWidth, bool setDtr);
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
         protected delegate EdiabasNet.ErrorCodes IdleDelegate();
         protected delegate EdiabasNet.ErrorCodes FinishDelegate();
@@ -101,6 +102,8 @@ namespace EdiabasLib
         protected InterfaceSendDataDelegate InterfaceSendDataFuncInt;
         protected InterfaceReceiveDataDelegate InterfaceReceiveDataFuncProtected;
         protected InterfaceReceiveDataDelegate InterfaceReceiveDataFuncInt;
+        protected InterfaceSendPulseDelegate InterfaceSendPulseFuncProtected;
+        protected InterfaceSendPulseDelegate InterfaceSendPulseFuncInt;
         protected Stopwatch StopWatch = new Stopwatch();
         protected byte[] KeyBytesProtected = ByteArray0;
         protected byte[] StateProtected = new byte[2];
@@ -817,6 +820,7 @@ namespace EdiabasLib
                 InterfaceAdapterEchoFuncInt = null;
                 InterfaceSendDataFuncInt = EdFtdiInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdFtdiInterface.InterfaceReceiveData;
+                InterfaceSendPulseFuncInt = null;
             }
 #if Android
             else if (ComPortProtected.ToUpper(Culture).StartsWith(EdBluetoothInterface.PortId))
@@ -834,6 +838,7 @@ namespace EdiabasLib
                 InterfaceAdapterEchoFuncInt = EdBluetoothInterface.InterfaceAdapterEcho;
                 InterfaceSendDataFuncInt = EdBluetoothInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdBluetoothInterface.InterfaceReceiveData;
+                InterfaceSendPulseFuncInt = EdBluetoothInterface.InterfaceSendPulse;
             }
 #endif
             else
@@ -850,6 +855,7 @@ namespace EdiabasLib
                 InterfaceAdapterEchoFuncInt = null;
                 InterfaceSendDataFuncInt = null;
                 InterfaceReceiveDataFuncInt = null;
+                InterfaceSendPulseFuncInt = null;
             }
             UpdateUseExtInterfaceFunc();
 
@@ -1306,6 +1312,27 @@ namespace EdiabasLib
             }
         }
 
+        public InterfaceSendPulseDelegate InterfaceSendPulseFunc
+        {
+            get
+            {
+                return InterfaceSendPulseFuncProtected;
+            }
+            set
+            {
+                InterfaceSendPulseFuncProtected = value;
+                UpdateUseExtInterfaceFunc();
+            }
+        }
+
+        protected InterfaceSendPulseDelegate InterfaceSendPulseFuncUse
+        {
+            get
+            {
+                return InterfaceSendPulseFuncProtected ?? InterfaceSendPulseFuncInt;
+            }
+        }
+
         protected bool HasAdapterEcho
         {
             get
@@ -1341,7 +1368,8 @@ namespace EdiabasLib
                 InterfacePurgeInBufferFuncUse != null &&
                 InterfaceAdapterEchoFuncUse != null &&
                 InterfaceSendDataFuncUse != null &&
-                InterfaceReceiveDataFuncUse != null;
+                InterfaceReceiveDataFuncUse != null &&
+                InterfaceSendPulseFuncUse != null;
         }
 
         protected bool GetDsrState()
@@ -1780,17 +1808,24 @@ namespace EdiabasLib
         {
             if (UseExtInterfaceFunc)
             {
-                if (setDtr) InterfaceSetDtrFuncUse(true);
-                long startTime = Stopwatch.GetTimestamp();
-                InterfaceSetBreakFuncUse(true);
-                while ((Stopwatch.GetTimestamp() - startTime) < 25 * TickResolMs)
+                if (InterfaceSendPulseFuncUse != null)
                 {
+                    InterfaceSendPulseFuncUse(0x02, 2, 25, setDtr);
                 }
-                InterfaceSetBreakFuncUse(false);
-                while ((Stopwatch.GetTimestamp() - startTime) < 50 * TickResolMs)
+                else
                 {
+                    if (setDtr) InterfaceSetDtrFuncUse(true);
+                    long startTime = Stopwatch.GetTimestamp();
+                    InterfaceSetBreakFuncUse(true);
+                    while ((Stopwatch.GetTimestamp() - startTime) < 25 * TickResolMs)
+                    {
+                    }
+                    InterfaceSetBreakFuncUse(false);
+                    while ((Stopwatch.GetTimestamp() - startTime) < 50 * TickResolMs)
+                    {
+                    }
+                    if (setDtr) InterfaceSetDtrFuncUse(false);
                 }
-                if (setDtr) InterfaceSetDtrFuncUse(false);
             }
             else
             {
@@ -1824,23 +1859,30 @@ namespace EdiabasLib
         {
             if (UseExtInterfaceFunc)
             {
-                InterfacePurgeInBufferFuncUse();
-                long startTime = Stopwatch.GetTimestamp();
-                InterfaceSetBreakFuncUse(true);    // start bit
-                Thread.Sleep(180);
-                while ((Stopwatch.GetTimestamp() - startTime) < 200 * TickResolMs)
+                if (InterfaceSendPulseFuncUse != null)
                 {
+                    InterfaceSendPulseFuncUse((UInt64)(((~value & 0xFF) << 1) | 0x0200), 10, 200, false);
                 }
-                for (int i = 0; i < 8; i++)
+                else
                 {
-                    InterfaceSetBreakFuncUse((value & (1 << i)) == 0);
+                    InterfacePurgeInBufferFuncUse();
+                    long startTime = Stopwatch.GetTimestamp();
+                    InterfaceSetBreakFuncUse(true);    // start bit
                     Thread.Sleep(180);
-                    while ((Stopwatch.GetTimestamp() - startTime) < 200 * (i + 2) * TickResolMs)
+                    while ((Stopwatch.GetTimestamp() - startTime) < 200 * TickResolMs)
                     {
                     }
+                    for (int i = 0; i < 8; i++)
+                    {
+                        InterfaceSetBreakFuncUse((value & (1 << i)) == 0);
+                        Thread.Sleep(180);
+                        while ((Stopwatch.GetTimestamp() - startTime) < 200 * (i + 2) * TickResolMs)
+                        {
+                        }
+                    }
+                    InterfaceSetBreakFuncUse(false);   // stop bit
+                    Thread.Sleep(200);
                 }
-                InterfaceSetBreakFuncUse(false);   // stop bit
-                Thread.Sleep(200);
             }
             else
             {

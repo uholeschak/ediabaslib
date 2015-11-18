@@ -62,28 +62,7 @@ namespace EdiabasLib
                 {
                     flags |= KLINEF_AUTO_LLINE;
                 }
-                switch (CurrentParity)
-                {
-                    case EdInterfaceObd.SerialParity.None:
-                        flags |= KLINEF_PARITY_NONE;
-                        break;
-
-                    case EdInterfaceObd.SerialParity.Odd:
-                        flags |= KLINEF_PARITY_ODD;
-                        break;
-
-                    case EdInterfaceObd.SerialParity.Even:
-                        flags |= KLINEF_PARITY_EVEN;
-                        break;
-
-                    case EdInterfaceObd.SerialParity.Mark:
-                        flags |= KLINEF_PARITY_MARK;
-                        break;
-
-                    case EdInterfaceObd.SerialParity.Space:
-                        flags |= KLINEF_PARITY_SPACE;
-                        break;
-                }
+                flags |= CalcParityFlags();
             }
             resultArray[2] = (byte)(baudHalf >> 8);     // baud rate / 2 high
             resultArray[3] = (byte)baudHalf;            // baud rate / 2 low
@@ -92,13 +71,88 @@ namespace EdiabasLib
             resultArray[6] = (byte)(length >> 8);   // telegram length high
             resultArray[7] = (byte)length;          // telegram length low
             Array.Copy(sendData, 0, resultArray, 8, length);
-            byte checkSum = 0x00;
-            for (int i = 0; i < resultArray.Length - 1; i++)
-            {
-                checkSum += resultArray[i];
-            }
-            resultArray[resultArray.Length - 1] = checkSum;
+            resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, resultArray.Length - 1);
             return resultArray;
+        }
+
+        public static byte[] CreatePulseTelegram(UInt64 dataBits, int length, int pulseWidth, bool setDtr)
+        {
+            if ((CurrentBaudRate < 9600) || (CurrentBaudRate > 19200))
+            {
+                return null;
+            }
+            if ((length < 0) || (length > 8))
+            {
+                return null;
+            }
+            if ((pulseWidth < 0) || (pulseWidth > 255))
+            {
+                return null;
+            }
+            int dataBytes = (length + 7) >> 3;
+            byte[] resultArray = new byte[dataBytes + 2 + 9];
+            resultArray[0] = 0x00;   // header
+            resultArray[1] = 0x00;   // telegram type
+
+            uint baudHalf = (uint)(CurrentBaudRate >> 1);
+            byte flags = (byte)(KLINEF_SEND_PULSE | KLINEF_NO_ECHO);
+            if (setDtr)
+            {
+                flags |= KLINEF_AUTO_LLINE;
+            }
+            flags |= CalcParityFlags();
+            resultArray[2] = (byte)(baudHalf >> 8);     // baud rate / 2 high
+            resultArray[3] = (byte)baudHalf;            // baud rate / 2 low
+            resultArray[4] = flags;                 // flags
+            resultArray[5] = (byte)InterByteTime;   // interbyte time
+            resultArray[6] = 0x00;                  // telegram length high
+            resultArray[7] = (byte)(dataBytes + 2); // telegram length low
+            resultArray[8] = (byte)pulseWidth;
+            resultArray[9] = (byte)length;
+            for (int i = 0; i < dataBytes; i++)
+            {
+                resultArray[10 + i] = (byte)(dataBits >> (i << 3));
+            }
+            resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, resultArray.Length - 1);
+            return resultArray;
+        }
+
+        static public byte CalcChecksumBmwFast(byte[] data, int length)
+        {
+            byte sum = 0;
+            for (int i = 0; i < length; i++)
+            {
+                sum += data[i];
+            }
+            return sum;
+        }
+
+        public static byte CalcParityFlags()
+        {
+            byte flags = 0x00;
+            switch (CurrentParity)
+            {
+                case EdInterfaceObd.SerialParity.None:
+                    flags |= KLINEF_PARITY_NONE;
+                    break;
+
+                case EdInterfaceObd.SerialParity.Odd:
+                    flags |= KLINEF_PARITY_ODD;
+                    break;
+
+                case EdInterfaceObd.SerialParity.Even:
+                    flags |= KLINEF_PARITY_EVEN;
+                    break;
+
+                case EdInterfaceObd.SerialParity.Mark:
+                    flags |= KLINEF_PARITY_MARK;
+                    break;
+
+                case EdInterfaceObd.SerialParity.Space:
+                    flags |= KLINEF_PARITY_SPACE;
+                    break;
+            }
+            return flags;
         }
     }
 }

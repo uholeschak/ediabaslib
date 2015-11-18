@@ -85,6 +85,7 @@
                 new [] {
                     "F_UW_KM",
                 }),
+#if false
             new EdiabasTestJob("d_ccc", "FS_LESEN", string.Empty, "F_ORT_NR;F_ORT_TEXT;F_READY_TEXT;F_READY_NR;F_SYMPTOM_NR;F_SYMPTOM_TEXT;F_VORHANDEN_NR;F_VORHANDEN_TEXT;F_WARNUNG_NR;F_WARNUNG_TEXT",
                 new [] {
                     "F_ORT_TEXT",
@@ -113,7 +114,8 @@
                     "F_VORHANDEN_TEXT",
                     "F_WARNUNG_TEXT",
                 }),
-            };
+#endif
+        };
 
         private string testResult = string.Empty;
         private int updateCount = 0;
