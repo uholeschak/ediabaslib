@@ -273,6 +273,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
     {
         update_led();
     }
+    update_led();
     if (kline_baud == 0)
     {   // BMW-FAST
         di();
