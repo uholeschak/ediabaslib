@@ -1864,7 +1864,7 @@ namespace EdiabasLib
             {
                 if (InterfaceSendPulseFuncUse != null)
                 {
-                    if (!InterfaceSendPulseFuncUse((UInt64) (((~value & 0xFF) << 1) | 0x0200), 10, 200, false))
+                    if (!InterfaceSendPulseFuncUse((UInt64) ((value << 1) | 0x0200), 10, 200, false))
                     {
                         return false;
                     }
