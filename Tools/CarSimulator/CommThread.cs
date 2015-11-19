@@ -861,9 +861,19 @@ namespace CarSimulator
                 while (!_stopThread)
                 {
                     UpdateOutState();
-                    if (_serialPort.DsrHolding)
-                    {   // start bit
-                        break;
+                    if (_klineResponder)
+                    {
+                        if (_serialPort.CtsHolding)
+                        {   // start bit
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (_serialPort.DsrHolding)
+                        {   // start bit
+                            break;
+                        }
                     }
                     Thread.Sleep(10);
                 }
@@ -873,9 +883,19 @@ namespace CarSimulator
                 for (int i = 0; i < 9; i++)
                 {
                     Thread.Sleep(200);
-                    if (!_serialPort.DsrHolding)
+                    if (_klineResponder)
                     {
-                        recValue |= (1 << i);
+                        if (!_serialPort.CtsHolding)
+                        {
+                            recValue |= (1 << i);
+                        }
+                    }
+                    else
+                    {
+                        if (!_serialPort.DsrHolding)
+                        {
+                            recValue |= (1 << i);
+                        }
                     }
                     if (_stopThread) return false;
                 }
