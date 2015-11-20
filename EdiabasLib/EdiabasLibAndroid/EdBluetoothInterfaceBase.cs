@@ -20,17 +20,26 @@ namespace EdiabasLib
 
         public static int CurrentBaudRate { get; protected set; }
 
+        public static int ActiveBaudRate { get; protected set; }
+
         public static int CurrentWordLength { get; protected set; }
 
+        public static int ActiveWordLength { get; protected set; }
+
         public static EdInterfaceObd.SerialParity CurrentParity { get; protected set; }
+
+        public static EdInterfaceObd.SerialParity ActiveParity { get; protected set; }
 
         public static int InterByteTime { get; protected set; }
 
         static EdBluetoothInterfaceBase()
         {
             CurrentBaudRate = 0;
+            ActiveBaudRate = -1;
             CurrentWordLength = 0;
+            ActiveWordLength = -1;
             CurrentParity = EdInterfaceObd.SerialParity.None;
+            ActiveParity = EdInterfaceObd.SerialParity.None;
             InterByteTime = 0;
         }
 
@@ -153,6 +162,24 @@ namespace EdiabasLib
                     break;
             }
             return flags;
+        }
+
+        public static void UpdateActiveSettings()
+        {
+            ActiveBaudRate = CurrentBaudRate;
+            ActiveWordLength = CurrentWordLength;
+            ActiveParity = CurrentParity;
+        }
+
+        public static bool SettingsUpdateRequired()
+        {
+            if (CurrentBaudRate == ActiveBaudRate &&
+                CurrentWordLength == ActiveWordLength &&
+                CurrentParity == ActiveParity)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

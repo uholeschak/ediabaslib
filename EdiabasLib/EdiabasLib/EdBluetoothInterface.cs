@@ -310,6 +310,7 @@ namespace EdiabasLib
                         return false;
                     }
                     _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
+                    UpdateActiveSettings();
                 }
             }
             catch (Exception)
@@ -361,6 +362,15 @@ namespace EdiabasLib
             timeoutTelEnd += ReadTimeoutOffset;
             try
             {
+                if (SettingsUpdateRequired())
+                {
+                    byte[] adapterTel = CreatePulseTelegram(0, 0, 0, false);
+                    if (adapterTel != null)
+                    {
+                        _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
+                        UpdateActiveSettings();
+                    }
+                }
                 int recLen = 0;
                 long startTime = Stopwatch.GetTimestamp();
                 while (recLen < length)
@@ -411,6 +421,7 @@ namespace EdiabasLib
                     return false;
                 }
                 _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
+                UpdateActiveSettings();
             }
             catch (Exception)
             {
