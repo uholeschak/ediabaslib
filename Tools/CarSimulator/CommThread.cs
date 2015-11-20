@@ -922,6 +922,10 @@ namespace CarSimulator
         {   // no try catch to allow loop exit
             //_serialPort.DiscardInBuffer();
             _serialPort.Write(sendData, 0, length);
+            if (!RemoveEcho(sendData, 0, length))
+            {
+                return false;
+            }
             return true;
         }
 
@@ -929,6 +933,30 @@ namespace CarSimulator
         {   // no try catch to allow loop exit
             _serialPort.DiscardInBuffer();
             _serialPort.Write(sendData, offset, length);
+            if (!RemoveEcho(sendData, offset, length))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool RemoveEcho(byte[] sendData, int offset, int length)
+        {
+            if (_klineResponder)
+            {   // remove echo
+                byte[] buffer = new byte[length];
+                if (!ReceiveData(buffer, 0, length))
+                {
+                    return false;
+                }
+                for (int i = 0; i < length; i++)
+                {
+                    if (buffer[i] != sendData[i + offset])
+                    {
+                        return false;
+                    }
+                }
+            }
             return true;
         }
 
