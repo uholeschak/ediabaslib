@@ -67,7 +67,7 @@ namespace EdiabasLib
             else
             {
                 baudHalf = (uint) (CurrentBaudRate >> 1);
-                if (setDtr)
+                if (!setDtr)
                 {
                     flags |= KLINEF_USE_LLINE;
                 }
@@ -105,7 +105,7 @@ namespace EdiabasLib
 
             uint baudHalf = (uint)(CurrentBaudRate >> 1);
             byte flags = (byte)(KLINEF_SEND_PULSE | KLINEF_NO_ECHO);
-            if (setDtr)
+            if (!setDtr)
             {
                 flags |= KLINEF_USE_LLINE;
             }
