@@ -86,7 +86,7 @@
 #define DEBUG_PIN           0   // enable debug pin
 #define ID_LOCATION         0x200000    // location of ID memory
 
-#define ADAPTER_VERSION     0x0001
+#define ADAPTER_VERSION     0x0002
 
 #define IGNITION_STATE()    IGNITION
 
@@ -663,13 +663,11 @@ void kline_receive()
             {
                 INTCONbits.TMR0IF = 0;
                 idle_counter++;
-#if 0
-                if (idle_counter > 2)
+                if (idle_counter > 16)  // 60 sec.
                 {   // idle -> leave loop
                     ei();
                     return;
                 }
-#endif
             }
             start_kline_rec_timer();
             if (buffer_len != 0)
