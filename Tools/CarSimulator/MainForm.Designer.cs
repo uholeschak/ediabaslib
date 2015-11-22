@@ -223,6 +223,8 @@
             // checkBoxKLineResponder
             // 
             this.checkBoxKLineResponder.AutoSize = true;
+            this.checkBoxKLineResponder.Checked = true;
+            this.checkBoxKLineResponder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxKLineResponder.Location = new System.Drawing.Point(344, 65);
             this.checkBoxKLineResponder.Name = "checkBoxKLineResponder";
             this.checkBoxKLineResponder.Size = new System.Drawing.Size(87, 17);

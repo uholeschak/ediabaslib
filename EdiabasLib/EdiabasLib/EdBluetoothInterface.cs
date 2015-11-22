@@ -254,6 +254,11 @@ namespace EdiabasLib
             return false;
         }
 
+        public static bool InterfaceHasPreciseTimeout()
+        {
+            return false;
+        }
+
         public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
         {
             if ((_bluetoothSocket == null) || (_bluetoothOutStream == null))

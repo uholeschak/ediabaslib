@@ -46,6 +46,7 @@ namespace EdiabasLib
         public delegate bool InterfaceSetInterByteTimeDelegate(int time);
         public delegate bool InterfacePurgeInBufferDelegate();
         public delegate bool InterfaceAdapterEchoDelegate();
+        public delegate bool InterfaceHasPreciseTimeoutDelegate();
         public delegate bool InterfaceSendDataDelegate(byte[] sendData, int length, bool setDtr, double dtrTimeCorr);
         public delegate bool InterfaceReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog);
         public delegate bool InterfaceSendPulseDelegate(UInt64 dataBits, int length, int pulseWidth, bool setDtr);
@@ -98,6 +99,8 @@ namespace EdiabasLib
         protected InterfacePurgeInBufferDelegate InterfacePurgeInBufferFuncInt;
         protected InterfaceAdapterEchoDelegate InterfaceAdapterEchoFuncProtected;
         protected InterfaceAdapterEchoDelegate InterfaceAdapterEchoFuncInt;
+        protected InterfaceHasPreciseTimeoutDelegate InterfaceHasPreciseTimeoutFuncProtected;
+        protected InterfaceHasPreciseTimeoutDelegate InterfaceHasPreciseTimeoutFuncInt;
         protected InterfaceSendDataDelegate InterfaceSendDataFuncProtected;
         protected InterfaceSendDataDelegate InterfaceSendDataFuncInt;
         protected InterfaceReceiveDataDelegate InterfaceReceiveDataFuncProtected;
@@ -818,6 +821,7 @@ namespace EdiabasLib
                 InterfaceSetInterByteTimeFuncInt = null;
                 InterfacePurgeInBufferFuncInt = EdFtdiInterface.InterfacePurgeInBuffer;
                 InterfaceAdapterEchoFuncInt = null;
+                InterfaceHasPreciseTimeoutFuncInt = null;
                 InterfaceSendDataFuncInt = EdFtdiInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdFtdiInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = null;
@@ -836,6 +840,7 @@ namespace EdiabasLib
                 InterfaceSetInterByteTimeFuncInt = EdBluetoothInterface.InterfaceSetInterByteTime;
                 InterfacePurgeInBufferFuncInt = EdBluetoothInterface.InterfacePurgeInBuffer;
                 InterfaceAdapterEchoFuncInt = EdBluetoothInterface.InterfaceAdapterEcho;
+                InterfaceHasPreciseTimeoutFuncInt = EdBluetoothInterface.InterfaceHasPreciseTimeout;
                 InterfaceSendDataFuncInt = EdBluetoothInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdBluetoothInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = EdBluetoothInterface.InterfaceSendPulse;
@@ -853,6 +858,7 @@ namespace EdiabasLib
                 InterfaceSetInterByteTimeFuncInt = null;
                 InterfacePurgeInBufferFuncInt = null;
                 InterfaceAdapterEchoFuncInt = null;
+                InterfaceHasPreciseTimeoutFuncInt = null;
                 InterfaceSendDataFuncInt = null;
                 InterfaceReceiveDataFuncInt = null;
                 InterfaceSendPulseFuncInt = null;
@@ -1270,6 +1276,27 @@ namespace EdiabasLib
             }
         }
 
+        public InterfaceHasPreciseTimeoutDelegate InterfaceHasPreciseTimeoutFunc
+        {
+            get
+            {
+                return InterfaceHasPreciseTimeoutFuncProtected;
+            }
+            set
+            {
+                InterfaceHasPreciseTimeoutFuncProtected = value;
+                UpdateUseExtInterfaceFunc();
+            }
+        }
+
+        protected InterfaceHasPreciseTimeoutDelegate InterfaceHasPreciseTimeoutFuncUse
+        {
+            get
+            {
+                return InterfaceHasPreciseTimeoutFuncProtected ?? InterfaceHasPreciseTimeoutFuncInt;
+            }
+        }
+
         public InterfaceSendDataDelegate InterfaceSendDataFunc
         {
             get
@@ -1354,6 +1381,19 @@ namespace EdiabasLib
             }
         }
 
+        protected bool HasPreciceTimeout
+        {
+            get
+            {
+                InterfaceHasPreciseTimeoutDelegate preciceTimeoutFunc = InterfaceHasPreciseTimeoutFuncUse;
+                if (preciceTimeoutFunc != null)
+                {
+                    return preciceTimeoutFunc();
+                }
+                return true;
+            }
+        }
+
         protected void UpdateUseExtInterfaceFunc()
         {
             UseExtInterfaceFunc =
@@ -1367,6 +1407,7 @@ namespace EdiabasLib
                 InterfaceSetInterByteTimeFuncUse != null &&
                 InterfacePurgeInBufferFuncUse != null &&
                 InterfaceAdapterEchoFuncUse != null &&
+                InterfaceHasPreciseTimeoutFuncUse != null &&
                 InterfaceSendDataFuncUse != null &&
                 InterfaceReceiveDataFuncUse != null &&
                 InterfaceSendPulseFuncUse != null;
@@ -2970,6 +3011,13 @@ namespace EdiabasLib
                 {   // buffer overflow
                     break;
                 }
+                if (!HasPreciceTimeout)
+                {   // bugfix if we can't detected telegram timeout
+                    if (CommAnswerLenProtected[0] > 0 && recLength >= CommAnswerLenProtected[0])
+                    {
+                        break;
+                    }
+                }
                 if (!ReceiveData(Iso9141Buffer, recLength, 1, 20, 20))
                 {   // last byte receive
                     break;
@@ -3028,6 +3076,13 @@ namespace EdiabasLib
                 if (recLength >= Iso9141Buffer.Length)
                 {   // buffer overflow
                     break;
+                }
+                if (!HasPreciceTimeout)
+                {   // bugfix if we can't detected telegram timeout
+                    if (CommAnswerLenProtected[0] > 0 && recLength >= CommAnswerLenProtected[0])
+                    {
+                        break;
+                    }
                 }
                 if (!ReceiveData(Iso9141Buffer, recLength, 1, 20, 20))
                 {   // last byte receive

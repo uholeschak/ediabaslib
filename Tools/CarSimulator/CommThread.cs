@@ -5076,7 +5076,8 @@ namespace CarSimulator
                     Thread.Sleep(10);
                     _serialPort.DataBits = 8;
                     _serialPort.Parity = Parity.Even;
-                    Thread.Sleep(10);     // max sum of both timeouts 2500ms
+                    //Thread.Sleep(10);     // max sum of both timeouts 2500ms
+                    Thread.Sleep(200);
                 }
                 initOk = true;
             } while (!initOk);
