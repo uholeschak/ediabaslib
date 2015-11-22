@@ -13,7 +13,7 @@ namespace EdiabasLib
         public static byte KLINEF_PARITY_ODD = 0x2;
         public static byte KLINEF_PARITY_MARK = 0x3;
         public static byte KLINEF_PARITY_SPACE = 0x4;
-        public static byte KLINEF_AUTO_LLINE = 0x08;
+        public static byte KLINEF_USE_LLINE = 0x08;
         public static byte KLINEF_SEND_PULSE = 0x10;
         public static byte KLINEF_NO_ECHO = 0x20;
         // ReSharper restore InconsistentNaming
@@ -69,7 +69,7 @@ namespace EdiabasLib
                 baudHalf = (uint) (CurrentBaudRate >> 1);
                 if (setDtr)
                 {
-                    flags |= KLINEF_AUTO_LLINE;
+                    flags |= KLINEF_USE_LLINE;
                 }
                 flags |= CalcParityFlags();
             }
@@ -107,7 +107,7 @@ namespace EdiabasLib
             byte flags = (byte)(KLINEF_SEND_PULSE | KLINEF_NO_ECHO);
             if (setDtr)
             {
-                flags |= KLINEF_AUTO_LLINE;
+                flags |= KLINEF_USE_LLINE;
             }
             flags |= CalcParityFlags();
             resultArray[2] = (byte)(baudHalf >> 8);     // baud rate / 2 high

@@ -109,7 +109,7 @@
 #define KLINEF_PARITY_ODD       0x2
 #define KLINEF_PARITY_MARK      0x3
 #define KLINEF_PARITY_SPACE     0x4
-#define KLINEF_AUTO_LLINE       0x08
+#define KLINEF_USE_LLINE        0x08
 #define KLINEF_SEND_PULSE       0x10
 #define KLINEF_NO_ECHO          0x20
 
@@ -321,6 +321,11 @@ void kline_send(uint8_t *buffer, uint16_t count)
     }
     // dynamic baudrate
     di();
+    bool use_lline = false;
+    if ((kline_flags & KLINEF_USE_LLINE) != 0)
+    {
+        use_lline = true;
+    }
     if ((kline_flags & KLINEF_SEND_PULSE) != 0)
     {   // send pulse with defined width
         if (count >= 3)
@@ -330,10 +335,6 @@ void kline_send(uint8_t *buffer, uint16_t count)
             ptr = buffer + 2;
             uint8_t out_data;
             LED_OBD_TX = 0;         // on
-            if ((kline_flags & KLINEF_AUTO_LLINE) != 0)
-            {
-                LLINE_OUT = 1;
-            }
             for (uint8_t i = 0; i < bit_count; i++)
             {
                 CLRWDT();
@@ -344,10 +345,18 @@ void kline_send(uint8_t *buffer, uint16_t count)
                 if ((out_data & 0x01) != 0)
                 {
                     KLINE_OUT = 0;
+                    if (use_lline)
+                    {
+                        LLINE_OUT = 0;
+                    }
                 }
                 else
                 {
                     KLINE_OUT = 1;
+                    if (use_lline)
+                    {
+                        LLINE_OUT = 1;
+                    }
                 }
                 out_data >>= 1;
                 // wait for pulse width
@@ -370,10 +379,6 @@ void kline_send(uint8_t *buffer, uint16_t count)
     PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
     T2CONbits.TMR2ON = 1;   // enable timer 2
     LED_OBD_TX = 0;         // on
-    if ((kline_flags & KLINEF_AUTO_LLINE) != 0)
-    {
-        LLINE_OUT = 1;
-    }
     for (uint16_t i = 0; i < count; i++)
     {
         if (kline_interbyte != 0 && i != 0)
@@ -392,6 +397,10 @@ void kline_send(uint8_t *buffer, uint16_t count)
         while (!PIR1bits.TMR2IF) {}
         PIR1bits.TMR2IF = 0;
         KLINE_OUT = 1;      // start bit
+        if (use_lline)
+        {
+            LLINE_OUT = 1;
+        }
 
         uint8_t out_data = *ptr++;
         uint8_t parity = 0;
@@ -402,11 +411,19 @@ void kline_send(uint8_t *buffer, uint16_t count)
             if ((out_data & 0x01) != 0)
             {
                 KLINE_OUT = 0;
+                if (use_lline)
+                {
+                    LLINE_OUT = 0;
+                }
                 parity++;
             }
             else
             {
                 KLINE_OUT = 1;
+                if (use_lline)
+                {
+                    LLINE_OUT = 1;
+                }
             }
             out_data >>= 1;
         }
@@ -418,10 +435,18 @@ void kline_send(uint8_t *buffer, uint16_t count)
                 if ((parity & 0x01) != 0)
                 {
                     KLINE_OUT = 0;
+                    if (use_lline)
+                    {
+                        LLINE_OUT = 0;
+                    }
                 }
                 else
                 {
                     KLINE_OUT = 1;
+                    if (use_lline)
+                    {
+                        LLINE_OUT = 1;
+                    }
                 }
                 break;
 
@@ -431,10 +456,18 @@ void kline_send(uint8_t *buffer, uint16_t count)
                 if ((parity & 0x01) != 0)
                 {
                     KLINE_OUT = 1;
+                    if (use_lline)
+                    {
+                        LLINE_OUT = 1;
+                    }
                 }
                 else
                 {
                     KLINE_OUT = 0;
+                    if (use_lline)
+                    {
+                        LLINE_OUT = 0;
+                    }
                 }
                 break;
 
@@ -442,18 +475,30 @@ void kline_send(uint8_t *buffer, uint16_t count)
                 while (!PIR1bits.TMR2IF) {}
                 PIR1bits.TMR2IF = 0;
                 KLINE_OUT = 0;
+                if (use_lline)
+                {
+                    LLINE_OUT = 0;
+                }
                 break;
 
             case KLINEF_PARITY_SPACE:
                 while (!PIR1bits.TMR2IF) {}
                 PIR1bits.TMR2IF = 0;
                 KLINE_OUT = 1;
+                if (use_lline)
+                {
+                    LLINE_OUT = 1;
+                }
                 break;
         }
         // 2 stop bits
         while (!PIR1bits.TMR2IF) {}
         PIR1bits.TMR2IF = 0;
         KLINE_OUT = 0;
+        if (use_lline)
+        {
+            LLINE_OUT = 0;
+        }
         while (!PIR1bits.TMR2IF) {}
         PIR1bits.TMR2IF = 0;
     }
