@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -56,6 +57,9 @@ namespace EdiabasLib
             {
                 return true;
             }
+            AdapterType = -1;
+            AdapterVersion = -1;
+
             if (!port.StartsWith(PortId, StringComparison.OrdinalIgnoreCase))
             {
                 InterfaceDisconnect();
@@ -309,6 +313,7 @@ namespace EdiabasLib
                 }
                 else
                 {
+                    UpdateAdapterInfo();
                     byte[] adapterTel = CreateAdapterTelegram(sendData, length, setDtr);
                     if (adapterTel == null)
                     {
@@ -369,12 +374,14 @@ namespace EdiabasLib
             {
                 if (SettingsUpdateRequired())
                 {
+                    UpdateAdapterInfo();
                     byte[] adapterTel = CreatePulseTelegram(0, 0, 0, false);
-                    if (adapterTel != null)
+                    if (adapterTel == null)
                     {
-                        _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
-                        UpdateActiveSettings();
+                        return false;
                     }
+                    _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
+                    UpdateActiveSettings();
                 }
                 int recLen = 0;
                 long startTime = Stopwatch.GetTimestamp();
@@ -420,6 +427,7 @@ namespace EdiabasLib
             }
             try
             {
+                UpdateAdapterInfo();
                 byte[] adapterTel = CreatePulseTelegram(dataBits, length, pulseWidth, setDtr);
                 if (adapterTel == null)
                 {
@@ -442,6 +450,79 @@ namespace EdiabasLib
             {
                 _bluetoothInStream.ReadByte();
             }
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private static bool UpdateAdapterInfo(bool forceUpdate = false)
+        {
+            if ((_bluetoothSocket == null) || (_bluetoothOutStream == null))
+            {
+                return false;
+            }
+            if (_elm327Device)
+            {
+                return false;
+            }
+            if (!forceUpdate && AdapterType >= 0)
+            {   // only read once
+                return true;
+            }
+            AdapterType = -1;
+            try
+            {
+                const int versionRespLen = 9;
+                byte[] identTel = { 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E };
+                FlushReceiveBuffer();
+                _bluetoothOutStream.Write(identTel, 0, identTel.Length);
+
+                List<byte> responseList = new List<byte>();
+                long startTime = Stopwatch.GetTimestamp();
+                for (; ; )
+                {
+                    while (_bluetoothInStream.IsDataAvailable())
+                    {
+                        int data = _bluetoothInStream.ReadByte();
+                        if (data >= 0)
+                        {
+                            responseList.Add((byte)data);
+                            startTime = Stopwatch.GetTimestamp();
+                        }
+                    }
+                    if (responseList.Count >= identTel.Length + versionRespLen)
+                    {
+                        bool validEcho = !identTel.Where((t, i) => responseList[i] != t).Any();
+                        if (!validEcho)
+                        {
+                            return false;
+                        }
+                        if (CalcChecksumBmwFast(responseList.ToArray(), identTel.Length, versionRespLen - 1) != responseList[identTel.Length + versionRespLen - 1])
+                        {
+                            return false;
+                        }
+                        AdapterType = responseList[identTel.Length + 5] + (responseList[identTel.Length + 4] << 8);
+                        AdapterVersion = responseList[identTel.Length + 7] + (responseList[identTel.Length + 6] << 8);
+                        break;
+                    }
+                    if (Stopwatch.GetTimestamp() - startTime > ReadTimeoutOffset * TickResolMs)
+                    {
+                        if (responseList.Count >= identTel.Length)
+                        {
+                            bool validEcho = !identTel.Where((t, i) => responseList[i] != t).Any();
+                            if (validEcho)
+                            {
+                                AdapterType = 0;
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private static bool Elm327Init()
@@ -907,7 +988,7 @@ namespace EdiabasLib
                     responseTel[2] = sourceAddr;
                     Array.Copy(recDataBuffer, 0, responseTel, 3, recDataBuffer.Length);
                 }
-                byte checkSum = CalcChecksumBmwFast(responseTel, responseTel.Length);
+                byte checkSum = CalcChecksumBmwFast(responseTel, 0, responseTel.Length);
                 lock (Elm327BufferLock)
                 {
                     foreach (byte data in responseTel)

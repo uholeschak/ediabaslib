@@ -32,6 +32,10 @@ namespace EdiabasLib
 
         public static int InterByteTime { get; protected set; }
 
+        public static int AdapterType { get; protected set; }
+
+        public static int AdapterVersion { get; protected set; }
+
         static EdBluetoothInterfaceBase()
         {
             CurrentBaudRate = 0;
@@ -41,10 +45,16 @@ namespace EdiabasLib
             CurrentParity = EdInterfaceObd.SerialParity.None;
             ActiveParity = EdInterfaceObd.SerialParity.None;
             InterByteTime = 0;
+            AdapterType = -1;
+            AdapterVersion = -1;
         }
 
         public static byte[] CreateAdapterTelegram(byte[] sendData, int length, bool setDtr)
         {
+            if ((AdapterType != 0x0002) || (AdapterVersion < 0x0002))
+            {
+                return null;
+            }
             if ((CurrentBaudRate != 115200) &&
                 ((CurrentBaudRate < 9600) || (CurrentBaudRate > 19200)))
             {
@@ -80,12 +90,16 @@ namespace EdiabasLib
             resultArray[6] = (byte)(length >> 8);   // telegram length high
             resultArray[7] = (byte)length;          // telegram length low
             Array.Copy(sendData, 0, resultArray, 8, length);
-            resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, resultArray.Length - 1);
+            resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
             return resultArray;
         }
 
         public static byte[] CreatePulseTelegram(UInt64 dataBits, int length, int pulseWidth, bool setDtr)
         {
+            if ((AdapterType != 0x0002) || (AdapterVersion < 0x0002))
+            {
+                return null;
+            }
             if ((CurrentBaudRate < 9600) || (CurrentBaudRate > 19200))
             {
                 return null;
@@ -122,16 +136,16 @@ namespace EdiabasLib
             {
                 resultArray[10 + i] = (byte)(dataBits >> (i << 3));
             }
-            resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, resultArray.Length - 1);
+            resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
             return resultArray;
         }
 
-        static public byte CalcChecksumBmwFast(byte[] data, int length)
+        static public byte CalcChecksumBmwFast(byte[] data, int offset, int length)
         {
             byte sum = 0;
             for (int i = 0; i < length; i++)
             {
-                sum += data[i];
+                sum += data[i + offset];
             }
             return sum;
         }
@@ -173,6 +187,10 @@ namespace EdiabasLib
 
         public static bool SettingsUpdateRequired()
         {
+            if (CurrentBaudRate == 115200)
+            {
+                return false;
+            }
             if (CurrentBaudRate == ActiveBaudRate &&
                 CurrentWordLength == ActiveWordLength &&
                 CurrentParity == ActiveParity)
