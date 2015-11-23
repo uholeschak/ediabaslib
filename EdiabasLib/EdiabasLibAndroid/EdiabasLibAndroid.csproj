@@ -43,10 +43,12 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\EdiabasLib\EdBluetoothInterfaceBase.cs">
+      <Link>EdBluetoothInterfaceBase.cs</Link>
+    </Compile>
     <Compile Include="..\EdiabasLib\EdFtdiInterfaceAndroid.cs">
       <Link>EdFtdiInterfaceAndroid.cs</Link>
     </Compile>
-    <Compile Include="EdBluetoothInterfaceBase.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="..\EdiabasLib\EdBluetoothInterface.cs">
       <Link>EdBluetoothInterface.cs</Link>
