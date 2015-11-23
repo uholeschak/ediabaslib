@@ -134,7 +134,7 @@ namespace BmwDeepObd
                 foreach (var device in pairedDevices)
                 {
                     ParcelUuid[] uuids = device.GetUuids();
-                    if ((uuids == null) || (uuids.Any(uuid => SppUuid.CompareTo(uuids[0].Uuid) == 0)))
+                    if ((uuids == null) || (uuids.Any(uuid => SppUuid.CompareTo(uuid.Uuid) == 0)))
                     {
                         _pairedDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
                     }
@@ -618,7 +618,7 @@ namespace BmwDeepObd
                     if (device.BondState != Bond.Bonded)
                     {
                         ParcelUuid[] uuids = device.GetUuids();
-                        if ((uuids == null) || (uuids.Any(uuid => SppUuid.CompareTo(uuids[0].Uuid) == 0)))
+                        if ((uuids == null) || (uuids.Any(uuid => SppUuid.CompareTo(uuid.Uuid) == 0)))
                         {
                             _newDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
                         }
