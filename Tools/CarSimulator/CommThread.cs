@@ -4929,12 +4929,20 @@ namespace CarSimulator
 
                 SendData(_sendData, 0, sendLen);
 
-                if (ReceiveData(_receiveData, 0, 1, 50, 50))
+                if (ReceiveData(_receiveData, 0, 1, 100, 100))
                 {
-                    if ((byte)(~_receiveData[0]) == _sendData[1])
+                    if ((byte) (~_receiveData[0]) == _sendData[1])
                     {
                         initOk = true;
                     }
+                    else
+                    {
+                        Debug.WriteLine(string.Format("Invalid init response {0}", (byte)(~_receiveData[0])));
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine("No init response");
                 }
             } while (!initOk);
 
