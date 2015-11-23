@@ -344,18 +344,24 @@ void kline_send(uint8_t *buffer, uint16_t count)
                 }
                 if ((out_data & 0x01) != 0)
                 {
-                    KLINE_OUT = 0;
                     if (use_lline)
                     {
                         LLINE_OUT = 0;
                     }
+                    else
+                    {
+                        KLINE_OUT = 0;
+                    }
                 }
                 else
                 {
-                    KLINE_OUT = 1;
                     if (use_lline)
                     {
                         LLINE_OUT = 1;
+                    }
+                    else
+                    {
+                        KLINE_OUT = 1;
                     }
                 }
                 out_data >>= 1;
@@ -396,10 +402,13 @@ void kline_send(uint8_t *buffer, uint16_t count)
         CLRWDT();
         while (!PIR1bits.TMR2IF) {}
         PIR1bits.TMR2IF = 0;
-        KLINE_OUT = 1;      // start bit
         if (use_lline)
         {
-            LLINE_OUT = 1;
+            LLINE_OUT = 1;      // start bit
+        }
+        else
+        {
+            KLINE_OUT = 1;      // start bit
         }
 
         uint8_t out_data = *ptr++;
@@ -410,19 +419,25 @@ void kline_send(uint8_t *buffer, uint16_t count)
             PIR1bits.TMR2IF = 0;
             if ((out_data & 0x01) != 0)
             {
-                KLINE_OUT = 0;
                 if (use_lline)
                 {
                     LLINE_OUT = 0;
+                }
+                else
+                {
+                    KLINE_OUT = 0;
                 }
                 parity++;
             }
             else
             {
-                KLINE_OUT = 1;
                 if (use_lline)
                 {
                     LLINE_OUT = 1;
+                }
+                else
+                {
+                    KLINE_OUT = 1;
                 }
             }
             out_data >>= 1;
@@ -434,18 +449,24 @@ void kline_send(uint8_t *buffer, uint16_t count)
                 PIR1bits.TMR2IF = 0;
                 if ((parity & 0x01) != 0)
                 {
-                    KLINE_OUT = 0;
                     if (use_lline)
                     {
                         LLINE_OUT = 0;
                     }
+                    else
+                    {
+                        KLINE_OUT = 0;
+                    }
                 }
                 else
                 {
-                    KLINE_OUT = 1;
                     if (use_lline)
                     {
                         LLINE_OUT = 1;
+                    }
+                    else
+                    {
+                        KLINE_OUT = 1;
                     }
                 }
                 break;
@@ -455,18 +476,24 @@ void kline_send(uint8_t *buffer, uint16_t count)
                 PIR1bits.TMR2IF = 0;
                 if ((parity & 0x01) != 0)
                 {
-                    KLINE_OUT = 1;
                     if (use_lline)
                     {
                         LLINE_OUT = 1;
                     }
+                    else
+                    {
+                        KLINE_OUT = 1;
+                    }
                 }
                 else
                 {
-                    KLINE_OUT = 0;
                     if (use_lline)
                     {
                         LLINE_OUT = 0;
+                    }
+                    else
+                    {
+                        KLINE_OUT = 0;
                     }
                 }
                 break;
@@ -474,30 +501,39 @@ void kline_send(uint8_t *buffer, uint16_t count)
             case KLINEF_PARITY_MARK:
                 while (!PIR1bits.TMR2IF) {}
                 PIR1bits.TMR2IF = 0;
-                KLINE_OUT = 0;
                 if (use_lline)
                 {
                     LLINE_OUT = 0;
+                }
+                else
+                {
+                    KLINE_OUT = 0;
                 }
                 break;
 
             case KLINEF_PARITY_SPACE:
                 while (!PIR1bits.TMR2IF) {}
                 PIR1bits.TMR2IF = 0;
-                KLINE_OUT = 1;
                 if (use_lline)
                 {
                     LLINE_OUT = 1;
+                }
+                else
+                {
+                    KLINE_OUT = 1;
                 }
                 break;
         }
         // 2 stop bits
         while (!PIR1bits.TMR2IF) {}
         PIR1bits.TMR2IF = 0;
-        KLINE_OUT = 0;
         if (use_lline)
         {
             LLINE_OUT = 0;
+        }
+        else
+        {
+            KLINE_OUT = 0;
         }
         while (!PIR1bits.TMR2IF) {}
         PIR1bits.TMR2IF = 0;
