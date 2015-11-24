@@ -108,7 +108,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\default\production\CanAdapterElm.X.production.hex">
-      <Link>HexFiles\CanAdapterElm.X.production.hex</Link>
+      <Link>HexFiles\Type2\CanAdapterElm.X.production.hex</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\fast\production\CanAdapterElm.X.production.hex">
+      <Link>HexFiles\Type3\CanAdapterElm.X.production.hex</Link>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />

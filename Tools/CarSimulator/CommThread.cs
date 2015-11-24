@@ -4929,7 +4929,8 @@ namespace CarSimulator
 
                 SendData(_sendData, 0, sendLen);
 
-                if (ReceiveData(_receiveData, 0, 1, 100, 100))
+                //if (ReceiveData(_receiveData, 0, 1, 50, 50))  // too fast for ELM
+                if (ReceiveData(_receiveData, 0, 1, 70, 70))
                 {
                     if ((byte) (~_receiveData[0]) == _sendData[1])
                     {

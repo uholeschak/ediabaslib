@@ -23,7 +23,8 @@ namespace BmwDeepObd
 
         private static readonly FirmwareInfo[] FirmwareInfos =
         {
-            new FirmwareInfo("CanAdapterElm.X.production.hex", 0x030C, Device.Families.PIC18)
+            new FirmwareInfo("Type2.CanAdapterElm.X.production.hex", 0x030C, Device.Families.PIC18),
+            new FirmwareInfo("Type3.CanAdapterElm.X.production.hex", 0x030C, Device.Families.PIC18)
         };
 
         private class FirmwareInfo

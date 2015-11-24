@@ -1517,7 +1517,11 @@ void main(void)
     // UART
     TRISCbits.TRISC6 = 0;   // TX output
     TRISCbits.TRISC7 = 1;   // RX input
+#if ADAPTER_TYPE == 0x02
     SPBRG = 103;            // 38400 @ 16MHz
+#else
+    SPBRG = 34;             // 115200 @ 16MHz
+#endif
     TXSTAbits.TXEN = 1;     // Enable transmit
     TXSTAbits.BRGH = 1;     // Select high baud rate
     TXSTAbits.SYNC = 0;     // async mode
