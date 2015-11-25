@@ -146,6 +146,7 @@ static uint8_t idle_counter;
 
 static volatile rec_states rec_state;
 static volatile uint16_t rec_len;
+static volatile bool rec_bt_mode;
 static uint8_t rec_chksum;
 static volatile uint8_t rec_buffer[270];
 
@@ -868,6 +869,79 @@ uint16_t uart_receive(uint8_t *buffer)
     return data_len;
 }
 
+bool send_bt_config(uint8_t *buffer, uint16_t count)
+{
+    for (uint8_t i = 0; i < 3; i++)
+    {
+        if (!uart_send(buffer, count))
+        {
+            return false;
+        }
+        uint16_t start_tick = get_systick();
+        for (;;)
+        {
+            CLRWDT();
+            update_led();
+            uint16_t len = uart_receive(temp_buffer);
+            if (len > 0)
+            {
+                return true;
+            }
+            if ((uint16_t) (get_systick() - start_tick) > (500 * TIMER0_RESOL / 1000))
+            {
+                break;
+            }
+        }
+    }
+    return false;
+}
+
+bool set_bt_pin()
+{
+    uint8_t len = 0;
+    temp_buffer[len++] = 'A';
+    temp_buffer[len++] = 'T';
+    temp_buffer[len++] = '+';
+    temp_buffer[len++] = 'P';
+    temp_buffer[len++] = 'I';
+    temp_buffer[len++] = 'N';
+    temp_buffer[len++] = '0';
+    temp_buffer[len++] = '1';
+    temp_buffer[len++] = '2';
+    temp_buffer[len++] = '3';
+    temp_buffer[len++] = '4';
+    temp_buffer[len++] = '5';
+    temp_buffer[len++] = '6';
+    temp_buffer[len++] = '7';
+    temp_buffer[len++] = '\r';
+    temp_buffer[len++] = '\n';
+
+    return send_bt_config(temp_buffer, len);
+}
+
+bool init_bt()
+{
+    di();
+    rec_bt_mode = true;
+    rec_state = rec_state_idle;
+    ei();
+    // wait for bt chip init
+    uint16_t start_tick = get_systick();
+    while ((uint16_t) (get_systick() - start_tick) < (1000 * TIMER0_RESOL / 1000))
+    {
+        CLRWDT();
+        update_led();
+    }
+
+    bool result = set_bt_pin();
+
+    di();
+    rec_bt_mode = false;
+    rec_state = rec_state_idle;
+    ei();
+    return result;
+}
+
 void update_led()
 {
     if (start_indicator)
@@ -989,6 +1063,7 @@ bool can_send_message_wait()
     uint16_t start_tick = get_systick();
     while (!writeCAN())
     {
+        CLRWDT();
         update_led();
         if ((uint16_t) (get_systick() - start_tick) > (250 * TIMER0_RESOL / 1000))
         {
@@ -1454,6 +1529,7 @@ void main(void)
     idle_counter = 0;
     rec_state = rec_state_idle;
     rec_len = 0;
+    rec_bt_mode = false;
     send_set_idx = 0;
     send_get_idx = 0;
     send_len = 0;
@@ -1584,6 +1660,17 @@ void main(void)
 
     read_eeprom();
     can_config();
+#if ADAPTER_TYPE != 0x02
+    if (!init_bt())
+    {   // error
+        LED_OBD_RX = 0;     // on
+        LED_OBD_TX = 1;     // off
+        for (;;)
+        {
+            do_idle();
+        }
+    }
+#endif
 
     for (;;)
     {
@@ -1662,6 +1749,41 @@ void interrupt high_priority high_isr (void)
             PIR1bits.TMR1IF = 0;    // clear interrupt flag
             T1CONbits.TMR1ON = 1;   // start timeout timer
 
+            if (rec_bt_mode)
+            {
+                switch (rec_state)
+                {
+                    case rec_state_idle:
+                        rec_len = 0;
+                        rec_buffer[rec_len++] = rec_data;
+                        rec_state = rec_state_rec;
+                        break;
+
+                    case rec_state_rec:
+                        if (rec_len < sizeof(rec_buffer))
+                        {
+                            rec_buffer[rec_len++] = rec_data;
+                        }
+                        if (rec_len >= 5)
+                        {
+                            if (rec_data == '\n')
+                            {
+                                if ((rec_buffer[rec_len - 5] == 'O') &&
+                                    (rec_buffer[rec_len - 4] == 'K') &&
+                                    (rec_buffer[rec_len - 3] == '\r') &&
+                                    (rec_buffer[rec_len - 2] == '\r'))
+                                {
+                                    T1CONbits.TMR1ON = 0;   // stop timer
+                                    PIR1bits.TMR1IF = 0;
+                                    rec_state = rec_state_done;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                }
+                return;
+            }
             switch (rec_state)
             {
                 case rec_state_idle:
