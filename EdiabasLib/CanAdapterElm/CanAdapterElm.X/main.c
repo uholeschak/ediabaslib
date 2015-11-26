@@ -145,7 +145,7 @@ static const uint16_t adapter_version @ _ROMSIZE - 6 = ADAPTER_VERSION;
 static volatile bool start_indicator;   // show start indicator
 static volatile bool init_failed;       // initialization failed
 static uint8_t idle_counter;
-static volatile uint8_t pin_buffer[8];
+static volatile uint8_t pin_buffer[4];
 
 static volatile rec_states rec_state;
 static volatile uint16_t rec_len;
@@ -1124,12 +1124,10 @@ bool internal_telegram(uint16_t len)
         return true;
     }
 
-    if ((len == 6) &&
-    (temp_buffer[0] == 0x82) &&
-    (temp_buffer[1] == 0xF1) &&
-    (temp_buffer[2] == 0xF1))
+    if ((temp_buffer[1] == 0xF1) &&
+        (temp_buffer[2] == 0xF1))
     {
-        if ((temp_buffer[3] & 0x7F) == 0x00)
+        if ((len == 6) && (temp_buffer[3] & 0x7F) == 0x00)
         {      // block size
             if ((temp_buffer[3] & 0x80) == 0x00)
             {   // write
@@ -1143,7 +1141,7 @@ bool internal_telegram(uint16_t len)
             uart_send(temp_buffer, len);
             return true;
         }
-        if ((temp_buffer[3] & 0x7F) == 0x01)
+        if ((len == 6) && (temp_buffer[3] & 0x7F) == 0x01)
         {      // separation time
             if ((temp_buffer[3] & 0x80) == 0x00)
             {   // write
@@ -1157,7 +1155,7 @@ bool internal_telegram(uint16_t len)
             uart_send(temp_buffer, len);
             return true;
         }
-        if ((temp_buffer[3] & 0x7F) == 0x02)
+        if ((len == 6) && (temp_buffer[3] & 0x7F) == 0x02)
         {      // can mode
             if ((temp_buffer[3] & 0x80) == 0x00)
             {   // write
@@ -1172,7 +1170,32 @@ bool internal_telegram(uint16_t len)
             uart_send(temp_buffer, len);
             return true;
         }
-        if ((temp_buffer[3] == 0xFB) && (temp_buffer[4] == 0xFB))
+        if ((len >= 5) && (temp_buffer[3] & 0x7F) == 0x03)
+        {      // bt pin
+#if ADAPTER_TYPE != 0x02
+            if ((temp_buffer[3] & 0x80) == 0x00)
+            {   // write
+                for (uint8_t i = 0; i < sizeof(pin_buffer); i++)
+                {
+                    uint8_t cfg_value = 0;
+                    if (i < (len - 5))
+                    {
+                        cfg_value = temp_buffer[4 + i];
+                    }
+                    eeprom_write(EEP_ADDR_BT_PIN + i, cfg_value);
+                }
+                read_eeprom();
+            }
+            memcpy(temp_buffer + 4, pin_buffer, sizeof(pin_buffer));
+            len = 5 + sizeof(pin_buffer);
+#else
+            len = 5;    // no pin
+#endif
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
+        if ((len == 6) && (temp_buffer[3] == 0xFB) && (temp_buffer[4] == 0xFB))
         {      // read id location
             temp_buffer[0] = 0x89;
             const uint8_t far *id_loc=(const uint8_t far *) ID_LOCATION;
@@ -1185,7 +1208,7 @@ bool internal_telegram(uint16_t len)
             uart_send(temp_buffer, len);
             return true;
         }
-        if ((temp_buffer[3] == 0xFC) && (temp_buffer[4] == 0xFC))
+        if ((len == 6) && (temp_buffer[3] == 0xFC) && (temp_buffer[4] == 0xFC))
         {      // read Vbat
             ADCON0bits.GODONE = 1;
             while (ADCON0bits.GODONE) {}
@@ -1194,7 +1217,7 @@ bool internal_telegram(uint16_t len)
             uart_send(temp_buffer, len);
             return true;
         }
-        if ((temp_buffer[3] == 0xFD) && (temp_buffer[4] == 0xFD))
+        if ((len == 6) && (temp_buffer[3] == 0xFD) && (temp_buffer[4] == 0xFD))
         {      // read adapter type and version
             temp_buffer[0] = 0x85;
             temp_buffer[4] = ADAPTER_TYPE >> 8;
@@ -1206,7 +1229,7 @@ bool internal_telegram(uint16_t len)
             uart_send(temp_buffer, len);
             return true;
         }
-        if ((temp_buffer[3] == 0xFE) && (temp_buffer[4] == 0xFE))
+        if ((len == 6) && (temp_buffer[3] == 0xFE) && (temp_buffer[4] == 0xFE))
         {      // read ignition state
             temp_buffer[4] = IGNITION_STATE() ? 0x01 : 0x00;
             temp_buffer[4] |= 0x80;     // invalid mark
