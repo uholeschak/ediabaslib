@@ -898,21 +898,16 @@ bool send_bt_config(uint8_t *buffer, uint16_t count)
 
 bool set_bt_pin()
 {
-    uint8_t len = 0;
-    temp_buffer[len++] = 'A';
-    temp_buffer[len++] = 'T';
-    temp_buffer[len++] = '+';
-    temp_buffer[len++] = 'P';
-    temp_buffer[len++] = 'I';
-    temp_buffer[len++] = 'N';
-    temp_buffer[len++] = '0';
-    temp_buffer[len++] = '1';
-    temp_buffer[len++] = '2';
-    temp_buffer[len++] = '3';
-    temp_buffer[len++] = '4';
-    temp_buffer[len++] = '5';
-    temp_buffer[len++] = '6';
-    temp_buffer[len++] = '7';
+    static const uint8_t pin[] = {'0', '1', '2', '3', '4', '5', '6', '7'};
+    temp_buffer[0] = 'A';
+    temp_buffer[1] = 'T';
+    temp_buffer[2] = '+';
+    temp_buffer[3] = 'P';
+    temp_buffer[4] = 'I';
+    temp_buffer[5] = 'N';
+
+    memcpy(temp_buffer + 6, pin, sizeof(pin));
+    uint8_t len = 6 + sizeof(pin);
     temp_buffer[len++] = '\r';
     temp_buffer[len++] = '\n';
 
@@ -1756,29 +1751,56 @@ void interrupt high_priority high_isr (void)
                     case rec_state_idle:
                         rec_len = 0;
                         rec_buffer[rec_len++] = rec_data;
+                        rec_chksum = 0;     // used as state
                         rec_state = rec_state_rec;
-                        break;
+                        // no break here
 
                     case rec_state_rec:
                         if (rec_len < sizeof(rec_buffer))
                         {
                             rec_buffer[rec_len++] = rec_data;
                         }
-                        if (rec_len >= 5)
+                        switch (rec_chksum)
                         {
-                            if (rec_data == '\n')
-                            {
-                                if ((rec_buffer[rec_len - 5] == 'O') &&
-                                    (rec_buffer[rec_len - 4] == 'K') &&
-                                    (rec_buffer[rec_len - 3] == '\r') &&
-                                    (rec_buffer[rec_len - 2] == '\r'))
+                            case 0:
+                                if (rec_data == 'O')
+                                {
+                                    rec_chksum++;
+                                }
+                                break;
+
+                            case 1:
+                                if (rec_data == 'K')
+                                {
+                                    rec_chksum++;
+                                    break;
+                                }
+                                rec_chksum = 0;
+                                break;
+
+                            case 2:
+                                if (rec_data == '\r')
+                                {
+                                    rec_chksum++;
+                                    break;
+                                }
+                                rec_chksum = 0;
+                                break;
+
+                            case 3:
+                                if (rec_data == '\n')
                                 {
                                     T1CONbits.TMR1ON = 0;   // stop timer
                                     PIR1bits.TMR1IF = 0;
                                     rec_state = rec_state_done;
                                     break;
                                 }
-                            }
+                                if (rec_data == '\r')
+                                {   // can appear multiple times
+                                    break;
+                                }
+                                rec_chksum = 0;
+                                break;
                         }
                         break;
                 }
