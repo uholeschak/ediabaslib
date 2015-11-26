@@ -121,6 +121,7 @@
 #define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes)
 #define EEP_ADDR_BLOCKSIZE  0x02    // eeprom address for FC block size (2 bytes)
 #define EEP_ADDR_SEP_TIME   0x04    // eeprom address for FC separation time (2 bytes)
+#define EEP_ADDR_BT_PIN     0x06    // eeprom address for Blutooth pin (8 bytes)
 
 #define TEMP_BUF_SIZE       0x0800  // temp buffer size
 
@@ -143,6 +144,7 @@ static const uint16_t adapter_version @ _ROMSIZE - 6 = ADAPTER_VERSION;
 
 static volatile bool start_indicator;  // show start indicator
 static uint8_t idle_counter;
+static volatile uint8_t pin_buffer[8];
 
 static volatile rec_states rec_state;
 static volatile uint16_t rec_len;
@@ -898,7 +900,6 @@ bool send_bt_config(uint8_t *buffer, uint16_t count)
 
 bool set_bt_pin()
 {
-    static const uint8_t pin[] = {'0', '1', '2', '3', '4', '5', '6', '7'};
     temp_buffer[0] = 'A';
     temp_buffer[1] = 'T';
     temp_buffer[2] = '+';
@@ -906,8 +907,16 @@ bool set_bt_pin()
     temp_buffer[4] = 'I';
     temp_buffer[5] = 'N';
 
-    memcpy(temp_buffer + 6, pin, sizeof(pin));
-    uint8_t len = 6 + sizeof(pin);
+    uint8_t len = 6;
+    for (uint8_t i = 0; i < sizeof(pin_buffer); i++)
+    {
+        uint8_t value = pin_buffer[i];
+        if (value == 0)
+        {
+            break;
+        }
+        temp_buffer[len++] = value;
+    }
     temp_buffer[len++] = '\r';
     temp_buffer[len++] = '\n';
 
@@ -1050,6 +1059,26 @@ void read_eeprom()
     if ((~temp_value1 & 0xFF) == temp_value2)
     {
         can_sep_time = temp_value1;
+    }
+
+    uint8_t pin_len = 0;
+    for (uint8_t i = 0; i < sizeof(pin_buffer); i++)
+    {
+        temp_value1 = eeprom_read(EEP_ADDR_BT_PIN + i);
+        if (temp_value1 < '0' || temp_value1 > '9')
+        {
+            temp_value1 = 0;
+        }
+        else
+        {
+            pin_len = i + 1;
+        }
+        pin_buffer[i] = temp_value1;
+    }
+    if (pin_len < 4)
+    {
+        static const uint8_t default_pin[] = {'1', '2', '3', '4'};
+        memcpy(pin_buffer, default_pin, sizeof(default_pin));
     }
 }
 
