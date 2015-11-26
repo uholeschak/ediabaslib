@@ -142,7 +142,8 @@ typedef enum
 static const uint16_t adapter_type @ _ROMSIZE - 4 = ADAPTER_TYPE;
 static const uint16_t adapter_version @ _ROMSIZE - 6 = ADAPTER_VERSION;
 
-static volatile bool start_indicator;  // show start indicator
+static volatile bool start_indicator;   // show start indicator
+static volatile bool init_failed;       // initialization failed
 static uint8_t idle_counter;
 static volatile uint8_t pin_buffer[8];
 
@@ -974,10 +975,18 @@ void update_led()
         }
         else
         {
-            LED_OBD_RX = 1; // off
+            if (init_failed)
+            {
+                LED_OBD_RX = 0;     // on
+            }
+            else
+            {
+                LED_OBD_RX = 1; // off
+            }
         }
         if (send_len > 0)
         {
+            init_failed = false;
             LED_OBD_TX = 0; // on
         }
         else
@@ -1550,6 +1559,7 @@ void can_receiver(bool new_can_msg)
 void main(void)
 {
     start_indicator = true;
+    init_failed = false;
     idle_counter = 0;
     rec_state = rec_state_idle;
     rec_len = 0;
@@ -1687,12 +1697,7 @@ void main(void)
 #if ADAPTER_TYPE != 0x02
     if (!init_bt())
     {   // error
-        LED_OBD_RX = 0;     // on
-        LED_OBD_TX = 1;     // off
-        for (;;)
-        {
-            do_idle();
-        }
+        init_failed = true;
     }
 #endif
 
