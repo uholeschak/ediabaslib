@@ -509,7 +509,7 @@ namespace BmwDeepObd
                     _btPin = null;
                     if (!commFailed && _adapterType == 0x0003 && _fwVersion >= 0x0002)
                     {
-                        byte[] result = AdapterCommandCustom(0x83, new byte[] { 0x83 });
+                        byte[] result = AdapterCommandCustom(0x84, new byte[] { 0x84 });
                         if (result == null)
                         {
                             commFailed = true;
@@ -644,7 +644,7 @@ namespace BmwDeepObd
                         // Bluetooth pin
                         if (!commFailed && btPinData != null)
                         {
-                            btPinResponse = AdapterCommandCustom(0x03, btPinData);
+                            btPinResponse = AdapterCommandCustom(0x04, btPinData);
                             if ((btPinResponse == null) || (btPinResponse.Length < 4))
                             {
                                 commFailed = true;
