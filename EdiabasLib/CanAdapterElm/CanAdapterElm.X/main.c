@@ -1170,7 +1170,7 @@ bool internal_telegram(uint16_t len)
             uart_send(temp_buffer, len);
             return true;
         }
-        if ((len >= 6) && (temp_buffer[3] & 0x7F) == 0x03)
+        if ((len >= 6) && (temp_buffer[3] & 0x7F) == 0x04)
         {      // bt pin
 #if ADAPTER_TYPE != 0x02
             if ((temp_buffer[3] & 0x80) == 0x00)
