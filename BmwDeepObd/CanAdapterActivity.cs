@@ -4,6 +4,7 @@ using Android.Bluetooth;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
+using Android.Views.InputMethods;
 using Android.Widget;
 using EdiabasLib;
 
@@ -13,12 +14,14 @@ namespace BmwDeepObd
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                         Android.Content.PM.ConfigChanges.Orientation |
                         Android.Content.PM.ConfigChanges.ScreenSize)]
-    public class CanAdapterActivity : AppCompatActivity
+    public class CanAdapterActivity : AppCompatActivity, View.IOnTouchListener
     {
         // Intent extra
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraInterfaceType = "interface_type";
 
+        private InputMethodManager _imm;
+        private View _contentView;
         private View _barView;
         private Button _buttonRead;
         private Button _buttonWrite;
@@ -30,6 +33,8 @@ namespace BmwDeepObd
         private TextView _textViewCanAdapterBlockSizeTitle;
         private Spinner _spinnerCanAdapterBlockSize;
         private StringAdapter _spinnerCanAdapterBlockSizeAdapter;
+        private TextView _textViewBtPinTitle;
+        private EditText _editTextBtPin;
         private TextView _textViewCanAdapterIgnitionStateTitle;
         private TextView _textViewIgnitionState;
         private TextView _textViewBatteryVoltageTitle;
@@ -45,6 +50,7 @@ namespace BmwDeepObd
         private int _batteryVoltage = -1;
         private int _adapterType = -1;
         private int _fwVersion = -1;
+        private byte[] _btPin;
         private bool _fwUpdateShown;
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
@@ -59,6 +65,9 @@ namespace BmwDeepObd
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowCustomEnabled(true);
             SetContentView(Resource.Layout.can_adapter_config);
+
+            _imm = (InputMethodManager)GetSystemService(InputMethodService);
+            _contentView = FindViewById<View>(Android.Resource.Id.Content);
 
             _barView = LayoutInflater.Inflate(Resource.Layout.bar_can_adapter, null);
             ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
@@ -77,6 +86,7 @@ namespace BmwDeepObd
             ViewStates visibility = interfaceType == ActivityCommon.InterfaceType.Bluetooth ? ViewStates.Visible : ViewStates.Gone;
 
             _buttonRead = _barView.FindViewById<Button>(Resource.Id.buttonAdapterRead);
+            _buttonRead.SetOnTouchListener(this);
             _buttonRead.Click += (sender, args) =>
             {
                 PerformRead();
@@ -84,12 +94,14 @@ namespace BmwDeepObd
             _buttonRead.Visibility = visibility;
 
             _buttonWrite = _barView.FindViewById<Button>(Resource.Id.buttonAdapterWrite);
+            _buttonWrite.SetOnTouchListener(this);
             _buttonWrite.Click += (sender, args) =>
             {
                 PerformWrite();
             };
 
             _spinnerCanAdapterMode = FindViewById<Spinner>(Resource.Id.spinnerCanAdapterMode);
+            _spinnerCanAdapterMode.SetOnTouchListener(this);
             _spinnerCanAdapterModeAdapter = new StringAdapter(this);
             _spinnerCanAdapterMode.Adapter = _spinnerCanAdapterModeAdapter;
             _spinnerCanAdapterModeAdapter.Items.Add(GetString(Resource.String.button_can_adapter_can_500));
@@ -101,6 +113,7 @@ namespace BmwDeepObd
             _textViewCanAdapterSepTimeTitle.Visibility = visibility;
 
             _spinnerCanAdapterSepTime = FindViewById<Spinner>(Resource.Id.spinnerCanAdapterSepTime);
+            _spinnerCanAdapterSepTime.SetOnTouchListener(this);
             _spinnerCanAdapterSepTimeAdapter = new StringAdapter(this);
             _spinnerCanAdapterSepTime.Adapter = _spinnerCanAdapterSepTimeAdapter;
             _spinnerCanAdapterSepTimeAdapter.Items.Add(GetString(Resource.String.can_adapter_text_off));
@@ -115,6 +128,7 @@ namespace BmwDeepObd
             _textViewCanAdapterBlockSizeTitle.Visibility = visibility;
 
             _spinnerCanAdapterBlockSize = FindViewById<Spinner>(Resource.Id.spinnerCanAdapterBlockSize);
+            _spinnerCanAdapterBlockSize.SetOnTouchListener(this);
             _spinnerCanAdapterBlockSizeAdapter = new StringAdapter(this);
             _spinnerCanAdapterBlockSize.Adapter = _spinnerCanAdapterBlockSizeAdapter;
             _spinnerCanAdapterBlockSizeAdapter.Items.Add(GetString(Resource.String.can_adapter_text_off));
@@ -124,6 +138,12 @@ namespace BmwDeepObd
             }
             _spinnerCanAdapterBlockSizeAdapter.NotifyDataSetChanged();
             _spinnerCanAdapterBlockSize.Visibility = visibility;
+
+            _textViewBtPinTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterBtPinTitle);
+            _textViewBtPinTitle.Visibility = visibility;
+
+            _editTextBtPin = FindViewById<EditText>(Resource.Id.editTextBtPin);
+            _editTextBtPin.Visibility = visibility;
 
             _textViewCanAdapterIgnitionStateTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterIgnitionStateTitle);
             _textViewCanAdapterIgnitionStateTitle.Visibility = visibility;
@@ -194,6 +214,17 @@ namespace BmwDeepObd
             return base.OnOptionsItemSelected(item);
         }
 
+        public bool OnTouch(View v, MotionEvent e)
+        {
+            switch (e.Action)
+            {
+                case MotionEventActions.Down:
+                    HideKeyboard();
+                    break;
+            }
+            return false;
+        }
+
         private void EdiabasInit()
         {
             if (_ediabas == null)
@@ -252,6 +283,14 @@ namespace BmwDeepObd
             return false;
         }
 
+        private void HideKeyboard()
+        {
+            if (_imm != null)
+            {
+                _imm.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
+            }
+        }
+
         private void UpdateDisplay()
         {
             bool requestFwUpdate = false;
@@ -262,6 +301,12 @@ namespace BmwDeepObd
             _spinnerCanAdapterMode.Enabled = bEnabled;
             _spinnerCanAdapterSepTime.Enabled = bEnabled;
             _spinnerCanAdapterBlockSize.Enabled = bEnabled;
+            _editTextBtPin.Enabled = bEnabled && _btPin != null && _btPin.Length >= 4;
+            if (!_editTextBtPin.Enabled)
+            {
+                _editTextBtPin.Text = string.Empty;
+            }
+
             if (bEnabled)
             {
                 if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
@@ -292,6 +337,12 @@ namespace BmwDeepObd
                 else
                 {
                     _spinnerCanAdapterBlockSize.SetSelection(_blockSize);
+                }
+
+                if (_editTextBtPin.Enabled && _btPin != null)
+                {
+                    string btPin = PinDataToString(_btPin);
+                    _editTextBtPin.Text = btPin.Length == 4 ? btPin : "1234";
                 }
 
                 string ignitionText = string.Empty;
@@ -350,6 +401,8 @@ namespace BmwDeepObd
                     .SetTitle(Resource.String.alert_title_question)
                     .Show();
             }
+
+            HideKeyboard();
         }
 
         private void PerformRead()
@@ -432,7 +485,7 @@ namespace BmwDeepObd
                     // firmware version
                     if (!commFailed)
                     {
-                        byte[] result = AdapterCommandCustom(0xFD, 0xFD);
+                        byte[] result = AdapterCommandCustom(0xFD, new byte[] {0xFD});
                         if ((result == null) || (result.Length < 4))
                         {
                             commFailed = true;
@@ -446,10 +499,24 @@ namespace BmwDeepObd
                     // id
                     if (!commFailed)
                     {
-                        byte[] result = AdapterCommandCustom(0xFB, 0xFB);
+                        byte[] result = AdapterCommandCustom(0xFB, new byte[] { 0xFB });
                         if (result == null)
                         {
                             commFailed = true;
+                        }
+                    }
+                    // bluetooth pin
+                    _btPin = null;
+                    if (!commFailed && _adapterType == 0x0003 && _fwVersion >= 0x0002)
+                    {
+                        byte[] result = AdapterCommandCustom(0x83, new byte[] { 0x83 });
+                        if (result == null)
+                        {
+                            commFailed = true;
+                        }
+                        else
+                        {
+                            _btPin = result;
                         }
                     }
                 }
@@ -466,6 +533,7 @@ namespace BmwDeepObd
                     _batteryVoltage = -1;
                     _adapterType = -1;
                     _fwVersion = -1;
+                    _btPin = null;
                 }
 
                 RunOnUiThread(() =>
@@ -513,9 +581,37 @@ namespace BmwDeepObd
                     break;
             }
 
+            byte[] btPinData = null;
+            if (_editTextBtPin.Enabled && _btPin != null && _btPin.Length >= 4)
+            {
+                bool pinChanged = false;
+                if (_editTextBtPin.Text.Length >= 4)
+                {
+                    btPinData = new byte[4];
+                    for (int i = 0; i < btPinData.Length; i++)
+                    {
+                        btPinData[i] = (byte)_editTextBtPin.Text[i];
+                        if (_btPin[i] != btPinData[i])
+                        {
+                            pinChanged = true;
+                        }
+                    }
+                    if (!pinChanged)
+                    {
+                        btPinData = null;
+                    }
+                }
+                else
+                {
+                    _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_pin_length), Resource.String.alert_title_error);
+                    return;
+                }
+            }
+
             _adapterThread = new Thread(() =>
             {
                 bool commFailed;
+                byte[] btPinResponse = null;
                 try
                 {
                     commFailed = !InterfacePrepare();
@@ -541,6 +637,15 @@ namespace BmwDeepObd
                         if (!commFailed)
                         {
                             if (AdapterCommand(0x02, mode) < 0)
+                            {
+                                commFailed = true;
+                            }
+                        }
+                        // Bluetooth pin
+                        if (!commFailed && btPinData != null)
+                        {
+                            btPinResponse = AdapterCommandCustom(0x03, btPinData);
+                            if ((btPinResponse == null) || (btPinResponse.Length < 4))
                             {
                                 commFailed = true;
                             }
@@ -578,6 +683,11 @@ namespace BmwDeepObd
                     }
                     else
                     {
+                        if (btPinResponse != null)
+                        {
+                            string message = string.Format(GetString(Resource.String.can_adapter_new_pin), PinDataToString(btPinResponse));
+                            _activityCommon.ShowAlert(message, Resource.String.alert_title_info);
+                        }
                         PerformRead();
                     }
                 });
@@ -663,6 +773,24 @@ namespace BmwDeepObd
             UpdateDisplay();
         }
 
+        private string PinDataToString(byte[] pinData)
+        {
+            string btPin = string.Empty;
+            foreach (byte value in pinData)
+            {
+                char digit = (char)value;
+                if (digit >= '0' && digit <= '9')
+                {
+                    btPin += digit;
+                }
+                if (btPin.Length >= 4)
+                {
+                    break;
+                }
+            }
+            return btPin;
+        }
+
         private int AdapterCommand(byte command, byte data = 0x00)
         {
             byte[] response;
@@ -677,10 +805,17 @@ namespace BmwDeepObd
             return response[4];
         }
 
-        private byte[] AdapterCommandCustom(byte command, byte data = 0x00)
+        private byte[] AdapterCommandCustom(byte command, byte[] data)
         {
+            byte[] request = new byte[4 + data.Length];
+            request[0] = (byte) (0x81 + data.Length);
+            request[1] = 0xF1;
+            request[2] = 0xF1;
+            request[3] = command;
+            Array.Copy(data, 0, request, 4, data.Length);
+
             byte[] response;
-            if (!_ediabas.EdInterfaceClass.TransmitData(new byte[] { 0x82, 0xF1, 0xF1, command, data }, out response))
+            if (!_ediabas.EdInterfaceClass.TransmitData(request, out response))
             {
                 return null;
             }
