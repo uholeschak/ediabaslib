@@ -121,7 +121,7 @@
 #define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes)
 #define EEP_ADDR_BLOCKSIZE  0x02    // eeprom address for FC block size (2 bytes)
 #define EEP_ADDR_SEP_TIME   0x04    // eeprom address for FC separation time (2 bytes)
-#define EEP_ADDR_BT_PIN     0x06    // eeprom address for Blutooth pin (8 bytes)
+#define EEP_ADDR_BT_PIN     0x06    // eeprom address for Blutooth pin (16 bytes)
 
 #define TEMP_BUF_SIZE       0x0800  // temp buffer size
 
@@ -1170,7 +1170,7 @@ bool internal_telegram(uint16_t len)
             uart_send(temp_buffer, len);
             return true;
         }
-        if ((len >= 5) && (temp_buffer[3] & 0x7F) == 0x03)
+        if ((len >= 6) && (temp_buffer[3] & 0x7F) == 0x03)
         {      // bt pin
 #if ADAPTER_TYPE != 0x02
             if ((temp_buffer[3] & 0x80) == 0x00)
@@ -1191,6 +1191,7 @@ bool internal_telegram(uint16_t len)
 #else
             len = 5;    // no pin
 #endif
+            temp_buffer[0] = 0x80 + len - 4;
             temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
