@@ -121,7 +121,8 @@
 #define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes)
 #define EEP_ADDR_BLOCKSIZE  0x02    // eeprom address for FC block size (2 bytes)
 #define EEP_ADDR_SEP_TIME   0x04    // eeprom address for FC separation time (2 bytes)
-#define EEP_ADDR_BT_PIN     0x06    // eeprom address for Blutooth pin (16 bytes)
+#define EEP_ADDR_BT_INIT    0x06    // eeprom address for Bluetooth init required (2 bytes)
+#define EEP_ADDR_BT_PIN     0x08    // eeprom address for Blutooth pin (16 bytes)
 
 #define TEMP_BUF_SIZE       0x0800  // temp buffer size
 
@@ -145,7 +146,8 @@ static const uint16_t adapter_version @ _ROMSIZE - 6 = ADAPTER_VERSION;
 static volatile bool start_indicator;   // show start indicator
 static volatile bool init_failed;       // initialization failed
 static uint8_t idle_counter;
-static volatile uint8_t pin_buffer[4];
+static bool init_bt_required;
+static uint8_t pin_buffer[4];
 
 static volatile rec_states rec_state;
 static volatile uint16_t rec_len;
@@ -872,9 +874,9 @@ uint16_t uart_receive(uint8_t *buffer)
     return data_len;
 }
 
-bool send_bt_config(uint8_t *buffer, uint16_t count)
+bool send_bt_config(uint8_t *buffer, uint16_t count, uint8_t retries)
 {
-    for (uint8_t i = 0; i < 3; i++)
+    for (uint8_t i = 0; i < retries; i++)
     {
         if (!uart_send(buffer, count))
         {
@@ -888,6 +890,12 @@ bool send_bt_config(uint8_t *buffer, uint16_t count)
             uint16_t len = uart_receive(temp_buffer);
             if (len > 0)
             {
+                // pause after command
+                uint16_t start_tick2 = get_systick();
+                while ((uint16_t) (get_systick() - start_tick2) < (50 * TIMER0_RESOL / 1000))
+                {
+                    CLRWDT();
+                }
                 return true;
             }
             if ((uint16_t) (get_systick() - start_tick) > (500 * TIMER0_RESOL / 1000))
@@ -897,6 +905,54 @@ bool send_bt_config(uint8_t *buffer, uint16_t count)
         }
     }
     return false;
+}
+
+bool set_bt_default()
+{
+    static const char bt_default[] = "AT+DEFAULT\r\n";
+    return send_bt_config((uint8_t *) bt_default, sizeof(bt_default) - 1, 3);
+}
+
+bool set_bt_baud()
+{
+    static const char bt_baud[] = "AT+BAUD8\r\n";   // 115200
+
+    uint8_t old_baudl = SPBRG1;
+    uint8_t old_baudh = SPBRGH1;
+
+    RCSTAbits.SPEN = 0;
+    SPBRGH1 = 415 >> 8;
+    SPBRG1 = 415;        // 9600 @ 16MHz
+    RCSTAbits.SPEN = 1;
+
+    send_bt_config((uint8_t *) bt_baud, sizeof(bt_baud) - 1, 2);
+
+    RCSTAbits.SPEN = 0;
+    SPBRGH1 = old_baudh;
+    SPBRG1 = old_baudl;
+    RCSTAbits.SPEN = 1;
+
+    return send_bt_config((uint8_t *) bt_baud, sizeof(bt_baud) - 1, 2);
+}
+
+bool set_bt_init()
+{
+    static const char * const bt_init[] =
+    {
+        "AT+ENABLEIND0\r\n",
+        "AT+ROLE0\r\n",
+        "AT+NAMEDeep OBD BMW\r\n",
+    };
+    bool result = true;
+    for (uint8_t i = 0; i < sizeof(bt_init)/sizeof(bt_init[0]); i++)
+    {
+        const char *pinit = bt_init[i];
+        if (!send_bt_config((uint8_t *) pinit, strlen(pinit), 3))
+        {
+            result = false;
+        }
+    }
+    return result;
 }
 
 bool set_bt_pin()
@@ -921,7 +977,7 @@ bool set_bt_pin()
     temp_buffer[len++] = '\r';
     temp_buffer[len++] = '\n';
 
-    return send_bt_config(temp_buffer, len);
+    return send_bt_config(temp_buffer, len, 3);
 }
 
 bool init_bt()
@@ -938,7 +994,28 @@ bool init_bt()
         update_led();
     }
 
-    bool result = set_bt_pin();
+    bool result = true;
+    if (init_bt_required)
+    {
+        //set_bt_default();   // for testing
+        if (!set_bt_baud())
+        {
+            result = false;
+        }
+        if (!set_bt_init())
+        {
+            result = false;
+        }
+        if (result)
+        {
+            eeprom_write(EEP_ADDR_BT_INIT, 0x01);
+            eeprom_write(EEP_ADDR_BT_INIT + 1, ~0x01);
+        }
+    }
+    if (!set_bt_pin())
+    {
+        result = false;
+    }
 
     di();
     rec_bt_mode = false;
@@ -1068,6 +1145,17 @@ void read_eeprom()
     if ((~temp_value1 & 0xFF) == temp_value2)
     {
         can_sep_time = temp_value1;
+    }
+
+    temp_value1 = eeprom_read(EEP_ADDR_BT_INIT);
+    temp_value2 = eeprom_read(EEP_ADDR_BT_INIT + 1);
+    init_bt_required = true;
+    if ((~temp_value1 & 0xFF) == temp_value2)
+    {
+        if (temp_value1 == 0x01)
+        {
+            init_bt_required = false;
+        }
     }
 
     uint8_t pin_len = 0;
@@ -1652,9 +1740,11 @@ void main(void)
     TRISCbits.TRISC6 = 0;   // TX output
     TRISCbits.TRISC7 = 1;   // RX input
 #if ADAPTER_TYPE == 0x02
-    SPBRG = 103;            // 38400 @ 16MHz
+    SPBRGH1 = 0;
+    SPBRG1 = 103;           // 38400 @ 16MHz
 #else
-    SPBRG = 34;             // 115200 @ 16MHz
+    SPBRGH1 = 0;
+    SPBRG1 = 34;            // 115200 @ 16MHz
 #endif
     TXSTAbits.TXEN = 1;     // Enable transmit
     TXSTAbits.BRGH = 1;     // Select high baud rate
