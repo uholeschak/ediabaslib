@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Reflection;
+using System.Text;
 using Android.Bluetooth;
 using Android.Content;
 using Android.Hardware.Usb;
@@ -15,6 +17,8 @@ using EdiabasLib;
 using Hoho.Android.UsbSerial.Driver;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
+using System.Threading;
+using Android.Content.PM;
 
 namespace BmwDeepObd
 {
@@ -765,6 +769,81 @@ namespace BmwDeepObd
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }
 
+        public bool SendTraceFile(string traceFile, PackageInfo packageInfo)
+        {
+            if (!File.Exists(traceFile))
+            {
+                return false;
+            }
+            string mailBody = string.Format("Deep OBD Trace file\nApp version name: {0}\nApp version code: {1}",
+                packageInfo.VersionName, packageInfo.VersionCode);
+
+            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_activity);
+            progress.SetCancelable(false);
+            progress.SetMessage(_activity.GetString(Resource.String.zip_trace_file));
+            progress.Show();
+
+            Thread sendThread = new Thread(() =>
+            {
+                bool sendFailed = false;
+                try
+                {
+                    string zipFile = Path.Combine(Path.GetDirectoryName(traceFile) ?? string.Empty, "trace.zip");
+                    if (!CreateZipFile(new[] {traceFile}, zipFile, null))
+                    {
+                        _activity.RunOnUiThread(() =>
+                        {
+                            progress.Hide();
+                            progress.Dispose();
+                            ShowAlert(_activity.GetString(Resource.String.compress_trace_file_failed),
+                                Resource.String.alert_title_error);
+                        });
+                        return;
+                    }
+
+                    SmtpClient client = new SmtpClient
+                    {
+                        Host = "auth.mail.onlinehome.de",
+                        Port = 587,
+                        EnableSsl = true,
+                        DeliveryMethod = SmtpDeliveryMethod.Network,
+                        Credentials = new System.Net.NetworkCredential("bmwdeepobd@holeschak.de", "bmwdeepobd"),
+                    };
+                    MailMessage mail = new MailMessage("bmwdeepobd@holeschak.de", "ulrich@holeschak.de")
+                    {
+                        Subject = "Deep OBD trace file",
+                        Body = mailBody,
+                        BodyEncoding = Encoding.UTF8
+                    };
+
+                    mail.Attachments.Add(new Attachment(zipFile));
+
+                    _activity.RunOnUiThread(() =>
+                    {
+                        progress.SetMessage(_activity.GetString(Resource.String.send_trace_file));
+                    });
+                    client.Send(mail);
+                    File.Delete(zipFile);
+                }
+                catch (Exception)
+                {
+                    sendFailed = true;
+                }
+                _activity.RunOnUiThread(() =>
+                {
+                    progress.Hide();
+                    progress.Dispose();
+                    if (sendFailed)
+                    {
+                        ShowAlert(_activity.GetString(Resource.String.send_trace_file_failed),
+                            Resource.String.alert_title_error);
+                    }
+                });
+            });
+            sendThread.Start();
+            return true;
+        }
+
         public static string MakeRelativePath(string fromPath, string toPath)
         {
             if (string.IsNullOrEmpty(fromPath))
@@ -846,6 +925,60 @@ namespace BmwDeepObd
                     zf.Close(); // Ensure we release resources
                 }
             }
+        }
+
+        public static bool CreateZipFile(string[] inputFiles, string archiveFilenameOut,
+            ProgressZipDelegate progressHandler)
+        {
+            try
+            {
+                FileStream fsOut = File.Create(archiveFilenameOut);
+                ZipOutputStream zipStream = new ZipOutputStream(fsOut);
+                zipStream.SetLevel(3);
+
+                try
+                {
+                    long index = 0;
+                    foreach (string filename in inputFiles)
+                    {
+                        if (progressHandler != null)
+                        {
+                            if (progressHandler((int)(100 * index / inputFiles.Length)))
+                            {
+                                return false;
+                            }
+                        }
+
+                        FileInfo fi = new FileInfo(filename);
+                        string entryName = Path.GetFileName(filename);
+
+                        ZipEntry newEntry = new ZipEntry(entryName)
+                        {
+                            DateTime = fi.LastWriteTime,
+                            Size = fi.Length
+                        };
+                        zipStream.PutNextEntry(newEntry);
+
+                        byte[] buffer = new byte[4096];
+                        using (FileStream streamReader = File.OpenRead(filename))
+                        {
+                            StreamUtils.Copy(streamReader, zipStream, buffer);
+                        }
+                        zipStream.CloseEntry();
+                        index++;
+                    }
+                }
+                finally
+                {
+                    zipStream.IsStreamOwner = true;
+                    zipStream.Close();
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
         public static string CreateValidFileName(string s, char replaceChar = '_', char[] includeChars = null)
