@@ -146,8 +146,10 @@ static const uint16_t adapter_version @ _ROMSIZE - 6 = ADAPTER_VERSION;
 static volatile bool start_indicator;   // show start indicator
 static volatile bool init_failed;       // initialization failed
 static uint8_t idle_counter;
+#if ADAPTER_TYPE != 0x02
 static bool init_bt_required;
 static uint8_t pin_buffer[4];
+#endif
 
 static volatile rec_states rec_state;
 static volatile uint16_t rec_len;
@@ -605,7 +607,7 @@ void kline_receive()
                 {
                     INTCONbits.TMR0IF = 0;
                     idle_counter++;
-                    if (idle_counter > 2)
+                    if (idle_counter > 16)  // 60 sec.
                     {   // idle -> leave loop
                         ei();
                         return;
@@ -874,6 +876,7 @@ uint16_t uart_receive(uint8_t *buffer)
     return data_len;
 }
 
+#if ADAPTER_TYPE != 0x02
 bool send_bt_config(uint8_t *buffer, uint16_t count, uint8_t retries)
 {
     for (uint8_t i = 0; i < retries; i++)
@@ -1023,6 +1026,7 @@ bool init_bt()
     ei();
     return result;
 }
+#endif
 
 void update_led()
 {
@@ -1147,6 +1151,7 @@ void read_eeprom()
         can_sep_time = temp_value1;
     }
 
+#if ADAPTER_TYPE != 0x02
     temp_value1 = eeprom_read(EEP_ADDR_BT_INIT);
     temp_value2 = eeprom_read(EEP_ADDR_BT_INIT + 1);
     init_bt_required = true;
@@ -1177,6 +1182,7 @@ void read_eeprom()
         static const uint8_t default_pin[] = {'1', '2', '3', '4'};
         memcpy(pin_buffer, default_pin, sizeof(default_pin));
     }
+#endif
 }
 
 bool can_send_message_wait()
