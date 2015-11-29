@@ -52,6 +52,7 @@
   <string name="send_trace_file">Trace-Datei senden</string>
   <string name="compress_trace_file_failed">Trace-Datei komprimieren fehlgeschlagen.</string>
   <string name="send_trace_file_failed">Trace-Datei senden fehlgeschlagen.</string>
+  <string name="send_trace_file_failed_retry">Trace-Datei senden fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.\nWollen Sie das Senden wiederholen?</string>
 
   <!--  DeviceListActivity -->
   <string name="scanning">Nach Geräten suchen ...</string>

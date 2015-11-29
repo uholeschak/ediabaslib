@@ -822,7 +822,47 @@ namespace BmwDeepObd
                     {
                         progress.SetMessage(_activity.GetString(Resource.String.send_trace_file));
                     });
-                    client.Send(mail);
+
+                    AutoResetEvent retryEvent = new AutoResetEvent(false);
+                    for (; ; )
+                    {
+                        retryEvent.Reset();
+                        try
+                        {
+                            client.Send(mail);
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            bool retrySend = false;
+                            _activity.RunOnUiThread(() =>
+                            {
+                                AlertDialog altertDialog = new AlertDialog.Builder(_activity)
+                                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                    {
+                                        retrySend = true;
+                                    })
+                                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                    {
+                                    })
+                                    .SetCancelable(true)
+                                    .SetMessage(Resource.String.send_trace_file_failed_retry)
+                                    .SetTitle(Resource.String.alert_title_error)
+                                    .Show();
+                                altertDialog.DismissEvent += (sender, args) =>
+                                {
+                                    // ReSharper disable once AccessToDisposedClosure
+                                    retryEvent.Set();
+                                };
+                            });
+                            retryEvent.WaitOne();
+                            if (!retrySend)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    retryEvent.Dispose();
                     File.Delete(zipFile);
                 }
                 catch (Exception)
