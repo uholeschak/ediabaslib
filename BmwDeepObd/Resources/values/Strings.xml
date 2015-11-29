@@ -52,6 +52,7 @@
   <string name="send_trace_file">Sending trace file</string>
   <string name="compress_trace_file_failed">Compressing trace file failed.</string>
   <string name="send_trace_file_failed">Sending trace file failed.</string>
+  <string name="send_trace_file_failed_retry">Sending trace file failed.\nPlease check your network connection.\nDo you want to retry sending?</string>
 
   <!--  DeviceListActivity -->
   <string name="scanning">Scanning for devices ...</string>
