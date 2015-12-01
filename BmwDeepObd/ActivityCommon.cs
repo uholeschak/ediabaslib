@@ -769,7 +769,35 @@ namespace BmwDeepObd
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }
 
-        public bool SendTraceFile(string traceFile, PackageInfo packageInfo)
+        public bool RequestSendTraceFile(string traceDir, PackageInfo packageInfo, EventHandler<EventArgs> handler = null)
+        {
+            string traceFile = Path.Combine(traceDir, "ifh.trc");
+
+            if (!File.Exists(traceFile))
+            {
+                return false;
+            }
+            new AlertDialog.Builder(_activity)
+                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                {
+                    SendTraceFile(traceFile, packageInfo, true);
+                })
+                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                {
+                    if (handler != null)
+                    {
+                        handler(this, new EventArgs());
+                    }
+                })
+                .SetCancelable(true)
+                .SetMessage(Resource.String.send_trace_file_request)
+                .SetTitle(Resource.String.alert_title_question)
+                .Show();
+
+            return true;
+        }
+
+        public bool SendTraceFile(string traceFile, PackageInfo packageInfo, bool deleteFile = false)
         {
             if (!File.Exists(traceFile))
             {
@@ -830,6 +858,17 @@ namespace BmwDeepObd
                         try
                         {
                             client.Send(mail);
+                            if (deleteFile)
+                            {
+                                try
+                                {
+                                    File.Delete(traceFile);
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
                             break;
                         }
                         catch (Exception)
@@ -1000,7 +1039,7 @@ namespace BmwDeepObd
                         zipStream.PutNextEntry(newEntry);
 
                         byte[] buffer = new byte[4096];
-                        using (FileStream streamReader = File.OpenRead(filename))
+                        using (FileStream streamReader = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                         {
                             StreamUtils.Copy(streamReader, zipStream, buffer);
                         }
