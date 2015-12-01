@@ -54,16 +54,18 @@ namespace BmwDeepObd
             RequestEdiabasTool,
         }
 
-        private class UnzipInfo
+        private class DownloadInfo
         {
-            public UnzipInfo(string fileName, string targetDir, XElement infoXml = null)
+            public DownloadInfo(string fileName, string downloadDir, string targetDir, XElement infoXml = null)
             {
                 _fileName = fileName;
+                _downloadDir = downloadDir;
                 _targetDir = targetDir;
                 _infoXml = infoXml;
             }
 
             private readonly string _fileName;
+            private readonly string _downloadDir;
             private readonly string _targetDir;
             private readonly XElement _infoXml;
 
@@ -75,6 +77,11 @@ namespace BmwDeepObd
             public string TargetDir
             {
                 get { return _targetDir; }
+            }
+
+            public string DownloadDir
+            {
+                get { return _downloadDir; }
             }
 
             public XElement InfoXml
@@ -93,7 +100,7 @@ namespace BmwDeepObd
         private const string SharedAppName = "de.holeschak.bmw_deep_obd";
         private const string AppFolderName = "de.holeschak.bmw_deep_obd";
         private const string EcuDirName = "Ecu";
-        private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Ecu1.zip";
+        private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Ecu1.xml";
         private const string InfoXmlName = "Info.xml";
         private const long EcuZipSize = 120000000;          // ecu zip file size
         private const long EcuExtractSize = 1200000000;     // extracted ecu files size
@@ -1505,17 +1512,11 @@ namespace BmwDeepObd
             });
         }
 
-        private void DownloadFile(string url, string fileName, string unzipTargetDir = null)
+        private void DownloadFile(string url, string downloadDir, string unzipTargetDir = null)
         {
-            string dirName = Path.GetDirectoryName(fileName);
-            if (dirName == null)
-            {
-                _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
-                return;
-            }
             try
             {
-                Directory.CreateDirectory(dirName);
+                Directory.CreateDirectory(downloadDir);
             }
             catch (Exception)
             {
@@ -1523,30 +1524,35 @@ namespace BmwDeepObd
                 return;
             }
 
-            _downloadProgress = new Android.App.ProgressDialog(this);
-            _downloadProgress.DismissEvent += (sender, args) => { _downloadProgress = null; };
+            if (_downloadProgress == null)
+            {
+                _downloadProgress = new Android.App.ProgressDialog(this);
+                _downloadProgress.DismissEvent += (sender, args) => { _downloadProgress = null; };
+                _downloadProgress.CancelEvent += DownloadProgressCancel;
+            }
             _downloadProgress.SetCancelable(true);
             _downloadProgress.SetMessage(GetString(Resource.String.downloading_file));
             _downloadProgress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
             _downloadProgress.Progress = 0;
             _downloadProgress.Max = 100;
-            _downloadProgress.CancelEvent += DownloadProgressCancel;
             _downloadProgress.Show();
 
             Thread downloadThread = new Thread(() =>
             {
                 try
                 {
-                    UnzipInfo unzipInfo = null;
+                    string fileName = Path.GetFileName(url) ?? string.Empty;
+                    string fileNameFull = Path.Combine(downloadDir, fileName);
+                    DownloadInfo downloadInfo = null;
                     if (!string.IsNullOrEmpty(unzipTargetDir))
                     {
                         XElement xmlInfo = new XElement("Info");
                         xmlInfo.Add(new XAttribute("Url", url));
-                        xmlInfo.Add(new XAttribute("Name", Path.GetFileName(url)??string.Empty));
-                        unzipInfo = new UnzipInfo(fileName, unzipTargetDir, xmlInfo);
+                        xmlInfo.Add(new XAttribute("Name", fileName));
+                        downloadInfo = new DownloadInfo(fileNameFull, downloadDir, unzipTargetDir, xmlInfo);
                     }
                     // ReSharper disable once RedundantNameQualifier
-                    _webClient.DownloadFileAsync(new System.Uri(url), fileName, unzipInfo);
+                    _webClient.DownloadFileAsync(new System.Uri(url), fileNameFull, downloadInfo);
                 }
                 catch (Exception)
                 {
@@ -1569,37 +1575,61 @@ namespace BmwDeepObd
         {
             RunOnUiThread(() =>
             {
-                UnzipInfo unzipInfo = e.UserState as UnzipInfo;
+                DownloadInfo downloadInfo = e.UserState as DownloadInfo;
                 if (_downloadProgress != null)
                 {
+                    bool error = false;
                     _downloadProgress.SetCancelable(false);
                     if (e.Error == null)
                     {
-                        if (unzipInfo != null)
+                        if (downloadInfo != null)
                         {
-                            _downloadProgress.CancelEvent -= DownloadProgressCancel;
-                            ExtractZipFile(unzipInfo.FileName, unzipInfo.TargetDir, unzipInfo.InfoXml, true);
-                            return;
+                            string extension = Path.GetExtension(downloadInfo.FileName) ?? string.Empty;
+                            if (string.Compare(extension, ".xml", StringComparison.OrdinalIgnoreCase) == 0)
+                            {   // XML URL file
+                                string url = GetDownloadUrl(downloadInfo.FileName);
+                                try
+                                {
+                                    if (File.Exists(downloadInfo.FileName))
+                                    {
+                                        File.Delete(downloadInfo.FileName);
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                                if (!string.IsNullOrEmpty(url))
+                                {
+                                    DownloadFile(url, downloadInfo.DownloadDir, downloadInfo.TargetDir);
+                                    return;
+                                }
+                                error = true;
+                            }
+                            else if (string.Compare(extension, ".zip", StringComparison.OrdinalIgnoreCase) == 0)
+                            {   // zip file
+                                _downloadProgress.CancelEvent -= DownloadProgressCancel;
+                                ExtractZipFile(downloadInfo.FileName, downloadInfo.TargetDir, downloadInfo.InfoXml, true);
+                                return;
+                            }
                         }
                     }
-                    else
+                    _downloadProgress.Hide();
+                    _downloadProgress.Dispose();
+                    _downloadProgress = null;
+                    if ((!e.Cancelled && e.Error != null) || error)
                     {
-                        _downloadProgress.Hide();
-                        _downloadProgress.Dispose();
-                        _downloadProgress = null;
-                        if (!e.Cancelled && e.Error != null)
-                        {
-                            _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
-                        }
+                        _activityCommon.ShowAlert(GetString(Resource.String.download_failed),
+                            Resource.String.alert_title_error);
                     }
                 }
-                if (unzipInfo != null)
+                if (downloadInfo != null)
                 {
                     try
                     {
-                        if (File.Exists(unzipInfo.FileName))
+                        if (File.Exists(downloadInfo.FileName))
                         {
-                            File.Delete(unzipInfo.FileName);
+                            File.Delete(downloadInfo.FileName);
                         }
                     }
                     catch (Exception)
@@ -1626,6 +1656,37 @@ namespace BmwDeepObd
             if (_webClient.IsBusy)
             {
                 _webClient.CancelAsync();
+            }
+        }
+
+        private string GetDownloadUrl(string xmlFile)
+        {
+            try
+            {
+                if (!File.Exists(xmlFile))
+                {
+                    return null;
+                }
+                XDocument xmlDoc = XDocument.Load(xmlFile);
+                if (xmlDoc.Root == null)
+                {
+                    return null;
+                }
+                XElement fileNode = xmlDoc.Root.Element("file");
+                if (fileNode == null)
+                {
+                    return null;
+                }
+                XAttribute urlAttr = fileNode.Attribute("url");
+                if (urlAttr == null)
+                {
+                    return null;
+                }
+                return urlAttr.Value;
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 
@@ -1768,7 +1829,7 @@ namespace BmwDeepObd
             {
                 // ignored
             }
-            DownloadFile(EcuDownloadUrl, Path.Combine(_appDataPath, "Download", "Ecu.zip"), ecuPath);
+            DownloadFile(EcuDownloadUrl, Path.Combine(_appDataPath, "Download"), ecuPath);
         }
 
         private bool CheckForEcuFiles(bool checkPackage = false)
@@ -1861,7 +1922,7 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                if (string.Compare(nameAttr.Value, Path.GetFileName(EcuDownloadUrl), StringComparison.OrdinalIgnoreCase) != 0)
+                if (string.Compare(Path.GetFileNameWithoutExtension(nameAttr.Value), Path.GetFileNameWithoutExtension(EcuDownloadUrl), StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     return false;
                 }
