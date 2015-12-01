@@ -152,6 +152,7 @@ namespace BmwDeepObd
         private EdiabasNet _ediabas;
         private StreamWriter _swDataLog;
         private string _dataLogDir;
+        private string _traceDir;
         private Thread _jobThread;
         private volatile bool _runContinuous;
         private volatile bool _ediabasJobAbort;
@@ -297,7 +298,13 @@ namespace BmwDeepObd
         {
             if (!IsJobRunning())
             {
-                base.OnBackPressed();
+                if (!SendTraceFile((sender, args) =>
+                {
+                    base.OnBackPressed();
+                }))
+                {
+                    base.OnBackPressed();
+                }
             }
         }
 
@@ -426,7 +433,13 @@ namespace BmwDeepObd
                     {
                         return true;
                     }
-                    Finish();
+                    if (!SendTraceFile((sender, args) =>
+                    {
+                        Finish();
+                    }))
+                    {
+                        Finish();
+                    }
                     return true;
 
                 case Resource.Id.menu_tool_sel_interface:
@@ -563,6 +576,16 @@ namespace BmwDeepObd
             {
                 _imm.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
             }
+        }
+
+        private bool SendTraceFile(EventHandler<EventArgs> handler)
+        {
+            if (_traceActive && !string.IsNullOrEmpty(_traceDir))
+            {
+                EdiabasClose();
+                return _activityCommon.RequestSendTraceFile(_traceDir, PackageManager.GetPackageInfo(PackageName, 0), handler);
+            }
+            return false;
         }
 
         private void UpdateDisplay()
@@ -846,15 +869,15 @@ namespace BmwDeepObd
             }
             _dataLogDir = logDir;
 
-            string traceDir = null;
+            _traceDir = null;
             if (_traceActive && !string.IsNullOrEmpty(_sgbdFileName))
             {
-                traceDir = logDir;
+                _traceDir = logDir;
             }
 
-            if (!string.IsNullOrEmpty(traceDir))
+            if (!string.IsNullOrEmpty(_traceDir))
             {
-                _ediabas.SetConfigProperty("TracePath", traceDir);
+                _ediabas.SetConfigProperty("TracePath", _traceDir);
                 _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
                 _ediabas.SetConfigProperty("AppendTrace", _traceAppend ? "1" : "0");
             }

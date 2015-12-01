@@ -769,7 +769,7 @@ namespace BmwDeepObd
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }
 
-        public bool RequestSendTraceFile(string traceDir, PackageInfo packageInfo)
+        public bool RequestSendTraceFile(string traceDir, PackageInfo packageInfo, EventHandler<EventArgs> handler = null)
         {
             string traceFile = Path.Combine(traceDir, "ifh.trc");
 
@@ -784,6 +784,10 @@ namespace BmwDeepObd
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
+                    if (handler != null)
+                    {
+                        handler(this, new EventArgs());
+                    }
                 })
                 .SetCancelable(true)
                 .SetMessage(Resource.String.send_trace_file_request)
@@ -1035,7 +1039,7 @@ namespace BmwDeepObd
                         zipStream.PutNextEntry(newEntry);
 
                         byte[] buffer = new byte[4096];
-                        using (FileStream streamReader = File.OpenRead(filename))
+                        using (FileStream streamReader = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                         {
                             StreamUtils.Copy(streamReader, zipStream, buffer);
                         }
