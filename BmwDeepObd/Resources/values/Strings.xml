@@ -47,7 +47,8 @@
   <string name="extract_failed">Extracting files failed.\nThe zip file seems to be corrupted.</string>
   <string name="extract_failed_io">Writing extracted files failed.\nIs there no space left on the device?</string>
 
-  <!-- Send email -->
+  <!-- Send trace file -->
+  <string name="send_trace_file_request">A trace file is present.\nDo you want to send this anonymous file to allow improvement of the product?</string>
   <string name="zip_trace_file">Compressing trace file</string>
   <string name="send_trace_file">Sending trace file</string>
   <string name="compress_trace_file_failed">Compressing trace file failed.</string>

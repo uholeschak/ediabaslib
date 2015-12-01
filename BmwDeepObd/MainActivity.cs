@@ -129,6 +129,7 @@ namespace BmwDeepObd
         private EdiabasThread _ediabasThread;
         private StreamWriter _swDataLog;
         private string _dataLogDir;
+        private string _traceDir;
         private List<Fragment> _fragmentList;
         private Fragment _lastFragment;
         private readonly ConnectButtonInfo _connectButtonInfo = new ConnectButtonInfo();
@@ -655,10 +656,10 @@ namespace BmwDeepObd
                 }
                 _dataLogDir = logDir;
 
-                string traceDir = null;
+                _traceDir = null;
                 if (_traceActive && !string.IsNullOrEmpty(_configFileName))
                 {
-                    traceDir = logDir;
+                    _traceDir = logDir;
                 }
                 JobReader.PageInfo pageInfo = GetSelectedPage();
                 object connectParameter = null;
@@ -683,7 +684,7 @@ namespace BmwDeepObd
                             connectParameter = new EdFtdiInterface.ConnectParameter(this, _activityCommon.UsbManager);
                             break;
                     }
-                    _ediabasThread.StartThread(portName, connectParameter, traceDir, _traceAppend, pageInfo, true);
+                    _ediabasThread.StartThread(portName, connectParameter, _traceDir, _traceAppend, pageInfo, true);
                     if (_dataLogActive)
                     {
                         _activityCommon.SetCpuLock(true);
@@ -887,6 +888,10 @@ namespace BmwDeepObd
             }
             StopEdiabasThread(true);
             UpdateDisplay();
+            if (_traceActive && !string.IsNullOrEmpty(_traceDir))
+            {
+                _activityCommon.RequestSendTraceFile(_traceDir, PackageManager.GetPackageInfo(PackageName, 0));
+            }
         }
 
         private JobReader.PageInfo GetSelectedPage()

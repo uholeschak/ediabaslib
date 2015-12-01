@@ -769,7 +769,31 @@ namespace BmwDeepObd
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }
 
-        public bool SendTraceFile(string traceFile, PackageInfo packageInfo)
+        public bool RequestSendTraceFile(string traceDir, PackageInfo packageInfo)
+        {
+            string traceFile = Path.Combine(traceDir, "ifh.trc");
+
+            if (!File.Exists(traceFile))
+            {
+                return false;
+            }
+            new AlertDialog.Builder(_activity)
+                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                {
+                    SendTraceFile(traceFile, packageInfo, true);
+                })
+                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                {
+                })
+                .SetCancelable(true)
+                .SetMessage(Resource.String.send_trace_file_request)
+                .SetTitle(Resource.String.alert_title_question)
+                .Show();
+
+            return true;
+        }
+
+        public bool SendTraceFile(string traceFile, PackageInfo packageInfo, bool deleteFile = false)
         {
             if (!File.Exists(traceFile))
             {
@@ -830,6 +854,17 @@ namespace BmwDeepObd
                         try
                         {
                             client.Send(mail);
+                            if (deleteFile)
+                            {
+                                try
+                                {
+                                    File.Delete(traceFile);
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
                             break;
                         }
                         catch (Exception)
