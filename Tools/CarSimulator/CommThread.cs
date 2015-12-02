@@ -2191,11 +2191,6 @@ namespace CarSimulator
             {
                 return false;
             }
-            if (_klineResponder)
-            {   // remove echo
-                byte[] tempBuffer = new byte[sendLength];
-                ReceiveData(tempBuffer, 0, sendLength);
-            }
             return true;
         }
 
