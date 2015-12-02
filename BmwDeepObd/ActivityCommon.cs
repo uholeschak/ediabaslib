@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using System.Reflection;
 using System.Text;
@@ -18,6 +19,8 @@ using Hoho.Android.UsbSerial.Driver;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Threading;
+using System.Xml;
+using System.Xml.Linq;
 using Android.Content.PM;
 
 namespace BmwDeepObd
@@ -65,6 +68,7 @@ namespace BmwDeepObd
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
         public const string EmulatorEnetIp = "192.168.10.244";
         public const string ActionUsbPermission = "de.holeschak.bmw_deep_obd.USB_PERMISSION";
+        private const string MailInfoDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Mail.xml";
 
         private bool _disposed;
         private readonly Android.App.Activity _activity;
@@ -803,8 +807,8 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            string mailBody = string.Format("Deep OBD Trace file\nApp version name: {0}\nApp version code: {1}",
-                packageInfo.VersionName, packageInfo.VersionCode);
+            string mailBody = string.Format("Deep OBD Trace file\nDate: {0}\nApp version name: {1}\nApp version code: {2}",
+                DateTime.Now.ToString("u"), packageInfo.VersionName, packageInfo.VersionCode);
 
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_activity);
             progress.SetCancelable(false);
@@ -829,13 +833,10 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    SmtpClient client = new SmtpClient
+                    WebClient webClient = new WebClient();
+                    SmtpClient smtpClient = new SmtpClient
                     {
-                        Host = "auth.mail.onlinehome.de",
-                        Port = 587,
-                        EnableSsl = true,
                         DeliveryMethod = SmtpDeliveryMethod.Network,
-                        Credentials = new System.Net.NetworkCredential("bmwdeepobd@holeschak.de", "bmwdeepobd"),
                     };
                     MailMessage mail = new MailMessage("bmwdeepobd@holeschak.de", "ulrich@holeschak.de")
                     {
@@ -857,7 +858,31 @@ namespace BmwDeepObd
                         retryEvent.Reset();
                         try
                         {
-                            client.Send(mail);
+                            string mailInfoFile = Path.Combine(Path.GetDirectoryName(traceFile) ?? string.Empty, "Mail.xml");
+                            webClient.DownloadFile(MailInfoDownloadUrl, mailInfoFile);
+
+                            string mailHost;
+                            int mailPort;
+                            bool mailSsl;
+                            string mailUser;
+                            string mailPassword;
+                            if (!GetMailInfo(mailInfoFile, out mailHost, out mailPort, out mailSsl, out mailUser, out mailPassword))
+                            {
+                                throw new Exception("Invalid mail info");
+                            }
+                            try
+                            {
+                                File.Delete(mailInfoFile);
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                            smtpClient.Host = mailHost;
+                            smtpClient.Port = mailPort;
+                            smtpClient.EnableSsl = mailSsl;
+                            smtpClient.Credentials = new NetworkCredential(mailUser, mailPassword);
+                            smtpClient.Send(mail);
                             if (deleteFile)
                             {
                                 try
@@ -920,6 +945,67 @@ namespace BmwDeepObd
                 });
             });
             sendThread.Start();
+            return true;
+        }
+
+        private bool GetMailInfo(string xmlFile, out string host, out int port, out bool ssl, out string name, out string password)
+        {
+            host = null;
+            port = 0;
+            ssl = false;
+            name = null;
+            password = null;
+            try
+            {
+                if (!File.Exists(xmlFile))
+                {
+                    return false;
+                }
+                XDocument xmlDoc = XDocument.Load(xmlFile);
+                if (xmlDoc.Root == null)
+                {
+                    return false;
+                }
+                XElement emailNode = xmlDoc.Root.Element("email");
+                if (emailNode == null)
+                {
+                    return false;
+                }
+                XAttribute hostAttr = emailNode.Attribute("host");
+                if (hostAttr == null)
+                {
+                    return false;
+                }
+                host = hostAttr.Value;
+                XAttribute portAttr = emailNode.Attribute("port");
+                if (portAttr == null)
+                {
+                    return false;
+                }
+                port = XmlConvert.ToInt32(portAttr.Value);
+                XAttribute sslAttr = emailNode.Attribute("ssl");
+                if (sslAttr == null)
+                {
+                    return false;
+                }
+                ssl = XmlConvert.ToBoolean(sslAttr.Value);
+                XAttribute usernameAttr = emailNode.Attribute("username");
+                if (usernameAttr == null)
+                {
+                    return false;
+                }
+                name = usernameAttr.Value;
+                XAttribute paswordAttr = emailNode.Attribute("password");
+                if (paswordAttr == null)
+                {
+                    return false;
+                }
+                password = paswordAttr.Value;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
             return true;
         }
 
