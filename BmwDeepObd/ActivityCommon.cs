@@ -838,7 +838,7 @@ namespace BmwDeepObd
                     {
                         DeliveryMethod = SmtpDeliveryMethod.Network,
                     };
-                    MailMessage mail = new MailMessage("bmwdeepobd@holeschak.de", "ulrich@holeschak.de")
+                    MailMessage mail = new MailMessage()
                     {
                         Subject = "Deep OBD trace file",
                         Body = mailBody,
@@ -864,9 +864,11 @@ namespace BmwDeepObd
                             string mailHost;
                             int mailPort;
                             bool mailSsl;
+                            string mailFrom;
+                            string mailTo;
                             string mailUser;
                             string mailPassword;
-                            if (!GetMailInfo(mailInfoFile, out mailHost, out mailPort, out mailSsl, out mailUser, out mailPassword))
+                            if (!GetMailInfo(mailInfoFile, out mailHost, out mailPort, out mailSsl, out mailFrom, out mailTo, out mailUser, out mailPassword))
                             {
                                 throw new Exception("Invalid mail info");
                             }
@@ -881,7 +883,18 @@ namespace BmwDeepObd
                             smtpClient.Host = mailHost;
                             smtpClient.Port = mailPort;
                             smtpClient.EnableSsl = mailSsl;
-                            smtpClient.Credentials = new NetworkCredential(mailUser, mailPassword);
+                            smtpClient.UseDefaultCredentials = false;
+                            if (string.IsNullOrEmpty(mailUser) || string.IsNullOrEmpty(mailPassword))
+                            {
+                                smtpClient.Credentials = null;
+                            }
+                            else
+                            {
+                                smtpClient.Credentials = new NetworkCredential(mailUser, mailPassword);
+                            }
+                            mail.From = new MailAddress(mailFrom);
+                            mail.To.Clear();
+                            mail.To.Add(new MailAddress(mailTo));
                             smtpClient.Send(mail);
                             if (deleteFile)
                             {
@@ -948,11 +961,13 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool GetMailInfo(string xmlFile, out string host, out int port, out bool ssl, out string name, out string password)
+        private bool GetMailInfo(string xmlFile, out string host, out int port, out bool ssl, out string from, out string to, out string name, out string password)
         {
             host = null;
             port = 0;
             ssl = false;
+            from = null;
+            to = null;
             name = null;
             password = null;
             try
@@ -989,18 +1004,28 @@ namespace BmwDeepObd
                     return false;
                 }
                 ssl = XmlConvert.ToBoolean(sslAttr.Value);
+                XAttribute fromAttr = emailNode.Attribute("from");
+                if (fromAttr == null)
+                {
+                    return false;
+                }
+                from = fromAttr.Value;
+                XAttribute toAttr = emailNode.Attribute("to");
+                if (toAttr == null)
+                {
+                    return false;
+                }
+                to = toAttr.Value;
                 XAttribute usernameAttr = emailNode.Attribute("username");
-                if (usernameAttr == null)
+                if (usernameAttr != null)
                 {
-                    return false;
+                    name = usernameAttr.Value;
                 }
-                name = usernameAttr.Value;
-                XAttribute paswordAttr = emailNode.Attribute("password");
-                if (paswordAttr == null)
+                XAttribute passwordAttr = emailNode.Attribute("password");
+                if (passwordAttr != null)
                 {
-                    return false;
+                    password = passwordAttr.Value;
                 }
-                password = paswordAttr.Value;
             }
             catch (Exception)
             {
