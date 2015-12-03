@@ -1150,7 +1150,7 @@ namespace BmwDeepObd
                         zipStream.PutNextEntry(newEntry);
 
                         byte[] buffer = new byte[4096];
-                        using (FileStream streamReader = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        using (FileStream streamReader = File.OpenRead(filename))
                         {
                             StreamUtils.Copy(streamReader, zipStream, buffer);
                         }
