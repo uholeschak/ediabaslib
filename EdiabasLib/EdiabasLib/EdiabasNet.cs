@@ -2839,12 +2839,12 @@ namespace EdiabasLib
                     CloseSgbdFs();
                     CloseTableFs();
                     CloseAllUserFiles();
-                    CloseLog();
                     if (_edInterfaceClass != null)
                     {
                         _edInterfaceClass.Dispose();
                         _edInterfaceClass = null;
                     }
+                    CloseLog(); // must be closed after interface class
                 }
 
                 // Note disposing has been done.
