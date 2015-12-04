@@ -775,7 +775,7 @@ namespace BmwDeepObd
 
         public bool RequestSendTraceFile(string traceDir, PackageInfo packageInfo, EventHandler<EventArgs> handler = null)
         {
-            string traceFile = Path.Combine(traceDir, "ifh.trc");
+            string traceFile = Path.Combine(traceDir, "ifh.trc.zip");
 
             if (!File.Exists(traceFile))
             {
@@ -820,19 +820,6 @@ namespace BmwDeepObd
                 bool sendFailed = false;
                 try
                 {
-                    string zipFile = Path.Combine(Path.GetDirectoryName(traceFile) ?? string.Empty, "trace.zip");
-                    if (!CreateZipFile(new[] {traceFile}, zipFile, null))
-                    {
-                        _activity.RunOnUiThread(() =>
-                        {
-                            progress.Hide();
-                            progress.Dispose();
-                            ShowAlert(_activity.GetString(Resource.String.compress_trace_file_failed),
-                                Resource.String.alert_title_error);
-                        });
-                        return;
-                    }
-
                     WebClient webClient = new WebClient();
                     SmtpClient smtpClient = new SmtpClient
                     {
@@ -845,7 +832,7 @@ namespace BmwDeepObd
                         BodyEncoding = Encoding.UTF8
                     };
 
-                    mail.Attachments.Add(new Attachment(zipFile));
+                    mail.Attachments.Add(new Attachment(traceFile));
 
                     _activity.RunOnUiThread(() =>
                     {
@@ -940,7 +927,7 @@ namespace BmwDeepObd
                         }
                     }
                     retryEvent.Dispose();
-                    File.Delete(zipFile);
+                    File.Delete(traceFile);
                 }
                 catch (Exception)
                 {
