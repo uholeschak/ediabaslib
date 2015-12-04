@@ -5170,7 +5170,7 @@ namespace EdiabasLib
                                     }
                                     FileStream fsOut = File.Create(zipFileName);
                                     _zipStream = new ICSharpCode.SharpZipLib.Zip.ZipOutputStream(fsOut);
-                                    _zipStream.SetLevel(3);
+                                    _zipStream.SetLevel(8);
                                     ICSharpCode.SharpZipLib.Zip.ZipEntry newEntry =
                                         new ICSharpCode.SharpZipLib.Zip.ZipEntry(TraceFileName);
                                     _zipStream.PutNextEntry(newEntry);

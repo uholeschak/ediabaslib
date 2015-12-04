@@ -143,7 +143,7 @@ namespace BmwDeepObd
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
         private bool _addErrorsPage = true;
-        private bool _traceActive;
+        private bool _traceActive = true;
         private bool _traceAppend;
         private bool _activityActive;
         private volatile bool _ediabasJobAbort;

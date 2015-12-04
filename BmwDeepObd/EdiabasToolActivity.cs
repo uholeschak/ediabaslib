@@ -159,9 +159,10 @@ namespace BmwDeepObd
         private string _sgbdFileName = string.Empty;
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
-        private bool _traceActive;
+        private bool _traceActive = true;
         private bool _traceAppend;
         private bool _dataLogActive;
+        private bool _commErrorsOccured;
         private bool _activityActive;
         private readonly List<JobInfo> _jobList = new List<JobInfo>();
 
@@ -580,7 +581,7 @@ namespace BmwDeepObd
 
         private bool SendTraceFile(EventHandler<EventArgs> handler)
         {
-            if (_traceActive && !string.IsNullOrEmpty(_traceDir))
+            if (_commErrorsOccured && _traceActive && !string.IsNullOrEmpty(_traceDir))
             {
                 EdiabasClose();
                 return _activityCommon.RequestSendTraceFile(_traceDir, PackageManager.GetPackageInfo(PackageName, 0), handler);
@@ -1100,7 +1101,12 @@ namespace BmwDeepObd
                 }
                 catch (Exception ex)
                 {
-                    messageList.Add(EdiabasNet.GetExceptionText(ex));
+                    string exceptionText = EdiabasNet.GetExceptionText(ex);
+                    messageList.Add(exceptionText);
+                    if (ActivityCommon.IsCommunicationError(exceptionText))
+                    {
+                        _commErrorsOccured = true;
+                    }
                 }
 
                 RunOnUiThread(() =>
@@ -1264,7 +1270,12 @@ namespace BmwDeepObd
                     }
                     catch (Exception ex)
                     {
-                        messageList.Add(EdiabasNet.GetExceptionText(ex));
+                        string exceptionText = EdiabasNet.GetExceptionText(ex);
+                        messageList.Add(exceptionText);
+                        if (ActivityCommon.IsCommunicationError(exceptionText))
+                        {
+                            _commErrorsOccured = true;
+                        }
                     }
 
                     RunOnUiThread(() =>
