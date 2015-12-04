@@ -584,7 +584,7 @@ namespace BmwDeepObd
             if (_commErrorsOccured && _traceActive && !string.IsNullOrEmpty(_traceDir))
             {
                 EdiabasClose();
-                return _activityCommon.RequestSendTraceFile(_traceDir, PackageManager.GetPackageInfo(PackageName, 0), handler);
+                return _activityCommon.RequestSendTraceFile(_traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType(), handler);
             }
             return false;
         }
