@@ -1,4 +1,7 @@
-﻿using System;
+﻿#if Android
+#define COMPRESS_TRACE
+#endif
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -2202,6 +2205,7 @@ namespace EdiabasLib
         private static Dictionary<ErrorCodes, UInt32> _trapBitDict;
         private static bool _firstLog = true;
 
+        private const string TraceFileName = "ifh.trc";
         private const string JobNameInit = "INITIALISIERUNG";
         private const string JobNameExit = "ENDE";
         private const string JobNameIdent = "IDENTIFIKATION";
@@ -2244,6 +2248,9 @@ namespace EdiabasLib
         private ProgressJobDelegate _progressJobFunc;
         private ErrorRaisedDelegate _errorRaisedFunc;
         private StreamWriter _swLog;
+#if COMPRESS_TRACE
+        private ICSharpCode.SharpZipLib.Zip.ZipOutputStream _zipStream;
+#endif
         private readonly object _logLock = new object();
         private int _logLevelCached = -1;
         private readonly bool _lockTrace;
@@ -2745,6 +2752,9 @@ namespace EdiabasLib
             SetConfigProperty("IfhTrace", "0");
             SetConfigProperty("TraceBuffering", "0");
             SetConfigProperty("AppendTrace", "0");
+#if COMPRESS_TRACE
+            SetConfigProperty("CompressTrace", "0");
+#endif
             SetConfigProperty("LockTrace", "0");
 
             SetConfigProperty("UbattHandling", "0");
@@ -5140,14 +5150,63 @@ namespace EdiabasLib
                             {
                                 appendTrace = (int)StringToValue(prop);
                             }
-
-                            FileMode fileMode = FileMode.Append;
-                            if (_firstLog && appendTrace == 0)
+#if COMPRESS_TRACE
+                            int compressTrace = 0;
+                            prop = GetConfigProperty("CompressTrace");
+                            if (prop != null)
                             {
-                                _firstLog = false;
-                                fileMode = FileMode.Create;
+                                compressTrace = (int)StringToValue(prop);
                             }
-                            _swLog = new StreamWriter(new FileStream(Path.Combine(tracePath, "ifh.trc"), fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding);
+                            if (compressTrace != 0)
+                            {
+                                if (_zipStream == null)
+                                {
+                                    string zipFileName = Path.Combine(tracePath, TraceFileName + ".zip");
+                                    string zipFileNameOld = Path.Combine(tracePath, TraceFileName + ".old.zip");
+                                    bool appendZip = (!_firstLog || appendTrace != 0) && File.Exists(zipFileName);
+                                    if (appendZip)
+                                    {
+                                        File.Move(zipFileName, zipFileNameOld);
+                                    }
+                                    FileStream fsOut = File.Create(zipFileName);
+                                    _zipStream = new ICSharpCode.SharpZipLib.Zip.ZipOutputStream(fsOut);
+                                    _zipStream.SetLevel(3);
+                                    ICSharpCode.SharpZipLib.Zip.ZipEntry newEntry =
+                                        new ICSharpCode.SharpZipLib.Zip.ZipEntry(TraceFileName);
+                                    _zipStream.PutNextEntry(newEntry);
+
+                                    // copy old zip content to new one
+                                    if (appendZip)
+                                    {
+                                        FileStream fs = File.OpenRead(zipFileNameOld);
+                                        ICSharpCode.SharpZipLib.Zip.ZipFile zf = new ICSharpCode.SharpZipLib.Zip.ZipFile(fs);
+                                        foreach (ICSharpCode.SharpZipLib.Zip.ZipEntry zipEntry in zf)
+                                        {
+                                            if (zipEntry.IsFile && string.Compare(zipEntry.Name, TraceFileName, StringComparison.OrdinalIgnoreCase) == 0)
+                                            {
+                                                ICSharpCode.SharpZipLib.Core.StreamUtils.Copy(zf.GetInputStream(zipEntry), _zipStream, new byte[4096]);
+                                                break;
+                                            }
+                                        }
+                                        zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                                        zf.Close(); // Ensure we release resources
+                                        File.Delete(zipFileNameOld);
+                                    }
+                                }
+                                _swLog = new StreamWriter(_zipStream, Encoding, 1024, true);
+                            }
+                            else
+#endif
+                            {
+                                FileMode fileMode = FileMode.Append;
+                                if (_firstLog && appendTrace == 0)
+                                {
+                                    fileMode = FileMode.Create;
+                                }
+                                _swLog = new StreamWriter(
+                                    new FileStream(Path.Combine(tracePath, TraceFileName), fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding);
+                            }
+                            _firstLog = false;
                         }
                     }
                     if (_swLog != null)
@@ -5200,9 +5259,33 @@ namespace EdiabasLib
             {
                 if (_swLog != null)
                 {
-                    _swLog.Dispose();
+                    try
+                    {
+                        _swLog.Dispose();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                     _swLog = null;
                 }
+#if COMPRESS_TRACE
+                if (_zipStream != null)
+                {
+                    try
+                    {
+                        _zipStream.CloseEntry();
+                        _zipStream.IsStreamOwner = true;
+                        _zipStream.Close();
+                        _zipStream.Dispose();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    _zipStream = null;
+                }
+#endif
                 _logLevelCached = -1;
             }
         }
