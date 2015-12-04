@@ -773,7 +773,7 @@ namespace BmwDeepObd
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }
 
-        public bool RequestSendTraceFile(string traceDir, PackageInfo packageInfo, EventHandler<EventArgs> handler = null)
+        public bool RequestSendTraceFile(string traceDir, PackageInfo packageInfo, Type classType, EventHandler<EventArgs> handler = null)
         {
             string traceFile = Path.Combine(traceDir, "ifh.trc.zip");
 
@@ -784,7 +784,7 @@ namespace BmwDeepObd
             new AlertDialog.Builder(_activity)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
-                    SendTraceFile(traceFile, packageInfo, true);
+                    SendTraceFile(traceFile, packageInfo, classType, true);
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
@@ -801,14 +801,14 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool SendTraceFile(string traceFile, PackageInfo packageInfo, bool deleteFile = false)
+        public bool SendTraceFile(string traceFile, PackageInfo packageInfo, Type classType, bool deleteFile = false)
         {
             if (!File.Exists(traceFile))
             {
                 return false;
             }
-            string mailBody = string.Format("Deep OBD Trace file\nDate: {0}\nApp version name: {1}\nApp version code: {2}",
-                DateTime.Now.ToString("u"), packageInfo.VersionName, packageInfo.VersionCode);
+            string mailBody = string.Format("Deep OBD Trace file\nDate: {0}\nApp version name: {1}\nApp version code: {2}\nClass name: {3}",
+                DateTime.Now.ToString("u"), packageInfo.VersionName, packageInfo.VersionCode, classType.FullName);
 
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_activity);
             progress.SetCancelable(false);

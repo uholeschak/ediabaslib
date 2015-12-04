@@ -892,7 +892,7 @@ namespace BmwDeepObd
             UpdateDisplay();
             if (_commErrorsOccured && _traceActive && !string.IsNullOrEmpty(_traceDir))
             {
-                _activityCommon.RequestSendTraceFile(_traceDir, PackageManager.GetPackageInfo(PackageName, 0));
+                _activityCommon.RequestSendTraceFile(_traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType());
             }
         }
 
