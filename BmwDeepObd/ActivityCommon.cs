@@ -1190,6 +1190,19 @@ namespace BmwDeepObd
             }
         }
 
+        public static bool IsCommunicationError(string exceptionText)
+        {
+            if (string.IsNullOrEmpty(exceptionText))
+            {
+                return false;
+            }
+            if (exceptionText.Contains("executeJob aborted"))
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static List<string> GetAllStorageMedia()
         {
             string procMounts = ReadProcMounts();

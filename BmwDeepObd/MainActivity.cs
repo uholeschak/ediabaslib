@@ -114,9 +114,10 @@ namespace BmwDeepObd
         private string _appDataPath = String.Empty;
         private string _ecuPath = String.Empty;
         private bool _userEcuFiles;
-        private bool _traceActive;
+        private bool _traceActive = true;
         private bool _traceAppend;
         private bool _dataLogActive;
+        private bool _commErrorsOccured;
         private bool _activityActive;
         private bool _onResumeExecuted;
         private bool _createTabsPending;
@@ -633,6 +634,7 @@ namespace BmwDeepObd
         private bool StartEdiabasThread()
         {
             _autoStart = false;
+            _commErrorsOccured = false;
             try
             {
                 if (_ediabasThread == null)
@@ -888,7 +890,7 @@ namespace BmwDeepObd
             }
             StopEdiabasThread(true);
             UpdateDisplay();
-            if (_traceActive && !string.IsNullOrEmpty(_traceDir))
+            if (_commErrorsOccured && _traceActive && !string.IsNullOrEmpty(_traceDir))
             {
                 _activityCommon.RequestSendTraceFile(_traceDir, PackageManager.GetPackageInfo(PackageName, 0));
             }
@@ -1018,9 +1020,15 @@ namespace BmwDeepObd
                         }
                     }
                     Dictionary<string, EdiabasNet.ResultData> resultDict;
+                    string errorMessage;
                     lock (EdiabasThread.DataLock)
                     {
                         resultDict = _ediabasThread.EdiabasResultDict;
+                        errorMessage = _ediabasThread.EdiabasErrorMessage;
+                    }
+                    if (ActivityCommon.IsCommunicationError(errorMessage))
+                    {
+                        _commErrorsOccured = true;
                     }
 
                     bool formatResult = false;
@@ -1052,6 +1060,10 @@ namespace BmwDeepObd
                             string lastEcuName = null;
                             foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
                             {
+                                if (ActivityCommon.IsCommunicationError(errorReport.ExecptionText))
+                                {
+                                    _commErrorsOccured = true;
+                                }
                                 string message = string.Format(Culture, "{0}: ",
                                     GetPageString(pageInfo, errorReport.EcuName));
                                 if (errorReport.ErrorDict == null)
