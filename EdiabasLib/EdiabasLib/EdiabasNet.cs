@@ -5164,6 +5164,14 @@ namespace EdiabasLib
                                     string zipFileName = Path.Combine(tracePath, TraceFileName + ".zip");
                                     string zipFileNameOld = Path.Combine(tracePath, TraceFileName + ".old.zip");
                                     bool appendZip = (!_firstLog || appendTrace != 0) && File.Exists(zipFileName);
+                                    if (appendZip && appendTrace == 0)
+                                    {
+                                        FileInfo fileInfo = new FileInfo(zipFileName);
+                                        if (fileInfo.Length > 10000)
+                                        {   // limit appended size
+                                            appendZip = false;
+                                        }
+                                    }
                                     if (appendZip)
                                     {
                                         File.Move(zipFileName, zipFileNameOld);

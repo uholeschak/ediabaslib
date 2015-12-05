@@ -329,7 +329,11 @@ namespace BmwDeepObd
                     }
                     catch (Exception ex)
                     {
-                        string exText = EdiabasNet.GetExceptionText(ex);
+                        string exText = String.Empty;
+                        if (!_ediabasJobAbort)
+                        {
+                            exText = EdiabasNet.GetExceptionText(ex);
+                        }
                         errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, null, null, exText));
                         Thread.Sleep(10);
                         continue;
@@ -411,7 +415,11 @@ namespace BmwDeepObd
                     }
                     catch (Exception ex)
                     {
-                        string exText = EdiabasNet.GetExceptionText(ex);
+                        string exText = String.Empty;
+                        if (!_ediabasJobAbort)
+                        {
+                            exText = EdiabasNet.GetExceptionText(ex);
+                        }
                         errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, null, null, exText));
                         Thread.Sleep(10);
                         continue;
@@ -441,7 +449,11 @@ namespace BmwDeepObd
                     }
                     catch (Exception ex)
                     {
-                        string exText = EdiabasNet.GetExceptionText(ex);
+                        string exText = String.Empty;
+                        if (!_ediabasJobAbort)
+                        {
+                            exText = EdiabasNet.GetExceptionText(ex);
+                        }
                         lock (DataLock)
                         {
                             EdiabasErrorMessage = exText;
@@ -494,7 +506,11 @@ namespace BmwDeepObd
             catch (Exception ex)
             {
                 _ediabasInitReq = true;
-                string exText = EdiabasNet.GetExceptionText(ex);
+                string exText = String.Empty;
+                if (!_ediabasJobAbort)
+                {
+                    exText = EdiabasNet.GetExceptionText(ex);
+                }
                 lock (DataLock)
                 {
                     EdiabasResultDict = null;

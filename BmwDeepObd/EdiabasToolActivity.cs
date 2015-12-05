@@ -1101,7 +1101,11 @@ namespace BmwDeepObd
                 }
                 catch (Exception ex)
                 {
-                    string exceptionText = EdiabasNet.GetExceptionText(ex);
+                    string exceptionText = String.Empty;
+                    if (!_ediabasJobAbort)
+                    {
+                        exceptionText = EdiabasNet.GetExceptionText(ex);
+                    }
                     messageList.Add(exceptionText);
                     if (ActivityCommon.IsCommunicationError(exceptionText))
                     {
@@ -1270,7 +1274,11 @@ namespace BmwDeepObd
                     }
                     catch (Exception ex)
                     {
-                        string exceptionText = EdiabasNet.GetExceptionText(ex);
+                        string exceptionText = String.Empty;
+                        if (!_ediabasJobAbort)
+                        {
+                            exceptionText = EdiabasNet.GetExceptionText(ex);
+                        }
                         messageList.Add(exceptionText);
                         if (ActivityCommon.IsCommunicationError(exceptionText))
                         {
