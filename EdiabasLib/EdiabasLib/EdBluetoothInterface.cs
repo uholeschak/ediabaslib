@@ -572,7 +572,14 @@ namespace EdiabasLib
         {
             if (_elm327Device)
             {
-                Elm327LeaveDataMode(Elm327CommandTimeout);
+                try
+                {
+                    Elm327LeaveDataMode(Elm327CommandTimeout);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
         }
 
