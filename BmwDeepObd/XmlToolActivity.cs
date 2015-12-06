@@ -145,11 +145,13 @@ namespace BmwDeepObd
         private bool _addErrorsPage = true;
         private bool _traceActive = true;
         private bool _traceAppend;
+        private bool _commErrorsOccured;
         private bool _activityActive;
         private volatile bool _ediabasJobAbort;
         private bool _autoStart;
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
+        private string _traceDir;
         private Thread _jobThread;
         private string _vin = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
@@ -183,10 +185,7 @@ namespace BmwDeepObd
             _buttonSafe = _barView.FindViewById<Button>(Resource.Id.buttonXmlSafe);
             _buttonSafe.Click += (sender, args) =>
             {
-                if (SaveConfiguration())
-                {
-                    Finish();
-                }
+                SaveConfiguration(false);
             };
 
             _textViewCarInfo = FindViewById<TextView>(Resource.Id.textViewCarInfo);
@@ -258,26 +257,38 @@ namespace BmwDeepObd
 
         public override void OnBackPressed()
         {
-            if (IsJobRunning() || !_buttonSafe.Enabled)
+            if (IsJobRunning())
             {
-                base.OnBackPressed();
+                return;
+            }
+            if (!_buttonSafe.Enabled)
+            {
+                OnBackPressedContinue();
                 return;
             }
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
-                    if (SaveConfiguration())
-                    {
-                        base.OnBackPressed();
-                    }
+                    SaveConfiguration(true);
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
-                    base.OnBackPressed();
+                    OnBackPressedContinue();
                 })
                 .SetMessage(Resource.String.xml_tool_msg_save_config)
                 .SetTitle(Resource.String.alert_title_question)
                 .Show();
+        }
+
+        private void OnBackPressedContinue()
+        {
+            if (!SendTraceFile((sender, args) =>
+            {
+                base.OnBackPressed();
+            }))
+            {
+                base.OnBackPressed();
+            }
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
@@ -396,14 +407,11 @@ namespace BmwDeepObd
                         new AlertDialog.Builder(this)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                             {
-                                if (SaveConfiguration())
-                                {
-                                    Finish();
-                                }
+                                SaveConfiguration(true);
                             })
                             .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                             {
-                                Finish();
+                                FinishContinue();
                             })
                             .SetMessage(Resource.String.xml_tool_msg_save_config)
                             .SetTitle(Resource.String.alert_title_question)
@@ -411,7 +419,7 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        Finish();
+                        FinishContinue();
                     }
                     return true;
 
@@ -457,6 +465,17 @@ namespace BmwDeepObd
             return base.OnOptionsItemSelected(item);
         }
 
+        private void FinishContinue()
+        {
+            if (!SendTraceFile((sender, args) =>
+            {
+                Finish();
+            }))
+            {
+                Finish();
+            }
+        }
+
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool EdiabasClose()
         {
@@ -485,6 +504,16 @@ namespace BmwDeepObd
                 return true;
             }
             _jobThread = null;
+            return false;
+        }
+
+        private bool SendTraceFile(EventHandler<EventArgs> handler)
+        {
+            if (_commErrorsOccured && _traceActive && !string.IsNullOrEmpty(_traceDir))
+            {
+                EdiabasClose();
+                return _activityCommon.RequestSendTraceFile(_traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType(), handler);
+            }
             return false;
         }
 
@@ -537,15 +566,15 @@ namespace BmwDeepObd
                 logDir = string.Empty;
             }
 
-            string traceDir = null;
+            _traceDir = null;
             if (_traceActive && !string.IsNullOrEmpty(_sgbdFileName))
             {
-                traceDir = logDir;
+                _traceDir = logDir;
             }
 
-            if (!string.IsNullOrEmpty(traceDir))
+            if (!string.IsNullOrEmpty(_traceDir))
             {
-                _ediabas.SetConfigProperty("TracePath", traceDir);
+                _ediabas.SetConfigProperty("TracePath", _traceDir);
                 _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
                 _ediabas.SetConfigProperty("AppendTrace", _traceAppend ? "1" : "0");
                 _ediabas.SetConfigProperty("CompressTrace", "1");
@@ -896,12 +925,14 @@ namespace BmwDeepObd
 
                     if (noResponse)
                     {
+                        _commErrorsOccured = true;
                         _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_no_response), Resource.String.alert_title_error);
                     }
                     else
                     {
                         if (invalidEcuCount > 0)
                         {
+                            _commErrorsOccured = true;
                             new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
@@ -1889,7 +1920,7 @@ namespace BmwDeepObd
             }
         }
 
-        private bool SaveConfiguration()
+        private bool SaveConfiguration(bool finish)
         {
             if (IsJobRunning())
             {
@@ -1901,11 +1932,16 @@ namespace BmwDeepObd
                 _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_save_xml_failed), Resource.String.alert_title_error);
                 return false;
             }
+            if (!finish)
+            {
+                return true;
+            }
             Intent intent = new Intent();
             intent.PutExtra(ExtraFileName, xmlFileName);
 
             // Set result and finish this Activity
             SetResult(Android.App.Result.Ok, intent);
+            FinishContinue();
             return true;
         }
 
