@@ -819,14 +819,14 @@ namespace BmwDeepObd
 
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_activity);
             progress.SetCancelable(false);
-            progress.SetMessage(_activity.GetString(Resource.String.zip_trace_file));
+            progress.SetMessage(_activity.GetString(Resource.String.send_trace_file));
             progress.Show();
 
             Thread sendThread = new Thread(() =>
             {
-                bool sendFailed = false;
                 try
                 {
+                    bool cancelled = false;
                     WebClient webClient = new WebClient();
                     SmtpClient smtpClient = new SmtpClient
                     {
@@ -841,55 +841,74 @@ namespace BmwDeepObd
 
                     mail.Attachments.Add(new Attachment(traceFile));
 
-                    _activity.RunOnUiThread(() =>
-                    {
-                        progress.SetMessage(_activity.GetString(Resource.String.send_trace_file));
-                    });
+                    string mailInfoFile = Path.Combine(Path.GetDirectoryName(traceFile) ?? string.Empty, "Mail.xml");
+                    webClient.DownloadFile(MailInfoDownloadUrl, mailInfoFile);
 
-                    AutoResetEvent retryEvent = new AutoResetEvent(false);
-                    for (; ; )
+                    string mailHost;
+                    int mailPort;
+                    bool mailSsl;
+                    string mailFrom;
+                    string mailTo;
+                    string mailUser;
+                    string mailPassword;
+                    if (!GetMailInfo(mailInfoFile, out mailHost, out mailPort, out mailSsl, out mailFrom, out mailTo,
+                        out mailUser, out mailPassword))
                     {
-                        retryEvent.Reset();
-                        try
+                        throw new Exception("Invalid mail info");
+                    }
+                    try
+                    {
+                        File.Delete(mailInfoFile);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    smtpClient.Host = mailHost;
+                    smtpClient.Port = mailPort;
+                    smtpClient.EnableSsl = mailSsl;
+                    smtpClient.UseDefaultCredentials = false;
+                    if (string.IsNullOrEmpty(mailUser) || string.IsNullOrEmpty(mailPassword))
+                    {
+                        smtpClient.Credentials = null;
+                    }
+                    else
+                    {
+                        smtpClient.Credentials = new NetworkCredential(mailUser, mailPassword);
+                    }
+                    mail.From = new MailAddress(mailFrom);
+                    mail.To.Clear();
+                    mail.To.Add(new MailAddress(mailTo));
+                    smtpClient.SendCompleted += (s, e) =>
+                    {
+                        _activity.RunOnUiThread(() =>
                         {
-                            string mailInfoFile = Path.Combine(Path.GetDirectoryName(traceFile) ?? string.Empty, "Mail.xml");
-                            webClient.DownloadFile(MailInfoDownloadUrl, mailInfoFile);
-
-                            string mailHost;
-                            int mailPort;
-                            bool mailSsl;
-                            string mailFrom;
-                            string mailTo;
-                            string mailUser;
-                            string mailPassword;
-                            if (!GetMailInfo(mailInfoFile, out mailHost, out mailPort, out mailSsl, out mailFrom, out mailTo, out mailUser, out mailPassword))
+                            if (progress != null)
                             {
-                                throw new Exception("Invalid mail info");
+                                progress.Hide();
+                                progress.Dispose();
+                                progress = null;
                             }
-                            try
+                            if (e.Cancelled || cancelled)
                             {
-                                File.Delete(mailInfoFile);
+                                return;
                             }
-                            catch (Exception)
+                            if (e.Error != null)
                             {
-                                // ignored
+                                new AlertDialog.Builder(_activity)
+                                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                    {
+                                        SendTraceFile(traceFile, packageInfo, classType, handler, deleteFile);
+                                    })
+                                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                    {
+                                    })
+                                    .SetCancelable(true)
+                                    .SetMessage(Resource.String.send_trace_file_failed_retry)
+                                    .SetTitle(Resource.String.alert_title_error)
+                                    .Show();
+                                return;
                             }
-                            smtpClient.Host = mailHost;
-                            smtpClient.Port = mailPort;
-                            smtpClient.EnableSsl = mailSsl;
-                            smtpClient.UseDefaultCredentials = false;
-                            if (string.IsNullOrEmpty(mailUser) || string.IsNullOrEmpty(mailPassword))
-                            {
-                                smtpClient.Credentials = null;
-                            }
-                            else
-                            {
-                                smtpClient.Credentials = new NetworkCredential(mailUser, mailPassword);
-                            }
-                            mail.From = new MailAddress(mailFrom);
-                            mail.To.Clear();
-                            mail.To.Add(new MailAddress(mailTo));
-                            smtpClient.Send(mail);
                             if (deleteFile)
                             {
                                 try
@@ -901,62 +920,47 @@ namespace BmwDeepObd
                                     // ignored
                                 }
                             }
-                            break;
-                        }
-                        catch (Exception)
-                        {
-                            bool retrySend = false;
-                            _activity.RunOnUiThread(() =>
+                            if (handler != null)
                             {
-                                AlertDialog altertDialog = new AlertDialog.Builder(_activity)
-                                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                                    {
-                                        retrySend = true;
-                                    })
-                                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                                    {
-                                    })
-                                    .SetCancelable(true)
-                                    .SetMessage(Resource.String.send_trace_file_failed_retry)
-                                    .SetTitle(Resource.String.alert_title_error)
-                                    .Show();
-                                altertDialog.DismissEvent += (sender, args) =>
-                                {
-                                    // ReSharper disable once AccessToDisposedClosure
-                                    retryEvent.Set();
-                                };
-                            });
-                            retryEvent.WaitOne();
-                            if (!retrySend)
-                            {
-                                break;
+                                handler(this, new EventArgs());
                             }
-                        }
-                    }
-                    retryEvent.Dispose();
-                    File.Delete(traceFile);
+                        });
+                    };
+                    _activity.RunOnUiThread(() =>
+                    {
+                        progress.CancelEvent += (sender, args) =>
+                        {
+                            cancelled = true;   // cancel flag in event seems to be missing
+                            smtpClient.SendAsyncCancel();
+                        };
+                        progress.SetCancelable(true);
+                    });
+                    smtpClient.SendAsync(mail, null);
                 }
                 catch (Exception)
                 {
-                    sendFailed = true;
-                }
-                _activity.RunOnUiThread(() =>
-                {
-                    progress.Hide();
-                    progress.Dispose();
-                    if (sendFailed)
+                    _activity.RunOnUiThread(() =>
                     {
-                        ShowAlert(_activity.GetString(Resource.String.send_trace_file_failed),
-                            Resource.String.alert_title_error);
-                    }
-                    else
-                    {
-                        if (handler != null)
+                        if (progress != null)
                         {
-                            handler(this, new EventArgs());
+                            progress.Hide();
+                            progress.Dispose();
+                            progress = null;
                         }
-                    }
-                });
+                        new AlertDialog.Builder(_activity)
+                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                            {
+                                SendTraceFile(traceFile, packageInfo, classType, handler, deleteFile);
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                            {
+                            })
+                            .SetCancelable(true)
+                            .SetMessage(Resource.String.send_trace_file_failed_retry)
+                            .SetTitle(Resource.String.alert_title_error)
+                            .Show();
+                    });
+                }
             });
             sendThread.Start();
             return true;
