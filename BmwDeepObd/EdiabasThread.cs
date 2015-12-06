@@ -330,7 +330,7 @@ namespace BmwDeepObd
                     catch (Exception ex)
                     {
                         string exText = String.Empty;
-                        if (!_ediabasJobAbort)
+                        if (!AbortEdiabasJob())
                         {
                             exText = EdiabasNet.GetExceptionText(ex);
                         }
@@ -416,7 +416,7 @@ namespace BmwDeepObd
                     catch (Exception ex)
                     {
                         string exText = String.Empty;
-                        if (!_ediabasJobAbort)
+                        if (!AbortEdiabasJob())
                         {
                             exText = EdiabasNet.GetExceptionText(ex);
                         }
@@ -450,7 +450,7 @@ namespace BmwDeepObd
                     catch (Exception ex)
                     {
                         string exText = String.Empty;
-                        if (!_ediabasJobAbort)
+                        if (!AbortEdiabasJob())
                         {
                             exText = EdiabasNet.GetExceptionText(ex);
                         }
@@ -507,7 +507,7 @@ namespace BmwDeepObd
             {
                 _ediabasInitReq = true;
                 string exText = String.Empty;
-                if (!_ediabasJobAbort)
+                if (!AbortEdiabasJob())
                 {
                     exText = EdiabasNet.GetExceptionText(ex);
                 }

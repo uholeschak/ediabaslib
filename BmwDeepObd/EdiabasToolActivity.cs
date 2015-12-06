@@ -1102,7 +1102,7 @@ namespace BmwDeepObd
                 catch (Exception ex)
                 {
                     string exceptionText = String.Empty;
-                    if (!_ediabasJobAbort)
+                    if (!AbortEdiabasJob())
                     {
                         exceptionText = EdiabasNet.GetExceptionText(ex);
                     }
@@ -1275,7 +1275,7 @@ namespace BmwDeepObd
                     catch (Exception ex)
                     {
                         string exceptionText = String.Empty;
-                        if (!_ediabasJobAbort)
+                        if (!AbortEdiabasJob())
                         {
                             exceptionText = EdiabasNet.GetExceptionText(ex);
                         }
