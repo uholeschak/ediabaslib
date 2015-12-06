@@ -27,9 +27,9 @@
 \nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:
-\n- Auswahl des Speichermediums hinzugefügt
-\n- ECU Fehler zurücksetzen Option hinzugefügt
-\n- Unterstützung der ELM327 Ersatzfirmware"</string>
+\n- Es werden komprimierte Trace-Dateien erzeugt
+\n- Unterstützung zum Senden von Trace-Dateien
+\n- Bluetooth Pin ist bei neuen Adaptern konfigurierbar"</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Information</string>

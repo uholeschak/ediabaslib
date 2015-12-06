@@ -27,9 +27,9 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
-\n- Added selection of storage media
-\n- Added reset ECU error option
-\n- Support for ELM327 replacement firmware"</string>
+\n- Create compressed traces files
+\n- Support for sending trace files
+\n- Configurable Bluetooth pin for new adapters"</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Information</string>
