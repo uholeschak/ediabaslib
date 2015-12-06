@@ -29,7 +29,8 @@
 \n\nChanges in this version:
 \n- Create compressed traces files
 \n- Support for sending trace files
-\n- Configurable Bluetooth pin for new adapters"</string>
+\n- Added adapter firmware that also supports older protocols
+\n- Configurable Bluetooth pin for new adapter types"</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Information</string>
@@ -48,8 +49,7 @@
   <string name="extract_failed_io">Writing extracted files failed.\nIs there no space left on the device?</string>
 
   <!-- Send trace file -->
-  <string name="send_trace_file_request">Communication errors have occured.\nDo you want to send a compressed and anonymous trace file ({0:fs1}) to allow improvement of the product?</string>
-  <string name="zip_trace_file">Compressing trace file</string>
+  <string name="send_trace_file_request">Communication errors have occured.\nDo you want to send a compressed and anonymous trace file (size {0:fs0}) to allow improvement of the product?</string>
   <string name="send_trace_file">Sending trace file</string>
   <string name="compress_trace_file_failed">Compressing trace file failed.</string>
   <string name="send_trace_file_failed">Sending trace file failed.</string>
