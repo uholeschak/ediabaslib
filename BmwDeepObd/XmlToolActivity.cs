@@ -234,6 +234,7 @@ namespace BmwDeepObd
                 SelectInterface();
             }
             SelectInterfaceEnable();
+            SupportInvalidateOptionsMenu();
         }
 
         protected override void OnPause()
