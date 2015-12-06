@@ -30,7 +30,7 @@
 \n- Es werden komprimierte Trace-Dateien erzeugt
 \n- Unterstützung zum Senden von Trace-Dateien
 \n- Adapter Firmware ergänzt, welche auch ältere Protokolle unterstüzt
-\n- Bluetooth Pin ist bei neuen Adapterntypen konfigurierbar"</string>
+\n- Bluetooth Pin ist bei neuen Adaptertypen konfigurierbar"</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Information</string>
