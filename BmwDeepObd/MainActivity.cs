@@ -295,6 +295,7 @@ namespace BmwDeepObd
             {
                 HandleStartDialogs(firstStart);
             }
+            SupportInvalidateOptionsMenu();
             UpdateDisplay();
         }
 
