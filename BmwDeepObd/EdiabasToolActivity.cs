@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using Android.Content;
 using Android.Content.Res;
+using Android.Hardware.Usb;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Util;
@@ -247,7 +248,7 @@ namespace BmwDeepObd
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
                 }
-            })
+            }, BroadcastReceived)
             {
                 SelectedInterface = (ActivityCommon.InterfaceType)
                     Intent.GetIntExtra(ExtraInterface, (int) ActivityCommon.InterfaceType.None)
@@ -1426,6 +1427,21 @@ namespace BmwDeepObd
                 return true;
             }
             return false;
+        }
+
+        private void BroadcastReceived(Context context, Intent intent)
+        {
+            if (intent == null)
+            {   // from usb check timer
+                return;
+            }
+            string action = intent.Action;
+            switch (action)
+            {
+                case UsbManager.ActionUsbDeviceDetached:
+                    EdiabasClose();
+                    break;
+            }
         }
 
         private class JobListAdapter : BaseAdapter<JobInfo>
