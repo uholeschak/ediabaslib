@@ -1920,6 +1920,7 @@ namespace BmwDeepObd
             }
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool SaveConfiguration(bool finish)
         {
             if (IsJobRunning())
