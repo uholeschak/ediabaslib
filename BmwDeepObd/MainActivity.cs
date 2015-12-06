@@ -23,7 +23,6 @@ using Android.Views;
 using Android.Widget;
 using BmwDeepObd.FilePicker;
 using EdiabasLib;
-using Hoho.Android.UsbSerial.Driver;
 using Java.Interop;
 using Mono.CSharp;
 
@@ -123,8 +122,6 @@ namespace BmwDeepObd
         private bool _createTabsPending;
         private bool _autoStart;
         private ActivityCommon _activityCommon;
-        private Timer _usbCheckTimer;
-        private int _usbDeviceDetectCount;
         private JobReader _jobReader;
         private Handler _updateHandler;
         private EdiabasThread _ediabasThread;
@@ -185,15 +182,6 @@ namespace BmwDeepObd
                     UpdateDisplay();
                 }
             }, BroadcastReceived);
-            if (_activityCommon.UsbSupport)
-            {   // usb handling
-                RegisterReceiver(_activityCommon.BcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
-                RegisterReceiver(_activityCommon.BcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceAttached));
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
-                {   // attached event fails
-                    _usbCheckTimer = new Timer(UsbCheckEvent, null, 1000, 1000);
-                }
-            }
 
             GetSettings();
             UpdateDirectories();
@@ -316,11 +304,6 @@ namespace BmwDeepObd
 
             StopEdiabasThread(true);
             StoreSettings();
-            if (_usbCheckTimer != null)
-            {
-                _usbCheckTimer.Dispose();
-                _usbCheckTimer = null;
-            }
             if (_activityCommon != null)
             {
                 _activityCommon.Dispose();
@@ -826,6 +809,11 @@ namespace BmwDeepObd
 
         private void BroadcastReceived(Context context, Intent intent)
         {
+            if (intent == null)
+            {   // from usb check timer
+                _activityCommon.RequestUsbPermission(null);
+                return;
+            }
             string action = intent.Action;
             switch (action)
             {
@@ -840,37 +828,7 @@ namespace BmwDeepObd
                         }
                         break;
                     }
-
-                case UsbManager.ActionUsbDeviceDetached:
-                    {
-                        UsbDevice usbDevice = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;
-                        if (EdFtdiInterface.IsValidUsbDevice(usbDevice))
-                        {
-                            SupportInvalidateOptionsMenu();
-                            UpdateDisplay();
-                        }
-                        break;
-                    }
             }
-        }
-
-        private void UsbCheckEvent(Object state)
-        {
-            if (_usbCheckTimer == null)
-            {
-                return;
-            }
-            RunOnUiThread(() =>
-            {
-                List<IUsbSerialDriver> availableDrivers = EdFtdiInterface.GetDriverList(_activityCommon.UsbManager);
-                if (availableDrivers.Count > _usbDeviceDetectCount)
-                {   // device attached
-                    _activityCommon.RequestUsbPermission(null);
-                    SupportInvalidateOptionsMenu();
-                    UpdateDisplay();
-                }
-                _usbDeviceDetectCount = availableDrivers.Count;
-            });
         }
 
         private void DataUpdated(object sender, EventArgs e)

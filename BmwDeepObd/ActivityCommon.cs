@@ -87,6 +87,8 @@ namespace BmwDeepObd
         private readonly PowerManager _powerManager;
         private PowerManager.WakeLock _wakeLockScreen;
         private PowerManager.WakeLock _wakeLockCpu;
+        private Timer _usbCheckTimer;
+        private int _usbDeviceDetectCount;
         private Receiver _bcReceiver;
         private InterfaceType _selectedInterface;
         private AlertDialog _activateAlertDialog;
@@ -233,7 +235,13 @@ namespace BmwDeepObd
                 activity.RegisterReceiver(_bcReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
                 if (UsbSupport)
                 {   // usb handling
+                    activity.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
+                    activity.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceAttached));
                     activity.RegisterReceiver(_bcReceiver, new IntentFilter(ActionUsbPermission));
+                    if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
+                    {   // attached event fails
+                        _usbCheckTimer = new Timer(UsbCheckEvent, null, 1000, 1000);
+                    }
                 }
             }
         }
@@ -258,6 +266,11 @@ namespace BmwDeepObd
                 // and unmanaged resources.
                 if (disposing)
                 {
+                    if (_usbCheckTimer != null)
+                    {
+                        _usbCheckTimer.Dispose();
+                        _usbCheckTimer = null;
+                    }
                     if (_activity != null && _bcReceiver != null)
                     {
                         _activity.UnregisterReceiver(_bcReceiver);
@@ -1398,6 +1411,30 @@ namespace BmwDeepObd
             return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
         }
 
+        private void UsbCheckEvent(Object state)
+        {
+            if (_usbCheckTimer == null)
+            {
+                return;
+            }
+            _activity.RunOnUiThread(() =>
+            {
+                List<IUsbSerialDriver> availableDrivers = EdFtdiInterface.GetDriverList(_usbManager);
+                if (availableDrivers.Count > _usbDeviceDetectCount)
+                {   // device attached
+                    if (_bcReceiverReceivedHandler != null)
+                    {
+                        _bcReceiverReceivedHandler(_activity, null);
+                    }
+                    if (_bcReceiverUpdateDisplayHandler != null)
+                    {
+                        _bcReceiverUpdateDisplayHandler();
+                    }
+                }
+                _usbDeviceDetectCount = availableDrivers.Count;
+            });
+        }
+
         public class Receiver : BroadcastReceiver
         {
             readonly ActivityCommon _activityCommon;
@@ -1424,6 +1461,20 @@ namespace BmwDeepObd
                             _activityCommon._bcReceiverUpdateDisplayHandler();
                         }
                         break;
+
+                    case UsbManager.ActionUsbDeviceAttached:
+                    case UsbManager.ActionUsbDeviceDetached:
+                        {
+                            UsbDevice usbDevice = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;
+                            if (EdFtdiInterface.IsValidUsbDevice(usbDevice))
+                            {
+                                if (_activityCommon._bcReceiverUpdateDisplayHandler != null)
+                                {
+                                    _activityCommon._bcReceiverUpdateDisplayHandler();
+                                }
+                            }
+                            break;
+                        }
 
                     case ActionUsbPermission:
                         if (intent.GetBooleanExtra(UsbManager.ExtraPermissionGranted, false))
