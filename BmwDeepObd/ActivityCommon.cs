@@ -784,7 +784,7 @@ namespace BmwDeepObd
             new AlertDialog.Builder(_activity)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
-                    SendTraceFile(traceFile, packageInfo, classType, true);
+                    SendTraceFile(traceFile, packageInfo, classType, handler, true);
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
@@ -801,7 +801,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool SendTraceFile(string traceFile, PackageInfo packageInfo, Type classType, bool deleteFile = false)
+        public bool SendTraceFile(string traceFile, PackageInfo packageInfo, Type classType, EventHandler<EventArgs> handler, bool deleteFile = false)
         {
             if (!File.Exists(traceFile))
             {
@@ -941,6 +941,13 @@ namespace BmwDeepObd
                     {
                         ShowAlert(_activity.GetString(Resource.String.send_trace_file_failed),
                             Resource.String.alert_title_error);
+                    }
+                    else
+                    {
+                        if (handler != null)
+                        {
+                            handler(this, new EventArgs());
+                        }
                     }
                 });
             });
