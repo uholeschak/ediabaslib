@@ -1396,6 +1396,8 @@ namespace EdiabasLib
 
         protected void UpdateUseExtInterfaceFunc()
         {
+            // these funtions are optional:
+            // InterfaceSetInterByteTimeFuncUse, InterfaceAdapterEchoFuncUse, InterfaceHasPreciseTimeoutFuncUse, InterfaceSendPulseFuncUse
             UseExtInterfaceFunc =
                 InterfaceConnectFuncUse != null &&
                 InterfaceDisconnectFuncUse != null &&
@@ -1404,13 +1406,9 @@ namespace EdiabasLib
                 InterfaceSetRtsFuncUse != null &&
                 InterfaceGetDsrFuncUse != null &&
                 InterfaceSetBreakFuncUse != null &&
-                InterfaceSetInterByteTimeFuncUse != null &&
                 InterfacePurgeInBufferFuncUse != null &&
-                InterfaceAdapterEchoFuncUse != null &&
-                InterfaceHasPreciseTimeoutFuncUse != null &&
                 InterfaceSendDataFuncUse != null &&
-                InterfaceReceiveDataFuncUse != null &&
-                InterfaceSendPulseFuncUse != null;
+                InterfaceReceiveDataFuncUse != null;
         }
 
         protected bool GetDsrState()
