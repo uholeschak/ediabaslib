@@ -775,29 +775,36 @@ namespace BmwDeepObd
 
         public bool RequestSendTraceFile(string traceDir, PackageInfo packageInfo, Type classType, EventHandler<EventArgs> handler = null)
         {
-            string traceFile = Path.Combine(traceDir, "ifh.trc.zip");
-
-            if (!File.Exists(traceFile))
+            try
+            {
+                string traceFile = Path.Combine(traceDir, "ifh.trc.zip");
+                if (!File.Exists(traceFile))
+                {
+                    return false;
+                }
+                FileInfo fileInfo = new FileInfo(traceFile);
+                string message = string.Format(new FileSizeFormatProvider(), _activity.GetString(Resource.String.send_trace_file_request), fileInfo.Length);
+                new AlertDialog.Builder(_activity)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        SendTraceFile(traceFile, packageInfo, classType, handler, true);
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                        if (handler != null)
+                        {
+                            handler(this, new EventArgs());
+                        }
+                    })
+                    .SetCancelable(true)
+                    .SetMessage(message)
+                    .SetTitle(Resource.String.alert_title_question)
+                    .Show();
+            }
+            catch (Exception)
             {
                 return false;
             }
-            new AlertDialog.Builder(_activity)
-                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                {
-                    SendTraceFile(traceFile, packageInfo, classType, handler, true);
-                })
-                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                {
-                    if (handler != null)
-                    {
-                        handler(this, new EventArgs());
-                    }
-                })
-                .SetCancelable(true)
-                .SetMessage(Resource.String.send_trace_file_request)
-                .SetTitle(Resource.String.alert_title_question)
-                .Show();
-
             return true;
         }
 
