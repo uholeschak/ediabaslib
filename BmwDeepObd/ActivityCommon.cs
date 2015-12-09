@@ -829,8 +829,8 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            string mailBody = string.Format("Deep OBD Trace file\nDate: {0}\nApp version name: {1}\nApp version code: {2}\nClass name: {3}\nId: {4}",
-                DateTime.Now.ToString("u"), packageInfo.VersionName, packageInfo.VersionCode, classType.FullName, AppId);
+            string mailBody = string.Format("Deep OBD Trace file\nDate: {0}\nAndroid version: {1}\nAndroid model: {2}\nApp version name: {3}\nApp version code: {4}\nApp id: {5}\nClass name: {6}",
+                DateTime.Now.ToString("u"), Build.VERSION.Sdk, Build.Model, packageInfo.VersionName, packageInfo.VersionCode, AppId, classType.FullName);
 
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_activity);
             progress.SetCancelable(false);
