@@ -40,17 +40,25 @@ namespace EdiabasLib
             _mapAddr = (IntPtr)(-1);
 
             if (!File.Exists(path))
-            {   // try to use lower and upper case filenames
+            {   // get the case sensitive name from the directory
                 string fileName = Path.GetFileName(path) ?? string.Empty;
                 string dirName = Path.GetDirectoryName(path) ?? string.Empty;
-                path = Path.Combine(dirName, fileName.ToLowerInvariant());
+                DirectoryInfo dir = new DirectoryInfo(dirName);
+                foreach (FileSystemInfo fsi in dir.GetFileSystemInfos())
+                {
+                    if ((fsi.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                    {
+                        continue;
+                    }
+                    if (string.Compare(fsi.Name, fileName, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        path = Path.Combine(dirName, fsi.Name);
+                        break;
+                    }
+                }
                 if (!File.Exists(path))
                 {
-                    path = Path.Combine(dirName, fileName.ToUpperInvariant());
-                    if (!File.Exists(path))
-                    {
-                        throw new FileNotFoundException();
-                    }
+                    throw new FileNotFoundException();
                 }
             }
 
