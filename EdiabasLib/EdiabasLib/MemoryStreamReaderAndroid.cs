@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -43,22 +44,30 @@ namespace EdiabasLib
             {   // get the case sensitive name from the directory
                 string fileName = Path.GetFileName(path) ?? string.Empty;
                 string dirName = Path.GetDirectoryName(path) ?? string.Empty;
-                DirectoryInfo dir = new DirectoryInfo(dirName);
-                foreach (FileSystemInfo fsi in dir.GetFileSystemInfos())
+                lock (DirDictLock)
                 {
-                    if ((fsi.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                    if (string.Compare(dirName, _dirDictName, StringComparison.Ordinal) != 0)
                     {
-                        continue;
+                        Dictionary<string, string> dirDict = GetDirDict(dirName);
+                        if (dirDict == null)
+                        {
+                            throw new FileNotFoundException();
+                        }
+                        _dirDictName = dirName;
+                        _dirDict = dirDict;
                     }
-                    if (string.Compare(fsi.Name, fileName, StringComparison.OrdinalIgnoreCase) == 0)
+                    string realName;
+                    if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out realName))
                     {
-                        path = Path.Combine(dirName, fsi.Name);
-                        break;
+                        _dirDictName = string.Empty;
+                        throw new FileNotFoundException();
                     }
-                }
-                if (!File.Exists(path))
-                {
-                    throw new FileNotFoundException();
+                    path = Path.Combine(dirName, realName);
+                    if (!File.Exists(path))
+                    {
+                        _dirDictName = string.Empty;
+                        throw new FileNotFoundException();
+                    }
                 }
             }
 
@@ -268,9 +277,38 @@ namespace EdiabasLib
             }
         }
 
+        private Dictionary<string, string> GetDirDict(string dirName)
+        {
+            try
+            {
+                Dictionary<string, string> dirDict = new Dictionary<string, string>();
+                DirectoryInfo dir = new DirectoryInfo(dirName);
+                foreach (FileSystemInfo fsi in dir.GetFileSystemInfos())
+                {
+                    if ((fsi.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                    {
+                        continue;
+                    }
+                    string key = fsi.Name.ToUpperInvariant();
+                    if (!dirDict.ContainsKey(key))
+                    {
+                        dirDict.Add(key, fsi.Name);
+                    }
+                }
+                return dirDict;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         private long _filePos;
         private readonly long _fileLength;
         private int _fd;
         private IntPtr _mapAddr;
+        private static readonly object DirDictLock = new object();
+        private static string _dirDictName = string.Empty;
+        private static Dictionary<string, string> _dirDict = new Dictionary<string, string>();
     }
 }
