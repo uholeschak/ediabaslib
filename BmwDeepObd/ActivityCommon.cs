@@ -201,6 +201,8 @@ namespace BmwDeepObd
             get { return _bcReceiver; }
         }
 
+        public static string AppId { get; set; }
+
         public ActivityCommon(Android.App.Activity activity, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null, BcReceiverReceivedDelegate bcReceiverReceivedHandler = null)
         {
             _activity = activity;
@@ -827,8 +829,8 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            string mailBody = string.Format("Deep OBD Trace file\nDate: {0}\nApp version name: {1}\nApp version code: {2}\nClass name: {3}",
-                DateTime.Now.ToString("u"), packageInfo.VersionName, packageInfo.VersionCode, classType.FullName);
+            string mailBody = string.Format("Deep OBD Trace file\nDate: {0}\nApp version name: {1}\nApp version code: {2}\nClass name: {3}\nId: {4}",
+                DateTime.Now.ToString("u"), packageInfo.VersionName, packageInfo.VersionCode, classType.FullName, AppId);
 
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_activity);
             progress.SetCancelable(false);
