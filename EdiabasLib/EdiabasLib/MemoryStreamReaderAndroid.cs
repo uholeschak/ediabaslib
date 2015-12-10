@@ -42,31 +42,49 @@ namespace EdiabasLib
 
             if (!File.Exists(path))
             {   // get the case sensitive name from the directory
-                string fileName = Path.GetFileName(path) ?? string.Empty;
-                string dirName = Path.GetDirectoryName(path) ?? string.Empty;
+                string fileName = Path.GetFileName(path);
+                string dirName = Path.GetDirectoryName(path);
+                if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(dirName))
+                {
+                    throw new FileNotFoundException();
+                }
                 lock (DirDictLock)
                 {
-                    if (string.Compare(dirName, _dirDictName, StringComparison.Ordinal) != 0)
+                    bool newDict = false;
+                    for (int i = 0; i < 2; i++)
                     {
-                        Dictionary<string, string> dirDict = GetDirDict(dirName);
-                        if (dirDict == null)
+                        if ((_dirDict == null) || (string.Compare(dirName, _dirDictName, StringComparison.Ordinal) != 0))
                         {
+                            Dictionary<string, string> dirDict = GetDirDict(dirName);
+                            if (dirDict == null)
+                            {
+                                throw new FileNotFoundException();
+                            }
+                            _dirDictName = dirName;
+                            _dirDict = dirDict;
+                            newDict = true;
+                        }
+                        string realName;
+                        if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out realName))
+                        {
+                            if (!newDict)
+                            {
+                                _dirDict = null;
+                                continue;
+                            }
                             throw new FileNotFoundException();
                         }
-                        _dirDictName = dirName;
-                        _dirDict = dirDict;
-                    }
-                    string realName;
-                    if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out realName))
-                    {
-                        _dirDictName = string.Empty;
-                        throw new FileNotFoundException();
-                    }
-                    path = Path.Combine(dirName, realName);
-                    if (!File.Exists(path))
-                    {
-                        _dirDictName = string.Empty;
-                        throw new FileNotFoundException();
+                        path = Path.Combine(dirName, realName);
+                        if (!File.Exists(path))
+                        {
+                            if (!newDict)
+                            {
+                                _dirDict = null;
+                                continue;
+                            }
+                            throw new FileNotFoundException();
+                        }
+                        break;
                     }
                 }
             }
@@ -309,6 +327,6 @@ namespace EdiabasLib
         private IntPtr _mapAddr;
         private static readonly object DirDictLock = new object();
         private static string _dirDictName = string.Empty;
-        private static Dictionary<string, string> _dirDict = new Dictionary<string, string>();
+        private static Dictionary<string, string> _dirDict;
     }
 }
