@@ -741,7 +741,7 @@ namespace BmwDeepObd
                 string appId = prefs.GetString("AppId", string.Empty);
                 if (string.IsNullOrEmpty(appId))
                 {
-                    appId = Java.Util.UUID.RandomUUID().ToString();
+                    appId = Guid.NewGuid().ToString();
                 }
                 ActivityCommon.AppId = appId;
             }
