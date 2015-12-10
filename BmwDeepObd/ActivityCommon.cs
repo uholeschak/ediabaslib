@@ -1301,8 +1301,8 @@ namespace BmwDeepObd
                 try
                 {
                     File.WriteAllText(testPath, testText);
-                    // check for case insensitive file system
-                    if (File.Exists(Path.Combine(pathToTest, testFile.ToUpperInvariant())))
+                    // case sensitive file systems are supported now
+                    if (File.Exists(testPath))
                     {
                         result = true;
                     }
