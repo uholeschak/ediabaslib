@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 
@@ -9,16 +10,59 @@ namespace EdiabasLib
         public MemoryStreamReader(string path)
         {
             if (!File.Exists(path))
-            {   // try to use lower and upper case filenames
-                string fileName = Path.GetFileName(path) ?? string.Empty;
-                string dirName = Path.GetDirectoryName(path) ?? string.Empty;
-                path = Path.Combine(dirName, fileName.ToLowerInvariant());
-                if (!File.Exists(path))
+            {   // get the case sensitive name from the directory
+                switch (Environment.OSVersion.Platform)
                 {
-                    path = Path.Combine(dirName, fileName.ToUpperInvariant());
-                    if (!File.Exists(path))
-                    {
+                    case PlatformID.Unix:
+                    case PlatformID.MacOSX:
+                        break;
+
+                    default:
                         throw new FileNotFoundException();
+                }
+                string fileName = Path.GetFileName(path);
+                string dirName = Path.GetDirectoryName(path);
+                if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(dirName))
+                {
+                    throw new FileNotFoundException();
+                }
+                lock (DirDictLock)
+                {
+                    bool newDict = false;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        if ((_dirDict == null) || (string.Compare(dirName, _dirDictName, StringComparison.Ordinal) != 0))
+                        {
+                            Dictionary<string, string> dirDict = GetDirDict(dirName);
+                            if (dirDict == null)
+                            {
+                                throw new FileNotFoundException();
+                            }
+                            _dirDictName = dirName;
+                            _dirDict = dirDict;
+                            newDict = true;
+                        }
+                        string realName;
+                        if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out realName))
+                        {
+                            if (!newDict)
+                            {
+                                _dirDict = null;
+                                continue;
+                            }
+                            throw new FileNotFoundException();
+                        }
+                        path = Path.Combine(dirName, realName);
+                        if (!File.Exists(path))
+                        {
+                            if (!newDict)
+                            {
+                                _dirDict = null;
+                                continue;
+                            }
+                            throw new FileNotFoundException();
+                        }
+                        break;
                     }
                 }
             }
@@ -216,8 +260,37 @@ namespace EdiabasLib
             }
         }
 
+        private Dictionary<string, string> GetDirDict(string dirName)
+        {
+            try
+            {
+                Dictionary<string, string> dirDict = new Dictionary<string, string>();
+                DirectoryInfo dir = new DirectoryInfo(dirName);
+                foreach (FileSystemInfo fsi in dir.GetFileSystemInfos())
+                {
+                    if ((fsi.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                    {
+                        continue;
+                    }
+                    string key = fsi.Name.ToUpperInvariant();
+                    if (!dirDict.ContainsKey(key))
+                    {
+                        dirDict.Add(key, fsi.Name);
+                    }
+                }
+                return dirDict;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         private MemoryMappedFile _mmFile;
         private MemoryMappedViewStream _mmStream;
         private readonly long _fileLength;
+        private static readonly object DirDictLock = new object();
+        private static string _dirDictName = string.Empty;
+        private static Dictionary<string, string> _dirDict;
     }
 }
