@@ -825,22 +825,18 @@ namespace BmwDeepObd
                                     ecuGroup = (string)resultData.OpData;
                                 }
                             }
-                            if (resultDict.TryGetValue("ID_DATUM_JAHR", out resultData))
-                            {
-                                if (resultData.OpData is Int64)
-                                {
-                                    dateYear = (Int64)resultData.OpData;
-                                }
-                            }
                             if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
                             {
                                 ecuList.Add(new EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup));
                             }
                             else
                             {
-                                if (ecuDataPresent && dateYear != 0)
+                                if (ecuDataPresent)
                                 {
-                                    invalidEcuCount++;
+                                    if (!ecuName.StartsWith("VIRTSG", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        invalidEcuCount++;
+                                    }
                                 }
                             }
                             dictIndex++;
