@@ -786,7 +786,6 @@ namespace BmwDeepObd
                             string ecuDesc = string.Empty;
                             string ecuSgbd = string.Empty;
                             string ecuGroup = string.Empty;
-                            Int64 dateYear = -1;
                             EdiabasNet.ResultData resultData;
                             if (resultDict.TryGetValue("ECU_GROBNAME", out resultData))
                             {
