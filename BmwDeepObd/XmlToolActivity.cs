@@ -848,7 +848,14 @@ namespace BmwDeepObd
                         _ediabas.ArgString = string.Empty;
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob("C_FG_LESEN_FUNKTIONAL");
+                        try
+                        {
+                            _ediabas.ExecuteJob("C_FG_LESEN_FUNKTIONAL");
+                        }
+                        catch (Exception)
+                        {
+                            _ediabas.ExecuteJob("PROG_FG_NR_LESEN_FUNKTIONAL");
+                        }
 
                         Regex regex = new Regex(@"^[a-zA-Z0-9]+$");
                         resultSets = _ediabas.ResultSets;
@@ -873,6 +880,13 @@ namespace BmwDeepObd
                                     }
                                 }
                                 if (resultDict.TryGetValue("FG_NR", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        ecuVin = (string)resultData.OpData;
+                                    }
+                                }
+                                if (resultDict.TryGetValue("FG_NR_KURZ", out resultData))
                                 {
                                     if (resultData.OpData is string)
                                     {
