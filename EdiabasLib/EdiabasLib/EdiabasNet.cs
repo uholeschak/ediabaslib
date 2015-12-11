@@ -3018,18 +3018,13 @@ namespace EdiabasLib
                 return true;
             }
             string fileName = Path.Combine(EcuPath, SgbdFileName);
-            if (!File.Exists(fileName))
-            {
-                LogString(EdLogLevel.Error, "OpenSgbdFs file not found: " + fileName);
-                return false;
-            }
             try
             {
                 _sgbdFs = MemoryStreamReader.OpenRead(fileName);
             }
             catch (Exception ex)
             {
-                LogString(EdLogLevel.Error, "OpenSgbdFs exception: " + GetExceptionText(ex));
+                LogString(EdLogLevel.Error, "OpenSgbdFs file not found: " + fileName);
                 return false;
             }
             _usesInfos = ReadAllUses(_sgbdFs);
@@ -3839,20 +3834,24 @@ namespace EdiabasLib
             foreach (UsesInfo usesInfo in _usesInfos.UsesInfoArray)
             {
                 string fileName = Path.Combine(EcuPath, usesInfo.Name.ToLower(Culture) + ".prg");
-                if (File.Exists(fileName))
+                try
                 {
-                    try
+                    using (Stream tempFs = MemoryStreamReader.OpenRead(fileName))
                     {
-                        using (Stream tempFs = MemoryStreamReader.OpenRead(fileName))
+                        try
                         {
                             List<JobInfo> jobListTemp = GetJobList(tempFs, usesInfo);
                             jobListComplete.AddRange(jobListTemp);
                         }
+                        catch (Exception ex)
+                        {
+                            LogString(EdLogLevel.Error, "ReadAllJobs exception: " + GetExceptionText(ex));
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        LogString(EdLogLevel.Error, "ReadAllJobs exception: " + GetExceptionText(ex));
-                    }
+                }
+                catch (Exception)
+                {
+                    LogString(EdLogLevel.Error, "ReadAllJobs file not found: " + fileName);
                 }
             }
 
@@ -4343,18 +4342,33 @@ namespace EdiabasLib
 
             string baseFileName = Path.GetFileNameWithoutExtension(fileName);
 
-            string dirName = Path.GetDirectoryName(fileName) ?? String.Empty;
-            string localFileName = Path.Combine(dirName, baseFileName + ".grp");
-            if (!File.Exists(localFileName))
+            string dirName = Path.GetDirectoryName(fileName) ?? string.Empty;
+            string prgFileName = Path.Combine(dirName, baseFileName + ".prg");
+            string grpFileName = Path.Combine(dirName, baseFileName + ".grp");
+            string localFileName = string.Empty;
+            if (File.Exists(prgFileName))
             {
-                localFileName = Path.Combine(dirName, baseFileName + ".prg");
+                localFileName = prgFileName;
+            }
+            else if (File.Exists(grpFileName))
+            {
+                localFileName = grpFileName;
+            }
+            if (string.IsNullOrEmpty(localFileName))
+            {   // now try for case sensitive file systems
+                try
+                {
+                    using (MemoryStreamReader.OpenRead(prgFileName))
+                    {
+                    }
+                    localFileName = prgFileName;
+                }
+                catch (Exception)
+                {
+                    localFileName = grpFileName;
+                }
             }
 
-            if (!File.Exists(localFileName))
-            {
-                LogString(EdLogLevel.Error, "GetFileType file not found: " + fileName);
-                throw new ArgumentOutOfRangeException(fileName, "GetFileType: File not found");
-            }
             try
             {
                 using (Stream tempFs = MemoryStreamReader.OpenRead(localFileName))
@@ -4499,7 +4513,7 @@ namespace EdiabasLib
 
             if (!OpenSgbdFs())
             {
-                throw new ArgumentOutOfRangeException("OpenSgbdFs", "ExecuteJobInternal: Open SGBD failed");
+                throw new ArgumentOutOfRangeException("OpenSgbdFs", "ExecuteJobPrivate: Open SGBD failed");
             }
             JobInfo jobInfo = GetJobInfo(jobName);
             if (jobInfo == null)
@@ -4520,22 +4534,26 @@ namespace EdiabasLib
             if (jobInfo.UsesInfo != null)
             {
                 string fileName = Path.Combine(EcuPath, jobInfo.UsesInfo.Name.ToLower(Culture) + ".prg");
-                if (!File.Exists(fileName))
-                {
-                    throw new ArgumentOutOfRangeException("fileName", "ExecuteJobInternal: SGBD not found: " + fileName);
-                }
                 try
                 {
                     using (Stream tempFs = MemoryStreamReader.OpenRead(fileName))
                     {
                         _sgbdBaseFs = tempFs;
-                        ExecuteJobPrivate(tempFs, jobInfo);
+                        try
+                        {
+                            ExecuteJobPrivate(tempFs, jobInfo);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogString(EdLogLevel.Error, "executeJob base job exception: " + GetExceptionText(ex));
+                            throw new Exception("executeJob base job exception", ex);
+                        }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    LogString(EdLogLevel.Error, "executeJob base job exception: " + GetExceptionText(ex));
-                    throw new Exception("executeJob base job exception", ex);
+                    LogString(EdLogLevel.Error, "ExecuteJobPrivate file not found: " + fileName);
+                    throw new ArgumentOutOfRangeException("fileName", "ExecuteJobPrivate: SGBD not found: " + fileName);
                 }
                 finally
                 {
