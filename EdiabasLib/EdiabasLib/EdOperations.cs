@@ -2416,15 +2416,30 @@ namespace EdiabasLib
             string baseFileName = arg1.GetStringData();
             if (baseFileName.Length > 0)
             {
-                string fullFileName = Path.Combine(ediabas.EcuPath, baseFileName + ".prg");
-                if (!File.Exists(fullFileName))
+                string prgFileName = Path.Combine(ediabas.EcuPath, baseFileName + ".prg");
+                string grpFileName = Path.Combine(ediabas.EcuPath, baseFileName + ".grp");
+                string fullFileName = string.Empty;
+                if (File.Exists(prgFileName))
                 {
-                    fullFileName = Path.Combine(ediabas.EcuPath, baseFileName + ".grp");
+                    fullFileName = prgFileName;
                 }
-                if (!File.Exists(fullFileName))
+                else if (File.Exists(grpFileName))
                 {
-                    ediabas.SetError(ErrorCodes.EDIABAS_SYS_0002);
-                    return;
+                    fullFileName = grpFileName;
+                }
+                if (string.IsNullOrEmpty(fullFileName))
+                {   // now try for case sensitive file systems
+                    try
+                    {
+                        using (MemoryStreamReader.OpenRead(prgFileName))
+                        {
+                        }
+                        fullFileName = prgFileName;
+                    }
+                    catch (Exception)
+                    {
+                        fullFileName = grpFileName;
+                    }
                 }
 
                 try
