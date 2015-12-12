@@ -3022,7 +3022,7 @@ namespace EdiabasLib
             {
                 _sgbdFs = MemoryStreamReader.OpenRead(fileName);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 LogString(EdLogLevel.Error, "OpenSgbdFs file not found: " + fileName);
                 return false;
