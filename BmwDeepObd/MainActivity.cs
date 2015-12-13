@@ -319,6 +319,7 @@ namespace BmwDeepObd
                 _webClient.Dispose();
                 _webClient = null;
             }
+            MemoryStreamReader.CleanUp();
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
