@@ -6,7 +6,7 @@ using Android.OS;
 
 namespace EdiabasLib
 {
-    class MemoryStreamReader : Stream
+    public class MemoryStreamReader : Stream
     {
         [DllImport("libc", SetLastError = true)]
         static extern int open(string path, int flags, int access);
@@ -268,6 +268,11 @@ namespace EdiabasLib
         public override void Write(byte[] buffer, int offset, int count)
         {
             throw new NotSupportedException();
+        }
+
+        public static void CleanUp()
+        {
+            RemoveDirectoryObserver();
         }
 
         private IntPtr PosPtr
