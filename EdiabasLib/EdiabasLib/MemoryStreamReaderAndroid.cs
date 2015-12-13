@@ -356,6 +356,7 @@ namespace EdiabasLib
                 {
                     lock (DirDictLock)
                     {
+                        StopWatching();
                         _dirDict = null;
                     }
                 }
