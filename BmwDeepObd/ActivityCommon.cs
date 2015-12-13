@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using Android.Bluetooth;
 using Android.Content;
 using Android.Hardware.Usb;
@@ -829,9 +830,6 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            string mailBody = string.Format("Deep OBD Trace file\nDate: {0}\nAndroid version: {1}\nAndroid model: {2}\nApp version name: {3}\nApp version code: {4}\nApp id: {5}\nClass name: {6}",
-                DateTime.Now.ToString("u"), Build.VERSION.Sdk, Build.Model, packageInfo.VersionName, packageInfo.VersionCode, AppId, classType.FullName);
-
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_activity);
             progress.SetCancelable(false);
             progress.SetMessage(_activity.GetString(Resource.String.send_trace_file));
@@ -850,7 +848,6 @@ namespace BmwDeepObd
                     MailMessage mail = new MailMessage()
                     {
                         Subject = "Deep OBD trace file",
-                        Body = mailBody,
                         BodyEncoding = Encoding.UTF8
                     };
 
@@ -858,6 +855,37 @@ namespace BmwDeepObd
 
                     string mailInfoFile = Path.Combine(Path.GetDirectoryName(traceFile) ?? string.Empty, "Mail.xml");
                     webClient.DownloadFile(MailInfoDownloadUrl, mailInfoFile);
+
+                    string regEx;
+                    int maxWords;
+                    if (!GetKeyWordsInfo(mailInfoFile, out regEx, out maxWords))
+                    {
+                        throw new Exception("Invalid mail info");
+                    }
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("Deep OBD Trace file");
+                    sb.Append(string.Format("\nDate: {0}", DateTime.Now.ToString("u")));
+                    sb.Append(string.Format("\nAndroid version: {0}", Build.VERSION.Sdk));
+                    sb.Append(string.Format("\nAndroid model: {0}", Build.Model));
+                    sb.Append(string.Format("\nApp version name: {0}", packageInfo.VersionName));
+                    sb.Append(string.Format("\nApp version code: {0}", packageInfo.VersionCode));
+                    sb.Append(string.Format("\nApp id: {0}", AppId));
+                    sb.Append(string.Format("\nClass name: {0}", classType.FullName));
+
+                    Dictionary<string, int> wordDict = ExtractKeyWords(traceFile, new Regex(regEx), maxWords, null);
+                    if (wordDict != null)
+                    {
+                        sb.Append("\nKeywords:");
+                        foreach (var entry in wordDict)
+                        {
+                            sb.Append(" ");
+                            sb.Append(entry.Key);
+                            sb.Append("=");
+                            sb.Append(entry.Value);
+                        }
+                    }
+                    mail.Body = sb.ToString();
 
                     string mailHost;
                     int mailPort;
@@ -1054,6 +1082,45 @@ namespace BmwDeepObd
             return true;
         }
 
+        private bool GetKeyWordsInfo(string xmlFile, out string regEx, out int maxWords)
+        {
+            regEx = null;
+            maxWords = 0;
+            try
+            {
+                if (!File.Exists(xmlFile))
+                {
+                    return false;
+                }
+                XDocument xmlDoc = XDocument.Load(xmlFile);
+                if (xmlDoc.Root == null)
+                {
+                    return false;
+                }
+                XElement keyWordsNode = xmlDoc.Root.Element("keywords");
+                if (keyWordsNode == null)
+                {
+                    return false;
+                }
+                XAttribute regexAttr = keyWordsNode.Attribute("regex");
+                if (regexAttr == null)
+                {
+                    return false;
+                }
+                regEx = regexAttr.Value;
+                XAttribute maxWordsAttr = keyWordsNode.Attribute("max_words");
+                if (maxWordsAttr != null)
+                {
+                    maxWords = XmlConvert.ToInt32(maxWordsAttr.Value);
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static string MakeRelativePath(string fromPath, string toPath)
         {
             if (string.IsNullOrEmpty(fromPath))
@@ -1189,6 +1256,83 @@ namespace BmwDeepObd
                 return false;
             }
             return true;
+        }
+
+        public static Dictionary<string, int> ExtractKeyWords(string archiveFilename, Regex regEx, int maxWords, ProgressZipDelegate progressHandler)
+        {
+            Dictionary<string, int> wordDict = new Dictionary<string, int>();
+            ZipFile zf = null;
+            try
+            {
+                long index = 0;
+                FileStream fs = File.OpenRead(archiveFilename);
+                zf = new ZipFile(fs);
+                foreach (ZipEntry zipEntry in zf)
+                {
+                    if (progressHandler != null)
+                    {
+                        if (progressHandler((int)(100 * index / zf.Count)))
+                        {
+                            return null;
+                        }
+                    }
+                    if (!zipEntry.IsFile)
+                    {
+                        continue;           // Ignore directories
+                    }
+                    Stream zipStream = zf.GetInputStream(zipEntry);
+                    using (StreamReader sr = new StreamReader(zipStream))
+                    {
+                        bool exit = false;
+                        for (; ; )
+                        {
+                            string line = sr.ReadLine();
+                            if (line == null)
+                            {
+                                break;
+                            }
+                            string[] words = line.Split(' ', '\t', '\n', '\r');
+                            foreach (string word in words)
+                            {
+                                if (string.IsNullOrEmpty(word))
+                                {
+                                    continue;
+                                }
+                                if (regEx.IsMatch(word))
+                                {
+                                    if (wordDict.ContainsKey(word))
+                                    {
+                                        wordDict[word] += 1;
+                                    }
+                                    else
+                                    {
+                                        if (maxWords > 0 && wordDict.Count > maxWords)
+                                        {
+                                            exit = true;
+                                        }
+                                        wordDict[word] = 1;
+                                    }
+                                }
+                            }
+                            if (exit)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    index++;
+                }
+            }
+            finally
+            {
+                if (zf != null)
+                {
+                    zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                    zf.Close(); // Ensure we release resources
+                }
+            }
+            return wordDict;
         }
 
         public static string CreateValidFileName(string s, char replaceChar = '_', char[] includeChars = null)
