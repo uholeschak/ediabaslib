@@ -27,10 +27,11 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
-\n- Create compressed traces files
-\n- Support for sending trace files
-\n- Added adapter firmware that also supports older protocols
-\n- Configurable Bluetooth pin for new adapter types"</string>
+\n(With help of the received trace files)
+\n- Fixed handling of case sensitive filesystems
+\n- Fixed reading VIN
+\n- Disabled sorting of job argument description
+\n- Improved log file generation"</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Information</string>
