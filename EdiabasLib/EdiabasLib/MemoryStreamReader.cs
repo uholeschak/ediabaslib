@@ -5,8 +5,16 @@ using System.IO.MemoryMappedFiles;
 
 namespace EdiabasLib
 {
-    class MemoryStreamReader : Stream
+    public class MemoryStreamReader : Stream
     {
+        static MemoryStreamReader()
+        {
+            AppDomain.CurrentDomain.ProcessExit += (sender, args) =>
+            {
+                RemoveDirectoryWatcher();
+            };
+        }
+
         public MemoryStreamReader(string path)
         {
             if (!File.Exists(path))
@@ -28,41 +36,33 @@ namespace EdiabasLib
                 }
                 lock (DirDictLock)
                 {
-                    bool newDict = false;
-                    for (int i = 0; i < 2; i++)
+                    if ((_dirDict == null) || (string.Compare(dirName, _dirDictName, StringComparison.Ordinal) != 0))
                     {
-                        if ((_dirDict == null) || (string.Compare(dirName, _dirDictName, StringComparison.Ordinal) != 0))
+                        Dictionary<string, string> dirDict = GetDirDict(dirName);
+                        if (dirDict == null)
                         {
-                            Dictionary<string, string> dirDict = GetDirDict(dirName);
-                            if (dirDict == null)
-                            {
-                                throw new FileNotFoundException();
-                            }
-                            _dirDictName = dirName;
-                            _dirDict = dirDict;
-                            newDict = true;
-                        }
-                        string realName;
-                        if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out realName))
-                        {
-                            if (!newDict)
-                            {
-                                _dirDict = null;
-                                continue;
-                            }
                             throw new FileNotFoundException();
                         }
-                        path = Path.Combine(dirName, realName);
-                        if (!File.Exists(path))
-                        {
-                            if (!newDict)
-                            {
-                                _dirDict = null;
-                                continue;
-                            }
-                            throw new FileNotFoundException();
-                        }
-                        break;
+                        _dirDictName = dirName;
+                        _dirDict = dirDict;
+                        RemoveDirectoryWatcher();
+                        _fsw = new FileSystemWatcher(dirName);
+                        _fsw.Changed += DirectoryChangedEvent;
+                        _fsw.Created += DirectoryChangedEvent;
+                        _fsw.Deleted += DirectoryChangedEvent;
+                        _fsw.Renamed += DirectoryChangedEvent;
+                        _fsw.IncludeSubdirectories = true;
+                        _fsw.EnableRaisingEvents = true;
+                    }
+                    string realName;
+                    if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out realName))
+                    {
+                        throw new FileNotFoundException();
+                    }
+                    path = Path.Combine(dirName, realName);
+                    if (!File.Exists(path))
+                    {
+                        throw new FileNotFoundException();
                     }
                 }
             }
@@ -246,6 +246,11 @@ namespace EdiabasLib
             throw new NotSupportedException();
         }
 
+        public static void CleanUp()
+        {
+            RemoveDirectoryWatcher();
+        }
+
         private void CloseHandles()
         {
             if (_mmStream != null)
@@ -286,11 +291,49 @@ namespace EdiabasLib
             }
         }
 
+        private static void RemoveDirectoryWatcher()
+        {
+            lock (DirDictLock)
+            {
+                if (_fsw != null)
+                {
+                    try
+                    {
+                        _fsw.EnableRaisingEvents = false;
+                        _fsw.Changed -= DirectoryChangedEvent;
+                        _fsw.Created -= DirectoryChangedEvent;
+                        _fsw.Deleted -= DirectoryChangedEvent;
+                        _fsw.Renamed -= DirectoryChangedEvent;
+                        _fsw.Dispose();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    _fsw = null;
+                }
+            }
+        }
+
+        private static void DirectoryChangedEvent(object sender, FileSystemEventArgs e)
+        {
+            lock (DirDictLock)
+            {
+                FileSystemWatcher fsw = sender as FileSystemWatcher;
+                if (fsw != null)
+                {
+                    fsw.EnableRaisingEvents = false;
+                }
+                _dirDict = null;
+            }
+        }
+
         private MemoryMappedFile _mmFile;
         private MemoryMappedViewStream _mmStream;
         private readonly long _fileLength;
         private static readonly object DirDictLock = new object();
         private static string _dirDictName = string.Empty;
         private static Dictionary<string, string> _dirDict;
+        private static FileSystemWatcher _fsw;
     }
 }
