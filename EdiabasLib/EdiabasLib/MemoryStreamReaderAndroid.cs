@@ -38,22 +38,7 @@ namespace EdiabasLib
         {
             AppDomain.CurrentDomain.ProcessExit += (sender, args) =>
             {
-                lock (DirDictLock)
-                {
-                    if (_directoryObserver != null)
-                    {
-                        try
-                        {
-                            _directoryObserver.StopWatching();
-                            _directoryObserver.Dispose();
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                        _directoryObserver = null;
-                    }
-                }
+                RemoveDirectoryObserver();
             };
         }
 
@@ -84,12 +69,7 @@ namespace EdiabasLib
                         }
                         _dirDictName = dirName;
                         _dirDict = dirDict;
-                        if (_directoryObserver != null)
-                        {
-                            _directoryObserver.StopWatching();
-                            _directoryObserver.Dispose();
-                            _directoryObserver = null;
-                        }
+                        RemoveDirectoryObserver();
                         _directoryObserver = new DirectoryObserver(dirName);
                         _directoryObserver.StartWatching();
                     }
@@ -338,7 +318,27 @@ namespace EdiabasLib
             }
         }
 
-        public class DirectoryObserver : FileObserver
+        private static void RemoveDirectoryObserver()
+        {
+            lock (DirDictLock)
+            {
+                if (_directoryObserver != null)
+                {
+                    try
+                    {
+                        _directoryObserver.StopWatching();
+                        _directoryObserver.Dispose();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    _directoryObserver = null;
+                }
+            }
+        }
+
+        private class DirectoryObserver : FileObserver
         {
             const FileObserverEvents Events =
                 (FileObserverEvents.Modify | FileObserverEvents.CloseWrite | FileObserverEvents.MovedFrom | FileObserverEvents.MovedTo |
