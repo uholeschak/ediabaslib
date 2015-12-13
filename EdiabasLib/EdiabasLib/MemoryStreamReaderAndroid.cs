@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using Android.OS;
 
 namespace EdiabasLib
 {
@@ -33,6 +34,22 @@ namespace EdiabasLib
         const int MapShared = 0x1;
         // ReSharper restore UnusedMember.Local
 
+        static MemoryStreamReader()
+        {
+            AppDomain.CurrentDomain.ProcessExit += (sender, args) =>
+            {
+                lock (DirDictLock)
+                {
+                    if (_directoryObserver != null)
+                    {
+                        _directoryObserver.StopWatching();
+                        _directoryObserver.Dispose();
+                        _directoryObserver = null;
+                    }
+                }
+            };
+        }
+
         public MemoryStreamReader(string path)
         {
             _filePos = 0;
@@ -50,41 +67,34 @@ namespace EdiabasLib
                 }
                 lock (DirDictLock)
                 {
-                    bool newDict = false;
-                    for (int i = 0; i < 2; i++)
+                    if ((_dirDict == null) || (_directoryObserver == null) ||
+                        (string.Compare(dirName, _dirDictName, StringComparison.Ordinal) != 0))
                     {
-                        if ((_dirDict == null) || (string.Compare(dirName, _dirDictName, StringComparison.Ordinal) != 0))
+                        Dictionary<string, string> dirDict = GetDirDict(dirName);
+                        if (dirDict == null)
                         {
-                            Dictionary<string, string> dirDict = GetDirDict(dirName);
-                            if (dirDict == null)
-                            {
-                                throw new FileNotFoundException();
-                            }
-                            _dirDictName = dirName;
-                            _dirDict = dirDict;
-                            newDict = true;
-                        }
-                        string realName;
-                        if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out realName))
-                        {
-                            if (!newDict)
-                            {
-                                _dirDict = null;
-                                continue;
-                            }
                             throw new FileNotFoundException();
                         }
-                        path = Path.Combine(dirName, realName);
-                        if (!File.Exists(path))
+                        _dirDictName = dirName;
+                        _dirDict = dirDict;
+                        if (_directoryObserver != null)
                         {
-                            if (!newDict)
-                            {
-                                _dirDict = null;
-                                continue;
-                            }
-                            throw new FileNotFoundException();
+                            _directoryObserver.StopWatching();
+                            _directoryObserver.Dispose();
+                            _directoryObserver = null;
                         }
-                        break;
+                        _directoryObserver = new DirectoryObserver(dirName);
+                        _directoryObserver.StartWatching();
+                    }
+                    string realName;
+                    if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out realName))
+                    {
+                        throw new FileNotFoundException();
+                    }
+                    path = Path.Combine(dirName, realName);
+                    if (!File.Exists(path))
+                    {
+                        throw new FileNotFoundException();
                     }
                 }
             }
@@ -321,6 +331,30 @@ namespace EdiabasLib
             }
         }
 
+        public class DirectoryObserver : FileObserver
+        {
+            const FileObserverEvents Events =
+                (FileObserverEvents.Modify | FileObserverEvents.CloseWrite | FileObserverEvents.MovedFrom | FileObserverEvents.MovedTo |
+                FileObserverEvents.Create | FileObserverEvents.Delete | FileObserverEvents.DeleteSelf | FileObserverEvents.MoveSelf);
+
+            public DirectoryObserver(String rootPath)
+                : base(rootPath, Events)
+            {
+            }
+
+            public override void OnEvent(FileObserverEvents e, String path)
+            {
+                //Android.Util.Log.Info("File event", String.Format("{0}:{1}", path, e));
+                if ((e & Events) != 0)
+                {
+                    lock (DirDictLock)
+                    {
+                        _dirDict = null;
+                    }
+                }
+            }
+        }
+
         private long _filePos;
         private readonly long _fileLength;
         private int _fd;
@@ -328,5 +362,6 @@ namespace EdiabasLib
         private static readonly object DirDictLock = new object();
         private static string _dirDictName = string.Empty;
         private static Dictionary<string, string> _dirDict;
+        private static DirectoryObserver _directoryObserver;
     }
 }
