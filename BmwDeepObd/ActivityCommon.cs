@@ -866,6 +866,7 @@ namespace BmwDeepObd
                     StringBuilder sb = new StringBuilder();
                     sb.Append("Deep OBD Trace file");
                     sb.Append(string.Format("\nDate: {0}", DateTime.Now.ToString("u")));
+                    sb.Append(string.Format("\nLanguage: {0}", Java.Util.Locale.Default.Language ?? string.Empty));
                     sb.Append(string.Format("\nAndroid version: {0}", Build.VERSION.Sdk));
                     sb.Append(string.Format("\nAndroid model: {0}", Build.Model));
                     sb.Append(string.Format("\nApp version name: {0}", packageInfo.VersionName));
