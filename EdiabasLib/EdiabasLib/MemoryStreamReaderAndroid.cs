@@ -42,8 +42,15 @@ namespace EdiabasLib
                 {
                     if (_directoryObserver != null)
                     {
-                        _directoryObserver.StopWatching();
-                        _directoryObserver.Dispose();
+                        try
+                        {
+                            _directoryObserver.StopWatching();
+                            _directoryObserver.Dispose();
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                         _directoryObserver = null;
                     }
                 }
