@@ -854,10 +854,17 @@ namespace BmwDeepObd
                         }
                         catch (Exception)
                         {
-                            _ediabas.ExecuteJob("PROG_FG_NR_LESEN_FUNKTIONAL");
+                            try
+                            {
+                                _ediabas.ExecuteJob("PROG_FG_NR_LESEN_FUNKTIONAL");
+                            }
+                            catch (Exception)
+                            {
+                                _ediabas.ExecuteJob("AIF_LESEN_FUNKTIONAL");
+                            }
                         }
 
-                        Regex regex = new Regex(@"^[a-zA-Z0-9]+$");
+                        Regex regex = new Regex(@"^[a-zA-Z][a-zA-Z0-9]+$");
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
@@ -887,6 +894,13 @@ namespace BmwDeepObd
                                     }
                                 }
                                 if (resultDict.TryGetValue("FG_NR_KURZ", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        ecuVin = (string)resultData.OpData;
+                                    }
+                                }
+                                if (resultDict.TryGetValue("AIF_FG_NR", out resultData))
                                 {
                                     if (resultData.OpData is string)
                                     {
