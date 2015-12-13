@@ -812,7 +812,7 @@ namespace BmwDeepObd
                 {
                     _infoListAdapter.Items.Add(new TableResultItem(GetString(Resource.String.tool_job_arguments_error_detail), null));
                 }
-                foreach (ExtraInfo info in jobInfo.Arguments.OrderBy(x => x.Name))
+                foreach (ExtraInfo info in jobInfo.Arguments)
                 {
                     StringBuilder stringBuilderComments = new StringBuilder();
                     stringBuilderComments.Append(info.Name + " (" + info.Type + "):");
