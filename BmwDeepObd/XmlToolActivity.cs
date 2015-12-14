@@ -769,6 +769,7 @@ namespace BmwDeepObd
                     _ediabas.ExecuteJob("IDENT_FUNKTIONAL");
 
                     List<EcuInfo> ecuList = new List<EcuInfo>();
+                    List<long> invalidAddrList = new List<long>();
                     List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                     if (resultSets != null && resultSets.Count >= 2)
                     {
@@ -826,7 +827,10 @@ namespace BmwDeepObd
                             }
                             if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
                             {
-                                ecuList.Add(new EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup));
+                                if (ecuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
+                                {   // address not existing
+                                    ecuList.Add(new EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup));
+                                }
                             }
                             else
                             {
@@ -834,11 +838,19 @@ namespace BmwDeepObd
                                 {
                                     if (!ecuName.StartsWith("VIRTSG", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        invalidEcuCount++;
+                                        invalidAddrList.Add(ecuAdr);
                                     }
                                 }
                             }
                             dictIndex++;
+                        }
+                        // ReSharper disable once LoopCanBeConvertedToQuery
+                        foreach (long addr in invalidAddrList)
+                        {
+                            if (ecuList.All(ecuInfo => ecuInfo.Address != addr))
+                            {
+                                invalidEcuCount++;
+                            }
                         }
                         _ecuList.AddRange(ecuList.OrderBy(x => x.Name));
                     }
