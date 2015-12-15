@@ -13,7 +13,8 @@ namespace CarSimulator
     public partial class MainForm : Form
     {
         private const string StdResponseFile = "e61.txt";
-        private readonly string _responseDir;
+        private string _rootFolder;
+        private string _responseDir;
         private readonly CommThread _commThread;
         private int _lastPortCount;
         private readonly CommThread.ConfigData _configData;
@@ -23,15 +24,21 @@ namespace CarSimulator
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.AboveNormal;
             InitializeComponent();
 
+            _rootFolder = Properties.Settings.Default.RootFolder;
             string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             if (!string.IsNullOrEmpty(appDir))
             {
-                _responseDir = Path.Combine(appDir, "Response");
+                if (string.IsNullOrEmpty(_rootFolder) || !Directory.Exists(_rootFolder))
+                {
+                    _rootFolder = appDir;
+                }
             }
+            _responseDir = _rootFolder;
 
             _lastPortCount = -1;
             _configData = new CommThread.ConfigData();
-            UpdateResponseFiles();
+            UpdateDirectoryList(_rootFolder);
+            UpdateResponseFiles(_responseDir);
             UpdatePorts();
             _commThread = new CommThread();
             timerUpdate.Enabled = true;
@@ -41,6 +48,8 @@ namespace CarSimulator
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             _commThread.StopThread();
+            Properties.Settings.Default.RootFolder = _rootFolder;
+            Properties.Settings.Default.Save();
         }
 
         private void UpdatePorts()
@@ -78,9 +87,56 @@ namespace CarSimulator
             _lastPortCount = ports.Length;
         }
 
-        private void UpdateResponseFiles()
+        private void UpdateDirectoryList(string path)
         {
-            string[] files = Directory.GetFiles(_responseDir, "*.txt");
+            treeViewDirectories.Nodes.Clear();
+            TreeNode node = new TreeNode
+            {
+                Text = path,
+                Tag = path
+            };
+            treeViewDirectories.BeginUpdate();
+            treeViewDirectories.Nodes.Add(node);
+            FillDirectory(path, node, 0);
+            treeViewDirectories.ExpandAll();
+            treeViewDirectories.SelectedNode = node;
+            treeViewDirectories.EndUpdate();
+        }
+
+        private void FillDirectory(string path, TreeNode parent, int level)
+        {
+            try
+            {
+                // limit levels
+                level++;
+                DirectoryInfo dir = new DirectoryInfo(path);
+                if (!dir.Exists)
+                {
+                    return;
+                }
+
+                foreach (DirectoryInfo di in dir.GetDirectories())
+                {
+                    TreeNode child = new TreeNode
+                    {
+                        Text = di.Name,
+                    };
+                    string fullPath = Path.Combine(path, di.Name);
+                    child.Tag = fullPath;
+                    parent.Nodes.Add(child);
+
+                    FillDirectory(child.FullPath, child, level);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        private void UpdateResponseFiles(string path)
+        {
+            string[] files = Directory.GetFiles(path, "*.txt");
             listBoxResponseFiles.BeginUpdate();
             listBoxResponseFiles.Items.Clear();
             string selectItem = null;
@@ -193,6 +249,7 @@ namespace CarSimulator
                             {
                                 if (listCompare.Count != responseEntry.Request.Length) continue;
                                 bool equal = true;
+                                // ReSharper disable once LoopCanBeConvertedToQuery
                                 for (int i = 0; i < listCompare.Count; i++)
                                 {
                                     if (listCompare[i] != responseEntry.Request[i])
@@ -445,6 +502,35 @@ namespace CarSimulator
         private void buttonErrorReset_Click(object sender, EventArgs e)
         {
             _commThread.ErrorDefault = true;
+        }
+
+        private void treeViewDirectories_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            try
+            {
+                TreeNode node = e.Node;
+                string path = node.Tag as string;
+                if (path != null)
+                {
+                    _responseDir = path;
+                    UpdateResponseFiles(path);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        private void buttonRootFolder_Click(object sender, EventArgs e)
+        {
+            folderBrowserDialog.SelectedPath = _rootFolder;
+            DialogResult result = folderBrowserDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                _rootFolder = folderBrowserDialog.SelectedPath;
+                UpdateDirectoryList(_rootFolder);
+            }
         }
     }
 }

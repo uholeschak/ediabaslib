@@ -47,6 +47,9 @@
             this.checkBoxAdsAdapter = new System.Windows.Forms.CheckBox();
             this.checkBoxKLineResponder = new System.Windows.Forms.CheckBox();
             this.buttonErrorDefault = new System.Windows.Forms.Button();
+            this.treeViewDirectories = new System.Windows.Forms.TreeView();
+            this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.buttonRootFolder = new System.Windows.Forms.Button();
             this.groupBoxConcepts.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -115,7 +118,7 @@
             this.groupBoxConcepts.Controls.Add(this.radioButtonDs2);
             this.groupBoxConcepts.Controls.Add(this.radioButtonKwp2000S);
             this.groupBoxConcepts.Controls.Add(this.radioButtonBmwFast);
-            this.groupBoxConcepts.Location = new System.Drawing.Point(224, 88);
+            this.groupBoxConcepts.Location = new System.Drawing.Point(437, 88);
             this.groupBoxConcepts.Name = "groupBoxConcepts";
             this.groupBoxConcepts.Size = new System.Drawing.Size(207, 186);
             this.groupBoxConcepts.TabIndex = 6;
@@ -191,7 +194,7 @@
             // listBoxResponseFiles
             // 
             this.listBoxResponseFiles.FormattingEnabled = true;
-            this.listBoxResponseFiles.Location = new System.Drawing.Point(12, 88);
+            this.listBoxResponseFiles.Location = new System.Drawing.Point(225, 88);
             this.listBoxResponseFiles.Name = "listBoxResponseFiles";
             this.listBoxResponseFiles.Size = new System.Drawing.Size(206, 186);
             this.listBoxResponseFiles.Sorted = true;
@@ -242,11 +245,36 @@
             this.buttonErrorDefault.UseVisualStyleBackColor = true;
             this.buttonErrorDefault.Click += new System.EventHandler(this.buttonErrorReset_Click);
             // 
+            // treeViewDirectories
+            // 
+            this.treeViewDirectories.Location = new System.Drawing.Point(12, 117);
+            this.treeViewDirectories.Name = "treeViewDirectories";
+            this.treeViewDirectories.Size = new System.Drawing.Size(206, 158);
+            this.treeViewDirectories.TabIndex = 9;
+            this.treeViewDirectories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewDirectories_AfterSelect);
+            // 
+            // folderBrowserDialog
+            // 
+            this.folderBrowserDialog.Description = "Select response root folder";
+            this.folderBrowserDialog.ShowNewFolderButton = false;
+            // 
+            // buttonRootFolder
+            // 
+            this.buttonRootFolder.Location = new System.Drawing.Point(12, 88);
+            this.buttonRootFolder.Name = "buttonRootFolder";
+            this.buttonRootFolder.Size = new System.Drawing.Size(206, 23);
+            this.buttonRootFolder.TabIndex = 8;
+            this.buttonRootFolder.Text = "Select Root Folder";
+            this.buttonRootFolder.UseVisualStyleBackColor = true;
+            this.buttonRootFolder.Click += new System.EventHandler(this.buttonRootFolder_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(443, 290);
+            this.ClientSize = new System.Drawing.Size(657, 287);
+            this.Controls.Add(this.buttonRootFolder);
+            this.Controls.Add(this.treeViewDirectories);
             this.Controls.Add(this.buttonErrorDefault);
             this.Controls.Add(this.checkBoxKLineResponder);
             this.Controls.Add(this.checkBoxAdsAdapter);
@@ -287,6 +315,9 @@
         private System.Windows.Forms.RadioButton radioButtonKwp2000Bmw;
         private System.Windows.Forms.CheckBox checkBoxKLineResponder;
         private System.Windows.Forms.Button buttonErrorDefault;
+        private System.Windows.Forms.TreeView treeViewDirectories;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+        private System.Windows.Forms.Button buttonRootFolder;
 
     }
 }
