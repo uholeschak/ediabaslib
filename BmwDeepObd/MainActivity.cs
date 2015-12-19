@@ -741,14 +741,9 @@ namespace BmwDeepObd
                 _configFileName = prefs.GetString("ConfigFile", string.Empty);
                 _activityCommon.CustomStorageMedia = prefs.GetString("StorageMedia", string.Empty);
                 _lastVersionCode = prefs.GetInt("VersionCode", -1);
-                string appId = prefs.GetString("AppId", string.Empty);
-                if (string.IsNullOrEmpty(appId))
-                {
-                    appId = Guid.NewGuid().ToString();
-                }
-                ActivityCommon.AppId = appId;
+                ActivityCommon.AppId = prefs.GetString("AppId", string.Empty);
             }
-            catch
+            catch (Exception)
             {
                 // ignored
             }
