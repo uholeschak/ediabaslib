@@ -81,6 +81,7 @@ namespace BmwDeepObd
         private static string _externalPath;
         private static string _externalWritePath;
         private static string _customStorageMedia;
+        private static string _appId;
         private readonly BluetoothAdapter _btAdapter;
         private readonly WifiManager _maWifi;
         private readonly ConnectivityManager _maConnectivity;
@@ -151,6 +152,22 @@ namespace BmwDeepObd
             }
         }
 
+        public static string AppId
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_appId))
+                {
+                    _appId = Guid.NewGuid().ToString();
+                }
+                return _appId;
+            }
+            set
+            {
+                _appId = value;
+            }
+        }
+
         public InterfaceType SelectedInterface
         {
             get
@@ -201,8 +218,6 @@ namespace BmwDeepObd
         {
             get { return _bcReceiver; }
         }
-
-        public static string AppId { get; set; }
 
         public ActivityCommon(Android.App.Activity activity, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null, BcReceiverReceivedDelegate bcReceiverReceivedHandler = null)
         {
