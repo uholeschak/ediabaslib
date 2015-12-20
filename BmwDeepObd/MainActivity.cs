@@ -2122,8 +2122,18 @@ namespace BmwDeepObd
             {
             }
 
+            // default constructor is required
+            public TabContentFragment()
+                : this(null, 0)
+            {
+            }
+
             public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
             {
+                if (_activity == null)
+                {
+                    return null;
+                }
                 View view = inflater.Inflate(_resourceId, null);
                 if (_pageInfo != null && _pageInfo.ClassObject != null)
                 {
