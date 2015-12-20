@@ -57,6 +57,7 @@ namespace EdiabasLib
             {
                 return true;
             }
+            FastInit = false;
             AdapterType = -1;
             AdapterVersion = -1;
 
@@ -186,6 +187,7 @@ namespace EdiabasLib
             CurrentBaudRate = baudRate;
             CurrentWordLength = dataBits;
             CurrentParity = parity;
+            FastInit = false;
             return EdInterfaceObd.InterfaceErrorResult.NoError;
         }
 
@@ -315,6 +317,7 @@ namespace EdiabasLib
                 {
                     UpdateAdapterInfo();
                     byte[] adapterTel = CreateAdapterTelegram(sendData, length, setDtr);
+                    FastInit = false;
                     if (adapterTel == null)
                     {
                         return false;
@@ -428,6 +431,11 @@ namespace EdiabasLib
             try
             {
                 UpdateAdapterInfo();
+                FastInit = IsFastInit(dataBits, length, pulseWidth);
+                if (FastInit)
+                {   // send next telegram with fast init
+                    return true;
+                }
                 byte[] adapterTel = CreatePulseTelegram(dataBits, length, pulseWidth, setDtr);
                 if (adapterTel == null)
                 {

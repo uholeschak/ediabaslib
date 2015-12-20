@@ -15,6 +15,7 @@ namespace EdiabasLib
         public static byte KLINEF_USE_LLINE = 0x08;
         public static byte KLINEF_SEND_PULSE = 0x10;
         public static byte KLINEF_NO_ECHO = 0x20;
+        public static byte KLINEF_FAST_INIT = 0x40;
         // ReSharper restore InconsistentNaming
 
         public static int CurrentBaudRate { get; protected set; }
@@ -30,6 +31,8 @@ namespace EdiabasLib
         public static EdInterfaceObd.SerialParity ActiveParity { get; protected set; }
 
         public static int InterByteTime { get; protected set; }
+
+        public static bool FastInit { get; protected set; }
 
         public static int AdapterType { get; protected set; }
 
@@ -51,7 +54,7 @@ namespace EdiabasLib
         public static byte[] CreateAdapterTelegram(byte[] sendData, int length, bool setDtr)
         {
             if ((AdapterType < 0x0002) || (AdapterType > 0x0003) ||
-                (AdapterVersion < 0x0002))
+                (AdapterVersion < 0x0003))
             {
                 return null;
             }
@@ -82,6 +85,10 @@ namespace EdiabasLib
                     flags |= KLINEF_USE_LLINE;
                 }
                 flags |= CalcParityFlags();
+                if (FastInit)
+                {
+                    flags |= KLINEF_FAST_INIT;
+                }
             }
             resultArray[2] = (byte)(baudHalf >> 8);     // baud rate / 2 high
             resultArray[3] = (byte)baudHalf;            // baud rate / 2 low
@@ -139,6 +146,11 @@ namespace EdiabasLib
             }
             resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
             return resultArray;
+        }
+
+        public static bool IsFastInit(UInt64 dataBits, int length, int pulseWidth)
+        {
+            return (dataBits == 0x02) && (length == 2) && (pulseWidth == 25);
         }
 
         static public byte CalcChecksumBmwFast(byte[] data, int offset, int length)
