@@ -133,6 +133,10 @@ namespace BmwDeepObd
                 FindViewById<View> (Resource.Id.title_paired_devices).Visibility = ViewStates.Visible;
                 foreach (var device in pairedDevices)
                 {
+                    if (device == null)
+                    {
+                        continue;
+                    }
                     ParcelUuid[] uuids = device.GetUuids();
                     if ((uuids == null) || (uuids.Any(uuid => SppUuid.CompareTo(uuid.Uuid) == 0)))
                     {
