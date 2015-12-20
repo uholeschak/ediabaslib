@@ -787,6 +787,7 @@ namespace BmwDeepObd
                             string ecuDesc = string.Empty;
                             string ecuSgbd = string.Empty;
                             string ecuGroup = string.Empty;
+                            Int64 dateYear = 0;
                             EdiabasNet.ResultData resultData;
                             if (resultDict.TryGetValue("ECU_GROBNAME", out resultData))
                             {
@@ -825,6 +826,13 @@ namespace BmwDeepObd
                                     ecuGroup = (string)resultData.OpData;
                                 }
                             }
+                            if (resultDict.TryGetValue("ID_DATUM_JAHR", out resultData))
+                            {
+                                if (resultData.OpData is Int64)
+                                {
+                                    dateYear = (Int64)resultData.OpData;
+                                }
+                            }
                             if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
                             {
                                 if (ecuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
@@ -836,7 +844,8 @@ namespace BmwDeepObd
                             {
                                 if (ecuDataPresent)
                                 {
-                                    if (!ecuName.StartsWith("VIRTSG", StringComparison.OrdinalIgnoreCase))
+                                    if (!ecuName.StartsWith("VIRTSG", StringComparison.OrdinalIgnoreCase) &&
+                                        (dateYear != 0))
                                     {
                                         invalidAddrList.Add(ecuAdr);
                                     }
