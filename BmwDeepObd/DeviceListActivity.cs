@@ -74,6 +74,7 @@ namespace BmwDeepObd
         private static ArrayAdapter<string> _newDevicesArrayAdapter;
         private Receiver _receiver;
         private AlertDialog _altertInfoDialog;
+        private Button _scanButton;
 
         protected override void OnCreate (Bundle savedInstanceState)
         {
@@ -89,12 +90,11 @@ namespace BmwDeepObd
             SetResult (Android.App.Result.Canceled);
 
             // Initialize the button to perform device discovery
-            var scanButton = FindViewById<Button> (Resource.Id.button_scan);
-            scanButton.Click += (sender, e) =>
+            _scanButton = FindViewById<Button>(Resource.Id.button_scan);
+            _scanButton.Click += (sender, e) =>
             {
                 DoDiscovery ();
-                var view = sender as View;
-                if (view != null) view.Visibility = ViewStates.Gone;
+                _scanButton.Enabled = false;
             };
 
             // Initialize array adapters. One for already paired devices and
@@ -130,7 +130,6 @@ namespace BmwDeepObd
             // If there are paired devices, add each one to the ArrayAdapter
             if (pairedDevices.Count > 0)
             {
-                FindViewById<View> (Resource.Id.title_paired_devices).Visibility = ViewStates.Visible;
                 foreach (var device in pairedDevices)
                 {
                     if (device == null)
@@ -186,14 +185,15 @@ namespace BmwDeepObd
             FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Visible;
             SetTitle (Resource.String.scanning);
 
-            // Turn on sub-title for new devices
-            FindViewById<View> (Resource.Id.title_new_devices).Visibility = ViewStates.Visible;
+            // Turn on area for new devices
+            FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
 
             // If we're already discovering, stop it
             if (_btAdapter.IsDiscovering)
             {
                 _btAdapter.CancelDiscovery ();
             }
+            _newDevicesArrayAdapter.Clear();
 
             // Request discover from BluetoothAdapter
             _btAdapter.StartDiscovery ();
@@ -602,9 +602,9 @@ namespace BmwDeepObd
 
         public class Receiver : BroadcastReceiver
         {
-            readonly Android.App.Activity _chat;
+            readonly DeviceListActivity _chat;
 
-            public Receiver(Android.App.Activity chat)
+            public Receiver(DeviceListActivity chat)
             {
                 _chat = chat;
             }
@@ -631,6 +631,7 @@ namespace BmwDeepObd
                 }
                 else if (action == BluetoothAdapter.ActionDiscoveryFinished)
                 {
+                    _chat._scanButton.Enabled = true;
                     //_chat.SetProgressBarIndeterminateVisibility (false);
                     _chat.FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Invisible;
                     _chat.SetTitle (Resource.String.select_device);

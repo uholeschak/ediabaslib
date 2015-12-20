@@ -13,14 +13,13 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="3">
+        android:layout_height="match_parent"
+        android:layout_weight="1">
         <TextView
             android:id="@+id/title_paired_devices"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/title_paired_devices"
-            android:visibility="gone"
             android:background="#666"
             android:textColor="#fff"
             android:paddingLeft="5dp" />
@@ -30,16 +29,17 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/layout_new_devices"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:visibility="gone"
         android:layout_weight="1">
         <TextView
             android:id="@+id/title_new_devices"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/title_other_devices"
-            android:visibility="gone"
             android:background="#666"
             android:textColor="#fff"
             android:paddingLeft="5dp" />
