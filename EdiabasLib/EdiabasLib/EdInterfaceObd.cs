@@ -2206,14 +2206,14 @@ namespace EdiabasLib
                 {
                     Thread.Sleep(10);
                 }
-                if (!SendWakeFastInit(ParSendSetDtr))
-                {
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending wake fast init failed");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-                }
-                LastCommTick = Stopwatch.GetTimestamp();
                 if (ParStartCommTelLen > 0)
                 {
+                    if (!SendWakeFastInit(ParSendSetDtr))
+                    {
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending wake fast init failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    }
+                    LastCommTick = Stopwatch.GetTimestamp();
                     errorCode = TransKwp2000(ParStartCommTel, ParStartCommTelLen, ref receiveData, out receiveLength, true);
                     if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                     {

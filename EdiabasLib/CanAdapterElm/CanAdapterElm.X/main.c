@@ -86,7 +86,7 @@
 #define DEBUG_PIN           0   // enable debug pin
 #define ID_LOCATION         0x200000    // location of ID memory
 
-#define ADAPTER_VERSION     0x0002
+#define ADAPTER_VERSION     0x0003
 
 #define IGNITION_STATE()    IGNITION
 
@@ -112,6 +112,7 @@
 #define KLINEF_USE_LLINE        0x08
 #define KLINEF_SEND_PULSE       0x10
 #define KLINEF_NO_ECHO          0x20
+#define KLINEF_FAST_INIT        0x40
 
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
@@ -390,9 +391,40 @@ void kline_send(uint8_t *buffer, uint16_t count)
     }
 
     kline_baud_cfg();
+    LED_OBD_TX = 0;         // on
+    if ((kline_flags & KLINEF_FAST_INIT) != 0)
+    {   // fast init request
+        if (use_lline)
+        {
+            LLINE_OUT = 1;
+        }
+        else
+        {
+            KLINE_OUT = 1;
+        }
+        // pulse with 25 ms
+        uint16_t start_tick = get_systick();
+        while ((uint16_t) (get_systick() - start_tick) < 25 * TIMER0_RESOL / 1000)
+        {
+            CLRWDT();
+        }
+        if (use_lline)
+        {
+            LLINE_OUT = 0;
+        }
+        else
+        {
+            KLINE_OUT = 0;
+        }
+        // pulse with 25 ms
+        uint16_t start_tick = get_systick();
+        while ((uint16_t) (get_systick() - start_tick) < 25 * TIMER0_RESOL / 1000)
+        {
+            CLRWDT();
+        }
+    }
     PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
     T2CONbits.TMR2ON = 1;   // enable timer 2
-    LED_OBD_TX = 0;         // on
     for (uint16_t i = 0; i < count; i++)
     {
         if (kline_interbyte != 0 && i != 0)
