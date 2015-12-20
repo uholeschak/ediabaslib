@@ -28,10 +28,9 @@
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
 \n(With help of the received trace files)
-\n- Fixed handling of case sensitive filesystems
-\n- Fixed reading VIN
-\n- Disabled sorting of job argument description
-\n- Improved log file generation"</string>
+\n- Reduced ECU detection warnings
+\n- Fixed KWP2000 communication
+\n- Allow to read ECU files via FTP</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Information</string>
