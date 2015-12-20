@@ -2538,6 +2538,21 @@ namespace CarSimulator
                 standardResponse = true;
             }
             else if (
+                _receiveData[0] == 0x81 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x20)
+            {   // stop diag
+                int i = 0;
+                _sendData[i++] = 0x83;
+                _sendData[i++] = 0xF1;
+                _sendData[i++] = _receiveData[1];
+                _sendData[i++] = 0x60;
+
+                ObdSend(_sendData);
+                Debug.WriteLine("Stop diag");
+                standardResponse = true;
+            }
+            else if (
                 _receiveData[0] == 0x83 &&
                 _receiveData[2] == 0xF1 &&
                 _receiveData[3] == 0x14 &&
