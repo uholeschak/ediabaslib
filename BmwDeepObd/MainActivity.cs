@@ -218,6 +218,7 @@ namespace BmwDeepObd
             SupportActionBar.RemoveAllTabs();
             _fragmentList.Clear();
             SupportActionBar.NavigationMode = Android.Support.V7.App.ActionBar.NavigationModeStandard;
+            int index = 0;
             foreach (JobReader.PageInfo pageInfo in _jobReader.PageList)
             {
                 int resourceId = Resource.Layout.tab_list;
@@ -230,10 +231,11 @@ namespace BmwDeepObd
                     resourceId = Resource.Layout.tab_activate;
                 }
 
-                Fragment fragmentPage = new TabContentFragment(this, resourceId, pageInfo);
+                Fragment fragmentPage = TabContentFragment.NewInstance(resourceId, index);
                 _fragmentList.Add(fragmentPage);
                 pageInfo.InfoObject = fragmentPage;
                 AddTabToActionBar(GetPageString(pageInfo, pageInfo.Name));
+                index++;
             }
             SupportActionBar.NavigationMode = (_jobReader.PageList.Count > 0) ? Android.Support.V7.App.ActionBar.NavigationModeTabs : Android.Support.V7.App.ActionBar.NavigationModeStandard;
             UpdateDisplay();
@@ -2106,56 +2108,64 @@ namespace BmwDeepObd
 
         public class TabContentFragment : Fragment
         {
-            private readonly ActivityMain _activity;
-            private readonly int _resourceId;
-            private readonly JobReader.PageInfo _pageInfo;
+            private int _resourceId;
+            private int _pageInfoIndex;
 
-            public TabContentFragment(ActivityMain activity, int resourceId, JobReader.PageInfo pageInfo)
-            {
-                _activity = activity;
-                _resourceId = resourceId;
-                _pageInfo = pageInfo;
-            }
-
-            public TabContentFragment(ActivityMain activity, int resourceId)
-                : this(activity, resourceId, null)
-            {
-            }
-
-            // default constructor is required
             public TabContentFragment()
-                : this(null, 0)
             {
+                _resourceId = -1;
+                _pageInfoIndex = -1;
+            }
+
+            public static TabContentFragment NewInstance(int resourceId, int pageInfoIndex)
+            {
+                TabContentFragment fragment = new TabContentFragment();
+                Bundle bundle = new Bundle();
+                bundle.PutInt("ResourceId", resourceId);
+                bundle.PutInt("PageInfoIndex", pageInfoIndex);
+                fragment.Arguments = bundle;
+                return fragment;
+            }
+
+            public override void OnCreate(Bundle savedInstanceState)
+            {
+                base.OnCreate(savedInstanceState);
+                _resourceId = Arguments.GetInt("ResourceId", -1);
+                _pageInfoIndex = Arguments.GetInt("PageInfoIndex", -1);
             }
 
             public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
             {
-                if (_activity == null)
-                {
-                    return null;
-                }
                 View view = inflater.Inflate(_resourceId, null);
-                if (_pageInfo != null && _pageInfo.ClassObject != null)
+                ActivityMain activityMain = Activity as ActivityMain;
+                if (activityMain != null)
                 {
-                    try
+                    if (_pageInfoIndex >= 0)
                     {
-                        Type pageType = _pageInfo.ClassObject.GetType();
-                        if (pageType.GetMethod("CreateLayout") != null)
+                        JobReader.PageInfo pageInfo = activityMain._jobReader.PageList[_pageInfoIndex];
+                        if (pageInfo.ClassObject != null)
                         {
-                            LinearLayout pageLayout = view.FindViewById<LinearLayout>(Resource.Id.listLayout);
-                            _pageInfo.ClassObject.CreateLayout(_activity, _pageInfo, pageLayout);
+                            try
+                            {
+                                Type pageType = pageInfo.ClassObject.GetType();
+                                if (pageType.GetMethod("CreateLayout") != null)
+                                {
+                                    LinearLayout pageLayout = view.FindViewById<LinearLayout>(Resource.Id.listLayout);
+                                    pageInfo.ClassObject.CreateLayout(activityMain, pageInfo, pageLayout);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                         }
                     }
-                    catch (Exception)
+                    activityMain._updateHandler.Post(() =>
                     {
-                        // ignored
-                    }
+                        activityMain.UpdateDisplay();
+                    });
                 }
 
-                _activity._updateHandler.Post(() =>
-                {
-                    _activity.UpdateDisplay();
-                });
                 return view;
             }
 
@@ -2163,19 +2173,24 @@ namespace BmwDeepObd
             {
                 base.OnDestroyView();
 
-                if (_pageInfo != null && _pageInfo.ClassObject != null)
+                ActivityMain activityMain = Activity as ActivityMain;
+                if (activityMain != null && _pageInfoIndex >= 0)
                 {
-                    try
+                    JobReader.PageInfo pageInfo = activityMain._jobReader.PageList[_pageInfoIndex];
+                    if (pageInfo.ClassObject != null)
                     {
-                        Type pageType = _pageInfo.ClassObject.GetType();
-                        if (pageType.GetMethod("DestroyLayout") != null)
+                        try
                         {
-                            _pageInfo.ClassObject.DestroyLayout(_pageInfo);
+                            Type pageType = pageInfo.ClassObject.GetType();
+                            if (pageType.GetMethod("DestroyLayout") != null)
+                            {
+                                pageInfo.ClassObject.DestroyLayout(pageInfo);
+                            }
                         }
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                     }
                 }
             }
