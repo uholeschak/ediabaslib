@@ -14,10 +14,10 @@ if [ $? -ne 0 ]; then
     echo "extract failed"
     exit
 fi
-mv "$data_dir/mandroid/Mono.Touch.Client.dll" "$data_dir/mandroid/Mono.Touch.Client_.dll"
+#mv "$data_dir/mandroid/Mono.Touch.Client.dll" "$data_dir/mandroid/Mono.Touch.Client_.dll"
 mv "$data_dir/mandroid/Mono.Touch.Common.dll" "$data_dir/mandroid/Mono.Touch.Common_.dll"
 mv "$data_dir/mtouch/Mono.Touch.Activation.Common.dll" "$data_dir/mtouch/Mono.Touch.Activation.Common_.dll"
-cp -a "$script_dir/../Support/MonoTouchClient/bin/Release/Mono.Touch.Client.dll" "$data_dir/mandroid/"
+#cp -a "$script_dir/../Support/MonoTouchClient/bin/Release/Mono.Touch.Client.dll" "$data_dir/mandroid/"
 cp -a "$script_dir/../Support/MonoTouchCommon/bin/Release/Mono.Touch.Common.dll" "$data_dir/mandroid/"
 cp -a "$script_dir/../Support/MonoTouchCommon/bin/Release/Mono.Touch.Activation.Common.dll" "$data_dir/mtouch/"
 pushd "$data_dir/mandroid/"
