@@ -1520,6 +1520,7 @@ namespace BmwDeepObd
             _downloadProgress.Max = 100;
             _downloadProgress.Show();
             _downloadFileSize = fileSize;
+            _activityCommon.SetCpuLock(true);
 
             Thread downloadThread = new Thread(() =>
             {
@@ -1552,6 +1553,7 @@ namespace BmwDeepObd
                             _downloadProgress.Hide();
                             _downloadProgress.Dispose();
                             _downloadProgress = null;
+                            _activityCommon.SetCpuLock(false);
                         }
                         _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
                     });
@@ -1622,6 +1624,7 @@ namespace BmwDeepObd
                     _downloadProgress.Hide();
                     _downloadProgress.Dispose();
                     _downloadProgress = null;
+                    _activityCommon.SetCpuLock(false);
                     if ((!e.Cancelled && e.Error != null) || error)
                     {
                         _activityCommon.ShowAlert(GetString(Resource.String.download_failed),
@@ -1724,45 +1727,15 @@ namespace BmwDeepObd
 
         private void ExtractZipFile(string fileName, string targetDirectory, XElement infoXml, bool removeFile = false)
         {
-            try
-            {
-                if (Directory.Exists(targetDirectory))
-                {
-                    Directory.Delete(targetDirectory, true);
-                }
-                Directory.CreateDirectory(targetDirectory);
-            }
-            catch (Exception)
-            {
-                if (_downloadProgress != null)
-                {
-                    _downloadProgress.Hide();
-                    _downloadProgress.Dispose();
-                    _downloadProgress = null;
-                }
-                if (removeFile)
-                {
-                    try
-                    {
-                        File.Delete(fileName);
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                }
-                _activityCommon.ShowAlert(GetString(Resource.String.extract_failed), Resource.String.alert_title_error);
-                return;
-            }
-
             bool extractCanceled = false;
             if (_downloadProgress == null)
             {
                 _downloadProgress = new Android.App.ProgressDialog(this);
                 _downloadProgress.DismissEvent += (sender, args) => { _downloadProgress = null; };
+                _activityCommon.SetCpuLock(true);
             }
-            _downloadProgress.SetCancelable(true);
-            _downloadProgress.SetMessage(GetString(Resource.String.extract_file));
+            _downloadProgress.SetCancelable(false);
+            _downloadProgress.SetMessage(GetString(Resource.String.extract_cleanup));
             _downloadProgress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
             _downloadProgress.Progress = 0;
             _downloadProgress.Max = 100;
@@ -1775,6 +1748,25 @@ namespace BmwDeepObd
                 bool ioError = false;
                 try
                 {
+                    try
+                    {
+                        if (Directory.Exists(targetDirectory))
+                        {
+                            Directory.Delete(targetDirectory, true);
+                        }
+                        Directory.CreateDirectory(targetDirectory);
+                    }
+                    catch (Exception)
+                    {
+                        ioError = true;
+                        throw;
+                    }
+                    RunOnUiThread(() =>
+                    {
+                        _downloadProgress.SetMessage(GetString(Resource.String.extract_file));
+                        _downloadProgress.SetCancelable(true);
+                    });
+
                     ActivityCommon.ExtractZipFile(fileName, targetDirectory,
                         percent =>
                         {
@@ -1821,6 +1813,7 @@ namespace BmwDeepObd
                         _downloadProgress.Hide();
                         _downloadProgress.Dispose();
                         _downloadProgress = null;
+                        _activityCommon.SetCpuLock(false);
                     }
                     if (extractFailed)
                     {
