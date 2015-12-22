@@ -23,4 +23,5 @@ using System.Reflection;
 
 //[assembly: AssemblyDelaySign(false)]
 //[assembly: AssemblyKeyFile("")]
+//[assembly: Android.App.UsesPermission("com.android.vending.CHECK_LICENSE")]
 
