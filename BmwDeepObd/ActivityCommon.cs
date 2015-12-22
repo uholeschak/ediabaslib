@@ -849,6 +849,7 @@ namespace BmwDeepObd
             progress.SetCancelable(false);
             progress.SetMessage(_activity.GetString(Resource.String.send_trace_file));
             progress.Show();
+            SetCpuLock(true);
 
             Thread sendThread = new Thread(() =>
             {
@@ -947,6 +948,7 @@ namespace BmwDeepObd
                                 progress.Hide();
                                 progress.Dispose();
                                 progress = null;
+                                SetCpuLock(false);
                             }
                             if (e.Cancelled || cancelled)
                             {
@@ -1005,6 +1007,7 @@ namespace BmwDeepObd
                             progress.Hide();
                             progress.Dispose();
                             progress = null;
+                            SetCpuLock(false);
                         }
                         new AlertDialog.Builder(_activity)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
