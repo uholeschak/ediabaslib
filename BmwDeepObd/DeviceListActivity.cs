@@ -136,10 +136,17 @@ namespace BmwDeepObd
                     {
                         continue;
                     }
-                    ParcelUuid[] uuids = device.GetUuids();
-                    if ((uuids == null) || (uuids.Any(uuid => SppUuid.CompareTo(uuid.Uuid) == 0)))
+                    try
                     {
-                        _pairedDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
+                        ParcelUuid[] uuids = device.GetUuids();
+                        if ((uuids == null) || (uuids.Any(uuid => SppUuid.CompareTo(uuid.Uuid) == 0)))
+                        {
+                            _pairedDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
                     }
                 }
             }
@@ -611,35 +618,42 @@ namespace BmwDeepObd
 
             public override void OnReceive (Context context, Intent intent)
             {
-                string action = intent.Action;
-
-                // When discovery finds a device
-                if (action == BluetoothDevice.ActionFound)
+                try
                 {
-                    // Get the BluetoothDevice object from the Intent
-                    BluetoothDevice device = (BluetoothDevice)intent.GetParcelableExtra (BluetoothDevice.ExtraDevice);
-                    // If it's already paired, skip it, because it's been listed already
-                    if (device.BondState != Bond.Bonded)
+                    string action = intent.Action;
+
+                    // When discovery finds a device
+                    if (action == BluetoothDevice.ActionFound)
                     {
-                        ParcelUuid[] uuids = device.GetUuids();
-                        if ((uuids == null) || (uuids.Any(uuid => SppUuid.CompareTo(uuid.Uuid) == 0)))
+                        // Get the BluetoothDevice object from the Intent
+                        BluetoothDevice device = (BluetoothDevice)intent.GetParcelableExtra(BluetoothDevice.ExtraDevice);
+                        // If it's already paired, skip it, because it's been listed already
+                        if (device.BondState != Bond.Bonded)
                         {
-                            _newDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
+                            ParcelUuid[] uuids = device.GetUuids();
+                            if ((uuids == null) || (uuids.Any(uuid => SppUuid.CompareTo(uuid.Uuid) == 0)))
+                            {
+                                _newDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
+                            }
+                        }
+                        // When discovery is finished, change the Activity title
+                    }
+                    else if (action == BluetoothAdapter.ActionDiscoveryFinished)
+                    {
+                        _chat._scanButton.Enabled = true;
+                        //_chat.SetProgressBarIndeterminateVisibility (false);
+                        _chat.FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Invisible;
+                        _chat.SetTitle(Resource.String.select_device);
+                        if (_newDevicesArrayAdapter.Count == 0)
+                        {
+                            var noDevices = _chat.Resources.GetText(Resource.String.none_found);
+                            _newDevicesArrayAdapter.Add(noDevices);
                         }
                     }
-                    // When discovery is finished, change the Activity title
                 }
-                else if (action == BluetoothAdapter.ActionDiscoveryFinished)
+                catch (Exception)
                 {
-                    _chat._scanButton.Enabled = true;
-                    //_chat.SetProgressBarIndeterminateVisibility (false);
-                    _chat.FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Invisible;
-                    _chat.SetTitle (Resource.String.select_device);
-                    if (_newDevicesArrayAdapter.Count == 0)
-                    {
-                        var noDevices = _chat.Resources.GetText (Resource.String.none_found);
-                        _newDevicesArrayAdapter.Add (noDevices);
-                    }
+                    // ignored
                 }
             }
         }
