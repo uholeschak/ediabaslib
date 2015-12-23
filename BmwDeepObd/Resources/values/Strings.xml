@@ -27,10 +27,8 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
-\n(With help of the received trace files)
-\n- Reduced ECU detection warnings
-\n- Fixed KWP2000 communication
-\n- Allow to read ECU files via FTP</string>
+\n- Improved ECU download
+\n- Fixed app crashes</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Information</string>

@@ -27,10 +27,8 @@
 \nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:
-\n(Mit Hilfe der erhaltenen Trace-Dateien)
-\n- Warnungen bei ECU Erkennung reduziert
-\n- KWP2000 Kommunikation korrigiert
-\n- ECU Dateien können mit FTP gelesen werden</string>
+\n- ECU Download verbessert
+\n- Abstürze behoben</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Information</string>
