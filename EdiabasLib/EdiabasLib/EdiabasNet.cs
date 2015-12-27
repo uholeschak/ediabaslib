@@ -2885,7 +2885,8 @@ namespace EdiabasLib
                         {
                             try
                             {
-                                if (xnn.Attributes != null)
+                                if ((string.Compare(xnn.Name, "add", StringComparison.OrdinalIgnoreCase ) == 0) &&
+                                    xnn.Attributes != null)
                                 {
                                     XmlAttribute attribKey = xnn.Attributes["key"];
                                     XmlAttribute attribValue = xnn.Attributes["value"];

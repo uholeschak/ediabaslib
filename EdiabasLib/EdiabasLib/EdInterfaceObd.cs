@@ -826,7 +826,6 @@ namespace EdiabasLib
                 InterfaceReceiveDataFuncInt = EdFtdiInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = null;
             }
-#if Android
             else if (ComPortProtected.ToUpper(Culture).StartsWith(EdBluetoothInterface.PortId))
             {   // automtatic hook of bluetooth functions
                 EdBluetoothInterface.Ediabas = Ediabas;
@@ -845,7 +844,6 @@ namespace EdiabasLib
                 InterfaceReceiveDataFuncInt = EdBluetoothInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = EdBluetoothInterface.InterfaceSendPulse;
             }
-#endif
             else
             {
                 InterfaceConnectFuncInt = null;
@@ -926,9 +924,16 @@ namespace EdiabasLib
             }
 
 #if USE_SERIAL_PORT
-            if (SerialPort.IsOpen)
+            try
             {
-                SerialPort.Close();
+                if (SerialPort.IsOpen)
+                {
+                    SerialPort.Close();
+                }
+            }
+            catch (Exception)
+            {
+                return false;
             }
             return true;
 #else
