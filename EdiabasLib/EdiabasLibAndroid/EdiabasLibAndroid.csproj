@@ -46,6 +46,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\EdiabasLib\EdBluetoothInterfaceAndroid.cs">
+      <Link>EdBluetoothInterfaceAndroid.cs</Link>
+    </Compile>
     <Compile Include="..\EdiabasLib\EdBluetoothInterfaceBase.cs">
       <Link>EdBluetoothInterfaceBase.cs</Link>
     </Compile>
@@ -53,9 +56,6 @@
       <Link>EdFtdiInterfaceAndroid.cs</Link>
     </Compile>
     <Compile Include="Resources\Resource.designer.cs" />
-    <Compile Include="..\EdiabasLib\EdBluetoothInterface.cs">
-      <Link>EdBluetoothInterface.cs</Link>
-    </Compile>
     <Compile Include="..\EdiabasLib\EdiabasNet.cs">
       <Link>EdiabasNet.cs</Link>
     </Compile>
