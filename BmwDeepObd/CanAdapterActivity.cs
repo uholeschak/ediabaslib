@@ -48,6 +48,8 @@ namespace BmwDeepObd
         private TextView _textViewBatteryVoltage;
         private TextView _textViewFwVersionTitle;
         private TextView _textViewFwVersion;
+        private TextView _textViewSerNumTitle;
+        private TextView _textViewSerNum;
         private Button _buttonFwUpdate;
         private CheckBox _checkBoxExpert;
         private string _deviceAddress = string.Empty;
@@ -58,6 +60,7 @@ namespace BmwDeepObd
         private int _batteryVoltage = -1;
         private int _adapterType = -1;
         private int _fwVersion = -1;
+        private byte[] _serNum;
         private byte[] _btPin;
         private bool _fwUpdateShown;
         private ActivityCommon _activityCommon;
@@ -171,6 +174,15 @@ namespace BmwDeepObd
             _textViewFwVersion = FindViewById<TextView>(Resource.Id.textViewCanAdapterFwVersion);
             _textViewFwVersion.Visibility = visibility;
 
+            _textViewSerNumTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterSerNumTitle);
+            _textViewSerNum = FindViewById<TextView>(Resource.Id.textViewCanAdapterSerNum);
+#if DEBUG
+            _textViewSerNumTitle.Visibility = visibility;
+            _textViewSerNum.Visibility = visibility;
+#else
+            _textViewSerNumTitle.Visibility = ViewStates.Gone;
+            _textViewSerNum.Visibility = ViewStates.Gone;
+#endif
             _buttonFwUpdate = FindViewById<Button>(Resource.Id.buttonCanAdapterFwUpdate);
             _buttonFwUpdate.Visibility = visibility;
             _buttonFwUpdate.Click += (sender, args) =>
@@ -319,6 +331,8 @@ namespace BmwDeepObd
                 _editTextBtPin.Text = string.Empty;
             }
 
+            _textViewSerNum.Enabled = bEnabled;
+
             if (bEnabled)
             {
                 if ((_separationTime < 0) || (_separationTime >= _spinnerCanAdapterSepTimeAdapter.Items.Count))
@@ -418,6 +432,11 @@ namespace BmwDeepObd
                     fwUpdateEnabled = fwUpdateVersion >= 0 && _fwVersion != fwUpdateVersion;
                 }
                 _textViewFwVersion.Text = versionText;
+
+                if (_textViewSerNum.Enabled)
+                {
+                    _textViewSerNum.Text = (_serNum == null) ? string.Empty : BitConverter.ToString(_serNum).Replace("-", "");
+                }
             }
             _buttonFwUpdate.Enabled = fwUpdateEnabled;
             _spinnerCanAdapterMode.Enabled = bEnabled;
@@ -522,6 +541,10 @@ namespace BmwDeepObd
                         {
                             commFailed = true;
                         }
+                        else
+                        {
+                            _serNum = result;
+                        }
                     }
                     // bluetooth pin
                     _btPin = null;
@@ -551,6 +574,7 @@ namespace BmwDeepObd
                     _batteryVoltage = -1;
                     _adapterType = -1;
                     _fwVersion = -1;
+                    _serNum = null;
                     _btPin = null;
                 }
 
