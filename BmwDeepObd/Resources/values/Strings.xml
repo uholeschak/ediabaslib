@@ -151,9 +151,12 @@
   <string name="xml_tool_info_grp">Group</string>
   <string name="xml_tool_info_vin">VIN</string>
   <string name="xml_tool_errors_page">Errors</string>
+  <string name="xml_tool_auto_config">Automatic</string>
+  <string name="xml_tool_man_config">Manual</string>
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Add errors page</string>
+  <string name="menu_xml_tool_cfg_type">Configuration</string>
 
   <!-- XML Tool Ecu Activity -->
   <string name="xml_tool_ecu_title">Jobs for ECU: {0}</string>

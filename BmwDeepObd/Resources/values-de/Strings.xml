@@ -151,9 +151,12 @@
   <string name="xml_tool_info_grp">Gruppe</string>
   <string name="xml_tool_info_vin">FG-NR</string>
   <string name="xml_tool_errors_page">Fehler</string>
+  <string name="xml_tool_auto_config">Automatisch</string>
+  <string name="xml_tool_man_config">Manuell</string>
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Fehlerseite hinzufügen</string>
+  <string name="menu_xml_tool_cfg_type">Konfiguration</string>
 
   <!-- XML Tool Ecu Activity -->
   <string name="xml_tool_ecu_title">Jobs für ECU: {0}</string>
