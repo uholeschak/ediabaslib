@@ -89,4 +89,9 @@
         android:layout_height="wrap_content"
         android:text="@string/button_can_adapter_fw_update"
         android:layout_gravity="center" />
+    <CheckBox
+        android:id="@+id/checkBoxCanAdapterExpert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/can_adapter_expert" />
 </LinearLayout>
