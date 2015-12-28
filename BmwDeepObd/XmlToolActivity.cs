@@ -29,6 +29,7 @@ namespace BmwDeepObd
     {
         private enum ActivityRequest
         {
+            RequestSelectFunctionalSgbd,
             RequestSelectSgbd,
             RequestSelectDevice,
             RequestCanAdapterConfig,
@@ -303,13 +304,35 @@ namespace BmwDeepObd
         {
             switch ((ActivityRequest)requestCode)
             {
-                case ActivityRequest.RequestSelectSgbd:
+                case ActivityRequest.RequestSelectFunctionalSgbd:
                     // When FilePickerActivity returns with a file
                     if (resultCode == Android.App.Result.Ok)
                     {
                         _sgbdFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
                         SupportInvalidateOptionsMenu();
                         ExecuteAnalyzeJob();
+                    }
+                    break;
+
+                case ActivityRequest.RequestSelectSgbd:
+                    // When FilePickerActivity returns with a file
+                    if (resultCode == Android.App.Result.Ok)
+                    {
+                        string fileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
+                        string ecuName = Path.GetFileNameWithoutExtension(fileName);
+                        if (string.IsNullOrEmpty(ecuName))
+                        {
+                            break;
+                        }
+                        bool existing = _ecuList.Any(ecuInfo => string.Compare(ecuInfo.EcuName, ecuName, StringComparison.OrdinalIgnoreCase) == 0);
+                        if (existing)
+                        {
+                            break;
+                        }
+                        _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, ecuName, string.Empty));
+                        EdiabasOpen(Path.GetDirectoryName(fileName));
+                        SupportInvalidateOptionsMenu();
+                        UpdateDisplay();
                     }
                     break;
 
@@ -329,7 +352,7 @@ namespace BmwDeepObd
                         }
                         else if (_autoStart)
                         {
-                            SelectSgbdFile();
+                            SelectFunctionalSgbdFile();
                         }
                     }
                     _autoStart = false;
@@ -500,6 +523,28 @@ namespace BmwDeepObd
             }
         }
 
+        private void EdiabasOpen(string ecuPath)
+        {
+            if (_ediabas == null)
+            {
+                _ediabas = new EdiabasNet();
+                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
+                {
+                    _ediabas.EdInterfaceClass = new EdInterfaceEnet();
+                }
+                else
+                {
+                    _ediabas.EdInterfaceClass = new EdInterfaceObd();
+                }
+                _ediabas.AbortJobFunc = AbortEdiabasJob;
+                _ediabas.SetConfigProperty("EcuPath", ecuPath);
+            }
+
+            _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
+
+            UpdateLogInfo();
+        }
+
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool EdiabasClose()
         {
@@ -611,7 +656,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void SelectSgbdFile()
+        private void SelectFunctionalSgbdFile()
         {
             // Launch the FilePickerActivity to select a sgbd file
             Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
@@ -633,6 +678,29 @@ namespace BmwDeepObd
             serverIntent.PutExtra(FilePickerActivity.ExtraFileRegex, @"^([efmr]|rr)[0-9]{2}[^_].");
             serverIntent.PutExtra(FilePickerActivity.ExtraDirChange, false);
             serverIntent.PutExtra(FilePickerActivity.ExtraShowExtension, false);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectFunctionalSgbd);
+        }
+
+        private void SelectSgbdFile(bool groupFile)
+        {
+            // Launch the FilePickerActivity to select a sgbd file
+            Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
+            string initDir = _initDirStart;
+            try
+            {
+                if (!string.IsNullOrEmpty(_sgbdFileName))
+                {
+                    initDir = Path.GetDirectoryName(_sgbdFileName);
+                }
+            }
+            catch (Exception)
+            {
+                initDir = _initDirStart;
+            }
+            serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.tool_select_sgbd));
+            serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
+            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, groupFile ? ".grp" : ".prg");
+            serverIntent.PutExtra(FilePickerActivity.ExtraDirChange, false);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSgbd);
         }
 
@@ -657,7 +725,6 @@ namespace BmwDeepObd
             _activityCommon.SelectInterface((sender, args) =>
             {
                 EdiabasClose();
-                _sgbdFileName = string.Empty;
                 SupportInvalidateOptionsMenu();
                 SelectInterfaceEnable();
             });
@@ -739,9 +806,14 @@ namespace BmwDeepObd
             builder.SetView(listView);
             builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
             {
-                _manualCfgIdx = listView.CheckedItemPosition >= 0 ? listView.CheckedItemPosition : 0;
-                SupportInvalidateOptionsMenu();
-                UpdateDisplay();
+                int index = listView.CheckedItemPosition >= 0 ? listView.CheckedItemPosition : 0;
+                if (index != _manualCfgIdx)
+                {
+                    _manualCfgIdx = index;
+                    EdiabasClose();
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                }
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
             {
@@ -758,9 +830,8 @@ namespace BmwDeepObd
                 switch (args.Item.ItemId)
                 {
                     case Resource.Id.menu_xml_tool_edit_grp:
-                        break;
-
                     case Resource.Id.menu_xml_tool_edit_prg:
+                        SelectSgbdFile(args.Item.ItemId == Resource.Id.menu_xml_tool_edit_grp);
                         break;
 
                     case Resource.Id.menu_xml_tool_edit_del:
@@ -796,7 +867,7 @@ namespace BmwDeepObd
                     return;
                 }
             }
-            SelectSgbdFile();
+            SelectFunctionalSgbdFile();
         }
 
         private void ExecuteAnalyzeJob()
@@ -805,27 +876,10 @@ namespace BmwDeepObd
             {
                 return;
             }
-            if (_ediabas == null)
-            {
-                _ediabas = new EdiabasNet();
-                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
-                {
-                    _ediabas.EdInterfaceClass = new EdInterfaceEnet();
-                }
-                else
-                {
-                    _ediabas.EdInterfaceClass = new EdInterfaceObd();
-                }
-                _ediabas.AbortJobFunc = AbortEdiabasJob;
-                _ediabas.SetConfigProperty("EcuPath", Path.GetDirectoryName(_sgbdFileName));
-            }
+            EdiabasOpen(Path.GetDirectoryName(_sgbdFileName));
             _vin = string.Empty;
             _ecuList.Clear();
             UpdateDisplay();
-
-            _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
-
-            UpdateLogInfo();
 
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
             progress.SetCancelable(false);
