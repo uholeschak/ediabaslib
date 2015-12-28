@@ -271,4 +271,7 @@
   <ItemGroup>
     <AndroidResource Include="Resources\values\attrs.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\xml_tool_edit.xml" />
+  </ItemGroup>
 </Project>

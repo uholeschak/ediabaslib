@@ -138,6 +138,7 @@
   <!-- XML Tool Activity -->
   <string name="xml_tool_title">Konfigurationsgenerator</string>
   <string name="button_xml_tool_read">Lesen</string>
+  <string name="button_xml_tool_edit">Bearbeiten</string>
   <string name="button_xml_tool_save">Speichern</string>
   <string name="xml_tool_analyze">Fahrzeugdaten lesen</string>
   <string name="xml_tool_select_sgbd">Fahrzeugtyp auswählen</string>
@@ -157,6 +158,11 @@
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Fehlerseite hinzufügen</string>
   <string name="menu_xml_tool_cfg_type">Konfiguration</string>
+
+  <!-- XML Tool Edit Menu -->
+  <string name="menu_xml_tool_edit_grp">ECU (grp) hinzufügen</string>
+  <string name="menu_xml_tool_edit_prg">ECU (prg) hinzufügen</string>
+  <string name="menu_xml_tool_edit_del">Unbenutze ECUs löschen</string>
 
   <!-- XML Tool Ecu Activity -->
   <string name="xml_tool_ecu_title">Jobs für ECU: {0}</string>

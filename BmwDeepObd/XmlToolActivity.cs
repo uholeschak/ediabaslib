@@ -182,6 +182,11 @@ namespace BmwDeepObd
             _buttonRead = _barView.FindViewById<Button>(Resource.Id.buttonXmlRead);
             _buttonRead.Click += (sender, args) =>
             {
+                if (_manualCfgIdx > 0)
+                {
+                    ShowEditMenu(_buttonRead);
+                    return;
+                }
                 PerformAnalyze();
             };
             _buttonSafe = _barView.FindViewById<Button>(Resource.Id.buttonXmlSafe);
@@ -552,6 +557,8 @@ namespace BmwDeepObd
                 }
             }
 
+            _buttonRead.Text = GetString((_manualCfgIdx > 0) ?
+                Resource.String.button_xml_tool_edit : Resource.String.button_xml_tool_read);
             _buttonRead.Enabled = _activityCommon.IsInterfaceAvailable();
             int selectedCount = _ecuList.Count(ecuInfo => ecuInfo.Selected);
             _buttonSafe.Enabled = (_ecuList.Count > 0) && (_addErrorsPage || (selectedCount > 0));
@@ -734,11 +741,33 @@ namespace BmwDeepObd
             {
                 _manualCfgIdx = listView.CheckedItemPosition >= 0 ? listView.CheckedItemPosition : 0;
                 SupportInvalidateOptionsMenu();
+                UpdateDisplay();
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
             {
             });
             builder.Show();
+        }
+
+        private void ShowEditMenu(View anchor)
+        {
+            Android.Support.V7.Widget.PopupMenu popupEdit = new Android.Support.V7.Widget.PopupMenu(this, anchor);
+            popupEdit.Inflate(Resource.Menu.xml_tool_edit);
+            popupEdit.MenuItemClick += (sender, args) =>
+            {
+                switch (args.Item.ItemId)
+                {
+                    case Resource.Id.menu_xml_tool_edit_grp:
+                        break;
+
+                    case Resource.Id.menu_xml_tool_edit_prg:
+                        break;
+
+                    case Resource.Id.menu_xml_tool_edit_del:
+                        break;
+                }
+            };
+            popupEdit.Show();
         }
 
         private void AdapterConfig()
