@@ -20,13 +20,20 @@ namespace BmwDeepObd
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraInterfaceType = "interface_type";
 
+        private enum AdapterMode
+        {
+            CanOff = 0,
+            Can500 = 1,
+            Can100 = 9,
+        }
+
         private InputMethodManager _imm;
         private View _contentView;
         private View _barView;
         private Button _buttonRead;
         private Button _buttonWrite;
         private Spinner _spinnerCanAdapterMode;
-        private StringAdapter _spinnerCanAdapterModeAdapter;
+        private StringObjAdapter _spinnerCanAdapterModeAdapter;
         private TextView _textViewCanAdapterSepTimeTitle;
         private Spinner _spinnerCanAdapterSepTime;
         private StringAdapter _spinnerCanAdapterSepTimeAdapter;
@@ -103,11 +110,11 @@ namespace BmwDeepObd
 
             _spinnerCanAdapterMode = FindViewById<Spinner>(Resource.Id.spinnerCanAdapterMode);
             _spinnerCanAdapterMode.SetOnTouchListener(this);
-            _spinnerCanAdapterModeAdapter = new StringAdapter(this);
+            _spinnerCanAdapterModeAdapter = new StringObjAdapter(this);
             _spinnerCanAdapterMode.Adapter = _spinnerCanAdapterModeAdapter;
-            _spinnerCanAdapterModeAdapter.Items.Add(GetString(Resource.String.button_can_adapter_can_500));
-            _spinnerCanAdapterModeAdapter.Items.Add(GetString(Resource.String.button_can_adapter_can_off));
-            _spinnerCanAdapterModeAdapter.Items.Add(GetString(Resource.String.button_can_adapter_can_100));
+            _spinnerCanAdapterModeAdapter.Items.Add(new StringObjType(GetString(Resource.String.button_can_adapter_can_500), AdapterMode.Can500));
+            _spinnerCanAdapterModeAdapter.Items.Add(new StringObjType(GetString(Resource.String.button_can_adapter_can_100), AdapterMode.Can100));
+            _spinnerCanAdapterModeAdapter.Items.Add(new StringObjType(GetString(Resource.String.button_can_adapter_can_off), AdapterMode.CanOff));
             _spinnerCanAdapterModeAdapter.NotifyDataSetChanged();
 
             _textViewCanAdapterSepTimeTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterSepTimeTitle);
@@ -343,27 +350,28 @@ namespace BmwDeepObd
                 // moved down because of expert mode setting
                 if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
                 {
-                    if (_canMode > 1)
+                    if (_canMode == (int)AdapterMode.Can100)
                     {
                         expertMode = true;
                     }
                     _spinnerCanAdapterModeAdapter.Items.Clear();
-                    _spinnerCanAdapterModeAdapter.Items.Add(GetString(Resource.String.button_can_adapter_can_500));
-                    _spinnerCanAdapterModeAdapter.Items.Add(GetString(Resource.String.button_can_adapter_can_off));
+                    _spinnerCanAdapterModeAdapter.Items.Add(new StringObjType(GetString(Resource.String.button_can_adapter_can_500), AdapterMode.Can500));
                     if (expertMode)
                     {
-                        _spinnerCanAdapterModeAdapter.Items.Add(GetString(Resource.String.button_can_adapter_can_100));
+                        _spinnerCanAdapterModeAdapter.Items.Add(new StringObjType(GetString(Resource.String.button_can_adapter_can_100), AdapterMode.Can100));
                     }
+                    _spinnerCanAdapterModeAdapter.Items.Add(new StringObjType(GetString(Resource.String.button_can_adapter_can_off), AdapterMode.CanOff));
                     _spinnerCanAdapterModeAdapter.NotifyDataSetChanged();
 
-                    if ((_canMode < 0) || (_canMode >= _spinnerCanAdapterModeAdapter.Items.Count))
+                    int indexMode = 0;
+                    for (int i = 0; i < _spinnerCanAdapterModeAdapter.Count; i++)
                     {
-                        _spinnerCanAdapterMode.SetSelection(0);
+                        if ((int) _spinnerCanAdapterModeAdapter.Items[i].Data == _canMode)
+                        {
+                            indexMode = i;
+                        }
                     }
-                    else
-                    {
-                        _spinnerCanAdapterMode.SetSelection(_canMode);
-                    }
+                    _spinnerCanAdapterMode.SetSelection(indexMode);
                 }
 
                 if (_editTextBtPin.Enabled && _btPin != null)
@@ -472,29 +480,7 @@ namespace BmwDeepObd
                     // CAN mode
                     if (!commFailed)
                     {
-                        int mode = AdapterCommand(0x82);
-                        _canMode = -1;
-                        if (mode < 0)
-                        {
-                            commFailed = true;
-                        }
-                        else
-                        {
-                            switch (mode)
-                            {
-                                case 0x00: // off
-                                    _canMode = 1;
-                                    break;
-
-                                case 0x01: // 500
-                                    _canMode = 0;
-                                    break;
-
-                                case 0x09: // 100
-                                    _canMode = 2;
-                                    break;
-                            }
-                        }
+                        _canMode = AdapterCommand(0x82);
                     }
                     // ignition state
                     if (!commFailed)
@@ -596,21 +582,10 @@ namespace BmwDeepObd
             int separationTime = _spinnerCanAdapterSepTime.SelectedItemPosition;
             if (separationTime < 0) separationTime = 0;
 
-            int canMode = _spinnerCanAdapterMode.SelectedItemPosition;
-            byte mode = 0x01;
-            switch (canMode)
+            int canMode = 0x01;
+            if (_spinnerCanAdapterMode.SelectedItemPosition >= 0)
             {
-                case 0: // 500
-                    mode = 0x01;
-                    break;
-
-                case 2: // 100
-                    mode = 0x09;
-                    break;
-
-                case 1: // off
-                    mode = 0x00;
-                    break;
+                canMode = (int)_spinnerCanAdapterModeAdapter.Items[_spinnerCanAdapterMode.SelectedItemPosition].Data;
             }
 
             byte[] btPinData = null;
@@ -668,7 +643,7 @@ namespace BmwDeepObd
                         // CAN mode
                         if (!commFailed)
                         {
-                            if (AdapterCommand(0x02, mode) < 0)
+                            if (AdapterCommand(0x02, (byte)canMode) < 0)
                             {
                                 commFailed = true;
                             }
@@ -688,7 +663,7 @@ namespace BmwDeepObd
                         // CAN mode
                         if (!commFailed)
                         {
-                            if (!AdapterCommandStd(mode))
+                            if (!AdapterCommandStd((byte)canMode))
                             {
                                 commFailed = true;
                             }
