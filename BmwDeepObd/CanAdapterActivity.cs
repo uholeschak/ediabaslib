@@ -33,6 +33,7 @@ namespace BmwDeepObd
         private View _barView;
         private Button _buttonRead;
         private Button _buttonWrite;
+        private LinearLayout _layoutCanAdapter;
         private Spinner _spinnerCanAdapterMode;
         private StringObjAdapter _spinnerCanAdapterModeAdapter;
         private TextView _textViewCanAdapterSepTimeTitle;
@@ -111,6 +112,9 @@ namespace BmwDeepObd
             {
                 PerformWrite();
             };
+
+            _layoutCanAdapter = FindViewById<LinearLayout>(Resource.Id.layoutCanAdapter);
+            _layoutCanAdapter.SetOnTouchListener(this);
 
             _spinnerCanAdapterMode = FindViewById<Spinner>(Resource.Id.spinnerCanAdapterMode);
             _spinnerCanAdapterMode.SetOnTouchListener(this);
