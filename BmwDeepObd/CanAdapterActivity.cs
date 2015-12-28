@@ -11,9 +11,10 @@ using EdiabasLib;
 namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/can_adapter_title",
-            ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
-                        Android.Content.PM.ConfigChanges.Orientation |
-                        Android.Content.PM.ConfigChanges.ScreenSize)]
+        WindowSoftInputMode = SoftInput.StateAlwaysHidden,
+        ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
+                    Android.Content.PM.ConfigChanges.Orientation |
+                    Android.Content.PM.ConfigChanges.ScreenSize)]
     public class CanAdapterActivity : AppCompatActivity, View.IOnTouchListener
     {
         // Intent extra

@@ -12,6 +12,7 @@ using Android.Widget;
 namespace BmwDeepObd
 {
     [Android.App.Activity(
+        WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                                Android.Content.PM.ConfigChanges.Orientation |
                                Android.Content.PM.ConfigChanges.ScreenSize)]
