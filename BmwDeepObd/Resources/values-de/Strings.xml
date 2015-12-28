@@ -180,11 +180,12 @@
   <string name="can_adapter_ignition_state">Zündung</string>
   <string name="can_adapter_bat_voltage">Batteriespannung</string>
   <string name="can_adapter_fw_version">Firmwareversion (aktuell / verfügbar)</string>
+  <string name="can_adapter_expert">Expertenmodus</string>
   <string name="can_adapter_comm_error">Es ist ein Kommunikationsfehler aufgetreten</string>
   <string name="can_adapter_comm_error_std">Es ist ein Kommunikationsfehler aufgetreten.\nDie Adapterkonfiguration ist nur möglich,\nwenn die Adapter LED nach dem Einschalten aktiv ist.</string>
   <string name="can_adapter_ignition_on">Zündung an</string>
   <string name="can_adapter_ignition_off">Zündung aus</string>
-  <string name="can_adapter_text_off">0: Aus</string>
+  <string name="can_adapter_text_off">0: Aus (Standard)</string>
   <string name="can_adapter_pin_length">Die Bluetooth Pin muss 4 Stellen lang sein</string>
   <string name="can_adapter_new_pin">Die neue Bluetooth Pin {0} wird aktiv, wenn der Adapter aus und eingeschaltet wird.</string>
   <string name="can_adapter_fw_update_present">Es ist ein Firmwareupdate für den Adpter vorhanden.\nWollen Sie das Update jetzt installieren?</string>
@@ -195,8 +196,8 @@
   <string name="can_adapter_fw_update_ok">Firmware Aktualisierung erfolgreich</string>
   <string name="button_can_adapter_read">Lesen</string>
   <string name="button_can_adapter_write">Schreiben</string>
-  <string name="button_can_adapter_can_500">500 kbit/s D-CAN</string>
-  <string name="button_can_adapter_can_100">100 kbit/s K-CAN</string>
-  <string name="button_can_adapter_can_off">CAN aus</string>
+  <string name="button_can_adapter_can_500">D-CAN (ab 3/2007)</string>
+  <string name="button_can_adapter_can_100">K-CAN (no standard)</string>
+  <string name="button_can_adapter_can_off">K-LINE (vor 3/2007)</string>
   <string name="button_can_adapter_fw_update">Firmware aktualisieren</string>
 </resources>

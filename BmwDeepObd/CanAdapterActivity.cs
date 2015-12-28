@@ -42,6 +42,7 @@ namespace BmwDeepObd
         private TextView _textViewFwVersionTitle;
         private TextView _textViewFwVersion;
         private Button _buttonFwUpdate;
+        private CheckBox _checkBoxExpert;
         private string _deviceAddress = string.Empty;
         private int _blockSize = -1;
         private int _separationTime = -1;
@@ -105,8 +106,8 @@ namespace BmwDeepObd
             _spinnerCanAdapterModeAdapter = new StringAdapter(this);
             _spinnerCanAdapterMode.Adapter = _spinnerCanAdapterModeAdapter;
             _spinnerCanAdapterModeAdapter.Items.Add(GetString(Resource.String.button_can_adapter_can_500));
-            _spinnerCanAdapterModeAdapter.Items.Add(GetString(Resource.String.button_can_adapter_can_100));
             _spinnerCanAdapterModeAdapter.Items.Add(GetString(Resource.String.button_can_adapter_can_off));
+            _spinnerCanAdapterModeAdapter.Items.Add(GetString(Resource.String.button_can_adapter_can_100));
             _spinnerCanAdapterModeAdapter.NotifyDataSetChanged();
 
             _textViewCanAdapterSepTimeTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterSepTimeTitle);
@@ -168,6 +169,12 @@ namespace BmwDeepObd
             _buttonFwUpdate.Click += (sender, args) =>
             {
                 PerformUpdateMessage();
+            };
+            _checkBoxExpert = FindViewById<CheckBox>(Resource.Id.checkBoxCanAdapterExpert);
+            _checkBoxExpert.Visibility = visibility;
+            _checkBoxExpert.Click += (sender, args) =>
+            {
+                UpdateDisplay();
             };
 
             _activityCommon = new ActivityCommon(this)
@@ -296,11 +303,9 @@ namespace BmwDeepObd
             bool requestFwUpdate = false;
             bool bEnabled = !IsJobRunning();
             bool fwUpdateEnabled = bEnabled;
+            bool expertMode = _checkBoxExpert.Checked;
             _buttonRead.Enabled = bEnabled;
             _buttonWrite.Enabled = bEnabled;
-            _spinnerCanAdapterMode.Enabled = bEnabled;
-            _spinnerCanAdapterSepTime.Enabled = bEnabled;
-            _spinnerCanAdapterBlockSize.Enabled = bEnabled;
             _editTextBtPin.Enabled = bEnabled && _btPin != null && _btPin.Length >= 4;
             if (!_editTextBtPin.Enabled)
             {
@@ -309,18 +314,6 @@ namespace BmwDeepObd
 
             if (bEnabled)
             {
-                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
-                {
-                    if ((_canMode < 0) || (_canMode >= _spinnerCanAdapterModeAdapter.Items.Count))
-                    {
-                        _spinnerCanAdapterMode.SetSelection(0);
-                    }
-                    else
-                    {
-                        _spinnerCanAdapterMode.SetSelection(_canMode);
-                    }
-                }
-
                 if ((_separationTime < 0) || (_separationTime >= _spinnerCanAdapterSepTimeAdapter.Items.Count))
                 {
                     _spinnerCanAdapterSepTime.SetSelection(0);
@@ -328,6 +321,10 @@ namespace BmwDeepObd
                 else
                 {
                     _spinnerCanAdapterSepTime.SetSelection(_separationTime);
+                    if (_separationTime != 0)
+                    {
+                        expertMode = true;
+                    }
                 }
 
                 if ((_blockSize < 0) || (_blockSize >= _spinnerCanAdapterBlockSizeAdapter.Items.Count))
@@ -337,6 +334,36 @@ namespace BmwDeepObd
                 else
                 {
                     _spinnerCanAdapterBlockSize.SetSelection(_blockSize);
+                    if (_blockSize != 0)
+                    {
+                        expertMode = true;
+                    }
+                }
+
+                // moved down because of expert mode setting
+                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
+                {
+                    if (_canMode > 1)
+                    {
+                        expertMode = true;
+                    }
+                    _spinnerCanAdapterModeAdapter.Items.Clear();
+                    _spinnerCanAdapterModeAdapter.Items.Add(GetString(Resource.String.button_can_adapter_can_500));
+                    _spinnerCanAdapterModeAdapter.Items.Add(GetString(Resource.String.button_can_adapter_can_off));
+                    if (expertMode)
+                    {
+                        _spinnerCanAdapterModeAdapter.Items.Add(GetString(Resource.String.button_can_adapter_can_100));
+                    }
+                    _spinnerCanAdapterModeAdapter.NotifyDataSetChanged();
+
+                    if ((_canMode < 0) || (_canMode >= _spinnerCanAdapterModeAdapter.Items.Count))
+                    {
+                        _spinnerCanAdapterMode.SetSelection(0);
+                    }
+                    else
+                    {
+                        _spinnerCanAdapterMode.SetSelection(_canMode);
+                    }
                 }
 
                 if (_editTextBtPin.Enabled && _btPin != null)
@@ -385,6 +412,11 @@ namespace BmwDeepObd
                 _textViewFwVersion.Text = versionText;
             }
             _buttonFwUpdate.Enabled = fwUpdateEnabled;
+            _spinnerCanAdapterMode.Enabled = bEnabled;
+            _spinnerCanAdapterSepTime.Enabled = bEnabled && expertMode;
+            _spinnerCanAdapterBlockSize.Enabled = bEnabled && expertMode;
+            _checkBoxExpert.Enabled = bEnabled;
+            _checkBoxExpert.Checked = expertMode;
             if (requestFwUpdate)
             {
                 _fwUpdateShown = true;
@@ -451,7 +483,7 @@ namespace BmwDeepObd
                             switch (mode)
                             {
                                 case 0x00: // off
-                                    _canMode = 2;
+                                    _canMode = 1;
                                     break;
 
                                 case 0x01: // 500
@@ -459,7 +491,7 @@ namespace BmwDeepObd
                                     break;
 
                                 case 0x09: // 100
-                                    _canMode = 1;
+                                    _canMode = 2;
                                     break;
                             }
                         }
@@ -572,11 +604,11 @@ namespace BmwDeepObd
                     mode = 0x01;
                     break;
 
-                case 1: // 100
+                case 2: // 100
                     mode = 0x09;
                     break;
 
-                case 2: // off
+                case 1: // off
                     mode = 0x00;
                     break;
             }
