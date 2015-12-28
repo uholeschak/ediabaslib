@@ -197,7 +197,7 @@
   <string name="button_can_adapter_read">Read</string>
   <string name="button_can_adapter_write">Write</string>
   <string name="button_can_adapter_can_500">D-CAN (from 3/2007)</string>
-  <string name="button_can_adapter_can_100">K-CAN (kein Standard)</string>
+  <string name="button_can_adapter_can_100">K-CAN (no standard)</string>
   <string name="button_can_adapter_can_off">K-LINE (before 3/2007)</string>
   <string name="button_can_adapter_fw_update">Firmware update</string>
 </resources>
