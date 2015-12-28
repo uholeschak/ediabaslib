@@ -144,6 +144,7 @@ namespace BmwDeepObd
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
         private bool _addErrorsPage = true;
+        private int _manualCfgIdx;
         private bool _traceActive = true;
         private bool _traceAppend;
         private bool _commErrorsOccured;
@@ -385,6 +386,14 @@ namespace BmwDeepObd
                 addErrorsMenu.SetChecked(_addErrorsPage);
             }
 
+            IMenuItem cfgTypeSubMenu = menu.FindItem(Resource.Id.menu_xml_tool_submenu_cfg_type);
+            if (cfgTypeSubMenu != null)
+            {
+                cfgTypeSubMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_xml_tool_cfg_type),
+                    (_manualCfgIdx > 0) ? GetString(Resource.String.xml_tool_man_config) : GetString(Resource.String.xml_tool_auto_config)));
+                cfgTypeSubMenu.SetEnabled(interfaceAvailable && !commActive);
+            }
+
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
             if (logSubMenu != null)
             {
@@ -450,6 +459,14 @@ namespace BmwDeepObd
                     _addErrorsPage = !_addErrorsPage;
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
+                    return true;
+
+                case Resource.Id.menu_xml_tool_submenu_cfg_type:
+                    if (IsJobRunning())
+                    {
+                        return true;
+                    }
+                    SelectCfgTypeConfig();
                     return true;
 
                 case Resource.Id.menu_submenu_log:
@@ -684,6 +701,38 @@ namespace BmwDeepObd
                     }
                 }
                 UpdateLogInfo();
+                SupportInvalidateOptionsMenu();
+            });
+            builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
+            {
+            });
+            builder.Show();
+        }
+
+        private void SelectCfgTypeConfig()
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.SetTitle(Resource.String.menu_xml_tool_cfg_type);
+            ListView listView = new ListView(this);
+
+            List<string> manualNames = new List<string>
+            {
+                GetString(Resource.String.xml_tool_auto_config)
+            };
+            for (int i = 0; i < 4; i++)
+            {
+                manualNames.Add(GetString(Resource.String.xml_tool_man_config) + " " + (i + 1).ToString(CultureInfo.InvariantCulture));
+            }
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
+                Android.Resource.Layout.SimpleListItemSingleChoice, manualNames.ToArray());
+            listView.Adapter = adapter;
+            listView.ChoiceMode = ChoiceMode.Single;
+            listView.SetItemChecked(_manualCfgIdx, true);
+
+            builder.SetView(listView);
+            builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+            {
+                _manualCfgIdx = listView.CheckedItemPosition >= 0 ? listView.CheckedItemPosition : 0;
                 SupportInvalidateOptionsMenu();
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
