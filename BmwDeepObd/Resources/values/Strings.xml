@@ -144,6 +144,7 @@
   <string name="xml_tool_select_sgbd">Select vehicle type</string>
   <string name="xml_tool_no_response">No response from vehicle</string>
   <string name="xml_tool_read_jobs_failed">Reading jobs failed</string>
+  <string name="xml_tool_read_ecu_info_failed">Reading ECU information failed</string>
   <string name="xml_tool_save_xml_failed">Saving configuration failed</string>
   <string name="xml_tool_msg_save_config">Do you want to save the configuration?</string>
   <string name="xml_tool_msg_ecu_error">Unable to get valid informations for some ECUs.\nFor newer models e89x is a good choices in most cases.\nDo you want to try again with another model type?</string>
