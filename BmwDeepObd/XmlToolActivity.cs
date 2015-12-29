@@ -54,7 +54,7 @@ namespace BmwDeepObd
 
             public string Name { get; set; }
 
-            public Int64 Address { get; private set; }
+            public Int64 Address { get; set; }
 
             public string Description { get; set; }
 
@@ -287,8 +287,7 @@ namespace BmwDeepObd
                         {
                             break;
                         }
-                        bool existing = _ecuList.Any(ecuInfo => string.Compare(ecuInfo.EcuName, ecuName, StringComparison.OrdinalIgnoreCase) == 0);
-                        if (existing)
+                        if (_ecuList.Any(ecuInfo => string.Compare(ecuInfo.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0))
                         {
                             break;
                         }
@@ -640,6 +639,7 @@ namespace BmwDeepObd
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, _ecuDir);
             serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, groupFile ? ".grp" : ".prg");
             serverIntent.PutExtra(FilePickerActivity.ExtraDirChange, false);
+            serverIntent.PutExtra(FilePickerActivity.ExtraShowExtension, false);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSgbd);
         }
 
@@ -1313,9 +1313,10 @@ namespace BmwDeepObd
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
             {
-                foreach (EcuInfo ecuInfo in _ecuList)
+                for (int idx = 0; idx < _ecuList.Count; idx++)
                 {
-                    if (!string.IsNullOrEmpty(ecuInfo.Description))
+                    EcuInfo ecuInfo = _ecuList[idx];
+                    if (ecuInfo.Address >= 0)
                     {
                         continue;
                     }
@@ -1364,10 +1365,16 @@ namespace BmwDeepObd
                         }
                         ecuInfo.Description = stringBuilderComment.ToString();
                         string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
+                        if (_ecuList.Any(info => !info.Equals(ecuInfo) && string.Compare(info.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0))
+                        {   // already existing
+                            _ecuList.Remove(ecuInfo);
+                            continue;
+                        }
                         ecuInfo.Name = ecuName.ToUpperInvariant();
                         ecuInfo.PageName = ecuInfo.Name;
                         ecuInfo.EcuName = ecuInfo.Name;
                         ecuInfo.Sgbd = ecuName;
+                        ecuInfo.Address = 0;
                     }
                     catch (Exception)
                     {
