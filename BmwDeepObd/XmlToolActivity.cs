@@ -672,6 +672,7 @@ namespace BmwDeepObd
                 return;
             }
             XmlToolEcuActivity.IntentEcuInfo = ecuInfo;
+            XmlToolEcuActivity.IntentEdiabas = _ediabas;
             Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
             serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectJobs);
