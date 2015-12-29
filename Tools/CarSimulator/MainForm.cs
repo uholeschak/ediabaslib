@@ -39,8 +39,8 @@ namespace CarSimulator
             _configData = new CommThread.ConfigData();
             UpdateDirectoryList(_rootFolder);
             UpdateResponseFiles(_responseDir);
-            UpdatePorts();
             _commThread = new CommThread();
+            UpdatePorts();
             timerUpdate.Enabled = true;
             UpdateDisplay();
         }
@@ -54,6 +54,10 @@ namespace CarSimulator
 
         private void UpdatePorts()
         {
+            if (_commThread.ThreadRunning())
+            {
+                return;
+            }
             // ReSharper disable once ConstantNullCoalescingCondition
             string[] ports = SerialPort.GetPortNames() ?? new string[0];
             if (_lastPortCount == ports.Length) return;
