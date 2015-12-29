@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Text;
 using Android.Content.Res;
 using Android.OS;
@@ -8,6 +9,7 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
+using EdiabasLib;
 
 namespace BmwDeepObd
 {
@@ -114,6 +116,7 @@ namespace BmwDeepObd
         private static readonly int[] LengthValues = {0, 1, 2, 3, 4, 5, 6, 8, 10, 15, 20, 25, 30, 35, 40};
 
         public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
+        public static EdiabasNet IntentEdiabas { get; set; }
         private InputMethodManager _imm;
         private View _contentView;
         private EditText _editTextPageName;
@@ -139,7 +142,11 @@ namespace BmwDeepObd
         private StringObjAdapter _spinnerFormatLength2Adapter;
         private Spinner _spinnerFormatType;
         private StringObjAdapter _spinnerFormatTypeAdapter;
+        private Button _buttonTestFormat;
+        private TextView _textViewTestFormatOutput;
+        private ActivityCommon _activityCommon;
         private XmlToolActivity.EcuInfo _ecuInfo;
+        private EdiabasNet _ediabas;
         private JobInfo _selectedJob;
         private ResultInfo _selectedResult;
         private bool _ignoreFormatSelection;
@@ -160,7 +167,9 @@ namespace BmwDeepObd
 
             SetResult(Android.App.Result.Canceled);
 
+            _activityCommon = new ActivityCommon(this);
             _ecuInfo = IntentEcuInfo;
+            _ediabas = IntentEdiabas;
 
             _editTextPageName = FindViewById<EditText>(Resource.Id.editTextPageName);
             _editTextPageName.Text = _ecuInfo.PageName;
@@ -237,8 +246,17 @@ namespace BmwDeepObd
             _spinnerFormatTypeAdapter.NotifyDataSetChanged();
             _spinnerFormatType.ItemSelected += FormatItemSelected;
 
+            _buttonTestFormat = FindViewById<Button>(Resource.Id.buttonTestFormat);
+            _buttonTestFormat.Enabled = _ediabas != null;
+            _buttonTestFormat.Click += (sender, args) =>
+            {
+                ExecuteTestFormat();
+            };
+            _textViewTestFormatOutput = FindViewById<TextView>(Resource.Id.textViewTestFormatOutput);
+
             _layoutJobConfig.Visibility = ViewStates.Gone;
             UpdateDisplay();
+            ResetTestResult();
         }
 
         protected override void OnStop()
@@ -247,6 +265,12 @@ namespace BmwDeepObd
             UpdateResultSettings(_selectedResult);
             _ecuInfo.PageName = _editTextPageName.Text;
             _ecuInfo.EcuName = _editTextEcuName.Text;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            _activityCommon.Dispose();
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
@@ -294,6 +318,12 @@ namespace BmwDeepObd
             {
                 JobSelected(null);
             }
+        }
+
+        private void ResetTestResult()
+        {
+            _textViewTestFormatOutput.Text = string.Empty;
+            _buttonTestFormat.Enabled = (_selectedJob != null) && (_selectedResult != null);
         }
 
         private void UpdateFormatFields(ResultInfo resultInfo, bool userFormat, bool initialCall = false)
@@ -565,6 +595,7 @@ namespace BmwDeepObd
 
         private void JobSelected(JobInfo jobInfo)
         {
+            ResetTestResult();
             _selectedJob = jobInfo;
             _spinnerJobResultsAdapter.Items.Clear();
             int selection = -1;
@@ -608,6 +639,7 @@ namespace BmwDeepObd
 
         private void ResultSelected(int pos)
         {
+            ResetTestResult();
             UpdateResultSettings(_selectedResult);
             if (pos >= 0)
             {
@@ -666,6 +698,73 @@ namespace BmwDeepObd
             {
                 _imm.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
             }
+        }
+
+        private void ExecuteTestFormat()
+        {
+            _textViewTestFormatOutput.Text = string.Empty;
+            if ((_selectedJob == null) || (_selectedResult == null))
+            {
+                return;
+            }
+
+            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
+            progress.SetCancelable(false);
+            progress.SetMessage(GetString(Resource.String.xml_tool_execute_test_job));
+            progress.Show();
+
+            string resultText = string.Empty;
+            bool executeFailed = false;
+            Thread jobThread = new Thread(() =>
+            {
+                try
+                {
+                    _ediabas.ResolveSgbdFile(_ecuInfo.Sgbd);
+
+                    _ediabas.ArgString = string.Empty;
+                    _ediabas.ArgBinaryStd = null;
+                    _ediabas.ResultsRequests = string.Empty;
+                    _ediabas.ExecuteJob(_selectedJob.Name);
+
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        int dictIndex = 0;
+                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                        {
+                            if (dictIndex == 0)
+                            {
+                                dictIndex++;
+                                continue;
+                            }
+                            EdiabasNet.ResultData resultData;
+                            if (resultDict.TryGetValue(_selectedResult.Name, out resultData))
+                            {
+                                resultText = EdiabasNet.FormatResult(resultData, _selectedResult.Format) ?? string.Empty;
+                                break;
+                            }
+                            dictIndex++;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    executeFailed = true;
+                }
+
+                RunOnUiThread(() =>
+                {
+                    progress.Hide();
+                    progress.Dispose();
+                    _textViewTestFormatOutput.Text = resultText;
+
+                    if (executeFailed)
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_test_job_failed), Resource.String.alert_title_error);
+                    }
+                });
+            });
+            jobThread.Start();
         }
 
         private class JobListAdapter : BaseAdapter<JobInfo>
