@@ -139,13 +139,12 @@ namespace BmwDeepObd
         private Button _buttonSafe;
         private EcuListAdapter _ecuListAdapter;
         private TextView _textViewCarInfo;
-        private string _initDirStart;
+        private string _ecuDir;
         private string _appDataDir;
-        private string _sgbdFileName = string.Empty;
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
         private bool _addErrorsPage = true;
-        private int _manualCfgIdx;
+        private int _manualConfigIdx;
         private bool _traceActive = true;
         private bool _traceAppend;
         private bool _commErrorsOccured;
@@ -183,7 +182,7 @@ namespace BmwDeepObd
             _buttonRead = _barView.FindViewById<Button>(Resource.Id.buttonXmlRead);
             _buttonRead.Click += (sender, args) =>
             {
-                if (_manualCfgIdx > 0)
+                if (_manualConfigIdx > 0)
                 {
                     ShowEditMenu(_buttonRead);
                     return;
@@ -222,7 +221,7 @@ namespace BmwDeepObd
                     Intent.GetIntExtra(ExtraInterface, (int)ActivityCommon.InterfaceType.None)
             };
 
-            _initDirStart = Intent.GetStringExtra(ExtraInitDir);
+            _ecuDir = Intent.GetStringExtra(ExtraInitDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _deviceName = Intent.GetStringExtra(ExtraDeviceName);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
@@ -308,9 +307,9 @@ namespace BmwDeepObd
                     // When FilePickerActivity returns with a file
                     if (resultCode == Android.App.Result.Ok)
                     {
-                        _sgbdFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
+                        string sgbdFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
                         SupportInvalidateOptionsMenu();
-                        ExecuteAnalyzeJob();
+                        ExecuteAnalyzeJob(sgbdFileName);
                     }
                     break;
 
@@ -330,7 +329,7 @@ namespace BmwDeepObd
                             break;
                         }
                         _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, ecuName, string.Empty));
-                        EdiabasOpen(Path.GetDirectoryName(fileName));
+                        EdiabasOpen();
                         SupportInvalidateOptionsMenu();
                         UpdateDisplay();
                     }
@@ -418,7 +417,7 @@ namespace BmwDeepObd
             if (cfgTypeSubMenu != null)
             {
                 cfgTypeSubMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_xml_tool_cfg_type),
-                    (_manualCfgIdx > 0) ? GetString(Resource.String.xml_tool_man_config) : GetString(Resource.String.xml_tool_auto_config)));
+                    (_manualConfigIdx > 0) ? GetString(Resource.String.xml_tool_man_config) : GetString(Resource.String.xml_tool_auto_config)));
                 cfgTypeSubMenu.SetEnabled(interfaceAvailable && !commActive);
             }
 
@@ -523,7 +522,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void EdiabasOpen(string ecuPath)
+        private void EdiabasOpen()
         {
             if (_ediabas == null)
             {
@@ -537,7 +536,7 @@ namespace BmwDeepObd
                     _ediabas.EdInterfaceClass = new EdInterfaceObd();
                 }
                 _ediabas.AbortJobFunc = AbortEdiabasJob;
-                _ediabas.SetConfigProperty("EcuPath", ecuPath);
+                _ediabas.SetConfigProperty("EcuPath", _ecuDir);
             }
 
             _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
@@ -602,7 +601,7 @@ namespace BmwDeepObd
                 }
             }
 
-            _buttonRead.Text = GetString((_manualCfgIdx > 0) ?
+            _buttonRead.Text = GetString((_manualConfigIdx > 0) ?
                 Resource.String.button_xml_tool_edit : Resource.String.button_xml_tool_read);
             _buttonRead.Enabled = _activityCommon.IsInterfaceAvailable();
             int selectedCount = _ecuList.Count(ecuInfo => ecuInfo.Selected);
@@ -638,7 +637,7 @@ namespace BmwDeepObd
             }
 
             _traceDir = null;
-            if (_traceActive && !string.IsNullOrEmpty(_sgbdFileName))
+            if (_traceActive)
             {
                 _traceDir = logDir;
             }
@@ -660,20 +659,8 @@ namespace BmwDeepObd
         {
             // Launch the FilePickerActivity to select a sgbd file
             Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
-            string initDir = _initDirStart;
-            try
-            {
-                if (!string.IsNullOrEmpty(_sgbdFileName))
-                {
-                    initDir = Path.GetDirectoryName(_sgbdFileName);
-                }
-            }
-            catch (Exception)
-            {
-                initDir = _initDirStart;
-            }
             serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.xml_tool_select_sgbd));
-            serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
+            serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, _ecuDir);
             serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".prg");
             serverIntent.PutExtra(FilePickerActivity.ExtraFileRegex, @"^([efmr]|rr)[0-9]{2}[^_].");
             serverIntent.PutExtra(FilePickerActivity.ExtraDirChange, false);
@@ -685,20 +672,8 @@ namespace BmwDeepObd
         {
             // Launch the FilePickerActivity to select a sgbd file
             Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
-            string initDir = _initDirStart;
-            try
-            {
-                if (!string.IsNullOrEmpty(_sgbdFileName))
-                {
-                    initDir = Path.GetDirectoryName(_sgbdFileName);
-                }
-            }
-            catch (Exception)
-            {
-                initDir = _initDirStart;
-            }
             serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.tool_select_sgbd));
-            serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
+            serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, _ecuDir);
             serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, groupFile ? ".grp" : ".prg");
             serverIntent.PutExtra(FilePickerActivity.ExtraDirChange, false);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSgbd);
@@ -801,16 +776,21 @@ namespace BmwDeepObd
                 Android.Resource.Layout.SimpleListItemSingleChoice, manualNames.ToArray());
             listView.Adapter = adapter;
             listView.ChoiceMode = ChoiceMode.Single;
-            listView.SetItemChecked(_manualCfgIdx, true);
+            listView.SetItemChecked(_manualConfigIdx, true);
 
             builder.SetView(listView);
             builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
             {
                 int index = listView.CheckedItemPosition >= 0 ? listView.CheckedItemPosition : 0;
-                if (index != _manualCfgIdx)
+                if (index != _manualConfigIdx)
                 {
-                    _manualCfgIdx = index;
-                    EdiabasClose();
+                    _manualConfigIdx = index;
+                    _ecuList.Clear();
+                    if (_manualConfigIdx > 0)
+                    {
+                        EdiabasOpen();
+                        ReadAllXml();
+                    }
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
                 }
@@ -870,13 +850,13 @@ namespace BmwDeepObd
             SelectFunctionalSgbdFile();
         }
 
-        private void ExecuteAnalyzeJob()
+        private void ExecuteAnalyzeJob(string sgbdFileName)
         {
-            if (string.IsNullOrEmpty(_sgbdFileName))
+            if (string.IsNullOrEmpty(sgbdFileName))
             {
                 return;
             }
-            EdiabasOpen(Path.GetDirectoryName(_sgbdFileName));
+            EdiabasOpen();
             _vin = string.Empty;
             _ecuList.Clear();
             UpdateDisplay();
@@ -893,7 +873,7 @@ namespace BmwDeepObd
                 bool noResponse = false;
                 try
                 {
-                    _ediabas.ResolveSgbdFile(_sgbdFileName);
+                    _ediabas.ResolveSgbdFile(sgbdFileName);
 
                     _ediabas.ArgString = string.Empty;
                     _ediabas.ArgBinaryStd = null;
@@ -1132,10 +1112,7 @@ namespace BmwDeepObd
 
         private void ExecuteJobsRead(EcuInfo ecuInfo)
         {
-            if (_ediabas == null)
-            {
-                return;
-            }
+            EdiabasOpen();
             if (ecuInfo.JobList != null)
             {
                 SelectJobs(ecuInfo);
@@ -1741,6 +1718,34 @@ namespace BmwDeepObd
                 return;
             }
 
+            if (_manualConfigIdx > 0)
+            {   // manual mode, create ecu list
+                _ecuList.Clear();
+                foreach (XElement node in pagesNode.Elements(ns + "include"))
+                {
+                    XAttribute fileAttrib = node.Attribute("filename");
+                    if (fileAttrib == null)
+                    {
+                        continue;
+                    }
+                    string fileName = fileAttrib.Value;
+                    if (string.Compare(fileName, ErrorsFileName, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        continue;
+                    }
+                    if (!File.Exists(Path.Combine(xmlFileDir, fileName)))
+                    {
+                        continue;
+                    }
+                    string ecuName = Path.GetFileNameWithoutExtension(fileName);
+                    if (string.IsNullOrEmpty(ecuName))
+                    {
+                        continue;
+                    }
+                    _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, ecuName, string.Empty));
+                }
+            }
+
             foreach (EcuInfo ecuInfo in _ecuList)
             {
                 string fileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
@@ -2078,8 +2083,12 @@ namespace BmwDeepObd
                         interfaceType = "Ftdi";
                         break;
                 }
-                string xmlConfigFile = Path.Combine(xmlFileDir,
-                    ActivityCommon.CreateValidFileName(_vin) + "_" + interfaceType + ConfigFileExtension);
+                string prefix = string.Empty;
+                if (!string.IsNullOrEmpty(_vin))
+                {
+                    prefix = ActivityCommon.CreateValidFileName(_vin) + "_";
+                }
+                string xmlConfigFile = Path.Combine(xmlFileDir, prefix + interfaceType + ConfigFileExtension);
                 XDocument documentConfig = null;
                 if (File.Exists(xmlConfigFile))
                 {
@@ -2210,6 +2219,10 @@ namespace BmwDeepObd
             }
             string configBaseDir = Path.Combine(_appDataDir, "Configurations");
             string vin = _vin;
+            if (_manualConfigIdx > 0)
+            {
+                vin = "Manual" + _manualConfigIdx.ToString(CultureInfo.InvariantCulture);
+            }
             if (string.IsNullOrEmpty(vin))
             {
                 vin = "Unknown";
