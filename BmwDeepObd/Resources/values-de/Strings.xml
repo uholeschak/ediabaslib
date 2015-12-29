@@ -144,6 +144,7 @@
   <string name="xml_tool_select_sgbd">Fahrzeugtyp auswählen</string>
   <string name="xml_tool_no_response">Keine Antwort vom Fahrzeug</string>
   <string name="xml_tool_read_jobs_failed">Jobs lesen fehlgeschlagen</string>
+  <string name="xml_tool_read_ecu_info_failed">ECU Information lesen fehlgeschlagen</string>
   <string name="xml_tool_save_xml_failed">Konfiguration speichern fehlgeschlagen</string>
   <string name="xml_tool_msg_save_config">Wollen Sie die Konfiguration speichern?</string>
   <string name="xml_tool_msg_ecu_error">Für einige ECUs konnten keine Information ermittelt werden.\nFür neuere Modelle ist e89x in den meisten Fällen eine gute Wahl.\nWollen Sie den Vorgang mit einem anderen Modelltyp wiederholen?</string>

@@ -40,11 +40,11 @@ namespace BmwDeepObd
         {
             public EcuInfo(string name, Int64 address, string description, string sgbd, string grp)
             {
-                _name = name;
-                _address = address;
-                _description = description;
-                _sgbd = sgbd;
-                _grp = grp;
+                Name = name;
+                Address = address;
+                Description = description;
+                Sgbd = sgbd;
+                Grp = grp;
                 Selected = false;
                 Vin = null;
                 PageName = name;
@@ -52,51 +52,15 @@ namespace BmwDeepObd
                 JobList = null;
             }
 
-            private readonly string _name;
-            private readonly Int64 _address;
-            private readonly string _description;
-            private readonly string _sgbd;
-            private readonly string _grp;
+            public string Name { get; set; }
 
-            public string Name
-            {
-                get
-                {
-                    return _name;
-                }
-            }
+            public Int64 Address { get; private set; }
 
-            public Int64 Address
-            {
-                get
-                {
-                    return _address;
-                }
-            }
+            public string Description { get; set; }
 
-            public string Description
-            {
-                get
-                {
-                    return _description;
-                }
-            }
+            public string Sgbd { get; set; }
 
-            public string Sgbd
-            {
-                get
-                {
-                    return _sgbd;
-                }
-            }
-
-            public string Grp
-            {
-                get
-                {
-                    return _grp;
-                }
-            }
+            public string Grp { get; set; }
 
             public string Vin { get; set; }
 
@@ -329,7 +293,7 @@ namespace BmwDeepObd
                             break;
                         }
                         _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, ecuName, string.Empty));
-                        EdiabasOpen();
+                        ExecuteUpdateEcuInfo();
                         SupportInvalidateOptionsMenu();
                         UpdateDisplay();
                     }
@@ -493,7 +457,7 @@ namespace BmwDeepObd
                     {
                         return true;
                     }
-                    SelectCfgTypeConfig();
+                    SelectConfigType();
                     return true;
 
                 case Resource.Id.menu_submenu_log:
@@ -758,7 +722,7 @@ namespace BmwDeepObd
             builder.Show();
         }
 
-        private void SelectCfgTypeConfig()
+        private void SelectConfigType()
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.SetTitle(Resource.String.menu_xml_tool_cfg_type);
@@ -785,11 +749,13 @@ namespace BmwDeepObd
                 if (index != _manualConfigIdx)
                 {
                     _manualConfigIdx = index;
+                    _vin = string.Empty;
                     _ecuList.Clear();
                     if (_manualConfigIdx > 0)
                     {
                         EdiabasOpen();
                         ReadAllXml();
+                        ExecuteUpdateEcuInfo();
                     }
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
@@ -1319,6 +1285,97 @@ namespace BmwDeepObd
                     else
                     {
                         SelectJobs(ecuInfo);
+                    }
+                });
+            });
+            _jobThread.Start();
+        }
+
+        private void ExecuteUpdateEcuInfo()
+        {
+            EdiabasOpen();
+
+            UpdateDisplay();
+
+            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
+            progress.SetCancelable(false);
+            progress.SetMessage(GetString(Resource.String.xml_tool_analyze));
+            progress.Show();
+
+            bool readFailed = false;
+            _ediabasJobAbort = false;
+            _jobThread = new Thread(() =>
+            {
+                foreach (EcuInfo ecuInfo in _ecuList)
+                {
+                    if (!string.IsNullOrEmpty(ecuInfo.Description))
+                    {
+                        continue;
+                    }
+                    try
+                    {
+                        _ediabas.ResolveSgbdFile(ecuInfo.Sgbd);
+
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob("_VERSIONINFO");
+
+                        StringBuilder stringBuilderComment = new StringBuilder();
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            int dictIndex = 0;
+                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                            {
+                                if (dictIndex == 0)
+                                {
+                                    dictIndex++;
+                                    continue;
+                                }
+                                for (int i = 0; ; i++)
+                                {
+                                    EdiabasNet.ResultData resultData;
+                                    if (resultDict.TryGetValue("ECUCOMMENT" + i.ToString(Culture), out resultData))
+                                    {
+                                        if (resultData.OpData is string)
+                                        {
+                                            if (stringBuilderComment.Length > 0)
+                                            {
+                                                stringBuilderComment.Append(";");
+                                            }
+                                            stringBuilderComment.Append((string)resultData.OpData);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                }
+                                dictIndex++;
+                            }
+                        }
+                        ecuInfo.Description = stringBuilderComment.ToString();
+                        string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
+                        ecuInfo.Name = ecuName.ToUpperInvariant();
+                        ecuInfo.Sgbd = ecuName;
+                    }
+                    catch (Exception)
+                    {
+                        readFailed = true;
+                    }
+                }
+
+                RunOnUiThread(() =>
+                {
+                    progress.Hide();
+                    progress.Dispose();
+
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                    if (readFailed)
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_ecu_info_failed), Resource.String.alert_title_error);
                     }
                 });
             });
