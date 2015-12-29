@@ -745,21 +745,17 @@ namespace BmwDeepObd
             builder.SetView(listView);
             builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
             {
-                int index = listView.CheckedItemPosition >= 0 ? listView.CheckedItemPosition : 0;
-                if (index != _manualConfigIdx)
+                _manualConfigIdx = listView.CheckedItemPosition >= 0 ? listView.CheckedItemPosition : 0;
+                _vin = string.Empty;
+                _ecuList.Clear();
+                if (_manualConfigIdx > 0)
                 {
-                    _manualConfigIdx = index;
-                    _vin = string.Empty;
-                    _ecuList.Clear();
-                    if (_manualConfigIdx > 0)
-                    {
-                        EdiabasOpen();
-                        ReadAllXml();
-                        ExecuteUpdateEcuInfo();
-                    }
-                    SupportInvalidateOptionsMenu();
-                    UpdateDisplay();
+                    EdiabasOpen();
+                    ReadAllXml();
+                    ExecuteUpdateEcuInfo();
                 }
+                SupportInvalidateOptionsMenu();
+                UpdateDisplay();
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
             {
@@ -781,7 +777,18 @@ namespace BmwDeepObd
                         break;
 
                     case Resource.Id.menu_xml_tool_edit_del:
+                    {
+                        for (int i = 0; i < _ecuList.Count; i++)
+                        {
+                            EcuInfo ecuInfo = _ecuList[i];
+                            if (!ecuInfo.Selected)
+                            {
+                                _ecuList.Remove(ecuInfo);
+                            }
+                        }
+                        UpdateDisplay();
                         break;
+                    }
                 }
             };
             popupEdit.Show();
@@ -1358,6 +1365,8 @@ namespace BmwDeepObd
                         ecuInfo.Description = stringBuilderComment.ToString();
                         string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
                         ecuInfo.Name = ecuName.ToUpperInvariant();
+                        ecuInfo.PageName = ecuInfo.Name;
+                        ecuInfo.EcuName = ecuInfo.Name;
                         ecuInfo.Sgbd = ecuName;
                     }
                     catch (Exception)
@@ -2140,12 +2149,16 @@ namespace BmwDeepObd
                         interfaceType = "Ftdi";
                         break;
                 }
-                string prefix = string.Empty;
-                if (!string.IsNullOrEmpty(_vin))
+                string prefix;
+                if (_manualConfigIdx > 0)
                 {
-                    prefix = ActivityCommon.CreateValidFileName(_vin) + "_";
+                    prefix = "Manual" + _manualConfigIdx.ToString(CultureInfo.InvariantCulture);
                 }
-                string xmlConfigFile = Path.Combine(xmlFileDir, prefix + interfaceType + ConfigFileExtension);
+                else
+                {
+                    prefix = string.IsNullOrEmpty(_vin) ? "Unknown" : ActivityCommon.CreateValidFileName(_vin);
+                }
+                string xmlConfigFile = Path.Combine(xmlFileDir, prefix + "_" + interfaceType + ConfigFileExtension);
                 XDocument documentConfig = null;
                 if (File.Exists(xmlConfigFile))
                 {
