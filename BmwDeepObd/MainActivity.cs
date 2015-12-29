@@ -2081,6 +2081,7 @@ namespace BmwDeepObd
             serverIntent.PutExtra(XmlToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
             serverIntent.PutExtra(XmlToolActivity.ExtraDeviceName, _deviceName);
             serverIntent.PutExtra(XmlToolActivity.ExtraDeviceAddress, _deviceAddress);
+            serverIntent.PutExtra(XmlToolActivity.ExtraFileName, _configFileName);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestXmlTool);
         }
 

@@ -88,6 +88,8 @@ namespace BmwDeepObd
         private const string DisplayNamePage = "!PAGE_NAME";
         private const string DisplayNameJobPrefix = "!JOB#";
         private const string DisplayNameEcuPrefix = "!ECU#";
+        private const string ManualConfigName = "Manual";
+        private const string UnknownVinConfigName = "Unknown";
 
         // Intent extra
         public const string ExtraInitDir = "init_dir";
@@ -107,6 +109,7 @@ namespace BmwDeepObd
         private string _appDataDir;
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
+        private string _lastFileName = string.Empty;
         private bool _addErrorsPage = true;
         private int _manualConfigIdx;
         private bool _traceActive = true;
@@ -189,8 +192,27 @@ namespace BmwDeepObd
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _deviceName = Intent.GetStringExtra(ExtraDeviceName);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
+            _lastFileName = Intent.GetStringExtra(ExtraFileName);
+            string configName = Path.GetFileNameWithoutExtension(_lastFileName);
+            if (!string.IsNullOrEmpty(configName) && configName.StartsWith(ManualConfigName))
+            {
+                try
+                {
+                    _manualConfigIdx = Convert.ToInt32(configName.Substring(ManualConfigName.Length, 1));
+                }
+                catch (Exception)
+                {
+                    _manualConfigIdx = 0;
+                }
+            }
 
             EdiabasClose();
+            if (_manualConfigIdx > 0)
+            {
+                EdiabasOpen();
+                ReadAllXml();
+                ExecuteUpdateEcuInfo();
+            }
             UpdateDisplay();
         }
 
@@ -456,7 +478,27 @@ namespace BmwDeepObd
                     {
                         return true;
                     }
-                    SelectConfigType();
+                    UpdateDisplay();
+                    if (_buttonSafe.Enabled)
+                    {
+                        new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                            {
+                                SaveConfiguration(false);
+                                SelectConfigType();
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                            {
+                                SelectConfigType();
+                            })
+                            .SetMessage(Resource.String.xml_tool_msg_save_config)
+                            .SetTitle(Resource.String.alert_title_question)
+                            .Show();
+                    }
+                    else
+                    {
+                        SelectConfigType();
+                    }
                     return true;
 
                 case Resource.Id.menu_submenu_log:
@@ -2159,11 +2201,11 @@ namespace BmwDeepObd
                 string prefix;
                 if (_manualConfigIdx > 0)
                 {
-                    prefix = "Manual" + _manualConfigIdx.ToString(CultureInfo.InvariantCulture);
+                    prefix = ManualConfigName + _manualConfigIdx.ToString(CultureInfo.InvariantCulture);
                 }
                 else
                 {
-                    prefix = string.IsNullOrEmpty(_vin) ? "Unknown" : ActivityCommon.CreateValidFileName(_vin);
+                    prefix = string.IsNullOrEmpty(_vin) ? UnknownVinConfigName : ActivityCommon.CreateValidFileName(_vin);
                 }
                 string xmlConfigFile = Path.Combine(xmlFileDir, prefix + "_" + interfaceType + ConfigFileExtension);
                 XDocument documentConfig = null;
@@ -2298,11 +2340,11 @@ namespace BmwDeepObd
             string vin = _vin;
             if (_manualConfigIdx > 0)
             {
-                vin = "Manual" + _manualConfigIdx.ToString(CultureInfo.InvariantCulture);
+                vin = ManualConfigName + _manualConfigIdx.ToString(CultureInfo.InvariantCulture);
             }
             if (string.IsNullOrEmpty(vin))
             {
-                vin = "Unknown";
+                vin = UnknownVinConfigName;
             }
             try
             {
