@@ -478,27 +478,7 @@ namespace BmwDeepObd
                     {
                         return true;
                     }
-                    UpdateDisplay();
-                    if (_buttonSafe.Enabled)
-                    {
-                        new AlertDialog.Builder(this)
-                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                            {
-                                SaveConfiguration(false);
-                                SelectConfigType();
-                            })
-                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                            {
-                                SelectConfigType();
-                            })
-                            .SetMessage(Resource.String.xml_tool_msg_save_config)
-                            .SetTitle(Resource.String.alert_title_question)
-                            .Show();
-                    }
-                    else
-                    {
-                        SelectConfigType();
-                    }
+                    SelectConfigTypeRequest();
                     return true;
 
                 case Resource.Id.menu_submenu_log:
@@ -762,6 +742,31 @@ namespace BmwDeepObd
             {
             });
             builder.Show();
+        }
+
+        private void SelectConfigTypeRequest()
+        {
+            UpdateDisplay();
+            if (_buttonSafe.Enabled)
+            {
+                new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        SaveConfiguration(false);
+                        SelectConfigType();
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                        SelectConfigType();
+                    })
+                    .SetMessage(Resource.String.xml_tool_msg_save_config)
+                    .SetTitle(Resource.String.alert_title_question)
+                    .Show();
+            }
+            else
+            {
+                SelectConfigType();
+            }
         }
 
         private void SelectConfigType()
@@ -1099,7 +1104,18 @@ namespace BmwDeepObd
                     if (noResponse)
                     {
                         _commErrorsOccured = true;
-                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_no_response), Resource.String.alert_title_error);
+                        new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                            {
+                                SelectConfigTypeRequest();
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                            {
+                            })
+                            .SetCancelable(true)
+                            .SetMessage(Resource.String.xml_tool_no_response_manual)
+                            .SetTitle(Resource.String.alert_title_warning)
+                            .Show();
                     }
                     else
                     {

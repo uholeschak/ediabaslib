@@ -143,6 +143,7 @@
   <string name="xml_tool_analyze">Reading vehicle data</string>
   <string name="xml_tool_select_sgbd">Select vehicle type</string>
   <string name="xml_tool_no_response">No response from vehicle</string>
+  <string name="xml_tool_no_response_manual">No response from vehicle.\nIf the vehicle is older than the available models, only a manual configuration is possible.\nDo you want to switch to manual configuration?</string>
   <string name="xml_tool_read_jobs_failed">Reading jobs failed</string>
   <string name="xml_tool_read_ecu_info_failed">Reading ECU information failed</string>
   <string name="xml_tool_save_xml_failed">Saving configuration failed</string>
