@@ -1950,19 +1950,45 @@ namespace BmwDeepObd
                     {
                         continue;
                     }
-                    _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, ecuName, string.Empty));
+                    _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, ecuName, string.Empty)
+                    {
+                        Selected = true
+                    });
+                }
+            }
+            else
+            {   // auto mode, reorder list and set selections
+                foreach (XElement node in pagesNode.Elements(ns + "include").Reverse())
+                {
+                    XAttribute fileAttrib = node.Attribute("filename");
+                    if (fileAttrib == null)
+                    {
+                        continue;
+                    }
+                    string fileName = fileAttrib.Value;
+                    if (string.Compare(fileName, ErrorsFileName, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        continue;
+                    }
+                    if (!File.Exists(Path.Combine(xmlFileDir, fileName)))
+                    {
+                        continue;
+                    }
+                    for (int i = 0; i < _ecuList.Count; i++)
+                    {
+                        EcuInfo ecuInfo = _ecuList[i];
+                        string ecuFileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
+                        if (string.Compare(ecuFileName, fileName, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            ecuInfo.Selected = true;
+                            _ecuList.Remove(ecuInfo);
+                            _ecuList.Insert(0, ecuInfo);
+                            break;
+                        }
+                    }
                 }
             }
 
-            foreach (EcuInfo ecuInfo in _ecuList)
-            {
-                string fileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
-                XElement fileNode = GetFileNode(fileName, ns, pagesNode);
-                if (fileNode != null && File.Exists(Path.Combine(xmlFileDir, fileName)))
-                {
-                    ecuInfo.Selected = true;
-                }
-            }
             {
                 string fileName = ErrorsFileName;
                 XElement fileNode = GetFileNode(fileName, ns, pagesNode);
