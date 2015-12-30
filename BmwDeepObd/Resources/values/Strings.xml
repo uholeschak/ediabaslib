@@ -166,6 +166,12 @@
   <string name="menu_xml_tool_edit_prg">Add ECU (prg)</string>
   <string name="menu_xml_tool_edit_del">Delete unused ECUs</string>
 
+  <!-- XML Tool context Menu -->
+  <string name="menu_xml_tool_move_top">Move to top</string>
+  <string name="menu_xml_tool_move_up">Move up</string>
+  <string name="menu_xml_tool_move_down">Move down</string>
+  <string name="menu_xml_tool_move_bottom">Move to bottom</string>
+
   <!-- XML Tool Ecu Activity -->
   <string name="xml_tool_ecu_title">Jobs for ECU: {0}</string>
   <string name="xml_tool_ecu_job_comments">Comments for job: {0}</string>
