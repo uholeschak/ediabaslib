@@ -880,37 +880,37 @@ namespace BmwDeepObd
                 {
                     case Resource.Id.menu_xml_tool_move_top:
                     {
-                        EcuInfo oldItem = _ecuListAdapter.Items[itemPos];
-                        _ecuListAdapter.Items.RemoveAt(itemPos);
-                        _ecuListAdapter.Items.Insert(0, oldItem);
-                        _ecuListAdapter.NotifyDataSetChanged();
+                        EcuInfo oldItem = _ecuList[itemPos];
+                        _ecuList.RemoveAt(itemPos);
+                        _ecuList.Insert(0, oldItem);
+                        UpdateDisplay();
                         break;
                     }
 
                     case Resource.Id.menu_xml_tool_move_up:
                     {
-                        EcuInfo oldItem = _ecuListAdapter.Items[itemPos - 1];
-                        _ecuListAdapter.Items[itemPos - 1] = _ecuListAdapter.Items[itemPos];
-                        _ecuListAdapter.Items[itemPos] = oldItem;
-                        _ecuListAdapter.NotifyDataSetChanged();
+                        EcuInfo oldItem = _ecuList[itemPos - 1];
+                        _ecuList[itemPos - 1] = _ecuList[itemPos];
+                        _ecuList[itemPos] = oldItem;
+                        UpdateDisplay();
                         break;
                     }
 
                     case Resource.Id.menu_xml_tool_move_down:
                     {
-                        EcuInfo oldItem = _ecuListAdapter.Items[itemPos + 1];
-                        _ecuListAdapter.Items[itemPos + 1] = _ecuListAdapter.Items[itemPos];
-                        _ecuListAdapter.Items[itemPos] = oldItem;
-                        _ecuListAdapter.NotifyDataSetChanged();
+                        EcuInfo oldItem = _ecuList[itemPos + 1];
+                        _ecuList[itemPos + 1] = _ecuList[itemPos];
+                        _ecuList[itemPos] = oldItem;
+                        UpdateDisplay();
                         break;
                     }
 
                     case Resource.Id.menu_xml_tool_move_bottom:
                     {
-                        EcuInfo oldItem = _ecuListAdapter.Items[itemPos];
-                        _ecuListAdapter.Items.RemoveAt(itemPos);
-                        _ecuListAdapter.Items.Add(oldItem);
-                        _ecuListAdapter.NotifyDataSetChanged();
+                        EcuInfo oldItem = _ecuList[itemPos];
+                        _ecuList.RemoveAt(itemPos);
+                        _ecuList.Add(oldItem);
+                        UpdateDisplay();
                         break;
                     }
                 }
