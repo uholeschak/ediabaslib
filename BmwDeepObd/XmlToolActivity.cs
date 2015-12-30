@@ -174,6 +174,10 @@ namespace BmwDeepObd
                     ExecuteJobsRead(_ecuList[pos]);
                 }
             };
+            listViewEcu.ItemLongClick += (sender, args) =>
+            {
+                ShowContextMenu(args.View, args.Position);
+            };
 
             _activityCommon = new ActivityCommon(this, () =>
             {
@@ -840,6 +844,78 @@ namespace BmwDeepObd
                 }
             };
             popupEdit.Show();
+        }
+
+        private void ShowContextMenu(View anchor, int itemPos)
+        {
+            Android.Support.V7.Widget.PopupMenu popupContext = new Android.Support.V7.Widget.PopupMenu(this, anchor);
+            popupContext.Inflate(Resource.Menu.xml_tool_context);
+            IMenuItem moveTopMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_top);
+            if (moveTopMenu != null)
+            {
+                moveTopMenu.SetEnabled(itemPos > 0);
+            }
+
+            IMenuItem moveUpMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_up);
+            if (moveUpMenu != null)
+            {
+                moveUpMenu.SetEnabled(itemPos > 0);
+            }
+
+            IMenuItem moveDownMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_down);
+            if (moveDownMenu != null)
+            {
+                moveDownMenu.SetEnabled((itemPos + 1) < _ecuListAdapter.Items.Count);
+            }
+
+            IMenuItem moveBottomMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_bottom);
+            if (moveBottomMenu != null)
+            {
+                moveBottomMenu.SetEnabled((itemPos + 1) < _ecuListAdapter.Items.Count);
+            }
+
+            popupContext.MenuItemClick += (sender, args) =>
+            {
+                switch (args.Item.ItemId)
+                {
+                    case Resource.Id.menu_xml_tool_move_top:
+                    {
+                        EcuInfo oldItem = _ecuListAdapter.Items[itemPos];
+                        _ecuListAdapter.Items.RemoveAt(itemPos);
+                        _ecuListAdapter.Items.Insert(0, oldItem);
+                        _ecuListAdapter.NotifyDataSetChanged();
+                        break;
+                    }
+
+                    case Resource.Id.menu_xml_tool_move_up:
+                    {
+                        EcuInfo oldItem = _ecuListAdapter.Items[itemPos - 1];
+                        _ecuListAdapter.Items[itemPos - 1] = _ecuListAdapter.Items[itemPos];
+                        _ecuListAdapter.Items[itemPos] = oldItem;
+                        _ecuListAdapter.NotifyDataSetChanged();
+                        break;
+                    }
+
+                    case Resource.Id.menu_xml_tool_move_down:
+                    {
+                        EcuInfo oldItem = _ecuListAdapter.Items[itemPos + 1];
+                        _ecuListAdapter.Items[itemPos + 1] = _ecuListAdapter.Items[itemPos];
+                        _ecuListAdapter.Items[itemPos] = oldItem;
+                        _ecuListAdapter.NotifyDataSetChanged();
+                        break;
+                    }
+
+                    case Resource.Id.menu_xml_tool_move_bottom:
+                    {
+                        EcuInfo oldItem = _ecuListAdapter.Items[itemPos];
+                        _ecuListAdapter.Items.RemoveAt(itemPos);
+                        _ecuListAdapter.Items.Add(oldItem);
+                        _ecuListAdapter.NotifyDataSetChanged();
+                        break;
+                    }
+                }
+            };
+            popupContext.Show();
         }
 
         private void AdapterConfig()

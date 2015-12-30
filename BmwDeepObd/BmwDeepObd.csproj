@@ -274,4 +274,7 @@
   <ItemGroup>
     <AndroidResource Include="Resources\menu\xml_tool_edit.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\xml_tool_context.xml" />
+  </ItemGroup>
 </Project>
