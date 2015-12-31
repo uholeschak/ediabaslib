@@ -27,8 +27,9 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
-\n- Improved ECU download
-\n- Fixed app crashes</string>
+\n- Allow to create manual configurations for older vehices
+\n- Added test button in configuration editor
+\n- Allow to send trace files for adapter detection</string>
   <string name="app_info_message">Deep OBD for BMW\nVersion: {0}\nId: {1}</string>
 
   <!-- Alert titles -->
