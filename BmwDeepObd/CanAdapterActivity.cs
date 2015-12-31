@@ -772,7 +772,6 @@ namespace BmwDeepObd
                     {
                         connectOk = true;
                         updateOk = PicBootloader.FwUpdate(bluetoothSocket);
-                        Thread.Sleep(3000);     // wait for app to start
                     }
                 }
                 catch (Exception)

@@ -86,7 +86,7 @@
 #define DEBUG_PIN           0   // enable debug pin
 #define ID_LOCATION         0x200000    // location of ID memory
 
-#define ADAPTER_VERSION     0x0003
+#define ADAPTER_VERSION     0x0004
 
 #define IGNITION_STATE()    IGNITION
 
@@ -1017,6 +1017,10 @@ bool set_bt_pin()
 
 bool init_bt()
 {
+    if (!RCONbits.RI)
+    {   // do nothing after a software reset
+        return true;
+    }
     di();
     rec_bt_mode = true;
     rec_state = rec_state_idle;
