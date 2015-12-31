@@ -590,6 +590,10 @@ namespace BmwDeepObd
             {
                 _btAdapter.CancelDiscovery();
             }
+            _scanButton.Enabled = true;
+            //_chat.SetProgressBarIndeterminateVisibility (false);
+            FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Invisible;
+            SetTitle(Resource.String.select_device);
 
             TextView textView = e.View as TextView;
             if (textView != null)
