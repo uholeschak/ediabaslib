@@ -29,6 +29,7 @@
 \n\nÄnderungen in dieser Version:
 \n- Für ältere Fahrzeuge können manuelle Konfigurationen erstellt werden
 \n- Test Schaltfläche im Konfigurationseditor ergänzt
+\n- Im Konfigurationseditor kann die ECU Reihenfolge geändert werden
 \n- Bei der Adaptererkennung können auch Trace Dateien gesendet werden</string>
   <string name="app_info_message">Deep OBD für BMW\nVersion: {0}\nId: {1}</string>
 
