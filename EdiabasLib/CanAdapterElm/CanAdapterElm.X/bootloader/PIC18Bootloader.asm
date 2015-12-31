@@ -338,6 +338,7 @@ GotoAppVector:
 BootloadMode:
 #endif ; end BOOTLOADER_ADDRESS == 0 ******************************************
     lfsr    FSR2, 0             ; for compatibility with Extended Instructions mode.
+    bcf     RCON, RI            ; [UH] clear hardware reset bit
 
 #ifdef USE_MAX_INTOSC
     movlw   b'01110000'         ; set INTOSC to maximum speed (usually 8MHz)
