@@ -29,6 +29,7 @@
 \n\nÄnderungen in dieser Version:
 \n- ECU Download verbessert
 \n- Abstürze behoben</string>
+  <string name="app_info_message">Deep OBD für BMW\nVersion: {0}\nId: {1}</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Information</string>
@@ -91,6 +92,7 @@
   <string name="menu_download_ecu">ECU Dateien herunterladen</string>
   <string name="menu_submenu_log">Datenaufzeichnung</string>
   <string name="menu_submenu_help">Onlinehilfe</string>
+  <string name="menu_info">App Info</string>
   <string name="menu_exit">App beenden</string>
 
   <!-- Data logging -->

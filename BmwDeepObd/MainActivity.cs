@@ -460,6 +460,12 @@ namespace BmwDeepObd
                 logSubMenu.SetEnabled(interfaceAvailable && !commActive);
             }
 
+            IMenuItem infoSubMenu = menu.FindItem(Resource.Id.menu_info);
+            if (infoSubMenu != null)
+            {
+                infoSubMenu.SetEnabled(!commActive);
+            }
+
             IMenuItem exitSubMenu = menu.FindItem(Resource.Id.menu_exit);
             if (exitSubMenu != null)
             {
@@ -514,6 +520,19 @@ namespace BmwDeepObd
                 case Resource.Id.menu_submenu_help:
                     StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse("https://ediabaslib.codeplex.com/wikipage?title=Deep OBD for BMW")));
                     return true;
+
+                case Resource.Id.menu_info:
+                {
+                    string message = string.Format(GetString(Resource.String.app_info_message),
+                        PackageManager.GetPackageInfo(PackageName, 0).VersionName, ActivityCommon.AppId);
+                    new AlertDialog.Builder(this)
+                        .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
+                        .SetCancelable(true)
+                        .SetMessage(message)
+                        .SetTitle(Resource.String.alert_title_info)
+                        .Show();
+                    return true;
+                }
 
                 case Resource.Id.menu_exit:
                     OnDestroy();
