@@ -50,6 +50,7 @@
 
   <!-- Send trace file -->
   <string name="send_trace_file_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie eine komprimierte und anonyme Trace-Datei (Größe {0:fs0}) senden um Produktverbesserungen zu ermöglichen?</string>
+  <string name="send_message_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie anonyme Daten senden um Produktverbesserungen zu ermöglichen?</string>
   <string name="send_trace_file">Trace-Datei senden</string>
   <string name="compress_trace_file_failed">Trace-Datei komprimieren fehlgeschlagen.</string>
   <string name="send_trace_file_failed">Trace-Datei senden fehlgeschlagen.</string>

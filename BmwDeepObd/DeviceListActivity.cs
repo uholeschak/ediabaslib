@@ -64,6 +64,7 @@ namespace BmwDeepObd
         private const int ResponseTimeout = 1000;
 
         // Return Intent extra
+        public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraCallAdapterConfig = "adapter_configuration";
@@ -75,6 +76,9 @@ namespace BmwDeepObd
         private Receiver _receiver;
         private AlertDialog _altertInfoDialog;
         private Button _scanButton;
+        private ActivityCommon _activityCommon;
+        private string _appDataDir;
+        private readonly StringBuilder _sbLog = new StringBuilder();
 
         protected override void OnCreate (Bundle savedInstanceState)
         {
@@ -88,6 +92,10 @@ namespace BmwDeepObd
 
             // Set result CANCELED incase the user backs out
             SetResult (Android.App.Result.Canceled);
+
+            _activityCommon = new ActivityCommon(this);
+
+            _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
 
             // Initialize the button to perform device discovery
             _scanButton = FindViewById<Button>(Resource.Id.button_scan);
@@ -168,6 +176,7 @@ namespace BmwDeepObd
 
             // Unregister broadcast listeners
             UnregisterReceiver (_receiver);
+            _activityCommon.Dispose();
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
@@ -217,6 +226,8 @@ namespace BmwDeepObd
             progress.SetCancelable(false);
             progress.SetMessage(GetString(Resource.String.detect_adapter));
             progress.Show();
+
+            _sbLog.Clear();
 
             Thread detectThread = new Thread(() =>
             {
@@ -287,6 +298,7 @@ namespace BmwDeepObd
                             _altertInfoDialog.DismissEvent += (sender, args) =>
                             {
                                 _altertInfoDialog = null;
+                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), PackageManager.GetPackageInfo(PackageName, 0), GetType());
                             };
                             break;
 
@@ -332,6 +344,7 @@ namespace BmwDeepObd
                             _altertInfoDialog.DismissEvent += (sender, args) =>
                             {
                                 _altertInfoDialog = null;
+                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), PackageManager.GetPackageInfo(PackageName, 0), GetType());
                             };
                             TextView messageView = _altertInfoDialog.FindViewById<TextView>(Android.Resource.Id.Message);
                             if (messageView != null)
@@ -418,8 +431,10 @@ namespace BmwDeepObd
                     {
                         bluetoothInStream.ReadByte();
                     }
+                    LogData(customData, 0, customData.Length, "Send");
                     bluetoothOutStream.Write(customData, 0, customData.Length);
 
+                    LogData(null, 0, 0, "Resp");
                     List<byte> responseList = new List<byte>();
                     long startTime = Stopwatch.GetTimestamp();
                     for (; ; )
@@ -429,15 +444,18 @@ namespace BmwDeepObd
                             int data = bluetoothInStream.ReadByte();
                             if (data >= 0)
                             {
+                                LogByte((byte)data);
                                 responseList.Add((byte)data);
                                 startTime = Stopwatch.GetTimestamp();
                             }
                         }
                         if (responseList.Count >= customData.Length + versionRespLen)
                         {
+                            LogString("Custom adapter length");
                             bool validEcho = !customData.Where((t, i) => responseList[i] != t).Any();
                             if (!validEcho)
                             {
+                                LogString("*** Echo incorrect");
                                 break;
                             }
                             byte checkSum = 0x00;
@@ -447,6 +465,7 @@ namespace BmwDeepObd
                             }
                             if (checkSum != responseList[customData.Length + versionRespLen - 1])
                             {
+                                LogString("*** Checksum incorrect");
                                 break;
                             }
                             int adapterTypeId = responseList[customData.Length + 5] + (responseList[customData.Length + 4] << 8);
@@ -454,8 +473,10 @@ namespace BmwDeepObd
                             int fwUpdateVersion = PicBootloader.GetFirmwareVersion((uint)adapterTypeId);
                             if (fwUpdateVersion >= 0 && fwUpdateVersion > fwVersion)
                             {
+                                LogString("Custom adapter with old firmware detected");
                                 return AdapterType.CustomUpdate;
                             }
+                            LogString("Custom adapter detected");
                             return AdapterType.Custom;
                         }
                         if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * TickResolMs)
@@ -465,6 +486,7 @@ namespace BmwDeepObd
                                 bool validEcho = !customData.Where((t, i) => responseList[i] != t).Any();
                                 if (validEcho)
                                 {
+                                    LogString("Valid echo detected");
                                     adapterType = AdapterType.EchoOnly;
                                 }
                             }
@@ -483,6 +505,7 @@ namespace BmwDeepObd
                         bluetoothInStream.ReadByte();
                     }
                     byte[] sendData = Encoding.UTF8.GetBytes("ATI\r");
+                    LogData(sendData, 0, sendData.Length, "Send");
                     bluetoothOutStream.Write(sendData, 0, sendData.Length);
 
                     string response = GetElm327Reponse(bluetoothInStream);
@@ -490,8 +513,10 @@ namespace BmwDeepObd
                     {
                         if (response.Contains("ELM327"))
                         {
+                            LogString("ELM327 detected");
                             if (response.Contains("ELM327 v2.1"))
                             {
+                                LogString("Version 2.1 detected");
                                 elmReports21 = true;
                             }
                             adapterType = AdapterType.Elm327;
@@ -509,16 +534,19 @@ namespace BmwDeepObd
                             bluetoothInStream.ReadByte();
                         }
                         byte[] sendData = Encoding.UTF8.GetBytes(command + "\r");
+                        LogData(sendData, 0, sendData.Length, "Send");
                         bluetoothOutStream.Write(sendData, 0, sendData.Length);
 
                         string response = GetElm327Reponse(bluetoothInStream);
                         if (response == null)
                         {
+                            LogString("*** No ELM response");
                             adapterType = AdapterType.Elm327Invalid;
                             break;
                         }
                         if (!response.Contains("OK\r"))
                         {
+                            LogString("*** No ELM OK found");
                             adapterType = AdapterType.Elm327Invalid;
                             break;
                         }
@@ -543,6 +571,7 @@ namespace BmwDeepObd
         /// <returns>Response string, null for no reponse</returns>
         private string GetElm327Reponse(Stream bluetoothInStream)
         {
+            LogData(null, 0, 0, "Resp");
             string response = null;
             StringBuilder stringBuilder = new StringBuilder();
             long startTime = Stopwatch.GetTimestamp();
@@ -554,6 +583,7 @@ namespace BmwDeepObd
                     if (data >= 0 && data != 0x00)
                     {
                         // remove 0x00
+                        LogByte((byte)data);
                         stringBuilder.Append(Convert.ToChar(data));
                         startTime = Stopwatch.GetTimestamp();
                     }
@@ -565,6 +595,7 @@ namespace BmwDeepObd
                     }
                     if (stringBuilder.Length > 100)
                     {
+                        LogString("*** ELM response too long");
                         break;
                     }
                 }
@@ -574,8 +605,13 @@ namespace BmwDeepObd
                 }
                 if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * TickResolMs)
                 {
+                    LogString("*** ELM response timeout");
                     break;
                 }
+            }
+            if (response == null)
+            {
+                LogString("*** No ELM prompt");
             }
             return response;
         }
@@ -609,6 +645,41 @@ namespace BmwDeepObd
 
                 DetectAdapter(address, name);
             }
+        }
+
+        private void LogData(byte[] data, int offset, int length, string info = null)
+        {
+            if (!string.IsNullOrEmpty(info))
+            {
+                if (_sbLog.Length > 0)
+                {
+                    _sbLog.Append("\n");
+                }
+                _sbLog.Append(" (");
+                _sbLog.Append(info);
+                _sbLog.Append("): ");
+            }
+            if (data != null)
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    _sbLog.Append(string.Format(ActivityMain.Culture, "{0:X02} ", data[offset + i]));
+                }
+            }
+        }
+
+        private void LogString(string info)
+        {
+            if (_sbLog.Length > 0)
+            {
+                _sbLog.Append("\n");
+            }
+            _sbLog.Append(info);
+        }
+
+        private void LogByte(byte data)
+        {
+            _sbLog.Append(string.Format(ActivityMain.Culture, "{0:X02} ", data));
         }
 
         public class Receiver : BroadcastReceiver
