@@ -462,7 +462,7 @@ namespace BmwDeepObd
                     _autoStart = false;
                     if (string.IsNullOrEmpty(_deviceAddress))
                     {
-                        if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, (sender, args) =>
+                        if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _appDataDir, (sender, args) =>
                             {
                                 _autoStart = true;
                                 _autoStartItemId = item.ItemId;
@@ -480,7 +480,7 @@ namespace BmwDeepObd
                         return true;
                     }
                     _autoStart = false;
-                    _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice);
+                    _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice, _appDataDir);
                     return true;
 
                 case Resource.Id.menu_adapter_config:
@@ -586,7 +586,7 @@ namespace BmwDeepObd
             if (_commErrorsOccured && _traceActive && !string.IsNullOrEmpty(_traceDir))
             {
                 EdiabasClose();
-                return _activityCommon.RequestSendTraceFile(_traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType(), handler);
+                return _activityCommon.RequestSendTraceFile(_appDataDir, _traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType(), handler);
             }
             return false;
         }

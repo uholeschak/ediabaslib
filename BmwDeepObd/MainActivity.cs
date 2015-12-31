@@ -486,7 +486,7 @@ namespace BmwDeepObd
             {
                 case Resource.Id.menu_scan:
                     _autoStart = false;
-                    _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice);
+                    _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice, _appDataPath);
                     return true;
 
                 case Resource.Id.menu_adapter_config:
@@ -552,7 +552,7 @@ namespace BmwDeepObd
             _autoStart = false;
             if (string.IsNullOrEmpty(_deviceAddress))
             {
-                if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, (s, args) =>
+                if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _appDataPath, (s, args) =>
                     {
                         _autoStart = true;
                     }))
@@ -877,7 +877,7 @@ namespace BmwDeepObd
             UpdateDisplay();
             if (_commErrorsOccured && _traceActive && !string.IsNullOrEmpty(_traceDir))
             {
-                _activityCommon.RequestSendTraceFile(_traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType());
+                _activityCommon.RequestSendTraceFile(_appDataPath, _traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType());
             }
         }
 
@@ -1873,7 +1873,7 @@ namespace BmwDeepObd
             {
                 // ignored
             }
-            DownloadFile(EcuDownloadUrl, Path.Combine(_appDataPath, "Download"), ecuPath);
+            DownloadFile(EcuDownloadUrl, Path.Combine(_appDataPath, ActivityCommon.DownloadDir), ecuPath);
         }
 
         private bool CheckForEcuFiles(bool checkPackage = false)

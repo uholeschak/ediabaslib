@@ -68,6 +68,7 @@ namespace BmwDeepObd
         public delegate void BcReceiverUpdateDisplayDelegate();
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
         public const string EmulatorEnetIp = "192.168.10.244";
+        public const string DownloadDir = "Download";
         public const string ActionUsbPermission = "de.holeschak.bmw_deep_obd.USB_PERMISSION";
         private const string MailInfoDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Mail.xml";
 
@@ -664,7 +665,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool RequestBluetoothDeviceSelect(int requestCode, EventHandler<DialogClickEventArgs> handler)
+        public bool RequestBluetoothDeviceSelect(int requestCode, string appDataDir, EventHandler<DialogClickEventArgs> handler)
         {
             if (SelectedInterface != InterfaceType.Bluetooth)
             {
@@ -677,7 +678,7 @@ namespace BmwDeepObd
             new AlertDialog.Builder(_activity)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
-                    if (SelectBluetoothDevice(requestCode))
+                    if (SelectBluetoothDevice(requestCode, appDataDir))
                     {
                         handler(sender, args);
                     }
@@ -692,7 +693,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool SelectBluetoothDevice(int requestCode)
+        public bool SelectBluetoothDevice(int requestCode, string appDataDir)
         {
             if (!IsInterfaceAvailable())
             {
@@ -703,6 +704,7 @@ namespace BmwDeepObd
                 return false;
             }
             Intent serverIntent = new Intent(_activity, typeof(DeviceListActivity));
+            serverIntent.PutExtra(XmlToolActivity.ExtraAppDataDir, appDataDir);
             _activity.StartActivityForResult(serverIntent, requestCode);
             return true;
         }
@@ -804,7 +806,7 @@ namespace BmwDeepObd
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }
 
-        public bool RequestSendTraceFile(string traceDir, PackageInfo packageInfo, Type classType, EventHandler<EventArgs> handler = null)
+        public bool RequestSendTraceFile(string appDataDir, string traceDir, PackageInfo packageInfo, Type classType, EventHandler<EventArgs> handler = null)
         {
             try
             {
@@ -818,7 +820,7 @@ namespace BmwDeepObd
                 new AlertDialog.Builder(_activity)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
-                        SendTraceFile(traceFile, packageInfo, classType, handler, true);
+                        SendTraceFile(appDataDir, traceFile, null, packageInfo, classType, handler, true);
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
@@ -839,9 +841,42 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool SendTraceFile(string traceFile, PackageInfo packageInfo, Type classType, EventHandler<EventArgs> handler, bool deleteFile = false)
+        public bool RequestSendMessage(string appDataDir, string message, PackageInfo packageInfo, Type classType, EventHandler<EventArgs> handler = null)
         {
-            if (!File.Exists(traceFile))
+            try
+            {
+                if (string.IsNullOrEmpty(message))
+                {
+                    return false;
+                }
+                new AlertDialog.Builder(_activity)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        SendTraceFile(appDataDir, null, message, packageInfo, classType, handler);
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                        if (handler != null)
+                        {
+                            handler(this, new EventArgs());
+                        }
+                    })
+                    .SetCancelable(true)
+                    .SetMessage(Resource.String.send_message_request)
+                    .SetTitle(Resource.String.alert_title_question)
+                    .Show();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool SendTraceFile(string appDataDir, string traceFile, string message, PackageInfo packageInfo, Type classType, EventHandler<EventArgs> handler, bool deleteFile = false)
+        {
+            if ((string.IsNullOrEmpty(traceFile) || !File.Exists(traceFile)) &&
+                string.IsNullOrEmpty(message))
             {
                 return false;
             }
@@ -863,13 +898,18 @@ namespace BmwDeepObd
                     };
                     MailMessage mail = new MailMessage()
                     {
-                        Subject = "Deep OBD trace file",
+                        Subject = "Deep OBD trace info",
                         BodyEncoding = Encoding.UTF8
                     };
 
-                    mail.Attachments.Add(new Attachment(traceFile));
+                    if (File.Exists(traceFile))
+                    {
+                        mail.Attachments.Add(new Attachment(traceFile));
+                    }
 
-                    string mailInfoFile = Path.Combine(Path.GetDirectoryName(traceFile) ?? string.Empty, "Mail.xml");
+                    string downloadDir = Path.Combine(appDataDir, DownloadDir);
+                    string mailInfoFile = Path.Combine(downloadDir, "Mail.xml");
+                    Directory.CreateDirectory(downloadDir);
                     webClient.DownloadFile(MailInfoDownloadUrl, mailInfoFile);
 
                     string regEx;
@@ -880,7 +920,7 @@ namespace BmwDeepObd
                     }
 
                     StringBuilder sb = new StringBuilder();
-                    sb.Append("Deep OBD Trace file");
+                    sb.Append("Deep OBD Trace info");
                     sb.Append(string.Format("\nDate: {0}", DateTime.Now.ToString("u")));
                     sb.Append(string.Format("\nLanguage: {0}", Java.Util.Locale.Default.Language ?? string.Empty));
                     sb.Append(string.Format("\nAndroid version: {0}", Build.VERSION.Sdk));
@@ -890,16 +930,25 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nApp id: {0}", AppId));
                     sb.Append(string.Format("\nClass name: {0}", classType.FullName));
 
-                    Dictionary<string, int> wordDict = ExtractKeyWords(traceFile, new Regex(regEx), maxWords, null);
-                    if (wordDict != null)
+                    if (!string.IsNullOrEmpty(message))
                     {
-                        sb.Append("\nKeywords:");
-                        foreach (var entry in wordDict)
+                        sb.Append("\nInformation:\n");
+                        sb.Append(message);
+                    }
+
+                    if (!string.IsNullOrEmpty(traceFile))
+                    {
+                        Dictionary<string, int> wordDict = ExtractKeyWords(traceFile, new Regex(regEx), maxWords, null);
+                        if (wordDict != null)
                         {
-                            sb.Append(" ");
-                            sb.Append(entry.Key);
-                            sb.Append("=");
-                            sb.Append(entry.Value);
+                            sb.Append("\nKeywords:");
+                            foreach (var entry in wordDict)
+                            {
+                                sb.Append(" ");
+                                sb.Append(entry.Key);
+                                sb.Append("=");
+                                sb.Append(entry.Value);
+                            }
                         }
                     }
                     mail.Body = sb.ToString();
@@ -959,7 +1008,7 @@ namespace BmwDeepObd
                                 new AlertDialog.Builder(_activity)
                                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                     {
-                                        SendTraceFile(traceFile, packageInfo, classType, handler, deleteFile);
+                                        SendTraceFile(appDataDir, traceFile, message, packageInfo, classType, handler, deleteFile);
                                     })
                                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                     {
@@ -974,7 +1023,10 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
-                                    File.Delete(traceFile);
+                                    if (!string.IsNullOrEmpty(traceFile))
+                                    {
+                                        File.Delete(traceFile);
+                                    }
                                 }
                                 catch (Exception)
                                 {
@@ -1012,7 +1064,7 @@ namespace BmwDeepObd
                         new AlertDialog.Builder(_activity)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                             {
-                                SendTraceFile(traceFile, packageInfo, classType, handler, deleteFile);
+                                SendTraceFile(appDataDir, traceFile, message, packageInfo, classType, handler, deleteFile);
                             })
                             .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                             {
