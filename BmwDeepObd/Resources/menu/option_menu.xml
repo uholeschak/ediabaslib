@@ -51,6 +51,9 @@
           <item android:id="@+id/menu_submenu_help"
                 android:icon="@android:drawable/ic_menu_help"
                 android:title="@string/menu_submenu_help" />
+          <item android:id="@+id/menu_info"
+                android:icon="@android:drawable/ic_menu_info_details"
+                android:title="@string/menu_info" />
           <item android:id="@+id/menu_exit"
                 android:icon="@android:drawable/ic_menu_close_clear_cancel"
                 android:title="@string/menu_exit" />
