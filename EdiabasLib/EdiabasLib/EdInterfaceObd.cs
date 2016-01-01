@@ -826,6 +826,7 @@ namespace EdiabasLib
                 InterfaceReceiveDataFuncInt = EdFtdiInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = null;
             }
+#if !WindowsCE
             else if (ComPortProtected.ToUpper(Culture).StartsWith(EdBluetoothInterface.PortId))
             {   // automtatic hook of bluetooth functions
                 EdBluetoothInterface.Ediabas = Ediabas;
@@ -844,6 +845,7 @@ namespace EdiabasLib
                 InterfaceReceiveDataFuncInt = EdBluetoothInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = EdBluetoothInterface.InterfaceSendPulse;
             }
+#endif
             else
             {
                 InterfaceConnectFuncInt = null;
