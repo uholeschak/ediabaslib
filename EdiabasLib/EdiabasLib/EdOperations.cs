@@ -2438,8 +2438,23 @@ namespace EdiabasLib
                     }
                     catch (Exception)
                     {
-                        fullFileName = grpFileName;
+                        try
+                        {
+                            using (MemoryStreamReader.OpenRead(grpFileName))
+                            {
+                            }
+                            fullFileName = grpFileName;
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                     }
+                }
+                if (string.IsNullOrEmpty(fullFileName))
+                {
+                    ediabas.SetError(ErrorCodes.EDIABAS_SYS_0002);
+                    return;
                 }
 
                 try
@@ -2451,6 +2466,7 @@ namespace EdiabasLib
                 catch (Exception)
                 {
                     ediabas.SetError(ErrorCodes.EDIABAS_SYS_0002);
+                    return;
                 }
             }
             bool found;
