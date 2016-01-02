@@ -398,11 +398,28 @@ namespace BmwDeepObd
                                         _ediabas.ArgBinaryStd = null;
                                         _ediabas.ResultsRequests = ecuInfo.Results;
 
-                                        _ediabas.ExecuteJob("FS_LESEN_DETAIL");
+                                        bool details;
+                                        try
+                                        {
+                                            _ediabas.ExecuteJob("FS_LESEN_DETAIL");
+                                            details = true;
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // no details
+                                            details = false;
+                                        }
 
-                                        List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail = new List<Dictionary<string, EdiabasNet.ResultData>>(_ediabas.ResultSets);
-                                        errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictLocal,
-                                            new List<Dictionary<string, EdiabasNet.ResultData>>(resultSetsDetail)));
+                                        if (details)
+                                        {
+                                            List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail = new List<Dictionary<string, EdiabasNet.ResultData>>(_ediabas.ResultSets);
+                                            errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictLocal,
+                                                new List<Dictionary<string, EdiabasNet.ResultData>>(resultSetsDetail)));
+                                        }
+                                        else
+                                        {
+                                            errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictLocal, null));
+                                        }
                                     }
                                 }
                                 dictIndex++;
