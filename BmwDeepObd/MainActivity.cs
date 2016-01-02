@@ -2156,7 +2156,7 @@ namespace BmwDeepObd
                 ActivityMain activityMain = Activity as ActivityMain;
                 if (activityMain != null)
                 {
-                    if (_pageInfoIndex >= 0)
+                    if (_pageInfoIndex >= 0 && _pageInfoIndex < activityMain._jobReader.PageList.Count)
                     {
                         JobReader.PageInfo pageInfo = activityMain._jobReader.PageList[_pageInfoIndex];
                         if (pageInfo.ClassObject != null)
@@ -2190,7 +2190,7 @@ namespace BmwDeepObd
                 base.OnDestroyView();
 
                 ActivityMain activityMain = Activity as ActivityMain;
-                if (activityMain != null && _pageInfoIndex >= 0)
+                if (activityMain != null && _pageInfoIndex >= 0 && _pageInfoIndex < activityMain._jobReader.PageList.Count)
                 {
                     JobReader.PageInfo pageInfo = activityMain._jobReader.PageList[_pageInfoIndex];
                     if (pageInfo.ClassObject != null)
