@@ -1061,22 +1061,25 @@ namespace BmwDeepObd
                                     message += FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
                                     message += ", ";
                                     message += FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
-                                    string detailText = string.Empty;
-                                    foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
+                                    if (errorReport.ErrorDetailSet != null)
                                     {
-                                        string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
-                                        if (kmText.Length > 0)
+                                        string detailText = string.Empty;
+                                        foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
                                         {
-                                            if (detailText.Length > 0)
+                                            string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
+                                            if (kmText.Length > 0)
                                             {
-                                                detailText += ", ";
+                                                if (detailText.Length > 0)
+                                                {
+                                                    detailText += ", ";
+                                                }
+                                                detailText += kmText + " km";
                                             }
-                                            detailText += kmText + " km";
                                         }
-                                    }
-                                    if (detailText.Length > 0)
-                                    {
-                                        message += "\r\n" + detailText;
+                                        if (detailText.Length > 0)
+                                        {
+                                            message += "\r\n" + detailText;
+                                        }
                                     }
                                 }
                                 if (formatErrorResult)
