@@ -7,6 +7,7 @@ using namespace System::Threading;
 using namespace System::Runtime::InteropServices;
 using namespace msclr::interop;
 using namespace Ediabas;
+#pragma warning(disable: 4081)
 
 #define DLLEXPORT __declspec(dllexport)
 

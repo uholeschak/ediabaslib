@@ -128,13 +128,10 @@ namespace EdiabasCall
 
                 Type type = typeof(API);
                 FieldInfo info = type.GetField("a", BindingFlags.NonPublic | BindingFlags.Static);
-                if (info != null)
+                object value = info?.GetValue(null);
+                if (value is uint)
                 {
-                    object value = info.GetValue(null);
-                    if (value is uint)
-                    {
-                        _apiHandle = (uint)value;
-                    }
+                    _apiHandle = (uint)value;
                 }
 
                 if (storeResults)
