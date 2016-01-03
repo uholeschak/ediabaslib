@@ -36,9 +36,9 @@ namespace BmwDeepObd
                 FamilyId = familyId;
             }
 
-            public string FileName { get; private set; }
-            public uint DeviceId { get; private set; }
-            public Device.Families FamilyId { get; private set; }
+            public string FileName { get; }
+            public uint DeviceId { get; }
+            public Device.Families FamilyId { get; }
         }
 
         private class FirmwareDetail
@@ -50,9 +50,9 @@ namespace BmwDeepObd
                 AdapterVersion = adapterVersion;
             }
 
-            public FirmwareInfo FirmwareInfo { get; private set; }
-            public uint AdapterType { get; private set; }
-            public uint AdapterVersion { get; private set; }
+            public FirmwareInfo FirmwareInfo { get; }
+            public uint AdapterType { get; }
+            public uint AdapterVersion { get; }
         }
 
         private class Crc
@@ -201,10 +201,7 @@ namespace BmwDeepObd
 
             private readonly List<byte> _packetData = new List<byte>();
 
-            public List<byte> PacketData
-            {
-                get { return _packetData; }
-            }
+            public List<byte> PacketData => _packetData;
 
             public const int HeaderSize = 7;
             public const int FooterSize = 2;
@@ -1868,15 +1865,9 @@ namespace BmwDeepObd
             private readonly Stream _bluetoothInStream;
             private readonly Stream _bluetoothOutStream;
 
-            public Stream BluetoothInStream
-            {
-                get { return _bluetoothInStream; }
-            }
+            public Stream BluetoothInStream => _bluetoothInStream;
 
-            public Stream BluetoothOutStream
-            {
-                get { return _bluetoothOutStream; }
-            }
+            public Stream BluetoothOutStream => _bluetoothOutStream;
 
             public Comm(Stream bluetoothInStream, Stream bluetoothOutStream)
             {

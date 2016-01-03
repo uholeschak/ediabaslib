@@ -24,33 +24,20 @@ namespace BmwDeepObd
         {
             public ResultInfo(string name, string type, List<string> comments )
             {
-                _name = name;
-                _type = type;
-                _comments = comments;
+                Name = name;
+                Type = type;
+                Comments = comments;
                 Selected = false;
                 Format = string.Empty;
                 DisplayText = name;
                 LogTag = name;
             }
 
-            private readonly string _name;
-            private readonly string _type;
-            private readonly List<string> _comments;
+            public string Name { get; }
 
-            public string Name
-            {
-                get { return _name; }
-            }
+            public string Type { get; }
 
-            public string Type
-            {
-                get { return _type; }
-            }
-
-            public List<string> Comments
-            {
-                get { return _comments; }
-            }
+            public List<string> Comments { get; }
 
             public bool Selected { get; set; }
 
@@ -65,36 +52,17 @@ namespace BmwDeepObd
         {
             public JobInfo(string name)
             {
-                _name = name;
-                _comments = new List<string>();
-                _results = new List<ResultInfo>();
+                Name = name;
+                Comments = new List<string>();
+                Results = new List<ResultInfo>();
                 Selected = false;
             }
 
-            private readonly string _name;
-            private readonly List<string> _comments;
-            private readonly List<ResultInfo> _results;
+            public string Name { get; }
 
-            public string Name
-            {
-                get { return _name; }
-            }
+            public List<string> Comments { get; }
 
-            public List<string> Comments
-            {
-                get
-                {
-                    return _comments;
-                }
-            }
-
-            public List<ResultInfo> Results
-            {
-                get
-                {
-                    return _results;
-                }
-            }
+            public List<ResultInfo> Results { get; }
 
             public uint ArgCount { get; set; }
 
@@ -694,10 +662,7 @@ namespace BmwDeepObd
 
         private void HideKeyboard()
         {
-            if (_imm != null)
-            {
-                _imm.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
-            }
+            _imm?.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
         }
 
         private void ExecuteTestFormat()
@@ -771,10 +736,7 @@ namespace BmwDeepObd
         {
             private readonly List<JobInfo> _items;
 
-            public List<JobInfo> Items
-            {
-                get { return _items; }
-            }
+            public List<JobInfo> Items => _items;
 
             private readonly XmlToolEcuActivity _context;
             private readonly Android.Graphics.Color _backgroundColor;
@@ -794,15 +756,9 @@ namespace BmwDeepObd
                 return position;
             }
 
-            public override JobInfo this[int position]
-            {
-                get { return _items[position]; }
-            }
+            public override JobInfo this[int position] => _items[position];
 
-            public override int Count
-            {
-                get { return _items.Count; }
-            }
+            public override int Count => _items.Count;
 
             public override View GetView(int position, View convertView, ViewGroup parent)
             {
@@ -856,15 +812,10 @@ namespace BmwDeepObd
             {
                 public TagInfo(JobInfo info)
                 {
-                    _info = info;
+                    Info = info;
                 }
 
-                private readonly JobInfo _info;
-
-                public JobInfo Info
-                {
-                    get { return _info; }
-                }
+                public JobInfo Info { get; }
             }
         }
 
@@ -872,10 +823,7 @@ namespace BmwDeepObd
         {
             private readonly List<ResultInfo> _items;
 
-            public List<ResultInfo> Items
-            {
-                get { return _items; }
-            }
+            public List<ResultInfo> Items => _items;
 
             private readonly XmlToolEcuActivity _context;
             private readonly Android.Graphics.Color _backgroundColor;
@@ -895,15 +843,9 @@ namespace BmwDeepObd
                 return position;
             }
 
-            public override ResultInfo this[int position]
-            {
-                get { return _items[position]; }
-            }
+            public override ResultInfo this[int position] => _items[position];
 
-            public override int Count
-            {
-                get { return _items.Count; }
-            }
+            public override int Count => _items.Count;
 
             public override View GetView(int position, View convertView, ViewGroup parent)
             {
@@ -957,15 +899,10 @@ namespace BmwDeepObd
             {
                 public TagInfo(ResultInfo info)
                 {
-                    _info = info;
+                    Info = info;
                 }
 
-                private readonly ResultInfo _info;
-
-                public ResultInfo Info
-                {
-                    get { return _info; }
-                }
+                public ResultInfo Info { get; }
             }
         }
     }

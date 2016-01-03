@@ -7,6 +7,9 @@ using Android.Hardware.Usb;
 using Android.OS;
 using Hoho.Android.UsbSerial.Driver;
 using Hoho.Android.UsbSerial.Util;
+// ReSharper disable ConvertPropertyToExpressionBody
+// ReSharper disable UseNullPropagation
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
 namespace EdiabasLib
 {

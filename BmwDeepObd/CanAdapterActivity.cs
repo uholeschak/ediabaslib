@@ -316,10 +316,7 @@ namespace BmwDeepObd
 
         private void HideKeyboard()
         {
-            if (_imm != null)
-            {
-                _imm.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
-            }
+            _imm?.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
         }
 
         private void UpdateDisplay()

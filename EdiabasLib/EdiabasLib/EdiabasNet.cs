@@ -14,6 +14,10 @@ using System.Xml;
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
 // ReSharper disable LoopCanBeConvertedToQuery
 // ReSharper disable RedundantCast
+// ReSharper disable UseNameofExpression
+// ReSharper disable ConvertPropertyToExpressionBody
+// ReSharper disable UseNullPropagation
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
 namespace EdiabasLib
 {

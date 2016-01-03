@@ -8,13 +8,7 @@ namespace BmwDeepObd
     public class ResultListAdapter : BaseAdapter<TableResultItem>
     {
         private readonly List<TableResultItem> _items;
-        public List<TableResultItem> Items
-        {
-            get
-            {
-                return _items;
-            }
-        }
+        public List<TableResultItem> Items => _items;
         private readonly Activity _context;
         private readonly float _textWeight;
         private readonly bool _showCheckBox;
@@ -43,15 +37,9 @@ namespace BmwDeepObd
             return position;
         }
 
-        public override TableResultItem this[int position]
-        {
-            get { return _items[position]; }
-        }
+        public override TableResultItem this[int position] => _items[position];
 
-        public override int Count
-        {
-            get { return _items.Count; }
-        }
+        public override int Count => _items.Count;
 
         public override bool IsEnabled(int position)
         {
@@ -121,37 +109,25 @@ namespace BmwDeepObd
         {
             public TagInfo(TableResultItem info)
             {
-                _info = info;
+                Info = info;
             }
 
-            private readonly TableResultItem _info;
-
-            public TableResultItem Info
-            {
-                get
-                {
-                    return _info;
-                }
-            }
+            public TableResultItem Info { get; }
         }
     }
 
     public class TableResultItem
     {
-        private readonly string _text1;
-        private readonly string _text2;
-        private readonly object _tag;
-        private readonly bool _checkVisible;
         private bool _selected;
         public delegate void CheckChangeEventHandler(TableResultItem item);
         public event CheckChangeEventHandler CheckChangeEvent;
 
         public TableResultItem(string text1, string text2, object tag, bool checkVisible, bool selected)
         {
-            _text1 = text1;
-            _text2 = text2;
-            _tag = tag;
-            _checkVisible = checkVisible;
+            Text1 = text1;
+            Text2 = text2;
+            Tag = tag;
+            CheckVisible = checkVisible;
             _selected = selected;
         }
 
@@ -165,37 +141,13 @@ namespace BmwDeepObd
         {
         }
 
-        public string Text1
-        {
-            get
-            {
-                return _text1;
-            }
-        }
+        public string Text1 { get; }
 
-        public string Text2
-        {
-            get
-            {
-                return _text2;
-            }
-        }
+        public string Text2 { get; }
 
-        public object Tag
-        {
-            get
-            {
-                return _tag;
-            }
-        }
+        public object Tag { get; }
 
-        public bool CheckVisible
-        {
-            get
-            {
-                return _checkVisible;
-            }
-        }
+        public bool CheckVisible { get; }
 
         public bool Selected
         {

@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Collections.Generic;
+// ReSharper disable ConvertPropertyToExpressionBody
 
 namespace EdiabasLib
 {

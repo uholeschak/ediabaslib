@@ -80,10 +80,7 @@ namespace Hoho.Android.UsbSerial.Util
             }
         }
 
-        public bool IsStarted
-        {
-            get { return _commThread != null; }
-        }
+        public bool IsStarted => _commThread != null;
 
         private void CommThreadFunc()
         {
@@ -97,10 +94,7 @@ namespace Hoho.Android.UsbSerial.Util
                 {
                     Log.Warn(Tag, "USB task exception: " + ex.Message, ex);
                     EventHandler<UnhandledExceptionEventArgs> handler = Volatile.Read(ref ErrorReceived);
-                    if (handler != null)
-                    {
-                        handler(this, new UnhandledExceptionEventArgs(ex, false));
-                    }
+                    handler?.Invoke(this, new UnhandledExceptionEventArgs(ex, false));
                 }
             }
         }
@@ -116,10 +110,7 @@ namespace Hoho.Android.UsbSerial.Util
                 var data = new byte[len];
                 Array.Copy(_buffer, data, len);
                 EventHandler<SerialDataReceivedArgs> handler = Volatile.Read(ref DataReceived);
-                if (handler != null)
-                {
-                    handler(this, new SerialDataReceivedArgs(data));
-                }
+                handler?.Invoke(this, new SerialDataReceivedArgs(data));
             }
         }
 

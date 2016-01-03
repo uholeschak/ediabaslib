@@ -58,36 +58,19 @@ namespace BmwDeepObd
         {
             public DownloadInfo(string fileName, string downloadDir, string targetDir, XElement infoXml = null)
             {
-                _fileName = fileName;
-                _downloadDir = downloadDir;
-                _targetDir = targetDir;
-                _infoXml = infoXml;
+                FileName = fileName;
+                DownloadDir = downloadDir;
+                TargetDir = targetDir;
+                InfoXml = infoXml;
             }
 
-            private readonly string _fileName;
-            private readonly string _downloadDir;
-            private readonly string _targetDir;
-            private readonly XElement _infoXml;
+            public string FileName { get; }
 
-            public string FileName
-            {
-                get { return _fileName; }
-            }
+            public string TargetDir { get; }
 
-            public string TargetDir
-            {
-                get { return _targetDir; }
-            }
+            public string DownloadDir { get; }
 
-            public string DownloadDir
-            {
-                get { return _downloadDir; }
-            }
-
-            public XElement InfoXml
-            {
-                get { return _infoXml; }
-            }
+            public XElement InfoXml { get; }
         }
 
         class ConnectButtonInfo
@@ -429,16 +412,10 @@ namespace BmwDeepObd
             }
 
             IMenuItem xmlToolMenu = menu.FindItem(Resource.Id.menu_xml_tool);
-            if (xmlToolMenu != null)
-            {
-                xmlToolMenu.SetEnabled(!commActive);
-            }
+            xmlToolMenu?.SetEnabled(!commActive);
 
             IMenuItem ediabasToolMenu = menu.FindItem(Resource.Id.menu_ediabas_tool);
-            if (ediabasToolMenu != null)
-            {
-                ediabasToolMenu.SetEnabled(!commActive);
-            }
+            ediabasToolMenu?.SetEnabled(!commActive);
 
             IMenuItem selectMedia = menu.FindItem(Resource.Id.menu_sel_media);
             if (selectMedia != null)
@@ -449,22 +426,13 @@ namespace BmwDeepObd
             }
 
             IMenuItem downloadEcu = menu.FindItem(Resource.Id.menu_download_ecu);
-            if (downloadEcu != null)
-            {
-                downloadEcu.SetEnabled(!commActive);
-            }
+            downloadEcu?.SetEnabled(!commActive);
 
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
-            if (logSubMenu != null)
-            {
-                logSubMenu.SetEnabled(interfaceAvailable && !commActive);
-            }
+            logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
 
             IMenuItem infoSubMenu = menu.FindItem(Resource.Id.menu_info);
-            if (infoSubMenu != null)
-            {
-                infoSubMenu.SetEnabled(!commActive);
-            }
+            infoSubMenu?.SetEnabled(!commActive);
 
             IMenuItem exitSubMenu = menu.FindItem(Resource.Id.menu_exit);
             if (exitSubMenu != null)
@@ -594,28 +562,19 @@ namespace BmwDeepObd
                 return;
             }
             View parent = v.Parent as View;
-            if (parent != null)
+            parent = parent?.Parent as View;
+            ListView listViewResult = parent?.FindViewById<ListView>(Resource.Id.resultList);
+            ResultListAdapter resultListAdapter = (ResultListAdapter) listViewResult?.Adapter;
+            if (resultListAdapter != null)
             {
-                parent = parent.Parent as View;
-            }
-            if (parent != null)
-            {
-                ListView listViewResult = parent.FindViewById<ListView>(Resource.Id.resultList);
-                if (listViewResult != null)
+                List<string> errorResetList =
+                    (from resultItem in resultListAdapter.Items
+                        let ecuName = resultItem.Tag as string
+                        where ecuName != null && resultItem.CheckVisible && resultItem.Selected
+                        select ecuName).ToList();
+                lock (EdiabasThread.DataLock)
                 {
-                    ResultListAdapter resultListAdapter = (ResultListAdapter) listViewResult.Adapter;
-                    if (resultListAdapter != null)
-                    {
-                        List<string> errorResetList =
-                            (from resultItem in resultListAdapter.Items
-                                let ecuName = resultItem.Tag as string
-                                where ecuName != null && resultItem.CheckVisible && resultItem.Selected
-                                select ecuName).ToList();
-                        lock (EdiabasThread.DataLock)
-                        {
-                            _ediabasThread.ErrorResetList = errorResetList;
-                        }
-                    }
+                    _ediabasThread.ErrorResetList = errorResetList;
                 }
             }
         }
@@ -961,7 +920,7 @@ namespace BmwDeepObd
                 dynamicFragment = (Fragment)pageInfo.InfoObject;
             }
 
-            if (dynamicFragment != null && dynamicFragment.View != null)
+            if (dynamicFragment?.View != null)
             {
                 ListView listViewResult = dynamicFragment.View.FindViewById<ListView>(Resource.Id.resultList);
                 if (listViewResult.Adapter == null)
@@ -1709,16 +1668,8 @@ namespace BmwDeepObd
                     return false;
                 }
                 XDocument xmlDoc = XDocument.Load(xmlFile);
-                if (xmlDoc.Root == null)
-                {
-                    return false;
-                }
-                XElement fileNode = xmlDoc.Root.Element("file_v2");
-                if (fileNode == null)
-                {
-                    return false;
-                }
-                XAttribute urlAttr = fileNode.Attribute("url");
+                XElement fileNode = xmlDoc.Root?.Element("file_v2");
+                XAttribute urlAttr = fileNode?.Attribute("url");
                 if (urlAttr == null)
                 {
                     return false;
@@ -1801,10 +1752,7 @@ namespace BmwDeepObd
                             });
                             return extractCanceled;
                         });
-                    if (infoXml != null)
-                    {
-                        infoXml.Save(Path.Combine(targetDirectory, InfoXmlName));
-                    }
+                    infoXml?.Save(Path.Combine(targetDirectory, InfoXmlName));
                 }
                 catch (Exception ex)
                 {
@@ -1960,11 +1908,7 @@ namespace BmwDeepObd
                     return false;
                 }
                 XDocument xmlInfo = XDocument.Load(xmlInfoName);
-                if (xmlInfo.Root == null)
-                {
-                    return false;
-                }
-                XAttribute nameAttr = xmlInfo.Root.Attribute("Name");
+                XAttribute nameAttr = xmlInfo.Root?.Attribute("Name");
                 if (nameAttr == null)
                 {
                     return false;

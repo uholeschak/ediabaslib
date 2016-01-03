@@ -8,6 +8,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Android.Bluetooth;
 using Java.Util;
+// ReSharper disable ConvertPropertyToExpressionBody
+// ReSharper disable UseNullPropagation
 
 namespace EdiabasLib
 {

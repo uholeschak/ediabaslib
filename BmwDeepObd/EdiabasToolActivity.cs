@@ -39,39 +39,17 @@ namespace BmwDeepObd
         {
             public ExtraInfo(string name, string type, List<string> commentList)
             {
-                _name = name;
-                _type = type;
-                _commentList = commentList;
+                Name = name;
+                Type = type;
+                CommentList = commentList;
                 Selected = false;
             }
 
-            private readonly string _name;
-            private readonly string _type;
-            private readonly List<string> _commentList;
+            public string Name { get; }
 
-            public string Name
-            {
-                get
-                {
-                    return _name;
-                }
-            }
+            public string Type { get; }
 
-            public string Type
-            {
-                get
-                {
-                    return _type;
-                }
-            }
-
-            public List<string> CommentList
-            {
-                get
-                {
-                    return _commentList;
-                }
-            }
+            public List<string> CommentList { get; }
 
             public bool Selected { get; set; }
         }
@@ -80,48 +58,19 @@ namespace BmwDeepObd
         {
             public JobInfo(string name)
             {
-                _name = name;
-                _comments = new List<string>();
-                _arguments = new List<ExtraInfo>();
-                _results = new List<ExtraInfo>();
+                Name = name;
+                Comments = new List<string>();
+                Arguments = new List<ExtraInfo>();
+                Results = new List<ExtraInfo>();
             }
 
-            private readonly string _name;
-            private readonly List<string> _comments;
-            private readonly List<ExtraInfo> _arguments;
-            private readonly List<ExtraInfo> _results;
+            public string Name { get; }
 
-            public string Name
-            {
-                get
-                {
-                    return _name;
-                }
-            }
+            public List<string> Comments { get; }
 
-            public List<string> Comments
-            {
-                get
-                {
-                    return _comments;
-                }
-            }
+            public List<ExtraInfo> Arguments { get; }
 
-            public List<ExtraInfo> Arguments
-            {
-                get
-                {
-                    return _arguments;
-                }
-            }
-
-            public List<ExtraInfo> Results
-            {
-                get
-                {
-                    return _results;
-                }
-            }
+            public List<ExtraInfo> Results { get; }
         }
 
         // Intent extra
@@ -393,7 +342,7 @@ namespace BmwDeepObd
                 string fileName = string.Empty;
                 if (!string.IsNullOrEmpty(_sgbdFileName))
                 {
-                    if (_ediabas != null && !string.IsNullOrEmpty(_ediabas.SgbdFileName))
+                    if (!string.IsNullOrEmpty(_ediabas?.SgbdFileName))
                     {
                         fileName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
                     }
@@ -418,10 +367,7 @@ namespace BmwDeepObd
             }
 
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
-            if (logSubMenu != null)
-            {
-                logSubMenu.SetEnabled(interfaceAvailable && !commActive);
-            }
+            logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
 
             return base.OnPrepareOptionsMenu(menu);
         }
@@ -575,10 +521,7 @@ namespace BmwDeepObd
 
         private void HideKeyboard()
         {
-            if (_imm != null)
-            {
-                _imm.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
-            }
+            _imm?.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
         }
 
         private bool SendTraceFile(EventHandler<EventArgs> handler)
@@ -1342,10 +1285,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                if (_swDataLog != null)
-                {
-                    _swDataLog.Write("----------------------------------------\r\n");
-                }
+                _swDataLog?.Write("----------------------------------------\r\n");
                 foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
                 {
                     StringBuilder stringBuilder = new StringBuilder();
@@ -1448,13 +1388,7 @@ namespace BmwDeepObd
         private class JobListAdapter : BaseAdapter<JobInfo>
         {
             private readonly List<JobInfo> _items;
-            public List<JobInfo> Items
-            {
-                get
-                {
-                    return _items;
-                }
-            }
+            public List<JobInfo> Items => _items;
             private readonly Android.App.Activity _context;
             private readonly Android.Graphics.Color _backgroundColor;
 
@@ -1473,15 +1407,9 @@ namespace BmwDeepObd
                 return position;
             }
 
-            public override JobInfo this[int position]
-            {
-                get { return _items[position]; }
-            }
+            public override JobInfo this[int position] => _items[position];
 
-            public override int Count
-            {
-                get { return _items.Count; }
-            }
+            public override int Count => _items.Count;
 
             public override View GetView(int position, View convertView, ViewGroup parent)
             {
@@ -1513,13 +1441,7 @@ namespace BmwDeepObd
         private class ResultSelectListAdapter : BaseAdapter<ExtraInfo>
         {
             private readonly List<ExtraInfo> _items;
-            public List<ExtraInfo> Items
-            {
-                get
-                {
-                    return _items;
-                }
-            }
+            public List<ExtraInfo> Items => _items;
             private readonly Android.App.Activity _context;
             private readonly Android.Graphics.Color _backgroundColor;
             private bool _ignoreCheckEvent;
@@ -1538,15 +1460,9 @@ namespace BmwDeepObd
                 return position;
             }
 
-            public override ExtraInfo this[int position]
-            {
-                get { return _items[position]; }
-            }
+            public override ExtraInfo this[int position] => _items[position];
 
-            public override int Count
-            {
-                get { return _items.Count; }
-            }
+            public override int Count => _items.Count;
 
             public override View GetView(int position, View convertView, ViewGroup parent)
             {
@@ -1601,18 +1517,10 @@ namespace BmwDeepObd
             {
                 public TagInfo(ExtraInfo info)
                 {
-                    _info = info;
+                    Info = info;
                 }
 
-                private readonly ExtraInfo _info;
-
-                public ExtraInfo Info
-                {
-                    get
-                    {
-                        return _info;
-                    }
-                }
+                public ExtraInfo Info { get; }
             }
         }
     }

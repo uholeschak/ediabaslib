@@ -12,270 +12,129 @@ namespace BmwDeepObd
         {
             public DisplayInfo(string name, string result, string format, string logTag)
             {
-                _name = name;
-                _result = result;
-                _format = format;
-                _logTag = logTag;
+                Name = name;
+                Result = result;
+                Format = format;
+                LogTag = logTag;
             }
 
-            private readonly string _name;
-            private readonly string _result;
-            private readonly string _format;
-            private readonly string _logTag;
+            public string Name { get; }
 
-            public string Name
-            {
-                get { return _name; }
-            }
+            public string Result { get; }
 
-            public string Result
-            {
-                get { return _result; }
-            }
+            public string Format { get; }
 
-            public string Format
-            {
-                get { return _format; }
-            }
-
-            public string LogTag
-            {
-                get { return _logTag; }
-            }
+            public string LogTag { get; }
         }
 
         public class StringInfo
         {
             public StringInfo(string lang, Dictionary<string, string> stringDict)
             {
-                _lang = lang;
-                _stringDict = stringDict;
+                Lang = lang;
+                StringDict = stringDict;
             }
 
-            private readonly string _lang;
-            private readonly Dictionary<string, string> _stringDict;
+            public string Lang { get; }
 
-            public string Lang
-            {
-                get { return _lang; }
-            }
-
-            public Dictionary<string, string> StringDict
-            {
-                get { return _stringDict; }
-            }
+            public Dictionary<string, string> StringDict { get; }
         }
 
         public class JobInfo
         {
             public JobInfo(string name, string argsFirst, string args, string results)
             {
-                _name = name;
-                _argsFirst = argsFirst;
-                _args = args;
-                _results = results;
+                Name = name;
+                ArgsFirst = argsFirst;
+                Args = args;
+                Results = results;
             }
 
-            private readonly string _name;
-            private readonly string _argsFirst;
-            private readonly string _args;
-            private readonly string _results;
+            public string Name { get; }
 
-            public string Name
-            {
-                get { return _name; }
-            }
+            public string Args { get; }
 
-            public string Args
-            {
-                get { return _args; }
-            }
+            public string ArgsFirst { get; }
 
-            public string ArgsFirst
-            {
-                get { return _argsFirst; }
-            }
-
-            public string Results
-            {
-                get { return _results; }
-            }
+            public string Results { get; }
         }
 
         public class JobsInfo
         {
             public JobsInfo(string sgbd, List<JobInfo> jobList)
             {
-                _sgbd = sgbd;
-                _jobList = jobList;
+                Sgbd = sgbd;
+                JobList = jobList;
             }
 
-            private readonly string _sgbd;
-            private readonly List<JobInfo> _jobList;
+            public string Sgbd { get; }
 
-            public string Sgbd
-            {
-                get { return _sgbd; }
-            }
-
-            public List<JobInfo> JobList
-            {
-                get { return _jobList; }
-            }
+            public List<JobInfo> JobList { get; }
         }
 
         public class EcuInfo
         {
             public EcuInfo(string name, string sgbd, string results)
             {
-                _name = name;
-                _sgbd = sgbd;
-                _results = results;
+                Name = name;
+                Sgbd = sgbd;
+                Results = results;
             }
 
-            private readonly string _name;
-            private readonly string _sgbd;
-            private readonly string _results;
+            public string Name { get; }
 
-            public string Name
-            {
-                get { return _name; }
-            }
+            public string Sgbd { get; }
 
-            public string Sgbd
-            {
-                get { return _sgbd; }
-            }
-
-            public string Results
-            {
-                get { return _results; }
-            }
+            public string Results { get; }
         }
 
         public class ErrorsInfo
         {
             public ErrorsInfo(List<EcuInfo> ecuList)
             {
-                _ecuList = ecuList;
+                EcuList = ecuList;
             }
 
-            private readonly List<EcuInfo> _ecuList;
-
-            public List<EcuInfo> EcuList
-            {
-                get { return _ecuList; }
-            }
+            public List<EcuInfo> EcuList { get; }
         }
 
         public class PageInfo
         {
             public PageInfo(string name, float weight, string logFile, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, ErrorsInfo errorsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
             {
-                _name = name;
-                _weight = weight;
-                _logFile = logFile;
-                _jobActivate = jobActivate;
-                _classCode = classCode;
-                _codeShowWarnings = codeShowWarnings;
-                _jobsInfo = jobsInfo;
-                _errorsInfo = errorsInfo;
-                _displayList = displayList;
-                _stringList = stringList;
+                Name = name;
+                Weight = weight;
+                LogFile = logFile;
+                JobActivate = jobActivate;
+                ClassCode = classCode;
+                CodeShowWarnings = codeShowWarnings;
+                JobsInfo = jobsInfo;
+                ErrorsInfo = errorsInfo;
+                DisplayList = displayList;
+                StringList = stringList;
                 InfoObject = null;
                 ClassObject = null;
             }
 
-            private readonly string _name;
-            private readonly float _weight;
-            private readonly string _logFile;
-            private readonly bool _jobActivate;
-            private readonly string _classCode;
-            private readonly bool _codeShowWarnings;
-            private readonly JobsInfo _jobsInfo;
-            private readonly ErrorsInfo _errorsInfo;
-            private readonly List<DisplayInfo> _displayList;
-            private readonly List<StringInfo> _stringList;
+            public string Name { get; }
 
-            public string Name
-            {
-                get
-                {
-                    return _name;
-                }
-            }
+            public float Weight { get; }
 
-            public float Weight
-            {
-                get
-                {
-                    return _weight;
-                }
-            }
+            public string LogFile { get; }
 
-            public string LogFile
-            {
-                get
-                {
-                    return _logFile;
-                }
-            }
+            public bool JobActivate { get; }
 
-            public bool JobActivate
-            {
-                get
-                {
-                    return _jobActivate;
-                }
-            }
+            public string ClassCode { get; }
 
-            public string ClassCode
-            {
-                get
-                {
-                    return _classCode;
-                }
-            }
+            public bool CodeShowWarnings { get; }
 
-            public bool CodeShowWarnings
-            {
-                get
-                {
-                    return _codeShowWarnings;
-                }
-            }
+            public JobsInfo JobsInfo { get; }
 
-            public JobsInfo JobsInfo
-            {
-                get
-                {
-                    return _jobsInfo;
-                }
-            }
+            public ErrorsInfo ErrorsInfo { get; }
 
-            public ErrorsInfo ErrorsInfo
-            {
-                get
-                {
-                    return _errorsInfo;
-                }
-            }
+            public List<DisplayInfo> DisplayList { get; }
 
-            public List<DisplayInfo> DisplayList
-            {
-                get
-                {
-                    return _displayList;
-                }
-            }
-
-            public List<StringInfo> StringList
-            {
-                get
-                {
-                    return _stringList;
-                }
-            }
+            public List<StringInfo> StringList { get; }
 
             public object InfoObject { get; set; }
 
@@ -289,53 +148,17 @@ namespace BmwDeepObd
         private string _interfaceName = string.Empty;
         private ActivityCommon.InterfaceType _interfaceType = ActivityCommon.InterfaceType.None;
 
-        public List<PageInfo> PageList
-        {
-            get
-            {
-                return _pageList;
-            }
-        }
+        public List<PageInfo> PageList => _pageList;
 
-        public string EcuPath
-        {
-            get
-            {
-                return _ecuPath;
-            }
-        }
+        public string EcuPath => _ecuPath;
 
-        public string LogPath
-        {
-            get
-            {
-                return _logPath;
-            }
-        }
+        public string LogPath => _logPath;
 
-        public bool AppendLog
-        {
-            get
-            {
-                return _appendLog;
-            }
-        }
+        public bool AppendLog => _appendLog;
 
-        public string InterfaceName
-        {
-            get
-            {
-                return _interfaceName;
-            }
-        }
+        public string InterfaceName => _interfaceName;
 
-        public ActivityCommon.InterfaceType Interface
-        {
-            get
-            {
-                return _interfaceType;
-            }
-        }
+        public ActivityCommon.InterfaceType Interface => _interfaceType;
 
         public JobReader()
         {
@@ -381,40 +204,37 @@ namespace BmwDeepObd
 
                 XmlAttribute attrib;
                 XmlNode xnodeGlobal = xdocConfig.SelectSingleNode(string.Format("/{0}configuration/{0}global", prefix), namespaceManager);
-                if (xnodeGlobal != null)
+                if (xnodeGlobal?.Attributes != null)
                 {
-                    if (xnodeGlobal.Attributes != null)
+                    attrib = xnodeGlobal.Attributes["ecu_path"];
+                    if (attrib != null)
                     {
-                        attrib = xnodeGlobal.Attributes["ecu_path"];
-                        if (attrib != null)
+                        if (Path.IsPathRooted(attrib.Value))
                         {
-                            if (Path.IsPathRooted(attrib.Value))
-                            {
-                                _ecuPath = attrib.Value;
-                            }
-                            else
-                            {
-                                _ecuPath = string.IsNullOrEmpty(xmlDir) ? attrib.Value : Path.Combine(xmlDir, attrib.Value);
-                            }
+                            _ecuPath = attrib.Value;
                         }
+                        else
+                        {
+                            _ecuPath = string.IsNullOrEmpty(xmlDir) ? attrib.Value : Path.Combine(xmlDir, attrib.Value);
+                        }
+                    }
 
-                        attrib = xnodeGlobal.Attributes["log_path"];
-                        if (attrib != null)
-                        {
-                            _logPath = attrib.Value;
-                        }
+                    attrib = xnodeGlobal.Attributes["log_path"];
+                    if (attrib != null)
+                    {
+                        _logPath = attrib.Value;
+                    }
 
-                        attrib = xnodeGlobal.Attributes["append_log"];
-                        if (attrib != null)
-                        {
-                            _appendLog = XmlConvert.ToBoolean(attrib.Value);
-                        }
+                    attrib = xnodeGlobal.Attributes["append_log"];
+                    if (attrib != null)
+                    {
+                        _appendLog = XmlConvert.ToBoolean(attrib.Value);
+                    }
 
-                        attrib = xnodeGlobal.Attributes["interface"];
-                        if (attrib != null)
-                        {
-                            _interfaceName = attrib.Value;
-                        }
+                    attrib = xnodeGlobal.Attributes["interface"];
+                    if (attrib != null)
+                    {
+                        _interfaceName = attrib.Value;
                     }
                 }
 

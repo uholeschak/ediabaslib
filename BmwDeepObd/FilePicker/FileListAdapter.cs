@@ -12,38 +12,16 @@ namespace BmwDeepObd.FilePicker
     {
         public FileInfoEx(FileSystemInfo fileSystemInfo, string displayName, string rootDir)
         {
-            _fileSystemInfo = fileSystemInfo;
-            _displayName = displayName;
-            _rootDir = rootDir;
+            FileSysInfo = fileSystemInfo;
+            DisplayName = displayName;
+            RootDir = rootDir;
         }
 
-        private readonly FileSystemInfo _fileSystemInfo;
-        private readonly string _displayName;
-        private readonly string _rootDir;
+        public FileSystemInfo FileSysInfo { get; }
 
-        public FileSystemInfo FileSysInfo
-        {
-            get
-            {
-                return _fileSystemInfo;
-            }
-        }
+        public string DisplayName { get; }
 
-        public string DisplayName
-        {
-            get
-            {
-                return _displayName;
-            }
-        }
-
-        public string RootDir
-        {
-            get
-            {
-                return _rootDir;
-            }
-        }
+        public string RootDir { get; }
     }
 
     public class FileListAdapter : ArrayAdapter<FileInfoEx>
