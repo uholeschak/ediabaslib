@@ -22,40 +22,24 @@ namespace CarSimulator
         {
             public ConfigData()
             {
-                _configList = new List<byte>();
-                _responseOnlyList = new List<byte[]>();
-                _responseList = new List<ResponseEntry>();
+                ConfigList = new List<byte>();
+                ResponseOnlyList = new List<byte[]>();
+                ResponseList = new List<ResponseEntry>();
             }
-            public List<byte> ConfigList
-            {
-                get { return _configList; }
-            }
-            public List<byte[]> ResponseOnlyList
-            {
-                get { return _responseOnlyList; }
-            }
-            public List<ResponseEntry> ResponseList
-            {
-                get { return _responseList; }
-            }
-
-            private readonly List<byte> _configList;
-            private readonly List<byte[]> _responseOnlyList;
-            private readonly List<ResponseEntry> _responseList;
+            public List<byte> ConfigList { get; }
+            public List<byte[]> ResponseOnlyList { get; }
+            public List<ResponseEntry> ResponseList { get; }
         }
 
         public class ResponseEntry
         {
-            private readonly byte[] _requestArray;
-            private readonly List<byte[]> _responseMultiList;
-            private readonly List<byte[]> _responseList;
             private int _responseIndex;
 
             public ResponseEntry(byte[] request, byte[] response)
             {
-                _requestArray = request;
-                _responseMultiList = new List<byte[]>();
-                _responseList = new List<byte[]> {response};
+                Request = request;
+                ResponseMultiList = new List<byte[]>();
+                ResponseList = new List<byte[]> {response};
                 _responseIndex = 0;
             }
 
@@ -64,32 +48,23 @@ namespace CarSimulator
                 _responseIndex = 0;
             }
 
-            public byte[] Request
-            {
-                get { return _requestArray; }
-            }
+            public byte[] Request { get; }
 
             public byte[] ResponseDyn
             {
                 get
                 {
-                    if (_responseIndex >= _responseList.Count)
+                    if (_responseIndex >= ResponseList.Count)
                     {
                         _responseIndex = 0;
                     }
-                    return _responseList[_responseIndex++];
+                    return ResponseList[_responseIndex++];
                 }
             }
 
-            public List<byte[]> ResponseList
-            {
-                get { return _responseList; }
-            }
+            public List<byte[]> ResponseList { get; }
 
-            public List<byte[]> ResponseMultiList
-            {
-                get { return _responseMultiList; }
-            }
+            public List<byte[]> ResponseMultiList { get; }
         }
 
         public enum ConceptType
@@ -566,9 +541,9 @@ namespace CarSimulator
         {
             if (Connect())
             {
-                for (int i = 0; i < _timeValveWrite.Length; i++)
+                foreach (Stopwatch watch in _timeValveWrite)
                 {
-                    _timeValveWrite[i].Stop();
+                    watch.Stop();
                 }
                 _outputs = 0x00;
                 _noResponseCount = 0;
@@ -1667,7 +1642,7 @@ namespace CarSimulator
         {
             try
             {
-                if (tcpClient != null && tcpClient.Client != null && tcpClient.Client.Connected)
+                if (tcpClient?.Client != null && tcpClient.Client.Connected)
                 {
                     // Detect if client disconnected
                     if (tcpClient.Client.Poll(0, SelectMode.SelectRead))
