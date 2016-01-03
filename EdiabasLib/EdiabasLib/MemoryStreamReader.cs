@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+// ReSharper disable ConvertPropertyToExpressionBody
 
 namespace EdiabasLib
 {

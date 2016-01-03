@@ -7,8 +7,9 @@ using System.Text;
 using System.Threading;
 using EdiabasLib;
 // ReSharper disable InconsistentNaming
-
+// ReSharper disable UseNullPropagation
 // ReSharper disable once CheckNamespace
+
 namespace Ediabas
 {
     public class ApiInternal

@@ -5,6 +5,8 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
+// ReSharper disable ConvertPropertyToExpressionBody
+// ReSharper disable UseNullPropagation
 
 namespace EdiabasLib
 {
