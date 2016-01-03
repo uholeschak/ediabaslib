@@ -76,7 +76,6 @@ namespace BmwDeepObd
         private readonly Android.App.Activity _activity;
         private readonly BcReceiverUpdateDisplayDelegate _bcReceiverUpdateDisplayHandler;
         private readonly BcReceiverReceivedDelegate _bcReceiverReceivedHandler;
-        private readonly bool _emulator;
         private bool? _usbSupport;
         private static bool _externalPathSet;
         private static string _externalPath;
@@ -98,13 +97,7 @@ namespace BmwDeepObd
         private AlertDialog _selectMediaAlertDialog;
         private AlertDialog _selectInterfaceAlertDialog;
 
-        public bool Emulator
-        {
-            get
-            {
-                return _emulator;
-            }
-        }
+        public bool Emulator { get; }
 
         public bool UsbSupport
         {
@@ -114,7 +107,7 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        _usbSupport = (_usbManager != null) && (_usbManager.DeviceList != null) && (Build.VERSION.SdkInt >= BuildVersionCodes.HoneycombMr1);
+                        _usbSupport = _usbManager?.DeviceList != null && (Build.VERSION.SdkInt >= BuildVersionCodes.HoneycombMr1);
                     }
                     catch (Exception)
                     {
@@ -125,21 +118,9 @@ namespace BmwDeepObd
             }
         }
 
-        public string ExternalPath
-        {
-            get
-            {
-                return _externalPath;
-            }
-        }
+        public string ExternalPath => _externalPath;
 
-        public string ExternalWritePath
-        {
-            get
-            {
-                return _externalWritePath;
-            }
-        }
+        public string ExternalWritePath => _externalWritePath;
 
         public string CustomStorageMedia
         {
@@ -181,51 +162,24 @@ namespace BmwDeepObd
             }
         }
 
-        public BluetoothAdapter BtAdapter
-        {
-            get
-            {
-                return _btAdapter;
-            }
-        }
+        public BluetoothAdapter BtAdapter => _btAdapter;
 
-        public WifiManager MaWifi
-        {
-            get
-            {
-                return _maWifi;
-            }
-        }
+        public WifiManager MaWifi => _maWifi;
 
-        public ConnectivityManager MaConnectivity
-        {
-            get
-            {
-                return _maConnectivity;
-            }
-        }
+        public ConnectivityManager MaConnectivity => _maConnectivity;
 
-        public UsbManager UsbManager
-        {
-            get { return _usbManager; }
-        }
+        public UsbManager UsbManager => _usbManager;
 
-        public PowerManager PowerManager
-        {
-            get { return _powerManager; }
-        }
+        public PowerManager PowerManager => _powerManager;
 
-        public Receiver BcReceiver
-        {
-            get { return _bcReceiver; }
-        }
+        public Receiver BcReceiver => _bcReceiver;
 
         public ActivityCommon(Android.App.Activity activity, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null, BcReceiverReceivedDelegate bcReceiverReceivedHandler = null)
         {
             _activity = activity;
             _bcReceiverUpdateDisplayHandler = bcReceiverUpdateDisplayHandler;
             _bcReceiverReceivedHandler = bcReceiverReceivedHandler;
-            _emulator = IsEmulator();
+            Emulator = IsEmulator();
             if (!_externalPathSet)
             {
                 SetStoragePath();
@@ -366,11 +320,7 @@ namespace BmwDeepObd
                     return _btAdapter.IsEnabled;
 
                 case InterfaceType.Enet:
-                    if (_maConnectivity == null)
-                    {
-                        return false;
-                    }
-                    NetworkInfo networkInfo = _maConnectivity.ActiveNetworkInfo;
+                    NetworkInfo networkInfo = _maConnectivity?.ActiveNetworkInfo;
                     if (networkInfo == null)
                     {
                         return false;
@@ -824,10 +774,7 @@ namespace BmwDeepObd
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
-                        if (handler != null)
-                        {
-                            handler(this, new EventArgs());
-                        }
+                        handler?.Invoke(this, new EventArgs());
                     })
                     .SetCancelable(true)
                     .SetMessage(message)
@@ -856,10 +803,7 @@ namespace BmwDeepObd
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
-                        if (handler != null)
-                        {
-                            handler(this, new EventArgs());
-                        }
+                        handler?.Invoke(this, new EventArgs());
                     })
                     .SetCancelable(true)
                     .SetMessage(Resource.String.send_message_request)
@@ -1033,10 +977,7 @@ namespace BmwDeepObd
                                     // ignored
                                 }
                             }
-                            if (handler != null)
-                            {
-                                handler(this, new EventArgs());
-                            }
+                            handler?.Invoke(this, new EventArgs());
                         });
                     };
                     _activity.RunOnUiThread(() =>
@@ -1096,16 +1037,8 @@ namespace BmwDeepObd
                     return false;
                 }
                 XDocument xmlDoc = XDocument.Load(xmlFile);
-                if (xmlDoc.Root == null)
-                {
-                    return false;
-                }
-                XElement emailNode = xmlDoc.Root.Element("email");
-                if (emailNode == null)
-                {
-                    return false;
-                }
-                XAttribute hostAttr = emailNode.Attribute("host");
+                XElement emailNode = xmlDoc.Root?.Element("email");
+                XAttribute hostAttr = emailNode?.Attribute("host");
                 if (hostAttr == null)
                 {
                     return false;
@@ -1164,16 +1097,8 @@ namespace BmwDeepObd
                     return false;
                 }
                 XDocument xmlDoc = XDocument.Load(xmlFile);
-                if (xmlDoc.Root == null)
-                {
-                    return false;
-                }
-                XElement keyWordsNode = xmlDoc.Root.Element("keywords");
-                if (keyWordsNode == null)
-                {
-                    return false;
-                }
-                XAttribute regexAttr = keyWordsNode.Attribute("regex");
+                XElement keyWordsNode = xmlDoc.Root?.Element("keywords");
+                XAttribute regexAttr = keyWordsNode?.Attribute("regex");
                 if (regexAttr == null)
                 {
                     return false;
@@ -1639,14 +1564,8 @@ namespace BmwDeepObd
                 List<IUsbSerialDriver> availableDrivers = EdFtdiInterface.GetDriverList(_usbManager);
                 if (availableDrivers.Count > _usbDeviceDetectCount)
                 {   // device attached
-                    if (_bcReceiverReceivedHandler != null)
-                    {
-                        _bcReceiverReceivedHandler(_activity, null);
-                    }
-                    if (_bcReceiverUpdateDisplayHandler != null)
-                    {
-                        _bcReceiverUpdateDisplayHandler();
-                    }
+                    _bcReceiverReceivedHandler?.Invoke(_activity, null);
+                    _bcReceiverUpdateDisplayHandler?.Invoke();
                 }
                 _usbDeviceDetectCount = availableDrivers.Count;
             });
@@ -1665,18 +1584,12 @@ namespace BmwDeepObd
             {
                 string action = intent.Action;
 
-                if (_activityCommon._bcReceiverReceivedHandler != null)
-                {
-                    _activityCommon._bcReceiverReceivedHandler(context, intent);
-                }
+                _activityCommon._bcReceiverReceivedHandler?.Invoke(context, intent);
                 switch (action)
                 {
                     case BluetoothAdapter.ActionStateChanged:
                     case ConnectivityManager.ConnectivityAction:
-                        if (_activityCommon._bcReceiverUpdateDisplayHandler != null)
-                        {
-                            _activityCommon._bcReceiverUpdateDisplayHandler();
-                        }
+                        _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
                         break;
 
                     case UsbManager.ActionUsbDeviceAttached:
@@ -1685,10 +1598,7 @@ namespace BmwDeepObd
                             UsbDevice usbDevice = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;
                             if (EdFtdiInterface.IsValidUsbDevice(usbDevice))
                             {
-                                if (_activityCommon._bcReceiverUpdateDisplayHandler != null)
-                                {
-                                    _activityCommon._bcReceiverUpdateDisplayHandler();
-                                }
+                                _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
                             }
                             break;
                         }
@@ -1696,10 +1606,7 @@ namespace BmwDeepObd
                     case ActionUsbPermission:
                         if (intent.GetBooleanExtra(UsbManager.ExtraPermissionGranted, false))
                         {
-                            if (_activityCommon._bcReceiverUpdateDisplayHandler != null)
-                            {
-                                _activityCommon._bcReceiverUpdateDisplayHandler();
-                            }
+                            _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
                         }
                         break;
                 }

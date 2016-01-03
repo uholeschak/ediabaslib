@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+// ReSharper disable ConvertPropertyToExpressionBody
 
 namespace EdiabasLib
 {

@@ -170,9 +170,7 @@ namespace BmwDeepObd
             base.OnDestroy ();
 
             // Make sure we're not doing discovery anymore
-            if (_btAdapter != null) {
-                _btAdapter.CancelDiscovery ();
-            }
+            _btAdapter?.CancelDiscovery ();
 
             // Unregister broadcast listeners
             UnregisterReceiver (_receiver);

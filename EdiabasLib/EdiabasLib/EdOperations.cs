@@ -8,6 +8,7 @@ using System.Threading;
 // ReSharper disable NotResolvedInText
 // ReSharper disable RedundantCast
 // ReSharper disable LoopCanBeConvertedToQuery
+// ReSharper disable UseNameofExpression
 
 namespace EdiabasLib
 {

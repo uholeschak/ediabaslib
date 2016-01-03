@@ -411,10 +411,7 @@ namespace BmwDeepObd
             }
 
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
-            if (logSubMenu != null)
-            {
-                logSubMenu.SetEnabled(interfaceAvailable && !commActive);
-            }
+            logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
 
             return base.OnPrepareOptionsMenu(menu);
         }
@@ -851,28 +848,16 @@ namespace BmwDeepObd
             Android.Support.V7.Widget.PopupMenu popupContext = new Android.Support.V7.Widget.PopupMenu(this, anchor);
             popupContext.Inflate(Resource.Menu.xml_tool_context);
             IMenuItem moveTopMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_top);
-            if (moveTopMenu != null)
-            {
-                moveTopMenu.SetEnabled(itemPos > 0);
-            }
+            moveTopMenu?.SetEnabled(itemPos > 0);
 
             IMenuItem moveUpMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_up);
-            if (moveUpMenu != null)
-            {
-                moveUpMenu.SetEnabled(itemPos > 0);
-            }
+            moveUpMenu?.SetEnabled(itemPos > 0);
 
             IMenuItem moveDownMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_down);
-            if (moveDownMenu != null)
-            {
-                moveDownMenu.SetEnabled((itemPos + 1) < _ecuListAdapter.Items.Count);
-            }
+            moveDownMenu?.SetEnabled((itemPos + 1) < _ecuListAdapter.Items.Count);
 
             IMenuItem moveBottomMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_bottom);
-            if (moveBottomMenu != null)
-            {
-                moveBottomMenu.SetEnabled((itemPos + 1) < _ecuListAdapter.Items.Count);
-            }
+            moveBottomMenu?.SetEnabled((itemPos + 1) < _ecuListAdapter.Items.Count);
 
             popupContext.MenuItemClick += (sender, args) =>
             {
@@ -1640,7 +1625,7 @@ namespace BmwDeepObd
                     return null;
                 }
                 XDocument document = documentOld;
-                if ((document == null) || (document.Root == null))
+                if (document?.Root == null)
                 {
                     document = XDocument.Parse(string.Format(XmlDocumentFrame, "fragment"));
                 }
@@ -1752,22 +1737,13 @@ namespace BmwDeepObd
                         stringNode.Add(new XAttribute("name", displayTag));
                         stringsNode.Add(stringNode);
 
-                        if (displayNodeOld != null)
-                        {
-                            displayNodeOld.Remove();
-                        }
+                        displayNodeOld?.Remove();
                         jobNodeNew.Add(displayNodeNew);
                     }
-                    if (jobNodeOld != null)
-                    {
-                        jobNodeOld.Remove();
-                    }
+                    jobNodeOld?.Remove();
                     jobsNodeNew.Add(jobNodeNew);
                 }
-                if (jobsNodeOld != null)
-                {
-                    jobsNodeOld.Remove();
-                }
+                jobsNodeOld?.Remove();
                 pageNode.Add(jobsNodeNew);
 
                 return document;
@@ -1820,7 +1796,7 @@ namespace BmwDeepObd
             try
             {
                 XDocument document = documentOld;
-                if ((document == null) || (document.Root == null))
+                if (document?.Root == null)
                 {
                     document = XDocument.Parse(string.Format(XmlDocumentFrame, "fragment"));
                 }
@@ -1881,9 +1857,9 @@ namespace BmwDeepObd
                     else
                     {
                         XAttribute attr = ecuNode.Attribute("name");
-                        if (attr != null) attr.Remove();
+                        attr?.Remove();
                         attr = ecuNode.Attribute("sgbd");
-                        if (attr != null) attr.Remove();
+                        attr?.Remove();
                     }
                     string displayTag = DisplayNameEcuPrefix + ecuInfo.Name;
                     errorsNodeNew.Add(ecuNode);
@@ -1894,10 +1870,7 @@ namespace BmwDeepObd
                     stringNode.Add(new XAttribute("name", displayTag));
                     stringsNode.Add(stringNode);
                 }
-                if (errorsNodeOld != null)
-                {
-                    errorsNodeOld.Remove();
-                }
+                errorsNodeOld?.Remove();
                 pageNode.Add(errorsNodeNew);
 
                 return document;
@@ -2009,7 +1982,7 @@ namespace BmwDeepObd
             try
             {
                 XDocument document = documentOld;
-                if ((document == null) || (document.Root == null))
+                if (document?.Root == null)
                 {
                     document = XDocument.Parse(string.Format(XmlDocumentFrame, "fragment"));
                 }
@@ -2048,7 +2021,7 @@ namespace BmwDeepObd
                     else
                     {
                         XAttribute attr = fileNode.Attribute("filename");
-                        if (attr != null) attr.Remove();
+                        attr?.Remove();
                     }
 
                     fileNode.Add(new XAttribute("filename", fileName));
@@ -2076,16 +2049,13 @@ namespace BmwDeepObd
                         else
                         {
                             XAttribute attr = fileNode.Attribute("filename");
-                            if (attr != null) attr.Remove();
+                            attr?.Remove();
                         }
                         fileNode.Add(new XAttribute("filename", fileName));
                         pagesNodeNew.Add(fileNode);
                     }
                 }
-                if (pagesNodeOld != null)
-                {
-                    pagesNodeOld.Remove();
-                }
+                pagesNodeOld?.Remove();
                 document.Root.Add(pagesNodeNew);
 
                 return document;
@@ -2106,7 +2076,7 @@ namespace BmwDeepObd
             try
             {
                 XDocument document = documentOld;
-                if ((document == null) || (document.Root == null))
+                if (document?.Root == null)
                 {
                     document = XDocument.Parse(string.Format(XmlDocumentFrame, "configuration"));
                 }
@@ -2124,9 +2094,9 @@ namespace BmwDeepObd
                 else
                 {
                     XAttribute attr = globalNode.Attribute("ecu_path");
-                    if (attr != null) attr.Remove();
+                    attr?.Remove();
                     attr = globalNode.Attribute("interface");
-                    if (attr != null) attr.Remove();
+                    attr?.Remove();
                 }
 
                 XAttribute logPathAttr = globalNode.Attribute("log_path");
@@ -2478,13 +2448,7 @@ namespace BmwDeepObd
         private class EcuListAdapter : BaseAdapter<EcuInfo>
         {
             private readonly List<EcuInfo> _items;
-            public List<EcuInfo> Items
-            {
-                get
-                {
-                    return _items;
-                }
-            }
+            public List<EcuInfo> Items => _items;
             private readonly XmlToolActivity _context;
             private bool _ignoreCheckEvent;
 
@@ -2499,15 +2463,9 @@ namespace BmwDeepObd
                 return position;
             }
 
-            public override EcuInfo this[int position]
-            {
-                get { return _items[position]; }
-            }
+            public override EcuInfo this[int position] => _items[position];
 
-            public override int Count
-            {
-                get { return _items.Count; }
-            }
+            public override int Count => _items.Count;
 
             public override View GetView(int position, View convertView, ViewGroup parent)
             {
@@ -2569,18 +2527,10 @@ namespace BmwDeepObd
             {
                 public TagInfo(EcuInfo info)
                 {
-                    _info = info;
+                    Info = info;
                 }
 
-                private readonly EcuInfo _info;
-
-                public EcuInfo Info
-                {
-                    get
-                    {
-                        return _info;
-                    }
-                }
+                public EcuInfo Info { get; }
             }
         }
     }

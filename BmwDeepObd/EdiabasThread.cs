@@ -19,48 +19,19 @@ namespace BmwDeepObd
 
             public EdiabasErrorReport(string ecuName, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet, string execptionText)
             {
-                _ecuName = ecuName;
-                _errorDict = errorDict;
-                _errorDetailSet = errorDetailSet;
-                _execptionText = execptionText;
+                EcuName = ecuName;
+                ErrorDict = errorDict;
+                ErrorDetailSet = errorDetailSet;
+                ExecptionText = execptionText;
             }
 
-            private readonly string _ecuName;
-            private readonly Dictionary<string, EdiabasNet.ResultData> _errorDict;
-            private readonly List<Dictionary<string, EdiabasNet.ResultData>> _errorDetailSet;
-            private readonly string _execptionText;
+            public string EcuName { get; }
 
-            public string EcuName
-            {
-                get
-                {
-                    return _ecuName;
-                }
-            }
+            public Dictionary<string, EdiabasNet.ResultData> ErrorDict { get; }
 
-            public Dictionary<string, EdiabasNet.ResultData> ErrorDict
-            {
-                get
-                {
-                    return _errorDict;
-                }
-            }
+            public List<Dictionary<string, EdiabasNet.ResultData>> ErrorDetailSet { get; }
 
-            public List<Dictionary<string, EdiabasNet.ResultData>> ErrorDetailSet
-            {
-                get
-                {
-                    return _errorDetailSet;
-                }
-            }
-
-            public string ExecptionText
-            {
-                get
-                {
-                    return _execptionText;
-                }
-            }
+            public string ExecptionText { get; }
         }
 
         public delegate void DataUpdatedEventHandler(object sender, EventArgs e);
@@ -106,13 +77,7 @@ namespace BmwDeepObd
 
         public List<string> ErrorResetList { get; set; }
 
-        public EdiabasNet Ediabas
-        {
-            get
-            {
-                return _ediabas;
-            }
-        }
+        public EdiabasNet Ediabas { get; private set; }
 
         static public readonly Object DataLock = new Object();
 
@@ -120,7 +85,6 @@ namespace BmwDeepObd
         private volatile bool _stopThread;
         private bool _threadRunning;
         private Thread _workerThread;
-        private EdiabasNet _ediabas;
         private bool _ediabasInitReq;
         private bool _ediabasJobAbort;
 
@@ -129,18 +93,18 @@ namespace BmwDeepObd
             _stopThread = false;
             _threadRunning = false;
             _workerThread = null;
-            _ediabas = new EdiabasNet();
+            Ediabas = new EdiabasNet();
 
             if (interfaceType == ActivityCommon.InterfaceType.Enet)
             {
-                _ediabas.EdInterfaceClass = new EdInterfaceEnet();
+                Ediabas.EdInterfaceClass = new EdInterfaceEnet();
             }
             else
             {
-                _ediabas.EdInterfaceClass = new EdInterfaceObd();
+                Ediabas.EdInterfaceClass = new EdInterfaceObd();
             }
-            _ediabas.AbortJobFunc = AbortEdiabasJob;
-            _ediabas.SetConfigProperty("EcuPath", ecuPath);
+            Ediabas.AbortJobFunc = AbortEdiabasJob;
+            Ediabas.SetConfigProperty("EcuPath", ecuPath);
 
             InitProperties();
         }
@@ -166,8 +130,8 @@ namespace BmwDeepObd
                 if (disposing)
                 {
                     // Dispose managed resources.
-                    _ediabas.Dispose();
-                    _ediabas = null;
+                    Ediabas.Dispose();
+                    Ediabas = null;
                 }
 
                 // Note disposing has been done.
@@ -184,28 +148,28 @@ namespace BmwDeepObd
             try
             {
                 _stopThread = false;
-                if (_ediabas.EdInterfaceClass is EdInterfaceObd)
+                if (Ediabas.EdInterfaceClass is EdInterfaceObd)
                 {
-                    ((EdInterfaceObd)_ediabas.EdInterfaceClass).ComPort = comPort;
+                    ((EdInterfaceObd)Ediabas.EdInterfaceClass).ComPort = comPort;
                 }
-                else if (_ediabas.EdInterfaceClass is EdInterfaceEnet)
+                else if (Ediabas.EdInterfaceClass is EdInterfaceEnet)
                 {
                     if (!string.IsNullOrEmpty(comPort))
                     {
-                        ((EdInterfaceEnet)_ediabas.EdInterfaceClass).RemoteHost = comPort;
+                        ((EdInterfaceEnet)Ediabas.EdInterfaceClass).RemoteHost = comPort;
                     }
                 }
-                _ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
+                Ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
                 if (!string.IsNullOrEmpty(traceDir))
                 {
-                    _ediabas.SetConfigProperty("TracePath", traceDir);
-                    _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
-                    _ediabas.SetConfigProperty("AppendTrace", traceAppend ? "1" : "0");
-                    _ediabas.SetConfigProperty("CompressTrace", "1");
+                    Ediabas.SetConfigProperty("TracePath", traceDir);
+                    Ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
+                    Ediabas.SetConfigProperty("AppendTrace", traceAppend ? "1" : "0");
+                    Ediabas.SetConfigProperty("CompressTrace", "1");
                 }
                 else
                 {
-                    _ediabas.SetConfigProperty("IfhTrace", "0");
+                    Ediabas.SetConfigProperty("IfhTrace", "0");
                 }
                 InitProperties();
                 CommActive = commActive;
@@ -325,7 +289,7 @@ namespace BmwDeepObd
                     }
                     try
                     {
-                        _ediabas.ResolveSgbdFile(ecuInfo.Sgbd);
+                        Ediabas.ResolveSgbdFile(ecuInfo.Sgbd);
                     }
                     catch (Exception ex)
                     {
@@ -339,9 +303,9 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    _ediabas.ArgString = string.Empty;
-                    _ediabas.ArgBinaryStd = null;
-                    _ediabas.ResultsRequests = "";
+                    Ediabas.ArgString = string.Empty;
+                    Ediabas.ArgBinaryStd = null;
+                    Ediabas.ResultsRequests = "";
 
                     try
                     {
@@ -349,7 +313,7 @@ namespace BmwDeepObd
                         {
                             if (errorResetList != null && errorResetList.Any(ecu => string.CompareOrdinal(ecu, ecuInfo.Name) == 0))
                             {   // error reset requested
-                                _ediabas.ExecuteJob("FS_LOESCHEN");
+                                Ediabas.ExecuteJob("FS_LOESCHEN");
                             }
                         }
                         catch (Exception)
@@ -357,9 +321,9 @@ namespace BmwDeepObd
                             // ignored
                         }
 
-                        _ediabas.ExecuteJob("FS_LESEN");
+                        Ediabas.ExecuteJob("FS_LESEN");
 
-                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(_ediabas.ResultSets);
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
 
                         bool jobOk = false;
                         if (resultSets.Count > 1)
@@ -394,14 +358,14 @@ namespace BmwDeepObd
                                 {
                                     if (resultData.OpData is Int64)
                                     {   // read details
-                                        _ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.OpData);
-                                        _ediabas.ArgBinaryStd = null;
-                                        _ediabas.ResultsRequests = ecuInfo.Results;
+                                        Ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.OpData);
+                                        Ediabas.ArgBinaryStd = null;
+                                        Ediabas.ResultsRequests = ecuInfo.Results;
 
                                         bool details;
                                         try
                                         {
-                                            _ediabas.ExecuteJob("FS_LESEN_DETAIL");
+                                            Ediabas.ExecuteJob("FS_LESEN_DETAIL");
                                             details = true;
                                         }
                                         catch (Exception)
@@ -412,7 +376,7 @@ namespace BmwDeepObd
 
                                         if (details)
                                         {
-                                            List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail = new List<Dictionary<string, EdiabasNet.ResultData>>(_ediabas.ResultSets);
+                                            List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
                                             errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictLocal,
                                                 new List<Dictionary<string, EdiabasNet.ResultData>>(resultSetsDetail)));
                                         }
@@ -458,11 +422,11 @@ namespace BmwDeepObd
                 firstRequestCall = true;
                 _ediabasJobAbort = false;
 
-                if ((pageInfo.JobsInfo != null) && !string.IsNullOrEmpty(pageInfo.JobsInfo.Sgbd))
+                if (!string.IsNullOrEmpty(pageInfo.JobsInfo?.Sgbd))
                 {
                     try
                     {
-                        _ediabas.ResolveSgbdFile(pageInfo.JobsInfo.Sgbd);
+                        Ediabas.ResolveSgbdFile(pageInfo.JobsInfo.Sgbd);
                     }
                     catch (Exception ex)
                     {
@@ -494,17 +458,17 @@ namespace BmwDeepObd
                         {
                             if (firstRequestCall && !string.IsNullOrEmpty(jobInfo.ArgsFirst))
                             {
-                                _ediabas.ArgString = jobInfo.ArgsFirst;
+                                Ediabas.ArgString = jobInfo.ArgsFirst;
                             }
                             else
                             {
-                                _ediabas.ArgString = jobInfo.Args;
+                                Ediabas.ArgString = jobInfo.Args;
                             }
-                            _ediabas.ArgBinaryStd = null;
-                            _ediabas.ResultsRequests = jobInfo.Results;
-                            _ediabas.ExecuteJob(jobInfo.Name);
+                            Ediabas.ArgBinaryStd = null;
+                            Ediabas.ResultsRequests = jobInfo.Results;
+                            Ediabas.ExecuteJob(jobInfo.Name);
 
-                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = Ediabas.ResultSets;
                             if (resultSets != null && resultSets.Count >= 2)
                             {
                                 MergeResultDictionarys(ref resultDict, resultSets[1], jobInfo.Name + "#");
@@ -516,7 +480,7 @@ namespace BmwDeepObd
                 {
                     if (pageInfo.ClassObject != null)
                     {
-                        pageInfo.ClassObject.ExecuteJob(_ediabas, ref resultDict, firstRequestCall);
+                        pageInfo.ClassObject.ExecuteJob(Ediabas, ref resultDict, firstRequestCall);
                     }
                 }
             }
@@ -607,12 +571,12 @@ namespace BmwDeepObd
 
         private void DataUpdatedEvent()
         {
-            if (DataUpdated != null) DataUpdated(this, EventArgs.Empty);
+            DataUpdated?.Invoke(this, EventArgs.Empty);
         }
 
         private void ThreadTerminatedEvent()
         {
-            if (ThreadTerminated != null) ThreadTerminated(this, EventArgs.Empty);
+            ThreadTerminated?.Invoke(this, EventArgs.Empty);
         }
     }
 }

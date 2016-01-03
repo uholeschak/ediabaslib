@@ -18,8 +18,8 @@ namespace BmwDeepObd.FilePicker
             ImageView = imageView;
         }
 
-        public ImageView ImageView { get; private set; }
-        public TextView TextView { get; private set; }
+        public ImageView ImageView { get; }
+        public TextView TextView { get; }
 
         /// <summary>
         ///   This method will update the TextView and the ImageView that are

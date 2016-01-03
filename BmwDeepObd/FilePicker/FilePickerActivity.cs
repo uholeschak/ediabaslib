@@ -89,7 +89,7 @@ namespace BmwDeepObd.FilePicker
         protected virtual void OnFilterEvent(string filter)
         {
             var handler = FilterEvent;
-            if (handler != null) handler(filter);
+            handler?.Invoke(filter);
         }
     }
 }

@@ -9,10 +9,7 @@ namespace BmwDeepObd
     {
         private readonly List<StringObjType> _items;
 
-        public List<StringObjType> Items
-        {
-            get { return _items; }
-        }
+        public List<StringObjType> Items => _items;
 
         private readonly Android.App.Activity _context;
         private readonly Android.Graphics.Color _backgroundColor;
@@ -31,15 +28,9 @@ namespace BmwDeepObd
             return position;
         }
 
-        public override StringObjType this[int position]
-        {
-            get { return _items[position]; }
-        }
+        public override StringObjType this[int position] => _items[position];
 
-        public override int Count
-        {
-            get { return _items.Count; }
-        }
+        public override int Count => _items.Count;
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {

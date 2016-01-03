@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using Android.OS;
+// ReSharper disable ConvertPropertyToExpressionBody
 
 namespace EdiabasLib
 {
