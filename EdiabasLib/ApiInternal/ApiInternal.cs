@@ -1522,7 +1522,7 @@ namespace Ediabas
                     args[i] = "[" + stringBuilder +"]";
                 }
             }
-            logString(logLevel, string.Format(format, args));
+            logString(logLevel, string.Format(Culture, format, args));
         }
 
         private void logString(ApiLogLevel logLevel, string info)
