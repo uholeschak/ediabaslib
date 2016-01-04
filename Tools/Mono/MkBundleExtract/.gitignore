@@ -4,3 +4,5 @@
 /*.suo
 /*.sdf
 /*.opensdf
+*.VC.opendb
+/.vs/
