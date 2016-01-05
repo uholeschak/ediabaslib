@@ -37,6 +37,7 @@ namespace EdiabasLib
         protected static int TcpDiagRecLen;
         protected static long LastTcpDiagRecTime;
         protected static Queue<byte[]> TcpDiagRecQueue;
+        protected static bool ReconnectRequired;
 
         protected Socket UdpSocket;
         protected byte[] UdpBuffer = new byte[0x100];
@@ -443,6 +444,7 @@ namespace EdiabasLib
                 TcpDiagRecQueue.Clear();
                 StartReadTcpDiag(6);
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Connected");
+                ReconnectRequired = false;
             }
             catch (Exception ex)
             {
@@ -503,6 +505,7 @@ namespace EdiabasLib
             }
             UdpRecEndPoint = null;
             TcpHostIp = null;
+            ReconnectRequired = false;
             return result;
         }
 
@@ -520,10 +523,24 @@ namespace EdiabasLib
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                 return false;
             }
+            if (ReconnectRequired)
+            {
+                InterfaceDisconnect();
+                if (!InterfaceConnect())
+                {
+                    ReconnectRequired = true;
+                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                    return false;
+                }
+            }
             int recLength;
             EdiabasNet.ErrorCodes errorCode = ObdTrans(sendData, sendData.Length, ref RecBuffer, out recLength);
             if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
+                if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_IFH_0003)
+                {
+                    ReconnectRequired = true;
+                }
                 EdiabasProtected.SetError(errorCode);
                 return false;
             }
