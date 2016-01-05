@@ -281,10 +281,12 @@ namespace BmwDeepObd
                             break;
 
                         case AdapterType.Unknown:
+                        {
+                            bool yesSelected = false;
                             _altertInfoDialog = new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
-                                    ReturnDeviceType(deviceAddress, deviceName);
+                                    yesSelected = true;
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {
@@ -296,9 +298,17 @@ namespace BmwDeepObd
                             _altertInfoDialog.DismissEvent += (sender, args) =>
                             {
                                 _altertInfoDialog = null;
-                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), PackageManager.GetPackageInfo(PackageName, 0), GetType());
+                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
+                                    PackageManager.GetPackageInfo(PackageName, 0), GetType(), (o, eventArgs) =>
+                                    {
+                                        if (yesSelected)
+                                        {
+                                            ReturnDeviceType(deviceAddress, deviceName);
+                                        }
+                                    });
                             };
                             break;
+                        }
 
                         case AdapterType.Elm327:
                         {
