@@ -846,18 +846,18 @@ namespace EdiabasLib
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
                     return false;
                 }
-                if ((recLen != sendLength) || (AckBuffer[5] != 0x02))
+                if ((recLen < 6) || (recLen > sendLength) || (AckBuffer[5] != 0x02))
                 {
-                    if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, RecBuffer, 0, recLen, "*** Ack frame invalid");
+                    if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack frame invalid");
                     return false;
                 }
                 AckBuffer[4] = DataBuffer[4];
                 AckBuffer[5] = DataBuffer[5];
-                for (int i = 0; i < recLen; i++)
+                for (int i = 4; i < recLen; i++)
                 {
                     if (AckBuffer[i] != DataBuffer[i])
                     {
-                        if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, RecBuffer, 0, recLen, "*** Ack data invalid");
+                        if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack data invalid");
                         return false;
                     }
                 }

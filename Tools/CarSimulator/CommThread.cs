@@ -1548,7 +1548,21 @@ namespace CarSimulator
                     byte[] ack = new byte[recLen];
                     Array.Copy(dataBuffer, ack, ack.Length);
                     ack[5] = 0x02;
-                    _tcpClientDiagStream.Write(ack, 0, ack.Length);
+
+                    if (recLen == 14 && ack[8] == 0x19)
+                    {
+                        Debug.WriteLine("FS_LESEN_DETAIL Ack");
+                        int ackLength = payloadLength - 1;
+                        ack[0] = (byte)((ackLength >> 24) & 0xFF);
+                        ack[1] = (byte)((ackLength >> 16) & 0xFF);
+                        ack[2] = (byte)((ackLength >> 8) & 0xFF);
+                        ack[3] = (byte)(ackLength & 0xFF);
+                        _tcpClientDiagStream.Write(ack, 0, ackLength + 8 - 2);
+                    }
+                    else
+                    {
+                        _tcpClientDiagStream.Write(ack, 0, ack.Length);
+                    }
 
                     // create BMW-FAST telegram
                     byte sourceAddr = dataBuffer[6];
