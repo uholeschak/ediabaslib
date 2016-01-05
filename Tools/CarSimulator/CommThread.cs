@@ -1243,12 +1243,24 @@ namespace CarSimulator
                     identMessage[idx++] = (byte)'1';
                     identMessage[idx++] = (byte)'0';
                     // MAC
-                    for (int i = 0; i < 18; i++)
+                    identMessage[idx++] = (byte)'B';
+                    identMessage[idx++] = (byte)'M';
+                    identMessage[idx++] = (byte)'W';
+                    identMessage[idx++] = (byte)'M';
+                    identMessage[idx++] = (byte)'A';
+                    identMessage[idx++] = (byte)'C';
+                    for (int i = 0; i < 12; i++)
                     {
                         identMessage[idx++] = (byte)('0'+ (i % 10));
                     }
                     // VIN
-                    for (int i = 0; i < 23; i++)
+                    identMessage[idx++] = (byte)'B';
+                    identMessage[idx++] = (byte)'M';
+                    identMessage[idx++] = (byte)'W';
+                    identMessage[idx++] = (byte)'V';
+                    identMessage[idx++] = (byte)'I';
+                    identMessage[idx++] = (byte)'N';
+                    for (int i = 0; i < 17; i++)
                     {
                         identMessage[idx++] = (byte)('a' + i);
                     }
