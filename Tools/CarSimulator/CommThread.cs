@@ -1406,7 +1406,7 @@ namespace CarSimulator
                         responseBuffer[3] = (byte)(responseBuffer.Length - 6);
                         responseBuffer[4] = 0x00;
                         responseBuffer[5] = 0x10;   // ignition state
-                        responseBuffer[6] = (byte)(IgnitionOk ? 0x04 : 0x00);   // Clamp state, Bit3,4 = 1 -> ignition on
+                        responseBuffer[6] = (byte)(IgnitionOk ? 0x05 : 0x00);   // Clamp state, Bit3,4 = 1 -> ignition on
                         _tcpClientControlStream.Write(responseBuffer, 0, responseBuffer.Length);
                     }
 
@@ -1725,7 +1725,7 @@ namespace CarSimulator
                     long receiveTime = Stopwatch.GetTimestamp();
                     long timeDiff = (receiveTime - lastReceiveTime) / TickResolMs;
                     lastReceiveTime = receiveTime;
-                    Debug.WriteLine(string.Format("Rec({0}): {1}", frameType, timeDiff));
+                    Debug.WriteLine("Rec({0}): {1}", frameType, timeDiff);
 #endif
                     if (recLen == 0)
                     {   // first telegram
@@ -2061,7 +2061,7 @@ namespace CarSimulator
                         sepTime = canMsg.DATA[3];
                     } while (wait);
 #if CAN_DEBUG
-                    Debug.WriteLine(string.Format("FC: BS={0} ST={1}", blockSize, sepTime));
+                    Debug.WriteLine("FC: BS={0} ST={1}", blockSize, sepTime);
 #endif
                 }
 #if false
@@ -2333,7 +2333,7 @@ namespace CarSimulator
                 {
                     return false;
                 }
-                Debug.WriteLine(string.Format("Send {0:X02}", sendData[i]));
+                Debug.WriteLine("Send {0:X02}", sendData[i]);
                 if (!SendData(sendData, i, 1))
                 {
                     return false;
@@ -2344,12 +2344,12 @@ namespace CarSimulator
                 }
                 if ((byte)(~buffer[0]) != sendData[i])
                 {
-                    Debug.WriteLine(string.Format("Echo incorrect {0:X02}", (byte)(~buffer[0])));
+                    Debug.WriteLine("Echo incorrect {0:X02}", (byte)(~buffer[0]));
                     return false;
                 }
             }
             buffer[0] = 0x03;   // block end
-            Debug.WriteLine(string.Format("Send {0:X02}", buffer[0]));
+            Debug.WriteLine("Send {0:X02}", buffer[0]);
             if (!SendData(buffer, 0, 1))
             {
                 return false;
@@ -2365,7 +2365,7 @@ namespace CarSimulator
                 Debug.WriteLine("Nothing received");
                 return false;
             }
-            Debug.WriteLine(string.Format("Rec {0:X02}", recData[0]));
+            Debug.WriteLine("Rec {0:X02}", recData[0]);
 
             int blockLen = recData[0];
             byte[] buffer = new byte[1];
@@ -2385,11 +2385,11 @@ namespace CarSimulator
                     Debug.WriteLine("Nothing received");
                     return false;
                 }
-                Debug.WriteLine(string.Format("Rec {0:X02}", recData[i + 1]));
+                Debug.WriteLine("Rec {0:X02}", recData[i + 1]);
             }
             if (recData[blockLen] != 0x03)
             {
-                Debug.WriteLine(string.Format("Block end invalid {0:X02}", recData[blockLen]));
+                Debug.WriteLine("Block end invalid {0:X02}", recData[blockLen]);
                 return false;
             }
             return true;
@@ -4900,7 +4900,7 @@ namespace CarSimulator
                 {
                     break;
                 }
-                Debug.WriteLine(string.Format("Wake Address: {0:X02}", wakeAddress));
+                Debug.WriteLine("Wake Address: {0:X02}", wakeAddress);
                 if ((_configData.ConfigList.Count > 1) && (wakeAddress != _configData.ConfigList[0]))
                 {
                     Debug.WriteLine("Invalid wake address");
@@ -4937,7 +4937,7 @@ namespace CarSimulator
                     }
                     else
                     {
-                        Debug.WriteLine(string.Format("Invalid init response {0}", (byte)(~_receiveData[0])));
+                        Debug.WriteLine("Invalid init response {0}", (byte)(~_receiveData[0]));
                     }
                 }
                 else
@@ -5058,7 +5058,7 @@ namespace CarSimulator
                 {
                     break;
                 }
-                Debug.WriteLine(string.Format("Wake Address: {0:X02}", wakeAddress));
+                Debug.WriteLine("Wake Address: {0:X02}", wakeAddress);
                 if ((_configData.ConfigList.Count > 1) && (wakeAddress != _configData.ConfigList[0]))
                 {
                     Debug.WriteLine("Invalid wake address");
