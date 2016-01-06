@@ -59,6 +59,10 @@
   <string name="send_trace_file_failed">Sending trace file failed.</string>
   <string name="send_trace_file_failed_retry">Sending trace file failed.\nPlease check your network connection.\nDo you want to retry sending?</string>
 
+  <!-- Translate -->
+  <string name="translate_text">Translating text</string>
+  <string name="translate_failed">Translation failed.\nPlease check your network connection.</string>
+
   <!--  DeviceListActivity -->
   <string name="scanning">Scanning for devices ...</string>
   <string name="select_device">Select adapter</string>

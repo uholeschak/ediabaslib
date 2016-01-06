@@ -59,6 +59,10 @@
   <string name="send_trace_file_failed">Trace-Datei senden fehlgeschlagen.</string>
   <string name="send_trace_file_failed_retry">Trace-Datei senden fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.\nWollen Sie das Senden wiederholen?</string>
 
+  <!-- Translate -->
+  <string name="translate_text">Text wird übersetzt</string>
+  <string name="translate_failed">Übersetzung fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.</string>
+
   <!--  DeviceListActivity -->
   <string name="scanning">Nach Geräten suchen ...</string>
   <string name="select_device">Adapter auswählen</string>
