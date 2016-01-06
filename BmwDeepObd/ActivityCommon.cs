@@ -98,6 +98,8 @@ namespace BmwDeepObd
         private AlertDialog _activateAlertDialog;
         private AlertDialog _selectMediaAlertDialog;
         private AlertDialog _selectInterfaceAlertDialog;
+        private Android.App.ProgressDialog _translateProgress;
+        private List<string> _yandexLangList;
 
         public bool Emulator { get; }
 
@@ -1125,43 +1127,77 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_activity);
-            progress.SetCancelable(false);
-            progress.SetMessage(_activity.GetString(Resource.String.translate_text));
-            progress.Show();
-            SetCpuLock(true);
+            if (_translateProgress == null)
+            {
+                _translateProgress = new Android.App.ProgressDialog(_activity);
+                _translateProgress.SetMessage(_activity.GetString(Resource.String.translate_text));
+                _translateProgress.Show();
+                SetCpuLock(true);
+            }
+            _translateProgress.SetCancelable(false);
 
             Thread translateThread = new Thread(() =>
             {
                 WebClient webClient = new WebClient();
                 StringBuilder sbUrl = new StringBuilder();
-                sbUrl.Append(@"https://translate.yandex.net/api/v1.5/tr/translate?");
-                sbUrl.Append("key=");
-                sbUrl.Append(System.Uri.EscapeDataString(YandexKey));
-                sbUrl.Append("&lang=de-en");
-                foreach (string text in stringList)
+                if (_yandexLangList == null)
+                {   // no language list present, get it first
+                    sbUrl.Append(@"https://translate.yandex.net/api/v1.5/tr/getLangs?");
+                    sbUrl.Append("key=");
+                    sbUrl.Append(System.Uri.EscapeDataString(YandexKey));
+                }
+                else
                 {
-                    sbUrl.Append("&text=");
-                    sbUrl.Append(System.Uri.EscapeDataString(text));
+                    string langPair = ("de-" + (Java.Util.Locale.Default.Language ?? string.Empty)).ToLowerInvariant();
+                    if (_yandexLangList.All(lang => string.Compare(lang, langPair, StringComparison.OrdinalIgnoreCase) != 0))
+                    {   // language not found
+                        langPair = "de-en";
+                    }
+
+                    sbUrl.Append(@"https://translate.yandex.net/api/v1.5/tr/translate?");
+                    sbUrl.Append("key=");
+                    sbUrl.Append(System.Uri.EscapeDataString(YandexKey));
+                    sbUrl.Append("&lang=");
+                    sbUrl.Append(langPair);
+                    foreach (string text in stringList)
+                    {
+                        sbUrl.Append("&text=");
+                        sbUrl.Append(System.Uri.EscapeDataString(text));
+                    }
                 }
                 webClient.DownloadStringCompleted += (sender, args) =>
                 {
                     List<string> transList = null;
                     if (!args.Cancelled && (args.Error == null))
                     {
-                        transList = GetTranslations(args.Result);
+                        if (_yandexLangList == null)
+                        {
+                            _yandexLangList = GetLanguages(args.Result);
+                            if (_yandexLangList != null)
+                            {
+                                _activity.RunOnUiThread(() =>
+                                {
+                                    TranslateStrings(stringList, handler);
+                                });
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            transList = GetTranslations(args.Result);
+                        }
                     }
                     _activity.RunOnUiThread(() =>
                     {
-                        if (progress != null)
+                        if (_translateProgress != null)
                         {
-                            progress.Hide();
-                            progress.Dispose();
-                            progress = null;
+                            _translateProgress.Hide();
+                            _translateProgress.Dispose();
+                            _translateProgress = null;
                             SetCpuLock(false);
                         }
                         handler(transList);
-                        if (!args.Cancelled && transList == null)
+                        if (!args.Cancelled && ((_yandexLangList == null) || (transList == null)))
                         {
                             ShowAlert(_activity.GetString(Resource.String.translate_failed),
                                 Resource.String.alert_title_error);
@@ -1170,17 +1206,49 @@ namespace BmwDeepObd
                 };
                 _activity.RunOnUiThread(() =>
                 {
-                    progress.CancelEvent += (sender, args) =>
+                    _translateProgress.CancelEvent += (sender, args) =>
                     {
                         webClient.CancelAsync();
                     };
-                    progress.SetCancelable(true);
+                    _translateProgress.SetCancelable(true);
                 });
                 ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true;
+                _translateProgress.SetCancelable(true);
                 webClient.DownloadStringAsync(new System.Uri(sbUrl.ToString()));
             });
             translateThread.Start();
             return true;
+        }
+
+        private List<string> GetLanguages(string xmlResult)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(xmlResult))
+                {
+                    return null;
+                }
+                XDocument xmlDoc = XDocument.Parse(xmlResult);
+                XElement dirsNode = xmlDoc.Root?.Element("dirs");
+                if (dirsNode == null)
+                {
+                    return null;
+                }
+                List<string> transList = new List<string>();
+                foreach (XElement textNode in dirsNode.Elements("string"))
+                {
+                    using (XmlReader reader = textNode.CreateReader())
+                    {
+                        reader.MoveToContent();
+                        transList.Add(reader.ReadInnerXml());
+                    }
+                }
+                return transList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private List<string> GetTranslations(string xmlResult)
