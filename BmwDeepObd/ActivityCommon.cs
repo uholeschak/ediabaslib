@@ -67,10 +67,12 @@ namespace BmwDeepObd
         public delegate bool ProgressZipDelegate(int percent);
         public delegate void BcReceiverUpdateDisplayDelegate();
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
+        public delegate void TranslateDelegate(List<string> transList);
         public const string EmulatorEnetIp = "192.168.10.244";
         public const string DownloadDir = "Download";
         public const string ActionUsbPermission = "de.holeschak.bmw_deep_obd.USB_PERMISSION";
         private const string MailInfoDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Mail.xml";
+        private const string YandexKey = @"trnsl.1.1.20160106T074747Z.4f63f50d2d083317.c10e989a8eea62b8952f949c3398bc2724afda97";
 
         private bool _disposed;
         private readonly Android.App.Activity _activity;
@@ -1115,6 +1117,100 @@ namespace BmwDeepObd
                 return false;
             }
             return true;
+        }
+
+        public bool TranslateStrings(List<string> stringList, TranslateDelegate handler)
+        {
+            if ((stringList.Count == 0) || (handler == null))
+            {
+                return false;
+            }
+            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_activity);
+            progress.SetCancelable(false);
+            progress.SetMessage(_activity.GetString(Resource.String.translate_text));
+            progress.Show();
+            SetCpuLock(true);
+
+            Thread translateThread = new Thread(() =>
+            {
+                WebClient webClient = new WebClient();
+                StringBuilder sbUrl = new StringBuilder();
+                sbUrl.Append(@"https://translate.yandex.net/api/v1.5/tr/translate?");
+                sbUrl.Append("key=");
+                sbUrl.Append(System.Uri.EscapeDataString(YandexKey));
+                sbUrl.Append("&lang=de-en");
+                foreach (string text in stringList)
+                {
+                    sbUrl.Append("&text=");
+                    sbUrl.Append(System.Uri.EscapeDataString(text));
+                }
+                webClient.DownloadStringCompleted += (sender, args) =>
+                {
+                    List<string> transList = null;
+                    if (!args.Cancelled && (args.Error == null))
+                    {
+                        transList = GetTranslations(args.Result);
+                    }
+                    _activity.RunOnUiThread(() =>
+                    {
+                        if (progress != null)
+                        {
+                            progress.Hide();
+                            progress.Dispose();
+                            progress = null;
+                            SetCpuLock(false);
+                        }
+                        handler(transList);
+                        if (!args.Cancelled && transList == null)
+                        {
+                            ShowAlert(_activity.GetString(Resource.String.translate_failed),
+                                Resource.String.alert_title_error);
+                        }
+                    });
+                };
+                _activity.RunOnUiThread(() =>
+                {
+                    progress.CancelEvent += (sender, args) =>
+                    {
+                        webClient.CancelAsync();
+                    };
+                    progress.SetCancelable(true);
+                });
+                ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true;
+                webClient.DownloadStringAsync(new System.Uri(sbUrl.ToString()));
+            });
+            translateThread.Start();
+            return true;
+        }
+
+        private List<string> GetTranslations(string xmlResult)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(xmlResult))
+                {
+                    return null;
+                }
+                XDocument xmlDoc = XDocument.Parse(xmlResult);
+                if (xmlDoc.Root == null)
+                {
+                    return null;
+                }
+                List<string> transList = new List<string>();
+                foreach (XElement textNode in xmlDoc.Root.Elements("text"))
+                {
+                    using (XmlReader reader = textNode.CreateReader())
+                    {
+                        reader.MoveToContent();
+                        transList.Add(reader.ReadInnerXml());
+                    }
+                }
+                return transList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static string MakeRelativePath(string fromPath, string toPath)

@@ -2391,20 +2391,20 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f060012
 			public const int abc_toolbar_collapse_description = 2131099666;
 			
-			// aapt resource value: 0x7f060062
-			public const int access_dir_failed = 2131099746;
+			// aapt resource value: 0x7f060064
+			public const int access_dir_failed = 2131099748;
 			
-			// aapt resource value: 0x7f06004c
-			public const int adapter_cfg_required = 2131099724;
+			// aapt resource value: 0x7f06004e
+			public const int adapter_cfg_required = 2131099726;
 			
-			// aapt resource value: 0x7f060046
-			public const int adapter_connection_failed = 2131099718;
-			
-			// aapt resource value: 0x7f06004b
-			public const int adapter_elm_replacement = 2131099723;
+			// aapt resource value: 0x7f060048
+			public const int adapter_connection_failed = 2131099720;
 			
 			// aapt resource value: 0x7f06004d
-			public const int adapter_fw_update = 2131099725;
+			public const int adapter_elm_replacement = 2131099725;
+			
+			// aapt resource value: 0x7f06004f
+			public const int adapter_fw_update = 2131099727;
 			
 			// aapt resource value: 0x7f06002f
 			public const int alert_title_error = 2131099695;
@@ -2436,26 +2436,26 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f06001b
 			public const int button_abort = 2131099675;
 			
-			// aapt resource value: 0x7f06004e
-			public const int button_active = 2131099726;
-			
-			// aapt resource value: 0x7f0600c5
-			public const int button_can_adapter_can_100 = 2131099845;
-			
-			// aapt resource value: 0x7f0600c4
-			public const int button_can_adapter_can_500 = 2131099844;
-			
-			// aapt resource value: 0x7f0600c6
-			public const int button_can_adapter_can_off = 2131099846;
+			// aapt resource value: 0x7f060050
+			public const int button_active = 2131099728;
 			
 			// aapt resource value: 0x7f0600c7
-			public const int button_can_adapter_fw_update = 2131099847;
+			public const int button_can_adapter_can_100 = 2131099847;
 			
-			// aapt resource value: 0x7f0600c2
-			public const int button_can_adapter_read = 2131099842;
+			// aapt resource value: 0x7f0600c6
+			public const int button_can_adapter_can_500 = 2131099846;
 			
-			// aapt resource value: 0x7f0600c3
-			public const int button_can_adapter_write = 2131099843;
+			// aapt resource value: 0x7f0600c8
+			public const int button_can_adapter_can_off = 2131099848;
+			
+			// aapt resource value: 0x7f0600c9
+			public const int button_can_adapter_fw_update = 2131099849;
+			
+			// aapt resource value: 0x7f0600c4
+			public const int button_can_adapter_read = 2131099844;
+			
+			// aapt resource value: 0x7f0600c5
+			public const int button_can_adapter_write = 2131099845;
 			
 			// aapt resource value: 0x7f060016
 			public const int button_connected = 2131099670;
@@ -2463,14 +2463,14 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f060017
 			public const int button_disconnected = 2131099671;
 			
-			// aapt resource value: 0x7f060050
-			public const int button_error_reset = 2131099728;
+			// aapt resource value: 0x7f060052
+			public const int button_error_reset = 2131099730;
 			
 			// aapt resource value: 0x7f06001d
 			public const int button_generate = 2131099677;
 			
-			// aapt resource value: 0x7f06004f
-			public const int button_inactive = 2131099727;
+			// aapt resource value: 0x7f060051
+			public const int button_inactive = 2131099729;
 			
 			// aapt resource value: 0x7f060019
 			public const int button_no = 2131099673;
@@ -2478,92 +2478,92 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f06001a
 			public const int button_ok = 2131099674;
 			
-			// aapt resource value: 0x7f060044
-			public const int button_scan = 2131099716;
+			// aapt resource value: 0x7f060046
+			public const int button_scan = 2131099718;
 			
 			// aapt resource value: 0x7f06001c
 			public const int button_select = 2131099676;
 			
-			// aapt resource value: 0x7f06007e
-			public const int button_xml_tool_edit = 2131099774;
-			
-			// aapt resource value: 0x7f06007d
-			public const int button_xml_tool_read = 2131099773;
+			// aapt resource value: 0x7f060080
+			public const int button_xml_tool_edit = 2131099776;
 			
 			// aapt resource value: 0x7f06007f
-			public const int button_xml_tool_save = 2131099775;
+			public const int button_xml_tool_read = 2131099775;
+			
+			// aapt resource value: 0x7f060081
+			public const int button_xml_tool_save = 2131099777;
 			
 			// aapt resource value: 0x7f060018
 			public const int button_yes = 2131099672;
 			
-			// aapt resource value: 0x7f0600b1
-			public const int can_adapter_bat_voltage = 2131099825;
-			
-			// aapt resource value: 0x7f0600ae
-			public const int can_adapter_block_size = 2131099822;
-			
-			// aapt resource value: 0x7f0600af
-			public const int can_adapter_bt_pin = 2131099823;
-			
-			// aapt resource value: 0x7f0600b5
-			public const int can_adapter_comm_error = 2131099829;
-			
-			// aapt resource value: 0x7f0600b6
-			public const int can_adapter_comm_error_std = 2131099830;
-			
-			// aapt resource value: 0x7f0600b4
-			public const int can_adapter_expert = 2131099828;
-			
-			// aapt resource value: 0x7f0600be
-			public const int can_adapter_fw_update_active = 2131099838;
-			
-			// aapt resource value: 0x7f0600bf
-			public const int can_adapter_fw_update_conn_failed = 2131099839;
-			
-			// aapt resource value: 0x7f0600c0
-			public const int can_adapter_fw_update_failed = 2131099840;
-			
-			// aapt resource value: 0x7f0600bd
-			public const int can_adapter_fw_update_info = 2131099837;
-			
-			// aapt resource value: 0x7f0600c1
-			public const int can_adapter_fw_update_ok = 2131099841;
-			
-			// aapt resource value: 0x7f0600bc
-			public const int can_adapter_fw_update_present = 2131099836;
-			
-			// aapt resource value: 0x7f0600b2
-			public const int can_adapter_fw_version = 2131099826;
-			
-			// aapt resource value: 0x7f0600b8
-			public const int can_adapter_ignition_off = 2131099832;
-			
-			// aapt resource value: 0x7f0600b7
-			public const int can_adapter_ignition_on = 2131099831;
+			// aapt resource value: 0x7f0600b3
+			public const int can_adapter_bat_voltage = 2131099827;
 			
 			// aapt resource value: 0x7f0600b0
-			public const int can_adapter_ignition_state = 2131099824;
+			public const int can_adapter_block_size = 2131099824;
 			
-			// aapt resource value: 0x7f0600ac
-			public const int can_adapter_mode_name = 2131099820;
+			// aapt resource value: 0x7f0600b1
+			public const int can_adapter_bt_pin = 2131099825;
 			
-			// aapt resource value: 0x7f0600bb
-			public const int can_adapter_new_pin = 2131099835;
+			// aapt resource value: 0x7f0600b7
+			public const int can_adapter_comm_error = 2131099831;
+			
+			// aapt resource value: 0x7f0600b8
+			public const int can_adapter_comm_error_std = 2131099832;
+			
+			// aapt resource value: 0x7f0600b6
+			public const int can_adapter_expert = 2131099830;
+			
+			// aapt resource value: 0x7f0600c0
+			public const int can_adapter_fw_update_active = 2131099840;
+			
+			// aapt resource value: 0x7f0600c1
+			public const int can_adapter_fw_update_conn_failed = 2131099841;
+			
+			// aapt resource value: 0x7f0600c2
+			public const int can_adapter_fw_update_failed = 2131099842;
+			
+			// aapt resource value: 0x7f0600bf
+			public const int can_adapter_fw_update_info = 2131099839;
+			
+			// aapt resource value: 0x7f0600c3
+			public const int can_adapter_fw_update_ok = 2131099843;
+			
+			// aapt resource value: 0x7f0600be
+			public const int can_adapter_fw_update_present = 2131099838;
+			
+			// aapt resource value: 0x7f0600b4
+			public const int can_adapter_fw_version = 2131099828;
 			
 			// aapt resource value: 0x7f0600ba
-			public const int can_adapter_pin_length = 2131099834;
-			
-			// aapt resource value: 0x7f0600ad
-			public const int can_adapter_sep_time = 2131099821;
-			
-			// aapt resource value: 0x7f0600b3
-			public const int can_adapter_ser_num = 2131099827;
+			public const int can_adapter_ignition_off = 2131099834;
 			
 			// aapt resource value: 0x7f0600b9
-			public const int can_adapter_text_off = 2131099833;
+			public const int can_adapter_ignition_on = 2131099833;
 			
-			// aapt resource value: 0x7f0600ab
-			public const int can_adapter_title = 2131099819;
+			// aapt resource value: 0x7f0600b2
+			public const int can_adapter_ignition_state = 2131099826;
+			
+			// aapt resource value: 0x7f0600ae
+			public const int can_adapter_mode_name = 2131099822;
+			
+			// aapt resource value: 0x7f0600bd
+			public const int can_adapter_new_pin = 2131099837;
+			
+			// aapt resource value: 0x7f0600bc
+			public const int can_adapter_pin_length = 2131099836;
+			
+			// aapt resource value: 0x7f0600af
+			public const int can_adapter_sep_time = 2131099823;
+			
+			// aapt resource value: 0x7f0600b5
+			public const int can_adapter_ser_num = 2131099829;
+			
+			// aapt resource value: 0x7f0600bb
+			public const int can_adapter_text_off = 2131099835;
+			
+			// aapt resource value: 0x7f0600ad
+			public const int can_adapter_title = 2131099821;
 			
 			// aapt resource value: 0x7f060031
 			public const int compile_start = 2131099697;
@@ -2574,23 +2574,23 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f060023
 			public const int config_select = 2131099683;
 			
-			// aapt resource value: 0x7f060066
-			public const int custom_media = 2131099750;
+			// aapt resource value: 0x7f060068
+			public const int custom_media = 2131099752;
 			
-			// aapt resource value: 0x7f06005f
-			public const int datalog_append_trace = 2131099743;
+			// aapt resource value: 0x7f060061
+			public const int datalog_append_trace = 2131099745;
+			
+			// aapt resource value: 0x7f060062
+			public const int datalog_enable_datalog = 2131099746;
 			
 			// aapt resource value: 0x7f060060
-			public const int datalog_enable_datalog = 2131099744;
+			public const int datalog_enable_trace = 2131099744;
 			
-			// aapt resource value: 0x7f06005e
-			public const int datalog_enable_trace = 2131099742;
+			// aapt resource value: 0x7f060067
+			public const int default_media = 2131099751;
 			
-			// aapt resource value: 0x7f060065
-			public const int default_media = 2131099749;
-			
-			// aapt resource value: 0x7f060045
-			public const int detect_adapter = 2131099717;
+			// aapt resource value: 0x7f060047
+			public const int detect_adapter = 2131099719;
 			
 			// aapt resource value: 0x7f060033
 			public const int download_failed = 2131099699;
@@ -2628,131 +2628,131 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f060035
 			public const int extract_file = 2131099701;
 			
-			// aapt resource value: 0x7f060049
-			public const int fake_elm_adapter_type = 2131099721;
+			// aapt resource value: 0x7f06004b
+			public const int fake_elm_adapter_type = 2131099723;
 			
-			// aapt resource value: 0x7f060063
-			public const int file_picker_search = 2131099747;
+			// aapt resource value: 0x7f060065
+			public const int file_picker_search = 2131099749;
 			
-			// aapt resource value: 0x7f060067
-			public const int free_space = 2131099751;
+			// aapt resource value: 0x7f060069
+			public const int free_space = 2131099753;
 			
-			// aapt resource value: 0x7f060048
-			public const int invalid_adapter_type = 2131099720;
+			// aapt resource value: 0x7f06004a
+			public const int invalid_adapter_type = 2131099722;
 			
 			// aapt resource value: 0x7f060014
 			public const int library_name = 2131099668;
 			
-			// aapt resource value: 0x7f060053
-			public const int menu_adapter = 2131099731;
-			
-			// aapt resource value: 0x7f060054
-			public const int menu_adapter_config = 2131099732;
-			
-			// aapt resource value: 0x7f060052
-			public const int menu_connect = 2131099730;
-			
-			// aapt resource value: 0x7f060059
-			public const int menu_download_ecu = 2131099737;
-			
-			// aapt resource value: 0x7f060057
-			public const int menu_ediabas_tool = 2131099735;
-			
-			// aapt resource value: 0x7f06005d
-			public const int menu_exit = 2131099741;
-			
-			// aapt resource value: 0x7f06005c
-			public const int menu_info = 2131099740;
-			
 			// aapt resource value: 0x7f060055
-			public const int menu_sel_cfg = 2131099733;
-			
-			// aapt resource value: 0x7f060058
-			public const int menu_sel_media = 2131099736;
-			
-			// aapt resource value: 0x7f060051
-			public const int menu_settings = 2131099729;
-			
-			// aapt resource value: 0x7f06005b
-			public const int menu_submenu_help = 2131099739;
-			
-			// aapt resource value: 0x7f06005a
-			public const int menu_submenu_log = 2131099738;
-			
-			// aapt resource value: 0x7f060079
-			public const int menu_tool_sel_interface = 2131099769;
-			
-			// aapt resource value: 0x7f06007a
-			public const int menu_tool_sel_sgbd_grp = 2131099770;
-			
-			// aapt resource value: 0x7f06007b
-			public const int menu_tool_sel_sgbd_prg = 2131099771;
+			public const int menu_adapter = 2131099733;
 			
 			// aapt resource value: 0x7f060056
-			public const int menu_xml_tool = 2131099734;
+			public const int menu_adapter_config = 2131099734;
 			
-			// aapt resource value: 0x7f060090
-			public const int menu_xml_tool_add_errors_page = 2131099792;
+			// aapt resource value: 0x7f060054
+			public const int menu_connect = 2131099732;
 			
-			// aapt resource value: 0x7f060091
-			public const int menu_xml_tool_cfg_type = 2131099793;
+			// aapt resource value: 0x7f06005b
+			public const int menu_download_ecu = 2131099739;
 			
-			// aapt resource value: 0x7f060094
-			public const int menu_xml_tool_edit_del = 2131099796;
+			// aapt resource value: 0x7f060059
+			public const int menu_ediabas_tool = 2131099737;
+			
+			// aapt resource value: 0x7f06005f
+			public const int menu_exit = 2131099743;
+			
+			// aapt resource value: 0x7f06005e
+			public const int menu_info = 2131099742;
+			
+			// aapt resource value: 0x7f060057
+			public const int menu_sel_cfg = 2131099735;
+			
+			// aapt resource value: 0x7f06005a
+			public const int menu_sel_media = 2131099738;
+			
+			// aapt resource value: 0x7f060053
+			public const int menu_settings = 2131099731;
+			
+			// aapt resource value: 0x7f06005d
+			public const int menu_submenu_help = 2131099741;
+			
+			// aapt resource value: 0x7f06005c
+			public const int menu_submenu_log = 2131099740;
+			
+			// aapt resource value: 0x7f06007b
+			public const int menu_tool_sel_interface = 2131099771;
+			
+			// aapt resource value: 0x7f06007c
+			public const int menu_tool_sel_sgbd_grp = 2131099772;
+			
+			// aapt resource value: 0x7f06007d
+			public const int menu_tool_sel_sgbd_prg = 2131099773;
+			
+			// aapt resource value: 0x7f060058
+			public const int menu_xml_tool = 2131099736;
 			
 			// aapt resource value: 0x7f060092
-			public const int menu_xml_tool_edit_grp = 2131099794;
+			public const int menu_xml_tool_add_errors_page = 2131099794;
 			
 			// aapt resource value: 0x7f060093
-			public const int menu_xml_tool_edit_prg = 2131099795;
-			
-			// aapt resource value: 0x7f060098
-			public const int menu_xml_tool_move_bottom = 2131099800;
-			
-			// aapt resource value: 0x7f060097
-			public const int menu_xml_tool_move_down = 2131099799;
-			
-			// aapt resource value: 0x7f060095
-			public const int menu_xml_tool_move_top = 2131099797;
+			public const int menu_xml_tool_cfg_type = 2131099795;
 			
 			// aapt resource value: 0x7f060096
-			public const int menu_xml_tool_move_up = 2131099798;
+			public const int menu_xml_tool_edit_del = 2131099798;
+			
+			// aapt resource value: 0x7f060094
+			public const int menu_xml_tool_edit_grp = 2131099796;
+			
+			// aapt resource value: 0x7f060095
+			public const int menu_xml_tool_edit_prg = 2131099797;
+			
+			// aapt resource value: 0x7f06009a
+			public const int menu_xml_tool_move_bottom = 2131099802;
+			
+			// aapt resource value: 0x7f060099
+			public const int menu_xml_tool_move_down = 2131099801;
+			
+			// aapt resource value: 0x7f060097
+			public const int menu_xml_tool_move_top = 2131099799;
+			
+			// aapt resource value: 0x7f060098
+			public const int menu_xml_tool_move_up = 2131099800;
 			
 			// aapt resource value: 0x7f06001e
 			public const int no_ext_storage = 2131099678;
 			
-			// aapt resource value: 0x7f060041
-			public const int none_found = 2131099713;
+			// aapt resource value: 0x7f060043
+			public const int none_found = 2131099715;
+			
+			// aapt resource value: 0x7f060042
+			public const int none_paired = 2131099714;
+			
+			// aapt resource value: 0x7f06004c
+			public const int recommened_adapter_type = 2131099724;
 			
 			// aapt resource value: 0x7f060040
-			public const int none_paired = 2131099712;
+			public const int scanning = 2131099712;
 			
-			// aapt resource value: 0x7f06004a
-			public const int recommened_adapter_type = 2131099722;
+			// aapt resource value: 0x7f060041
+			public const int select_device = 2131099713;
 			
-			// aapt resource value: 0x7f06003e
-			public const int scanning = 2131099710;
-			
-			// aapt resource value: 0x7f06003f
-			public const int select_device = 2131099711;
-			
-			// aapt resource value: 0x7f060061
-			public const int select_file = 2131099745;
-			
-			// aapt resource value: 0x7f060068
-			public const int select_interface = 2131099752;
-			
-			// aapt resource value: 0x7f060069
-			public const int select_interface_bt = 2131099753;
+			// aapt resource value: 0x7f060063
+			public const int select_file = 2131099747;
 			
 			// aapt resource value: 0x7f06006a
-			public const int select_interface_enet = 2131099754;
+			public const int select_interface = 2131099754;
 			
 			// aapt resource value: 0x7f06006b
-			public const int select_interface_ftdi = 2131099755;
+			public const int select_interface_bt = 2131099755;
 			
-			// aapt resource value: 0x7f060064
-			public const int select_media = 2131099748;
+			// aapt resource value: 0x7f06006c
+			public const int select_interface_enet = 2131099756;
+			
+			// aapt resource value: 0x7f06006d
+			public const int select_interface_ftdi = 2131099757;
+			
+			// aapt resource value: 0x7f060066
+			public const int select_media = 2131099750;
 			
 			// aapt resource value: 0x7f060039
 			public const int send_message_request = 2131099705;
@@ -2772,53 +2772,59 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f060013
 			public const int status_bar_notification_info_overflow = 2131099667;
 			
-			// aapt resource value: 0x7f060043
-			public const int title_other_devices = 2131099715;
+			// aapt resource value: 0x7f060045
+			public const int title_other_devices = 2131099717;
 			
-			// aapt resource value: 0x7f060042
-			public const int title_paired_devices = 2131099714;
-			
-			// aapt resource value: 0x7f060076
-			public const int tool_check_continuous = 2131099766;
-			
-			// aapt resource value: 0x7f060071
-			public const int tool_job_arguments = 2131099761;
-			
-			// aapt resource value: 0x7f060072
-			public const int tool_job_arguments_error_detail = 2131099762;
-			
-			// aapt resource value: 0x7f060075
-			public const int tool_job_infos = 2131099765;
-			
-			// aapt resource value: 0x7f060070
-			public const int tool_job_job = 2131099760;
-			
-			// aapt resource value: 0x7f06006f
-			public const int tool_job_jobs = 2131099759;
-			
-			// aapt resource value: 0x7f060074
-			public const int tool_job_result = 2131099764;
-			
-			// aapt resource value: 0x7f060073
-			public const int tool_job_results = 2131099763;
+			// aapt resource value: 0x7f060044
+			public const int title_paired_devices = 2131099716;
 			
 			// aapt resource value: 0x7f060078
-			public const int tool_no_errors = 2131099768;
+			public const int tool_check_continuous = 2131099768;
+			
+			// aapt resource value: 0x7f060073
+			public const int tool_job_arguments = 2131099763;
+			
+			// aapt resource value: 0x7f060074
+			public const int tool_job_arguments_error_detail = 2131099764;
 			
 			// aapt resource value: 0x7f060077
-			public const int tool_read_errors_failure = 2131099767;
+			public const int tool_job_infos = 2131099767;
+			
+			// aapt resource value: 0x7f060072
+			public const int tool_job_job = 2131099762;
+			
+			// aapt resource value: 0x7f060071
+			public const int tool_job_jobs = 2131099761;
+			
+			// aapt resource value: 0x7f060076
+			public const int tool_job_result = 2131099766;
+			
+			// aapt resource value: 0x7f060075
+			public const int tool_job_results = 2131099765;
+			
+			// aapt resource value: 0x7f06007a
+			public const int tool_no_errors = 2131099770;
+			
+			// aapt resource value: 0x7f060079
+			public const int tool_read_errors_failure = 2131099769;
+			
+			// aapt resource value: 0x7f060070
+			public const int tool_read_sgbd = 2131099760;
+			
+			// aapt resource value: 0x7f06006f
+			public const int tool_select_sgbd = 2131099759;
 			
 			// aapt resource value: 0x7f06006e
-			public const int tool_read_sgbd = 2131099758;
+			public const int tool_title = 2131099758;
 			
-			// aapt resource value: 0x7f06006d
-			public const int tool_select_sgbd = 2131099757;
+			// aapt resource value: 0x7f06003f
+			public const int translate_failed = 2131099711;
 			
-			// aapt resource value: 0x7f06006c
-			public const int tool_title = 2131099756;
+			// aapt resource value: 0x7f06003e
+			public const int translate_text = 2131099710;
 			
-			// aapt resource value: 0x7f060047
-			public const int unknown_adapter_type = 2131099719;
+			// aapt resource value: 0x7f060049
+			public const int unknown_adapter_type = 2131099721;
 			
 			// aapt resource value: 0x7f06002b
 			public const int version_change_info_message = 2131099691;
@@ -2829,110 +2835,110 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f060022
 			public const int wifi_not_available = 2131099682;
 			
-			// aapt resource value: 0x7f060080
-			public const int xml_tool_analyze = 2131099776;
-			
-			// aapt resource value: 0x7f06008e
-			public const int xml_tool_auto_config = 2131099790;
-			
-			// aapt resource value: 0x7f0600a8
-			public const int xml_tool_button_test_format = 2131099816;
-			
-			// aapt resource value: 0x7f0600a5
-			public const int xml_tool_ecu_display_text = 2131099813;
-			
-			// aapt resource value: 0x7f0600a2
-			public const int xml_tool_ecu_ecu_name = 2131099810;
-			
-			// aapt resource value: 0x7f06009e
-			public const int xml_tool_ecu_format = 2131099806;
-			
-			// aapt resource value: 0x7f0600a0
-			public const int xml_tool_ecu_format_left = 2131099808;
-			
-			// aapt resource value: 0x7f06009f
-			public const int xml_tool_ecu_format_right = 2131099807;
-			
-			// aapt resource value: 0x7f06009a
-			public const int xml_tool_ecu_job_comments = 2131099802;
-			
-			// aapt resource value: 0x7f0600a3
-			public const int xml_tool_ecu_jobs_name = 2131099811;
-			
-			// aapt resource value: 0x7f060089
-			public const int xml_tool_ecu_list = 2131099785;
-			
-			// aapt resource value: 0x7f0600a6
-			public const int xml_tool_ecu_log_tag = 2131099814;
-			
-			// aapt resource value: 0x7f0600a1
-			public const int xml_tool_ecu_page_name = 2131099809;
-			
-			// aapt resource value: 0x7f06009b
-			public const int xml_tool_ecu_result_comments = 2131099803;
-			
-			// aapt resource value: 0x7f06009c
-			public const int xml_tool_ecu_result_type = 2131099804;
-			
-			// aapt resource value: 0x7f0600a4
-			public const int xml_tool_ecu_results = 2131099812;
-			
-			// aapt resource value: 0x7f0600a7
-			public const int xml_tool_ecu_test_format = 2131099815;
-			
-			// aapt resource value: 0x7f060099
-			public const int xml_tool_ecu_title = 2131099801;
-			
-			// aapt resource value: 0x7f06009d
-			public const int xml_tool_ecu_user_format = 2131099805;
-			
-			// aapt resource value: 0x7f06008d
-			public const int xml_tool_errors_page = 2131099789;
-			
-			// aapt resource value: 0x7f0600a9
-			public const int xml_tool_execute_test_job = 2131099817;
-			
-			// aapt resource value: 0x7f06008b
-			public const int xml_tool_info_grp = 2131099787;
-			
-			// aapt resource value: 0x7f06008a
-			public const int xml_tool_info_sgbd = 2131099786;
-			
-			// aapt resource value: 0x7f06008c
-			public const int xml_tool_info_vin = 2131099788;
-			
-			// aapt resource value: 0x7f06008f
-			public const int xml_tool_man_config = 2131099791;
-			
-			// aapt resource value: 0x7f060088
-			public const int xml_tool_msg_ecu_error = 2131099784;
-			
-			// aapt resource value: 0x7f060087
-			public const int xml_tool_msg_save_config = 2131099783;
-			
 			// aapt resource value: 0x7f060082
-			public const int xml_tool_no_response = 2131099778;
+			public const int xml_tool_analyze = 2131099778;
 			
-			// aapt resource value: 0x7f060083
-			public const int xml_tool_no_response_manual = 2131099779;
-			
-			// aapt resource value: 0x7f060085
-			public const int xml_tool_read_ecu_info_failed = 2131099781;
-			
-			// aapt resource value: 0x7f060084
-			public const int xml_tool_read_jobs_failed = 2131099780;
+			// aapt resource value: 0x7f060090
+			public const int xml_tool_auto_config = 2131099792;
 			
 			// aapt resource value: 0x7f0600aa
-			public const int xml_tool_read_test_job_failed = 2131099818;
+			public const int xml_tool_button_test_format = 2131099818;
+			
+			// aapt resource value: 0x7f0600a7
+			public const int xml_tool_ecu_display_text = 2131099815;
+			
+			// aapt resource value: 0x7f0600a4
+			public const int xml_tool_ecu_ecu_name = 2131099812;
+			
+			// aapt resource value: 0x7f0600a0
+			public const int xml_tool_ecu_format = 2131099808;
+			
+			// aapt resource value: 0x7f0600a2
+			public const int xml_tool_ecu_format_left = 2131099810;
+			
+			// aapt resource value: 0x7f0600a1
+			public const int xml_tool_ecu_format_right = 2131099809;
+			
+			// aapt resource value: 0x7f06009c
+			public const int xml_tool_ecu_job_comments = 2131099804;
+			
+			// aapt resource value: 0x7f0600a5
+			public const int xml_tool_ecu_jobs_name = 2131099813;
+			
+			// aapt resource value: 0x7f06008b
+			public const int xml_tool_ecu_list = 2131099787;
+			
+			// aapt resource value: 0x7f0600a8
+			public const int xml_tool_ecu_log_tag = 2131099816;
+			
+			// aapt resource value: 0x7f0600a3
+			public const int xml_tool_ecu_page_name = 2131099811;
+			
+			// aapt resource value: 0x7f06009d
+			public const int xml_tool_ecu_result_comments = 2131099805;
+			
+			// aapt resource value: 0x7f06009e
+			public const int xml_tool_ecu_result_type = 2131099806;
+			
+			// aapt resource value: 0x7f0600a6
+			public const int xml_tool_ecu_results = 2131099814;
+			
+			// aapt resource value: 0x7f0600a9
+			public const int xml_tool_ecu_test_format = 2131099817;
+			
+			// aapt resource value: 0x7f06009b
+			public const int xml_tool_ecu_title = 2131099803;
+			
+			// aapt resource value: 0x7f06009f
+			public const int xml_tool_ecu_user_format = 2131099807;
+			
+			// aapt resource value: 0x7f06008f
+			public const int xml_tool_errors_page = 2131099791;
+			
+			// aapt resource value: 0x7f0600ab
+			public const int xml_tool_execute_test_job = 2131099819;
+			
+			// aapt resource value: 0x7f06008d
+			public const int xml_tool_info_grp = 2131099789;
+			
+			// aapt resource value: 0x7f06008c
+			public const int xml_tool_info_sgbd = 2131099788;
+			
+			// aapt resource value: 0x7f06008e
+			public const int xml_tool_info_vin = 2131099790;
+			
+			// aapt resource value: 0x7f060091
+			public const int xml_tool_man_config = 2131099793;
+			
+			// aapt resource value: 0x7f06008a
+			public const int xml_tool_msg_ecu_error = 2131099786;
+			
+			// aapt resource value: 0x7f060089
+			public const int xml_tool_msg_save_config = 2131099785;
+			
+			// aapt resource value: 0x7f060084
+			public const int xml_tool_no_response = 2131099780;
+			
+			// aapt resource value: 0x7f060085
+			public const int xml_tool_no_response_manual = 2131099781;
+			
+			// aapt resource value: 0x7f060087
+			public const int xml_tool_read_ecu_info_failed = 2131099783;
 			
 			// aapt resource value: 0x7f060086
-			public const int xml_tool_save_xml_failed = 2131099782;
+			public const int xml_tool_read_jobs_failed = 2131099782;
 			
-			// aapt resource value: 0x7f060081
-			public const int xml_tool_select_sgbd = 2131099777;
+			// aapt resource value: 0x7f0600ac
+			public const int xml_tool_read_test_job_failed = 2131099820;
 			
-			// aapt resource value: 0x7f06007c
-			public const int xml_tool_title = 2131099772;
+			// aapt resource value: 0x7f060088
+			public const int xml_tool_save_xml_failed = 2131099784;
+			
+			// aapt resource value: 0x7f060083
+			public const int xml_tool_select_sgbd = 2131099779;
+			
+			// aapt resource value: 0x7f06007e
+			public const int xml_tool_title = 2131099774;
 			
 			static String()
 			{

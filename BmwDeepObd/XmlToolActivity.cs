@@ -124,6 +124,7 @@ namespace BmwDeepObd
         private Thread _jobThread;
         private string _vin = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
+        private bool _ecuListTranslated;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -578,9 +579,33 @@ namespace BmwDeepObd
             {
                 _vin = string.Empty;
                 _ecuList.Clear();
+                _ecuListTranslated = false;
             }
             else
             {
+                if (!_ecuListTranslated)
+                {
+                    _ecuListTranslated = true;
+                    List<string> stringList = (from ecu in _ecuList where !string.IsNullOrEmpty(ecu.Description) select ecu.Description).ToList();
+                    if (_activityCommon.TranslateStrings(stringList, transList =>
+                    {
+                        if (transList != null && transList.Count == stringList.Count)
+                        {
+                            int index = 0;
+                            foreach (EcuInfo ecu in _ecuList)
+                            {
+                                if (!string.IsNullOrEmpty(ecu.Description))
+                                {
+                                    ecu.Description = transList[index++];
+                                }
+                            }
+                        }
+                        UpdateDisplay();
+                    }))
+                    {
+                        return;
+                    }
+                }
                 foreach (EcuInfo ecu in _ecuList)
                 {
                     _ecuListAdapter.Items.Add(ecu);
@@ -797,6 +822,7 @@ namespace BmwDeepObd
                 _manualConfigIdx = listView.CheckedItemPosition >= 0 ? listView.CheckedItemPosition : 0;
                 _vin = string.Empty;
                 _ecuList.Clear();
+                _ecuListTranslated = false;
                 if (_manualConfigIdx > 0)
                 {
                     EdiabasOpen();
@@ -941,6 +967,7 @@ namespace BmwDeepObd
             EdiabasOpen();
             _vin = string.Empty;
             _ecuList.Clear();
+            _ecuListTranslated = false;
             UpdateDisplay();
 
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
@@ -1902,6 +1929,7 @@ namespace BmwDeepObd
             if (_manualConfigIdx > 0)
             {   // manual mode, create ecu list
                 _ecuList.Clear();
+                _ecuListTranslated = false;
                 foreach (XElement node in pagesNode.Elements(ns + "include"))
                 {
                     XAttribute fileAttrib = node.Attribute("filename");
