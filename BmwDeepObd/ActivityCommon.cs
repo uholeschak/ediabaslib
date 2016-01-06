@@ -23,6 +23,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using Android.Content.PM;
+using Android.Text.Method;
 
 namespace BmwDeepObd
 {
@@ -153,6 +154,10 @@ namespace BmwDeepObd
                 _appId = value;
             }
         }
+
+        public static bool EnableTranslation { get; set; }
+
+        public static bool EnableTranslateRequested { get; set; }
 
         public InterfaceType SelectedInterface
         {
@@ -1112,6 +1117,50 @@ namespace BmwDeepObd
                 if (maxWordsAttr != null)
                 {
                     maxWords = XmlConvert.ToInt32(maxWordsAttr.Value);
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool IsTranslationRequired()
+        {
+            string lang = Java.Util.Locale.Default.Language ?? string.Empty;
+            return string.Compare(lang, "de", StringComparison.OrdinalIgnoreCase) != 0;
+        }
+
+        public bool RequestEnableTranslate(EventHandler<EventArgs> handler = null)
+        {
+            try
+            {
+                if (!IsTranslationRequired() || EnableTranslation || EnableTranslateRequested)
+                {
+                    return false;
+                }
+                EnableTranslateRequested = true;
+                AlertDialog alertDialog = new AlertDialog.Builder(_activity)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        EnableTranslation = true;
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                    })
+                    .SetCancelable(true)
+                    .SetMessage(Resource.String.translate_enable_request)
+                    .SetTitle(Resource.String.alert_title_question)
+                    .Show();
+                alertDialog.DismissEvent += (sender, args) =>
+                {
+                    handler?.Invoke(sender, args);
+                };
+                TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                if (messageView != null)
+                {
+                    messageView.MovementMethod = new LinkMovementMethod();
                 }
             }
             catch (Exception)
