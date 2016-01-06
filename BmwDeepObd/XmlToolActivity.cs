@@ -43,6 +43,7 @@ namespace BmwDeepObd
                 Name = name;
                 Address = address;
                 Description = description;
+                DescriptionTrans = null;
                 Sgbd = sgbd;
                 Grp = grp;
                 Selected = false;
@@ -57,6 +58,8 @@ namespace BmwDeepObd
             public Int64 Address { get; set; }
 
             public string Description { get; set; }
+
+            public string DescriptionTrans { get; set; }
 
             public string Sgbd { get; set; }
 
@@ -621,7 +624,7 @@ namespace BmwDeepObd
                             {
                                 if (!string.IsNullOrEmpty(ecu.Description))
                                 {
-                                    ecu.Description = transList[index++];
+                                    ecu.DescriptionTrans = transList[index++];
                                 }
                             }
                         }
@@ -635,6 +638,10 @@ namespace BmwDeepObd
                 {
                     _ecuListAdapter.Items.Add(ecu);
                 }
+            }
+            if (!ActivityCommon.EnableTranslation)
+            {
+                _ecuListTranslated = false;
             }
 
             _buttonRead.Text = GetString((_manualConfigIdx > 0) ?
@@ -1559,10 +1566,12 @@ namespace BmwDeepObd
                     progress.Hide();
                     progress.Dispose();
 
+                    _ecuListTranslated = false;
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
                     if (readFailed)
                     {
+                        _commErrorsOccured = true;
                         _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_ecu_info_failed), Resource.String.alert_title_error);
                     }
                 });
@@ -2536,7 +2545,15 @@ namespace BmwDeepObd
 
                 TextView textEcuName = view.FindViewById<TextView>(Resource.Id.textEcuName);
                 TextView textEcuDesc = view.FindViewById<TextView>(Resource.Id.textEcuDesc);
-                textEcuName.Text = item.Name + ": " + item.Description;
+                textEcuName.Text = item.Name + ": ";
+                if (_context._ecuListTranslated && !string.IsNullOrEmpty(item.DescriptionTrans))
+                {
+                    textEcuName.Text += item.DescriptionTrans;
+                }
+                else
+                {
+                    textEcuName.Text += item.Description;
+                }
 
                 StringBuilder stringBuilderInfo = new StringBuilder();
                 stringBuilderInfo.Append(_context.GetString(Resource.String.xml_tool_info_sgbd));
