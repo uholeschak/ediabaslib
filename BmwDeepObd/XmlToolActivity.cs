@@ -226,12 +226,13 @@ namespace BmwDeepObd
             base.OnResume();
 
             _activityActive = true;
-            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None)
+            if (!_activityCommon.RequestEnableTranslate((sender, args) =>
             {
-                SelectInterface();
+                HandleStartDialogs();
+            }))
+            {
+                HandleStartDialogs();
             }
-            SelectInterfaceEnable();
-            SupportInvalidateOptionsMenu();
         }
 
         protected override void OnPause()
@@ -403,6 +404,14 @@ namespace BmwDeepObd
                 addErrorsMenu.SetChecked(_addErrorsPage);
             }
 
+            IMenuItem enableTranslationMenu = menu.FindItem(Resource.Id.menu_xml_tool_enable_translation);
+            if (enableTranslationMenu != null)
+            {
+                enableTranslationMenu.SetEnabled(true);
+                enableTranslationMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                enableTranslationMenu.SetChecked(ActivityCommon.EnableTranslation);
+            }
+
             IMenuItem cfgTypeSubMenu = menu.FindItem(Resource.Id.menu_xml_tool_submenu_cfg_type);
             if (cfgTypeSubMenu != null)
             {
@@ -475,6 +484,12 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     return true;
 
+                case Resource.Id.menu_xml_tool_enable_translation:
+                    ActivityCommon.EnableTranslation = !ActivityCommon.EnableTranslation;
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                    return true;
+
                 case Resource.Id.menu_xml_tool_submenu_cfg_type:
                     if (IsJobRunning())
                     {
@@ -507,6 +522,16 @@ namespace BmwDeepObd
             {
                 Finish();
             }
+        }
+
+        private void HandleStartDialogs()
+        {
+            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None)
+            {
+                SelectInterface();
+            }
+            SelectInterfaceEnable();
+            SupportInvalidateOptionsMenu();
         }
 
         private void EdiabasOpen()
@@ -583,7 +608,7 @@ namespace BmwDeepObd
             }
             else
             {
-                if (!_ecuListTranslated)
+                if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation && !_ecuListTranslated)
                 {
                     _ecuListTranslated = true;
                     List<string> stringList = (from ecu in _ecuList where !string.IsNullOrEmpty(ecu.Description) select ecu.Description).ToList();

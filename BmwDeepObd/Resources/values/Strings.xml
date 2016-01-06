@@ -62,6 +62,7 @@
   <!-- Translate -->
   <string name="translate_text">Translating text</string>
   <string name="translate_failed">Translation failed.\nPlease check your network connection.</string>
+  <string name="translate_enable_request">Do you want to enable automatic ECU text translation with <a href='http://translate.yandex.com'>Yandex</a>?\nThis requires an internet connection.\nPowered by Yandex.Translate</string>
 
   <!--  DeviceListActivity -->
   <string name="scanning">Scanning for devices ...</string>
@@ -102,6 +103,7 @@
   <string name="menu_submenu_help">Online help</string>
   <string name="menu_info">App info</string>
   <string name="menu_exit">Exit app</string>
+  <string name="menu_enable_translaton">Translate ECU text</string>
 
   <!-- Data logging -->
   <string name="datalog_enable_trace">Create trace file</string>
