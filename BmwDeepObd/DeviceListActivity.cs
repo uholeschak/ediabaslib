@@ -235,18 +235,53 @@ namespace BmwDeepObd
                     BluetoothDevice device = _btAdapter.GetRemoteDevice(deviceAddress);
                     if (device != null)
                     {
-                        using (BluetoothSocket bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid))
+                        BluetoothSocket bluetoothSocket = null;
+
+                        adapterType = AdapterType.ConnectionFailed;
+                        if (adapterType == AdapterType.ConnectionFailed)
                         {
                             try
                             {
-                                bluetoothSocket.Connect();
+                                bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
+                                if (bluetoothSocket != null)
+                                {
+                                    bluetoothSocket.Connect();
+                                    adapterType = AdapterTypeDetection(bluetoothSocket);
+                                }
                             }
                             catch (Exception)
-                            {   // sometimes connection failes in the first attempt
-                                bluetoothSocket.Connect();
+                            {
+                                adapterType = AdapterType.ConnectionFailed;
                             }
-                            adapterType = AdapterTypeDetection(bluetoothSocket);
-                            bluetoothSocket.Close();
+                            finally
+                            {
+                                bluetoothSocket?.Close();
+                            }
+                        }
+
+                        if (adapterType == AdapterType.ConnectionFailed)
+                        {
+                            IntPtr createRfcommSocket = Android.Runtime.JNIEnv.GetMethodID(device.Class.Handle,
+                                "createRfcommSocket", "(I)Landroid/bluetooth/BluetoothSocket;");
+                            IntPtr rfCommSocket = Android.Runtime.JNIEnv.CallObjectMethod(device.Handle,
+                                createRfcommSocket, new Android.Runtime.JValue(1));
+                            try
+                            {
+                                bluetoothSocket = GetObject<BluetoothSocket>(rfCommSocket, Android.Runtime.JniHandleOwnership.TransferLocalRef);
+                                if (bluetoothSocket != null)
+                                {
+                                    bluetoothSocket.Connect();
+                                    adapterType = AdapterTypeDetection(bluetoothSocket);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                adapterType = AdapterType.ConnectionFailed;
+                            }
+                            finally
+                            {
+                                bluetoothSocket?.Close();
+                            }
                         }
                     }
                 }
