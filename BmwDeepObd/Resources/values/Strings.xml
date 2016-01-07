@@ -27,11 +27,7 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
-\n- Now Bluetooth adapters with many improvements are available at <a href='https://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327'>ediabaslib.codeplex.com</a>!
-\n- Allow to create manual configurations for older vehices
-\n- Added test button in configuration editor
-\n- Allow to change ECU order in configuration editor
-\n- Allow to send trace files for adapter detection</string>
+\n- Improved Bluetooth connection</string>
   <string name="app_info_message">Deep OBD for BMW\nVersion: {0}\nId: {1}</string>
 
   <!-- Alert titles -->

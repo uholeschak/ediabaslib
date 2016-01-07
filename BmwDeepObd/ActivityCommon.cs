@@ -1129,8 +1129,12 @@ namespace BmwDeepObd
 
         public static bool IsTranslationRequired()
         {
+#if false
             string lang = Java.Util.Locale.Default.Language ?? string.Empty;
             return string.Compare(lang, "de", StringComparison.OrdinalIgnoreCase) != 0;
+#else
+            return false;
+#endif
         }
 
         public bool RequestEnableTranslate(EventHandler<EventArgs> handler = null)
