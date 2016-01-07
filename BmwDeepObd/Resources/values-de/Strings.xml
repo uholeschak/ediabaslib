@@ -61,7 +61,7 @@
 
   <!-- Translate -->
   <string name="translate_text">Text wird übersetzt</string>
-  <string name="translate_failed">Übersetzung fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.</string>
+  <string name="translate_failed">Übersetzung fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.\nWollen Sie die Übersetzung wiederholen?</string>
   <string name="translate_enable_request">Wollen Sie automatisch die ECU Texte mit <a href='http://translate.yandex.com'>Yandex</a> übersetzen lasen?\nHierfür benötigen Sie eine Internetverbindung.\nPowered by Yandex.Translate</string>
 
   <!--  DeviceListActivity -->
@@ -73,7 +73,7 @@
   <string name="title_other_devices">Andere verfügbare Geräte</string>
   <string name="button_scan">Nach Geräten suchen</string>
   <string name="detect_adapter">Adaptertyp erkennen</string>
-  <string name="adapter_connection_failed">Es konnte keine Verbindung zum Adapter hergestellt werden.\nWollen Sie trotzdem diesen Adapter verwenden (die Telegramme werden unverändert gesendet)?</string>
+  <string name="adapter_connection_failed">Es konnte keine Bloetooth-Verbindung zum Adapter hergestellt werden.\nWenn eine andere App diese Verbindung verwendet beenden Sie diese App oder starten Sie das Android Gerät neu.\nWollen Sie trotzdem diesen Adapter verwenden (die Telegramme werden unverändert gesendet)?</string>
   <string name="unknown_adapter_type">Der Adaptertyp wurde nicht erkannt.\nWollen Sie trotzdem diesen Adapter verwenden (die Telegramme werden unverändert gesendet)?</string>
   <string name="invalid_adapter_type">Der ELM327 Adapter unterstützt nicht all notwendigen Kommandos und ist inkompatibel mit dieser Software.</string>
   <string name="fake_elm_adapter_type">The ELM327 Adapter ist eine gefälschte 2.1 Version und inkompatibel mit dieser Software.</string>

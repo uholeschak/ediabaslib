@@ -1284,11 +1284,33 @@ namespace BmwDeepObd
                                 _translateProgress = null;
                                 SetCpuLock(false);
                             }
-                            handler(_yandexTransList);
                             if (!args.Cancelled && ((_yandexLangList == null) || (_yandexTransList == null)))
                             {
-                                ShowAlert(_activity.GetString(Resource.String.translate_failed),
-                                    Resource.String.alert_title_error);
+                                bool yesSelected = false;
+                                AlertDialog altertDialog = new AlertDialog.Builder(_activity)
+                                    .SetPositiveButton(Resource.String.button_yes, (s, a) =>
+                                    {
+                                        yesSelected = true;
+                                        TranslateStrings(stringList, handler);
+                                    })
+                                    .SetNegativeButton(Resource.String.button_no, (s, a) =>
+                                    {
+                                    })
+                                    .SetCancelable(true)
+                                    .SetMessage(Resource.String.translate_failed)
+                                    .SetTitle(Resource.String.alert_title_error)
+                                    .Show();
+                                altertDialog.DismissEvent += (o, eventArgs) =>
+                                {
+                                    if (!yesSelected)
+                                    {
+                                        handler(null);
+                                    }
+                                };
+                            }
+                            else
+                            {
+                                handler(_yandexTransList);
                             }
                         });
                     };
@@ -1322,9 +1344,27 @@ namespace BmwDeepObd
                             _translateProgress = null;
                             SetCpuLock(false);
                         }
-                        handler(null);
-                        ShowAlert(_activity.GetString(Resource.String.translate_failed),
-                            Resource.String.alert_title_error);
+                        bool yesSelected = false;
+                        AlertDialog altertDialog = new AlertDialog.Builder(_activity)
+                            .SetPositiveButton(Resource.String.button_yes, (s, a) =>
+                            {
+                                yesSelected = true;
+                                TranslateStrings(stringList, handler);
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (s, a) =>
+                            {
+                            })
+                            .SetCancelable(true)
+                            .SetMessage(Resource.String.translate_failed)
+                            .SetTitle(Resource.String.alert_title_error)
+                            .Show();
+                        altertDialog.DismissEvent += (o, eventArgs) =>
+                        {
+                            if (!yesSelected)
+                            {
+                                handler(null);
+                            }
+                        };
                     });
                 }
             });
