@@ -39,6 +39,8 @@ namespace BmwDeepObd
 
             public List<string> Comments { get; }
 
+            public List<string> CommentsTrans { get; set; }
+
             public bool Selected { get; set; }
 
             public string Format { get; set; }
@@ -61,6 +63,8 @@ namespace BmwDeepObd
             public string Name { get; }
 
             public List<string> Comments { get; }
+
+            public List<string> CommentsTrans { get; set; }
 
             public List<ResultInfo> Results { get; }
 
@@ -266,12 +270,17 @@ namespace BmwDeepObd
             return false;
         }
 
+        public static bool IsValidJob(JobInfo job)
+        {
+            return job.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase) && job.ArgCount == 0;
+        }
+
         private void UpdateDisplay()
         {
             _spinnerJobsAdapter.Items.Clear();
             foreach (JobInfo job in _ecuInfo.JobList.OrderBy(x => x.Name))
             {
-                if (job.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase) && job.ArgCount == 0)
+                if (IsValidJob(job))
                 {
                     _spinnerJobsAdapter.Items.Add(job);
                 }
@@ -586,13 +595,17 @@ namespace BmwDeepObd
                 _textViewJobCommentsTitle.Text = string.Format(GetString(Resource.String.xml_tool_ecu_job_comments), _selectedJob.Name);
 
                 StringBuilder stringBuilderComments = new StringBuilder();
-                foreach (string comment in _selectedJob.Comments)
+                List<string> commentList = _selectedJob.CommentsTrans ?? _selectedJob.Comments;
+                if (commentList != null)
                 {
-                    if (stringBuilderComments.Length > 0)
+                    foreach (string comment in commentList)
                     {
-                        stringBuilderComments.Append("\r\n");
+                        if (stringBuilderComments.Length > 0)
+                        {
+                            stringBuilderComments.Append("\r\n");
+                        }
+                        stringBuilderComments.Append(comment);
                     }
-                    stringBuilderComments.Append(comment);
                 }
                 _textViewJobComments.Text = stringBuilderComments.ToString();
             }
@@ -619,10 +632,14 @@ namespace BmwDeepObd
                 stringBuilderComments.Append(GetString(Resource.String.xml_tool_ecu_result_type));
                 stringBuilderComments.Append(": ");
                 stringBuilderComments.Append(_selectedResult.Type);
-                foreach (string comment in _selectedResult.Comments)
+                List<string> commentList = _selectedResult.CommentsTrans ?? _selectedResult.Comments;
+                if (commentList != null)
                 {
-                    stringBuilderComments.Append("\r\n");
-                    stringBuilderComments.Append(comment);
+                    foreach (string comment in commentList)
+                    {
+                        stringBuilderComments.Append("\r\n");
+                        stringBuilderComments.Append(comment);
+                    }
                 }
                 _textViewResultComments.Text = stringBuilderComments.ToString();
                 _editTextDisplayText.Text = _selectedResult.DisplayText;
@@ -780,13 +797,17 @@ namespace BmwDeepObd
                 textJobName.Text = item.Name;
 
                 StringBuilder stringBuilderComments = new StringBuilder();
-                foreach (string comment in item.Comments)
+                List<string> commentList = item.CommentsTrans ?? item.Comments;
+                if (commentList != null)
                 {
-                    if (stringBuilderComments.Length > 0)
+                    foreach (string comment in commentList)
                     {
-                        stringBuilderComments.Append("; ");
+                        if (stringBuilderComments.Length > 0)
+                        {
+                            stringBuilderComments.Append("; ");
+                        }
+                        stringBuilderComments.Append(comment);
                     }
-                    stringBuilderComments.Append(comment);
                 }
                 textJobDesc.Text = stringBuilderComments.ToString();
 
@@ -867,13 +888,17 @@ namespace BmwDeepObd
                 textJobName.Text = item.Name + " (" + item.Type + ")";
 
                 StringBuilder stringBuilderComments = new StringBuilder();
-                foreach (string comment in item.Comments)
+                List<string> commentList = item.CommentsTrans ?? item.Comments;
+                if (commentList != null)
                 {
-                    if (stringBuilderComments.Length > 0)
+                    foreach (string comment in commentList)
                     {
-                        stringBuilderComments.Append("; ");
+                        if (stringBuilderComments.Length > 0)
+                        {
+                            stringBuilderComments.Append("; ");
+                        }
+                        stringBuilderComments.Append(comment);
                     }
-                    stringBuilderComments.Append(comment);
                 }
                 textJobDesc.Text = stringBuilderComments.ToString();
 
