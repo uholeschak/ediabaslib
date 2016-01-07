@@ -61,7 +61,7 @@
 
   <!-- Translate -->
   <string name="translate_text">Translating text</string>
-  <string name="translate_failed">Translation failed.\nPlease check your network connection.</string>
+  <string name="translate_failed">Translation failed.\nPlease check your network connection.\nDo you want to retry the translation?</string>
   <string name="translate_enable_request">Do you want to enable automatic ECU text translation with <a href='http://translate.yandex.com'>Yandex</a>?\nThis requires an internet connection.\nPowered by Yandex.Translate</string>
 
   <!--  DeviceListActivity -->
@@ -73,7 +73,7 @@
   <string name="title_other_devices">Other available devices</string>
   <string name="button_scan">Scan for devices</string>
   <string name="detect_adapter">Detecting adapter type</string>
-  <string name="adapter_connection_failed">Unable to connect to the adapter.\nDo you still want to use this adapter (the telegrams will be send unmodified)?</string>
+  <string name="adapter_connection_failed">Bluetooth connection to the adapter failed.\nIf another app uses the connection terminate the app or reboot the android device.\nDo you still want to use this adapter (the telegrams will be send unmodified)?</string>
   <string name="unknown_adapter_type">Adapter type detection failed.\nDo you still want to use this adapter (the telegrams will be send unmodified)?</string>
   <string name="invalid_adapter_type">The ELM327 adapter is not supporting all required commands and is incompatible with this software.</string>
   <string name="fake_elm_adapter_type">The ELM327 adapter is a fake 2.1 version and is incompatible with this software.</string>
