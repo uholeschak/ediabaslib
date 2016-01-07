@@ -108,7 +108,7 @@ namespace EdiabasLib
                 }
                 bluetoothAdapter.CancelDiscovery();
 
-                _bluetoothSocket = device.CreateRfcommSocketToServiceRecord (SppUuid);
+                _bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
                 try
                 {
                     _bluetoothSocket.Connect();
@@ -123,8 +123,16 @@ namespace EdiabasLib
                 {
                     IntPtr createRfcommSocket = Android.Runtime.JNIEnv.GetMethodID(device.Class.Handle,
                         "createRfcommSocket", "(I)Landroid/bluetooth/BluetoothSocket;");
+                    if (createRfcommSocket == IntPtr.Zero)
+                    {
+                        throw new Exception("No createRfcommSocket");
+                    }
                     IntPtr rfCommSocket = Android.Runtime.JNIEnv.CallObjectMethod(device.Handle,
                         createRfcommSocket, new Android.Runtime.JValue(1));
+                    if (rfCommSocket == IntPtr.Zero)
+                    {
+                        throw new Exception("No rfCommSocket");
+                    }
                     _bluetoothSocket = Java.Lang.Object.GetObject<BluetoothSocket>(rfCommSocket, Android.Runtime.JniHandleOwnership.TransferLocalRef);
                     _bluetoothSocket.Connect();
                 }
