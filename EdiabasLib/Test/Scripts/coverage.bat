@@ -82,7 +82,7 @@ for /l %%x in (0, 1, 32) do (
  -f \"ERGD=D\" -f \"ERGD=6.4D\" -f \"ERGD=-6.4D\" -f \"ERGD=6.4B\" -f \"ERGD=6.4C\" -f \"ERGL=6.4L\" -f \"ERGL=-6.4L\" -f \"ERGL=-6.4B\" -f \"ERGL=-6.4C\" !"^"=!^
  -f \"ERGR=R\" -f \"ERGR=10.5R\" -f \"ERGR=-10.5R\" -f \"ERGR=10.5ER\" -f \"ERGR=-10.5eR\" -f \"ERGR=-.5R\" -f \"ERGR=-8.R\" -f \"ERGR=8.ER\" -f \"ERGR=0.3R\" -f \"ERGR=3.0R\" !"^"=!^
  -f \"ERGS=10.4T\" -f \"ERGS=-10.4T\" -f \"ERGS=10.8T\" -f \"ERGS=0.8T\" -f \"ERGS=T\" !"^"=!^
- -j \"TEST_MULTIARG#3;-4;10000;-10000;100000;-100000;0.001345;Ulrich;Erwin\""
+ -j \"TEST_MULTIARG#3;-4;10000;-10000;100000;-100000;0.001345;Ulrich;Erwin\" -j \"TEST_MULTIARG#;-4;z;-10000;100000;-100000;0.001345; ;Erwin\""
 
 "%OPEN_COVER%" "-output:results21.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" !"^"=!^
  -f \"ERGB=W\" -f \"ERGB=6.4W\" -f \"ERGB=-6.4W\" -f \"ERGB=-.4W\" -f \"ERGB=8.W\" -f \"ERGB=-.W\" !"^"=!^

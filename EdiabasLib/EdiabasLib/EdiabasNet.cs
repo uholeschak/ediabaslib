@@ -5711,7 +5711,14 @@ namespace EdiabasLib
 
         public static Int64 StringToValue(string number)
         {
+            bool valid;
+            return StringToValue(number, out valid);
+        }
+
+        public static Int64 StringToValue(string number, out bool valid)
+        {
             Int64 value = 0;
+            valid = false;
             string numberLocal = number.TrimEnd();
             if (numberLocal.Length == 0)
             {
@@ -5746,6 +5753,7 @@ namespace EdiabasLib
                         }
                     }
                 }
+                valid = true;
             }
             catch (Exception)
             {
@@ -5756,7 +5764,14 @@ namespace EdiabasLib
 
         public static EdFloatType StringToFloat(string number)
         {
+            bool valid;
+            return StringToFloat(number, out valid);
+        }
+
+        public static EdFloatType StringToFloat(string number, out bool valid)
+        {
             EdFloatType result = 0;
+            valid = false;
             try
             {
                 byte[] numberArray = Encoding.ASCII.GetBytes(number);
@@ -5764,6 +5779,7 @@ namespace EdiabasLib
                 {
                     number = number.Replace(",", ".");
                     result = EdFloatType.Parse(number, Culture);
+                    valid = true;
                 }
             }
             catch (Exception)
