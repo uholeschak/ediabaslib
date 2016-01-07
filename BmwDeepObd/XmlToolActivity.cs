@@ -611,28 +611,12 @@ namespace BmwDeepObd
             }
             else
             {
-                if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation && !_ecuListTranslated)
+                if (TranslateEcuText((sender, args) =>
                 {
-                    _ecuListTranslated = true;
-                    List<string> stringList = (from ecu in _ecuList where !string.IsNullOrEmpty(ecu.Description) select ecu.Description).ToList();
-                    if (_activityCommon.TranslateStrings(stringList, transList =>
-                    {
-                        if (transList != null && transList.Count == stringList.Count)
-                        {
-                            int index = 0;
-                            foreach (EcuInfo ecu in _ecuList)
-                            {
-                                if (!string.IsNullOrEmpty(ecu.Description))
-                                {
-                                    ecu.DescriptionTrans = transList[index++];
-                                }
-                            }
-                        }
-                        UpdateDisplay();
-                    }))
-                    {
-                        return;
-                    }
+                    UpdateDisplay();
+                }))
+                {
+                    return;
                 }
                 foreach (EcuInfo ecu in _ecuList)
                 {
@@ -661,6 +645,145 @@ namespace BmwDeepObd
                 }
             }
             _textViewCarInfo.Text = statusText;
+        }
+
+        private bool TranslateEcuText(EventHandler<EventArgs> handler = null)
+        {
+            if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation && !_ecuListTranslated)
+            {
+                _ecuListTranslated = true;
+                List<string> stringList = new List<string>();
+                foreach (EcuInfo ecu in _ecuList)
+                {
+                    if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTrans == null)
+                    {
+                        stringList.Add(ecu.Description);
+                    }
+                    if (ecu.JobList != null)
+                    {
+                        // ReSharper disable LoopCanBeConvertedToQuery
+                        foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
+                        {
+                            if (jobInfo.Comments != null && jobInfo.CommentsTrans == null &&
+                                XmlToolEcuActivity.IsValidJob(jobInfo))
+                            {
+                                foreach (string comment in jobInfo.Comments)
+                                {
+                                    if (!string.IsNullOrEmpty(comment))
+                                    {
+                                        stringList.Add(comment);
+                                    }
+                                }
+                            }
+                            if (jobInfo.Results != null)
+                            {
+                                foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
+                                {
+                                    if (result.Comments != null && result.CommentsTrans == null)
+                                    {
+                                        foreach (string comment in result.Comments)
+                                        {
+                                            if (!string.IsNullOrEmpty(comment))
+                                            {
+                                                stringList.Add(comment);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        // ReSharper restore LoopCanBeConvertedToQuery
+                    }
+                }
+                if (stringList.Count == 0)
+                {
+                    return false;
+                }
+                if (_activityCommon.TranslateStrings(stringList, transList =>
+                {
+                    if (transList != null && transList.Count == stringList.Count)
+                    {
+                        int transIndex = 0;
+                        foreach (EcuInfo ecu in _ecuList)
+                        {
+                            if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTrans == null)
+                            {
+                                ecu.DescriptionTrans = transList[transIndex++];
+                            }
+                            if (ecu.JobList != null)
+                            {
+                                foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
+                                {
+                                    if (jobInfo.Comments != null && jobInfo.CommentsTrans == null &&
+                                        XmlToolEcuActivity.IsValidJob(jobInfo))
+                                    {
+                                        jobInfo.CommentsTrans = new List<string>();
+                                        foreach (string comment in jobInfo.Comments)
+                                        {
+                                            if (!string.IsNullOrEmpty(comment))
+                                            {
+                                                jobInfo.CommentsTrans.Add(transList[transIndex++]);
+                                            }
+                                        }
+                                    }
+                                    if (jobInfo.Results != null)
+                                    {
+                                        foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
+                                        {
+                                            if (result.Comments != null && result.CommentsTrans == null)
+                                            {
+                                                result.CommentsTrans = new List<string>();
+                                                foreach (string comment in result.Comments)
+                                                {
+                                                    if (!string.IsNullOrEmpty(comment))
+                                                    {
+                                                        result.CommentsTrans.Add(transList[transIndex++]);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    handler?.Invoke(this, new EventArgs());
+                }))
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                ResetTranslations();
+            }
+            return false;
+        }
+
+        private void ResetTranslations()
+        {
+            if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
+            {
+                return;
+            }
+            foreach (EcuInfo ecu in _ecuList)
+            {
+                ecu.DescriptionTrans = null;
+                if (ecu.JobList != null)
+                {
+                    foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
+                    {
+                        jobInfo.CommentsTrans = null;
+                        if (jobInfo.Results != null)
+                        {
+                            foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
+                            {
+                                result.CommentsTrans = null;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void UpdateLogInfo()
@@ -1470,7 +1593,14 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        SelectJobs(ecuInfo);
+                        _ecuListTranslated = false;
+                        if (!TranslateEcuText((sender, args) =>
+                        {
+                            SelectJobs(ecuInfo);
+                        }))
+                        {
+                            SelectJobs(ecuInfo);
+                        }
                     }
                 });
             });
@@ -2546,7 +2676,7 @@ namespace BmwDeepObd
                 TextView textEcuName = view.FindViewById<TextView>(Resource.Id.textEcuName);
                 TextView textEcuDesc = view.FindViewById<TextView>(Resource.Id.textEcuDesc);
                 textEcuName.Text = item.Name + ": ";
-                if (_context._ecuListTranslated && !string.IsNullOrEmpty(item.DescriptionTrans))
+                if (!string.IsNullOrEmpty(item.DescriptionTrans))
                 {
                     textEcuName.Text += item.DescriptionTrans;
                 }
