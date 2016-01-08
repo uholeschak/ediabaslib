@@ -1146,6 +1146,87 @@ namespace BmwDeepObd
 #endif
         }
 
+        public static bool StoreTranslationCache(string fileName)
+        {
+            try
+            {
+                XElement xmlLangNodes = new XElement("LanguageCache");
+                foreach (string language in YandexTransDict.Keys)
+                {
+                    Dictionary<string, string> langDict = YandexTransDict[language];
+                    XElement xmlLang = new XElement("Language");
+                    xmlLang.Add(new XAttribute("Name", language));
+                    foreach (string key in langDict.Keys)
+                    {
+                        XElement xmlTransNode = new XElement("Trans");
+                        xmlTransNode.Add(new XAttribute("Key", key));
+                        xmlTransNode.Add(new XAttribute("Value", langDict[key]));
+                        xmlLang.Add(xmlTransNode);
+                    }
+                    xmlLangNodes.Add(xmlLang);
+                }
+                xmlLangNodes.Save(fileName);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool ReadTranslationCache(string fileName)
+        {
+            try
+            {
+                YandexTransDict.Clear();
+                if (!File.Exists(fileName))
+                {
+                    return false;
+                }
+                XDocument xmlLangDoc = XDocument.Load(fileName);
+                if (xmlLangDoc.Root == null)
+                {
+                    return false;
+                }
+                foreach (XElement langNode in xmlLangDoc.Root.Elements("Language"))
+                {
+                    XAttribute attrName = langNode.Attribute("Name");
+                    if (attrName == null)
+                    {
+                        continue;
+                    }
+                    string language = attrName.Value;
+                    if (!YandexTransDict.ContainsKey(language))
+                    {
+                        Dictionary<string, string> langDict = new Dictionary<string, string>();
+                        foreach (XElement transNode in langNode.Elements("Trans"))
+                        {
+                            XAttribute attrKey = transNode.Attribute("Key");
+                            if (attrKey == null)
+                            {
+                                continue;
+                            }
+                            XAttribute attrValue = transNode.Attribute("Value");
+                            if (attrValue == null)
+                            {
+                                continue;
+                            }
+                            if (!langDict.ContainsKey(attrKey.Value))
+                            {
+                                langDict.Add(attrKey.Value, attrValue.Value);
+                            }
+                        }
+                        YandexTransDict.Add(language, langDict);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public bool RequestEnableTranslate(EventHandler<EventArgs> handler = null)
         {
             try
