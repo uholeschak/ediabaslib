@@ -2370,7 +2370,7 @@ namespace BmwDeepObd
                     // ignored
                 }
             }
-            ActivityCommon.ReadTranslationCache(Path.Combine(xmlFileDir, TranslationFileName));
+            _activityCommon.ReadTranslationCache(Path.Combine(xmlFileDir, TranslationFileName));
         }
 
         private string SaveAllXml()
@@ -2522,7 +2522,7 @@ namespace BmwDeepObd
                     }
                 }
                 ActivityCommon.WriteResourceToFile(typeof(XmlToolActivity).Namespace + ".Xml." + XsdFileName, Path.Combine(xmlFileDir, XsdFileName));
-                ActivityCommon.StoreTranslationCache(Path.Combine(xmlFileDir, TranslationFileName));
+                _activityCommon.StoreTranslationCache(Path.Combine(xmlFileDir, TranslationFileName));
                 return xmlConfigFile;
             }
             catch (Exception)
