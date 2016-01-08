@@ -742,11 +742,6 @@ namespace BmwDeepObd
                 prefsEdit.PutInt("VersionCode", _currentVersionCode);
                 prefsEdit.PutString("AppId", ActivityCommon.AppId);
                 prefsEdit.Commit();
-
-                if (!string.IsNullOrEmpty(_appDataPath))
-                {
-                    ActivityCommon.StoreTranslationCache(Path.Combine(_appDataPath, "TranslationCache.xml"));
-                }
             }
             catch (Exception)
             {
@@ -794,10 +789,6 @@ namespace BmwDeepObd
             {
                 _appDataPath = Path.Combine(_activityCommon.CustomStorageMedia, AppFolderName);
                 _ecuPath = Path.Combine(_appDataPath, EcuDirName);
-            }
-            if (!string.IsNullOrEmpty(_appDataPath))
-            {
-                ActivityCommon.ReadTranslationCache(Path.Combine(_appDataPath, "TranslationCache.xml"));
             }
         }
 
