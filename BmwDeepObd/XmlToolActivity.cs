@@ -552,11 +552,10 @@ namespace BmwDeepObd
                 }
                 _ediabas.AbortJobFunc = AbortEdiabasJob;
                 _ediabas.SetConfigProperty("EcuPath", _ecuDir);
+                UpdateLogInfo();
             }
 
             _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
-
-            UpdateLogInfo();
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local

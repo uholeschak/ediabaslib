@@ -102,6 +102,10 @@ namespace BmwDeepObd
         private Android.App.ProgressDialog _translateProgress;
         private List<string> _yandexLangList;
         private List<string> _yandexTransList;
+        private List<string> _yandexReducedStringList;
+        private string _yandexCurrentLang;
+        private static readonly Dictionary<string, Dictionary<string, string>> YandexTransDict;
+        private Dictionary<string, string> _yandexCurrentLangDict;
 
         public bool Emulator { get; }
 
@@ -183,6 +187,11 @@ namespace BmwDeepObd
         public PowerManager PowerManager => _powerManager;
 
         public Receiver BcReceiver => _bcReceiver;
+
+        static ActivityCommon()
+        {
+            YandexTransDict = new Dictionary<string, Dictionary<string, string>>();
+        }
 
         public ActivityCommon(Android.App.Activity activity, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null, BcReceiverReceivedDelegate bcReceiverReceivedHandler = null)
         {
@@ -1129,7 +1138,7 @@ namespace BmwDeepObd
 
         public static bool IsTranslationRequired()
         {
-#if false
+#if true
             string lang = Java.Util.Locale.Default.Language ?? string.Empty;
             return string.Compare(lang, "de", StringComparison.OrdinalIgnoreCase) != 0;
 #else
@@ -1184,6 +1193,34 @@ namespace BmwDeepObd
             if (_translateProgress == null)
             {
                 _yandexTransList = null;
+                // try to translate with cache first
+                _yandexCurrentLang = (Java.Util.Locale.Default.Language ?? "en").ToLowerInvariant();
+
+                if (!YandexTransDict.TryGetValue(_yandexCurrentLang, out _yandexCurrentLangDict))
+                {
+                    _yandexCurrentLangDict = new Dictionary<string, string>();
+                    YandexTransDict.Add(_yandexCurrentLang, _yandexCurrentLangDict);
+                }
+                _yandexReducedStringList = new List<string>();
+                List<string> translationList = new List<string>();
+                foreach (string text in stringList)
+                {
+                    string translation;
+                    if (_yandexCurrentLangDict.TryGetValue(text, out translation))
+                    {
+                        translationList.Add(translation);
+                    }
+                    else
+                    {
+                        _yandexReducedStringList.Add(text);
+                    }
+                }
+                if (_yandexReducedStringList.Count == 0)
+                {
+                    handler(translationList);
+                    return true;
+                }
+
                 _translateProgress = new Android.App.ProgressDialog(_activity);
                 _translateProgress.SetMessage(_activity.GetString(Resource.String.translate_text));
                 _translateProgress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
@@ -1193,7 +1230,7 @@ namespace BmwDeepObd
                 SetCpuLock(true);
             }
             _translateProgress.SetCancelable(false);
-            _translateProgress.Progress = (_yandexTransList?.Count ?? 0) * 100 / stringList.Count;
+            _translateProgress.Progress = (_yandexTransList?.Count ?? 0) * 100 / _yandexReducedStringList.Count;
 
             Thread translateThread = new Thread(() =>
             {
@@ -1211,7 +1248,7 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        string langPair = ("de-" + (Java.Util.Locale.Default.Language ?? string.Empty)).ToLowerInvariant();
+                        string langPair = "de-" + _yandexCurrentLang;
                         if (_yandexLangList.All(lang => string.Compare(lang, langPair, StringComparison.OrdinalIgnoreCase) != 0))
                         {
                             // language not found
@@ -1224,10 +1261,10 @@ namespace BmwDeepObd
                         sbUrl.Append("&lang=");
                         sbUrl.Append(langPair);
                         int offset = _yandexTransList?.Count ?? 0;
-                        for (int i = offset; i < stringList.Count; i++)
+                        for (int i = offset; i < _yandexReducedStringList.Count; i++)
                         {
                             sbUrl.Append("&text=");
-                            sbUrl.Append(System.Uri.EscapeDataString(stringList[i]));
+                            sbUrl.Append(System.Uri.EscapeDataString(_yandexReducedStringList[i]));
                             stringCount++;
                             if (sbUrl.Length > 8000)
                             {
@@ -1264,7 +1301,7 @@ namespace BmwDeepObd
                                     {
                                         _yandexTransList.AddRange(transList);
                                     }
-                                    if (_yandexTransList.Count < stringList.Count)
+                                    if (_yandexTransList.Count < _yandexReducedStringList.Count)
                                     {
                                         _activity.RunOnUiThread(() =>
                                         {
@@ -1314,7 +1351,35 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                handler(_yandexTransList);
+                                // add translation to cache
+                                if (_yandexReducedStringList.Count == _yandexTransList.Count)
+                                {
+                                    for (int i = 0; i < _yandexTransList.Count; i++)
+                                    {
+                                        string key = _yandexReducedStringList[i];
+                                        if (!_yandexCurrentLangDict.ContainsKey(key))
+                                        {
+                                            _yandexCurrentLangDict.Add(key, _yandexTransList[i]);
+                                        }
+                                    }
+                                }
+                                // create full list
+                                List<string> transListFull = new List<string>();
+                                foreach (string text in stringList)
+                                {
+                                    string translation;
+                                    if (_yandexCurrentLangDict.TryGetValue(text, out translation))
+                                    {
+                                        transListFull.Add(translation);
+                                    }
+                                    else
+                                    {
+                                        // should not happen
+                                        transListFull = null;
+                                        break;
+                                    }
+                                }
+                                handler(transListFull);
                             }
                         });
                     };
