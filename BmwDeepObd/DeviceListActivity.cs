@@ -245,7 +245,15 @@ namespace BmwDeepObd
                                 bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
                                 if (bluetoothSocket != null)
                                 {
-                                    bluetoothSocket.Connect();
+                                    try
+                                    {
+                                        bluetoothSocket.Connect();
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // sometimes the second connect is working
+                                        bluetoothSocket.Connect();
+                                    }
                                     adapterType = AdapterTypeDetection(bluetoothSocket);
                                 }
                             }
@@ -263,6 +271,7 @@ namespace BmwDeepObd
                         {
                             try
                             {
+                                // this socket sometimes looses data for long telegrams
                                 IntPtr createRfcommSocket = Android.Runtime.JNIEnv.GetMethodID(device.Class.Handle,
                                     "createRfcommSocket", "(I)Landroid/bluetooth/BluetoothSocket;");
                                 if (createRfcommSocket == IntPtr.Zero)
