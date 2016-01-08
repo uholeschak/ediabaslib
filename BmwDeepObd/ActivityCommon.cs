@@ -1165,13 +1165,18 @@ namespace BmwDeepObd
                     }
                     xmlLangNodes.Add(xmlLang);
                 }
-                xmlLangNodes.Save(fileName);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    XDocument doc = new XDocument(xmlLangNodes);
+                    doc.Save(ms);
+                    ms.Position = 0;
+                    return CreateZipFile(ms, Path.GetFileName(fileName), fileName +".zip");
+                }
             }
             catch (Exception)
             {
                 return false;
             }
-            return true;
         }
 
         public static bool ReadTranslationCache(string fileName)
@@ -1179,44 +1184,48 @@ namespace BmwDeepObd
             try
             {
                 YandexTransDict.Clear();
-                if (!File.Exists(fileName))
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    return false;
-                }
-                XDocument xmlLangDoc = XDocument.Load(fileName);
-                if (xmlLangDoc.Root == null)
-                {
-                    return false;
-                }
-                foreach (XElement langNode in xmlLangDoc.Root.Elements("Language"))
-                {
-                    XAttribute attrName = langNode.Attribute("Name");
-                    if (attrName == null)
+                    if (!ExtractZipFile(fileName + ".zip", Path.GetFileName(fileName), ms))
                     {
-                        continue;
+                        return false;
                     }
-                    string language = attrName.Value;
-                    if (!YandexTransDict.ContainsKey(language))
+                    ms.Position = 0;
+                    XDocument xmlLangDoc = XDocument.Load(ms);
+                    if (xmlLangDoc.Root == null)
                     {
-                        Dictionary<string, string> langDict = new Dictionary<string, string>();
-                        foreach (XElement transNode in langNode.Elements("Trans"))
+                        return false;
+                    }
+                    foreach (XElement langNode in xmlLangDoc.Root.Elements("Language"))
+                    {
+                        XAttribute attrName = langNode.Attribute("Name");
+                        if (attrName == null)
                         {
-                            XAttribute attrKey = transNode.Attribute("Key");
-                            if (attrKey == null)
-                            {
-                                continue;
-                            }
-                            XAttribute attrValue = transNode.Attribute("Value");
-                            if (attrValue == null)
-                            {
-                                continue;
-                            }
-                            if (!langDict.ContainsKey(attrKey.Value))
-                            {
-                                langDict.Add(attrKey.Value, attrValue.Value);
-                            }
+                            continue;
                         }
-                        YandexTransDict.Add(language, langDict);
+                        string language = attrName.Value;
+                        if (!YandexTransDict.ContainsKey(language))
+                        {
+                            Dictionary<string, string> langDict = new Dictionary<string, string>();
+                            foreach (XElement transNode in langNode.Elements("Trans"))
+                            {
+                                XAttribute attrKey = transNode.Attribute("Key");
+                                if (attrKey == null)
+                                {
+                                    continue;
+                                }
+                                XAttribute attrValue = transNode.Attribute("Value");
+                                if (attrValue == null)
+                                {
+                                    continue;
+                                }
+                                if (!langDict.ContainsKey(attrKey.Value))
+                                {
+                                    langDict.Add(attrKey.Value, attrValue.Value);
+                                }
+                            }
+                            YandexTransDict.Add(language, langDict);
+                        }
                     }
                 }
             }
@@ -1758,6 +1767,76 @@ namespace BmwDeepObd
                         zipStream.CloseEntry();
                         index++;
                     }
+                }
+                finally
+                {
+                    zipStream.IsStreamOwner = true;
+                    zipStream.Close();
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool ExtractZipFile(string archiveFilenameIn, string archiveName, Stream outStream)
+        {
+            try
+            {
+                ZipFile zf = null;
+                try
+                {
+                    FileStream fs = File.OpenRead(archiveFilenameIn);
+                    zf = new ZipFile(fs);
+                    foreach (ZipEntry zipEntry in zf)
+                    {
+                        if (!zipEntry.IsFile)
+                        {
+                            continue; // Ignore directories
+                        }
+                        if (string.Compare(zipEntry.Name, archiveName, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            byte[] buffer = new byte[4096]; // 4K is optimum
+                            Stream zipStream = zf.GetInputStream(zipEntry);
+
+                            StreamUtils.Copy(zipStream, outStream, buffer);
+                            break;
+                        }
+                    }
+                }
+                finally
+                {
+                    if (zf != null)
+                    {
+                        zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                        zf.Close(); // Ensure we release resources
+                    }
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static bool CreateZipFile(Stream inStream, string archiveName, string archiveFilenameOut)
+        {
+            try
+            {
+                FileStream fsOut = File.Create(archiveFilenameOut);
+                ZipOutputStream zipStream = new ZipOutputStream(fsOut);
+                zipStream.SetLevel(3);
+
+                try
+                {
+                    ZipEntry newEntry = new ZipEntry(archiveName);
+                    zipStream.PutNextEntry(newEntry);
+                    byte[] buffer = new byte[4096];
+                    StreamUtils.Copy(inStream, zipStream, buffer);
+                    zipStream.CloseEntry();
                 }
                 finally
                 {
