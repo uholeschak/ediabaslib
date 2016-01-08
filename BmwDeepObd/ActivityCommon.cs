@@ -104,7 +104,7 @@ namespace BmwDeepObd
         private List<string> _yandexTransList;
         private List<string> _yandexReducedStringList;
         private string _yandexCurrentLang;
-        private static readonly Dictionary<string, Dictionary<string, string>> YandexTransDict;
+        private readonly Dictionary<string, Dictionary<string, string>> _yandexTransDict;
         private Dictionary<string, string> _yandexCurrentLangDict;
 
         public bool Emulator { get; }
@@ -188,11 +188,6 @@ namespace BmwDeepObd
 
         public Receiver BcReceiver => _bcReceiver;
 
-        static ActivityCommon()
-        {
-            YandexTransDict = new Dictionary<string, Dictionary<string, string>>();
-        }
-
         public ActivityCommon(Android.App.Activity activity, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null, BcReceiverReceivedDelegate bcReceiverReceivedHandler = null)
         {
             _activity = activity;
@@ -219,6 +214,7 @@ namespace BmwDeepObd
                 _wakeLockCpu.SetReferenceCounted(false);
             }
             _selectedInterface = InterfaceType.None;
+            _yandexTransDict = new Dictionary<string, Dictionary<string, string>>();
 
             if ((_bcReceiverUpdateDisplayHandler != null) || (_bcReceiverReceivedHandler != null))
             {
@@ -1146,14 +1142,14 @@ namespace BmwDeepObd
 #endif
         }
 
-        public static bool StoreTranslationCache(string fileName)
+        public bool StoreTranslationCache(string fileName)
         {
             try
             {
                 XElement xmlLangNodes = new XElement("LanguageCache");
-                foreach (string language in YandexTransDict.Keys)
+                foreach (string language in _yandexTransDict.Keys)
                 {
-                    Dictionary<string, string> langDict = YandexTransDict[language];
+                    Dictionary<string, string> langDict = _yandexTransDict[language];
                     XElement xmlLang = new XElement("Language");
                     xmlLang.Add(new XAttribute("Name", language));
                     foreach (string key in langDict.Keys)
@@ -1179,11 +1175,11 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool ReadTranslationCache(string fileName)
+        public bool ReadTranslationCache(string fileName)
         {
             try
             {
-                YandexTransDict.Clear();
+                _yandexTransDict.Clear();
                 using (MemoryStream ms = new MemoryStream())
                 {
                     if (!ExtractZipFile(fileName + ".zip", Path.GetFileName(fileName), ms))
@@ -1204,7 +1200,7 @@ namespace BmwDeepObd
                             continue;
                         }
                         string language = attrName.Value;
-                        if (!YandexTransDict.ContainsKey(language))
+                        if (!_yandexTransDict.ContainsKey(language))
                         {
                             Dictionary<string, string> langDict = new Dictionary<string, string>();
                             foreach (XElement transNode in langNode.Elements("Trans"))
@@ -1224,7 +1220,7 @@ namespace BmwDeepObd
                                     langDict.Add(attrKey.Value, attrValue.Value);
                                 }
                             }
-                            YandexTransDict.Add(language, langDict);
+                            _yandexTransDict.Add(language, langDict);
                         }
                     }
                 }
@@ -1286,10 +1282,10 @@ namespace BmwDeepObd
                 // try to translate with cache first
                 _yandexCurrentLang = (Java.Util.Locale.Default.Language ?? "en").ToLowerInvariant();
 
-                if (!YandexTransDict.TryGetValue(_yandexCurrentLang, out _yandexCurrentLangDict))
+                if (!_yandexTransDict.TryGetValue(_yandexCurrentLang, out _yandexCurrentLangDict))
                 {
                     _yandexCurrentLangDict = new Dictionary<string, string>();
-                    YandexTransDict.Add(_yandexCurrentLang, _yandexCurrentLangDict);
+                    _yandexTransDict.Add(_yandexCurrentLang, _yandexCurrentLangDict);
                 }
                 _yandexReducedStringList = new List<string>();
                 List<string> translationList = new List<string>();
