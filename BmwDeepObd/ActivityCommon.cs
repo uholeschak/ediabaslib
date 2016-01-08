@@ -1408,6 +1408,25 @@ namespace BmwDeepObd
                             }
                             if (!args.Cancelled && ((_yandexLangList == null) || (_yandexTransList == null)))
                             {
+                                string errorMessage = string.Empty;
+                                if (!args.Cancelled && (args.Error != null))
+                                {
+                                    WebException webException = args.Error as WebException;
+                                    Stream responseStream = webException?.Response?.GetResponseStream();
+                                    if (responseStream != null)
+                                    {
+                                        string responseText;
+                                        using (var reader = new StreamReader(responseStream))
+                                        {
+                                            responseText = reader.ReadToEnd();
+                                        }
+                                        int errorCode;
+                                        errorMessage = GetTranslationError(responseText, out errorCode);
+                                    }
+                                }
+
+                                string message = string.IsNullOrEmpty(errorMessage) ?
+                                    _activity.GetString(Resource.String.translate_failed) : string.Format(_activity.GetString(Resource.String.translate_failed_message), errorMessage);
                                 bool yesSelected = false;
                                 AlertDialog altertDialog = new AlertDialog.Builder(_activity)
                                     .SetPositiveButton(Resource.String.button_yes, (s, a) =>
@@ -1419,7 +1438,7 @@ namespace BmwDeepObd
                                     {
                                     })
                                     .SetCancelable(true)
-                                    .SetMessage(Resource.String.translate_failed)
+                                    .SetMessage(message)
                                     .SetTitle(Resource.String.alert_title_error)
                                     .Show();
                                 altertDialog.DismissEvent += (o, eventArgs) =>
@@ -1520,6 +1539,39 @@ namespace BmwDeepObd
             });
             translateThread.Start();
             return true;
+        }
+
+        private string GetTranslationError(string xmlResult, out int errorCode)
+        {
+            errorCode = -1;
+            string message = string.Empty;
+            try
+            {
+                if (string.IsNullOrEmpty(xmlResult))
+                {
+                    return message;
+                }
+                XDocument xmlDoc = XDocument.Parse(xmlResult);
+                if (xmlDoc.Root == null)
+                {
+                    return message;
+                }
+                XAttribute attrCode = xmlDoc.Root.Attribute("code");
+                if (attrCode != null)
+                {
+                    errorCode = XmlConvert.ToInt32(attrCode.Value);
+                }
+                XAttribute attrMessage = xmlDoc.Root.Attribute("message");
+                if (attrMessage != null)
+                {
+                    message = attrMessage.Value;
+                }
+                return message;
+            }
+            catch (Exception)
+            {
+                return message;
+            }
         }
 
         private List<string> GetLanguages(string xmlResult)

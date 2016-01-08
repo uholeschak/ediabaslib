@@ -58,6 +58,7 @@
   <!-- Translate -->
   <string name="translate_text">Translating text</string>
   <string name="translate_failed">Translation failed.\nPlease check your network connection.\nDo you want to retry the translation?</string>
+  <string name="translate_failed_message">Translation failed with error:\n{0}.\nDo you want to retry the translation?</string>
   <string name="translate_enable_request">Do you want to enable automatic ECU text translation with <a href='http://translate.yandex.com'>Yandex</a>?\nThis requires an internet connection.\nPowered by Yandex.Translate</string>
 
   <!--  DeviceListActivity -->
