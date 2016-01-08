@@ -30,11 +30,6 @@ namespace EdiabasLib
         private static BluetoothSocket _bluetoothSocket;
         private static Stream _bluetoothInStream;
         private static Stream _bluetoothOutStream;
-        private static readonly Queue<byte> BluetoothInQueue = new Queue<byte>();
-        private static readonly Object BtInBufferLock = new Object();
-        private static readonly AutoResetEvent BtInThreadEvent = new AutoResetEvent(false);
-        private static bool _btInTerminateThread;
-        private static Thread _btInThread;
         private static bool _elm327Device;
         private static long _elm327ReceiveStartTime;
         private static bool _elm327DataMode;
@@ -120,12 +115,21 @@ namespace EdiabasLib
                 }
                 catch (Exception)
                 {
-                    _bluetoothSocket.Close();
-                    _bluetoothSocket = null;
+                    try
+                    {
+                        // sometimes the second connect is working
+                        _bluetoothSocket.Connect();
+                    }
+                    catch (Exception)
+                    {
+                        _bluetoothSocket.Close();
+                        _bluetoothSocket = null;
+                    }
                 }
 
                 if (_bluetoothSocket == null)
                 {
+                    // this socket sometimes looses data for long telegrams
                     IntPtr createRfcommSocket = Android.Runtime.JNIEnv.GetMethodID(device.Class.Handle,
                         "createRfcommSocket", "(I)Landroid/bluetooth/BluetoothSocket;");
                     if (createRfcommSocket == IntPtr.Zero)
@@ -153,10 +157,6 @@ namespace EdiabasLib
                         return false;
                     }
                 }
-                else
-                {
-                    StartBtInputThread();
-                }
             }
             catch (Exception)
             {
@@ -169,7 +169,6 @@ namespace EdiabasLib
         public static bool InterfaceDisconnect()
         {
             bool result = true;
-            StopBtInputThread();
             Elm327StopThread();
             Elm327Exit();
             try
@@ -277,9 +276,13 @@ namespace EdiabasLib
                 }
                 return true;
             }
-            lock (BtInBufferLock)
+            try
             {
-                BluetoothInQueue.Clear();
+                FlushReceiveBuffer();
+            }
+            catch (Exception)
+            {
+                return false;
             }
             return true;
         }
@@ -420,17 +423,10 @@ namespace EdiabasLib
                 while (recLen < length)
                 {
                     int currTimeout = (recLen == 0) ? timeout : timeoutTelEnd;
-                    lock (BtInBufferLock)
+                    if (_bluetoothInStream.IsDataAvailable())
                     {
-                        while (BluetoothInQueue.Count > 0)
-                        {
-                            receiveData[offset + recLen] = BluetoothInQueue.Dequeue();
-                            recLen++;
-                            if (recLen >= length)
-                            {
-                                break;
-                            }
-                        }
+                        int bytesRead = _bluetoothInStream.Read (receiveData, offset + recLen, length - recLen);
+                        recLen += bytesRead;
                     }
                     if (recLen >= length)
                     {
@@ -487,59 +483,6 @@ namespace EdiabasLib
             return true;
         }
 
-        private static void StartBtInputThread()
-        {
-            if (_btInThread != null)
-            {
-                return;
-            }
-            _btInTerminateThread = false;
-            BtInThreadEvent.Reset();
-            _btInThread = new Thread(BtInputThreadFunc)
-            {
-                Priority = ThreadPriority.Highest
-            };
-            _btInThread.Start();
-        }
-
-        private static void StopBtInputThread()
-        {
-            if (_btInThread != null)
-            {
-                _btInTerminateThread = true;
-                BtInThreadEvent.Set();
-                _btInThread.Join();
-                _btInThread = null;
-                lock (BtInBufferLock)
-                {
-                    BluetoothInQueue.Clear();
-                }
-            }
-        }
-
-        private static void BtInputThreadFunc()
-        {
-            while (!_btInTerminateThread)
-            {
-                while (_bluetoothInStream.IsDataAvailable())
-                {
-                    int data = _bluetoothInStream.ReadByte();
-                    if (data >= 0)
-                    {
-                        lock (BtInBufferLock)
-                        {
-                            BluetoothInQueue.Enqueue((byte)data);
-                        }
-                    }
-                    if (_btInTerminateThread)
-                    {
-                        break;
-                    }
-                }
-                BtInThreadEvent.WaitOne(10, false);
-            }
-        }
-
         private static void FlushReceiveBuffer()
         {
             _bluetoothInStream.Flush();
@@ -569,21 +512,19 @@ namespace EdiabasLib
             {
                 const int versionRespLen = 9;
                 byte[] identTel = { 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E };
-                lock (BtInBufferLock)
-                {
-                    BluetoothInQueue.Clear();
-                }
+                FlushReceiveBuffer();
                 _bluetoothOutStream.Write(identTel, 0, identTel.Length);
 
                 List<byte> responseList = new List<byte>();
                 long startTime = Stopwatch.GetTimestamp();
                 for (; ; )
                 {
-                    lock (BtInBufferLock)
+                    while (_bluetoothInStream.IsDataAvailable())
                     {
-                        while (BluetoothInQueue.Count > 0)
+                        int data = _bluetoothInStream.ReadByte();
+                        if (data >= 0)
                         {
-                            responseList.Add(BluetoothInQueue.Dequeue());
+                            responseList.Add((byte)data);
                             startTime = Stopwatch.GetTimestamp();
                         }
                     }
