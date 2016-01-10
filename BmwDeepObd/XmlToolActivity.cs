@@ -367,12 +367,9 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestYandexKey:
-                    if (resultCode == Android.App.Result.Ok)
-                    {
-                        ActivityCommon.EnableTranslation = true;
-                        SupportInvalidateOptionsMenu();
-                        UpdateDisplay();
-                    }
+                    ActivityCommon.EnableTranslation = !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey);
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
                     break;
             }
         }
@@ -584,6 +581,7 @@ namespace BmwDeepObd
             }
             SelectInterfaceEnable();
             SupportInvalidateOptionsMenu();
+            UpdateDisplay();
         }
 
         private void EdiabasOpen()
@@ -650,6 +648,11 @@ namespace BmwDeepObd
 
         private void UpdateDisplay()
         {
+            if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation && string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey))
+            {
+                EditYandexKey();
+                return;
+            }
             _ecuListAdapter.Items.Clear();
             if ((_ediabas == null) || (_ecuList.Count == 0))
             {
@@ -697,97 +700,100 @@ namespace BmwDeepObd
 
         private bool TranslateEcuText(EventHandler<EventArgs> handler = null)
         {
-            if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation && !_ecuListTranslated)
+            if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
             {
-                _ecuListTranslated = true;
-                List<string> stringList = new List<string>();
-                foreach (EcuInfo ecu in _ecuList)
+                if (!_ecuListTranslated)
                 {
-                    if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTrans == null)
+                    _ecuListTranslated = true;
+                    List<string> stringList = new List<string>();
+                    foreach (EcuInfo ecu in _ecuList)
                     {
-                        stringList.Add(ecu.Description);
-                    }
-                    if (ecu.JobList != null)
-                    {
-                        // ReSharper disable LoopCanBeConvertedToQuery
-                        foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
+                        if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTrans == null)
                         {
-                            if (jobInfo.Comments != null && jobInfo.CommentsTrans == null &&
-                                XmlToolEcuActivity.IsValidJob(jobInfo))
+                            stringList.Add(ecu.Description);
+                        }
+                        if (ecu.JobList != null)
+                        {
+                            // ReSharper disable LoopCanBeConvertedToQuery
+                            foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
                             {
-                                foreach (string comment in jobInfo.Comments)
+                                if (jobInfo.Comments != null && jobInfo.CommentsTrans == null &&
+                                    XmlToolEcuActivity.IsValidJob(jobInfo))
                                 {
-                                    if (!string.IsNullOrEmpty(comment))
+                                    foreach (string comment in jobInfo.Comments)
                                     {
-                                        stringList.Add(comment);
-                                    }
-                                }
-                            }
-                            if (jobInfo.Results != null)
-                            {
-                                foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
-                                {
-                                    if (result.Comments != null && result.CommentsTrans == null)
-                                    {
-                                        foreach (string comment in result.Comments)
+                                        if (!string.IsNullOrEmpty(comment))
                                         {
-                                            if (!string.IsNullOrEmpty(comment))
-                                            {
-                                                stringList.Add(comment);
-                                            }
+                                            stringList.Add(comment);
                                         }
                                     }
                                 }
-                            }
-                        }
-                        // ReSharper restore LoopCanBeConvertedToQuery
-                    }
-                }
-                if (stringList.Count == 0)
-                {
-                    return false;
-                }
-                if (_activityCommon.TranslateStrings(stringList, transList =>
-                {
-                    try
-                    {
-                        if (transList != null && transList.Count == stringList.Count)
-                        {
-                            int transIndex = 0;
-                            foreach (EcuInfo ecu in _ecuList)
-                            {
-                                if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTrans == null)
+                                if (jobInfo.Results != null)
                                 {
-                                    ecu.DescriptionTrans = transList[transIndex++];
-                                }
-                                if (ecu.JobList != null)
-                                {
-                                    foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
+                                    foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
                                     {
-                                        if (jobInfo.Comments != null && jobInfo.CommentsTrans == null &&
-                                            XmlToolEcuActivity.IsValidJob(jobInfo))
+                                        if (result.Comments != null && result.CommentsTrans == null)
                                         {
-                                            jobInfo.CommentsTrans = new List<string>();
-                                            foreach (string comment in jobInfo.Comments)
+                                            foreach (string comment in result.Comments)
                                             {
                                                 if (!string.IsNullOrEmpty(comment))
                                                 {
-                                                    jobInfo.CommentsTrans.Add(transList[transIndex++]);
+                                                    stringList.Add(comment);
                                                 }
                                             }
                                         }
-                                        if (jobInfo.Results != null)
+                                    }
+                                }
+                            }
+                            // ReSharper restore LoopCanBeConvertedToQuery
+                        }
+                    }
+                    if (stringList.Count == 0)
+                    {
+                        return false;
+                    }
+                    if (_activityCommon.TranslateStrings(stringList, transList =>
+                    {
+                        try
+                        {
+                            if (transList != null && transList.Count == stringList.Count)
+                            {
+                                int transIndex = 0;
+                                foreach (EcuInfo ecu in _ecuList)
+                                {
+                                    if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTrans == null)
+                                    {
+                                        ecu.DescriptionTrans = transList[transIndex++];
+                                    }
+                                    if (ecu.JobList != null)
+                                    {
+                                        foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
                                         {
-                                            foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
+                                            if (jobInfo.Comments != null && jobInfo.CommentsTrans == null &&
+                                                XmlToolEcuActivity.IsValidJob(jobInfo))
                                             {
-                                                if (result.Comments != null && result.CommentsTrans == null)
+                                                jobInfo.CommentsTrans = new List<string>();
+                                                foreach (string comment in jobInfo.Comments)
                                                 {
-                                                    result.CommentsTrans = new List<string>();
-                                                    foreach (string comment in result.Comments)
+                                                    if (!string.IsNullOrEmpty(comment))
                                                     {
-                                                        if (!string.IsNullOrEmpty(comment))
+                                                        jobInfo.CommentsTrans.Add(transList[transIndex++]);
+                                                    }
+                                                }
+                                            }
+                                            if (jobInfo.Results != null)
+                                            {
+                                                foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
+                                                {
+                                                    if (result.Comments != null && result.CommentsTrans == null)
+                                                    {
+                                                        result.CommentsTrans = new List<string>();
+                                                        foreach (string comment in result.Comments)
                                                         {
-                                                            result.CommentsTrans.Add(transList[transIndex++]);
+                                                            if (!string.IsNullOrEmpty(comment))
+                                                            {
+                                                                result.CommentsTrans.Add(transList[transIndex++]);
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -797,23 +803,20 @@ namespace BmwDeepObd
                                 }
                             }
                         }
-                    }
-                    catch (Exception)
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                        handler?.Invoke(this, new EventArgs());
+                    }))
                     {
-                        // ignored
+                        return true;
                     }
-                    handler?.Invoke(this, new EventArgs());
-                }))
-                {
-                    return true;
                 }
             }
             else
             {
-                if (!(ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation))
-                {
-                    ResetTranslations();
-                }
+                ResetTranslations();
             }
             return false;
         }
