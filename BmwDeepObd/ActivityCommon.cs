@@ -888,6 +888,7 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nApp version name: {0}", packageInfo.VersionName));
                     sb.Append(string.Format("\nApp version code: {0}", packageInfo.VersionCode));
                     sb.Append(string.Format("\nApp id: {0}", AppId));
+                    sb.Append(string.Format("\nEnable translation: {0}", EnableTranslation));
                     sb.Append(string.Format("\nClass name: {0}", classType.FullName));
 
                     if (!string.IsNullOrEmpty(message))
