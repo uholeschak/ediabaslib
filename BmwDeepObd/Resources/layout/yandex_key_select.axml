@@ -50,5 +50,22 @@
             android:layout_height="wrap_content"
             android:inputType="text|textNoSuggestions"
             android:maxLines="1" />
+        <TextView
+            android:id="@+id/textViewYandexKeyTestTitle"
+            android:text="@+string/yandex_key_test_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <Button
+            android:id="@+id/buttonYandexKeyTest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_yandex_key_test"
+            android:layout_gravity="center" />
+        <TextView
+            android:id="@+id/textViewYandexKeyTestResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </ScrollView>

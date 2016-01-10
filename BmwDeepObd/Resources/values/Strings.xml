@@ -76,6 +76,9 @@
   <string name="button_yandex_key_get">Display API Keys</string>
   <string name="yandex_key_paste_title">API Key</string>
   <string name="button_yandex_key_paste">Paste API Key</string>
+  <string name="yandex_key_test_title">Translate</string>
+  <string name="button_yandex_key_test">Test translation</string>
+  <string name="button_yandex_key_test_failed">Translation failed</string>
 
   <!--  DeviceListActivity -->
   <string name="scanning">Scanning for devices ...</string>
