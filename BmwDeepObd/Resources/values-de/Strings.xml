@@ -27,7 +27,8 @@
 \nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:
-\n- Bluetooth Verbindung verbessert</string>
+\n- Bluetooth Verbindung verbessert
+\n- Automatische ECU Textübersetzung mit Yandex ergänzt (für andere Sprachen)</string>
   <string name="app_info_message">Deep OBD für BMW\nVersion: {0}\nId: {1}</string>
 
   <!-- Alert titles -->
