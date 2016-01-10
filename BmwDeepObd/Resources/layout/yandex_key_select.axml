@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/layoutYandexKey"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/textViewYandexKeyDesc"
+            android:text="@+string/yandex_key_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/textViewYandexKeyCopyTitle"
+            android:text="@+string/yandex_key_copy_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <Button
+            android:id="@+id/buttonYandexKeyCreate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_yandex_key_create"
+            android:layout_gravity="center" />
+        <Button
+            android:id="@+id/buttonYandexKeyGet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_yandex_key_get"
+            android:layout_gravity="center" />
+        <TextView
+            android:id="@+id/textViewYandexKeyPasteTitle"
+            android:text="@+string/yandex_key_paste_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <Button
+            android:id="@+id/buttonYandexKeyPaste"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_yandex_key_paste"
+            android:layout_gravity="center" />
+        <EditText
+            android:id="@+id/editTextYandexApiKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text|textNoSuggestions"
+            android:maxLines="1" />
+    </LinearLayout>
+</ScrollView>

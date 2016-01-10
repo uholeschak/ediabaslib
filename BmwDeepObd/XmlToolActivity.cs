@@ -34,6 +34,7 @@ namespace BmwDeepObd
             RequestSelectDevice,
             RequestCanAdapterConfig,
             RequestSelectJobs,
+            RequestYandexKey,
         }
 
         public class EcuInfo
@@ -364,6 +365,15 @@ namespace BmwDeepObd
                         UpdateDisplay();
                     }
                     break;
+
+                case ActivityRequest.RequestYandexKey:
+                    if (resultCode == Android.App.Result.Ok)
+                    {
+                        ActivityCommon.EnableTranslation = true;
+                        SupportInvalidateOptionsMenu();
+                        UpdateDisplay();
+                    }
+                    break;
             }
         }
 
@@ -408,14 +418,6 @@ namespace BmwDeepObd
                 addErrorsMenu.SetChecked(_addErrorsPage);
             }
 
-            IMenuItem enableTranslationMenu = menu.FindItem(Resource.Id.menu_xml_tool_enable_translation);
-            if (enableTranslationMenu != null)
-            {
-                enableTranslationMenu.SetEnabled(true);
-                enableTranslationMenu.SetVisible(ActivityCommon.IsTranslationRequired());
-                enableTranslationMenu.SetChecked(ActivityCommon.EnableTranslation);
-            }
-
             IMenuItem cfgTypeSubMenu = menu.FindItem(Resource.Id.menu_xml_tool_submenu_cfg_type);
             if (cfgTypeSubMenu != null)
             {
@@ -426,6 +428,35 @@ namespace BmwDeepObd
 
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
             logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
+
+            IMenuItem translationSubmenu = menu.FindItem(Resource.Id.menu_translation_submenu);
+            if (translationSubmenu != null)
+            {
+                translationSubmenu.SetEnabled(true);
+                translationSubmenu.SetVisible(ActivityCommon.IsTranslationRequired());
+            }
+
+            IMenuItem translationEnableMenu = menu.FindItem(Resource.Id.menu_translation_enable);
+            if (translationEnableMenu != null)
+            {
+                translationEnableMenu.SetEnabled(true);
+                translationEnableMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                translationEnableMenu.SetChecked(ActivityCommon.EnableTranslation);
+            }
+
+            IMenuItem translationYandexKeyMenu = menu.FindItem(Resource.Id.menu_translation_yandex_key);
+            if (translationYandexKeyMenu != null)
+            {
+                translationYandexKeyMenu.SetEnabled(true);
+                translationYandexKeyMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+            }
+
+            IMenuItem translationClearCacheMenu = menu.FindItem(Resource.Id.menu_translation_clear_cache);
+            if (translationClearCacheMenu != null)
+            {
+                translationClearCacheMenu.SetEnabled(!_activityCommon.IsTranslationCacheEmpty());
+                translationClearCacheMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+            }
 
             return base.OnPrepareOptionsMenu(menu);
         }
@@ -488,12 +519,6 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     return true;
 
-                case Resource.Id.menu_xml_tool_enable_translation:
-                    ActivityCommon.EnableTranslation = !ActivityCommon.EnableTranslation;
-                    SupportInvalidateOptionsMenu();
-                    UpdateDisplay();
-                    return true;
-
                 case Resource.Id.menu_xml_tool_submenu_cfg_type:
                     if (IsJobRunning())
                     {
@@ -510,8 +535,31 @@ namespace BmwDeepObd
                     SelectDataLogging();
                     return true;
 
+                case Resource.Id.menu_translation_enable:
+                    if (!ActivityCommon.EnableTranslation && string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey))
+                    {
+                        EditYandexKey();
+                        return true;
+                    }
+                    ActivityCommon.EnableTranslation = !ActivityCommon.EnableTranslation;
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                    return true;
+
+                case Resource.Id.menu_translation_yandex_key:
+                    EditYandexKey();
+                    return true;
+
+                case Resource.Id.menu_translation_clear_cache:
+                    _activityCommon.ClearTranslationCache();
+                    ResetTranslations();
+                    _ecuListTranslated = false;
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                    return true;
+
                 case Resource.Id.menu_submenu_help:
-                    StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse("https://ediabaslib.codeplex.com/wikipage?title=Configuration Generator")));
+                    StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://ediabaslib.codeplex.com/wikipage?title=Configuration Generator")));
                     return true;
             }
             return base.OnOptionsItemSelected(item);
@@ -762,17 +810,16 @@ namespace BmwDeepObd
             }
             else
             {
-                ResetTranslations();
+                if (!(ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation))
+                {
+                    ResetTranslations();
+                }
             }
             return false;
         }
 
         private void ResetTranslations()
         {
-            if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
-            {
-                return;
-            }
             foreach (EcuInfo ecu in _ecuList)
             {
                 ecu.DescriptionTrans = null;
@@ -864,6 +911,12 @@ namespace BmwDeepObd
             Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
             serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectJobs);
+        }
+
+        private void EditYandexKey()
+        {
+            Intent serverIntent = new Intent(this, typeof(YandexKeyActivity));
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestYandexKey);
         }
 
         private void SelectInterface()
