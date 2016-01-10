@@ -721,6 +721,7 @@ namespace BmwDeepObd
                 _configFileName = prefs.GetString("ConfigFile", string.Empty);
                 _activityCommon.CustomStorageMedia = prefs.GetString("StorageMedia", string.Empty);
                 _lastVersionCode = prefs.GetInt("VersionCode", -1);
+                ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", false);
                 ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", string.Empty);
                 ActivityCommon.AppId = prefs.GetString("AppId", string.Empty);
             }
@@ -741,6 +742,7 @@ namespace BmwDeepObd
                 prefsEdit.PutString("ConfigFile", _configFileName);
                 prefsEdit.PutString("StorageMedia", _activityCommon.CustomStorageMedia ?? string.Empty);
                 prefsEdit.PutInt("VersionCode", _currentVersionCode);
+                prefsEdit.PutBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
                 prefsEdit.PutString("YandexApiKey", ActivityCommon.YandexApiKey ?? string.Empty);
                 prefsEdit.PutString("AppId", ActivityCommon.AppId);
                 prefsEdit.Commit();
