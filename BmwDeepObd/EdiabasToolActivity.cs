@@ -266,7 +266,7 @@ namespace BmwDeepObd
             {
                 case ActivityRequest.RequestSelectSgbd:
                     // When FilePickerActivity returns with a file
-                    if (resultCode == Android.App.Result.Ok)
+                    if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         _sgbdFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
                         SupportInvalidateOptionsMenu();
@@ -276,7 +276,7 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestSelectDevice:
                     // When DeviceListActivity returns with a device to connect
-                    if (resultCode == Android.App.Result.Ok)
+                    if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         // Get the device MAC address
                         _deviceName = data.Extras.GetString(DeviceListActivity.ExtraDeviceName);

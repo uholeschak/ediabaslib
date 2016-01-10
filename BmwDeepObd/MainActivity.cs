@@ -315,7 +315,7 @@ namespace BmwDeepObd
             {
                 case ActivityRequest.RequestSelectDevice:
                     // When DeviceListActivity returns with a device to connect
-                    if (resultCode == Android.App.Result.Ok)
+                    if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         // Get the device MAC address
                         _deviceName = data.Extras.GetString(DeviceListActivity.ExtraDeviceName);
@@ -339,7 +339,7 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestSelectConfig:
                     // When FilePickerActivity returns with a file
-                    if (resultCode == Android.App.Result.Ok)
+                    if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         _configFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
                         ReadConfigFile();
@@ -349,7 +349,7 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestXmlTool:
                     // When XML tool returns with a file
-                    if (resultCode == Android.App.Result.Ok)
+                    if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         _configFileName = data.Extras.GetString(XmlToolActivity.ExtraFileName);
                         ReadConfigFile();
