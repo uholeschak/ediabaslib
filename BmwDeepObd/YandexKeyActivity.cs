@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Android.Content;
 using Android.OS;
@@ -19,6 +20,7 @@ namespace BmwDeepObd
         private Java.Lang.Object _clipboardManager;
         private InputMethodManager _imm;
         private Timer _clipboardCheckTimer;
+        private ActivityCommon _activityCommon;
         private string _oldYandexApiKey;
         private View _contentView;
         private LinearLayout _layoutYandexKey;
@@ -26,6 +28,8 @@ namespace BmwDeepObd
         private Button _buttonYandexApiKeyGet;
         private Button _buttonYandexApiKeyPaste;
         private EditText _editTextYandexApiKey;
+        private Button _buttonYandexApiKeyTest;
+        private TextView _textViewYandexApiKeyTestResult;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -43,6 +47,8 @@ namespace BmwDeepObd
             SetResult(Android.App.Result.Canceled);
 
             _oldYandexApiKey = ActivityCommon.YandexApiKey ?? string.Empty;
+
+            _activityCommon = new ActivityCommon(this);
 
             _layoutYandexKey = FindViewById<LinearLayout>(Resource.Id.layoutYandexKey);
             _layoutYandexKey.SetOnTouchListener(this);
@@ -77,6 +83,7 @@ namespace BmwDeepObd
                         if (!string.IsNullOrWhiteSpace(item?.Text))
                         {
                             _editTextYandexApiKey.Text = item.Text.Trim();
+                            UpdateDisplay();
                         }
                     }
                 }
@@ -88,10 +95,47 @@ namespace BmwDeepObd
                     if (!string.IsNullOrWhiteSpace(clipboardManagerOld?.Text))
                     {
                         _editTextYandexApiKey.Text = clipboardManagerOld.Text.Trim();
+                        UpdateDisplay();
                     }
                 }
             };
+            _buttonYandexApiKeyPaste.TextChanged += (sender, args) =>
+            {
+                UpdateDisplay();
+            };
+
+            _textViewYandexApiKeyTestResult = FindViewById<TextView>(Resource.Id.textViewYandexKeyTestResult);
+
+            _buttonYandexApiKeyTest = FindViewById<Button>(Resource.Id.buttonYandexKeyTest);
+            _buttonYandexApiKeyTest.SetOnTouchListener(this);
+            _buttonYandexApiKeyTest.Click += (sender, args) =>
+            {
+                _textViewYandexApiKeyTestResult.Text = string.Empty;
+                ActivityCommon.YandexApiKey = _editTextYandexApiKey.Text.Trim();
+                if (!_activityCommon.TranslateStrings(new List<string> {@"Dieser Text wurde erfolgreich übersetzt"}, list =>
+                {
+                    if (list != null && list.Count > 0)
+                    {
+                        _textViewYandexApiKeyTestResult.Text = list[0];
+                    }
+                    else
+                    {
+                        _textViewYandexApiKeyTestResult.Text = GetString(Resource.String.button_yandex_key_test_failed);
+                    }
+                }, true))
+                {
+                    _textViewYandexApiKeyTestResult.Text = GetString(Resource.String.button_yandex_key_test_failed);
+                }
+            };
+
             UpdateDisplay();
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            _activityCommon.Dispose();
         }
 
         protected override void OnResume()
@@ -183,6 +227,7 @@ namespace BmwDeepObd
                 }
             }
             _buttonYandexApiKeyPaste.Enabled = pasteEnable;
+            _buttonYandexApiKeyTest.Enabled = !string.IsNullOrWhiteSpace(_editTextYandexApiKey.Text);
         }
 
         private bool StoreYandexKey(EventHandler handler)
@@ -201,6 +246,7 @@ namespace BmwDeepObd
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
+                    ActivityCommon.YandexApiKey = _oldYandexApiKey;
                     handler?.Invoke(sender, args);
                 })
                 .SetCancelable(true)

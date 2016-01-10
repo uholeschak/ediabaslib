@@ -1281,9 +1281,13 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool TranslateStrings(List<string> stringList, TranslateDelegate handler)
+        public bool TranslateStrings(List<string> stringList, TranslateDelegate handler, bool disableCache = false)
         {
             if ((stringList.Count == 0) || (handler == null))
+            {
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(YandexApiKey))
             {
                 return false;
             }
@@ -1303,7 +1307,7 @@ namespace BmwDeepObd
                 foreach (string text in stringList)
                 {
                     string translation;
-                    if (_yandexCurrentLangDict.TryGetValue(text, out translation))
+                    if (!disableCache && _yandexCurrentLangDict.TryGetValue(text, out translation))
                     {
                         translationList.Add(translation);
                     }
@@ -1380,7 +1384,7 @@ namespace BmwDeepObd
                                 {
                                     _activity.RunOnUiThread(() =>
                                     {
-                                        TranslateStrings(stringList, handler);
+                                        TranslateStrings(stringList, handler, disableCache);
                                     });
                                     return;
                                 }
@@ -1402,7 +1406,7 @@ namespace BmwDeepObd
                                     {
                                         _activity.RunOnUiThread(() =>
                                         {
-                                            TranslateStrings(stringList, handler);
+                                            TranslateStrings(stringList, handler, disableCache);
                                         });
                                         return;
                                     }
@@ -1448,7 +1452,7 @@ namespace BmwDeepObd
                                     .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                                     {
                                         yesSelected = true;
-                                        TranslateStrings(stringList, handler);
+                                        TranslateStrings(stringList, handler, disableCache);
                                     })
                                     .SetNegativeButton(Resource.String.button_no, (s, a) =>
                                     {
@@ -1467,35 +1471,43 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                // add translation to cache
-                                if (_yandexReducedStringList.Count == _yandexTransList.Count)
+                                if (disableCache)
                                 {
-                                    for (int i = 0; i < _yandexTransList.Count; i++)
+                                    handler(_yandexReducedStringList.Count == _yandexTransList.Count
+                                        ? _yandexTransList : null);
+                                }
+                                else
+                                {
+                                    // add translation to cache
+                                    if (_yandexReducedStringList.Count == _yandexTransList.Count)
                                     {
-                                        string key = _yandexReducedStringList[i];
-                                        if (!_yandexCurrentLangDict.ContainsKey(key))
+                                        for (int i = 0; i < _yandexTransList.Count; i++)
                                         {
-                                            _yandexCurrentLangDict.Add(key, _yandexTransList[i]);
+                                            string key = _yandexReducedStringList[i];
+                                            if (!_yandexCurrentLangDict.ContainsKey(key))
+                                            {
+                                                _yandexCurrentLangDict.Add(key, _yandexTransList[i]);
+                                            }
                                         }
                                     }
-                                }
-                                // create full list
-                                List<string> transListFull = new List<string>();
-                                foreach (string text in stringList)
-                                {
-                                    string translation;
-                                    if (_yandexCurrentLangDict.TryGetValue(text, out translation))
+                                    // create full list
+                                    List<string> transListFull = new List<string>();
+                                    foreach (string text in stringList)
                                     {
-                                        transListFull.Add(translation);
+                                        string translation;
+                                        if (_yandexCurrentLangDict.TryGetValue(text, out translation))
+                                        {
+                                            transListFull.Add(translation);
+                                        }
+                                        else
+                                        {
+                                            // should not happen
+                                            transListFull = null;
+                                            break;
+                                        }
                                     }
-                                    else
-                                    {
-                                        // should not happen
-                                        transListFull = null;
-                                        break;
-                                    }
+                                    handler(transListFull);
                                 }
-                                handler(transListFull);
                             }
                         });
                     };
@@ -1534,7 +1546,7 @@ namespace BmwDeepObd
                             .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                             {
                                 yesSelected = true;
-                                TranslateStrings(stringList, handler);
+                                TranslateStrings(stringList, handler, disableCache);
                             })
                             .SetNegativeButton(Resource.String.button_no, (s, a) =>
                             {
