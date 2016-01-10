@@ -105,6 +105,7 @@
     <Compile Include="ResultListAdapter.cs" />
     <Compile Include="XmlDocumentLoader.cs" />
     <Compile Include="XmlToolEcuActivity.cs" />
+    <Compile Include="YandexKeyActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\default\production\CanAdapterElm.X.production.hex">
@@ -155,6 +156,9 @@
     </AndroidResource>
     <AndroidResource Include="Resources\layout\connect_action_provider.axml" />
     <AndroidResource Include="Resources\layout\tab_errors.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\yandex_key_select.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <None Include="Xml\AdapterCustom.ccpage">

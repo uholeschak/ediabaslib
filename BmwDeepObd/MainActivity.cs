@@ -486,7 +486,7 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_submenu_help:
-                    StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse("https://ediabaslib.codeplex.com/wikipage?title=Deep OBD for BMW")));
+                    StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://ediabaslib.codeplex.com/wikipage?title=Deep OBD for BMW")));
                     return true;
 
                 case Resource.Id.menu_info:
@@ -721,6 +721,7 @@ namespace BmwDeepObd
                 _configFileName = prefs.GetString("ConfigFile", string.Empty);
                 _activityCommon.CustomStorageMedia = prefs.GetString("StorageMedia", string.Empty);
                 _lastVersionCode = prefs.GetInt("VersionCode", -1);
+                ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", string.Empty);
                 ActivityCommon.AppId = prefs.GetString("AppId", string.Empty);
             }
             catch (Exception)
@@ -740,6 +741,7 @@ namespace BmwDeepObd
                 prefsEdit.PutString("ConfigFile", _configFileName);
                 prefsEdit.PutString("StorageMedia", _activityCommon.CustomStorageMedia ?? string.Empty);
                 prefsEdit.PutInt("VersionCode", _currentVersionCode);
+                prefsEdit.PutString("YandexApiKey", ActivityCommon.YandexApiKey ?? string.Empty);
                 prefsEdit.PutString("AppId", ActivityCommon.AppId);
                 prefsEdit.Commit();
             }

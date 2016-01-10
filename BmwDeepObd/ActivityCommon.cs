@@ -73,7 +73,6 @@ namespace BmwDeepObd
         public const string DownloadDir = "Download";
         public const string ActionUsbPermission = "de.holeschak.bmw_deep_obd.USB_PERMISSION";
         private const string MailInfoDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Mail.xml";
-        private const string YandexKey = @"trnsl.1.1.20160106T074747Z.4f63f50d2d083317.c10e989a8eea62b8952f949c3398bc2724afda97";
 
         private bool _disposed;
         private readonly Android.App.Activity _activity;
@@ -159,6 +158,8 @@ namespace BmwDeepObd
                 _appId = value;
             }
         }
+
+        public static string YandexApiKey { get; set; }
 
         public static bool EnableTranslation { get; set; }
 
@@ -1232,6 +1233,16 @@ namespace BmwDeepObd
             return true;
         }
 
+        public void ClearTranslationCache()
+        {
+            _yandexTransDict.Clear();
+        }
+
+        public bool IsTranslationCacheEmpty()
+        {
+            return _yandexTransDict.Count == 0;
+        }
+
         public bool RequestEnableTranslate(EventHandler<EventArgs> handler = null)
         {
             try
@@ -1330,7 +1341,7 @@ namespace BmwDeepObd
                         // no language list present, get it first
                         sbUrl.Append(@"https://translate.yandex.net/api/v1.5/tr/getLangs?");
                         sbUrl.Append("key=");
-                        sbUrl.Append(System.Uri.EscapeDataString(YandexKey));
+                        sbUrl.Append(System.Uri.EscapeDataString(YandexApiKey));
                     }
                     else
                     {
@@ -1343,7 +1354,7 @@ namespace BmwDeepObd
 
                         sbUrl.Append(@"https://translate.yandex.net/api/v1.5/tr/translate?");
                         sbUrl.Append("key=");
-                        sbUrl.Append(System.Uri.EscapeDataString(YandexKey));
+                        sbUrl.Append(System.Uri.EscapeDataString(YandexApiKey));
                         sbUrl.Append("&lang=");
                         sbUrl.Append(langPair);
                         int offset = _yandexTransList?.Count ?? 0;
