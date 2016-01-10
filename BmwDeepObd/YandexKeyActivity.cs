@@ -77,12 +77,18 @@ namespace BmwDeepObd
                 ClipboardManager clipboardManagerNew = _clipboardManager as ClipboardManager;
                 if (clipboardManagerNew != null)
                 {
-                    if (clipboardManagerNew.HasPrimaryClip && clipboardManagerNew.PrimaryClipDescription.HasMimeType(ClipDescription.MimetypeTextPlain))
+                    if (clipboardManagerNew.HasPrimaryClip)
                     {
+                        string clipText = string.Empty;
                         ClipData.Item item = clipboardManagerNew.PrimaryClip.GetItemAt(0);
-                        if (!string.IsNullOrWhiteSpace(item?.Text))
+                        if (item != null)
                         {
-                            _editTextYandexApiKey.Text = item.Text.Trim();
+                            clipText = clipboardManagerNew.PrimaryClipDescription.HasMimeType(ClipDescription.MimetypeTextPlain) ?
+                                item.Text : item.CoerceToText(this);
+                        }
+                        if (!string.IsNullOrWhiteSpace(clipText))
+                        {
+                            _editTextYandexApiKey.Text = clipText.Trim();
                             UpdateDisplay();
                         }
                     }
@@ -207,10 +213,16 @@ namespace BmwDeepObd
             ClipboardManager clipboardManagerNew = _clipboardManager as ClipboardManager;
             if (clipboardManagerNew != null)
             {
-                if (clipboardManagerNew.HasPrimaryClip && clipboardManagerNew.PrimaryClipDescription.HasMimeType(ClipDescription.MimetypeTextPlain))
+                if (clipboardManagerNew.HasPrimaryClip)
                 {
+                    string clipText = string.Empty;
                     ClipData.Item item = clipboardManagerNew.PrimaryClip.GetItemAt(0);
-                    if (!string.IsNullOrWhiteSpace(item?.Text))
+                    if (item != null)
+                    {
+                        clipText = clipboardManagerNew.PrimaryClipDescription.HasMimeType(ClipDescription.MimetypeTextPlain) ?
+                            item.Text : item.CoerceToText(this);
+                    }
+                    if (!string.IsNullOrWhiteSpace(clipText))
                     {
                         pasteEnable = true;
                     }
