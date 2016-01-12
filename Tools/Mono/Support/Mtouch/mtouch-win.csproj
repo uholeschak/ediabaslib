@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8C6171E6-F6C3-4F89-A2B0-7AF6EE1C8D55}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mtouch_win</RootNamespace>
+    <AssemblyName>mtouch-win</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Mandroid\LicenseType.cs">
+      <Link>LicenseType.cs</Link>
+    </Compile>
+    <Compile Include="..\Mandroid\Mono.Options\Options.cs">
+      <Link>Mono.Options\Options.cs</Link>
+    </Compile>
+    <Compile Include="..\Mandroid\Xamarin.Licensing.Interop\AddressFamily.cs">
+      <Link>Xamarin.Licensing.Interop\AddressFamily.cs</Link>
+    </Compile>
+    <Compile Include="..\Mandroid\Xamarin.Licensing.Interop\GetAdaptersAddressesFlags.cs">
+      <Link>Xamarin.Licensing.Interop\GetAdaptersAddressesFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\Mandroid\Xamarin.Licensing.Interop\IfLuid.cs">
+      <Link>Xamarin.Licensing.Interop\IfLuid.cs</Link>
+    </Compile>
+    <Compile Include="..\Mandroid\Xamarin.Licensing.Interop\IfOperStatus.cs">
+      <Link>Xamarin.Licensing.Interop\IfOperStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\Mandroid\Xamarin.Licensing.Interop\IfType.cs">
+      <Link>Xamarin.Licensing.Interop\IfType.cs</Link>
+    </Compile>
+    <Compile Include="..\Mandroid\Xamarin.Licensing.Interop\IpAdapterAddresses.cs">
+      <Link>Xamarin.Licensing.Interop\IpAdapterAddresses.cs</Link>
+    </Compile>
+    <Compile Include="..\Mandroid\Xamarin.Licensing.Interop\IpAdapterAddressesFlags.cs">
+      <Link>Xamarin.Licensing.Interop\IpAdapterAddressesFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\Mandroid\Xamarin.Licensing.Interop\NetIfConnectionType.cs">
+      <Link>Xamarin.Licensing.Interop\NetIfConnectionType.cs</Link>
+    </Compile>
+    <Compile Include="..\Mandroid\Xamarin.Licensing.Interop\SocketAddress.cs">
+      <Link>Xamarin.Licensing.Interop\SocketAddress.cs</Link>
+    </Compile>
+    <Compile Include="..\Mandroid\Xamarin.Licensing.Interop\TunnelType.cs">
+      <Link>Xamarin.Licensing.Interop\TunnelType.cs</Link>
+    </Compile>
+    <Compile Include="..\Mandroid\Xamarin.Licensing.Interop\UnsafeNativeMethods.cs">
+      <Link>Xamarin.Licensing.Interop\UnsafeNativeMethods.cs</Link>
+    </Compile>
+    <Compile Include="..\Mandroid\Xamarin.Licensing.Interop\WinapiError.cs">
+      <Link>Xamarin.Licensing.Interop\WinapiError.cs</Link>
+    </Compile>
+    <Compile Include="..\Mandroid\Xamarin.Licensing.Interop\WinNetworkInterfaceInfo.cs">
+      <Link>Xamarin.Licensing.Interop\WinNetworkInterfaceInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Mandroid\Xamarin.Licensing.Interop\WinNetworkInterfaces.cs">
+      <Link>Xamarin.Licensing.Interop\WinNetworkInterfaces.cs</Link>
+    </Compile>
+    <Compile Include="MonoTouch\Constants.cs" />
+    <Compile Include="MonoTouch\ErrorHelper.cs" />
+    <Compile Include="MonoTouch\MonoTouchException.cs" />
+    <Compile Include="MTouch.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Xamarin.Licensing\Certificates.cs" />
+    <Compile Include="Xamarin.Licensing\PlatformActivation.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MonoTouchClient\Mono.Touch.Activation.Client.csproj">
+      <Project>{16c22691-8c00-4e38-8095-60b22f69d7e0}</Project>
+      <Name>Mono.Touch.Activation.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MonoTouchCommon\Mono.Touch.Activation.Common.csproj">
+      <Project>{7fec847b-56eb-4145-9a77-8880db3698c0}</Project>
+      <Name>Mono.Touch.Activation.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
