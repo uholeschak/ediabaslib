@@ -2935,19 +2935,23 @@ namespace EdiabasLib
             string key = name.ToUpper(Culture);
             if (_lockTrace)
             {
-                if (string.Compare(key, "APITRACE", StringComparison.Ordinal) == 0)
+                if (string.Compare(key, "ApiTrace", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return;
                 }
-                if (string.Compare(key, "IFHTRACE", StringComparison.Ordinal) == 0)
+                if (string.Compare(key, "IfhTrace", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return;
                 }
-                if (string.Compare(key, "TRACEPATH", StringComparison.Ordinal) == 0)
+                if (string.Compare(key, "TracePath", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return;
                 }
-                if (string.Compare(key, "TRACEBUFFERING", StringComparison.Ordinal) == 0)
+                if (string.Compare(key, "TraceBuffering", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return;
+                }
+                if (string.Compare(key, "AppendTrace", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return;
                 }
