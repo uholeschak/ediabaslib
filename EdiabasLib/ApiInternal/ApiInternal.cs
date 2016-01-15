@@ -1549,9 +1549,16 @@ namespace Ediabas
                                 buffering = EdiabasNet.StringToValue(traceBuffering);
                             }
 
+                            int appendTrace = 0;
+                            string prop = _ediabas.GetConfigProperty("AppendTrace");
+                            if (prop != null)
+                            {
+                                appendTrace = (int)EdiabasNet.StringToValue(prop);
+                            }
+
                             Directory.CreateDirectory(tracePath);
                             FileMode fileMode = FileMode.Append;
-                            if (_firstLog)
+                            if (_firstLog && appendTrace == 0)
                             {
                                 _firstLog = false;
                                 fileMode = FileMode.Create;
