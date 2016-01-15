@@ -191,17 +191,18 @@ namespace CarSimulator
                             numberArray = line.Split(' ');
                             foreach (string number in numberArray)
                             {
-                                if (number.Length > 1)
+                                if (string.IsNullOrEmpty(number))
                                 {
-                                    try
-                                    {
-                                        int value = Convert.ToInt32(number, 16);
-                                        configList.Add((byte)value);
-                                    }
-                                    catch
-                                    {
-                                        // ignored
-                                    }
+                                    continue;
+                                }
+                                try
+                                {
+                                    int value = Convert.ToInt32(number, 16);
+                                    configList.Add((byte) value);
+                                }
+                                catch
+                                {
+                                    // ignored
                                 }
                             }
                             continue;
@@ -214,6 +215,10 @@ namespace CarSimulator
 
                         foreach (string number in numberArray)
                         {
+                            if (string.IsNullOrEmpty(number))
+                            {
+                                continue;
+                            }
                             if (number == ":")
                             {
                                 responseData = true;
@@ -362,7 +367,14 @@ namespace CarSimulator
                                 int telLength = responseEntry.Request[0] & 0x3F;
                                 if (telLength == 0)
                                 {   // with length byte
-                                    telLength = responseEntry.Request[3] + 5;
+                                    if (responseEntry.Request[3] == 0)
+                                    {
+                                        telLength = ((responseEntry.Request[4] << 8) | responseEntry.Request[5]) + 7;
+                                    }
+                                    else
+                                    {
+                                        telLength = responseEntry.Request[3] + 5;
+                                    }
                                 }
                                 else
                                 {
@@ -390,7 +402,14 @@ namespace CarSimulator
                             int telLength = response[telOffset + 0] & 0x3F;
                             if (telLength == 0)
                             {   // with length byte
-                                telLength = response[telOffset + 3] + 5;
+                                if (response[telOffset + 3] == 0)
+                                {
+                                    telLength = ((response[telOffset + 4] << 8) | response[telOffset + 5]) + 7;
+                                }
+                                else
+                                {
+                                    telLength = response[telOffset + 3] + 5;
+                                }
                             }
                             else
                             {

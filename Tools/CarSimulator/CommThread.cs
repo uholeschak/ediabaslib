@@ -1633,8 +1633,16 @@ namespace CarSimulator
                 int dataLength = sendData[0] & 0x3F;
                 if (dataLength == 0)
                 {   // with length byte
-                    dataLength = sendData[3];
-                    dataOffset = 4;
+                    if (sendData[3] == 0)
+                    {
+                        dataLength = (sendData[4] << 8) | sendData[5];
+                        dataOffset = 6;
+                    }
+                    else
+                    {
+                        dataLength = sendData[3];
+                        dataOffset = 4;
+                    }
                 }
                 byte[] dataBuffer = new byte[dataLength + 8];
                 int payloadLength = dataLength + 2;
