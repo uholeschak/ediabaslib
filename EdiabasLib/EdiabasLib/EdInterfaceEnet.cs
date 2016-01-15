@@ -14,7 +14,7 @@ namespace EdiabasLib
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
 
         private bool _disposed;
-        protected const int TransBufferSize = 512; // transmit buffer size
+        protected const int TransBufferSize = 0x10010; // transmit buffer size
         protected const string AutoIp = "auto";
         protected static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         protected static readonly byte[] ByteArray0 = new byte[0];
@@ -837,8 +837,16 @@ namespace EdiabasLib
                 int dataLength = sendData[0] & 0x3F;
                 if (dataLength == 0)
                 {   // with length byte
-                    dataLength = sendData[3];
-                    dataOffset = 4;
+                    if (sendData[3] == 0)
+                    {
+                        dataLength = (sendData[4] << 8) | sendData[5];
+                        dataOffset = 6;
+                    }
+                    else
+                    {
+                        dataLength = sendData[3];
+                        dataOffset = 4;
+                    }
                 }
                 int payloadLength = dataLength + 2;
                 DataBuffer[0] = (byte)((payloadLength >> 24) & 0xFF);
@@ -911,7 +919,18 @@ namespace EdiabasLib
                 byte sourceAddr = DataBuffer[6];
                 byte targetAddr = 0xF1;
                 int len;
-                if (dataLen > 0x3F)
+                if (dataLen > 0xFF)
+                {
+                    receiveData[0] = 0x80;
+                    receiveData[1] = targetAddr;
+                    receiveData[2] = sourceAddr;
+                    receiveData[3] = 0x00;
+                    receiveData[4] = (byte)(dataLen >> 8);
+                    receiveData[5] = (byte)dataLen;
+                    Array.Copy(DataBuffer, 8, receiveData, 6, dataLen);
+                    len = dataLen + 6;
+                }
+                else if (dataLen > 0x3F)
                 {
                     receiveData[0] = 0x80;
                     receiveData[1] = targetAddr;
@@ -1088,8 +1107,16 @@ namespace EdiabasLib
                 int dataStart = 3;
                 if (dataLen == 0)
                 {   // with length byte
-                    dataLen = receiveData[3];
-                    dataStart++;
+                    if (receiveData[3] == 0)
+                    {
+                        dataLen = (receiveData[4] << 8) | receiveData[5];
+                        dataStart += 3;
+                    }
+                    else
+                    {
+                        dataLen = receiveData[3];
+                        dataStart++;
+                    }
                 }
                 if ((dataLen == 3) && (receiveData[dataStart] == 0x7F) && (receiveData[dataStart + 2] == 0x78))
                 {   // negative response 0x78
@@ -1116,7 +1143,14 @@ namespace EdiabasLib
             int telLength = dataBuffer[0] & 0x3F;
             if (telLength == 0)
             {   // with length byte
-                telLength = dataBuffer[3] + 4;
+                if (dataBuffer[3] == 0)
+                {
+                    telLength = ((dataBuffer[4] << 8) | dataBuffer[5]) + 6;
+                }
+                else
+                {
+                    telLength = dataBuffer[3] + 4;
+                }
             }
             else
             {
