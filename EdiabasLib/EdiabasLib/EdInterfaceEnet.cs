@@ -911,7 +911,7 @@ namespace EdiabasLib
                 // ReSharper disable RedundantCast
                 int dataLen = (((int)DataBuffer[0] << 24) | ((int)DataBuffer[1] << 16) | ((int)DataBuffer[2] << 8) | DataBuffer[3]) - 2;
                 // ReSharper restore RedundantCast
-                if ((dataLen < 1) || ((dataLen + 8) > recLen))
+                if ((dataLen < 1) || ((dataLen + 8) > recLen) || (dataLen > 0xFFFF))
                 {
                     return false;
                 }
