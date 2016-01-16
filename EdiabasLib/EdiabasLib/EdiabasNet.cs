@@ -2322,9 +2322,13 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ArgString: Job is running");
                 }
+                if (!string.IsNullOrEmpty(value))
+                {
+                    LogFormat(EdLogLevel.Ifh, "ArgString: {0}", value);
+                }
                 lock (_apiLock)
                 {
-                    _argInfo.BinData = Encoding.GetBytes(value);
+                    _argInfo.BinData = string.IsNullOrEmpty(value) ? null : Encoding.GetBytes(value);
                 }
             }
         }
@@ -2347,6 +2351,10 @@ namespace EdiabasLib
                 if (JobRunning)
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ArgBinary: Job is running");
+                }
+                if (value != null && value.Length > 0)
+                {
+                    LogData(EdLogLevel.Ifh, value, 0, value.Length, "ArgBinary");
                 }
                 lock (_apiLock)
                 {
@@ -2374,9 +2382,13 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ArgStringStd: Job is running");
                 }
+                if (!string.IsNullOrEmpty(value))
+                {
+                    LogFormat(EdLogLevel.Ifh, "ArgStringStd: {0}", value);
+                }
                 lock (_apiLock)
                 {
-                    _argInfoStd.BinData = Encoding.GetBytes(value);
+                    _argInfoStd.BinData = string.IsNullOrEmpty(value) ? null : Encoding.GetBytes(value);
                 }
             }
         }
@@ -2399,6 +2411,10 @@ namespace EdiabasLib
                 if (JobRunning)
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "ArgBinaryStd: Job is running");
+                }
+                if (value != null && value.Length > 0)
+                {
+                    LogData(EdLogLevel.Ifh, value, 0, value.Length, "ArgBinaryStd");
                 }
                 lock (_apiLock)
                 {
