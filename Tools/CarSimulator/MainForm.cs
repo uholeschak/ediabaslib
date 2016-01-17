@@ -68,7 +68,10 @@ namespace CarSimulator
             foreach (string port in ports)
             {
                 string portFixed = rx.Replace(port, "$1");
-                index = listPorts.Items.Add(portFixed);
+                if (!listPorts.Items.Contains(portFixed))
+                {
+                    index = listPorts.Items.Add(portFixed);
+                }
             }
             try
             {
