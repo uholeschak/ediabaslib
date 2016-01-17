@@ -125,6 +125,7 @@
   <string name="datalog_enable_trace">Create trace file</string>
   <string name="datalog_append_trace">Append trace file</string>
   <string name="datalog_enable_datalog">Log data</string>
+  <string name="datalog_date">Date</string>
 
   <!-- FilePicker -->
   <string name="select_file">Select file</string>

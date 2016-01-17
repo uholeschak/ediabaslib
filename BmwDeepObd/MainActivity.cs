@@ -80,6 +80,7 @@ namespace BmwDeepObd
             public bool Checked { get; set; }
         }
 
+        private const char DataLogSeparator = '\t';
         private const string SharedAppName = "de.holeschak.bmw_deep_obd";
         private const string AppFolderName = "de.holeschak.bmw_deep_obd";
         private const string EcuDirName = "Ecu";
@@ -961,6 +962,29 @@ namespace BmwDeepObd
                                 fileMode = FileMode.Create;
                             }
                             _swDataLog = new StreamWriter(new FileStream(fileName, fileMode, FileAccess.Write, FileShare.ReadWrite));
+                            if (fileMode == FileMode.Create)
+                            {
+                                // add header
+                                StringBuilder sbLog = new StringBuilder();
+                                sbLog.Append(GetString(Resource.String.datalog_date));
+                                foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
+                                {
+                                    if (!string.IsNullOrEmpty(displayInfo.LogTag))
+                                    {
+                                        sbLog.Append(DataLogSeparator);
+                                        sbLog.Append(displayInfo.LogTag.Replace(DataLogSeparator, ' '));
+                                    }
+                                }
+                                try
+                                {
+                                    sbLog.Append("\r\n");
+                                    _swDataLog.Write(sbLog.ToString());
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
                         }
                         catch (Exception)
                         {
@@ -1084,6 +1108,9 @@ namespace BmwDeepObd
                     }
                     else
                     {
+                        StringBuilder sbLog = new StringBuilder();
+                        sbLog.Append(currDateTime);
+                        bool logDataPresent = false;
                         foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                         {
                             string result = string.Empty;
@@ -1114,15 +1141,25 @@ namespace BmwDeepObd
                                 tempResultList.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result));
                                 if (!string.IsNullOrEmpty(displayInfo.LogTag) && _dataLogActive && _swDataLog != null)
                                 {
-                                    try
+                                    if (!string.IsNullOrWhiteSpace(result))
                                     {
-                                        _swDataLog.Write("{0}\t{1}\t{2}\r\n", displayInfo.LogTag, currDateTime, result);
+                                        logDataPresent = true;
                                     }
-                                    catch (Exception)
-                                    {
-                                        // ignored
-                                    }
+                                    sbLog.Append(DataLogSeparator);
+                                    sbLog.Append(result.Replace(DataLogSeparator, ' '));
                                 }
+                            }
+                        }
+                        if (logDataPresent && _dataLogActive && _swDataLog != null)
+                        {
+                            try
+                            {
+                                sbLog.Append("\r\n");
+                                _swDataLog.Write(sbLog.ToString());
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
                             }
                         }
                     }
