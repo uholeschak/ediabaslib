@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Deep OBD для BMW</string>
+  <string name="button_connected">Соеденено</string>
+  <string name="button_disconnected">Разъеденено</string>
+  <string name="button_yes">Да</string>
+  <string name="button_no">Нет</string>
+  <string name="button_ok">Ok</string>
+  <string name="button_abort">Отменить</string>
+  <string name="button_select">Выбрать</string>
+  <string name="button_generate">Генерировать</string>
+  <string name="no_ext_storage">Внешняя память недоступна</string>
+  <string name="bt_enable">Bluetooth не активирован.\nХотите его активираивать?</string>
+  <string name="wifi_enable">Wifi не активирован.\nХотите его активираивать?</string>
+  <string name="bt_not_available">Bluetooth не доступен.</string>
+  <string name="wifi_not_available">Wifi не доступен.</string>
+  <string name="config_select">Отсутствует правильная конфигурация.\nХотите создать или выбрать конфигурацию?</string>
+  <string name="bt_device_select">Bluetooth устройство не выбрано.\nХотите выбрать устройство?</string>
+  <string name="ecu_download_free_space">На этом устройстве недостаточно свободной памяти ({0:fs0}) для сохранения ECU файла.\nХотите выбрать другой носитель памяти?</string>
+  <string name="ecu_not_found">ECU файлы не найдены.</string>
+  <string name="ecu_package">Для этого приложенйя сеществуют другие ECU файлы.</string>
+  <string name="ecu_download">Хотите загрузить ECU файлы (размер файла примерно {0:fs0})?</string>
+  <string name="error_no_error">Ошибки отсутствуют</string>
+  <string name="error_no_response">Нет подтверждения</string>
+  <string name="version_change_info_message">Этот проект с открытым исходным кодом размещен на:
+\n<a href='https://ediabaslib.codeplex.com'>ediabaslib.codeplex.com</a>
+\nВы можете принять участие в проекте или же сообщить об ошибках.
+\nДополнительную инфирмацию вы можете найти на этой веб-странице.
+\n\nИзменения в этой версии:
+\n- улучшено Bluetooth соединение
+\n- автоматический ЕСU переводчик дополнен яндексом (длы других языков)</string>
+  <string name="app_info_message">Deep OBD для BMW\nВерсия: {0}\nId: {1}</string>
+
+  <!-- Alert titles -->
+  <string name="alert_title_info">Информация</string>
+  <string name="alert_title_warning">Предупреждение</string>
+  <string name="alert_title_error">Ошибка</string>
+  <string name="alert_title_question">Вопрос</string>
+
+  <!-- Compile -->
+  <string name="compile_start">Компилировать код пользователя</string>
+
+  <!-- Download -->
+  <string name="downloading_file">Скачать файлы</string>
+  <string name="download_failed">Неудалось скачать файлы.\nПожалуйста, проверьте подключение к сети.</string>
+  <string name="extract_cleanup">Удалить старые файлы</string>
+  <string name="extract_file">Разархивировать файлы</string>
+  <string name="extract_failed">Не удалось разархивировать файлы.\nВозможно поврежден Zip-файл.</string>
+  <string name="extract_failed_io">Не удалось сохранить разархивированные файлы.\nНа данном устройстве недостаточно свободаной памяти?</string>
+
+  <!-- Send trace file -->
+  <string name="send_trace_file_request">Ошибка соединения.\nХотите отправить анонимный и сжатый Trace-файл (размер {0:fs0}) для улучшения качества продукта?</string>
+  <string name="send_message_request">Ошибка соединения.\nХотите отправить анонимный файл для улучшения качества продукта?</string>
+  <string name="send_trace_file">Послать Trace-файл</string>
+  <string name="compress_trace_file_failed">Не удалось сжать Trace-файл.</string>
+  <string name="send_trace_file_failed">Не удалось отправить Trace-файл.</string>
+  <string name="send_trace_file_failed_retry">Не удалось отправить Trace-файл.\nПожалуйста, проверьте подключение к сети.\nХотите повторить отправку?</string>
+
+  <!-- Translate -->
+  <string name="translate_text">Перевод текста</string>
+  <string name="translate_failed">Ошибка перевода текста.\nПожалуйста, проверьте подключение к сети.\nХотите повторить перевод?</string>
+  <string name="translate_enable_request">Хотите воспользоваться автоматическим переводчиком <a href='http://translate.yandex.com'>Яндекс</a> для перевода ECU текста?\nДля этого необходим Яндекс аккаунт и API ключ.\nPowered by Yandex.Translate</string>
+  <string name="translate_store_key">Сохранить ключ?</string>
+
+  <!-- Translate Menu -->
+  <string name="menu_translation_submenu">Переводы</string>
+  <string name="menu_translation_enable">Перевести ECU тексты</string>
+  <string name="menu_translation_yandex_key">Яндекс API ключ</string>
+  <string name="menu_translation_clear_cache">Удалить кэш перевода</string>
+
+  <!-- Yandex key -->
+  <string name="yandex_api_key_title">Яндекс API ключ</string>
+  <string name="yandex_key_desc">Для автоматическохо перевода в Яндексе необходим безплатный API ключ, который разрешает ограниченное количество переводов в день.\nЧтобы получить этот ключ, необходим Яндекс аккаунт.\nЧтобы получить ключ или показать имеющийся, зарегистрируйтесь в Яндексе с помощью двух следующих кнопок.\nСкопируйте клуч из броузера в нижнее окно и вставте его, нажав кнопку Вставить.\nЧтобы скопировать клуч, нажмите и удерживайте первое слово, выделите нужное и нажмите Копировать.</string>
+  <string name="yandex_key_copy_title">копировать API ключ</string>
+  <string name="button_yandex_key_create">создать API ключ</string>
+  <string name="button_yandex_key_get">Показать API ключи</string>
+  <string name="yandex_key_paste_title">API ключ</string>
+  <string name="button_yandex_key_paste">Вставить API ключи</string>
+  <string name="yandex_key_test_title">Перевести</string>
+  <string name="button_yandex_key_test">Проверить перевод</string>
+  <string name="button_yandex_key_test_failed">Ошибка при переводе</string>
+
+  <!--  DeviceListActivity -->
+  <string name="scanning">Поиск устройств ...</string>
+  <string name="select_device">Выбор устройства</string>
+  <string name="none_paired">Отсутствуют авторизированные устойства.</string>
+  <string name="none_found">Устройство не найдено</string>
+  <string name="title_paired_devices">Авторизированные устройства</string>
+  <string name="title_other_devices">Другие доступные устройства</string>
+  <string name="button_scan">Поиск устройств</string>
+  <string name="detect_adapter">Определение типа устройства</string>
+  <string name="adapter_connection_failed">Не удалось установить Bloetooth соединение с устройством.\nЗакройте другие приложения, если они используют это соединение или перезагрузите ваше Android устройство.\nХотите все равно использовать это устройство (Пакеты данных будут посланы без изменений)?</string>
+  <string name="unknown_adapter_type">Неустановлен тип устройства.\nХотите все равно использовать это устройство (Пакеты данных будут посланы без изменений)?</string>
+  <string name="invalid_adapter_type">ELM327 устройство поддерживает не все необходимые команды и несовместимо с этим приложением.</string>
+  <string name="fake_elm_adapter_type">ELM327 устройство имеет поддельную 2.1 версию и несовместимо с этим приложением.</string>
+  <string formatted="false" name="recommened_adapter_type">Рекомендуется ELM327 устройство v1.4b, v1.5 или оригинальной версии v2.1,&lt;br&gt;которое базируется на процессоре PIC18F25K80 (не на MCP2515 чипе).&lt;br&gt;По ссылке &lt;a href=\'https://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327\'&gt;ediabaslib.codeplex.com&lt;/a&gt; можете найти улучшенную прошивку.</string>
+  <string name="adapter_elm_replacement">ELM327 устройство медленное и нестабильное.\nВы можете купить улучшенную прошивку\n<a href='https://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327'>ediabaslib.codeplex.com</a>.</string>
+  <string name="adapter_cfg_required">Устройсво, возможно, требуется настроить.\nХотите получить доступ к конфигурации устройсва?</string>
+  <string name="adapter_fw_update">Доступно обновление для этого устройства.\nХотите получить доступ к конфигурации устройсва, чтобы установить обновление?</string>
+
+  <!-- tabs_activate -->
+  <string name="button_active">Активна</string>
+  <string name="button_inactive">Не активна</string>
+
+  <!-- tabs_errors -->
+  <string name="button_error_reset">Удалить ошибки</string>
+
+  <!-- Options Menu -->
+  <string name="menu_settings">Настройки</string>
+  <string name="menu_connect">Подключить</string>
+  <string name="menu_adapter">Устройство</string>
+  <string name="menu_adapter_config">Настройки устройства</string>
+  <string name="menu_sel_cfg">Конфигурация</string>
+  <string name="menu_xml_tool">Генератор конфигураций</string>
+  <string name="menu_ediabas_tool">Ediabas утилита</string>
+  <string name="menu_sel_media">Носитель памяти</string>
+  <string name="menu_download_ecu">Скачать ECU файл.</string>
+  <string name="menu_submenu_log">Протокол данных</string>
+  <string name="menu_submenu_help">Онлайн помощь</string>
+  <string name="menu_info">Информация о приложении</string>
+  <string name="menu_exit">Завершить приложении</string>
+
+  <!-- Data logging -->
+  <string name="datalog_enable_trace">создать Trace файл</string>
+  <string name="datalog_append_trace">Добавить Trace файл</string>
+  <string name="datalog_enable_datalog">Протоколировать данные</string>
+  <string name="datalog_date">Date</string>
+
+  <!-- FilePicker -->
+  <string name="select_file">Выбрать файл</string>
+  <string name="access_dir_failed">В доступе отказано:</string>
+  <string name="file_picker_search">Поиск</string>
+
+  <!-- Storage media selection -->
+  <string name="select_media">Выбрать носитель памяти</string>
+  <string name="default_media">По умолчанию</string>
+  <string name="custom_media">Пользователь</string>
+  <string name="free_space">Свободно</string>
+
+  <!-- Interface selection -->
+  <string name="select_interface">Выбрать интерфейс</string>
+  <string name="select_interface_bt">Bluetooth</string>
+  <string name="select_interface_enet">ENET</string>
+  <string name="select_interface_ftdi">USB (FTDI)</string>
+
+  <!--  EdiabasToolActivity -->
+  <string name="tool_title">Ediabas утилита</string>
+  <string name="tool_select_sgbd">Выбрать SGBD</string>
+  <string name="tool_read_sgbd">Считать SGBD информацию</string>
+  <string name="tool_job_jobs">Jobs:</string>
+  <string name="tool_job_job">Job:</string>
+  <string name="tool_job_arguments">Аргументы:</string>
+  <string name="tool_job_arguments_error_detail">Без аргументов будут считаны все ошибки</string>
+  <string name="tool_job_results">Результаты:</string>
+  <string name="tool_job_result">Результат:</string>
+  <string name="tool_job_infos">Информация:</string>
+  <string name="tool_check_continuous">Fortlaufend</string>
+  <string name="tool_read_errors_failure">Не удалось считать ошибки</string>
+  <string name="tool_no_errors">Ошибок нет</string>
+
+  <!-- Ediabas Tool Options Menu -->
+  <string name="menu_tool_sel_interface">Интерфейс</string>
+  <string name="menu_tool_sel_sgbd_grp">SGBD (grp)</string>
+  <string name="menu_tool_sel_sgbd_prg">SGBD (prg)</string>
+
+  <!-- XML Tool Activity -->
+  <string name="xml_tool_title">Генератор конфигураций</string>
+  <string name="button_xml_tool_read">Считать</string>
+  <string name="button_xml_tool_edit">Редактировать</string>
+  <string name="button_xml_tool_save">Сохранить</string>
+  <string name="xml_tool_analyze">Считать данные автомобиля</string>
+  <string name="xml_tool_select_sgbd">Выбрать тип автомобиля</string>
+  <string name="xml_tool_no_response">Автомобиль не отвечает</string>
+  <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nКогда транспортное средство старше доступных моделей, возможна только ручная настройка.\nПерейти к ручной настройке?</string>
+  <string name="xml_tool_read_jobs_failed">Не удалось считать Jobs</string>
+  <string name="xml_tool_read_ecu_info_failed">Не удалось считать ECU информацию</string>
+  <string name="xml_tool_save_xml_failed">Не удалось сохраноть конфигурацию</string>
+  <string name="xml_tool_msg_save_config">Сохраноть конфигурацию?</string>
+  <string name="xml_tool_msg_ecu_error">Для некоторых ECU информация не может быть найдена.\nДля новых моделей попробуйте выбрать e89x.\nХотите попытаться еще раз с другим типом модели?</string>
+  <string name="xml_tool_ecu_list">Обнаруженные ECU</string>
+  <string name="xml_tool_info_sgbd">SGBD</string>
+  <string name="xml_tool_info_grp">Группа</string>
+  <string name="xml_tool_info_vin">VIN</string>
+  <string name="xml_tool_errors_page">Ошибки</string>
+  <string name="xml_tool_auto_config">Автоматически</string>
+  <string name="xml_tool_man_config">Ручная настройка</string>
+
+  <!-- XML Tool Options Menu -->
+  <string name="menu_xml_tool_add_errors_page">Добавить страницу ошибок</string>
+  <string name="menu_xml_tool_cfg_type">Конфигурация</string>
+
+  <!-- XML Tool Edit Menu -->
+  <string name="menu_xml_tool_edit_grp">Добавить ECU (grp)</string>
+  <string name="menu_xml_tool_edit_prg">Добавить ECU (prg)</string>
+  <string name="menu_xml_tool_edit_del">Удалить неиспользуемые ECU</string>
+
+  <!-- XML Tool context Menu -->
+  <string name="menu_xml_tool_move_top">Переместить в начало</string>
+  <string name="menu_xml_tool_move_up">Переместить вверх</string>
+  <string name="menu_xml_tool_move_down">Переместить вниз</string>
+  <string name="menu_xml_tool_move_bottom">Переместить в конец</string>
+
+  <!-- XML Tool Ecu Activity -->
+  <string name="xml_tool_ecu_title">Jobs для ECU: {0}</string>
+  <string name="xml_tool_ecu_job_comments">Комментарии для Job: {0}</string>
+  <string name="xml_tool_ecu_result_comments">Комментарии для результата: {0}</string>
+  <string name="xml_tool_ecu_result_type">Тип данных</string>
+  <string name="xml_tool_ecu_user_format">Пользователь</string>
+  <string name="xml_tool_ecu_format">Выходной формат</string>
+  <string name="xml_tool_ecu_format_right">Вправо</string>
+  <string name="xml_tool_ecu_format_left">Влево</string>
+  <string name="xml_tool_ecu_page_name">Название страницы</string>
+  <string name="xml_tool_ecu_ecu_name">Название ECU</string>
+  <string name="xml_tool_ecu_jobs_name">Job список</string>
+  <string name="xml_tool_ecu_results">Job результат</string>
+  <string name="xml_tool_ecu_display_text">Выведенный текст</string>
+  <string name="xml_tool_ecu_log_tag">Тег для протоколированных данных</string>
+  <string name="xml_tool_ecu_test_format">Тестировать формат</string>
+  <string name="xml_tool_button_test_format">Считать</string>
+  <string name="xml_tool_execute_test_job">Выполнение Job</string>
+  <string name="xml_tool_read_test_job_failed">Не удалось выполнить Job</string>
+
+  <!-- CAN Adapter Activity -->
+  <string name="can_adapter_title">CAN адаптер</string>
+  <string name="can_adapter_mode_name">Режим работы CAN</string>
+  <string name="can_adapter_sep_time">Интервал между пакетами данных [мс]</string>
+  <string name="can_adapter_block_size">Размер блока данных</string>
+  <string name="can_adapter_bt_pin">Pin код для Bluetooth</string>
+  <string name="can_adapter_ignition_state">Зажигание</string>
+  <string name="can_adapter_bat_voltage">Напряжение аккумулятора</string>
+  <string name="can_adapter_fw_version">Версия прошивки (текущая  / доступная)</string>
+  <string name="can_adapter_ser_num">Серийный номер</string>
+  <string name="can_adapter_expert">Режим эксперта</string>
+  <string name="can_adapter_comm_error">Ошибка соединения</string>
+  <string name="can_adapter_comm_error_std">Ошибка соединения.\nКонфигурация адаптера возможно только во время, когда светоизлучающий диод адаптера активен после включения.</string>
+  <string name="can_adapter_ignition_on">Зажигание включено</string>
+  <string name="can_adapter_ignition_off">Зажигание выключено</string>
+  <string name="can_adapter_text_off">0: выкл. (по умолчанию)</string>
+  <string name="can_adapter_pin_length">Pin код для Bluetooth должен быть длиной в 4 цифры.</string>
+  <string name="can_adapter_new_pin">Для активации нового Pin кода для Bluetooth {0} выключите, а затем включите адаптер.</string>
+  <string name="can_adapter_fw_update_present">Доступно обновление для этого адаптера.\nХотите установить обновление?</string>
+  <string name="can_adapter_fw_update_info">Во время обновления, связь не должна прерываться ни при каких обстоятельствах.\nПродолжить?</string>
+  <string name="can_adapter_fw_update_active">Обновление прошивки.\nПожалуйста не прерывайте связь.</string>
+  <string name="can_adapter_fw_update_conn_failed">Не удалось подключиться к адаптеру</string>
+  <string name="can_adapter_fw_update_failed">Не удалось обновление прошивки</string>
+  <string name="can_adapter_fw_update_ok">Обновление прошивки успешно завершено</string>
+  <string name="button_can_adapter_read">Считать</string>
+  <string name="button_can_adapter_write">Сохранить</string>
+  <string name="button_can_adapter_can_500">D-CAN (после 3/2007)</string>
+  <string name="button_can_adapter_can_100">K-CAN (не стандарт)</string>
+  <string name="button_can_adapter_can_off">K-LINE (до 3/2007)</string>
+  <string name="button_can_adapter_fw_update">Обновление прошивки</string>
+</resources>

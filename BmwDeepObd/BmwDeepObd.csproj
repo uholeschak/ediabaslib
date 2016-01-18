@@ -234,7 +234,9 @@
     <None Include="Xml\E61\E61Enet.cccfg" />
     <None Include="Xml\E61\Ihk.ccpage" />
     <None Include="Xml\E61\Errors.ccpage" />
-    <None Include="Xml\E61\Motor.ccpage" />
+    <None Include="Xml\E61\Motor.ccpage">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Xml\E61\MotorIrregular.ccpage" />
     <None Include="Xml\E61\MotorPm.ccpage" />
     <None Include="Xml\E61\MotorUneven.ccpage" />
@@ -280,5 +282,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\menu\xml_tool_context.xml" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <AndroidResource Include="Resources\values-ru\String.xml" />
   </ItemGroup>
 </Project>
