@@ -124,6 +124,7 @@
 #define EEP_ADDR_SEP_TIME   0x04    // eeprom address for FC separation time (2 bytes)
 #define EEP_ADDR_BT_INIT    0x06    // eeprom address for Bluetooth init required (2 bytes)
 #define EEP_ADDR_BT_PIN     0x08    // eeprom address for Blutooth pin (16 bytes)
+#define EEP_ADDR_BT_NAME    0x18    // eeprom address for Blutooth pin (16 bytes)
 
 #define TEMP_BUF_SIZE       0x0800  // temp buffer size
 
@@ -150,6 +151,7 @@ static uint8_t idle_counter;
 #if ADAPTER_TYPE != 0x02
 static bool init_bt_required;
 static uint8_t pin_buffer[4];
+static uint8_t name_buffer[16];
 #endif
 
 static volatile rec_states rec_state;
@@ -976,7 +978,6 @@ bool set_bt_init()
     {
         "AT+ENABLEIND0\r\n",
         "AT+ROLE0\r\n",
-        "AT+NAMEDeep OBD BMW\r\n",
     };
     bool result = true;
     for (uint8_t i = 0; i < sizeof(bt_init)/sizeof(bt_init[0]); i++)
@@ -1009,6 +1010,33 @@ bool set_bt_pin()
         }
         temp_buffer[len++] = value;
     }
+    temp_buffer[len++] = '\r';
+    temp_buffer[len++] = '\n';
+
+    return send_bt_config(temp_buffer, len, 3);
+}
+
+bool set_bt_name()
+{
+    temp_buffer[0] = 'A';
+    temp_buffer[1] = 'T';
+    temp_buffer[2] = '+';
+    temp_buffer[3] = 'N';
+    temp_buffer[4] = 'A';
+    temp_buffer[5] = 'M';
+    temp_buffer[6] = 'E';
+
+    uint8_t len = 7;
+    for (uint8_t i = 0; i < sizeof(name_buffer); i++)
+    {
+        uint8_t value = name_buffer[i];
+        temp_buffer[len++] = value;
+        if (value == 0)
+        {
+            break;
+        }
+    }
+    temp_buffer[len++] = 0x00;
     temp_buffer[len++] = '\r';
     temp_buffer[len++] = '\n';
 
@@ -1052,6 +1080,10 @@ bool init_bt()
         }
     }
     if (!set_bt_pin())
+    {
+        result = false;
+    }
+    if (!set_bt_name())
     {
         result = false;
     }
@@ -1218,6 +1250,21 @@ void read_eeprom()
         static const uint8_t default_pin[] = {'1', '2', '3', '4'};
         memcpy(pin_buffer, default_pin, sizeof(default_pin));
     }
+
+    for (uint8_t i = 0; i < sizeof(name_buffer); i++)
+    {
+        temp_value1 = eeprom_read(EEP_ADDR_BT_NAME + i);
+        if (i == 0 && temp_value1 == 0xFF)
+        {
+            temp_value1 = 0;
+        }
+        name_buffer[i] = temp_value1;
+    }
+    if (name_buffer[0] == 0)
+    {
+        static const char default_name[] = {"Deep OBD BMW"};
+        memcpy(name_buffer, default_name, sizeof(default_name));
+    }
 #endif
 }
 
@@ -1320,6 +1367,32 @@ bool internal_telegram(uint16_t len)
             len = 5 + sizeof(pin_buffer);
 #else
             len = 5;    // no pin
+#endif
+            temp_buffer[0] = 0x80 + len - 4;
+            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
+            uart_send(temp_buffer, len);
+            return true;
+        }
+        if ((len >= 6) && (temp_buffer[3] & 0x7F) == 0x05)
+        {      // bt name
+#if ADAPTER_TYPE != 0x02
+            if ((temp_buffer[3] & 0x80) == 0x00)
+            {   // write
+                for (uint8_t i = 0; i < sizeof(name_buffer); i++)
+                {
+                    uint8_t cfg_value = 0;
+                    if (i < (len - 5))
+                    {
+                        cfg_value = temp_buffer[4 + i];
+                    }
+                    eeprom_write(EEP_ADDR_BT_NAME + i, cfg_value);
+                }
+                read_eeprom();
+            }
+            memcpy(temp_buffer + 4, name_buffer, sizeof(name_buffer));
+            len = 5 + sizeof(name_buffer);
+#else
+            len = 5;    // no name
 #endif
             temp_buffer[0] = 0x80 + len - 4;
             temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
