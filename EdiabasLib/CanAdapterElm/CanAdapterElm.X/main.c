@@ -86,7 +86,7 @@
 #define DEBUG_PIN           0   // enable debug pin
 #define ID_LOCATION         0x200000    // location of ID memory
 
-#define ADAPTER_VERSION     0x0004
+#define ADAPTER_VERSION     0x0005
 
 #define IGNITION_STATE()    IGNITION
 
@@ -1030,11 +1030,11 @@ bool set_bt_name()
     for (uint8_t i = 0; i < sizeof(name_buffer); i++)
     {
         uint8_t value = name_buffer[i];
-        temp_buffer[len++] = value;
         if (value == 0)
         {
             break;
         }
+        temp_buffer[len++] = value;
     }
     temp_buffer[len++] = 0x00;
     temp_buffer[len++] = '\r';
