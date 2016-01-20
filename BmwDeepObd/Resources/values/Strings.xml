@@ -27,8 +27,9 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
-\n- Improved Bluetooth connection
-\n- Added automatic ECU text translation with Yandex</string>
+\n- Bluetooth name adjustable
+\n- New log file format
+\n- Russian translation added</string>
   <string name="app_info_message">Deep OBD for BMW\nVersion: {0}\nId: {1}</string>
 
   <!-- Alert titles -->
