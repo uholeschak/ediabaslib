@@ -27,8 +27,9 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную инфирмацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:
-\n- улучшено Bluetooth соединение
-\n- автоматический ЕСU переводчик дополнен яндексом (длы других языков)</string>
+\n- Bluetooth name adjustable
+\n- New log file format
+\n- Russian translation added</string>
   <string name="app_info_message">Deep OBD для BMW\nВерсия: {0}\nId: {1}</string>
 
   <!-- Alert titles -->
