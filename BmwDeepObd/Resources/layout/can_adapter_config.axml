@@ -55,6 +55,20 @@
             android:maxLength="4"
             android:maxLines="1" />
         <TextView
+            android:id="@+id/textViewCanAdapterBtNameTitle"
+            android:text="@+string/can_adapter_bt_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <EditText
+            android:id="@+id/editTextBtName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLength="16"
+            android:maxLines="1" />
+        <TextView
             android:id="@+id/textViewCanAdapterIgnitionStateTitle"
             android:text="@+string/can_adapter_ignition_state"
             android:layout_width="match_parent"

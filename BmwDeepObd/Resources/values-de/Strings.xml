@@ -226,6 +226,7 @@
   <string name="can_adapter_sep_time">Telegrammabstand [ms]</string>
   <string name="can_adapter_block_size">Blockgröße</string>
   <string name="can_adapter_bt_pin">Bluetooth Pin</string>
+  <string name="can_adapter_bt_name">Bluetooth Name</string>
   <string name="can_adapter_ignition_state">Zündung</string>
   <string name="can_adapter_bat_voltage">Batteriespannung</string>
   <string name="can_adapter_fw_version">Firmwareversion (aktuell / verfügbar)</string>
@@ -237,7 +238,9 @@
   <string name="can_adapter_ignition_off">Zündung aus</string>
   <string name="can_adapter_text_off">0: Aus (Standard)</string>
   <string name="can_adapter_pin_length">Die Bluetooth Pin muss 4 Stellen lang sein</string>
+  <string name="can_adapter_name_length">Die Länge des Bluetoothnamens ist ungültig</string>
   <string name="can_adapter_new_pin">Die neue Bluetooth Pin {0} wird aktiv, wenn der Adapter aus und eingeschaltet wird.</string>
+  <string name="can_adapter_new_name">Der neue Bluetooth Name wird aktiv, wenn der Adapter aus und eingeschaltet wird.</string>
   <string name="can_adapter_fw_update_present">Es ist ein Firmwareupdate für den Adpter vorhanden.\nWollen Sie das Update jetzt installieren?</string>
   <string name="can_adapter_fw_update_info">Während des Updates darf die Kommunikation auf keinen Fall unterbrochen werden.\nWollen Sie fortfahren?</string>
   <string name="can_adapter_fw_update_active">Firmware Aktualisierung aktiv.\nBitte Kommunikation nicht unterbrechen.</string>
