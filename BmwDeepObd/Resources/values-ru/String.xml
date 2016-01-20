@@ -238,7 +238,7 @@
   <string name="can_adapter_ignition_off">Зажигание выключено</string>
   <string name="can_adapter_text_off">0: выкл. (по умолчанию)</string>
   <string name="can_adapter_pin_length">Pin код для Bluetooth должен быть длиной в 4 цифры.</string>
-  <string name="can_adapter_name_length">The Bluetooth name length invalid</string>
+  <string name="can_adapter_name_length">The UTF-8 Bluetooth name length invalid</string>
   <string name="can_adapter_new_pin">Для активации нового Pin кода для Bluetooth {0} выключите, а затем включите адаптер.</string>
   <string name="can_adapter_new_name">The new Bluetooth name will get active after power cycle of the adapter</string>
   <string name="can_adapter_fw_update_present">Доступно обновление для этого адаптера.\nХотите установить обновление?</string>

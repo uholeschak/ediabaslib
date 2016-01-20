@@ -701,15 +701,19 @@ namespace BmwDeepObd
                 bool nameChanged = false;
                 if ((btNameData != null) && (btNameData.Length >= 1) && (btNameData.Length <= _btName.Length))
                 {
-                    if (_btName.Length != btNameData.Length)
+                    int length = _btName.TakeWhile(value => value != 0x00).Count();
+                    if (length != btNameData.Length)
                     {
                         nameChanged = true;
                     }
-                    for (int i = 0; i < btNameData.Length; i++)
+                    else
                     {
-                        if (_btName[i] != btNameData[i])
+                        for (int i = 0; i < btNameData.Length; i++)
                         {
-                            nameChanged = true;
+                            if (_btName[i] != btNameData[i])
+                            {
+                                nameChanged = true;
+                            }
                         }
                     }
                     if (!nameChanged)
