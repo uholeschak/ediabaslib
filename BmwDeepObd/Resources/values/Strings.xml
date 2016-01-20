@@ -227,6 +227,7 @@
   <string name="can_adapter_sep_time">Separation time [ms]</string>
   <string name="can_adapter_block_size">Block size</string>
   <string name="can_adapter_bt_pin">Bluetooth pin</string>
+  <string name="can_adapter_bt_name">Bluetooth name</string>
   <string name="can_adapter_ignition_state">Ignition</string>
   <string name="can_adapter_bat_voltage">Battery voltage</string>
   <string name="can_adapter_fw_version">Firmware version (current / available)</string>
@@ -238,7 +239,9 @@
   <string name="can_adapter_ignition_off">Ignition off</string>
   <string name="can_adapter_text_off">0: Off (default)</string>
   <string name="can_adapter_pin_length">The Bluetooth pin must be 4 digits long</string>
+  <string name="can_adapter_name_length">The Bluetooth name length invalid</string>
   <string name="can_adapter_new_pin">The new Bluetooth pin {0} will get active after power cycle of the adapter</string>
+  <string name="can_adapter_new_name">The new Bluetooth name will get active after power cycle of the adapter</string>
   <string name="can_adapter_fw_update_present">A firmware update for the adapter is available.\nDo you want to install the update now?</string>
   <string name="can_adapter_fw_update_info">During the update the communication should be never interrupted.\nDo you want to continue?</string>
   <string name="can_adapter_fw_update_active">Firmware update in progress.\nDo not interrupt communication.</string>
