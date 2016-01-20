@@ -86,7 +86,11 @@
 #define DEBUG_PIN           0   // enable debug pin
 #define ID_LOCATION         0x200000    // location of ID memory
 
+#if ADAPTER_TYPE != 0x02
 #define ADAPTER_VERSION     0x0005
+#else
+#define ADAPTER_VERSION     0x0004
+#endif
 
 #define IGNITION_STATE()    IGNITION
 
