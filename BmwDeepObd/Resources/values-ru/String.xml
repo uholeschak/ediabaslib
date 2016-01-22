@@ -27,6 +27,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную инфирмацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:
+\n- Simplified configuration generator
 \n- Bluetooth name adjustable
 \n- New log file format
 \n- Russian translation added</string>
@@ -177,7 +178,7 @@
   <string name="xml_tool_read_ecu_info_failed">Не удалось считать ECU информацию</string>
   <string name="xml_tool_save_xml_failed">Не удалось сохраноть конфигурацию</string>
   <string name="xml_tool_msg_save_config">Сохраноть конфигурацию?</string>
-  <string name="xml_tool_msg_ecu_error">Для некоторых ECU информация не может быть найдена.\nДля новых моделей попробуйте выбрать e89x.\nХотите попытаться еще раз с другим типом модели?</string>
+  <string name="xml_tool_msg_ecu_error">Для некоторых ECU информация не может быть найдена.</string>
   <string name="xml_tool_ecu_list">Обнаруженные ECU</string>
   <string name="xml_tool_info_sgbd">SGBD</string>
   <string name="xml_tool_info_grp">Группа</string>
