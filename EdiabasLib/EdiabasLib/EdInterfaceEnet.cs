@@ -523,6 +523,18 @@ namespace EdiabasLib
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                 return false;
             }
+            EdiabasNet.ErrorCodes cachedErrorCode;
+            byte[] cachedResponse;
+            if (ReadCachedTransmission(sendData, out cachedResponse, out cachedErrorCode))
+            {
+                if (cachedErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EdiabasProtected.SetError(cachedErrorCode);
+                    return false;
+                }
+                receiveData = cachedResponse;
+                return true;
+            }
             if (ReconnectRequired)
             {
                 InterfaceDisconnect();
@@ -541,11 +553,13 @@ namespace EdiabasLib
                 {
                     ReconnectRequired = true;
                 }
+                CacheTransmission(sendData, null, errorCode);
                 EdiabasProtected.SetError(errorCode);
                 return false;
             }
             receiveData = new byte[recLength];
             Array.Copy(RecBuffer, receiveData, recLength);
+            CacheTransmission(sendData, receiveData, EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE);
             return true;
         }
 

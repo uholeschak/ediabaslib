@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 // ReSharper disable ConvertPropertyToExpressionBody
 
@@ -6,6 +7,33 @@ namespace EdiabasLib
 {
     public abstract class EdInterfaceBase : IDisposable
     {
+        protected class TransmitStorage
+        {
+            public TransmitStorage(byte[] request, byte[] response, EdiabasNet.ErrorCodes errorCode)
+            {
+                Request = request;
+                ResponseList = new List<byte[]>();
+                if (response != null && response.Length > 0)
+                {
+                    byte[] buffer = new byte[response.Length];
+                    Array.Copy(response, buffer, response.Length);
+                    ResponseList.Add(buffer);
+                }
+                ErrorCode = errorCode;
+            }
+
+            public byte[] Request
+            {
+                set
+                {
+                    Key = BitConverter.ToString(value);
+                }
+            }
+            public string Key { get; private set; }
+            public List<byte[]> ResponseList { get; set; }
+            public EdiabasNet.ErrorCodes ErrorCode { get; set; }
+        }
+
         private bool _disposed;
         protected EdiabasNet EdiabasProtected;
         protected object ConnectParameterProtected;
@@ -14,6 +42,11 @@ namespace EdiabasLib
         protected UInt32 CommRepeatsProtected;
         protected UInt32[] CommParameterProtected;
         protected Int16[] CommAnswerLenProtected = new Int16[2];
+        protected bool EnableTransCacheProtected;
+        protected TransmitStorage ReadTransaction;
+        protected TransmitStorage WriteTransaction;
+        protected int ReadTransactionPos;
+        protected Dictionary<string, TransmitStorage> TransmitCacheDict = new Dictionary<string, TransmitStorage>();
 
         public abstract bool IsValidInterfaceName(string name);
 
@@ -127,6 +160,106 @@ namespace EdiabasLib
         public abstract Int64 IgnitionVoltage { get; }
 
         public abstract bool Connected { get; }
+
+        public bool EnableTransmitCache
+        {
+            get
+            {
+                return EnableTransCacheProtected;
+            }
+            set
+            {
+                EnableTransCacheProtected = value;
+                if (!EnableTransCacheProtected)
+                {
+                    WriteTransaction = null;
+                    ReadTransaction = null;
+                    ReadTransactionPos = 0;
+                    TransmitCacheDict.Clear();
+                }
+            }
+        }
+
+        protected void CacheTransmission(byte[] request, byte[] response, EdiabasNet.ErrorCodes errorCode)
+        {
+            if (!EnableTransmitCache)
+            {
+                return;
+            }
+            if (request.Length > 0)
+            {
+                StoreWriteTransaction();
+                WriteTransaction = new TransmitStorage(request, response, errorCode);
+            }
+            else
+            {
+                if (WriteTransaction != null)
+                {
+                    if (response != null && response.Length > 0)
+                    {
+                        byte[] buffer = new byte[response.Length];
+                        Array.Copy(response, buffer, response.Length);
+                        WriteTransaction.ResponseList.Add(buffer);
+                    }
+                    if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE && WriteTransaction.ErrorCode == EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                    {
+                        WriteTransaction.ErrorCode = errorCode;
+                    }
+                }
+            }
+        }
+
+        protected void StoreWriteTransaction()
+        {
+            if (WriteTransaction != null)
+            {
+                if (TransmitCacheDict.ContainsKey(WriteTransaction.Key))
+                {
+                    TransmitCacheDict.Remove(WriteTransaction.Key);
+                }
+                TransmitCacheDict.Add(WriteTransaction.Key, WriteTransaction);
+                WriteTransaction = null;
+            }
+        }
+
+        protected bool ReadCachedTransmission(byte[] request, out byte[] response, out EdiabasNet.ErrorCodes errorCode)
+        {
+            response = null;
+            errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            if (!EnableTransmitCache)
+            {
+                return false;
+            }
+            if (request.Length > 0)
+            {
+                StoreWriteTransaction();
+                ReadTransaction = null;
+                ReadTransactionPos = 0;
+                TransmitCacheDict.TryGetValue(BitConverter.ToString(request), out ReadTransaction);
+            }
+            if (ReadTransaction == null)
+            {
+                return false;
+            }
+            if (request.Length > 0)
+            {
+                Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, request, 0, request.Length, "Send Cache");
+            }
+            if (ReadTransaction.ResponseList.Count > ReadTransactionPos)
+            {
+                response = ReadTransaction.ResponseList[ReadTransactionPos++];
+                errorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, response, 0, response.Length, "Resp Cache");
+            }
+            else
+            {
+                if (ReadTransaction.ErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    errorCode = ReadTransaction.ErrorCode;
+                }
+            }
+            return true;
+        }
 
         public void Dispose()
         {
