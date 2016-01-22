@@ -27,6 +27,7 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
+\n- Simplified configuration generator
 \n- Bluetooth name adjustable
 \n- New log file format
 \n- Russian translation added</string>
@@ -178,7 +179,7 @@
   <string name="xml_tool_read_ecu_info_failed">Reading ECU information failed</string>
   <string name="xml_tool_save_xml_failed">Saving configuration failed</string>
   <string name="xml_tool_msg_save_config">Do you want to save the configuration?</string>
-  <string name="xml_tool_msg_ecu_error">Unable to get valid informations for some ECUs.\nFor newer models e89x is a good choices in most cases.\nDo you want to try again with another model type?</string>
+  <string name="xml_tool_msg_ecu_error">Unable to get valid informations for some ECUs.</string>
   <string name="xml_tool_ecu_list">Detected ECUs</string>
   <string name="xml_tool_info_sgbd">SGBD</string>
   <string name="xml_tool_info_grp">Group</string>
