@@ -968,6 +968,18 @@ namespace EdiabasLib
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0031);
                 return false;
             }
+            EdiabasNet.ErrorCodes cachedErrorCode;
+            byte[] cachedResponse;
+            if (ReadCachedTransmission(sendData, out cachedResponse, out cachedErrorCode))
+            {
+                if (cachedErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EdiabasProtected.SetError(cachedErrorCode);
+                    return false;
+                }
+                receiveData = cachedResponse;
+                return true;
+            }
 #if false
             sendData.CopyTo(this.sendBuffer, 0);
             this.sendBufferLength = sendData.Length;
@@ -999,6 +1011,7 @@ namespace EdiabasLib
 #endif
             if (RecErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
+                CacheTransmission(sendData, null, RecErrorCode);
                 EdiabasProtected.SetError(RecErrorCode);
                 return false;
             }
@@ -1007,6 +1020,7 @@ namespace EdiabasLib
                 receiveData = new byte[RecBufferLength];
                 Array.Copy(RecBuffer, receiveData, RecBufferLength);
             }
+            CacheTransmission(sendData, receiveData, EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE);
             return true;
         }
 
