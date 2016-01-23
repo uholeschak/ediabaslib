@@ -236,6 +236,14 @@ namespace LogfileConverter
                             {
                                 if (send)
                                 {
+                                    int sendLength = TelLengthBmwFast(lineValues);
+                                    if (sendLength > 0 && sendLength == lineValues.Count)
+                                    {
+                                        // checksum missing
+                                        byte checksum = CalcChecksumBmwFast(lineValues, lineValues.Count);
+                                        lineValues.Add(checksum);
+                                        line += $" {checksum:X02}";
+                                    }
                                     bool validWrite = ChecksumValid(lineValues);
                                     if (_responseFile)
                                     {
@@ -405,32 +413,59 @@ namespace LogfileConverter
             return values;
         }
 
+        static private byte CalcChecksumBmwFast(List<byte> data, int length)
+        {
+            byte sum = 0;
+            for (int i = 0; i < length; i++)
+            {
+                sum += data[i];
+            }
+            return sum;
+        }
+
+        // telegram length without checksum
+        static private int TelLengthBmwFast(List<byte> telegram)
+        {
+            if (telegram.Count < 4)
+            {
+                return 0;
+            }
+            int telLength = telegram[0] & 0x3F;
+            if (telLength == 0)
+            {   // with length byte
+                if (telegram[3] == 0)
+                {
+                    if (telegram.Count < 6)
+                    {
+                        return 0;
+                    }
+                    telLength = ((telegram[4] << 8) | telegram[5]) + 6;
+                }
+                else
+                {
+                    telLength = telegram[3] + 4;
+                }
+            }
+            else
+            {
+                telLength += 3;
+            }
+            return telLength;
+        }
+
         static private bool ChecksumValid(List<byte> telegram)
         {
             int offset = 0;
             for (; ; )
             {
-                if (telegram.Count - offset < 4) return false;
-
-                int dataLength = telegram[0 + offset] & 0x3F;
-                if (dataLength == 0)
-                {   // with length byte
-                    dataLength = telegram[3 + offset] + 4;
-                }
-                else
-                {
-                    dataLength += 3;
-                }
+                int dataLength = TelLengthBmwFast(telegram);
+                if (dataLength == 0) return false;
                 if (telegram.Count - offset < dataLength + 1)
                 {
                     return false;
                 }
 
-                byte sum = 0;
-                for (int i = 0; i < dataLength; i++)
-                {
-                    sum += telegram[i + offset];
-                }
+                byte sum = CalcChecksumBmwFast(telegram, dataLength);
                 if (sum != telegram[dataLength + offset])
                 {
                     return false;
