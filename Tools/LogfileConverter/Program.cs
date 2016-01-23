@@ -236,11 +236,11 @@ namespace LogfileConverter
                             {
                                 if (send)
                                 {
-                                    int sendLength = TelLengthBmwFast(lineValues);
+                                    int sendLength = TelLengthBmwFast(lineValues, 0);
                                     if (sendLength > 0 && sendLength == lineValues.Count)
                                     {
                                         // checksum missing
-                                        byte checksum = CalcChecksumBmwFast(lineValues, lineValues.Count);
+                                        byte checksum = CalcChecksumBmwFast(lineValues, 0, lineValues.Count);
                                         lineValues.Add(checksum);
                                         line += $" {checksum:X02}";
                                     }
@@ -413,37 +413,37 @@ namespace LogfileConverter
             return values;
         }
 
-        static private byte CalcChecksumBmwFast(List<byte> data, int length)
+        static private byte CalcChecksumBmwFast(List<byte> data, int offset, int length)
         {
             byte sum = 0;
             for (int i = 0; i < length; i++)
             {
-                sum += data[i];
+                sum += data[i + offset];
             }
             return sum;
         }
 
         // telegram length without checksum
-        static private int TelLengthBmwFast(List<byte> telegram)
+        static private int TelLengthBmwFast(List<byte> telegram, int offset)
         {
-            if (telegram.Count < 4)
+            if (telegram.Count - offset < 4)
             {
                 return 0;
             }
-            int telLength = telegram[0] & 0x3F;
+            int telLength = telegram[0 + offset] & 0x3F;
             if (telLength == 0)
             {   // with length byte
-                if (telegram[3] == 0)
+                if (telegram[3 + offset] == 0)
                 {
                     if (telegram.Count < 6)
                     {
                         return 0;
                     }
-                    telLength = ((telegram[4] << 8) | telegram[5]) + 6;
+                    telLength = ((telegram[4 + offset] << 8) | telegram[5 + offset]) + 6;
                 }
                 else
                 {
-                    telLength = telegram[3] + 4;
+                    telLength = telegram[3 + offset] + 4;
                 }
             }
             else
@@ -458,14 +458,14 @@ namespace LogfileConverter
             int offset = 0;
             for (; ; )
             {
-                int dataLength = TelLengthBmwFast(telegram);
+                int dataLength = TelLengthBmwFast(telegram, offset);
                 if (dataLength == 0) return false;
                 if (telegram.Count - offset < dataLength + 1)
                 {
                     return false;
                 }
 
-                byte sum = CalcChecksumBmwFast(telegram, dataLength);
+                byte sum = CalcChecksumBmwFast(telegram, offset, dataLength);
                 if (sum != telegram[dataLength + offset])
                 {
                     return false;
