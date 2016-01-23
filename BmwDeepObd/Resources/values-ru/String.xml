@@ -173,7 +173,8 @@
   <string name="xml_tool_analyze">Считать данные автомобиля</string>
   <string name="xml_tool_select_sgbd">Выбрать тип автомобиля</string>
   <string name="xml_tool_no_response">Автомобиль не отвечает</string>
-  <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nКогда транспортное средство старше доступных моделей, возможна только ручная настройка.\nПерейти к ручной настройке?</string>
+  <!--translate!-->
+  <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nПерейти к ручной настройке?</string>
   <string name="xml_tool_read_jobs_failed">Не удалось считать Jobs</string>
   <string name="xml_tool_read_ecu_info_failed">Не удалось считать ECU информацию</string>
   <string name="xml_tool_save_xml_failed">Не удалось сохраноть конфигурацию</string>
