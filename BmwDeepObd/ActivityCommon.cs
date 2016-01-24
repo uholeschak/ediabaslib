@@ -696,7 +696,14 @@ namespace BmwDeepObd
             if (usbDevice != null)
             {
                 Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_activity, 0, new Intent(ActionUsbPermission), 0);
-                _usbManager.RequestPermission(usbDevice, intent);
+                try
+                {
+                    _usbManager.RequestPermission(usbDevice, intent);
+                }
+                catch (Exception)
+                {
+                    // seems to crash on Samsung 5.1.1 with android.permission.sec.MDM_APP_MGMT
+                }
             }
         }
 
