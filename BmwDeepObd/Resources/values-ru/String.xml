@@ -174,7 +174,7 @@
   <string name="xml_tool_select_sgbd">Выбрать тип автомобиля</string>
   <string name="xml_tool_no_response">Автомобиль не отвечает</string>
   <!--translate!-->
-  <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nПерейти к ручной настройке?</string>
+  <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или ОDB устройство.\nУ более старших моделей возможна только ручная настройка конфигурации.\nДля этого вам необходимо в INPA на информационной странице для каждого ECU найти необходимые .GRP и .PRG файлы.\nПерейти к ручной настройке?</string>
   <string name="xml_tool_read_jobs_failed">Не удалось считать Jobs</string>
   <string name="xml_tool_read_ecu_info_failed">Не удалось считать ECU информацию</string>
   <string name="xml_tool_save_xml_failed">Не удалось сохраноть конфигурацию</string>
