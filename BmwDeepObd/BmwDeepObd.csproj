@@ -114,6 +114,9 @@
     <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\bc04\production\CanAdapterElm.X.production.hex">
       <Link>HexFiles\Type3\CanAdapterElm.X.production.hex</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\hc04\production\CanAdapterElm.X.production.hex">
+      <Link>HexFiles\Type4\CanAdapterElm.X.production.hex</Link>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
