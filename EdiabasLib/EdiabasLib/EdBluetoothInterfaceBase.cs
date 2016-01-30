@@ -53,8 +53,7 @@ namespace EdiabasLib
 
         public static byte[] CreateAdapterTelegram(byte[] sendData, int length, bool setDtr)
         {
-            if ((AdapterType < 0x0002) || (AdapterType > 0x0003) ||
-                (AdapterVersion < 0x0003))
+            if ((AdapterType < 0x0002) || (AdapterVersion < 0x0003))
             {
                 return null;
             }
@@ -103,8 +102,7 @@ namespace EdiabasLib
 
         public static byte[] CreatePulseTelegram(UInt64 dataBits, int length, int pulseWidth, bool setDtr)
         {
-            if ((AdapterType < 0x0002) || (AdapterType > 0x0003) ||
-                (AdapterVersion < 0x0002))
+            if ((AdapterType < 0x0002) || (AdapterVersion < 0x0002))
             {
                 return null;
             }

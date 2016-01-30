@@ -581,7 +581,7 @@ namespace BmwDeepObd
                     }
                     // bluetooth pin
                     _btPin = null;
-                    if (!commFailed && _adapterType == 0x0003 && _fwVersion >= 0x0002)
+                    if (!commFailed && _adapterType >= 0x0003 && _fwVersion >= 0x0002)
                     {
                         byte[] result = AdapterCommandCustom(0x84, new byte[] { 0x84 });
                         if (result == null)
@@ -595,7 +595,7 @@ namespace BmwDeepObd
                     }
                     // bluetooth name
                     _btName = null;
-                    if (!commFailed && _adapterType == 0x0003 && _fwVersion >= 0x0005)
+                    if (!commFailed && _adapterType >= 0x0003 && _fwVersion >= 0x0005)
                     {
                         byte[] result = AdapterCommandCustom(0x85, new byte[] { 0x85 });
                         if (result == null)
