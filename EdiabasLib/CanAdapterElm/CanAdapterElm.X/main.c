@@ -88,8 +88,20 @@
 
 #if ADAPTER_TYPE != 0x02
 #define ADAPTER_VERSION     0x0005
+#if ADAPTER_TYPE == 0x03
+#define REQUIRES_BT_INIT
+#define REQUIRES_BT_CRFL
+#define BT_COMMAND_PAUSE 50         // bluetooth command pause
+#define BT_RESPONSE_TIMEOUT 500
+#else
+//#define REQUIRES_BT_INIT
+//#define REQUIRES_BT_CRFL
+#define BT_COMMAND_PAUSE 500        // bluetooth command pause
+#define BT_RESPONSE_TIMEOUT 1500    // bluetooth command response timeout
+#endif
 #else
 #define ADAPTER_VERSION     0x0004
+#define REQUIRES_BT_CRFL
 #endif
 
 #define IGNITION_STATE()    IGNITION
@@ -153,7 +165,9 @@ static volatile bool start_indicator;   // show start indicator
 static volatile bool init_failed;       // initialization failed
 static uint8_t idle_counter;
 #if ADAPTER_TYPE != 0x02
+#if defined(REQUIRES_BT_INIT)
 static bool init_bt_required;
+#endif
 static uint8_t pin_buffer[4];
 static uint8_t name_buffer[16];
 #endif
@@ -933,13 +947,13 @@ bool send_bt_config(uint8_t *buffer, uint16_t count, uint8_t retries)
             {
                 // pause after command
                 uint16_t start_tick2 = get_systick();
-                while ((uint16_t) (get_systick() - start_tick2) < (50 * TIMER0_RESOL / 1000))
+                while ((uint16_t) (get_systick() - start_tick2) < (BT_COMMAND_PAUSE * TIMER0_RESOL / 1000))
                 {
                     CLRWDT();
                 }
                 return true;
             }
-            if ((uint16_t) (get_systick() - start_tick) > (500 * TIMER0_RESOL / 1000))
+            if ((uint16_t) (get_systick() - start_tick) > (BT_RESPONSE_TIMEOUT * TIMER0_RESOL / 1000))
             {
                 break;
             }
@@ -948,6 +962,7 @@ bool send_bt_config(uint8_t *buffer, uint16_t count, uint8_t retries)
     return false;
 }
 
+#if defined(REQUIRES_BT_INIT)
 bool set_bt_default()
 {
     static const char bt_default[] = "AT+DEFAULT\r\n";
@@ -994,6 +1009,7 @@ bool set_bt_init()
     }
     return result;
 }
+#endif
 
 bool set_bt_pin()
 {
@@ -1014,8 +1030,10 @@ bool set_bt_pin()
         }
         temp_buffer[len++] = value;
     }
+#if defined(REQUIRES_BT_CRFL)
     temp_buffer[len++] = '\r';
     temp_buffer[len++] = '\n';
+#endif
 
     return send_bt_config(temp_buffer, len, 3);
 }
@@ -1040,9 +1058,11 @@ bool set_bt_name()
         }
         temp_buffer[len++] = value;
     }
+#if defined(REQUIRES_BT_CRFL)
     temp_buffer[len++] = 0x00;
     temp_buffer[len++] = '\r';
     temp_buffer[len++] = '\n';
+#endif
 
     return send_bt_config(temp_buffer, len, 3);
 }
@@ -1066,6 +1086,7 @@ bool init_bt()
     }
 
     bool result = true;
+#if defined(REQUIRES_BT_INIT)
     if (init_bt_required)
     {
         //set_bt_default();   // for testing
@@ -1083,6 +1104,7 @@ bool init_bt()
             eeprom_write(EEP_ADDR_BT_INIT + 1, ~0x01);
         }
     }
+#endif
     if (!set_bt_pin())
     {
         result = false;
@@ -1224,6 +1246,7 @@ void read_eeprom()
     }
 
 #if ADAPTER_TYPE != 0x02
+#if defined(REQUIRES_BT_INIT)
     temp_value1 = eeprom_read(EEP_ADDR_BT_INIT);
     temp_value2 = eeprom_read(EEP_ADDR_BT_INIT + 1);
     init_bt_required = true;
@@ -1234,6 +1257,7 @@ void read_eeprom()
             init_bt_required = false;
         }
     }
+#endif
 
     uint8_t pin_len = 0;
     for (uint8_t i = 0; i < sizeof(pin_buffer); i++)
@@ -2039,12 +2063,18 @@ void interrupt high_priority high_isr (void)
                             case 1:
                                 if (rec_data == 'K')
                                 {
+#if defined(REQUIRES_BT_CRFL)
                                     rec_chksum++;
+#else
+                                    T1CONbits.TMR1ON = 0;   // stop timer
+                                    PIR1bits.TMR1IF = 0;
+                                    rec_state = rec_state_done;
+#endif
                                     break;
                                 }
                                 rec_chksum = 0;
                                 break;
-
+#if defined(REQUIRES_BT_CRFL)
                             case 2:
                                 if (rec_data == '\r')
                                 {
@@ -2068,6 +2098,7 @@ void interrupt high_priority high_isr (void)
                                 }
                                 rec_chksum = 0;
                                 break;
+#endif
                         }
                         break;
                 }
