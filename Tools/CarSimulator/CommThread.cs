@@ -2502,6 +2502,26 @@ namespace CarSimulator
             {
                 return;
             }
+            int recLength = _receiveData[0] & 0x3F;
+            if (recLength == 0)
+            {   // with length byte
+                recLength = _receiveData[3] + 4;
+            }
+            else
+            {
+                recLength += 3;
+            }
+            recLength += 1; // checksum
+#if false
+            {
+                string text = string.Empty;
+                for (int i = 0; i < recLength; i++)
+                {
+                    text += string.Format("{0:X02} ", _receiveData[i]);
+                }
+                Debug.WriteLine("Request: " + text);
+            }
+#endif
             if (!_adsAdapter && !_klineResponder && (_tcpServerDiag == null) && (_pcanHandle == PCANBasic.PCAN_NONEBUS))
             {
                 // send echo
@@ -2650,22 +2670,12 @@ namespace CarSimulator
 
             if (useResponseList)
             {
-                int recLength = _receiveData[0] & 0x3F;
-                if (recLength == 0)
-                {   // with length byte
-                    recLength = _receiveData[3] + 4;
-                }
-                else
-                {
-                    recLength += 3;
-                }
-                recLength += 1; // checksum
-
                 bool found = false;
                 foreach (ResponseEntry responseEntry in _configData.ResponseList)
                 {
                     if (recLength != responseEntry.Request.Length) continue;
                     bool equal = true;
+                    // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
                     for (int i = 0; i < recLength - 1; i++)
                     {   // don't compare checksum
                         if (_receiveData[i] != responseEntry.Request[i])
