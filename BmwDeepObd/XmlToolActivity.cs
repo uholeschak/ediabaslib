@@ -1880,6 +1880,23 @@ namespace BmwDeepObd
             }
         }
 
+        private string ReadPageSgbd(XDocument document)
+        {
+            if (document.Root == null)
+            {
+                return null;
+            }
+            XNamespace ns = document.Root.GetDefaultNamespace();
+            XElement pageNode = document.Root.Element(ns + "page");
+            if (pageNode == null)
+            {
+                return null;
+            }
+            XElement jobsNode = pageNode.Element(ns + "jobs");
+            XAttribute sgbdAttr = jobsNode?.Attribute("sgbd");
+            return sgbdAttr?.Value;
+        }
+
         private XDocument GeneratePageXml(EcuInfo ecuInfo, XDocument documentOld)
         {
             try
@@ -2195,7 +2212,7 @@ namespace BmwDeepObd
                 }
             }
             else
-            {   // auto mode, reorder list and set selections
+            {   // auto mode, reorder list and set selections, add missing entries
                 foreach (XElement node in pagesNode.Elements(ns + "include").Reverse())
                 {
                     XAttribute fileAttrib = node.Attribute("filename");
@@ -2208,20 +2225,45 @@ namespace BmwDeepObd
                     {
                         continue;
                     }
-                    if (!File.Exists(Path.Combine(xmlFileDir, fileName)))
+                    string xmlPageFile = Path.Combine(xmlFileDir, fileName);
+                    if (!File.Exists(xmlPageFile))
                     {
                         continue;
                     }
+                    bool found = false;
                     for (int i = 0; i < _ecuList.Count; i++)
                     {
                         EcuInfo ecuInfo = _ecuList[i];
                         string ecuFileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
                         if (string.Compare(ecuFileName, fileName, StringComparison.OrdinalIgnoreCase) == 0)
                         {
+                            found = true;
                             ecuInfo.Selected = true;
                             _ecuList.Remove(ecuInfo);
                             _ecuList.Insert(0, ecuInfo);
                             break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        string ecuName = Path.GetFileNameWithoutExtension(fileName);
+                        if (!string.IsNullOrEmpty(ecuName))
+                        {
+                            try
+                            {
+                                string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile));
+                                if (!string.IsNullOrEmpty(sgbdName))
+                                {
+                                    _ecuList.Insert(0, new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty)
+                                    {
+                                        Selected = true
+                                    });
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                         }
                     }
                 }
