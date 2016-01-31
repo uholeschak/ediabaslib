@@ -1339,7 +1339,7 @@ namespace BmwDeepObd
                 SetCpuLock(true);
             }
             _translateProgress.SetCancelable(false);
-            _translateProgress.Progress = (_yandexTransList?.Count ?? 0) * 100 / _yandexReducedStringList?.Count ?? 1;
+            _translateProgress.Progress = (_yandexTransList?.Count ?? 0) * 100 / _yandexReducedStringList.Count;
 
             Thread translateThread = new Thread(() =>
             {
