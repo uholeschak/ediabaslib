@@ -1305,7 +1305,7 @@ namespace BmwDeepObd
                 // try to translate with cache first
                 _yandexCurrentLang = (Java.Util.Locale.Default.Language ?? "en").ToLowerInvariant();
 
-                if (!_yandexTransDict.TryGetValue(_yandexCurrentLang, out _yandexCurrentLangDict))
+                if (!_yandexTransDict.TryGetValue(_yandexCurrentLang, out _yandexCurrentLangDict) || (_yandexCurrentLangDict == null))
                 {
                     _yandexCurrentLangDict = new Dictionary<string, string>();
                     _yandexTransDict.Add(_yandexCurrentLang, _yandexCurrentLangDict);
@@ -1339,7 +1339,7 @@ namespace BmwDeepObd
                 SetCpuLock(true);
             }
             _translateProgress.SetCancelable(false);
-            _translateProgress.Progress = (_yandexTransList?.Count ?? 0) * 100 / _yandexReducedStringList.Count;
+            _translateProgress.Progress = (_yandexTransList?.Count ?? 0) * 100 / _yandexReducedStringList?.Count ?? 1;
 
             Thread translateThread = new Thread(() =>
             {
