@@ -1062,6 +1062,7 @@ namespace BmwDeepObd
                             if (!ecuInfo.Selected)
                             {
                                 _ecuList.Remove(ecuInfo);
+                                i = 0;
                             }
                         }
                         UpdateDisplay();
@@ -2196,7 +2197,8 @@ namespace BmwDeepObd
                     {
                         continue;
                     }
-                    if (!File.Exists(Path.Combine(xmlFileDir, fileName)))
+                    string xmlPageFile = Path.Combine(xmlFileDir, fileName);
+                    if (!File.Exists(xmlPageFile))
                     {
                         continue;
                     }
@@ -2205,10 +2207,21 @@ namespace BmwDeepObd
                     {
                         continue;
                     }
-                    _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, ecuName, string.Empty)
+                    try
                     {
-                        Selected = true
-                    });
+                        string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile));
+                        if (!string.IsNullOrEmpty(sgbdName))
+                        {
+                            _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty)
+                            {
+                                Selected = true
+                            });
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
             }
             else
