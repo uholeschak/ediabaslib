@@ -23,7 +23,7 @@
   <string name="error_no_error">Ошибки отсутствуют</string>
   <string name="error_no_response">Нет подтверждения</string>
   <string name="version_change_info_message">Этот проект с открытым исходным кодом размещен на:
-\n<a href='https://ediabaslib.codeplex.com'>ediabaslib.codeplex.com</a>
+\n<a href='http://ediabaslib.codeplex.com'>ediabaslib.codeplex.com</a>
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную инфирмацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:
@@ -95,8 +95,8 @@
   <string name="unknown_adapter_type">Неустановлен тип устройства.\nХотите все равно использовать это устройство (Пакеты данных будут посланы без изменений)?</string>
   <string name="invalid_adapter_type">ELM327 устройство поддерживает не все необходимые команды и несовместимо с этим приложением.</string>
   <string name="fake_elm_adapter_type">ELM327 устройство имеет поддельную 2.1 версию и несовместимо с этим приложением.</string>
-  <string formatted="false" name="recommened_adapter_type">Рекомендуется ELM327 устройство v1.4b, v1.5 или оригинальной версии v2.1,&lt;br&gt;которое базируется на процессоре PIC18F25K80 (не на MCP2515 чипе).&lt;br&gt;По ссылке &lt;a href=\'https://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327\'&gt;ediabaslib.codeplex.com&lt;/a&gt; можете найти улучшенную прошивку.</string>
-  <string name="adapter_elm_replacement">ELM327 устройство медленное и нестабильное.\nВы можете купить улучшенную прошивку\n<a href='https://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327'>ediabaslib.codeplex.com</a>.</string>
+  <string formatted="false" name="recommened_adapter_type">Рекомендуется ELM327 устройство v1.4b, v1.5 или оригинальной версии v2.1,&lt;br&gt;которое базируется на процессоре PIC18F25K80 (не на MCP2515 чипе).&lt;br&gt;По ссылке &lt;a href=\'http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327\'&gt;ediabaslib.codeplex.com&lt;/a&gt; можете найти улучшенную прошивку.</string>
+  <string name="adapter_elm_replacement">ELM327 устройство медленное и нестабильное.\nВы можете купить улучшенную прошивку\n<a href='http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327'>ediabaslib.codeplex.com</a>.</string>
   <string name="adapter_cfg_required">Устройсво, возможно, требуется настроить.\nХотите получить доступ к конфигурации устройсва?</string>
   <string name="adapter_fw_update">Доступно обновление для этого устройства.\nХотите получить доступ к конфигурации устройсва, чтобы установить обновление?</string>
 
@@ -174,7 +174,7 @@
   <string name="xml_tool_select_sgbd">Выбрать тип автомобиля</string>
   <string name="xml_tool_no_response">Автомобиль не отвечает</string>
   <!--translate!-->
-  <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или ОDB устройство.\nУ более старших моделей возможна только ручная настройка конфигурации.\nДля этого вам необходимо в INPA на информационной странице для каждого ECU найти необходимые .GRP и .PRG файлы.\nПерейти к ручной настройке?</string>
+  <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или ОDB устройство.\nУ более старших моделей возможна только ручная настройка конфигурации.\nДля этого вам необходимо в INPA на информационной странице для каждого ECU найти необходимые .GRP и .PRG файлы.\nПерейти к <a href='http://ediabaslib.codeplex.com/wikipage?title=Configuration%20Generator#ManualConfiguration'>ручной настройке</a>?</string>
   <string name="xml_tool_read_jobs_failed">Не удалось считать Jobs</string>
   <string name="xml_tool_read_ecu_info_failed">Не удалось считать ECU информацию</string>
   <string name="xml_tool_save_xml_failed">Не удалось сохраноть конфигурацию</string>

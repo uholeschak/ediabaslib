@@ -11,6 +11,7 @@ using Android.Content;
 using Android.Hardware.Usb;
 using Android.OS;
 using Android.Support.V7.App;
+using Android.Text.Method;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -1433,7 +1434,7 @@ namespace BmwDeepObd
                     if (ecuListBest == null)
                     {
                         _commErrorsOccured = true;
-                        new AlertDialog.Builder(this)
+                        AlertDialog altertDialog = new AlertDialog.Builder(this)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                             {
                                 SelectConfigTypeRequest();
@@ -1445,6 +1446,11 @@ namespace BmwDeepObd
                             .SetMessage(Resource.String.xml_tool_no_response_manual)
                             .SetTitle(Resource.String.alert_title_warning)
                             .Show();
+                        TextView messageView = altertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                        if (messageView != null)
+                        {
+                            messageView.MovementMethod = new LinkMovementMethod();
+                        }
                     }
                     else
                     {
