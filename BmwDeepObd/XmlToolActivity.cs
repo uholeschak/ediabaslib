@@ -99,6 +99,10 @@ namespace BmwDeepObd
         {
             "e60", "e65", "e70", "e81", "e87", "e89X", "e90", "m12", "r56", "f01", "f01bn2k", "rr01"
         };
+        private static readonly string[] ReadVinJobs =
+        {
+            "C_FG_LESEN_FUNKTIONAL", "PROG_FG_NR_LESEN_FUNKTIONAL", "AIF_LESEN_FUNKTIONAL"
+        };
 
         // Intent extra
         public const string ExtraInitDir = "init_dir";
@@ -1180,6 +1184,7 @@ namespace BmwDeepObd
             _jobThread = new Thread(() =>
             {
                 int bestInvalidCount = 0;
+                int bestInvalidVinCount = 0;
                 List<EcuInfo> ecuListBest = null;
                 string ecuFileNameBest = null;
                 _ediabas.EdInterfaceClass.EnableTransmitCache = true;
@@ -1290,7 +1295,27 @@ namespace BmwDeepObd
                                 }
                             }
                         }
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detect result: count={0}, invalid={1}", ecuList.Count, invalidEcuCount);
+
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        bool readVinOk = false;
+                        foreach (string vinJob in ReadVinJobs)
+                        {
+                            try
+                            {
+                                _ediabas.ExecuteJob(vinJob);
+                                readVinOk = true;
+                                break;
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detect result: count={0}, invalid={1}, vinok={2}", ecuList.Count, invalidEcuCount, readVinOk);
+                        int invalidVinCount = readVinOk ? 0 : 1;
                         bool acceptEcu = false;
                         if (ecuListBest == null)
                         {
@@ -1304,7 +1329,7 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                if (ecuListBest.Count == ecuList.Count && bestInvalidCount > invalidEcuCount)
+                                if (ecuListBest.Count == ecuList.Count && (bestInvalidCount + bestInvalidVinCount) > (invalidEcuCount + invalidVinCount))
                                 {
                                     acceptEcu = true;
                                 }
@@ -1316,6 +1341,7 @@ namespace BmwDeepObd
                             ecuListBest = ecuList;
                             ecuFileNameBest = fileName;
                             bestInvalidCount = invalidEcuCount;
+                            bestInvalidVinCount = invalidVinCount;
                         }
                     }
                     catch (Exception)
@@ -1323,7 +1349,6 @@ namespace BmwDeepObd
                         // ignored
                     }
                 }
-                _ediabas.EdInterfaceClass.EnableTransmitCache = false;
                 if (ecuListBest != null)
                 {
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Selected Ecu file: {0}", ecuFileNameBest);
@@ -1335,20 +1360,23 @@ namespace BmwDeepObd
                         _ediabas.ArgString = string.Empty;
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
-                        try
-                        {
-                            _ediabas.ExecuteJob("C_FG_LESEN_FUNKTIONAL");
-                        }
-                        catch (Exception)
+                        bool readVinOk = false;
+                        foreach (string vinJob in ReadVinJobs)
                         {
                             try
                             {
-                                _ediabas.ExecuteJob("PROG_FG_NR_LESEN_FUNKTIONAL");
+                                _ediabas.ExecuteJob(vinJob);
+                                readVinOk = true;
+                                break;
                             }
                             catch (Exception)
                             {
-                                _ediabas.ExecuteJob("AIF_LESEN_FUNKTIONAL");
+                                // ignored
                             }
+                        }
+                        if (!readVinOk)
+                        {
+                            throw new Exception("Read VIN failed");
                         }
 
                         Regex regex = new Regex(@"^[a-zA-Z][a-zA-Z0-9]+$");
@@ -1422,6 +1450,7 @@ namespace BmwDeepObd
                     _vin = vinInfo != null ? vinInfo.Key : string.Empty;
                     ReadAllXml();
                 }
+                _ediabas.EdInterfaceClass.EnableTransmitCache = false;
 
                 RunOnUiThread(() =>
                 {
