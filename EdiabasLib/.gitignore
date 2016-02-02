@@ -4,3 +4,4 @@ Package
 *.sdf
 *.zip
 *.VC.opendb
+/.vs/
