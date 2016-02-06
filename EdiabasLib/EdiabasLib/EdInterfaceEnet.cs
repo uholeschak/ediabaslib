@@ -42,6 +42,7 @@ namespace EdiabasLib
         protected Socket UdpSocket;
         protected byte[] UdpBuffer = new byte[0x100];
         protected volatile List<IPAddress> UdpRecIpListList = new List<IPAddress>();
+        protected object UdpRecListLock = new object();
         protected int UdpMaxResponses;
         protected AutoResetEvent UdpEvent = new AutoResetEvent(false);
 
@@ -299,10 +300,10 @@ namespace EdiabasLib
             InterfaceMutex = new Mutex(false, "EdiabasLib_InterfaceEnet");
 #endif
             TcpDiagStreamRecEvent = new AutoResetEvent(false);
-            TcpDiagStreamSendLock = new Object();
-            TcpDiagStreamRecLock = new Object();
+            TcpDiagStreamSendLock = new object();
+            TcpDiagStreamRecLock = new object();
             TcpControlTimer = new Timer(TcpControlTimeout, null, Timeout.Infinite, Timeout.Infinite);
-            TcpControlTimerLock = new Object();
+            TcpControlTimerLock = new object();
             TcpDiagBuffer = new byte[TransBufferSize];
             TcpDiagRecLen = 0;
             LastTcpDiagRecTime = DateTime.MinValue.Ticks;
@@ -521,7 +522,10 @@ namespace EdiabasLib
 #endif
             IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, 0);
             UdpSocket.Bind(ipUdp);
-            UdpRecIpListList.Clear();
+            lock (UdpRecListLock)
+            {
+                UdpRecIpListList = new List<IPAddress>();
+            }
             UdpMaxResponses = maxVehicles;
             StartUdpListen();
 
@@ -606,7 +610,13 @@ namespace EdiabasLib
                 return null;
             }
             UdpSocket.Close();
-            return UdpRecIpListList;
+            List<IPAddress> ipList;
+            lock (UdpRecListLock)
+            {
+                ipList = UdpRecIpListList;
+                UdpRecIpListList = null;
+            }
+            return ipList;
         }
 
         protected void StartUdpListen()
@@ -644,8 +654,16 @@ namespace EdiabasLib
                     (UdpBuffer[13] == '1') &&
                     (UdpBuffer[14] == '0'))
                 {
-                    UdpRecIpListList.Add(((IPEndPoint)tempRemoteEp).Address);
-                    if ((UdpMaxResponses >= 1) && (UdpRecIpListList.Count >= UdpMaxResponses))
+                    int listCount = 0;
+                    lock (UdpRecListLock)
+                    {
+                        if (UdpRecIpListList != null)
+                        {
+                            UdpRecIpListList.Add(((IPEndPoint)tempRemoteEp).Address);
+                            listCount = UdpRecIpListList.Count;
+                        }
+                    }
+                    if ((UdpMaxResponses >= 1) && (listCount >= UdpMaxResponses))
                     {
                         UdpEvent.Set();
                     }
