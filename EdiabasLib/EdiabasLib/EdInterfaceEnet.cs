@@ -598,7 +598,8 @@ namespace EdiabasLib
                 return null;
             }
 
-            if (!UdpEvent.WaitOne(500, false) || (UdpRecIpListList.Count == 0))
+            UdpEvent.WaitOne(500, false);
+            if (UdpRecIpListList.Count == 0)
             {
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "No answer received");
                 InterfaceDisconnect();
@@ -644,7 +645,7 @@ namespace EdiabasLib
                     (UdpBuffer[14] == '0'))
                 {
                     UdpRecIpListList.Add(((IPEndPoint)tempRemoteEp).Address);
-                    if ((UdpMaxResponses < 1) || (UdpRecIpListList.Count >= UdpMaxResponses))
+                    if ((UdpMaxResponses >= 1) && (UdpRecIpListList.Count >= UdpMaxResponses))
                     {
                         UdpEvent.Set();
                     }
