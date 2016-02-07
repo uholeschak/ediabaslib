@@ -2118,6 +2118,7 @@ namespace BmwDeepObd
             serverIntent.PutExtra(XmlToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
             serverIntent.PutExtra(XmlToolActivity.ExtraDeviceName, _deviceName);
             serverIntent.PutExtra(XmlToolActivity.ExtraDeviceAddress, _deviceAddress);
+            serverIntent.PutExtra(XmlToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
             serverIntent.PutExtra(XmlToolActivity.ExtraFileName, _configFileName);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestXmlTool);
         }
@@ -2134,6 +2135,7 @@ namespace BmwDeepObd
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _deviceName);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _deviceAddress);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEdiabasTool);
         }
 
