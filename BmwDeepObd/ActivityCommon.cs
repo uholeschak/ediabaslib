@@ -95,6 +95,7 @@ namespace BmwDeepObd
         private int _usbDeviceDetectCount;
         private Receiver _bcReceiver;
         private InterfaceType _selectedInterface;
+        private IPAddress _selectedEnetIp;
         private AlertDialog _activateAlertDialog;
         private AlertDialog _selectMediaAlertDialog;
         private AlertDialog _selectInterfaceAlertDialog;
@@ -174,6 +175,18 @@ namespace BmwDeepObd
             set
             {
                 _selectedInterface = value;
+            }
+        }
+
+        public IPAddress SelectedEnetIp
+        {
+            get
+            {
+                return _selectedEnetIp;
+            }
+            set
+            {
+                _selectedEnetIp = value;
             }
         }
 
@@ -672,6 +685,85 @@ namespace BmwDeepObd
             Intent serverIntent = new Intent(_activity, typeof(DeviceListActivity));
             serverIntent.PutExtra(XmlToolActivity.ExtraAppDataDir, appDataDir);
             _activity.StartActivityForResult(serverIntent, requestCode);
+            return true;
+        }
+
+        public bool SelectEnetIp(EventHandler<DialogClickEventArgs> handler)
+        {
+            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_activity);
+            progress.SetCancelable(false);
+            progress.SetMessage(_activity.GetString(Resource.String.select_enet_ip_detect));
+            progress.Show();
+            SetCpuLock(true);
+
+            Thread detectThread = new Thread(() =>
+            {
+                EdInterfaceEnet edInterface = new EdInterfaceEnet();
+                List<IPAddress> detectedVehicles = edInterface.DetectedVehicles("auto");
+                edInterface.Dispose();
+                _activity.RunOnUiThread(() =>
+                {
+                    if (progress != null)
+                    {
+                        progress.Hide();
+                        progress.Dispose();
+                        progress = null;
+                        SetCpuLock(false);
+                    }
+                    AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
+                    builder.SetTitle(Resource.String.select_enet_ip);
+                    ListView listView = new ListView(_activity);
+
+                    List<string> interfaceNames = new List<string>
+                    {
+                        _activity.GetString(Resource.String.select_enet_ip_auto)
+                    };
+                    int selIndex = 0;
+                    int index = 0;
+                    if (detectedVehicles != null)
+                    {
+                        foreach (IPAddress ipAddress in detectedVehicles)
+                        {
+                            if (_selectedEnetIp != null && _selectedEnetIp.Equals(ipAddress))
+                            {
+                                selIndex = index + 1;
+                            }
+                            interfaceNames.Add(ipAddress.ToString());
+                            index++;
+                        }
+                    }
+                    ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity,
+                        Android.Resource.Layout.SimpleListItemSingleChoice, interfaceNames.ToArray());
+                    listView.Adapter = adapter;
+                    listView.ChoiceMode = ChoiceMode.Single;
+                    listView.SetItemChecked(selIndex, true);
+                    builder.SetView(listView);
+                    builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                    {
+                        switch (listView.CheckedItemPosition)
+                        {
+                            case 0:
+                                _selectedEnetIp = null;
+                                handler(sender, args);
+                                break;
+
+                            default:
+                                if (detectedVehicles != null && listView.CheckedItemPosition >= 1 &&
+                                    listView.CheckedItemPosition - 1 < detectedVehicles.Count)
+                                {
+                                    _selectedEnetIp = detectedVehicles[listView.CheckedItemPosition - 1];
+                                    handler(sender, args);
+                                }
+                                break;
+                        }
+                    });
+                    builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
+                    {
+                    });
+                    builder.Show();
+                });
+            });
+            detectThread.Start();
             return true;
         }
 

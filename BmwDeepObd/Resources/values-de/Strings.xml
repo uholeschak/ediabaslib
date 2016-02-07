@@ -109,6 +109,7 @@
   <string name="menu_connect">Verbinden</string>
   <string name="menu_adapter">Adapter</string>
   <string name="menu_adapter_config">Adapter Konfiguration</string>
+  <string name="menu_enet_ip">ENET IP</string>
   <string name="menu_sel_cfg">Konfiguration</string>
   <string name="menu_xml_tool">Konfigurationsgenerator</string>
   <string name="menu_ediabas_tool">Ediabas Tool</string>
@@ -141,6 +142,11 @@
   <string name="select_interface_bt">Bluetooth</string>
   <string name="select_interface_enet">ENET</string>
   <string name="select_interface_ftdi">USB (FTDI)</string>
+
+  <!-- ENET ip selection -->
+  <string name="select_enet_ip_detect">Fahrzeuge erkennen</string>
+  <string name="select_enet_ip">ENET IP-Adresse wählen</string>
+  <string name="select_enet_ip_auto">Automatisch</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas Tool</string>
