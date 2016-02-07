@@ -110,6 +110,7 @@ namespace BmwDeepObd
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
+        public const string ExtraEnetIp = "enet_ip";
         public const string ExtraFileName = "file_name";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
 
@@ -210,6 +211,7 @@ namespace BmwDeepObd
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _deviceName = Intent.GetStringExtra(ExtraDeviceName);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
+            _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
             _lastFileName = Intent.GetStringExtra(ExtraFileName);
             string configName = Path.GetFileNameWithoutExtension(_lastFileName);
             if (!string.IsNullOrEmpty(configName) && configName.StartsWith(ManualConfigName))
@@ -410,6 +412,15 @@ namespace BmwDeepObd
                 adapterConfigMenu.SetVisible(_activityCommon.AllowCanAdapterConfig(_deviceAddress));
             }
 
+            IMenuItem enetIpMenu = menu.FindItem(Resource.Id.menu_enet_ip);
+            if (enetIpMenu != null)
+            {
+                enetIpMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_enet_ip),
+                    string.IsNullOrEmpty(_activityCommon.SelectedEnetIp) ? GetString(Resource.String.select_enet_ip_auto) : _activityCommon.SelectedEnetIp));
+                enetIpMenu.SetEnabled(interfaceAvailable && !commActive);
+                enetIpMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet);
+            }
+
             IMenuItem addErrorsMenu = menu.FindItem(Resource.Id.menu_xml_tool_add_errors_page);
             if (addErrorsMenu != null)
             {
@@ -509,7 +520,19 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_adapter_config:
+                    if (IsJobRunning())
+                    {
+                        return true;
+                    }
                     AdapterConfig();
+                    return true;
+
+                case Resource.Id.menu_enet_ip:
+                    if (IsJobRunning())
+                    {
+                        return true;
+                    }
+                    EnetIpConfig();
                     return true;
 
                 case Resource.Id.menu_xml_tool_add_errors_page:
@@ -1145,6 +1168,15 @@ namespace BmwDeepObd
             serverIntent.PutExtra(CanAdapterActivity.ExtraDeviceAddress, _deviceAddress);
             serverIntent.PutExtra(CanAdapterActivity.ExtraInterfaceType, (int)_activityCommon.SelectedInterface);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestCanAdapterConfig);
+        }
+
+        private void EnetIpConfig()
+        {
+            EdiabasClose();
+            _activityCommon.SelectEnetIp((sender, args) =>
+            {
+                SupportInvalidateOptionsMenu();
+            });
         }
 
         private void PerformAnalyze()

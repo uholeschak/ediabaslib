@@ -862,7 +862,7 @@ namespace BmwDeepObd
             }
             else if (ediabas.EdInterfaceClass is EdInterfaceEnet)
             {
-                string remoteHost = "auto";
+                string remoteHost = string.IsNullOrEmpty(_selectedEnetIp) ? "auto" : _selectedEnetIp;
                 if (Emulator)
                 {   // broadcast is not working with emulator
                     remoteHost = EmulatorEnetIp;

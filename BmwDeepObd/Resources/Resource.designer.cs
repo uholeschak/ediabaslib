@@ -1472,8 +1472,8 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0c008c
 			public const int action_divider = 2131493004;
 			
-			// aapt resource value: 0x7f0c00d0
-			public const int action_menu = 2131493072;
+			// aapt resource value: 0x7f0c00d1
+			public const int action_menu = 2131493073;
 			
 			// aapt resource value: 0x7f0c0002
 			public const int action_menu_divider = 2131492866;
@@ -1493,8 +1493,8 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0c0023
 			public const int action_mode_close_button = 2131492899;
 			
-			// aapt resource value: 0x7f0c00ce
-			public const int action_search = 2131493070;
+			// aapt resource value: 0x7f0c00cf
+			public const int action_search = 2131493071;
 			
 			// aapt resource value: 0x7f0c0024
 			public const int activity_chooser_view_content = 2131492900;
@@ -1715,8 +1715,8 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0c008b
 			public const int media_actions = 2131493003;
 			
-			// aapt resource value: 0x7f0c00cf
-			public const int menu_action_provider_connect = 2131493071;
+			// aapt resource value: 0x7f0c00d0
+			public const int menu_action_provider_connect = 2131493072;
 			
 			// aapt resource value: 0x7f0c00cb
 			public const int menu_adapter_config = 2131493067;
@@ -1727,8 +1727,8 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0c00d4
 			public const int menu_ediabas_tool = 2131493076;
 			
-			// aapt resource value: 0x7f0c00d1
-			public const int menu_enet_ip = 2131493073;
+			// aapt resource value: 0x7f0c00cc
+			public const int menu_enet_ip = 2131493068;
 			
 			// aapt resource value: 0x7f0c00d8
 			public const int menu_exit = 2131493080;
@@ -1745,11 +1745,11 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0c00d5
 			public const int menu_sel_media = 2131493077;
 			
-			// aapt resource value: 0x7f0c00cd
-			public const int menu_submenu_help = 2131493069;
+			// aapt resource value: 0x7f0c00ce
+			public const int menu_submenu_help = 2131493070;
 			
-			// aapt resource value: 0x7f0c00cc
-			public const int menu_submenu_log = 2131493068;
+			// aapt resource value: 0x7f0c00cd
+			public const int menu_submenu_log = 2131493069;
 			
 			// aapt resource value: 0x7f0c00c7
 			public const int menu_tool_sel_interface = 2131493063;
