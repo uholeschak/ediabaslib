@@ -27,6 +27,7 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
+\n- Allow to select ENET IP address
 \n- Fixed minor problems</string>
   <string name="app_info_message">Deep OBD for BMW\nVersion: {0}\nId: {1}</string>
 
@@ -146,7 +147,7 @@
 
   <!-- ENET ip selection -->
   <string name="select_enet_ip_search">Searching vehicles</string>
-  <string name="select_enet_ip">Select ENET ip address</string>
+  <string name="select_enet_ip">Select ENET IP address</string>
   <string name="select_enet_ip_auto">Automatic</string>
 
   <!--  EdiabasToolActivity -->
