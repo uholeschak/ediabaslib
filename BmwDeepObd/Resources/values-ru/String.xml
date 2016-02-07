@@ -146,7 +146,7 @@
 
   <!-- ENET ip selection -->
   <!-- translate! -->
-  <string name="select_enet_ip_detect">Detecting vehicles</string>
+  <string name="select_enet_ip_search">Searching vehicles</string>
   <string name="select_enet_ip">Select ENET ip address</string>
   <string name="select_enet_ip_auto">Automatic</string>
 
