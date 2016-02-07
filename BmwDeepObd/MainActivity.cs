@@ -404,7 +404,7 @@ namespace BmwDeepObd
             if (enetIpMenu != null)
             {
                 enetIpMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_enet_ip),
-                    (_activityCommon.SelectedEnetIp == null) ? GetString(Resource.String.select_enet_ip_auto) : _activityCommon.SelectedEnetIp.ToString()));
+                    string.IsNullOrEmpty(_activityCommon.SelectedEnetIp) ? GetString(Resource.String.select_enet_ip_auto) : _activityCommon.SelectedEnetIp));
                 enetIpMenu.SetEnabled(interfaceAvailable && !commActive);
                 enetIpMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet);
             }
@@ -657,9 +657,12 @@ namespace BmwDeepObd
 
                         case ActivityCommon.InterfaceType.Enet:
                             if (_activityCommon.Emulator)
-                            {   // broadcast is not working with emulator
+                            {
+                                // broadcast is not working with emulator
                                 portName = ActivityCommon.EmulatorEnetIp;
+                                break;
                             }
+                            portName = _activityCommon.SelectedEnetIp;
                             break;
 
                         case ActivityCommon.InterfaceType.Ftdi:
@@ -732,6 +735,7 @@ namespace BmwDeepObd
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
                 _deviceName = prefs.GetString("DeviceName", string.Empty);
                 _deviceAddress = prefs.GetString("DeviceAddress", string.Empty);
+                _activityCommon.SelectedEnetIp = prefs.GetString("EnetIp", string.Empty);
                 _configFileName = prefs.GetString("ConfigFile", string.Empty);
                 _activityCommon.CustomStorageMedia = prefs.GetString("StorageMedia", string.Empty);
                 _lastVersionCode = prefs.GetInt("VersionCode", -1);
@@ -753,6 +757,7 @@ namespace BmwDeepObd
                 ISharedPreferencesEditor prefsEdit = prefs.Edit();
                 prefsEdit.PutString("DeviceName", _deviceName);
                 prefsEdit.PutString("DeviceAddress", _deviceAddress);
+                prefsEdit.PutString("EnetIp", _activityCommon.SelectedEnetIp);
                 prefsEdit.PutString("ConfigFile", _configFileName);
                 prefsEdit.PutString("StorageMedia", _activityCommon.CustomStorageMedia ?? string.Empty);
                 prefsEdit.PutInt("VersionCode", _currentVersionCode);

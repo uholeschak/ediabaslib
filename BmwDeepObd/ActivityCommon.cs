@@ -95,7 +95,7 @@ namespace BmwDeepObd
         private int _usbDeviceDetectCount;
         private Receiver _bcReceiver;
         private InterfaceType _selectedInterface;
-        private IPAddress _selectedEnetIp;
+        private string _selectedEnetIp;
         private AlertDialog _activateAlertDialog;
         private AlertDialog _selectMediaAlertDialog;
         private AlertDialog _selectInterfaceAlertDialog;
@@ -178,7 +178,7 @@ namespace BmwDeepObd
             }
         }
 
-        public IPAddress SelectedEnetIp
+        public string SelectedEnetIp
         {
             get
             {
@@ -692,7 +692,7 @@ namespace BmwDeepObd
         {
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_activity);
             progress.SetCancelable(false);
-            progress.SetMessage(_activity.GetString(Resource.String.select_enet_ip_detect));
+            progress.SetMessage(_activity.GetString(Resource.String.select_enet_ip_search));
             progress.Show();
             SetCpuLock(true);
 
@@ -724,7 +724,8 @@ namespace BmwDeepObd
                     {
                         foreach (IPAddress ipAddress in detectedVehicles)
                         {
-                            if (_selectedEnetIp != null && _selectedEnetIp.Equals(ipAddress))
+                            if (!string.IsNullOrEmpty(_selectedEnetIp) &&
+                                string.Compare(_selectedEnetIp, ipAddress.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 selIndex = index + 1;
                             }
@@ -751,7 +752,7 @@ namespace BmwDeepObd
                                 if (detectedVehicles != null && listView.CheckedItemPosition >= 1 &&
                                     listView.CheckedItemPosition - 1 < detectedVehicles.Count)
                                 {
-                                    _selectedEnetIp = detectedVehicles[listView.CheckedItemPosition - 1];
+                                    _selectedEnetIp = detectedVehicles[listView.CheckedItemPosition - 1].ToString();
                                     handler(sender, args);
                                 }
                                 break;

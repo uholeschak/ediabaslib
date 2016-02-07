@@ -2842,7 +2842,7 @@ namespace BmwDeepObd
 			public const int select_enet_ip_auto = 2131099778;
 			
 			// aapt resource value: 0x7f060080
-			public const int select_enet_ip_detect = 2131099776;
+			public const int select_enet_ip_search = 2131099776;
 			
 			// aapt resource value: 0x7f060075
 			public const int select_file = 2131099765;
