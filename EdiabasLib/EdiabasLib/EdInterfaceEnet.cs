@@ -375,7 +375,7 @@ namespace EdiabasLib
 
         public override bool InterfaceDisconnect()
         {
-            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Disconnect");
+            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Disconnect");
             bool result = true;
 
             try
@@ -559,7 +559,7 @@ namespace EdiabasLib
                                                 ipBytes[i] |= (byte)(~maskBytes[i]);
                                             }
                                             IPAddress broadcastAddress = new IPAddress(ipBytes);
-                                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': Ip={1} Mask={2} Broadcast={3}",
+                                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': Ip={1} Mask={2} Broadcast={3}",
                                                 adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress));
                                             IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, ControlPort);
                                             UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
@@ -567,7 +567,7 @@ namespace EdiabasLib
                                         }
                                         catch (Exception)
                                         {
-                                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
+                                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
                                         }
                                     }
                                 }
@@ -586,26 +586,26 @@ namespace EdiabasLib
 #else
                     IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse("169.254.255.255"), ControlPort);
 #endif
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending to: {0}", ipUdpIdent.Address));
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending to: {0}", ipUdpIdent.Address));
                     UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
                     broadcastSend = true;
                 }
                 catch (Exception)
                 {
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
                 }
             }
             if (!broadcastSend)
             {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "No broadcast send");
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "No broadcast send");
                 InterfaceDisconnect();
                 return null;
             }
 
-            UdpEvent.WaitOne(500, false);
+            UdpEvent.WaitOne(1000, false);
             if (UdpRecIpListList.Count == 0)
             {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "No answer received");
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "No answer received");
                 InterfaceDisconnect();
                 return null;
             }

@@ -400,6 +400,15 @@ namespace BmwDeepObd
                 adapterConfigMenu.SetVisible(_activityCommon.AllowCanAdapterConfig(_deviceAddress));
             }
 
+            IMenuItem enetIpMenu = menu.FindItem(Resource.Id.menu_enet_ip);
+            if (enetIpMenu != null)
+            {
+                enetIpMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_enet_ip),
+                    (_activityCommon.SelectedEnetIp == null) ? GetString(Resource.String.select_enet_ip_auto) : _activityCommon.SelectedEnetIp.ToString()));
+                enetIpMenu.SetEnabled(interfaceAvailable && !commActive);
+                enetIpMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet);
+            }
+
             IMenuItem selCfgMenu = menu.FindItem(Resource.Id.menu_sel_cfg);
             if (selCfgMenu != null)
             {
@@ -460,6 +469,10 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_adapter_config:
                     AdapterConfig();
+                    return true;
+
+                case Resource.Id.menu_enet_ip:
+                    EnetIpConfig();
                     return true;
 
                 case Resource.Id.menu_sel_cfg:
@@ -2049,6 +2062,18 @@ namespace BmwDeepObd
             serverIntent.PutExtra(CanAdapterActivity.ExtraDeviceAddress, _deviceAddress);
             serverIntent.PutExtra(CanAdapterActivity.ExtraInterfaceType, (int)_activityCommon.SelectedInterface);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestAdapterConfig);
+        }
+
+        private void EnetIpConfig()
+        {
+            if (!CheckForEcuFiles())
+            {
+                return;
+            }
+            _activityCommon.SelectEnetIp((sender, args) =>
+            {
+                SupportInvalidateOptionsMenu();
+            });
         }
 
         private void SelectConfigFile()

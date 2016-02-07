@@ -109,6 +109,8 @@
   <string name="menu_connect">Подключить</string>
   <string name="menu_adapter">Устройство</string>
   <string name="menu_adapter_config">Настройки устройства</string>
+  <!-- translate! -->
+  <string name="menu_enet_ip">ENET IP</string>
   <string name="menu_sel_cfg">Конфигурация</string>
   <string name="menu_xml_tool">Генератор конфигураций</string>
   <string name="menu_ediabas_tool">Ediabas утилита</string>
@@ -141,6 +143,12 @@
   <string name="select_interface_bt">Bluetooth</string>
   <string name="select_interface_enet">ENET</string>
   <string name="select_interface_ftdi">USB (FTDI)</string>
+
+  <!-- ENET ip selection -->
+  <!-- translate! -->
+  <string name="select_enet_ip_detect">Detecting vehicles</string>
+  <string name="select_enet_ip">Select ENET ip address</string>
+  <string name="select_enet_ip_auto">Automatic</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>
