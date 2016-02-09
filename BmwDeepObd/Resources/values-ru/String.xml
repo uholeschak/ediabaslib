@@ -109,7 +109,6 @@
   <string name="menu_connect">Подключить</string>
   <string name="menu_adapter">Устройство</string>
   <string name="menu_adapter_config">Настройки устройства</string>
-  <!-- translate! -->
   <string name="menu_enet_ip">ENET IP</string>
   <string name="menu_sel_cfg">Конфигурация</string>
   <string name="menu_xml_tool">Генератор конфигураций</string>
@@ -145,9 +144,8 @@
   <string name="select_interface_ftdi">USB (FTDI)</string>
 
   <!-- ENET ip selection -->
-  <!-- translate! -->
-  <string name="select_enet_ip_search">Searching vehicles</string>
-  <string name="select_enet_ip">Select ENET ip address</string>
+  <string name="select_enet_ip_search">Поиск автомобиля</string>
+  <string name="select_enet_ip">Выберите ENET IP-адрес</string>
   <string name="select_enet_ip_auto">Automatic</string>
 
   <!--  EdiabasToolActivity -->
@@ -178,8 +176,7 @@
   <string name="xml_tool_analyze">Считать данные автомобиля</string>
   <string name="xml_tool_select_sgbd">Выбрать тип автомобиля</string>
   <string name="xml_tool_no_response">Автомобиль не отвечает</string>
-  <!--translate!-->
-  <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или ОDB устройство.\nУ более старших моделей возможна только ручная настройка конфигурации.\nДля этого вам необходимо в INPA на информационной странице для каждого ECU найти необходимые .GRP и .PRG файлы.\nПерейти к <a href='http://ediabaslib.codeplex.com/wikipage?title=Configuration%20Generator#ManualConfiguration'>ручной настройке</a>?</string>
+  <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или Deep ОDB устройство.\nУ более старших моделей возможна только ручная настройка конфигурации.\nДля этого вам необходимо в INPA на информационной странице для каждого ECU найти необходимые .GRP и .PRG файлы.\nПерейти к <a href='http://ediabaslib.codeplex.com/wikipage?title=Configuration%20Generator#ManualConfiguration'>ручной настройке</a>?</string>
   <string name="xml_tool_read_jobs_failed">Не удалось считать Jobs</string>
   <string name="xml_tool_read_ecu_info_failed">Не удалось считать ECU информацию</string>
   <string name="xml_tool_save_xml_failed">Не удалось сохраноть конфигурацию</string>
