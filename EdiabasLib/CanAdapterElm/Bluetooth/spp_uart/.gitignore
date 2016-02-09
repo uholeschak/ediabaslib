@@ -1,0 +1,14 @@
+*.o
+/depend/
+/image/
+/spp_uart_leds.c
+/spp_uart_leds.h
+*.sym
+*.psr_
+*.map
+*.dbg
+*.app
+*.xpv
+*.xdv
+*.fs
+*.xap
