@@ -15,7 +15,7 @@
 // PSKEY_DEEP_SLEEP_STATE
 &0229 = 0000// deep sleep will not be used
 // PSKEY_UART_BAUDRATE
-&01be = 009d// 38.4 kbaud
+&01be = 01d8// 115.2 kbaud
 // PSKEY_UART_CONFIG_USR
 &01c2 = 0880
 // PSKEY_CODEC_MIN_CPU_CLOCK (16Mhz)
