@@ -1,0 +1,11 @@
+<custom>
+   <property type="list" key="debug" format="define" name="Enable debug" defaultvalue="1">
+       <option internalval="DEBUG_ENABLED">Yes</option>
+       <option internalval="NO_DEBUG">No</option>
+       <description>
+           <![CDATA[
+           This option determines if debug should be enabled.
+           ]]>
+       </description>
+   </property>
+</custom>

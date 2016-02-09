@@ -1,0 +1,35 @@
+<project buildenvironment="{84faf732-1340-4049-9094-244167adf571}" buildenvironmentname="CSR Virtual Machine" executionenvironmentoption="" buildenvironmentoption="" executionenvironmentname="CSR Virtual Machine" executionenvironment="{2b2c6868-a56e-4266-962a-cddf1c979343}" >
+ <folder name="C Files" >
+  <extension name="c" />
+  <file path="main.c" />
+  <file path="spp_dev_init.c" />
+  <file path="spp_dev_inquire.c" />
+  <file path="spp_dev_auth.c" />
+  <file path="spp_uart_leds.c" />
+ </folder>
+ <folder name="Header Files" >
+  <extension name="h" />
+  <file path="spp_dev_init.h" />
+  <file path="spp_dev_private.h" />
+  <file path="spp_dev_inquire.h" />
+  <file path="spp_dev_auth.h" />
+  <file path="spp_uart_leds.h" />
+ </folder>
+ <file path="spp_uart_leds.led" />
+ <file path="spp_uart.psr" />
+ <properties currentconfiguration="Release" >
+  <configuration name="Release" >
+   <property key="board" >0</property>
+   <property key="buildMatch" >(file):(line):</property>
+   <property key="buildtransport" >1</property>
+   <property key="debug" >1</property>
+   <property key="debugtransport" >[SPITRANS=USB SPIPORT=1 SPIMAXCLOCK=100]</property>
+   <property key="defines" ></property>
+   <property key="gcc_ver" >1</property>
+   <property key="libs" >connection, spp, region, service,bdaddr,sdp_parse</property>
+   <property key="output" ></property>
+   <property key="panic" >0</property>
+   <property key="stacksize" ></property>
+  </configuration>
+ </properties>
+</project>
