@@ -7,6 +7,6 @@ pattern RED_ON RPT
 	RED ON 0
 	
 pattern RED_FLASH RPT
-	RED ON 50
-	RED OFF 50
+	RED ON 100
+	RED OFF 100
 	
