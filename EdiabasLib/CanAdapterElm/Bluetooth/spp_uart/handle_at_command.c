@@ -41,6 +41,16 @@ void spp_handleUnrecognised(const uint8 *data, uint16 length, Task task)
 	addATCrLfandSend(lUart, lUsed);
 }
 
+void handleATEmpty(Task pTask)
+{
+    Sink lUart = StreamUartSink();
+	uint16 lUsed = 0;
+
+	/* Send result to host */
+	lUsed += addATStr(lUart, pbapATRespId_Ok);
+	addATCrLfandSend(lUart, lUsed);
+}
+
 void handleATGetPin(Task pTask)
 {
     sppTaskData* app = (sppTaskData*) pTask;

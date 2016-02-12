@@ -16,6 +16,9 @@
 
 prefix spp_
 
+# Empty command
+{ AT \r} : handleATEmpty
+
 # Get pin
 { AT + PSWD ? \r} : handleATGetPin
 
