@@ -174,6 +174,23 @@ void handleATGetVersion(Task pTask)
 	addATCrLfandSend(lUart, lUsed);
 }
 
+void handleATOrgl(Task pTask)
+{
+    sppTaskData* app = (sppTaskData*) pTask;
+    Sink lUart = StreamUartSink();
+	uint16 lUsed = 0;
+
+    PsStore(PSKEY_USR_PIN, NULL, 0);
+    PsStore(PSKEY_USR_NAME, NULL, 0);
+
+    initAppData();
+    ConnectionChangeLocalName(app->name_length, app->name);
+
+	/* Send result to host */
+    lUsed = addATStr(lUart, pbapATRespId_Ok);
+	addATCrLfandSend(lUart, lUsed);
+}
+
 void handleATReset(Task pTask)
 {
     Sink lUart = StreamUartSink();

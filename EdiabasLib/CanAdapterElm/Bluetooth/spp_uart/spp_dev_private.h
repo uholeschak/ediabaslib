@@ -80,5 +80,17 @@ RETURNS
 Task getAppTask(void);
 
 
+/*************************************************************************
+NAME    
+    initAppData
+    
+DESCRIPTION
+  Init the application data
+
+RETURNS
+    
+*/
+void initAppData(void);
+        
 #endif /* _SPP_DEV_PRIVATE_H_ */
 
