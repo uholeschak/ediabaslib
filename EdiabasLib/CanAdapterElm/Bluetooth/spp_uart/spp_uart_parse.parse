@@ -34,6 +34,9 @@ prefix spp_
 # Get uart
 { AT + UART ? \r} : handleATGetUart
 
+# Set uart
+{ AT + UART = %d:baud , %d:stop , %d:parity \r} : handleATSetUart
+
 # Get address
 { AT + ADDR ? \r} : handleATGetAddr
 
