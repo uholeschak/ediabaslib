@@ -29,18 +29,9 @@ DESCRIPTION
 RETURNS
     void
 */
-void sppDevHandlePinCodeRequest(const CL_SM_PIN_CODE_IND_T* ind)
+void sppDevHandlePinCodeRequest(sppTaskData* app, const CL_SM_PIN_CODE_IND_T* ind)
 {
-    uint8 pin[16];
-	uint16 pin_length = 0;
-	
-	/* Do we have a fixed pin in PS, if not reject pairing (by setting the length to zero) */ 
-    if (((pin_length = PsFullRetrieve(PSKEY_FIXED_PIN, pin, sizeof(pin))) == 0) || (pin_length > sizeof(pin)))
-    {
-        pin_length = 0; 
-    }
-	
-    ConnectionSmPinCodeResponse(&ind->bd_addr, pin_length, pin);
+    ConnectionSmPinCodeResponse(&ind->bd_addr, app->pin_length, app->pin);
 }
 
 /****************************************************************************

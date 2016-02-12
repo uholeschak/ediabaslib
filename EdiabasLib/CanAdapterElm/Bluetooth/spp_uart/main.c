@@ -5,12 +5,15 @@
 #include "spp_dev_inquire.h"
 #include "spp_dev_auth.h"
 #include "spp_uart_leds.h"
+#include "handle_system.h"
 
 #include <connection.h>
 #include <panic.h>
 #include <stdio.h>
 #include <stream.h>
+#include <string.h>
 #include <pio.h>
+#include <ps.h>
 
 #ifdef DEBUG_ENABLED
 #define DEBUG(x) {printf x;}
@@ -233,7 +236,7 @@ static void app_handler(Task task, MessageId id, Message message)
         break;
     case CL_SM_PIN_CODE_IND:
         DEBUG(("CL_SM_PIN_CODE_IND\n"));
-        sppDevHandlePinCodeRequest((CL_SM_PIN_CODE_IND_T *) message);
+        sppDevHandlePinCodeRequest(&theSppApp, (CL_SM_PIN_CODE_IND_T *) message);
         break;
     case CL_SM_AUTHORISE_IND:  
         DEBUG(("CL_SM_PIN_CODE_IND\n"));
@@ -280,7 +283,12 @@ static void app_handler(Task task, MessageId id, Message message)
     case SPP_MESSAGE_MORE_SPACE:
         DEBUG(("SPP_MESSAGE_MORE_SPACE\n"));
         break;
-
+	case MESSAGE_MORE_DATA:
+		handleMoreData(&theSppApp, ((MessageMoreData*)message)->source);
+		break;
+	case MESSAGE_MORE_SPACE:
+		handleMoreSpace(&theSppApp, ((MessageMoreSpace*)message)->sink);
+		break;
     default:
         /* An unexpected message has arrived - must handle it */
         DEBUG(("main app - msg type  not yet handled 0x%x\n", id));
@@ -292,16 +300,25 @@ int main(void)
 {
     DEBUG(("Main Started...\n"));
     
-#ifndef NO_UART_CHECK
     /* Make sure Uart has been successfully initialised before running */
     if (StreamUartSource())
-#endif
     {
         /* Set up task 1 handler */
         theSppApp.task.handler = app_handler;
         
         setSppState(sppDevInitialising);
         theSppApp.spp = 0;
+
+        if (((theSppApp.pin_length = PsRetrieve(PSKEY_USR_PIN, theSppApp.pin, sizeof(theSppApp.pin))) == 0) ||
+            (theSppApp.pin_length > sizeof(theSppApp.pin)))
+        {
+    		uint8 pin_code[4] = {'1','2','3','4'};
+
+            memcpy(theSppApp.pin, pin_code, sizeof(pin_code));
+            theSppApp.pin_length = sizeof(pin_code);
+        }
+        
+    	PanicNotNull(MessageSinkTask(StreamUartSink(), &theSppApp.task));
         
         /* Init the Connection Manager */
         ConnectionInit(&theSppApp.task);

@@ -16,6 +16,8 @@ DESCRIPTION
 #include <message.h>
 #include <app/message/system_message.h>
 
+#define PSKEY_USR_PIN    0
+
 #define FRAME_SIZE		0
 
 #define SPP_MSG_BASE    (0x0)
@@ -39,6 +41,8 @@ typedef struct
     TaskData            task;
     SPP*                spp;
     bdaddr              bd_addr;
+    uint8               pin[16];
+    uint16              pin_length;
     sppDevState         spp_state;
 } sppTaskData;
 
