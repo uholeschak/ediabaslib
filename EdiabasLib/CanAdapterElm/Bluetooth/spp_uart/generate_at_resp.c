@@ -21,11 +21,10 @@ FILE
 
 static const uint8 gCrLfStr[] = {'\r','\n'};
 static const uint8 gOkResStr[] = {'O','K'};
-static const uint8 gColonResStr[] = {':'};
-static const uint8 gDotResStr[] = {'.'};
 static const uint8 gFailResStr[] = {'F','A','I','L'};
 static const uint8 gPinResStr[] = {'+','P','S','W','D',':'};
 static const uint8 gNameResStr[] = {'+','N','A','M','E',':'};
+static const uint8 gUartResStr[] = {'+','U','A','R','T',':'};
 static const uint8 gAddrResStr[] = {'+','A','D','D','R',':'};
 static const uint8 gVerResStr[] = {'+','V','E','R','S','I','O','N',':'};
 
@@ -41,11 +40,10 @@ static const ATStrType gAtStrList[] =
 							{ 
 								AT_LIST_ENTRY(gCrLfStr),
 								AT_LIST_ENTRY(gOkResStr),
-								AT_LIST_ENTRY(gColonResStr),
-								AT_LIST_ENTRY(gDotResStr),
 								AT_LIST_ENTRY(gFailResStr),
 								AT_LIST_ENTRY(gPinResStr),
 								AT_LIST_ENTRY(gNameResStr),
+								AT_LIST_ENTRY(gUartResStr),
 								AT_LIST_ENTRY(gAddrResStr),
 								AT_LIST_ENTRY(gVerResStr),
 								{0, 0}
@@ -114,14 +112,14 @@ uint16 addATByte(Sink pSink, uint8 pByte)
 	return 1;
 }
 
-uint16 addATUint8(Sink pSink, uint8 pValue)
+uint16 addATUint(Sink pSink, uint32 pValue)
 {
 	char lTxt[10];
 	uint16 lLen;
 	uint8* lS=SinkMap(pSink);
 	uint16 lO;
 
-	sprintf(lTxt, "%d", pValue & 0xff);
+	sprintf(lTxt, "%ld", pValue);
 	lLen = strlen(lTxt);
 
 	lO = SinkClaim(pSink, lLen);

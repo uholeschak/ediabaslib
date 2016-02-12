@@ -14,6 +14,7 @@ DESCRIPTION
 
 #include <spp.h>
 #include <message.h>
+#include <stream.h>
 #include <app/message/system_message.h>
 
 #define VER_H            1
@@ -21,6 +22,7 @@ DESCRIPTION
 
 #define PSKEY_USR_PIN    0
 #define PSKEY_USR_NAME   1
+#define PSKEY_USR_UART   2
 
 #define FRAME_SIZE		0
 
@@ -40,10 +42,18 @@ typedef enum
     sppDevConnected
 } sppDevState;
 
+typedef struct
+{
+    vm_uart_rate        baud_rate;
+    vm_uart_stop        stop_bits;
+    vm_uart_parity      parity;
+} uartData;
+
 typedef struct 
 {
     TaskData            task;
     SPP*                spp;
+    uartData            uart_data;
     bdaddr              bd_addr;
     bdaddr              bd_addr_local;
     uint8               pin[16];

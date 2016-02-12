@@ -68,6 +68,13 @@ void initAppData(void)
         memcpy(theSppApp.name, name, sizeof(name));
         theSppApp.name_length = sizeof(name);
     }
+
+    if (PsRetrieve(PSKEY_USR_UART, &theSppApp.uart_data, sizeof(theSppApp.uart_data)) != sizeof(theSppApp.uart_data))
+    {
+        theSppApp.uart_data.baud_rate = VM_UART_RATE_115K2;
+        theSppApp.uart_data.stop_bits = VM_UART_STOP_ONE;
+        theSppApp.uart_data.parity = VM_UART_PARITY_NONE;
+    }
 }
 
 /*************************************************************************
@@ -357,6 +364,7 @@ int main(void)
         theSppApp.spp = 0;
 
         initAppData();
+        StreamUartConfigure(theSppApp.uart_data.baud_rate, theSppApp.uart_data.stop_bits, theSppApp.uart_data.parity);
 
         PanicNotNull(MessageSinkTask(StreamUartSink(), &theSppApp.task));
 
