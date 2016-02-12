@@ -30,3 +30,9 @@ prefix spp_
 
 # Get address
 { AT + ADDR ? \r} : handleATGetAddr
+
+# Get version
+{ AT + VERSION ? \r} : handleATGetVersion
+
+# Reset
+{ AT + RESET \r} : handleATReset

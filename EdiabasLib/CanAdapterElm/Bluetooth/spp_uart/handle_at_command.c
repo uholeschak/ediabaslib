@@ -25,6 +25,7 @@ FILE
 #include <string.h>
 #include <stdbool.h>
 #include <ps.h>
+#include <boot.h>
 
 #include "spp_dev_private.h"
 #include "spp_uart_parse.h"
@@ -158,3 +159,28 @@ void handleATGetAddr(Task pTask)
 	addATCrLfandSend(lUart, lUsed);
 }
 
+void handleATGetVersion(Task pTask)
+{
+    Sink lUart = StreamUartSink();
+	uint16 lUsed = 0;
+
+	/* Send result to host */
+	lUsed = addATStr(lUart, pbapATRespId_Ver);
+    lUsed += addATUint8(lUart, VER_H);
+	lUsed += addATStr(lUart, pbapATRespId_Dot);
+    lUsed += addATUint8(lUart, VER_L);
+	lUsed += addATStr(lUart, pbapATRespId_CrLf);
+	lUsed += addATStr(lUart, pbapATRespId_Ok);
+	addATCrLfandSend(lUart, lUsed);
+}
+
+void handleATReset(Task pTask)
+{
+    Sink lUart = StreamUartSink();
+	uint16 lUsed = 0;
+
+	/* Send result to host */
+	lUsed = addATStr(lUart, pbapATRespId_Ok);
+	addATCrLfandSend(lUart, lUsed);
+    BootSetMode(BootGetMode());
+}

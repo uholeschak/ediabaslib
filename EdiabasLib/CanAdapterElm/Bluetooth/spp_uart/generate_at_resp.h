@@ -20,10 +20,12 @@ typedef enum
 	pbapATRespId_CrLf,
 	pbapATRespId_Ok,
 	pbapATRespId_Colon,
+	pbapATRespId_Dot,
 	pbapATRespId_Fail,
 	pbapATRespId_Pin,
 	pbapATRespId_Name,
 	pbapATRespId_Addr,
+	pbapATRespId_Ver,
 	
 	pbapATRespId_eol
 } pbapATRespId;

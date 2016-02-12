@@ -16,6 +16,9 @@ DESCRIPTION
 #include <message.h>
 #include <app/message/system_message.h>
 
+#define VER_H            1
+#define VER_L            0
+
 #define PSKEY_USR_PIN    0
 #define PSKEY_USR_NAME   1
 
