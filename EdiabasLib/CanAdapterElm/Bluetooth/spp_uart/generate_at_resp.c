@@ -21,9 +21,11 @@ FILE
 
 static const uint8 gCrLfStr[] = {'\r','\n'};
 static const uint8 gOkResStr[] = {'O','K'};
+static const uint8 gColonResStr[] = {':'};
 static const uint8 gFailResStr[] = {'F','A','I','L'};
 static const uint8 gPinResStr[] = {'+','P','S','W','D',':'};
 static const uint8 gNameResStr[] = {'+','N','A','M','E',':'};
+static const uint8 gAddrResStr[] = {'+','A','D','D','R',':'};
 
 typedef struct
 {
@@ -37,9 +39,11 @@ static const ATStrType gAtStrList[] =
 							{ 
 								AT_LIST_ENTRY(gCrLfStr),
 								AT_LIST_ENTRY(gOkResStr),
+								AT_LIST_ENTRY(gColonResStr),
 								AT_LIST_ENTRY(gFailResStr),
 								AT_LIST_ENTRY(gPinResStr),
 								AT_LIST_ENTRY(gNameResStr),
+								AT_LIST_ENTRY(gAddrResStr),
 								{0, 0}
 							};
 
@@ -114,6 +118,26 @@ uint16 addATUint8(Sink pSink, uint8 pValue)
 	uint16 lO;
 
 	sprintf(lTxt, "%d", pValue & 0xff);
+	lLen = strlen(lTxt);
+
+	lO = SinkClaim(pSink, lLen);
+	if (lO == 0xffff)
+		Panic(); /* Error */
+	lS += lO;
+
+	memcpy(lS, lTxt, lLen);
+
+	return lLen;
+}
+
+uint16 addATUintHex(Sink pSink, uint32 pValue)
+{
+	char lTxt[10];
+	uint16 lLen;
+	uint8* lS=SinkMap(pSink);
+	uint16 lO;
+
+	sprintf(lTxt, "%lX", pValue);
 	lLen = strlen(lTxt);
 
 	lO = SinkClaim(pSink, lLen);
