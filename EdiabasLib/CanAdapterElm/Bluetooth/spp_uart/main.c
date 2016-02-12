@@ -299,37 +299,37 @@ static void app_handler(Task task, MessageId id, Message message)
 int main(void)
 {
     DEBUG(("Main Started...\n"));
-    
+
     /* Make sure Uart has been successfully initialised before running */
     if (StreamUartSource())
     {
         /* Set up task 1 handler */
         theSppApp.task.handler = app_handler;
-        
+
         setSppState(sppDevInitialising);
         theSppApp.spp = 0;
 
-        if (((theSppApp.pin_length = PsRetrieve(PSKEY_USR_PIN, theSppApp.pin, sizeof(theSppApp.pin))) == 0) ||
-            (theSppApp.pin_length > sizeof(theSppApp.pin)))
+        theSppApp.pin_length = PsRetrieve(PSKEY_USR_PIN, theSppApp.pin, sizeof(theSppApp.pin));
+        if ((theSppApp.pin_length < 4) || (theSppApp.pin_length > sizeof(theSppApp.pin)))
         {
     		uint8 pin_code[4] = {'1','2','3','4'};
 
             memcpy(theSppApp.pin, pin_code, sizeof(pin_code));
             theSppApp.pin_length = sizeof(pin_code);
         }
-        
+
     	PanicNotNull(MessageSinkTask(StreamUartSink(), &theSppApp.task));
-        
+
         /* Init the Connection Manager */
         ConnectionInit(&theSppApp.task);
 
         /* Start the message scheduler loop */
         MessageLoop();
     }
-    
+
     /* Will never get here! */
     DEBUG(("Main Ended!\n"));
-    
+
     return 0;
 }
 

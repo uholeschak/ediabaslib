@@ -23,6 +23,7 @@ FILE
 #include <sink.h>
 #include <source.h>
 #include <string.h>
+#include <stdbool.h>
 #include <ps.h>
 
 #include "spp_dev_private.h"
@@ -58,17 +59,37 @@ void handleATSetPin(Task pTask, const struct ATSetPin *pPinReq)
     sppTaskData* app = (sppTaskData*) pTask;
     Sink lUart = StreamUartSink();
 	uint16 lUsed = 0;
+    bool valid = true;
+    uint16 i;
 
-    if ((pPinReq->pin.length < 1) || (pPinReq->pin.length > sizeof(app->pin)))
+    if ((pPinReq->pin.length < 4) || (pPinReq->pin.length > sizeof(app->pin)))
     {
-    	lUsed = addATStr(lUart, pbapATRespId_Fail);    
+        valid = false;
+    }
+    for (i = 0; i < pPinReq->pin.length; i++)
+    {
+        if ((pPinReq->pin.data[i] < '0') || (pPinReq->pin.data[i] > '9'))
+        {
+            valid = false;
+            break;
+        }
+    }
+    if (!valid)
+    {
+    	lUsed = addATStr(lUart, pbapATRespId_Fail);
     }
     else
     {
         memcpy(app->pin, pPinReq->pin.data, pPinReq->pin.length);
         app->pin_length = pPinReq->pin.length;
-        PsStore(PSKEY_USR_PIN, app->pin, app->pin_length);
-    	lUsed = addATStr(lUart, pbapATRespId_Ok);
+        if (!PsStore(PSKEY_USR_PIN, app->pin, app->pin_length))
+        {
+        	lUsed = addATStr(lUart, pbapATRespId_Fail);    
+        }
+        else
+        {
+        	lUsed = addATStr(lUart, pbapATRespId_Ok);
+        }
     }
 	addATCrLfandSend(lUart, lUsed);
 }
