@@ -42,6 +42,7 @@ typedef struct
     TaskData            task;
     SPP*                spp;
     bdaddr              bd_addr;
+    bdaddr              bd_addr_local;
     uint8               pin[16];
     uint16              pin_length;
     uint8               name[31];

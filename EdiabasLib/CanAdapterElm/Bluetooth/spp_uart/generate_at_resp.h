@@ -19,9 +19,11 @@ typedef enum
 {
 	pbapATRespId_CrLf,
 	pbapATRespId_Ok,
+	pbapATRespId_Colon,
 	pbapATRespId_Fail,
 	pbapATRespId_Pin,
 	pbapATRespId_Name,
+	pbapATRespId_Addr,
 	
 	pbapATRespId_eol
 } pbapATRespId;
@@ -35,5 +37,7 @@ uint16 addATBuffer8(Sink pSink, const uint8 *pBuffer, uint16 pBufLen);
 uint16 addATByte(Sink pSink, uint8 pByte);
 
 uint16 addATUint8(Sink pSink, uint8 pValue);
+
+uint16 addATUintHex(Sink pSink, uint32 pValue);
 
 #endif /* GENERATE_AT_RESP_H */

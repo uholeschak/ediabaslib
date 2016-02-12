@@ -140,3 +140,21 @@ void handleATSetName(Task pTask, const struct ATSetName *pNameReq)
 	addATCrLfandSend(lUart, lUsed);
 }
 
+void handleATGetAddr(Task pTask)
+{
+    sppTaskData* app = (sppTaskData*) pTask;
+    Sink lUart = StreamUartSink();
+	uint16 lUsed = 0;
+
+	/* Send result to host */
+	lUsed = addATStr(lUart, pbapATRespId_Addr);
+    lUsed += addATUintHex(lUart, app->bd_addr_local.lap);
+	lUsed += addATStr(lUart, pbapATRespId_Colon);
+    lUsed += addATUintHex(lUart, app->bd_addr_local.uap);
+	lUsed += addATStr(lUart, pbapATRespId_Colon);
+    lUsed += addATUintHex(lUart, app->bd_addr_local.nap);
+	lUsed += addATStr(lUart, pbapATRespId_CrLf);
+	lUsed += addATStr(lUart, pbapATRespId_Ok);
+	addATCrLfandSend(lUart, lUsed);
+}
+

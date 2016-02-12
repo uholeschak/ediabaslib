@@ -95,12 +95,23 @@ static void app_handler(Task task, MessageId id, Message message)
         if(((CL_INIT_CFM_T*)message)->status == success)
         {
             ConnectionChangeLocalName(theSppApp.name_length, theSppApp.name);
+            ConnectionReadLocalAddr(task);
             /* Connection Library initialisation was a success */
             sppDevInit();
         }
         else
         {
             Panic();
+        }
+        break;
+    case CL_DM_LOCAL_BD_ADDR_CFM:
+        {
+            CL_DM_LOCAL_BD_ADDR_CFM_T *bd_addr = (CL_DM_LOCAL_BD_ADDR_CFM_T *) message;
+            if (bd_addr->status != success)
+            {
+                Panic();
+            }
+            memcpy(&theSppApp.bd_addr_local, &bd_addr->bd_addr, sizeof(theSppApp.bd_addr_local));
         }
         break;
     case CL_DM_LINK_SUPERVISION_TIMEOUT_IND:
