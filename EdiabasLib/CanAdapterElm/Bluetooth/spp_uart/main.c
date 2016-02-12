@@ -14,6 +14,7 @@
 #include <string.h>
 #include <pio.h>
 #include <ps.h>
+#include <boot.h>
 
 #ifdef DEBUG_ENABLED
 #define DEBUG(x) {printf x;}
@@ -262,26 +263,14 @@ static void app_handler(Task task, MessageId id, Message message)
             break;
         }
         break;
-#if 0        
-    case SPP_DEV_INQUIRY_TIMEOUT_IND:
-        DEBUG(("SPP_DEV_INQUIRY_TIMEOUT_IND\n"));
-        switch(state)
-        {
-        case sppDevPairable:
-            /* Inquiry mode timed out */
-            ConnectionWriteScanEnable(hci_scan_enable_off);
-            setSppState(sppDevReady);
-            break;
-        case sppDevConnected:
-        case sppDevInitialising:
-        case sppDevConnecting:
-        case sppDevReady:
-        default:
-            unhandledSppState(state, id);
-            break;
-        }
+    case SPP_DEV_RESET:
+        DEBUG((SPP_DEV_RESET));
+        BootSetMode(BootGetMode());
         break;
-#endif
+    case SPP_DEV_CONFIG_UART:
+        DEBUG((SPP_DEV_CONFIG_UART));
+        StreamUartConfigure(theSppApp.uart_data.baud_rate, theSppApp.uart_data.stop_bits, theSppApp.uart_data.parity);
+        break;
     case CL_DM_ACL_OPENED_IND:
         DEBUG(("CL_DM_ACL_OPENED_IND\n"));
         break;

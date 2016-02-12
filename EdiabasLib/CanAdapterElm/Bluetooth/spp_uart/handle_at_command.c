@@ -25,7 +25,6 @@ FILE
 #include <string.h>
 #include <stdbool.h>
 #include <ps.h>
-#include <boot.h>
 
 #include "spp_dev_private.h"
 #include "spp_uart_parse.h"
@@ -273,7 +272,7 @@ void handleATSetUart(Task pTask, const struct ATSetUart *pUartReq)
 	addATCrLfandSend(lUart, lUsed);
     if (valid)
     {
-        StreamUartConfigure(app->uart_data.baud_rate, app->uart_data.stop_bits, app->uart_data.parity);
+        MessageSendLater(getAppTask(), SPP_DEV_CONFIG_UART, 0, 500);
     }
 }
 
@@ -337,5 +336,5 @@ void handleATReset(Task pTask)
 	/* Send result to host */
 	lUsed = addATStr(lUart, pbapATRespId_Ok);
 	addATCrLfandSend(lUart, lUsed);
-    BootSetMode(BootGetMode());
+    MessageSendLater(getAppTask(), SPP_DEV_RESET, 0, 500);
 }
