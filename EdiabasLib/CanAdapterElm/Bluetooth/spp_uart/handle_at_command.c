@@ -183,6 +183,7 @@ void handleATGetUart(Task pTask)
         if (app->uart_data.baud_rate == uartInfoTable[i].baud_code)
         {
             baud_rate = uartInfoTable[i].baud_rate;
+            break;
         }
     }
 
@@ -196,6 +197,62 @@ void handleATGetUart(Task pTask)
 	lUsed += addATStr(lUart, pbapATRespId_CrLf);
 	lUsed += addATStr(lUart, pbapATRespId_Ok);
 	addATCrLfandSend(lUart, lUsed);
+}
+
+void handleATSetUart(Task pTask, const struct ATSetUart *pUartReq)
+{
+    sppTaskData* app = (sppTaskData*) pTask;
+    Sink lUart = StreamUartSink();
+	uint16 lUsed = 0;
+	uint16 i;
+    vm_uart_rate baud_code = VM_UART_RATE_SAME;
+    bool valid = true;
+
+    for (i = 0; i < sizeof(uartInfoTable)/sizeof(uartInfoTable[0]); i++)
+    {
+        if (uartInfoTable[i].baud_rate == pUartReq->baud)
+        {
+            baud_code = uartInfoTable[i].baud_code;
+            break;
+        }
+    }
+    if (baud_code == VM_UART_RATE_SAME)
+    {
+        valid = false;
+    }
+    if (pUartReq->stop >= VM_UART_STOP_SAME)
+    {
+        valid = false;
+    }
+    if (pUartReq->parity >= VM_UART_PARITY_SAME)
+    {
+        valid = false;
+    }
+
+    if (!valid)
+    {
+    	lUsed = addATStr(lUart, pbapATRespId_Fail);
+    }
+    else
+    {
+        app->uart_data.baud_rate = baud_code;
+        app->uart_data.stop_bits = pUartReq->stop;
+        app->uart_data.parity = pUartReq->parity;
+        if (!PsStore(PSKEY_USR_UART, &app->uart_data, sizeof(app->uart_data)))
+        {
+        	lUsed = addATStr(lUart, pbapATRespId_Fail);
+            valid = false;
+        }
+        else
+        {
+        	lUsed = addATStr(lUart, pbapATRespId_Ok);
+        }
+    }
+	addATCrLfandSend(lUart, lUsed);
+    if (valid)
+    {
+        StreamUartConfigure(app->uart_data.baud_rate, app->uart_data.stop_bits, app->uart_data.parity);
+    }
 }
 
 void handleATGetAddr(Task pTask)
