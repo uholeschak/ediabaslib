@@ -50,6 +50,26 @@ const uartInfo uartInfoTable[] =
     { 1382400, VM_UART_RATE_1382K4 },
 };
 
+static uint32 handSeqExtractUint32(const uint8 *pBuffer, uint16 pLen)
+{
+	uint32 lRes = 0;
+	uint16 lC;
+	uint16 lVal = 0;
+	uint8 lCh;
+	
+	for (lC=0; lC<pLen; lC++)
+	{
+		lCh = toupper(pBuffer[lC]);
+		if ((lCh>= '0') && (lCh <= '9'))
+			lVal = lCh - '0';
+		else /* Invalid character */
+			return 0;
+		lRes = (lRes * 10) + lVal;
+	}
+	
+	return lRes;
+}
+
 void spp_handleUnrecognised(const uint8 *data, uint16 length, Task task)
 {
  	Sink lUart = StreamUartSink();
@@ -205,12 +225,14 @@ void handleATSetUart(Task pTask, const struct ATSetUart *pUartReq)
     Sink lUart = StreamUartSink();
 	uint16 lUsed = 0;
 	uint16 i;
+    uint32 baud_rate;
     vm_uart_rate baud_code = VM_UART_RATE_SAME;
     bool valid = true;
 
+    baud_rate = handSeqExtractUint32(pUartReq->baud.data, pUartReq->baud.length);
     for (i = 0; i < sizeof(uartInfoTable)/sizeof(uartInfoTable[0]); i++)
     {
-        if (uartInfoTable[i].baud_rate == pUartReq->baud)
+        if (uartInfoTable[i].baud_rate == baud_rate)
         {
             baud_code = uartInfoTable[i].baud_code;
             break;
