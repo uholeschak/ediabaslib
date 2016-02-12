@@ -6,6 +6,10 @@
   <file path="spp_dev_inquire.c" />
   <file path="spp_dev_auth.c" />
   <file path="spp_uart_leds.c" />
+  <file path="handle_system.c" />
+  <file path="spp_uart_parse.c" />
+  <file path="handle_at_command.c" />
+  <file path="generate_at_resp.c" />
  </folder>
  <folder name="Header Files" >
   <extension name="h" />
@@ -14,9 +18,13 @@
   <file path="spp_dev_inquire.h" />
   <file path="spp_dev_auth.h" />
   <file path="spp_uart_leds.h" />
+  <file path="handle_system.h" />
+  <file path="spp_uart_parse.h" />
+  <file path="generate_at_resp.h" />
  </folder>
  <file path="spp_uart_leds.led" />
  <file path="spp_uart.psr" />
+ <file path="spp_uart_parse.parse" />
  <properties currentconfiguration="Release" >
   <configuration name="Release" >
    <property key="board" >0</property>
@@ -25,6 +33,7 @@
    <property key="debug" >1</property>
    <property key="debugtransport" >[SPITRANS=USB SPIPORT=1 SPIMAXCLOCK=100]</property>
    <property key="defines" ></property>
+   <property key="firmwareimage" >D:\Downloads\HC-05\CSR\Firmware\23i\cyt_8unified_fl_bt3.0_23i_0911261257_encr56_casira_prod\23260_cyt_8unified_fl_bt3.0_23i_0911261257_encr56_casira_prod\bc_cyt</property>
    <property key="gcc_ver" >1</property>
    <property key="libs" >connection, spp, region, service,bdaddr,sdp_parse</property>
    <property key="output" ></property>

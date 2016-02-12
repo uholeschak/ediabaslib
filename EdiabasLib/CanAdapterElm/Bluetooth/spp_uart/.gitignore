@@ -13,3 +13,5 @@
 *.fs
 *.xap
 *.mak
+/spp_uart_parse.c
+/spp_uart_parse.h

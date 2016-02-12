@@ -27,7 +27,7 @@ DESCRIPTION
 RETURNS
     void
 */
-void sppDevHandlePinCodeRequest(const CL_SM_PIN_CODE_IND_T* ind);
+void sppDevHandlePinCodeRequest(sppTaskData* app, const CL_SM_PIN_CODE_IND_T* ind);
 
 /****************************************************************************
 NAME    
