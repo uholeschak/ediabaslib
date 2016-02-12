@@ -34,5 +34,8 @@ prefix spp_
 # Get version
 { AT + VERSION ? \r} : handleATGetVersion
 
+# Factory reset
+{ AT + ORGL \r} : handleATOrgl
+
 # Reset
 { AT + RESET \r} : handleATReset
