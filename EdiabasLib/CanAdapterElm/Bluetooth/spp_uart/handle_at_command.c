@@ -31,6 +31,25 @@ FILE
 #include "spp_uart_parse.h"
 #include "generate_at_resp.h"
 
+typedef struct
+{
+    uint32        baud_rate;
+    vm_uart_rate  baud_code;
+} uartInfo;
+
+const uartInfo uartInfoTable[] =
+{
+    { 9600, VM_UART_RATE_9K6 },
+    { 19200, VM_UART_RATE_19K2 },
+    { 38400, VM_UART_RATE_38K4 },
+    { 57600, VM_UART_RATE_57K6 },
+    { 115200, VM_UART_RATE_115K2 },
+    { 230400, VM_UART_RATE_230K4 },
+    { 460800, VM_UART_RATE_460K8 },
+    { 921600, VM_UART_RATE_921K6 },
+    { 1382400, VM_UART_RATE_1382K4 },
+};
+
 void spp_handleUnrecognised(const uint8 *data, uint16 length, Task task)
 {
  	Sink lUart = StreamUartSink();
@@ -151,6 +170,34 @@ void handleATSetName(Task pTask, const struct ATSetName *pNameReq)
 	addATCrLfandSend(lUart, lUsed);
 }
 
+void handleATGetUart(Task pTask)
+{
+    sppTaskData* app = (sppTaskData*) pTask;
+    Sink lUart = StreamUartSink();
+	uint16 lUsed = 0;
+	uint16 i;
+	uint32 baud_rate = 0;
+
+    for (i = 0; i < sizeof(uartInfoTable)/sizeof(uartInfoTable[0]); i++)
+    {
+        if (app->uart_data.baud_rate == uartInfoTable[i].baud_code)
+        {
+            baud_rate = uartInfoTable[i].baud_rate;
+        }
+    }
+
+	/* Send result to host */
+	lUsed = addATStr(lUart, pbapATRespId_Uart);
+    lUsed += addATUint(lUart, baud_rate);
+	lUsed += addATByte(lUart, ',');
+    lUsed += addATUint(lUart, app->uart_data.stop_bits);
+	lUsed += addATByte(lUart, ',');
+    lUsed += addATUint(lUart, app->uart_data.parity);
+	lUsed += addATStr(lUart, pbapATRespId_CrLf);
+	lUsed += addATStr(lUart, pbapATRespId_Ok);
+	addATCrLfandSend(lUart, lUsed);
+}
+
 void handleATGetAddr(Task pTask)
 {
     sppTaskData* app = (sppTaskData*) pTask;
@@ -160,9 +207,9 @@ void handleATGetAddr(Task pTask)
 	/* Send result to host */
 	lUsed = addATStr(lUart, pbapATRespId_Addr);
     lUsed += addATUintHex(lUart, app->bd_addr_local.lap);
-	lUsed += addATStr(lUart, pbapATRespId_Colon);
+	lUsed += addATByte(lUart, ':');
     lUsed += addATUintHex(lUart, app->bd_addr_local.uap);
-	lUsed += addATStr(lUart, pbapATRespId_Colon);
+	lUsed += addATByte(lUart, ':');
     lUsed += addATUintHex(lUart, app->bd_addr_local.nap);
 	lUsed += addATStr(lUart, pbapATRespId_CrLf);
 	lUsed += addATStr(lUart, pbapATRespId_Ok);
@@ -176,9 +223,9 @@ void handleATGetVersion(Task pTask)
 
 	/* Send result to host */
 	lUsed = addATStr(lUart, pbapATRespId_Ver);
-    lUsed += addATUint8(lUart, VER_H);
-	lUsed += addATStr(lUart, pbapATRespId_Dot);
-    lUsed += addATUint8(lUart, VER_L);
+    lUsed += addATUint(lUart, VER_H);
+	lUsed += addATByte(lUart, '.');
+    lUsed += addATUint(lUart, VER_L);
 	lUsed += addATStr(lUart, pbapATRespId_CrLf);
 	lUsed += addATStr(lUart, pbapATRespId_Ok);
 	addATCrLfandSend(lUart, lUsed);
@@ -192,6 +239,7 @@ void handleATOrgl(Task pTask)
 
     PsStore(PSKEY_USR_PIN, NULL, 0);
     PsStore(PSKEY_USR_NAME, NULL, 0);
+    PsStore(PSKEY_USR_UART, NULL, 0);
 
     initAppData();
     ConnectionChangeLocalName(app->name_length, app->name);
@@ -199,6 +247,7 @@ void handleATOrgl(Task pTask)
 	/* Send result to host */
     lUsed = addATStr(lUart, pbapATRespId_Ok);
 	addATCrLfandSend(lUart, lUsed);
+    StreamUartConfigure(app->uart_data.baud_rate, app->uart_data.stop_bits, app->uart_data.parity);
 }
 
 void handleATReset(Task pTask)

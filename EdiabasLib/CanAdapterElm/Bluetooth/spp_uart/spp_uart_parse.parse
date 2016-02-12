@@ -31,6 +31,9 @@ prefix spp_
 # Set name
 { AT + NAME = %*:name \r} : handleATSetName
 
+# Get uart
+{ AT + UART ? \r} : handleATGetUart
+
 # Get address
 { AT + ADDR ? \r} : handleATGetAddr
 
