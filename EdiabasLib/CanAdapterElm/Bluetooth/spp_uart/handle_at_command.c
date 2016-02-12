@@ -93,3 +93,50 @@ void handleATSetPin(Task pTask, const struct ATSetPin *pPinReq)
     }
 	addATCrLfandSend(lUart, lUsed);
 }
+
+void handleATGetName(Task pTask)
+{
+    sppTaskData* app = (sppTaskData*) pTask;
+    Sink lUart = StreamUartSink();
+	uint16 lUsed = 0;
+
+	/* Send result to host */
+	lUsed = addATStr(lUart, pbapATRespId_Name);
+    lUsed += addATBuffer8(lUart, app->name, app->name_length);
+	lUsed += addATStr(lUart, pbapATRespId_CrLf);
+	lUsed += addATStr(lUart, pbapATRespId_Ok);
+	addATCrLfandSend(lUart, lUsed);
+}
+
+void handleATSetName(Task pTask, const struct ATSetName *pNameReq)
+{
+    sppTaskData* app = (sppTaskData*) pTask;
+    Sink lUart = StreamUartSink();
+	uint16 lUsed = 0;
+    bool valid = true;
+
+    if ((pNameReq->name.length < 1) || (pNameReq->name.length > sizeof(app->name)))
+    {
+        valid = false;
+    }
+    if (!valid)
+    {
+    	lUsed = addATStr(lUart, pbapATRespId_Fail);
+    }
+    else
+    {
+        memcpy(app->name, pNameReq->name.data, pNameReq->name.length);
+        app->name_length = pNameReq->name.length;
+        if (!PsStore(PSKEY_USR_NAME, app->name, app->name_length))
+        {
+        	lUsed = addATStr(lUart, pbapATRespId_Fail);    
+        }
+        else
+        {
+            ConnectionChangeLocalName(app->name_length, app->name);
+        	lUsed = addATStr(lUart, pbapATRespId_Ok);
+        }
+    }
+	addATCrLfandSend(lUart, lUsed);
+}
+

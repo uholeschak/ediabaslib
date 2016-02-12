@@ -21,3 +21,10 @@ prefix spp_
 
 # Set pin
 { AT + PSWD = %s:pin \r} : handleATSetPin
+
+# Get name
+{ AT + NAME ? \r} : handleATGetName
+
+# Set name
+{ AT + NAME = %*:name \r} : handleATSetName
+

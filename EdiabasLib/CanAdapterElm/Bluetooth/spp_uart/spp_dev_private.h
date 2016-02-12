@@ -17,6 +17,7 @@ DESCRIPTION
 #include <app/message/system_message.h>
 
 #define PSKEY_USR_PIN    0
+#define PSKEY_USR_NAME   1
 
 #define FRAME_SIZE		0
 
@@ -43,6 +44,8 @@ typedef struct
     bdaddr              bd_addr;
     uint8               pin[16];
     uint16              pin_length;
+    uint8               name[31];
+    uint16              name_length;
     sppDevState         spp_state;
 } sppTaskData;
 
