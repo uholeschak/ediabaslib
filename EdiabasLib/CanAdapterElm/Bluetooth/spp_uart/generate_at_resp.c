@@ -22,10 +22,12 @@ FILE
 static const uint8 gCrLfStr[] = {'\r','\n'};
 static const uint8 gOkResStr[] = {'O','K'};
 static const uint8 gColonResStr[] = {':'};
+static const uint8 gDotResStr[] = {'.'};
 static const uint8 gFailResStr[] = {'F','A','I','L'};
 static const uint8 gPinResStr[] = {'+','P','S','W','D',':'};
 static const uint8 gNameResStr[] = {'+','N','A','M','E',':'};
 static const uint8 gAddrResStr[] = {'+','A','D','D','R',':'};
+static const uint8 gVerResStr[] = {'+','V','E','R','S','I','O','N',':'};
 
 typedef struct
 {
@@ -40,10 +42,12 @@ static const ATStrType gAtStrList[] =
 								AT_LIST_ENTRY(gCrLfStr),
 								AT_LIST_ENTRY(gOkResStr),
 								AT_LIST_ENTRY(gColonResStr),
+								AT_LIST_ENTRY(gDotResStr),
 								AT_LIST_ENTRY(gFailResStr),
 								AT_LIST_ENTRY(gPinResStr),
 								AT_LIST_ENTRY(gNameResStr),
 								AT_LIST_ENTRY(gAddrResStr),
+								AT_LIST_ENTRY(gVerResStr),
 								{0, 0}
 							};
 
