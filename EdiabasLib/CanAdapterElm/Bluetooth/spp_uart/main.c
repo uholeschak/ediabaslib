@@ -93,10 +93,15 @@ static void app_handler(Task task, MessageId id, Message message)
     case CL_INIT_CFM:
         DEBUG(("CL_INIT_CFM\n"));
         if(((CL_INIT_CFM_T*)message)->status == success)
+        {
+            ConnectionChangeLocalName(theSppApp.name_length, theSppApp.name);
             /* Connection Library initialisation was a success */
-            sppDevInit();   
+            sppDevInit();
+        }
         else
+        {
             Panic();
+        }
         break;
     case CL_DM_LINK_SUPERVISION_TIMEOUT_IND:
         DEBUG(("CL_DM_LINK_SUPERVISION_TIMEOUT_IND\n"));
@@ -312,13 +317,22 @@ int main(void)
         theSppApp.pin_length = PsRetrieve(PSKEY_USR_PIN, theSppApp.pin, sizeof(theSppApp.pin));
         if ((theSppApp.pin_length < 4) || (theSppApp.pin_length > sizeof(theSppApp.pin)))
         {
-    		uint8 pin_code[4] = {'1','2','3','4'};
+    		const uint8 pin_code[] = {'1','2','3','4'};
 
             memcpy(theSppApp.pin, pin_code, sizeof(pin_code));
             theSppApp.pin_length = sizeof(pin_code);
         }
 
-    	PanicNotNull(MessageSinkTask(StreamUartSink(), &theSppApp.task));
+        theSppApp.name_length = PsRetrieve(PSKEY_USR_NAME, theSppApp.name, sizeof(theSppApp.name));
+        if ((theSppApp.name_length < 1) || (theSppApp.name_length > sizeof(theSppApp.name)))
+        {
+    		const uint8 name[] = {'B','M','W',' ','D','E','E','P',' ','O','B','D'};
+
+            memcpy(theSppApp.name, name, sizeof(name));
+            theSppApp.name_length = sizeof(name);
+        }
+
+        PanicNotNull(MessageSinkTask(StreamUartSink(), &theSppApp.task));
 
         /* Init the Connection Manager */
         ConnectionInit(&theSppApp.task);
