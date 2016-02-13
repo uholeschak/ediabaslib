@@ -64,7 +64,7 @@ void initAppData(void)
     theSppApp.name_length = PsRetrieve(PSKEY_USR_NAME, theSppApp.name, sizeof(theSppApp.name));
     if ((theSppApp.name_length < 1) || (theSppApp.name_length > sizeof(theSppApp.name)))
     {
-        const uint8 name[] = {'B','M','W',' ','D','e','e','p',' ','O','B','D'};
+        const uint8 name[] = {'D','e','e','p',' ','O','B','D',' ','B','M','W'};
 
         memcpy(theSppApp.name, name, sizeof(name));
         theSppApp.name_length = sizeof(name);
