@@ -32,6 +32,7 @@ void handleMoreData(sppTaskData* app, Source pSrc)
 
     if (app->spp_state == sppDevConnected)
     {
+		SourceDrop(pSrc, lLen);
         return;
     }
 
