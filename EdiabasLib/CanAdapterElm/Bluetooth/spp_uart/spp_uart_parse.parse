@@ -17,34 +17,45 @@
 prefix spp_
 
 # Empty command
-{ AT \r} : handleATEmpty
+{ AT \r\n} : handleATEmpty
+{ \n AT \r\n} : handleATEmpty
 
 # Get pin
-{ AT + PSWD ? \r} : handleATGetPin
+{ AT + PSWD ? \r\n} : handleATGetPin
+{ \n AT + PSWD ? \r\n} : handleATGetPin
 
 # Set pin
-{ AT + PSWD = %s:pin \r} : handleATSetPin
+{ AT + PSWD = %s:pin \r\n} : handleATSetPin
+{ \n AT + PSWD = %s:pin \r\n} : handleATSetPin
 
 # Get name
-{ AT + NAME ? \r} : handleATGetName
+{ AT + NAME ? \r\n} : handleATGetName
+{ \n AT + NAME ? \r\n} : handleATGetName
 
 # Set name
-{ AT + NAME = %*:name \r} : handleATSetName
+{ AT + NAME = %*:name \r\n} : handleATSetName
+{ \n AT + NAME = %*:name \r\n} : handleATSetName
 
 # Get uart
-{ AT + UART ? \r} : handleATGetUart
+{ AT + UART ? \r\n} : handleATGetUart
+{ \n AT + UART ? \r\n} : handleATGetUart
 
 # Set uart
-{ AT + UART = %s:baud , %d:stop , %d:parity \r} : handleATSetUart
+{ AT + UART = %s:baud , %d:stop , %d:parity \r\n} : handleATSetUart
+{ \n AT + UART = %s:baud , %d:stop , %d:parity \r\n} : handleATSetUart
 
 # Get address
-{ AT + ADDR ? \r} : handleATGetAddr
+{ AT + ADDR ? \r\n} : handleATGetAddr
+{ \n AT + ADDR ? \r\n} : handleATGetAddr
 
 # Get version
-{ AT + VERSION ? \r} : handleATGetVersion
+{ AT + VERSION ? \r\n} : handleATGetVersion
+{ \n AT + VERSION ? \r\n} : handleATGetVersion
 
 # Factory reset
-{ AT + ORGL \r} : handleATOrgl
+{ AT + ORGL \r\n} : handleATOrgl
+{ \n AT + ORGL \r\n} : handleATOrgl
 
 # Reset
-{ AT + RESET \r} : handleATReset
+{ AT + RESET \r\n} : handleATReset
+{ \n AT + RESET \r\n} : handleATReset
