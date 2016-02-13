@@ -26,7 +26,7 @@ static const uint8 gPinResStr[] = {'+','P','S','W','D',':'};
 static const uint8 gNameResStr[] = {'+','N','A','M','E',':'};
 static const uint8 gUartResStr[] = {'+','U','A','R','T',':'};
 static const uint8 gAddrResStr[] = {'+','A','D','D','R',':'};
-static const uint8 gVerResStr[] = {'+','V','E','R','S','I','O','N',':'};
+static const uint8 gVerResStr[] = {'+','V','E','R','S','I','O','N',':','S','P','P','_','U','A','R','T',' '};
 
 typedef struct
 {
