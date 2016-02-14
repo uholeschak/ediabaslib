@@ -20,6 +20,7 @@ FILE
 #include <string.h>
 #include <vm.h>
 #include <stream.h>
+#include <source.h>
 
 #include "spp_dev_private.h"
 #include "handle_system.h"
