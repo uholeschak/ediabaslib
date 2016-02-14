@@ -11,6 +11,7 @@
 #include <panic.h>
 #include <stdio.h>
 #include <stream.h>
+#include <source.h>
 #include <string.h>
 #include <pio.h>
 #include <ps.h>
@@ -330,7 +331,17 @@ static void app_handler(Task task, MessageId id, Message message)
 		handleMoreSpace(&theSppApp, ((SPP_MESSAGE_MORE_SPACE_T*)message)->sink);
         break;
 	case MESSAGE_MORE_DATA:
-		handleMoreData(&theSppApp, ((MessageMoreData*)message)->source);
+        {
+            Source pSrc = ((MessageMoreData*)message)->source;
+            if (pSrc == StreamUartSource())
+            {
+        		handleMoreData(&theSppApp, pSrc);
+            }
+            else
+            {
+                SourceDrop(pSrc, SourceSize(pSrc));
+            }
+        }
 		break;
 	case MESSAGE_MORE_SPACE:
 		handleMoreSpace(&theSppApp, ((MessageMoreSpace*)message)->sink);
