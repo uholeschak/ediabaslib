@@ -321,10 +321,10 @@ static void app_handler(Task task, MessageId id, Message message)
         }
         break;          
     case SPP_MESSAGE_MORE_DATA:
-		handleMoreData(&theSppApp, ((MessageMoreData*)message)->source);
+		handleMoreData(&theSppApp, ((SPP_MESSAGE_MORE_DATA_T*)message)->source);
         break;
     case SPP_MESSAGE_MORE_SPACE:
-		handleMoreSpace(&theSppApp, ((MessageMoreSpace*)message)->sink);
+		handleMoreSpace(&theSppApp, ((SPP_MESSAGE_MORE_SPACE_T*)message)->sink);
         break;
 	case MESSAGE_MORE_DATA:
 		handleMoreData(&theSppApp, ((MessageMoreData*)message)->source);
