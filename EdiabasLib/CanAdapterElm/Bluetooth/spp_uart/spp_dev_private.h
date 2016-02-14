@@ -54,6 +54,8 @@ typedef struct
 {
     TaskData            task;
     SPP*                spp;
+    Sink                spp_sink;
+    Sink                sink;
     uartData            uart_data;
     bdaddr              bd_addr;
     bdaddr              bd_addr_local;

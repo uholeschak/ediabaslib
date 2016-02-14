@@ -44,10 +44,5 @@ void sppDevInquire(sppTaskData* app)
     ConnectionSmSetSdpSecurityIn(TRUE);
     /* Make this device discoverable (inquiry scan), and connectable (page scan) */
     ConnectionWriteScanEnable(hci_scan_enable_inq_and_page);
-    /* Send timeout message after specified time, if no device is found to be connected with */
-    /*
-    MessageCancelAll(getAppTask(), SPP_DEV_INQUIRY_TIMEOUT_IND);
-    MessageSendLater(getAppTask(), SPP_DEV_INQUIRY_TIMEOUT_IND, 0, 50000);
-    */
 }
 

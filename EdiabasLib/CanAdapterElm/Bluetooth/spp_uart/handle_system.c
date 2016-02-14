@@ -30,29 +30,25 @@ void handleMoreData(sppTaskData* app, Source pSrc)
 
 	PRINT(("MESSAGE_MORE_DATA\n"));
 
-    if (app->spp_state == sppDevConnected)
+    if (pSrc == StreamUartSource() && app->spp_state == sppDevConnected)
     {
 		SourceDrop(pSrc, lLen);
         return;
     }
 
-	if ((pSrc == StreamUartSource()) && (lLen > 0))
-	{ /* Uart */				
+	if (lLen > 0)
+	{
 	    /* Only bother parsing if there is something to parse */
 	    while (lLen > 0)
 	    {
-			/* Keep parsing while we have data in the buffer */
+            app->sink = StreamSinkFromSource(pSrc);
+            /* Keep parsing while we have data in the buffer */
 	        if (!spp_parseSource(pSrc, (Task) app))
     	        break;
 
 			/* Check we have more data to parse */
     	    lLen = SourceSize(pSrc);
 	    }
-	}
-	else
-	{ /* Unknown source */
-		PRINT(("    Unknown/Empty Source \n"));
-		SourceDrop(pSrc, lLen);
 	}
 }
 
