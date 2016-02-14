@@ -36,6 +36,14 @@ enum
 
 typedef enum
 {
+    sppDataModeInit,
+    sppDataModeConfig,
+    sppDataModeDataReq,
+    sppDataModeData
+} sppDataMode;
+
+typedef enum
+{
     sppDevInitialising,
     sppDevReady,
     sppDevPairable,
@@ -64,6 +72,7 @@ typedef struct
     uint8               name[31];
     uint16              name_length;
     sppDevState         spp_state;
+    sppDataMode         spp_mode;
 } sppTaskData;
 
 

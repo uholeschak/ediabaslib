@@ -20,6 +20,14 @@ prefix spp_
 { AT \r\n} : handleATEmpty
 { \n AT \r\n} : handleATEmpty
 
+# Config command
+{ AT + CONF \r\n} : handleATConf
+{ \n AT + CONF \r\n} : handleATConf
+
+# Data command
+{ AT + DATA \r\n} : handleATData
+{ \n AT + DATA \r\n} : handleATData
+
 # Get pin
 { AT + PSWD ? \r\n} : handleATGetPin
 { \n AT + PSWD ? \r\n} : handleATGetPin

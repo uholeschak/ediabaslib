@@ -195,12 +195,15 @@ static void app_handler(Task task, MessageId id, Message message)
                     /* Connection Success */
                     DEBUG(("Device connected...\n"));
                     /* Connect Uart to Rfcomm */
+                    /*
                     (void) StreamConnect(StreamUartSource(), cfm->sink);
                     (void) StreamConnect(StreamSourceFromSink(cfm->sink), StreamUartSink());
+                    */
 					/* (void) StreamConnectDispose(StreamSourceFromSink(cfm->sink)); */
 
                     theSppApp.spp = cfm->spp;
                     theSppApp.spp_sink = cfm->sink;
+                    theSppApp.spp_mode = sppDataModeInit;
                     setSppState(sppDevConnected);
                     ConnectionWriteScanEnable(hci_scan_enable_off);
                 }

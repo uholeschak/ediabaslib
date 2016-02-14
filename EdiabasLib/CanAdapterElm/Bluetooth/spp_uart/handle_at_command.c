@@ -87,7 +87,44 @@ void handleATEmpty(Task pTask)
 	uint16 lUsed = 0;
 
 	/* Send result to host */
-	lUsed += addATStr(pSink, pbapATRespId_Ok);
+	lUsed = addATStr(pSink, pbapATRespId_Ok);
+	addATCrLfandSend(pSink, lUsed);
+}
+
+void handleATConf(Task pTask)
+{
+    sppTaskData* app = (sppTaskData*) pTask;
+    Sink pSink = app->sink;
+	uint16 lUsed = 0;
+
+	/* Send result to host */
+    if (app->spp_sink == pSink && app->spp_mode == sppDataModeConfig)
+    {                
+    	lUsed = addATStr(pSink, pbapATRespId_Ok);
+    }
+    else
+    {
+    	lUsed = addATStr(pSink, pbapATRespId_Fail);
+    }
+	addATCrLfandSend(pSink, lUsed);
+}
+
+void handleATData(Task pTask)
+{
+    sppTaskData* app = (sppTaskData*) pTask;
+    Sink pSink = app->sink;
+	uint16 lUsed = 0;
+
+    if (app->spp_sink == pSink && app->spp_mode == sppDataModeConfig)
+    {                
+        app->spp_mode = sppDataModeDataReq;
+    	lUsed = addATStr(pSink, pbapATRespId_Ok);
+    }
+    else
+    {
+    	lUsed = addATStr(pSink, pbapATRespId_Fail);
+    }
+	/* Send result to host */
 	addATCrLfandSend(pSink, lUsed);
 }
 
