@@ -200,9 +200,9 @@ static void app_handler(Task task, MessageId id, Message message)
 					/* (void) StreamConnectDispose(StreamSourceFromSink(cfm->sink)); */
 
                     theSppApp.spp = cfm->spp;
+                    theSppApp.spp_sink = cfm->sink;
                     setSppState(sppDevConnected);
                     ConnectionWriteScanEnable(hci_scan_enable_off);
-                    /*(void) MessageCancelFirst(&theSppApp.task, SPP_DEV_INQUIRY_TIMEOUT_IND); */
                 }
                 else
                 {
@@ -321,10 +321,10 @@ static void app_handler(Task task, MessageId id, Message message)
         }
         break;          
     case SPP_MESSAGE_MORE_DATA:
-        DEBUG(("SPP_MESSAGE_MORE_DATA\n"));
+		handleMoreData(&theSppApp, ((MessageMoreData*)message)->source);
         break;
     case SPP_MESSAGE_MORE_SPACE:
-        DEBUG(("SPP_MESSAGE_MORE_SPACE\n"));
+		handleMoreSpace(&theSppApp, ((MessageMoreSpace*)message)->sink);
         break;
 	case MESSAGE_MORE_DATA:
 		handleMoreData(&theSppApp, ((MessageMoreData*)message)->source);

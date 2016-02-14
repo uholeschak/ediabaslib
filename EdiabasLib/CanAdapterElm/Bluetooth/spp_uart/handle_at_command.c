@@ -71,42 +71,44 @@ static uint32 handSeqExtractUint32(const uint8 *pBuffer, uint16 pLen)
 
 void spp_handleUnrecognised(const uint8 *data, uint16 length, Task task)
 {
- 	Sink lUart = StreamUartSink();
+    sppTaskData* app = (sppTaskData*) task;
+    Sink pSink = app->sink;
 	uint16 lUsed = 0;
     PRINT(("spp_handleUnrecognised\n"));
 	/* Send result to host */
-	lUsed = addATStr(lUart, pbapATRespId_Fail);
-	addATCrLfandSend(lUart, lUsed);
+	lUsed = addATStr(pSink, pbapATRespId_Fail);
+	addATCrLfandSend(pSink, lUsed);
 }
 
 void handleATEmpty(Task pTask)
 {
-    Sink lUart = StreamUartSink();
+    sppTaskData* app = (sppTaskData*) pTask;
+    Sink pSink = app->sink;
 	uint16 lUsed = 0;
 
 	/* Send result to host */
-	lUsed += addATStr(lUart, pbapATRespId_Ok);
-	addATCrLfandSend(lUart, lUsed);
+	lUsed += addATStr(pSink, pbapATRespId_Ok);
+	addATCrLfandSend(pSink, lUsed);
 }
 
 void handleATGetPin(Task pTask)
 {
     sppTaskData* app = (sppTaskData*) pTask;
-    Sink lUart = StreamUartSink();
+    Sink pSink = app->sink;
 	uint16 lUsed = 0;
 
 	/* Send result to host */
-	lUsed = addATStr(lUart, pbapATRespId_Pin);
-    lUsed += addATBuffer8(lUart, app->pin, app->pin_length);
-	lUsed += addATStr(lUart, pbapATRespId_CrLf);
-	lUsed += addATStr(lUart, pbapATRespId_Ok);
-	addATCrLfandSend(lUart, lUsed);
+	lUsed = addATStr(pSink, pbapATRespId_Pin);
+    lUsed += addATBuffer8(pSink, app->pin, app->pin_length);
+	lUsed += addATStr(pSink, pbapATRespId_CrLf);
+	lUsed += addATStr(pSink, pbapATRespId_Ok);
+	addATCrLfandSend(pSink, lUsed);
 }
 
 void handleATSetPin(Task pTask, const struct ATSetPin *pPinReq)
 {
     sppTaskData* app = (sppTaskData*) pTask;
-    Sink lUart = StreamUartSink();
+    Sink pSink = app->sink;
 	uint16 lUsed = 0;
     bool valid = true;
     uint16 i;
@@ -125,7 +127,7 @@ void handleATSetPin(Task pTask, const struct ATSetPin *pPinReq)
     }
     if (!valid)
     {
-    	lUsed = addATStr(lUart, pbapATRespId_Fail);
+    	lUsed = addATStr(pSink, pbapATRespId_Fail);
     }
     else
     {
@@ -133,34 +135,34 @@ void handleATSetPin(Task pTask, const struct ATSetPin *pPinReq)
         app->pin_length = pPinReq->pin.length;
         if (!PsStore(PSKEY_USR_PIN, app->pin, app->pin_length))
         {
-        	lUsed = addATStr(lUart, pbapATRespId_Fail);    
+        	lUsed = addATStr(pSink, pbapATRespId_Fail);    
         }
         else
         {
-        	lUsed = addATStr(lUart, pbapATRespId_Ok);
+        	lUsed = addATStr(pSink, pbapATRespId_Ok);
         }
     }
-	addATCrLfandSend(lUart, lUsed);
+	addATCrLfandSend(pSink, lUsed);
 }
 
 void handleATGetName(Task pTask)
 {
     sppTaskData* app = (sppTaskData*) pTask;
-    Sink lUart = StreamUartSink();
+    Sink pSink = app->sink;
 	uint16 lUsed = 0;
 
 	/* Send result to host */
-	lUsed = addATStr(lUart, pbapATRespId_Name);
-    lUsed += addATBuffer8(lUart, app->name, app->name_length);
-	lUsed += addATStr(lUart, pbapATRespId_CrLf);
-	lUsed += addATStr(lUart, pbapATRespId_Ok);
-	addATCrLfandSend(lUart, lUsed);
+	lUsed = addATStr(pSink, pbapATRespId_Name);
+    lUsed += addATBuffer8(pSink, app->name, app->name_length);
+	lUsed += addATStr(pSink, pbapATRespId_CrLf);
+	lUsed += addATStr(pSink, pbapATRespId_Ok);
+	addATCrLfandSend(pSink, lUsed);
 }
 
 void handleATSetName(Task pTask, const struct ATSetName *pNameReq)
 {
     sppTaskData* app = (sppTaskData*) pTask;
-    Sink lUart = StreamUartSink();
+    Sink pSink = app->sink;
 	uint16 lUsed = 0;
     bool valid = true;
 
@@ -170,7 +172,7 @@ void handleATSetName(Task pTask, const struct ATSetName *pNameReq)
     }
     if (!valid)
     {
-    	lUsed = addATStr(lUart, pbapATRespId_Fail);
+    	lUsed = addATStr(pSink, pbapATRespId_Fail);
     }
     else
     {
@@ -178,21 +180,21 @@ void handleATSetName(Task pTask, const struct ATSetName *pNameReq)
         app->name_length = pNameReq->name.length;
         if (!PsStore(PSKEY_USR_NAME, app->name, app->name_length))
         {
-        	lUsed = addATStr(lUart, pbapATRespId_Fail);    
+        	lUsed = addATStr(pSink, pbapATRespId_Fail);    
         }
         else
         {
             ConnectionChangeLocalName(app->name_length, app->name);
-        	lUsed = addATStr(lUart, pbapATRespId_Ok);
+        	lUsed = addATStr(pSink, pbapATRespId_Ok);
         }
     }
-	addATCrLfandSend(lUart, lUsed);
+	addATCrLfandSend(pSink, lUsed);
 }
 
 void handleATGetUart(Task pTask)
 {
     sppTaskData* app = (sppTaskData*) pTask;
-    Sink lUart = StreamUartSink();
+    Sink pSink = app->sink;
 	uint16 lUsed = 0;
 	uint16 i;
 	uint32 baud_rate = 0;
@@ -207,21 +209,21 @@ void handleATGetUart(Task pTask)
     }
 
 	/* Send result to host */
-	lUsed = addATStr(lUart, pbapATRespId_Uart);
-    lUsed += addATUint(lUart, baud_rate);
-	lUsed += addATByte(lUart, ',');
-    lUsed += addATUint(lUart, app->uart_data.stop_bits);
-	lUsed += addATByte(lUart, ',');
-    lUsed += addATUint(lUart, app->uart_data.parity);
-	lUsed += addATStr(lUart, pbapATRespId_CrLf);
-	lUsed += addATStr(lUart, pbapATRespId_Ok);
-	addATCrLfandSend(lUart, lUsed);
+	lUsed = addATStr(pSink, pbapATRespId_Uart);
+    lUsed += addATUint(pSink, baud_rate);
+	lUsed += addATByte(pSink, ',');
+    lUsed += addATUint(pSink, app->uart_data.stop_bits);
+	lUsed += addATByte(pSink, ',');
+    lUsed += addATUint(pSink, app->uart_data.parity);
+	lUsed += addATStr(pSink, pbapATRespId_CrLf);
+	lUsed += addATStr(pSink, pbapATRespId_Ok);
+	addATCrLfandSend(pSink, lUsed);
 }
 
 void handleATSetUart(Task pTask, const struct ATSetUart *pUartReq)
 {
     sppTaskData* app = (sppTaskData*) pTask;
-    Sink lUart = StreamUartSink();
+    Sink pSink = app->sink;
 	uint16 lUsed = 0;
 	uint16 i;
     uint32 baud_rate;
@@ -252,7 +254,7 @@ void handleATSetUart(Task pTask, const struct ATSetUart *pUartReq)
 
     if (!valid)
     {
-    	lUsed = addATStr(lUart, pbapATRespId_Fail);
+    	lUsed = addATStr(pSink, pbapATRespId_Fail);
     }
     else
     {
@@ -261,15 +263,15 @@ void handleATSetUart(Task pTask, const struct ATSetUart *pUartReq)
         app->uart_data.parity = pUartReq->parity;
         if (!PsStore(PSKEY_USR_UART, &app->uart_data, sizeof(app->uart_data)))
         {
-        	lUsed = addATStr(lUart, pbapATRespId_Fail);
+        	lUsed = addATStr(pSink, pbapATRespId_Fail);
             valid = false;
         }
         else
         {
-        	lUsed = addATStr(lUart, pbapATRespId_Ok);
+        	lUsed = addATStr(pSink, pbapATRespId_Ok);
         }
     }
-	addATCrLfandSend(lUart, lUsed);
+	addATCrLfandSend(pSink, lUsed);
     if (valid)
     {
         MessageSendLater(getAppTask(), SPP_DEV_CONFIG_UART, 0, 500);
@@ -279,40 +281,41 @@ void handleATSetUart(Task pTask, const struct ATSetUart *pUartReq)
 void handleATGetAddr(Task pTask)
 {
     sppTaskData* app = (sppTaskData*) pTask;
-    Sink lUart = StreamUartSink();
+    Sink pSink = app->sink;
 	uint16 lUsed = 0;
 
 	/* Send result to host */
-	lUsed = addATStr(lUart, pbapATRespId_Addr);
-    lUsed += addATUintHex(lUart, app->bd_addr_local.lap);
-	lUsed += addATByte(lUart, ':');
-    lUsed += addATUintHex(lUart, app->bd_addr_local.uap);
-	lUsed += addATByte(lUart, ':');
-    lUsed += addATUintHex(lUart, app->bd_addr_local.nap);
-	lUsed += addATStr(lUart, pbapATRespId_CrLf);
-	lUsed += addATStr(lUart, pbapATRespId_Ok);
-	addATCrLfandSend(lUart, lUsed);
+	lUsed = addATStr(pSink, pbapATRespId_Addr);
+    lUsed += addATUintHex(pSink, app->bd_addr_local.lap);
+	lUsed += addATByte(pSink, ':');
+    lUsed += addATUintHex(pSink, app->bd_addr_local.uap);
+	lUsed += addATByte(pSink, ':');
+    lUsed += addATUintHex(pSink, app->bd_addr_local.nap);
+	lUsed += addATStr(pSink, pbapATRespId_CrLf);
+	lUsed += addATStr(pSink, pbapATRespId_Ok);
+	addATCrLfandSend(pSink, lUsed);
 }
 
 void handleATGetVersion(Task pTask)
 {
-    Sink lUart = StreamUartSink();
+    sppTaskData* app = (sppTaskData*) pTask;
+    Sink pSink = app->sink;
 	uint16 lUsed = 0;
 
 	/* Send result to host */
-	lUsed = addATStr(lUart, pbapATRespId_Ver);
-    lUsed += addATUint(lUart, VER_H);
-	lUsed += addATByte(lUart, '.');
-    lUsed += addATUint(lUart, VER_L);
-	lUsed += addATStr(lUart, pbapATRespId_CrLf);
-	lUsed += addATStr(lUart, pbapATRespId_Ok);
-	addATCrLfandSend(lUart, lUsed);
+	lUsed = addATStr(pSink, pbapATRespId_Ver);
+    lUsed += addATUint(pSink, VER_H);
+	lUsed += addATByte(pSink, '.');
+    lUsed += addATUint(pSink, VER_L);
+	lUsed += addATStr(pSink, pbapATRespId_CrLf);
+	lUsed += addATStr(pSink, pbapATRespId_Ok);
+	addATCrLfandSend(pSink, lUsed);
 }
 
 void handleATOrgl(Task pTask)
 {
     sppTaskData* app = (sppTaskData*) pTask;
-    Sink lUart = StreamUartSink();
+    Sink pSink = app->sink;
 	uint16 lUsed = 0;
 
     PsStore(PSKEY_USR_PIN, NULL, 0);
@@ -323,18 +326,19 @@ void handleATOrgl(Task pTask)
     ConnectionChangeLocalName(app->name_length, app->name);
 
 	/* Send result to host */
-    lUsed = addATStr(lUart, pbapATRespId_Ok);
-	addATCrLfandSend(lUart, lUsed);
+    lUsed = addATStr(pSink, pbapATRespId_Ok);
+	addATCrLfandSend(pSink, lUsed);
     StreamUartConfigure(app->uart_data.baud_rate, app->uart_data.stop_bits, app->uart_data.parity);
 }
 
 void handleATReset(Task pTask)
 {
-    Sink lUart = StreamUartSink();
+    sppTaskData* app = (sppTaskData*) pTask;
+    Sink pSink = app->sink;
 	uint16 lUsed = 0;
 
 	/* Send result to host */
-	lUsed = addATStr(lUart, pbapATRespId_Ok);
-	addATCrLfandSend(lUart, lUsed);
+	lUsed = addATStr(pSink, pbapATRespId_Ok);
+	addATCrLfandSend(pSink, lUsed);
     MessageSendLater(getAppTask(), SPP_DEV_RESET, 0, 500);
 }
