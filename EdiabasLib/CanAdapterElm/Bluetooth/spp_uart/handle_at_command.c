@@ -99,7 +99,7 @@ void handleATConf(Task pTask)
 
 	/* Send result to host */
     if (app->spp_sink == pSink && app->spp_mode == sppDataModeConfig)
-    {                
+    {
     	lUsed = addATStr(pSink, pbapATRespId_Ok);
     }
     else
@@ -115,8 +115,9 @@ void handleATData(Task pTask)
     Sink pSink = app->sink;
 	uint16 lUsed = 0;
 
-    if (app->spp_sink == pSink && app->spp_mode == sppDataModeConfig)
-    {                
+    if (app->boot_mode == 0 &&
+        app->spp_sink == pSink && app->spp_mode == sppDataModeConfig)
+    {
         app->spp_mode = sppDataModeDataReq;
     	lUsed = addATStr(pSink, pbapATRespId_Ok);
     }

@@ -61,6 +61,7 @@ typedef struct
 typedef struct 
 {
     TaskData            task;
+    uint16              boot_mode;
     SPP*                spp;
     Sink                spp_sink;
     Sink                sink;
