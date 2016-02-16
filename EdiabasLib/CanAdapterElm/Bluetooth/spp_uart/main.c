@@ -357,8 +357,9 @@ int main(void)
 {
     DEBUG(("Main Started...\n"));
 
+    theSppApp.boot_mode = BootGetMode();
     /* Make sure Uart has been successfully initialised before running */
-    if (StreamUartSource())
+    if ((theSppApp.boot_mode != 0) || StreamUartSource())
     {
         /* Set up task 1 handler */
         theSppApp.task.handler = app_handler;
@@ -367,9 +368,12 @@ int main(void)
         theSppApp.spp = 0;
 
         initAppData();
-        StreamUartConfigure(theSppApp.uart_data.baud_rate, theSppApp.uart_data.stop_bits, theSppApp.uart_data.parity);
+        if (theSppApp.boot_mode == 0)
+        {
+            StreamUartConfigure(theSppApp.uart_data.baud_rate, theSppApp.uart_data.stop_bits, theSppApp.uart_data.parity);
 
-        PanicNotNull(MessageSinkTask(StreamUartSink(), &theSppApp.task));
+            PanicNotNull(MessageSinkTask(StreamUartSink(), &theSppApp.task));
+        }
 
         /* Init the Connection Manager */
         ConnectionInit(&theSppApp.task);

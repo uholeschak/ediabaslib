@@ -51,7 +51,7 @@ void handleMoreData(sppTaskData* app, Source pSrc)
         if (app->spp_mode == sppDataModeInit)
         {
             bool connect = true;
-            if (lLen == sizeof(gConfigStr))
+            if (app->boot_mode == 0 && lLen == sizeof(gConfigStr))
             {
                 const uint8* s = SourceMap(pSrc);
                 if (s != NULL)
@@ -99,6 +99,9 @@ void handleMoreData(sppTaskData* app, Source pSrc)
 
         if (app->spp_mode == sppDataModeDataReq)
         {
+            /* remove garbage from UART */
+            SourceDrop(StreamUartSource(), SourceSize(StreamUartSource()));
+
             (void) StreamConnect(StreamUartSource(), StreamSinkFromSource(pSrc));
             (void) StreamConnect(pSrc, StreamUartSink());
             app->spp_mode = sppDataModeData;
