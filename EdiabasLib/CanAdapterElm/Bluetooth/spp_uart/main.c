@@ -268,12 +268,16 @@ static void app_handler(Task task, MessageId id, Message message)
         }
         break;
     case SPP_DEV_RESET:
-        DEBUG((SPP_DEV_RESET));
+        DEBUG(("SPP_DEV_RESET\n"));
         BootSetMode(BootGetMode());
         break;
     case SPP_DEV_CONFIG_UART:
-        DEBUG((SPP_DEV_CONFIG_UART));
+        DEBUG(("SPP_DEV_CONFIG_UART\n"));
         StreamUartConfigure(theSppApp.uart_data.baud_rate, theSppApp.uart_data.stop_bits, theSppApp.uart_data.parity);
+        break;
+    case SPP_DEV_FWUPDATE:
+        DEBUG(("SPP_DEV_FWUPDATE\n"));
+        BootSetMode(1);
         break;
     case CL_DM_ACL_OPENED_IND:
         DEBUG(("CL_DM_ACL_OPENED_IND\n"));
