@@ -98,7 +98,7 @@ void handleATConf(Task pTask)
 	uint16 lUsed = 0;
 
 	/* Send result to host */
-    if (app->spp_sink == pSink && app->spp_mode == sppDataModeConfig)
+    if (app->spp_sink == pSink && app->spp_mode != sppDataModeData)
     {
     	lUsed = addATStr(pSink, pbapATRespId_Ok);
     }
@@ -380,3 +380,15 @@ void handleATReset(Task pTask)
 	addATCrLfandSend(pSink, lUsed);
     MessageSendLater(getAppTask(), SPP_DEV_RESET, 0, 500);
 }
+
+void handleATFwUpdate(Task pTask)
+{
+    sppTaskData* app = (sppTaskData*) pTask;
+    Sink pSink = app->sink;
+	uint16 lUsed = 0;
+
+    lUsed = addATStr(pSink, pbapATRespId_Ok);
+	addATCrLfandSend(pSink, lUsed);
+    MessageSendLater(getAppTask(), SPP_DEV_FWUPDATE, 0, 500);
+}
+

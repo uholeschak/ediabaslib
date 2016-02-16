@@ -48,10 +48,10 @@ void handleMoreData(sppTaskData* app, Source pSrc)
     }
     else
     {
-        if (app->spp_mode == sppDataModeInit)
+        if (app->boot_mode == 0 && app->spp_mode == sppDataModeInit)
         {
             bool connect = true;
-            if (app->boot_mode == 0 && lLen == sizeof(gConfigStr))
+            if (lLen == sizeof(gConfigStr))
             {
                 const uint8* s = SourceMap(pSrc);
                 if (s != NULL)

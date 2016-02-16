@@ -67,3 +67,7 @@ prefix spp_
 # Reset
 { AT + RESET \r\n} : handleATReset
 { \n AT + RESET \r\n} : handleATReset
+
+# firmware update command
+{ AT + FWUPDATE \r\n} : handleATFwUpdate
+{ \n AT + FWUPDATE \r\n} : handleATFwUpdate
