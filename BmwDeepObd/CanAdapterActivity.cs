@@ -339,6 +339,8 @@ namespace BmwDeepObd
             _buttonRead.Enabled = bEnabled;
             _buttonWrite.Enabled = bEnabled;
             _editTextBtPin.Enabled = bEnabled && _btPin != null && _btPin.Length >= 4;
+            int maxPinLength = (_btPin != null && _btPin.Length > 0) ? _btPin.Length : 4;
+            _editTextBtPin.SetFilters(new Android.Text.IInputFilter[] { new Android.Text.InputFilterLengthFilter(maxPinLength) });
             if (!_editTextBtPin.Enabled)
             {
                 _editTextBtPin.Text = string.Empty;
@@ -411,7 +413,7 @@ namespace BmwDeepObd
                 if (_editTextBtPin.Enabled && _btPin != null)
                 {
                     string btPin = PinDataToString(_btPin);
-                    _editTextBtPin.Text = btPin.Length == 4 ? btPin : "1234";
+                    _editTextBtPin.Text = btPin.Length >= 4 ? btPin : "1234";
                 }
 
                 if (_editTextBtName.Enabled && _btName != null)
@@ -666,7 +668,7 @@ namespace BmwDeepObd
                 bool pinChanged = false;
                 if (_editTextBtPin.Text.Length >= 4)
                 {
-                    btPinData = new byte[4];
+                    btPinData = new byte[_editTextBtPin.Text.Length];
                     for (int i = 0; i < btPinData.Length; i++)
                     {
                         btPinData[i] = (byte)_editTextBtPin.Text[i];
@@ -919,10 +921,6 @@ namespace BmwDeepObd
                 if (digit >= '0' && digit <= '9')
                 {
                     btPin += digit;
-                }
-                if (btPin.Length >= 4)
-                {
-                    break;
                 }
             }
             return btPin;

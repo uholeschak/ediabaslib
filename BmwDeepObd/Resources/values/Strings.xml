@@ -244,7 +244,7 @@
   <string name="can_adapter_ignition_on">Ignition on</string>
   <string name="can_adapter_ignition_off">Ignition off</string>
   <string name="can_adapter_text_off">0: Off (default)</string>
-  <string name="can_adapter_pin_length">The Bluetooth pin must be 4 digits long</string>
+  <string name="can_adapter_pin_length">The Bluetooth pin must be at least 4 digits long</string>
   <string name="can_adapter_name_length">The UTF-8 Bluetooth name length invalid</string>
   <string name="can_adapter_new_pin">The new Bluetooth pin {0} will get active after power cycle of the adapter</string>
   <string name="can_adapter_new_name">The new Bluetooth name will get active after power cycle of the adapter</string>

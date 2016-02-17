@@ -243,7 +243,7 @@
   <string name="can_adapter_ignition_on">Zündung an</string>
   <string name="can_adapter_ignition_off">Zündung aus</string>
   <string name="can_adapter_text_off">0: Aus (Standard)</string>
-  <string name="can_adapter_pin_length">Die Bluetooth Pin muss 4 Stellen lang sein</string>
+  <string name="can_adapter_pin_length">Die Bluetooth Pin muss mindestens 4 Stellen lang sein</string>
   <string name="can_adapter_name_length">Die Länge des UTF-8 Bluetoothnamens ist ungültig</string>
   <string name="can_adapter_new_pin">Die neue Bluetooth Pin {0} wird aktiv, wenn der Adapter aus und eingeschaltet wird.</string>
   <string name="can_adapter_new_name">Der neue Bluetooth Name wird aktiv, wenn der Adapter aus und eingeschaltet wird.</string>
