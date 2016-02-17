@@ -89,17 +89,35 @@
 #if ADAPTER_TYPE != 0x02
 #define ADAPTER_VERSION     0x0005
 #if ADAPTER_TYPE == 0x03
+// BC04
 #define REQUIRES_BT_FACTORY
 #define REQUIRES_BT_CRFL
+//#define REQUIRES_BT_ASSIGN
+#define REQUIRES_BT_NAME_0
 #define BT_COMMAND_PAUSE 50         // bluetooth command pause
 #define BT_RESPONSE_TIMEOUT 500
+#define BT_PIN_LENGTH 4
 #define BT_NAME_LENGTH 16
-#else
+#elif ADAPTER_TYPE == 0x04
+// HC04
 //#define REQUIRES_BT_FACTORY
 //#define REQUIRES_BT_CRFL
+//#define REQUIRES_BT_ASSIGN
+//#define REQUIRES_BT_NAME_0
 #define BT_COMMAND_PAUSE 500        // bluetooth command pause
 #define BT_RESPONSE_TIMEOUT 1500    // bluetooth command response timeout
+#define BT_PIN_LENGTH 4
 #define BT_NAME_LENGTH 14
+#else
+//SPP_UART
+//#define REQUIRES_BT_FACTORY
+#define REQUIRES_BT_CRFL
+#define REQUIRES_BT_ASSIGN
+//#define REQUIRES_BT_NAME_0
+#define BT_COMMAND_PAUSE 50         // bluetooth command pause
+#define BT_RESPONSE_TIMEOUT 500
+#define BT_PIN_LENGTH 16
+#define BT_NAME_LENGTH 31
 #endif
 #else
 #define ADAPTER_VERSION     0x0004
@@ -142,7 +160,7 @@
 #define EEP_ADDR_SEP_TIME   0x04    // eeprom address for FC separation time (2 bytes)
 #define EEP_ADDR_BT_INIT    0x06    // eeprom address for Bluetooth init required (2 bytes)
 #define EEP_ADDR_BT_PIN     0x08    // eeprom address for Blutooth pin (16 bytes)
-#define EEP_ADDR_BT_NAME    0x18    // eeprom address for Blutooth pin (16 bytes)
+#define EEP_ADDR_BT_NAME    0x18    // eeprom address for Blutooth pin (32 bytes)
 
 #define TEMP_BUF_SIZE       0x0800  // temp buffer size
 
@@ -168,7 +186,7 @@ static volatile bool init_failed;       // initialization failed
 static uint8_t idle_counter;
 #if ADAPTER_TYPE != 0x02
 static bool init_bt_required;
-static uint8_t pin_buffer[4];
+static uint8_t pin_buffer[BT_PIN_LENGTH];
 static uint8_t name_buffer[BT_NAME_LENGTH];
 #endif
 
@@ -1016,11 +1034,20 @@ bool set_bt_pin()
     temp_buffer[0] = 'A';
     temp_buffer[1] = 'T';
     temp_buffer[2] = '+';
+#if defined(REQUIRES_BT_ASSIGN)
+    temp_buffer[3] = 'P';
+    temp_buffer[4] = 'S';
+    temp_buffer[5] = 'W';
+    temp_buffer[6] = 'D';
+    temp_buffer[7] = '=';
+    uint8_t len = 8;
+#else
     temp_buffer[3] = 'P';
     temp_buffer[4] = 'I';
     temp_buffer[5] = 'N';
-
     uint8_t len = 6;
+#endif
+
     for (uint8_t i = 0; i < sizeof(pin_buffer); i++)
     {
         uint8_t value = pin_buffer[i];
@@ -1049,6 +1076,9 @@ bool set_bt_name()
     temp_buffer[6] = 'E';
 
     uint8_t len = 7;
+#if defined(REQUIRES_BT_ASSIGN)
+    temp_buffer[len++] = '=';
+#endif
     for (uint8_t i = 0; i < sizeof(name_buffer); i++)
     {
         uint8_t value = name_buffer[i];
@@ -1059,7 +1089,9 @@ bool set_bt_name()
         temp_buffer[len++] = value;
     }
 #if defined(REQUIRES_BT_CRFL)
+#if defined(REQUIRES_BT_NAME_0)
     temp_buffer[len++] = 0x00;
+#endif
     temp_buffer[len++] = '\r';
     temp_buffer[len++] = '\n';
 #endif
