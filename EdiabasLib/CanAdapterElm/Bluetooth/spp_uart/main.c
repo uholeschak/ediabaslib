@@ -269,11 +269,11 @@ static void app_handler(Task task, MessageId id, Message message)
         break;
     case SPP_DEV_RESET:
         DEBUG(("SPP_DEV_RESET\n"));
-        BootSetMode(0);
+        BootSetMode(BOOTMODE_UART);
         break;
     case SPP_DEV_FWUPDATE:
         DEBUG(("SPP_DEV_FWUPDATE\n"));
-        BootSetMode(1);
+        BootSetMode(BOOTMODE_UPDATE);
         break;
     case SPP_DEV_CONFIG_UART:
         DEBUG(("SPP_DEV_CONFIG_UART\n"));
@@ -362,8 +362,13 @@ int main(void)
     DEBUG(("Main Started...\n"));
 
     theSppApp.boot_mode = BootGetMode();
+    if (theSppApp.boot_mode == BOOTMODE_INIT)
+    {
+        BootSetMode(BOOTMODE_UART);
+        return 0;
+    }
     /* Make sure Uart has been successfully initialised before running */
-    if ((theSppApp.boot_mode != 0) || StreamUartSource())
+    if ((theSppApp.boot_mode != BOOTMODE_UART) || StreamUartSource())
     {
         /* Set up task 1 handler */
         theSppApp.task.handler = app_handler;
@@ -372,7 +377,7 @@ int main(void)
         theSppApp.spp = 0;
 
         initAppData();
-        if (theSppApp.boot_mode == 0)
+        if (theSppApp.boot_mode == BOOTMODE_UART)
         {
             StreamUartConfigure(theSppApp.uart_data.baud_rate, theSppApp.uart_data.stop_bits, theSppApp.uart_data.parity);
 

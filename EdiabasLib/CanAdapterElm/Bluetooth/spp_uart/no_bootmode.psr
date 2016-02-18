@@ -1,0 +1,4 @@
+// keys for no bootmode, always start in DFU mode
+
+// PSKEY_HOST_INTERFACE
+&01f9 = 0001// UART link running BCSP
