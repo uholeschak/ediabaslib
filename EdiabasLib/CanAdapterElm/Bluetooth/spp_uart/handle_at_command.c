@@ -115,7 +115,7 @@ void handleATData(Task pTask)
     Sink pSink = app->sink;
 	uint16 lUsed = 0;
 
-    if (app->boot_mode == 0 &&
+    if (app->boot_mode == BOOTMODE_UART &&
         app->spp_sink == pSink && app->spp_mode == sppDataModeConfig)
     {
         app->spp_mode = sppDataModeDataReq;

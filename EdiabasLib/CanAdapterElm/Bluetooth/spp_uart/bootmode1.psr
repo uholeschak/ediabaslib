@@ -1,4 +1,4 @@
-// keys for bootmode 1 to allow firmware update over BCSP
+// keys for bootmode 1 to allow UART access
 
 // PSKEY_HOST_INTERFACE
-&01f9 = 0001// UART link running BCSP
+&01f9 = 0004// VM access to the UART

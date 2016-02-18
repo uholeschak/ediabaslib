@@ -48,7 +48,7 @@ void handleMoreData(sppTaskData* app, Source pSrc)
     }
     else
     {
-        if (app->boot_mode == 0 && app->spp_mode == sppDataModeInit)
+        if (app->boot_mode == BOOTMODE_UART && app->spp_mode == sppDataModeInit)
         {
             bool connect = true;
             if (lLen == sizeof(gConfigStr))

@@ -24,6 +24,10 @@ DESCRIPTION
 #define PSKEY_USR_NAME   1
 #define PSKEY_USR_UART   2
 
+#define BOOTMODE_INIT    0
+#define BOOTMODE_UART    1
+#define BOOTMODE_UPDATE  2
+
 #define FRAME_SIZE		0
 
 #define SPP_MSG_BASE    (0x0)
