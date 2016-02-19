@@ -125,6 +125,8 @@
   <string name="datalog_enable_trace">создать Trace файл</string>
   <string name="datalog_append_trace">Добавить Trace файл</string>
   <string name="datalog_enable_datalog">Протоколировать данные</string>
+  <!-- Translate! -->
+  <string name="datalog_append_datalog">Append log data</string>
   <string name="datalog_date">Дата</string>
 
   <!-- FilePicker -->

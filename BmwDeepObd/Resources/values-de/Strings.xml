@@ -125,6 +125,7 @@
   <string name="datalog_enable_trace">Tracefile erzeugen</string>
   <string name="datalog_append_trace">Tracefile anhängen</string>
   <string name="datalog_enable_datalog">Daten aufzeichnen</string>
+  <string name="datalog_append_datalog">Daten anhängen</string>
   <string name="datalog_date">Datum</string>
 
   <!-- FilePicker -->
