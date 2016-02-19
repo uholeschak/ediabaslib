@@ -672,9 +672,19 @@ namespace BmwDeepObd
                     for (int i = 0; i < btPinData.Length; i++)
                     {
                         btPinData[i] = (byte)_editTextBtPin.Text[i];
-                        if (_btPin[i] != btPinData[i])
+                    }
+                    if (_btPin.Length != btPinData.Length)
+                    {
+                        pinChanged = true;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < btPinData.Length; i++)
                         {
-                            pinChanged = true;
+                            if (_btPin[i] != btPinData[i])
+                            {
+                                pinChanged = true;
+                            }
                         }
                     }
                     if (!pinChanged)
