@@ -1561,7 +1561,7 @@ namespace BmwDeepObd
             _downloadProgress.Max = 100;
             _downloadProgress.Show();
             _downloadFileSize = fileSize;
-            _activityCommon.SetCpuLock(true);
+            _activityCommon.SetScreenLock(true);
 
             Thread downloadThread = new Thread(() =>
             {
@@ -1594,7 +1594,7 @@ namespace BmwDeepObd
                             _downloadProgress.Hide();
                             _downloadProgress.Dispose();
                             _downloadProgress = null;
-                            _activityCommon.SetCpuLock(false);
+                            _activityCommon.SetScreenLock(false);
                         }
                         _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
                     });
@@ -1665,7 +1665,7 @@ namespace BmwDeepObd
                     _downloadProgress.Hide();
                     _downloadProgress.Dispose();
                     _downloadProgress = null;
-                    _activityCommon.SetCpuLock(false);
+                    _activityCommon.SetScreenLock(false);
                     if ((!e.Cancelled && e.Error != null) || error)
                     {
                         _activityCommon.ShowAlert(GetString(Resource.String.download_failed),
@@ -1765,7 +1765,7 @@ namespace BmwDeepObd
             {
                 _downloadProgress = new Android.App.ProgressDialog(this);
                 _downloadProgress.DismissEvent += (sender, args) => { _downloadProgress = null; };
-                _activityCommon.SetCpuLock(true);
+                _activityCommon.SetScreenLock(true);
             }
             _downloadProgress.SetCancelable(false);
             _downloadProgress.SetMessage(GetString(Resource.String.extract_cleanup));
@@ -1785,6 +1785,12 @@ namespace BmwDeepObd
                     {
                         if (Directory.Exists(targetDirectory))
                         {
+                            // delete xml files first to invalidate the ECUs
+                            string[] xmlFiles = Directory.GetFiles(targetDirectory, "*.xml");
+                            foreach (string xmlFile in xmlFiles)
+                            {
+                                File.Delete(xmlFile);
+                            }
                             Directory.Delete(targetDirectory, true);
                         }
                         Directory.CreateDirectory(targetDirectory);
@@ -1843,7 +1849,7 @@ namespace BmwDeepObd
                         _downloadProgress.Hide();
                         _downloadProgress.Dispose();
                         _downloadProgress = null;
-                        _activityCommon.SetCpuLock(false);
+                        _activityCommon.SetScreenLock(false);
                     }
                     if (extractFailed)
                     {
