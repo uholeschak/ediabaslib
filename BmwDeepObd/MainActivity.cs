@@ -101,6 +101,7 @@ namespace BmwDeepObd
         private bool _traceActive = true;
         private bool _traceAppend;
         private bool _dataLogActive;
+        private bool _dataLogAppend;
         private bool _commErrorsOccured;
         private bool _activityActive;
         private bool _onResumeExecuted;
@@ -973,7 +974,7 @@ namespace BmwDeepObd
                             string fileName = Path.Combine(_dataLogDir, pageInfo.LogFile);
                             if (File.Exists(fileName))
                             {
-                                fileMode = _jobReader.AppendLog ? FileMode.Append : FileMode.Create;
+                                fileMode = (_dataLogAppend || _jobReader.AppendLog) ? FileMode.Append : FileMode.Create;
                             }
                             else
                             {
@@ -2016,6 +2017,7 @@ namespace BmwDeepObd
                 GetString(Resource.String.datalog_enable_trace),
                 GetString(Resource.String.datalog_append_trace),
                 GetString(Resource.String.datalog_enable_datalog),
+                GetString(Resource.String.datalog_append_datalog),
             };
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
                 Android.Resource.Layout.SimpleListItemMultipleChoice, logNames.ToArray());
@@ -2024,6 +2026,7 @@ namespace BmwDeepObd
             listView.SetItemChecked(0, _traceActive);
             listView.SetItemChecked(1, _traceAppend);
             listView.SetItemChecked(2, _dataLogActive);
+            listView.SetItemChecked(3, _dataLogAppend);
 
             builder.SetView(listView);
             builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
@@ -2044,6 +2047,10 @@ namespace BmwDeepObd
 
                         case 2:
                             _dataLogActive = value;
+                            break;
+
+                        case 3:
+                            _dataLogAppend = value;
                             break;
                     }
                 }
