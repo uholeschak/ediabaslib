@@ -317,7 +317,7 @@ namespace BmwDeepObd
                             _altertInfoDialog = new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
-                                    ReturnDeviceType(deviceAddress, deviceName);
+                                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.RawTag, deviceName);
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {
@@ -355,7 +355,7 @@ namespace BmwDeepObd
                                     {
                                         if (yesSelected)
                                         {
-                                            ReturnDeviceType(deviceAddress, deviceName);
+                                            ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.RawTag, deviceName);
                                         }
                                     });
                             };

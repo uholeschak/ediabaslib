@@ -17,6 +17,7 @@ namespace EdiabasLib
     {
         public const string PortId = "BLUETOOTH";
         public const string Elm327Tag = "ELM327";
+        public const string RawTag = "RAW";
         public static readonly string[] Elm327InitCommands = { "ATD", "ATE0", "ATSH6F1", "ATCF600", "ATCM700", "ATPBC001", "ATSPB", "ATAT0", "ATSTFF", "ATAL", "ATH1", "ATS0", "ATL0" };
         private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
@@ -30,6 +31,7 @@ namespace EdiabasLib
         private static BluetoothSocket _bluetoothSocket;
         private static Stream _bluetoothInStream;
         private static Stream _bluetoothOutStream;
+        private static bool _rawMode;
         private static bool _elm327Device;
         private static long _elm327ReceiveStartTime;
         private static bool _elm327DataMode;
@@ -73,6 +75,7 @@ namespace EdiabasLib
             {
                 return false;
             }
+            _rawMode = false;
             _elm327Device = false;
             try
             {
@@ -93,6 +96,10 @@ namespace EdiabasLib
                         if (string.Compare(stringList[1], Elm327Tag, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             _elm327Device = true;
+                        }
+                        else if (string.Compare(stringList[1], RawTag, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            _rawMode = true;
                         }
                     }
                 }
@@ -328,7 +335,7 @@ namespace EdiabasLib
             }
             try
             {
-                if (CurrentBaudRate == 115200)
+                if (_rawMode || (CurrentBaudRate == 115200))
                 {   // BMW-FAST
                     _bluetoothOutStream.Write(sendData, 0, length);
                     // remove echo
@@ -407,7 +414,7 @@ namespace EdiabasLib
             timeoutTelEnd += ReadTimeoutOffset;
             try
             {
-                if (SettingsUpdateRequired())
+                if (!_rawMode && SettingsUpdateRequired())
                 {
                     UpdateAdapterInfo();
                     byte[] adapterTel = CreatePulseTelegram(0, 0, 0, false);
