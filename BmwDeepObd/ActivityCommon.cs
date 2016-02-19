@@ -221,7 +221,7 @@ namespace BmwDeepObd
             _powerManager = activity.GetSystemService(Context.PowerService) as PowerManager;
             if (_powerManager != null)
             {
-                _wakeLockScreen = _powerManager.NewWakeLock(WakeLockFlags.ScreenDim, "ScreenLock");
+                _wakeLockScreen = _powerManager.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.OnAfterRelease, "ScreenLock");
                 _wakeLockScreen.SetReferenceCounted(false);
 
                 _wakeLockCpu = _powerManager.NewWakeLock(WakeLockFlags.Partial, "PartialLock");
