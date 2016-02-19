@@ -27,7 +27,7 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
-\n- Allow to select ENET IP address
+\n- Allow to append data log files
 \n- Fixed minor problems</string>
   <string name="app_info_message">Deep OBD for BMW\nVersion: {0}\nId: {1}</string>
 
