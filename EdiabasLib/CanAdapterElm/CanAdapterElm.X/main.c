@@ -90,6 +90,7 @@
 #define ADAPTER_VERSION     0x0005
 #if ADAPTER_TYPE == 0x03
 // BC04
+#define ALLOW_FACTORY_RESET
 #define REQUIRES_BT_FACTORY
 #define REQUIRES_BT_CRFL
 //#define REQUIRES_BT_ASSIGN
@@ -100,6 +101,7 @@
 #define BT_NAME_LENGTH 16
 #elif ADAPTER_TYPE == 0x04
 // HC04
+#define ALLOW_FACTORY_RESET
 //#define REQUIRES_BT_FACTORY
 //#define REQUIRES_BT_CRFL
 //#define REQUIRES_BT_ASSIGN
@@ -110,6 +112,7 @@
 #define BT_NAME_LENGTH 14
 #else
 //SPP_UART
+#define ALLOW_FACTORY_RESET
 //#define REQUIRES_BT_FACTORY
 #define REQUIRES_BT_CRFL
 #define REQUIRES_BT_ASSIGN
@@ -1306,6 +1309,7 @@ void read_eeprom()
         }
     }
 
+    memset(pin_buffer, 0x00, sizeof(pin_buffer));
     uint8_t pin_len = 0;
     for (uint8_t i = 0; i < sizeof(pin_buffer); i++)
     {
@@ -1313,6 +1317,7 @@ void read_eeprom()
         if (temp_value1 < '0' || temp_value1 > '9')
         {
             temp_value1 = 0;
+            break;
         }
         else
         {
@@ -1887,7 +1892,11 @@ void main(void)
     TRISAbits.TRISA0 = 1;   // AN0 input
     ANCON0 = 0x01;          // AN0 analog
     ANCON1 = 0x00;
+#if defined(ALLOW_FACTORY_RESET)
+    WPUB = 0x30;            // LED_RS_RX, LED_RS_TX pullup
+#else
     WPUB = 0x10;            // LED_RS_RX pullup
+#endif
     INTCON2bits.RBPU = 0;   // port B pull up
 
     // K/L line
@@ -1912,7 +1921,11 @@ void main(void)
     LED_OBD_TX = 1;
     // LED as output
     //TRISBbits.TRISB4 = 0; // used by bootloader
+#if defined(ALLOW_FACTORY_RESET)
+    TRISBbits.TRISB5 = 1;
+#else
     TRISBbits.TRISB5 = 0;
+#endif
     TRISBbits.TRISB6 = 0;
     TRISBbits.TRISB7 = 0;
 
@@ -2004,6 +2017,21 @@ void main(void)
     WDTCONbits.REGSLP = 1;  // regulator low power mode
     CLRWDT();
 
+#if defined(ALLOW_FACTORY_RESET)
+    if (!PORTBbits.RB5)
+    {   // LED_RS_TX low -> factory reset
+        eeprom_write(EEP_ADDR_BAUD, 0xFF);
+        eeprom_write(EEP_ADDR_BAUD + 1, 0xFF);
+        eeprom_write(EEP_ADDR_BLOCKSIZE, 0xFF);
+        eeprom_write(EEP_ADDR_BLOCKSIZE + 1, 0xFF);
+        eeprom_write(EEP_ADDR_SEP_TIME, 0xFF);
+        eeprom_write(EEP_ADDR_SEP_TIME + 1, 0xFF);
+        eeprom_write(EEP_ADDR_BT_INIT, 0xFF);
+        eeprom_write(EEP_ADDR_BT_INIT + 1, 0xFF);
+        eeprom_write(EEP_ADDR_BT_PIN, 0xFF);
+        eeprom_write(EEP_ADDR_BT_NAME, 0xFF);
+    }
+#endif
     read_eeprom();
     can_config();
 #if ADAPTER_TYPE != 0x02
