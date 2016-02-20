@@ -666,14 +666,18 @@ namespace BmwDeepObd
             if (_editTextBtPin.Enabled && _btPin != null && _btPin.Length >= 4)
             {
                 bool pinChanged = false;
-                if (_editTextBtPin.Text.Length >= 4)
+                try
                 {
-                    btPinData = new byte[_editTextBtPin.Text.Length];
-                    for (int i = 0; i < btPinData.Length; i++)
-                    {
-                        btPinData[i] = (byte)_editTextBtPin.Text[i];
-                    }
-                    if (_btPin.Length != btPinData.Length)
+                    btPinData = Encoding.UTF8.GetBytes(_editTextBtPin.Text);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                if ((btPinData != null) && (btPinData.Length >= 4) && (btPinData.Length <= _btPin.Length))
+                {
+                    int length = _btPin.TakeWhile(value => value != 0x00).Count();
+                    if (length != btPinData.Length)
                     {
                         pinChanged = true;
                     }
