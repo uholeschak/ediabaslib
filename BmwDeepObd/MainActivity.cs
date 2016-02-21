@@ -13,6 +13,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using Android.Content;
+using Android.Graphics;
 using Android.Hardware.Usb;
 using Android.OS;
 using Android.Support.V4.App;
@@ -26,6 +27,7 @@ using BmwDeepObd.FilePicker;
 using EdiabasLib;
 using Java.Interop;
 using Mono.CSharp;
+using Path = System.IO.Path;
 
 #if APP_USB_FILTER
 [assembly: Android.App.UsesFeature("android.hardware.usb.host")]
@@ -177,6 +179,18 @@ namespace BmwDeepObd
             _jobReader = new JobReader();
 
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
+            string backgroundImageFile = Path.Combine(_appDataPath, "Images", "Background.jpg");
+            if (File.Exists(backgroundImageFile))
+            {
+                try
+                {
+                    _imageBackground.SetImageBitmap(BitmapFactory.DecodeFile(backgroundImageFile));
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
             _fragmentList = new List<Fragment>();
 
             _webClient = new WebClient();
