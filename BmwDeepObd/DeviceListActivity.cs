@@ -435,11 +435,13 @@ namespace BmwDeepObd
                             };
                             break;
 
+                        case AdapterType.EchoOnly:
+                            ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.RawTag, deviceName);
+                            break;
+
                         default:
-                        {
                             ReturnDeviceType(deviceAddress, deviceName);
                             break;
-                        }
                     }
                 });
             })
