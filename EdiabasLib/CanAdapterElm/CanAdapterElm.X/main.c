@@ -87,7 +87,7 @@
 #define ID_LOCATION         0x200000    // location of ID memory
 
 #if ADAPTER_TYPE != 0x02
-#define ADAPTER_VERSION     0x0005
+#define ADAPTER_VERSION     0x0006
 #if ADAPTER_TYPE == 0x03
 // BC04
 #define ALLOW_FACTORY_RESET
