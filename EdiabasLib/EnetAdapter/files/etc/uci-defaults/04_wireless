@@ -4,5 +4,6 @@ uci set wireless.@wifi-iface[0].mode='ap'
 uci set wireless.@wifi-iface[0].encryption='psk2'
 uci set wireless.@wifi-iface[0].key='deepobdbmw'
 uci set wireless.@wifi-iface[0].ssid='Deep OBD BMW'
+uci set wireless.@wifi-iface[0].wmm='0'
 uci commit wireless
 exit 0
