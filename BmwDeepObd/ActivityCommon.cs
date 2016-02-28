@@ -410,7 +410,8 @@ namespace BmwDeepObd
         public string GetEnetAdapterIp()
         {
             WifiInfo wifiInfo = _maWifi?.ConnectionInfo;
-            if (wifiInfo != null && string.Compare(wifiInfo.SSID, "Deep OBD BMW", StringComparison.OrdinalIgnoreCase) == 0)
+            if (wifiInfo != null && _maWifi.DhcpInfo != null &&
+                string.Compare(wifiInfo.SSID, "Deep OBD BMW", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 int ipAddress = _maWifi.DhcpInfo.ServerAddress;
                 if (Java.Nio.ByteOrder.NativeOrder().Equals(Java.Nio.ByteOrder.LittleEndian))
