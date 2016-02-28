@@ -1,0 +1,8 @@
+local sys = require "luci.sys"
+
+function set_password(user,pass)
+  sys.user.setpasswd(user,pass)
+ return
+end
+
+if #arg == 2 then set_password(...) else print("\nUSAGE:\n\tset_passwd <user> <password>\n") end
