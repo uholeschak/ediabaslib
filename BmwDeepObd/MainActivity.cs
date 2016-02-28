@@ -410,7 +410,7 @@ namespace BmwDeepObd
             if (adapterConfigMenu != null)
             {
                 adapterConfigMenu.SetEnabled(interfaceAvailable && !commActive);
-                adapterConfigMenu.SetVisible(_activityCommon.AllowCanAdapterConfig(_deviceAddress));
+                adapterConfigMenu.SetVisible(_activityCommon.AllowAdapterConfig(_deviceAddress));
             }
 
             IMenuItem enetIpMenu = menu.FindItem(Resource.Id.menu_enet_ip);
@@ -2086,6 +2086,11 @@ namespace BmwDeepObd
         {
             if (!CheckForEcuFiles())
             {
+                return;
+            }
+            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
+            {
+                _activityCommon.EnetAdapterConfig();
                 return;
             }
             Intent serverIntent = new Intent(this, typeof(CanAdapterActivity));

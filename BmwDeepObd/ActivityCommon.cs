@@ -373,7 +373,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool AllowCanAdapterConfig(string deviceAddress)
+        public bool AllowAdapterConfig(string deviceAddress)
         {
             switch (_selectedInterface)
             {
@@ -396,6 +396,57 @@ namespace BmwDeepObd
 
                 case InterfaceType.Ftdi:
                     return true;
+
+                case InterfaceType.Enet:
+                    if (string.IsNullOrEmpty(GetEnetAdapterIp()))
+                    {
+                        return false;
+                    }
+                    return true;
+            }
+            return false;
+        }
+
+        public string GetEnetAdapterIp()
+        {
+            WifiInfo wifiInfo = _maWifi?.ConnectionInfo;
+            if (wifiInfo != null && string.Compare(wifiInfo.SSID, "Deep OBD BMW", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                int ipAddress = _maWifi.DhcpInfo.ServerAddress;
+                if (Java.Nio.ByteOrder.NativeOrder().Equals(Java.Nio.ByteOrder.LittleEndian))
+                {
+                    ipAddress = Java.Lang.Integer.ReverseBytes(ipAddress);
+                }
+                byte[] ipByteArray = Java.Math.BigInteger.ValueOf(ipAddress).ToByteArray();
+                try
+                {
+                    return Java.Net.InetAddress.GetByAddress(ipByteArray).HostAddress;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        public bool EnetAdapterConfig()
+        {
+            if (SelectedInterface == ActivityCommon.InterfaceType.Enet)
+            {
+                string adapterIp = GetEnetAdapterIp();
+                if (!string.IsNullOrEmpty(adapterIp))
+                {
+                    try
+                    {
+                        _activity.StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"http://" + adapterIp)));
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
             }
             return false;
         }
