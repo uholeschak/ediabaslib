@@ -30,3 +30,6 @@ sed -i -e 's/^\([ \t]*s:taboption(\"general\", \)Value\(, \"ssid\",.*\)$/\1Dummy
 sed -i -e 's/^\([ \t]*mode = s:taboption(\"general\", \)ListValue\(, \"mode\",.*\)$/\1DummyValue\2/' ${file}
 sed -i -e 's/^[ \t]*mode\.override_values.*$//' ${file}
 sed -i -e 's/^[ \t]*mode:value.*$//' ${file}
+
+sed -i -e 's/^\([ \t]*hidden = s:taboption(\"general\", Flag, \"hidden\",.*\)$//' ${file}
+sed -i -e 's/^\([ \t]*hidden:depends.*\)$//' ${file}
