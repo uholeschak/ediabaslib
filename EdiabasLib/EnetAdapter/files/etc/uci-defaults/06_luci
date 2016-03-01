@@ -1,0 +1,11 @@
+#!/bin/sh
+file=/usr/lib/lua/luci/view/admin_network/wifi_overview.htm
+sed -i -e 's/^[ \t]*<input .*type=\"button\" class=\"cbi-button cbi-button-add\".*$//' ${file}
+sed -i -e 's/^[ \t]*<input .*type=\"button\" class=\"cbi-button cbi-button-reload\".*$//' ${file}
+sed -i -e 's/^[ \t]*<input .*type=\"button\" class=\"cbi-button cbi-button-remove\".*$//' ${file}
+
+file=/usr/lib/lua/luci/view/admin_network/iface_overview.htm
+sed -i -e 's/^[ \t]*<input .*type=\"button\" class=\"cbi-button cbi-button-reload\".*$//' ${file}
+sed -i -e 's/^[ \t]*<input .*type=\"button\" class=\"cbi-button cbi-button-reset\".*$//' ${file}
+sed -i -e 's/^[ \t]*<input .*type=\"button\" class=\"cbi-button cbi-button-remove\".*$//' ${file}
+sed -i -e 's/^[ \t]*<input .*type=\"button\" class=\"cbi-button cbi-button-add\".*$//' ${file}
