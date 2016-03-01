@@ -9,3 +9,24 @@ sed -i -e 's/^[ \t]*<input .*type=\"button\" class=\"cbi-button cbi-button-reloa
 sed -i -e 's/^[ \t]*<input .*type=\"button\" class=\"cbi-button cbi-button-reset\".*$//' ${file}
 sed -i -e 's/^[ \t]*<input .*type=\"button\" class=\"cbi-button cbi-button-remove\".*$//' ${file}
 sed -i -e 's/^[ \t]*<input .*type=\"button\" class=\"cbi-button cbi-button-add\".*$//' ${file}
+
+file=/usr/lib/lua/luci/model/cbi/admin_network/wifi.lua
+sed -i -e 's/^\([ \t]*network = s:taboption(\"general\", \)Value\(, \"network\",.*\),$/\1DummyValue\2)/' ${file}
+sed -i -e 's/^\([ \t]*translate(\"Choose the network(s) you want to attach to this wireless interface or \".*\)$//' ${file}
+sed -i -e 's/^\([ \t]*\"fill out the <em>create<\/em> field to define a new network.\".*\)$//' ${file}
+
+sed -i -e 's/^\([ \t]*network.rmempty.*\)$//' ${file}
+sed -i -e 's/^\([ \t]*network.template.*\)$//' ${file}
+sed -i -e 's/^\([ \t]*network.widget.*\)$//' ${file}
+sed -i -e 's/^\([ \t]*network.novirtual.*\)$//' ${file}
+
+sed -i -e 's/^\([ \t]*en = s:taboption(\"general\", Button, "__toggle".*\)$//' ${file}
+sed -i -e 's/^\([ \t]*en.title.*\)$//' ${file}
+sed -i -e 's/^\([ \t]*en.inputtitle.*\)$//' ${file}
+sed -i -e 's/^\([ \t]*en.inputstyle.*\)$//' ${file}
+
+sed -i -e 's/^\([ \t]*s:taboption(\"general\", \)Value\(, \"ssid\",.*\)$/\1DummyValue\2/' ${file}
+
+sed -i -e 's/^\([ \t]*mode = s:taboption(\"general\", \)ListValue\(, \"mode\",.*\)$/\1DummyValue\2/' ${file}
+sed -i -e 's/^[ \t]*mode\.override_values.*$//' ${file}
+sed -i -e 's/^[ \t]*mode:value.*$//' ${file}
