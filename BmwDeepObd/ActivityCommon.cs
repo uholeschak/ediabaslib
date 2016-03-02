@@ -433,7 +433,7 @@ namespace BmwDeepObd
 
         public bool EnetAdapterConfig()
         {
-            if (SelectedInterface == ActivityCommon.InterfaceType.Enet)
+            if (SelectedInterface == InterfaceType.Enet)
             {
                 string adapterIp = GetEnetAdapterIp();
                 if (!string.IsNullOrEmpty(adapterIp))
