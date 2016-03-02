@@ -675,7 +675,7 @@ namespace BmwDeepObd
                                 portName = ActivityCommon.EmulatorEnetIp;
                                 break;
                             }
-                            portName = _activityCommon.SelectedEnetIp;
+                            portName = string.IsNullOrEmpty(_activityCommon.SelectedEnetIp) ? "auto:all" : _activityCommon.SelectedEnetIp;
                             break;
 
                         case ActivityCommon.InterfaceType.Ftdi:

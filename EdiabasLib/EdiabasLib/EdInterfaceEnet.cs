@@ -536,6 +536,43 @@ namespace EdiabasLib
             {
                 string adapterName = configData.StartsWith(":all", StringComparison.OrdinalIgnoreCase) ? string.Empty : configData.Remove(0, 1);
 
+#if Android
+                Java.Util.IEnumeration networkInterfaces = Java.Net.NetworkInterface.NetworkInterfaces;
+                while (networkInterfaces.HasMoreElements)
+                {
+                    Java.Net.NetworkInterface netInterface = (Java.Net.NetworkInterface) networkInterfaces.NextElement();
+                    if (netInterface.IsUp)
+                    {
+                        IList<Java.Net.InterfaceAddress> interfaceAdresses = netInterface.InterfaceAddresses;
+                        foreach (Java.Net.InterfaceAddress interfaceAddress in interfaceAdresses)
+                        {
+                            if (string.IsNullOrEmpty(adapterName) || (netInterface.Name.StartsWith(adapterName, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                if (interfaceAddress.Address != null && interfaceAddress.Broadcast != null)
+                                {
+                                    if (string.Compare(interfaceAddress.Address.HostAddress, "127.0.0.1", StringComparison.OrdinalIgnoreCase) != 0)
+                                    {
+                                        try
+                                        {
+                                            IPAddress broadcastAddress =
+                                                IPAddress.Parse(interfaceAddress.Broadcast.HostAddress);
+                                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': Broadcast={1}",
+                                                    netInterface.Name, broadcastAddress));
+                                            IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, ControlPort);
+                                            UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
+                                            broadcastSend = true;
+                                        }
+                                        catch (Exception)
+                                        {
+                                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+#else
                 System.Net.NetworkInformation.NetworkInterface[] adapters = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
                 foreach (System.Net.NetworkInformation.NetworkInterface adapter in adapters)
                 {
@@ -548,7 +585,7 @@ namespace EdiabasLib
                             {
                                 if (ipAddressInfo.Address.AddressFamily == AddressFamily.InterNetwork)
                                 {
-                                    if ((adapterName.Length == 0) || (adapter.Name.StartsWith(adapterName, StringComparison.OrdinalIgnoreCase)))
+                                    if (string.IsNullOrEmpty(adapterName) || (adapter.Name.StartsWith(adapterName, StringComparison.OrdinalIgnoreCase)))
                                     {
                                         try
                                         {
@@ -575,13 +612,14 @@ namespace EdiabasLib
                         }
                     }
                 }
+#endif
             }
             else
 #endif
             {
                 try
                 {
-#if Android || WindowsCE
+#if WindowsCE
                     IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Broadcast, ControlPort);
 #else
                     IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse("169.254.255.255"), ControlPort);

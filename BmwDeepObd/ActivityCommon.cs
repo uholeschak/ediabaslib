@@ -751,7 +751,7 @@ namespace BmwDeepObd
             Thread detectThread = new Thread(() =>
             {
                 EdInterfaceEnet edInterface = new EdInterfaceEnet();
-                List<IPAddress> detectedVehicles = edInterface.DetectedVehicles("auto");
+                List<IPAddress> detectedVehicles = edInterface.DetectedVehicles("auto:all");
                 edInterface.Dispose();
                 _activity.RunOnUiThread(() =>
                 {
@@ -914,7 +914,7 @@ namespace BmwDeepObd
             }
             else if (ediabas.EdInterfaceClass is EdInterfaceEnet)
             {
-                string remoteHost = string.IsNullOrEmpty(_selectedEnetIp) ? "auto" : _selectedEnetIp;
+                string remoteHost = string.IsNullOrEmpty(_selectedEnetIp) ? "auto:all" : _selectedEnetIp;
                 if (Emulator)
                 {   // broadcast is not working with emulator
                     remoteHost = EmulatorEnetIp;
