@@ -548,14 +548,14 @@ namespace EdiabasLib
                         {
                             if (string.IsNullOrEmpty(adapterName) || (netInterface.Name.StartsWith(adapterName, StringComparison.OrdinalIgnoreCase)))
                             {
-                                if (interfaceAddress.Address != null && interfaceAddress.Broadcast != null)
+                                if (interfaceAddress.Broadcast != null)
                                 {
-                                    if (string.Compare(interfaceAddress.Address.HostAddress, "127.0.0.1", StringComparison.OrdinalIgnoreCase) != 0)
+                                    string broadcastAddressName = interfaceAddress.Broadcast.HostAddress;
+                                    if (!broadcastAddressName.StartsWith("127."))
                                     {
                                         try
                                         {
-                                            IPAddress broadcastAddress =
-                                                IPAddress.Parse(interfaceAddress.Broadcast.HostAddress);
+                                            IPAddress broadcastAddress = IPAddress.Parse(broadcastAddressName);
                                             EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': Broadcast={1}",
                                                     netInterface.Name, broadcastAddress));
                                             IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, ControlPort);
