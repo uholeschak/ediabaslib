@@ -3,7 +3,7 @@ uci set dhcp.@dnsmasq[0].port='0'
 uci set dhcp.@dnsmasq[0].domain=''
 uci set dhcp.lan.start='50'
 uci set dhcp.lan.limit='200'
-uci set dhcp.lan.leasetime='1h'
+uci set dhcp.lan.leasetime='30d'
 uci set dhcp.lan.dhcp_option='3'
 uci commit dhcp
 exit 0
