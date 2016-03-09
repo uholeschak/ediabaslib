@@ -1,0 +1,16 @@
+--- a/src/ap/wpa_auth.c	2016-03-06 15:30:50.397163882 +0000
++++ b/src/ap/wpa_auth.c	2016-03-06 16:39:44.051371178 +0000
+@@ -48,9 +48,9 @@
+ 
+ static const u32 dot11RSNAConfigGroupUpdateCount = 4;
+ static const u32 dot11RSNAConfigPairwiseUpdateCount = 4;
+-static const u32 eapol_key_timeout_first = 100; /* ms */
+-static const u32 eapol_key_timeout_subseq = 1000; /* ms */
+-static const u32 eapol_key_timeout_first_group = 500; /* ms */
++static const u32 eapol_key_timeout_first = 500; /* ms */
++static const u32 eapol_key_timeout_subseq = 1500; /* ms */
++static const u32 eapol_key_timeout_first_group = 1000; /* ms */
+ 
+ /* TODO: make these configurable */
+ static const int dot11RSNAConfigPMKLifetime = 43200;
+
