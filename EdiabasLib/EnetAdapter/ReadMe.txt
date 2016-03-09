@@ -9,6 +9,10 @@ cp diffconfig .config
 make defconfig
 make
 
+If download of packages fails build with
+make V=s
+and copy the missing files to the dl directory.
+
 copy imagebulder from bin new location
 extract imagebilder tar -xvjf ...
 copy files directory and build.sh to imagebilder build directory
