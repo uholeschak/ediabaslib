@@ -11,7 +11,7 @@
   <string name="button_generate">Generieren</string>
   <string name="no_ext_storage">Kein externer Speicher verfügbar</string>
   <string name="bt_enable">Bluetooth ist nicht aktiviert.\nWollen Sie es jetzt aktivieren?</string>
-  <string name="wifi_enable">Wifi ist nicht aktiviert.\nWollen Sie es jetzt aktivieren?</string>
+  <string name="wifi_enable">Wifi ist nicht aktiviert.\nWollen Sie es jetzt aktivieren oder den Accesspoint auswählen?</string>
   <string name="bt_not_available">Bluetooth ist nicht verfügbar.</string>
   <string name="wifi_not_available">Wifi ist nicht verfügbar.</string>
   <string name="config_select">Es ist keine gültige Konfiguration vorhanden.\nWollen Sie jetzt eine Konfiguration generieren oder auswählen?</string>
