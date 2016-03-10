@@ -150,6 +150,9 @@
   <string name="select_enet_ip">ENET IP-Adresse wählen</string>
   <string name="select_enet_ip_auto">Automatisch</string>
 
+  <!-- ENET adapter config -->
+  <string name="enet_adapter_web_info">Das Default-Password für das Adapter-Webinterface ist root.\nFalls der Adapter nach der Konfiguration nicht mehr erreichbar ist, müssen Sie den Adapter öffnen und die Resetaste drücken, nachdem der Adapter gebootet hat.</string>
+
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas Tool</string>
   <string name="tool_select_sgbd">SGBD auswählen</string>
