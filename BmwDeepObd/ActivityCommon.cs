@@ -459,6 +459,19 @@ namespace BmwDeepObd
             return false;
         }
 
+        public bool ShowWifiSettings()
+        {
+            try
+            {
+                _activity.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public void ShowAlert(string message, int titleId)
         {
             new AlertDialog.Builder(_activity)
@@ -669,32 +682,46 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            int resourceId;
             switch (_selectedInterface)
             {
                 case InterfaceType.Bluetooth:
-                    resourceId = Resource.String.bt_enable;
+                    _activateAlertDialog = new AlertDialog.Builder(_activity)
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                        {
+                            EnableInterface();
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.bt_enable)
+                        .SetTitle(Resource.String.alert_title_question)
+                        .Show();
                     break;
 
                 case InterfaceType.Enet:
-                    resourceId = Resource.String.wifi_enable;
+                    _activateAlertDialog = new AlertDialog.Builder(_activity)
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                        {
+                            EnableInterface();
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                        {
+                        })
+                        .SetNeutralButton(Resource.String.button_select, (sender, args) =>
+                        {
+                            EnableInterface();
+                            ShowWifiSettings();
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.wifi_enable)
+                        .SetTitle(Resource.String.alert_title_question)
+                        .Show();
                     break;
 
                 default:
                     return false;
             }
-            _activateAlertDialog = new AlertDialog.Builder(_activity)
-                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                {
-                    EnableInterface();
-                })
-                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                {
-                })
-                .SetCancelable(true)
-                .SetMessage(resourceId)
-                .SetTitle(Resource.String.alert_title_question)
-                .Show();
             _activateAlertDialog.DismissEvent += (sender, args) =>
             {
                 _activateAlertDialog = null;
