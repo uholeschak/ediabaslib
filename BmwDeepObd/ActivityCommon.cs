@@ -438,15 +438,22 @@ namespace BmwDeepObd
                 string adapterIp = GetEnetAdapterIp();
                 if (!string.IsNullOrEmpty(adapterIp))
                 {
-                    try
+                    new AlertDialog.Builder(_activity)
+                    .SetMessage(Resource.String.enet_adapter_web_info)
+                    .SetTitle(Resource.String.alert_title_info)
+                    .SetNeutralButton(Resource.String.button_ok, (s, e) =>
                     {
-                        _activity.StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"http://" + adapterIp)));
-                        return true;
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
+                        try
+                        {
+                            _activity.StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"http://" + adapterIp)));
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    })
+                    .Show();
+                    return true;
                 }
             }
             return false;
