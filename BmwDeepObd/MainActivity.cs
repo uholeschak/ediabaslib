@@ -552,8 +552,20 @@ namespace BmwDeepObd
                         _autoStart = true;
                     }))
                 {
+                    UpdateDisplay();
                     return;
                 }
+            }
+            if (_activityCommon.ShowEnetSsidWarning(noAction => 
+            {
+                if (noAction)
+                {
+                    ButtonConnectClick(sender, e);
+                }
+            }))
+            {
+                UpdateDisplay();
+                return;
             }
 
             if (_ediabasThread != null && _ediabasThread.ThreadRunning())
@@ -945,8 +957,11 @@ namespace BmwDeepObd
                 }
                 _connectButtonInfo.Checked = false;
             }
-            if (_connectButtonInfo.Button != null) _connectButtonInfo.Button.Enabled = _connectButtonInfo.Checked;
-            if (_connectButtonInfo.Button != null) _connectButtonInfo.Button.Enabled = _connectButtonInfo.Enabled;
+            if (_connectButtonInfo.Button != null)
+            {
+                _connectButtonInfo.Button.Checked = _connectButtonInfo.Checked;
+                _connectButtonInfo.Button.Enabled = _connectButtonInfo.Enabled;
+            }
             _imageBackground.Visibility = dynamicValid ? ViewStates.Invisible : ViewStates.Visible;
 
             Fragment dynamicFragment = null;

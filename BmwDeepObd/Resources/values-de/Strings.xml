@@ -11,7 +11,7 @@
   <string name="button_generate">Generieren</string>
   <string name="no_ext_storage">Kein externer Speicher verfügbar</string>
   <string name="bt_enable">Bluetooth ist nicht aktiviert.\nWollen Sie es jetzt aktivieren?</string>
-  <string name="wifi_enable">Wifi ist nicht aktiviert.\nWollen Sie es jetzt aktivieren oder den Accesspoint auswählen?</string>
+  <string name="wifi_enable">Wifi ist nicht aktiviert.\nWollen Sie es jetzt aktivieren oder den Access Point auswählen?</string>
   <string name="bt_not_available">Bluetooth ist nicht verfügbar.</string>
   <string name="wifi_not_available">Wifi ist nicht verfügbar.</string>
   <string name="config_select">Es ist keine gültige Konfiguration vorhanden.\nWollen Sie jetzt eine Konfiguration generieren oder auswählen?</string>
@@ -27,7 +27,7 @@
 \nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:
-\n- Logdaten können angehängt werden
+\n- Für ENET Wifi Adapter vorbereitet
 \n- Kleinere Probleme behoben</string>
   <string name="app_info_message">Deep OBD für BMW\nVersion: {0}\nId: {1}</string>
 
@@ -152,7 +152,8 @@
 
   <!-- ENET adapter config -->
   <string name="enet_adapter_web_info">Das Default-Password für das Adapter-Webinterface ist root.\nFalls der Adapter nach der Konfiguration nicht mehr erreichbar ist, müssen Sie den Adapter öffnen und die Resetaste drücken, nachdem der Adapter gebootet hat.</string>
-  <string name="enet_adapter_wifi_info">Wenn Sie einen Deep OBD BMW Wifi Adapter verwenden wählen Sie den Access Point mit dem Namen \'Deep OBD BMW\', das Default-Password ist deepobdbmw.</string>
+  <string name="enet_adapter_wifi_info">Wenn Sie einen Deep OBD BMW Wifi Adapter verwenden, wählen Sie den Access Point mit dem Namen \'Deep OBD BMW\', das Default-Password ist deepobdbmw.</string>
+  <string name="enet_adapter_ssid_warn">Die sind nicht mit einem Deep OBD BMW Wifi Adapter verbunden.\nWollen Sie einen anderen Access Point auswählen?</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas Tool</string>

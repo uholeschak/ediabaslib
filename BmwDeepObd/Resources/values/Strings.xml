@@ -27,7 +27,7 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
-\n- Allow to append data log files
+\n- Prepared for Enet Wifi adapter
 \n- Fixed minor problems</string>
   <string name="app_info_message">Deep OBD for BMW\nVersion: {0}\nId: {1}</string>
 
@@ -154,6 +154,7 @@
   <!-- ENET adapter config -->
   <string name="enet_adapter_web_info">The default password for the adapter web interface is root.\nIf the adapter gets unreachable after configuration you have to open the adapter and press the reset button after the adapter has booted.</string>
   <string name="enet_adapter_wifi_info">If you are using a Deep OBD BMW Wifi adapter select the access point with the name \'Deep OBD BMW\', the default password is deepobdbmw.</string>
+  <string name="enet_adapter_ssid_warn">You are not connected with a Deep OBD BMW Wifi adapter.\nDo you want to select a different access point?</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas tool</string>
