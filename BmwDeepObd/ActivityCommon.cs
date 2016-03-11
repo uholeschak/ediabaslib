@@ -459,16 +459,24 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool ShowWifiSettings()
+        public bool ShowWifiSettings(EventHandler handler)
         {
-            try
+            AlertDialog alterDialog = new AlertDialog.Builder(_activity)
+            .SetMessage(Resource.String.enet_adapter_wifi_info)
+            .SetTitle(Resource.String.alert_title_info)
+            .SetNeutralButton(Resource.String.button_ok, (s, e) =>
             {
-                _activity.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+                try
+                {
+                    _activity.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            })
+            .Show();
+            alterDialog.DismissEvent += handler;
             return true;
         }
 
@@ -682,6 +690,7 @@ namespace BmwDeepObd
             {
                 return false;
             }
+            bool ignoreDismiss = false;
             switch (_selectedInterface)
             {
                 case InterfaceType.Bluetooth:
@@ -710,8 +719,13 @@ namespace BmwDeepObd
                         })
                         .SetNeutralButton(Resource.String.button_select, (sender, args) =>
                         {
+                            ignoreDismiss = true;
                             EnableInterface();
-                            ShowWifiSettings();
+                            ShowWifiSettings((o, eventArgs) =>
+                            {
+                                _activateAlertDialog = null;
+                                handler(sender, args);
+                            });
                         })
                         .SetCancelable(true)
                         .SetMessage(Resource.String.wifi_enable)
@@ -724,8 +738,11 @@ namespace BmwDeepObd
             }
             _activateAlertDialog.DismissEvent += (sender, args) =>
             {
-                _activateAlertDialog = null;
-                handler(sender, args);
+                if (!ignoreDismiss)
+                {
+                    _activateAlertDialog = null;
+                    handler(sender, args);
+                }
             };
             return true;
         }
