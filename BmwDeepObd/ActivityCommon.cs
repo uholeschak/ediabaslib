@@ -69,7 +69,9 @@ namespace BmwDeepObd
         public delegate void BcReceiverUpdateDisplayDelegate();
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
         public delegate void TranslateDelegate(List<string> transList);
+        public delegate void EnetSsidWarnDelegate(bool noAction);
         public const string EmulatorEnetIp = "192.168.10.244";
+        public const string AdapterSsid = "Deep OBD BMW";
         public const string DownloadDir = "Download";
         public const string ActionUsbPermission = "de.holeschak.bmw_deep_obd.USB_PERMISSION";
         private const string MailInfoDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Mail.xml";
@@ -106,6 +108,7 @@ namespace BmwDeepObd
         private string _yandexCurrentLang;
         private readonly Dictionary<string, Dictionary<string, string>> _yandexTransDict;
         private Dictionary<string, string> _yandexCurrentLangDict;
+        private string _lastEnetSsid = string.Empty;
 
         public bool Emulator { get; }
 
@@ -174,6 +177,10 @@ namespace BmwDeepObd
             }
             set
             {
+                if (_selectedInterface != value)
+                {
+                    _lastEnetSsid = string.Empty;
+                }
                 _selectedInterface = value;
             }
         }
@@ -411,7 +418,7 @@ namespace BmwDeepObd
         {
             WifiInfo wifiInfo = _maWifi?.ConnectionInfo;
             if (wifiInfo != null && _maWifi.DhcpInfo != null &&
-                string.Compare(wifiInfo.SSID, "Deep OBD BMW", StringComparison.OrdinalIgnoreCase) == 0)
+                string.Compare(wifiInfo.SSID, AdapterSsid, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 int ipAddress = _maWifi.DhcpInfo.ServerAddress;
                 if (Java.Nio.ByteOrder.NativeOrder().Equals(Java.Nio.ByteOrder.LittleEndian))
@@ -457,6 +464,52 @@ namespace BmwDeepObd
                 }
             }
             return false;
+        }
+
+        public bool ShowEnetSsidWarning(EnetSsidWarnDelegate handler)
+        {
+            if (_selectedInterface != InterfaceType.Enet)
+            {
+                return false;
+            }
+            bool result = false;
+            string enetSsid = string.Empty;
+            WifiInfo wifiInfo = _maWifi?.ConnectionInfo;
+            if (wifiInfo != null && _maWifi.DhcpInfo != null)
+            {
+                enetSsid = wifiInfo.SSID;
+            }
+            if (string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
+            {
+                _lastEnetSsid = enetSsid;
+                if (string.Compare(enetSsid, AdapterSsid, StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    bool ignoreDismiss = false;
+                    AlertDialog alertDialog = new AlertDialog.Builder(_activity)
+                    .SetMessage(Resource.String.enet_adapter_ssid_warn)
+                    .SetTitle(Resource.String.alert_title_warning)
+                    .SetPositiveButton(Resource.String.button_yes, (s, e) =>
+                    {
+                        ignoreDismiss = true;
+                        ShowWifiSettings((sender, args) =>
+                        {
+                            handler(false);
+                        });
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (s, e) => { })
+                    .Show();
+                    alertDialog.DismissEvent += (sender, args) =>
+                    {
+                        if (!ignoreDismiss)
+                        {
+                            handler(true);
+                        }
+                    };
+
+                    result = true;
+                }
+            }
+            return result;
         }
 
         public bool ShowWifiSettings(EventHandler handler)
@@ -663,6 +716,7 @@ namespace BmwDeepObd
                     }
                     if (!_maWifi.IsWifiEnabled)
                     {
+                        _lastEnetSsid = string.Empty;
                         try
                         {
                             _maWifi.SetWifiEnabled(true);
