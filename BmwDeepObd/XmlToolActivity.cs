@@ -1201,6 +1201,16 @@ namespace BmwDeepObd
                     return;
                 }
             }
+            if (_activityCommon.ShowEnetSsidWarning(noAction =>
+            {
+                if (noAction)
+                {
+                    PerformAnalyze();
+                }
+            }))
+            {
+                return;
+            }
             ExecuteAnalyzeJob();
         }
 
