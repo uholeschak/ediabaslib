@@ -428,6 +428,16 @@ namespace BmwDeepObd
                             return true;
                         }
                     }
+                    if (_activityCommon.ShowEnetSsidWarning(noAction =>
+                    {
+                        if (noAction)
+                        {
+                            OnOptionsItemSelected(item);
+                        }
+                    }))
+                    {
+                        return true;
+                    }
                     SelectSgbdFile(item.ItemId == Resource.Id.menu_tool_sel_sgbd_grp);
                     return true;
 
