@@ -11,8 +11,7 @@
   <string name="button_generate">Генерировать</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="bt_enable">Bluetooth не активирован.\nХотите его активираивать?</string>
-  <!--Translate! <string name="wifi_enable">Wifi ist nicht aktiviert.\nWollen Sie es jetzt aktivieren oder den Access Point auswählen?</string> -->
-  <string name="wifi_enable">Wifi не активирован.\nХотите его активираивать?</string>
+  <string name="wifi_enable">Wifi не активирован.\nХотите активираивать или выбрать точку доступа?</string>
   <string name="bt_not_available">Bluetooth не доступен.</string>
   <string name="wifi_not_available">Wifi не доступен.</string>
   <string name="config_select">Отсутствует правильная конфигурация.\nХотите создать или выбрать конфигурацию?</string>
