@@ -11,7 +11,7 @@
   <string name="button_generate">Генерировать</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="bt_enable">Bluetooth не активирован.\nХотите его активираивать?</string>
-  <string name="wifi_enable">Wifi не активирован.\nХотите активираивать или выбрать точку доступа?</string>
+  <string name="wifi_enable">Wifi не активирован.\nАктивировать или выбрать точку доступа?</string>
   <string name="bt_not_available">Bluetooth не доступен.</string>
   <string name="wifi_not_available">Wifi не доступен.</string>
   <string name="config_select">Отсутствует правильная конфигурация.\nХотите создать или выбрать конфигурацию?</string>
@@ -27,6 +27,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную инфирмацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:
+\n- Добавлена поддержка ENET Wifi устройства.
 \n- улучшена стабильность</string>
   <string name="app_info_message">Deep OBD для BMW\nВерсия: {0}\nId: {1}</string>
 
@@ -150,10 +151,9 @@
   <string name="select_enet_ip_auto">Automatic</string>
 
   <!-- ENET adapter config -->
-  <!-- Translate! -->
-  <string name="enet_adapter_web_info">Das Default-Password für das Adapter-Webinterface ist root.\nFalls der Adapter nach der Konfiguration nicht mehr erreichbar ist, müssen Sie den Adapter öffnen und die Resetaste drücken, nachdem der Adapter gebootet hat.</string>
-  <string name="enet_adapter_wifi_info">Wenn Sie einen Deep OBD BMW Wifi Adapter verwenden, wählen Sie den Access Point mit dem Namen \'Deep OBD BMW\', das Default-Password ist deepobdbmw.</string>
-  <string name="enet_adapter_ssid_warn">Die sind nicht mit einem Deep OBD BMW Wifi Adapter verbunden.\nWollen Sie einen anderen Access Point auswählen?</string>
+  <string name="enet_adapter_web_info">Пароль для веб интерфейса устойства по умолчанию root.\nЕсли устройство после его конфигурирования больше не реагирует - необходимо открыть устройство, перезагрузить его и нажать кнопку сброса.</string>
+  <string name="enet_adapter_wifi_info">Если вы используете OBD BMW Wifi устройство, выберите точку доступа с именем \'Deep OBD BMW\'. Пароль по умолчанию deepobdbmw.</string>
+  <string name="enet_adapter_ssid_warn">Вы соеденены не с Deep OBD BMW Wifi устройством.\nВыбрать другую точку доступа?</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>
