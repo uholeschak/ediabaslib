@@ -254,7 +254,7 @@ namespace BmwDeepObd
                                         // sometimes the second connect is working
                                         bluetoothSocket.Connect();
                                     }
-                                    Thread.Sleep(500);
+                                    Thread.Sleep(200);
                                     adapterType = AdapterTypeDetection(bluetoothSocket);
                                 }
                             }
@@ -487,6 +487,7 @@ namespace BmwDeepObd
                 Stream bluetoothInStream = bluetoothSocket.InputStream;
                 Stream bluetoothOutStream = bluetoothSocket.OutputStream;
 
+                for (int retries = 0; retries < 2; retries++)
                 {
                     // custom adapter
                     bluetoothInStream.Flush();
@@ -556,11 +557,15 @@ namespace BmwDeepObd
                             break;
                         }
                     }
+                    if (adapterType != AdapterType.Unknown)
+                    {
+                        break;
+                    }
                 }
 
                 // ELM327
                 bool elmReports21 = false;
-                for (int i = 0; i < 2; i++)
+                for (int retries = 0; retries < 2; retries++)
                 {
                     bluetoothInStream.Flush();
                     while (bluetoothInStream.IsDataAvailable())
