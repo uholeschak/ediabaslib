@@ -289,6 +289,7 @@ namespace BmwDeepObd
                                 if (bluetoothSocket != null)
                                 {
                                     bluetoothSocket.Connect();
+                                    Thread.Sleep(200);
                                     adapterType = AdapterTypeDetection(bluetoothSocket);
                                 }
                             }
@@ -487,78 +488,71 @@ namespace BmwDeepObd
                 Stream bluetoothInStream = bluetoothSocket.InputStream;
                 Stream bluetoothOutStream = bluetoothSocket.OutputStream;
 
-                for (int retries = 0; retries < 2; retries++)
+                // custom adapter
+                bluetoothInStream.Flush();
+                while (bluetoothInStream.IsDataAvailable())
                 {
-                    // custom adapter
-                    bluetoothInStream.Flush();
+                    bluetoothInStream.ReadByte();
+                }
+                LogData(customData, 0, customData.Length, "Send");
+                bluetoothOutStream.Write(customData, 0, customData.Length);
+
+                LogData(null, 0, 0, "Resp");
+                List<byte> responseList = new List<byte>();
+                long startTime = Stopwatch.GetTimestamp();
+                for (; ; )
+                {
                     while (bluetoothInStream.IsDataAvailable())
                     {
-                        bluetoothInStream.ReadByte();
+                        int data = bluetoothInStream.ReadByte();
+                        if (data >= 0)
+                        {
+                            LogByte((byte)data);
+                            responseList.Add((byte)data);
+                            startTime = Stopwatch.GetTimestamp();
+                        }
                     }
-                    LogData(customData, 0, customData.Length, "Send");
-                    bluetoothOutStream.Write(customData, 0, customData.Length);
-
-                    LogData(null, 0, 0, "Resp");
-                    List<byte> responseList = new List<byte>();
-                    long startTime = Stopwatch.GetTimestamp();
-                    for (; ; )
+                    if (responseList.Count >= customData.Length + versionRespLen)
                     {
-                        while (bluetoothInStream.IsDataAvailable())
+                        LogString("Custom adapter length");
+                        bool validEcho = !customData.Where((t, i) => responseList[i] != t).Any();
+                        if (!validEcho)
                         {
-                            int data = bluetoothInStream.ReadByte();
-                            if (data >= 0)
-                            {
-                                LogByte((byte)data);
-                                responseList.Add((byte)data);
-                                startTime = Stopwatch.GetTimestamp();
-                            }
-                        }
-                        if (responseList.Count >= customData.Length + versionRespLen)
-                        {
-                            LogString("Custom adapter length");
-                            bool validEcho = !customData.Where((t, i) => responseList[i] != t).Any();
-                            if (!validEcho)
-                            {
-                                LogString("*** Echo incorrect");
-                                break;
-                            }
-                            byte checkSum = 0x00;
-                            for (int i = 0; i < versionRespLen - 1; i++)
-                            {
-                                checkSum += responseList[i + customData.Length];
-                            }
-                            if (checkSum != responseList[customData.Length + versionRespLen - 1])
-                            {
-                                LogString("*** Checksum incorrect");
-                                break;
-                            }
-                            int adapterTypeId = responseList[customData.Length + 5] + (responseList[customData.Length + 4] << 8);
-                            int fwVersion = responseList[customData.Length + 7] + (responseList[customData.Length + 6] << 8);
-                            int fwUpdateVersion = PicBootloader.GetFirmwareVersion((uint)adapterTypeId);
-                            if (fwUpdateVersion >= 0 && fwUpdateVersion > fwVersion)
-                            {
-                                LogString("Custom adapter with old firmware detected");
-                                return AdapterType.CustomUpdate;
-                            }
-                            LogString("Custom adapter detected");
-                            return AdapterType.Custom;
-                        }
-                        if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * TickResolMs)
-                        {
-                            if (responseList.Count >= customData.Length)
-                            {
-                                bool validEcho = !customData.Where((t, i) => responseList[i] != t).Any();
-                                if (validEcho)
-                                {
-                                    LogString("Valid echo detected");
-                                    adapterType = AdapterType.EchoOnly;
-                                }
-                            }
+                            LogString("*** Echo incorrect");
                             break;
                         }
+                        byte checkSum = 0x00;
+                        for (int i = 0; i < versionRespLen - 1; i++)
+                        {
+                            checkSum += responseList[i + customData.Length];
+                        }
+                        if (checkSum != responseList[customData.Length + versionRespLen - 1])
+                        {
+                            LogString("*** Checksum incorrect");
+                            break;
+                        }
+                        int adapterTypeId = responseList[customData.Length + 5] + (responseList[customData.Length + 4] << 8);
+                        int fwVersion = responseList[customData.Length + 7] + (responseList[customData.Length + 6] << 8);
+                        int fwUpdateVersion = PicBootloader.GetFirmwareVersion((uint)adapterTypeId);
+                        if (fwUpdateVersion >= 0 && fwUpdateVersion > fwVersion)
+                        {
+                            LogString("Custom adapter with old firmware detected");
+                            return AdapterType.CustomUpdate;
+                        }
+                        LogString("Custom adapter detected");
+                        return AdapterType.Custom;
                     }
-                    if (adapterType != AdapterType.Unknown)
+                    if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * TickResolMs)
                     {
+                        if (responseList.Count >= customData.Length)
+                        {
+                            bool validEcho = !customData.Where((t, i) => responseList[i] != t).Any();
+                            if (validEcho)
+                            {
+                                LogString("Valid echo detected");
+                                adapterType = AdapterType.EchoOnly;
+                            }
+                        }
                         break;
                     }
                 }
