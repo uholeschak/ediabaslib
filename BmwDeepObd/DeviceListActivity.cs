@@ -254,7 +254,7 @@ namespace BmwDeepObd
                                         // sometimes the second connect is working
                                         bluetoothSocket.Connect();
                                     }
-                                    Thread.Sleep(200);
+                                    Thread.Sleep(500);
                                     adapterType = AdapterTypeDetection(bluetoothSocket);
                                 }
                             }
@@ -289,7 +289,7 @@ namespace BmwDeepObd
                                 if (bluetoothSocket != null)
                                 {
                                     bluetoothSocket.Connect();
-                                    Thread.Sleep(200);
+                                    Thread.Sleep(500);
                                     adapterType = AdapterTypeDetection(bluetoothSocket);
                                 }
                             }
