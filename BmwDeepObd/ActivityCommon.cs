@@ -418,7 +418,7 @@ namespace BmwDeepObd
         {
             WifiInfo wifiInfo = _maWifi?.ConnectionInfo;
             if (wifiInfo != null && _maWifi.DhcpInfo != null &&
-                string.Compare(wifiInfo.SSID, AdapterSsid, StringComparison.OrdinalIgnoreCase) == 0)
+                wifiInfo.SSID.Contains(AdapterSsid))
             {
                 int ipAddress = _maWifi.DhcpInfo.ServerAddress;
                 if (Java.Nio.ByteOrder.NativeOrder().Equals(Java.Nio.ByteOrder.LittleEndian))
@@ -482,7 +482,7 @@ namespace BmwDeepObd
             if (string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
             {
                 _lastEnetSsid = enetSsid;
-                if (string.Compare(enetSsid, AdapterSsid, StringComparison.OrdinalIgnoreCase) != 0)
+                if (!enetSsid.Contains(AdapterSsid))
                 {
                     bool ignoreDismiss = false;
                     AlertDialog alertDialog = new AlertDialog.Builder(_activity)
