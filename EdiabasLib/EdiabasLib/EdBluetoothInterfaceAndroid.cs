@@ -152,7 +152,7 @@ namespace EdiabasLib
                     _bluetoothSocket = Java.Lang.Object.GetObject<BluetoothSocket>(rfCommSocket, Android.Runtime.JniHandleOwnership.TransferLocalRef);
                     _bluetoothSocket.Connect();
                 }
-                Thread.Sleep(200);
+                Thread.Sleep(500);
 
                 _bluetoothInStream = _bluetoothSocket.InputStream;
                 _bluetoothOutStream = _bluetoothSocket.OutputStream;
