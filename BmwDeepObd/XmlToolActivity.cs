@@ -789,7 +789,10 @@ namespace BmwDeepObd
                                 {
                                     if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTrans == null)
                                     {
-                                        ecu.DescriptionTrans = transList[transIndex++];
+                                        if (transIndex < transList.Count)
+                                        {
+                                            ecu.DescriptionTrans = transList[transIndex++];
+                                        }
                                     }
                                     if (ecu.JobList != null)
                                     {
@@ -803,7 +806,10 @@ namespace BmwDeepObd
                                                 {
                                                     if (!string.IsNullOrEmpty(comment))
                                                     {
-                                                        jobInfo.CommentsTrans.Add(transList[transIndex++]);
+                                                        if (transIndex < transList.Count)
+                                                        {
+                                                            jobInfo.CommentsTrans.Add(transList[transIndex++]);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -818,7 +824,10 @@ namespace BmwDeepObd
                                                         {
                                                             if (!string.IsNullOrEmpty(comment))
                                                             {
-                                                                result.CommentsTrans.Add(transList[transIndex++]);
+                                                                if (transIndex < transList.Count)
+                                                                {
+                                                                    result.CommentsTrans.Add(transList[transIndex++]);
+                                                                }
                                                             }
                                                         }
                                                     }
