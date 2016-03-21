@@ -33,3 +33,5 @@ sed -i -e 's/^[ \t]*mode:value.*$//' ${file}
 
 sed -i -e 's/^\([ \t]*hidden = s:taboption(\"general\", Flag, \"hidden\",.*\)$//' ${file}
 sed -i -e 's/^\([ \t]*hidden:depends.*\)$//' ${file}
+
+exit 0
