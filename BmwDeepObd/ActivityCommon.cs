@@ -418,7 +418,7 @@ namespace BmwDeepObd
         {
             WifiInfo wifiInfo = _maWifi?.ConnectionInfo;
             if (wifiInfo != null && _maWifi.DhcpInfo != null &&
-                wifiInfo.SSID.Contains(AdapterSsid))
+                !string.IsNullOrEmpty(wifiInfo.SSID) && wifiInfo.SSID.Contains(AdapterSsid))
             {
                 int ipAddress = _maWifi.DhcpInfo.ServerAddress;
                 if (Java.Nio.ByteOrder.NativeOrder().Equals(Java.Nio.ByteOrder.LittleEndian))
@@ -475,7 +475,7 @@ namespace BmwDeepObd
             bool result = false;
             string enetSsid = string.Empty;
             WifiInfo wifiInfo = _maWifi?.ConnectionInfo;
-            if (wifiInfo != null && _maWifi.DhcpInfo != null)
+            if (wifiInfo != null && _maWifi.DhcpInfo != null && !string.IsNullOrEmpty(wifiInfo.SSID))
             {
                 enetSsid = wifiInfo.SSID;
             }
