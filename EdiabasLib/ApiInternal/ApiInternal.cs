@@ -1331,7 +1331,7 @@ namespace Ediabas
 
             Dictionary<string, EdiabasNet.ResultData> resultDict = _resultSets[rset];
             EdiabasNet.ResultData resultData;
-            if (!resultDict.TryGetValue(result, out resultData))
+            if (!resultDict.TryGetValue(result.ToUpper(Culture), out resultData))
             {
                 setLocalError(EDIABAS_API_0014);
                 return null;
