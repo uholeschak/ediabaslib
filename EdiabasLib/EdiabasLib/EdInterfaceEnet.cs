@@ -513,7 +513,12 @@ namespace EdiabasLib
             }
         }
 
-        public List<IPAddress> DetectedVehicles(string remoteHostConfig, int maxVehicles = -1)
+        public List<IPAddress> DetectedVehicles(string remoteHostConfig)
+        {
+            return DetectedVehicles(remoteHostConfig, -1);
+        }
+
+        public List<IPAddress> DetectedVehicles(string remoteHostConfig, int maxVehicles)
         {
             if (!remoteHostConfig.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
             {
