@@ -1339,7 +1339,7 @@ namespace BmwDeepObd
         {
             string result = string.Empty;
             EdiabasNet.ResultData resultData;
-            if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
+            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultData))
             {
                 if (resultData.OpData.GetType() == typeof(byte[]))
                 {
@@ -1363,7 +1363,7 @@ namespace BmwDeepObd
         {
             found = false;
             EdiabasNet.ResultData resultData;
-            if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
+            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultData))
             {
                 if (resultData.OpData is Int64)
                 {
@@ -1378,7 +1378,7 @@ namespace BmwDeepObd
         {
             found = false;
             EdiabasNet.ResultData resultData;
-            if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
+            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultData))
             {
                 if (resultData.OpData is Double)
                 {
@@ -1393,7 +1393,7 @@ namespace BmwDeepObd
         {
             found = false;
             EdiabasNet.ResultData resultData;
-            if (resultDict != null && resultDict.TryGetValue(dataName, out resultData))
+            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultData))
             {
                 // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
                 if (resultData.OpData is String)
