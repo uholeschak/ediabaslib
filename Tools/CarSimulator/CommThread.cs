@@ -111,6 +111,7 @@ namespace CarSimulator
         private readonly byte[] _udpBuffer;
         private bool _udpError;
         private long _lastTcpDiagRecTick;
+        private int _tcpNackIndex;
         private readonly SerialPort _serialPort;
         private readonly AutoResetEvent _serialReceiveEvent;
         private readonly AutoResetEvent _pcanReceiveEvent;
@@ -1477,6 +1478,7 @@ namespace CarSimulator
                     _tcpClientDiag = _tcpServerDiag.AcceptTcpClient();
                     _tcpClientDiagStream = _tcpClientDiag.GetStream();
                     _lastTcpDiagRecTick = Stopwatch.GetTimestamp();
+                    _tcpNackIndex = 0;
                 }
             }
             catch (Exception)
@@ -1557,6 +1559,16 @@ namespace CarSimulator
                         return false;
                     }
                     // send ack
+                    if (_tcpNackIndex >= 5)
+                    {
+                        Debug.WriteLine("Send NAck");
+                        _tcpNackIndex = 0;
+                        byte[] nack = new byte[6];
+                        nack[5] = 0xFF;     // nack
+                        _tcpClientDiagStream.Write(nack, 0, nack.Length);
+                        return false;
+                    }
+                    _tcpNackIndex++;
                     byte[] ack = new byte[recLen];
                     Array.Copy(dataBuffer, ack, ack.Length);
                     ack[5] = 0x02;
