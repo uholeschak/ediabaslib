@@ -720,7 +720,7 @@ namespace BmwDeepObd
                                 continue;
                             }
                             EdiabasNet.ResultData resultData;
-                            if (resultDict.TryGetValue(_selectedResult.Name, out resultData))
+                            if (resultDict.TryGetValue(_selectedResult.Name.ToUpperInvariant(), out resultData))
                             {
                                 resultText = EdiabasNet.FormatResult(resultData, _selectedResult.Format) ?? string.Empty;
                                 break;

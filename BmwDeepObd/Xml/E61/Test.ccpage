@@ -177,7 +177,7 @@
                             foreach (string dataName in ediabasJob.JobData)
                             {
                                 EdiabasNet.ResultData resultData;
-                                if (resultDictLocal.TryGetValue(dataName, out resultData))
+                                if (resultDictLocal.TryGetValue(dataName.ToUpperInvariant(), out resultData))
                                 {
                                     string valueText = string.Empty;
                                     if (resultData.OpData is string)
