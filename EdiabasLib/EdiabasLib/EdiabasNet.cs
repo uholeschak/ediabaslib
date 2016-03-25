@@ -3654,7 +3654,7 @@ namespace EdiabasLib
 
         private void SetResultData(ResultData resultData)
         {
-            string key = resultData.Name;
+            string key = resultData.Name.ToUpper(Culture);
             if (_resultDict.ContainsKey(key))
             {
                 _resultDict[key] = resultData;
@@ -3670,7 +3670,7 @@ namespace EdiabasLib
         {
             ResultData result;
 
-            if (_resultDict.TryGetValue(name, out result))
+            if (_resultDict.TryGetValue(name.ToUpper(Culture), out result))
             {
                 return result;
             }
@@ -3679,7 +3679,7 @@ namespace EdiabasLib
 
         private void SetSysResultData(ResultData resultData)
         {
-            string key = resultData.Name;
+            string key = resultData.Name.ToUpper(Culture);
             if (_resultSysDict.ContainsKey(key))
             {
                 _resultSysDict[key] = resultData;
