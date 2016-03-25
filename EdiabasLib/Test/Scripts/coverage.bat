@@ -24,7 +24,7 @@ set OUTFILE=output_lib.log
 rem set ADD_ARGS=-p !COMPORT! -o "!OUTFILE!" -a -c
 set ADD_ARGS=--ifh="!IFH!" -o "!OUTFILE!" -a -c
 set ADD_ARGS=!ADD_ARGS! --cfg="ObdComPort=!COMPORT!"
-set FILTERS=+[EdiabasLib]*
+set FILTERS=+[EdiabasLib]EdiabasLib.EdiabasNet*
 set COVERAGE=1
 goto argsok
 )
@@ -34,7 +34,7 @@ set OUTFILE=output_apilib.log
 set ADD_ARGS=-o !OUTFILE! --ifh="!IFH!" --device="_" -a -c
 rem set ADD_ARGS=!ADD_ARGS! --cfg="@!BATPATH!\EdiabasLib.config"
 set ADD_ARGS=!ADD_ARGS! --cfg="ObdComPort=!COMPORT!"
-set FILTERS=+[EdiabasLib]* +[apiNET32]*
+set FILTERS=+[EdiabasLib]EdiabasLib.EdiabasNet* +[apiNET32]*
 set COVERAGE=1
 goto argsok
 )
