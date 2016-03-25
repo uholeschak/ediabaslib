@@ -878,8 +878,9 @@ namespace EdiabasLib
                     {   // telegram received
                         switch (TcpDiagBuffer[5])
                         {
-                            case 0x01: // diag data
-                            case 0x02: // ack
+                            case 0x01:  // diag data
+                            case 0x02:  // ack
+                            case 0xFF:  // nack
                                 lock (TcpDiagStreamRecLock)
                                 {
                                     if (TcpDiagRecQueue.Count > 256)
@@ -990,6 +991,20 @@ namespace EdiabasLib
                 {
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
                     return false;
+                }
+                if ((recLen == 6) && (AckBuffer[5] == 0xFF))
+                {
+                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "nack received: resending");
+                    lock (TcpDiagStreamSendLock)
+                    {
+                        TcpDiagStream.Write(DataBuffer, 0, sendLength);
+                    }
+                    recLen = ReceiveTelegram(AckBuffer, 5000);
+                    if (recLen < 0)
+                    {
+                        if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
+                        return false;
+                    }
                 }
                 if ((recLen < 6) || (recLen > sendLength) || (AckBuffer[5] != 0x02))
                 {
