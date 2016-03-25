@@ -13,6 +13,7 @@ set CANADAPTERELMPATH="!PACKAGEPATH!CanAdapterElm\"
 set CANADAPTERELM_DEFAULT_PATH="!PACKAGEPATH!CanAdapterElm\default\"
 set CANADAPTERELM_FAST_PATH="!PACKAGEPATH!CanAdapterElm\fast\"
 if exist "!PACKAGEPATH!" rmdir /s /q "!PACKAGEPATH!"
+timeout /T 1 /NOBREAK > nul
 mkdir "!PACKAGEPATH!"
 copy "!BATPATH!ReadMe.txt" "!PACKAGEPATH!"
 
