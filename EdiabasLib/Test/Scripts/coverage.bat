@@ -81,7 +81,7 @@ for /l %%x in (0, 1, 32) do (
  -f \"ERGW=D\" -f \"ERGW=6.4D\" -f \"ERGW=-6.4D\" -f \"ERGI=6.4L\" -f \"ERGI=-6.4L\" !"^"=!^
  -f \"ERGD=D\" -f \"ERGD=6.4D\" -f \"ERGD=-6.4D\" -f \"ERGD=6.4B\" -f \"ERGD=6.4C\" -f \"ERGL=6.4L\" -f \"ERGL=-6.4L\" -f \"ERGL=-6.4B\" -f \"ERGL=-6.4C\" !"^"=!^
  -f \"ERGR=R\" -f \"ERGR=10.5R\" -f \"ERGR=-10.5R\" -f \"ERGR=10.5ER\" -f \"ERGR=-10.5eR\" -f \"ERGR=-.5R\" -f \"ERGR=-8.R\" -f \"ERGR=8.ER\" -f \"ERGR=0.3R\" -f \"ERGR=3.0R\" !"^"=!^
- -f \"ERGS=10.4T\" -f \"ERGS=-10.4T\" -f \"ERGS=10.8T\" -f \"ERGS=0.8T\" -f \"ERGS=T\" !"^"=!^
+ -f \"ERGS=10.4T\" -f \"ERGS=-10.4T\" -f \"ERGS=10.8T\" -f \"ERGS=0.8T\" -f \"ERGS=T\" -f \"Ergs=T\" !"^"=!^
  -j \"TEST_MULTIARG#3;-4;10000;-10000;100000;-100000;0.001345;Ulrich;Erwin\" -j \"TEST_MULTIARG#;-4;z;-10000;100000;-100000;0.001345; ;Erwin\""
 
 "%OPEN_COVER%" "-output:results21.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" !"^"=!^
@@ -90,7 +90,7 @@ for /l %%x in (0, 1, 32) do (
  -f \"ERGW=D\" -f \"ERGW=6.4D\" -f \"ERGW=-6.4D\" -f \"ERGW=06X\" -f \"ERGW=-6X\" -f \"ERGW=6X\" -f \"ERGW=3.2X\" -f \"ERGW=\" -f \"ERGW=T\" -f \"ERGI=6.4L\" -f \"ERGI=-6.4L\" !"^"=!^
  -f \"ERGD=D\" -f \"ERGD=6.4D\" -f \"ERGD=-6.4D\" -f \"ERGD=6.4B\" -f \"ERGD=6.4C\" -f \"ERGL=6.4L\" -f \"ERGL=-6.4L\" -f \"ERGL=-6.4B\" -f \"ERGL=-6.4C\" !"^"=!^
  -f \"ERGR=R\" -f \"ERGR=10.5R\" -f \"ERGR=-10.5R\" -f \"ERGR=10.5ER\" -f \"ERGR=-10.5eR\" -f \"ERGR=-.5R\" -f \"ERGR=-8.R\" -f \"ERGR=8.ER\" -f \"ERGR=0.3R\" -f \"ERGR=3.0R\" -f \"ERGR=08X\" -f \"ERGR=\" -f \"ERGR=T\" !"^"=!^
- -f \"ERGS=10.4T\" -f \"ERGS=-10.4T\" -f \"ERGS=10.8T\" -f \"ERGS=0.8T\" -f \"ERGS=T\" !"^"=!^
+ -f \"ERGS=10.4T\" -f \"ERGS=-10.4T\" -f \"ERGS=10.8T\" -f \"ERGS=0.8T\" -f \"ERGS=T\" -f \"Ergs=T\" !"^"=!^
  -j \"TEST_MULTIARG#-30;40;-12345;12345;-123456;123456;-13.45;Ulrich Test;Erwin\""
 
 "%OPEN_COVER%" "-output:results20.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! --alltypes -s \"!ECU_TEST_PATH!\cmd_test1.prg\" !"^"=!^
@@ -99,7 +99,7 @@ for /l %%x in (0, 1, 32) do (
  -f \"ERGW=D\" -f \"ERGW=6.4D\" -f \"ERGW=-6.4D\" -f \"ERGI=6.4L\" -f \"ERGI=-6.4L\" !"^"=!^
  -f \"ERGD=D\" -f \"ERGD=6.4D\" -f \"ERGD=-6.4D\" -f \"ERGD=6.4B\" -f \"ERGD=6.4C\" -f \"ERGL=6.4L\" -f \"ERGL=-6.4L\" -f \"ERGL=-6.4B\" -f \"ERGL=-6.4C\" !"^"=!^
  -f \"ERGR=R\" -f \"ERGR=10.5R\" -f \"ERGR=-10.5R\" -f \"ERGR=10.5ER\" -f \"ERGR=-10.5eR\" -f \"ERGR=-.5R\" -f \"ERGR=-8.R\" -f \"ERGR=8.ER\" -f \"ERGR=0.3R\" -f \"ERGR=3.0R\" !"^"=!^
- -f \"ERGS=10.4T\" -f \"ERGS=-10.4T\" -f \"ERGS=10.8T\" -f \"ERGS=0.8T\" -f \"ERGS=T\" !"^"=!^
+ -f \"ERGS=10.4T\" -f \"ERGS=-10.4T\" -f \"ERGS=10.8T\" -f \"ERGS=0.8T\" -f \"ERGS=T\" -f \"Ergs=T\" !"^"=!^
  -j \"TEST_MULTIARG#3;-4;10000;-10000;100000;-100000;12.3456789123;Ulrich;Erwin\""
 
 "%OPEN_COVER%" "-output:results30.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"MISSING\""
