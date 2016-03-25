@@ -1050,7 +1050,7 @@ namespace Ediabas
                 return false;
             }
 
-            buffer = resultDict.Keys.ElementAt(index - 1);
+            buffer = resultDict.Values.ElementAt(index - 1).Name;
             logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
         }
