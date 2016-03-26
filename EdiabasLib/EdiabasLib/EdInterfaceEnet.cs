@@ -605,21 +605,15 @@ namespace EdiabasLib
                                                 ipBytes[i] |= (byte)(~maskBytes[i]);
                                             }
                                             IPAddress broadcastAddress = new IPAddress(ipBytes);
-                                            if (EdiabasProtected != null)
-                                            {
-                                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': Ip={1} Mask={2} Broadcast={3}",    
-                                                    adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress));
-                                            }
+                                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': Ip={1} Mask={2} Broadcast={3}",
+                                                adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress));
                                             IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, ControlPort);
                                             UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
                                             broadcastSend = true;
                                         }
                                         catch (Exception)
                                         {
-                                            if (EdiabasProtected != null)
-                                            {
-                                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
-                                            }
+                                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
                                         }
                                     }
                                 }
