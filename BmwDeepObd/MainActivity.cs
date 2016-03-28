@@ -73,6 +73,25 @@ namespace BmwDeepObd
             public XElement InfoXml { get; }
         }
 
+        private class DownloadUrlInfo
+        {
+            public DownloadUrlInfo(string url, long fileSize, string name, string password)
+            {
+                Url = url;
+                FileSize = fileSize;
+                Name = name;
+                Password = password;
+            }
+
+            public string Url { get; }
+
+            public long FileSize { get; }
+
+            public string Name { get; }
+
+            public string Password { get; }
+        }
+
         class ConnectButtonInfo
         {
             public ToggleButton Button { get; set; }
@@ -121,6 +140,7 @@ namespace BmwDeepObd
         private WebClient _webClient;
         private Android.App.ProgressDialog _downloadProgress;
         private long _downloadFileSize;
+        private List<DownloadUrlInfo> _downloadUrlInfoList;
         private AlertDialog _startAlertDialog;
         private AlertDialog _downloadEcuAlertDialog;
 
@@ -1578,8 +1598,13 @@ namespace BmwDeepObd
             if (_downloadProgress == null)
             {
                 _downloadProgress = new Android.App.ProgressDialog(this);
-                _downloadProgress.DismissEvent += (sender, args) => { _downloadProgress = null; };
+                _downloadProgress.DismissEvent += (sender, args) =>
+                {
+                    _downloadProgress = null;
+                   _activityCommon.SetScreenLock(false);
+                };
                 _downloadProgress.CancelEvent += DownloadProgressCancel;
+                _downloadUrlInfoList = null;
             }
             _downloadProgress.SetCancelable(true);
             _downloadProgress.SetMessage(GetString(Resource.String.downloading_file));
@@ -1639,18 +1664,16 @@ namespace BmwDeepObd
                 {
                     bool error = false;
                     _downloadProgress.SetCancelable(false);
-                    if (e.Error == null)
+                    if (downloadInfo != null)
                     {
-                        if (downloadInfo != null)
+                        if (e.Error == null)
                         {
                             string extension = Path.GetExtension(downloadInfo.FileName) ?? string.Empty;
                             if (string.Compare(extension, ".xml", StringComparison.OrdinalIgnoreCase) == 0)
-                            {   // XML URL file
-                                string url;
-                                long fileSize;
-                                string name;
-                                string password;
-                                if (!GetDownloadUrl(downloadInfo.FileName, out url, out fileSize, out name, out password))
+                            {
+                                // XML URL file
+                                _downloadUrlInfoList = GetDownloadUrls(downloadInfo.FileName);
+                                if ((_downloadUrlInfoList == null) || (_downloadUrlInfoList.Count < 1))
                                 {
                                     error = true;
                                 }
@@ -1665,26 +1688,25 @@ namespace BmwDeepObd
                                 {
                                     // ignored
                                 }
-                                if (!error && !string.IsNullOrEmpty(url))
+                                if (!error)
                                 {
-                                    _webClient.UseDefaultCredentials = false;
-                                    if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(password))
-                                    {
-                                        _webClient.Credentials = null;
-                                    }
-                                    else
-                                    {
-                                        _webClient.Credentials = new NetworkCredential(name, password);
-                                    }
-                                    DownloadFile(url, downloadInfo.DownloadDir, downloadInfo.TargetDir, fileSize);
+                                    StartDownload(downloadInfo);
                                     return;
                                 }
-                                error = true;
                             }
                             else if (string.Compare(extension, ".zip", StringComparison.OrdinalIgnoreCase) == 0)
-                            {   // zip file
+                            {
+                                // zip file
                                 _downloadProgress.CancelEvent -= DownloadProgressCancel;
                                 ExtractZipFile(downloadInfo.FileName, downloadInfo.TargetDir, downloadInfo.InfoXml, true);
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            if (!e.Cancelled && (_downloadUrlInfoList != null) && (_downloadUrlInfoList.Count >= 1))
+                            {
+                                StartDownload(downloadInfo);
                                 return;
                             }
                         }
@@ -1693,10 +1715,10 @@ namespace BmwDeepObd
                     _downloadProgress.Dispose();
                     _downloadProgress = null;
                     _activityCommon.SetScreenLock(false);
+                    _downloadUrlInfoList = null;
                     if ((!e.Cancelled && e.Error != null) || error)
                     {
-                        _activityCommon.ShowAlert(GetString(Resource.String.download_failed),
-                            Resource.String.alert_title_error);
+                        _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
                     }
                 }
                 if (downloadInfo != null)
@@ -1714,6 +1736,22 @@ namespace BmwDeepObd
                     }
                 }
             });
+        }
+
+        private void StartDownload(DownloadInfo downloadInfo)
+        {
+            DownloadUrlInfo urlInfo = _downloadUrlInfoList[0];
+            _downloadUrlInfoList.RemoveAt(0);
+            _webClient.UseDefaultCredentials = false;
+            if (string.IsNullOrEmpty(urlInfo.Name) || string.IsNullOrEmpty(urlInfo.Password))
+            {
+                _webClient.Credentials = null;
+            }
+            else
+            {
+                _webClient.Credentials = new NetworkCredential(urlInfo.Name, urlInfo.Password);
+            }
+            DownloadFile(urlInfo.Url, downloadInfo.DownloadDir, downloadInfo.TargetDir, urlInfo.FileSize);
         }
 
         private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -1742,46 +1780,52 @@ namespace BmwDeepObd
             }
         }
 
-        private bool GetDownloadUrl(string xmlFile, out string url, out long fileSize, out string name, out string password)
+        private List<DownloadUrlInfo> GetDownloadUrls(string xmlFile)
         {
-            url = null;
-            name = null;
-            password = null;
-            fileSize = -1;
+            List<DownloadUrlInfo> urlInfo = new List<DownloadUrlInfo>();
             try
             {
                 if (!File.Exists(xmlFile))
                 {
-                    return false;
+                    return null;
                 }
                 XDocument xmlDoc = XDocument.Load(xmlFile);
-                XElement fileNode = xmlDoc.Root?.Element("file_v2");
-                XAttribute urlAttr = fileNode?.Attribute("url");
-                if (urlAttr == null)
+                if (xmlDoc.Root == null)
                 {
-                    return false;
+                    return null;
                 }
-                url = urlAttr.Value;
-                XAttribute sizeAttr = fileNode.Attribute("file_size");
-                if (sizeAttr != null)
+                foreach (XElement fileNode in xmlDoc.Root.Elements("file_v2"))
                 {
-                    fileSize = XmlConvert.ToInt64(sizeAttr.Value);
+                    XAttribute urlAttr = fileNode.Attribute("url");
+                    if (!string.IsNullOrEmpty(urlAttr?.Value))
+                    {
+                        string url = urlAttr.Value;
+                        string name = null;
+                        string password = null;
+                        long fileSize = -1;
+                        XAttribute sizeAttr = fileNode.Attribute("file_size");
+                        if (sizeAttr != null)
+                        {
+                            fileSize = XmlConvert.ToInt64(sizeAttr.Value);
+                        }
+                        XAttribute usernameAttr = fileNode.Attribute("username");
+                        if (usernameAttr != null)
+                        {
+                            name = usernameAttr.Value;
+                        }
+                        XAttribute passwordAttr = fileNode.Attribute("password");
+                        if (passwordAttr != null)
+                        {
+                            password = passwordAttr.Value;
+                        }
+                        urlInfo.Add(new DownloadUrlInfo(url, fileSize, name, password));
+                    }
                 }
-                XAttribute usernameAttr = fileNode.Attribute("username");
-                if (usernameAttr != null)
-                {
-                    name = usernameAttr.Value;
-                }
-                XAttribute passwordAttr = fileNode.Attribute("password");
-                if (passwordAttr != null)
-                {
-                    password = passwordAttr.Value;
-                }
-                return true;
+                return urlInfo;
             }
             catch (Exception)
             {
-                return false;
+                return null;
             }
         }
 
