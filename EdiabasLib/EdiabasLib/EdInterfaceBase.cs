@@ -64,6 +64,10 @@ namespace EdiabasLib
                 }
                 MutexAquired = true;
             }
+            catch (AbandonedMutexException)
+            {
+                MutexAquired = true;
+            }
             catch (Exception)
             {
                 return false;
