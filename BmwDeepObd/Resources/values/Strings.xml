@@ -18,7 +18,7 @@
   <string name="bt_device_select">No Bluetooth device has been selected.\nDo you want to select a device now?</string>
   <string name="ecu_download_free_space">There is not enough free space ({0:fs0}) on the device for storing the ECU files.\nDo you want to select a different storage media?</string>
   <string name="ecu_not_found">No ECU files have been found.</string>
-  <string name="ecu_package">Different ECU files are available for this application.</string>
+  <string name="ecu_package">Updated ECU files are available for this application.</string>
   <string name="ecu_download">Do you want to download the ECU files now (File size approx. {0:fs0})?</string>
   <string name="error_no_error">No errors present</string>
   <string name="error_no_response">No response</string>
@@ -27,7 +27,8 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
-\n- Prepared for ENET Wifi adapter
+\n- ENET communication improved
+\n- ECU files updated
 \n- Fixed minor problems</string>
   <string name="app_info_message">Deep OBD for BMW\nVersion: {0}\nId: {1}</string>
 

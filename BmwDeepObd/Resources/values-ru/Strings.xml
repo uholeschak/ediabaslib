@@ -19,6 +19,9 @@
   <string name="ecu_download_free_space">На этом устройстве недостаточно свободной памяти ({0:fs0}) для сохранения ECU файла.\nХотите выбрать другой носитель памяти?</string>
   <string name="ecu_not_found">ECU файлы не найдены.</string>
   <string name="ecu_package">Для этого приложенйя сеществуют другие ECU файлы.</string>
+  <!--
+  <string name="ecu_package">Es stehen aktualisierte ECU Dateien für diese Anwendung zur Verfügung.</string>
+  -->
   <string name="ecu_download">Хотите загрузить ECU файлы (размер файла примерно {0:fs0})?</string>
   <string name="error_no_error">Ошибки отсутствуют</string>
   <string name="error_no_response">Нет подтверждения</string>

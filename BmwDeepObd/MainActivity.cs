@@ -103,9 +103,9 @@ namespace BmwDeepObd
         private const string SharedAppName = "de.holeschak.bmw_deep_obd";
         private const string AppFolderName = "de.holeschak.bmw_deep_obd";
         private const string EcuDirName = "Ecu";
-        private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Ecu1.xml";
+        private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Ecu2.xml";
         private const string InfoXmlName = "Info.xml";
-        private const long EcuZipSize = 120000000;          // ecu zip file size
+        private const long EcuZipSize = 130000000;          // ecu zip file size
         private const long EcuExtractSize = 1200000000;     // extracted ecu files size
 
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
