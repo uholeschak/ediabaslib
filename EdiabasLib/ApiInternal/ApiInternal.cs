@@ -1550,10 +1550,17 @@ namespace Ediabas
                             }
 
                             int appendTrace = 0;
-                            string prop = _ediabas.GetConfigProperty("AppendTrace");
-                            if (prop != null)
+                            string propAppend = _ediabas.GetConfigProperty("AppendTrace");
+                            if (propAppend != null)
                             {
-                                appendTrace = (int)EdiabasNet.StringToValue(prop);
+                                appendTrace = (int)EdiabasNet.StringToValue(propAppend);
+                            }
+
+                            string traceFileName = "api.trc";
+                            string propName = _ediabas.GetConfigProperty("ApiTraceName");
+                            if (!string.IsNullOrWhiteSpace(propName))
+                            {
+                                traceFileName = propName;
                             }
 
                             Directory.CreateDirectory(tracePath);
@@ -1564,7 +1571,7 @@ namespace Ediabas
                                 fileMode = FileMode.Create;
                             }
                             _swLog = new StreamWriter(
-                                new FileStream(Path.Combine(tracePath, "api.trc"), fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding)
+                                new FileStream(Path.Combine(tracePath, traceFileName), fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding)
                                 {
                                     AutoFlush = buffering == 0
                                 };
