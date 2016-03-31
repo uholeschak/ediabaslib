@@ -486,6 +486,15 @@ namespace Ediabas
                 }
             }
 
+            if (!string.IsNullOrEmpty(ifh))
+            {
+                if (ifh.StartsWith("REMOTE:", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    logFormat(ApiLogLevel.Normal, "Ignoring REMOTE", false);
+                    ifh = null;
+                }
+            }
+
             if (string.IsNullOrEmpty(ifh))
             {
                 ifh = _ediabas.GetConfigProperty("Interface");
