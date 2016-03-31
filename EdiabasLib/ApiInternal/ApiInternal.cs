@@ -472,16 +472,19 @@ namespace Ediabas
 
             setLocalError(EDIABAS_ERR_NONE);
 
+            _ediabas = new EdiabasNet(config);
+            logFormat(ApiLogLevel.Normal, "apiInitExt({0}, {1}, {2}, {3})", ifh, unit, app, config);
+
             if (!string.IsNullOrEmpty(unit))
             {
                 if (char.IsLetter(unit[0]))
                 {
                     setLocalError(EDIABAS_IFH_0018);
+                    _ediabas.Dispose();
+                    logFormat(ApiLogLevel.Normal, "={0} ()", false);
                     return false;
                 }
             }
-
-            _ediabas = new EdiabasNet(config);
 
             if (string.IsNullOrEmpty(ifh))
             {
@@ -509,6 +512,7 @@ namespace Ediabas
                 {
                     setLocalError(EDIABAS_IFH_0027);
                     _ediabas.Dispose();
+                    logFormat(ApiLogLevel.Normal, "={0} ()", false);
                     return false;
                 }
             }
@@ -522,13 +526,13 @@ namespace Ediabas
                 setLocalError(EDIABAS_API_0006);
                 edInterface.Dispose();
                 _ediabas.Dispose();
+                logFormat(ApiLogLevel.Normal, "={0} ()", false);
                 return false;
             }
 
             _ediabas.EdInterfaceClass = edInterface;
             _ediabas.AbortJobFunc = abortJobFunc;
 
-            logFormat(ApiLogLevel.Normal, "apiInitExt({0}, {1}, {2}, {3})", ifh, unit, app, config);
             logFormat(ApiLogLevel.Normal, "={0} ()", true);
             return true;
         }
