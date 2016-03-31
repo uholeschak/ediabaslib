@@ -1221,6 +1221,10 @@ namespace Ediabas
             {
                 closeLog();
             }
+            if (string.Compare(cfgName, "ApiTraceName", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                closeLog();
+            }
 
             logFormat(ApiLogLevel.Normal, "={0} ()", true);
             return true;

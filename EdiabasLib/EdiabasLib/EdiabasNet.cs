@@ -2970,6 +2970,14 @@ namespace EdiabasLib
                 {
                     return;
                 }
+                if (string.Compare(key, "IfhTraceName", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return;
+                }
+                if (string.Compare(key, "ApiTraceName", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return;
+                }
             }
 
             lock (_apiLock)
@@ -2991,7 +2999,7 @@ namespace EdiabasLib
                 }
             }
 
-            if (string.Compare(key, "ECUPATH", StringComparison.Ordinal) == 0)
+            if (string.Compare(key, "EcuPath", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 if (JobRunning)
                 {
@@ -3003,11 +3011,15 @@ namespace EdiabasLib
                 }
                 CloseSgbdFs();
             }
-            if (string.Compare(key, "TRACEPATH", StringComparison.Ordinal) == 0)
+            if (string.Compare(key, "TracePath", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 CloseLog();
             }
-            if (string.Compare(key, "IFHTRACE", StringComparison.Ordinal) == 0)
+            if (string.Compare(key, "IfhTrace", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                CloseLog();
+            }
+            if (string.Compare(key, "IfhTraceName", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 CloseLog();
             }
