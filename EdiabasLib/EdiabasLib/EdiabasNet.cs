@@ -2209,7 +2209,6 @@ namespace EdiabasLib
         private static Dictionary<ErrorCodes, UInt32> _trapBitDict;
         private static bool _firstLog = true;
 
-        private const string TraceFileName = "ifh.trc";
         private const string JobNameInit = "INITIALISIERUNG";
         private const string JobNameExit = "ENDE";
         private const string JobNameIdent = "IDENTIFIKATION";
@@ -5188,10 +5187,17 @@ namespace EdiabasLib
                             Directory.CreateDirectory(tracePath);
 
                             int appendTrace = 0;
-                            string prop = GetConfigProperty("AppendTrace");
-                            if (prop != null)
+                            string propAppend = GetConfigProperty("AppendTrace");
+                            if (propAppend != null)
                             {
-                                appendTrace = (int)StringToValue(prop);
+                                appendTrace = (int)StringToValue(propAppend);
+                            }
+
+                            string traceFileName = "ifh.trc";
+                            string propName = GetConfigProperty("IfhTraceName");
+                            if (!string.IsNullOrWhiteSpace(propName))
+                            {
+                                traceFileName = propName;
                             }
 #if COMPRESS_TRACE
                             int compressTrace = 0;
@@ -5204,8 +5210,8 @@ namespace EdiabasLib
                             {
                                 if (_zipStream == null)
                                 {
-                                    string zipFileName = Path.Combine(tracePath, TraceFileName + ".zip");
-                                    string zipFileNameOld = Path.Combine(tracePath, TraceFileName + ".old.zip");
+                                    string zipFileName = Path.Combine(tracePath, traceFileName + ".zip");
+                                    string zipFileNameOld = Path.Combine(tracePath, traceFileName + ".old.zip");
                                     bool appendZip = (!_firstLog || appendTrace != 0) && File.Exists(zipFileName);
                                     if (appendZip && appendTrace == 0)
                                     {
@@ -5223,7 +5229,7 @@ namespace EdiabasLib
                                     _zipStream = new ICSharpCode.SharpZipLib.Zip.ZipOutputStream(fsOut);
                                     _zipStream.SetLevel(8);
                                     ICSharpCode.SharpZipLib.Zip.ZipEntry newEntry =
-                                        new ICSharpCode.SharpZipLib.Zip.ZipEntry(TraceFileName);
+                                        new ICSharpCode.SharpZipLib.Zip.ZipEntry(traceFileName);
                                     _zipStream.PutNextEntry(newEntry);
 
                                     // copy old zip content to new one
@@ -5233,7 +5239,7 @@ namespace EdiabasLib
                                         ICSharpCode.SharpZipLib.Zip.ZipFile zf = new ICSharpCode.SharpZipLib.Zip.ZipFile(fs);
                                         foreach (ICSharpCode.SharpZipLib.Zip.ZipEntry zipEntry in zf)
                                         {
-                                            if (zipEntry.IsFile && string.Compare(zipEntry.Name, TraceFileName, StringComparison.OrdinalIgnoreCase) == 0)
+                                            if (zipEntry.IsFile && string.Compare(zipEntry.Name, traceFileName, StringComparison.OrdinalIgnoreCase) == 0)
                                             {
                                                 ICSharpCode.SharpZipLib.Core.StreamUtils.Copy(zf.GetInputStream(zipEntry), _zipStream, new byte[4096]);
                                                 break;
@@ -5255,7 +5261,7 @@ namespace EdiabasLib
                                     fileMode = FileMode.Create;
                                 }
                                 _swLog = new StreamWriter(
-                                    new FileStream(Path.Combine(tracePath, TraceFileName), fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding);
+                                    new FileStream(Path.Combine(tracePath, traceFileName), fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding);
                             }
                             _firstLog = false;
                         }
