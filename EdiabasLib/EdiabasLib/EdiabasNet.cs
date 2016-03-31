@@ -5213,10 +5213,10 @@ namespace EdiabasLib
                             }
 #if COMPRESS_TRACE
                             int compressTrace = 0;
-                            prop = GetConfigProperty("CompressTrace");
-                            if (prop != null)
+                            string propCompress = GetConfigProperty("CompressTrace");
+                            if (propCompress != null)
                             {
-                                compressTrace = (int)StringToValue(prop);
+                                compressTrace = (int)StringToValue(propCompress);
                             }
                             if (compressTrace != 0)
                             {
