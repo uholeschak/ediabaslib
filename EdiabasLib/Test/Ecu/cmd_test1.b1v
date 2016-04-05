@@ -764,6 +764,10 @@ lsr_nc:
 TEST_LINK#
 ;    JOBNAME:TEST_LINK
 ;    JOBCOMMENT:Test link commands
+;    ARG:PLUGIN NAME
+;    ARGTYPE:string
+;    ARG:PLUGIN VERSION
+;    ARGTYPE:integer
 ;    RESULT:dynamic
 ;    RESULTTYPE:dynamic
 ;    RESULTCOMMENT:Test results
