@@ -1117,7 +1117,8 @@ namespace EdiabasLib
                 }
                 else if (sendData.Length == 2 && sendData[0] == 0x2E && sendData[1] == 0x00)
                 {
-                    receiveData = new byte[] { 0x00, 0x20, 0x00, 0x01, 0x00, 0x00 };
+                    // byte 1: bit0=0 HISTORY KL30 ON, bit4=0 = KL30 ON, bit5=0 = KL15 ON, bit6=0 = KL15 DISCONNECTED,
+                    receiveData = new byte[] { 0x00, 0x00, 0x00, 0x01, 0x00, 0x00 };
                 }
                 else if (sendData.Length == 3 && sendData[0] == 0x24 && sendData[1] == 0x00 && sendData[2] == 0x80)
                 {
