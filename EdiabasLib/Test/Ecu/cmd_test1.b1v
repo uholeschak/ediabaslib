@@ -761,6 +761,29 @@ lsr_nc:
 					eoj
 					eoj
 
+TEST_LINK#
+;    JOBNAME:TEST_LINK
+;    JOBCOMMENT:Test link commands
+;    RESULT:dynamic
+;    RESULTTYPE:dynamic
+;    RESULTCOMMENT:Test results
+;
+					clear		S0
+					pars		S0,#$1
+					jz			test_link_done
+					parl		L0,#$2
+					jnz			test_link_ver
+					move		L0,#$0
+					plink		S0
+					jump		test_link_done
+test_link_ver:
+					plinkv		S0,L0
+test_link_done:
+					ergs		"PLUGIN", S0
+					ergl		"VERSION", L0
+					eoj
+					eoj
+
 TEST_PARY#
 ;    JOBNAME:TEST_PARY
 ;    JOBCOMMENT:Test pary
