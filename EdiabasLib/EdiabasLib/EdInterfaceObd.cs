@@ -1115,6 +1115,14 @@ namespace EdiabasLib
                 {
                     receiveData = new byte[] { 0x00, 0x00, 0xFF };
                 }
+                else if (sendData.Length == 2 && sendData[0] == 0x2E && sendData[1] == 0x00)
+                {
+                    receiveData = new byte[] { 0x00, 0x20, 0x00, 0x01, 0x00, 0x00 };
+                }
+                else if (sendData.Length == 3 && sendData[0] == 0x24 && sendData[1] == 0x00 && sendData[2] == 0x80)
+                {
+                    receiveData = new byte[] { 0x0B, 0x20 };
+                }
             }
             else
             {
