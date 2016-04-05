@@ -111,6 +111,8 @@ namespace EdiabasLib
 
         public abstract bool StopFrequent();
 
+        public abstract bool RawData(byte[] sendData, out byte[] receiveData);
+
         public virtual EdiabasNet Ediabas
         {
             get { return EdiabasProtected; }
@@ -162,6 +164,8 @@ namespace EdiabasLib
         public abstract Int64 BatteryVoltage { get; }
 
         public abstract Int64 IgnitionVoltage { get; }
+
+        public abstract Int64 GetPort(UInt32 index);
 
         public abstract bool Connected { get; }
 

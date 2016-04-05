@@ -285,6 +285,11 @@ namespace EdiabasLib
             }
         }
 
+        public override Int64 GetPort(UInt32 index)
+        {
+            return 0;
+        }
+
         public override bool Connected
         {
             get
@@ -498,6 +503,12 @@ namespace EdiabasLib
 
         public override bool StopFrequent()
         {
+            return true;
+        }
+
+        public override bool RawData(byte[] sendData, out byte[] receiveData)
+        {
+            receiveData = ByteArray0;
             return true;
         }
 
