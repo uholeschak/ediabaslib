@@ -78,6 +78,7 @@ namespace EdiabasLib
         protected double DtrTimeCorrFtdi = 0.3;
         protected int AddRecTimeout = 20;
         protected bool EnableFtdiBitBang;
+        protected bool EdicSimulation;
         protected bool ConnectedProtected;
         protected const int EchoTimeout = 100;
         protected bool UseExtInterfaceFunc;
@@ -193,6 +194,12 @@ namespace EdiabasLib
                 {
                     EnableFtdiBitBang = EdiabasNet.StringToValue(prop) != 0;
                 }
+
+                prop = EdiabasProtected.GetConfigProperty("ObdEdicSimul");
+                if (prop != null)
+                {
+                    EdicSimulation = EdiabasNet.StringToValue(prop) != 0;
+                }
             }
         }
 
@@ -259,6 +266,22 @@ namespace EdiabasLib
                 uint concept = CommParameterProtected[0];
                 switch (concept)
                 {
+                    case 0x0000:    // Raw
+                        if (!EdicSimulation)
+                        {
+                            EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
+                            return;
+                        }
+                        if (CommParameterProtected.Length < 7)
+                        {
+                            EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
+                        }
+                        baudRate = 9600;
+                        parity = SerialParity.Even;
+                        ParTransmitFunc = TransKwp2000S;
+                        break;
+
                     case 0x0001:    // Concept 1
                         if (HasAdapterEcho)
                         {   // only with ADS adapter
@@ -737,6 +760,11 @@ namespace EdiabasLib
             }
         }
 
+        public override Int64 GetPort(UInt32 index)
+        {
+            return 0;
+        }
+
         public override bool Connected
         {
             get
@@ -1074,6 +1102,28 @@ namespace EdiabasLib
         public override bool StopFrequent()
         {
             StopCommThread();
+            return true;
+        }
+
+        public override bool RawData(byte[] sendData, out byte[] receiveData)
+        {
+            EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send Raw");
+            receiveData = ByteArray0;
+            if (EdicSimulation)
+            {
+                if (sendData.Length == 2 && sendData[0] == 0xF1 && sendData[1] == 0x07)
+                {
+                    receiveData = new byte[] { 0x00, 0x00, 0xFF };
+                }
+            }
+            else
+            {
+                if (sendData.Length == 2 && sendData[0] == 0xF1 && sendData[1] == 0x07)
+                {
+                    receiveData = new byte[] { 0x05, 0x03, 0x00 };
+                }
+            }
+            EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, receiveData.Length, "Resp Raw");
             return true;
         }
 

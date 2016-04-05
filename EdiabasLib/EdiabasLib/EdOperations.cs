@@ -618,6 +618,18 @@ namespace EdiabasLib
             ediabas._flags.Overflow = false;
         }
 
+        // link plugin
+        private static void OpPlink(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            ediabas.LogFormat(EdLogLevel.Ifh, "OpPlink: Ignoring plugin {0}", arg0.GetStringData());
+        }
+
+        // link plugin with version
+        private static void OpPlinkv(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            ediabas.LogFormat(EdLogLevel.Ifh, "OpPlinkv: Ignoring plugin {0} version {1:X04}", arg0.GetStringData(), arg1.GetValueData());
+        }
+
         // BEST2: realdiv
         private static void OpFdiv(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
@@ -2688,6 +2700,28 @@ namespace EdiabasLib
             interfaceClass.InterfaceConnect();
         }
 
+        // BEST2: ifgetport
+        private static void OpXgetport(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.OpData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpXignit: Invalid type");
+            }
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if (interfaceClass == null)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
+            else
+            {
+                Int64 voltage = interfaceClass.GetPort(arg1.GetValueData());
+                if (voltage != Int64.MinValue)
+                {
+                    arg0.SetRawData((EdValueType)voltage);
+                }
+            }
+        }
+
         // BEST2: close_communication
         private static void OpXhangup(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
@@ -2722,19 +2756,6 @@ namespace EdiabasLib
             }
         }
 
-        private static void OpXor(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
-        {
-            if (arg0.OpData1.GetType() != typeof(Register))
-            {
-                throw new ArgumentOutOfRangeException("arg0", "OpXor: Invalid type");
-            }
-            EdValueType len = GetArgsValueLength(arg0, arg1);
-            EdValueType value = arg0.GetValueData(len) ^ arg1.GetValueData(len);
-            arg0.SetRawData(value);
-            ediabas._flags.Overflow = false;
-            ediabas._flags.UpdateFlags(value, len);
-        }
-
         // BEST2: recv_keybytes
         private static void OpXkeyb(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
@@ -2753,6 +2774,43 @@ namespace EdiabasLib
                 if (keyBytes != null)
                 {
                     arg0.SetRawData(keyBytes);
+                }
+            }
+        }
+
+        private static void OpXor(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.OpData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpXor: Invalid type");
+            }
+            EdValueType len = GetArgsValueLength(arg0, arg1);
+            EdValueType value = arg0.GetValueData(len) ^ arg1.GetValueData(len);
+            arg0.SetRawData(value);
+            ediabas._flags.Overflow = false;
+            ediabas._flags.UpdateFlags(value, len);
+        }
+
+        // BEST2: ifrawmode
+        private static void OpXraw(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.OpData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpXraw: Invalid type");
+            }
+
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if ((interfaceClass == null) || !interfaceClass.Connected)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
+            else
+            {
+                byte[] request = arg1.GetArrayData();
+                byte[] response;
+                if (interfaceClass.RawData(request, out response))
+                {
+                    arg0.SetRawData(response);
                 }
             }
         }

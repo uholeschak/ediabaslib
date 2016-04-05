@@ -5206,6 +5206,25 @@ job(  name      : TEST_IFACE_FLAGS;
 					clear		S4
 					move		S4, "DEFAULT"
 					clrc
+					xraw		S4,{$F1.B,$07.B}
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergy		"XRAW", S4
+#endasm
+	get_error_bit();
+#asm
+					ergl		"VALUE_ERROR", L0
+					clrt
+#endasm
+
+#asm
+					enewset
+					clear		S4
+					move		S4, "DEFAULT"
+					clrc
 					xstate		S4
 #endasm
 	calc_flags();
