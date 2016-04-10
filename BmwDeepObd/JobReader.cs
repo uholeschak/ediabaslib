@@ -242,6 +242,10 @@ namespace BmwDeepObd
                 {
                     _interfaceType = ActivityCommon.InterfaceType.Enet;
                 }
+                else if (string.Compare(_interfaceName, "ELMWIFI", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    _interfaceType = ActivityCommon.InterfaceType.ElmWifi;
+                }
                 else if (string.Compare(_interfaceName, "FTDI", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _interfaceType = ActivityCommon.InterfaceType.Ftdi;
