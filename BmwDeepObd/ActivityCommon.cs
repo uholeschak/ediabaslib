@@ -62,6 +62,7 @@ namespace BmwDeepObd
             None,
             Bluetooth,
             Enet,
+            ElmWifi,
             Ftdi,
         }
 
@@ -314,6 +315,9 @@ namespace BmwDeepObd
                 case InterfaceType.Enet:
                     return _activity.GetString(Resource.String.select_interface_enet);
 
+                case InterfaceType.ElmWifi:
+                    return _activity.GetString(Resource.String.select_interface_elmwifi);
+
                 case InterfaceType.Ftdi:
                     return _activity.GetString(Resource.String.select_interface_ftdi);
             }
@@ -332,6 +336,7 @@ namespace BmwDeepObd
                     return _btAdapter.IsEnabled;
 
                 case InterfaceType.Enet:
+                case InterfaceType.ElmWifi:
                     if (_maWifi == null)
                     {
                         return false;
@@ -356,6 +361,7 @@ namespace BmwDeepObd
                     return _btAdapter.IsEnabled;
 
                 case InterfaceType.Enet:
+                case InterfaceType.ElmWifi:
                     NetworkInfo networkInfo = _maConnectivity?.ActiveNetworkInfo;
                     if (networkInfo == null)
                     {
@@ -401,14 +407,17 @@ namespace BmwDeepObd
                     return true;
                 }
 
-                case InterfaceType.Ftdi:
-                    return true;
-
                 case InterfaceType.Enet:
                     if (string.IsNullOrEmpty(GetEnetAdapterIp()))
                     {
                         return false;
                     }
+                    return true;
+
+                case InterfaceType.ElmWifi:
+                    return false;
+
+                case InterfaceType.Ftdi:
                     return true;
             }
             return false;
@@ -514,22 +523,34 @@ namespace BmwDeepObd
 
         public bool ShowWifiSettings(EventHandler handler)
         {
-            AlertDialog alterDialog = new AlertDialog.Builder(_activity)
-            .SetMessage(Resource.String.enet_adapter_wifi_info)
-            .SetTitle(Resource.String.alert_title_info)
-            .SetNeutralButton(Resource.String.button_ok, (s, e) =>
+            if (_selectedInterface == InterfaceType.Enet)
             {
-                try
+                AlertDialog alterDialog = new AlertDialog.Builder(_activity)
+                .SetMessage(Resource.String.enet_adapter_wifi_info)
+                .SetTitle(Resource.String.alert_title_info)
+                .SetNeutralButton(Resource.String.button_ok, (s, e) =>
                 {
-                    _activity.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            })
-            .Show();
-            alterDialog.DismissEvent += handler;
+                    try
+                    {
+                        _activity.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                })
+                .Show();
+                alterDialog.DismissEvent += handler;
+                return true;
+            }
+            try
+            {
+                _activity.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
             return true;
         }
 
@@ -631,7 +652,8 @@ namespace BmwDeepObd
             List<string> interfaceNames = new List<string>
             {
                 _activity.GetString(Resource.String.select_interface_bt),
-                _activity.GetString(Resource.String.select_interface_enet)
+                _activity.GetString(Resource.String.select_interface_enet),
+                _activity.GetString(Resource.String.select_interface_elmwifi)
             };
             if (UsbSupport)
             {
@@ -651,8 +673,12 @@ namespace BmwDeepObd
                     listView.SetItemChecked(1, true);
                     break;
 
-                case InterfaceType.Ftdi:
+                case InterfaceType.ElmWifi:
                     listView.SetItemChecked(2, true);
+                    break;
+
+                case InterfaceType.Ftdi:
+                    listView.SetItemChecked(3, true);
                     break;
             }
             builder.SetView(listView);
@@ -671,6 +697,11 @@ namespace BmwDeepObd
                             break;
 
                         case 2:
+                            _selectedInterface = InterfaceType.ElmWifi;
+                            handler(sender, args);
+                            break;
+
+                        case 3:
                             _selectedInterface = InterfaceType.Ftdi;
                             handler(sender, args);
                             break;
@@ -709,6 +740,7 @@ namespace BmwDeepObd
                     break;
 
                 case InterfaceType.Enet:
+                case InterfaceType.ElmWifi:
                     if (_maWifi == null)
                     {
                         Toast.MakeText(_activity, Resource.String.wifi_not_available, ToastLength.Long).Show();
@@ -763,6 +795,7 @@ namespace BmwDeepObd
                     break;
 
                 case InterfaceType.Enet:
+                case InterfaceType.ElmWifi:
                     _activateAlertDialog = new AlertDialog.Builder(_activity)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
@@ -1011,6 +1044,10 @@ namespace BmwDeepObd
                 {
                     ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "FTDI0";
                     connectParameter = new EdFtdiInterface.ConnectParameter(_activity, _usbManager);
+                }
+                else if (SelectedInterface == InterfaceType.ElmWifi)
+                {
+                    ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "ELM327WIFI";
                 }
                 else
                 {

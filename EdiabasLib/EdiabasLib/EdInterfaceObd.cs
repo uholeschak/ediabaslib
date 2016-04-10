@@ -875,6 +875,24 @@ namespace EdiabasLib
                 InterfaceReceiveDataFuncInt = EdBluetoothInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = EdBluetoothInterface.InterfaceSendPulse;
             }
+            else if (ComPortProtected.ToUpper(Culture).StartsWith(EdElmWifiInterface.PortId))
+            {   // automtatic hook of elm wifi functions
+                EdElmWifiInterface.Ediabas = Ediabas;
+                InterfaceConnectFuncInt = EdElmWifiInterface.InterfaceConnect;
+                InterfaceDisconnectFuncInt = EdElmWifiInterface.InterfaceDisconnect;
+                InterfaceSetConfigFuncInt = EdElmWifiInterface.InterfaceSetConfig;
+                InterfaceSetDtrFuncInt = EdElmWifiInterface.InterfaceSetDtr;
+                InterfaceSetRtsFuncInt = EdElmWifiInterface.InterfaceSetRts;
+                InterfaceGetDsrFuncInt = EdElmWifiInterface.InterfaceGetDsr;
+                InterfaceSetBreakFuncInt = EdElmWifiInterface.InterfaceSetBreak;
+                InterfaceSetInterByteTimeFuncInt = EdElmWifiInterface.InterfaceSetInterByteTime;
+                InterfacePurgeInBufferFuncInt = EdElmWifiInterface.InterfacePurgeInBuffer;
+                InterfaceAdapterEchoFuncInt = EdElmWifiInterface.InterfaceAdapterEcho;
+                InterfaceHasPreciseTimeoutFuncInt = EdElmWifiInterface.InterfaceHasPreciseTimeout;
+                InterfaceSendDataFuncInt = EdElmWifiInterface.InterfaceSendData;
+                InterfaceReceiveDataFuncInt = EdElmWifiInterface.InterfaceReceiveData;
+                InterfaceSendPulseFuncInt = EdElmWifiInterface.InterfaceSendPulse;
+            }
 #endif
             else
             {

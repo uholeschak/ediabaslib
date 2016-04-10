@@ -2527,6 +2527,10 @@ namespace BmwDeepObd
                         interfaceName = "ENET";
                         break;
 
+                    case ActivityCommon.InterfaceType.ElmWifi:
+                        interfaceName = "ELMWIFI";
+                        break;
+
                     case ActivityCommon.InterfaceType.Ftdi:
                         interfaceName = "FTDI";
                         break;
@@ -2693,6 +2697,10 @@ namespace BmwDeepObd
 
                     case ActivityCommon.InterfaceType.Enet:
                         interfaceType = "Enet";
+                        break;
+
+                    case ActivityCommon.InterfaceType.ElmWifi:
+                        interfaceType = "ElmWifi";
                         break;
 
                     case ActivityCommon.InterfaceType.Ftdi:

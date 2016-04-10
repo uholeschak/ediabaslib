@@ -44,6 +44,13 @@
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
+      <xs:enumeration value="ELMWIFI">
+        <xs:annotation>
+          <xs:documentation>
+            ELM 327 WIFI device
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
       <xs:enumeration value="FTDI">
         <xs:annotation>
           <xs:documentation>

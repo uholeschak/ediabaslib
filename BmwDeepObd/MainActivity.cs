@@ -710,6 +710,10 @@ namespace BmwDeepObd
                             portName = string.IsNullOrEmpty(_activityCommon.SelectedEnetIp) ? "auto:all" : _activityCommon.SelectedEnetIp;
                             break;
 
+                        case ActivityCommon.InterfaceType.ElmWifi:
+                            portName = "ELM327WIFI";
+                            break;
+
                         case ActivityCommon.InterfaceType.Ftdi:
                             portName = "FTDI0";
                             connectParameter = new EdFtdiInterface.ConnectParameter(this, _activityCommon.UsbManager);
