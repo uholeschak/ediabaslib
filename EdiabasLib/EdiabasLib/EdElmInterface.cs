@@ -396,7 +396,12 @@ namespace EdiabasLib
             byte[] recDataBuffer = null;
             for (;;)
             {
-                if (recLen == 0 && !_inStream.IsDataAvailable())
+                if (recLen == 0 &&
+#if Android
+                    !_inStream.IsDataAvailable())
+#else
+                    _inStream.Length == 0)
+#endif
                 {
                     return;
                 }
@@ -717,7 +722,11 @@ namespace EdiabasLib
             }
             bool elmThread = _elm327Thread != null && Thread.CurrentThread == _elm327Thread;
             StringBuilder stringBuilder = new StringBuilder();
+#if Android
             while (_inStream.IsDataAvailable())
+#else
+            while (_inStream.Length > 0)
+#endif
             {
                 int data = _inStream.ReadByte();
                 if (data >= 0)
@@ -747,7 +756,11 @@ namespace EdiabasLib
             long startTime = Stopwatch.GetTimestamp();
             for (;;)
             {
+#if Android
                 while (_inStream.IsDataAvailable())
+#else
+                while (_inStream.Length > 0)
+#endif
                 {
                     int data = _inStream.ReadByte();
                     if (data >= 0)
@@ -802,7 +815,11 @@ namespace EdiabasLib
             long startTime = Stopwatch.GetTimestamp();
             for (;;)
             {
+#if Android
                 while (_inStream.IsDataAvailable())
+#else
+                while (_inStream.Length > 0)
+#endif
                 {
                     int data = _inStream.ReadByte();
                     if (data >= 0 && data != 0x00)
@@ -870,7 +887,11 @@ namespace EdiabasLib
         private void FlushReceiveBuffer()
         {
             _inStream.Flush();
+#if Android
             while (_inStream.IsDataAvailable())
+#else
+            while (_inStream.Length > 0)
+#endif
             {
                 _inStream.ReadByte();
             }
