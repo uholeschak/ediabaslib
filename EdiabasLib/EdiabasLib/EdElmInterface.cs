@@ -91,7 +91,7 @@ namespace EdiabasLib
                         break;
                     }
                 }
-                if ((Stopwatch.GetTimestamp() - Volatile.Read(ref _elm327ReceiveStartTime)) > timeout * TickResolMs)
+                if ((Stopwatch.GetTimestamp() - _elm327ReceiveStartTime) > timeout * TickResolMs)
                 {
                     if (Ediabas != null)
                     {
