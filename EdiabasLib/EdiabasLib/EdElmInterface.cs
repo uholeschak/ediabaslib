@@ -239,6 +239,14 @@ namespace EdiabasLib
                     }
                     _elm327CanHeader = canHeader;
                 }
+                if (!Elm327SendCommand("ATSTFF"))
+                {
+                    if (Ediabas != null)
+                    {
+                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Setting timeout failed");
+                        return;
+                    }
+                }
                 byte[] canSendBuffer = new byte[8];
                 if (dataLength <= 6)
                 {
@@ -338,9 +346,37 @@ namespace EdiabasLib
                             while (wait);
                         }
 
+                        waitForFc = false;
+                        if (blockSize > 0)
+                        {
+                            if (blockSize == 1)
+                            {
+                                waitForFc = true;
+                            }
+                            blockSize--;
+                        }
                         if (Ediabas != null)
                         {
                             Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Send CF");
+                        }
+                        bool withResponse = (waitForFc || dataLength <= 6);
+                        if (!Elm327SendCommand(withResponse ? "ATSTFF" : "ATST00", false))
+                        {
+                            if (Ediabas != null)
+                            {
+                                Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Setting timeout failed");
+                                return;
+                            }
+                        }
+                        string answer = Elm327ReceiveAnswer(Elm327CommandTimeout);
+                        // check for OK
+                        if (!answer.Contains("OK\r") && !answer.Contains("STOPPED\r") && !answer.Contains("NO DATA\r"))
+                        {
+                            if (Ediabas != null)
+                            {
+                                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ELM set timeout invalid response: {0}", answer);
+                            }
+                            return;
                         }
                         // consecutive frame
                         Array.Clear(canSendBuffer, 0, canSendBuffer.Length);
@@ -359,22 +395,17 @@ namespace EdiabasLib
                         {
                             return;
                         }
+                        if (!withResponse)
+                        {
+                            _elm327DataMode = false;
+                        }
                         if (dataLength <= 0)
                         {
                             break;
                         }
 
-                        waitForFc = false;
-                        if (blockSize > 0)
-                        {
-                            if (blockSize == 1)
-                            {
-                                waitForFc = true;
-                            }
-                            blockSize--;
-                        }
                         if (!waitForFc)
-                        {   // we have to wait here, otherwise thread requires too much compuation time
+                        {   // we have to wait here, otherwise thread requires too much computation time
                             Thread.Sleep(sepTime < 10 ? 10 : sepTime);
                         }
                         if (_elm327TerminateThread)
@@ -396,7 +427,12 @@ namespace EdiabasLib
             byte[] recDataBuffer = null;
             for (;;)
             {
-                if (recLen == 0 && !_inStream.IsDataAvailable())
+                if (recLen == 0 &&
+#if Android
+                    !_inStream.IsDataAvailable())
+#else
+                    _inStream.Length == 0)
+#endif
                 {
                     return;
                 }
@@ -717,7 +753,11 @@ namespace EdiabasLib
             }
             bool elmThread = _elm327Thread != null && Thread.CurrentThread == _elm327Thread;
             StringBuilder stringBuilder = new StringBuilder();
+#if Android
             while (_inStream.IsDataAvailable())
+#else
+            while (_inStream.Length > 0)
+#endif
             {
                 int data = _inStream.ReadByte();
                 if (data >= 0)
@@ -747,7 +787,11 @@ namespace EdiabasLib
             long startTime = Stopwatch.GetTimestamp();
             for (;;)
             {
+#if Android
                 while (_inStream.IsDataAvailable())
+#else
+                while (_inStream.Length > 0)
+#endif
                 {
                     int data = _inStream.ReadByte();
                     if (data >= 0)
@@ -802,7 +846,11 @@ namespace EdiabasLib
             long startTime = Stopwatch.GetTimestamp();
             for (;;)
             {
+#if Android
                 while (_inStream.IsDataAvailable())
+#else
+                while (_inStream.Length > 0)
+#endif
                 {
                     int data = _inStream.ReadByte();
                     if (data >= 0 && data != 0x00)
@@ -870,7 +918,11 @@ namespace EdiabasLib
         private void FlushReceiveBuffer()
         {
             _inStream.Flush();
+#if Android
             while (_inStream.IsDataAvailable())
+#else
+            while (_inStream.Length > 0)
+#endif
             {
                 _inStream.ReadByte();
             }
