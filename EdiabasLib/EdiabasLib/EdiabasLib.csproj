@@ -49,6 +49,8 @@
   <ItemGroup>
     <Compile Include="EdBluetoothInterface.cs" />
     <Compile Include="EdBluetoothInterfaceBase.cs" />
+    <Compile Include="EdElmInterface.cs" />
+    <Compile Include="EdElmWifiInterface.cs" />
     <Compile Include="EdFtdiInterface.cs" />
     <Compile Include="EdInterfaceAds.cs" />
     <Compile Include="EdInterfaceBase.cs" />
