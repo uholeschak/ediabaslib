@@ -33,7 +33,8 @@ namespace EdiabasLib
         private readonly Queue<byte> _elm327RespQueue = new Queue<byte>();
         private readonly Object _elm327BufferLock = new Object();
 
-        public static EdiabasNet Ediabas { get; set; }
+        public bool StreamFailure { get; set; }
+        public EdiabasNet Ediabas { get; set; }
 
         public EdElmInterface(EdiabasNet ediabas, Stream inStream, Stream outStream)
         {
@@ -46,6 +47,7 @@ namespace EdiabasLib
         {
             Elm327StopThread();
             Elm327Exit();
+            StreamFailure = false;
 
             return true;
         }
@@ -152,6 +154,7 @@ namespace EdiabasLib
             }
             _elm327CanHeader = 0x6F1;
             _elm327Timeout = -1;
+            StreamFailure = false;
             Elm327StartThread();
             return true;
         }
@@ -631,6 +634,7 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
+                StreamFailure = true;
                 return false;
             }
             return true;
@@ -689,6 +693,7 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
+                StreamFailure = true;
                 return false;
             }
             return true;

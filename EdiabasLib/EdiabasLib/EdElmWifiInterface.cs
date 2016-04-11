@@ -13,6 +13,7 @@ namespace EdiabasLib
         protected static string ElmIp = "192.168.0.10";
         protected static int ElmPort = 35000;
         protected static int ConnectTimeout = 5000;
+        protected static string ConnectPort;
         private static EdElmInterface _edElmInterface;
 
         static EdElmWifiInterface()
@@ -29,6 +30,7 @@ namespace EdiabasLib
             }
             try
             {
+                ConnectPort = port;
                 TcpElmClient = new TcpClientWithTimeout(IPAddress.Parse(ElmIp), ElmPort, ConnectTimeout).Connect();
                 TcpElmStream = TcpElmClient.GetStream();
                 _edElmInterface = new EdElmInterface(Ediabas, TcpElmStream, TcpElmStream);
@@ -167,7 +169,21 @@ namespace EdiabasLib
             {
                 return false;
             }
-            return _edElmInterface.InterfaceSendData(sendData, length, setDtr, dtrTimeCorr);
+            if (_edElmInterface.StreamFailure)
+            {
+                Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
+                InterfaceDisconnect();
+                if (!InterfaceConnect(ConnectPort, null))
+                {
+                    _edElmInterface.StreamFailure = true;
+                    return false;
+                }
+            }
+            if (!_edElmInterface.InterfaceSendData(sendData, length, setDtr, dtrTimeCorr))
+            {
+                return false;
+            }
+            return true;
         }
 
         public static bool InterfaceReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog)
