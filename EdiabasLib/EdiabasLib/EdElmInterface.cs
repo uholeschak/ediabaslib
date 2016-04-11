@@ -24,6 +24,7 @@ namespace EdiabasLib
         private long _elm327ReceiveStartTime;
         private bool _elm327DataMode;
         private int _elm327CanHeader;
+        private int _elm327Timeout;
         private Thread _elm327Thread;
         private bool _elm327TerminateThread;
         private readonly AutoResetEvent _elm327RequEvent = new AutoResetEvent(false);
@@ -150,6 +151,7 @@ namespace EdiabasLib
                 }
             }
             _elm327CanHeader = 0x6F1;
+            _elm327Timeout = -1;
             Elm327StartThread();
             return true;
         }
@@ -238,14 +240,6 @@ namespace EdiabasLib
                         return;
                     }
                     _elm327CanHeader = canHeader;
-                }
-                if (!Elm327SendCommand("ATSTFF"))
-                {
-                    if (Ediabas != null)
-                    {
-                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Setting timeout failed");
-                        return;
-                    }
                 }
                 byte[] canSendBuffer = new byte[8];
                 if (dataLength <= 6)
@@ -359,25 +353,7 @@ namespace EdiabasLib
                         {
                             Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Send CF");
                         }
-                        bool withResponse = (waitForFc || dataLength <= 6);
-                        if (!Elm327SendCommand(withResponse ? "ATSTFF" : "ATST00", false))
-                        {
-                            if (Ediabas != null)
-                            {
-                                Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Setting timeout failed");
-                                return;
-                            }
-                        }
-                        string answer = Elm327ReceiveAnswer(Elm327CommandTimeout);
-                        // check for OK
-                        if (!answer.Contains("OK\r") && !answer.Contains("STOPPED\r") && !answer.Contains("NO DATA\r"))
-                        {
-                            if (Ediabas != null)
-                            {
-                                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ELM set timeout invalid response: {0}", answer);
-                            }
-                            return;
-                        }
+                        bool expectResponse = (waitForFc || (dataLength <= 6));
                         // consecutive frame
                         Array.Clear(canSendBuffer, 0, canSendBuffer.Length);
                         canSendBuffer[0] = targetAddr;
@@ -391,13 +367,9 @@ namespace EdiabasLib
                         dataLength -= telLen;
                         dataOffset += telLen;
                         blockCount++;
-                        if (!Elm327SendCanTelegram(canSendBuffer))
+                        if (!Elm327SendCanTelegram(canSendBuffer, expectResponse))
                         {
                             return;
-                        }
-                        if (!withResponse)
-                        {
-                            _elm327DataMode = false;
                         }
                         if (dataLength <= 0)
                         {
@@ -406,7 +378,7 @@ namespace EdiabasLib
 
                         if (!waitForFc)
                         {   // we have to wait here, otherwise thread requires too much computation time
-                            Thread.Sleep(sepTime < 10 ? 10 : sepTime);
+                            Thread.Sleep(sepTime < 50 ? 50 : sepTime);
                         }
                         if (_elm327TerminateThread)
                         {
@@ -664,13 +636,40 @@ namespace EdiabasLib
             return true;
         }
 
-        private bool Elm327SendCanTelegram(byte[] canTelegram)
+        private bool Elm327SendCanTelegram(byte[] canTelegram, bool expectResponse = true)
         {
             try
             {
+                int timeout = expectResponse ? 0xFF : 0x00;
+                if ((timeout == 0x00) || (timeout != _elm327Timeout))
+                {
+                    if (!Elm327SendCommand(string.Format("ATST{0:X02}", timeout), false))
+                    {
+                        if (Ediabas != null)
+                        {
+                            Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Setting timeout failed");
+                            _elm327Timeout = -1;
+                            return false;
+                        }
+                    }
+                    string answer = Elm327ReceiveAnswer(Elm327CommandTimeout);
+                    // check for OK
+                    if (!answer.Contains("OK\r") && !answer.Contains("STOPPED\r") && !answer.Contains("NO DATA\r"))
+                    {
+                        if (Ediabas != null)
+                        {
+                            Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ELM set timeout invalid response: {0}", answer);
+                        }
+                        _elm327Timeout = -1;
+                        return false;
+                    }
+                }
+                _elm327Timeout = timeout;
+
                 if (!Elm327LeaveDataMode(Elm327CommandTimeout))
                 {
                     _elm327DataMode = false;
+                    _elm327Timeout = -1;
                     return false;
                 }
                 FlushReceiveBuffer();
@@ -686,7 +685,7 @@ namespace EdiabasLib
                 stringBuilder.Append("\r");
                 byte[] sendData = Encoding.UTF8.GetBytes(stringBuilder.ToString());
                 _outStream.Write(sendData, 0, sendData.Length);
-                _elm327DataMode = true;
+                _elm327DataMode = expectResponse;
             }
             catch (Exception)
             {
