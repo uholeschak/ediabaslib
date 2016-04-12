@@ -8,10 +8,10 @@ namespace EdiabasLib
     public class EdElmWifiInterface
     {
         public const string PortId = "ELM327WIFI";
+        public static string ElmIp = "192.168.0.10";
+        public static int ElmPort = 35000;
         protected static TcpClient TcpElmClient;
         protected static NetworkStream TcpElmStream;
-        protected static string ElmIp = "192.168.0.10";
-        protected static int ElmPort = 35000;
         protected static int ConnectTimeout = 5000;
         protected static string ConnectPort;
         private static EdElmInterface _edElmInterface;

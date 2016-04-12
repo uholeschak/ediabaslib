@@ -428,7 +428,7 @@ namespace BmwDeepObd
                             return true;
                         }
                     }
-                    if (_activityCommon.ShowEnetSsidWarning(noAction =>
+                    if (_activityCommon.ShowWifiWarning(noAction =>
                     {
                         if (noAction)
                         {
