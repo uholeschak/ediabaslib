@@ -429,22 +429,41 @@ namespace BmwDeepObd
             if (wifiInfo != null && _maWifi.DhcpInfo != null &&
                 !string.IsNullOrEmpty(wifiInfo.SSID) && wifiInfo.SSID.Contains(AdapterSsid))
             {
-                int ipAddress = _maWifi.DhcpInfo.ServerAddress;
-                if (Java.Nio.ByteOrder.NativeOrder().Equals(Java.Nio.ByteOrder.LittleEndian))
-                {
-                    ipAddress = Java.Lang.Integer.ReverseBytes(ipAddress);
-                }
-                byte[] ipByteArray = Java.Math.BigInteger.ValueOf(ipAddress).ToByteArray();
-                try
-                {
-                    return Java.Net.InetAddress.GetByAddress(ipByteArray).HostAddress;
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
+                return ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
             }
             return null;
+        }
+
+        public bool ElmWifiAdapterValid()
+        {
+            WifiInfo wifiInfo = _maWifi?.ConnectionInfo;
+            if (wifiInfo != null && _maWifi.DhcpInfo != null)
+            {
+                string adapterIp = ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
+                if (string.Compare(adapterIp, EdElmWifiInterface.ElmIp, StringComparison.Ordinal) != 0)
+                {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public string ConvertIpAddress(int ipAddress)
+        {
+            if (Java.Nio.ByteOrder.NativeOrder().Equals(Java.Nio.ByteOrder.LittleEndian))
+            {
+                ipAddress = Java.Lang.Integer.ReverseBytes(ipAddress);
+            }
+            byte[] ipByteArray = Java.Math.BigInteger.ValueOf(ipAddress).ToByteArray();
+            try
+            {
+                return Java.Net.InetAddress.GetByAddress(ipByteArray).HostAddress;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public bool EnetAdapterConfig()
@@ -475,50 +494,80 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool ShowEnetSsidWarning(EnetSsidWarnDelegate handler)
+        public bool ShowWifiWarning(EnetSsidWarnDelegate handler)
         {
-            if (_selectedInterface != InterfaceType.Enet)
+            if (_selectedInterface == InterfaceType.ElmWifi)
             {
+                if (ElmWifiAdapterValid())
+                {
+                    return false;
+                }
+                bool ignoreDismiss = false;
+                AlertDialog alertDialog = new AlertDialog.Builder(_activity)
+                .SetMessage(Resource.String.elmwifi_adapter_warn)
+                .SetTitle(Resource.String.alert_title_warning)
+                .SetPositiveButton(Resource.String.button_yes, (s, e) =>
+                {
+                    ignoreDismiss = true;
+                    ShowWifiSettings((sender, args) =>
+                    {
+                        handler(false);
+                    });
+                })
+                .SetNegativeButton(Resource.String.button_no, (s, e) => { })
+                .Show();
+                alertDialog.DismissEvent += (sender, args) =>
+                {
+                    if (!ignoreDismiss)
+                    {
+                        handler(true);
+                    }
+                };
                 return false;
             }
-            bool result = false;
-            string enetSsid = string.Empty;
-            WifiInfo wifiInfo = _maWifi?.ConnectionInfo;
-            if (wifiInfo != null && _maWifi.DhcpInfo != null && !string.IsNullOrEmpty(wifiInfo.SSID))
-            {
-                enetSsid = wifiInfo.SSID;
-            }
-            if (string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
-            {
-                _lastEnetSsid = enetSsid;
-                if (!enetSsid.Contains(AdapterSsid))
-                {
-                    bool ignoreDismiss = false;
-                    AlertDialog alertDialog = new AlertDialog.Builder(_activity)
-                    .SetMessage(Resource.String.enet_adapter_ssid_warn)
-                    .SetTitle(Resource.String.alert_title_warning)
-                    .SetPositiveButton(Resource.String.button_yes, (s, e) =>
-                    {
-                        ignoreDismiss = true;
-                        ShowWifiSettings((sender, args) =>
-                        {
-                            handler(false);
-                        });
-                    })
-                    .SetNegativeButton(Resource.String.button_no, (s, e) => { })
-                    .Show();
-                    alertDialog.DismissEvent += (sender, args) =>
-                    {
-                        if (!ignoreDismiss)
-                        {
-                            handler(true);
-                        }
-                    };
 
-                    result = true;
+            if (_selectedInterface == InterfaceType.Enet)
+            {
+                bool result = false;
+                string enetSsid = string.Empty;
+                WifiInfo wifiInfo = _maWifi?.ConnectionInfo;
+                if (wifiInfo != null && _maWifi.DhcpInfo != null && !string.IsNullOrEmpty(wifiInfo.SSID))
+                {
+                    enetSsid = wifiInfo.SSID;
                 }
+                if (string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
+                {
+                    _lastEnetSsid = enetSsid;
+                    if (!enetSsid.Contains(AdapterSsid))
+                    {
+                        bool ignoreDismiss = false;
+                        AlertDialog alertDialog = new AlertDialog.Builder(_activity)
+                        .SetMessage(Resource.String.enet_adapter_ssid_warn)
+                        .SetTitle(Resource.String.alert_title_warning)
+                        .SetPositiveButton(Resource.String.button_yes, (s, e) =>
+                        {
+                            ignoreDismiss = true;
+                            ShowWifiSettings((sender, args) =>
+                            {
+                                handler(false);
+                            });
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (s, e) => { })
+                        .Show();
+                        alertDialog.DismissEvent += (sender, args) =>
+                        {
+                            if (!ignoreDismiss)
+                            {
+                                handler(true);
+                            }
+                        };
+
+                        result = true;
+                    }
+                }
+                return result;
             }
-            return result;
+            return false;
         }
 
         public bool ShowWifiSettings(EventHandler handler)

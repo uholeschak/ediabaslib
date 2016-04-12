@@ -157,6 +157,9 @@
   <string name="enet_adapter_wifi_info">Wenn Sie einen Deep OBD BMW Wifi Adapter verwenden, wählen Sie den Access Point mit dem Namen \'Deep OBD BMW\', das Default-Password ist deepobdbmw.</string>
   <string name="enet_adapter_ssid_warn">Sie sind nicht mit einem Deep OBD BMW Wifi Adapter verbunden.\nWollen Sie einen anderen Access Point auswählen?</string>
 
+  <!-- ELM327 Wifi -->
+  <string name="elmwifi_adapter_warn">Sie sind nicht mit einem ELM327 Wifi Adapter verbunden.\nWollen Sie einen anderen Access Point auswählen?</string>
+
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas Tool</string>
   <string name="tool_select_sgbd">SGBD auswählen</string>
