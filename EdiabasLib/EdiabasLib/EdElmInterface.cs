@@ -402,12 +402,7 @@ namespace EdiabasLib
             byte[] recDataBuffer = null;
             for (;;)
             {
-                if (recLen == 0 &&
-#if Android
-                    !_inStream.IsDataAvailable())
-#else
-                    _inStream.Length == 0)
-#endif
+                if (recLen == 0 && !DataAvailable())
                 {
                     return;
                 }
@@ -632,8 +627,12 @@ namespace EdiabasLib
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ELM stream failure", ex.Message);
+                }
                 StreamFailure = true;
                 return false;
             }
@@ -691,8 +690,12 @@ namespace EdiabasLib
                 _outStream.Write(sendData, 0, sendData.Length);
                 _elm327DataMode = expectResponse;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ELM stream failure", ex.Message);
+                }
                 StreamFailure = true;
                 return false;
             }
@@ -757,11 +760,7 @@ namespace EdiabasLib
             }
             bool elmThread = _elm327Thread != null && Thread.CurrentThread == _elm327Thread;
             StringBuilder stringBuilder = new StringBuilder();
-#if Android
-            while (_inStream.IsDataAvailable())
-#else
-            while (_inStream.Length > 0)
-#endif
+            while (DataAvailable())
             {
                 int data = _inStream.ReadByte();
                 if (data >= 0)
@@ -791,11 +790,7 @@ namespace EdiabasLib
             long startTime = Stopwatch.GetTimestamp();
             for (;;)
             {
-#if Android
-                while (_inStream.IsDataAvailable())
-#else
-                while (_inStream.Length > 0)
-#endif
+                while (DataAvailable())
                 {
                     int data = _inStream.ReadByte();
                     if (data >= 0)
@@ -850,11 +845,7 @@ namespace EdiabasLib
             long startTime = Stopwatch.GetTimestamp();
             for (;;)
             {
-#if Android
-                while (_inStream.IsDataAvailable())
-#else
-                while (_inStream.Length > 0)
-#endif
+                while (DataAvailable())
                 {
                     int data = _inStream.ReadByte();
                     if (data >= 0 && data != 0x00)
@@ -922,14 +913,24 @@ namespace EdiabasLib
         private void FlushReceiveBuffer()
         {
             _inStream.Flush();
-#if Android
-            while (_inStream.IsDataAvailable())
-#else
-            while (_inStream.Length > 0)
-#endif
+            while (DataAvailable())
             {
                 _inStream.ReadByte();
             }
+        }
+
+        private bool DataAvailable()
+        {
+#if Android
+            return _inStream.IsDataAvailable();
+#else
+            System.Net.Sockets.NetworkStream networkStream = _inStream as System.Net.Sockets.NetworkStream;
+            if (networkStream == null)
+            {
+                return false;
+            }
+            return networkStream.DataAvailable;
+#endif
         }
 
         public static byte CalcChecksumBmwFast(byte[] data, int offset, int length)

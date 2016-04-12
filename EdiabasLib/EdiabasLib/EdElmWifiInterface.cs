@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+// ReSharper disable UseNullPropagation
 
 namespace EdiabasLib
 {
@@ -171,7 +172,10 @@ namespace EdiabasLib
             }
             if (_edElmInterface.StreamFailure)
             {
-                Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
+                if (Ediabas != null)
+                {
+                    Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
+                }
                 InterfaceDisconnect();
                 if (!InterfaceConnect(ConnectPort, null))
                 {
