@@ -5200,11 +5200,11 @@ namespace CarSimulator
                     continue;
                 }
 
-                Thread.Sleep(100); // maximum is 2000ms
+                Thread.Sleep(100); // W1: 60-300ms
                 _sendData[0] = 0x55;
                 SendData(_sendData, 0, 1);
 
-                Thread.Sleep(100); // maximum 400ms
+                Thread.Sleep(10); // W2: 5-20ms
                 int sendLen;
                 if (_configData.ConfigList.Count > 1)
                 {
@@ -5215,8 +5215,8 @@ namespace CarSimulator
                 else
                 {
                     sendLen = 2;
-                    _sendData[0] = 0x08;
-                    _sendData[1] = 0x08;
+                    _sendData[0] = 0xEF;
+                    _sendData[1] = 0x8F;
                 }
 
                 SendData(_sendData, 0, sendLen);
@@ -5237,11 +5237,14 @@ namespace CarSimulator
                 {
                     Debug.WriteLine("No init response");
                 }
+
+                Thread.Sleep(25); // W4: 25-50ms
+                _sendData[0] = (byte) (~_configData.ConfigList[0]);
+                SendData(_sendData, 0, 1);
             } while (!initOk);
 
             Debug.WriteLine("Init done");
 
-#if false
             long lastRecTime = Stopwatch.GetTimestamp();
             for (;;)
             {
@@ -5256,7 +5259,9 @@ namespace CarSimulator
                         Debug.WriteLine("Receive timeout");
                         break;
                     }
+                    continue;
                 }
+                lastRecTime = Stopwatch.GetTimestamp();
                 int recLength = _receiveData[0] & 0x3F;
                 if (recLength == 0)
                 {
@@ -5284,7 +5289,6 @@ namespace CarSimulator
                     ObdSend(_receiveData);
                 }
             }
-#endif
         }
     }
 }
