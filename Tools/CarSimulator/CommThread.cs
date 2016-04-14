@@ -76,6 +76,7 @@ namespace CarSimulator
             Concept1,
             ConceptIso9141,     // Concept2
             Concept3,
+            ConceptKwp2000,     // VW
         };
 
         public enum ResponseType
@@ -573,6 +574,10 @@ namespace CarSimulator
                                 SerialConcept3Transmission();
                                 break;
 
+                            case ConceptType.ConceptKwp2000:
+                                SerialKwp2000Transmission();
+                                break;
+
                             default:
                                 SerialTransmission();
                                 break;
@@ -679,6 +684,12 @@ namespace CarSimulator
                     case ConceptType.Concept3:
                         baudRate = 9600;
                         parity = Parity.Even;
+                        break;
+
+                    case ConceptType.ConceptKwp2000:
+                        baudRate = 10400;
+                        //baudRate = 9600;
+                        parity = Parity.None;
                         break;
                 }
 
@@ -1070,6 +1081,7 @@ namespace CarSimulator
                     return SendBmwfast(sendData);
 
                 case ConceptType.ConceptKwp2000S:
+                case ConceptType.ConceptKwp2000:
                     {
                         byte[] tempArray = new byte[260];
                         // convert to KWP2000*
@@ -1138,6 +1150,7 @@ namespace CarSimulator
                     return ReceiveBmwFast(receiveData);
 
                 case ConceptType.ConceptKwp2000S:
+                case ConceptType.ConceptKwp2000:
                     {
                         if (!ReceiveKwp2000S(receiveData))
                         {
@@ -5169,5 +5182,109 @@ namespace CarSimulator
             }
         }
 
+        private void SerialKwp2000Transmission()
+        {
+            bool initOk;
+            do
+            {
+                initOk = false;
+                byte wakeAddress = 0x00;
+                if (!ReceiveWakeUp(out wakeAddress))
+                {
+                    break;
+                }
+                Debug.WriteLine("Wake Address: {0:X02}", wakeAddress);
+                if ((_configData.ConfigList.Count > 1) && (wakeAddress != _configData.ConfigList[0]))
+                {
+                    Debug.WriteLine("Invalid wake address");
+                    continue;
+                }
+
+                Thread.Sleep(100); // maximum is 2000ms
+                _sendData[0] = 0x55;
+                SendData(_sendData, 0, 1);
+
+                Thread.Sleep(100); // maximum 400ms
+                int sendLen;
+                if (_configData.ConfigList.Count > 1)
+                {
+                    byte[] configArray = _configData.ConfigList.ToArray();
+                    sendLen = configArray.Length - 1;
+                    Array.Copy(configArray, 1, _sendData, 0, sendLen);
+                }
+                else
+                {
+                    sendLen = 2;
+                    _sendData[0] = 0x08;
+                    _sendData[1] = 0x08;
+                }
+
+                SendData(_sendData, 0, sendLen);
+
+                //if (ReceiveData(_receiveData, 0, 1, 50, 50))  // too fast for ELM
+                if (ReceiveData(_receiveData, 0, 1, 70, 70))
+                {
+                    if ((byte) (~_receiveData[0]) == _sendData[1])
+                    {
+                        initOk = true;
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Invalid init response {0}", (byte) (~_receiveData[0]));
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine("No init response");
+                }
+            } while (!initOk);
+
+            Debug.WriteLine("Init done");
+
+#if false
+            long lastRecTime = Stopwatch.GetTimestamp();
+            for (;;)
+            {
+                if (_stopThread)
+                {
+                    break;
+                }
+                if (!ObdReceive(_receiveData))
+                {
+                    if ((Stopwatch.GetTimestamp() - lastRecTime) > 2000*TickResolMs)
+                    {
+                        Debug.WriteLine("Receive timeout");
+                        break;
+                    }
+                }
+                int recLength = _receiveData[0] & 0x3F;
+                if (recLength == 0)
+                {
+                    // with length byte
+                    recLength = _receiveData[3] + 4;
+                }
+                else
+                {
+                    recLength += 3;
+                }
+                recLength += 1; // checksum
+#if true
+                {
+                    string text = string.Empty;
+                    for (int i = 0; i < recLength; i++)
+                    {
+                        text += string.Format("{0:X02} ", _receiveData[i]);
+                    }
+                    Debug.WriteLine("Request: " + text);
+                }
+#endif
+                if (!_adsAdapter && !_klineResponder)
+                {
+                    // send echo
+                    ObdSend(_receiveData);
+                }
+            }
+#endif
+        }
     }
 }
