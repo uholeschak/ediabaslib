@@ -1081,7 +1081,6 @@ namespace CarSimulator
                     return SendBmwfast(sendData);
 
                 case ConceptType.ConceptKwp2000S:
-                case ConceptType.ConceptKwp2000:
                     {
                         byte[] tempArray = new byte[260];
                         // convert to KWP2000*
@@ -1127,6 +1126,9 @@ namespace CarSimulator
                         }
                         return SendDs2(tempArray);
                     }
+
+                case ConceptType.ConceptKwp2000:
+                    return SendBmwfast(sendData);
             }
             return false;
         }
@@ -1150,7 +1152,6 @@ namespace CarSimulator
                     return ReceiveBmwFast(receiveData);
 
                 case ConceptType.ConceptKwp2000S:
-                case ConceptType.ConceptKwp2000:
                     {
                         if (!ReceiveKwp2000S(receiveData))
                         {
@@ -1205,6 +1206,9 @@ namespace CarSimulator
                         }
                         return true;
                     }
+
+                case ConceptType.ConceptKwp2000:
+                    return ReceiveBmwFast(receiveData);
             }
             return false;
         }
@@ -5185,6 +5189,7 @@ namespace CarSimulator
         private void SerialKwp2000Transmission()
         {
             bool initOk;
+            byte[] keyBytes = { 0xEF, 0x8F};
             do
             {
                 initOk = false;
@@ -5205,26 +5210,21 @@ namespace CarSimulator
                 SendData(_sendData, 0, 1);
 
                 Thread.Sleep(10); // W2: 5-20ms
-                int sendLen;
                 if (_configData.ConfigList.Count > 1)
                 {
                     byte[] configArray = _configData.ConfigList.ToArray();
-                    sendLen = configArray.Length - 1;
-                    Array.Copy(configArray, 1, _sendData, 0, sendLen);
+                    if (configArray.Length >= 3)
+                    {
+                        keyBytes[0] = configArray[1];
+                        keyBytes[1] = configArray[2];
+                    }
                 }
-                else
-                {
-                    sendLen = 2;
-                    _sendData[0] = 0xEF;
-                    _sendData[1] = 0x8F;
-                }
-
-                SendData(_sendData, 0, sendLen);
+                SendData(keyBytes, 0, keyBytes.Length);
 
                 //if (ReceiveData(_receiveData, 0, 1, 50, 50))  // too fast for ELM
                 if (ReceiveData(_receiveData, 0, 1, 70, 70))
                 {
-                    if ((byte) (~_receiveData[0]) == _sendData[1])
+                    if ((byte) (~_receiveData[0]) == keyBytes[1])
                     {
                         initOk = true;
                     }
@@ -5254,7 +5254,7 @@ namespace CarSimulator
                 }
                 if (!ObdReceive(_receiveData))
                 {
-                    if ((Stopwatch.GetTimestamp() - lastRecTime) > 2000*TickResolMs)
+                    if ((Stopwatch.GetTimestamp() - lastRecTime) > 4000*TickResolMs)
                     {
                         Debug.WriteLine("Receive timeout");
                         break;
@@ -5287,6 +5287,89 @@ namespace CarSimulator
                 {
                     // send echo
                     ObdSend(_receiveData);
+                }
+
+                bool standardResponse = false;
+                if (
+                    _receiveData[0] == 0x81 &&
+                    _receiveData[2] == 0xF1 &&
+                    _receiveData[3] == 0x81)
+                {
+                    // start communication service
+                    int i = 0;
+                    _sendData[i++] = 0x83;
+                    _sendData[i++] = 0xF1;
+                    _sendData[i++] = _receiveData[1];
+                    _sendData[i++] = 0xC1;
+                    _sendData[i++] = keyBytes[0]; // key low
+                    _sendData[i++] = keyBytes[1]; // key high
+
+                    ObdSend(_sendData);
+                    Debug.WriteLine("Start communication");
+                    standardResponse = true;
+                }
+                else if (
+                    _receiveData[0] == 0x81 &&
+                    _receiveData[2] == 0xF1 &&
+                    _receiveData[3] == 0x82)
+                {
+                    // stop communication service
+                    int i = 0;
+                    _sendData[i++] = 0x81;
+                    _sendData[i++] = 0xF1;
+                    _sendData[i++] = _receiveData[1];
+                    _sendData[i++] = 0xC2;
+
+                    ObdSend(_sendData);
+                    Debug.WriteLine("Stop communication");
+                    standardResponse = true;
+                    break;
+                }
+
+                if (!standardResponse)
+                {
+                    bool found = false;
+                    foreach (ResponseEntry responseEntry in _configData.ResponseList)
+                    {
+                        if (recLength != responseEntry.Request.Length) continue;
+                        bool equal = true;
+                        // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
+                        for (int i = 0; i < recLength - 1; i++)
+                        {
+                            // don't compare checksum
+                            if (_receiveData[i] != responseEntry.Request[i])
+                            {
+                                equal = false;
+                                break;
+                            }
+                        }
+                        if (equal)
+                        {
+                            // entry found
+                            found = true;
+                            if (responseEntry.ResponseMultiList.Count > 1)
+                            {
+                                foreach (byte[] responseTel in responseEntry.ResponseMultiList)
+                                {
+                                    ObdSend(responseTel);
+                                }
+                            }
+                            else
+                            {
+                                ObdSend(responseEntry.ResponseDyn);
+                            }
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        string text = string.Empty;
+                        for (int i = 0; i < recLength; i++)
+                        {
+                            text += string.Format("{0:X02} ", _receiveData[i]);
+                        }
+                        Debug.WriteLine("Not found: " + text);
+                    }
                 }
             }
         }
