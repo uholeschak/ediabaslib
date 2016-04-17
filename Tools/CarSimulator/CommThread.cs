@@ -22,11 +22,11 @@ namespace CarSimulator
         {
             public ConfigData()
             {
-                ConfigList = new List<byte>();
+                ConfigList = new List<byte[]>();
                 ResponseOnlyList = new List<byte[]>();
                 ResponseList = new List<ResponseEntry>();
             }
-            public List<byte> ConfigList { get; }
+            public List<byte[]> ConfigList { get; }
             public List<byte[]> ResponseOnlyList { get; }
             public List<ResponseEntry> ResponseList { get; }
         }
@@ -2370,6 +2370,18 @@ namespace CarSimulator
                 sum ^= data[i];
             }
             return sum;
+        }
+
+        private byte[] GetConfigData(byte wakeAddress)
+        {
+            foreach (byte[] configData in _configData.ConfigList)
+            {
+                if (configData.Length > 0 && configData[0] == wakeAddress)
+                {
+                    return configData;
+                }
+            }
+            return null;
         }
 
         private bool SendIso9141Block(byte[] sendData)
@@ -4960,7 +4972,8 @@ namespace CarSimulator
                     break;
                 }
                 Debug.WriteLine("Wake Address: {0:X02}", wakeAddress);
-                if ((_configData.ConfigList.Count > 1) && (wakeAddress != _configData.ConfigList[0]))
+                byte[] configData = GetConfigData(wakeAddress);
+                if (configData == null)
                 {
                     Debug.WriteLine("Invalid wake address");
                     continue;
@@ -4972,11 +4985,10 @@ namespace CarSimulator
 
                 Thread.Sleep(100);   // maximum 400ms
                 int sendLen;
-                if (_configData.ConfigList.Count > 1)
+                if (configData.Length > 1)
                 {
-                    byte[] configArray = _configData.ConfigList.ToArray();
-                    sendLen = configArray.Length - 1;
-                    Array.Copy(configArray, 1, _sendData, 0, sendLen);
+                    sendLen = configData.Length - 1;
+                    Array.Copy(configData, 1, _sendData, 0, sendLen);
                 }
                 else
                 {
@@ -5118,7 +5130,8 @@ namespace CarSimulator
                     break;
                 }
                 Debug.WriteLine("Wake Address: {0:X02}", wakeAddress);
-                if ((_configData.ConfigList.Count > 1) && (wakeAddress != _configData.ConfigList[0]))
+                byte[] configData = GetConfigData(wakeAddress);
+                if (configData == null)
                 {
                     Debug.WriteLine("Invalid wake address");
                     continue;
@@ -5130,11 +5143,10 @@ namespace CarSimulator
 
                 Thread.Sleep(10);   // maximum 200ms
                 int sendLen = 0;
-                if (_configData.ConfigList.Count > 1)
+                if (configData.Length > 1)
                 {
-                    byte[] configArray = _configData.ConfigList.ToArray();
-                    sendLen = configArray.Length - 1;
-                    Array.Copy(configArray, 1, _sendData, 0, sendLen);
+                    sendLen = configData.Length - 1;
+                    Array.Copy(configData, 1, _sendData, 0, sendLen);
                 }
 
                 if (sendLen > 1)
@@ -5199,7 +5211,8 @@ namespace CarSimulator
                     break;
                 }
                 Debug.WriteLine("Wake Address: {0:X02}", wakeAddress);
-                if ((_configData.ConfigList.Count > 1) && (wakeAddress != _configData.ConfigList[0]))
+                byte[] configData = GetConfigData(wakeAddress);
+                if (configData == null)
                 {
                     Debug.WriteLine("Invalid wake address");
                     continue;
@@ -5210,13 +5223,12 @@ namespace CarSimulator
                 SendData(_sendData, 0, 1);
 
                 Thread.Sleep(10); // W2: 5-20ms
-                if (_configData.ConfigList.Count > 1)
+                if (configData.Length > 1)
                 {
-                    byte[] configArray = _configData.ConfigList.ToArray();
-                    if (configArray.Length >= 3)
+                    if (configData.Length >= 3)
                     {
-                        keyBytes[0] = configArray[1];
-                        keyBytes[1] = configArray[2];
+                        keyBytes[0] = configData[1];
+                        keyBytes[1] = configData[2];
                     }
                 }
                 SendData(keyBytes, 0, keyBytes.Length);
@@ -5239,7 +5251,7 @@ namespace CarSimulator
                 }
 
                 Thread.Sleep(25); // W4: 25-50ms
-                _sendData[0] = (byte) (~_configData.ConfigList[0]);
+                _sendData[0] = (byte) (~configData[0]);
                 SendData(_sendData, 0, 1);
             } while (!initOk);
 

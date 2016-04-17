@@ -167,7 +167,7 @@ namespace CarSimulator
         {
             if (!File.Exists(fileName)) return false;
 
-            List<byte> configList = _configData.ConfigList;
+            List<byte[]> configList = _configData.ConfigList;
             List<byte[]> responseOnlyList = _configData.ResponseOnlyList;
             List<CommThread.ResponseEntry> responseList = _configData.ResponseList;
             try
@@ -186,7 +186,7 @@ namespace CarSimulator
                         string[] numberArray;
                         if (line.ToUpper().StartsWith("CFG:"))
                         {
-                            configList.Clear();
+                            List<byte> configData = new List<byte>();
                             line = line.Substring(4);
                             numberArray = line.Split(' ');
                             foreach (string number in numberArray)
@@ -198,13 +198,14 @@ namespace CarSimulator
                                 try
                                 {
                                     int value = Convert.ToInt32(number, 16);
-                                    configList.Add((byte) value);
+                                    configData.Add((byte) value);
                                 }
                                 catch
                                 {
                                     // ignored
                                 }
                             }
+                            configList.Add(configData.ToArray());
                             continue;
                         }
 
