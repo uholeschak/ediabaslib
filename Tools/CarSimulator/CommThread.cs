@@ -5254,7 +5254,7 @@ namespace CarSimulator
                 }
                 if (!ObdReceive(_receiveData))
                 {
-                    if ((Stopwatch.GetTimestamp() - lastRecTime) > 4000*TickResolMs)
+                    if ((Stopwatch.GetTimestamp() - lastRecTime) > 3000*TickResolMs)
                     {
                         Debug.WriteLine("Receive timeout");
                         break;
@@ -5324,6 +5324,22 @@ namespace CarSimulator
                     Debug.WriteLine("Stop communication");
                     standardResponse = true;
                     break;
+                }
+                else if (
+                    _receiveData[0] == 0x81 &&
+                    _receiveData[2] == 0xF1 &&
+                    _receiveData[3] == 0x3E)
+                {
+                    // tester present
+                    int i = 0;
+                    _sendData[i++] = 0x81;
+                    _sendData[i++] = 0xF1;
+                    _sendData[i++] = _receiveData[1];
+                    _sendData[i++] = 0x7E;
+
+                    ObdSend(_sendData);
+                    Debug.WriteLine("Tester present");
+                    standardResponse = true;
                 }
 
                 if (!standardResponse)
