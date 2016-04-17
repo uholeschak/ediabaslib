@@ -618,18 +618,6 @@ namespace EdiabasLib
             ediabas._flags.Overflow = false;
         }
 
-        // link plugin
-        private static void OpPlink(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
-        {
-            ediabas.LogFormat(EdLogLevel.Ifh, "OpPlink: Ignoring plugin {0}", arg0.GetStringData());
-        }
-
-        // link plugin with version
-        private static void OpPlinkv(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
-        {
-            ediabas.LogFormat(EdLogLevel.Ifh, "OpPlinkv: Ignoring plugin {0} version {1:X04}", arg0.GetStringData(), arg1.GetValueData());
-        }
-
         // BEST2: realdiv
         private static void OpFdiv(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
@@ -1830,6 +1818,24 @@ namespace EdiabasLib
             arg0.SetArrayData(result);
         }
 
+        // plugin jump
+        private static void OpPjtsr(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            ediabas.LogFormat(EdLogLevel.Ifh, "OpPjtsr: Ignoring");
+        }
+
+        // link plugin
+        private static void OpPlink(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            ediabas.LogFormat(EdLogLevel.Ifh, "OpPlink: Ignoring plugin {0}", arg0.GetStringData());
+        }
+
+        // link plugin with version
+        private static void OpPlinkv(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            ediabas.LogFormat(EdLogLevel.Ifh, "OpPlinkv: Ignoring plugin {0} version {1:X04}", arg0.GetStringData(), arg1.GetValueData());
+        }
+
         private static void OpPush(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdValueType value = arg0.GetValueData();
@@ -1899,6 +1905,37 @@ namespace EdiabasLib
                 }
             }
             ediabas._flags.FromValue(value);
+        }
+
+        // plugin pop value
+        private static void OpPpop(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            ediabas.LogFormat(EdLogLevel.Ifh, "OpPpop: Ignoring");
+
+            EdValueType value = 0;
+            arg0.SetRawData(value);
+            ediabas._flags.Overflow = false;
+            ediabas._flags.UpdateFlags(value, arg0.GetDataLen());
+        }
+
+        // plugin pop string
+        private static void OpPpopy(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            ediabas.LogFormat(EdLogLevel.Ifh, "OpPpopy: Ignoring");
+
+            arg0.SetArrayData(ByteArray0);
+        }
+
+        // plugin push value
+        private static void OpPpush(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            ediabas.LogFormat(EdLogLevel.Ifh, "OpPpush: Ignoring");
+        }
+
+        // plugin push string
+        private static void OpPpushy(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            ediabas.LogFormat(EdLogLevel.Ifh, "OpPpushy: Ignoring");
         }
 
         private static void OpOr(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)

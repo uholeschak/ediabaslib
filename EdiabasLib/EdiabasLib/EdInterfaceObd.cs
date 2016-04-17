@@ -143,6 +143,8 @@ namespace EdiabasLib
         protected int ParTimeoutNr;
         protected int ParRetryNr;
         protected byte ParWakeAddress;
+        protected byte ParTesterAddress;
+        protected byte ParEcuAddress;
         protected int ParTesterPresentTime;
         protected int ParTesterPresentTelLen;
         protected byte[] ParTesterPresentTel = new byte[TransBufferSize];
@@ -227,6 +229,8 @@ namespace EdiabasLib
                 ParTimeoutNr = 0;
                 ParRetryNr = 0;
                 ParWakeAddress = 0;
+                ParTesterAddress = 0;
+                ParEcuAddress = 0;
                 ParTesterPresentTime = 0;
                 ParTesterPresentTelLen = 0;
                 ParStartCommTelLen = 0;
@@ -266,20 +270,36 @@ namespace EdiabasLib
                 uint concept = CommParameterProtected[0];
                 switch (concept)
                 {
-                    case 0x0000:    // Raw
+                    case 0x0000:    // Raw (EDIC)
                         if (!EdicSimulation)
                         {
                             EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                             return;
                         }
-                        if (CommParameterProtected.Length < 7)
+                        if (CommParameterProtected.Length < 73)
                         {
                             EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
                         }
                         baudRate = 9600;
-                        parity = SerialParity.Even;
-                        ParTransmitFunc = TransKwp2000S;
+                        parity = SerialParity.None;
+                        ParTransmitFunc = TransKwp2000;
+                        ParIdleFunc = IdleKwp2000;
+                        ParFinishFunc = FinishKwp2000;
+                        ParWakeAddress = (byte)CommParameterProtected[5];
+                        ParTesterAddress = (byte)CommParameterProtected[70];
+                        ParEcuAddress = (byte)CommParameterProtected[71];
+                        ParTimeoutStd = 2000;
+                        ParTesterPresentTime = 1000;
+                        ParTesterPresentTelLen = 5;
+                        ParTesterPresentTel[0] = 0x81;
+                        ParTesterPresentTel[1] = ParEcuAddress;
+                        ParTesterPresentTel[2] = ParTesterAddress;
+                        ParTesterPresentTel[3] = 0x3E;
+                        ParTesterPresentTel[4] = 0x00;
+                        ParSendSetDtr = true;
+                        ParAllowBitBang = false;
+                        ParHasKeyBytes = true;
                         break;
 
                     case 0x0001:    // Concept 1
@@ -1009,14 +1029,35 @@ namespace EdiabasLib
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                 return false;
             }
-            if (sendData.Length > SendBuffer.Length)
+            byte[] sendDataBuffer = sendData;
+            if (EdicSimulation && sendData.Length > 0)
+            {   // create full telegram
+                if (sendData.Length > 0x3F)
+                {
+                    sendDataBuffer = new byte[sendData.Length + 5]; // +1 checksum
+                    sendDataBuffer[0] = 0x80;
+                    sendDataBuffer[1] = ParEcuAddress;
+                    sendDataBuffer[2] = ParTesterAddress;
+                    sendDataBuffer[3] = (byte)sendData.Length;
+                    Array.Copy(sendData, 0, sendDataBuffer, 4, sendData.Length);
+                }
+                else
+                {
+                    sendDataBuffer = new byte[sendData.Length + 4]; // +1 checksum
+                    sendDataBuffer[0] = (byte)(0x80 | sendData.Length);
+                    sendDataBuffer[1] = ParEcuAddress;
+                    sendDataBuffer[2] = ParTesterAddress;
+                    Array.Copy(sendData, 0, sendDataBuffer, 3, sendData.Length);
+                }
+            }
+            if (sendDataBuffer.Length > SendBuffer.Length)
             {
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0031);
                 return false;
             }
             EdiabasNet.ErrorCodes cachedErrorCode;
             byte[] cachedResponse;
-            if (ReadCachedTransmission(sendData, out cachedResponse, out cachedErrorCode))
+            if (ReadCachedTransmission(sendDataBuffer, out cachedResponse, out cachedErrorCode))
             {
                 if (cachedErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
@@ -1027,17 +1068,17 @@ namespace EdiabasLib
                 return true;
             }
 #if false
-            sendData.CopyTo(this.sendBuffer, 0);
-            this.sendBufferLength = sendData.Length;
+            sendDataBuffer.CopyTo(this.sendBuffer, 0);
+            this.sendBufferLength = sendDataBuffer.Length;
             int recLength;
-            this.recErrorCode = OBDTrans(this.sendBuffer, sendData.Length, ref this.recBuffer, out recLength);
+            this.recErrorCode = OBDTrans(this.sendBuffer, sendDataBuffer.Length, ref this.recBuffer, out recLength);
             this.recBufferLength = recLength;
 #else
             StartCommThread();
             lock (CommThreadLock)
             {
-                sendData.CopyTo(SendBuffer, 0);
-                SendBufferLength = sendData.Length;
+                sendDataBuffer.CopyTo(SendBuffer, 0);
+                SendBufferLength = sendDataBuffer.Length;
                 CommThreadReqCount++;
                 CommThreadCommand = CommThreadCommands.SingleTransmit;
             }
@@ -1057,7 +1098,7 @@ namespace EdiabasLib
 #endif
             if (RecErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
-                CacheTransmission(sendData, null, RecErrorCode);
+                CacheTransmission(sendDataBuffer, null, RecErrorCode);
                 EdiabasProtected.SetError(RecErrorCode);
                 return false;
             }
@@ -1066,7 +1107,7 @@ namespace EdiabasLib
                 receiveData = new byte[RecBufferLength];
                 Array.Copy(RecBuffer, receiveData, RecBufferLength);
             }
-            CacheTransmission(sendData, receiveData, EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE);
+            CacheTransmission(sendDataBuffer, receiveData, EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE);
             return true;
         }
 
@@ -1999,11 +2040,16 @@ namespace EdiabasLib
 
         protected bool SendWakeAddress5Baud(byte value)
         {
+            return SendWakeAddress5Baud(value, false);
+        }
+
+        protected bool SendWakeAddress5Baud(byte value, bool setDtr)
+        {
             if (UseExtInterfaceFunc)
             {
                 if (InterfaceSendPulseFuncUse != null)
                 {
-                    if (!InterfaceSendPulseFuncUse((UInt64) ((value << 1) | 0x0200), 10, 200, false))
+                    if (!InterfaceSendPulseFuncUse((UInt64) ((value << 1) | 0x0200), 10, 200, setDtr))
                     {
                         return false;
                     }
@@ -2161,6 +2207,155 @@ namespace EdiabasLib
             return TransKwp2000(sendData, sendDataLength, ref receiveData, out receiveLength, true);
         }
 
+        private EdiabasNet.ErrorCodes TransKwp2000(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
+        {
+            receiveLength = 0;
+
+            if (!EcuConnected)
+            {
+                KeyBytesProtected = ByteArray0;
+                List<byte> keyBytesList = new List<byte>();
+                while ((Stopwatch.GetTimestamp() - LastCommTick) < 2600 * TickResolMs)
+                {
+                    Thread.Sleep(10);
+                }
+
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Establish connection");
+                if (UseExtInterfaceFunc)
+                {
+                    if (InterfaceSetConfigFuncUse(9600, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                    {
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                    }
+                }
+                else
+                {
+#if USE_SERIAL_PORT
+                    try
+                    {
+                        SerialPort.BaudRate = 9600;
+                        SerialPort.Parity = System.IO.Ports.Parity.None;
+                    }
+                    catch (Exception)
+                    {
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                    }
+#else
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+#endif
+                }
+                CurrentBaudRate = 9600;
+                CurrentParity = SerialParity.None;
+
+                if (!SetDtrSignal(ParSendSetDtr))
+                {
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set DTR failed");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                }
+
+                LastCommTick = Stopwatch.GetTimestamp();
+                if (!SendWakeAddress5Baud(ParWakeAddress))
+                {
+                    LastCommTick = Stopwatch.GetTimestamp();
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending wake address failed");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                }
+
+                LastCommTick = Stopwatch.GetTimestamp();
+                if (!ReceiveData(Iso9141Buffer, 0, 1, ParTimeoutStd, ParTimeoutStd))
+                {
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No wake response");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                }
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate byte: {0:X02}", Iso9141Buffer[0]);
+                if (Iso9141Buffer[0] == 0x55)
+                {
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate 9.6k detected");
+                }
+                else
+                {   // baud rate different
+                    if ((Iso9141Buffer[0] & 0x87) != 0x85)
+                    {
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Invalid baud rate");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate 10.4k detected");
+                    if (UseExtInterfaceFunc)
+                    {
+                        if (InterfaceSetConfigFuncUse(10400, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                        }
+                    }
+                    else
+                    {
+#if USE_SERIAL_PORT
+                        try
+                        {
+                            SerialPort.BaudRate = 10400;
+                            SerialPort.Parity = System.IO.Ports.Parity.None;
+                        }
+                        catch (Exception)
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                        }
+#else
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+#endif
+                    }
+                    CurrentBaudRate = 10400;
+                    CurrentParity = SerialParity.None;
+                }
+
+                LastCommTick = Stopwatch.GetTimestamp();
+                if (!ReceiveData(Iso9141Buffer, 0, 2, 500, 500))
+                {
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No key bytes received");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                }
+                keyBytesList.Add((byte)(Iso9141Buffer[0] & 0x7F));
+                keyBytesList.Add((byte)(Iso9141Buffer[1] & 0x7F));
+
+                LastCommTick = Stopwatch.GetTimestamp();
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Key bytes: {0:X02} {1:X02}", Iso9141Buffer[0], Iso9141Buffer[1]);
+                Iso9141Buffer[0] = (byte)(~Iso9141Buffer[1]);
+                Thread.Sleep(10);
+                if (!SendData(Iso9141Buffer, 1, ParSendSetDtr))
+                {
+                    EcuConnected = false;
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending key byte response failed");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                }
+
+                LastCommTick = Stopwatch.GetTimestamp();
+                if (!ReceiveData(Iso9141Buffer, 0, 1, 500, 500))
+                {
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No wake address received");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                }
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Wake address byte: {0:X02}", Iso9141Buffer[0]);
+                if (ParWakeAddress != (byte) (~Iso9141Buffer[0]))
+                {
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Invalid wake address received");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                }
+                EcuConnected = true;
+
+                KeyBytesProtected = keyBytesList.ToArray();
+                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, KeyBytesProtected, 0, KeyBytesProtected.Length, "ID bytes");
+            }
+
+            if (sendDataLength == 0)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+            }
+            return TransKwp2000(sendData, sendDataLength, ref receiveData, out receiveLength, true);
+        }
+
         private EdiabasNet.ErrorCodes TransKwp2000(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, bool enableLogging)
         {
             receiveLength = 0;
@@ -2267,6 +2462,32 @@ namespace EdiabasLib
 
             LastResponseTick = Stopwatch.GetTimestamp();
             receiveLength = TelLengthBmwFast(receiveData) + 1;
+            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+        }
+
+        private EdiabasNet.ErrorCodes IdleKwp2000()
+        {
+            return IdleKwp2000Bmw();
+        }
+
+        private EdiabasNet.ErrorCodes FinishKwp2000()
+        {
+            if (!EcuConnected)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+
+            int receiveLength;
+            byte[] finishTel = {0x81, ParEcuAddress, ParTesterAddress, 0x82, 0x00};
+            EdiabasNet.ErrorCodes errorCode = TransKwp2000(finishTel, finishTel.Length, ref Iso9141Buffer,
+                out receiveLength, false);
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                EcuConnected = false;
+                return errorCode;
+            }
+
+            EcuConnected = false;
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
