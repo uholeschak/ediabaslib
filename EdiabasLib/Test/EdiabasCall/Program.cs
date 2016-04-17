@@ -27,6 +27,7 @@ namespace EdiabasCall
         private static List<API.APIRESULTFIELD> _apiResultFields;
         private static string _lastJobInfo = string.Empty;
         private static int _lastJobProgress = -1;
+        private static bool _api6;
 
         static int Main(string[] args)
         {
@@ -104,10 +105,11 @@ namespace EdiabasCall
                 }
 
                 string apiVersion;
+                _api6 = false;
                 if (!API.apiCheckVersion(API.APICOMPATIBILITYVERSION, out apiVersion))
                 {
-                    _outputWriter.WriteLine("API incompatible");
-                    return 1;
+                    apiVersion = "6.0.0";
+                    _api6 = true;
                 }
                 _outputWriter.WriteLine("API Version: " + apiVersion);
 
@@ -116,14 +118,30 @@ namespace EdiabasCall
                 {
                     configString = cfgString;
                 }
-                if (!API.apiInitExt(ifhName, deviceName, "EdiabasCall", configString))
+
+                if (_api6)
                 {
-                    _outputWriter.WriteLine("Init api failed");
-                    if (API.apiErrorCode() != API.EDIABAS_ERR_NONE)
+                    if (!API.apiInit())
                     {
-                        _outputWriter.WriteLine(string.Format(Culture, "Error occured: 0x{0:X08} {1}", API.apiErrorCode(), API.apiErrorText()));
+                        _outputWriter.WriteLine("Init api failed");
+                        if (API.apiErrorCode() != API.EDIABAS_ERR_NONE)
+                        {
+                            _outputWriter.WriteLine(string.Format(Culture, "Error occured: 0x{0:X08} {1}", API.apiErrorCode(), API.apiErrorText()));
+                        }
+                        return 1;
                     }
-                    return 1;
+                }
+                else
+                {
+                    if (!API.apiInitExt(ifhName, deviceName, "EdiabasCall", configString))
+                    {
+                        _outputWriter.WriteLine("Init api failed");
+                        if (API.apiErrorCode() != API.EDIABAS_ERR_NONE)
+                        {
+                            _outputWriter.WriteLine(string.Format(Culture, "Error occured: 0x{0:X08} {1}", API.apiErrorCode(), API.apiErrorText()));
+                        }
+                        return 1;
+                    }
                 }
 
                 Type type = typeof(API);
@@ -445,6 +463,18 @@ namespace EdiabasCall
                                         case API.APIFORMAT_BINARY:
                                             {
                                                 byte[] resultByteArray;
+                                                if (_api6)
+                                                {
+                                                    ushort resultLengthShort;
+                                                    if (API.apiResultBinary(out resultByteArray, out resultLengthShort, resultName, set))
+                                                    {
+                                                        for (int i = 0; i < resultLengthShort; i++)
+                                                        {
+                                                            resultText += string.Format(Culture, "{0:X02} ", resultByteArray[i]);
+                                                        }
+                                                    }
+                                                    break;
+                                                }
                                                 uint resultLength;
                                                 if (API.apiResultBinaryExt(out resultByteArray, out resultLength, API.APIMAXBINARYEXT, resultName, set))
                                                 {
