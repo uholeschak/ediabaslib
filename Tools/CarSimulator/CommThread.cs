@@ -687,8 +687,8 @@ namespace CarSimulator
                         break;
 
                     case ConceptType.ConceptKwp2000:
-                        //baudRate = 10400;
-                        baudRate = 9600;
+                        baudRate = 10400;
+                        //baudRate = 9600;
                         parity = Parity.None;
                         break;
                 }
@@ -5222,7 +5222,7 @@ namespace CarSimulator
                 _sendData[0] = 0x55;
                 SendData(_sendData, 0, 1);
 
-                Thread.Sleep(10); // W2: 5-20ms
+                Thread.Sleep(40); // W2: 5-20ms
                 if (configData.Length > 1)
                 {
                     if (configData.Length >= 3)
@@ -5234,7 +5234,7 @@ namespace CarSimulator
                 SendData(keyBytes, 0, keyBytes.Length);
 
                 //if (ReceiveData(_receiveData, 0, 1, 50, 50))  // too fast for ELM
-                if (ReceiveData(_receiveData, 0, 1, 70, 70))
+                if (ReceiveData(_receiveData, 0, 1, 80, 80))
                 {
                     if ((byte) (~_receiveData[0]) == keyBytes[1])
                     {
