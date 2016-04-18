@@ -1821,19 +1821,19 @@ namespace EdiabasLib
         // plugin jump
         private static void OpPjtsr(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.LogFormat(EdLogLevel.Ifh, "OpPjtsr: Ignoring");
+            ediabas.LogFormat(EdLogLevel.Info, "OpPjtsr: Ignoring");
         }
 
         // link plugin
         private static void OpPlink(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.LogFormat(EdLogLevel.Ifh, "OpPlink: Ignoring plugin {0}", arg0.GetStringData());
+            ediabas.LogFormat(EdLogLevel.Info, "OpPlink: Ignoring plugin {0}", arg0.GetStringData());
         }
 
         // link plugin with version
         private static void OpPlinkv(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.LogFormat(EdLogLevel.Ifh, "OpPlinkv: Ignoring plugin {0} version {1:X04}", arg0.GetStringData(), arg1.GetValueData());
+            ediabas.LogFormat(EdLogLevel.Info, "OpPlinkv: Ignoring plugin {0} version {1:X04}", arg0.GetStringData(), arg1.GetValueData());
         }
 
         private static void OpPush(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
@@ -1910,7 +1910,7 @@ namespace EdiabasLib
         // plugin pop value
         private static void OpPpop(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.LogFormat(EdLogLevel.Ifh, "OpPpop: Ignoring");
+            ediabas.LogFormat(EdLogLevel.Info, "OpPpop: Ignoring");
 
             EdValueType value = 0;
             arg0.SetRawData(value);
@@ -1921,7 +1921,7 @@ namespace EdiabasLib
         // plugin pop string
         private static void OpPpopy(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.LogFormat(EdLogLevel.Ifh, "OpPpopy: Ignoring");
+            ediabas.LogFormat(EdLogLevel.Info, "OpPpopy: Ignoring");
 
             arg0.SetArrayData(ByteArray0);
         }
@@ -1929,13 +1929,13 @@ namespace EdiabasLib
         // plugin push value
         private static void OpPpush(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.LogFormat(EdLogLevel.Ifh, "OpPpush: Ignoring");
+            ediabas.LogFormat(EdLogLevel.Info, "OpPpush: Ignoring");
         }
 
         // plugin push string
         private static void OpPpushy(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
-            ediabas.LogFormat(EdLogLevel.Ifh, "OpPpushy: Ignoring");
+            ediabas.LogFormat(EdLogLevel.Info, "OpPpushy: Ignoring");
         }
 
         private static void OpOr(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
