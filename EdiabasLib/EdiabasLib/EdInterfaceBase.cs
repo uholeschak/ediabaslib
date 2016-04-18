@@ -142,6 +142,7 @@ namespace EdiabasLib
                 {
                     CommAnswerLenProtected[0] = value[0];
                     CommAnswerLenProtected[1] = value[1];
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Answer length: {0:X04} {1:X04}", CommAnswerLenProtected[0], CommAnswerLenProtected[1]);
                 }
             }
         }
