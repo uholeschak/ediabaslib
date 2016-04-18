@@ -687,8 +687,8 @@ namespace CarSimulator
                         break;
 
                     case ConceptType.ConceptKwp2000:
-                        baudRate = 10400;
-                        //baudRate = 9600;
+                        //baudRate = 10400;
+                        baudRate = 9600;
                         parity = Parity.None;
                         break;
                 }
