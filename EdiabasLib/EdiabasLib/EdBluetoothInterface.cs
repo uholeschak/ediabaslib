@@ -24,8 +24,6 @@ namespace EdiabasLib
             CommReceiveEvent = new AutoResetEvent(false);
         }
 
-        public static EdiabasNet Ediabas { get; set; }
-
         public static bool InterfaceConnect(string port, object parameter)
         {
             if (SerialPort.IsOpen)
@@ -229,7 +227,7 @@ namespace EdiabasLib
                 if (SettingsUpdateRequired())
                 {
                     UpdateAdapterInfo();
-                    byte[] adapterTel = CreatePulseTelegram(0, 0, 0, false);
+                    byte[] adapterTel = CreatePulseTelegram(0, 0, 0, false, false);
                     if (adapterTel == null)
                     {
                         return false;
@@ -303,7 +301,7 @@ namespace EdiabasLib
             return true;
         }
 
-        public static bool InterfaceSendPulse(UInt64 dataBits, int length, int pulseWidth, bool setDtr)
+        public static bool InterfaceSendPulse(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines)
         {
             if (!SerialPort.IsOpen)
             {
@@ -318,7 +316,7 @@ namespace EdiabasLib
                     // send next telegram with fast init
                     return true;
                 }
-                byte[] adapterTel = CreatePulseTelegram(dataBits, length, pulseWidth, setDtr);
+                byte[] adapterTel = CreatePulseTelegram(dataBits, length, pulseWidth, setDtr, bothLines);
                 if (adapterTel == null)
                 {
                     return false;
