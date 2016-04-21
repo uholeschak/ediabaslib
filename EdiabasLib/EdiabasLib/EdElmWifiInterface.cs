@@ -203,7 +203,7 @@ namespace EdiabasLib
             return _edElmInterface.InterfaceReceiveData(receiveData, offset, length, timeout, timeoutTelEnd, ediabasLog);
         }
 
-        public static bool InterfaceSendPulse(UInt64 dataBits, int length, int pulseWidth, bool setDtr)
+        public static bool InterfaceSendPulse(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines)
         {
             return false;
         }

@@ -1,4 +1,5 @@
 using System;
+// ReSharper disable UseNullPropagation
 
 namespace EdiabasLib
 {
@@ -16,7 +17,10 @@ namespace EdiabasLib
         public static byte KLINEF_SEND_PULSE = 0x10;
         public static byte KLINEF_NO_ECHO = 0x20;
         public static byte KLINEF_FAST_INIT = 0x40;
+        public static byte KLINEF_USE_KLINE = 0x80;
         // ReSharper restore InconsistentNaming
+
+        public static EdiabasNet Ediabas { get; set; }
 
         public static int CurrentBaudRate { get; protected set; }
 
@@ -55,15 +59,27 @@ namespace EdiabasLib
         {
             if ((AdapterType < 0x0002) || (AdapterVersion < 0x0003))
             {
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateAdapterTelegram, invalid adapter: {0} {1}", AdapterType, AdapterVersion);
+                }
                 return null;
             }
             if ((CurrentBaudRate != 115200) &&
                 ((CurrentBaudRate < 9600) || (CurrentBaudRate > 19200)))
             {
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateAdapterTelegram, invalid baud rate: {0}", CurrentBaudRate);
+                }
                 return null;
             }
             if ((InterByteTime < 0) || (InterByteTime > 255))
             {
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateAdapterTelegram, invalid inter byte time: {0}", InterByteTime);
+                }
                 return null;
             }
             byte[] resultArray = new byte[length + 9];
@@ -100,22 +116,46 @@ namespace EdiabasLib
             return resultArray;
         }
 
-        public static byte[] CreatePulseTelegram(UInt64 dataBits, int length, int pulseWidth, bool setDtr)
+        public static byte[] CreatePulseTelegram(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines)
         {
             if ((AdapterType < 0x0002) || (AdapterVersion < 0x0002))
             {
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreatePulseTelegram, invalid adapter: {0} {1}", AdapterType, AdapterVersion);
+                }
+                return null;
+            }
+            if (bothLines && AdapterVersion < 0x0007)
+            {
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreatePulseTelegram, invalid adapter for both lines: {0}", AdapterVersion);
+                }
                 return null;
             }
             if ((CurrentBaudRate < 9600) || (CurrentBaudRate > 19200))
             {
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreatePulseTelegram, invalid baud rate: {0}", CurrentBaudRate);
+                }
                 return null;
             }
             if ((length < 0) || (length > 64))
             {
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreatePulseTelegram, invalid length: {0}", length);
+                }
                 return null;
             }
             if ((pulseWidth < 0) || (pulseWidth > 255))
             {
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreatePulseTelegram, invalid pulse width: {0}", pulseWidth);
+                }
                 return null;
             }
             int dataBytes = (length + 7) >> 3;
@@ -125,7 +165,11 @@ namespace EdiabasLib
 
             uint baudHalf = (uint)(CurrentBaudRate >> 1);
             byte flags = (byte)(KLINEF_SEND_PULSE | KLINEF_NO_ECHO);
-            if (!setDtr)
+            if (bothLines)
+            {
+                flags |= (byte)(KLINEF_USE_LLINE | KLINEF_USE_KLINE);
+            }
+            else if (!setDtr)
             {
                 flags |= KLINEF_USE_LLINE;
             }

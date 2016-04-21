@@ -86,8 +86,9 @@
 #define DEBUG_PIN           0   // enable debug pin
 #define ID_LOCATION         0x200000    // location of ID memory
 
+#define ADAPTER_VERSION     0x0007
+
 #if ADAPTER_TYPE != 0x02
-#define ADAPTER_VERSION     0x0006
 #if ADAPTER_TYPE == 0x03
 // BC04
 #define ALLOW_FACTORY_RESET
@@ -122,9 +123,6 @@
 #define BT_PIN_LENGTH 16
 #define BT_NAME_LENGTH 31
 #endif
-#else
-#define ADAPTER_VERSION     0x0004
-#define REQUIRES_BT_CRFL
 #endif
 
 #define IGNITION_STATE()    IGNITION
@@ -152,6 +150,7 @@
 #define KLINEF_SEND_PULSE       0x10
 #define KLINEF_NO_ECHO          0x20
 #define KLINEF_FAST_INIT        0x40
+#define KLINEF_USE_KLINE        0x80    // for combination with KLINEF_USE_LLINE
 
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
@@ -371,10 +370,19 @@ void kline_send(uint8_t *buffer, uint16_t count)
     }
     // dynamic baudrate
     di();
+    bool use_kline = false;
     bool use_lline = false;
+    if ((kline_flags & KLINEF_USE_KLINE) != 0)
+    {
+        use_kline = true;
+    }
     if ((kline_flags & KLINEF_USE_LLINE) != 0)
     {
         use_lline = true;
+    }
+    else
+    {
+        use_kline = true;
     }
     if ((kline_flags & KLINEF_SEND_PULSE) != 0)
     {   // send pulse with defined width
@@ -394,24 +402,24 @@ void kline_send(uint8_t *buffer, uint16_t count)
                 }
                 if ((out_data & 0x01) != 0)
                 {
+                    if (use_kline)
+                    {
+                        KLINE_OUT = 0;
+                    }
                     if (use_lline)
                     {
                         LLINE_OUT = 0;
                     }
-                    else
-                    {
-                        KLINE_OUT = 0;
-                    }
                 }
                 else
                 {
+                    if (use_kline)
+                    {
+                        KLINE_OUT = 1;
+                    }
                     if (use_lline)
                     {
                         LLINE_OUT = 1;
-                    }
-                    else
-                    {
-                        KLINE_OUT = 1;
                     }
                 }
                 out_data >>= 1;
@@ -435,13 +443,13 @@ void kline_send(uint8_t *buffer, uint16_t count)
     LED_OBD_TX = 0;         // on
     if ((kline_flags & KLINEF_FAST_INIT) != 0)
     {   // fast init request
+        if (use_kline)
+        {
+            KLINE_OUT = 1;
+        }
         if (use_lline)
         {
             LLINE_OUT = 1;
-        }
-        else
-        {
-            KLINE_OUT = 1;
         }
         // pulse with 25 ms
         uint16_t start_tick = get_systick();
@@ -449,13 +457,13 @@ void kline_send(uint8_t *buffer, uint16_t count)
         {
             CLRWDT();
         }
+        if (use_kline)
+        {
+            KLINE_OUT = 0;
+        }
         if (use_lline)
         {
             LLINE_OUT = 0;
-        }
-        else
-        {
-            KLINE_OUT = 0;
         }
         // pulse with 25 ms
         uint16_t start_tick = get_systick();
@@ -483,13 +491,13 @@ void kline_send(uint8_t *buffer, uint16_t count)
         CLRWDT();
         while (!PIR1bits.TMR2IF) {}
         PIR1bits.TMR2IF = 0;
+        if (use_kline)
+        {
+            KLINE_OUT = 1;      // start bit
+        }
         if (use_lline)
         {
             LLINE_OUT = 1;      // start bit
-        }
-        else
-        {
-            KLINE_OUT = 1;      // start bit
         }
 
         uint8_t out_data = *ptr++;
@@ -500,25 +508,25 @@ void kline_send(uint8_t *buffer, uint16_t count)
             PIR1bits.TMR2IF = 0;
             if ((out_data & 0x01) != 0)
             {
+                if (use_kline)
+                {
+                    KLINE_OUT = 0;
+                }
                 if (use_lline)
                 {
                     LLINE_OUT = 0;
-                }
-                else
-                {
-                    KLINE_OUT = 0;
                 }
                 parity++;
             }
             else
             {
+                if (use_kline)
+                {
+                    KLINE_OUT = 1;
+                }
                 if (use_lline)
                 {
                     LLINE_OUT = 1;
-                }
-                else
-                {
-                    KLINE_OUT = 1;
                 }
             }
             out_data >>= 1;
@@ -530,24 +538,24 @@ void kline_send(uint8_t *buffer, uint16_t count)
                 PIR1bits.TMR2IF = 0;
                 if ((parity & 0x01) != 0)
                 {
+                    if (use_kline)
+                    {
+                        KLINE_OUT = 0;
+                    }
                     if (use_lline)
                     {
                         LLINE_OUT = 0;
                     }
-                    else
-                    {
-                        KLINE_OUT = 0;
-                    }
                 }
                 else
                 {
+                    if (use_kline)
+                    {
+                        KLINE_OUT = 1;
+                    }
                     if (use_lline)
                     {
                         LLINE_OUT = 1;
-                    }
-                    else
-                    {
-                        KLINE_OUT = 1;
                     }
                 }
                 break;
@@ -557,24 +565,24 @@ void kline_send(uint8_t *buffer, uint16_t count)
                 PIR1bits.TMR2IF = 0;
                 if ((parity & 0x01) != 0)
                 {
+                    if (use_kline)
+                    {
+                        KLINE_OUT = 1;
+                    }
                     if (use_lline)
                     {
                         LLINE_OUT = 1;
                     }
-                    else
-                    {
-                        KLINE_OUT = 1;
-                    }
                 }
                 else
                 {
+                    if (use_kline)
+                    {
+                        KLINE_OUT = 0;
+                    }
                     if (use_lline)
                     {
                         LLINE_OUT = 0;
-                    }
-                    else
-                    {
-                        KLINE_OUT = 0;
                     }
                 }
                 break;
@@ -582,39 +590,39 @@ void kline_send(uint8_t *buffer, uint16_t count)
             case KLINEF_PARITY_MARK:
                 while (!PIR1bits.TMR2IF) {}
                 PIR1bits.TMR2IF = 0;
+                if (use_kline)
+                {
+                    KLINE_OUT = 0;
+                }
                 if (use_lline)
                 {
                     LLINE_OUT = 0;
-                }
-                else
-                {
-                    KLINE_OUT = 0;
                 }
                 break;
 
             case KLINEF_PARITY_SPACE:
                 while (!PIR1bits.TMR2IF) {}
                 PIR1bits.TMR2IF = 0;
+                if (use_kline)
+                {
+                    KLINE_OUT = 1;
+                }
                 if (use_lline)
                 {
                     LLINE_OUT = 1;
-                }
-                else
-                {
-                    KLINE_OUT = 1;
                 }
                 break;
         }
         // 2 stop bits
         while (!PIR1bits.TMR2IF) {}
         PIR1bits.TMR2IF = 0;
+        if (use_kline)
+        {
+            KLINE_OUT = 0;
+        }
         if (use_lline)
         {
             LLINE_OUT = 0;
-        }
-        else
-        {
-            KLINE_OUT = 0;
         }
         while (!PIR1bits.TMR2IF) {}
         PIR1bits.TMR2IF = 0;
