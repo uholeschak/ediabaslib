@@ -207,6 +207,7 @@ static uint32_t kline_baud;     // K-line baud rate, 0=115200 (BMW-FAST))
 static uint8_t kline_flags;     // K-line flags
 static uint8_t kline_interbyte; // K-line interbyte time [ms]
 static uint8_t kline_bit_delay; // K-line read bit delay
+static bool kline_baud_detect;  // K-line baud rate detection is active
 
 static uint8_t temp_buffer[TEMP_BUF_SIZE];
 static uint8_t temp_buffer_short[10];
@@ -286,6 +287,7 @@ void do_idle()
 
 void kline_baud_cfg()
 {
+    kline_baud_detect = false;
     // fout = fclk / (4 * prescaler * PR2 * postscaler)
     // PR2 = fclk / (4 * prescaler * fout * postscaler)
     if (kline_baud == 0)
@@ -300,11 +302,17 @@ void kline_baud_cfg()
     }
     else
     {
+        uint32_t baud_rate = kline_baud;
+        if (baud_rate == 2)
+        {   // 9600 with 10400 baud rate detection
+            baud_rate = 9600;
+            kline_baud_detect = true;
+        }
         T2CONbits.TMR2ON = 0;
         T2CONbits.T2CKPS = 1;       // prescaler 4
         T2CONbits.T2OUTPS = 0x0;    // postscaler 1
         TMR2 = 0x00;                // reset timer 2
-        PR2 = 16000000ul / 16 / kline_baud;
+        PR2 = 16000000ul / 16 / baud_rate;
         kline_bit_delay = 0;
         uint8_t bit_delay = (PR2 >> 1) + 15;
         if (bit_delay < PR2)
@@ -862,6 +870,16 @@ void kline_receive()
         while (!PIR1bits.TMR2IF) {}
         PIR1bits.TMR2IF = 0;
 
+        if (kline_baud_detect)
+        {
+            if ((data & 0x87) == 0x85)
+            {   // baud rate 10400 detected
+                kline_baud = 10400;
+                kline_baud_cfg();
+            }
+            kline_baud_detect = false;
+        }
+
         T2CONbits.TMR2ON = 0;
         TMR2 = 0x00;
         PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
@@ -933,7 +951,7 @@ uint16_t uart_receive(uint8_t *buffer)
         // byte 5: interbyte time
         // byte 6+7: telegram length (high/low)
         kline_baud = (((uint32_t) rec_buffer[2] << 8) + rec_buffer[3]) << 1;
-        if ((kline_baud != 0) && ((kline_baud < 9600) || (kline_baud > 19200)))
+        if ((kline_baud != 0) && (kline_baud != 2) && ((kline_baud < 9600) || (kline_baud > 19200)))
         {
             data_len = 0;
         }
@@ -953,6 +971,7 @@ uint16_t uart_receive(uint8_t *buffer)
         data_len = rec_len;
         memcpy(buffer, rec_buffer, data_len);
     }
+    kline_baud_detect = false;
     rec_state = rec_state_idle;
     return data_len;
 }
@@ -1271,6 +1290,7 @@ void can_config()
     kline_baud = 0;
     kline_flags = 0;
     kline_interbyte = 0;
+    kline_baud_detect = false;
 }
 
 void read_eeprom()

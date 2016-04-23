@@ -5222,7 +5222,7 @@ namespace CarSimulator
                 _sendData[0] = 0x55;
                 SendData(_sendData, 0, 1);
 
-                Thread.Sleep(40); // W2: 5-20ms
+                Thread.Sleep(10); // W2: 5-20ms
                 if (configData.Length > 1)
                 {
                     if (configData.Length >= 3)
