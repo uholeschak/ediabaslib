@@ -167,6 +167,11 @@ namespace EdiabasLib
             return false;
         }
 
+        public static bool InterfaceHasAutoBaudRate()
+        {
+            return true;
+        }
+
         public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
         {
             if (!SerialPort.IsOpen)
@@ -226,6 +231,10 @@ namespace EdiabasLib
             {
                 if (SettingsUpdateRequired())
                 {
+                    if (Ediabas != null)
+                    {
+                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "InterfaceReceiveData, update settings");
+                    }
                     UpdateAdapterInfo();
                     byte[] adapterTel = CreatePulseTelegram(0, 0, 0, false, false);
                     if (adapterTel == null)

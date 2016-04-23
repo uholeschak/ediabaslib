@@ -20,6 +20,9 @@ namespace EdiabasLib
         public static byte KLINEF_USE_KLINE = 0x80;
         // ReSharper restore InconsistentNaming
 
+        // automatic baud rate detection 9600, 10400
+        public static int BaudAuto9600 = 2;
+
         public static EdiabasNet Ediabas { get; set; }
 
         public static int CurrentBaudRate { get; protected set; }
@@ -134,7 +137,18 @@ namespace EdiabasLib
                 }
                 return null;
             }
-            if ((CurrentBaudRate < 9600) || (CurrentBaudRate > 19200))
+            if (CurrentBaudRate == BaudAuto9600)
+            {
+                if (AdapterVersion < 0x0007)
+                {
+                    if (Ediabas != null)
+                    {
+                        Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreatePulseTelegram, invalid adapter for auto baud 9600: {0}", AdapterVersion);
+                    }
+                    return null;
+                }
+            }
+            else if ((CurrentBaudRate < 9600) || (CurrentBaudRate > 19200))
             {
                 if (Ediabas != null)
                 {
@@ -243,6 +257,10 @@ namespace EdiabasLib
         public static bool SettingsUpdateRequired()
         {
             if (CurrentBaudRate == 115200)
+            {
+                return false;
+            }
+            if (ActiveBaudRate == BaudAuto9600)
             {
                 return false;
             }
