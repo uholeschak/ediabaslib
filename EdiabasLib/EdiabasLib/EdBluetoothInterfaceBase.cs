@@ -20,9 +20,6 @@ namespace EdiabasLib
         public static byte KLINEF_USE_KLINE = 0x80;
         // ReSharper restore InconsistentNaming
 
-        // automatic baud rate detection 9600, 10400
-        public static int BaudAuto9600 = 2;
-
         public static EdiabasNet Ediabas { get; set; }
 
         public static int CurrentBaudRate { get; protected set; }
@@ -137,7 +134,7 @@ namespace EdiabasLib
                 }
                 return null;
             }
-            if (CurrentBaudRate == BaudAuto9600)
+            if (CurrentBaudRate == EdInterfaceBase.BaudAuto9600)
             {
                 if (AdapterVersion < 0x0007)
                 {
@@ -260,7 +257,7 @@ namespace EdiabasLib
             {
                 return false;
             }
-            if (ActiveBaudRate == BaudAuto9600)
+            if (ActiveBaudRate == EdInterfaceBase.BaudAuto9600)
             {
                 return false;
             }
