@@ -234,16 +234,21 @@ namespace EdiabasLib
                 StopCommThread();
 
                 CommParameterProtected = value;
+                bool edicPar = (CommParameterProtected != null) && (CommParameterProtected.Length > 0) &&
+                              (CommParameterProtected[0] == 0x0000);
                 CommAnswerLenProtected[0] = 0;
                 CommAnswerLenProtected[1] = 0;
 
                 ParTransmitFunc = null;
                 ParIdleFunc = null;
                 ParFinishFunc = null;
-                ParTimeoutStd = 0;
-                ParTimeoutTelEnd = 0;
-                ParInterbyteTime = 0;
-                ParRegenTime = 0;
+                if (!edicPar)
+                {
+                    ParTimeoutStd = 0;
+                    ParTimeoutTelEnd = 0;
+                    ParInterbyteTime = 0;
+                    ParRegenTime = 0;
+                }
                 ParTimeoutNr = 0;
                 ParRetryNr = 0;
                 ParWakeAddress = 0;
@@ -295,7 +300,6 @@ namespace EdiabasLib
                         ParTransmitFunc = TransKwp2000;
                         ParIdleFunc = IdleKwp2000;
                         ParFinishFunc = FinishKwp2000;
-                        ParTimeoutStd = 2000;
                         ParSendSetDtr = true;
                         ParAllowBitBang = false;
                         ParHasKeyBytes = true;
@@ -1072,6 +1076,11 @@ namespace EdiabasLib
                                     ParEdicTesterPresentTel[i] = (byte) CommParameterProtected[i + 49];
                                 }
                                 EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, ParEdicTesterPresentTel, 0, ParEdicTesterPresentTelLen, "EDIC tester present");
+                                // copy Px values to standard timeouts
+                                ParTimeoutStd = ParEdicP2;
+                                ParTimeoutTelEnd = ParEdicP1;
+                                ParInterbyteTime = ParEdicP4;
+                                ParRegenTime = ParEdicP3;
                                 ParEdicPrmSet |= 0x01;
                             }
                             break;
