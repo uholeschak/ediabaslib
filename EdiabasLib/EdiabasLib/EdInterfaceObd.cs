@@ -2550,7 +2550,7 @@ namespace EdiabasLib
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No tail received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
-                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, recLength + 1, "Resp");
+                if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, recLength + 1, "Resp");
                 if (!ParChecksumNoCheck)
                 {
                     if (CalcChecksumBmwFast(receiveData, recLength) != receiveData[recLength])
