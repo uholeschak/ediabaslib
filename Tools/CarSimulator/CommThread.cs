@@ -4979,7 +4979,7 @@ namespace CarSimulator
                     continue;
                 }
 
-                Thread.Sleep(100);  // maximum is 2000ms
+                Thread.Sleep(10);  // maximum is 2000ms
                 _sendData[0] = 0x55;
                 SendData(_sendData, 0, 1);
 
