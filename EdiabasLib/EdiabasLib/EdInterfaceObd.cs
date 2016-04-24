@@ -2347,7 +2347,7 @@ namespace EdiabasLib
             {
                 KeyBytesProtected = ByteArray0;
                 List<byte> keyBytesList = new List<byte>();
-                while ((Stopwatch.GetTimestamp() - LastCommTick) < 1000 * TickResolMs)  // W5
+                while ((Stopwatch.GetTimestamp() - LastCommTick) < (ParEdicW5 + 1000) * TickResolMs)  // offset for simulator
                 {
                     Thread.Sleep(10);
                 }
@@ -2397,7 +2397,7 @@ namespace EdiabasLib
                 }
 
                 LastCommTick = Stopwatch.GetTimestamp();
-                if (!ReceiveData(Iso9141Buffer, 0, 1, ParTimeoutStd, ParTimeoutStd))
+                if (!ReceiveData(Iso9141Buffer, 0, 1, ParEdicW1 + 1000, ParEdicW1 + 1000))  // offet because Bluetooth falls in idle state
                 {
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No wake response");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
@@ -2457,7 +2457,7 @@ namespace EdiabasLib
                 }
 
                 LastCommTick = Stopwatch.GetTimestamp();
-                if (!ReceiveData(Iso9141Buffer, 0, 2, 500, 500))
+                if (!ReceiveData(Iso9141Buffer, 0, 2, ParEdicW2, ParEdicW3))
                 {
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No key bytes received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
@@ -2471,7 +2471,7 @@ namespace EdiabasLib
                 LastCommTick = Stopwatch.GetTimestamp();
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Key bytes: {0:X02} {1:X02}", Iso9141Buffer[0], Iso9141Buffer[1]);
                 Iso9141Buffer[0] = (byte)(~Iso9141Buffer[1]);
-                Thread.Sleep(10);
+                Thread.Sleep(ParEdicW4A);
                 if (!SendData(Iso9141Buffer, 1, ParSendSetDtr))
                 {
                     EcuConnected = false;
@@ -2480,7 +2480,7 @@ namespace EdiabasLib
                 }
 
                 LastCommTick = Stopwatch.GetTimestamp();
-                if (!ReceiveData(Iso9141Buffer, 0, 1, 500, 500))
+                if (!ReceiveData(Iso9141Buffer, 0, 1, ParEdicW4, ParEdicW4))
                 {
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No wake address received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
