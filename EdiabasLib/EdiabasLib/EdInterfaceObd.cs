@@ -1034,6 +1034,22 @@ namespace EdiabasLib
                     {
                         case 0x0001:    // parameter set 1
                             ParEdicPrmSet |= 0x01;
+                            if (CommParameterProtected.Length >= 49 + 11)
+                            {
+                                ParEdicTesterPresentTime = 1000;
+                                ParEdicTesterPresentTelLen = (byte) CommParameterProtected[47];
+                                if (ParTesterPresentTelLen > 11)
+                                {
+                                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0010);
+                                    return false;
+                                }
+                                for (int i = 0; i < ParEdicTesterPresentTelLen; i++)
+                                {
+                                    ParEdicTesterPresentTel[i] = (byte) CommParameterProtected[i + 49];
+                                }
+                                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, ParEdicTesterPresentTel, 0,
+                                    ParEdicTesterPresentTelLen, "EDIC tester present");
+                            }
                             break;
 
                         case 0x0002:    // parameter set 2
@@ -1061,14 +1077,6 @@ namespace EdiabasLib
                                 ParEdicTesterAddress = (byte)CommParameterProtected[70];
                                 ParEdicEcuAddress = (byte)CommParameterProtected[71];
                                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC Tester: {0:X02}, Ecu: {1:X02}", ParEdicTesterAddress, ParEdicEcuAddress);
-
-                                ParEdicTesterPresentTime = 1000;
-                                ParEdicTesterPresentTelLen = 5;
-                                ParEdicTesterPresentTel[0] = 0x81;
-                                ParEdicTesterPresentTel[1] = ParEdicEcuAddress;
-                                ParEdicTesterPresentTel[2] = ParEdicTesterAddress;
-                                ParEdicTesterPresentTel[3] = 0x3E;
-                                ParEdicTesterPresentTel[4] = 0x00;
 
                                 ParEdicPrmSet = 0x04;
                             }
