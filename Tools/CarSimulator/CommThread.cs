@@ -4979,11 +4979,11 @@ namespace CarSimulator
                     continue;
                 }
 
-                Thread.Sleep(10);  // maximum is 2000ms
+                Thread.Sleep(60);  // maximum is 2000ms
                 _sendData[0] = 0x55;
                 SendData(_sendData, 0, 1);
 
-                Thread.Sleep(100);   // maximum 400ms
+                Thread.Sleep(5);   // maximum 400ms
                 int sendLen;
                 if (configData.Length > 1)
                 {
@@ -5137,11 +5137,11 @@ namespace CarSimulator
                     continue;
                 }
 
-                Thread.Sleep(100);  // maximum is 2200ms
+                Thread.Sleep(60);  // maximum is 2200ms
                 _sendData[0] = 0x55;
                 SendData(_sendData, 0, 1);
 
-                Thread.Sleep(10);   // maximum 200ms
+                Thread.Sleep(5);   // maximum 200ms
                 int sendLen = 0;
                 if (configData.Length > 1)
                 {
@@ -5218,11 +5218,11 @@ namespace CarSimulator
                     continue;
                 }
 
-                Thread.Sleep(100); // W1: 60-300ms
+                Thread.Sleep(60); // W1: 60-300ms
                 _sendData[0] = 0x55;
                 SendData(_sendData, 0, 1);
 
-                Thread.Sleep(10); // W2: 5-20ms
+                Thread.Sleep(5); // W2: 5-20ms
                 if (configData.Length > 1)
                 {
                     if (configData.Length >= 3)
