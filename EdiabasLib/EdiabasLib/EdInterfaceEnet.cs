@@ -1241,7 +1241,7 @@ namespace EdiabasLib
                 }
 
                 int recLength = TelLengthBmwFast(receiveData);
-                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, recLength + 1, "Resp");
+                if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, recLength + 1, "Resp");
 
                 int dataLen = receiveData[0] & 0x3F;
                 int dataStart = 3;
