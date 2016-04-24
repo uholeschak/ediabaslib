@@ -150,6 +150,16 @@ namespace EdiabasLib
         protected byte ParEdicWakeAddress;
         protected byte ParEdicTesterAddress;
         protected byte ParEdicEcuAddress;
+        protected int ParEdicW1;
+        protected int ParEdicW2;
+        protected int ParEdicW3;
+        protected int ParEdicW4A;
+        protected int ParEdicW4;
+        protected int ParEdicW5;
+        protected int ParEdicP1;
+        protected int ParEdicP2;
+        protected int ParEdicP3;
+        protected int ParEdicP4;
         protected int ParEdicTesterPresentTime;
         protected int ParEdicTesterPresentTelLen;
         protected byte[] ParEdicTesterPresentTel = new byte[TransBufferSize];
@@ -1033,9 +1043,22 @@ namespace EdiabasLib
                     switch (CommAnswerLenProtected[1])
                     {
                         case 0x0001:    // parameter set 1
-                            ParEdicPrmSet |= 0x01;
                             if (CommParameterProtected.Length >= 62)
                             {
+                                ParEdicW1 = (int)(CommParameterProtected[23] + (CommParameterProtected[24] << 8));
+                                ParEdicW2 = (int)(CommParameterProtected[25] + (CommParameterProtected[26] << 8));
+                                ParEdicW3 = (int)(CommParameterProtected[27] + (CommParameterProtected[28] << 8));
+                                ParEdicW4A = (int)(CommParameterProtected[29] + (CommParameterProtected[30] << 8));
+                                ParEdicW4 = (int)(CommParameterProtected[31] + (CommParameterProtected[32] << 8));
+                                ParEdicW5 = (int)(CommParameterProtected[33] + (CommParameterProtected[34] << 8));
+                                ParEdicP1 = (int)(CommParameterProtected[35] + (CommParameterProtected[36] << 8));
+                                ParEdicP2 = (int)(CommParameterProtected[37] + (CommParameterProtected[38] << 8));
+                                ParEdicP3 = (int)(CommParameterProtected[39] + (CommParameterProtected[40] << 8));
+                                ParEdicP4 = (int)(CommParameterProtected[41] + (CommParameterProtected[42] << 8));
+                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC W1-W5: {0} {1} {2} {3} {4} {5}",
+                                    ParEdicW1, ParEdicW2, ParEdicW3, ParEdicW4A, ParEdicW4, ParEdicW5);
+                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC P1-P4: {0} {1} {2} {3}",
+                                    ParEdicP1, ParEdicP2, ParEdicP3, ParEdicP4);
                                 ParEdicTesterPresentTime = (int) (CommParameterProtected[60] + (CommParameterProtected[61] << 8));
                                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC Tester present time: {0}", ParEdicTesterPresentTime);
                                 ParEdicTesterPresentTelLen = (byte) CommParameterProtected[47];
@@ -1049,6 +1072,7 @@ namespace EdiabasLib
                                     ParEdicTesterPresentTel[i] = (byte) CommParameterProtected[i + 49];
                                 }
                                 EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, ParEdicTesterPresentTel, 0, ParEdicTesterPresentTelLen, "EDIC tester present");
+                                ParEdicPrmSet |= 0x01;
                             }
                             break;
 
@@ -2323,7 +2347,7 @@ namespace EdiabasLib
             {
                 KeyBytesProtected = ByteArray0;
                 List<byte> keyBytesList = new List<byte>();
-                while ((Stopwatch.GetTimestamp() - LastCommTick) < 2600 * TickResolMs)
+                while ((Stopwatch.GetTimestamp() - LastCommTick) < 1000 * TickResolMs)  // W5
                 {
                     Thread.Sleep(10);
                 }
