@@ -1034,9 +1034,10 @@ namespace EdiabasLib
                     {
                         case 0x0001:    // parameter set 1
                             ParEdicPrmSet |= 0x01;
-                            if (CommParameterProtected.Length >= 49 + 11)
+                            if (CommParameterProtected.Length >= 62)
                             {
-                                ParEdicTesterPresentTime = 1000;
+                                ParEdicTesterPresentTime = (int) (CommParameterProtected[60] + (CommParameterProtected[61] << 8));
+                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC Tester present time: {0}", ParEdicTesterPresentTime);
                                 ParEdicTesterPresentTelLen = (byte) CommParameterProtected[47];
                                 if (ParTesterPresentTelLen > 11)
                                 {
@@ -1047,8 +1048,7 @@ namespace EdiabasLib
                                 {
                                     ParEdicTesterPresentTel[i] = (byte) CommParameterProtected[i + 49];
                                 }
-                                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, ParEdicTesterPresentTel, 0,
-                                    ParEdicTesterPresentTelLen, "EDIC tester present");
+                                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, ParEdicTesterPresentTel, 0, ParEdicTesterPresentTelLen, "EDIC tester present");
                             }
                             break;
 
