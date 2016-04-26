@@ -56,15 +56,15 @@ namespace EdiabasLib
         protected byte[] RecBuffer = new byte[TransBufferSize];
         protected byte[] DataBuffer = new byte[TransBufferSize];
         protected byte[] AckBuffer = new byte[TransBufferSize];
-        protected Dictionary<byte, int> NrDict = new Dictionary<byte, int>();
+        protected Dictionary<byte, int> Nr78Dict = new Dictionary<byte, int>();
 
         protected TransmitDelegate ParTransmitFunc;
         protected int ParTimeoutStd;
         protected int ParTimeoutTelEnd;
         protected int ParInterbyteTime;
         protected int ParRegenTime;
-        protected int ParTimeoutNr;
-        protected int ParRetryNr;
+        protected int ParTimeoutNr78;
+        protected int ParRetryNr78;
 
         public override EdiabasNet Ediabas
         {
@@ -125,9 +125,9 @@ namespace EdiabasLib
                 ParTimeoutTelEnd = 0;
                 ParInterbyteTime = 0;
                 ParRegenTime = 0;
-                ParTimeoutNr = 0;
-                ParRetryNr = 0;
-                NrDict.Clear();
+                ParTimeoutNr78 = 0;
+                ParRetryNr78 = 0;
+                Nr78Dict.Clear();
 
                 if (CommParameterProtected == null)
                 {   // clear parameter
@@ -156,8 +156,8 @@ namespace EdiabasLib
                         ParTimeoutStd = (int)CommParameterProtected[2];
                         ParRegenTime = (int)CommParameterProtected[3];
                         ParTimeoutTelEnd = (int)CommParameterProtected[4];
-                        ParTimeoutNr = (int)CommParameterProtected[6];
-                        ParRetryNr = (int)CommParameterProtected[5];
+                        ParTimeoutNr78 = (int)CommParameterProtected[6];
+                        ParRetryNr78 = (int)CommParameterProtected[5];
                         break;
 
                     case 0x0110:    // D-CAN
@@ -170,8 +170,8 @@ namespace EdiabasLib
                         ParTimeoutStd = (int)CommParameterProtected[7];
                         ParTimeoutTelEnd = 10;
                         ParRegenTime = (int)CommParameterProtected[8];
-                        ParTimeoutNr = (int)CommParameterProtected[9];
-                        ParRetryNr = (int)CommParameterProtected[10];
+                        ParTimeoutNr78 = (int)CommParameterProtected[9];
+                        ParRetryNr78 = (int)CommParameterProtected[10];
                         break;
 
                     default:
@@ -1175,36 +1175,36 @@ namespace EdiabasLib
             return errorCode;
         }
 
-        private void NrDictAdd(byte deviceAddr, bool enableLogging)
+        private void Nr78DictAdd(byte deviceAddr, bool enableLogging)
         {
             int retries;
-            if (NrDict.TryGetValue(deviceAddr, out retries))
+            if (Nr78Dict.TryGetValue(deviceAddr, out retries))
             {
-                NrDict.Remove(deviceAddr);
+                Nr78Dict.Remove(deviceAddr);
                 retries++;
-                if (retries <= ParRetryNr)
+                if (retries <= ParRetryNr78)
                 {
-                    if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NR({0:X02}) count={1}", deviceAddr, retries);
-                    NrDict.Add(deviceAddr, retries);
+                    if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NR78({0:X02}) count={1}", deviceAddr, retries);
+                    Nr78Dict.Add(deviceAddr, retries);
                 }
                 else
                 {
-                    if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NR({0:X02}) exceeded", deviceAddr);
+                    if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NR78({0:X02}) exceeded", deviceAddr);
                 }
             }
             else
             {
-                if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NR({0:X02}) added", deviceAddr);
-                NrDict.Add(deviceAddr, 0);
+                if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NR78({0:X02}) added", deviceAddr);
+                Nr78Dict.Add(deviceAddr, 0);
             }
         }
 
-        private void NrDictRemove(byte deviceAddr, bool enableLogging)
+        private void Nr78DictRemove(byte deviceAddr, bool enableLogging)
         {
-            if (NrDict.ContainsKey(deviceAddr))
+            if (Nr78Dict.ContainsKey(deviceAddr))
             {
-                if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NR({0:X02}) removed", deviceAddr);
-                NrDict.Remove(deviceAddr);
+                if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NR78({0:X02}) removed", deviceAddr);
+                Nr78Dict.Remove(deviceAddr);
             }
         }
 
@@ -1219,7 +1219,7 @@ namespace EdiabasLib
 
             if (sendDataLength > 0)
             {
-                NrDict.Clear();
+                Nr78Dict.Clear();
                 int sendLength = TelLengthBmwFast(sendData);
                 if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendLength, "Send");
 
@@ -1232,7 +1232,7 @@ namespace EdiabasLib
 
             for (; ; )
             {
-                int timeout = (NrDict.Count > 0) ? ParTimeoutNr : ParTimeoutStd;
+                int timeout = (Nr78Dict.Count > 0) ? ParTimeoutNr78 : ParTimeoutStd;
                 //if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout: {0}", timeout);
                 if (!ReceiveData(receiveData, timeout))
                 {
@@ -1260,14 +1260,14 @@ namespace EdiabasLib
                 }
                 if ((dataLen == 3) && (receiveData[dataStart] == 0x7F) && (receiveData[dataStart + 2] == 0x78))
                 {   // negative response 0x78
-                    NrDictAdd(receiveData[2], enableLogging);
+                    Nr78DictAdd(receiveData[2], enableLogging);
                 }
                 else
                 {
-                    NrDictRemove(receiveData[2], enableLogging);
+                    Nr78DictRemove(receiveData[2], enableLogging);
                     break;
                 }
-                if (NrDict.Count == 0)
+                if (Nr78Dict.Count == 0)
                 {
                     break;
                 }
