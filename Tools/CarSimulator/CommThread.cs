@@ -5380,12 +5380,20 @@ namespace CarSimulator
                                 foreach (byte[] responseTel in responseEntry.ResponseMultiList)
                                 {
                                     ObdSend(responseTel);
+#if false
+                                    if (responseTel.Length == 7 && responseTel[3] == 0x7F && responseTel[5] == 0x78)
+                                    {
+                                        Debug.WriteLine("Delay NR78");
+                                        Thread.Sleep(4000);
+                                    }
+#endif
                                 }
                             }
                             else
                             {
                                 ObdSend(responseEntry.ResponseDyn);
                             }
+                            lastRecTime = Stopwatch.GetTimestamp();
                             break;
                         }
                     }
