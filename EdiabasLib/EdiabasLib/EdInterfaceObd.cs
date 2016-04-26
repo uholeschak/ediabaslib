@@ -248,9 +248,9 @@ namespace EdiabasLib
                     ParTimeoutTelEnd = 0;
                     ParInterbyteTime = 0;
                     ParRegenTime = 0;
+                    ParTimeoutNr = 0;
+                    ParRetryNr = 0;
                 }
-                ParTimeoutNr = 0;
-                ParRetryNr = 0;
                 ParWakeAddress = 0;
                 ParTesterPresentTime = 0;
                 ParTesterPresentTelLen = 0;
@@ -1081,6 +1081,8 @@ namespace EdiabasLib
                                 ParTimeoutTelEnd = ParEdicP1;
                                 ParInterbyteTime = ParEdicP4;
                                 ParRegenTime = ParEdicP3;
+                                ParTimeoutNr = 5000;
+                                ParRetryNr = 50;    // VAG is only using interface deadlock timeout
                                 ParEdicPrmSet |= 0x01;
                             }
                             break;
