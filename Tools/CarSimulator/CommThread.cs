@@ -90,6 +90,7 @@ namespace CarSimulator
         private const byte TcpTesterAddr = 0xF4;
         private const int EnetDiagPort = 6801;
         private const int EnetControlPort = 6811;
+        private const int Kwp2000Nr2123Retries = 3;
         private volatile bool _stopThread;
         private bool _threadRunning;
         private Thread _workerThread;
@@ -2374,6 +2375,7 @@ namespace CarSimulator
 
         private byte[] GetConfigData(byte wakeAddress)
         {
+            // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (byte[] configData in _configData.ConfigList)
             {
                 if (configData.Length > 0 && configData[0] == wakeAddress)
@@ -5257,6 +5259,7 @@ namespace CarSimulator
 
             Debug.WriteLine("Init done");
 
+            int nr2123SendCount = 0;
             long lastRecTime = Stopwatch.GetTimestamp();
             for (;;)
             {
@@ -5379,7 +5382,18 @@ namespace CarSimulator
                             {
                                 foreach (byte[] responseTel in responseEntry.ResponseMultiList)
                                 {
-                                    ObdSend(responseTel);
+                                    bool nr2123 = responseTel.Length == 7 && responseTel[3] == 0x7F && ((responseTel[5] == 0x21) || (responseTel[5] == 0x23));
+                                    if (!nr2123 || (nr2123SendCount < Kwp2000Nr2123Retries))
+                                    {
+                                        ObdSend(responseTel);
+                                        if (nr2123)
+                                        {
+                                            Debug.WriteLine("Send NR21/23");
+                                            nr2123SendCount++;
+                                            break;
+                                        }
+                                    }
+                                    nr2123SendCount = 0;
 #if false
                                     if (responseTel.Length == 7 && responseTel[3] == 0x7F && responseTel[5] == 0x78)
                                     {
@@ -5392,6 +5406,7 @@ namespace CarSimulator
                             else
                             {
                                 ObdSend(responseEntry.ResponseDyn);
+                                nr2123SendCount = 0;
                             }
                             lastRecTime = Stopwatch.GetTimestamp();
                             break;
