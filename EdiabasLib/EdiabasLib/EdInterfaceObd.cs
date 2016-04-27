@@ -79,7 +79,6 @@ namespace EdiabasLib
         protected double DtrTimeCorrFtdi = 0.3;
         protected int AddRecTimeout = 20;
         protected bool EnableFtdiBitBang;
-        protected bool EdicSimulation;
         protected bool ConnectedProtected;
         protected const int EchoTimeout = 100;
         protected bool UseExtInterfaceFunc;
@@ -217,12 +216,6 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     EnableFtdiBitBang = EdiabasNet.StringToValue(prop) != 0;
-                }
-
-                prop = EdiabasProtected.GetConfigProperty("ObdEdicSimul");
-                if (prop != null)
-                {
-                    EdicSimulation = EdiabasNet.StringToValue(prop) != 0;
                 }
             }
         }
@@ -1662,6 +1655,14 @@ namespace EdiabasLib
             get
             {
                 return true;
+            }
+        }
+
+        protected virtual bool EdicSimulation
+        {
+            get
+            {
+                return false;
             }
         }
 

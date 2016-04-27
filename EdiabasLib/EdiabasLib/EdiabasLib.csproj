@@ -54,6 +54,7 @@
     <Compile Include="EdFtdiInterface.cs" />
     <Compile Include="EdInterfaceAds.cs" />
     <Compile Include="EdInterfaceBase.cs" />
+    <Compile Include="EdInterfaceEdic.cs" />
     <Compile Include="EdInterfaceEnet.cs" />
     <Compile Include="EdInterfaceObd.cs" />
     <Compile Include="EdiabasNet.cs" />
