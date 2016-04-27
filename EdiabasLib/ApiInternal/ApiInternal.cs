@@ -507,6 +507,10 @@ namespace Ediabas
                 {
                     edInterface = new EdInterfaceObd();
                 }
+                else if (EdInterfaceEdic.IsValidInterfaceNameStatic(ifh))
+                {
+                    edInterface = new EdInterfaceEdic();
+                }
 #if !Android
                 else if (EdInterfaceAds.IsValidInterfaceNameStatic(ifh))
                 {

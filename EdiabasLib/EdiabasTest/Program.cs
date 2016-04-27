@@ -117,6 +117,10 @@ namespace EdiabasTest
                         {
                             edInterface = new EdInterfaceObd();
                         }
+                        else if (EdInterfaceEdic.IsValidInterfaceNameStatic(ifhName))
+                        {
+                            edInterface = new EdInterfaceEdic();
+                        }
                         else if (EdInterfaceAds.IsValidInterfaceNameStatic(ifhName))
                         {
                             edInterface = new EdInterfaceAds();
@@ -147,6 +151,10 @@ namespace EdiabasTest
                         if (edInterface is EdInterfaceObd)
                         {
                             ((EdInterfaceObd)edInterface).ComPort = comPort;
+                        }
+                        else if (edInterface is EdInterfaceEdic)
+                        {
+                            ((EdInterfaceEdic)edInterface).ComPort = comPort;
                         }
                         else if (edInterface is EdInterfaceAds)
                         {
