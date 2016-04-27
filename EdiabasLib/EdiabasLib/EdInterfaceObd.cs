@@ -1291,18 +1291,19 @@ namespace EdiabasLib
             receiveData = ByteArray0;
             if (EdicSimulation)
             {
+                // bit0 = 0 = HISTORY KL30 ON, bit4 = 0 = KL30 ON, bit5 = 0 = KL15 ON, bit6 = 0 = KL15 DISCONNECTED
+                byte edicStatus = 0x00;
                 if (sendData.Length == 2 && sendData[0] == 0xF1 && sendData[1] == 0x07)
                 {
                     receiveData = new byte[] { 0x00, 0x00, 0xFF };
                 }
                 else if (sendData.Length == 2 && sendData[0] == 0x2E && sendData[1] == 0x00)
                 {
-                    // byte 1: bit0=0 HISTORY KL30 ON, bit4=0 = KL30 ON, bit5=0 = KL15 ON, bit6=0 = KL15 DISCONNECTED,
-                    receiveData = new byte[] { 0x00, 0x00, 0x00, 0x01, 0x00, 0x00 };
+                    receiveData = new byte[] { 0x00, edicStatus, (byte) (EcuConnected ? 0x02 : 0x00), (byte)((EcuConnected ? 0x80 : 0x00) | 0x01), 0x00, 0x00 };
                 }
                 else if (sendData.Length == 3 && sendData[0] == 0x24 && sendData[1] == 0x00 && sendData[2] == 0x80)
                 {
-                    receiveData = new byte[] { 0x0B, 0x20 };
+                    receiveData = new byte[] { 0x0B, edicStatus };
                 }
             }
             else
