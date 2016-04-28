@@ -1701,6 +1701,14 @@ namespace BmwDeepObd
                             else if (string.Compare(extension, ".zip", StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 // zip file
+                                if (!ActivityCommon.CheckZipFile(downloadInfo.FileName))
+                                {   // zip file corrupted, try next server
+                                    if (!e.Cancelled && (_downloadUrlInfoList != null) && (_downloadUrlInfoList.Count >= 1))
+                                    {
+                                        StartDownload(downloadInfo);
+                                        return;
+                                    }
+                                }
                                 _downloadProgress.CancelEvent -= DownloadProgressCancel;
                                 ExtractZipFile(downloadInfo.FileName, downloadInfo.TargetDir, downloadInfo.InfoXml, true);
                                 return;
