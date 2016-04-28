@@ -2033,6 +2033,32 @@ namespace BmwDeepObd
             return relativePath;
         }
 
+        public static bool CheckZipFile(string archiveFilename)
+        {
+            ZipFile zf = null;
+            try
+            {
+                try
+                {
+                    FileStream fs = File.OpenRead(archiveFilename);
+                    zf = new ZipFile(fs);
+                    return zf.TestArchive(false);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                if (zf != null)
+                {
+                    zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                    zf.Close(); // Ensure we release resources
+                }
+            }
+        }
+
         public static void ExtractZipFile(string archiveFilenameIn, string outFolder, ProgressZipDelegate progressHandler)
         {
             ZipFile zf = null;
