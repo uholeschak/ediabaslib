@@ -1043,13 +1043,17 @@ namespace EdiabasLib
             if (EdicSimulation)
             {
                 EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send EDIC");
-                if (CommAnswerLenProtected[0] == -1)
+                if (CommAnswerLenProtected[1] != 0x0000)
                 {   // command
                     switch (CommAnswerLenProtected[1])
                     {
                         case 0x0001:    // parameter set 1
-                            if (CommParameterProtected.Length >= 62)
+                            if (CommParameterProtected.Length >= 89)
                             {
+                                ParEdicTesterAddress = (byte)CommParameterProtected[88];
+                                ParEdicEcuAddress = (byte)CommParameterProtected[5];
+                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC Tester: {0:X02}, Ecu: {1:X02}", ParEdicTesterAddress, ParEdicEcuAddress);
+
                                 ParEdicW1 = (int)(CommParameterProtected[23] + (CommParameterProtected[24] << 8));
                                 ParEdicW2 = (int)(CommParameterProtected[25] + (CommParameterProtected[26] << 8));
                                 ParEdicW3 = (int)(CommParameterProtected[27] + (CommParameterProtected[28] << 8));
@@ -1112,18 +1116,11 @@ namespace EdiabasLib
                             break;
 
                         case 0x0004:    // parameter set 4
-                            if (CommParameterProtected.Length >= 72 && CommParameterProtected[4] == 0xA5)
-                            {
-                                ParEdicTesterAddress = (byte)CommParameterProtected[70];
-                                ParEdicEcuAddress = (byte)CommParameterProtected[71];
-                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC Tester: {0:X02}, Ecu: {1:X02}", ParEdicTesterAddress, ParEdicEcuAddress);
-
-                                ParEdicPrmSet = 0x04;
-                            }
+                            ParEdicPrmSet = 0x00;
                             break;
 
-                        case 0x0010:
-                            if (ParEdicPrmSet != 0x07)
+                        case 0x0010:    // start communication
+                            if (ParEdicPrmSet != 0x03)
                             {
                                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** EDIC par incomplete");
                                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0010);
@@ -1134,7 +1131,7 @@ namespace EdiabasLib
                     receiveData = ByteArray0;
                     return true;
                 }
-                if (ParEdicPrmSet != 0x07)
+                if (ParEdicPrmSet != 0x03)
                 {
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** EDIC par incomplete");
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0010);
