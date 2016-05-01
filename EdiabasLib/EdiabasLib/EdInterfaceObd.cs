@@ -2522,7 +2522,30 @@ namespace EdiabasLib
             {
                 return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
             }
-            return TransKwp2000(sendData, sendDataLength, ref receiveData, out receiveLength, true);
+            EdiabasNet.ErrorCodes errorCode = TransKwp2000(sendData, sendDataLength, ref receiveData, out receiveLength, true);
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                return errorCode;
+            }
+            for (;;)
+            {
+                byte[] tempRecBuffer = new byte[receiveData.Length];
+                int tempRecLen;
+                errorCode = TransKwp2000(null, 0, ref tempRecBuffer, out tempRecLen, true);
+                if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_IFH_0003)
+                {
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                }
+                if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                }
+                if (receiveLength + tempRecLen <= receiveData.Length)
+                {
+                    Array.Copy(tempRecBuffer, 0, receiveData, receiveLength, tempRecLen);
+                    receiveLength += tempRecLen;
+                }
+            }
         }
 
         private EdiabasNet.ErrorCodes TransKwp2000(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, bool enableLogging)
