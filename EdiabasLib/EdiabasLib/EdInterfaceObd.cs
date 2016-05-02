@@ -2487,8 +2487,8 @@ namespace EdiabasLib
                 keyBytesList.Add(Iso9141Buffer[0]);
                 keyBytesList.Add(Iso9141Buffer[1]);
                 keyBytesList.Add((byte)(~ParEdicWakeAddress));
-                keyBytesList.Add(Iso9141Buffer[1]);
-                keyBytesList.Add(0x25);
+                keyBytesList.Add((byte)CurrentBaudRate);
+                keyBytesList.Add((byte)(CurrentBaudRate >> 8));
 
                 LastCommTick = Stopwatch.GetTimestamp();
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Key bytes: {0:X02} {1:X02}", Iso9141Buffer[0], Iso9141Buffer[1]);
