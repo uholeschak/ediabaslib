@@ -332,6 +332,7 @@ namespace EdiabasLib
                 }
                 SerialPort.Write(adapterTel, 0, adapterTel.Length);
                 UpdateActiveSettings();
+                Thread.Sleep(pulseWidth * length);
             }
             catch (Exception)
             {

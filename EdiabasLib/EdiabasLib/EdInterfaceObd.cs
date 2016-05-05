@@ -2425,7 +2425,7 @@ namespace EdiabasLib
                 }
 
                 LastCommTick = Stopwatch.GetTimestamp();
-                if (!ReceiveData(Iso9141Buffer, 0, 1, ParEdicW1 + 1000, ParEdicW1 + 1000))  // offet because Bluetooth falls in idle state
+                if (!ReceiveData(Iso9141Buffer, 0, 1, ParEdicW1, ParEdicW1))
                 {
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No wake response");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
