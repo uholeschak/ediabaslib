@@ -166,6 +166,7 @@ namespace EdiabasLib
         protected int ParEdicTesterPresentTime;
         protected int ParEdicTesterPresentTelLen;
         protected byte[] ParEdicTesterPresentTel = new byte[TransBufferSize];
+        protected int ParEdicAddRetries;
         protected int ParTesterPresentTime;
         protected int ParTesterPresentTelLen;
         protected byte[] ParTesterPresentTel = new byte[TransBufferSize];
@@ -1081,6 +1082,7 @@ namespace EdiabasLib
                                     ParEdicTesterPresentTel[i] = (byte) CommParameterProtected[i + 49];
                                 }
                                 EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, ParEdicTesterPresentTel, 0, ParEdicTesterPresentTelLen, "EDIC tester present");
+                                ParEdicAddRetries = 3;
                                 // copy Px values to standard timeouts
                                 ParTimeoutStd = ParEdicP2;
                                 ParTimeoutTelEnd = ParEdicP1;
@@ -2287,6 +2289,10 @@ namespace EdiabasLib
                 {
                     retries = 0;
                 }
+            }
+            if (EdicSimulation)
+            {
+                retries += (UInt32)ParEdicAddRetries;
             }
             for (int i = 0; i < retries + 1; i++)
             {
