@@ -11,7 +11,8 @@ namespace EdiabasLib
     {
         public const string PortId = "BLUETOOTH";
         private static readonly long TickResolMs = Stopwatch.Frequency/1000;
-        private const int ReadTimeoutOffset = 1000;
+        private const int ReadTimeoutOffsetLong = 1000;
+        private const int ReadTimeoutOffsetShort = 100;
         protected const int EchoTimeout = 500;
         protected static System.IO.Ports.SerialPort SerialPort;
         protected static AutoResetEvent CommReceiveEvent;
@@ -33,6 +34,7 @@ namespace EdiabasLib
             FastInit = false;
             AdapterType = -1;
             AdapterVersion = -1;
+            LastCommTick = DateTime.MinValue.Ticks;
 
             if (!port.StartsWith(PortId, StringComparison.OrdinalIgnoreCase))
             {
@@ -184,6 +186,7 @@ namespace EdiabasLib
                 {
                     // BMW-FAST
                     SerialPort.Write(sendData, 0, length);
+                    LastCommTick = Stopwatch.GetTimestamp();
                     // remove echo
                     byte[] receiveData = new byte[length];
                     if (!InterfaceReceiveData(receiveData, 0, length, EchoTimeout, EchoTimeout, null))
@@ -208,6 +211,7 @@ namespace EdiabasLib
                         return false;
                     }
                     SerialPort.Write(adapterTel, 0, adapterTel.Length);
+                    LastCommTick = Stopwatch.GetTimestamp();
                     UpdateActiveSettings();
                 }
             }
@@ -225,8 +229,14 @@ namespace EdiabasLib
             {
                 return false;
             }
-            timeout += ReadTimeoutOffset;
-            timeoutTelEnd += ReadTimeoutOffset;
+            int timeoutOffset = ReadTimeoutOffsetLong;
+            if (((Stopwatch.GetTimestamp() - LastCommTick) < 100*TickResolMs) && (timeout < 100))
+            {
+                timeoutOffset = ReadTimeoutOffsetShort;
+            }
+            //Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout offset {0}", timeoutOffset);
+            timeout += timeoutOffset;
+            timeoutTelEnd += timeoutOffset;
             try
             {
                 if (SettingsUpdateRequired())
@@ -242,6 +252,7 @@ namespace EdiabasLib
                         return false;
                     }
                     SerialPort.Write(adapterTel, 0, adapterTel.Length);
+                    LastCommTick = Stopwatch.GetTimestamp();
                     UpdateActiveSettings();
                 }
 
@@ -272,7 +283,12 @@ namespace EdiabasLib
                     int bytesToRead = SerialPort.BytesToRead;
                     if (bytesToRead >= length)
                     {
-                        recLen += SerialPort.Read(receiveData, offset + recLen, length - recLen);
+                        int bytesRead = SerialPort.Read(receiveData, offset + recLen, length - recLen);
+                        if (bytesRead > 0)
+                        {
+                            LastCommTick = Stopwatch.GetTimestamp();
+                        }
+                        recLen += bytesRead;
                     }
                     if (recLen >= length)
                     {
@@ -331,6 +347,7 @@ namespace EdiabasLib
                     return false;
                 }
                 SerialPort.Write(adapterTel, 0, adapterTel.Length);
+                LastCommTick = Stopwatch.GetTimestamp();
                 UpdateActiveSettings();
                 Thread.Sleep(pulseWidth * length);
             }
@@ -365,6 +382,7 @@ namespace EdiabasLib
                 byte[] identTel = {0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E};
                 SerialPort.DiscardInBuffer();
                 SerialPort.Write(identTel, 0, identTel.Length);
+                LastCommTick = Stopwatch.GetTimestamp();
 
                 List<byte> responseList = new List<byte>();
                 long startTime = Stopwatch.GetTimestamp();
@@ -375,6 +393,7 @@ namespace EdiabasLib
                         int data = SerialPort.ReadByte();
                         if (data >= 0)
                         {
+                            LastCommTick = Stopwatch.GetTimestamp();
                             responseList.Add((byte) data);
                             startTime = Stopwatch.GetTimestamp();
                         }
@@ -395,7 +414,7 @@ namespace EdiabasLib
                         AdapterVersion = responseList[identTel.Length + 7] + (responseList[identTel.Length + 6] << 8);
                         break;
                     }
-                    if (Stopwatch.GetTimestamp() - startTime > ReadTimeoutOffset*TickResolMs)
+                    if (Stopwatch.GetTimestamp() - startTime > ReadTimeoutOffsetLong*TickResolMs)
                     {
                         if (responseList.Count >= identTel.Length)
                         {

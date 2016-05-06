@@ -42,6 +42,8 @@ namespace EdiabasLib
 
         public static int AdapterVersion { get; protected set; }
 
+        public static long LastCommTick { get; protected set; }
+
         static EdBluetoothInterfaceBase()
         {
             CurrentBaudRate = 0;
