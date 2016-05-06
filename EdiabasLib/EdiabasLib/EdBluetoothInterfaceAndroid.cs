@@ -17,7 +17,8 @@ namespace EdiabasLib
         public const string RawTag = "RAW";
         private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
-        private const int ReadTimeoutOffset = 1000;
+        private const int ReadTimeoutOffsetLong = 1000;
+        private const int ReadTimeoutOffsetShort = 100;
         protected const int EchoTimeout = 500;
         private static BluetoothSocket _bluetoothSocket;
         private static Stream _bluetoothInStream;
@@ -41,6 +42,7 @@ namespace EdiabasLib
             FastInit = false;
             AdapterType = -1;
             AdapterVersion = -1;
+            LastCommTick = DateTime.MinValue.Ticks;
 
             if (!port.StartsWith(PortId, StringComparison.OrdinalIgnoreCase))
             {
@@ -314,6 +316,7 @@ namespace EdiabasLib
                 if (_rawMode || (CurrentBaudRate == 115200))
                 {   // BMW-FAST
                     _bluetoothOutStream.Write(sendData, 0, length);
+                    LastCommTick = Stopwatch.GetTimestamp();
                     // remove echo
                     byte[] receiveData = new byte[length];
                     if (!InterfaceReceiveData(receiveData, 0, length, EchoTimeout, EchoTimeout, null))
@@ -338,6 +341,7 @@ namespace EdiabasLib
                         return false;
                     }
                     _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
+                    LastCommTick = Stopwatch.GetTimestamp();
                     UpdateActiveSettings();
                 }
             }
@@ -362,8 +366,14 @@ namespace EdiabasLib
                 }
                 return _edElmInterface.InterfaceReceiveData(receiveData, offset, length, timeout, timeoutTelEnd, ediabasLog);
             }
-            timeout += ReadTimeoutOffset;
-            timeoutTelEnd += ReadTimeoutOffset;
+            int timeoutOffset = ReadTimeoutOffsetLong;
+            if (((Stopwatch.GetTimestamp() - LastCommTick) < 100 * TickResolMs) && (timeout < 100))
+            {
+                timeoutOffset = ReadTimeoutOffsetShort;
+            }
+            //Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout offset {0}", timeoutOffset);
+            timeout += timeoutOffset;
+            timeoutTelEnd += timeoutOffset;
             try
             {
                 if (!_rawMode && SettingsUpdateRequired())
@@ -375,6 +385,7 @@ namespace EdiabasLib
                         return false;
                     }
                     _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
+                    LastCommTick = Stopwatch.GetTimestamp();
                     UpdateActiveSettings();
                 }
                 int recLen = 0;
@@ -385,6 +396,10 @@ namespace EdiabasLib
                     if (_bluetoothInStream.IsDataAvailable())
                     {
                         int bytesRead = _bluetoothInStream.Read (receiveData, offset + recLen, length - recLen);
+                        if (bytesRead > 0)
+                        {
+                            LastCommTick = Stopwatch.GetTimestamp();
+                        }
                         recLen += bytesRead;
                     }
                     if (recLen >= length)
@@ -430,6 +445,7 @@ namespace EdiabasLib
                     return false;
                 }
                 _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
+                LastCommTick = Stopwatch.GetTimestamp();
                 UpdateActiveSettings();
             }
             catch (Exception)
@@ -470,6 +486,7 @@ namespace EdiabasLib
                 byte[] identTel = { 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E };
                 FlushReceiveBuffer();
                 _bluetoothOutStream.Write(identTel, 0, identTel.Length);
+                LastCommTick = Stopwatch.GetTimestamp();
 
                 List<byte> responseList = new List<byte>();
                 long startTime = Stopwatch.GetTimestamp();
@@ -480,6 +497,7 @@ namespace EdiabasLib
                         int data = _bluetoothInStream.ReadByte();
                         if (data >= 0)
                         {
+                            LastCommTick = Stopwatch.GetTimestamp();
                             responseList.Add((byte)data);
                             startTime = Stopwatch.GetTimestamp();
                         }
@@ -499,7 +517,7 @@ namespace EdiabasLib
                         AdapterVersion = responseList[identTel.Length + 7] + (responseList[identTel.Length + 6] << 8);
                         break;
                     }
-                    if (Stopwatch.GetTimestamp() - startTime > ReadTimeoutOffset * TickResolMs)
+                    if (Stopwatch.GetTimestamp() - startTime > ReadTimeoutOffsetLong * TickResolMs)
                     {
                         if (responseList.Count >= identTel.Length)
                         {
