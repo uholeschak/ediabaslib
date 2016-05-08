@@ -955,7 +955,14 @@ namespace CarSimulator
                 UpdateOutState();
                 // wait for first byte
                 // for stable switching we always need 10ms, but then are problems with win CE client
-                int interByteTimeout = _conceptType == ConceptType.ConceptBwmFast ? 30 : 10;
+                int interByteTimeout = 10;
+                switch (_conceptType)
+                {
+                    case ConceptType.ConceptBwmFast:
+                    case ConceptType.ConceptKwp2000:
+                        interByteTimeout = 30;
+                        break;
+                }
                 int lastBytesToRead = 0;
                 int recLen = 0;
                 _receiveStopWatch.Reset();
