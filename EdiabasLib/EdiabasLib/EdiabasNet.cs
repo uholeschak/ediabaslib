@@ -3005,9 +3005,12 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "SetConfigProperty: Job is running");
                 }
-                lock (_apiLock)
+                if (!string.IsNullOrEmpty(value))
                 {
-                    _ecuPath = value;
+                    lock (_apiLock)
+                    {
+                        _ecuPath = value;
+                    }
                 }
                 CloseSgbdFs();
             }
