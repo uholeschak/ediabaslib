@@ -2244,6 +2244,7 @@ namespace EdiabasLib
         private string _sgbdFileName = string.Empty;
         private string _sgbdFileResolveLast = string.Empty;
         private string _ecuPath = string.Empty;
+        private readonly string _ecuPathDefault;
         private EdInterfaceBase _edInterfaceClass;
         private static long _timeMeas;
         private readonly byte[] _opArgBuffer = new byte[5];
@@ -2817,6 +2818,7 @@ namespace EdiabasLib
                     _xdocConfig = null;
                 }
             }
+            _ecuPathDefault = _ecuPath;
 
             string lockTrace = GetConfigProperty("LockTrace");
             if (lockTrace != null)
@@ -3005,12 +3007,9 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "SetConfigProperty: Job is running");
                 }
-                if (!string.IsNullOrEmpty(value))
+                lock (_apiLock)
                 {
-                    lock (_apiLock)
-                    {
-                        _ecuPath = value;
-                    }
+                    _ecuPath = string.IsNullOrEmpty(value) ? _ecuPathDefault : value;
                 }
                 CloseSgbdFs();
             }
