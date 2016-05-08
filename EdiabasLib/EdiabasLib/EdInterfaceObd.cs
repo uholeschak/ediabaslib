@@ -1093,7 +1093,7 @@ namespace EdiabasLib
                                 ParRetryNr21 = 240;     // 2 min
                                 ParRetryNr23 = 240;     // 2 min
                                 ParTimeoutNr78 = 5000;
-                                ParRetryNr78 = 50;    // VAG is only using interface deadlock timeout
+                                ParRetryNr78 = 50;      // VAG is only using interface deadlock timeout
                                 ParEdicPrmSet |= 0x01;
                             }
                             break;
