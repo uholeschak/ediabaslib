@@ -29,10 +29,28 @@ CFG: 01 EF 8F
 ; Messwerteblock_lesen: 57;LESEN
 82 10 F1 21 39 DD : 9A F1 10 61 39 25 00 00 25 00 00 25 00 00 25 00 00 25 00 00 25 00 00 25 00 00 25 00 00 5D
 ; Messwerteblock_lesen: 57;STOP
+; Messwerteblock_lesen: 100;START
+; Messwerteblock_lesen: 100;STOP
+82 10 F1 21 64 08 : 9A F1 10 61 64 01 69 00 05 3B 5B 08 0A 00 10 02 00 30 00 00 30 00 00 30 00 00 25 00 00 3E
+; Messwerteblock_lesen: 101;START
+; Messwerteblock_lesen: 101;STOP
+82 10 F1 21 65 09 : 9A F1 10 61 65 10 FF 00 10 FF 00 10 FF 00 10 07 00 30 00 00 25 00 00 25 00 00 25 00 00 44
+; Messwerteblock_lesen: 102;START
+; Messwerteblock_lesen: 102;STOP
+82 10 F1 21 66 0A : 9A F1 10 61 66 05 3A C3 05 3B 5B 12 62 00 12 62 00 30 00 00 30 00 00 25 00 00 25 00 00 91
+; Messwerteblock_lesen: 103;START
+; Messwerteblock_lesen: 103;STOP
+82 10 F1 21 67 0B : 9A F1 10 61 67 08 0A 00 10 0F 00 08 1C FF 10 03 00 25 00 00 25 00 00 25 00 00 25 00 00 5E
+; Messwerteblock_lesen: 104;START
+; Messwerteblock_lesen: 104;STOP
+82 10 F1 21 68 0C : 9A F1 10 61 68 1F 65 00 08 03 00 08 03 00 5C 0A 00 25 00 00 25 00 00 25 00 00 25 00 00 F8
+
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 10 F1 18 02 FF 00 9E : 83 F1 10 7F 18 12 2D
 ; FehlerspeicherSAE_abfragen: MW_LESEN
 84 10 F1 18 00 FF 00 9E : 82 F1 10 58 00 DB
+; Fehlerspeicher_loeschen
+83 10 F1 14 FF 00 00 : 83 F1 10 54 FF 00 00
 
 ; zus_05.grp
 CFG: 85 EF 8F
@@ -49,6 +67,8 @@ CFG: 85 EF 8F
 ; Messwerteblock_lesen: 23;STOP
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 C4 F1 18 02 FF 00 00 : 83 F1 C4 7F 18 12 00
+; Fehlerspeicher_loeschen
+83 C4 F1 14 FF 00 00 : 83 F1 C4 54 FF 00 00
 
 ; weg_25.grp
 CFG: 25 EF 8F
@@ -61,6 +81,8 @@ CFG: 25 EF 8F
 84 C0 F1 31 B8 00 00 1E : 8E F1 C0 71 B8 01 02 01 03 01 04 01 05 01 06 01 0D 8F
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 C0 F1 18 02 FF 00 00 : 83 F1 C0 7F 18 12 00
+; Fehlerspeicher_loeschen
+83 C0 F1 14 FF 00 00 : 83 F1 C0 54 FF 00 00
 
 ; Get2000.prg
 CFG: 02 EF 8F
@@ -73,6 +95,8 @@ CFG: 02 EF 8F
 84 1A F1 31 B8 00 00 78 : 8A F1 1A 71 B8 01 01 01 02 01 04 01 06 CF
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 1A F1 18 02 FF 00 A8 : 82 F1 1A 58 00 E5
+; Fehlerspeicher_loeschen
+83 1A F1 14 FF 00 00 : 83 F1 1A 54 FF 00 00
 
 ; Air2000.prg
 CFG: 15 E9 8F
@@ -85,6 +109,8 @@ CFG: 15 E9 8F
 84 58 F1 31 B8 00 00 B6 : 88 F1 58 71 B8 01 02 01 04 01 06 09
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 58 F1 18 02 FF 00 00 : 83 F1 58 7F 18 12 00
+; Fehlerspeicher_loeschen
+83 58 F1 14 FF 00 00 : 83 F1 58 54 FF 00 00
 
 ; Bre2000.prg
 CFG: 83 EF 8F
@@ -97,6 +123,8 @@ CFG: 83 EF 8F
 84 28 F1 31 B8 00 00 86 : 90 F1 28 71 B8 01 01 01 02 01 03 01 04 01 05 01 06 01 08 F6
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 28 F1 18 02 FF 00 00 : 83 F1 28 7F 18 12 00
+; Fehlerspeicher_loeschen
+83 28 F1 14 FF 00 00 : 83 F1 28 54 FF 00 00
 
 ;Alr2000.prg
 CFG: A2 EF 8F
@@ -109,6 +137,8 @@ CFG: A2 EF 8F
 84 1C F1 31 B8 00 00 7A : 84 F1 1C 71 B8 01 06 C1
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 1C F1 18 02 FF 00 00 : 83 F1 1C 7F 18 12 00
+; Fehlerspeicher_loeschen
+83 1C F1 14 FF 00 00 : 83 F1 1C 54 FF 00 00
 
 ;Klh2000.prg
 CFG: 08 EF 8F
@@ -121,6 +151,8 @@ CFG: 08 EF 8F
 84 98 F1 31 B8 00 00 F6 : 8C F1 98 71 B8 01 01 01 02 01 04 01 06 01 08 58
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 98 F1 18 02 FF 00 00 : 83 F1 98 7F 18 12 00
+; Fehlerspeicher_loeschen
+83 98 F1 14 FF 00 00 : 83 F1 98 54 FF 00 00
 
 ;Did_19.grp
 CFG: 19 EF 8F
@@ -133,6 +165,8 @@ CFG: 19 EF 8F
 84 40 F1 31 B8 00 00 9E : 88 F1 40 71 B8 01 04 01 05 01 06 F4
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 40 F1 18 02 FF 00 00 : 83 F1 40 7F 18 12 00
+; Fehlerspeicher_loeschen
+83 40 F1 14 FF 00 00 : 83 F1 40 54 FF 00 00
 
 ;Eph_76.grp
 CFG: 76 EF 8F
@@ -145,6 +179,8 @@ CFG: 76 EF 8F
 84 60 F1 31 B8 00 00 BE : 8C F1 60 71 B8 01 02 01 03 01 06 01 07 01 08 25
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 60 F1 18 02 FF 00 00 : 83 F1 60 7F 18 12 00
+; Fehlerspeicher_loeschen
+83 60 F1 14 FF 00 00 : 83 F1 60 54 FF 00 00
 
 ;Zks_46.grp
 CFG: 46 EF 8F
@@ -163,11 +199,23 @@ CFG: 46 EF 8F
 ; Messwerteblock_lesen: 12;START
 82 A2 F1 21 0C 42 : 85 F1 A2 61 0C 10 54 54 3D
 ; Messwerteblock_lesen: 12;STOP
-
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 A2 F1 18 02 FF 00 30 : 82 F1 A2 58 02 6F 81 F1 A2 58 6C 81 F1 A2 58 6C 81 F1 A2 58 6C 81 F1 A2 58 6C 81 F1 A2 58 6C 84 F1 A2 58 05 DF 29 7C 81 F1 A2 58 6C 81 F1 A2 58 6C 84 F1 A2 58 03 A0 28 3A 81 F1 A2 58 6C 81 F1 A2 58 6C 81 F1 A2 58 6C 81 F1 A2 58 6C 81 F1 A2 58 6C
 85 A2 F1 12 00 04 05 DF 12 : 83 F1 A2 7F 12 11 B8
 85 A2 F1 12 00 04 03 A0 D1 : 83 F1 A2 7F 12 11 B8
+; Fehlerspeicher_loeschen
+83 A2 F1 14 FF 00 29 : 83 F1 A2 54 FF 00 69
+; Login: 99999911155555;19283
+82 A2 F1 27 03 3F : 86 F1 A2 67 03 00 00 00 00 83
+; Steuergeraet_codieren2: 99999911155555;12151
+90 A2 F1 3B 9A 7A 11 F8 DE D9 03 B0 33 30 30 03 80 2F 77 A1 : 82 F1 A2 7B 9A 2A
+; Speicher_lesen: 3;16831;2
+82 A2 F1 10 86 AB : 82 F1 A2 50 86 EB
+88 A2 F1 35 00 41 BF 00 00 00 02 52 : 82 F1 A2 75 06 90
+81 A2 F1 36 4A : 83 F1 A2 76 30 32 EE
+81 A2 F1 37 4B : 81 F1 A2 77 8B
+; Speicher_lesen: 3;20927;2
+88 A2 F1 35 00 51 BF 00 00 00 02 62 : 82 F1 A2 75 06 90
 
 ;Lwr_55.grp
 CFG: D5 EF 8F
@@ -180,6 +228,8 @@ CFG: D5 EF 8F
 84 70 F1 31 B8 00 00 CE : 90 F1 70 71 B8 01 01 01 02 01 03 01 04 01 06 01 07 01 08 40
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 70 F1 18 02 FF 00 00 : 83 F1 70 7F 18 12 00
+; Fehlerspeicher_loeschen
+83 70 F1 14 FF 00 00 : 83 F1 70 54 FF 00 00
 
 ;Lre_16.grp
 CFG: 16 EF 8F
@@ -192,6 +242,8 @@ CFG: 16 EF 8F
 84 30 F1 31 B8 00 00 8E : 8A F1 30 71 B8 01 02 01 04 01 06 01 08 EC
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 30 F1 18 02 FF 00 00 : 83 F1 30 7F 18 12 00
+; Fehlerspeicher_loeschen
+83 30 F1 14 FF 00 00 : 83 F1 30 54 FF 00 00
 
 ;Nav_37.grp
 CFG: 37 EF 8F
@@ -204,6 +256,8 @@ CFG: 37 EF 8F
 84 62 F1 31 B8 00 00 C0 : 88 F1 62 71 B8 01 02 01 04 01 06 13
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 62 F1 18 02 FF 00 F0 : 83 F1 62 7F 18 12 7F
+; Fehlerspeicher_loeschen
+83 62 F1 14 FF 00 00 : 83 F1 62 54 FF 00 00
 
 ;Rio_56.grp
 CFG: D6 EF 8F
@@ -218,6 +272,8 @@ CFG: D6 EF 8F
 84 80 F1 18 02 FF 00 0E : 88 F1 80 58 02 03 6C 6B 03 6D 6B 08
 85 80 F1 12 00 04 03 6C 7B : 83 F1 80 7F 12 11 96
 85 80 F1 12 00 04 03 6D 7C : 83 F1 80 7F 12 11 96
+; Fehlerspeicher_loeschen
+83 80 F1 14 FF 00 00 : 83 F1 80 54 FF 00 00
 
 ;Sch_17.grp
 CFG: 97 EF 8F
@@ -234,6 +290,8 @@ CFG: 97 EF 8F
 ; Messwerteblock_lesen: 81;STOP
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 61 F1 18 02 FF 00 EF : 83 F1 61 7F 18 12 7E
+; Fehlerspeicher_loeschen
+83 61 F1 14 FF 00 00 : 83 F1 61 54 FF 00 00
 
 ;Eze2000.prg
 CFG: 89 EF 8F
@@ -248,6 +306,8 @@ CFG: 89 EF 8F
 84 A4 F1 18 02 FF 00 32 : 85 F1 A4 58 02 04 5D 68 3D 84 F1 A4 58 03 8B 60 5F
 85 A4 F1 12 00 04 04 5D 91 : 83 F1 A4 7F 12 11 BA
 85 A4 F1 12 00 04 03 8B BE : 83 F1 A4 7F 12 11 BA
+; Fehlerspeicher_loeschen
+83 A4 F1 14 FF 00 00 : 83 F1 A4 54 FF 00 00
 
 ;Wie2000.prg
 CFG: 68 EF 8F
@@ -260,6 +320,8 @@ CFG: 68 EF 8F
 84 A6 F1 31 B8 00 00 04 : 88 F1 A6 71 B8 01 02 01 04 01 06 57
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 A6 F1 18 02 FF 00 34 : 83 F1 A6 7F 18 12 C3
+; Fehlerspeicher_loeschen
+83 A6 F1 14 FF 00 00 : 83 F1 A6 54 FF 00 00
 
 ;Zst_18.grp
 CFG: 98 EF 8F
@@ -270,6 +332,10 @@ CFG: 98 EF 8F
 82 99 F1 1A 86 B9 : 83 F1 99 7F 1A 12 B8
 ; UnterstFunktionen_abfragen
 84 99 F1 31 B8 00 00 04 : 8C F1 99 71 B8 01 01 01 02 01 03 01 04 01 06 54
+; FlashStatus_abfragen
+82 99 F1 1A 9C C2 : 94 F1 10 5A 9C 00 04 04 00 00 00 00 00 18 B5 30 30 2E 30 30 2E 30 30 DC
 ; Fehlerspeicher_abfragen: MW_LESEN
 84 99 F1 18 02 FF 00 27 : 85 F1 99 58 01 04 66 28 FA
 85 99 F1 12 00 04 04 66 8F : 83 F1 99 7F 12 11 AF
+; Fehlerspeicher_loeschen
+83 99 F1 14 FF 00 00 : 83 F1 99 54 FF 00 00
