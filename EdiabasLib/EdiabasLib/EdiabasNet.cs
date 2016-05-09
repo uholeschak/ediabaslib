@@ -2784,6 +2784,7 @@ namespace EdiabasLib
             SetConfigProperty("RetryComm", "1");
             SetConfigProperty("SystemResults", "1");
             SetConfigProperty("TaskPriority", "0");
+            SetConfigProperty("EdicApiHandle", "0");
 
 #if WindowsCE
             string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);
