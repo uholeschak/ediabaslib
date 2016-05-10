@@ -15,12 +15,49 @@ static FILE *hLogFile = NULL;
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
+#define CFGTYPE_PATH 0x13
+#define CFGTYPE_STRING 0x23
+#define CFGTYPE_INT 0x37
+#define CFGTYPE_BOOL 0x47
+
+#define MAXCFGNAME 32
+#define APIMAXCONFIG 256
+
 typedef struct
 {
     INT16 fktNo;
     TCHAR fktName[100];
 } FUNCTION;
 
+typedef short POWERSTATE;
+typedef struct
+{
+    POWERSTATE UbattCurrent;
+    POWERSTATE UbattHistory;
+    POWERSTATE IgnitionCurrent;
+    POWERSTATE IgnitionHistory;
+} PSCONTEXT;
+
+typedef short CFGID;
+typedef short CFGTYPE;
+
+#pragma pack(2)
+typedef struct
+{
+    CHAR name[MAXCFGNAME]; /* Name des Konfigurationselements */
+    CFGTYPE type; /* Konfigurationstyp */
+    CFGID id; /* Konfigurations-ID */
+    union /* Wert des Konfigurationselements */
+    {
+        CHAR p[APIMAXCONFIG];
+        CHAR s[APIMAXCONFIG];
+        INT16 i;
+        BOOL b;
+    } value;
+} CFGCONTEXT;
+#pragma pack()
+
+#pragma pack(4)
 typedef struct
 {
     INT16 fktNo; /* Nummer der IFH-Schnittstellenfunktion */
@@ -30,6 +67,7 @@ typedef struct
     UINT16 len; /* Anzahl der Datenbytes */
     UCHAR *data; /* Datenbytes */
 } MESSAGE;
+#pragma pack()
 
 static FUNCTION functions[] = 
 {
@@ -127,6 +165,13 @@ static BOOL OpenLogFile()
     return TRUE;
 }
 
+static std::wstring ConvertTextW(char *text)
+{
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    std::wstring textConv = converter.from_bytes((text == NULL) ? "(NULL)" : text);
+    return textConv;
+}
+
 static BOOL LogString(const TCHAR *text)
 {
     OpenLogFile();
@@ -154,6 +199,122 @@ static BOOL LogFormat(const TCHAR *format, ...)
     va_end(args);
 
     return TRUE;
+}
+
+static BOOL LogData(UCHAR *data, unsigned int length)
+{
+    if (length > 0)
+    {
+        std::wstring dataString;
+        for (unsigned int i = 0; i < length; i++)
+        {
+            if ((i > 0) && (i % 16 == 0))
+            {
+                dataString += TEXT("\n");
+            }
+            TCHAR buffer[100];
+            swprintf(buffer, 100, TEXT("%02X "), (unsigned int)data[i]);
+            dataString += buffer;
+        }
+        return LogString(dataString.c_str());
+    }
+    return TRUE;
+}
+
+static void LogMsg(TCHAR *text, MESSAGE *msg)
+{
+    TCHAR *fktName = TEXT("");
+    for (int i = 0; i < sizeof(functions) / sizeof(functions[0]); i++)
+    {
+        if (functions[i].fktNo == msg->fktNo)
+        {
+            fktName = functions[i].fktName;
+            break;
+        }
+    }
+    LogFormat(TEXT("%s: fktNo = %u '%s', wParam = %u, channel = %u, len = %u"),
+        text,
+        (unsigned int)msg->fktNo,
+        fktName,
+        (unsigned int)msg->wParam,
+        (unsigned int)msg->channel,
+        (unsigned int)msg->len
+    );
+
+    BOOL printData = TRUE;
+    switch (msg->fktNo)
+    {
+        case 3:
+            switch (msg->wParam)
+            {
+                case 0:
+                    LogString(TEXT("IFHREADY"));
+                    break;
+
+                case 1:
+                    LogString(TEXT("IFHBUSY"));
+                    break;
+
+                case 2:
+                    LogString(TEXT("IFHERROR"));
+                    break;
+            }
+            break;
+
+        case 11:
+        case 12:
+        case 13:
+            if (msg->len == sizeof(CFGCONTEXT))
+            {
+                CFGCONTEXT *pCfgContext = (CFGCONTEXT *)msg->data;
+
+                LogFormat(TEXT("name = %s, type = %u, id = %u"),
+                    ConvertTextW(pCfgContext->name).c_str(),
+                    (unsigned int)pCfgContext->type,
+                    (unsigned int)pCfgContext->id);
+                switch (pCfgContext->type)
+                {
+                case CFGTYPE_PATH:
+                    LogFormat(TEXT("path = %s"),
+                        ConvertTextW(pCfgContext->value.p).c_str());
+                    break;
+
+                case CFGTYPE_STRING:
+                    LogFormat(TEXT("string = %s"),
+                        ConvertTextW(pCfgContext->value.s).c_str());
+                    break;
+
+                case CFGTYPE_INT:
+                    LogFormat(TEXT("int = %u"),
+                        (unsigned int)pCfgContext->value.i);
+                    break;
+
+                case CFGTYPE_BOOL:
+                    LogFormat(TEXT("bool = %s"),
+                        pCfgContext->value.b ? TEXT("TRUE") : TEXT("FALSE"));
+                    break;
+                }
+                printData = FALSE;
+            }
+            break;
+
+        case 14:
+            if (msg->len == sizeof(PSCONTEXT))
+            {
+                PSCONTEXT *pPsContext = (PSCONTEXT *)msg->data;
+                LogFormat(TEXT("ubat_curr = %i, ubat_hist = %i, ignit_curr = %i, ignit_hist = %i"),
+                    (int)pPsContext->UbattCurrent,
+                    (int)pPsContext->UbattHistory,
+                    (int)pPsContext->IgnitionCurrent,
+                    (int)pPsContext->IgnitionHistory);
+                printData = FALSE;
+            }
+            break;
+    }
+    if (printData)
+    {
+        LogData(msg->data, msg->len);
+    }
 }
 
 static BOOL LoadIfhDll()
@@ -222,11 +383,9 @@ typedef short(WINAPI *PdllStartupIFH)(char *ediabasIniPath, char *ifhName);
 
 extern "C" DLLEXPORT short WINAPI dllStartupIFH(char *ediabasIniPath, char *ifhName)
 {
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-    std::wstring wediabasIniPath = converter.from_bytes((ediabasIniPath == NULL) ? "(NULL)" : ediabasIniPath);
-    std::wstring wifhName = converter.from_bytes((ifhName == NULL) ? "(NULL)" : ifhName);
-
-    LogFormat(TEXT("dllStartupIFH('%s', '%s')"), wediabasIniPath.c_str(), wifhName.c_str());
+    LogFormat(TEXT("dllStartupIFH('%s', '%s')"),
+        ConvertTextW(ediabasIniPath).c_str(),
+        ConvertTextW(ifhName).c_str());
     if (!LoadIfhDll())
     {
         return -1;
@@ -313,28 +472,7 @@ extern "C" DLLEXPORT short WINAPI dllCallIFH(MESSAGE *msgIn, MESSAGE *msgOut)
             break;
         }
     }
-    LogFormat(TEXT("msgIn: fktNo = %u '%s', wParam = %u, channel = %u, len = %u"),
-        (unsigned int)msgIn->fktNo,
-        fktName,
-        (unsigned int)msgIn->wParam,
-        (unsigned int)msgIn->channel,
-        (unsigned int)msgIn->len
-    );
-    if (msgIn->len > 0)
-    {
-        std::wstring inData;
-        for (int i = 0; i < msgIn->len; i++)
-        {
-            if ((i > 0) && (i % 16 == 0))
-            {
-                inData += TEXT("\n");
-            }
-            TCHAR buffer[100];
-            swprintf(buffer, 100, TEXT("%02X "), (unsigned int)msgIn->data[i]);
-            inData += buffer;
-        }
-        LogString(inData.c_str());
-    }
+    LogMsg(TEXT("msgIn"), msgIn);
     if (!LoadIfhDll())
     {
         return -1;
@@ -346,27 +484,7 @@ extern "C" DLLEXPORT short WINAPI dllCallIFH(MESSAGE *msgIn, MESSAGE *msgOut)
         return -1;
     }
     short result = pdllCallIFH(msgIn, msgOut);
-    LogFormat(TEXT("msgOut: fktNo = %u, wParam = %u, channel = %u, len = %u"),
-        (unsigned int)msgOut->fktNo,
-        (unsigned int)msgOut->wParam,
-        (unsigned int)msgOut->channel,
-        (unsigned int)msgOut->len
-    );
-    if (msgOut->len > 0)
-    {
-        std::wstring outData;
-        for (int i = 0; i < msgOut->len; i++)
-        {
-            if ((i > 0) && (i % 16 == 0))
-            {
-                outData += TEXT("\n");
-            }
-            TCHAR buffer[100];
-            swprintf(buffer, 100, TEXT("%02X "), (unsigned int)msgOut->data[i]);
-            outData += buffer;
-        }
-        LogString(outData.c_str());
-    }
+    LogMsg(TEXT("msgOut"), msgOut);
     LogFormat(TEXT("dllCallIFH()=%u"), (unsigned int)result);
     return result;
 }
