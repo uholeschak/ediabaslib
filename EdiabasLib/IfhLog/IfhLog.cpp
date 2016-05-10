@@ -17,6 +17,12 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
 typedef struct
 {
+    INT16 fktNo;
+    TCHAR fktName[100];
+} FUNCTION;
+
+typedef struct
+{
     INT16 fktNo; /* Nummer der IFH-Schnittstellenfunktion */
     INT16 wParam; /* Frei verfügbar */
     UINT32 reserved; /* reserviert */
@@ -24,6 +30,53 @@ typedef struct
     UINT16 len; /* Anzahl der Datenbytes */
     UCHAR *data; /* Datenbytes */
 } MESSAGE;
+
+static FUNCTION functions[] = 
+{
+    { 1, TEXT("ifhInit")},
+    { 2, TEXT("ifhGetVersion")},
+    { 3, TEXT("ifhGetIfhStatus") },
+    { 4, TEXT("ifhGetIfhError") },
+    { 5, TEXT("ifhGetResult") },
+    { 8, TEXT("ifhEnd") },
+    { 11, TEXT("ifhPassSetConfig") },
+    { 12, TEXT("ifhPassGetConfig") },
+    { 13, TEXT("ifhNotifyConfig") },
+    { 14, TEXT("ifhGetPowerState") },
+    { 20, TEXT("ifhConnect") },
+    { 21, TEXT("ifhDisconnect") },
+    { 22, TEXT("ifhInterfaceType") },
+    { 23, TEXT("ifhPowerSupply") },
+    { 24, TEXT("ifhIgnition") },
+    { 25, TEXT("ifhWarmStart") },
+    { 26, TEXT("ifhReset") },
+    { 27, TEXT("ifhSetParameter") },
+    { 28, TEXT("ifhSetTelPreface") },
+    { 29, TEXT("ifhSendTelegram") },
+    { 30, TEXT("ifhSendTelegramFreq") },
+    { 31, TEXT("ifhRequTelegramFreq") },
+    { 32, TEXT("ifhStopFreqTelegram") },
+    { 33, TEXT("ifhRequestKeyBytes") },
+    { 34, TEXT("ifhRepeatLastMsg") },
+    { 35, TEXT("ifhRequestState") },
+    { 36, TEXT("ifhSetPort") },
+    { 37, TEXT("ifhGetPort") },
+    { 38, TEXT("ifhSetProgVoltage") },
+    { 39, TEXT("ifhLoopTest") },
+    { 40, TEXT("ifhVersion") },
+    { 41, TEXT("ifhDownload") },
+    { 42, TEXT("ifhSwitchSiRelais") },
+    { 43, TEXT("ifhStopTransmission") },
+    { 44, TEXT("ifhRawMode") },
+    { 45, TEXT("ifhSend") },
+    { 46, TEXT("ifhReceive") },
+    { 47, TEXT("ifhSysInfo") },
+    { 48, TEXT("ifhOpenChannel") },
+    { 49, TEXT("ifhCloseChannel") },
+    { 50, TEXT("ifhSendDirect") },
+    { 51, TEXT("ifhReceiveDirect") },
+    { 54, TEXT("IfhSetParameterRaw") },
+};
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
@@ -250,8 +303,19 @@ typedef short(WINAPI *PdllCallIFH)(MESSAGE *msgIn, MESSAGE *msgOut);
 extern "C" DLLEXPORT short WINAPI dllCallIFH(MESSAGE *msgIn, MESSAGE *msgOut)
 {
     LogFormat(TEXT("dllCallIFH()"));
-    LogFormat(TEXT("msgIn: fktNo = %u, wParam = %u, channel = %u, len = %u"),
+
+    TCHAR *fktName = TEXT("");
+    for (int i = 0; i < sizeof(functions) / sizeof(functions[0]); i++)
+    {
+        if (functions[i].fktNo == msgIn->fktNo)
+        {
+            fktName = functions[i].fktName;
+            break;
+        }
+    }
+    LogFormat(TEXT("msgIn: fktNo = %u '%s', wParam = %u, channel = %u, len = %u"),
         (unsigned int)msgIn->fktNo,
+        fktName,
         (unsigned int)msgIn->wParam,
         (unsigned int)msgIn->channel,
         (unsigned int)msgIn->len
