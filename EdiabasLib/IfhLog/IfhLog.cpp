@@ -10,6 +10,7 @@
 
 #define DLLEXPORT __declspec(dllexport)
 
+static HANDLE hMutex = NULL;
 static HMODULE hIfhDll = NULL;
 static FILE *hLogFile = NULL;
 
@@ -116,28 +117,74 @@ static FUNCTION functions[] =
     { 54, TEXT("IfhSetParameterRaw") },
 };
 
+static void Init();
+static void Exit();
+static BOOL LoadIfhDll();
+static BOOL OpenLogFile();
+
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
     switch (ul_reason_for_call)
     {
         case DLL_PROCESS_ATTACH:
+            Init();
+            break;
+
         case DLL_THREAD_ATTACH:
         case DLL_THREAD_DETACH:
             break;
 
         case DLL_PROCESS_DETACH:
-            if (hIfhDll != NULL)
-            {
-                FreeLibrary(hIfhDll);
-                hIfhDll = NULL;
-            }
-            if (hLogFile != NULL)
-            {
-                fclose(hLogFile);
-                hLogFile = NULL;
-            }
+            Exit();
             break;
     }
+    return TRUE;
+}
+
+static void Init()
+{
+    if (hMutex == NULL)
+    {
+        hMutex = CreateMutex(NULL, FALSE, NULL);
+    }
+    LoadIfhDll();
+}
+
+static void Exit()
+{
+    if (hIfhDll != NULL)
+    {
+        FreeLibrary(hIfhDll);
+        hIfhDll = NULL;
+    }
+    if (hLogFile != NULL)
+    {
+        fclose(hLogFile);
+        hLogFile = NULL;
+    }
+    if (hMutex != NULL)
+    {
+        CloseHandle(hMutex);
+        hMutex = NULL;
+    }
+}
+
+static BOOL AquireMutex()
+{
+    if (hMutex == NULL)
+    {
+        return FALSE;
+    }
+    if (WaitForSingleObject(hMutex, INFINITE) != WAIT_OBJECT_0)
+    {
+        return FALSE;
+    }
+    return TRUE;
+}
+
+static BOOL ReleaseMutex()
+{
+    ReleaseMutex(hMutex);
     return TRUE;
 }
 
@@ -157,7 +204,12 @@ static BOOL OpenLogFile()
     std::wstring logFileName = fileName;
     logFileName += TEXT(".log");
 
+    if (!AquireMutex())
+    {
+        return FALSE;
+    }
     hLogFile = _wfopen(logFileName.c_str(), TEXT("at"));
+    ReleaseMutex();
     if (hLogFile == NULL)
     {
         return FALSE;
@@ -179,8 +231,13 @@ static BOOL LogString(const TCHAR *text)
     {
         return FALSE;
     }
+    if (!AquireMutex())
+    {
+        return FALSE;
+    }
     fwprintf(hLogFile, text);
     fwprintf(hLogFile, TEXT("\n"));
+    ReleaseMutex();
 
     return TRUE;
 }
@@ -194,8 +251,13 @@ static BOOL LogFormat(const TCHAR *format, ...)
         return FALSE;
     }
     va_start(args, format);
+    if (!AquireMutex)
+    {
+        return FALSE;
+    }
     vfwprintf(hLogFile, format, args);
     fwprintf(hLogFile, TEXT("\n"));
+    ReleaseMutex();
     va_end(args);
 
     return TRUE;
@@ -221,7 +283,7 @@ static BOOL LogData(UCHAR *data, unsigned int length)
     return TRUE;
 }
 
-static void LogMsg(TCHAR *text, MESSAGE *msg)
+static void LogMsg(MESSAGE *msg, BOOL output)
 {
     TCHAR *fktName = TEXT("");
     for (int i = 0; i < sizeof(functions) / sizeof(functions[0]); i++)
@@ -233,7 +295,7 @@ static void LogMsg(TCHAR *text, MESSAGE *msg)
         }
     }
     LogFormat(TEXT("%s: fktNo = %u '%s', wParam = %u, channel = %u, len = %u"),
-        text,
+        output ? TEXT("msgOut") : TEXT("msgIn"),
         (unsigned int)msg->fktNo,
         fktName,
         (unsigned int)msg->wParam,
@@ -245,6 +307,10 @@ static void LogMsg(TCHAR *text, MESSAGE *msg)
     switch (msg->fktNo)
     {
         case 3:
+            if (!output)
+            {
+                break;
+            }
             switch (msg->wParam)
             {
                 case 0:
@@ -346,7 +412,7 @@ typedef BOOL(WINAPI *PdllLockIFH)(void);
 extern "C" DLLEXPORT BOOL WINAPI dllLockIFH(void)
 {
     LogFormat(TEXT("dllLockIFH()"));
-    if (!LoadIfhDll())
+    if (hIfhDll == NULL)
     {
         return FALSE;
     }
@@ -366,7 +432,7 @@ typedef void(WINAPI *PdllUnlockIFH)(void);
 extern "C" DLLEXPORT void WINAPI dllUnlockIFH(void)
 {
     LogFormat(TEXT("dllUnlockIFH()"));
-    if (!LoadIfhDll())
+    if (hIfhDll == NULL)
     {
         return;
     }
@@ -386,7 +452,7 @@ extern "C" DLLEXPORT short WINAPI dllStartupIFH(char *ediabasIniPath, char *ifhN
     LogFormat(TEXT("dllStartupIFH('%s', '%s')"),
         ConvertTextW(ediabasIniPath).c_str(),
         ConvertTextW(ifhName).c_str());
-    if (!LoadIfhDll())
+    if (hIfhDll == NULL)
     {
         return -1;
     }
@@ -406,7 +472,7 @@ typedef void(WINAPI *PdllShutdownIFH)(void);
 extern "C" DLLEXPORT void WINAPI dllShutdownIFH(void)
 {
     LogFormat(TEXT("dllShutdownIFH()"));
-    if (!LoadIfhDll())
+    if (hIfhDll == NULL)
     {
         return;
     }
@@ -424,7 +490,7 @@ typedef short(WINAPI *PdllCheckIFH)(short compatibilityNo);
 extern "C" DLLEXPORT short WINAPI dllCheckIFH(short compatibilityNo)
 {
     LogFormat(TEXT("dllCheckIFH(%u)"), (unsigned int) compatibilityNo);
-    if (!LoadIfhDll())
+    if (hIfhDll == NULL)
     {
         return -1;
     }
@@ -444,7 +510,7 @@ typedef void(WINAPI *PdllExitIFH)(void);
 extern "C" DLLEXPORT void WINAPI dllExitIFH(void)
 {
     LogFormat(TEXT("dllExitIFH()"));
-    if (!LoadIfhDll())
+    if (hIfhDll == NULL)
     {
         return;
     }
@@ -472,8 +538,8 @@ extern "C" DLLEXPORT short WINAPI dllCallIFH(MESSAGE *msgIn, MESSAGE *msgOut)
             break;
         }
     }
-    LogMsg(TEXT("msgIn"), msgIn);
-    if (!LoadIfhDll())
+    LogMsg(msgIn, FALSE);
+    if (hIfhDll == NULL)
     {
         return -1;
     }
@@ -484,7 +550,7 @@ extern "C" DLLEXPORT short WINAPI dllCallIFH(MESSAGE *msgIn, MESSAGE *msgOut)
         return -1;
     }
     short result = pdllCallIFH(msgIn, msgOut);
-    LogMsg(TEXT("msgOut"), msgOut);
+    LogMsg(msgOut, TRUE);
     LogFormat(TEXT("dllCallIFH()=%u"), (unsigned int)result);
     return result;
 }
@@ -494,7 +560,7 @@ typedef void (WINAPI *PXControlEnable)(BOOL enable);
 extern "C" DLLEXPORT void WINAPI XControlEnable(BOOL enable)
 {
     LogFormat(TEXT("XControlEnable(%u)"), enable);
-    if (!LoadIfhDll())
+    if (hIfhDll == NULL)
     {
         return;
     }
