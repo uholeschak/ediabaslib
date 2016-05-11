@@ -306,25 +306,33 @@ static void LogMsg(MESSAGE *msg, BOOL output)
     BOOL printData = TRUE;
     switch (msg->fktNo)
     {
-        case 3:
+        case 2:
             if (!output)
             {
                 break;
             }
             switch (msg->wParam)
             {
-                case 0:
-                    LogString(TEXT("IFHREADY"));
-                    break;
+            case 0:
+                LogString(TEXT("IFHREADY"));
+                break;
 
-                case 1:
-                    LogString(TEXT("IFHBUSY"));
-                    break;
+            case 1:
+                LogString(TEXT("IFHBUSY"));
+                break;
 
-                case 2:
-                    LogString(TEXT("IFHERROR"));
-                    break;
+            case 2:
+                LogString(TEXT("IFHERROR"));
+                break;
             }
+            break;
+
+        case 3:
+            if (!output)
+            {
+                break;
+            }
+            LogFormat(TEXT("version = %s"), ConvertTextW((char *)msg->data).c_str());
             break;
 
         case 11:
@@ -376,6 +384,15 @@ static void LogMsg(MESSAGE *msg, BOOL output)
                 printData = FALSE;
             }
             break;
+
+        case 20:
+            if (output)
+            {
+                break;
+            }
+            LogFormat(TEXT("sgbd = %s"), ConvertTextW((char *)msg->data).c_str());
+            break;
+
     }
     if (printData)
     {
