@@ -10,6 +10,8 @@
 
 #define DLLEXPORT __declspec(dllexport)
 
+#define FLUSH_LOG 0
+
 static HANDLE hMutex = NULL;
 static HMODULE hIfhDll = NULL;
 static FILE *hLogFile = NULL;
@@ -119,6 +121,9 @@ static FUNCTION functions[] =
 
 static void Init();
 static void Exit();
+static BOOL LogFlush();
+static BOOL LogString(const TCHAR *text);
+static BOOL LogFormat(const TCHAR *format, ...);
 static BOOL LoadIfhDll();
 static BOOL OpenLogFile();
 
@@ -159,6 +164,7 @@ static void Exit()
     }
     if (hLogFile != NULL)
     {
+        fflush(hLogFile);
         fclose(hLogFile);
         hLogFile = NULL;
     }
@@ -224,6 +230,22 @@ static std::wstring ConvertTextW(char *text)
     return textConv;
 }
 
+static BOOL LogFlush()
+{
+    if (hLogFile == NULL)
+    {
+        return FALSE;
+    }
+    if (!AquireMutex())
+    {
+        return FALSE;
+    }
+    fflush(hLogFile);
+    ReleaseMutex();
+
+    return TRUE;
+}
+
 static BOOL LogString(const TCHAR *text)
 {
     OpenLogFile();
@@ -237,6 +259,9 @@ static BOOL LogString(const TCHAR *text)
     }
     fwprintf(hLogFile, text);
     fwprintf(hLogFile, TEXT("\n"));
+#if FLUSH_LOG
+    fflush(hLogFile);
+#endif
     ReleaseMutex();
 
     return TRUE;
@@ -251,12 +276,15 @@ static BOOL LogFormat(const TCHAR *format, ...)
         return FALSE;
     }
     va_start(args, format);
-    if (!AquireMutex)
+    if (!AquireMutex())
     {
         return FALSE;
     }
     vfwprintf(hLogFile, format, args);
     fwprintf(hLogFile, TEXT("\n"));
+#if FLUSH_LOG
+    fflush(hLogFile);
+#endif
     ReleaseMutex();
     va_end(args);
 
@@ -265,7 +293,7 @@ static BOOL LogFormat(const TCHAR *format, ...)
 
 static BOOL LogData(UCHAR *data, unsigned int length)
 {
-    if (length > 0)
+    if (data != NULL && length > 0)
     {
         std::wstring dataString;
         for (unsigned int i = 0; i < length; i++)
@@ -338,7 +366,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
         case 11:
         case 12:
         case 13:
-            if (msg->len == sizeof(CFGCONTEXT))
+            if (msg->len == sizeof(CFGCONTEXT) && msg->data != NULL)
             {
                 CFGCONTEXT *pCfgContext = (CFGCONTEXT *)msg->data;
 
@@ -373,7 +401,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             break;
 
         case 14:
-            if (msg->len == sizeof(PSCONTEXT))
+            if (msg->len == sizeof(PSCONTEXT) && msg->data != NULL)
             {
                 PSCONTEXT *pPsContext = (PSCONTEXT *)msg->data;
                 LogFormat(TEXT("ubat_curr = %i, ubat_hist = %i, ignit_curr = %i, ignit_hist = %i"),
@@ -460,6 +488,7 @@ extern "C" DLLEXPORT void WINAPI dllUnlockIFH(void)
         return;
     }
     pdllLockIFH();
+    LogFlush();
 }
 
 typedef short(WINAPI *PdllStartupIFH)(char *ediabasIniPath, char *ifhName);
@@ -500,6 +529,7 @@ extern "C" DLLEXPORT void WINAPI dllShutdownIFH(void)
         return;
     }
     dllShutdownIFH();
+    LogFlush();
 }
 
 typedef short(WINAPI *PdllCheckIFH)(short compatibilityNo);
@@ -538,6 +568,7 @@ extern "C" DLLEXPORT void WINAPI dllExitIFH(void)
         return;
     }
     pdllExitIFH();
+    LogFlush();
 }
 
 typedef short(WINAPI *PdllCallIFH)(MESSAGE *msgIn, MESSAGE *msgOut);
