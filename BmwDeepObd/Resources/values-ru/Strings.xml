@@ -93,6 +93,7 @@
   <string name="invalid_adapter_type">ELM327 устройство поддерживает не все необходимые команды и несовместимо с этим приложением.</string>
   <string name="fake_elm_adapter_type">ELM327 устройство имеет поддельную 2.1 версию и несовместимо с этим приложением.</string>
   <string formatted="false" name="recommened_adapter_type">Рекомендуется ELM327 устройство v1.4b, v1.5 или оригинальной версии v2.1,&lt;br&gt;которое базируется на процессоре PIC18F25K80 (не на MCP2515 чипе).&lt;br&gt;По ссылке &lt;a href=\'http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327\'&gt;ediabaslib.codeplex.com&lt;/a&gt; можете найти улучшенную прошивку.</string>
+  <!-- translate -->
   <string name="adapter_elm_replacement">ELM327 устройство медленное и нестабильное.\nВы можете купить улучшенную прошивку\n<a href='http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327'>ediabaslib.codeplex.com</a>.</string>
   <string name="adapter_cfg_required">Устройсво, возможно, требуется настроить.\nХотите получить доступ к конфигурации устройсва?</string>
   <string name="adapter_fw_update">Доступно обновление для этого устройства.\nХотите получить доступ к конфигурации устройсва, чтобы установить обновление?</string>

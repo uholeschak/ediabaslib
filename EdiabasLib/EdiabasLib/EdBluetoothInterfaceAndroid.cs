@@ -370,8 +370,9 @@ namespace EdiabasLib
                     UpdateActiveSettings();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
                 _reconnectRequired = true;
                 return false;
             }
@@ -440,8 +441,9 @@ namespace EdiabasLib
                     Thread.Sleep(10);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
                 _reconnectRequired = true;
                 return false;
             }
@@ -475,8 +477,9 @@ namespace EdiabasLib
                 LastCommTick = Stopwatch.GetTimestamp();
                 UpdateActiveSettings();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
                 _reconnectRequired = true;
                 return false;
             }
@@ -559,8 +562,9 @@ namespace EdiabasLib
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
                 _reconnectRequired = true;
                 return false;
             }
