@@ -13,6 +13,7 @@
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
 #define FLUSH_LOG 0
+#define STATUS_LOG 0
 
 #define IFH_COMPATIBILITY_NO 6
 #define CFGTYPE_PATH 0x13
@@ -606,7 +607,14 @@ typedef short(WINAPI *PdllCallIFH)(MESSAGE *msgIn, MESSAGE *msgOut);
 
 extern "C" DLLEXPORT short WINAPI dllCallIFH(MESSAGE *msgIn, MESSAGE *msgOut)
 {
-    LogFormat(TEXT("dllCallIFH()"));
+    BOOL writeLog = TRUE;
+#if !STATUS_LOG
+    if (msgIn->fktNo == 3)
+    {   // hide status message
+        writeLog = FALSE;
+    }
+#endif
+    if (writeLog) LogFormat(TEXT("dllCallIFH()"));
 
     TCHAR *fktName = TEXT("");
     for (int i = 0; i < sizeof(functions) / sizeof(functions[0]); i++)
@@ -617,7 +625,7 @@ extern "C" DLLEXPORT short WINAPI dllCallIFH(MESSAGE *msgIn, MESSAGE *msgOut)
             break;
         }
     }
-    LogMsg(msgIn, FALSE);
+    if (writeLog) LogMsg(msgIn, FALSE);
     if (hIfhDll == NULL)
     {
         return -1;
@@ -629,8 +637,8 @@ extern "C" DLLEXPORT short WINAPI dllCallIFH(MESSAGE *msgIn, MESSAGE *msgOut)
         return -1;
     }
     short result = pdllCallIFH(msgIn, msgOut);
-    LogMsg(msgOut, TRUE);
-    LogFormat(TEXT("dllCallIFH()=%u"), (unsigned int)result);
+    if (writeLog) LogMsg(msgOut, TRUE);
+    if (writeLog) LogFormat(TEXT("dllCallIFH()=%u"), (unsigned int)result);
     return result;
 }
 
