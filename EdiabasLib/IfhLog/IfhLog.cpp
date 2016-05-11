@@ -10,14 +10,11 @@
 
 #define DLLEXPORT __declspec(dllexport)
 
-#define FLUSH_LOG 0
-
-static HANDLE hMutex = NULL;
-static HMODULE hIfhDll = NULL;
-static FILE *hLogFile = NULL;
-
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
+#define FLUSH_LOG 0
+
+#define IFH_COMPATIBILITY_NO 6
 #define CFGTYPE_PATH 0x13
 #define CFGTYPE_STRING 0x23
 #define CFGTYPE_INT 0x37
@@ -70,7 +67,20 @@ typedef struct
     UINT16 len; /* Anzahl der Datenbytes */
     UCHAR *data; /* Datenbytes */
 } MESSAGE;
+
+typedef struct
+{
+    INT16 fktNo; /* Nummer der IFH-Schnittstellenfunktion */
+    INT16 wParam; /* Frei verfügbar */
+    UINT16 len; /* Anzahl der Datenbytes */
+    UCHAR *data; /* Datenbytes */
+} MESSAGE_V4;
 #pragma pack()
+
+static HANDLE hMutex = NULL;
+static HMODULE hIfhDll = NULL;
+static FILE *hLogFile = NULL;
+static int compatNo = IFH_COMPATIBILITY_NO;
 
 static FUNCTION functions[] = 
 {
@@ -214,7 +224,7 @@ static BOOL OpenLogFile()
     {
         return FALSE;
     }
-    hLogFile = _wfopen(logFileName.c_str(), TEXT("at"));
+    hLogFile = _wfopen(logFileName.c_str(), TEXT("wt"));
     ReleaseMutex();
     if (hLogFile == NULL)
     {
@@ -313,10 +323,22 @@ static BOOL LogData(UCHAR *data, unsigned int length)
 
 static void LogMsg(MESSAGE *msg, BOOL output)
 {
+    MESSAGE *msgTmp = msg;
+    MESSAGE msgLocal;
+    if (compatNo < IFH_COMPATIBILITY_NO)
+    {
+        MESSAGE_V4 *msgV4 = (MESSAGE_V4 *)msg;
+        memset(&msgLocal, 0x00, sizeof(msgLocal));
+        msgLocal.fktNo = msgV4->fktNo;
+        msgLocal.wParam = msgV4->wParam;
+        msgLocal.len = msgV4->len;
+        msgLocal.data = msgV4->data;
+        msgTmp = &msgLocal;
+    }
     TCHAR *fktName = TEXT("");
     for (int i = 0; i < sizeof(functions) / sizeof(functions[0]); i++)
     {
-        if (functions[i].fktNo == msg->fktNo)
+        if (functions[i].fktNo == msgTmp->fktNo)
         {
             fktName = functions[i].fktName;
             break;
@@ -324,22 +346,22 @@ static void LogMsg(MESSAGE *msg, BOOL output)
     }
     LogFormat(TEXT("%s: fktNo = %u '%s', wParam = %u, channel = %u, len = %u"),
         output ? TEXT("msgOut") : TEXT("msgIn"),
-        (unsigned int)msg->fktNo,
+        (unsigned int)msgTmp->fktNo,
         fktName,
-        (unsigned int)msg->wParam,
-        (unsigned int)msg->channel,
-        (unsigned int)msg->len
+        (unsigned int)msgTmp->wParam,
+        (unsigned int)msgTmp->channel,
+        (unsigned int)msgTmp->len
     );
 
     BOOL printData = TRUE;
-    switch (msg->fktNo)
+    switch (msgTmp->fktNo)
     {
         case 2:
             if (!output)
             {
                 break;
             }
-            LogFormat(TEXT("version = %s"), ConvertTextW((char *)msg->data).c_str());
+            LogFormat(TEXT("version = %s"), ConvertTextW((char *)msgTmp->data).c_str());
             break;
 
         case 3:
@@ -347,7 +369,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             {
                 break;
             }
-            switch (msg->wParam)
+            switch (msgTmp->wParam)
             {
                 case 0:
                     LogString(TEXT("IFHREADY"));
@@ -368,15 +390,15 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             {
                 break;
             }
-            LogFormat(TEXT("error = %u"), (unsigned int) msg->wParam + 9);
+            LogFormat(TEXT("error = %u"), (unsigned int)msgTmp->wParam + 9);
             break;
 
         case 11:
         case 12:
         case 13:
-            if (msg->len == sizeof(CFGCONTEXT) && msg->data != NULL)
+            if (msgTmp->len == sizeof(CFGCONTEXT) && msgTmp->data != NULL)
             {
-                CFGCONTEXT *pCfgContext = (CFGCONTEXT *)msg->data;
+                CFGCONTEXT *pCfgContext = (CFGCONTEXT *)msgTmp->data;
 
                 LogFormat(TEXT("name = %s, type = %u, id = %u"),
                     ConvertTextW(pCfgContext->name).c_str(),
@@ -409,9 +431,9 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             break;
 
         case 14:
-            if (msg->len == sizeof(PSCONTEXT) && msg->data != NULL)
+            if (msgTmp->len == sizeof(PSCONTEXT) && msgTmp->data != NULL)
             {
-                PSCONTEXT *pPsContext = (PSCONTEXT *)msg->data;
+                PSCONTEXT *pPsContext = (PSCONTEXT *)msgTmp->data;
                 LogFormat(TEXT("ubat_curr = %i, ubat_hist = %i, ignit_curr = %i, ignit_hist = %i"),
                     (int)pPsContext->UbattCurrent,
                     (int)pPsContext->UbattHistory,
@@ -426,13 +448,13 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             {
                 break;
             }
-            LogFormat(TEXT("sgbd = %s"), ConvertTextW((char *)msg->data).c_str());
+            LogFormat(TEXT("sgbd = %s"), ConvertTextW((char *)msgTmp->data).c_str());
             break;
 
     }
     if (printData)
     {
-        LogData(msg->data, msg->len);
+        LogData(msgTmp->data, msgTmp->len);
     }
 }
 
@@ -545,6 +567,7 @@ typedef short(WINAPI *PdllCheckIFH)(short compatibilityNo);
 extern "C" DLLEXPORT short WINAPI dllCheckIFH(short compatibilityNo)
 {
     LogFormat(TEXT("dllCheckIFH(%u)"), (unsigned int) compatibilityNo);
+    compatNo = compatibilityNo;
     if (hIfhDll == NULL)
     {
         return -1;
