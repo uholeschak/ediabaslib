@@ -339,20 +339,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             {
                 break;
             }
-            switch (msg->wParam)
-            {
-            case 0:
-                LogString(TEXT("IFHREADY"));
-                break;
-
-            case 1:
-                LogString(TEXT("IFHBUSY"));
-                break;
-
-            case 2:
-                LogString(TEXT("IFHERROR"));
-                break;
-            }
+            LogFormat(TEXT("version = %s"), ConvertTextW((char *)msg->data).c_str());
             break;
 
         case 3:
@@ -360,7 +347,28 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             {
                 break;
             }
-            LogFormat(TEXT("version = %s"), ConvertTextW((char *)msg->data).c_str());
+            switch (msg->wParam)
+            {
+                case 0:
+                    LogString(TEXT("IFHREADY"));
+                    break;
+
+                case 1:
+                    LogString(TEXT("IFHBUSY"));
+                    break;
+
+                case 2:
+                    LogString(TEXT("IFHERROR"));
+                    break;
+            }
+            break;
+
+        case 4:
+            if (!output)
+            {
+                break;
+            }
+            LogFormat(TEXT("error = %u"), (unsigned int) msg->wParam + 9);
             break;
 
         case 11:
