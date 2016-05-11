@@ -94,7 +94,7 @@
   <string name="invalid_adapter_type">Der ELM327 Adapter unterstützt nicht all notwendigen Kommandos und ist inkompatibel mit dieser Software.</string>
   <string name="fake_elm_adapter_type">The ELM327 Adapter ist eine gefälschte 2.1 Version und inkompatibel mit dieser Software.</string>
   <string formatted="false" name="recommened_adapter_type">Es wird ein ELM327 v1.4b, v1.5 oder original v2.1 Adapter empfohlen,&lt;br&gt;welcher auf einem PIC18F25K80 Prozessor basiert (kein MCP2515 Chip).&lt;br&gt;Auf &lt;a href=\'http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327\'&gt;ediabaslib.codeplex.com&lt;/a&gt; befindet sich eine verbesserte Firmware.</string>
-  <string name="adapter_elm_replacement">ELM327 Adapter sind langsam und die Kommunikation ist instabil.\nSie können jetzt Adapter mit Ersatzfirware kaufen unter\n<a href='http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327'>ediabaslib.codeplex.com</a>,\nwelche viele Verbesserungen aufweist.</string>
+  <string name="adapter_elm_replacement">ELM327 Adapter sind langsam und unterstützen nur D-CAN (Fahrzeuge ab 3/2007).\nSie können jetzt Adapter mit Ersatzfirware kaufen unter\n<a href='http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327'>ediabaslib.codeplex.com</a>,\nwelche viele Verbesserungen aufweist.</string>
   <string name="adapter_cfg_required">Der Adapter muss unter Umständen noch konfiguriert werden.\nWollen Sie die Adapter Konfiguration aufrufen?</string>
   <string name="adapter_fw_update">Es ist ein Firmwareupdate für diesen Adapter verfügbar.\nWollen Sie die Adapter Konfiguration aufrufen um das Update zu installieren?</string>
 

@@ -631,7 +631,7 @@ namespace EdiabasLib
             {
                 if (Ediabas != null)
                 {
-                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ELM stream failure", ex.Message);
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ELM stream failure: {0}", ex.Message);
                 }
                 StreamFailure = true;
                 return false;
@@ -694,7 +694,7 @@ namespace EdiabasLib
             {
                 if (Ediabas != null)
                 {
-                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ELM stream failure", ex.Message);
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ELM stream failure: {0}", ex.Message);
                 }
                 StreamFailure = true;
                 return false;
