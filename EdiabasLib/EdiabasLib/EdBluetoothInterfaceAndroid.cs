@@ -25,6 +25,8 @@ namespace EdiabasLib
         private static Stream _bluetoothOutStream;
         private static bool _rawMode;
         private static bool _elm327Device;
+        private static bool _reconnectRequired;
+        private static string _connectPort;
         private static EdElmInterface _edElmInterface;
 
         static EdBluetoothInterface()
@@ -56,6 +58,8 @@ namespace EdiabasLib
             }
             _rawMode = false;
             _elm327Device = false;
+            _connectPort = port;
+            _reconnectRequired = false;
             try
             {
                 BluetoothDevice device;
@@ -309,7 +313,28 @@ namespace EdiabasLib
                 {
                     return false;
                 }
+                if (_edElmInterface.StreamFailure)
+                {
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
+                    InterfaceDisconnect();
+                    if (!InterfaceConnect(_connectPort, null))
+                    {
+                        _edElmInterface.StreamFailure = true;
+                        return false;
+                    }
+                }
                 return _edElmInterface.InterfaceSendData(sendData, length, setDtr, dtrTimeCorr);
+            }
+            if (_reconnectRequired)
+            {
+                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
+                InterfaceDisconnect();
+                if (!InterfaceConnect(_connectPort, null))
+                {
+                    _reconnectRequired = true;
+                    return false;
+                }
+                _reconnectRequired = false;
             }
             try
             {
@@ -347,6 +372,7 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
+                _reconnectRequired = true;
                 return false;
             }
             return true;
@@ -416,6 +442,7 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
+                _reconnectRequired = true;
                 return false;
             }
             return true;
@@ -450,6 +477,7 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
+                _reconnectRequired = true;
                 return false;
             }
             return true;
@@ -533,6 +561,7 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
+                _reconnectRequired = true;
                 return false;
             }
 
