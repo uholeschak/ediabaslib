@@ -83,7 +83,7 @@ static HMODULE hIfhDll = NULL;
 static FILE *hLogFile = NULL;
 static int compatNo = IFH_COMPATIBILITY_NO;
 
-static FUNCTION functions[] = 
+static const FUNCTION functions[] = 
 {
     { 1, TEXT("ifhInit")},
     { 2, TEXT("ifhGetVersion")},
@@ -128,6 +128,60 @@ static FUNCTION functions[] =
     { 50, TEXT("ifhSendDirect") },
     { 51, TEXT("ifhReceiveDirect") },
     { 54, TEXT("IfhSetParameterRaw") },
+};
+
+static const TCHAR *ErrorDescription[] =
+{
+    TEXT("IFH-0000: INTERNAL ERROR"),
+    TEXT("IFH-0001: UART ERROR"),
+    TEXT("IFH-0002: NO RESPONSE FROM INTERFACE"),
+    TEXT("IFH-0003: DATATRANSMISSION TO INTERFACE DISTURBED"),
+    TEXT("IFH-0004: ERROR IN INTERFACE COMMAND"),
+    TEXT("IFH-0005: INTERNAL INTERFACE ERROR"),
+    TEXT("IFH-0006: COMMAND NOT ACCEPTED"),
+    TEXT("IFH-0007: WRONG UBATT"),
+    TEXT("IFH-0008: CONTROLUNIT CONNECTION ERROR"),
+    TEXT("IFH-0009: NO RESPONSE FROM CONTROLUNIT"),
+    TEXT("IFH-0010: DATATRANSMISSION TO CONTROLUNIT DISTURBED"),
+    TEXT("IFH-0011: UNKNOWN INTERFACE"),
+    TEXT("IFH-0012: BUFFER OVERFLOW"),
+    TEXT("IFH-0013: COMMAND NOT IMPLEMENTED"),
+    TEXT("IFH-0014: CONCEPT NOT IMPLEMENTED"),
+    TEXT("IFH-0015: UBATT ON/OFF ERROR"),
+    TEXT("IFH-0016: IGNITION ON/OFF ERROR"),
+    TEXT("IFH-0017: INTERFACE DEADLOCK ERROR"),
+    TEXT("IFH-0018: INITIALIZATION ERROR"),
+    TEXT("IFH-0019: DEVICE ACCESS ERROR"),
+    TEXT("IFH-0020: DRIVER ERROR"),
+    TEXT("IFH-0021: ILLEGAL PORT"),
+    TEXT("IFH-0022: DRIVER STATUS ERROR"),
+    TEXT("IFH-0023: INTERFACE STATUS ERROR"),
+    TEXT("IFH-0024: CANCEL FAILED"),
+    TEXT("IFH-0025: INTERFACE APPLICATION ERROR"),
+    TEXT("IFH-0026: SIMULATION ERROR"),
+    TEXT("IFH-0027: IFH NOT FOUND"),
+    TEXT("IFH-0028: ILLEGAL IFH VERSION"),
+    TEXT("IFH-0029: ACCESS DENIED"),
+    TEXT("IFH-0030: TASK COMMUNICATION ERROR"),
+    TEXT("IFH-0031: DATA OVERFLOW"),
+    TEXT("IFH-0032: IGNITION IS OFF"),
+    TEXT("IFH-0033"),
+    TEXT("IFH-0034: CONFIGURATION FILE NOT FOUND"),
+    TEXT("IFH-0035: CONFIGURATION ERROR"),
+    TEXT("IFH-0036: LOAD ERROR"),
+    TEXT("IFH-0037: LOW UBATT"),
+    TEXT("IFH-0038: INTERFACE COMMAND NOT IMPLEMENTED"),
+    TEXT("IFH-0039: EDIC USER INTERFACE NOT FOUND"),
+    TEXT("IFH-0040: ILLEGAL EDIC USER INTERFACE VERSION"),
+    TEXT("IFH-0041: ILLEGAL PARAMETERS"),
+    TEXT("IFH-0042: CARD INSTALLATION ERROR"),
+    TEXT("IFH-0043: COMMUNICATION TRACE ERROR"),
+    TEXT("IFH-0044: FLASH ERROR"),
+    TEXT("IFH-0045: RUNBOARD ERROR"),
+    TEXT("IFH-0046: EDIC API ACCESS ERROR"),
+    TEXT("IFH-0047: PLUGIN ERROR"),
+    TEXT("IFH-0048: PLUGIN FUNCTION ERROR"),
+    TEXT("IFH-0049: CSS DEVICE DETECTION ERROR"),
 };
 
 static void Init();
@@ -336,7 +390,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
         msgLocal.data = msgV4->data;
         msgTmp = &msgLocal;
     }
-    TCHAR *fktName = TEXT("");
+    const TCHAR *fktName = TEXT("");
     for (int i = 0; i < sizeof(functions) / sizeof(functions[0]); i++)
     {
         if (functions[i].fktNo == msgTmp->fktNo)
@@ -391,7 +445,19 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             {
                 break;
             }
-            LogFormat(TEXT("error = %u"), (unsigned int)msgTmp->wParam + 9);
+            if (msgTmp->wParam == 0)
+            {
+                LogString(TEXT("EDIABAS_ERR_NONE"));
+            }
+            else
+            {
+                const TCHAR *pDescription = TEXT("");
+                if (msgTmp->wParam < sizeof(ErrorDescription) / sizeof(ErrorDescription[0]))
+                {
+                    pDescription = ErrorDescription[msgTmp->wParam];
+                }
+                LogFormat(TEXT("EDIABAS_IFH_%04u: \"%s\""), (unsigned int)msgTmp->wParam, pDescription);
+            }
             break;
 
         case 11:
@@ -616,7 +682,7 @@ extern "C" DLLEXPORT short WINAPI dllCallIFH(MESSAGE *msgIn, MESSAGE *msgOut)
 #endif
     if (writeLog) LogFormat(TEXT("dllCallIFH()"));
 
-    TCHAR *fktName = TEXT("");
+    const TCHAR *fktName = TEXT("");
     for (int i = 0; i < sizeof(functions) / sizeof(functions[0]); i++)
     {
         if (functions[i].fktNo == msgIn->fktNo)
