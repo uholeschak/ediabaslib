@@ -29,3 +29,14 @@ kill `cat /var/run/wifi-phy0.pid` until hostadp finally dies.
 iw dev wlan0 del
 iw phy phy0 interface add wlan0 type managed
 /usr/sbin/hostapd -ddddddd -P /var/run/wifi-phy0.pid /var/run/hostapd-phy0.conf > /tmp/log.txt &
+
+Flash firmware with uboot:
+--------------------------
+Set adapter ip address to 192.168.1.55
+add arp table entry:
+arp -s 192.168.1.109 00-AA-BB-CC-DD-10 192.168.1.55
+Start uboot and select 2
+local ip: 192.168.1.109
+server ip: 192.168.1.55
+file: openwrt-15.05-ramips-rt305x-a5-v11-squashfs-sysupgrade.bin
+Start tftp server
