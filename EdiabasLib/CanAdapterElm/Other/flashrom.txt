@@ -1,0 +1,18 @@
+Compile flashrom with cygwin:
+
+Install libftdi-0.20 (to /usr/local):
+-------------------------------------
+Extract libftdi-0.20.tar
+./configure
+make
+make install
+
+Compile flashrom:
+-----------------
+Add to the Makefile:
+ifeq ($(TARGET_OS), Cygwin)
+override CPPFLAGS += -I/usr/local/include
+override LDFLAGS += -L/usr/local/lib
+endif
+
+make CONFIG_ENABLE_LIBPCI_PROGRAMMERS=no CONFIG_RAYER_SPI=no CONFIG_DEDIPROG=no CONFIG_CH341A_SPI=no
