@@ -18,11 +18,11 @@ endif
 make CONFIG_DEFAULT_PROGRAMMER=PROGRAMMER_FT2232_SPI CONFIG_DEFAULT_PROGRAMMER_ARGS="type=JTAGkey" CONFIG_ENABLE_LIBPCI_PROGRAMMERS=no CONFIG_RAYER_SPI=no CONFIG_DEDIPROG=no CONFIG_CH341A_SPI=no
 
 Probing algorithms:
-SST25VF040B.REMS: probe_spi_rems
-SST25VF040B: probe_spi_rdid
-A25L05PT: probe_spi_rdid4
-AT25F512: probe_spi_at25f
-M25P05: probe_spi_res1
-Pm25LV010: probe_spi_res2
-SFDP-capable chip:probe_spi_sfdp
-AT45DB011D:probe_spi_at45db
+SFDP-capable chip:probe_spi_sfdp (0x5a, 0x00, 0x00, 0x00)
+unknown SPI chip (REMS): probe_spi_rems (0x90, 0x00, 0x00, 0x00)
+unknown SPI chip (RDID): probe_spi_rdid (0x9f)
+A25L05PT: probe_spi_rdid4 (0x9f)
+AT45DB011D:probe_spi_at45db (0x9f)
+AT25F512: probe_spi_at25f (0x15)
+M25P05: probe_spi_res1 (0xab, 0x00, 0x00, 0x00) (probes rdid before!)
+Pm25LV010: probe_spi_res2 (0xab, 0x00, 0x00, 0x00)
