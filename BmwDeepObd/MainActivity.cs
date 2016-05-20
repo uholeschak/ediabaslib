@@ -1022,7 +1022,10 @@ namespace BmwDeepObd
                         try
                         {
                             FileMode fileMode;
-                            string fileName = Path.Combine(_dataLogDir, pageInfo.LogFile);
+                            string logFileName = pageInfo.LogFile;
+                            logFileName = logFileName.Replace("{D}", DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", Culture));
+
+                            string fileName = Path.Combine(_dataLogDir, logFileName);
                             if (File.Exists(fileName))
                             {
                                 fileMode = (_dataLogAppend || _jobReader.AppendLog) ? FileMode.Append : FileMode.Create;
