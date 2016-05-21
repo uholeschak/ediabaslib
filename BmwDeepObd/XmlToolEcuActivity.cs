@@ -273,9 +273,9 @@ namespace BmwDeepObd
         public static bool IsValidJob(JobInfo job)
         {
             bool validResult = false;
-            foreach (ResultInfo resultInfo in job.Results)
+            foreach (ResultInfo result in job.Results)
             {
-                if (resultInfo.Name.EndsWith("_WERT", StringComparison.OrdinalIgnoreCase))
+                if (result.Name.EndsWith("_WERT", StringComparison.OrdinalIgnoreCase))
                 {
                     validResult = true;
                 }
@@ -589,6 +589,10 @@ namespace BmwDeepObd
                 _layoutJobConfig.Visibility = ViewStates.Visible;
                 foreach (ResultInfo result in _selectedJob.Results.OrderBy(x => x.Name))
                 {
+                    if (string.Compare(result.Type, "binary", StringComparison.OrdinalIgnoreCase) == 0)
+                    {   // ignore binary results
+                        continue;
+                    }
                     _spinnerJobResultsAdapter.Items.Add(result);
                     if (result.Selected && selection < 0)
                     {
@@ -597,7 +601,26 @@ namespace BmwDeepObd
                 }
                 if (_spinnerJobResultsAdapter.Items.Count > 0 && selection < 0)
                 {
-                    selection = 0;
+                    if (jobInfo.Selected)
+                    {   // no selection, auto select all value types
+                        int index = 0;
+                        foreach (ResultInfo result in _spinnerJobResultsAdapter.Items)
+                        {
+                            if (result.Name.EndsWith("_WERT", StringComparison.OrdinalIgnoreCase))
+                            {
+                                result.Selected = true;
+                                if (selection < 0)
+                                {
+                                    selection = index;
+                                }
+                            }
+                            index++;
+                        }
+                    }
+                    if (selection < 0)
+                    {
+                        selection = 0;
+                    }
                 }
 
                 _textViewJobCommentsTitle.Text = string.Format(GetString(Resource.String.xml_tool_ecu_job_comments), _selectedJob.Name);
