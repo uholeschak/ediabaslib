@@ -82,7 +82,7 @@
       <![CDATA[
     class PageClass
     {
-        public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName)
+        public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor)
         {
             string result = string.Empty;
             bool found;
@@ -96,6 +96,10 @@
 
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_OELDRUCKSCHALTER_EIN_WERT":
                     result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) > 0.5) && found) ? "1" : "0";
+                    if (found && result == "1")
+                    {
+                        textColor = Android.Graphics.Color.Red;
+                    }
                     if (!found) result = string.Empty;
                     break;
 
