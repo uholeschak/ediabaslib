@@ -72,6 +72,10 @@ namespace BmwDeepObd
             TextView textView1 = view.FindViewById<TextView>(Resource.Id.ListText1);
             TextView textView2 = view.FindViewById<TextView>(Resource.Id.ListText2);
             textView1.Text = item.Text1;
+            if (item.TextColor != null)
+            {
+                textView1.SetTextColor(item.TextColor.Value);
+            }
             if (item.Text2 == null)
             {
                 textView2.Visibility = ViewStates.Gone;
@@ -80,6 +84,10 @@ namespace BmwDeepObd
             {
                 textView2.Visibility = ViewStates.Visible;
                 textView2.Text = item.Text2;
+                if (item.TextColor != null)
+                {
+                    textView2.SetTextColor(item.TextColor.Value);
+                }
                 if (_textWeight >= 0)
                 {
                     LinearLayout.LayoutParams layoutPar = (LinearLayout.LayoutParams)textView2.LayoutParameters;
@@ -122,22 +130,28 @@ namespace BmwDeepObd
         public delegate void CheckChangeEventHandler(TableResultItem item);
         public event CheckChangeEventHandler CheckChangeEvent;
 
-        public TableResultItem(string text1, string text2, object tag, bool checkVisible, bool selected)
+        public TableResultItem(string text1, string text2, object tag, bool checkVisible, bool selected, Android.Graphics.Color? textColor)
         {
             Text1 = text1;
             Text2 = text2;
             Tag = tag;
             CheckVisible = checkVisible;
             _selected = selected;
+            TextColor = textColor;
+        }
+
+        public TableResultItem(string text1, string text2, object tag, bool checkVisible, bool selected)
+            : this(text1, text2, tag, checkVisible, selected, null)
+        {
         }
 
         public TableResultItem(string text1, string text2, object tag)
-            : this(text1, text2, tag, false, false)
+            : this(text1, text2, tag, false, false, null)
         {
         }
 
         public TableResultItem(string text1, string text2)
-            : this(text1, text2, null, false, false)
+            : this(text1, text2, null, false, false, null)
         {
         }
 
@@ -162,5 +176,7 @@ namespace BmwDeepObd
                 }
             }
         }
+
+        public Android.Graphics.Color? TextColor { get; }
     }
 }

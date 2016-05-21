@@ -1077,12 +1077,14 @@ namespace BmwDeepObd
                     }
 
                     bool formatResult = false;
+                    bool formatResultColor = false;
                     bool formatErrorResult = false;
                     bool updateResult = false;
                     if (pageInfo.ClassObject != null)
                     {
                         Type pageType = pageInfo.ClassObject.GetType();
-                        formatResult = pageType.GetMethod("FormatResult") != null;
+                        formatResult = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary< string, EdiabasNet.ResultData >), typeof(string) }) != null;
+                        formatResultColor = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() }) != null;
                         formatErrorResult = pageType.GetMethod("FormatErrorResult") != null;
                         updateResult = pageType.GetMethod("UpdateResultList") != null;
                     }
@@ -1109,8 +1111,7 @@ namespace BmwDeepObd
                                 {
                                     _commErrorsOccured = true;
                                 }
-                                string message = string.Format(Culture, "{0}: ",
-                                    GetPageString(pageInfo, errorReport.EcuName));
+                                string message = string.Format(Culture, "{0}: ", GetPageString(pageInfo, errorReport.EcuName));
                                 if (errorReport.ErrorDict == null)
                                 {
                                     message += GetString(Resource.String.error_no_response);
@@ -1187,16 +1188,20 @@ namespace BmwDeepObd
                         foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                         {
                             string result = string.Empty;
+                            Android.Graphics.Color? textColor = null;
                             if (displayInfo.Format == null)
                             {
                                 if (resultDict != null)
                                 {
                                     try
                                     {
-                                        if (formatResult)
+                                        if (formatResultColor)
                                         {
-                                            result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict,
-                                                displayInfo.Result);
+                                            result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result, ref textColor);
+                                        }
+                                        else if (formatResult)
+                                        {
+                                            result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result);
                                         }
                                     }
                                     catch (Exception)
@@ -1211,7 +1216,7 @@ namespace BmwDeepObd
                             }
                             if (result != null)
                             {
-                                tempResultList.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result));
+                                tempResultList.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result, null, false, false, textColor));
                                 if (!string.IsNullOrEmpty(displayInfo.LogTag) && _dataLogActive && _swDataLog != null)
                                 {
                                     if (!string.IsNullOrWhiteSpace(result))
