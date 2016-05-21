@@ -331,7 +331,7 @@
     <xs:attribute name="logfile" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>
-          Name of the data logfile.
+          Name of the data logfile. The symbol {D} will be replaced by the current date and time.
           Data logging is only available if a log file name has been set.
         </xs:documentation>
       </xs:annotation>
