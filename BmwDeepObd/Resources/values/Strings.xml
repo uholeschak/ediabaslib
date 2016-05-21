@@ -27,7 +27,9 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
-\n- Added automatic Bluetooth reconnect
+\n- Allow to add the date in log file name with {D}
+\n- Improved result selection in configuration generator
+\n- Allow to change text color in FormatResult callback
 \n- Fixed minor problems</string>
   <string name="app_info_message">Deep OBD for BMW\nVersion: {0}\nId: {1}</string>
 
