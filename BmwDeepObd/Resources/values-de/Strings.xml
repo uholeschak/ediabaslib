@@ -27,7 +27,9 @@
 \nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:
-\n- Automatische Bluetooth Verbindungswiederherstellung
+\n- Das Datum kann im Logfilenamen mit {D} eingetragen werden.
+\n- Verbesserte Ergebnisauswahl im Konfigurationsgenerator
+\n- Die Textfarbe kann im FormatResult Callback geändert werden
 \n- Kleinere Probleme behoben</string>
   <string name="app_info_message">Deep OBD für BMW\nVersion: {0}\nId: {1}</string>
 
