@@ -272,7 +272,15 @@ namespace BmwDeepObd
 
         public static bool IsValidJob(JobInfo job)
         {
-            return job.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase) && job.ArgCount == 0;
+            bool validResult = false;
+            foreach (ResultInfo resultInfo in job.Results)
+            {
+                if (resultInfo.Name.EndsWith("_WERT", StringComparison.OrdinalIgnoreCase))
+                {
+                    validResult = true;
+                }
+            }
+            return job.ArgCount == 0 && validResult;
         }
 
         private void UpdateDisplay()
