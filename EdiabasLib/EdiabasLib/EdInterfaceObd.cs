@@ -2499,7 +2499,6 @@ namespace EdiabasLib
                 LastCommTick = Stopwatch.GetTimestamp();
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Key bytes: {0:X02} {1:X02}", Iso9141Buffer[0], Iso9141Buffer[1]);
                 Iso9141Buffer[0] = (byte)(~Iso9141Buffer[1]);
-                Thread.Sleep(ParEdicW4A);
                 if (!SendData(Iso9141Buffer, 1, ParSendSetDtr))
                 {
                     EcuConnected = false;
@@ -3194,7 +3193,7 @@ namespace EdiabasLib
                 LastCommTick = Stopwatch.GetTimestamp();
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Key bytes: {0:X02} {1:X02}", Iso9141Buffer[0], Iso9141Buffer[1]);
                 Iso9141Buffer[0] = (byte)(~Iso9141Buffer[1]);
-                Thread.Sleep(10);
+                //Thread.Sleep(10);
                 if (!SendData(Iso9141Buffer, 1, ParSendSetDtr))
                 {
                     EcuConnected = false;
