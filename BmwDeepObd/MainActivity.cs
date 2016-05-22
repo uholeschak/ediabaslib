@@ -18,6 +18,7 @@ using Android.OS;
 using Android.Support.V4.App;
 using Android.Support.V4.View;
 using Android.Support.V7.App;
+using Android.Text;
 using Android.Text.Method;
 using Android.Util;
 using Android.Views;
@@ -52,6 +53,7 @@ namespace BmwDeepObd
             RequestSelectConfig,
             RequestXmlTool,
             RequestEdiabasTool,
+            RequestSelectEcuZip,
         }
 
         private class DownloadInfo
@@ -393,6 +395,21 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestEdiabasTool:
                     break;
+
+                case ActivityRequest.RequestSelectEcuZip:
+                    if (data != null && resultCode == Android.App.Result.Ok)
+                    {
+                        string zipFile = data.Extras.GetString(XmlToolActivity.ExtraFileName);
+                        string fileName = Path.GetFileName(zipFile) ?? string.Empty;
+                        string ecuPath = Path.Combine(_appDataPath, EcuDirName);
+
+                        XElement xmlInfo = new XElement("Info");
+                        xmlInfo.Add(new XAttribute("Url", zipFile));
+                        xmlInfo.Add(new XAttribute("Name", fileName));
+
+                        ExtractZipFile(zipFile, ecuPath, xmlInfo);
+                    }
+                    break;
             }
         }
 
@@ -525,7 +542,7 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_download_ecu:
-                    DownloadEcuFiles();
+                    DownloadEcuFiles(true);
                     return true;
 
                 case Resource.Id.menu_submenu_log:
@@ -1951,7 +1968,7 @@ namespace BmwDeepObd
             extractThread.Start();
         }
 
-        private void DownloadEcuFiles()
+        private void DownloadEcuFiles(bool manualRequest = false)
         {
             string ecuPath = Path.Combine(_appDataPath, EcuDirName);
             try
@@ -1981,7 +1998,49 @@ namespace BmwDeepObd
             {
                 // ignored
             }
-            DownloadFile(EcuDownloadUrl, Path.Combine(_appDataPath, ActivityCommon.DownloadDir), ecuPath);
+
+            if (manualRequest)
+            {
+                string message = string.Format(GetString(Resource.String.download_manual), EcuDownloadUrl.Replace(".xml", ".zip"));
+
+                AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        ManualEcuFilesInstall();
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                        DownloadFile(EcuDownloadUrl, Path.Combine(_appDataPath, ActivityCommon.DownloadDir), ecuPath);
+                    })
+                    .SetMessage(Html.FromHtml(message))
+                    .SetTitle(Resource.String.alert_title_question)
+                    .Show();
+                TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                if (messageView != null)
+                {
+                    messageView.MovementMethod = new LinkMovementMethod();
+                }
+            }
+            else
+            {
+                DownloadFile(EcuDownloadUrl, Path.Combine(_appDataPath, ActivityCommon.DownloadDir), ecuPath);
+            }
+        }
+
+        private void ManualEcuFilesInstall()
+        {
+            string downloadsDir = _appDataPath;
+            Java.IO.File directoryDownloads = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads);
+            if (!string.IsNullOrEmpty(directoryDownloads?.AbsolutePath))
+            {
+                downloadsDir = directoryDownloads.AbsolutePath;
+            }
+
+            Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
+            serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.select_ecu_zip));
+            serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, downloadsDir);
+            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".zip");
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectEcuZip);
         }
 
         private bool CheckForEcuFiles(bool checkPackage = false)
@@ -1999,7 +2058,7 @@ namespace BmwDeepObd
                 _downloadEcuAlertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
-                        DownloadEcuFiles();
+                        DownloadEcuFiles(true);
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
@@ -2021,7 +2080,7 @@ namespace BmwDeepObd
                     _downloadEcuAlertDialog = new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
-                            DownloadEcuFiles();
+                            DownloadEcuFiles(true);
                         })
                         .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                         {

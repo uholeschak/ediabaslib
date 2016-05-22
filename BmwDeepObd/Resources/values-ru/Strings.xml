@@ -41,6 +41,9 @@
   <string name="compile_start">Компилировать код пользователя</string>
 
   <!-- Download -->
+  <!--Translate!!-->
+  <string formatted="false" name="download_manual">Wenn Sie Probleme mit dem automatischen Download der ECU Dateien haben, können Sie diese von&lt;br&gt;&lt;a href=\'{0}\'&gt;{0}&lt;/a&gt;&lt;br&gt;herunterladen und manuell installieren.&lt;br&gt;Wollen Sie die manuelle Installation verwenden?</string>
+  <string name="select_ecu_zip">ECU Zip auswählen</string>
   <string name="downloading_file">Скачать файлы</string>
   <string name="download_failed">Неудалось скачать файлы.\nПожалуйста, проверьте подключение к сети.</string>
   <string name="extract_cleanup">Удалить старые файлы</string>

@@ -27,6 +27,7 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
+\n- Allow manual ECU file download
 \n- Allow to add the date in log file name with {D}
 \n- Improved result selection in configuration generator
 \n- Allow to change text color in FormatResult callback
@@ -43,6 +44,8 @@
   <string name="compile_start">Compiling user code</string>
 
   <!-- Download -->
+  <string formatted="false" name="download_manual">If you have problems with the automatic download of the ECU files you could download them from&lt;br&gt;&lt;a href=\'{0}\'&gt;{0}&lt;/a&gt;&lt;br&gt;and install them manually.&lt;br&gt;Do you want to use manual installation?</string>
+  <string name="select_ecu_zip">Select ECU Zip</string>
   <string name="downloading_file">Downloading files</string>
   <string name="download_failed">Download files failed.\Please check your network connection.</string>
   <string name="extract_cleanup">Removing old files</string>
