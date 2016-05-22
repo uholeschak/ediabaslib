@@ -68,10 +68,12 @@ namespace EdiabasLib
                 }
                 MutexAquired = true;
             }
+#if !WindowsCE
             catch (AbandonedMutexException)
             {
                 MutexAquired = true;
             }
+#endif
             catch (Exception)
             {
                 return false;

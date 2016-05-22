@@ -5210,7 +5210,7 @@ namespace EdiabasLib
 
                             string traceFileName = "ifh.trc";
                             string propName = GetConfigProperty("IfhTraceName");
-                            if (!string.IsNullOrWhiteSpace(propName))
+                            if (!string.IsNullOrEmpty(propName))
                             {
                                 traceFileName = propName;
                             }
