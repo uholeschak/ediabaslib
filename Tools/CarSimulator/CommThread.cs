@@ -2516,7 +2516,7 @@ namespace CarSimulator
 
             if (VariableValues)
             {
-                if (_batteryVoltage > 1200)
+                if (_batteryVoltage > 1000)
                 {
                     _batteryVoltage--;
                 }
@@ -5008,8 +5008,8 @@ namespace CarSimulator
 
                 SendData(_sendData, 0, sendLen);
 
-                //if (ReceiveData(_receiveData, 0, 1, 50, 50))  // too fast for ELM
-                if (ReceiveData(_receiveData, 0, 1, 80, 80))
+                if (ReceiveData(_receiveData, 0, 1, 50, 50))  // too fast for ELM
+                //if (ReceiveData(_receiveData, 0, 1, 80, 80))
                 {
                     if ((byte) (~_receiveData[0]) == _sendData[1])
                     {
@@ -5242,8 +5242,8 @@ namespace CarSimulator
                 }
                 SendData(keyBytes, 0, keyBytes.Length);
 
-                //if (ReceiveData(_receiveData, 0, 1, 50, 50))  // too fast for ELM
-                if (ReceiveData(_receiveData, 0, 1, 80, 80))
+                if (ReceiveData(_receiveData, 0, 1, 50, 50))  // too fast for ELM
+                //if (ReceiveData(_receiveData, 0, 1, 200, 200))
                 {
                     if ((byte) (~_receiveData[0]) == keyBytes[1])
                     {
