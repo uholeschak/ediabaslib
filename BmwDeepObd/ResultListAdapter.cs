@@ -13,6 +13,7 @@ namespace BmwDeepObd
         private readonly float _textWeight;
         private readonly bool _showCheckBox;
         private bool _ignoreCheckEvent;
+        private Android.Content.Res.ColorStateList _defaultTextColors;
 
         public ResultListAdapter(Activity context, float textWeight, bool showCheckBox)
         {
@@ -20,6 +21,9 @@ namespace BmwDeepObd
             _items = new List<TableResultItem> ();
             _textWeight = textWeight;
             _showCheckBox = showCheckBox;
+
+            TextView dummy = new TextView(context);
+            _defaultTextColors = dummy.TextColors;
         }
 
         public ResultListAdapter(Activity context, float textWeight)
@@ -76,6 +80,10 @@ namespace BmwDeepObd
             {
                 textView1.SetTextColor(item.TextColor.Value);
             }
+            else
+            {
+                textView1.SetTextColor(_defaultTextColors);
+            }
             if (item.Text2 == null)
             {
                 textView2.Visibility = ViewStates.Gone;
@@ -87,6 +95,10 @@ namespace BmwDeepObd
                 if (item.TextColor != null)
                 {
                     textView2.SetTextColor(item.TextColor.Value);
+                }
+                else
+                {
+                    textView2.SetTextColor(_defaultTextColors);
                 }
                 if (_textWeight >= 0)
                 {

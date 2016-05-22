@@ -55,7 +55,7 @@
       <job name="STATUS_MESSWERTBLOCK_LESEN"
            args_first="JA;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED"
            args="NEIN;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED">
-        <display name="label_motor_bat_voltage" result="STAT_UBATT_WERT" format="7.2R" />
+        <display name="label_motor_bat_voltage" result="STAT_UBATT_WERT" />
         <display name="label_motor_temp" result="STAT_CTSCD_tClntLin_WERT" format="6.2R" />
         <display name="label_motor_air_mass" result="STAT_LUFTMASSE_WERT" format="7.2R" />
         <display name="label_motor_intake_air_temp" result="STAT_LADELUFTTEMPERATUR_WERT" format="6.2R" />
@@ -85,10 +85,21 @@
         public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor)
         {
             string result = string.Empty;
+            double value;
             bool found;
 
             switch (resultName)
             {
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_UBATT_WERT":
+                    value = ActivityMain.GetResultDouble(resultDict, resultName, out found);
+                    result = string.Format(ActivityMain.Culture, "{0,7:0.00}", value);
+                    if (found && value < 11.0)
+                    {
+                        textColor = Android.Graphics.Color.Red;
+                    }
+                    if (!found) result = string.Empty;
+                    break;
+
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT":
                     result = string.Format(ActivityMain.Culture, "{0,6:0.0}", ActivityMain.GetResultDouble(resultDict, resultName, out found) / 1000.0);
                     if (!found) result = string.Empty;
