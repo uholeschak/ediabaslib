@@ -27,7 +27,8 @@
 \nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:
-\n- Das Datum kann im Logfilenamen mit {D} eingetragen werden.
+\n- Unterstützung für manuellen ECU Datei Download
+\n- Das Datum kann im Logfilenamen mit {D} eingetragen werden
 \n- Verbesserte Ergebnisauswahl im Konfigurationsgenerator
 \n- Die Textfarbe kann im FormatResult Callback geändert werden
 \n- Kleinere Probleme behoben</string>
@@ -43,6 +44,8 @@
   <string name="compile_start">Anwendercode kompilieren</string>
 
   <!-- Download -->
+  <string formatted="false" name="download_manual">Wenn Sie Probleme mit dem automatischen Download der ECU Dateien haben, können Sie diese von&lt;br&gt;&lt;a href=\'{0}\'&gt;{0}&lt;/a&gt;&lt;br&gt;herunterladen und manuell installieren.&lt;br&gt;Wollen Sie die manuelle Installation verwenden?</string>
+  <string name="select_ecu_zip">ECU Zip auswählen</string>
   <string name="downloading_file">Dateien herunterladen</string>
   <string name="download_failed">Herunterladen der Dateien fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.</string>
   <string name="extract_cleanup">Alte Dateien löschen</string>
