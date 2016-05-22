@@ -460,6 +460,17 @@ namespace EdiabasLib
             {
                 return false;
             }
+            if (_reconnectRequired)
+            {
+                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
+                InterfaceDisconnect();
+                if (!InterfaceConnect(_connectPort, null))
+                {
+                    _reconnectRequired = true;
+                    return false;
+                }
+                _reconnectRequired = false;
+            }
             try
             {
                 UpdateAdapterInfo();

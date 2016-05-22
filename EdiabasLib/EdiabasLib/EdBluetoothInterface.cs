@@ -17,6 +17,8 @@ namespace EdiabasLib
         protected static System.IO.Ports.SerialPort SerialPort;
         protected static AutoResetEvent CommReceiveEvent;
         protected static Stopwatch StopWatch = new Stopwatch();
+        private static bool _reconnectRequired;
+        private static string _connectPort;
 
         static EdBluetoothInterface()
         {
@@ -41,6 +43,8 @@ namespace EdiabasLib
                 InterfaceDisconnect();
                 return false;
             }
+            _connectPort = port;
+            _reconnectRequired = false;
             try
             {
                 string portData = port.Remove(0, PortId.Length);
@@ -178,7 +182,19 @@ namespace EdiabasLib
         {
             if (!SerialPort.IsOpen)
             {
+                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Port closed");
                 return false;
+            }
+            if (_reconnectRequired)
+            {
+                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
+                InterfaceDisconnect();
+                if (!InterfaceConnect(_connectPort, null))
+                {
+                    _reconnectRequired = true;
+                    return false;
+                }
+                _reconnectRequired = false;
             }
             try
             {
@@ -215,8 +231,10 @@ namespace EdiabasLib
                     UpdateActiveSettings();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                _reconnectRequired = true;
                 return false;
             }
             return true;
@@ -319,8 +337,10 @@ namespace EdiabasLib
                     return false;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                _reconnectRequired = true;
                 return false;
             }
             return true;
@@ -330,7 +350,19 @@ namespace EdiabasLib
         {
             if (!SerialPort.IsOpen)
             {
+                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Port closed");
                 return false;
+            }
+            if (_reconnectRequired)
+            {
+                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
+                InterfaceDisconnect();
+                if (!InterfaceConnect(_connectPort, null))
+                {
+                    _reconnectRequired = true;
+                    return false;
+                }
+                _reconnectRequired = false;
             }
             try
             {
@@ -351,8 +383,10 @@ namespace EdiabasLib
                 UpdateActiveSettings();
                 Thread.Sleep(pulseWidth * length);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                _reconnectRequired = true;
                 return false;
             }
             return true;
@@ -428,8 +462,10 @@ namespace EdiabasLib
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                _reconnectRequired = true;
                 return false;
             }
 
