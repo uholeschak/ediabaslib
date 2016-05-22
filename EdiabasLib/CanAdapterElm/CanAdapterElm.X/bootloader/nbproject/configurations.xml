@@ -36,7 +36,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.66</languageToolchainVersion>
+        <languageToolchainVersion>5.67</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -133,7 +133,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.66</languageToolchainVersion>
+        <languageToolchainVersion>5.67</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -230,7 +230,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.66</languageToolchainVersion>
+        <languageToolchainVersion>5.67</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -327,7 +327,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.66</languageToolchainVersion>
+        <languageToolchainVersion>5.67</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
