@@ -107,7 +107,7 @@ CFG: 15 E9 8F
 ; UnterstFunktionen_abfragen
 84 58 F1 31 B8 00 00 B6 : 88 F1 58 71 B8 01 02 01 04 01 06 09
 ; Fehlerspeicher_abfragen: MW_LESEN
-84 58 F1 18 02 FF 00 00 : 83 F1 58 7F 18 12 00
+84 58 F1 18 02 FF 00 E6 : 82 F1 58 58 00 23
 ; Fehlerspeicher_loeschen
 83 58 F1 14 FF 00 00 : 83 F1 58 54 FF 00 00
 
@@ -121,7 +121,7 @@ CFG: 83 E9 8F
 ; UnterstFunktionen_abfragen
 84 28 F1 31 B8 00 00 86 : 90 F1 28 71 B8 01 01 01 02 01 03 01 04 01 05 01 06 01 08 F6
 ; Fehlerspeicher_abfragen: MW_LESEN
-84 28 F1 18 02 FF 00 00 : 83 F1 28 7F 18 12 00
+84 28 F1 18 02 FF 00 B6 : 82 F1 28 58 00 F3
 ; Fehlerspeicher_loeschen
 83 28 F1 14 FF 00 00 : 83 F1 28 54 FF 00 00
 
@@ -135,7 +135,7 @@ CFG: A2 EF 8F
 ; UnterstFunktionen_abfragen
 84 1C F1 31 B8 00 00 7A : 84 F1 1C 71 B8 01 06 C1
 ; Fehlerspeicher_abfragen: MW_LESEN
-84 1C F1 18 02 FF 00 00 : 83 F1 1C 7F 18 12 00
+84 1C F1 18 02 FF 00 AA : 82 F1 1C 58 00 E7
 ; Fehlerspeicher_loeschen
 83 1C F1 14 FF 00 00 : 83 F1 1C 54 FF 00 00
 
@@ -149,7 +149,7 @@ CFG: 08 6B 8F
 ; UnterstFunktionen_abfragen
 84 98 F1 31 B8 00 00 F6 : 8C F1 98 71 B8 01 01 01 02 01 04 01 06 01 08 58
 ; Fehlerspeicher_abfragen: MW_LESEN
-84 98 F1 18 02 FF 00 00 : 83 F1 98 7F 18 12 00
+84 98 F1 18 02 FF 00 26 : 83 F1 98 7F 18 23 C6 82 F1 98 58 00 63
 ; Fehlerspeicher_loeschen
 83 98 F1 14 FF 00 00 : 83 F1 98 54 FF 00 00
 
@@ -163,7 +163,7 @@ CFG: 19 6B 8F
 ; UnterstFunktionen_abfragen
 84 40 F1 31 B8 00 00 9E : 88 F1 40 71 B8 01 04 01 05 01 06 F4
 ; Fehlerspeicher_abfragen: MW_LESEN
-84 40 F1 18 02 FF 00 00 : 83 F1 40 7F 18 12 00
+84 40 F1 18 02 FF 00 CE : 82 F1 40 58 00 0B
 ; Fehlerspeicher_loeschen
 83 40 F1 14 FF 00 00 : 83 F1 40 54 FF 00 00
 
@@ -177,7 +177,7 @@ CFG: 76 E9 8F
 ; UnterstFunktionen_abfragen
 84 60 F1 31 B8 00 00 BE : 8C F1 60 71 B8 01 02 01 03 01 06 01 07 01 08 25
 ; Fehlerspeicher_abfragen: MW_LESEN
-84 60 F1 18 02 FF 00 00 : 83 F1 60 7F 18 12 00
+84 60 F1 18 02 FF 00 EE : 82 F1 60 58 00 2B
 ; Fehlerspeicher_loeschen
 83 60 F1 14 FF 00 00 : 83 F1 60 54 FF 00 00
 
@@ -226,7 +226,7 @@ CFG: D5 6B 8F
 ; UnterstFunktionen_abfragen
 84 70 F1 31 B8 00 00 CE : 90 F1 70 71 B8 01 01 01 02 01 03 01 04 01 06 01 07 01 08 40
 ; Fehlerspeicher_abfragen: MW_LESEN
-84 70 F1 18 02 FF 00 00 : 83 F1 70 7F 18 78 F3 82 F1 70 58 00 3B
+84 70 F1 18 02 FF 00 FE : 83 F1 70 7F 18 78 F3 82 F1 70 58 00 3B
 ; Fehlerspeicher_loeschen
 83 70 F1 14 FF 00 00 : 83 F1 70 54 FF 00 00
 
@@ -240,7 +240,7 @@ CFG: 16 E9 8F
 ; UnterstFunktionen_abfragen
 84 30 F1 31 B8 00 00 8E : 8A F1 30 71 B8 01 02 01 04 01 06 01 08 EC
 ; Fehlerspeicher_abfragen: MW_LESEN
-84 30 F1 18 02 FF 00 00 : 83 F1 30 7F 18 12 00
+84 30 F1 18 02 FF 00 BE : 82 F1 30 58 00 FB
 ; Fehlerspeicher_loeschen
 83 30 F1 14 FF 00 00 : 83 F1 30 54 FF 00 00
 
