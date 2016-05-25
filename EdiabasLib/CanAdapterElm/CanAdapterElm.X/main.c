@@ -86,7 +86,7 @@
 #define DEBUG_PIN           0   // enable debug pin
 #define ID_LOCATION         0x200000    // location of ID memory
 
-#define ADAPTER_VERSION     0x0007
+#define ADAPTER_VERSION     0x0008
 
 #if ADAPTER_TYPE != 0x02
 #if ADAPTER_TYPE == 0x03
@@ -334,6 +334,13 @@ void kline_send(uint8_t *buffer, uint16_t count)
     if (kline_baud == 0)
     {   // BMW-FAST
         di();
+        // disable UART receiver
+        RCSTAbits.CREN = 0;
+        // stop timeout timer
+        T1CONbits.TMR1ON = 0;
+        PIR1bits.TMR1IF = 0;
+        rec_state = rec_state_idle;
+
         kline_baud_cfg();
         PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
         T2CONbits.TMR2ON = 1;   // enable timer 2
@@ -372,12 +379,20 @@ void kline_send(uint8_t *buffer, uint16_t count)
         LED_OBD_TX = 1;     // off
         T2CONbits.TMR2ON = 0;
         INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
+        RCSTAbits.CREN = 1;     // enable UART receiver
         idle_counter = 0;
         ei();
         return;
     }
     // dynamic baudrate
     di();
+    // disable UART receiver
+    RCSTAbits.CREN = 0;
+    // stop timeout timer
+    T1CONbits.TMR1ON = 0;
+    PIR1bits.TMR1IF = 0;
+    rec_state = rec_state_idle;
+
     bool use_kline = false;
     bool use_lline = false;
     if ((kline_flags & KLINEF_USE_KLINE) != 0)
@@ -442,6 +457,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
         KLINE_OUT = 0;      // idle
         LLINE_OUT = 0;      // idle
         LED_OBD_TX = 1;     // off
+        RCSTAbits.CREN = 1; // enable UART receiver
         idle_counter = 0;
         ei();
         return;
@@ -640,6 +656,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
     LED_OBD_TX = 1;     // off
     T2CONbits.TMR2ON = 0;
     INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
+    RCSTAbits.CREN = 1;     // enable UART receiver
     idle_counter = 0;
     ei();
 }
