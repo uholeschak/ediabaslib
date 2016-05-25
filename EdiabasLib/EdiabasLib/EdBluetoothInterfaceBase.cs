@@ -120,7 +120,7 @@ namespace EdiabasLib
 
         public static byte[] CreatePulseTelegram(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines)
         {
-            if ((AdapterType < 0x0002) || (AdapterVersion < 0x0002))
+            if ((AdapterType < 0x0002) || (AdapterVersion < 0x0008))
             {
                 if (Ediabas != null)
                 {
@@ -128,26 +128,7 @@ namespace EdiabasLib
                 }
                 return null;
             }
-            if (bothLines && AdapterVersion < 0x0007)
-            {
-                if (Ediabas != null)
-                {
-                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreatePulseTelegram, invalid adapter for both lines: {0}", AdapterVersion);
-                }
-                return null;
-            }
-            if (CurrentBaudRate == EdInterfaceBase.BaudAuto9600)
-            {
-                if (AdapterVersion < 0x0007)
-                {
-                    if (Ediabas != null)
-                    {
-                        Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreatePulseTelegram, invalid adapter for auto baud 9600: {0}", AdapterVersion);
-                    }
-                    return null;
-                }
-            }
-            else if ((CurrentBaudRate < 9600) || (CurrentBaudRate > 19200))
+            if ((CurrentBaudRate != EdInterfaceBase.BaudAuto9600) && ((CurrentBaudRate < 9600) || (CurrentBaudRate > 19200)))
             {
                 if (Ediabas != null)
                 {

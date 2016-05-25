@@ -398,13 +398,14 @@ namespace EdiabasLib
             {
                 timeoutOffset = ReadTimeoutOffsetShort;
             }
-            //Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout offset {0}", timeoutOffset);
+            //Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout offset {0}", timeoutOffset);
             timeout += timeoutOffset;
             timeoutTelEnd += timeoutOffset;
             try
             {
                 if (!_rawMode && SettingsUpdateRequired())
                 {
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "InterfaceReceiveData, update settings");
                     UpdateAdapterInfo();
                     byte[] adapterTel = CreatePulseTelegram(0, 0, 0, false, false);
                     if (adapterTel == null)
@@ -487,6 +488,23 @@ namespace EdiabasLib
                 _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
                 LastCommTick = Stopwatch.GetTimestamp();
                 UpdateActiveSettings();
+                // send keep alive telegram
+                int pulseTime = pulseWidth * length;
+                if (pulseTime > 100)
+                {
+                    byte[] keepAlive = { 0x00 };
+                    long startTime = Stopwatch.GetTimestamp();
+                    while (Stopwatch.GetTimestamp() - startTime < pulseTime * TickResolMs)
+                    {
+                        Thread.Sleep(10);
+                        if (Stopwatch.GetTimestamp() - startTime < (pulseTime - 50) * TickResolMs)
+                        {   // only send at the beginning
+                            _bluetoothOutStream.Write(keepAlive, 0, keepAlive.Length);
+                            LastCommTick = Stopwatch.GetTimestamp();
+                            //Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Keep Alive: {0}", (Stopwatch.GetTimestamp() - startTime) / TickResolMs);
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
