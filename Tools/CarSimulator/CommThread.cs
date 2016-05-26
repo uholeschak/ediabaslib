@@ -688,8 +688,12 @@ namespace CarSimulator
                         break;
 
                     case ConceptType.ConceptKwp2000:
-                        baudRate = 10400;
+                        //baudRate = 24000;
+                        baudRate = 20400;   // AUDI uses 20500 but this is not supported by UART
+                        //baudRate = 10400;
                         //baudRate = 9600;
+                        //baudRate = 4800;
+                        //baudRate = 4000;
                         parity = Parity.None;
                         break;
                 }
@@ -5259,9 +5263,12 @@ namespace CarSimulator
                     Debug.WriteLine("No init response");
                 }
 
-                Thread.Sleep(25); // W4: 25-50ms
-                _sendData[0] = (byte) (~configData[0]);
-                SendData(_sendData, 0, 1);
+                if (initOk)
+                {
+                    Thread.Sleep(25); // W4: 25-50ms
+                    _sendData[0] = (byte)(~configData[0]);
+                    SendData(_sendData, 0, 1);
+                }
             } while (!initOk);
 
             Debug.WriteLine("Init done");

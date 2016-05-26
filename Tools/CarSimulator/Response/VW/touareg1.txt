@@ -1,6 +1,4 @@
 ; VW touareg1 (KWP2000)
-
-; mot_01.grp
 ; wake address, key bytes (odd parity)
 
 ; mot_01.grp
