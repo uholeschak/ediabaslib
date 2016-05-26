@@ -2384,7 +2384,7 @@ namespace EdiabasLib
                 if (UseExtInterfaceFunc)
                 {
                     if (HasAutoBaudRate) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Auto baud rate");
-                    if (InterfaceSetConfigFuncUse(HasAutoBaudRate ? BaudAuto9600 : 9600, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                    if (InterfaceSetConfigFuncUse(HasAutoBaudRate ? BaudAuto : 9600, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
                     {
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -2425,26 +2425,53 @@ namespace EdiabasLib
                 }
 
                 LastCommTick = Stopwatch.GetTimestamp();
-                if (!ReceiveData(Iso9141Buffer, 0, 1, ParEdicW1, ParEdicW1))
+                if (HasAutoBaudRate)
                 {
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No wake response");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-                }
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate byte: {0:X02}", Iso9141Buffer[0]);
-                if (Iso9141Buffer[0] == 0x55)
-                {
-                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate 9.6k detected");
-                }
-                else
-                {   // baud rate different
-                    if ((Iso9141Buffer[0] & 0x87) != 0x85)
+                    if (!ReceiveData(Iso9141Buffer, 0, 2, ParEdicW1, ParEdicW1))
+                    {
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No wake response");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
+                    int baudRate = ((Iso9141Buffer[0] << 8) + Iso9141Buffer[1]) << 1;
+                    if (baudRate == 0)
                     {
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Invalid baud rate");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                     }
-                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate 10.4k detected");
-                    if (!HasAutoBaudRate)
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate {0} detected", baudRate);
+
+                    CurrentBaudRate = baudRate;
+                    CurrentParity = SerialParity.None;
+                    if (UseExtInterfaceFunc)
                     {
+                        if (InterfaceSetConfigFuncUse(CurrentBaudRate, 8, CurrentParity, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                        }
+                    }
+                }
+                else
+                {
+                    if (!ReceiveData(Iso9141Buffer, 0, 1, ParEdicW1, ParEdicW1))
+                    {
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No wake response");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate byte: {0:X02}", Iso9141Buffer[0]);
+                    if (Iso9141Buffer[0] == 0x55)
+                    {
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate 9.6k detected");
+                    }
+                    else
+                    {
+                        // baud rate different
+                        if ((Iso9141Buffer[0] & 0x87) != 0x85)
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Invalid baud rate");
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                        }
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate 10.4k detected");
                         if (UseExtInterfaceFunc)
                         {
                             if (InterfaceSetConfigFuncUse(10400, 8, SerialParity.None, ParAllowBitBang) !=
@@ -2474,14 +2501,6 @@ namespace EdiabasLib
                     }
                     CurrentBaudRate = 10400;
                     CurrentParity = SerialParity.None;
-                }
-                if (HasAutoBaudRate && UseExtInterfaceFunc)
-                {
-                    if (InterfaceSetConfigFuncUse(CurrentBaudRate, 8, CurrentParity, ParAllowBitBang) != InterfaceErrorResult.NoError)
-                    {
-                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
-                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
-                    }
                 }
 
                 LastCommTick = Stopwatch.GetTimestamp();
@@ -3077,7 +3096,7 @@ namespace EdiabasLib
                 if (UseExtInterfaceFunc)
                 {
                     if (HasAutoBaudRate) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Auto baud rate");
-                    if (InterfaceSetConfigFuncUse(HasAutoBaudRate ? BaudAuto9600 : 9600, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                    if (InterfaceSetConfigFuncUse(HasAutoBaudRate ? BaudAuto : 9600, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
                     {
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -3118,26 +3137,53 @@ namespace EdiabasLib
                 }
 
                 LastCommTick = Stopwatch.GetTimestamp();
-                if (!ReceiveData(Iso9141Buffer, 0, 1, ParTimeoutStd, ParTimeoutStd))
+                if (HasAutoBaudRate)
                 {
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No wake response");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-                }
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate byte: {0:X02}", Iso9141Buffer[0]);
-                if (Iso9141Buffer[0] == 0x55)
-                {
-                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate 9.6k detected");
-                }
-                else
-                {   // baud rate different
-                    if ((Iso9141Buffer[0] & 0x87) != 0x85)
+                    if (!ReceiveData(Iso9141Buffer, 0, 2, ParEdicW1, ParEdicW1))
+                    {
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No wake response");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
+                    int baudRate = ((Iso9141Buffer[0] << 8) + Iso9141Buffer[1]) << 1;
+                    if (baudRate == 0)
                     {
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Invalid baud rate");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                     }
-                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate 10.4k detected");
-                    if (!HasAutoBaudRate)
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate {0} detected", baudRate);
+
+                    CurrentBaudRate = baudRate;
+                    CurrentParity = SerialParity.None;
+                    if (UseExtInterfaceFunc)
                     {
+                        if (InterfaceSetConfigFuncUse(CurrentBaudRate, 8, CurrentParity, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                        }
+                    }
+                }
+                else
+                {
+                    if (!ReceiveData(Iso9141Buffer, 0, 1, ParTimeoutStd, ParTimeoutStd))
+                    {
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No wake response");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate byte: {0:X02}", Iso9141Buffer[0]);
+                    if (Iso9141Buffer[0] == 0x55)
+                    {
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate 9.6k detected");
+                    }
+                    else
+                    {
+                        // baud rate different
+                        if ((Iso9141Buffer[0] & 0x87) != 0x85)
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Invalid baud rate");
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                        }
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate 10.4k detected");
                         if (UseExtInterfaceFunc)
                         {
                             if (InterfaceSetConfigFuncUse(10400, 8, SerialParity.None, ParAllowBitBang) !=
@@ -3164,16 +3210,8 @@ namespace EdiabasLib
                             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
 #endif
                         }
-                    }
-                    CurrentBaudRate = 10400;
-                    CurrentParity = SerialParity.None;
-                }
-                if (HasAutoBaudRate && UseExtInterfaceFunc)
-                {
-                    if (InterfaceSetConfigFuncUse(CurrentBaudRate, 8, CurrentParity, ParAllowBitBang) != InterfaceErrorResult.NoError)
-                    {
-                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
-                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                        CurrentBaudRate = 10400;
+                        CurrentParity = SerialParity.None;
                     }
                 }
 

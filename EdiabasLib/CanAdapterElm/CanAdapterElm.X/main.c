@@ -125,6 +125,9 @@
 #endif
 #endif
 
+#define MIN_BAUD    4000
+#define MAX_BAUD    25000
+
 #define IGNITION_STATE()    IGNITION
 
 #define KLINE_OUT LATBbits.LATB0
@@ -207,7 +210,6 @@ static uint32_t kline_baud;     // K-line baud rate, 0=115200 (BMW-FAST))
 static uint8_t kline_flags;     // K-line flags
 static uint8_t kline_interbyte; // K-line interbyte time [ms]
 static uint8_t kline_bit_delay; // K-line read bit delay
-static bool kline_baud_detect;  // K-line baud rate detection is active
 
 static uint8_t temp_buffer[TEMP_BUF_SIZE];
 static uint8_t temp_buffer_short[10];
@@ -287,7 +289,6 @@ void do_idle()
 
 void kline_baud_cfg()
 {
-    kline_baud_detect = false;
     // fout = fclk / (4 * prescaler * PR2 * postscaler)
     // PR2 = fclk / (4 * prescaler * fout * postscaler)
     if (kline_baud == 0)
@@ -304,14 +305,12 @@ void kline_baud_cfg()
     {
         uint32_t baud_rate = kline_baud;
         if (baud_rate == 2)
-        {   // 9600 with 10400 baud rate detection
+        {   // baud rate detection
             baud_rate = 9600;
-            kline_baud_detect = true;
         }
         T2CONbits.TMR2ON = 0;
         T2CONbits.T2CKPS = 1;       // prescaler 4
         T2CONbits.T2OUTPS = 0x0;    // postscaler 1
-        TMR2 = 0x00;                // reset timer 2
         PR2 = 16000000ul / 16 / baud_rate;
         kline_bit_delay = 0;
         uint8_t bit_delay = (PR2 >> 1) + 15;
@@ -320,6 +319,112 @@ void kline_baud_cfg()
             kline_bit_delay = bit_delay;
         }
     }
+}
+
+bool kline_baud_detect()
+{
+    if (kline_baud != 2)
+    {
+        return true;
+    }
+    di();
+    // stop timeout timer
+    T1CONbits.TMR1ON = 0;
+    PIR1bits.TMR1IF = 0;
+    TMR1H = 0x00;
+    TMR1L = 0x00;
+    rec_state = rec_state_idle;
+    idle_counter = 0;
+
+    // wait for start bit
+    for (;;)
+    {
+        CLRWDT();
+        if (!KLINE_IN) T1CONbits.TMR1ON = 1;
+        if (T1CONbits.TMR1ON)
+        {
+            break;
+        }
+        if (PIR1bits.RCIF)
+        {   // start of new UART telegram
+            ei();
+            return false;
+        }
+        if (INTCONbits.TMR0IF)
+        {
+            INTCONbits.TMR0IF = 0;
+            idle_counter++;
+            if (idle_counter > 16)  // 60 sec.
+            {   // idle -> leave loop
+                T1CONbits.TMR1ON = 0;
+                PIR1bits.TMR1IF = 0;
+                ei();
+                return false;
+            }
+        }
+    }
+    for (uint8_t i = 0; i < 4 ; i++)
+    {
+        while (!KLINE_IN)
+        {
+            if (PIR1bits.TMR1IF)
+            {   // timeout
+                T1CONbits.TMR1ON = 0;
+                PIR1bits.TMR1IF = 0;
+                ei();
+                return false;
+            }
+        }
+        while (KLINE_IN)
+        {
+            if (PIR1bits.TMR1IF)
+            {   // timeout
+                T1CONbits.TMR1ON = 0;
+                PIR1bits.TMR1IF = 0;
+                ei();
+                return false;
+            }
+        }
+    }
+    // wait for stop bit
+    while (!KLINE_IN)
+    {
+        if (PIR1bits.TMR1IF)
+        {   // timeout
+            T1CONbits.TMR1ON = 0;
+            PIR1bits.TMR1IF = 0;
+            ei();
+            return false;
+        }
+    }
+    T1CONbits.TMR1ON = 0;
+    PIR1bits.TMR1IF = 0;
+    // timer resolution 2us, 9 bit
+    uint32_t baud_rate = 1000000ul * 9 / ((uint32_t) TMR1 * 2);
+    if (baud_rate < MIN_BAUD)
+    {
+        baud_rate = 0;
+    }
+    else if (baud_rate > MAX_BAUD)
+    {
+        baud_rate = 0;
+    }
+    // return baud rate devided by 2
+    while (!TXSTAbits.TRMT);
+    TXREG = baud_rate >> 9;
+    while (!TXSTAbits.TRMT);
+    TXREG = baud_rate >> 1;
+    while (!TXSTAbits.TRMT);
+
+    if (baud_rate != 0)
+    {
+        kline_baud = baud_rate;
+        ei();
+        return true;
+    }
+
+    ei();
+    return false;
 }
 
 void kline_send(uint8_t *buffer, uint16_t count)
@@ -655,7 +760,6 @@ void kline_send(uint8_t *buffer, uint16_t count)
     LLINE_OUT = 0;      // idle
     LED_OBD_TX = 1;     // off
     T2CONbits.TMR2ON = 0;
-    INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
     RCSTAbits.CREN = 1;     // enable UART receiver
     idle_counter = 0;
     ei();
@@ -788,6 +892,10 @@ void kline_receive()
         }
     }
     // dynamic baudrate
+    if (!kline_baud_detect())
+    {
+        return;
+    }
     di();
     kline_baud_cfg();
     PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
@@ -886,17 +994,6 @@ void kline_receive()
         // read stop bit
         while (!PIR1bits.TMR2IF) {}
         PIR1bits.TMR2IF = 0;
-
-        if (kline_baud_detect)
-        {
-            if ((data & 0x87) == 0x85)
-            {   // baud rate 10400 detected
-                kline_baud = 10400;
-                kline_baud_cfg();
-            }
-            kline_baud_detect = false;
-        }
-
         T2CONbits.TMR2ON = 0;
         TMR2 = 0x00;
         PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
@@ -968,7 +1065,7 @@ uint16_t uart_receive(uint8_t *buffer)
         // byte 5: interbyte time
         // byte 6+7: telegram length (high/low)
         kline_baud = (((uint32_t) rec_buffer[2] << 8) + rec_buffer[3]) << 1;
-        if ((kline_baud != 0) && (kline_baud != 2) && ((kline_baud < 9600) || (kline_baud > 19200)))
+        if ((kline_baud != 0) && (kline_baud != 2) && ((kline_baud < MIN_BAUD) || (kline_baud > MAX_BAUD)))
         {
             data_len = 0;
         }
@@ -988,7 +1085,6 @@ uint16_t uart_receive(uint8_t *buffer)
         data_len = rec_len;
         memcpy(buffer, rec_buffer, data_len);
     }
-    kline_baud_detect = false;
     rec_state = rec_state_idle;
     return data_len;
 }
@@ -1307,7 +1403,6 @@ void can_config()
     kline_baud = 0;
     kline_flags = 0;
     kline_interbyte = 0;
-    kline_baud_detect = false;
 }
 
 void read_eeprom()
