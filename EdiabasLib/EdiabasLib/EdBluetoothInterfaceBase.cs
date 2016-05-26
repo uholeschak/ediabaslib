@@ -68,7 +68,7 @@ namespace EdiabasLib
                 return null;
             }
             if ((CurrentBaudRate != 115200) &&
-                ((CurrentBaudRate < 9600) || (CurrentBaudRate > 19200)))
+                ((CurrentBaudRate < 4000) || (CurrentBaudRate > 25000)))
             {
                 if (Ediabas != null)
                 {
@@ -128,7 +128,7 @@ namespace EdiabasLib
                 }
                 return null;
             }
-            if ((CurrentBaudRate != EdInterfaceBase.BaudAuto9600) && ((CurrentBaudRate < 9600) || (CurrentBaudRate > 19200)))
+            if ((CurrentBaudRate != EdInterfaceBase.BaudAuto) && ((CurrentBaudRate < 4000) || (CurrentBaudRate > 25000)))
             {
                 if (Ediabas != null)
                 {
@@ -240,7 +240,7 @@ namespace EdiabasLib
             {
                 return false;
             }
-            if (ActiveBaudRate == EdInterfaceBase.BaudAuto9600)
+            if (ActiveBaudRate == EdInterfaceBase.BaudAuto)
             {
                 return false;
             }

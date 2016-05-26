@@ -34,9 +34,9 @@ namespace EdiabasLib
             public EdiabasNet.ErrorCodes ErrorCode { get; set; }
         }
 
-        // automatic baud rate detection 9600 -> 10400
+        // automatic baud rate detection
         // don't change this value, it's also used in the adapter.
-        public static int BaudAuto9600 = 2;
+        public static int BaudAuto = 2;
 
         private bool _disposed;
         protected EdiabasNet EdiabasProtected;
