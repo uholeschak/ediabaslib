@@ -40,3 +40,24 @@ local ip: 192.168.1.109
 server ip: 192.168.1.55
 file: openwrt-15.05-ramips-rt305x-a5-v11-squashfs-sysupgrade.bin
 Start tftp server
+
+Update QualComm factory firmware:
+---------------------------------
+Copy uboot.img and mini.bin to USB stick
+Set network adapter to 192.168.100.10/255.255.255.0
+insert USB stick into the router
+
+telnet 192.168.100.1
+mount /dev/sda1 /mnt
+ls /mnt
+uboot.img and mini.bin should be visible
+mtd_write write /mnt/uboot.img Bootloader
+mtd_write write /mnt/mini.bin Kernel
+reboot
+remove USB stick
+
+start miniweb.exe
+telnet 192.168.100.1
+cd /tmp
+wget http://192.168.100.10:8000/openwrt-15.05-ramips-rt305x-a5-v11-squashfs-sysupgrade.bin
+sysupgrade -v -n /tmp/openwrt-15.05-ramips-rt305x-a5-v11-squashfs-sysupgrade.bin
