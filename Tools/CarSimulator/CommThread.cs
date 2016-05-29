@@ -2399,8 +2399,8 @@ namespace CarSimulator
                         }
                         else
                         {
-                            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                            if (channel.SendBlock >= channel.BlockSize)
+                            channel.SendBlock++;
+                            if (channel.BlockSize != 0x00 && channel.SendBlock >= channel.BlockSize)
                             {
                                 op = 0x0;   // wait for ACK, block size reached
                                 channel.SendBlock = 0;
@@ -2410,7 +2410,6 @@ namespace CarSimulator
                             else
                             {
                                 op = 0x2;   // no wait for ACK, more packets follow
-                                channel.SendBlock++;
                                 Thread.Sleep((int)channel.T3Time);
                             }
                         }
@@ -2638,7 +2637,7 @@ namespace CarSimulator
                                 sendMsg.LEN = 6;
                                 sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
                                 sendMsg.DATA[0] = 0xA1; // parameter response
-                                sendMsg.DATA[1] = currChannel.BlockSize;
+                                sendMsg.DATA[1] = 0x0F; // block size
                                 sendMsg.DATA[2] = 0x8A;
                                 sendMsg.DATA[3] = 0xFF;
                                 sendMsg.DATA[4] = 0x4A;
