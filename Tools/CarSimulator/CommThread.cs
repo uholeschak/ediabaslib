@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -67,6 +68,85 @@ namespace CarSimulator
             public List<byte[]> ResponseMultiList { get; }
         }
 
+        private class Tp20Channel
+        {
+            public Tp20Channel()
+            {
+                BlockSize = 0x0F;
+                T1 = 0x8A;
+                T3 = 0x32;
+                RecSeq = 0;
+                SendSeq = 0;
+            }
+            private byte _t1;
+            private byte _t3;
+
+            public long LastAccessTick { get; set; }
+            public byte EcuAddress { get; set; }
+            public byte TelAddress { get; set; }
+            public byte AppId { get; set; }
+            public int TxId { get; set; }
+            public int RxId { get; set; }
+            public byte BlockSize { get; set; }
+            public byte T1
+            {
+                // ReSharper disable once UnusedMember.Local
+                get { return _t1; }
+                set
+                {
+                    _t1 = value;
+                    T1Time = ConvertTp20Time(value);
+                }
+            }
+            public double T1Time { get; private set; }
+            public byte T3
+            {
+                // ReSharper disable once UnusedMember.Local
+                get { return _t3; }
+                set
+                {
+                    _t3 = value;
+                    T3Time = ConvertTp20Time(value);
+                }
+            }
+            public double T3Time { get; private set; }
+
+            private static double ConvertTp20Time(byte time)
+            {
+                double scale = time & 0x3F;
+                double unit = 1.0;
+                switch ((time >> 6) & 0x03)
+                {
+                    case 0x00:
+                        unit = 0.1;
+                        break;
+
+                    case 0x01:
+                        unit = 1.0;
+                        break;
+
+                    case 0x02:
+                        unit = 10.0;
+                        break;
+
+                    case 0x03:
+                        unit = 100.0;
+                        break;
+                }
+                return scale * unit;
+            }
+
+            public byte RecSeq { get; set; }
+            public byte SendSeq { get; set; }
+            public int RecLen { get; set; }
+            public int SendPos { get; set; }
+            public int SendBlock { get; set; }
+            public bool WaitForAck { get; set; }
+            public long AckWaitStartTick { get; set; }
+            public List<byte> RecData { get; set; }
+            public List<byte> SendData { get; set; }
+        }
+
         public enum ConceptType
         {
             ConceptBwmFast,
@@ -77,6 +157,7 @@ namespace CarSimulator
             ConceptIso9141,     // Concept2
             Concept3,
             ConceptKwp2000,     // VW
+            ConceptTp20,        // VW CAN
         };
 
         public enum ResponseType
@@ -102,6 +183,7 @@ namespace CarSimulator
         private ConfigData _configData;
         private byte _pcanHandle;
         private long _lastCanSendTick;
+        private readonly List<Tp20Channel> _tp20Channels;
         private TcpListener _tcpServerDiag;
         private TcpClient _tcpClientDiag;
         private NetworkStream _tcpClientDiagStream;
@@ -455,6 +537,7 @@ namespace CarSimulator
             _workerThread = null;
             _pcanHandle = PCANBasic.PCAN_NONEBUS;
             _lastCanSendTick = DateTime.MinValue.Ticks;
+            _tp20Channels = new List<Tp20Channel>();
             _tcpServerDiag = null;
             _tcpClientDiag = null;
             _tcpClientDiagStream = null;
@@ -576,6 +659,7 @@ namespace CarSimulator
                                 break;
 
                             case ConceptType.ConceptKwp2000:
+                            case ConceptType.ConceptTp20:
                                 SerialKwp2000Transmission();
                                 break;
 
@@ -635,6 +719,10 @@ namespace CarSimulator
                         //baudRate = TPCANBaudrate.PCAN_BAUD_100K;
                         break;
 
+                    case ConceptType.ConceptTp20:
+                        baudRate = TPCANBaudrate.PCAN_BAUD_500K;
+                        break;
+
                     default:
                         return false;
                 }
@@ -688,9 +776,7 @@ namespace CarSimulator
                         break;
 
                     case ConceptType.ConceptKwp2000:
-                        //baudRate = 24000;
-                        baudRate = 20400;   // AUDI uses 20500 but this is not supported by UART
-                        //baudRate = 10400;
+                        baudRate = 10400;
                         //baudRate = 9600;
                         //baudRate = 4800;
                         //baudRate = 4000;
@@ -1141,6 +1227,13 @@ namespace CarSimulator
 
                 case ConceptType.ConceptKwp2000:
                     return SendBmwfast(sendData);
+
+                case ConceptType.ConceptTp20:
+                    if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
+                    {
+                        return SendCanTp20(sendData);
+                    }
+                    return false;
             }
             return false;
         }
@@ -1221,6 +1314,13 @@ namespace CarSimulator
 
                 case ConceptType.ConceptKwp2000:
                     return ReceiveBmwFast(receiveData);
+
+                case ConceptType.ConceptTp20:
+                    if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
+                    {
+                        return ReceiveCanTp20(receiveData);
+                    }
+                    return false;
             }
             return false;
         }
@@ -2221,6 +2321,417 @@ namespace CarSimulator
                 }
             }
             _lastCanSendTick = Stopwatch.GetTimestamp();
+            return true;
+        }
+
+        private bool ReceiveCanTp20(byte[] receiveData)
+        {
+            TPCANMsg sendMsg = new TPCANMsg
+            {
+                DATA = new byte[8]
+            };
+
+            for (;;)
+            {
+                TPCANStatus stsResult;
+                // clean up old channels
+                for (int i = 0; i < _tp20Channels.Count; i++)
+                {
+                    Tp20Channel channel = _tp20Channels[i];
+                    if (channel.SendData == null)
+                    {
+                        if ((Stopwatch.GetTimestamp() - channel.LastAccessTick) > 5000 * TickResolMs)
+                        {
+                            _tp20Channels.Remove(channel);
+#if CAN_DEBUG
+                            Debug.WriteLine("Timeout channel {0:X04}", channel.TxId);
+#endif
+                        }
+                    }
+                }
+
+                // check for send data
+                foreach (Tp20Channel channel in _tp20Channels)
+                {
+                    if (channel.SendData != null)
+                    {
+                        if (channel.WaitForAck)
+                        {
+                            if ((Stopwatch.GetTimestamp() - channel.AckWaitStartTick) > channel.T1Time * TickResolMs)
+                            {
+#if CAN_DEBUG
+                                Debug.WriteLine("ACK timeout channel {0:X04}", channel.TxId);
+#endif
+                                channel.SendData = null;
+                            }
+                            continue;
+                        }
+
+                        byte[] sendData = channel.SendData.ToArray();
+                        sendMsg.ID = (uint)(channel.RxId);
+                        sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                        int len = channel.SendData.Count - channel.SendPos;
+                        int offset;
+                        if (channel.SendPos == 0)
+                        {   // first part
+                            sendMsg.DATA[1] = (byte)(channel.SendData.Count >> 8);
+                            sendMsg.DATA[2] = (byte)(channel.SendData.Count);
+                            offset = 3;
+                        }
+                        else
+                        {
+                            offset = 1;
+                        }
+                        if (len > 8 - offset)
+                        {
+                            len = 8 - offset;
+                        }
+                        Array.Copy(sendData, channel.SendPos, sendMsg.DATA, offset, len);
+                        sendMsg.LEN = (byte)(len + offset);
+                        channel.SendPos += len;
+
+                        byte op;
+                        if (channel.SendPos >= channel.SendData.Count)
+                        {
+                            // all send
+                            op = 0x1;   // wait for ACK, last packet
+                            channel.SendData = null;
+                        }
+                        else
+                        {
+                            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                            if (channel.SendBlock >= channel.BlockSize)
+                            {
+                                op = 0x0;   // wait for ACK, block size reached
+                                channel.SendBlock = 0;
+                                channel.WaitForAck = true;
+                                channel.AckWaitStartTick = Stopwatch.GetTimestamp();
+                            }
+                            else
+                            {
+                                op = 0x2;   // no wait for ACK, more packets follow
+                                channel.SendBlock++;
+                                Thread.Sleep((int)channel.T3Time);
+                            }
+                        }
+
+                        sendMsg.DATA[0] = (byte)((op << 4) | (channel.SendSeq & 0x0F));
+                        channel.SendSeq = (byte)((channel.SendSeq + 1) & 0x0F);
+#if CAN_DEBUG
+                        Debug.WriteLine("Send channel {0:X04} Op={1:X01} Seq={2}", channel.TxId, op, channel.SendSeq);
+#endif
+                        stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
+                        if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                TPCANMsg canMsg;
+                TPCANTimestamp canTimeStamp;
+                stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out canTimeStamp);
+                if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                {
+                    break;
+                }
+                if (canMsg.MSGTYPE != TPCANMessageType.PCAN_MESSAGE_STANDARD)
+                {
+                    break;
+                }
+#if CAN_DEBUG
+                string dataString = string.Empty;
+                for (int i = 0; i < canMsg.LEN; i++)
+                {
+                    dataString += string.Format("{0:X02} ", canMsg.DATA[i]);
+                }
+                Debug.WriteLine("CAN rec: {0:X04} {1}", canMsg.ID, dataString);
+#endif
+                if (canMsg.ID == 0x0200 && canMsg.LEN == 7)
+                {
+                    // channel setup request
+                    if (canMsg.DATA[1] == 0xC0)
+                    {
+                        byte[] configData = GetConfigData(canMsg.DATA[0]);
+                        if ((configData == null) || (configData.Length < 2))
+                        {
+#if CAN_DEBUG
+                            Debug.WriteLine("Invalid ECU address");
+#endif
+                            break;
+                        }
+                        for (int i = 0; i < _tp20Channels.Count; i++)
+                        {
+                            Tp20Channel channel = _tp20Channels[i];
+                            if (channel.EcuAddress == canMsg.DATA[0])
+                            {
+                                _tp20Channels.Remove(channel);
+#if CAN_DEBUG
+                                Debug.WriteLine("Removed multiple ECU {0:X02} channel {1:X04}", channel.EcuAddress, channel.TxId);
+#endif
+                            }
+                        }
+
+                        Tp20Channel newChannel = new Tp20Channel
+                        {
+                            EcuAddress = canMsg.DATA[0],
+                            TelAddress = configData[1],
+                            AppId = canMsg.DATA[6],
+                            RxId = (canMsg.DATA[5] << 8) | canMsg.DATA[4]
+                        };
+                        int txId = 0x740;
+                        // search for free tx id
+                        for (;;)
+                        {
+                            bool modified = false;
+                            // ReSharper disable once LoopCanBeConvertedToQuery
+                            foreach (Tp20Channel channel in _tp20Channels)
+                            {
+                                if (channel.TxId == txId)
+                                {
+                                    txId++;
+                                    modified = true;
+                                    break;
+                                }
+                            }
+                            if (!modified)
+                            {
+                                break;
+                            }
+                        }
+                        newChannel.TxId = txId;
+                        _tp20Channels.Add(newChannel);
+#if CAN_DEBUG
+                        Debug.WriteLine("Added channel {0:X04}:{1:X04}", newChannel.TxId, newChannel.RxId);
+#endif
+
+                        newChannel.LastAccessTick = Stopwatch.GetTimestamp();
+
+                        sendMsg.ID = (uint) (0x200 + newChannel.EcuAddress);
+                        sendMsg.LEN = 7;
+                        sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+
+                        sendMsg.DATA[0] = 0x00;
+                        sendMsg.DATA[1] = 0xD0; // pos. response
+                        sendMsg.DATA[2] = (byte) newChannel.RxId;
+                        sendMsg.DATA[3] = (byte) (newChannel.RxId >> 8);
+                        sendMsg.DATA[4] = (byte) newChannel.TxId;
+                        sendMsg.DATA[5] = (byte) (newChannel.TxId >> 8);
+                        sendMsg.DATA[6] = newChannel.AppId;
+
+                        stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
+                        if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                        {
+                            return false;
+                        }
+                        newChannel.LastAccessTick = Stopwatch.GetTimestamp();
+                    }
+                    break;
+                }
+                Tp20Channel currChannel = _tp20Channels.FirstOrDefault(channel => channel.TxId == canMsg.ID);
+                if (currChannel == null)
+                {
+                    break;
+                }
+                currChannel.LastAccessTick = Stopwatch.GetTimestamp();
+                if (canMsg.LEN < 1)
+                {
+                    break;
+                }
+                byte sequence = (byte)(canMsg.DATA[0] & 0x0F);
+                byte opcode = (byte)(canMsg.DATA[0] >> 4);
+                switch (opcode)
+                {
+                    case 0x00:  // wait for ACK, block size reached
+                    case 0x01:  // wait for ACK, last packet
+                    case 0x02:  // no wait for ACK, more packets follow
+                    case 0x03:  // no wait for ACK, last packet
+                        if (currChannel.RecSeq != sequence)
+                        {
+#if CAN_DEBUG
+                            Debug.WriteLine("Invalid rec sequence");
+#endif
+                            break;
+                        }
+                        currChannel.RecSeq = (byte)((sequence + 1) & 0x0F);
+                        if (currChannel.RecData == null)
+                        {
+                            // start of telegram
+                            if (canMsg.LEN < 3)
+                            {
+                                break;
+                            }
+                            currChannel.RecLen = (canMsg.DATA[1] << 8) | canMsg.DATA[2];
+                            currChannel.RecData = new List<byte>();
+                            for (int i = 0; i < canMsg.LEN - 3; i++)
+                            {
+                                currChannel.RecData.Add(canMsg.DATA[i + 3]);
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 0; i < canMsg.LEN - 1; i++)
+                            {
+                                currChannel.RecData.Add(canMsg.DATA[i + 1]);
+                            }
+                        }
+                        if ((opcode == 0x01) || (opcode == 0x03))
+                        {   // last packet, length too short
+                            if (currChannel.RecData.Count < currChannel.RecLen)
+                            {
+                                currChannel.RecData = null;
+                            }
+                        }
+                        if ((opcode == 0x00) || (opcode == 0x01))
+                        {   // wait for ack
+#if CAN_DEBUG
+                            Debug.WriteLine("Send ACK");
+#endif
+                            sendMsg.ID = (uint)(currChannel.RxId);
+                            sendMsg.LEN = 1;
+                            sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                            sendMsg.DATA[0] = (byte)(0xB0 | (currChannel.RecSeq & 0x0F));
+
+                            stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
+                            if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                            {
+                                return false;
+                            }
+                        }
+                        break;
+
+                    case 0x09:  // ACK, not ready for next packet
+#if CAN_DEBUG
+                        Debug.WriteLine("Rec ACK not ready");
+#endif
+                        currChannel.AckWaitStartTick = Stopwatch.GetTimestamp();
+                        break;
+
+                    case 0x0B:  // ACK, ready for next packet
+#if CAN_DEBUG
+                        Debug.WriteLine("Rec ACK");
+#endif
+                        currChannel.WaitForAck = false;
+                        break;
+
+                    case 0x0A:  // parameter
+                        switch (canMsg.DATA[0])
+                        {
+                            case 0xA0: // parameter request
+                            case 0xA3: // channel test
+                                if (canMsg.DATA[0] == 0xA0 && canMsg.LEN == 6)
+                                {
+                                    currChannel.BlockSize = canMsg.DATA[1];
+                                    currChannel.T1 = canMsg.DATA[2];
+                                    currChannel.T3 = canMsg.DATA[4];
+#if CAN_DEBUG
+                                    Debug.WriteLine("Parameter Block:{0:X02} T1:{1} T3:{2}", currChannel.BlockSize, currChannel.T1Time, currChannel.T3Time);
+#endif
+                                }
+                                if (canMsg.DATA[0] == 0xA3)
+                                {
+#if CAN_DEBUG
+                                    Debug.WriteLine("Keep alive");
+#endif
+                                }
+                                sendMsg.ID = (uint)(currChannel.RxId);
+                                sendMsg.LEN = 6;
+                                sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                                sendMsg.DATA[0] = 0xA1; // parameter response
+                                sendMsg.DATA[1] = currChannel.BlockSize;
+                                sendMsg.DATA[2] = 0x8A;
+                                sendMsg.DATA[3] = 0xFF;
+                                sendMsg.DATA[4] = 0x4A;
+                                sendMsg.DATA[5] = 0xFF;
+                                stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
+                                if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                                {
+                                    return false;
+                                }
+                                break;
+
+                            case 0xA4: // break;
+                                currChannel.RecData = null;
+                                break;
+
+                            case 0xA8: // disconnect
+#if CAN_DEBUG
+                                Debug.WriteLine("Disconnect channel {0:X04}", currChannel.TxId);
+#endif
+                                _tp20Channels.Remove(currChannel);
+                                sendMsg.ID = (uint)(currChannel.RxId);
+                                sendMsg.LEN = 1;
+                                sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                                sendMsg.DATA[0] = 0xA8;
+                                stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
+                                if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                                {
+                                    return false;
+                                }
+                                break;
+                        }
+                        break;
+                }
+                if (currChannel.RecData != null && currChannel.RecData.Count >= currChannel.RecLen)
+                {
+#if CAN_DEBUG
+                    Debug.WriteLine("Rec OK");
+#endif
+                    // create BMW-FAST telegram
+                    byte[] dataBuffer = currChannel.RecData.ToArray();
+                    int len;
+                    if (currChannel.RecLen > 0x3F)
+                    {
+                        receiveData[0] = 0x80;
+                        receiveData[1] = currChannel.TelAddress;
+                        receiveData[2] = 0xF1;
+                        receiveData[3] = (byte)currChannel.RecLen;
+                        Array.Copy(dataBuffer, 0, receiveData, 4, currChannel.RecLen);
+                        len = dataBuffer.Length + 4;
+                    }
+                    else
+                    {
+                        receiveData[0] = (byte)(0x80 | dataBuffer.Length);
+                        receiveData[1] = currChannel.TelAddress;
+                        receiveData[2] = 0xF1;
+                        Array.Copy(dataBuffer, 0, receiveData, 3, dataBuffer.Length);
+                        len = dataBuffer.Length + 3;
+                    }
+                    receiveData[len] = CalcChecksumBmwFast(receiveData, len);
+                    currChannel.RecData = null;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool SendCanTp20(byte[] sendData)
+        {
+            byte sourceAddr = sendData[2];
+
+            Tp20Channel currChannel = _tp20Channels.FirstOrDefault(channel => channel.TelAddress == sourceAddr);
+            if (currChannel == null)
+            {
+#if CAN_DEBUG
+                Debug.WriteLine("Send channel not found");
+#endif
+                return false;
+            }
+
+            int dataOffset = 3;
+            int dataLength = sendData[0] & 0x3F;
+            if (dataLength == 0)
+            {   // with length byte
+                dataLength = sendData[3];
+                dataOffset = 4;
+            }
+            currChannel.SendPos = 0;
+            currChannel.SendBlock = 0;
+            currChannel.SendData = new List<byte>();
+            for (int i = 0; i < dataLength; i++)
+            {
+                currChannel.SendData.Add(sendData[i + dataOffset]);
+            }
             return true;
         }
 
@@ -5213,65 +5724,68 @@ namespace CarSimulator
 
         private void SerialKwp2000Transmission()
         {
-            bool initOk;
-            byte[] keyBytes = { 0xEF, 0x8F};
-            do
+            byte[] keyBytes = { 0xEF, 0x8F };
+            if (_conceptType == ConceptType.ConceptKwp2000)
             {
-                initOk = false;
-                byte wakeAddress = 0x00;
-                if (!ReceiveWakeUp(out wakeAddress))
+                bool initOk;
+                do
                 {
-                    break;
-                }
-                Debug.WriteLine("Wake Address: {0:X02}", wakeAddress);
-                byte[] configData = GetConfigData(wakeAddress);
-                if (configData == null)
-                {
-                    Debug.WriteLine("Invalid wake address");
-                    continue;
-                }
-
-                Thread.Sleep(60); // W1: 60-300ms
-                _sendData[0] = 0x55;
-                SendData(_sendData, 0, 1);
-
-                Thread.Sleep(5); // W2: 5-20ms
-                if (configData.Length > 1)
-                {
-                    if (configData.Length >= 3)
+                    initOk = false;
+                    byte wakeAddress = 0x00;
+                    if (!ReceiveWakeUp(out wakeAddress))
                     {
-                        keyBytes[0] = configData[1];
-                        keyBytes[1] = configData[2];
+                        break;
                     }
-                }
-                SendData(keyBytes, 0, keyBytes.Length);
-
-                if (ReceiveData(_receiveData, 0, 1, 50, 50))  // too fast for ELM
-                //if (ReceiveData(_receiveData, 0, 1, 200, 200))
-                {
-                    if ((byte) (~_receiveData[0]) == keyBytes[1])
+                    Debug.WriteLine("Wake Address: {0:X02}", wakeAddress);
+                    byte[] configData = GetConfigData(wakeAddress);
+                    if (configData == null)
                     {
-                        initOk = true;
+                        Debug.WriteLine("Invalid wake address");
+                        continue;
+                    }
+
+                    Thread.Sleep(60); // W1: 60-300ms
+                    _sendData[0] = 0x55;
+                    SendData(_sendData, 0, 1);
+
+                    Thread.Sleep(5); // W2: 5-20ms
+                    if (configData.Length > 1)
+                    {
+                        if (configData.Length >= 3)
+                        {
+                            keyBytes[0] = configData[1];
+                            keyBytes[1] = configData[2];
+                        }
+                    }
+                    SendData(keyBytes, 0, keyBytes.Length);
+
+                    if (ReceiveData(_receiveData, 0, 1, 50, 50)) // too fast for ELM
+                        //if (ReceiveData(_receiveData, 0, 1, 200, 200))
+                    {
+                        if ((byte) (~_receiveData[0]) == keyBytes[1])
+                        {
+                            initOk = true;
+                        }
+                        else
+                        {
+                            Debug.WriteLine("Invalid init response {0}", (byte) (~_receiveData[0]));
+                        }
                     }
                     else
                     {
-                        Debug.WriteLine("Invalid init response {0}", (byte) (~_receiveData[0]));
+                        Debug.WriteLine("No init response");
                     }
-                }
-                else
-                {
-                    Debug.WriteLine("No init response");
-                }
 
-                if (initOk)
-                {
-                    Thread.Sleep(25); // W4: 25-50ms
-                    _sendData[0] = (byte)(~configData[0]);
-                    SendData(_sendData, 0, 1);
-                }
-            } while (!initOk);
+                    if (initOk)
+                    {
+                        Thread.Sleep(25); // W4: 25-50ms
+                        _sendData[0] = (byte) (~configData[0]);
+                        SendData(_sendData, 0, 1);
+                    }
+                } while (!initOk);
 
-            Debug.WriteLine("Init done");
+                Debug.WriteLine("Init done");
+            }
 
             int nr2123SendCount = 0;
             long lastRecTime = Stopwatch.GetTimestamp();
@@ -5283,12 +5797,16 @@ namespace CarSimulator
                 }
                 if (!ObdReceive(_receiveData))
                 {
-                    if ((Stopwatch.GetTimestamp() - lastRecTime) > 3000*TickResolMs)
+                    if (_conceptType == ConceptType.ConceptKwp2000)
                     {
-                        Debug.WriteLine("Receive timeout");
-                        break;
+                        if ((Stopwatch.GetTimestamp() - lastRecTime) > 3000*TickResolMs)
+                        {
+                            Debug.WriteLine("Receive timeout");
+                            break;
+                        }
+                        continue;
                     }
-                    continue;
+                    break;
                 }
                 lastRecTime = Stopwatch.GetTimestamp();
                 int recLength = _receiveData[0] & 0x3F;

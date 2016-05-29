@@ -482,6 +482,7 @@ namespace CarSimulator
                 if (radioButtonIso9141.Checked) conceptType = CommThread.ConceptType.ConceptIso9141;
                 if (radioButtonConcept3.Checked) conceptType = CommThread.ConceptType.Concept3;
                 if (radioButtonKwp2000.Checked) conceptType = CommThread.ConceptType.ConceptKwp2000;
+                if (radioButtonTp20.Checked) conceptType = CommThread.ConceptType.ConceptTp20;
 
                 string responseFile = (string)listBoxResponseFiles.SelectedItem;
                 CommThread.ResponseType responseType = CommThread.ResponseType.Standard;

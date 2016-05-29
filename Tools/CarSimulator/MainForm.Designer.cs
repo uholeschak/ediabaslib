@@ -36,6 +36,7 @@
             this.checkBoxVariableValues = new System.Windows.Forms.CheckBox();
             this.radioButtonBmwFast = new System.Windows.Forms.RadioButton();
             this.groupBoxConcepts = new System.Windows.Forms.GroupBox();
+            this.radioButtonKwp2000 = new System.Windows.Forms.RadioButton();
             this.radioButtonKwp2000Bmw = new System.Windows.Forms.RadioButton();
             this.radioButtonConcept3 = new System.Windows.Forms.RadioButton();
             this.radioButtonConcept1 = new System.Windows.Forms.RadioButton();
@@ -50,7 +51,7 @@
             this.treeViewDirectories = new System.Windows.Forms.TreeView();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonRootFolder = new System.Windows.Forms.Button();
-            this.radioButtonKwp2000 = new System.Windows.Forms.RadioButton();
+            this.radioButtonTp20 = new System.Windows.Forms.RadioButton();
             this.groupBoxConcepts.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -112,6 +113,7 @@
             // 
             // groupBoxConcepts
             // 
+            this.groupBoxConcepts.Controls.Add(this.radioButtonTp20);
             this.groupBoxConcepts.Controls.Add(this.radioButtonKwp2000);
             this.groupBoxConcepts.Controls.Add(this.radioButtonKwp2000Bmw);
             this.groupBoxConcepts.Controls.Add(this.radioButtonConcept3);
@@ -122,10 +124,21 @@
             this.groupBoxConcepts.Controls.Add(this.radioButtonBmwFast);
             this.groupBoxConcepts.Location = new System.Drawing.Point(437, 88);
             this.groupBoxConcepts.Name = "groupBoxConcepts";
-            this.groupBoxConcepts.Size = new System.Drawing.Size(207, 212);
+            this.groupBoxConcepts.Size = new System.Drawing.Size(207, 232);
             this.groupBoxConcepts.TabIndex = 6;
             this.groupBoxConcepts.TabStop = false;
             this.groupBoxConcepts.Text = "Concepts";
+            // 
+            // radioButtonKwp2000
+            // 
+            this.radioButtonKwp2000.AutoSize = true;
+            this.radioButtonKwp2000.Location = new System.Drawing.Point(6, 180);
+            this.radioButtonKwp2000.Name = "radioButtonKwp2000";
+            this.radioButtonKwp2000.Size = new System.Drawing.Size(126, 17);
+            this.radioButtonKwp2000.TabIndex = 27;
+            this.radioButtonKwp2000.TabStop = true;
+            this.radioButtonKwp2000.Text = "KWP2000 (Standard)";
+            this.radioButtonKwp2000.UseVisualStyleBackColor = true;
             // 
             // radioButtonKwp2000Bmw
             // 
@@ -196,7 +209,7 @@
             // listBoxResponseFiles
             // 
             this.listBoxResponseFiles.FormattingEnabled = true;
-            this.listBoxResponseFiles.Location = new System.Drawing.Point(225, 88);
+            this.listBoxResponseFiles.Location = new System.Drawing.Point(225, 107);
             this.listBoxResponseFiles.Name = "listBoxResponseFiles";
             this.listBoxResponseFiles.Size = new System.Drawing.Size(206, 212);
             this.listBoxResponseFiles.Sorted = true;
@@ -251,7 +264,7 @@
             // 
             this.treeViewDirectories.Location = new System.Drawing.Point(12, 117);
             this.treeViewDirectories.Name = "treeViewDirectories";
-            this.treeViewDirectories.Size = new System.Drawing.Size(206, 183);
+            this.treeViewDirectories.Size = new System.Drawing.Size(206, 202);
             this.treeViewDirectories.TabIndex = 9;
             this.treeViewDirectories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewDirectories_AfterSelect);
             // 
@@ -270,22 +283,22 @@
             this.buttonRootFolder.UseVisualStyleBackColor = true;
             this.buttonRootFolder.Click += new System.EventHandler(this.buttonRootFolder_Click);
             // 
-            // radioButtonKwp2000
+            // radioButtonTp20
             // 
-            this.radioButtonKwp2000.AutoSize = true;
-            this.radioButtonKwp2000.Location = new System.Drawing.Point(6, 180);
-            this.radioButtonKwp2000.Name = "radioButtonKwp2000";
-            this.radioButtonKwp2000.Size = new System.Drawing.Size(126, 17);
-            this.radioButtonKwp2000.TabIndex = 27;
-            this.radioButtonKwp2000.TabStop = true;
-            this.radioButtonKwp2000.Text = "KWP2000 (Standard)";
-            this.radioButtonKwp2000.UseVisualStyleBackColor = true;
+            this.radioButtonTp20.AutoSize = true;
+            this.radioButtonTp20.Location = new System.Drawing.Point(6, 203);
+            this.radioButtonTp20.Name = "radioButtonTp20";
+            this.radioButtonTp20.Size = new System.Drawing.Size(88, 17);
+            this.radioButtonTp20.TabIndex = 28;
+            this.radioButtonTp20.TabStop = true;
+            this.radioButtonTp20.Text = "TP 2.0 (CAN)";
+            this.radioButtonTp20.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(657, 313);
+            this.ClientSize = new System.Drawing.Size(657, 332);
             this.Controls.Add(this.buttonRootFolder);
             this.Controls.Add(this.treeViewDirectories);
             this.Controls.Add(this.buttonErrorDefault);
@@ -332,6 +345,7 @@
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
         private System.Windows.Forms.Button buttonRootFolder;
         private System.Windows.Forms.RadioButton radioButtonKwp2000;
+        private System.Windows.Forms.RadioButton radioButtonTp20;
     }
 }
 
