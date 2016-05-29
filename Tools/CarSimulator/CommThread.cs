@@ -2638,9 +2638,9 @@ namespace CarSimulator
                                 sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
                                 sendMsg.DATA[0] = 0xA1; // parameter response
                                 sendMsg.DATA[1] = 0x0F; // block size
-                                sendMsg.DATA[2] = 0x8A;
+                                sendMsg.DATA[2] = 0x8A; // T1 100ms
                                 sendMsg.DATA[3] = 0xFF;
-                                sendMsg.DATA[4] = 0x4A;
+                                sendMsg.DATA[4] = 0x00; // T3 0ms
                                 sendMsg.DATA[5] = 0xFF;
                                 stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
                                 if (stsResult != TPCANStatus.PCAN_ERROR_OK)
