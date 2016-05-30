@@ -77,6 +77,7 @@ namespace CarSimulator
                 T3 = 0x32;
                 RecSeq = 0;
                 SendSeq = 0;
+                SendData = new List<byte[]>();
             }
             private byte _t1;
             private byte _t3;
@@ -144,7 +145,7 @@ namespace CarSimulator
             public bool WaitForAck { get; set; }
             public long AckWaitStartTick { get; set; }
             public List<byte> RecData { get; set; }
-            public List<byte> SendData { get; set; }
+            public List<byte[]> SendData { get; set; }
         }
 
         public enum ConceptType
@@ -2338,11 +2339,11 @@ namespace CarSimulator
                 for (int i = 0; i < _tp20Channels.Count; i++)
                 {
                     Tp20Channel channel = _tp20Channels[i];
-                    if (channel.SendData == null)
+                    if (channel.SendData.Count == 0)
                     {
                         if ((Stopwatch.GetTimestamp() - channel.LastAccessTick) > 5000 * TickResolMs)
                         {
-                            _tp20Channels.Remove(channel);
+                            channel.SendData.Clear();
 #if CAN_DEBUG
                             Debug.WriteLine("Timeout channel {0:X04}", channel.TxId);
 #endif
@@ -2353,29 +2354,28 @@ namespace CarSimulator
                 // check for send data
                 foreach (Tp20Channel channel in _tp20Channels)
                 {
-                    if (channel.SendData != null)
+                    if (channel.WaitForAck)
                     {
-                        if (channel.WaitForAck)
+                        if ((Stopwatch.GetTimestamp() - channel.AckWaitStartTick) > channel.T1Time * TickResolMs)
                         {
-                            if ((Stopwatch.GetTimestamp() - channel.AckWaitStartTick) > channel.T1Time * TickResolMs)
-                            {
 #if CAN_DEBUG
-                                Debug.WriteLine("ACK timeout channel {0:X04}", channel.TxId);
+                            Debug.WriteLine("ACK timeout channel {0:X04}", channel.TxId);
 #endif
-                                channel.SendData = null;
-                            }
-                            continue;
+                            _tp20Channels.Remove(channel);
                         }
-
-                        byte[] sendData = channel.SendData.ToArray();
+                        continue;
+                    }
+                    if (channel.SendData.Count > 0)
+                    {
+                        byte[] sendData = channel.SendData[0];
                         sendMsg.ID = (uint)(channel.RxId);
                         sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
-                        int len = channel.SendData.Count - channel.SendPos;
+                        int len = sendData.Length - channel.SendPos;
                         int offset;
                         if (channel.SendPos == 0)
                         {   // first part
-                            sendMsg.DATA[1] = (byte)(channel.SendData.Count >> 8);
-                            sendMsg.DATA[2] = (byte)(channel.SendData.Count);
+                            sendMsg.DATA[1] = (byte)(sendData.Length >> 8);
+                            sendMsg.DATA[2] = (byte)(sendData.Length);
                             offset = 3;
                         }
                         else
@@ -2391,11 +2391,16 @@ namespace CarSimulator
                         channel.SendPos += len;
 
                         byte op;
-                        if (channel.SendPos >= channel.SendData.Count)
+                        if (channel.SendPos >= sendData.Length)
                         {
                             // all send
                             op = 0x1;   // wait for ACK, last packet
-                            channel.SendData = null;
+                            // start with next telegram
+                            channel.SendPos = 0;
+                            channel.SendBlock = 0;
+                            channel.SendData.RemoveAt(0);
+                            channel.WaitForAck = true;
+                            channel.AckWaitStartTick = Stopwatch.GetTimestamp();
                         }
                         else
                         {
@@ -2726,11 +2731,9 @@ namespace CarSimulator
             }
             currChannel.SendPos = 0;
             currChannel.SendBlock = 0;
-            currChannel.SendData = new List<byte>();
-            for (int i = 0; i < dataLength; i++)
-            {
-                currChannel.SendData.Add(sendData[i + dataOffset]);
-            }
+            byte[] sendArray = new byte[dataLength];
+            Array.Copy(sendData, dataOffset, sendArray, 0, dataLength);
+            currChannel.SendData.Add(sendArray);
             return true;
         }
 
