@@ -145,7 +145,7 @@ namespace CarSimulator
             public bool WaitForAck { get; set; }
             public long AckWaitStartTick { get; set; }
             public List<byte> RecData { get; set; }
-            public List<byte[]> SendData { get; set; }
+            public List<byte[]> SendData { get; }
         }
 
         public enum ConceptType
@@ -2343,10 +2343,10 @@ namespace CarSimulator
                     {
                         if ((Stopwatch.GetTimestamp() - channel.LastAccessTick) > 5000 * TickResolMs)
                         {
-                            channel.SendData.Clear();
 #if CAN_DEBUG
                             Debug.WriteLine("Timeout channel {0:X04}", channel.TxId);
 #endif
+                            _tp20Channels.Remove(channel);
                         }
                     }
                 }
@@ -2361,7 +2361,7 @@ namespace CarSimulator
 #if CAN_DEBUG
                             Debug.WriteLine("ACK timeout channel {0:X04}", channel.TxId);
 #endif
-                            _tp20Channels.Remove(channel);
+                            channel.SendData.Clear();
                         }
                         continue;
                     }
@@ -2481,29 +2481,9 @@ namespace CarSimulator
                             EcuAddress = canMsg.DATA[0],
                             TelAddress = configData[1],
                             AppId = canMsg.DATA[6],
-                            RxId = (canMsg.DATA[5] << 8) | canMsg.DATA[4]
+                            RxId = (canMsg.DATA[5] << 8) | canMsg.DATA[4],
+                            TxId = 0x700 + canMsg.DATA[0]   // no real id
                         };
-                        int txId = 0x740;
-                        // search for free tx id
-                        for (;;)
-                        {
-                            bool modified = false;
-                            // ReSharper disable once LoopCanBeConvertedToQuery
-                            foreach (Tp20Channel channel in _tp20Channels)
-                            {
-                                if (channel.TxId == txId)
-                                {
-                                    txId++;
-                                    modified = true;
-                                    break;
-                                }
-                            }
-                            if (!modified)
-                            {
-                                break;
-                            }
-                        }
-                        newChannel.TxId = txId;
                         _tp20Channels.Add(newChannel);
 #if CAN_DEBUG
                         Debug.WriteLine("Added channel {0:X04}:{1:X04}", newChannel.TxId, newChannel.RxId);
@@ -2729,8 +2709,11 @@ namespace CarSimulator
                 dataLength = sendData[3];
                 dataOffset = 4;
             }
-            currChannel.SendPos = 0;
-            currChannel.SendBlock = 0;
+            if (currChannel.SendData.Count == 0)
+            {
+                currChannel.SendPos = 0;
+                currChannel.SendBlock = 0;
+            }
             byte[] sendArray = new byte[dataLength];
             Array.Copy(sendData, dataOffset, sendArray, 0, dataLength);
             currChannel.SendData.Add(sendArray);
