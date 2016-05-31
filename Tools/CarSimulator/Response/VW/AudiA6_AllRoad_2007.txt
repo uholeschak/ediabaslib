@@ -1,4 +1,4 @@
-; AUDI A6 2007 (TP2.0)
+; AUDI A6 AllRoad 2007 (TP2.0)
 ; ecu address, tel. address
 
 ; mot_01.grp
