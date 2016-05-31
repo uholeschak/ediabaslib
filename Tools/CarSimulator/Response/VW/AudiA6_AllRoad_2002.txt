@@ -1,0 +1,45 @@
+; AUDI A6 AllRoad 2002 (KWP2000)
+; ecu address, tel. address
+
+; mot_01.grp
+CFG: 01 EF 8F
+; Steuergeraeteversion_abfragen2
+82 10 F1 1A 9B 38 : B0 F1 10 5A 9B 34 44 30 39 30 37 35 36 30 42 46 20 30 30 33 30 03 00 2D EB 00 00 00 00 00 2E 34 2E 32 4C 20 56 38 2F 35 56 20 20 20 20 20 20 47 20 20 20 EC
+; Fahrgestellnr_abfragen
+82 10 F1 1A 90 2D : 83 F1 10 7F 1A 12 2F 
+; MotorOderSystemnr_abfragen
+82 10 F1 1A 97 34 : 83 F1 10 7F 1A 12 2F
+; UnterstFunktionen_abfragen
+84 10 F1 31 B8 00 00 6E : 92 F1 10 71 B8 01 01 01 02 01 03 01 04 01 05 01 06 01 07 01 08 E8
+; FlashStatus_abfragen
+82 10 F1 1A 9C 39 : 86 F1 10 5A 9C 00 03 03 00 83
+; Messwerteblock_lesen: 26;START
+82 10 F1 1A 9D 3A : 83 F1 10 7F 1A 91 AE
+82 10 F1 21 1A BE : 9A F1 10 61 1A 15 75 21 15 75 21 15 75 21 15 75 21 25 00 00 25 00 00 25 00 00 25 00 00 56
+; Messwerteblock_lesen: 28;LESEN
+82 10 F1 21 1C C0 : 9A F1 10 61 1C 01 C8 00 21 85 85 05 0A 8E 25 00 EB 25 00 00 25 00 00 25 00 00 25 00 00 4D
+; Messwerteblock_lesen: 31;LESEN
+82 10 F1 21 1F C3 : 9A F1 10 61 1F 0B 4E 80 0B 4E 6F 0B 4E 80 0B 4E 6F 25 00 00 25 00 00 25 00 00 25 00 00 F1
+; Messwerteblock_lesen: 57;LESEN
+82 10 F1 21 39 DD : 9A F1 10 61 39 01 32 00 01 32 89 25 00 10 0E 28 1F 25 00 00 25 00 00 25 00 00 25 00 00 42
+; Messwerteblock_lesen: 57;STOP
+; Messwerteblock_lesen: 100;START
+; Messwerteblock_lesen: 100;STOP
+82 10 F1 21 64 08 : 9A F1 10 61 64 10 FF 00 05 0A 8E 3C 00 00 10 FF 90 5B 00 8A 5B 00 8A 25 00 00 25 00 00 FB
+; Messwerteblock_lesen: 101;START
+; Messwerteblock_lesen: 101;STOP
+82 10 F1 21 65 09 : 9A F1 10 61 65 01 C8 00 21 85 85 0F 29 00 19 00 00 25 00 00 25 00 00 25 00 00 25 00 00 3A
+; Messwerteblock_lesen: 102;START
+; Messwerteblock_lesen: 102;STOP
+82 10 F1 21 66 0A : 9A F1 10 61 66 01 C8 00 05 0A 8E 05 0A 91 0F 29 00 05 0A 91 05 32 5E 05 32 5E 05 32 5E FF
+; Messwerteblock_lesen: 103;START
+; Messwerteblock_lesen: 103;STOP
+82 10 F1 21 67 0B : 9A F1 10 61 67 25 00 00 25 00 00 25 00 00 25 00 00 5A 02 3E 5A 02 00 5C 01 00 10 FF 01 5A
+; Messwerteblock_lesen: 104;START
+; Messwerteblock_lesen: 104;STOP
+82 10 F1 21 68 0C : 9A F1 10 61 68 05 0A 8E 14 64 80 14 64 80 14 64 80 37 A0 00 3E 19 00 25 00 00 25 00 00 61
+
+; Fehlerspeicher_abfragen: MW_LESEN
+84 10 F1 18 02 FF 00 9E : 8B F1 10 58 03 47 95 64 41 B9 22 46 39 28 EA
+; FehlerspeicherSAE_abfragen: MW_LESEN
+84 10 F1 18 00 FF 00 9E : 8B F1 10 58 03 26 00 64 04 41 22 05 68 28 6D
