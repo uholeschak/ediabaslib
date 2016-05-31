@@ -8,8 +8,6 @@
 #include <codecvt>
 #include <string>
 
-#define DLLEXPORT __declspec(dllexport)
-
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
 #define FLUSH_LOG 0
@@ -551,7 +549,7 @@ static BOOL LoadIfhDll()
 
 typedef BOOL(WINAPI *PdllLockIFH)(void);
 
-extern "C" DLLEXPORT BOOL WINAPI dllLockIFH(void)
+extern "C" BOOL WINAPI dllLockIFH(void)
 {
     LogFormat(TEXT("dllLockIFH()"));
     if (hIfhDll == NULL)
@@ -571,7 +569,7 @@ extern "C" DLLEXPORT BOOL WINAPI dllLockIFH(void)
 
 typedef void(WINAPI *PdllUnlockIFH)(void);
 
-extern "C" DLLEXPORT void WINAPI dllUnlockIFH(void)
+extern "C" void WINAPI dllUnlockIFH(void)
 {
     LogFormat(TEXT("dllUnlockIFH()"));
     if (hIfhDll == NULL)
@@ -590,7 +588,7 @@ extern "C" DLLEXPORT void WINAPI dllUnlockIFH(void)
 
 typedef short(WINAPI *PdllStartupIFH)(char *ediabasIniPath, char *ifhName);
 
-extern "C" DLLEXPORT short WINAPI dllStartupIFH(char *ediabasIniPath, char *ifhName)
+extern "C" short WINAPI dllStartupIFH(char *ediabasIniPath, char *ifhName)
 {
     LogFormat(TEXT("dllStartupIFH('%s', '%s')"),
         ConvertTextW(ediabasIniPath).c_str(),
@@ -612,7 +610,7 @@ extern "C" DLLEXPORT short WINAPI dllStartupIFH(char *ediabasIniPath, char *ifhN
 
 typedef void(WINAPI *PdllShutdownIFH)(void);
 
-extern "C" DLLEXPORT void WINAPI dllShutdownIFH(void)
+extern "C" void WINAPI dllShutdownIFH(void)
 {
     LogFormat(TEXT("dllShutdownIFH()"));
     if (hIfhDll == NULL)
@@ -631,7 +629,7 @@ extern "C" DLLEXPORT void WINAPI dllShutdownIFH(void)
 
 typedef short(WINAPI *PdllCheckIFH)(short compatibilityNo);
 
-extern "C" DLLEXPORT short WINAPI dllCheckIFH(short compatibilityNo)
+extern "C" short WINAPI dllCheckIFH(short compatibilityNo)
 {
     LogFormat(TEXT("dllCheckIFH(%u)"), (unsigned int) compatibilityNo);
     compatNo = compatibilityNo;
@@ -652,7 +650,7 @@ extern "C" DLLEXPORT short WINAPI dllCheckIFH(short compatibilityNo)
 
 typedef void(WINAPI *PdllExitIFH)(void);
 
-extern "C" DLLEXPORT void WINAPI dllExitIFH(void)
+extern "C" void WINAPI dllExitIFH(void)
 {
     LogFormat(TEXT("dllExitIFH()"));
     if (hIfhDll == NULL)
@@ -671,7 +669,7 @@ extern "C" DLLEXPORT void WINAPI dllExitIFH(void)
 
 typedef short(WINAPI *PdllCallIFH)(MESSAGE *msgIn, MESSAGE *msgOut);
 
-extern "C" DLLEXPORT short WINAPI dllCallIFH(MESSAGE *msgIn, MESSAGE *msgOut)
+extern "C" short WINAPI dllCallIFH(MESSAGE *msgIn, MESSAGE *msgOut)
 {
     BOOL writeLog = TRUE;
 #if !STATUS_LOG
@@ -710,7 +708,7 @@ extern "C" DLLEXPORT short WINAPI dllCallIFH(MESSAGE *msgIn, MESSAGE *msgOut)
 
 typedef void (WINAPI *PXControlEnable)(BOOL enable);
 
-extern "C" DLLEXPORT void WINAPI XControlEnable(BOOL enable)
+extern "C" void WINAPI XControlEnable(BOOL enable)
 {
     LogFormat(TEXT("XControlEnable(%u)"), enable);
     if (hIfhDll == NULL)
