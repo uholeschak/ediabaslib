@@ -618,12 +618,12 @@ extern "C" void WINAPI dllShutdownIFH(void)
         return;
     }
     PdllShutdownIFH pdllShutdownIFH = (PdllShutdownIFH)GetProcAddress(hIfhDll, "_dllShutdownIFH@0");
-    if (dllShutdownIFH == NULL)
+    if (pdllShutdownIFH == NULL)
     {
         LogString(TEXT("dllShutdownIFH not found"));
         return;
     }
-    dllShutdownIFH();
+    pdllShutdownIFH();
     LogFlush();
 }
 
