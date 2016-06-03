@@ -2588,6 +2588,13 @@ namespace CarSimulator
 #if CAN_DEBUG
                         Debug.WriteLine("Rec ACK not ready");
 #endif
+                        if (currChannel.SendSeq != sequence)
+                        {
+#if CAN_DEBUG
+                            Debug.WriteLine("Invalid send sequence");
+#endif
+                            break;
+                        }
                         currChannel.AckWaitStartTick = Stopwatch.GetTimestamp();
                         break;
 
@@ -2595,6 +2602,13 @@ namespace CarSimulator
 #if CAN_DEBUG
                         Debug.WriteLine("Rec ACK");
 #endif
+                        if (currChannel.SendSeq != sequence)
+                        {
+#if CAN_DEBUG
+                            Debug.WriteLine("Invalid send sequence");
+#endif
+                            break;
+                        }
                         currChannel.WaitForAck = false;
                         break;
 
