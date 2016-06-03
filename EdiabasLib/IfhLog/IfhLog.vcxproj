@@ -160,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="IfhLog.def" />
+    <None Include="IfhLog.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

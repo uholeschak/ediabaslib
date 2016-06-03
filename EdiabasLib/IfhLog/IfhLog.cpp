@@ -10,9 +10,6 @@
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
-#define FLUSH_LOG 0
-#define STATUS_LOG 0
-
 #define IFH_COMPATIBILITY_NO 6
 #define CFGTYPE_PATH 0x13
 #define CFGTYPE_STRING 0x23
@@ -80,6 +77,9 @@ static HANDLE hMutex = NULL;
 static HMODULE hIfhDll = NULL;
 static FILE *hLogFile = NULL;
 static int compatNo = IFH_COMPATIBILITY_NO;
+static int iAppendLog = 0;
+static int iStatusLog = 0;
+static int iFlushLog = 0;
 
 static const FUNCTION functions[] = 
 {
@@ -271,13 +271,19 @@ static BOOL OpenLogFile()
     }
     PathRemoveExtension(fileName);
     std::wstring logFileName = fileName;
+    std::wstring iniFileName = fileName;
     logFileName += TEXT(".log");
+    iniFileName += TEXT("Log.ini");
+
+    iAppendLog = GetPrivateProfileInt(TEXT("IfhLog"), TEXT("AppendLog"), 0, iniFileName.c_str());
+    iStatusLog = GetPrivateProfileInt(TEXT("IfhLog"), TEXT("StatusLog"), 0, iniFileName.c_str());
+    iFlushLog = GetPrivateProfileInt(TEXT("IfhLog"), TEXT("FlushLog"), 0, iniFileName.c_str());
 
     if (!AquireMutex())
     {
         return FALSE;
     }
-    hLogFile = _wfopen(logFileName.c_str(), TEXT("wt"));
+    hLogFile = _wfopen(logFileName.c_str(), iAppendLog ? TEXT("at") : TEXT("wt"));
     ReleaseMutex();
     if (hLogFile == NULL)
     {
@@ -322,9 +328,10 @@ static BOOL LogString(const TCHAR *text)
     }
     fwprintf(hLogFile, text);
     fwprintf(hLogFile, TEXT("\n"));
-#if FLUSH_LOG
-    fflush(hLogFile);
-#endif
+    if (iFlushLog)
+    {
+        fflush(hLogFile);
+    }
     ReleaseMutex();
 
     return TRUE;
@@ -345,9 +352,10 @@ static BOOL LogFormat(const TCHAR *format, ...)
     }
     vfwprintf(hLogFile, format, args);
     fwprintf(hLogFile, TEXT("\n"));
-#if FLUSH_LOG
-    fflush(hLogFile);
-#endif
+    if (iFlushLog)
+    {
+        fflush(hLogFile);
+    }
     ReleaseMutex();
     va_end(args);
 
@@ -672,12 +680,12 @@ typedef short(WINAPI *PdllCallIFH)(MESSAGE *msgIn, MESSAGE *msgOut);
 extern "C" short WINAPI dllCallIFH(MESSAGE *msgIn, MESSAGE *msgOut)
 {
     BOOL writeLog = TRUE;
-#if !STATUS_LOG
-    if (msgIn->fktNo == 3)
+
+    if (!iStatusLog && msgIn->fktNo == 3)
     {   // hide status message
         writeLog = FALSE;
     }
-#endif
+
     if (writeLog) LogFormat(TEXT("dllCallIFH()"));
 
     const TCHAR *fktName = TEXT("");
