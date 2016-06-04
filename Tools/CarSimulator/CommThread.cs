@@ -220,6 +220,7 @@ namespace CarSimulator
 
         private const double FilterConst = 0.95;
         private const int IsoTimeout = 2000;
+        private const int Tp20T1 = 100;
 
         // ReSharper disable InconsistentNaming
         // 0x38 EHC
@@ -2356,12 +2357,13 @@ namespace CarSimulator
                 {
                     if (channel.WaitForAck)
                     {
-                        if ((Stopwatch.GetTimestamp() - channel.AckWaitStartTick) > channel.T1Time * TickResolMs)
+                        if ((Stopwatch.GetTimestamp() - channel.AckWaitStartTick) > Tp20T1 * TickResolMs)
                         {
 #if CAN_DEBUG
                             Debug.WriteLine("ACK timeout channel {0:X04}", channel.TxId);
 #endif
                             channel.SendData.Clear();
+                            channel.WaitForAck = false;
                         }
                         continue;
                     }
@@ -2637,7 +2639,7 @@ namespace CarSimulator
                                 sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
                                 sendMsg.DATA[0] = 0xA1; // parameter response
                                 sendMsg.DATA[1] = 0x0F; // block size
-                                sendMsg.DATA[2] = 0x8A; // T1 100ms
+                                sendMsg.DATA[2] = 0x80 | (Tp20T1 / 10); // T1 100ms
                                 sendMsg.DATA[3] = 0xFF;
                                 sendMsg.DATA[4] = 0x00; // T3 0ms
                                 sendMsg.DATA[5] = 0xFF;
