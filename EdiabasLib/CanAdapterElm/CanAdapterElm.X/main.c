@@ -155,10 +155,12 @@
 #define KLINEF_FAST_INIT        0x40
 #define KLINEF_USE_KLINE        0x80    // for combination with KLINEF_USE_LLINE
 
+#define CAN_TP20_TEST       0
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
 #define CAN_MIN_SEP_TIME    0       // min separation time (ms)
 #define CAN_TIMEOUT         1000    // can receive timeout (1ms)
+#define CAN_TP20_T1         100     // TP2.0 T1 ACK timeout
 
 #define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes)
 #define EEP_ADDR_BLOCKSIZE  0x02    // eeprom address for FC block size (2 bytes)
@@ -181,6 +183,23 @@ typedef enum
     rec_state_done,     // receive complete, ok
     rec_state_error,    // receive error
 } rec_states;
+
+// CAN TP2.0 state machine
+typedef enum
+{
+    tp20_idle,              // no connection
+    tp20_send_connect,      // send connect channel
+    tp20_rec_connect,       // receive connect channel
+    tp20_send_par,          // send parameter
+    tp20_rec_par,           // receive parameter
+    tp20_send_data,         // send data
+    tp20_send_data_delay,   // send data delay
+    tp20_send_wait_ack,     // send data, wait for ack
+    tp20_send_done_wait_ack, // send data finished, wait for ack
+    tp20_rec_data,          // receive data
+    tp20_send_alive,        // send keep alive
+    tp20_rec_alive,         // receive keep alive
+} tp20_states;
 
 // constants in rom
 static const uint16_t adapter_type @ _ROMSIZE - 4 = ADAPTER_TYPE;
@@ -240,6 +259,17 @@ static uint16_t can_rec_time;
 static uint16_t can_rec_rec_len;
 static uint16_t can_rec_data_len;
 static bool can_rec_tel_valid;
+
+// can TP2.0 variables
+static tp20_states can_tp20_state;
+static uint8_t can_tp20_ecu_addr;
+static uint16_t can_tp20_rxid;
+static uint16_t can_tp20_txid;
+static uint8_t can_tp20_block_size;
+static uint16_t can_tp20_t1;    // T1 [ms]
+static uint16_t can_tp20_t3;    // T3 [ms]
+static uint8_t can_tp20_block;
+static uint8_t can_tp20_send_seq;
 
 void update_led();
 
@@ -1385,15 +1415,23 @@ void can_config()
     }
     if (can_enabled)
     {
+#if CAN_TP20_TEST
+        uint16_t sid = 0x200;
+        uint16_t mask = 0x000;
+#else
+        uint16_t sid = 0x600;
+        uint16_t mask = 0x700;
+#endif
+
         if (bitrate == 1)
         {   // 100 kb
             open_can(SJW_2_TQ, BRP_FOSC_10, PSEG1T_6_TQ, PRGT_7_TQ, PSEG2T_2_TQ,
-                0x600, 0x700);
+                sid, mask);
         }
         else
         {   // 500kb
             open_can(SJW_2_TQ, BRP_FOSC_2, PSEG1T_6_TQ, PRGT_7_TQ, PSEG2T_2_TQ,
-                0x600, 0x700);
+                sid, mask);
         }
     }
     else
@@ -1403,6 +1441,7 @@ void can_config()
     kline_baud = 0;
     kline_flags = 0;
     kline_interbyte = 0;
+    can_tp20_state = tp20_idle;
 }
 
 void read_eeprom()
@@ -2011,6 +2050,281 @@ void can_receiver(bool new_can_msg)
     }
 }
 
+uint16_t convert_tp20_time(uint8_t time)
+{
+    uint16_t scale = time & 0x3F;
+    switch ((time >> 6) & 0x03)
+    {
+        case 0x00:
+            return (scale + 9) / 10;
+
+        case 0x01:
+            return scale;
+
+        case 0x02:
+            return scale * 10;
+
+        case 0x03:
+            return scale * 100;
+    }
+    return scale;
+}
+
+void tp20_disconnect()
+{
+    if (can_tp20_state >= tp20_send_par)
+    {
+        memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+        can_out_msg.sid = can_tp20_txid;
+        can_out_msg.dlc.bits.count = 1;
+        can_out_msg.data[0] = 0xA8;
+        can_send_message_wait();
+    }
+    can_tp20_state = tp20_idle;
+}
+
+void can_tp20(bool new_can_msg)
+{
+    if (((can_tp20_state == tp20_idle) || (can_tp20_state >= tp20_rec_data)) && !PIE1bits.TXIE)
+    {
+        uint16_t len = uart_receive(temp_buffer);
+        if (len > 0)
+        {
+            if ((kline_flags & KLINEF_NO_ECHO) == 0)
+            {
+                uart_send(temp_buffer, len);
+            }
+            if (internal_telegram(len))
+            {
+                return;
+            }
+            can_tp20_state = tp20_send_connect;
+            can_tp20_ecu_addr = temp_buffer[1];
+            can_send_pos = 0;
+        }
+    }
+    switch (can_tp20_state)
+    {
+        case tp20_idle:          // no connection
+            break;
+
+        case tp20_send_connect:  // send connect channel
+            tp20_disconnect();
+            memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+            can_out_msg.sid = 0x200;
+            can_out_msg.dlc.bits.count = 7;
+            can_out_msg.data[0] = can_tp20_ecu_addr;
+            can_out_msg.data[1] = 0xC0;     // Setup request
+            can_out_msg.data[2] = 0x00;     // rx addr low
+            can_out_msg.data[3] = 0x10;     // rx addr high
+            can_out_msg.data[4] = 0x00;     // tx addr low
+            can_out_msg.data[5] = 0x03;     // tx addr high
+            can_out_msg.data[6] = 0x01;     // app id
+            can_send_message_wait();
+            can_tp20_send_seq = 0;
+            can_tp20_state = tp20_rec_connect;
+            break;
+
+        case tp20_rec_connect:   // receive connect channel
+            break;
+
+        case tp20_send_par:      // send parameter
+            memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+            can_out_msg.sid = can_tp20_txid;
+            can_out_msg.dlc.bits.count = 6;
+            can_out_msg.data[0] = 0xA0;     // Parameter request
+            can_out_msg.data[1] = 0x0F;     // block size
+            can_out_msg.data[2] = 0x80 | (CAN_TP20_T1 / 10);     // T1: 100ms
+            can_out_msg.data[3] = 0xFF;     // T2
+            can_out_msg.data[4] = 0x0A;     // T3: 1ms
+            can_out_msg.data[5] = 0xFF;     // T4
+            can_send_message_wait();
+            can_rec_time = get_systick();
+            can_tp20_state = tp20_rec_par;
+            break;
+
+        case tp20_send_data:     // send data
+        {
+            uint8_t *data_offset = &temp_buffer[3];
+            uint8_t data_len = temp_buffer[0] & 0x3F;
+            if (data_len == 0)
+            {
+                data_len = temp_buffer[3];
+                data_offset = &temp_buffer[4];
+            }
+            memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+            can_out_msg.sid = can_tp20_txid;
+            uint8_t offset;
+            uint16_t len = data_len - can_send_pos;
+            if (can_send_pos == 0)
+            {   // first part
+                can_tp20_block = 0;
+                can_out_msg.data[1] = 0x00;
+                can_out_msg.data[2] = data_len;
+                offset = 3;
+            }
+            else
+            {
+                offset = 1;
+            }
+            if (len > (8 - offset))
+            {
+                len = 8 - offset;
+            }
+            for (uint8_t i = 0; i < len; i++)
+            {
+                can_out_msg.data[i + offset] = data_offset[can_send_pos + i];
+            }
+            can_out_msg.dlc.bits.count = len + offset;
+            can_send_pos += len;
+
+            uint8_t op;
+            if (can_send_pos >= data_len)
+            {   // all send
+                op = 0x1;   // wait for ACK, last packet
+                can_tp20_state = tp20_send_done_wait_ack;
+            }
+            else
+            {
+                can_tp20_block++;
+                if (can_tp20_block_size != 0x00 && can_tp20_block >= can_tp20_block_size)
+                {
+                    op = 0x0;   // wait for ACK, block size reached
+                    can_tp20_block = 0;
+                    can_tp20_state = tp20_send_wait_ack;
+                }
+                else
+                {
+                    op = 0x2;   // no wait for ACK, more packets follow
+                    if (can_tp20_t3 > 0)
+                    {
+                        can_tp20_state = tp20_send_data_delay;
+                    }
+                }
+            }
+            can_out_msg.data[0] = ((op << 4) | (can_tp20_send_seq & 0x0F));
+            can_tp20_send_seq = (can_tp20_send_seq + 1) & 0x0F;
+
+            can_send_message_wait();
+            can_rec_time = get_systick();
+            break;
+        }
+
+        case tp20_send_data_delay:
+            if ((uint16_t) (get_systick() - can_rec_time) < (can_tp20_t3 * TIMER0_RESOL / 1000))
+            {
+                break;
+            }
+            can_tp20_state = tp20_send_data;
+            break;
+
+        case tp20_rec_data:      // receive data
+            break;
+
+        case tp20_send_alive:    // send keep alive
+            if ((uint16_t) (get_systick() - can_rec_time) < (can_tp20_t1 / 2 * TIMER0_RESOL / 1000))
+            {
+                break;
+            }
+            memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+            can_out_msg.sid = can_tp20_txid;
+            can_out_msg.dlc.bits.count = 1;
+            can_out_msg.data[0] = 0xA3;     // Channel test
+            can_send_message_wait();
+            can_rec_time = get_systick();
+            can_tp20_state = tp20_rec_alive;
+            break;
+
+        case tp20_rec_par:              // receive parameter
+        case tp20_send_wait_ack:        // send data, wait for ack
+        case tp20_send_done_wait_ack:   // send data finished, wait for ack
+        case tp20_rec_alive:            // receive keep alive
+            if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TP20_T1 * TIMER0_RESOL / 1000))
+            {
+                tp20_disconnect();
+            }
+            break;
+    }
+    if (new_can_msg)
+    {
+        if (can_in_msg.sid == (0x200 + can_tp20_ecu_addr) &&
+            (can_in_msg.dlc.bits.count == 7))
+        {   // channel setup response
+            if ((can_tp20_state == tp20_rec_connect) &&
+                (can_in_msg.data[1] == 0xD0) &&
+                ((can_in_msg.data[3] & 0x10) == 0x00) &&
+                ((can_in_msg.data[5] & 0x10) == 0x00))
+            {
+                can_tp20_rxid = can_in_msg.data[2] + ((uint16_t) can_in_msg.data[3] << 8);
+                can_tp20_txid = can_in_msg.data[4] + ((uint16_t) can_in_msg.data[5] << 8);
+                // default values
+                can_tp20_block_size = 0x0F;
+                can_tp20_t1 = 100;  // T1
+                can_tp20_t3 = 10;   // T3
+                can_tp20_state = tp20_send_par;
+            }
+        }
+        else if ((can_tp20_state >= tp20_send_par) && (can_in_msg.sid == can_tp20_rxid) && (can_in_msg.dlc.bits.count >= 1))
+        {
+            uint8_t sequence = can_in_msg.data[0] & 0x0F;
+            uint8_t opcode = can_in_msg.data[0] >> 4;
+            switch (opcode)
+            {
+                case 0x0A:  // parameter
+                    switch (can_in_msg.data[0])
+                    {
+                        case 0xA1:  // parameter response
+                            if (can_tp20_state == tp20_rec_alive)
+                            {
+                                can_rec_time = get_systick();
+                                can_tp20_state = tp20_send_alive;
+                                break;
+                            }
+                            if (can_tp20_state == tp20_rec_par)
+                            {
+                                if (can_in_msg.dlc.bits.count == 6)
+                                {
+                                    can_tp20_block_size = can_in_msg.data[1];
+                                    can_tp20_t1 = convert_tp20_time(can_in_msg.data[2]);  // T1
+                                    can_tp20_t3 = convert_tp20_time(can_in_msg.data[4]);  // T3
+                                }
+                                can_tp20_state = tp20_send_data;
+                                break;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 0x09:  // ACK, not ready for next packet
+                    if (sequence != can_tp20_send_seq)
+                    {
+                        break;
+                    }
+                    can_tp20_state = tp20_rec_alive;
+                    break;
+
+                case 0x0B:  // ACK, ready for next packet
+                    if (sequence != can_tp20_send_seq)
+                    {
+                        break;
+                    }
+                    if (can_tp20_state == tp20_send_done_wait_ack)
+                    {
+                        can_rec_time = get_systick();
+                        can_tp20_state = tp20_send_alive;
+                        break;
+                    }
+                    if (can_tp20_state == tp20_send_wait_ack)
+                    {
+                        can_tp20_state = tp20_send_data;
+                        break;
+                    }
+                    break;
+            }
+        }
+    }
+}
+
 void main(void)
 {
     start_indicator = true;
@@ -2025,6 +2339,7 @@ void main(void)
 
     can_send_active = false;
     can_rec_tel_valid = false;
+    can_tp20_state = tp20_idle;
 
     RCONbits.IPEN = 1;      // interrupt priority enable
 
@@ -2189,8 +2504,12 @@ void main(void)
 #if DEBUG_PIN
             if (new_can_msg) LED_RS_TX = 1;
 #endif
+#if CAN_TP20_TEST
+            can_tp20(new_can_msg);
+#else
             can_receiver(new_can_msg);
             can_sender(new_can_msg);
+#endif
 #if DEBUG_PIN
             LED_RS_TX = 0;
 #endif
