@@ -2098,10 +2098,15 @@ void can_tp20(bool new_can_msg)
             {
                 return;
             }
+            tp20_disconnect();
             can_tp20_state = tp20_send_connect;
             can_tp20_ecu_addr = temp_buffer[1];
             can_send_pos = 0;
         }
+    }
+    if (can_tp20_state != tp20_idle)
+    {
+        idle_counter = 0;
     }
     switch (can_tp20_state)
     {
@@ -2109,7 +2114,6 @@ void can_tp20(bool new_can_msg)
             break;
 
         case tp20_send_connect:  // send connect channel
-            tp20_disconnect();
             memset(&can_out_msg, 0x00, sizeof(can_out_msg));
             can_out_msg.sid = 0x200;
             can_out_msg.dlc.bits.count = 7;
