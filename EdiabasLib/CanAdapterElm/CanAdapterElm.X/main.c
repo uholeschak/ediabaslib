@@ -263,6 +263,7 @@ static bool can_rec_tel_valid;
 // can TP2.0 variables
 static tp20_states can_tp20_state;
 static uint8_t can_tp20_ecu_addr;
+static uint8_t can_tp20_tester_addr;
 static uint16_t can_tp20_rxid;
 static uint16_t can_tp20_txid;
 static uint8_t can_tp20_block_size;
@@ -2086,6 +2087,18 @@ void tp20_disconnect()
 
 void can_tp20(bool new_can_msg)
 {
+    if ((can_tp20_state != tp20_idle) && can_error())
+    {
+        temp_buffer[0] = 0x82;
+        temp_buffer[1] = 0xF1;
+        temp_buffer[2] = 0xF1;
+        temp_buffer[3] = 0x7F;  // status message
+        temp_buffer[4] = 0x01;  // bus off
+        temp_buffer[5] = calc_checkum(temp_buffer, 5);
+        uart_send(temp_buffer, 6);
+        can_tp20_state = tp20_idle;
+        return;
+    }
     if (((can_tp20_state == tp20_idle) || (can_tp20_state >= tp20_rec_data)) && !PIE1bits.TXIE)
     {
         uint16_t len = uart_receive(temp_buffer);
@@ -2099,9 +2112,14 @@ void can_tp20(bool new_can_msg)
             {
                 return;
             }
+            if (can_error())
+            {
+                can_config();
+            }
             tp20_disconnect();
             can_tp20_state = tp20_send_connect;
             can_tp20_ecu_addr = temp_buffer[1];
+            can_tp20_tester_addr = temp_buffer[2];
             can_send_pos = 0;
         }
     }
@@ -2128,10 +2146,16 @@ void can_tp20(bool new_can_msg)
             can_send_message_wait();
             can_tp20_send_seq = 0;
             can_tp20_rec_seq = 0;
+            can_rec_time = get_systick();
             can_tp20_state = tp20_rec_connect;
             break;
 
         case tp20_rec_connect:   // receive connect channel
+            if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TP20_T1 * TIMER0_RESOL / 1000))
+            {
+                can_tp20_state = tp20_idle;
+                break;
+            }
             break;
 
         case tp20_send_par:      // send parameter
@@ -2232,7 +2256,7 @@ void can_tp20(bool new_can_msg)
                 if (can_rec_data_len > 0x3F)
                 {
                     temp_buffer[0] = 0x80;
-                    temp_buffer[1] = 0xF1;
+                    temp_buffer[1] = can_tp20_tester_addr;
                     temp_buffer[2] = can_tp20_ecu_addr;
                     temp_buffer[3] = can_rec_data_len;
                     len = can_rec_data_len + 4;
@@ -2240,7 +2264,7 @@ void can_tp20(bool new_can_msg)
                 else
                 {
                     temp_buffer[0] = 0x80 | can_rec_data_len;
-                    temp_buffer[1] = 0xF1;
+                    temp_buffer[1] = can_tp20_tester_addr;
                     temp_buffer[2] = can_tp20_ecu_addr;
                     len = can_rec_data_len + 3;
                 }

@@ -153,6 +153,16 @@ bool readCAN()
 }
 
 //------------------------------------------------------------------------------
+bool can_error()
+{
+    if (COMSTATbits.EWARN)
+    {
+        return true;
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
 void close_can (void)
 {
     set_can_mode(ECAN_CONFIG_MODE);
