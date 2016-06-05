@@ -142,7 +142,7 @@
 #define TIMER0_RESOL        15625ul         // 16526 Hz
 #define TIMER1_RELOAD       (0x10000-500)   // 1 ms
 
-// K-Line flags
+// K-LINE flags
 #define KLINEF_PARITY_MASK      0x7
 #define KLINEF_PARITY_NONE      0x0
 #define KLINEF_PARITY_EVEN      0x1
@@ -155,7 +155,18 @@
 #define KLINEF_FAST_INIT        0x40
 #define KLINEF_USE_KLINE        0x80    // for combination with KLINEF_USE_LLINE
 
-#define CAN_TP20_TEST       0
+// CAN flags
+#define CANF_NO_ECHO            0x01
+
+// CAN baudrates
+#define CAN_BAUD_OFF        0x00
+#define CAN_BAUD_500        0x01
+#define CAN_BAUD_100        0x09
+
+// CAN protocols
+#define CAN_PROT_BMW        0x00
+#define CAN_PROT_TP20       0x01
+
 #define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
 #define CAN_MIN_SEP_TIME    0       // min separation time (ms)
@@ -174,6 +185,14 @@
 #if (TEMP_BUF_SIZE & 0xFF) != 0
 #error TEMP_BUF_SIZE must be divisible by 256
 #endif
+
+// operation mode
+typedef enum
+{
+    op_mode_standard,   // standard mode from configuration
+    op_mode_kline,      // K-LINE mode
+    op_mode_can,        // CAN mode
+} op_modes;
 
 // receiver state machine
 typedef enum
@@ -218,17 +237,27 @@ static volatile rec_states rec_state;
 static volatile uint16_t rec_len;
 static volatile bool rec_bt_mode;
 static uint8_t rec_chksum;
-static volatile uint8_t rec_buffer[270];
+static volatile uint8_t rec_buffer[275];
 
 static uint16_t send_set_idx;
 static uint16_t send_get_idx;
 static volatile uint16_t send_len;
 static volatile uint8_t send_buffer[280];   // larger send buffer for multi responses
 
+static op_modes op_mode;        // current operation mode
+
+// K-LINE data
 static uint32_t kline_baud;     // K-line baud rate, 0=115200 (BMW-FAST))
 static uint8_t kline_flags;     // K-line flags
 static uint8_t kline_interbyte; // K-line interbyte time [ms]
 static uint8_t kline_bit_delay; // K-line read bit delay
+
+// CAN data
+static uint8_t can_cfg_protocol;    // CAN protocol
+static uint8_t can_cfg_baud;        // CAN baud rate (table)
+static uint8_t can_cfg_flags;       // CAN flags
+static uint8_t can_cfg_blocksize;   // CAN blocksize
+static uint8_t can_cfg_packet_interval; // CAN packet inverval time
 
 static uint8_t temp_buffer[TEMP_BUF_SIZE];
 static uint8_t temp_buffer_short[10];
@@ -274,6 +303,8 @@ static uint8_t can_tp20_send_seq;
 static uint8_t can_tp20_rec_seq;
 
 void update_led();
+void can_config();
+void reset_comm_states();
 
 inline uint16_t get_systick()
 {
@@ -1088,36 +1119,98 @@ uint16_t uart_receive(uint8_t *buffer)
     }
     idle_counter = 0;
 
-    uint16_t data_len;
+    op_modes op_mode_new = op_mode_standard;
+    bool can_init_required = false;
+    uint16_t data_len = 0;
     if (rec_buffer[0] == 0x00)
     {   // special mode
         // byte 1: telegram type
-        // byte 2+3: baud rate (high/low) / 2
-        // byte 4: flags
-        // byte 5: interbyte time
-        // byte 6+7: telegram length (high/low)
-        kline_baud = (((uint32_t) rec_buffer[2] << 8) + rec_buffer[3]) << 1;
-        if ((kline_baud != 0) && (kline_baud != 2) && ((kline_baud < MIN_BAUD) || (kline_baud > MAX_BAUD)))
-        {
-            data_len = 0;
+        if (rec_buffer[1] == 0x00)
+        {   // K-LINE telegram
+            // byte 2+3: baud rate (high/low) / 2
+            // byte 4: flags
+            // byte 5: interbyte time
+            // byte 6+7: telegram length (high/low)
+            if (buffer != NULL && op_mode != op_mode_kline)
+            {   // mode change
+                return 0;
+            }
+            kline_baud = (((uint32_t) rec_buffer[2] << 8) + rec_buffer[3]) << 1;
+            if ((kline_baud != 0) && (kline_baud != 2) && ((kline_baud < MIN_BAUD) || (kline_baud > MAX_BAUD)))
+            {   // baud date invalid
+                data_len = 0;
+            }
+            else
+            {
+                kline_flags = rec_buffer[4];
+                kline_interbyte = rec_buffer[5];
+                data_len = ((uint16_t) rec_buffer[6] << 8) + rec_buffer[7];
+                if (buffer != NULL)
+                {
+                    memcpy(buffer, rec_buffer + 8, data_len);
+                }
+                op_mode_new = op_mode_kline;
+            }
         }
-        else
-        {
-            kline_flags = rec_buffer[4];
-            kline_interbyte = rec_buffer[5];
-            data_len = ((uint16_t) rec_buffer[6] << 8) + rec_buffer[7];
-            memcpy(buffer, rec_buffer + 8, data_len);
+        else if (rec_buffer[1] == 0x01)
+        {   // CAN telegram
+            // byte 2: protocol
+            // byte 3: baud rate
+            // byte 4: flags
+            // byte 5: block size
+            // byte 6: packet interval
+            // byte 7+8: telegram length (high/low)
+            if ((buffer != NULL) &&
+                ((op_mode != op_mode_can) || (can_cfg_protocol != rec_buffer[2]))
+                )
+            {   // mode or protocol change
+                return 0;
+            }
+            can_cfg_protocol = rec_buffer[2];
+            if (can_cfg_baud != rec_buffer[3])
+            {
+                can_init_required = true;
+            }
+            can_cfg_baud = rec_buffer[3];
+            can_cfg_flags = rec_buffer[4];
+            can_cfg_blocksize = rec_buffer[5];
+            can_cfg_packet_interval = rec_buffer[6];
+            data_len = ((uint16_t) rec_buffer[7] << 8) + rec_buffer[8];
+            if (buffer != NULL)
+            {
+                memcpy(buffer, rec_buffer + 9, data_len);
+            }
+            op_mode_new = op_mode_can;
         }
     }
     else
     {
-        kline_baud = 0;
-        kline_flags = 0;
-        kline_interbyte = 0;
+        if (buffer != NULL && op_mode != op_mode_standard)
+        {   // mode change
+            return 0;
+        }
+        reset_comm_states();
+
         data_len = rec_len;
-        memcpy(buffer, rec_buffer, data_len);
+        if (buffer != NULL)
+        {
+            memcpy(buffer, rec_buffer, data_len);
+        }
     }
-    rec_state = rec_state_idle;
+
+    if (op_mode != op_mode_new)
+    {
+        can_init_required = true;
+        op_mode = op_mode_new;
+    }
+    if (can_init_required)
+    {
+        can_config();
+    }
+    if (buffer != NULL)
+    {
+        rec_state = rec_state_idle;
+    }
     return data_len;
 }
 
@@ -1398,37 +1491,55 @@ void update_led()
 void can_config()
 {
     uint8_t bitrate = 5;
-    switch (can_mode)
+    uint16_t sid1 = 0x600;
+    uint16_t mask1 = 0x700;
+    uint16_t sid2 = 0x600;
+    uint16_t mask2 = 0x700;
+
+    switch (op_mode)
     {
-        case 0:     // can off
+        case op_mode_standard:
+            switch (can_mode)
+            {
+                case CAN_BAUD_OFF:     // can off
+                    can_enabled = false;
+                    break;
+
+                default:
+                case CAN_BAUD_500:     // can 500kb
+                    bitrate = 5;
+                    can_enabled = true;
+                    break;
+
+                case CAN_BAUD_100:     // can 100kb
+                    bitrate = 1;
+                    can_enabled = true;
+                    break;
+            }
+            break;
+
+        case op_mode_kline:
             can_enabled = false;
             break;
 
-        default:
-        case 1:     // can 500kb
-            bitrate = 5;
+        case op_mode_can:
             can_enabled = true;
-            break;
-
-        case 9:     // can 100kb
-            bitrate = 1;
-            can_enabled = true;
+            if (can_cfg_baud == CAN_BAUD_100)
+            {
+                bitrate = 1;
+            }
+            if (can_cfg_protocol == CAN_PROT_TP20)
+            {
+                sid1 = 0x200;
+                mask1 = 0x700;
+                sid2 = 0x300;
+                mask2 = 0x700;
+            }
             break;
     }
+
     if (can_enabled)
     {
-#if CAN_TP20_TEST
-        uint16_t sid1 = 0x200;
-        uint16_t mask1 = 0x700;
-        uint16_t sid2 = 0x300;
-        uint16_t mask2 = 0x700;
-#else
-        uint16_t sid1 = 0x600;
-        uint16_t mask1 = 0x700;
-        uint16_t sid2 = 0x600;
-        uint16_t mask2 = 0x700;
-#endif
-
         if (bitrate == 1)
         {   // 100 kb
             open_can(SJW_2_TQ, BRP_FOSC_10, PSEG1T_6_TQ, PRGT_7_TQ, PSEG2T_2_TQ,
@@ -1444,9 +1555,20 @@ void can_config()
     {
         close_can();
     }
+}
+
+void reset_comm_states()
+{
     kline_baud = 0;
     kline_flags = 0;
     kline_interbyte = 0;
+
+    can_cfg_protocol = CAN_PROT_BMW;
+    can_cfg_baud = CAN_BAUD_500;
+    can_cfg_flags = 0;
+    can_cfg_blocksize = 0;
+    can_cfg_packet_interval = 0;
+
     can_tp20_state = tp20_idle;
 }
 
@@ -2108,7 +2230,7 @@ void can_tp20(bool new_can_msg)
         uint16_t len = uart_receive(temp_buffer);
         if (len > 0)
         {
-            if ((kline_flags & KLINEF_NO_ECHO) == 0)
+            if ((can_cfg_flags & CANF_NO_ECHO) == 0)
             {
                 uart_send(temp_buffer, len);
             }
@@ -2167,10 +2289,10 @@ void can_tp20(bool new_can_msg)
             can_out_msg.sid = can_tp20_txid;
             can_out_msg.dlc.bits.count = 6;
             can_out_msg.data[0] = 0xA0;     // Parameter request
-            can_out_msg.data[1] = 0x0F;     // block size
-            can_out_msg.data[2] = 0x80 | (CAN_TP20_T1 / 10);     // T1: 100ms
+            can_out_msg.data[1] = can_cfg_blocksize;     // block size
+            can_out_msg.data[2] = 0x80 | (CAN_TP20_T1 / 10);    // T1: 100ms
             can_out_msg.data[3] = 0xFF;     // T2
-            can_out_msg.data[4] = 0x0A;     // T3: 1ms
+            can_out_msg.data[4] = can_cfg_packet_interval;      // T3
             can_out_msg.data[5] = 0xFF;     // T4
             can_send_message_wait();
             can_rec_time = get_systick();
@@ -2481,7 +2603,8 @@ void main(void)
 
     can_send_active = false;
     can_rec_tel_valid = false;
-    can_tp20_state = tp20_idle;
+    op_mode = op_mode_standard;
+    reset_comm_states();
 
     RCONbits.IPEN = 1;      // interrupt priority enable
 
@@ -2640,18 +2763,24 @@ void main(void)
 
     for (;;)
     {
+        uart_receive(NULL);
         if (can_enabled)
         {
             bool new_can_msg = readCAN();
 #if DEBUG_PIN
             if (new_can_msg) LED_RS_TX = 1;
 #endif
-#if CAN_TP20_TEST
-            can_tp20(new_can_msg);
-#else
-            can_receiver(new_can_msg);
-            can_sender(new_can_msg);
-#endif
+            switch (can_cfg_protocol)
+            {
+                case CAN_PROT_TP20:
+                    can_tp20(new_can_msg);
+                    break;
+
+                default:
+                    can_receiver(new_can_msg);
+                    can_sender(new_can_msg);
+                    break;
+            }
 #if DEBUG_PIN
             LED_RS_TX = 0;
 #endif
@@ -2808,22 +2937,43 @@ void interrupt high_priority high_isr (void)
                         if (rec_buffer[0] == 0x00)
                         {   // special mode:
                             // byte 1: telegram type
-                            // byte 2+3: baud rate (high/low) / 2
-                            // byte 4: flags
-                            // byte 5: interbyte time
-                            // byte 6+7: telegram length (high/low)
-                            if (rec_buffer[1] != 0x00)
-                            {   // invalid telegram type
-                                rec_state = rec_state_error;
-                                break;
+                            if (rec_buffer[1] == 0x00)
+                            {   // K-LINE telegram
+                                // byte 2+3: baud rate (high/low) / 2
+                                // byte 4: flags
+                                // byte 5: interbyte time
+                                // byte 6+7: telegram length (high/low)
+                                if (rec_len >= 8)
+                                {
+                                    tel_len = ((uint16_t) rec_buffer[6] << 8) + rec_buffer[7] + 9;
+                                }
+                                else
+                                {
+                                    tel_len = 0;
+                                }
                             }
-                            if (rec_len >= 8)
-                            {
-                                tel_len = ((uint16_t) rec_buffer[6] << 8) + rec_buffer[7] + 9;
+                            else if (rec_buffer[1] == 0x01)
+                            {   // CAN telegram
+                                // byte 2: protocol
+                                // byte 3: baud rate
+                                // byte 4: flags
+                                // byte 5: block size
+                                // byte 6: packet interval
+                                // byte 7+8: telegram length (high/low)
+                                if (rec_len >= 9)
+                                {
+                                    tel_len = ((uint16_t) rec_buffer[7] << 8) + rec_buffer[8] + 10;
+                                }
+                                else
+                                {
+                                    tel_len = 0;
+                                }
                             }
                             else
                             {
-                                tel_len = 0;
+                                // invalid telegram type
+                                rec_state = rec_state_error;
+                                break;
                             }
                         }
                         else
