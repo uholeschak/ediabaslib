@@ -270,6 +270,7 @@ static uint16_t can_tp20_t1;    // T1 [ms]
 static uint16_t can_tp20_t3;    // T3 [ms]
 static uint8_t can_tp20_block;
 static uint8_t can_tp20_send_seq;
+static uint8_t can_tp20_rec_seq;
 
 void update_led();
 
@@ -2126,6 +2127,7 @@ void can_tp20(bool new_can_msg)
             can_out_msg.data[6] = 0x01;     // app id
             can_send_message_wait();
             can_tp20_send_seq = 0;
+            can_tp20_rec_seq = 0;
             can_tp20_state = tp20_rec_connect;
             break;
 
@@ -2223,6 +2225,41 @@ void can_tp20(bool new_can_msg)
             break;
 
         case tp20_rec_data:      // receive data
+            if (can_rec_rec_len >= can_rec_data_len)
+            {   // complete tel received
+                uint16_t len;
+                // create BMW-FAST telegram
+                if (can_rec_data_len > 0x3F)
+                {
+                    temp_buffer[0] = 0x80;
+                    temp_buffer[1] = 0xF1;
+                    temp_buffer[2] = can_tp20_ecu_addr;
+                    temp_buffer[3] = can_rec_data_len;
+                    len = can_rec_data_len + 4;
+                }
+                else
+                {
+                    temp_buffer[0] = 0x80 | can_rec_data_len;
+                    temp_buffer[1] = 0xF1;
+                    temp_buffer[2] = can_tp20_ecu_addr;
+                    len = can_rec_data_len + 3;
+                }
+
+                temp_buffer[len] = calc_checkum(temp_buffer, len);
+                len++;
+                if (uart_send(temp_buffer, len))
+                {
+                    can_rec_time = get_systick();
+                    can_tp20_state = tp20_send_alive;
+                    break;
+                }
+                break;
+            }
+            if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TP20_T1 * TIMER0_RESOL / 1000))
+            {
+                tp20_disconnect();
+                break;
+            }
             break;
 
         case tp20_send_alive:    // send keep alive
@@ -2246,6 +2283,7 @@ void can_tp20(bool new_can_msg)
             if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TP20_T1 * TIMER0_RESOL / 1000))
             {
                 tp20_disconnect();
+                break;
             }
             break;
     }
@@ -2274,6 +2312,76 @@ void can_tp20(bool new_can_msg)
             uint8_t opcode = can_in_msg.data[0] >> 4;
             switch (opcode)
             {
+                case 0x00:  // wait for ACK, block size reached
+                case 0x01:  // wait for ACK, last packet
+                case 0x02:  // no wait for ACK, more packets follow
+                case 0x03:  // no wait for ACK, last packet
+                    if (can_tp20_rec_seq != sequence)
+                    {
+                        tp20_disconnect();
+                        break;
+                    }
+                    can_tp20_rec_seq = (sequence + 1) & 0x0F;
+                    if (can_tp20_state != tp20_rec_data)
+                    {   // start of telegram
+                        if ((can_tp20_state != tp20_send_alive) && (can_tp20_state != tp20_rec_alive))
+                        {
+                            tp20_disconnect();
+                            break;
+                        }
+                        if (can_in_msg.dlc.bits.count < 3)
+                        {
+                            break;
+                        }
+                        can_rec_data_len = ((uint16_t) can_in_msg.data[1] << 8) + can_in_msg.data[2];
+                        if (can_rec_data_len > 0xFF)
+                        {
+                            tp20_disconnect();
+                            break;
+                        }
+                        if (can_rec_data_len > 0x3F)
+                        {
+                            can_rec_buffer_offset = temp_buffer + 4;
+                        }
+                        else
+                        {
+                            can_rec_buffer_offset = temp_buffer + 3;
+                        }
+                        uint8_t len = can_in_msg.dlc.bits.count - 3;
+                        memcpy(can_rec_buffer_offset, can_in_msg.data + 3, len);
+                        can_rec_rec_len = len;
+                        can_tp20_state = tp20_rec_data;
+                    }
+                    else
+                    {
+                        if (can_rec_rec_len >= can_rec_data_len)
+                        {   // complete tel received, but sending failed
+                            tp20_disconnect();
+                            break;
+                        }
+                        uint8_t len = can_in_msg.dlc.bits.count - 1;
+                        memcpy(can_rec_buffer_offset + can_rec_rec_len, can_in_msg.data + 1, len);
+                        can_rec_rec_len += len;
+                    }
+                    if ((opcode == 0x01) || (opcode == 0x03))
+                    {   // last packet, length too short
+                        if (can_rec_rec_len < can_rec_data_len)
+                        {
+                            tp20_disconnect();
+                            break;
+                        }
+                    }
+                    if ((opcode == 0x00) || (opcode == 0x01))
+                    {   // wait for ack
+                        memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+                        can_out_msg.sid = can_tp20_txid;
+                        can_out_msg.dlc.bits.count = 1;
+                        can_out_msg.data[0] = 0xB0 | (can_tp20_rec_seq & 0x0F);
+                        can_send_message_wait();
+                    }
+                    can_rec_time = get_systick();
+                    break;
+
                 case 0x0A:  // parameter
                     switch (can_in_msg.data[0])
                     {
@@ -2302,6 +2410,7 @@ void can_tp20(bool new_can_msg)
                 case 0x09:  // ACK, not ready for next packet
                     if (sequence != can_tp20_send_seq)
                     {
+                        tp20_disconnect();
                         break;
                     }
                     can_tp20_state = tp20_rec_alive;
@@ -2310,6 +2419,7 @@ void can_tp20(bool new_can_msg)
                 case 0x0B:  // ACK, ready for next packet
                     if (sequence != can_tp20_send_seq)
                     {
+                        tp20_disconnect();
                         break;
                     }
                     if (can_tp20_state == tp20_send_done_wait_ack)
