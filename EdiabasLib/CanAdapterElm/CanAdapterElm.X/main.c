@@ -157,6 +157,7 @@
 
 // CAN flags
 #define CANF_NO_ECHO            0x01
+#define CANF_CAN_ERROR          0x02
 
 // CAN baudrates
 #define CAN_BAUD_OFF        0x00
@@ -2215,13 +2216,16 @@ void can_tp20(bool new_can_msg)
 {
     if ((can_tp20_state != tp20_idle) && can_error())
     {
-        temp_buffer[0] = 0x82;
-        temp_buffer[1] = 0xF1;
-        temp_buffer[2] = 0xF1;
-        temp_buffer[3] = 0x7F;  // status message
-        temp_buffer[4] = 0x01;  // bus off
-        temp_buffer[5] = calc_checkum(temp_buffer, 5);
-        uart_send(temp_buffer, 6);
+        if ((can_cfg_flags & CANF_CAN_ERROR) != 0)
+        {
+            temp_buffer[0] = 0x82;
+            temp_buffer[1] = 0xF1;
+            temp_buffer[2] = 0xF1;
+            temp_buffer[3] = 0x7F;  // status message
+            temp_buffer[4] = 0x01;  // bus off
+            temp_buffer[5] = calc_checkum(temp_buffer, 5);
+            uart_send(temp_buffer, 6);
+        }
         can_tp20_state = tp20_idle;
         return;
     }
