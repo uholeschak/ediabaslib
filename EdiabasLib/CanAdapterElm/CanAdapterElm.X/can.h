@@ -111,6 +111,8 @@ void set_can_mode( uint8_t mode );
 
 extern void baudCAN(uint8_t sjw, uint8_t brp_fosz, uint8_t seg1tm, uint8_t prpgtm, uint8_t seg2tm);
 
+extern bool can_error();
+
 extern void close_can(void);
 
 //---------------------------------------------------------------------------
