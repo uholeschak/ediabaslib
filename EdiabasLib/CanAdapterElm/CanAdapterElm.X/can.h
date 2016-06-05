@@ -105,7 +105,7 @@ typedef struct {
 
 //- Function declarations ----------------------
 extern void open_can(uint8_t sjw, uint8_t brp_fosz, uint8_t seg1tm, uint8_t prgtm, uint8_t seg2tm,
-                uint16_t sid, uint16_t mask);
+                uint16_t sid1, uint16_t mask1, uint16_t sid2, uint16_t mask2);
 
 void set_can_mode( uint8_t mode );
 
@@ -116,7 +116,7 @@ extern bool can_error();
 extern void close_can(void);
 
 //---------------------------------------------------------------------------
-extern void set_standard_filter_RXB0(uint16_t sid, uint16_t mask);
+extern void set_standard_filter_RXB0(uint16_t sid1, uint16_t mask1, uint16_t sid2, uint16_t mask2);
 extern bool writeCAN();
 extern bool readCAN();
 extern CAN_MSG can_in_msg;

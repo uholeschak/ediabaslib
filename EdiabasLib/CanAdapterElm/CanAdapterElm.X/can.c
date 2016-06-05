@@ -7,7 +7,7 @@ CAN_MSG can_out_msg;
 
 //------------------------------------------------------------------------------
 void open_can(uint8_t sjw, uint8_t brp_fosz, uint8_t seg1tm, uint8_t prpgtm, uint8_t seg2tm,
-                uint16_t sid, uint16_t mask)
+                uint16_t sid1, uint16_t mask1, uint16_t sid2, uint16_t mask2)
 {
     // ensure ECAN is in config mode
     set_can_mode(ECAN_CONFIG_MODE);
@@ -19,16 +19,28 @@ void open_can(uint8_t sjw, uint8_t brp_fosz, uint8_t seg1tm, uint8_t prpgtm, uin
     RXB1CON = 0x00;     // use acceptance filter
 
     // setup mask 0
-    RXM0SIDH = mask >> 3;
-    RXM0SIDL = mask << 5;
+    RXM0SIDH = mask1 >> 3;
+    RXM0SIDL = mask1 << 5;
     RXM0EIDH = 0x00;
     RXM0EIDL = 0x00;
 
-    RXF0SIDH = sid >> 3;
-    RXF0SIDL = sid << 5;
+    RXF0SIDH = sid1 >> 3;
+    RXF0SIDL = sid1 << 5;
 
     // Set mask 0 to filter 0
     MSEL0bits.FIL0 = 0b00;
+
+    // setup mask 1
+    RXM1SIDH = mask2 >> 3;
+    RXM1SIDL = mask2 << 5;
+    RXM1EIDH = 0x00;
+    RXM1EIDL = 0x00;
+
+    RXF1SIDH = sid2 >> 3;
+    RXF1SIDL = sid2 << 5;
+
+    // Set mask 1 to filter 1
+    MSEL0bits.FIL1 = 0b01;
 
     // Leave all filters set to RXB0.  The filters will apply to
     // all receive buffers.
@@ -36,8 +48,8 @@ void open_can(uint8_t sjw, uint8_t brp_fosz, uint8_t seg1tm, uint8_t prpgtm, uin
     RXFBCON1  = 0x00;
     RXFBCON2  = 0x00;
 
-    // Enable filters 0 Disable the others.
-    RXFCON0  = 0x01;
+    // Enable filters 0,1 Disable the others.
+    RXFCON0  = 0x03;
     RXFCON1  = 0x00;
 
     //---- set baud rate -----
@@ -69,17 +81,24 @@ void set_can_mode( uint8_t mode )
 }
 
 //------------------------------------------------------------------------------
-void set_standard_filter_RXB0(uint16_t sid, uint16_t mask)
+void set_standard_filter_RXB0(uint16_t sid1, uint16_t mask1, uint16_t sid2, uint16_t mask2)
 {
     set_can_mode(ECAN_CONFIG_MODE);
 
-    RXF0SIDH = sid >> 3;    // filter 0, mask 0 -> RXB0
-    RXF0SIDL = sid << 5;
+    RXF0SIDH = sid1 >> 3;    // filter 0, mask 0 -> RXB0
+    RXF0SIDL = sid1 << 5;
 
-    RXM0SIDH = mask >> 3;
-    RXM0SIDL = mask << 5;
+    RXM0SIDH = mask1 >> 3;
+    RXM0SIDL = mask1 << 5;
 
-    RXFCON0bits.RXF0EN = 1; // filter 0 enable
+    RXF1SIDH = sid2 >> 3;    // filter 1, mask 1 -> RXB0
+    RXF1SIDL = sid2 << 5;
+
+    RXM1SIDH = mask2 >> 3;
+    RXM1SIDL = mask2 << 5;
+
+    RXFCON0bits.RXF0EN = 1;  // filter 0 enable
+    RXFCON0bits.RXF1EN = 1;  // filter 1 enable
 }
 
 //------------------------------------------------------------------------------

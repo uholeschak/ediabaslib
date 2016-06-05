@@ -1418,22 +1418,26 @@ void can_config()
     if (can_enabled)
     {
 #if CAN_TP20_TEST
-        uint16_t sid = 0x200;
-        uint16_t mask = 0x000;
+        uint16_t sid1 = 0x200;
+        uint16_t mask1 = 0x700;
+        uint16_t sid2 = 0x300;
+        uint16_t mask2 = 0x700;
 #else
-        uint16_t sid = 0x600;
-        uint16_t mask = 0x700;
+        uint16_t sid1 = 0x600;
+        uint16_t mask1 = 0x700;
+        uint16_t sid2 = 0x600;
+        uint16_t mask2 = 0x700;
 #endif
 
         if (bitrate == 1)
         {   // 100 kb
             open_can(SJW_2_TQ, BRP_FOSC_10, PSEG1T_6_TQ, PRGT_7_TQ, PSEG2T_2_TQ,
-                sid, mask);
+                sid1, mask1, sid2, mask2);
         }
         else
         {   // 500kb
             open_can(SJW_2_TQ, BRP_FOSC_2, PSEG1T_6_TQ, PRGT_7_TQ, PSEG2T_2_TQ,
-                sid, mask);
+                sid1, mask1, sid2, mask2);
         }
     }
     else
