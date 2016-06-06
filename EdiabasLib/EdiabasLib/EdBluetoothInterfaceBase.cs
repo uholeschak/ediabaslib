@@ -38,6 +38,8 @@ namespace EdiabasLib
 
         public static bool FastInit { get; protected set; }
 
+        public static bool ConvertBaudResponse { get; protected set; }
+
         public static int AdapterType { get; protected set; }
 
         public static int AdapterVersion { get; protected set; }
@@ -59,6 +61,7 @@ namespace EdiabasLib
 
         public static byte[] CreateAdapterTelegram(byte[] sendData, int length, bool setDtr)
         {
+            ConvertBaudResponse = false;
             if ((AdapterType < 0x0002) || (AdapterVersion < 0x0003))
             {
                 if (Ediabas != null)
@@ -84,6 +87,7 @@ namespace EdiabasLib
                 }
                 return null;
             }
+
             byte[] resultArray = new byte[length + 9];
             resultArray[0] = 0x00;   // header
             resultArray[1] = 0x00;   // telegram type
@@ -120,7 +124,8 @@ namespace EdiabasLib
 
         public static byte[] CreatePulseTelegram(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines)
         {
-            if ((AdapterType < 0x0002) || (AdapterVersion < 0x0008))
+            ConvertBaudResponse = false;
+            if ((AdapterType < 0x0002) || (AdapterVersion < 0x0007))
             {
                 if (Ediabas != null)
                 {
@@ -152,6 +157,8 @@ namespace EdiabasLib
                 }
                 return null;
             }
+            ConvertBaudResponse = (AdapterVersion < 0x0008) && (CurrentBaudRate == EdInterfaceBase.BaudAuto);
+
             int dataBytes = (length + 7) >> 3;
             byte[] resultArray = new byte[dataBytes + 2 + 9];
             resultArray[0] = 0x00;   // header
@@ -187,6 +194,22 @@ namespace EdiabasLib
         public static bool IsFastInit(UInt64 dataBits, int length, int pulseWidth)
         {
             return (dataBits == 0x02) && (length == 2) && (pulseWidth == 25);
+        }
+
+        public static void ConvertStdBaudResponse(byte[] receiveData, int offset)
+        {
+            int baudRate = 0;
+            if (receiveData[offset] == 0x55)
+            {
+                baudRate = 9600;
+            }
+            else if ((receiveData[offset] & 0x87) == 0x85)
+            {
+                baudRate = 10400;
+            }
+            baudRate /= 2;
+            receiveData[offset] = (byte)(baudRate >> 8);
+            receiveData[offset + 1] = (byte)baudRate;
         }
 
         static public byte CalcChecksumBmwFast(byte[] data, int offset, int length)
