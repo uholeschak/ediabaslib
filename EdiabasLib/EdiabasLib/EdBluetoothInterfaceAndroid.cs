@@ -42,6 +42,7 @@ namespace EdiabasLib
                 return true;
             }
             FastInit = false;
+            ConvertBaudResponse = false;
             AdapterType = -1;
             AdapterVersion = -1;
             LastCommTick = DateTime.MinValue.Ticks;
@@ -215,6 +216,7 @@ namespace EdiabasLib
             CurrentWordLength = dataBits;
             CurrentParity = parity;
             FastInit = false;
+            ConvertBaudResponse = false;
             return EdInterfaceObd.InterfaceErrorResult.NoError;
         }
 
@@ -299,6 +301,7 @@ namespace EdiabasLib
 
         public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
         {
+            ConvertBaudResponse = false;
             if ((_bluetoothSocket == null) || (_bluetoothOutStream == null))
             {
                 return false;
@@ -381,6 +384,9 @@ namespace EdiabasLib
 
         public static bool InterfaceReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog)
         {
+            bool convertBaudResponse = ConvertBaudResponse;
+            ConvertBaudResponse = false;
+
             if ((_bluetoothSocket == null) || (_bluetoothInStream == null))
             {
                 return false;
@@ -416,6 +422,11 @@ namespace EdiabasLib
                     LastCommTick = Stopwatch.GetTimestamp();
                     UpdateActiveSettings();
                 }
+                if (convertBaudResponse && length == 2)
+                {
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Convert baud response");
+                    length = 1;
+                }
                 int recLen = 0;
                 long startTime = Stopwatch.GetTimestamp();
                 while (recLen < length)
@@ -441,6 +452,10 @@ namespace EdiabasLib
                     }
                     Thread.Sleep(10);
                 }
+                if (convertBaudResponse)
+                {
+                    ConvertStdBaudResponse(receiveData, offset);
+                }
             }
             catch (Exception ex)
             {
@@ -453,6 +468,7 @@ namespace EdiabasLib
 
         public static bool InterfaceSendPulse(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines)
         {
+            ConvertBaudResponse = false;
             if ((_bluetoothSocket == null) || (_bluetoothOutStream == null))
             {
                 return false;
@@ -488,22 +504,30 @@ namespace EdiabasLib
                 _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
                 LastCommTick = Stopwatch.GetTimestamp();
                 UpdateActiveSettings();
-                // send keep alive telegram
-                int pulseTime = pulseWidth * length;
-                if (pulseTime > 100)
+                if (AdapterVersion >= 0x0008)
                 {
-                    byte[] keepAlive = { 0x00 };
-                    long startTime = Stopwatch.GetTimestamp();
-                    while (Stopwatch.GetTimestamp() - startTime < pulseTime * TickResolMs)
+                    // send keep alive telegram
+                    int pulseTime = pulseWidth*length;
+                    if (pulseTime > 100)
                     {
-                        Thread.Sleep(10);
-                        if (Stopwatch.GetTimestamp() - startTime < (pulseTime - 50) * TickResolMs)
-                        {   // only send at the beginning
-                            _bluetoothOutStream.Write(keepAlive, 0, keepAlive.Length);
-                            LastCommTick = Stopwatch.GetTimestamp();
-                            //Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Keep Alive: {0}", (Stopwatch.GetTimestamp() - startTime) / TickResolMs);
+                        byte[] keepAlive = {0x00};
+                        long startTime = Stopwatch.GetTimestamp();
+                        while (Stopwatch.GetTimestamp() - startTime < pulseTime*TickResolMs)
+                        {
+                            Thread.Sleep(10);
+                            if (Stopwatch.GetTimestamp() - startTime < (pulseTime - 50)*TickResolMs)
+                            {
+                                // only send at the beginning
+                                _bluetoothOutStream.Write(keepAlive, 0, keepAlive.Length);
+                                LastCommTick = Stopwatch.GetTimestamp();
+                                //Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Keep Alive: {0}", (Stopwatch.GetTimestamp() - startTime) / TickResolMs);
+                            }
                         }
                     }
+                }
+                else
+                {
+                    Thread.Sleep(pulseWidth * length);
                 }
             }
             catch (Exception ex)
