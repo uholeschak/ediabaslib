@@ -1897,7 +1897,10 @@ namespace BmwDeepObd
                             string[] xmlFiles = Directory.GetFiles(targetDirectory, "*.xml");
                             foreach (string xmlFile in xmlFiles)
                             {
-                                File.Delete(xmlFile);
+                                if (!string.IsNullOrEmpty(xmlFile))
+                                {
+                                    File.Delete(xmlFile);
+                                }
                             }
                             Directory.Delete(targetDirectory, true);
                         }
