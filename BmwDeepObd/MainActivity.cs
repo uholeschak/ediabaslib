@@ -2257,7 +2257,7 @@ namespace BmwDeepObd
             }
             // Launch the FilePickerActivity to select a configuration
             Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
-            string initDir = _activityCommon.ExternalPath;
+            string initDir = _appDataPath;
             try
             {
                 if (!string.IsNullOrEmpty(_configFileName))
