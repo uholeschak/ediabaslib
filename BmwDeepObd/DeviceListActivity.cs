@@ -125,6 +125,11 @@ namespace BmwDeepObd
             var filter = new IntentFilter (BluetoothDevice.ActionFound);
             RegisterReceiver (_receiver, filter);
 
+            // Register for broadcasts when a device name changed
+            _receiver = new Receiver(this);
+            filter = new IntentFilter(BluetoothDevice.ActionNameChanged);
+            RegisterReceiver(_receiver, filter);
+
             // Register for broadcasts when discovery has finished
             filter = new IntentFilter (BluetoothAdapter.ActionDiscoveryFinished);
             RegisterReceiver (_receiver, filter);
@@ -697,16 +702,35 @@ namespace BmwDeepObd
             if (textView != null)
             {
                 string info = textView.Text;
-                string[] parts = info.Split('\n');
-                if (parts.Length < 2)
+                string name;
+                string address;
+                if (!ExtractDeviceInfo(info, out name, out address))
                 {
                     return;
                 }
-                string name = parts[0];
-                string address = parts[1];
 
                 DetectAdapter(address, name);
             }
+        }
+
+        /// <summary>
+        /// Extract device info from name
+        /// </summary>
+        /// <param name="info">Complete device info text</param>
+        /// <param name="name">Device name</param>
+        /// <param name="address">Device address</param>
+        static private bool ExtractDeviceInfo(string info, out string name, out string address)
+        {
+            string[] parts = info.Split('\n');
+            if (parts.Length < 2)
+            {
+                name = string.Empty;
+                address = string.Empty;
+                return false;
+            }
+            name = parts[0];
+            address = parts[1];
+            return true;
         }
 
         private void LogData(byte[] data, int offset, int length, string info = null)
@@ -759,33 +783,63 @@ namespace BmwDeepObd
                 {
                     string action = intent.Action;
 
-                    // When discovery finds a device
-                    if (action == BluetoothDevice.ActionFound)
+                    switch (action)
                     {
-                        // Get the BluetoothDevice object from the Intent
-                        BluetoothDevice device = (BluetoothDevice)intent.GetParcelableExtra(BluetoothDevice.ExtraDevice);
-                        // If it's already paired, skip it, because it's been listed already
-                        if (device.BondState != Bond.Bonded)
+                        case BluetoothDevice.ActionFound:
+                        case BluetoothDevice.ActionNameChanged:
                         {
-                            ParcelUuid[] uuids = device.GetUuids();
-                            if ((uuids == null) || (uuids.Any(uuid => SppUuid.CompareTo(uuid.Uuid) == 0)))
+                            // Get the BluetoothDevice object from the Intent
+                            BluetoothDevice device = (BluetoothDevice) intent.GetParcelableExtra(BluetoothDevice.ExtraDevice);
+                            // If it's already paired, skip it, because it's been listed already
+                            if (device.BondState != Bond.Bonded)
                             {
-                                _newDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
+                                ParcelUuid[] uuids = device.GetUuids();
+                                if ((uuids == null) || (uuids.Any(uuid => SppUuid.CompareTo(uuid.Uuid) == 0)))
+                                {
+                                    // check for multiple entries
+                                    int index = -1;
+                                    for (int i = 0; i < _newDevicesArrayAdapter.Count; i++)
+                                    {
+                                        string item = _newDevicesArrayAdapter.GetItem(i);
+                                        string name;
+                                        string address;
+                                        if (!ExtractDeviceInfo(_newDevicesArrayAdapter.GetItem(i), out name, out address))
+                                        {
+                                            return;
+                                        }
+                                        if (string.Compare(address, device.Address, StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            _newDevicesArrayAdapter.Remove(item);
+                                            index = i;
+                                            break;
+                                        }
+                                    }
+                                    string newName = device.Name + "\n" + device.Address;
+                                    if (index < 0)
+                                    {
+                                        _newDevicesArrayAdapter.Add(newName);
+                                    }
+                                    else
+                                    {
+                                        _newDevicesArrayAdapter.Insert(newName, index);
+                                    }
+                                }
                             }
+                            break;
                         }
-                        // When discovery is finished, change the Activity title
-                    }
-                    else if (action == BluetoothAdapter.ActionDiscoveryFinished)
-                    {
-                        _chat._scanButton.Enabled = true;
-                        //_chat.SetProgressBarIndeterminateVisibility (false);
-                        _chat.FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Invisible;
-                        _chat.SetTitle(Resource.String.select_device);
-                        if (_newDevicesArrayAdapter.Count == 0)
-                        {
-                            var noDevices = _chat.Resources.GetText(Resource.String.none_found);
-                            _newDevicesArrayAdapter.Add(noDevices);
-                        }
+
+                        case BluetoothAdapter.ActionDiscoveryFinished:
+                            // When discovery is finished, change the Activity title
+                            _chat._scanButton.Enabled = true;
+                            //_chat.SetProgressBarIndeterminateVisibility (false);
+                            _chat.FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Invisible;
+                            _chat.SetTitle(Resource.String.select_device);
+                            if (_newDevicesArrayAdapter.Count == 0)
+                            {
+                                var noDevices = _chat.Resources.GetText(Resource.String.none_found);
+                                _newDevicesArrayAdapter.Add(noDevices);
+                            }
+                            break;
                     }
                 }
                 catch (Exception)
