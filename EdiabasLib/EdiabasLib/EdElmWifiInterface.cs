@@ -86,13 +86,14 @@ namespace EdiabasLib
             return result;
         }
 
-        public static EdInterfaceObd.InterfaceErrorResult InterfaceSetConfig(int baudRate, int dataBits, EdInterfaceObd.SerialParity parity, bool allowBitBang)
+        public static EdInterfaceObd.InterfaceErrorResult InterfaceSetConfig(EdInterfaceObd.Protocol protocol, int baudRate, int dataBits, EdInterfaceObd.SerialParity parity, bool allowBitBang)
         {
             if (TcpElmStream == null)
             {
                 return EdInterfaceObd.InterfaceErrorResult.ConfigError;
             }
-            if ((baudRate != 115200) || (dataBits != 8) || (parity != EdInterfaceObd.SerialParity.None))
+            if ((protocol != EdInterfaceObd.Protocol.Uart) ||
+                (baudRate != 115200) || (dataBits != 8) || (parity != EdInterfaceObd.SerialParity.None))
             {
                 return EdInterfaceObd.InterfaceErrorResult.ConfigError;
             }

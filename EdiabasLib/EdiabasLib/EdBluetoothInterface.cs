@@ -94,13 +94,13 @@ namespace EdiabasLib
             return true;
         }
 
-        public static EdInterfaceObd.InterfaceErrorResult InterfaceSetConfig(int baudRate, int dataBits,
-            EdInterfaceObd.SerialParity parity, bool allowBitBang)
+        public static EdInterfaceObd.InterfaceErrorResult InterfaceSetConfig(EdInterfaceObd.Protocol protocol, int baudRate, int dataBits, EdInterfaceObd.SerialParity parity, bool allowBitBang)
         {
             if (!SerialPort.IsOpen)
             {
                 return EdInterfaceObd.InterfaceErrorResult.ConfigError;
             }
+            CurrentProtocol = protocol;
             CurrentBaudRate = baudRate;
             CurrentWordLength = dataBits;
             CurrentParity = parity;
@@ -201,6 +201,19 @@ namespace EdiabasLib
             }
             try
             {
+                if (CurrentProtocol == EdInterfaceObd.Protocol.Tp20)
+                {
+                    UpdateAdapterInfo();
+                    byte[] adapterTel = CreateCanTelegram(sendData, length);
+                    if (adapterTel == null)
+                    {
+                        return false;
+                    }
+                    SerialPort.Write(adapterTel, 0, adapterTel.Length);
+                    LastCommTick = Stopwatch.GetTimestamp();
+                    UpdateActiveSettings();
+                    return true;
+                }
                 if (CurrentBaudRate == 115200)
                 {
                     // BMW-FAST
