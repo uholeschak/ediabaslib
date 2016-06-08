@@ -205,9 +205,13 @@ namespace EdiabasLib
             return true;
         }
 
-        public static EdInterfaceObd.InterfaceErrorResult InterfaceSetConfig(int baudRate, int dataBits, EdInterfaceObd.SerialParity parity, bool allowBitBang)
+        public static EdInterfaceObd.InterfaceErrorResult InterfaceSetConfig(EdInterfaceObd.Protocol protocol, int baudRate, int dataBits, EdInterfaceObd.SerialParity parity, bool allowBitBang)
         {
             if (_usbPort == null)
+            {
+                return EdInterfaceObd.InterfaceErrorResult.ConfigError;
+            }
+            if (protocol != EdInterfaceObd.Protocol.Uart)
             {
                 return EdInterfaceObd.InterfaceErrorResult.ConfigError;
             }

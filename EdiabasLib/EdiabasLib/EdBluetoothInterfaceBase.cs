@@ -18,9 +18,20 @@ namespace EdiabasLib
         public static byte KLINEF_NO_ECHO = 0x20;
         public static byte KLINEF_FAST_INIT = 0x40;
         public static byte KLINEF_USE_KLINE = 0x80;
+
+        public static byte CANF_NO_ECHO = 0x01;
+        public static byte CANF_CAN_ERROR = 0x02;
+
+        // CAN protocols
+        public static byte CAN_PROT_BMW = 0x00;
+        public static byte CAN_PROT_TP20 = 0x01;
         // ReSharper restore InconsistentNaming
 
         public static EdiabasNet Ediabas { get; set; }
+
+        public static EdInterfaceObd.Protocol CurrentProtocol { get; protected set; }
+
+        public static EdInterfaceObd.Protocol ActiveProtocol { get; protected set; }
 
         public static int CurrentBaudRate { get; protected set; }
 
@@ -48,6 +59,8 @@ namespace EdiabasLib
 
         static EdBluetoothInterfaceBase()
         {
+            CurrentProtocol = EdInterfaceObd.Protocol.Uart;
+            ActiveProtocol = EdInterfaceObd.Protocol.Uart;
             CurrentBaudRate = 0;
             ActiveBaudRate = -1;
             CurrentWordLength = 0;
@@ -191,6 +204,51 @@ namespace EdiabasLib
             return resultArray;
         }
 
+        public static byte[] CreateCanTelegram(byte[] sendData, int length)
+        {
+            ConvertBaudResponse = false;
+            if ((AdapterType < 0x0002) || (AdapterVersion < 0x0008))
+            {
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateCanTelegram, invalid adapter: {0} {1}", AdapterType, AdapterVersion);
+                }
+                return null;
+            }
+            if (CurrentProtocol != EdInterfaceObd.Protocol.Tp20)
+            {
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateCanTelegram, invalid protocol: {0}", CurrentProtocol);
+                }
+                return null;
+            }
+            if ((CurrentBaudRate != 500000) && (CurrentBaudRate != 100000))
+            {
+                if (Ediabas != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateCanTelegram, invalid baud rate: {0}", CurrentBaudRate);
+                }
+                return null;
+            }
+
+            byte[] resultArray = new byte[length + 10];
+            resultArray[0] = 0x00;   // header
+            resultArray[1] = 0x01;   // telegram type
+
+            byte flags = (byte)(CANF_NO_ECHO | CANF_CAN_ERROR);
+            resultArray[2] = CAN_PROT_TP20;         // protocol TP2.0
+            resultArray[3] = (byte)((CurrentBaudRate == 500000) ? 0x01 : 0x09);     // baud rate
+            resultArray[4] = flags;                 // flags
+            resultArray[5] = 0x0F;                  // block size
+            resultArray[6] = 0x0A;                  // packet interval (1ms)
+            resultArray[7] = (byte)(length >> 8);   // telegram length high
+            resultArray[8] = (byte)length;          // telegram length low
+            Array.Copy(sendData, 0, resultArray, 9, length);
+            resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
+            return resultArray;
+        }
+
         public static bool IsFastInit(UInt64 dataBits, int length, int pulseWidth)
         {
             return (dataBits == 0x02) && (length == 2) && (pulseWidth == 25);
@@ -252,6 +310,7 @@ namespace EdiabasLib
 
         public static void UpdateActiveSettings()
         {
+            ActiveProtocol = CurrentProtocol;
             ActiveBaudRate = CurrentBaudRate;
             ActiveWordLength = CurrentWordLength;
             ActiveParity = CurrentParity;
@@ -259,6 +318,10 @@ namespace EdiabasLib
 
         public static bool SettingsUpdateRequired()
         {
+            if (CurrentProtocol != EdInterfaceObd.Protocol.Uart)
+            {
+                return false;
+            }
             if (CurrentBaudRate == 115200)
             {
                 return false;

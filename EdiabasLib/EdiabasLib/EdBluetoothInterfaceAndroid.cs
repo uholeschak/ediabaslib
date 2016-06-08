@@ -206,12 +206,13 @@ namespace EdiabasLib
             return result;
         }
 
-        public static EdInterfaceObd.InterfaceErrorResult InterfaceSetConfig(int baudRate, int dataBits, EdInterfaceObd.SerialParity parity, bool allowBitBang)
+        public static EdInterfaceObd.InterfaceErrorResult InterfaceSetConfig(EdInterfaceObd.Protocol protocol, int baudRate, int dataBits, EdInterfaceObd.SerialParity parity, bool allowBitBang)
         {
             if (_bluetoothSocket == null)
             {
                 return EdInterfaceObd.InterfaceErrorResult.ConfigError;
             }
+            CurrentProtocol = protocol;
             CurrentBaudRate = baudRate;
             CurrentWordLength = dataBits;
             CurrentParity = parity;
@@ -308,7 +309,8 @@ namespace EdiabasLib
             }
             if (_elm327Device)
             {
-                if ((CurrentBaudRate != 115200) || (CurrentWordLength != 8) || (CurrentParity != EdInterfaceObd.SerialParity.None))
+                if ((CurrentProtocol != EdInterfaceObd.Protocol.Uart) ||
+                    (CurrentBaudRate != 115200) || (CurrentWordLength != 8) || (CurrentParity != EdInterfaceObd.SerialParity.None))
                 {
                     return false;
                 }
@@ -341,6 +343,19 @@ namespace EdiabasLib
             }
             try
             {
+                if (CurrentProtocol == EdInterfaceObd.Protocol.Tp20)
+                {
+                    UpdateAdapterInfo();
+                    byte[] adapterTel = CreateCanTelegram(sendData, length);
+                    if (adapterTel == null)
+                    {
+                        return false;
+                    }
+                    _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
+                    LastCommTick = Stopwatch.GetTimestamp();
+                    UpdateActiveSettings();
+                    return true;
+                }
                 if (_rawMode || (CurrentBaudRate == 115200))
                 {   // BMW-FAST
                     _bluetoothOutStream.Write(sendData, 0, length);

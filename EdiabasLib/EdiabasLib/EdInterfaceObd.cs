@@ -23,6 +23,12 @@ namespace EdiabasLib
             Space = 4,
         }
 
+        public enum Protocol
+        {
+            Uart = 0,
+            Tp20 = 1,
+        }
+
         protected enum CommThreadCommands
         {
             Idle,               // do nothing
@@ -40,7 +46,7 @@ namespace EdiabasLib
 
         public delegate bool InterfaceConnectDelegate(string port, object parameter);
         public delegate bool InterfaceDisconnectDelegate();
-        public delegate InterfaceErrorResult InterfaceSetConfigDelegate(int baudRate, int dataBits, SerialParity parity, bool allowBitBang);
+        public delegate InterfaceErrorResult InterfaceSetConfigDelegate(Protocol protocol, int baudRate, int dataBits, SerialParity parity, bool allowBitBang);
         public delegate bool InterfaceSetDtrDelegate(bool dtr);
         public delegate bool InterfaceSetRtsDelegate(bool rts);
         public delegate bool InterfaceGetDsrDelegate(out bool dsr);
@@ -310,7 +316,16 @@ namespace EdiabasLib
                                 ParIdleFunc = IdleKwp2000;
                                 ParFinishFunc = FinishKwp2000;
                                 break;
-
+#if false
+                            case 0xA5:      // TP2.0
+                                ParTransmitFunc = TransTp20;
+                                if (!UseExtInterfaceFunc || (InterfaceSetConfigFuncUse(Protocol.Tp20, 500000, 8, SerialParity.None, false) != InterfaceErrorResult.NoError))
+                                {
+                                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set TP2.0 protocol failed");
+                                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                                }
+                                break;
+#endif
                             default:
                                 ParTransmitFunc = TransUnsupported;
                                 break;
@@ -590,7 +605,7 @@ namespace EdiabasLib
 
                 if (UseExtInterfaceFunc)
                 {
-                    InterfaceErrorResult ftdiResult = InterfaceSetConfigFuncUse(baudRate, dataBits, parity, ParAllowBitBang);
+                    InterfaceErrorResult ftdiResult = InterfaceSetConfigFuncUse(Protocol.Uart, baudRate, dataBits, parity, ParAllowBitBang);
                     switch (ftdiResult)
                     {
                         case InterfaceErrorResult.NoError:
@@ -1136,6 +1151,21 @@ namespace EdiabasLib
                                 ParEdicTesterAddress = (byte) CommParameterProtected[70];
                                 ParEdicEcuAddress = (byte) CommParameterProtected[71];
                                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC CAN: {0:X02}, Tester: {1:X02}, Ecu: {2:X02}", ParEdicWakeAddress, ParEdicTesterAddress, ParEdicEcuAddress);
+
+                                ParEdicAddRetries = 3;
+                                // set standard timeouts
+                                ParTimeoutStd = 50;     // take from parameter?
+                                ParTimeoutTelEnd = 20;
+                                ParInterbyteTime = 0;
+                                ParRegenTime = 0;
+                                ParRequestTimeNr21 = 500;
+                                ParRequestTimeNr23 = 500;
+                                ParRetryNr21 = 240;     // 2 min
+                                ParRetryNr23 = 240;     // 2 min
+                                ParTimeoutNr78 = 5000;
+                                ParRetryNr78 = 50;      // VAG is only using interface deadlock timeout
+
+                                KeyBytesProtected = new byte[] { 0xDA, 0x8F, ParEdicWakeAddress, 0x54, 0x50 };
                             }
                             return true;
 
@@ -2310,6 +2340,10 @@ namespace EdiabasLib
                 {   // interface error
                     break;
                 }
+                if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_IFH_0011)
+                {   // unknown interface
+                    break;
+                }
             }
             return errorCode;
         }
@@ -2397,7 +2431,7 @@ namespace EdiabasLib
                 if (UseExtInterfaceFunc)
                 {
                     if (HasAutoBaudRate) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Auto baud rate");
-                    if (InterfaceSetConfigFuncUse(HasAutoBaudRate ? BaudAuto : 9600, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                    if (InterfaceSetConfigFuncUse(Protocol.Uart, HasAutoBaudRate ? BaudAuto : 9600, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
                     {
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -2457,7 +2491,7 @@ namespace EdiabasLib
                     CurrentParity = SerialParity.None;
                     if (UseExtInterfaceFunc)
                     {
-                        if (InterfaceSetConfigFuncUse(CurrentBaudRate, 8, CurrentParity, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                        if (InterfaceSetConfigFuncUse(Protocol.Uart, CurrentBaudRate, 8, CurrentParity, ParAllowBitBang) != InterfaceErrorResult.NoError)
                         {
                             EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -2487,7 +2521,7 @@ namespace EdiabasLib
                         EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate 10.4k detected");
                         if (UseExtInterfaceFunc)
                         {
-                            if (InterfaceSetConfigFuncUse(10400, 8, SerialParity.None, ParAllowBitBang) !=
+                            if (InterfaceSetConfigFuncUse(Protocol.Uart, 10400, 8, SerialParity.None, ParAllowBitBang) !=
                                 InterfaceErrorResult.NoError)
                             {
                                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
@@ -2760,8 +2794,7 @@ namespace EdiabasLib
 
             int receiveLength;
             byte[] finishTel = {0x81, ParEdicEcuAddress, ParEdicTesterAddress, 0x82, 0x00};
-            EdiabasNet.ErrorCodes errorCode = TransKwp2000(finishTel, finishTel.Length, ref Iso9141Buffer,
-                out receiveLength, false);
+            EdiabasNet.ErrorCodes errorCode = TransKwp2000(finishTel, finishTel.Length, ref Iso9141Buffer, out receiveLength, false);
             if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
                 EcuConnected = false;
@@ -2769,6 +2802,75 @@ namespace EdiabasLib
             }
 
             EcuConnected = false;
+            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+        }
+
+        private EdiabasNet.ErrorCodes TransTp20(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
+        {
+            receiveLength = 0;
+
+            if (sendDataLength == 0)
+            {
+                if (!SendData(sendData, sendDataLength, ParSendSetDtr, ParInterbyteTime))
+                {
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                }
+                return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+            }
+
+            EdiabasNet.ErrorCodes errorCode = TransTp20(sendData, sendDataLength, ref receiveData, out receiveLength, true);
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                return errorCode;
+            }
+            for (;;)
+            {
+                byte[] tempRecBuffer = new byte[receiveData.Length];
+                int tempRecLen;
+                errorCode = TransTp20(null, 0, ref tempRecBuffer, out tempRecLen, true);
+                if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_IFH_0003)
+                {
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                }
+                if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                }
+                if (receiveLength + tempRecLen <= receiveData.Length)
+                {
+                    Array.Copy(tempRecBuffer, 0, receiveData, receiveLength, tempRecLen);
+                    receiveLength += tempRecLen;
+                }
+            }
+        }
+
+        private EdiabasNet.ErrorCodes TransTp20(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, bool enableLogging)
+        {
+            if (sendDataLength >= 3)
+            {
+                // replace ecu address with the CAN address
+                sendData[1] = ParEdicWakeAddress;
+            }
+            EdiabasNet.ErrorCodes errorCode = TransKwp2000(sendData, sendDataLength, ref receiveData, out receiveLength, enableLogging);
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                return errorCode;
+            }
+
+            if (receiveLength == 6 && receiveData[1] == 0xF1 && receiveData[2] == 0xF1 && receiveData[3] == 0x7F)
+            {
+                // adapter error telegram
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Unknown interface");
+                receiveLength = 0;
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
+            }
+            if (receiveLength >= 4)
+            {
+                // restore address in response
+                receiveData[2] = ParEdicEcuAddress;
+                receiveData[receiveLength - 1] = CalcChecksumBmwFast(receiveData, receiveLength - 1);
+            }
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
@@ -3109,7 +3211,7 @@ namespace EdiabasLib
                 if (UseExtInterfaceFunc)
                 {
                     if (HasAutoBaudRate) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Auto baud rate");
-                    if (InterfaceSetConfigFuncUse(HasAutoBaudRate ? BaudAuto : 9600, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                    if (InterfaceSetConfigFuncUse(Protocol.Uart, HasAutoBaudRate ? BaudAuto : 9600, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
                     {
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -3169,7 +3271,7 @@ namespace EdiabasLib
                     CurrentParity = SerialParity.None;
                     if (UseExtInterfaceFunc)
                     {
-                        if (InterfaceSetConfigFuncUse(CurrentBaudRate, 8, CurrentParity, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                        if (InterfaceSetConfigFuncUse(Protocol.Uart, CurrentBaudRate, 8, CurrentParity, ParAllowBitBang) != InterfaceErrorResult.NoError)
                         {
                             EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -3199,8 +3301,7 @@ namespace EdiabasLib
                         EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate 10.4k detected");
                         if (UseExtInterfaceFunc)
                         {
-                            if (InterfaceSetConfigFuncUse(10400, 8, SerialParity.None, ParAllowBitBang) !=
-                                InterfaceErrorResult.NoError)
+                            if (InterfaceSetConfigFuncUse(Protocol.Uart, 10400, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
                             {
                                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -3529,7 +3630,7 @@ namespace EdiabasLib
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Establish connection");
                 if (UseExtInterfaceFunc)
                 {
-                    if (InterfaceSetConfigFuncUse(9600, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                    if (InterfaceSetConfigFuncUse(Protocol.Uart, 9600, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
                     {
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -3605,7 +3706,7 @@ namespace EdiabasLib
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Key bytes: {0:X02} {1:X02} {2:X02}", Iso9141Buffer[0], Iso9141Buffer[1], Iso9141Buffer[2]);
                 if (UseExtInterfaceFunc)
                 {
-                    if (InterfaceSetConfigFuncUse(9600, 8, SerialParity.Even, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                    if (InterfaceSetConfigFuncUse(Protocol.Uart, 9600, 8, SerialParity.Even, ParAllowBitBang) != InterfaceErrorResult.NoError)
                     {
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                         FinishConcept3();
@@ -3744,7 +3845,7 @@ namespace EdiabasLib
             EcuConnected = false;
             if (UseExtInterfaceFunc)
             {
-                if (InterfaceSetConfigFuncUse(10400, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                if (InterfaceSetConfigFuncUse(Protocol.Uart, 10400, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
                 {
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
