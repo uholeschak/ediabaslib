@@ -319,6 +319,7 @@ namespace EdiabasLib
 
                             case 0xA5:      // TP2.0
                                 ParTransmitFunc = TransTp20;
+                                ParFinishFunc = FinishTp20;
                                 if (!UseExtInterfaceFunc || (InterfaceSetConfigFuncUse(Protocol.Tp20, 500000, 8, SerialParity.None, false) != InterfaceErrorResult.NoError))
                                 {
                                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set TP2.0 protocol failed");
@@ -2794,7 +2795,7 @@ namespace EdiabasLib
 
             int receiveLength;
             byte[] finishTel = {0x81, ParEdicEcuAddress, ParEdicTesterAddress, 0x82, 0x00};
-            EdiabasNet.ErrorCodes errorCode = TransKwp2000(finishTel, finishTel.Length, ref Iso9141Buffer, out receiveLength, false);
+            EdiabasNet.ErrorCodes errorCode = TransKwp2000(finishTel, finishTel.Length - 1, ref Iso9141Buffer, out receiveLength, false);
             if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
                 EcuConnected = false;
@@ -2807,8 +2808,6 @@ namespace EdiabasLib
 
         private EdiabasNet.ErrorCodes TransTp20(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
-            receiveLength = 0;
-
             if (sendDataLength == 0)
             {
                 // connect check command
@@ -2867,7 +2866,11 @@ namespace EdiabasLib
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Connect OK");
                         break;
 
-                    case 0x01:  // CAN error
+                    case 0x01:  // disconnected
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Disconnect OK");
+                        break;
+
+                    case 0x02:  // CAN error
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CAN error");
                         errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
                         break;
@@ -2881,6 +2884,14 @@ namespace EdiabasLib
                 receiveData[receiveLength - 1] = CalcChecksumBmwFast(receiveData, receiveLength - 1);
             }
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+        }
+
+        private EdiabasNet.ErrorCodes FinishTp20()
+        {
+            // disconnect command
+            int receiveLength;
+            byte[] finishTel = { 0x01, ParEdicWakeAddress, ParEdicTesterAddress, 0x01, 0x00 };
+            return TransTp20(finishTel, finishTel.Length - 1, ref Iso9141Buffer, out receiveLength, true);
         }
 
         // telegram length without checksum
