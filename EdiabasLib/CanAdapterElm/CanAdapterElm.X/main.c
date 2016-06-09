@@ -2224,7 +2224,7 @@ void can_tp20(bool new_can_msg)
             temp_buffer[1] = 0xF1;
             temp_buffer[2] = 0xF1;
             temp_buffer[3] = 0x7F;  // status message
-            temp_buffer[4] = 0x01;  // bus off
+            temp_buffer[4] = 0x02;  // bus off
             temp_buffer[5] = calc_checkum(temp_buffer, 5);
             uart_send(temp_buffer, 6);
         }
@@ -2245,7 +2245,17 @@ void can_tp20(bool new_can_msg)
                 can_config();
             }
             tp20_disconnect();
-            if ((can_cfg_flags & CANF_DISCONNECT) == 0)
+            if ((can_cfg_flags & CANF_DISCONNECT) != 0)
+            {
+                temp_buffer[0] = 0x82;
+                temp_buffer[1] = 0xF1;
+                temp_buffer[2] = 0xF1;
+                temp_buffer[3] = 0x7F;  // status message
+                temp_buffer[4] = 0x01;  // disconnected
+                temp_buffer[5] = calc_checkum(temp_buffer, 5);
+                uart_send(temp_buffer, 6);
+            }
+            else
             {
                 can_tp20_state = tp20_send_connect;
                 can_tp20_ecu_addr = temp_buffer[1];
