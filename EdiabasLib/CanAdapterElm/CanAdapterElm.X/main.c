@@ -158,6 +158,7 @@
 // CAN flags
 #define CANF_NO_ECHO            0x01
 #define CANF_CAN_ERROR          0x02
+#define CANF_CONNECT_CHECK      0x04
 
 // CAN baudrates
 #define CAN_BAUD_OFF        0x00
@@ -2553,6 +2554,20 @@ void can_tp20(bool new_can_msg)
                                     can_tp20_block_size = can_in_msg.data[1];
                                     can_tp20_t1 = convert_tp20_time(can_in_msg.data[2]);  // T1
                                     can_tp20_t3 = convert_tp20_time(can_in_msg.data[4]);  // T3
+                                }
+                                if ((can_cfg_flags & CANF_CONNECT_CHECK) != 0)
+                                {
+                                    temp_buffer[0] = 0x82;
+                                    temp_buffer[1] = 0xF1;
+                                    temp_buffer[2] = 0xF1;
+                                    temp_buffer[3] = 0x7F;  // status message
+                                    temp_buffer[4] = 0x00;  // connected
+                                    temp_buffer[5] = calc_checkum(temp_buffer, 5);
+                                    uart_send(temp_buffer, 6);
+
+                                    can_rec_time = get_systick();
+                                    can_tp20_state = tp20_send_alive;
+                                    break;
                                 }
                                 can_tp20_state = tp20_send_data;
                                 break;
