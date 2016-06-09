@@ -159,6 +159,7 @@
 #define CANF_NO_ECHO            0x01
 #define CANF_CAN_ERROR          0x02
 #define CANF_CONNECT_CHECK      0x04
+#define CANF_DISCONNECT         0x08
 
 // CAN baudrates
 #define CAN_BAUD_OFF        0x00
@@ -2239,19 +2240,18 @@ void can_tp20(bool new_can_msg)
             {
                 uart_send(temp_buffer, len);
             }
-            if (internal_telegram(len))
-            {
-                return;
-            }
             if (can_error())
             {
                 can_config();
             }
             tp20_disconnect();
-            can_tp20_state = tp20_send_connect;
-            can_tp20_ecu_addr = temp_buffer[1];
-            can_tp20_tester_addr = temp_buffer[2];
-            can_send_pos = 0;
+            if ((can_cfg_flags & CANF_DISCONNECT) == 0)
+            {
+                can_tp20_state = tp20_send_connect;
+                can_tp20_ecu_addr = temp_buffer[1];
+                can_tp20_tester_addr = temp_buffer[2];
+                can_send_pos = 0;
+            }
         }
     }
     if (can_tp20_state != tp20_idle)

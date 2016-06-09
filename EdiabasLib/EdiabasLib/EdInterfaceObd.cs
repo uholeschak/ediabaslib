@@ -316,7 +316,7 @@ namespace EdiabasLib
                                 ParIdleFunc = IdleKwp2000;
                                 ParFinishFunc = FinishKwp2000;
                                 break;
-#if false
+
                             case 0xA5:      // TP2.0
                                 ParTransmitFunc = TransTp20;
                                 if (!UseExtInterfaceFunc || (InterfaceSetConfigFuncUse(Protocol.Tp20, 500000, 8, SerialParity.None, false) != InterfaceErrorResult.NoError))
@@ -325,7 +325,7 @@ namespace EdiabasLib
                                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                                 }
                                 break;
-#endif
+
                             default:
                                 ParTransmitFunc = TransUnsupported;
                                 break;
@@ -2811,16 +2811,13 @@ namespace EdiabasLib
 
             if (sendDataLength == 0)
             {
-                if (!SendData(sendData, sendDataLength, ParSendSetDtr, ParInterbyteTime))
-                {
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-                }
-                return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                // connect check command
+                sendData = new byte[] {0x01, ParEdicWakeAddress, ParEdicTesterAddress, 0x00, 0x00 };
+                sendDataLength = sendData.Length - 1;   // for checksum
             }
 
             EdiabasNet.ErrorCodes errorCode = TransTp20(sendData, sendDataLength, ref receiveData, out receiveLength, true);
-            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            if ((errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE) || (receiveLength == 0))
             {
                 return errorCode;
             }
@@ -2860,10 +2857,22 @@ namespace EdiabasLib
 
             if (receiveLength == 6 && receiveData[1] == 0xF1 && receiveData[2] == 0xF1 && receiveData[3] == 0x7F)
             {
-                // adapter error telegram
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Unknown interface");
                 receiveLength = 0;
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
+                // adapter status telegram
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Adapter status: {0:X02}", receiveData[4]);
+                errorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                switch (receiveData[4])
+                {
+                    case 0x00:  // connected
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Connect OK");
+                        break;
+
+                    case 0x01:  // CAN error
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CAN error");
+                        errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
+                        break;
+                }
+                return errorCode;
             }
             if (receiveLength >= 4)
             {

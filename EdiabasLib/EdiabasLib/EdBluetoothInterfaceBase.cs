@@ -21,6 +21,8 @@ namespace EdiabasLib
 
         public static byte CANF_NO_ECHO = 0x01;
         public static byte CANF_CAN_ERROR = 0x02;
+        public static byte CANF_CONNECT_CHECK = 0x04;
+        public static byte CANF_DISCONNECT = 0x08;
 
         // CAN protocols
         public static byte CAN_PROT_BMW = 0x00;
@@ -237,6 +239,20 @@ namespace EdiabasLib
             resultArray[1] = 0x01;   // telegram type
 
             byte flags = (byte)(CANF_NO_ECHO | CANF_CAN_ERROR);
+            if (length == 5 && sendData[0] == 0x01)
+            {
+                switch (sendData[3])
+                {
+                    case 0x00:  // connect check
+                        flags |= CANF_CONNECT_CHECK;
+                        break;
+
+                    default:  // disconnect
+                        flags |= CANF_DISCONNECT;
+                        break;
+                }
+                sendData[0] = 0x81;
+            }
             resultArray[2] = CAN_PROT_TP20;         // protocol TP2.0
             resultArray[3] = (byte)((CurrentBaudRate == 500000) ? 0x01 : 0x09);     // baud rate
             resultArray[4] = flags;                 // flags
