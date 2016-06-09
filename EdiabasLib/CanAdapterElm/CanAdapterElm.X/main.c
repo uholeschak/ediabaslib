@@ -2565,8 +2565,7 @@ void can_tp20(bool new_can_msg)
                                     temp_buffer[5] = calc_checkum(temp_buffer, 5);
                                     uart_send(temp_buffer, 6);
 
-                                    can_rec_time = get_systick();
-                                    can_tp20_state = tp20_send_alive;
+                                    tp20_disconnect();
                                     break;
                                 }
                                 can_tp20_state = tp20_send_data;
