@@ -99,6 +99,7 @@ namespace CarSimulator
                     T1Time = ConvertTp20Time(value);
                 }
             }
+            // ReSharper disable once UnusedAutoPropertyAccessor.Local
             public double T1Time { get; private set; }
             public byte T3
             {
@@ -184,6 +185,9 @@ namespace CarSimulator
         private ConfigData _configData;
         private byte _pcanHandle;
         private long _lastCanSendTick;
+#if CAN_DEBUG
+        private long _lastCanReceiveTick;
+#endif
         private readonly List<Tp20Channel> _tp20Channels;
         private TcpListener _tcpServerDiag;
         private TcpClient _tcpClientDiag;
@@ -538,7 +542,10 @@ namespace CarSimulator
             _threadRunning = false;
             _workerThread = null;
             _pcanHandle = PCANBasic.PCAN_NONEBUS;
-            _lastCanSendTick = DateTime.MinValue.Ticks;
+            _lastCanSendTick = 0;
+#if CAN_DEBUG
+            _lastCanReceiveTick = Stopwatch.GetTimestamp();
+#endif
             _tp20Channels = new List<Tp20Channel>();
             _tcpServerDiag = null;
             _tcpClientDiag = null;
@@ -2446,12 +2453,16 @@ namespace CarSimulator
                     break;
                 }
 #if CAN_DEBUG
+                long receiveTime = Stopwatch.GetTimestamp();
+                long timeDiff = (receiveTime - _lastCanReceiveTick) / TickResolMs;
+                _lastCanReceiveTick = receiveTime;
+
                 string dataString = string.Empty;
                 for (int i = 0; i < canMsg.LEN; i++)
                 {
                     dataString += string.Format("{0:X02} ", canMsg.DATA[i]);
                 }
-                Debug.WriteLine("CAN rec: {0:X04} {1}", canMsg.ID, dataString);
+                Debug.WriteLine("CAN rec: T={0,-5} {1:X04} {2}", timeDiff, canMsg.ID, dataString);
 #endif
                 if (canMsg.ID == 0x0200 && canMsg.LEN == 7)
                 {
