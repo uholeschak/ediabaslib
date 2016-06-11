@@ -2385,6 +2385,13 @@ namespace CarSimulator
                         {   // first part
                             sendMsg.DATA[1] = (byte)(sendData.Length >> 8);
                             sendMsg.DATA[2] = (byte)(sendData.Length);
+                            if (channel.SendData.Count > 1)
+                            {
+                                sendMsg.DATA[1] |= 0x80;
+#if CAN_DEBUG
+                                Debug.WriteLine("More telegrams follow");
+#endif
+                            }
                             offset = 3;
                         }
                         else
@@ -2736,6 +2743,14 @@ namespace CarSimulator
                 dataLength = sendData[3];
                 dataOffset = 4;
             }
+#if false
+            string dataString = string.Empty;
+            for (int i = 0; i < sendData.Length; i++)
+            {
+                dataString += string.Format("{0:X02} ", sendData[i]);
+            }
+            Debug.WriteLine(string.Format("Add send: {0}", dataString));
+#endif
             if (currChannel.SendData.Count == 0)
             {
                 currChannel.SendPos = 0;
