@@ -234,7 +234,7 @@ namespace EdiabasLib
                 return null;
             }
 
-            byte[] resultArray = new byte[length + 10];
+            byte[] resultArray = new byte[length + 11];
             resultArray[0] = 0x00;   // header
             resultArray[1] = 0x01;   // telegram type
 
@@ -258,9 +258,10 @@ namespace EdiabasLib
             resultArray[4] = flags;                 // flags
             resultArray[5] = 0x0F;                  // block size
             resultArray[6] = 0x0A;                  // packet interval (1ms)
-            resultArray[7] = (byte)(length >> 8);   // telegram length high
-            resultArray[8] = (byte)length;          // telegram length low
-            Array.Copy(sendData, 0, resultArray, 9, length);
+            resultArray[7] = 1000 / 10;             // idle time (10ms)
+            resultArray[8] = (byte)(length >> 8);   // telegram length high
+            resultArray[9] = (byte)length;          // telegram length low
+            Array.Copy(sendData, 0, resultArray, 10, length);
             resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
             return resultArray;
         }

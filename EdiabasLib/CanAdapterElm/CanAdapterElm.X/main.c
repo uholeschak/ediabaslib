@@ -269,6 +269,7 @@ static uint8_t can_cfg_baud;        // CAN baud rate (table)
 static uint8_t can_cfg_flags;       // CAN flags
 static uint8_t can_cfg_blocksize;   // CAN blocksize
 static uint8_t can_cfg_packet_interval; // CAN packet inverval time
+static uint16_t can_cfg_idle_time;   // CAN idle time [ms]
 
 static uint8_t temp_buffer[TEMP_BUF_SIZE];
 static uint8_t temp_buffer_short[10];
@@ -306,7 +307,6 @@ static uint8_t can_tp20_ecu_addr;
 static uint16_t can_tp20_rxid;
 static uint16_t can_tp20_txid;
 static uint8_t can_tp20_block_size;
-static uint16_t can_tp20_t1;    // T1 [ms]
 static uint16_t can_tp20_t3;    // T3 [ms]
 static uint8_t can_tp20_block;
 static uint8_t can_tp20_send_seq;
@@ -1170,7 +1170,8 @@ uint16_t uart_receive(uint8_t *buffer)
             // byte 4: flags
             // byte 5: block size
             // byte 6: packet interval
-            // byte 7+8: telegram length (high/low)
+            // byte 7: idle time [10ms]
+            // byte 8+9: telegram length (high/low)
             if ((buffer != NULL) &&
                 ((op_mode != op_mode_can) || (can_cfg_protocol != rec_buffer[2]))
                 )
@@ -1186,10 +1187,11 @@ uint16_t uart_receive(uint8_t *buffer)
             can_cfg_flags = rec_buffer[4];
             can_cfg_blocksize = rec_buffer[5];
             can_cfg_packet_interval = rec_buffer[6];
-            data_len = ((uint16_t) rec_buffer[7] << 8) + rec_buffer[8];
+            can_cfg_idle_time = (uint16_t) rec_buffer[7] * 10;
+            data_len = ((uint16_t) rec_buffer[8] << 8) + rec_buffer[9];
             if (buffer != NULL)
             {
-                memcpy(buffer, rec_buffer + 9, data_len);
+                memcpy(buffer, rec_buffer + 10, data_len);
             }
             op_mode_new = op_mode_can;
         }
@@ -1579,6 +1581,7 @@ void reset_comm_states()
     can_cfg_flags = 0;
     can_cfg_blocksize = 0;
     can_cfg_packet_interval = 0;
+    can_cfg_idle_time = 0;
 
     can_tp20_state = tp20_idle;
 }
@@ -2449,7 +2452,7 @@ void can_tp20(bool new_can_msg)
             break;
 
         case tp20_send_alive:    // send keep alive
-            if ((uint16_t) (get_systick() - can_rec_time) < (can_tp20_t1 / 2 * TIMER0_RESOL / 1000))
+            if ((uint16_t) (get_systick() - can_rec_time) < (can_cfg_idle_time * TIMER0_RESOL / 1000))
             {
                 break;
             }
@@ -2487,7 +2490,6 @@ void can_tp20(bool new_can_msg)
                 can_tp20_txid = can_in_msg.data[4] + ((uint16_t) can_in_msg.data[5] << 8);
                 // default values
                 can_tp20_block_size = 0x0F;
-                can_tp20_t1 = 100;  // T1
                 can_tp20_t3 = 10;   // T3
                 can_tp20_state = tp20_send_par;
             }
@@ -2584,7 +2586,6 @@ void can_tp20(bool new_can_msg)
                                 if (can_in_msg.dlc.bits.count == 6)
                                 {
                                     can_tp20_block_size = can_in_msg.data[1];
-                                    can_tp20_t1 = convert_tp20_time(can_in_msg.data[2]);  // T1
                                     can_tp20_t3 = convert_tp20_time(can_in_msg.data[4]);  // T3
                                 }
                                 if ((can_cfg_flags & CANF_CONNECT_CHECK) != 0)
@@ -3009,10 +3010,11 @@ void interrupt high_priority high_isr (void)
                                 // byte 4: flags
                                 // byte 5: block size
                                 // byte 6: packet interval
-                                // byte 7+8: telegram length (high/low)
-                                if (rec_len >= 9)
+                                // byte 7: idle time [10ms]
+                                // byte 8+9: telegram length (high/low)
+                                if (rec_len >= 10)
                                 {
-                                    tel_len = ((uint16_t) rec_buffer[7] << 8) + rec_buffer[8] + 10;
+                                    tel_len = ((uint16_t) rec_buffer[8] << 8) + rec_buffer[9] + 11;
                                 }
                                 else
                                 {
