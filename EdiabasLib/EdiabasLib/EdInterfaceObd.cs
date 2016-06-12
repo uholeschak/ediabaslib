@@ -1155,7 +1155,7 @@ namespace EdiabasLib
 
                                 ParEdicAddRetries = 3;
                                 // set standard timeouts
-                                ParTimeoutStd = 50;     // take from parameter?
+                                ParTimeoutStd = 5000;   // max timeout, use ParTimeoutNr78
                                 ParTimeoutTelEnd = 20;
                                 ParInterbyteTime = 0;
                                 ParRegenTime = 0;
