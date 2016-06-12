@@ -2409,7 +2409,7 @@ void can_tp20(bool new_can_msg)
                 {
                     temp_buffer[0] = 0x80;
                     temp_buffer[1] = 0x00;
-                    temp_buffer[2] = 0x00;
+                    temp_buffer[2] = can_tp20_ecu_addr;
                     temp_buffer[3] = can_rec_data_len;
                     len = can_rec_data_len + 4;
                 }
@@ -2417,7 +2417,7 @@ void can_tp20(bool new_can_msg)
                 {
                     temp_buffer[0] = 0x80 | can_rec_data_len;
                     temp_buffer[1] = 0x00;
-                    temp_buffer[2] = 0x00;
+                    temp_buffer[2] = can_tp20_ecu_addr;
                     len = can_rec_data_len + 3;
                 }
 
