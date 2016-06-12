@@ -14,8 +14,8 @@
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <AssemblyName>BmwDeepObd</AssemblyName>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
-    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
-    <AndroidUseLatestPlatformSdk />
+    <TargetFrameworkVersion>v5.1</TargetFrameworkVersion>
+    <AndroidUseLatestPlatformSdk>False</AndroidUseLatestPlatformSdk>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -67,6 +67,7 @@
       <HintPath>packages\SharpZipLib.Portable.0.86.0.0003\lib\portable-net45+netcore45+wp8+win8+wpa81+MonoTouch+MonoAndroid+Xamarin.iOS10\ICSharpCode.SharpZipLib.Portable.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Java.Interop" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Mono.CSharp" />
     <Reference Include="System" />
