@@ -210,6 +210,7 @@ namespace CarSimulator
         private readonly byte[] _receiveData;
         private readonly byte[] _receiveDataMotorBackup;
         private int _noResponseCount;
+        private int _nr2123SendCount;
         private readonly Stopwatch[] _timeValveWrite = new Stopwatch[4];
         private byte _mode; // 2: conveyor, 4: transport
         private int _outputs; // 0:left, 1:right, 2:down, 3:comp
@@ -568,6 +569,7 @@ namespace CarSimulator
             _receiveData = new byte[260];
             _receiveDataMotorBackup = new byte[_receiveData.Length];
             _noResponseCount = 0;
+            _nr2123SendCount = 0;
             for (int i = 0; i < _timeValveWrite.Length; i++)
             {
                 _timeValveWrite[i] = new Stopwatch();
@@ -644,6 +646,7 @@ namespace CarSimulator
                 }
                 _outputs = 0x00;
                 _noResponseCount = 0;
+                _nr2123SendCount = 0;
                 _ecuErrorResetList.Clear();
                 ErrorDefault = false;
                 while (!_stopThread)
@@ -5835,11 +5838,11 @@ namespace CarSimulator
                         SendData(_sendData, 0, 1);
                     }
                 } while (!initOk);
+                _nr2123SendCount = 0;
 
                 Debug.WriteLine("Init done");
             }
 
-            int nr2123SendCount = 0;
             long lastRecTime = Stopwatch.GetTimestamp();
             for (;;)
             {
@@ -5967,17 +5970,17 @@ namespace CarSimulator
                                 foreach (byte[] responseTel in responseEntry.ResponseMultiList)
                                 {
                                     bool nr2123 = responseTel.Length == 7 && responseTel[3] == 0x7F && ((responseTel[5] == 0x21) || (responseTel[5] == 0x23));
-                                    if (!nr2123 || (nr2123SendCount < Kwp2000Nr2123Retries))
+                                    if (!nr2123 || (_nr2123SendCount < Kwp2000Nr2123Retries))
                                     {
                                         ObdSend(responseTel);
                                         if (nr2123)
                                         {
-                                            Debug.WriteLine("Send NR21/23");
-                                            nr2123SendCount++;
+                                            Debug.WriteLine("Send NR21/23: {0}", _nr2123SendCount);
+                                            _nr2123SendCount++;
                                             break;
                                         }
                                     }
-                                    nr2123SendCount = 0;
+                                    _nr2123SendCount = 0;
 #if false
                                     if (responseTel.Length == 7 && responseTel[3] == 0x7F && responseTel[5] == 0x78)
                                     {
@@ -5990,7 +5993,7 @@ namespace CarSimulator
                             else
                             {
                                 ObdSend(responseEntry.ResponseDyn);
-                                nr2123SendCount = 0;
+                                _nr2123SendCount = 0;
                             }
                             lastRecTime = Stopwatch.GetTimestamp();
                             break;
