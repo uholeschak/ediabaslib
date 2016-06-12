@@ -2877,6 +2877,7 @@ namespace EdiabasLib
             if (receiveLength >= 4)
             {
                 // restore address in response
+                receiveData[1] = ParEdicTesterAddress;
                 receiveData[2] = ParEdicEcuAddress;
                 receiveData[receiveLength - 1] = CalcChecksumBmwFast(receiveData, receiveLength - 1);
             }
