@@ -2815,25 +2815,18 @@ namespace EdiabasLib
                 sendDataLength = sendData.Length - 1;   // for checksum
             }
 
-            EdiabasNet.ErrorCodes errorCode = TransTp20(sendData, sendDataLength, ref receiveData, out receiveLength, true);
-            if ((errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE) || (receiveLength == 0))
-            {
-                return errorCode;
-            }
+            receiveLength = 0;
             for (;;)
             {
                 byte[] tempRecBuffer = new byte[receiveData.Length];
                 int tempRecLen;
-                errorCode = TransTp20(null, 0, ref tempRecBuffer, out tempRecLen, true);
-                if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_IFH_0003)
+                EdiabasNet.ErrorCodes errorCode = TransTp20(sendData, sendDataLength, ref tempRecBuffer, out tempRecLen, true);
+                if ((errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE) || (tempRecLen == 0))
                 {
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    return errorCode;
                 }
-                if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
-                {
-                    return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
-                }
-                if (receiveLength + tempRecLen <= receiveData.Length)
+                sendDataLength = 0;
+                if ((receiveLength + tempRecLen) <= receiveData.Length)
                 {
                     Array.Copy(tempRecBuffer, 0, receiveData, receiveLength, tempRecLen);
                     receiveLength += tempRecLen;
@@ -2870,7 +2863,11 @@ namespace EdiabasLib
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Disconnect OK");
                         break;
 
-                    case 0x02:  // CAN error
+                    case 0x02:  // receive complete
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Receive complete");
+                        break;
+
+                    case 0x03:  // CAN error
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CAN error");
                         errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
                         break;
