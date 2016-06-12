@@ -303,7 +303,6 @@ static bool can_rec_tel_valid;
 // can TP2.0 variables
 static tp20_states can_tp20_state;
 static uint8_t can_tp20_ecu_addr;
-static uint8_t can_tp20_tester_addr;
 static uint16_t can_tp20_rxid;
 static uint16_t can_tp20_txid;
 static uint8_t can_tp20_block_size;
@@ -2268,7 +2267,6 @@ void can_tp20(bool new_can_msg)
             {
                 can_tp20_state = tp20_send_connect;
                 can_tp20_ecu_addr = temp_buffer[1];
-                can_tp20_tester_addr = temp_buffer[2];
                 can_send_pos = 0;
             }
         }
@@ -2407,16 +2405,16 @@ void can_tp20(bool new_can_msg)
                 if (can_rec_data_len > 0x3F)
                 {
                     temp_buffer[0] = 0x80;
-                    temp_buffer[1] = can_tp20_tester_addr;
-                    temp_buffer[2] = can_tp20_ecu_addr;
+                    temp_buffer[1] = 0x00;
+                    temp_buffer[2] = 0x00;
                     temp_buffer[3] = can_rec_data_len;
                     len = can_rec_data_len + 4;
                 }
                 else
                 {
                     temp_buffer[0] = 0x80 | can_rec_data_len;
-                    temp_buffer[1] = can_tp20_tester_addr;
-                    temp_buffer[2] = can_tp20_ecu_addr;
+                    temp_buffer[1] = 0x00;
+                    temp_buffer[2] = 0x00;
                     len = can_rec_data_len + 3;
                 }
 
