@@ -1195,7 +1195,9 @@ namespace BmwDeepObd
                 {
                     bool cancelled = false;
                     WebClient webClient = new WebClient();
+#pragma warning disable 618
                     SmtpClient smtpClient = new SmtpClient
+#pragma warning restore 618
                     {
                         DeliveryMethod = SmtpDeliveryMethod.Network,
                     };
