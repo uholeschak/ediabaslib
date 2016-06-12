@@ -145,6 +145,8 @@ namespace CarSimulator
             public int SendBlock { get; set; }
             public bool WaitForAck { get; set; }
             public long AckWaitStartTick { get; set; }
+            public bool SendDelay { get; set; }
+            public long SendDelayStartTick { get; set; }
             public List<byte> RecData { get; set; }
             public List<byte[]> SendData { get; }
         }
@@ -2376,6 +2378,18 @@ namespace CarSimulator
                     }
                     if (channel.SendData.Count > 0)
                     {
+                        if (channel.SendDelay)
+                        {
+                            if ((Stopwatch.GetTimestamp() - channel.SendDelayStartTick) > 500*TickResolMs)
+                            {
+                                channel.SendDelay = false;
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+
                         byte[] sendData = channel.SendData[0];
                         sendMsg.ID = (uint)(channel.RxId);
                         sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
@@ -2414,6 +2428,17 @@ namespace CarSimulator
                             // start with next telegram
                             channel.SendPos = 0;
                             channel.SendBlock = 0;
+                            channel.SendDelay = false;
+                            channel.SendDelayStartTick = Stopwatch.GetTimestamp();
+#if true
+                            if (sendData.Length == 3 && sendData[0] == 0x7F && sendData[2] == 0x78)
+                            {
+#if CAN_DEBUG
+                                Debug.WriteLine("Delay NR78");
+#endif
+                                channel.SendDelay = true;
+                            }
+#endif
                             channel.SendData.RemoveAt(0);
                             channel.WaitForAck = true;
                             channel.AckWaitStartTick = Stopwatch.GetTimestamp();
