@@ -316,6 +316,7 @@ static bool can_tp20_telegram_follows;
 void update_led();
 void can_config();
 void reset_comm_states();
+void tp20_disconnect();
 
 inline uint16_t get_systick()
 {
@@ -1572,6 +1573,10 @@ void can_config()
 
 void reset_comm_states()
 {
+    if (op_mode == op_mode_can && can_cfg_protocol == CAN_PROT_TP20)
+    {
+        tp20_disconnect();
+    }
     kline_baud = 0;
     kline_flags = 0;
     kline_interbyte = 0;
@@ -2242,7 +2247,7 @@ void can_tp20(bool new_can_msg)
         can_tp20_state = tp20_idle;
         return;
     }
-    if (((can_tp20_state == tp20_idle) || (can_tp20_state >= tp20_rec_data)) && !PIE1bits.TXIE)
+    if (((can_tp20_state == tp20_idle) || (can_tp20_state >= tp20_send_alive)) && !PIE1bits.TXIE)
     {
         uint16_t len = uart_receive(temp_buffer);
         if (len > 0)
@@ -2254,10 +2259,11 @@ void can_tp20(bool new_can_msg)
             if (can_error())
             {
                 can_config();
+                tp20_disconnect();
             }
-            tp20_disconnect();
             if ((can_cfg_flags & CANF_DISCONNECT) != 0)
             {
+                tp20_disconnect();
                 temp_buffer[0] = 0x82;
                 temp_buffer[1] = 0xF1;
                 temp_buffer[2] = 0xF1;
@@ -2265,11 +2271,29 @@ void can_tp20(bool new_can_msg)
                 temp_buffer[4] = tp20_status_disconnected;
                 temp_buffer[5] = calc_checkum(temp_buffer, 5);
                 uart_send(temp_buffer, 6);
+                return;
+            }
+            if (((can_cfg_flags & CANF_CONNECT_CHECK) != 0) && (can_tp20_state >= tp20_send_data))
+            {
+                temp_buffer[0] = 0x82;
+                temp_buffer[1] = 0xF1;
+                temp_buffer[2] = 0xF1;
+                temp_buffer[3] = 0x7F;  // status message
+                temp_buffer[4] = tp20_status_connected;
+                temp_buffer[5] = calc_checkum(temp_buffer, 5);
+                uart_send(temp_buffer, 6);
+                return;
+            }
+            if ((can_tp20_state == tp20_idle) || (can_tp20_ecu_addr != temp_buffer[1]))
+            {
+                tp20_disconnect();
+                can_tp20_state = tp20_send_connect;
+                can_tp20_ecu_addr = temp_buffer[1];
+                can_send_pos = 0;
             }
             else
             {
-                can_tp20_state = tp20_send_connect;
-                can_tp20_ecu_addr = temp_buffer[1];
+                can_tp20_state = tp20_send_data;
                 can_send_pos = 0;
             }
         }
@@ -2431,7 +2455,7 @@ void can_tp20(bool new_can_msg)
                         can_tp20_state = tp20_send_alive;
                         break;
                     }
-                    // last telegram, disconnect
+                    // last telegram, resport status
                     temp_buffer[0] = 0x82;
                     temp_buffer[1] = 0xF1;
                     temp_buffer[2] = 0xF1;
@@ -2439,7 +2463,9 @@ void can_tp20(bool new_can_msg)
                     temp_buffer[4] = tp20_status_rec_complete;
                     temp_buffer[5] = calc_checkum(temp_buffer, 5);
                     uart_send(temp_buffer, 6);
-                    tp20_disconnect();
+
+                    can_rec_time = get_systick();
+                    can_tp20_state = tp20_send_alive;
                     break;
                 }
                 break;
@@ -2598,7 +2624,8 @@ void can_tp20(bool new_can_msg)
                                     temp_buffer[5] = calc_checkum(temp_buffer, 5);
                                     uart_send(temp_buffer, 6);
 
-                                    tp20_disconnect();
+                                    can_rec_time = get_systick();
+                                    can_tp20_state = tp20_send_alive;
                                     break;
                                 }
                                 can_tp20_state = tp20_send_data;
