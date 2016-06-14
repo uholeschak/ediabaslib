@@ -2094,6 +2094,13 @@ namespace CarSimulator
 #if CAN_DEBUG
             Debug.WriteLine("Rec OK");
 #endif
+            if (dataBuffer.Length == 0)
+            {
+#if CAN_DEBUG
+                Debug.WriteLine("Empty telegram");
+#endif
+                return false;
+            }
             // create BMW-FAST telegram
             if (dataBuffer.Length > 0x3F)
             {

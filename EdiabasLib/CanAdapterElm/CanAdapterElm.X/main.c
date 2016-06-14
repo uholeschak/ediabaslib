@@ -162,9 +162,10 @@
 #define CANF_DISCONNECT         0x08
 
 // CAN baudrates
-#define CAN_BAUD_OFF        0x00
-#define CAN_BAUD_500        0x01
-#define CAN_BAUD_100        0x09
+#define CAN_MODE_OFF        0x00    // K-LINE
+#define CAN_MODE_500        0x01    // CAN 500
+#define CAN_MODE_100        0x09    // CAN 100
+#define CAN_MODE_AUTO       0xFF    // auto K-LINE, CAN mode
 
 // CAN protocols
 #define CAN_PROT_BMW        0x00
@@ -196,6 +197,14 @@ typedef enum
     op_mode_kline,      // K-LINE mode
     op_mode_can,        // CAN mode
 } op_modes;
+
+// interface modes
+typedef enum
+{
+    iface_mode_auto,    // auto detect
+    iface_mode_can,     // CAN mode
+    iface_mode_kline,   // K-LINE mode
+} iface_modes;
 
 // receiver state machine
 typedef enum
@@ -256,6 +265,7 @@ static volatile uint16_t send_len;
 static volatile uint8_t send_buffer[280];   // larger send buffer for multi responses
 
 static op_modes op_mode;        // current operation mode
+static iface_modes iface_mode;  // current interface mode
 
 // K-LINE data
 static uint32_t kline_baud;     // K-line baud rate, 0=115200 (BMW-FAST))
@@ -315,6 +325,7 @@ static bool can_tp20_telegram_follows;
 
 void update_led();
 void can_config();
+bool can_send_message_wait();
 bool internal_telegram(uint8_t *buffer, uint16_t len);
 void reset_comm_states();
 void tp20_disconnect();
@@ -338,7 +349,7 @@ void do_idle()
     if (idle_counter > 2)
     {   // idle
         bool enter_idle = true;
-        if (can_mode)
+        if (can_enabled)
         {
             PIR5 = 0x00;            // clear CAN interrupts
             if (COMSTATbits.FIFOEMPTY)
@@ -1132,9 +1143,20 @@ uint16_t uart_receive(uint8_t *buffer)
     }
     idle_counter = 0;
 
+    uint16_t data_len = 0;
+    if (rec_bt_mode)
+    {
+        data_len = rec_len;
+        if (buffer != NULL)
+        {
+            memcpy(buffer, rec_buffer, data_len);
+            rec_state = rec_state_idle;
+        }
+        return data_len;
+    }
+
     op_modes op_mode_new = op_mode_standard;
     bool can_init_required = false;
-    uint16_t data_len = 0;
     if (rec_buffer[0] == 0x00)
     {   // special mode
         // byte 1: telegram type
@@ -1205,6 +1227,40 @@ uint16_t uart_receive(uint8_t *buffer)
             rec_state = rec_state_idle;
             return 0;
         }
+
+        if (can_mode == CAN_MODE_AUTO && iface_mode == iface_mode_auto)
+        {   // detect interface mode
+            if (buffer != NULL)
+            {
+                return 0;
+            }
+            memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+            can_out_msg.sid = 0x600 | 0xF1;    // source address
+            can_out_msg.dlc.bits.count = 8;
+            can_out_msg.data[0] = 0xF1;        // target address
+            can_out_msg.data[1] = 0x00;        // single frame + length
+
+            can_send_message_wait();
+
+            uint16_t start_tick = get_systick();
+            for (;;)
+            {
+                CLRWDT();
+                update_led();
+                if (can_error())
+                {
+                    iface_mode = iface_mode_kline;
+                    break;
+                }
+                if ((uint16_t) (get_systick() - start_tick) > (100 * TIMER0_RESOL / 1000))
+                {
+                    iface_mode = iface_mode_can;
+                    break;
+                }
+            }
+            can_init_required = true;
+        }
+
         if (buffer != NULL && op_mode != op_mode_standard)
         {   // mode change
             return 0;
@@ -1521,19 +1577,34 @@ void can_config()
         case op_mode_standard:
             switch (can_mode)
             {
-                case CAN_BAUD_OFF:     // can off
+                case CAN_MODE_OFF:     // can off
                     can_enabled = false;
                     break;
 
                 default:
-                case CAN_BAUD_500:     // can 500kb
+                case CAN_MODE_500:     // can 500kb
                     bitrate = 5;
                     can_enabled = true;
                     break;
 
-                case CAN_BAUD_100:     // can 100kb
+                case CAN_MODE_100:     // can 100kb
                     bitrate = 1;
                     can_enabled = true;
+                    break;
+
+                case CAN_MODE_AUTO:    // auto K-LINE, CAN mode
+                    switch (iface_mode)
+                    {
+                        case iface_mode_auto:
+                        case iface_mode_can:
+                            bitrate = 5;
+                            can_enabled = true;
+                            break;
+
+                        default:
+                            can_enabled = false;
+                            break;
+                    }
                     break;
             }
             break;
@@ -1544,7 +1615,7 @@ void can_config()
 
         case op_mode_can:
             can_enabled = true;
-            if (can_cfg_baud == CAN_BAUD_100)
+            if (can_cfg_baud == CAN_MODE_100)
             {
                 bitrate = 1;
             }
@@ -1588,7 +1659,7 @@ void reset_comm_states()
     kline_interbyte = 0;
 
     can_cfg_protocol = CAN_PROT_BMW;
-    can_cfg_baud = CAN_BAUD_500;
+    can_cfg_baud = CAN_MODE_500;
     can_cfg_flags = 0;
     can_cfg_blocksize = 0;
     can_cfg_packet_interval = 0;
@@ -2686,6 +2757,7 @@ void main(void)
     can_send_active = false;
     can_rec_tel_valid = false;
     op_mode = op_mode_standard;
+    iface_mode = iface_mode_auto;
     reset_comm_states();
 
     RCONbits.IPEN = 1;      // interrupt priority enable
