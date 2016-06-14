@@ -315,6 +315,7 @@ static bool can_tp20_telegram_follows;
 
 void update_led();
 void can_config();
+bool internal_telegram(uint8_t *buffer, uint16_t len);
 void reset_comm_states();
 void tp20_disconnect();
 
@@ -1199,6 +1200,11 @@ uint16_t uart_receive(uint8_t *buffer)
     }
     else
     {
+        if (internal_telegram((uint8_t *) rec_buffer, rec_len))
+        {
+            rec_state = rec_state_idle;
+            return 0;
+        }
         if (buffer != NULL && op_mode != op_mode_standard)
         {   // mode change
             return 0;
@@ -1689,81 +1695,83 @@ bool can_send_message_wait()
     return true;
 }
 
-bool internal_telegram(uint16_t len)
+bool internal_telegram(uint8_t *buffer, uint16_t len)
 {
     if ((len == 5) &&
-    (temp_buffer[0] == 0x81) &&
-    (temp_buffer[1] == 0x00) &&
-    (temp_buffer[2] == 0x00))
+    (buffer[0] == 0x81) &&
+    (buffer[1] == 0x00) &&
+    (buffer[2] == 0x00))
     {
-        uint8_t cfg_value = temp_buffer[3];
+        uart_send(buffer, len);
+        uint8_t cfg_value = buffer[3];
         eeprom_write(EEP_ADDR_BAUD, cfg_value);
         eeprom_write(EEP_ADDR_BAUD + 1, ~cfg_value);
         read_eeprom();
         can_config();
-        temp_buffer[3] = ~can_mode;
-        temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
-        uart_send(temp_buffer, len);
+        buffer[3] = ~can_mode;
+        buffer[len - 1] = calc_checkum(buffer, len - 1);
+        uart_send(buffer, len);
         return true;
     }
 
-    if ((temp_buffer[1] == 0xF1) &&
-        (temp_buffer[2] == 0xF1))
+    if ((buffer[1] == 0xF1) &&
+        (buffer[2] == 0xF1))
     {
-        if ((len == 6) && (temp_buffer[3] & 0x7F) == 0x00)
+        uart_send(buffer, len);
+        if ((len == 6) && (buffer[3] & 0x7F) == 0x00)
         {      // block size
-            if ((temp_buffer[3] & 0x80) == 0x00)
+            if ((buffer[3] & 0x80) == 0x00)
             {   // write
-                uint8_t cfg_value = temp_buffer[4];
+                uint8_t cfg_value = buffer[4];
                 eeprom_write(EEP_ADDR_BLOCKSIZE, cfg_value);
                 eeprom_write(EEP_ADDR_BLOCKSIZE + 1, ~cfg_value);
                 read_eeprom();
             }
-            temp_buffer[4] = can_blocksize;
-            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
-            uart_send(temp_buffer, len);
+            buffer[4] = can_blocksize;
+            buffer[len - 1] = calc_checkum(buffer, len - 1);
+            uart_send(buffer, len);
             return true;
         }
-        if ((len == 6) && (temp_buffer[3] & 0x7F) == 0x01)
+        if ((len == 6) && (buffer[3] & 0x7F) == 0x01)
         {      // separation time
-            if ((temp_buffer[3] & 0x80) == 0x00)
+            if ((buffer[3] & 0x80) == 0x00)
             {   // write
-                uint8_t cfg_value = temp_buffer[4];
+                uint8_t cfg_value = buffer[4];
                 eeprom_write(EEP_ADDR_SEP_TIME, cfg_value);
                 eeprom_write(EEP_ADDR_SEP_TIME + 1, ~cfg_value);
                 read_eeprom();
             }
-            temp_buffer[4] = can_sep_time;
-            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
-            uart_send(temp_buffer, len);
+            buffer[4] = can_sep_time;
+            buffer[len - 1] = calc_checkum(buffer, len - 1);
+            uart_send(buffer, len);
             return true;
         }
-        if ((len == 6) && (temp_buffer[3] & 0x7F) == 0x02)
+        if ((len == 6) && (buffer[3] & 0x7F) == 0x02)
         {      // can mode
-            if ((temp_buffer[3] & 0x80) == 0x00)
+            if ((buffer[3] & 0x80) == 0x00)
             {   // write
-                uint8_t cfg_value = temp_buffer[4];
+                uint8_t cfg_value = buffer[4];
                 eeprom_write(EEP_ADDR_BAUD, cfg_value);
                 eeprom_write(EEP_ADDR_BAUD + 1, ~cfg_value);
                 read_eeprom();
                 can_config();
             }
-            temp_buffer[4] = can_mode;
-            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
-            uart_send(temp_buffer, len);
+            buffer[4] = can_mode;
+            buffer[len - 1] = calc_checkum(buffer, len - 1);
+            uart_send(buffer, len);
             return true;
         }
-        if ((len >= 6) && (temp_buffer[3] & 0x7F) == 0x04)
+        if ((len >= 6) && (buffer[3] & 0x7F) == 0x04)
         {      // bt pin
 #if ADAPTER_TYPE != 0x02
-            if ((temp_buffer[3] & 0x80) == 0x00)
+            if ((buffer[3] & 0x80) == 0x00)
             {   // write
                 for (uint8_t i = 0; i < sizeof(pin_buffer); i++)
                 {
                     uint8_t cfg_value = 0;
                     if (i < (len - 5))
                     {
-                        cfg_value = temp_buffer[4 + i];
+                        cfg_value = buffer[4 + i];
                     }
                     eeprom_write(EEP_ADDR_BT_PIN + i, cfg_value);
                 }
@@ -1773,27 +1781,27 @@ bool internal_telegram(uint16_t len)
 #endif
                 read_eeprom();
             }
-            memcpy(temp_buffer + 4, pin_buffer, sizeof(pin_buffer));
+            memcpy(buffer + 4, pin_buffer, sizeof(pin_buffer));
             len = 5 + sizeof(pin_buffer);
 #else
             len = 5;    // no pin
 #endif
-            temp_buffer[0] = 0x80 + len - 4;
-            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
-            uart_send(temp_buffer, len);
+            buffer[0] = 0x80 + len - 4;
+            buffer[len - 1] = calc_checkum(buffer, len - 1);
+            uart_send(buffer, len);
             return true;
         }
-        if ((len >= 6) && (temp_buffer[3] & 0x7F) == 0x05)
+        if ((len >= 6) && (buffer[3] & 0x7F) == 0x05)
         {      // bt name
 #if ADAPTER_TYPE != 0x02
-            if ((temp_buffer[3] & 0x80) == 0x00)
+            if ((buffer[3] & 0x80) == 0x00)
             {   // write
                 for (uint8_t i = 0; i < sizeof(name_buffer); i++)
                 {
                     uint8_t cfg_value = 0;
                     if (i < (len - 5))
                     {
-                        cfg_value = temp_buffer[4 + i];
+                        cfg_value = buffer[4 + i];
                     }
                     eeprom_write(EEP_ADDR_BT_NAME + i, cfg_value);
                 }
@@ -1803,59 +1811,59 @@ bool internal_telegram(uint16_t len)
 #endif
                 read_eeprom();
             }
-            memcpy(temp_buffer + 4, name_buffer, sizeof(name_buffer));
+            memcpy(buffer + 4, name_buffer, sizeof(name_buffer));
             len = 5 + sizeof(name_buffer);
 #else
             len = 5;    // no name
 #endif
-            temp_buffer[0] = 0x80 + len - 4;
-            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
-            uart_send(temp_buffer, len);
+            buffer[0] = 0x80 + len - 4;
+            buffer[len - 1] = calc_checkum(buffer, len - 1);
+            uart_send(buffer, len);
             return true;
         }
-        if ((len == 6) && (temp_buffer[3] == 0xFB) && (temp_buffer[4] == 0xFB))
+        if ((len == 6) && (buffer[3] == 0xFB) && (buffer[4] == 0xFB))
         {      // read id location
-            temp_buffer[0] = 0x89;
+            buffer[0] = 0x89;
             const uint8_t far *id_loc=(const uint8_t far *) ID_LOCATION;
             for (uint8_t i = 0; i < 8; i++)
             {
-                temp_buffer[4 + i] = (*id_loc++);
+                buffer[4 + i] = (*id_loc++);
             }
             len = 13;
-            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
-            uart_send(temp_buffer, len);
+            buffer[len - 1] = calc_checkum(buffer, len - 1);
+            uart_send(buffer, len);
             return true;
         }
-        if ((len == 6) && (temp_buffer[3] == 0xFC) && (temp_buffer[4] == 0xFC))
+        if ((len == 6) && (buffer[3] == 0xFC) && (buffer[4] == 0xFC))
         {      // read Vbat
             ADCON0bits.GODONE = 1;
             while (ADCON0bits.GODONE) {}
-            temp_buffer[4] = (((int16_t) ADRES) * 50l * 6l / 4096l); // Voltage*10
-            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
-            uart_send(temp_buffer, len);
+            buffer[4] = (((int16_t) ADRES) * 50l * 6l / 4096l); // Voltage*10
+            buffer[len - 1] = calc_checkum(buffer, len - 1);
+            uart_send(buffer, len);
             return true;
         }
-        if ((len == 6) && (temp_buffer[3] == 0xFD) && (temp_buffer[4] == 0xFD))
+        if ((len == 6) && (buffer[3] == 0xFD) && (buffer[4] == 0xFD))
         {      // read adapter type and version
-            temp_buffer[0] = 0x85;
-            temp_buffer[4] = ADAPTER_TYPE >> 8;
-            temp_buffer[5] = ADAPTER_TYPE;
-            temp_buffer[6] = ADAPTER_VERSION >> 8;
-            temp_buffer[7] = ADAPTER_VERSION;
+            buffer[0] = 0x85;
+            buffer[4] = ADAPTER_TYPE >> 8;
+            buffer[5] = ADAPTER_TYPE;
+            buffer[6] = ADAPTER_VERSION >> 8;
+            buffer[7] = ADAPTER_VERSION;
             len = 9;
-            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
-            uart_send(temp_buffer, len);
+            buffer[len - 1] = calc_checkum(buffer, len - 1);
+            uart_send(buffer, len);
             return true;
         }
-        if ((len == 6) && (temp_buffer[3] == 0xFE) && (temp_buffer[4] == 0xFE))
+        if ((len == 6) && (buffer[3] == 0xFE) && (buffer[4] == 0xFE))
         {      // read ignition state
-            temp_buffer[4] = IGNITION_STATE() ? 0x01 : 0x00;
-            temp_buffer[4] |= 0x80;     // invalid mark
-            temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
-            uart_send(temp_buffer, len);
+            buffer[4] = IGNITION_STATE() ? 0x01 : 0x00;
+            buffer[4] |= 0x80;     // invalid mark
+            buffer[len - 1] = calc_checkum(buffer, len - 1);
+            uart_send(buffer, len);
             return true;
         }
-        if ((temp_buffer[3] == 0xFF) && (temp_buffer[4] == 0xFF))
+        if ((buffer[3] == 0xFF) && (buffer[4] == 0xFF))
         {      // reset command
             RESET();
             return true;
@@ -1879,10 +1887,6 @@ void can_sender(bool new_can_msg)
             if ((kline_flags & KLINEF_NO_ECHO) == 0)
             {
                 uart_send(temp_buffer, len);
-            }
-            if (internal_telegram(len))
-            {
-                return;
             }
             can_send_active = true;
             can_send_wait_sep_time = false;
@@ -2874,11 +2878,8 @@ void main(void)
                     {
                         uart_send(temp_buffer, len);
                     }
-                    if (!internal_telegram(len))
-                    {
-                        kline_send(temp_buffer, len);
-                        kline_receive();
-                    }
+                    kline_send(temp_buffer, len);
+                    kline_receive();
                 }
             }
         }
