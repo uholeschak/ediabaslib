@@ -266,6 +266,7 @@
   <string name="can_adapter_fw_update_ok">Обновление прошивки успешно завершено</string>
   <string name="button_can_adapter_read">Считать</string>
   <string name="button_can_adapter_write">Сохранить</string>
+  <string name="button_can_adapter_can_auto">Автоматический</string>
   <string name="button_can_adapter_can_500">D-CAN (после 3/2007)</string>
   <string name="button_can_adapter_can_100">K-CAN (не стандарт)</string>
   <string name="button_can_adapter_can_off">K-LINE (до 3/2007)</string>

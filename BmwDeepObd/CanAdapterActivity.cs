@@ -25,9 +25,10 @@ namespace BmwDeepObd
 
         private enum AdapterMode
         {
-            CanOff = 0,
-            Can500 = 1,
-            Can100 = 9,
+            CanOff = 0x00,
+            Can500 = 0x01,
+            Can100 = 0x09,
+            CanAuto = 0xFF,
         }
 
         private InputMethodManager _imm;
@@ -391,6 +392,10 @@ namespace BmwDeepObd
                         expertMode = true;
                     }
                     _spinnerCanAdapterModeAdapter.Items.Clear();
+                    if (_adapterType >= 0x0002 && _fwVersion >= 0x0008)
+                    {
+                        _spinnerCanAdapterModeAdapter.Items.Add(new StringObjType(GetString(Resource.String.button_can_adapter_can_auto), AdapterMode.CanAuto));
+                    }
                     _spinnerCanAdapterModeAdapter.Items.Add(new StringObjType(GetString(Resource.String.button_can_adapter_can_500), AdapterMode.Can500));
                     if (expertMode)
                     {

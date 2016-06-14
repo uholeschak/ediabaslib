@@ -171,7 +171,6 @@
 #define CAN_PROT_BMW        0x00
 #define CAN_PROT_TP20       0x01
 
-#define CAN_MODE            1       // default can mode (1=500kb)
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
 #define CAN_MIN_SEP_TIME    0       // min separation time (ms)
 #define CAN_TIMEOUT         1000    // can receive timeout (1ms)
@@ -1680,7 +1679,8 @@ void read_eeprom()
 
     temp_value1 = eeprom_read(EEP_ADDR_BAUD);
     temp_value2 = eeprom_read(EEP_ADDR_BAUD + 1);
-    can_mode = CAN_MODE;
+    can_mode = CAN_MODE_AUTO;
+    iface_mode = iface_mode_auto;
     if ((~temp_value1 & 0xFF) == temp_value2)
     {
         can_mode = temp_value1;
