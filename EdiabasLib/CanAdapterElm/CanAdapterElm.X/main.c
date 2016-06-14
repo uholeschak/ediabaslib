@@ -1234,6 +1234,8 @@ uint16_t uart_receive(uint8_t *buffer)
             {
                 return 0;
             }
+            can_config();
+
             memset(&can_out_msg, 0x00, sizeof(can_out_msg));
             can_out_msg.sid = 0x600 | 0xF1;    // source address
             can_out_msg.dlc.bits.count = 8;
@@ -1252,7 +1254,7 @@ uint16_t uart_receive(uint8_t *buffer)
                     iface_mode = iface_mode_kline;
                     break;
                 }
-                if ((uint16_t) (get_systick() - start_tick) > (100 * TIMER0_RESOL / 1000))
+                if ((uint16_t) (get_systick() - start_tick) > (20 * TIMER0_RESOL / 1000))
                 {
                     iface_mode = iface_mode_can;
                     break;
