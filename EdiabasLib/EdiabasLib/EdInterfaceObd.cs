@@ -29,6 +29,13 @@ namespace EdiabasLib
             Tp20 = 1,
         }
 
+        protected enum KwpModes
+        {
+            Undefined,
+            Kwp2000,
+            Iso9141,
+        }
+
         protected enum CommThreadCommands
         {
             Idle,               // do nothing
@@ -133,6 +140,7 @@ namespace EdiabasLib
         protected byte[] Iso9141BlockBuffer = new byte[1];
         protected Dictionary<byte, int> Nr78Dict = new Dictionary<byte, int>();
         protected bool EcuConnected;
+        protected KwpModes KwpMode;
         protected long LastCommTick;
         protected long LastResponseTick;
         protected int CurrentBaudRate;
@@ -271,6 +279,7 @@ namespace EdiabasLib
                 KeyBytesProtected = ByteArray0;
                 Nr78Dict.Clear();
                 EcuConnected = false;
+                KwpMode = KwpModes.Undefined;
                 // don't init lastCommTick here
                 LastResponseTick = DateTime.MinValue.Ticks;
                 BlockCounter = 0;
@@ -2417,12 +2426,14 @@ namespace EdiabasLib
 
         private EdiabasNet.ErrorCodes TransKwp2000(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
+            List<byte> keyBytesList = null;
             receiveLength = 0;
 
             if (!EcuConnected)
             {
+                KwpMode = KwpModes.Undefined;
                 KeyBytesProtected = ByteArray0;
-                List<byte> keyBytesList = new List<byte>();
+                keyBytesList = new List<byte>();
                 while ((Stopwatch.GetTimestamp() - LastCommTick) < (ParEdicW5 + 1000) * TickResolMs)  // offset for simulator
                 {
                     Thread.Sleep(10);
@@ -2565,6 +2576,17 @@ namespace EdiabasLib
 
                 LastCommTick = Stopwatch.GetTimestamp();
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Key bytes: {0:X02} {1:X02}", Iso9141Buffer[0], Iso9141Buffer[1]);
+                if (Iso9141Buffer[1] == 0x8F)
+                {
+                    KwpMode = KwpModes.Kwp2000;
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "KWP2000 protocol");
+                }
+                else
+                {
+                    KwpMode = KwpModes.Iso9141;
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "ISO9141 protocol");
+                }
+
                 Iso9141Buffer[0] = (byte)(~Iso9141Buffer[1]);
                 if (!SendData(Iso9141Buffer, 1, ParSendSetDtr))
                 {
@@ -2572,24 +2594,59 @@ namespace EdiabasLib
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending key byte response failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
-
                 LastCommTick = Stopwatch.GetTimestamp();
-                if (!ReceiveData(Iso9141Buffer, 0, 1, ParEdicW4, ParEdicW4))
-                {
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No wake address received");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-                }
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Wake address byte: {0:X02}", Iso9141Buffer[0]);
-                if (ParEdicWakeAddress != (byte) (~Iso9141Buffer[0]))
-                {
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Invalid wake address received");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-                }
-                EcuConnected = true;
 
-                KeyBytesProtected = keyBytesList.ToArray();
-                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, KeyBytesProtected, 0, KeyBytesProtected.Length, "ID bytes");
+                EdiabasNet.ErrorCodes errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0014;   // concept not implemented
+                switch (KwpMode)
+                {
+                    case KwpModes.Kwp2000:
+                        errorCode = InitKwp2000(ref keyBytesList);
+                        break;
+
+                    case KwpModes.Iso9141:
+                        errorCode = InitIso9141(ref keyBytesList);
+                        break;
+                }
+                if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    return errorCode;
+                }
             }
+            switch (KwpMode)
+            {
+                case KwpModes.Kwp2000:
+                    return ProcessKwp2000(sendData, sendDataLength, ref receiveData, out receiveLength);
+
+                case KwpModes.Iso9141:
+                    return ProcessIso9141(sendData, sendDataLength, ref receiveData, out receiveLength, ref keyBytesList);
+            }
+            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0014;   // concept not implemented
+        }
+
+        private EdiabasNet.ErrorCodes InitKwp2000(ref List<byte> keyBytesList)
+        {
+            if (!ReceiveData(Iso9141Buffer, 0, 1, ParEdicW4, ParEdicW4))
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No wake address received");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Wake address byte: {0:X02}", Iso9141Buffer[0]);
+            if (ParEdicWakeAddress != (byte)(~Iso9141Buffer[0]))
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Invalid wake address received");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+            EcuConnected = true;
+
+            KeyBytesProtected = keyBytesList.ToArray();
+            EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, KeyBytesProtected, 0, KeyBytesProtected.Length, "ID bytes");
+            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+        }
+
+        private EdiabasNet.ErrorCodes ProcessKwp2000(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
+        {
+            receiveLength = 0;
+
             if (sendDataLength == 0)
             {
                 return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
@@ -2618,6 +2675,176 @@ namespace EdiabasLib
                     receiveLength += tempRecLen;
                 }
             }
+        }
+
+        private EdiabasNet.ErrorCodes InitIso9141(ref List<byte> keyBytesList)
+        {
+            BlockCounter = 1;
+
+            keyBytesList[2] = 0x00;
+            Thread.Sleep(10);
+            EdiabasNet.ErrorCodes errorCode = ReceiveIso9141Block(Iso9141Buffer, true);
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                return errorCode;
+            }
+            LastIso9141Cmd = Iso9141Buffer[2];
+            BlockCounter++;
+            if (EdicSimulation || (LastIso9141Cmd != 0x09))
+            {
+                // store key bytes
+                int dataLen = Iso9141Buffer[0] + 1;
+                for (int i = 0; i < dataLen; i++)
+                {
+                    keyBytesList.Add(Iso9141Buffer[i]);
+                }
+            }
+            EcuConnected = true;
+            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+        }
+
+        private EdiabasNet.ErrorCodes ProcessIso9141(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, ref List<byte> keyBytesList)
+        {
+            receiveLength = 0;
+
+            if (sendDataLength > Iso9141Buffer.Length)
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Invalid send data length");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+            }
+
+            EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendDataLength, "Request");
+            int recLength = 0;
+            int recBlocks = 0;
+            int maxRecBlocks = CommAnswerLenProtected[0];
+
+            int waitToSendCount = 0;
+            bool waitToSend = true;
+            bool transmitDone = false;
+            for (;;)
+            {
+                bool sendDataValid = false;
+                if (LastIso9141Cmd == 0x09)
+                {   // ack
+                    if (waitToSend)
+                    {
+                        waitToSend = false;
+                        if (sendDataLength > 0)
+                        {
+                            Array.Copy(sendData, Iso9141Buffer, sendDataLength);
+                            sendDataValid = true;
+                        }
+                        else
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Receive ID finished");
+                            transmitDone = true;
+                        }
+                    }
+                    else
+                    {
+                        if (recBlocks > 0)
+                        {
+                            // at least one block received
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Transmission finished");
+                            transmitDone = true;
+                        }
+                    }
+                }
+
+                if (waitToSend)
+                {
+                    waitToSendCount++;
+                    if (waitToSendCount > 1000)
+                    {
+                        EcuConnected = false;
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Wait for first ACK failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
+                }
+                if (sendDataValid)
+                {
+#if false
+                    // EDIABAS seems not to respect the regeneration time
+                    while ((Stopwatch.GetTimestamp() - this.lastResponseTick) < this.parRegenTime * tickResolMs)
+                    {
+                        Thread.Sleep(10);
+                    }
+#endif
+                }
+                else
+                {
+                    Iso9141Buffer[0] = 0x03;    // block length
+                    Iso9141Buffer[2] = 0x09;    // ACK
+                }
+
+                Thread.Sleep(50);
+
+                LastCommTick = Stopwatch.GetTimestamp();
+                Iso9141Buffer[1] = BlockCounter++;
+                EdiabasNet.ErrorCodes errorCode = SendIso9141Block(Iso9141Buffer, true);
+                if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EcuConnected = false;
+                    return errorCode;
+                }
+
+                LastCommTick = Stopwatch.GetTimestamp();
+                errorCode = ReceiveIso9141Block(Iso9141Buffer, true);
+                if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EcuConnected = false;
+                    return errorCode;
+                }
+                BlockCounter++;
+                LastIso9141Cmd = Iso9141Buffer[2];
+
+                if (!waitToSend)
+                {   // store received data
+                    if ((recBlocks == 0) || (LastIso9141Cmd != 0x09))
+                    {
+                        int blockLen = Iso9141Buffer[0];
+                        if (recLength + blockLen > receiveData.Length)
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receive buffer overflow, ignore data");
+                            transmitDone = true;
+                        }
+                        Array.Copy(Iso9141Buffer, 0, receiveData, recLength, blockLen);
+                        recLength += blockLen;
+                        recBlocks++;
+                        if (recBlocks >= maxRecBlocks)
+                        {   // all blocks received
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "All blocks received");
+                            transmitDone = true;
+                        }
+                    }
+                }
+                else
+                {
+                    if ((keyBytesList != null) && (EdicSimulation || (LastIso9141Cmd != 0x09)))
+                    {   // store key bytes
+                        int dataLen = Iso9141Buffer[0] + 1;
+                        for (int i = 0; i < dataLen; i++)
+                        {
+                            keyBytesList.Add(Iso9141Buffer[i]);
+                        }
+                    }
+                }
+                if (transmitDone)
+                {
+                    break;
+                }
+            }
+
+            if (keyBytesList != null)
+            {
+                KeyBytesProtected = keyBytesList.ToArray();
+                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, KeyBytesProtected, 0, KeyBytesProtected.Length, "ID bytes");
+            }
+
+            LastResponseTick = Stopwatch.GetTimestamp();
+            receiveLength = recLength;
+            EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, receiveLength, "Answer");
+            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
         private EdiabasNet.ErrorCodes TransKwp2000(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, bool enableLogging)
@@ -2766,24 +2993,32 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
 
-            while ((Stopwatch.GetTimestamp() - LastCommTick) < ParEdicTesterPresentTime * TickResolMs)
+            switch (KwpMode)
             {
-                return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
-            }
+                case KwpModes.Kwp2000:
+                    while ((Stopwatch.GetTimestamp() - LastCommTick) < ParEdicTesterPresentTime * TickResolMs)
+                    {
+                        return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                    }
 
-            if (ParEdicTesterPresentTelLen > 0)
-            {
-                int receiveLength;
-                EdiabasNet.ErrorCodes errorCode = TransKwp2000(ParEdicTesterPresentTel, ParEdicTesterPresentTelLen, ref Iso9141Buffer, out receiveLength, false);
-                if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
-                {
-                    EcuConnected = false;
-                    return errorCode;
-                }
-            }
+                    if (ParEdicTesterPresentTelLen > 0)
+                    {
+                        int receiveLength;
+                        EdiabasNet.ErrorCodes errorCode = TransKwp2000(ParEdicTesterPresentTel, ParEdicTesterPresentTelLen, ref Iso9141Buffer, out receiveLength, false);
+                        if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                        {
+                            EcuConnected = false;
+                            return errorCode;
+                        }
+                    }
 
-            LastCommTick = Stopwatch.GetTimestamp();
-            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                    LastCommTick = Stopwatch.GetTimestamp();
+                    return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+
+                case KwpModes.Iso9141:
+                    return IdleIso9141();
+            }
+            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0014;   // concept not implemented
         }
 
         private EdiabasNet.ErrorCodes FinishKwp2000()
@@ -2793,17 +3028,27 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
 
-            int receiveLength;
-            byte[] finishTel = {0x81, ParEdicEcuAddress, ParEdicTesterAddress, 0x82, 0x00};
-            EdiabasNet.ErrorCodes errorCode = TransKwp2000(finishTel, finishTel.Length - 1, ref Iso9141Buffer, out receiveLength, false);
-            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            switch (KwpMode)
             {
-                EcuConnected = false;
-                return errorCode;
-            }
+                case KwpModes.Kwp2000:
+                {
+                    int receiveLength;
+                    byte[] finishTel = {0x81, ParEdicEcuAddress, ParEdicTesterAddress, 0x82, 0x00};
+                    EdiabasNet.ErrorCodes errorCode = TransKwp2000(finishTel, finishTel.Length - 1, ref Iso9141Buffer, out receiveLength, false);
+                    if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                    {
+                        EcuConnected = false;
+                        return errorCode;
+                    }
 
-            EcuConnected = false;
-            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                    EcuConnected = false;
+                    return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                }
+
+                case KwpModes.Iso9141:
+                    return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+            }
+            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0014;   // concept not implemented
         }
 
         private EdiabasNet.ErrorCodes TransTp20(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
