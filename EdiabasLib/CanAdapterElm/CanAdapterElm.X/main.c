@@ -267,10 +267,11 @@ static op_modes op_mode;        // current operation mode
 static iface_modes iface_mode;  // current interface mode
 
 // K-LINE data
-static uint32_t kline_baud;     // K-line baud rate, 0=115200 (BMW-FAST))
-static uint8_t kline_flags;     // K-line flags
-static uint8_t kline_interbyte; // K-line interbyte time [ms]
-static uint8_t kline_bit_delay; // K-line read bit delay
+static uint32_t kline_baud;         // K-line baud rate, 0=115200 (BMW-FAST))
+static uint8_t kline_flags;         // K-line flags
+static uint8_t kline_interbyte;     // K-line interbyte time [ms]
+static uint8_t kline_bit_delay;     // K-line read bit delay
+static uint8_t kline_auto_response; // K-line auto response counter
 
 // CAN data
 static uint8_t can_cfg_protocol;    // CAN protocol
@@ -409,6 +410,7 @@ void kline_baud_cfg()
 
 bool kline_baud_detect()
 {
+    kline_auto_response = 0;
     if (kline_baud != 2)
     {
         return true;
@@ -505,6 +507,7 @@ bool kline_baud_detect()
     if (baud_rate != 0)
     {
         kline_baud = baud_rate;
+        kline_auto_response = 2;
         ei();
         return true;
     }
@@ -1020,6 +1023,33 @@ void kline_receive()
                 {   // transmitter empty
                     start_kline_rec_timer();
                     TXREG = *read_ptr;
+                    if (kline_auto_response != 0)
+                    {
+                        start_kline_rec_timer();
+                        kline_auto_response--;
+                        start_kline_rec_timer();
+                        if (kline_auto_response == 0)
+                        {   // last key byte received
+                            ei();
+                            // delay execution
+                            uint16_t start_tick = get_systick();
+                            uint16_t compare_tick = 40 * TIMER0_RESOL / 1000;
+                            while ((uint16_t) (get_systick() - start_tick) < compare_tick)
+                            {
+                                CLRWDT();
+                            }
+                            // send back inverted data
+                            kline_flags = kline_flags & (KLINEF_PARITY_MASK | KLINEF_NO_ECHO);
+                            temp_buffer_short[0] = ~(*read_ptr);
+                            kline_send(temp_buffer_short, 1);
+                            di();
+                            // continue receiving
+                            kline_baud_cfg();
+                            PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
+                            INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
+                            idle_counter = 0;
+                        }
+                    }
                     start_kline_rec_timer();
                     read_ptr++;
                     start_kline_rec_timer();
@@ -1185,6 +1215,7 @@ uint16_t uart_receive(uint8_t *buffer)
                 }
                 op_mode_new = op_mode_kline;
             }
+            kline_auto_response = 0;
         }
         else if (rec_buffer[1] == 0x01)
         {   // CAN telegram
@@ -1658,6 +1689,7 @@ void reset_comm_states()
     kline_baud = 0;
     kline_flags = 0;
     kline_interbyte = 0;
+    kline_auto_response = 0;
 
     can_cfg_protocol = CAN_PROT_BMW;
     can_cfg_baud = CAN_MODE_500;

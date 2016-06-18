@@ -2588,12 +2588,16 @@ namespace EdiabasLib
                 keyBytesList.Add((byte)CurrentBaudRate);
                 keyBytesList.Add((byte)(CurrentBaudRate >> 8));
 
-                Iso9141Buffer[0] = (byte)(~Iso9141Buffer[1]);
-                if (!SendData(Iso9141Buffer, 1, ParSendSetDtr))
+                Thread.Sleep(ParEdicW4A);
+                if (!HasAutoBaudRate)
                 {
-                    EcuConnected = false;
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending key byte response failed");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    Iso9141Buffer[0] = (byte) (~Iso9141Buffer[1]);
+                    if (!SendData(Iso9141Buffer, 1, ParSendSetDtr))
+                    {
+                        EcuConnected = false;
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending key byte response failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    }
                 }
                 LastCommTick = Stopwatch.GetTimestamp();
 
@@ -3435,12 +3439,16 @@ namespace EdiabasLib
 
                 LastCommTick = Stopwatch.GetTimestamp();
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Key bytes: {0:X02} {1:X02}", Iso9141Buffer[0], Iso9141Buffer[1]);
-                Iso9141Buffer[0] = (byte)(~Iso9141Buffer[1]);
-                //Thread.Sleep(10);
-                if (!SendData(Iso9141Buffer, 1, ParSendSetDtr))
+
+                Thread.Sleep(40);
+                if (!HasAutoBaudRate)
                 {
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending key byte response failed");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    Iso9141Buffer[0] = (byte) (~Iso9141Buffer[1]);
+                    if (!SendData(Iso9141Buffer, 1, ParSendSetDtr))
+                    {
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending key byte response failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    }
                 }
                 LastCommTick = Stopwatch.GetTimestamp();
 
