@@ -43,6 +43,7 @@ namespace EdiabasLib
             }
             FastInit = false;
             ConvertBaudResponse = false;
+            AutoKeyByteResponse = false;
             AdapterType = -1;
             AdapterVersion = -1;
             LastCommTick = DateTime.MinValue.Ticks;
@@ -303,6 +304,7 @@ namespace EdiabasLib
         public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
         {
             ConvertBaudResponse = false;
+            AutoKeyByteResponse = false;
             if ((_bluetoothSocket == null) || (_bluetoothOutStream == null))
             {
                 return false;
@@ -400,7 +402,9 @@ namespace EdiabasLib
         public static bool InterfaceReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog)
         {
             bool convertBaudResponse = ConvertBaudResponse;
+            bool autoKeyByteResponse = AutoKeyByteResponse;
             ConvertBaudResponse = false;
+            AutoKeyByteResponse = false;
 
             if ((_bluetoothSocket == null) || (_bluetoothInStream == null))
             {
@@ -441,6 +445,7 @@ namespace EdiabasLib
                 {
                     Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Convert baud response");
                     length = 1;
+                    AutoKeyByteResponse = true;
                 }
                 int recLen = 0;
                 long startTime = Stopwatch.GetTimestamp();
@@ -470,6 +475,18 @@ namespace EdiabasLib
                 if (convertBaudResponse)
                 {
                     ConvertStdBaudResponse(receiveData, offset);
+                }
+                if (autoKeyByteResponse && length == 2)
+                {   // auto key byte response for old adapter
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Auto key byte response");
+                    byte[] keyByteResponse = { (byte)~receiveData[offset + 1] };
+                    byte[] adapterTel = CreateAdapterTelegram(keyByteResponse, keyByteResponse.Length, true);
+                    if (adapterTel == null)
+                    {
+                        return false;
+                    }
+                    _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
+                    LastCommTick = Stopwatch.GetTimestamp();
                 }
             }
             catch (Exception ex)

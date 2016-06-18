@@ -53,6 +53,8 @@ namespace EdiabasLib
 
         public static bool ConvertBaudResponse { get; protected set; }
 
+        public static bool AutoKeyByteResponse { get; protected set; }
+
         public static int AdapterType { get; protected set; }
 
         public static int AdapterVersion { get; protected set; }
@@ -140,6 +142,7 @@ namespace EdiabasLib
         public static byte[] CreatePulseTelegram(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines)
         {
             ConvertBaudResponse = false;
+            AutoKeyByteResponse = false;
             if ((AdapterType < 0x0002) || (AdapterVersion < 0x0007))
             {
                 if (Ediabas != null)
@@ -209,6 +212,7 @@ namespace EdiabasLib
         public static byte[] CreateCanTelegram(byte[] sendData, int length)
         {
             ConvertBaudResponse = false;
+            AutoKeyByteResponse = false;
             if ((AdapterType < 0x0002) || (AdapterVersion < 0x0008))
             {
                 if (Ediabas != null)

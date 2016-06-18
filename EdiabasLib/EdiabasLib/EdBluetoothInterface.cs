@@ -35,6 +35,7 @@ namespace EdiabasLib
             }
             FastInit = false;
             ConvertBaudResponse = false;
+            AutoKeyByteResponse = false;
             AdapterType = -1;
             AdapterVersion = -1;
             LastCommTick = DateTime.MinValue.Ticks;
@@ -183,6 +184,7 @@ namespace EdiabasLib
         public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
         {
             ConvertBaudResponse = false;
+            AutoKeyByteResponse = false;
             if (!SerialPort.IsOpen)
             {
                 Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Port closed");
@@ -260,7 +262,9 @@ namespace EdiabasLib
             int timeoutTelEnd, EdiabasNet ediabasLog)
         {
             bool convertBaudResponse = ConvertBaudResponse;
+            bool autoKeyByteResponse = AutoKeyByteResponse;
             ConvertBaudResponse = false;
+            AutoKeyByteResponse = false;
 
             if (!SerialPort.IsOpen)
             {
@@ -313,6 +317,7 @@ namespace EdiabasLib
                 {
                     Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Convert baud response");
                     length = 1;
+                    AutoKeyByteResponse = true;
                 }
                 int recLen = 0;
                 StopWatch.Reset();
@@ -360,6 +365,18 @@ namespace EdiabasLib
                 if (convertBaudResponse)
                 {
                     ConvertStdBaudResponse(receiveData, offset);
+                }
+                if (autoKeyByteResponse && length == 2)
+                {   // auto key byte response for old adapter
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Auto key byte response");
+                    byte[] keyByteResponse = { (byte) ~receiveData[offset + 1] };
+                    byte[] adapterTel = CreateAdapterTelegram(keyByteResponse, keyByteResponse.Length, true);
+                    if (adapterTel == null)
+                    {
+                        return false;
+                    }
+                    SerialPort.Write(adapterTel, 0, adapterTel.Length);
+                    LastCommTick = Stopwatch.GetTimestamp();
                 }
             }
             catch (Exception ex)
