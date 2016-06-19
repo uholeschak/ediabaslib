@@ -139,7 +139,7 @@ namespace EdiabasLib
             return resultArray;
         }
 
-        public static byte[] CreatePulseTelegram(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines)
+        public static byte[] CreatePulseTelegram(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines, int autoKeyByteDelay)
         {
             ConvertBaudResponse = false;
             AutoKeyByteResponse = false;
@@ -205,7 +205,7 @@ namespace EdiabasLib
             {
                 resultArray[10 + i] = (byte)(dataBits >> (i << 3));
             }
-            resultArray[resultArray.Length - 2] = 40;   // W4 auto key byte response delay [ms], 0 = off
+            resultArray[resultArray.Length - 2] = (byte)autoKeyByteDelay;   // W4 auto key byte response delay [ms], 0 = off
             resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
             return resultArray;
         }
