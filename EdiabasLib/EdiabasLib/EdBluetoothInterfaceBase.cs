@@ -178,7 +178,7 @@ namespace EdiabasLib
             ConvertBaudResponse = (AdapterVersion < 0x0008) && (CurrentBaudRate == EdInterfaceBase.BaudAuto);
 
             int dataBytes = (length + 7) >> 3;
-            byte[] resultArray = new byte[dataBytes + 2 + 9];
+            byte[] resultArray = new byte[dataBytes + 2 + 1 + 9];
             resultArray[0] = 0x00;   // header
             resultArray[1] = 0x00;   // telegram type
 
@@ -198,13 +198,14 @@ namespace EdiabasLib
             resultArray[4] = flags;                 // flags
             resultArray[5] = (byte)InterByteTime;   // interbyte time
             resultArray[6] = 0x00;                  // telegram length high
-            resultArray[7] = (byte)(dataBytes + 2); // telegram length low
+            resultArray[7] = (byte)(dataBytes + 2 + 1); // telegram length low
             resultArray[8] = (byte)pulseWidth;
             resultArray[9] = (byte)length;
             for (int i = 0; i < dataBytes; i++)
             {
                 resultArray[10 + i] = (byte)(dataBits >> (i << 3));
             }
+            resultArray[resultArray.Length - 2] = 40;   // W4 auto key byte response delay [ms], 0 = off
             resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
             return resultArray;
         }

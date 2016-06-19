@@ -271,6 +271,7 @@ static uint32_t kline_baud;         // K-line baud rate, 0=115200 (BMW-FAST))
 static uint8_t kline_flags;         // K-line flags
 static uint8_t kline_interbyte;     // K-line interbyte time [ms]
 static uint8_t kline_bit_delay;     // K-line read bit delay
+static uint8_t kline_auto_delay;    // K-line auto response W4 delay [ms], 0 = off
 static uint8_t kline_auto_response; // K-line auto response counter
 
 // CAN data
@@ -507,7 +508,10 @@ bool kline_baud_detect()
     if (baud_rate != 0)
     {
         kline_baud = baud_rate;
-        kline_auto_response = 2;
+        if (kline_auto_delay > 0)
+        {
+            kline_auto_response = 2;
+        }
         ei();
         return true;
     }
@@ -607,6 +611,11 @@ void kline_send(uint8_t *buffer, uint16_t count)
         {
             uint16_t compare_tick = buffer[0] * TIMER0_RESOL / 1000;
             uint8_t bit_count = buffer[1];
+            uint8_t byte_count = (bit_count + 7) >> 3;
+            if (count > byte_count + 2)
+            {   // W4 delay specified
+                kline_auto_delay = buffer[byte_count + 2];
+            }
             ptr = buffer + 2;
             uint8_t out_data;
             LED_OBD_TX = 0;         // on
@@ -1033,7 +1042,7 @@ void kline_receive()
                             ei();
                             // delay execution
                             uint16_t start_tick = get_systick();
-                            uint16_t compare_tick = 40 * TIMER0_RESOL / 1000;
+                            uint16_t compare_tick = kline_auto_delay * TIMER0_RESOL / 1000;
                             while ((uint16_t) (get_systick() - start_tick) < compare_tick)
                             {
                                 CLRWDT();
@@ -1215,6 +1224,8 @@ uint16_t uart_receive(uint8_t *buffer)
                 }
                 op_mode_new = op_mode_kline;
             }
+            iface_mode = iface_mode_auto;
+            kline_auto_delay = 0;
             kline_auto_response = 0;
         }
         else if (rec_buffer[1] == 0x01)
@@ -1248,6 +1259,7 @@ uint16_t uart_receive(uint8_t *buffer)
                 memcpy(buffer, rec_buffer + 10, data_len);
             }
             op_mode_new = op_mode_can;
+            iface_mode = iface_mode_auto;
         }
     }
     else
@@ -1689,6 +1701,7 @@ void reset_comm_states()
     kline_baud = 0;
     kline_flags = 0;
     kline_interbyte = 0;
+    kline_auto_delay = 0;
     kline_auto_response = 0;
 
     can_cfg_protocol = CAN_PROT_BMW;
