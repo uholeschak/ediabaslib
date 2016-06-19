@@ -3341,7 +3341,7 @@ namespace EdiabasLib
                 }
 
                 LastCommTick = Stopwatch.GetTimestamp();
-                if (!SendWakeAddress5Baud(ParWakeAddress, 40))
+                if (!SendWakeAddress5Baud(ParWakeAddress, 10))
                 {
                     LastCommTick = Stopwatch.GetTimestamp();
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending wake address failed");
@@ -3665,6 +3665,11 @@ namespace EdiabasLib
             LastResponseTick = Stopwatch.GetTimestamp();
             receiveLength = recLength;
             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, receiveLength, "Answer");
+            if (sendDataLength == 3 && sendData[2] == 0x06)
+            {   // end output command
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Disconnect");
+                EcuConnected = false;
+            }
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
@@ -3786,7 +3791,7 @@ namespace EdiabasLib
                 }
 
                 LastCommTick = Stopwatch.GetTimestamp();
-                if (!SendWakeAddress5Baud(ParWakeAddress, 40))
+                if (!SendWakeAddress5Baud(ParWakeAddress, 10))
                 {
                     LastCommTick = Stopwatch.GetTimestamp();
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending wake address failed");
