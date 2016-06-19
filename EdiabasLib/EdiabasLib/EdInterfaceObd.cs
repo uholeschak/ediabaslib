@@ -3609,6 +3609,13 @@ namespace EdiabasLib
                     return errorCode;
                 }
 
+                if (sendDataValid && sendDataLength == 3 && sendData[2] == 0x06)
+                {   // end output command
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Disconnect");
+                    EcuConnected = false;
+                    return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                }
+
                 LastCommTick = Stopwatch.GetTimestamp();
                 errorCode = ReceiveIso9141Block(Iso9141Buffer, true);
                 if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
@@ -3665,11 +3672,6 @@ namespace EdiabasLib
             LastResponseTick = Stopwatch.GetTimestamp();
             receiveLength = recLength;
             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, receiveLength, "Answer");
-            if (sendDataLength == 3 && sendData[2] == 0x06)
-            {   // end output command
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Disconnect");
-                EcuConnected = false;
-            }
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 

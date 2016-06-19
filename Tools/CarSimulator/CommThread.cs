@@ -5662,6 +5662,11 @@ namespace CarSimulator
                 blockCount++;
                 byte command = _receiveData[2];
                 int recLength = _receiveData[0];
+                if (command == 0x06)
+                {   // end output
+                    Debug.WriteLine("Disconnect");
+                    break;
+                }
                 if (command != 0x09)
                 {   // no ack
                     bool found = false;
