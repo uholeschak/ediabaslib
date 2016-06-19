@@ -1224,7 +1224,6 @@ uint16_t uart_receive(uint8_t *buffer)
                 }
                 op_mode_new = op_mode_kline;
             }
-            iface_mode = iface_mode_auto;
             kline_auto_delay = 0;
             kline_auto_response = 0;
         }
@@ -1259,7 +1258,6 @@ uint16_t uart_receive(uint8_t *buffer)
                 memcpy(buffer, rec_buffer + 10, data_len);
             }
             op_mode_new = op_mode_can;
-            iface_mode = iface_mode_auto;
         }
     }
     else
@@ -1276,6 +1274,7 @@ uint16_t uart_receive(uint8_t *buffer)
             {
                 return 0;
             }
+            op_mode = op_mode_standard;     // required for can_config()
             can_config();
 
             memset(&can_out_msg, 0x00, sizeof(can_out_msg));
@@ -1746,6 +1745,7 @@ void read_eeprom()
     {
         can_sep_time = temp_value1;
     }
+    can_config();
 
 #if ADAPTER_TYPE != 0x02
     temp_value1 = eeprom_read(EEP_ADDR_BT_INIT);
@@ -1825,7 +1825,6 @@ bool internal_telegram(uint8_t *buffer, uint16_t len)
         eeprom_write(EEP_ADDR_BAUD, cfg_value);
         eeprom_write(EEP_ADDR_BAUD + 1, ~cfg_value);
         read_eeprom();
-        can_config();
         buffer[3] = ~can_mode;
         buffer[len - 1] = calc_checkum(buffer, len - 1);
         uart_send(buffer, len);
@@ -1872,7 +1871,6 @@ bool internal_telegram(uint8_t *buffer, uint16_t len)
                 eeprom_write(EEP_ADDR_BAUD, cfg_value);
                 eeprom_write(EEP_ADDR_BAUD + 1, ~cfg_value);
                 read_eeprom();
-                can_config();
             }
             buffer[4] = can_mode;
             buffer[len - 1] = calc_checkum(buffer, len - 1);
@@ -2954,7 +2952,6 @@ void main(void)
     }
 #endif
     read_eeprom();
-    can_config();
 #if ADAPTER_TYPE != 0x02
     if (!init_bt())
     {   // error
