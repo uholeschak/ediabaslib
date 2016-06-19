@@ -65,7 +65,7 @@ namespace EdiabasLib
         public delegate bool InterfaceHasAutoBaudRateDelegate();
         public delegate bool InterfaceSendDataDelegate(byte[] sendData, int length, bool setDtr, double dtrTimeCorr);
         public delegate bool InterfaceReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog);
-        public delegate bool InterfaceSendPulseDelegate(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines);
+        public delegate bool InterfaceSendPulseDelegate(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines, int autoKeyByteDelay);
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
         protected delegate EdiabasNet.ErrorCodes IdleDelegate();
         protected delegate EdiabasNet.ErrorCodes FinishDelegate();
@@ -2191,7 +2191,7 @@ namespace EdiabasLib
             {
                 if (InterfaceSendPulseFuncUse != null)
                 {
-                    if (!InterfaceSendPulseFuncUse(0x02, 2, 25, setDtr, false))
+                    if (!InterfaceSendPulseFuncUse(0x02, 2, 25, setDtr, false, 0))
                     {
                         return false;
                     }
@@ -2239,18 +2239,18 @@ namespace EdiabasLib
             return true;
         }
 
-        protected bool SendWakeAddress5Baud(byte value)
+        protected bool SendWakeAddress5Baud(byte value, int autoKeyByteDelay)
         {
-            return SendWakeAddress5Baud(value, false, false);
+            return SendWakeAddress5Baud(value, false, false, autoKeyByteDelay);
         }
 
-        protected bool SendWakeAddress5Baud(byte value, bool setDtr, bool bothLines)
+        protected bool SendWakeAddress5Baud(byte value, bool setDtr, bool bothLines, int autoKeyByteDelay)
         {
             if (UseExtInterfaceFunc)
             {
                 if (InterfaceSendPulseFuncUse != null)
                 {
-                    if (!InterfaceSendPulseFuncUse((UInt64) ((value << 1) | 0x0200), 10, 200, setDtr, bothLines))
+                    if (!InterfaceSendPulseFuncUse((UInt64) ((value << 1) | 0x0200), 10, 200, setDtr, bothLines, autoKeyByteDelay))
                     {
                         return false;
                     }
@@ -2476,7 +2476,7 @@ namespace EdiabasLib
                 }
 
                 LastCommTick = Stopwatch.GetTimestamp();
-                if (!SendWakeAddress5Baud(ParEdicWakeAddress, ParSendSetDtr, true))
+                if (!SendWakeAddress5Baud(ParEdicWakeAddress, ParSendSetDtr, true, ParEdicW4A))
                 {
                     LastCommTick = Stopwatch.GetTimestamp();
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending wake address failed");
@@ -3341,7 +3341,7 @@ namespace EdiabasLib
                 }
 
                 LastCommTick = Stopwatch.GetTimestamp();
-                if (!SendWakeAddress5Baud(ParWakeAddress))
+                if (!SendWakeAddress5Baud(ParWakeAddress, 40))
                 {
                     LastCommTick = Stopwatch.GetTimestamp();
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending wake address failed");
@@ -3786,7 +3786,7 @@ namespace EdiabasLib
                 }
 
                 LastCommTick = Stopwatch.GetTimestamp();
-                if (!SendWakeAddress5Baud(ParWakeAddress))
+                if (!SendWakeAddress5Baud(ParWakeAddress, 40))
                 {
                     LastCommTick = Stopwatch.GetTimestamp();
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending wake address failed");

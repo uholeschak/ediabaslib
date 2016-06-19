@@ -432,7 +432,7 @@ namespace EdiabasLib
                 {
                     Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "InterfaceReceiveData, update settings");
                     UpdateAdapterInfo();
-                    byte[] adapterTel = CreatePulseTelegram(0, 0, 0, false, false);
+                    byte[] adapterTel = CreatePulseTelegram(0, 0, 0, false, false, 0);
                     if (adapterTel == null)
                     {
                         return false;
@@ -498,7 +498,7 @@ namespace EdiabasLib
             return true;
         }
 
-        public static bool InterfaceSendPulse(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines)
+        public static bool InterfaceSendPulse(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines, int autoKeyByteDelay)
         {
             ConvertBaudResponse = false;
             if ((_bluetoothSocket == null) || (_bluetoothOutStream == null))
@@ -528,7 +528,7 @@ namespace EdiabasLib
                 {   // send next telegram with fast init
                     return true;
                 }
-                byte[] adapterTel = CreatePulseTelegram(dataBits, length, pulseWidth, setDtr, bothLines);
+                byte[] adapterTel = CreatePulseTelegram(dataBits, length, pulseWidth, setDtr, bothLines, autoKeyByteDelay);
                 if (adapterTel == null)
                 {
                     return false;
