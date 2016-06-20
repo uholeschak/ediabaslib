@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Threading;
 // ReSharper disable ConvertPropertyToExpressionBody
 // ReSharper disable UseNullPropagation
+// ReSharper disable IntroduceOptionalParameters.Local
 
 namespace EdiabasLib
 {
@@ -3503,8 +3504,7 @@ namespace EdiabasLib
         {
             BlockCounter = 1;
 
-            Thread.Sleep(10);
-            EdiabasNet.ErrorCodes errorCode = ReceiveIso9141Block(Iso9141Buffer, true);
+            EdiabasNet.ErrorCodes errorCode = ReceiveIso9141Block(Iso9141Buffer, true, 50);
             if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
                 return errorCode;
@@ -3710,8 +3710,13 @@ namespace EdiabasLib
 
         private EdiabasNet.ErrorCodes ReceiveIso9141Block(byte[] recData, bool enableLog)
         {
+            return ReceiveIso9141Block(recData, enableLog, 0);
+        }
+
+        private EdiabasNet.ErrorCodes ReceiveIso9141Block(byte[] recData, bool enableLog, int addStartTimeout)
+        {
             // block length
-            if (!ReceiveData(recData, 0, 1, ParTimeoutTelEnd, ParTimeoutTelEnd))
+            if (!ReceiveData(recData, 0, 1, ParTimeoutTelEnd + addStartTimeout, ParTimeoutTelEnd + addStartTimeout))
             {
                 if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No block length received");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
