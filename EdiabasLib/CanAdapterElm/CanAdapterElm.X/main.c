@@ -1268,13 +1268,17 @@ uint16_t uart_receive(uint8_t *buffer)
             return 0;
         }
 
-        if (can_mode == CAN_MODE_AUTO && iface_mode == iface_mode_auto)
+        if (can_mode == CAN_MODE_AUTO &&
+            ((iface_mode == iface_mode_auto) || (op_mode != op_mode_standard))
+            )
         {   // detect interface mode
             if (buffer != NULL)
             {
                 return 0;
             }
-            op_mode = op_mode_standard;     // required for can_config()
+            // required for can_config
+            iface_mode = iface_mode_auto;
+            op_mode = op_mode_standard;
             can_config();
 
             memset(&can_out_msg, 0x00, sizeof(can_out_msg));
