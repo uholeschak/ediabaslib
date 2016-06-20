@@ -95,6 +95,7 @@ namespace EdiabasLib
         protected bool EnableFtdiBitBang;
         protected bool ConnectedProtected;
         protected const int EchoTimeout = 100;
+        protected const int Iso9141ByteTimeout = 50;
         protected bool UseExtInterfaceFunc;
         protected InterfaceConnectDelegate InterfaceConnectFuncProtected;
         protected InterfaceConnectDelegate InterfaceConnectFuncInt;
@@ -3687,7 +3688,7 @@ namespace EdiabasLib
                     if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
-                if (!ReceiveData(Iso9141BlockBuffer, 0, 1, ParTimeoutTelEnd, ParTimeoutTelEnd))
+                if (!ReceiveData(Iso9141BlockBuffer, 0, 1, Iso9141ByteTimeout, Iso9141ByteTimeout))
                 {
                     if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data ack received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
@@ -3716,7 +3717,7 @@ namespace EdiabasLib
         private EdiabasNet.ErrorCodes ReceiveIso9141Block(byte[] recData, bool enableLog, int addStartTimeout)
         {
             // block length
-            if (!ReceiveData(recData, 0, 1, ParTimeoutTelEnd + addStartTimeout, ParTimeoutTelEnd + addStartTimeout))
+            if (!ReceiveData(recData, 0, 1, Iso9141ByteTimeout + addStartTimeout, Iso9141ByteTimeout + addStartTimeout))
             {
                 if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No block length received");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
@@ -3732,7 +3733,7 @@ namespace EdiabasLib
                     if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
-                if (!ReceiveData(recData, i + 1, 1, ParTimeoutTelEnd, ParTimeoutTelEnd))
+                if (!ReceiveData(recData, i + 1, 1, Iso9141ByteTimeout, Iso9141ByteTimeout))
                 {
                     if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No block data received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
