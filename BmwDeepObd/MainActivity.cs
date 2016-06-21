@@ -145,6 +145,9 @@ namespace BmwDeepObd
         private List<DownloadUrlInfo> _downloadUrlInfoList;
         private AlertDialog _startAlertDialog;
         private AlertDialog _downloadEcuAlertDialog;
+        private bool _translateActive;
+        private List<string> _translationList;
+        private List<string> _translatedList;
 
         public void OnTabReselected(ActionBar.Tab tab, FragmentTransaction ft)
         {
@@ -706,6 +709,9 @@ namespace BmwDeepObd
                 {
                     _traceDir = logDir;
                 }
+                _translationList = null;
+                _translatedList = null;
+
                 JobReader.PageInfo pageInfo = GetSelectedPage();
                 object connectParameter = null;
                 if (pageInfo != null)
@@ -923,6 +929,10 @@ namespace BmwDeepObd
             }
             StopEdiabasThread(true);
             UpdateDisplay();
+
+            _translationList = null;
+            _translatedList = null;
+
             if (_commErrorsOccured && _traceActive && !string.IsNullOrEmpty(_traceDir))
             {
                 _activityCommon.RequestSendTraceFile(_appDataPath, _traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType());
@@ -1114,6 +1124,7 @@ namespace BmwDeepObd
                     List<TableResultItem> tempResultList = new List<TableResultItem>();
                     if (pageInfo.ErrorsInfo != null)
                     {   // read errors
+                        List<string> stringList = new List<string>();
                         List<EdiabasThread.EdiabasErrorReport> errorReportList;
                         lock (EdiabasThread.DataLock)
                         {
@@ -1135,10 +1146,38 @@ namespace BmwDeepObd
                                 }
                                 else
                                 {
+                                    string text1 = FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
+                                    string text2 = FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
+                                    if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
+                                    {
+                                        int index = stringList.Count;
+                                        stringList.Add(text1);
+                                        stringList.Add(text2);
+                                        if (_translationList != null && _translatedList != null &&
+                                            _translationList.Count == _translatedList.Count)
+                                        {
+                                            if (index < _translatedList.Count)
+                                            {
+                                                if (string.Compare(text1, _translationList[index], StringComparison.Ordinal) == 0)
+                                                {
+                                                    text1 = _translatedList[index];
+                                                }
+                                            }
+                                            index++;
+                                            if (index < _translatedList.Count)
+                                            {
+                                                if (string.Compare(text2, _translationList[index], StringComparison.Ordinal) == 0)
+                                                {
+                                                    text2 = _translatedList[index];
+                                                }
+                                            }
+                                        }
+                                    }
                                     message += "\r\n";
-                                    message += FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
+                                    message += text1;
                                     message += ", ";
-                                    message += FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
+                                    message += text2;
+
                                     if (errorReport.ErrorDetailSet != null)
                                     {
                                         string detailText = string.Empty;
@@ -1196,6 +1235,52 @@ namespace BmwDeepObd
                             }
                         }
                         UpdateButtonErrorReset(buttonErrorReset, tempResultList);
+
+                        if (stringList.Count > 0)
+                        {
+                            if (!_translateActive)
+                            {
+                                // translation text present
+                                bool translate = false;
+                                if ((_translationList == null) || (_translationList.Count != stringList.Count))
+                                {
+                                    translate = true;
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < stringList.Count; i++)
+                                    {
+                                        if (string.Compare(stringList[i], _translationList[i], StringComparison.Ordinal) != 0)
+                                        {
+                                            translate = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (translate)
+                                {
+                                    _translationList = stringList;
+                                    _translateActive = true;
+                                    if (!_activityCommon.TranslateStrings(stringList, transList =>
+                                    {
+                                        RunOnUiThread(() =>
+                                        {
+                                            _translateActive = false;
+                                            _translatedList = transList;
+                                            _updateHandler?.Post(UpdateDisplay);
+                                        });
+                                    }))
+                                    {
+                                        _translateActive = false;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _translationList = null;
+                            _translatedList = null;
+                        }
                     }
                     else
                     {
@@ -1488,6 +1573,7 @@ namespace BmwDeepObd
         {
             _jobReader.ReadXml(_configFileName);
             _activityCommon.SelectedInterface = (_jobReader.PageList.Count > 0) ? _jobReader.Interface : ActivityCommon.InterfaceType.None;
+            _activityCommon.ClearTranslationCache();
             RequestConfigSelect();
             CompileCode();
         }
