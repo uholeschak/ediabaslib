@@ -603,6 +603,14 @@ namespace BmwDeepObd
                     EditYandexKey();
                     return true;
 
+                case Resource.Id.menu_translation_clear_cache:
+                    _activityCommon.ClearTranslationCache();
+                    _translationList = null;
+                    _translatedList = null;
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                    return true;
+
                 case Resource.Id.menu_submenu_help:
                     StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://ediabaslib.codeplex.com/wikipage?title=Deep OBD for BMW")));
                     return true;
@@ -1318,6 +1326,7 @@ namespace BmwDeepObd
                                         {
                                             _translateActive = false;
                                             _translatedList = transList;
+                                            SupportInvalidateOptionsMenu();
                                             _updateHandler?.Post(UpdateDisplay);
                                         });
                                     }))
@@ -1625,6 +1634,8 @@ namespace BmwDeepObd
             _jobReader.ReadXml(_configFileName);
             _activityCommon.SelectedInterface = (_jobReader.PageList.Count > 0) ? _jobReader.Interface : ActivityCommon.InterfaceType.None;
             _activityCommon.ClearTranslationCache();
+            _translationList = null;
+            _translatedList = null;
             RequestConfigSelect();
             CompileCode();
         }
