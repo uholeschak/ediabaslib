@@ -1757,11 +1757,11 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0c00cc
 			public const int menu_enet_ip = 2131493068;
 			
-			// aapt resource value: 0x7f0c00d8
-			public const int menu_exit = 2131493080;
+			// aapt resource value: 0x7f0c00dc
+			public const int menu_exit = 2131493084;
 			
-			// aapt resource value: 0x7f0c00d7
-			public const int menu_info = 2131493079;
+			// aapt resource value: 0x7f0c00db
+			public const int menu_info = 2131493083;
 			
 			// aapt resource value: 0x7f0c00ca
 			public const int menu_scan = 2131493066;
@@ -1787,47 +1787,47 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0c00c9
 			public const int menu_tool_sel_sgbd_prg = 2131493065;
 			
-			// aapt resource value: 0x7f0c00e5
-			public const int menu_translation_clear_cache = 2131493093;
+			// aapt resource value: 0x7f0c00da
+			public const int menu_translation_clear_cache = 2131493082;
 			
-			// aapt resource value: 0x7f0c00e3
-			public const int menu_translation_enable = 2131493091;
+			// aapt resource value: 0x7f0c00d8
+			public const int menu_translation_enable = 2131493080;
 			
-			// aapt resource value: 0x7f0c00e2
-			public const int menu_translation_submenu = 2131493090;
+			// aapt resource value: 0x7f0c00d7
+			public const int menu_translation_submenu = 2131493079;
 			
-			// aapt resource value: 0x7f0c00e4
-			public const int menu_translation_yandex_key = 2131493092;
+			// aapt resource value: 0x7f0c00d9
+			public const int menu_translation_yandex_key = 2131493081;
 			
 			// aapt resource value: 0x7f0c00d3
 			public const int menu_xml_tool = 2131493075;
 			
-			// aapt resource value: 0x7f0c00e0
-			public const int menu_xml_tool_add_errors_page = 2131493088;
+			// aapt resource value: 0x7f0c00e4
+			public const int menu_xml_tool_add_errors_page = 2131493092;
 			
-			// aapt resource value: 0x7f0c00df
-			public const int menu_xml_tool_edit_del = 2131493087;
-			
-			// aapt resource value: 0x7f0c00dd
-			public const int menu_xml_tool_edit_grp = 2131493085;
-			
-			// aapt resource value: 0x7f0c00de
-			public const int menu_xml_tool_edit_prg = 2131493086;
-			
-			// aapt resource value: 0x7f0c00dc
-			public const int menu_xml_tool_move_bottom = 2131493084;
-			
-			// aapt resource value: 0x7f0c00db
-			public const int menu_xml_tool_move_down = 2131493083;
-			
-			// aapt resource value: 0x7f0c00d9
-			public const int menu_xml_tool_move_top = 2131493081;
-			
-			// aapt resource value: 0x7f0c00da
-			public const int menu_xml_tool_move_up = 2131493082;
+			// aapt resource value: 0x7f0c00e3
+			public const int menu_xml_tool_edit_del = 2131493091;
 			
 			// aapt resource value: 0x7f0c00e1
-			public const int menu_xml_tool_submenu_cfg_type = 2131493089;
+			public const int menu_xml_tool_edit_grp = 2131493089;
+			
+			// aapt resource value: 0x7f0c00e2
+			public const int menu_xml_tool_edit_prg = 2131493090;
+			
+			// aapt resource value: 0x7f0c00e0
+			public const int menu_xml_tool_move_bottom = 2131493088;
+			
+			// aapt resource value: 0x7f0c00df
+			public const int menu_xml_tool_move_down = 2131493087;
+			
+			// aapt resource value: 0x7f0c00dd
+			public const int menu_xml_tool_move_top = 2131493085;
+			
+			// aapt resource value: 0x7f0c00de
+			public const int menu_xml_tool_move_up = 2131493086;
+			
+			// aapt resource value: 0x7f0c00e5
+			public const int menu_xml_tool_submenu_cfg_type = 2131493093;
 			
 			// aapt resource value: 0x7f0c001b
 			public const int middle = 2131492891;

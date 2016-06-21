@@ -54,6 +54,7 @@ namespace BmwDeepObd
             RequestXmlTool,
             RequestEdiabasTool,
             RequestSelectEcuZip,
+            RequestYandexKey,
         }
 
         private class DownloadInfo
@@ -413,6 +414,12 @@ namespace BmwDeepObd
                         ExtractZipFile(zipFile, ecuPath, xmlInfo);
                     }
                     break;
+
+                case ActivityRequest.RequestYandexKey:
+                    ActivityCommon.EnableTranslation = !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey);
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                    break;
             }
         }
 
@@ -494,6 +501,35 @@ namespace BmwDeepObd
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
             logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
 
+            IMenuItem translationSubmenu = menu.FindItem(Resource.Id.menu_translation_submenu);
+            if (translationSubmenu != null)
+            {
+                translationSubmenu.SetEnabled(true);
+                translationSubmenu.SetVisible(ActivityCommon.IsTranslationRequired());
+            }
+
+            IMenuItem translationEnableMenu = menu.FindItem(Resource.Id.menu_translation_enable);
+            if (translationEnableMenu != null)
+            {
+                translationEnableMenu.SetEnabled(true);
+                translationEnableMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                translationEnableMenu.SetChecked(ActivityCommon.EnableTranslation);
+            }
+
+            IMenuItem translationYandexKeyMenu = menu.FindItem(Resource.Id.menu_translation_yandex_key);
+            if (translationYandexKeyMenu != null)
+            {
+                translationYandexKeyMenu.SetEnabled(true);
+                translationYandexKeyMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+            }
+
+            IMenuItem translationClearCacheMenu = menu.FindItem(Resource.Id.menu_translation_clear_cache);
+            if (translationClearCacheMenu != null)
+            {
+                translationClearCacheMenu.SetEnabled(!_activityCommon.IsTranslationCacheEmpty());
+                translationClearCacheMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+            }
+
             IMenuItem infoSubMenu = menu.FindItem(Resource.Id.menu_info);
             infoSubMenu?.SetEnabled(!commActive);
 
@@ -550,6 +586,21 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_submenu_log:
                     SelectDataLogging();
+                    return true;
+
+                case Resource.Id.menu_translation_enable:
+                    if (!ActivityCommon.EnableTranslation && string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey))
+                    {
+                        EditYandexKey();
+                        return true;
+                    }
+                    ActivityCommon.EnableTranslation = !ActivityCommon.EnableTranslation;
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                    return true;
+
+                case Resource.Id.menu_translation_yandex_key:
+                    EditYandexKey();
                     return true;
 
                 case Resource.Id.menu_submenu_help:
@@ -2307,6 +2358,12 @@ namespace BmwDeepObd
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
             builder.Show();
+        }
+
+        private void EditYandexKey()
+        {
+            Intent serverIntent = new Intent(this, typeof(YandexKeyActivity));
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestYandexKey);
         }
 
         private void AdapterConfig()
