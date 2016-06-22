@@ -1772,7 +1772,7 @@ namespace BmwDeepObd
                                 _translateProgress = null;
                                 SetCpuLock(false);
                             }
-                            if (!args.Cancelled && ((_yandexLangList == null) || (_yandexTransList == null)))
+                            if ((_yandexLangList == null) || (_yandexTransList == null))
                             {
                                 string errorMessage = string.Empty;
                                 if (!args.Cancelled && (args.Error != null))
