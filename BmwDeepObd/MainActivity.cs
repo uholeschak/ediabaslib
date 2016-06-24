@@ -1796,6 +1796,7 @@ namespace BmwDeepObd
             _downloadProgress.Show();
             _downloadFileSize = fileSize;
             _activityCommon.SetScreenLock(true);
+            _activityCommon.SetPreferredNetworkInterface();
 
             Thread downloadThread = new Thread(() =>
             {
