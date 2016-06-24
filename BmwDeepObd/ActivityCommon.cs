@@ -94,6 +94,7 @@ namespace BmwDeepObd
         private readonly PowerManager _powerManager;
         private PowerManager.WakeLock _wakeLockScreen;
         private PowerManager.WakeLock _wakeLockCpu;
+        private CellularCallback _cellularCallback;
         private Timer _usbCheckTimer;
         private int _usbDeviceDetectCount;
         private Receiver _bcReceiver;
@@ -183,6 +184,7 @@ namespace BmwDeepObd
                     _lastEnetSsid = string.Empty;
                 }
                 _selectedInterface = value;
+                SetPreferredNetworkInterface();
             }
         }
 
@@ -384,6 +386,70 @@ namespace BmwDeepObd
                 }
             }
             return false;
+        }
+
+        public bool RegisterInternetCellular()
+        {
+            if (_maConnectivity == null)
+            {
+                return false;
+            }
+            NetworkRequest.Builder builder = new NetworkRequest.Builder();
+            builder.AddCapability(NetCapability.Internet);
+            builder.AddTransportType(Android.Net.TransportType.Cellular);
+            NetworkRequest networkRequest = builder.Build();
+            _cellularCallback = new CellularCallback(this);
+            _maConnectivity.RequestNetwork(networkRequest, _cellularCallback);
+            _maConnectivity.RegisterNetworkCallback(networkRequest, _cellularCallback);
+
+            return true;
+        }
+
+        public bool UnRegisterInternetCellular()
+        {
+            if (_maConnectivity == null)
+            {
+                return false;
+            }
+            if (_cellularCallback != null)
+            {
+                _maConnectivity.UnregisterNetworkCallback(_cellularCallback);
+                _cellularCallback = null;
+            }
+            return true;
+        }
+
+        public bool SetPreferredNetworkInterface()
+        {
+            Network[] networks = _maConnectivity?.GetAllNetworks();
+            if (networks == null)
+            {
+                return false;
+            }
+            bool forceMobile = false;
+            switch (_selectedInterface)
+            {
+                case InterfaceType.Enet:
+                case InterfaceType.ElmWifi:
+                    forceMobile = true;
+                    break;
+            }
+
+            Network defaultNetwork = null;
+            if (forceMobile)
+            {
+                foreach (Network network in networks)
+                {
+                    NetworkInfo networkInfo = _maConnectivity.GetNetworkInfo(network);
+                    if (networkInfo != null && networkInfo.IsConnected && networkInfo.Type == ConnectivityType.Mobile)
+                    {
+                        defaultNetwork = network;
+                        break;
+                    }
+                }
+            }
+            ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
+            return true;
         }
 
         public bool AllowAdapterConfig(string deviceAddress)
@@ -736,22 +802,22 @@ namespace BmwDeepObd
                     switch (listView.CheckedItemPosition)
                     {
                         case 0:
-                            _selectedInterface = InterfaceType.Bluetooth;
+                            SelectedInterface = InterfaceType.Bluetooth;
                             handler(sender, args);
                             break;
 
                         case 1:
-                            _selectedInterface = InterfaceType.Enet;
+                            SelectedInterface = InterfaceType.Enet;
                             handler(sender, args);
                             break;
 
                         case 2:
-                            _selectedInterface = InterfaceType.ElmWifi;
+                            SelectedInterface = InterfaceType.ElmWifi;
                             handler(sender, args);
                             break;
 
                         case 3:
-                            _selectedInterface = InterfaceType.Ftdi;
+                            SelectedInterface = InterfaceType.Ftdi;
                             handler(sender, args);
                             break;
                     }
@@ -1188,6 +1254,7 @@ namespace BmwDeepObd
             progress.SetMessage(_activity.GetString(Resource.String.send_trace_file));
             progress.Show();
             SetCpuLock(true);
+            SetPreferredNetworkInterface();
 
             Thread sendThread = new Thread(() =>
             {
@@ -1678,6 +1745,7 @@ namespace BmwDeepObd
             }
             _translateProgress.SetCancelable(false);
             _translateProgress.Progress = (_yandexTransList?.Count ?? 0) * 100 / _yandexReducedStringList.Count;
+            SetPreferredNetworkInterface();
 
             Thread translateThread = new Thread(() =>
             {
@@ -2578,6 +2646,10 @@ namespace BmwDeepObd
                     case BluetoothAdapter.ActionStateChanged:
                     case ConnectivityManager.ConnectivityAction:
                         _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
+                        if (action == ConnectivityManager.ConnectivityAction)
+                        {
+                            _activityCommon.SetPreferredNetworkInterface();
+                        }
                         break;
 
                     case UsbManager.ActionUsbDeviceAttached:
@@ -2598,6 +2670,21 @@ namespace BmwDeepObd
                         }
                         break;
                 }
+            }
+        }
+
+        public class CellularCallback : ConnectivityManager.NetworkCallback
+        {
+            private readonly ActivityCommon _activityCommon;
+
+            public CellularCallback(ActivityCommon activityCommon)
+            {
+                _activityCommon = activityCommon;
+            }
+
+            public override void OnAvailable(Network network)
+            {
+                _activityCommon.SetPreferredNetworkInterface();
             }
         }
     }
