@@ -794,15 +794,17 @@ namespace BmwDeepObd
                                 break;
                             }
                             portName = string.IsNullOrEmpty(_activityCommon.SelectedEnetIp) ? "auto:all" : _activityCommon.SelectedEnetIp;
+                            connectParameter = new EdInterfaceEnet.ConnectParameterType(this, _activityCommon.MaConnectivity);
                             break;
 
                         case ActivityCommon.InterfaceType.ElmWifi:
                             portName = "ELM327WIFI";
+                            connectParameter = new EdElmWifiInterface.ConnectParameterType(this, _activityCommon.MaConnectivity);
                             break;
 
                         case ActivityCommon.InterfaceType.Ftdi:
                             portName = "FTDI0";
-                            connectParameter = new EdFtdiInterface.ConnectParameter(this, _activityCommon.UsbManager);
+                            connectParameter = new EdFtdiInterface.ConnectParameterType(this, _activityCommon.UsbManager);
                             break;
                     }
                     _ediabasThread.StartThread(portName, connectParameter, _traceDir, _traceAppend, pageInfo, true);

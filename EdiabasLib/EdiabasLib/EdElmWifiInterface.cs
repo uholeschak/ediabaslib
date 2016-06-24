@@ -8,6 +8,23 @@ namespace EdiabasLib
 {
     public class EdElmWifiInterface
     {
+#if Android
+        public class ConnectParameterType
+        {
+            public ConnectParameterType(Android.Content.Context parentContext, Android.Net.ConnectivityManager connectivityManager)
+            {
+                ParentContext = parentContext;
+                ConnectivityManager = connectivityManager;
+            }
+
+            public Android.Content.Context ParentContext { get; private set; }
+
+            public Android.Net.ConnectivityManager ConnectivityManager { get; private set; }
+        }
+#endif
+
+        protected delegate void ExecuteNetworkDelegate();
+
         public const string PortId = "ELM327WIFI";
         public static string ElmIp = "192.168.0.10";
         public static int ElmPort = 35000;
@@ -15,6 +32,7 @@ namespace EdiabasLib
         protected static NetworkStream TcpElmStream;
         protected static int ConnectTimeout = 5000;
         protected static string ConnectPort;
+        protected static object ConnectParameter;
         private static EdElmInterface _edElmInterface;
 
         static EdElmWifiInterface()
@@ -32,20 +50,11 @@ namespace EdiabasLib
             try
             {
                 ConnectPort = port;
-#if Android
-                Android.Net.Network defaultNetwork = Android.Net.ConnectivityManager.ProcessDefaultNetwork;
-                try
+                ConnectParameter = parameter;
+                ExecuteNetworkCommand(() =>
                 {
-                    Android.Net.ConnectivityManager.SetProcessDefaultNetwork(null);
                     TcpElmClient = new TcpClientWithTimeout(IPAddress.Parse(ElmIp), ElmPort, ConnectTimeout).Connect();
-                }
-                finally 
-                {
-                    Android.Net.ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
-                }
-#else
-                TcpElmClient = new TcpClientWithTimeout(IPAddress.Parse(ElmIp), ElmPort, ConnectTimeout).Connect();
-#endif
+                });
                 TcpElmStream = TcpElmClient.GetStream();
                 _edElmInterface = new EdElmInterface(Ediabas, TcpElmStream, TcpElmStream);
                 if (!_edElmInterface.Elm327Init())
@@ -196,7 +205,7 @@ namespace EdiabasLib
                     Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
                 }
                 InterfaceDisconnect();
-                if (!InterfaceConnect(ConnectPort, null))
+                if (!InterfaceConnect(ConnectPort, ConnectParameter))
                 {
                     _edElmInterface.StreamFailure = true;
                     return false;
@@ -225,6 +234,45 @@ namespace EdiabasLib
         public static bool InterfaceSendPulse(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines, int autoKeyByteDelay)
         {
             return false;
+        }
+
+        protected static void ExecuteNetworkCommand(ExecuteNetworkDelegate command)
+        {
+#if Android
+            if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Lollipop)
+            {
+#pragma warning disable 618
+                ConnectParameterType connectParameter = ConnectParameter as ConnectParameterType;
+                if (connectParameter == null)
+                {
+                    throw new Exception("No connect parameter");
+                }
+                Android.Net.ConnectivityType defaultConnectivityType = connectParameter.ConnectivityManager.NetworkPreference;
+                try
+                {
+                    connectParameter.ConnectivityManager.NetworkPreference = Android.Net.ConnectivityType.Wifi;
+                    command();
+                }
+                finally
+                {
+                    connectParameter.ConnectivityManager.NetworkPreference = defaultConnectivityType;
+                }
+#pragma warning restore 618
+                return;
+            }
+            Android.Net.Network defaultNetwork = Android.Net.ConnectivityManager.ProcessDefaultNetwork;
+            try
+            {
+                Android.Net.ConnectivityManager.SetProcessDefaultNetwork(null);
+                command();
+            }
+            finally
+            {
+                Android.Net.ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
+            }
+#else
+            command();
+#endif
         }
 
         /// <summary>
@@ -287,10 +335,6 @@ namespace EdiabasLib
 
             private void BeginConnect()
             {
-#if Android
-                Android.Net.Network defaultNetwork = Android.Net.ConnectivityManager.ProcessDefaultNetwork;
-                Android.Net.ConnectivityManager.SetProcessDefaultNetwork(null);
-#endif
                 try
                 {
                     _connection = new TcpClient();
@@ -304,9 +348,6 @@ namespace EdiabasLib
                     // record the exception for the main thread to re-throw back to the calling code
                     _exception = ex;
                 }
-#if Android
-                Android.Net.ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
-#endif
             }
         }
     }

@@ -394,6 +394,13 @@ namespace BmwDeepObd
             {
                 return false;
             }
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+            {
+#pragma warning disable 618
+                _maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
+#pragma warning restore 618
+                return true;
+            }
             NetworkRequest.Builder builder = new NetworkRequest.Builder();
             builder.AddCapability(NetCapability.Internet);
             builder.AddTransportType(Android.Net.TransportType.Cellular);
@@ -411,6 +418,13 @@ namespace BmwDeepObd
             {
                 return false;
             }
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+            {
+#pragma warning disable 618
+                _maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
+#pragma warning restore 618
+                return true;
+            }
             if (_cellularCallback != null)
             {
                 _maConnectivity.UnregisterNetworkCallback(_cellularCallback);
@@ -421,11 +435,6 @@ namespace BmwDeepObd
 
         public bool SetPreferredNetworkInterface()
         {
-            Network[] networks = _maConnectivity?.GetAllNetworks();
-            if (networks == null)
-            {
-                return false;
-            }
             bool forceMobile = false;
             switch (_selectedInterface)
             {
@@ -435,6 +444,19 @@ namespace BmwDeepObd
                     break;
             }
 
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+            {
+#pragma warning disable 618
+                _maConnectivity.NetworkPreference = forceMobile ? ConnectivityType.Mobile : ConnectivityType.Wifi;
+#pragma warning restore 618
+                return true;
+            }
+
+            Network[] networks = _maConnectivity?.GetAllNetworks();
+            if (networks == null)
+            {
+                return false;
+            }
             Network defaultNetwork = null;
             if (forceMobile)
             {
@@ -1158,11 +1180,12 @@ namespace BmwDeepObd
                 if (SelectedInterface == InterfaceType.Ftdi)
                 {
                     ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "FTDI0";
-                    connectParameter = new EdFtdiInterface.ConnectParameter(_activity, _usbManager);
+                    connectParameter = new EdFtdiInterface.ConnectParameterType(_activity, _usbManager);
                 }
                 else if (SelectedInterface == InterfaceType.ElmWifi)
                 {
                     ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "ELM327WIFI";
+                    connectParameter = new EdElmWifiInterface.ConnectParameterType(_activity, _maConnectivity);
                 }
                 else
                 {
@@ -1177,6 +1200,7 @@ namespace BmwDeepObd
                     remoteHost = EmulatorEnetIp;
                 }
                 ((EdInterfaceEnet)ediabas.EdInterfaceClass).RemoteHost = remoteHost;
+                connectParameter = new EdInterfaceEnet.ConnectParameterType(_activity, _maConnectivity);
             }
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }

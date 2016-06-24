@@ -12,7 +12,23 @@ namespace EdiabasLib
 {
     public class EdInterfaceEnet : EdInterfaceBase
     {
+#if Android
+        public class ConnectParameterType
+        {
+            public ConnectParameterType(Android.Content.Context parentContext, Android.Net.ConnectivityManager connectivityManager)
+            {
+                ParentContext = parentContext;
+                ConnectivityManager = connectivityManager;
+            }
+
+            public Android.Content.Context ParentContext { get; private set; }
+
+            public Android.Net.ConnectivityManager ConnectivityManager { get; private set; }
+        }
+#endif
+
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
+        protected delegate void ExecuteNetworkDelegate();
 
         private bool _disposed;
         protected const int TransBufferSize = 0x10010; // transmit buffer size
@@ -370,20 +386,10 @@ namespace EdiabasLib
                 {
                     TcpHostIp = IPAddress.Parse(RemoteHostProtected);
                 }
-#if Android
-                Android.Net.Network defaultNetwork = Android.Net.ConnectivityManager.ProcessDefaultNetwork;
-                try
+                ExecuteNetworkCommand(() =>
                 {
-                    Android.Net.ConnectivityManager.SetProcessDefaultNetwork(null);
                     TcpDiagClient = new TcpClientWithTimeout(TcpHostIp, DiagnosticPort, ConnectTimeout).Connect();
-                }
-                finally
-                {
-                    Android.Net.ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
-                }
-#else
-                TcpDiagClient = new TcpClientWithTimeout(TcpHostIp, DiagnosticPort, ConnectTimeout).Connect();
-#endif
+                });
                 TcpDiagStream = TcpDiagClient.GetStream();
                 TcpDiagRecLen = 0;
                 LastTcpDiagRecTime = DateTime.MinValue.Ticks;
@@ -602,16 +608,10 @@ namespace EdiabasLib
                                                     netInterface.Name, broadcastAddress));
                                             IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, ControlPort);
 
-                                            Android.Net.Network defaultNetwork = Android.Net.ConnectivityManager.ProcessDefaultNetwork;
-                                            try
+                                            ExecuteNetworkCommand(() =>
                                             {
-                                                Android.Net.ConnectivityManager.SetProcessDefaultNetwork(null);
                                                 UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
-                                            }
-                                            finally
-                                            {
-                                                Android.Net.ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
-                                            }
+                                            });
                                             broadcastSend = true;
                                         }
                                         catch (Exception)
@@ -680,20 +680,10 @@ namespace EdiabasLib
                     {
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending to: {0}", ipUdpIdent.Address));
                     }
-#if Android
-                    Android.Net.Network defaultNetwork = Android.Net.ConnectivityManager.ProcessDefaultNetwork;
-                    try
+                    ExecuteNetworkCommand(() =>
                     {
-                        Android.Net.ConnectivityManager.SetProcessDefaultNetwork(null);
                         UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
-                    }
-                    finally
-                    {
-                        Android.Net.ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
-                    }
-#else
-                    UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
-#endif
+                    });
                     broadcastSend = true;
                 }
                 catch (Exception)
@@ -744,6 +734,45 @@ namespace EdiabasLib
             IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
             EndPoint tempRemoteEp = ip;
             udpSocketLocal.BeginReceiveFrom(UdpBuffer, 0, UdpBuffer.Length, SocketFlags.None, ref tempRemoteEp, UdpReceiver, udpSocketLocal);
+        }
+
+        protected void ExecuteNetworkCommand(ExecuteNetworkDelegate command)
+        {
+#if Android
+            if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Lollipop)
+            {
+#pragma warning disable 618
+                ConnectParameterType connectParameter = ConnectParameterProtected as ConnectParameterType;
+                if (connectParameter == null)
+                {
+                    throw new Exception("No connect parameter");
+                }
+                Android.Net.ConnectivityType defaultConnectivityType = connectParameter.ConnectivityManager.NetworkPreference;
+                try
+                {
+                    connectParameter.ConnectivityManager.NetworkPreference = Android.Net.ConnectivityType.Wifi;
+                    command();
+                }
+                finally
+                {
+                    connectParameter.ConnectivityManager.NetworkPreference = defaultConnectivityType;
+                }
+#pragma warning restore 618
+                return;
+            }
+            Android.Net.Network defaultNetwork = Android.Net.ConnectivityManager.ProcessDefaultNetwork;
+            try
+            {
+                Android.Net.ConnectivityManager.SetProcessDefaultNetwork(null);
+                command();
+            }
+            finally
+            {
+                Android.Net.ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
+            }
+#else
+            command();
+#endif
         }
 
         protected void UdpReceiver(IAsyncResult ar)
@@ -837,20 +866,10 @@ namespace EdiabasLib
                 {
                     TcpControlTimerStop();
                 }
-#if Android
-                Android.Net.Network defaultNetwork = Android.Net.ConnectivityManager.ProcessDefaultNetwork;
-                try
+                ExecuteNetworkCommand(() =>
                 {
-                    Android.Net.ConnectivityManager.SetProcessDefaultNetwork(null);
                     TcpControlClient = TcpDiagClient = new TcpClientWithTimeout(TcpHostIp, ControlPort, ConnectTimeout).Connect();
-                }
-                finally
-                {
-                    Android.Net.ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
-                }
-#else
-                TcpControlClient = TcpDiagClient = new TcpClientWithTimeout(TcpHostIp, ControlPort, ConnectTimeout).Connect();
-#endif
+                });
                 TcpControlStream = TcpControlClient.GetStream();
             }
             catch (Exception)
@@ -1446,10 +1465,6 @@ namespace EdiabasLib
 
             private void BeginConnect()
             {
-#if Android
-                Android.Net.Network defaultNetwork = Android.Net.ConnectivityManager.ProcessDefaultNetwork;
-                Android.Net.ConnectivityManager.SetProcessDefaultNetwork(null);
-#endif
                 try
                 {
                     _connection = new TcpClient();
@@ -1463,9 +1478,6 @@ namespace EdiabasLib
                     // record the exception for the main thread to re-throw back to the calling code
                     _exception = ex;
                 }
-#if Android
-                Android.Net.ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
-#endif
             }
         }
     }
