@@ -15,9 +15,9 @@ namespace EdiabasLib
 {
     static public class EdFtdiInterface
     {
-        public class ConnectParameter
+        public class ConnectParameterType
         {
-            public ConnectParameter(Android.Content.Context parentContext, UsbManager usbManager)
+            public ConnectParameterType(Android.Content.Context parentContext, UsbManager usbManager)
             {
                 ParentContext = parentContext;
                 UsbManager = usbManager;
@@ -72,7 +72,7 @@ namespace EdiabasLib
             }
             try
             {
-                ConnectParameter connectParameter = parameter as ConnectParameter;
+                ConnectParameterType connectParameter = parameter as ConnectParameterType;
                 if (connectParameter == null)
                 {
                     return false;
