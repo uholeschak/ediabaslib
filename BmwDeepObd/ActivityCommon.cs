@@ -397,20 +397,33 @@ namespace BmwDeepObd
             }
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
+                try
+                {
 #pragma warning disable 618
-                _maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
+                    _maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
 #pragma warning restore 618
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
                 return true;
             }
             UnRegisterInternetCellular();
-            NetworkRequest.Builder builder = new NetworkRequest.Builder();
-            builder.AddCapability(NetCapability.Internet);
-            builder.AddTransportType(Android.Net.TransportType.Cellular);
-            NetworkRequest networkRequest = builder.Build();
-            _cellularCallback = new CellularCallback(this);
-            _maConnectivity.RequestNetwork(networkRequest, _cellularCallback);
-            _maConnectivity.RegisterNetworkCallback(networkRequest, _cellularCallback);
-
+            try
+            {
+                NetworkRequest.Builder builder = new NetworkRequest.Builder();
+                builder.AddCapability(NetCapability.Internet);
+                builder.AddTransportType(Android.Net.TransportType.Cellular);
+                NetworkRequest networkRequest = builder.Build();
+                _cellularCallback = new CellularCallback(this);
+                _maConnectivity.RequestNetwork(networkRequest, _cellularCallback);
+                _maConnectivity.RegisterNetworkCallback(networkRequest, _cellularCallback);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -422,14 +435,28 @@ namespace BmwDeepObd
             }
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
+                try
+                {
 #pragma warning disable 618
-                _maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
+                    _maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
 #pragma warning restore 618
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
                 return true;
             }
             if (_cellularCallback != null)
             {
-                _maConnectivity.UnregisterNetworkCallback(_cellularCallback);
+                try
+                {
+                    _maConnectivity.UnregisterNetworkCallback(_cellularCallback);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
                 _cellularCallback = null;
             }
             return true;
@@ -448,9 +475,16 @@ namespace BmwDeepObd
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
+                try
+                {
 #pragma warning disable 618
-                _maConnectivity.NetworkPreference = forceMobile ? ConnectivityType.Mobile : ConnectivityType.Wifi;
+                    _maConnectivity.NetworkPreference = forceMobile ? ConnectivityType.Mobile : ConnectivityType.Wifi;
 #pragma warning restore 618
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
                 return true;
             }
 
@@ -463,8 +497,15 @@ namespace BmwDeepObd
                     defaultNetwork = _mobileNetwork;
                 }
             }
-            // Android.Util.Log.WriteLine(Android.Util.LogPriority.Debug, "Network", (defaultNetwork != null) ? "Mobile selected" : "Mobile not selected");
-            ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
+            //Android.Util.Log.WriteLine(Android.Util.LogPriority.Debug, "Network", (defaultNetwork != null) ? "Mobile selected" : "Mobile not selected");
+            try
+            {
+                ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
             return true;
         }
 
