@@ -95,6 +95,7 @@ namespace BmwDeepObd
         private PowerManager.WakeLock _wakeLockScreen;
         private PowerManager.WakeLock _wakeLockCpu;
         private CellularCallback _cellularCallback;
+        private Network _mobileNetwork;
         private Timer _usbCheckTimer;
         private int _usbDeviceDetectCount;
         private Receiver _bcReceiver;
@@ -401,6 +402,7 @@ namespace BmwDeepObd
 #pragma warning restore 618
                 return true;
             }
+            UnRegisterInternetCellular();
             NetworkRequest.Builder builder = new NetworkRequest.Builder();
             builder.AddCapability(NetCapability.Internet);
             builder.AddTransportType(Android.Net.TransportType.Cellular);
@@ -452,24 +454,16 @@ namespace BmwDeepObd
                 return true;
             }
 
-            Network[] networks = _maConnectivity?.GetAllNetworks();
-            if (networks == null)
-            {
-                return false;
-            }
             Network defaultNetwork = null;
-            if (forceMobile)
+            if (forceMobile && _mobileNetwork != null)
             {
-                foreach (Network network in networks)
+                NetworkInfo networkInfo = _maConnectivity.GetNetworkInfo(_mobileNetwork);
+                if (networkInfo != null && networkInfo.IsConnected && networkInfo.Type == ConnectivityType.Mobile)
                 {
-                    NetworkInfo networkInfo = _maConnectivity.GetNetworkInfo(network);
-                    if (networkInfo != null && networkInfo.IsConnected && networkInfo.Type == ConnectivityType.Mobile)
-                    {
-                        defaultNetwork = network;
-                        break;
-                    }
+                    defaultNetwork = _mobileNetwork;
                 }
             }
+            // Android.Util.Log.WriteLine(Android.Util.LogPriority.Debug, "Network", (defaultNetwork != null) ? "Mobile selected" : "Mobile not selected");
             ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
             return true;
         }
@@ -2708,7 +2702,22 @@ namespace BmwDeepObd
 
             public override void OnAvailable(Network network)
             {
-                _activityCommon.SetPreferredNetworkInterface();
+                NetworkInfo networkInfo = _activityCommon._maConnectivity.GetNetworkInfo(network);
+                if (networkInfo != null && networkInfo.Type == ConnectivityType.Mobile)
+                {
+                    _activityCommon._mobileNetwork = network;
+                    _activityCommon.SetPreferredNetworkInterface();
+                }
+            }
+
+            public override void OnLost(Network network)
+            {
+                NetworkInfo networkInfo = _activityCommon._maConnectivity.GetNetworkInfo(network);
+                if (networkInfo != null && networkInfo.Type == ConnectivityType.Mobile)
+                {
+                    _activityCommon._mobileNetwork = null;
+                    _activityCommon.SetPreferredNetworkInterface();
+                }
             }
         }
     }
