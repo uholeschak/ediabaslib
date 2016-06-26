@@ -400,7 +400,10 @@ namespace BmwDeepObd
                 try
                 {
 #pragma warning disable 618
-                    _maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
+                    if (_maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI") < 0)
+                    {
+                        return false;
+                    }
 #pragma warning restore 618
                 }
                 catch (Exception)
@@ -478,6 +481,7 @@ namespace BmwDeepObd
                 try
                 {
 #pragma warning disable 618
+                    _maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
                     _maConnectivity.NetworkPreference = forceMobile ? ConnectivityType.Mobile : ConnectivityType.Wifi;
 #pragma warning restore 618
                 }
