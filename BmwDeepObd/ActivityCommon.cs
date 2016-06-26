@@ -97,6 +97,7 @@ namespace BmwDeepObd
         private CellularCallback _cellularCallback;
         private Network _mobileNetwork;
         private Timer _usbCheckTimer;
+        private Timer _networkTimer;
         private int _usbDeviceDetectCount;
         private Receiver _bcReceiver;
         private InterfaceType _selectedInterface;
@@ -397,6 +398,10 @@ namespace BmwDeepObd
             }
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
+                if (_networkTimer == null)
+                {
+                    _networkTimer = new Timer(NetworkTimerEvent, null, 2000, 2000);
+                }
                 try
                 {
 #pragma warning disable 618
@@ -438,10 +443,15 @@ namespace BmwDeepObd
             }
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
+                if (_networkTimer != null)
+                {
+                    _networkTimer.Dispose();
+                    _networkTimer = null;
+                }
                 try
                 {
 #pragma warning disable 618
-                    _maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
+                    _maConnectivity.StopUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
 #pragma warning restore 618
                 }
                 catch (Exception)
@@ -482,7 +492,6 @@ namespace BmwDeepObd
                 {
 #pragma warning disable 618
                     _maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
-                    _maConnectivity.NetworkPreference = forceMobile ? ConnectivityType.Mobile : ConnectivityType.Wifi;
 #pragma warning restore 618
                 }
                 catch (Exception)
@@ -2688,6 +2697,23 @@ namespace BmwDeepObd
                 }
                 _usbDeviceDetectCount = availableDrivers.Count;
             });
+        }
+
+        private void NetworkTimerEvent(Object state)
+        {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+            {
+                try
+                {
+#pragma warning disable 618
+                    _maConnectivity?.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
+#pragma warning restore 618
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
         }
 
         public class Receiver : BroadcastReceiver
