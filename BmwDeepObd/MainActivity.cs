@@ -637,7 +637,7 @@ namespace BmwDeepObd
                         StoragePermissonGranted();
                         break;
                     }
-                    Toast.MakeText(this, GetString(Resource.String.no_ext_storage), ToastLength.Long).Show();
+                    Toast.MakeText(this, GetString(Resource.String.access_denied_ext_storage), ToastLength.Long).Show();
                     Finish();
                     break;
             }
