@@ -211,18 +211,6 @@ namespace EdiabasLib
                     return false;
                 }
             }
-#if Android
-            if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Lollipop)
-            {
-                ConnectParameterType connectParameter = ConnectParameter as ConnectParameterType;
-                if (connectParameter != null)
-                {
-#pragma warning disable 618
-                    connectParameter.ConnectivityManager.StartUsingNetworkFeature(Android.Net.ConnectivityType.Mobile, "enableHIPRI");
-#pragma warning restore 618
-                }
-            }
-#endif
             if (!_edElmInterface.InterfaceSendData(sendData, length, setDtr, dtrTimeCorr))
             {
                 return false;
@@ -253,24 +241,7 @@ namespace EdiabasLib
 #if Android
             if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Lollipop)
             {
-                ConnectParameterType connectParameter = ConnectParameter as ConnectParameterType;
-                if (connectParameter == null)
-                {
-                    throw new Exception("No connect parameter");
-                }
-#pragma warning disable 618
-                Android.Net.ConnectivityType defaultConnectivityType = connectParameter.ConnectivityManager.NetworkPreference;
-                try
-                {
-                    connectParameter.ConnectivityManager.StartUsingNetworkFeature(Android.Net.ConnectivityType.Mobile, "enableHIPRI");
-                    connectParameter.ConnectivityManager.NetworkPreference = Android.Net.ConnectivityType.Wifi;
-                    command();
-                }
-                finally
-                {
-                    connectParameter.ConnectivityManager.NetworkPreference = defaultConnectivityType;
-                }
-#pragma warning restore 618
+                command();
                 return;
             }
             Android.Net.Network defaultNetwork = Android.Net.ConnectivityManager.ProcessDefaultNetwork;
