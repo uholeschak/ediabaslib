@@ -279,6 +279,14 @@ namespace BmwDeepObd
                 {
                     validResult = true;
                 }
+                if (result.Name.StartsWith("STAT_", StringComparison.OrdinalIgnoreCase) || result.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase))
+                {
+                    validResult = true;
+                }
+            }
+            if (job.Name.StartsWith("STAT_", StringComparison.OrdinalIgnoreCase) || job.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase))
+            {
+                validResult = true;
             }
             return job.ArgCount == 0 && validResult;
         }
@@ -606,7 +614,8 @@ namespace BmwDeepObd
                         int index = 0;
                         foreach (ResultInfo result in _spinnerJobResultsAdapter.Items)
                         {
-                            if (result.Name.EndsWith("_WERT", StringComparison.OrdinalIgnoreCase))
+                            if (result.Name.EndsWith("_WERT", StringComparison.OrdinalIgnoreCase) ||
+                                result.Name.StartsWith("STAT_", StringComparison.OrdinalIgnoreCase) || result.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase))
                             {
                                 result.Selected = true;
                                 if (selection < 0)
