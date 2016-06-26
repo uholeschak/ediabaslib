@@ -244,15 +244,36 @@ namespace EdiabasLib
                 command();
                 return;
             }
-            Android.Net.Network defaultNetwork = Android.Net.ConnectivityManager.ProcessDefaultNetwork;
+            if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.M)
+            {
+#pragma warning disable 618
+                Android.Net.Network defaultNetwork = Android.Net.ConnectivityManager.ProcessDefaultNetwork;
+                try
+                {
+                    Android.Net.ConnectivityManager.SetProcessDefaultNetwork(null);
+                    command();
+                }
+                finally
+                {
+                    Android.Net.ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
+                }
+#pragma warning restore 618
+                return;
+            }
+            ConnectParameterType connectParameter = ConnectParameter as ConnectParameterType;
+            if (connectParameter == null)
+            {
+                throw new Exception("No connect parameter");
+            }
+            Android.Net.Network boundNetwork = connectParameter.ConnectivityManager.BoundNetworkForProcess;
             try
             {
-                Android.Net.ConnectivityManager.SetProcessDefaultNetwork(null);
+                connectParameter.ConnectivityManager.BindProcessToNetwork(null);
                 command();
             }
             finally
             {
-                Android.Net.ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
+                connectParameter.ConnectivityManager.BindProcessToNetwork(boundNetwork);
             }
 #else
             command();

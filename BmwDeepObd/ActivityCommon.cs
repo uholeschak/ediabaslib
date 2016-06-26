@@ -513,7 +513,16 @@ namespace BmwDeepObd
             //Android.Util.Log.WriteLine(Android.Util.LogPriority.Debug, "Network", (defaultNetwork != null) ? "Mobile selected" : "Mobile not selected");
             try
             {
-                ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
+                if (Build.VERSION.SdkInt < BuildVersionCodes.M)
+                {
+#pragma warning disable 618
+                    ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
+#pragma warning restore 618
+                }
+                else
+                {
+                    _maConnectivity.BindProcessToNetwork(defaultNetwork);
+                }
             }
             catch (Exception)
             {

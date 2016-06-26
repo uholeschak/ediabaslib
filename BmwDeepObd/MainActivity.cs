@@ -13,9 +13,11 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using Android.Content;
+using Android.Content.PM;
 using Android.Hardware.Usb;
 using Android.OS;
 using Android.Support.V4.App;
+using Android.Support.V4.Content;
 using Android.Support.V4.View;
 using Android.Support.V7.App;
 using Android.Text;
@@ -35,10 +37,10 @@ using Mono.CSharp;
 namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/app_name", MainLauncher = true,
-            UiOptions=Android.Content.PM.UiOptions.SplitActionBarWhenNarrow,
-            ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
-                Android.Content.PM.ConfigChanges.Orientation |
-                Android.Content.PM.ConfigChanges.ScreenSize)]
+            UiOptions=UiOptions.SplitActionBarWhenNarrow,
+            ConfigurationChanges = ConfigChanges.KeyboardHidden |
+                ConfigChanges.Orientation |
+                ConfigChanges.ScreenSize)]
     [Android.App.MetaData("android.support.UI_OPTIONS", Value = "splitActionBarWhenNarrow")]
 #if APP_USB_FILTER
     [Android.App.IntentFilter(new[] { UsbManager.ActionUsbDeviceAttached })]
@@ -110,6 +112,11 @@ namespace BmwDeepObd
         private const string InfoXmlName = "Info.xml";
         private const long EcuZipSize = 130000000;          // ecu zip file size
         private const long EcuExtractSize = 1200000000;     // extracted ecu files size
+        private const int RequestPermissionExternalStorage = 0;
+        private readonly string[] _permissionsExternalStorage =
+        {
+            Android.Manifest.Permission.WriteExternalStorage
+        };
 
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         private string _deviceName = string.Empty;
@@ -127,6 +134,7 @@ namespace BmwDeepObd
         private bool _commErrorsOccured;
         private bool _activityActive;
         private bool _onResumeExecuted;
+        private bool _storageAccessGranted;
         private bool _createTabsPending;
         private bool _autoStart;
         private ActivityCommon _activityCommon;
@@ -198,7 +206,6 @@ namespace BmwDeepObd
             _activityCommon.RegisterInternetCellular();
 
             GetSettings();
-            UpdateDirectories();
 
             _updateHandler = new Handler();
             _jobReader = new JobReader();
@@ -280,27 +287,7 @@ namespace BmwDeepObd
             if (!_onResumeExecuted)
             {
                 _onResumeExecuted = true;
-                _activityCommon.RequestUsbPermission(null);
-                ReadConfigFile();
-                if (_startAlertDialog == null && _currentVersionCode != _lastVersionCode)
-                {
-                    _startAlertDialog = new AlertDialog.Builder(this)
-                        .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
-                        .SetCancelable(true)
-                        .SetMessage(Resource.String.version_change_info_message)
-                        .SetTitle(Resource.String.alert_title_info)
-                        .Show();
-                    _startAlertDialog.DismissEvent += (sender, args) =>
-                    {
-                        _startAlertDialog = null;
-                        HandleStartDialogs(firstStart);
-                    };
-                    TextView messageView = _startAlertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                    if (messageView != null)
-                    {
-                        messageView.MovementMethod = new LinkMovementMethod();
-                    }
-                }
+                RequestStoragePermissions();
             }
             _activityActive = true;
             if (_createTabsPending)
@@ -640,6 +627,22 @@ namespace BmwDeepObd
             return base.OnOptionsItemSelected(item);
         }
 
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+        {
+            switch (requestCode)
+            {
+                case RequestPermissionExternalStorage:
+                    if (grantResults.Length > 0 && grantResults[0] == Permission.Granted)
+                    {
+                        StoragePermissonGranted();
+                        break;
+                    }
+                    Toast.MakeText(this, GetString(Resource.String.no_ext_storage), ToastLength.Long).Show();
+                    Finish();
+                    break;
+            }
+        }
+
         protected void ButtonConnectClick(object sender, EventArgs e)
         {
             if (!CheckForEcuFiles())
@@ -906,6 +909,43 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 // ignored
+            }
+        }
+
+        private void RequestStoragePermissions()
+        {
+            if (_permissionsExternalStorage.All(permisson => ContextCompat.CheckSelfPermission(this, permisson) == Permission.Granted))
+            {
+                StoragePermissonGranted();
+                return;
+            }
+            ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, RequestPermissionExternalStorage);
+        }
+
+        private void StoragePermissonGranted()
+        {
+            _storageAccessGranted = true;
+            UpdateDirectories();
+            _activityCommon.RequestUsbPermission(null);
+            ReadConfigFile();
+            if (_startAlertDialog == null && _currentVersionCode != _lastVersionCode)
+            {
+                _startAlertDialog = new AlertDialog.Builder(this)
+                    .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
+                    .SetCancelable(true)
+                    .SetMessage(Resource.String.version_change_info_message)
+                    .SetTitle(Resource.String.alert_title_info)
+                    .Show();
+                _startAlertDialog.DismissEvent += (sender, args) =>
+                {
+                    _startAlertDialog = null;
+                    HandleStartDialogs(true);
+                };
+                TextView messageView = _startAlertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                if (messageView != null)
+                {
+                    messageView.MovementMethod = new LinkMovementMethod();
+                }
             }
         }
 
@@ -2204,7 +2244,7 @@ namespace BmwDeepObd
 
         private bool CheckForEcuFiles(bool checkPackage = false)
         {
-            if (_downloadEcuAlertDialog != null)
+            if (!_storageAccessGranted || (_downloadEcuAlertDialog != null))
             {
                 return true;
             }
