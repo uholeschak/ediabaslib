@@ -150,7 +150,7 @@
   <string name="select_interface_ftdi">USB (FTDI)</string>
 
   <!-- WiFi-->
-  <string name="connected_with_wifi_adapter">Sie sind im Moment mit einem WiFi Adapter verbunden.\nFür den Internetzugriff muss der Adapter getrennt werden.\nWollen Sie dies jetzt ausführen?</string>
+  <string name="connected_with_wifi_adapter">Sie sind im Moment mit einem WiFi Adapter verbunden.\nFür den Internetzugriff muss der Adapter getrennt werden.\nWollen Sie WiFi jetzt ausschalten?</string>
 
   <!-- ENET ip selection -->
   <string name="select_enet_ip_search">Fahrzeuge suchen</string>

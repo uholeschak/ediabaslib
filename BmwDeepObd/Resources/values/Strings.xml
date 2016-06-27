@@ -151,7 +151,7 @@
   <string name="select_interface_ftdi">USB (FTDI)</string>
 
   <!-- WiFi-->
-  <string name="connected_with_wifi_adapter">You are currently connected to a WiFi adapter.\nFor internet access disconnection of the adapter is required.\nDo you want to disconnect now?</string>
+  <string name="connected_with_wifi_adapter">You are currently connected to a WiFi adapter.\nFor internet access disconnection of the adapter is required.\nDo you want to disable WiFi now?</string>
 
   <!-- ENET ip selection -->
   <string name="select_enet_ip_search">Searching vehicles</string>
