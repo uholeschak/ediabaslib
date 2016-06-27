@@ -475,7 +475,10 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_submenu_help:
-                    StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://ediabaslib.codeplex.com/wikipage?title=Ediabas Tool")));
+                    _activityCommon.ShowWifiConnectedWarning(() =>
+                    {
+                        StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://ediabaslib.codeplex.com/wikipage?title=Ediabas Tool")));
+                    });
                     return true;
             }
             return base.OnOptionsItemSelected(item);

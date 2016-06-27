@@ -60,14 +60,20 @@ namespace BmwDeepObd
             _buttonYandexApiKeyCreate.SetOnTouchListener(this);
             _buttonYandexApiKeyCreate.Click += (sender, args) =>
             {
-                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/get/?service=trnsl")));
+                _activityCommon.ShowWifiConnectedWarning(() =>
+                {
+                    StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/get/?service=trnsl")));
+                });
             };
 
             _buttonYandexApiKeyGet = FindViewById<Button>(Resource.Id.buttonYandexKeyGet);
             _buttonYandexApiKeyGet.SetOnTouchListener(this);
             _buttonYandexApiKeyGet.Click += (sender, args) =>
             {
-                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
+                _activityCommon.ShowWifiConnectedWarning(() =>
+                {
+                    StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
+                });
             };
 
             _buttonYandexApiKeyPaste = FindViewById<Button>(Resource.Id.buttonYandexKeyPaste);
