@@ -71,6 +71,7 @@ namespace BmwDeepObd
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
         public delegate void TranslateDelegate(List<string> transList);
         public delegate void EnetSsidWarnDelegate(bool noAction);
+        public delegate void WifiConnectedWarnDelegate();
         public const string EmulatorEnetIp = "192.168.10.244";
         public const string AdapterSsid = "Deep OBD BMW";
         public const string DownloadDir = "Download";
@@ -570,7 +571,11 @@ namespace BmwDeepObd
 
         public string GetEnetAdapterIp()
         {
-            WifiInfo wifiInfo = _maWifi?.ConnectionInfo;
+            if ((_maWifi == null) || !_maWifi.IsWifiEnabled)
+            {
+                return null;
+            }
+            WifiInfo wifiInfo = _maWifi.ConnectionInfo;
             if (wifiInfo != null && _maWifi.DhcpInfo != null &&
                 !string.IsNullOrEmpty(wifiInfo.SSID) && wifiInfo.SSID.Contains(AdapterSsid))
             {
@@ -581,7 +586,11 @@ namespace BmwDeepObd
 
         public bool ElmWifiAdapterValid()
         {
-            WifiInfo wifiInfo = _maWifi?.ConnectionInfo;
+            if ((_maWifi == null) || !_maWifi.IsWifiEnabled)
+            {
+                return false;
+            }
+            WifiInfo wifiInfo = _maWifi.ConnectionInfo;
             if (wifiInfo != null && _maWifi.DhcpInfo != null)
             {
                 string adapterIp = ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
@@ -639,6 +648,42 @@ namespace BmwDeepObd
             return false;
         }
 
+        public bool IsConnectedToWifiAdapter()
+        {
+            if (!string.IsNullOrEmpty(GetEnetAdapterIp()))
+            {
+                return true;
+            }
+            if (ElmWifiAdapterValid())
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool ShowWifiConnectedWarning(WifiConnectedWarnDelegate handler)
+        {
+            if (!IsConnectedToWifiAdapter())
+            {
+                handler();
+                return true;
+            }
+            new AlertDialog.Builder(_activity)
+            .SetMessage(Resource.String.connected_with_wifi_adapter)
+            .SetTitle(Resource.String.alert_title_warning)
+            .SetPositiveButton(Resource.String.button_yes, (s, e) =>
+            {
+                _maWifi?.SetWifiEnabled(false);
+                handler();
+            })
+            .SetNegativeButton(Resource.String.button_no, (s, e) =>
+            {
+                handler();
+            })
+            .Show();
+            return false;
+        }
+
         public bool ShowWifiWarning(EnetSsidWarnDelegate handler)
         {
             if (_selectedInterface == InterfaceType.ElmWifi)
@@ -674,11 +719,14 @@ namespace BmwDeepObd
             if (_selectedInterface == InterfaceType.Enet)
             {
                 bool result = false;
-                string enetSsid = string.Empty;
-                WifiInfo wifiInfo = _maWifi?.ConnectionInfo;
-                if (wifiInfo != null && _maWifi.DhcpInfo != null && !string.IsNullOrEmpty(wifiInfo.SSID))
+                string enetSsid = "NoSsid";
+                if ((_maWifi != null) && _maWifi.IsWifiEnabled)
                 {
-                    enetSsid = wifiInfo.SSID;
+                    WifiInfo wifiInfo = _maWifi.ConnectionInfo;
+                    if (wifiInfo != null && _maWifi.DhcpInfo != null && !string.IsNullOrEmpty(wifiInfo.SSID))
+                    {
+                        enetSsid = wifiInfo.SSID;
+                    }
                 }
                 if (string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
                 {

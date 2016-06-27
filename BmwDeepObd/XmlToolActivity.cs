@@ -449,7 +449,7 @@ namespace BmwDeepObd
             IMenuItem translationEnableMenu = menu.FindItem(Resource.Id.menu_translation_enable);
             if (translationEnableMenu != null)
             {
-                translationEnableMenu.SetEnabled(true);
+                translationEnableMenu.SetEnabled(!commActive || !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey));
                 translationEnableMenu.SetVisible(ActivityCommon.IsTranslationRequired());
                 translationEnableMenu.SetChecked(ActivityCommon.EnableTranslation);
             }
@@ -457,7 +457,7 @@ namespace BmwDeepObd
             IMenuItem translationYandexKeyMenu = menu.FindItem(Resource.Id.menu_translation_yandex_key);
             if (translationYandexKeyMenu != null)
             {
-                translationYandexKeyMenu.SetEnabled(true);
+                translationYandexKeyMenu.SetEnabled(!commActive);
                 translationYandexKeyMenu.SetVisible(ActivityCommon.IsTranslationRequired());
             }
 
@@ -581,7 +581,10 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_submenu_help:
-                    StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://ediabaslib.codeplex.com/wikipage?title=Configuration Generator")));
+                    _activityCommon.ShowWifiConnectedWarning(() =>
+                    {
+                        StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://ediabaslib.codeplex.com/wikipage?title=Configuration Generator")));
+                    });
                     return true;
             }
             return base.OnOptionsItemSelected(item);
