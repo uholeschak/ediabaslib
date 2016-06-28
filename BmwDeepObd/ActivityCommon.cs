@@ -673,7 +673,14 @@ namespace BmwDeepObd
             .SetTitle(Resource.String.alert_title_warning)
             .SetPositiveButton(Resource.String.button_yes, (s, e) =>
             {
-                _maWifi?.SetWifiEnabled(false);
+                try
+                {
+                    _maWifi?.SetWifiEnabled(false);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
                 handler();
             })
             .SetNegativeButton(Resource.String.button_no, (s, e) =>
@@ -774,6 +781,10 @@ namespace BmwDeepObd
                 {
                     try
                     {
+                        if (_maWifi != null && !_maWifi.IsWifiEnabled)
+                        {
+                            _maWifi.SetWifiEnabled(true);
+                        }
                         _activity.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
                     }
                     catch (Exception)
@@ -787,6 +798,10 @@ namespace BmwDeepObd
             }
             try
             {
+                if (_maWifi != null && !_maWifi.IsWifiEnabled)
+                {
+                    _maWifi.SetWifiEnabled(true);
+                }
                 _activity.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
             }
             catch (Exception)
