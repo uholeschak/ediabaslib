@@ -12,9 +12,9 @@
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения</string>
   <string name="bt_enable">Bluetooth не активирован.\nХотите его активираивать?</string>
-  <string name="wifi_enable">WiFi не активирован.\nАктивировать или выбрать точку доступа?</string>
+  <string name="wifi_enable">Wi-Fi не активирован.\nАктивировать или выбрать точку доступа?</string>
   <string name="bt_not_available">Bluetooth не доступен.</string>
-  <string name="wifi_not_available">WiFi не доступен.</string>
+  <string name="wifi_not_available">Wi-Fi не доступен.</string>
   <string name="config_select">Отсутствует правильная конфигурация.\nХотите создать или выбрать конфигурацию?</string>
   <string name="bt_device_select">Bluetooth устройство не выбрано.\nХотите выбрать устройство?</string>
   <string name="ecu_download_free_space">На этом устройстве недостаточно свободной памяти ({0:fs0}) для сохранения ECU файла.\nХотите выбрать другой носитель памяти?</string>
@@ -149,8 +149,8 @@
   <string name="select_interface_elmwifi">ELM327 WIFI</string>
   <string name="select_interface_ftdi">USB (FTDI)</string>
 
-  <!-- WiFi-->
-  <string name="connected_with_wifi_adapter">В настоящее время вы подключены к WiFi адаптеру.\nДля получения доступа в интернет необходимо отключить адаптер.\nОтключить WiFi?</string>
+  <!-- Wi-Fi-->
+  <string name="connected_with_wifi_adapter">В настоящее время вы подключены к Wi-Fi адаптеру.\nДля получения доступа в интернет необходимо отключить адаптер.\nОтключить Wi-Fi?</string>
 
   <!-- ENET ip selection -->
   <string name="select_enet_ip_search">Поиск автомобиля</string>
@@ -159,11 +159,11 @@
 
   <!-- ENET adapter config -->
   <string name="enet_adapter_web_info">Пароль для веб интерфейса устойства по умолчанию root.\nЕсли устройство после его конфигурирования больше не реагирует - необходимо открыть устройство, перезагрузить его и нажать кнопку сброса.</string>
-  <string name="enet_adapter_wifi_info">Если вы используете OBD BMW WiFi устройство, выберите точку доступа с именем \'Deep OBD BMW\'. Пароль по умолчанию deepobdbmw.</string>
-  <string name="enet_adapter_ssid_warn">Вы соеденены не с Deep OBD BMW WiFi устройством.\nВыбрать другую точку доступа?</string>
+  <string name="enet_adapter_wifi_info">Если вы используете OBD BMW Wi-Fi устройство, выберите точку доступа с именем \'Deep OBD BMW\'. Пароль по умолчанию deepobdbmw.</string>
+  <string name="enet_adapter_ssid_warn">Вы соеденены не с Deep OBD BMW Wi-Fi устройством.\nВыбрать другую точку доступа?</string>
 
-  <!-- ELM327 WiFi -->
-  <string name="elmwifi_adapter_warn">Вы соеденены не с ELM327 WiFi устройством.\nВыбрать другую точку доступа?</string>
+  <!-- ELM327 Wi-Fi -->
+  <string name="elmwifi_adapter_warn">Вы соеденены не с ELM327 Wi-Fi устройством.\nВыбрать другую точку доступа?</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>

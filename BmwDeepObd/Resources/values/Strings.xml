@@ -12,9 +12,9 @@
   <string name="no_ext_storage">No external storage available</string>
   <string name="access_denied_ext_storage">Access to the external storage is required to execute this app</string>
   <string name="bt_enable">Bluetooth is not enabled.\nDo you want to enable it now?</string>
-  <string name="wifi_enable">WiFi is not enabled.\nDo you want to enable it now or select the access point?</string>
+  <string name="wifi_enable">Wi-Fi is not enabled.\nDo you want to enable it now or select the access point?</string>
   <string name="bt_not_available">Bluetooth is not available.</string>
-  <string name="wifi_not_available">WiFi is not available.</string>
+  <string name="wifi_not_available">Wi-Fi is not available.</string>
   <string name="config_select">No valid configuration is present.\nDo you want to generate or selecta configuration now?</string>
   <string name="bt_device_select">No Bluetooth device has been selected.\nDo you want to select a device now?</string>
   <string name="ecu_download_free_space">There is not enough free space ({0:fs0}) on the device for storing the ECU files.\nDo you want to select a different storage media?</string>
@@ -150,8 +150,8 @@
   <string name="select_interface_elmwifi">ELM327 WIFI</string>
   <string name="select_interface_ftdi">USB (FTDI)</string>
 
-  <!-- WiFi-->
-  <string name="connected_with_wifi_adapter">You are currently connected to a WiFi adapter.\nFor internet access disconnection of the adapter is required.\nDo you want to disable WiFi now?</string>
+  <!-- Wi-Fi-->
+  <string name="connected_with_wifi_adapter">You are currently connected to a Wi-Fi adapter.\nFor internet access disconnection of the adapter is required.\nDo you want to disable Wi-Fi now?</string>
 
   <!-- ENET ip selection -->
   <string name="select_enet_ip_search">Searching vehicles</string>
@@ -160,11 +160,11 @@
 
   <!-- ENET adapter config -->
   <string name="enet_adapter_web_info">The default password for the adapter web interface is root.\nIf the adapter gets unreachable after configuration you have to open the adapter and press the reset button after the adapter has booted.</string>
-  <string name="enet_adapter_wifi_info">If you are using a Deep OBD BMW WiFi adapter select the access point with the name \'Deep OBD BMW\', the default password is deepobdbmw.</string>
-  <string name="enet_adapter_ssid_warn">You are not connected with a Deep OBD BMW WiFi adapter.\nDo you want to select a different access point?</string>
+  <string name="enet_adapter_wifi_info">If you are using a Deep OBD BMW Wi-Fi adapter select the access point with the name \'Deep OBD BMW\', the default password is deepobdbmw.</string>
+  <string name="enet_adapter_ssid_warn">You are not connected with a Deep OBD BMW Wi-Fi adapter.\nDo you want to select a different access point?</string>
 
-  <!-- ELM327 WiFi -->
-  <string name="elmwifi_adapter_warn">You are not connected with an ELM327 WiFi adapter.\nDo you want to select a different access point?</string>
+  <!-- ELM327 Wi-Fi -->
+  <string name="elmwifi_adapter_warn">You are not connected with an ELM327 Wi-Fi adapter.\nDo you want to select a different access point?</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas tool</string>
