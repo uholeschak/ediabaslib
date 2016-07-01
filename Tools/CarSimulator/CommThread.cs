@@ -203,6 +203,8 @@ namespace CarSimulator
         private bool _udpError;
         private long _lastTcpDiagRecTick;
         private int _tcpNackIndex;
+        // ReSharper disable once NotAccessedField.Local
+        private byte[] _tcpLastResponse;
         private readonly SerialPort _serialPort;
         private readonly AutoResetEvent _serialReceiveEvent;
         private readonly AutoResetEvent _pcanReceiveEvent;
@@ -1712,6 +1714,14 @@ namespace CarSimulator
                         return false;
                     }
                     _tcpNackIndex++;
+#if false
+                    if (_tcpLastResponse != null)
+                    {
+                        Debug.WriteLine("Inject old response");
+                        _tcpClientDiagStream.Write(_tcpLastResponse, 0, _tcpLastResponse.Length);
+                    }
+#endif
+
                     byte[] ack = new byte[recLen];
                     Array.Copy(dataBuffer, ack, ack.Length);
                     ack[5] = 0x02;
@@ -1819,6 +1829,7 @@ namespace CarSimulator
                 Debug.WriteLine("Send: " + text);
 #endif
                 _tcpClientDiagStream.Write(dataBuffer, 0, dataBuffer.Length);
+                _tcpLastResponse = dataBuffer;
             }
             catch (Exception)
             {
