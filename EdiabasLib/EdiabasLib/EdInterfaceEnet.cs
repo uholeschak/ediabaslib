@@ -32,6 +32,7 @@ namespace EdiabasLib
 
         private bool _disposed;
         protected const int TransBufferSize = 0x10010; // transmit buffer size
+        protected const int TcpAckTimeout = 5000;
         protected const string AutoIp = "auto";
         protected static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         protected static readonly byte[] ByteArray0 = new byte[0];
@@ -1073,7 +1074,7 @@ namespace EdiabasLib
                 }
 
                 // wait for ack
-                int recLen = ReceiveTelegram(AckBuffer, 5000);
+                int recLen = ReceiveAck(AckBuffer, TcpAckTimeout, enableLogging);
                 if (recLen < 0)
                 {
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
@@ -1086,7 +1087,7 @@ namespace EdiabasLib
                     {
                         TcpDiagStream.Write(DataBuffer, 0, sendLength);
                     }
-                    recLen = ReceiveTelegram(AckBuffer, 5000);
+                    recLen = ReceiveAck(AckBuffer, TcpAckTimeout, enableLogging);
                     if (recLen < 0)
                     {
                         if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
@@ -1222,6 +1223,29 @@ namespace EdiabasLib
                 return -1;
             }
             return recLen;
+        }
+
+        protected int ReceiveAck(byte[] receiveData, int timeout, bool enableLogging)
+        {
+            long startTick = Stopwatch.GetTimestamp();
+            for (;;)
+            {
+                int recLen = ReceiveTelegram(receiveData, timeout);
+                if (recLen < 0)
+                {
+                    return recLen;
+                }
+                if (recLen >= 6 && receiveData[5] == 0x02)
+                {   // ack received
+                    return recLen;
+                }
+                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Ignore Non ack");
+                if ((Stopwatch.GetTimestamp() - startTick) > timeout * TickResolMs)
+                {
+                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Ack timeout");
+                    return -1;
+                }
+            }
         }
 
         protected EdiabasNet.ErrorCodes ObdTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
