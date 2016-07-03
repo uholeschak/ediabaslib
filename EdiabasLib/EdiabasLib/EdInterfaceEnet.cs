@@ -32,6 +32,7 @@ namespace EdiabasLib
 
         private bool _disposed;
         protected const int TransBufferSize = 0x10010; // transmit buffer size
+        protected const int TcpReadTimeoutOffset = 1000;
         protected const int TcpAckTimeout = 5000;
         protected const string AutoIp = "auto";
         protected static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
@@ -1340,6 +1341,7 @@ namespace EdiabasLib
             {
                 int timeout = (Nr78Dict.Count > 0) ? ParTimeoutNr78 : ParTimeoutStd;
                 //if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout: {0}", timeout);
+                timeout += TcpReadTimeoutOffset;
                 if (!ReceiveData(receiveData, timeout))
                 {
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
