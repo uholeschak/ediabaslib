@@ -1247,8 +1247,9 @@ namespace EdiabasLib
                 {
                     return recLen;
                 }
-                if (recLen >= 6 && receiveData[5] == 0x02)
-                {   // ack received
+                if ((recLen >= 6) &&
+                    ((receiveData[5] == 0x02) || (receiveData[5] == 0xFF)))
+                {   // ACK or NACK received
                     return recLen;
                 }
                 if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Ignore Non ack");
