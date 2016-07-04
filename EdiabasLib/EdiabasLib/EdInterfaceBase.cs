@@ -26,10 +26,13 @@ namespace EdiabasLib
             {
                 set
                 {
+                    _request = value;
                     Key = BitConverter.ToString(value);
                 }
+                get { return _request; }
             }
             public string Key { get; private set; }
+            private byte[] _request;
             public List<byte[]> ResponseList { get; set; }
             public EdiabasNet.ErrorCodes ErrorCode { get; set; }
         }
@@ -201,6 +204,10 @@ namespace EdiabasLib
             {
                 return;
             }
+            if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_IFH_0003)
+            {
+                return;
+            }
             if (request.Length > 0)
             {
                 StoreWriteTransaction();
@@ -259,6 +266,14 @@ namespace EdiabasLib
             if (request.Length > 0)
             {
                 Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, request, 0, request.Length, "Send Cache");
+            }
+            if ((ReadTransaction.Request.Length > 0) && ((ReadTransaction.Request[0] & 0xC0) == 0xC0))
+            {   // functional address
+                if (ReadTransaction.ErrorCode == EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {   // transmission not completed
+                    Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Incomplete cached response");
+                    return false;
+                }
             }
             if (ReadTransaction.ResponseList.Count > ReadTransactionPos)
             {
