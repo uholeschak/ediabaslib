@@ -2511,6 +2511,7 @@ namespace EdiabasLib
                 }
                 if (string.IsNullOrEmpty(fullFileName))
                 {
+                    ediabas.LogFormat(EdLogLevel.Error, "OpTabsetex: File not found {0}", baseFileName);
                     ediabas.SetError(ErrorCodes.EDIABAS_SYS_0002);
                     return;
                 }
@@ -2523,6 +2524,7 @@ namespace EdiabasLib
                 }
                 catch (Exception)
                 {
+                    ediabas.LogFormat(EdLogLevel.Error, "OpTabsetex: File not found {0}", baseFileName);
                     ediabas.SetError(ErrorCodes.EDIABAS_SYS_0002);
                     return;
                 }
