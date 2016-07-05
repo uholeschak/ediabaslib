@@ -1080,7 +1080,6 @@ namespace EdiabasLib
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                 return false;
             }
-            byte[] sendDataBuffer = sendData;
             if (EdicSimulation)
             {
                 EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send EDIC");
@@ -1188,36 +1187,15 @@ namespace EdiabasLib
                             return true;
                     }
                 }
-                if (sendData.Length > 0)
-                {
-                    // create full telegram
-                    if (sendData.Length > 0x3F)
-                    {
-                        sendDataBuffer = new byte[sendData.Length + 5]; // +1 checksum
-                        sendDataBuffer[0] = 0x80;
-                        sendDataBuffer[1] = ParEdicEcuAddress;
-                        sendDataBuffer[2] = ParEdicTesterAddress;
-                        sendDataBuffer[3] = (byte)sendData.Length;
-                        Array.Copy(sendData, 0, sendDataBuffer, 4, sendData.Length);
-                    }
-                    else
-                    {
-                        sendDataBuffer = new byte[sendData.Length + 4]; // +1 checksum
-                        sendDataBuffer[0] = (byte)(0x80 | sendData.Length);
-                        sendDataBuffer[1] = ParEdicEcuAddress;
-                        sendDataBuffer[2] = ParEdicTesterAddress;
-                        Array.Copy(sendData, 0, sendDataBuffer, 3, sendData.Length);
-                    }
-                }
             }
-            if (sendDataBuffer.Length > SendBuffer.Length)
+            if (sendData.Length > SendBuffer.Length)
             {
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0031);
                 return false;
             }
             EdiabasNet.ErrorCodes cachedErrorCode;
             byte[] cachedResponse;
-            if (ReadCachedTransmission(sendDataBuffer, out cachedResponse, out cachedErrorCode))
+            if (ReadCachedTransmission(sendData, out cachedResponse, out cachedErrorCode))
             {
                 if (cachedErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
@@ -1228,17 +1206,17 @@ namespace EdiabasLib
                 return true;
             }
 #if false
-            sendDataBuffer.CopyTo(this.sendBuffer, 0);
-            this.sendBufferLength = sendDataBuffer.Length;
+            sendData.CopyTo(this.sendBuffer, 0);
+            this.sendBufferLength = sendData.Length;
             int recLength;
-            this.recErrorCode = OBDTrans(this.sendBuffer, sendDataBuffer.Length, ref this.recBuffer, out recLength);
+            this.recErrorCode = OBDTrans(this.sendBuffer, sendData.Length, ref this.recBuffer, out recLength);
             this.recBufferLength = recLength;
 #else
             StartCommThread();
             lock (CommThreadLock)
             {
-                sendDataBuffer.CopyTo(SendBuffer, 0);
-                SendBufferLength = sendDataBuffer.Length;
+                sendData.CopyTo(SendBuffer, 0);
+                SendBufferLength = sendData.Length;
                 CommThreadReqCount++;
                 CommThreadCommand = CommThreadCommands.SingleTransmit;
             }
@@ -1258,7 +1236,7 @@ namespace EdiabasLib
 #endif
             if (RecErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
-                CacheTransmission(sendDataBuffer, null, RecErrorCode);
+                CacheTransmission(sendData, null, RecErrorCode);
                 EdiabasProtected.SetError(RecErrorCode);
                 return false;
             }
@@ -1267,7 +1245,7 @@ namespace EdiabasLib
                 receiveData = new byte[RecBufferLength];
                 Array.Copy(RecBuffer, receiveData, RecBufferLength);
             }
-            CacheTransmission(sendDataBuffer, receiveData, EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE);
+            CacheTransmission(sendData, receiveData, EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE);
             return true;
         }
 
@@ -2622,6 +2600,29 @@ namespace EdiabasLib
             switch (KwpMode)
             {
                 case KwpModes.Kwp2000:
+                    if (sendDataLength > 0)
+                    {
+                        // create full telegram
+                        byte[] sendDataBuffer;
+                        if (sendDataLength > 0x3F)
+                        {
+                            sendDataBuffer = new byte[sendDataLength + 5]; // +1 checksum
+                            sendDataBuffer[0] = 0x80;
+                            sendDataBuffer[1] = ParEdicEcuAddress;
+                            sendDataBuffer[2] = ParEdicTesterAddress;
+                            sendDataBuffer[3] = (byte)sendDataLength;
+                            Array.Copy(sendData, 0, sendDataBuffer, 4, sendDataLength);
+                        }
+                        else
+                        {
+                            sendDataBuffer = new byte[sendDataLength + 4]; // +1 checksum
+                            sendDataBuffer[0] = (byte)(0x80 | sendDataLength);
+                            sendDataBuffer[1] = ParEdicEcuAddress;
+                            sendDataBuffer[2] = ParEdicTesterAddress;
+                            Array.Copy(sendData, 0, sendDataBuffer, 3, sendDataLength);
+                        }
+                        return ProcessKwp2000(sendDataBuffer, sendDataBuffer.Length, ref receiveData, out receiveLength);
+                    }
                     return ProcessKwp2000(sendData, sendDataLength, ref receiveData, out receiveLength);
 
                 case KwpModes.Iso9141:
@@ -2872,42 +2873,66 @@ namespace EdiabasLib
                     int receiveLength;
                     byte[] finishTel = {0x81, ParEdicEcuAddress, ParEdicTesterAddress, 0x82, 0x00};
                     EdiabasNet.ErrorCodes errorCode = TransKwp2000(finishTel, finishTel.Length - 1, ref Iso9141Buffer, out receiveLength, false);
-                    if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
-                    {
-                        EcuConnected = false;
-                        return errorCode;
-                    }
-
                     EcuConnected = false;
-                    return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                    return errorCode;
                 }
 
                 case KwpModes.Iso9141:
-                    return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                {
+                    int receiveLength;
+                    byte[] finishTel = { 0x03, 0x00, 0x06 };    // end output
+                    byte[] receiveData = new byte[256];
+                    List<byte> keyBytesList = null;
+                    EdiabasNet.ErrorCodes errorCode = ProcessIso9141(finishTel, finishTel.Length, ref receiveData, out receiveLength, ref keyBytesList);
+                    EcuConnected = false;
+                    return errorCode;
+                }
             }
             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0014;   // concept not implemented
         }
 
         private EdiabasNet.ErrorCodes TransTp20(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
+            byte[] sendDataBuffer;
             if (sendDataLength == 0)
             {
                 // connect check command
-                sendData = new byte[] {0x01, ParEdicWakeAddress, ParEdicTesterAddress, 0x00, 0x00 };
-                sendDataLength = sendData.Length - 1;   // for checksum
+                sendDataBuffer = new byte[] {0x01, ParEdicWakeAddress, ParEdicTesterAddress, 0x00, 0x00 };
             }
+            else
+            {
+                // create full telegram
+                if (sendDataLength > 0x3F)
+                {
+                    sendDataBuffer = new byte[sendDataLength + 5]; // +1 checksum
+                    sendDataBuffer[0] = 0x80;
+                    sendDataBuffer[1] = ParEdicEcuAddress;
+                    sendDataBuffer[2] = ParEdicTesterAddress;
+                    sendDataBuffer[3] = (byte)sendDataLength;
+                    Array.Copy(sendData, 0, sendDataBuffer, 4, sendDataLength);
+                }
+                else
+                {
+                    sendDataBuffer = new byte[sendDataLength + 4]; // +1 checksum
+                    sendDataBuffer[0] = (byte)(0x80 | sendDataLength);
+                    sendDataBuffer[1] = ParEdicEcuAddress;
+                    sendDataBuffer[2] = ParEdicTesterAddress;
+                    Array.Copy(sendData, 0, sendDataBuffer, 3, sendDataLength);
+                }
+            }
+            int sendLen = sendDataBuffer.Length - 1;   // for checksum
 
             receiveLength = 0;
             for (;;)
             {
                 byte[] tempRecBuffer = new byte[receiveData.Length];
                 int tempRecLen;
-                EdiabasNet.ErrorCodes errorCode = TransTp20(sendData, sendDataLength, ref tempRecBuffer, out tempRecLen, true);
+                EdiabasNet.ErrorCodes errorCode = TransTp20(sendDataBuffer, sendLen, ref tempRecBuffer, out tempRecLen, true);
                 if ((errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE) || (tempRecLen == 0))
                 {
                     return errorCode;
                 }
-                sendDataLength = 0;
+                sendLen = 0;
                 if ((receiveLength + tempRecLen) <= receiveData.Length)
                 {
                     Array.Copy(tempRecBuffer, 0, receiveData, receiveLength, tempRecLen);
