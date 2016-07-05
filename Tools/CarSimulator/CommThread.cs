@@ -5680,6 +5680,13 @@ namespace CarSimulator
                 }
                 if (command != 0x09)
                 {   // no ack
+                    string text = string.Empty;
+                    for (int i = 0; i < recLength; i++)
+                    {
+                        text += string.Format("{0:X02} ", _receiveData[i]);
+                    }
+                    Debug.WriteLine("Request: " + text);
+
                     bool found = false;
                     foreach (ResponseEntry responseEntry in _configData.ResponseList)
                     {
@@ -5707,11 +5714,6 @@ namespace CarSimulator
                     }
                     if (!found)
                     {
-                        string text = string.Empty;
-                        for (int i = 0; i < recLength; i++)
-                        {
-                            text += string.Format("{0:X02} ", _receiveData[i]);
-                        }
                         Debug.WriteLine("Not found: " + text);
                     }
                 }

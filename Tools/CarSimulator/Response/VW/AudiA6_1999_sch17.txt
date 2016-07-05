@@ -1,0 +1,12 @@
+;for sch_17.grp (ISO 9141)
+
+; wake address, key bytes (odd parity)
+CFG: 97 01 8A
+;ID
+: 0F 01 F6 B4 42 30 39 32 30 39 33 34 46 20 20
+: 0F 03 F6 43 35 2D 4B 4F 4D 42 49 49 4E 53 54
+: 0E 05 F6 52 2E 20 56 44 4F 20 44 31 32 20
+: 08 07 F6 00 09 3E 3B 5A 03 03 09 09
+
+; Steuergeraeteversion_abfragen2
+03 00 00 : 0F 0B F6 57 41 55 5A 5A 5A 34 42 5A 58 4E 31 0F 0D F6 33 37 35 33 33 20 20 20 20 20 41 55 0F 0F F6 5A 37 5A 30 41 31 37 38 36 33 37 36

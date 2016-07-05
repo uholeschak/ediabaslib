@@ -1,0 +1,13 @@
+;for mot_01.grp (ISO 9141)
+
+; wake address, key bytes (odd parity)
+CFG: 01 01 8A
+;ID
+: 0F 01 F6 34 44 30 39 30 37 35 35 38 41 20 20
+: 17 03 F6 34 2E 32 4C 20 56 38 2F 35 56 20 20 20 20 20 20 47 20 20 20 03 07 05 F6 30 30 30 32
+: 08 07 F6 00 2C F0 00 00
+
+; Fehlerspeicher_abfragen
+03 00 07 : 09 0F FC 45 5B 23 44 74 23
+; Fehlerspeicher_loeschen
+03 00 05 : 06 13 FC FF FF 88
