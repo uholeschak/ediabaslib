@@ -41,6 +41,7 @@ namespace EdiabasLib
         {
             Idle,               // do nothing
             SingleTransmit,     // single data transmission
+            FrequentMode,       // frequent mode setting
             IdleTransmit,       // idle data transmission
             Exit,               // exit thread
         }
@@ -69,6 +70,7 @@ namespace EdiabasLib
         public delegate bool InterfaceSendPulseDelegate(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines, int autoKeyByteDelay);
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
         protected delegate EdiabasNet.ErrorCodes IdleDelegate();
+        protected delegate EdiabasNet.ErrorCodes FrequentDelegate();
         protected delegate EdiabasNet.ErrorCodes FinishDelegate();
 
         private bool _disposed;
@@ -131,12 +133,16 @@ namespace EdiabasLib
         protected byte[] KeyBytesProtected = ByteArray0;
         protected byte[] StateProtected = new byte[2];
         protected byte[] SendBuffer = new byte[TransBufferSize];
-        protected byte[] SendBufferThread = new byte[TransBufferSize];
-        protected byte[] SendBufferInternal = new byte[1];
         protected volatile int SendBufferLength;
+        protected byte[] SendBufferThread = new byte[TransBufferSize];
+        protected byte[] SendBufferFrequent = new byte[TransBufferSize];
+        protected volatile int SendBufferFrequentLength;
+        protected byte[] SendBufferInternal = new byte[1];
         protected byte[] RecBuffer = new byte[TransBufferSize];
-        protected byte[] RecBufferThread = new byte[TransBufferSize];
         protected volatile int RecBufferLength;
+        protected byte[] RecBufferThread = new byte[TransBufferSize];
+        protected byte[] RecBufferFrequent = new byte[TransBufferSize];
+        protected int RecBufferFrequentLength;
         protected volatile EdiabasNet.ErrorCodes RecErrorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         protected byte[] Iso9141Buffer = new byte[256];
         protected byte[] Iso9141BlockBuffer = new byte[1];
@@ -153,6 +159,7 @@ namespace EdiabasLib
 
         protected TransmitDelegate ParTransmitFunc;
         protected IdleDelegate ParIdleFunc;
+        protected FrequentDelegate ParFrequentFunc;
         protected FinishDelegate ParFinishFunc;
         protected int ParTimeoutStd;
         protected int ParTimeoutTelEnd;
@@ -254,6 +261,7 @@ namespace EdiabasLib
 
                 ParTransmitFunc = null;
                 ParIdleFunc = null;
+                ParFrequentFunc = null;
                 ParFinishFunc = null;
                 if (!edicPar)
                 {
@@ -279,6 +287,8 @@ namespace EdiabasLib
                 ParHasKeyBytes = false;
                 ParSupportFrequent = false;
                 KeyBytesProtected = ByteArray0;
+                SendBufferFrequentLength = 0;
+                RecBufferFrequentLength = 0;
                 Nr78Dict.Clear();
                 EcuConnected = false;
                 KwpMode = KwpModes.Undefined;
@@ -325,6 +335,7 @@ namespace EdiabasLib
                             case 0x81:      // KWP2000
                                 ParTransmitFunc = TransKwp2000;
                                 ParIdleFunc = IdleKwp2000;
+                                ParFrequentFunc = FrequentKwp2000;
                                 ParFinishFunc = FinishKwp2000;
                                 break;
 
@@ -345,6 +356,7 @@ namespace EdiabasLib
                         ParSendSetDtr = true;
                         ParAllowBitBang = false;
                         ParHasKeyBytes = true;
+                        ParSupportFrequent = true;
                         return;
 
                     case 0x0001:    // Concept 1
@@ -749,6 +761,7 @@ namespace EdiabasLib
                 {
                     if (EcuConnected)
                     {
+                        EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, KeyBytesProtected, 0, KeyBytesProtected.Length, "KeyBytes");
                         return KeyBytesProtected;
                     }
                     // start transmission
@@ -780,6 +793,7 @@ namespace EdiabasLib
                         EdiabasProtected.SetError(RecErrorCode);
                         return ByteArray0;
                     }
+                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, KeyBytesProtected, 0, KeyBytesProtected.Length, "KeyBytes");
                     return KeyBytesProtected;
                 }
                 return ByteArray0;
@@ -1082,6 +1096,12 @@ namespace EdiabasLib
             }
             if (EdicSimulation)
             {
+                if (SendBufferFrequentLength != 0)
+                {
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Frequent mode active");
+                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
+                    return false;
+                }
                 EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send EDIC");
                 if (CommAnswerLenProtected[1] != 0x0000)
                 {   // command
@@ -1249,8 +1269,70 @@ namespace EdiabasLib
             return true;
         }
 
+        public override bool TransmitFrequent(byte[] sendData)
+        {
+            EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send Frequent");
+            if (!EdicSimulation)
+            {
+                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
+                return false;
+            }
+            if (CommParameterProtected == null)
+            {
+                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
+                return false;
+            }
+            if (!ParSupportFrequent)
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Frequent not supported");
+                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
+                return false;
+            }
+            if (sendData.Length == 0)
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "No frequent send data");
+                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
+                return false;
+            }
+            if (SendBufferFrequentLength != 0)
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Frequent mode active");
+                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
+                return false;
+            }
+            StartCommThread();
+            lock (CommThreadLock)
+            {
+                sendData.CopyTo(SendBuffer, 0);
+                SendBufferLength = sendData.Length;
+                CommThreadReqCount++;
+                CommThreadCommand = CommThreadCommands.FrequentMode;
+            }
+            CommThreadReqEvent.Set();
+
+            for (;;)
+            {
+                lock (CommThreadLock)
+                {
+                    if (CommThreadResCount == CommThreadReqCount)
+                    {
+                        break;
+                    }
+                }
+                CommThreadResEvent.WaitOne(10, false);
+            }
+            if (RecErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                EdiabasProtected.SetError(RecErrorCode);
+                return false;
+            }
+            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Frequent mode started");
+            return true;
+        }
+
         public override bool ReceiveFrequent(out byte[] receiveData)
         {
+            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "ReceiveFrequent");
             receiveData = null;
             if (CommParameterProtected == null)
             {
@@ -1259,6 +1341,12 @@ namespace EdiabasLib
             }
             if (!ParSupportFrequent)
             {
+                receiveData = ByteArray0;
+                return true;
+            }
+            if (SendBufferFrequentLength == 0)
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Frequent mode not active");
                 receiveData = ByteArray0;
                 return true;
             }
@@ -1293,12 +1381,46 @@ namespace EdiabasLib
                 receiveData = new byte[RecBufferLength];
                 Array.Copy(RecBuffer, receiveData, RecBufferLength);
             }
+            EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, receiveData.Length, "Frequent");
             return true;
         }
 
         public override bool StopFrequent()
         {
-            StopCommThread();
+            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "StopFrequent");
+            if (EdicSimulation)
+            {
+                StartCommThread();
+                lock (CommThreadLock)
+                {
+                    SendBufferLength = 0;
+                    CommThreadReqCount++;
+                    CommThreadCommand = CommThreadCommands.FrequentMode;
+                }
+                CommThreadReqEvent.Set();
+
+                for (;;)
+                {
+                    lock (CommThreadLock)
+                    {
+                        if (CommThreadResCount == CommThreadReqCount)
+                        {
+                            break;
+                        }
+                    }
+                    CommThreadResEvent.WaitOne(10, false);
+                }
+                if (RecErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EdiabasProtected.SetError(RecErrorCode);
+                    return false;
+                }
+            }
+            else
+            {
+                StopCommThread();
+            }
+            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Frequent mode stopped");
             return true;
         }
 
@@ -1853,7 +1975,7 @@ namespace EdiabasLib
 
                     case CommThreadCommands.IdleTransmit:
                         {
-                            EdiabasNet.ErrorCodes errorCode = ObdIdleTrans();
+                            EdiabasNet.ErrorCodes errorCode = (SendBufferFrequentLength == 0) ? ObdIdleTrans() : ObdFrequentTrans();
                             if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                             {
                                 lock (CommThreadLock)
@@ -1879,9 +2001,64 @@ namespace EdiabasLib
                 {
                     case CommThreadCommands.SingleTransmit:
                         {
-                            RecErrorCode = ObdTrans(SendBufferThread, sendLength, ref RecBufferThread, out recLength);
+                            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                            if (SendBufferFrequentLength != 0)
+                            {
+                                if (RecBufferFrequentLength == 0)
+                                {
+                                    EdiabasNet.ErrorCodes errorCode = ObdFrequentTrans();
+                                    if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                                    {
+                                        lock (CommThreadLock)
+                                        {
+                                            if (CommThreadCommand == CommThreadCommands.IdleTransmit)
+                                            {
+                                                CommThreadCommand = CommThreadCommands.Idle;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (RecBufferFrequentLength != 0)
+                                {
+                                    Array.Copy(RecBufferFrequent, RecBufferThread, RecBufferFrequentLength);
+                                    recLength = RecBufferFrequentLength;
+                                    RecBufferFrequentLength = 0;
+                                }
+                            }
+                            else
+                            {
+                                RecErrorCode = ObdTrans(SendBufferThread, sendLength, ref RecBufferThread, out recLength);
+                            }
                             command = CommThreadCommands.Idle;
-                            if (ParIdleFunc != null)
+                            if ((SendBufferFrequentLength != 0) || (ParIdleFunc != null))
+                            {
+                                command = CommThreadCommands.IdleTransmit;
+                            }
+                            break;
+                        }
+
+                    case CommThreadCommands.FrequentMode:
+                        {
+                            if (sendLength == 0)
+                            {   // stop frequent
+                                SendBufferFrequentLength = 0;
+                                RecBufferFrequentLength = 0;
+                            }
+                            else
+                            {
+                                if (ParFrequentFunc == null)
+                                {
+                                    RecErrorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0006;
+                                }
+                                else
+                                {
+                                    Array.Copy(SendBufferThread, SendBufferFrequent, sendLength);
+                                    SendBufferFrequentLength = sendLength;
+                                    RecBufferFrequentLength = 0;
+                                }
+                            }
+                            command = CommThreadCommands.Idle;
+                            if ((SendBufferFrequentLength != 0) || (ParIdleFunc != null))
                             {
                                 command = CommThreadCommands.IdleTransmit;
                             }
@@ -2346,6 +2523,16 @@ namespace EdiabasLib
             }
 
             return ParIdleFunc();
+        }
+
+        protected EdiabasNet.ErrorCodes ObdFrequentTrans()
+        {
+            if (ParFrequentFunc == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0014;
+            }
+
+            return ParFrequentFunc();
         }
 
         protected EdiabasNet.ErrorCodes ObdFinishTrans()
@@ -2855,6 +3042,44 @@ namespace EdiabasLib
 
                 case KwpModes.Iso9141:
                     return IdleIso9141();
+            }
+            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0014;   // concept not implemented
+        }
+
+        private EdiabasNet.ErrorCodes FrequentKwp2000()
+        {
+            if (!EcuConnected)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+            if (SendBufferFrequentLength == 0)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+            switch (KwpMode)
+            {
+                case KwpModes.Kwp2000:
+                    {
+                        EdiabasNet.ErrorCodes errorCode = TransKwp2000(SendBufferFrequent, SendBufferFrequentLength, ref RecBufferFrequent, out RecBufferFrequentLength, false);
+                        if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                        {
+                            EcuConnected = false;
+                            return errorCode;
+                        }
+                        return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                    }
+
+                case KwpModes.Iso9141:
+                    {
+                        List<byte> keyBytesList = null;
+                        EdiabasNet.ErrorCodes errorCode = ProcessIso9141(SendBufferFrequent, SendBufferFrequentLength, ref RecBufferFrequent, out RecBufferFrequentLength, ref keyBytesList);
+                        if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                        {
+                            EcuConnected = false;
+                            return errorCode;
+                        }
+                        return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                    }
             }
             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0014;   // concept not implemented
         }
@@ -3662,13 +3887,17 @@ namespace EdiabasLib
                             EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receive buffer overflow, ignore data");
                             transmitDone = true;
                         }
-                        Array.Copy(Iso9141Buffer, 0, receiveData, recLength, blockLen);
-                        recLength += blockLen;
-                        recBlocks++;
-                        if (recBlocks >= maxRecBlocks)
-                        {   // all blocks received
-                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "All blocks received");
-                            transmitDone = true;
+                        else
+                        {
+                            Array.Copy(Iso9141Buffer, 0, receiveData, recLength, blockLen);
+                            recLength += blockLen;
+                            recBlocks++;
+                            if (recBlocks >= maxRecBlocks)
+                            {
+                                // all blocks received
+                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "All blocks received");
+                                transmitDone = true;
+                            }
                         }
                     }
                 }

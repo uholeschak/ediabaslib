@@ -520,6 +520,12 @@ namespace EdiabasLib
             return true;
         }
 
+        public override bool TransmitFrequent(byte[] sendData)
+        {
+            EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
+            return false;
+        }
+
         public override bool ReceiveFrequent(out byte[] receiveData)
         {
             receiveData = null;

@@ -1794,7 +1794,7 @@ namespace EdiabasLib
             new OpCode(0x28, "xsetpar", OpXsetpar),
             new OpCode(0x29, "xawlen", OpXawlen),
             new OpCode(0x2A, "xsend", OpXsend),
-            new OpCode(0x2B, "xsendf", null),
+            new OpCode(0x2B, "xsendf", OpXsendf),
             new OpCode(0x2C, "xrequf", OpXrequf),
             new OpCode(0x2D, "xstopf", OpXstopf),
             new OpCode(0x2E, "xkeyb", OpXkeyb),

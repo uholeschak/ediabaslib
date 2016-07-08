@@ -2931,6 +2931,21 @@ namespace EdiabasLib
             }
         }
 
+        // BEST2: send_frequent
+        private static void OpXsendf(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if ((interfaceClass == null) || !interfaceClass.Connected)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
+            else
+            {
+                byte[] request = arg0.GetArrayData();
+                interfaceClass.TransmitFrequent(request);
+            }
+        }
+
         // BEST2: set_communication_pars
         private static void OpXsetpar(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
