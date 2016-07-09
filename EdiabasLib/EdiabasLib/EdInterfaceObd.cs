@@ -2813,7 +2813,7 @@ namespace EdiabasLib
                     return ProcessKwp2000(sendData, sendDataLength, ref receiveData, out receiveLength);
 
                 case KwpModes.Iso9141:
-                    return ProcessIso9141(sendData, sendDataLength, ref receiveData, out receiveLength, ref keyBytesList);
+                    return ProcessIso9141(sendData, sendDataLength, ref receiveData, out receiveLength, ref keyBytesList, true);
             }
             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0014;   // concept not implemented
         }
@@ -3072,7 +3072,7 @@ namespace EdiabasLib
                 case KwpModes.Iso9141:
                     {
                         List<byte> keyBytesList = null;
-                        EdiabasNet.ErrorCodes errorCode = ProcessIso9141(SendBufferFrequent, SendBufferFrequentLength, ref RecBufferFrequent, out RecBufferFrequentLength, ref keyBytesList);
+                        EdiabasNet.ErrorCodes errorCode = ProcessIso9141(SendBufferFrequent, SendBufferFrequentLength, ref RecBufferFrequent, out RecBufferFrequentLength, ref keyBytesList, false);
                         if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                         {
                             EcuConnected = false;
@@ -3108,7 +3108,7 @@ namespace EdiabasLib
                     byte[] finishTel = { 0x03, 0x00, 0x06 };    // end output
                     byte[] receiveData = new byte[256];
                     List<byte> keyBytesList = null;
-                    EdiabasNet.ErrorCodes errorCode = ProcessIso9141(finishTel, finishTel.Length, ref receiveData, out receiveLength, ref keyBytesList);
+                    EdiabasNet.ErrorCodes errorCode = ProcessIso9141(finishTel, finishTel.Length, ref receiveData, out receiveLength, ref keyBytesList, true);
                     EcuConnected = false;
                     return errorCode;
                 }
@@ -3711,7 +3711,7 @@ namespace EdiabasLib
                 }
             }
 
-            return ProcessIso9141(sendData, sendDataLength, ref receiveData, out receiveLength, ref keyBytesList);
+            return ProcessIso9141(sendData, sendDataLength, ref receiveData, out receiveLength, ref keyBytesList, false);
         }
 
         private EdiabasNet.ErrorCodes IdleIso9141()
@@ -3775,7 +3775,7 @@ namespace EdiabasLib
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
-        private EdiabasNet.ErrorCodes ProcessIso9141(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, ref List<byte> keyBytesList)
+        private EdiabasNet.ErrorCodes ProcessIso9141(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, ref List<byte> keyBytesList, bool appendAck)
         {
             receiveLength = 0;
 
@@ -3793,6 +3793,7 @@ namespace EdiabasLib
             int waitToSendCount = 0;
             bool waitToSend = true;
             bool transmitDone = false;
+            bool ackStored = false;
             for (;;)
             {
                 bool sendDataValid = false;
@@ -3879,7 +3880,7 @@ namespace EdiabasLib
 
                 if (!waitToSend)
                 {   // store received data
-                    if ((recBlocks == 0) || (LastIso9141Cmd != 0x09))
+                    if ((recBlocks == 0) || (LastIso9141Cmd != 0x09) || (!ackStored && appendAck))
                     {
                         int blockLen = Iso9141Buffer[0];
                         if (recLength + blockLen > receiveData.Length)
@@ -3892,6 +3893,10 @@ namespace EdiabasLib
                             Array.Copy(Iso9141Buffer, 0, receiveData, recLength, blockLen);
                             recLength += blockLen;
                             recBlocks++;
+                            if (LastIso9141Cmd == 0x09)
+                            {
+                                ackStored = true;
+                            }
                             if (recBlocks >= maxRecBlocks)
                             {
                                 // all blocks received
