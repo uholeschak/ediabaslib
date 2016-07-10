@@ -1,0 +1,31 @@
+;for eph_76.grp (ISO 9141)
+
+; wake address, key bytes (odd parity)
+CFG: 76 01 8A
+;ID
+: 0F 01 F6 34 42 30 39 31 39 32 38 33 20 20 50
+: 0F 03 F6 61 72 6B 69 6E 67 73 79 73 74 65 6D
+: 0E 05 F6 20 41 36 20 52 44 57 20 44 31 38
+: 08 07 F6 00 08 A4 09 15
+
+; Fehlerspeicher_abfragen
+03 00 07 : 06 0F FC FF FF 88
+; Fehlerspeicher_loeschen
+03 00 05 : 06 13 FC FF FF 88
+
+; Messwerteblock_lesen#1;WertEinmalLesen
+; Messwerteblock_lesen#1;WertLesen
+; Messwerteblock_lesen#1;ZyklusAbbrechen
+; Messwerteblock_lesen#1;ZyklusEinleitenWertLesen
+04 00 29 01 : 2A 0F E7 3F 20 20 2D 2D 2D 20 63 6D 20 20 20 20 2D 2D 2D 20 63 6D 20 20 20 20 2D 2D 2D 20 63 6D 20 20 20 20 2D 2D 2D 20 63 6D
+04 00 29 02 : 0C 5B E7 47 01 FF 07 64 00 25 01 44
+04 00 29 03 : 0C 1D E7 06 3D C6 25 01 46 25 01 48
+04 00 29 04 : 0F 25 E7 16 10 FF 16 10 FF 16 10 FF 16 10 FF
+04 00 29 06 : 04 3D 0A 3D
+
+; Anpassung_lesen#1;WertEinmalLesen
+04 00 21 01 : 06 45 E6 01 00 02
+; Anpassung_testen#1;Lautstaerke;WertEinmalLesen
+06 00 22 01 00 00 : 06 4B E6 01 00 02
+; Anpassung_lesen#2;WertEinmalLesen
+04 00 21 02 : 06 53 E6 02 00 03
