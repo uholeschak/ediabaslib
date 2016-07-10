@@ -1,0 +1,31 @@
+;for get_02.grp (ISO 9141)
+
+; wake address, key bytes (odd parity)
+CFG: 02 01 8A
+;ID
+: 0F 01 F6 34 42 30 39 32 37 31 35 36 42 41 20
+: 0F 03 F6 41 47 35 20 30 31 4C 20 34 2E 32 6C
+: 0F 05 F6 35 56 20 20 52 64 57 20 31 32 31 34
+: 08 07 F6 00 00 02 09 15
+
+; Fehlerspeicher_abfragen
+03 00 07 : 06 0F FC FF FF 88
+; Fehlerspeicher_loeschen
+03 00 05 : 06 13 FC FF FF 88
+
+; Messwerteblock_lesen#1;WertEinmalLesen
+; Messwerteblock_lesen#1;WertLesen
+; Messwerteblock_lesen#1;ZyklusAbbrechen
+; Messwerteblock_lesen#1;ZyklusEinleitenWertLesen
+04 00 29 01 : 0F 0F E7 01 A0 00 01 A0 00 01 A0 00 11 34 20
+04 00 29 02 : 0F 1B E7 11 44 53 21 FA 00 01 A0 00 11 34 20
+04 00 29 03 : 0F 5D E7 25 00 00 25 00 3F 07 C8 00 06 40 BD
+04 00 29 04 : 0F 3D E7 05 0A 87 11 00 50 10 0F 08 10 0F 00
+04 00 29 05 : 0F 31 E7 11 00 4F 11 00 4F 11 00 4F 11 34 20
+04 00 29 07 : 0F 87 E7 05 0A 87 18 08 12 25 00 3C 01 A0 00
+04 00 29 08 : 0C 51 E7 25 00 00 21 FA 00 25 00 00
+04 00 29 09 : 0C 93 E7 34 C8 87 01 A0 00 21 FA 00
+04 00 29 0A : 0C 7D E7 1F 20 50 01 A0 00 11 34 20
+04 00 29 0B : 0C 49 E7 11 00 50 25 00 00 25 00 00
+; Grundeinstellung#0;WertEinmalLesen
+03 00 11 : 04 27 0A 27

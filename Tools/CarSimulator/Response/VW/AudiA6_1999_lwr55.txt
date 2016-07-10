@@ -7,3 +7,8 @@ CFG: D5 01 8A
 : 0F 03 F6 64 79 6E 61 6D 69 73 63 68 65 20 4C
 : 0F 05 F6 57 52 20 20 20 20 20 20 20 44 30 32
 : 08 07 F6 00 00 64 09 15
+
+; Fehlerspeicher_abfragen
+03 00 07 : 06 0F FC FF FF 88
+; Fehlerspeicher_loeschen
+03 00 05 : 06 13 FC FF FF 88
