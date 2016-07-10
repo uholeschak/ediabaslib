@@ -48,6 +48,7 @@ Set network adapter to 192.168.100.10/255.255.255.0
 insert USB stick into the router
 
 telnet 192.168.100.1
+login: admin/admin
 mount /dev/sda1 /mnt
 ls /mnt
 uboot.img and mini.bin should be visible
