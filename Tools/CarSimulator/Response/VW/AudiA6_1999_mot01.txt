@@ -14,6 +14,7 @@ CFG: 01 01 8A
 ; Fehlerspeicher_loeschen
 03 00 05 : 06 13 FC FF FF 88
 
+; Messwerteblock_lesen#0;WertEinmalLesen
 03 00 12 : 0D 11 F4 8A 85 00 05 80 80 80 80 80 80
 ; Messwerteblock_lesen#10;WertEinmalLesen
 ; Messwerteblock_lesen#10;WertLesen
@@ -55,7 +56,9 @@ CFG: 01 01 8A
 04 00 29 5D : 0F BD E7 01 C8 00 21 85 85 22 64 80 22 64 80
 04 00 29 62 : 0F C5 E7 10 00 00 10 00 00 10 00 00 10 00 00
 04 00 29 09 : 0F CD E7 10 00 00 10 00 00 10 00 00 10 00 00
+; Grundeinstellung#0;WertEinmalLesen
 03 00 11 : 0D DD F4 8A 85 00 0E 80 80 80 80 80 80
+; Grundeinstellung#107;WertEinmalLesen
 04 00 28 6B : 0F F5 E7 01 C8 00 14 64 80 14 64 80 25 00 EB
 04 00 28 0B : 0F 01 E7 01 C8 00 05 0A 8A 05 0A 87 1B 4B 80
 04 00 28 01 : 0F 0D E7 01 C8 00 05 0A 8A 14 64 80 14 64 80
