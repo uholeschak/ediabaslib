@@ -2018,11 +2018,16 @@ namespace EdiabasLib
                                         }
                                     }
                                 }
-                                if (RecBufferFrequentLength != 0)
+                                RecErrorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                                if (EcuConnected && RecBufferFrequentLength != 0)
                                 {
                                     Array.Copy(RecBufferFrequent, RecBufferThread, RecBufferFrequentLength);
                                     recLength = RecBufferFrequentLength;
                                     RecBufferFrequentLength = 0;
+                                }
+                                else
+                                {
+                                    recLength = 0;
                                 }
                             }
                             else
