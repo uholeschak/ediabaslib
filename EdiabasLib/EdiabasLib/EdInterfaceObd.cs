@@ -2601,7 +2601,7 @@ namespace EdiabasLib
                 KwpMode = KwpModes.Undefined;
                 KeyBytesProtected = ByteArray0;
                 keyBytesList = new List<byte>();
-                while ((Stopwatch.GetTimestamp() - LastCommTick) < (ParEdicW5 + 1000) * TickResolMs)  // offset for simulator
+                while ((Stopwatch.GetTimestamp() - LastCommTick) < (ParEdicW5 + 1500) * TickResolMs)  // offset for simulator
                 {
                     Thread.Sleep(10);
                 }
@@ -3705,6 +3705,7 @@ namespace EdiabasLib
                 LastCommTick = Stopwatch.GetTimestamp();
 
                 EdiabasNet.ErrorCodes errorCode = InitIso9141(ref keyBytesList);
+                LastCommTick = Stopwatch.GetTimestamp();
                 if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
                     return errorCode;
@@ -3732,14 +3733,15 @@ namespace EdiabasLib
             LastCommTick = Stopwatch.GetTimestamp();
             Iso9141Buffer[1] = BlockCounter++;
             EdiabasNet.ErrorCodes errorCode = SendIso9141Block(Iso9141Buffer, false);
+            LastCommTick = Stopwatch.GetTimestamp();
             if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
                 EcuConnected = false;
                 return errorCode;
             }
 
-            LastCommTick = Stopwatch.GetTimestamp();
             errorCode = ReceiveIso9141Block(Iso9141Buffer, false);
+            LastCommTick = Stopwatch.GetTimestamp();
             if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
                 EcuConnected = false;
@@ -3756,6 +3758,7 @@ namespace EdiabasLib
             BlockCounter = 1;
 
             EdiabasNet.ErrorCodes errorCode = ReceiveIso9141Block(Iso9141Buffer, true, 50);
+            LastCommTick = Stopwatch.GetTimestamp();
             if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
                 return errorCode;
@@ -3851,10 +3854,11 @@ namespace EdiabasLib
                 }
 
                 Thread.Sleep(50);
-
                 LastCommTick = Stopwatch.GetTimestamp();
+
                 Iso9141Buffer[1] = BlockCounter++;
                 EdiabasNet.ErrorCodes errorCode = SendIso9141Block(Iso9141Buffer, true);
+                LastCommTick = Stopwatch.GetTimestamp();
                 if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
                     EcuConnected = false;
@@ -3868,8 +3872,8 @@ namespace EdiabasLib
                     return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
                 }
 
-                LastCommTick = Stopwatch.GetTimestamp();
                 errorCode = ReceiveIso9141Block(Iso9141Buffer, true);
+                LastCommTick = Stopwatch.GetTimestamp();
                 if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
                     EcuConnected = false;
@@ -3955,7 +3959,7 @@ namespace EdiabasLib
                 if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Info, "(A): {0:X02}", (byte)(~Iso9141BlockBuffer[0]));
                 if ((byte)(~Iso9141BlockBuffer[0]) != sendData[i])
                 {
-                    if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Response invalid");
+                    if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Response invalid: {0:X02} {1:X02}", (byte)(~Iso9141BlockBuffer[0]), sendData[i]);
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
             }
@@ -3999,10 +4003,10 @@ namespace EdiabasLib
                 }
                 if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Info, "(R): {0:X02}", recData[i + 1]);
             }
-            if (enableLog) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, recData, 0, blockLen, "Resp");
+            if (enableLog) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, recData, 0, blockLen + 1, "Resp");
             if (recData[blockLen] != 0x03)
             {
-                if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Block end invalid");
+                if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Block end invalid: {0:X02}", recData[blockLen]);
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
