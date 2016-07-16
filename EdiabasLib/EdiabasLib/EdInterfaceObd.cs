@@ -3953,7 +3953,7 @@ namespace EdiabasLib
                 }
                 if (!ReceiveData(Iso9141BlockBuffer, 0, 1, Iso9141ByteTimeout, Iso9141ByteTimeout))
                 {
-                    if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data ack received");
+                    if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No data ack received: {0}", i);
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Info, "(A): {0:X02}", (byte)(~Iso9141BlockBuffer[0]));
@@ -3998,7 +3998,7 @@ namespace EdiabasLib
                 }
                 if (!ReceiveData(recData, i + 1, 1, Iso9141ByteTimeout, Iso9141ByteTimeout))
                 {
-                    if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No block data received");
+                    if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No block data received: {0}", i);
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
                 if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Info, "(R): {0:X02}", recData[i + 1]);
