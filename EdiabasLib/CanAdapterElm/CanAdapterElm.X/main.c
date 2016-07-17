@@ -142,18 +142,21 @@
 #define TIMER0_RESOL        15625ul         // 16526 Hz
 #define TIMER1_RELOAD       (0x10000-500)   // 1 ms
 
-// K-LINE flags
-#define KLINEF_PARITY_MASK      0x7
-#define KLINEF_PARITY_NONE      0x0
-#define KLINEF_PARITY_EVEN      0x1
-#define KLINEF_PARITY_ODD       0x2
-#define KLINEF_PARITY_MARK      0x3
-#define KLINEF_PARITY_SPACE     0x4
-#define KLINEF_USE_LLINE        0x08
-#define KLINEF_SEND_PULSE       0x10
-#define KLINEF_NO_ECHO          0x20
-#define KLINEF_FAST_INIT        0x40
-#define KLINEF_USE_KLINE        0x80    // for combination with KLINEF_USE_LLINE
+// K-LINE flags 1
+#define KLINEF1_PARITY_MASK     0x7
+#define KLINEF1_PARITY_NONE     0x0
+#define KLINEF1_PARITY_EVEN     0x1
+#define KLINEF1_PARITY_ODD      0x2
+#define KLINEF1_PARITY_MARK     0x3
+#define KLINEF1_PARITY_SPACE    0x4
+#define KLINEF1_USE_LLINE       0x08
+#define KLINEF1_SEND_PULSE      0x10
+#define KLINEF1_NO_ECHO         0x20
+#define KLINEF1_FAST_INIT       0x40
+#define KLINEF1_USE_KLINE       0x80    // for combination with KLINEF1_USE_LLINE
+
+// K-LINE flags 2
+#define KLINEF2_KWP1281_DETECT  0x01    // detect KWP1281 mode
 
 // CAN flags
 #define CANF_NO_ECHO            0x01
@@ -268,11 +271,15 @@ static iface_modes iface_mode;  // current interface mode
 
 // K-LINE data
 static uint32_t kline_baud;         // K-line baud rate, 0=115200 (BMW-FAST))
-static uint8_t kline_flags;         // K-line flags
+static uint8_t kline_flags1;        // K-line flags 1
+static uint8_t kline_flags2;        // K-line flags 2
 static uint8_t kline_interbyte;     // K-line interbyte time [ms]
 static uint8_t kline_bit_delay;     // K-line read bit delay
 static uint8_t kline_auto_delay;    // K-line auto response W4 delay [ms], 0 = off
 static uint8_t kline_auto_response; // K-line auto response counter
+static bool kline_kwp1281_mode;          // K-line kwp1281 mode detected
+static uint8_t kline_kwp1281_len;   // KWP1281 block len
+static uint8_t kline_kwp1281_pos;   // KWP1281 current position
 
 // CAN data
 static uint8_t can_cfg_protocol;    // CAN protocol
@@ -512,6 +519,7 @@ bool kline_baud_detect()
         {
             kline_auto_response = 2;
         }
+        kline_kwp1281_mode = false;
         ei();
         return true;
     }
@@ -593,11 +601,11 @@ void kline_send(uint8_t *buffer, uint16_t count)
 
     bool use_kline = false;
     bool use_lline = false;
-    if ((kline_flags & KLINEF_USE_KLINE) != 0)
+    if ((kline_flags1 & KLINEF1_USE_KLINE) != 0)
     {
         use_kline = true;
     }
-    if ((kline_flags & KLINEF_USE_LLINE) != 0)
+    if ((kline_flags1 & KLINEF1_USE_LLINE) != 0)
     {
         use_lline = true;
     }
@@ -605,7 +613,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
     {
         use_kline = true;
     }
-    if ((kline_flags & KLINEF_SEND_PULSE) != 0)
+    if ((kline_flags1 & KLINEF1_SEND_PULSE) != 0)
     {   // send pulse with defined width
         if (count >= 3)
         {
@@ -668,7 +676,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
 
     kline_baud_cfg();
     LED_OBD_TX = 0;         // on
-    if ((kline_flags & KLINEF_FAST_INIT) != 0)
+    if ((kline_flags1 & KLINEF1_FAST_INIT) != 0)
     {   // fast init request
         if (use_kline)
         {
@@ -758,9 +766,9 @@ void kline_send(uint8_t *buffer, uint16_t count)
             }
             out_data >>= 1;
         }
-        switch (kline_flags & KLINEF_PARITY_MASK)
+        switch (kline_flags1 & KLINEF1_PARITY_MASK)
         {
-            case KLINEF_PARITY_EVEN:
+            case KLINEF1_PARITY_EVEN:
                 while (!PIR1bits.TMR2IF) {}
                 PIR1bits.TMR2IF = 0;
                 if ((parity & 0x01) != 0)
@@ -787,7 +795,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
                 }
                 break;
 
-            case KLINEF_PARITY_ODD:
+            case KLINEF1_PARITY_ODD:
                 while (!PIR1bits.TMR2IF) {}
                 PIR1bits.TMR2IF = 0;
                 if ((parity & 0x01) != 0)
@@ -814,7 +822,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
                 }
                 break;
 
-            case KLINEF_PARITY_MARK:
+            case KLINEF1_PARITY_MARK:
                 while (!PIR1bits.TMR2IF) {}
                 PIR1bits.TMR2IF = 0;
                 if (use_kline)
@@ -827,7 +835,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
                 }
                 break;
 
-            case KLINEF_PARITY_SPACE:
+            case KLINEF1_PARITY_SPACE:
                 while (!PIR1bits.TMR2IF) {}
                 PIR1bits.TMR2IF = 0;
                 if (use_kline)
@@ -881,7 +889,7 @@ void inline start_kline_rec_timer()
     }
 }
 
-void kline_receive()
+bool kline_receive(bool auto_response)
 {
     uint8_t const temp_bufferh = HIGH_BYTE((uint16_t) temp_buffer);
     uint16_t buffer_len = 0;
@@ -909,7 +917,7 @@ void kline_receive()
                 if (PIR1bits.RCIF)
                 {   // start of new UART telegram
                     ei();
-                    return;
+                    return true;
                 }
                 if (INTCONbits.TMR0IF)
                 {
@@ -918,7 +926,7 @@ void kline_receive()
                     if (idle_counter > 16)  // 60 sec.
                     {   // idle -> leave loop
                         ei();
-                        return;
+                        return false;
                     }
                 }
                 if (!KLINE_IN) T2CONbits.TMR2ON = 1;
@@ -992,7 +1000,7 @@ void kline_receive()
     // dynamic baudrate
     if (!kline_baud_detect())
     {
-        return;
+        return false;
     }
     di();
     kline_baud_cfg();
@@ -1013,7 +1021,7 @@ void kline_receive()
             if (PIR1bits.RCIF)
             {   // start of new UART telegram
                 ei();
-                return;
+                return true;
             }
             if (INTCONbits.TMR0IF)
             {
@@ -1022,7 +1030,7 @@ void kline_receive()
                 if (idle_counter > 16)  // 60 sec.
                 {   // idle -> leave loop
                     ei();
-                    return;
+                    return false;
                 }
             }
             start_kline_rec_timer();
@@ -1032,13 +1040,45 @@ void kline_receive()
                 {   // transmitter empty
                     start_kline_rec_timer();
                     TXREG = *read_ptr;
+                    if (kline_kwp1281_mode)
+                    {
+                        if (!auto_response)
+                        {   // one byte received
+                            kline_kwp1281_len = 0;
+                            ei();
+                            return false;
+                        }
+                        if (kline_kwp1281_len == 0)
+                        {   // get block length
+                            kline_kwp1281_len = *read_ptr;
+                            kline_kwp1281_pos = 0;
+                        }
+                        if (kline_kwp1281_pos >= kline_kwp1281_len)
+                        {   // end of block reached
+                            ei();
+                            return false;
+                        }
+                        kline_kwp1281_pos++;
+                        ei();
+                        temp_buffer_short[0] = ~(*read_ptr);
+                        kline_send(temp_buffer_short, 1);
+                        di();
+                        // continue receiving
+                        kline_baud_cfg();
+                        PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
+                        INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
+                        idle_counter = 0;
+                    }
+                    start_kline_rec_timer();
                     if (kline_auto_response != 0)
                     {
                         start_kline_rec_timer();
                         kline_auto_response--;
                         start_kline_rec_timer();
-                        if (kline_auto_response == 0)
+                        if (kline_auto_response == 0 && auto_response)
                         {   // last key byte received
+                            kline_kwp1281_mode = (kline_flags2 & KLINEF2_KWP1281_DETECT) && (*read_ptr == 0x8A);
+                            kline_kwp1281_len = 0;
                             ei();
                             // delay execution
                             uint16_t start_tick = get_systick();
@@ -1048,7 +1088,7 @@ void kline_receive()
                                 CLRWDT();
                             }
                             // send back inverted data
-                            kline_flags = kline_flags & (KLINEF_PARITY_MASK | KLINEF_NO_ECHO);
+                            kline_flags1 = kline_flags1 & (KLINEF1_PARITY_MASK | KLINEF1_NO_ECHO);
                             temp_buffer_short[0] = ~(*read_ptr);
                             kline_send(temp_buffer_short, 1);
                             di();
@@ -1100,7 +1140,7 @@ void kline_receive()
 #if DEBUG_PIN
         LED_RS_TX = 1;
 #endif
-        if ((kline_flags & KLINEF_PARITY_MASK) != KLINEF_PARITY_NONE)
+        if ((kline_flags1 & KLINEF1_PARITY_MASK) != KLINEF1_PARITY_NONE)
         {   // read parity bit
             while (!PIR1bits.TMR2IF) {}
             PIR1bits.TMR2IF = 0;
@@ -1199,7 +1239,7 @@ uint16_t uart_receive(uint8_t *buffer)
     {   // special mode
         // byte 1: telegram type
         if (rec_buffer[1] == 0x00)
-        {   // K-LINE telegram
+        {   // K-LINE telegram 1
             // byte 2+3: baud rate (high/low) / 2
             // byte 4: flags
             // byte 5: interbyte time
@@ -1215,7 +1255,8 @@ uint16_t uart_receive(uint8_t *buffer)
             }
             else
             {
-                kline_flags = rec_buffer[4];
+                kline_flags1 = rec_buffer[4];
+                kline_flags2 = 0x00;
                 kline_interbyte = rec_buffer[5];
                 data_len = ((uint16_t) rec_buffer[6] << 8) + rec_buffer[7];
                 if (buffer != NULL)
@@ -1226,6 +1267,9 @@ uint16_t uart_receive(uint8_t *buffer)
             }
             kline_auto_delay = 0;
             kline_auto_response = 0;
+            kline_kwp1281_mode = false;
+            kline_kwp1281_len = 0;
+            kline_kwp1281_pos = 0;
         }
         else if (rec_buffer[1] == 0x01)
         {   // CAN telegram
@@ -1258,6 +1302,43 @@ uint16_t uart_receive(uint8_t *buffer)
                 memcpy(buffer, rec_buffer + 10, data_len);
             }
             op_mode_new = op_mode_can;
+        }
+        else if (rec_buffer[1] == 0x02)
+        {   // K-LINE telegram 2
+            // byte 2+3: baud rate (high/low) / 2
+            // byte 4: flags 1
+            // byte 5: flags 2
+            // byte 6: interbyte time
+            // byte 7+8: telegram length (high/low)
+            if (buffer != NULL && op_mode != op_mode_kline)
+            {   // mode change
+                return 0;
+            }
+            kline_baud = (((uint32_t) rec_buffer[2] << 8) + rec_buffer[3]) << 1;
+            if ((kline_baud != 0) && (kline_baud != 2) && ((kline_baud < MIN_BAUD) || (kline_baud > MAX_BAUD)))
+            {   // baud date invalid
+                data_len = 0;
+            }
+            else
+            {
+                kline_flags1 = rec_buffer[4];
+                kline_flags2 = rec_buffer[5];
+                kline_interbyte = rec_buffer[6];
+                data_len = ((uint16_t) rec_buffer[7] << 8) + rec_buffer[8];
+                if (buffer != NULL)
+                {
+                    memcpy(buffer, rec_buffer + 9, data_len);
+                }
+                op_mode_new = op_mode_kline;
+            }
+            kline_auto_delay = 0;
+            kline_auto_response = 0;
+            if ((kline_flags1 & KLINEF1_SEND_PULSE) || !(kline_flags2 & KLINEF2_KWP1281_DETECT))
+            {   // start new detection
+                kline_kwp1281_mode = false;
+            }
+            kline_kwp1281_len = 0;
+            kline_kwp1281_pos = 0;
         }
     }
     else
@@ -1702,10 +1783,14 @@ void reset_comm_states()
         tp20_disconnect();
     }
     kline_baud = 0;
-    kline_flags = 0;
+    kline_flags1 = 0;
+    kline_flags2 = 0;
     kline_interbyte = 0;
     kline_auto_delay = 0;
     kline_auto_response = 0;
+    kline_kwp1281_mode = false;
+    kline_kwp1281_len = 0;
+    kline_kwp1281_pos = 0;
 
     can_cfg_protocol = CAN_PROT_BMW;
     can_cfg_baud = CAN_MODE_500;
@@ -2004,7 +2089,7 @@ void can_sender(bool new_can_msg)
         uint16_t len = uart_receive(temp_buffer);
         if (len > 0)
         {
-            if ((kline_flags & KLINEF_NO_ECHO) == 0)
+            if ((kline_flags1 & KLINEF1_NO_ECHO) == 0)
             {
                 uart_send(temp_buffer, len);
             }
@@ -2994,12 +3079,29 @@ void main(void)
                 uint16_t len = uart_receive(temp_buffer);
                 if (len > 0)
                 {
-                    if ((kline_flags & KLINEF_NO_ECHO) == 0)
+                    if ((kline_flags1 & KLINEF1_NO_ECHO) == 0)
                     {
                         uart_send(temp_buffer, len);
                     }
-                    kline_send(temp_buffer, len);
-                    kline_receive();
+                    if (kline_kwp1281_mode)
+                    {
+                        for (uint16_t i = 0; i < len; i++)
+                        {
+                            temp_buffer_short[0] = temp_buffer[i];
+                            kline_send(temp_buffer_short, 1);
+                            // wait for inverted response
+                            bool auto_response = (i + 1) >= len;
+                            if (kline_receive(auto_response))
+                            {   // start of new send telegram
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        kline_send(temp_buffer, len);
+                        kline_receive(true);
+                    }
                 }
             }
         }
@@ -3136,43 +3238,67 @@ void interrupt high_priority high_isr (void)
                         if (rec_buffer[0] == 0x00)
                         {   // special mode:
                             // byte 1: telegram type
-                            if (rec_buffer[1] == 0x00)
-                            {   // K-LINE telegram
-                                // byte 2+3: baud rate (high/low) / 2
-                                // byte 4: flags
-                                // byte 5: interbyte time
-                                // byte 6+7: telegram length (high/low)
-                                if (rec_len >= 8)
-                                {
-                                    tel_len = ((uint16_t) rec_buffer[6] << 8) + rec_buffer[7] + 9;
-                                }
-                                else
-                                {
-                                    tel_len = 0;
-                                }
-                            }
-                            else if (rec_buffer[1] == 0x01)
-                            {   // CAN telegram
-                                // byte 2: protocol
-                                // byte 3: baud rate
-                                // byte 4: flags
-                                // byte 5: block size
-                                // byte 6: packet interval
-                                // byte 7: idle time [10ms]
-                                // byte 8+9: telegram length (high/low)
-                                if (rec_len >= 10)
-                                {
-                                    tel_len = ((uint16_t) rec_buffer[8] << 8) + rec_buffer[9] + 11;
-                                }
-                                else
-                                {
-                                    tel_len = 0;
-                                }
-                            }
-                            else
+                            switch (rec_buffer[1])
                             {
-                                // invalid telegram type
-                                rec_state = rec_state_error;
+                                case 0x00:
+                                    // K-LINE telegram 1
+                                    // byte 2+3: baud rate (high/low) / 2
+                                    // byte 4: flags
+                                    // byte 5: interbyte time
+                                    // byte 6+7: telegram length (high/low)
+                                    if (rec_len >= 8)
+                                    {
+                                        tel_len = ((uint16_t) rec_buffer[6] << 8) + rec_buffer[7] + 9;
+                                    }
+                                    else
+                                    {
+                                        tel_len = 0;
+                                    }
+                                    break;
+
+                                case 0x01:
+                                    // CAN telegram
+                                    // byte 2: protocol
+                                    // byte 3: baud rate
+                                    // byte 4: flags
+                                    // byte 5: block size
+                                    // byte 6: packet interval
+                                    // byte 7: idle time [10ms]
+                                    // byte 8+9: telegram length (high/low)
+                                    if (rec_len >= 10)
+                                    {
+                                        tel_len = ((uint16_t) rec_buffer[8] << 8) + rec_buffer[9] + 11;
+                                    }
+                                    else
+                                    {
+                                        tel_len = 0;
+                                    }
+                                    break;
+
+                                case 0x02:
+                                    // K-LINE telegram 2
+                                    // byte 2+3: baud rate (high/low) / 2
+                                    // byte 4: flags 1
+                                    // byte 5: flags 2
+                                    // byte 6: interbyte time
+                                    // byte 7+8: telegram length (high/low)
+                                    if (rec_len >= 9)
+                                    {
+                                        tel_len = ((uint16_t) rec_buffer[7] << 8) + rec_buffer[8] + 10;
+                                    }
+                                    else
+                                    {
+                                        tel_len = 0;
+                                    }
+                                    break;
+
+                                default:
+                                    // invalid telegram type
+                                    rec_state = rec_state_error;
+                                    break;
+                            }
+                            if (rec_state == rec_state_error)
+                            {
                                 break;
                             }
                         }
