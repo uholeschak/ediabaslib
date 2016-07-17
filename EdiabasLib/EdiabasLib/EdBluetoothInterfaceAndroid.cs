@@ -301,6 +301,19 @@ namespace EdiabasLib
             return true;
         }
 
+        public static bool InterfaceHasAutoKwp1281()
+        {
+            if (!UpdateAdapterInfo())
+            {
+                return false;
+            }
+            if (AdapterVersion < 0x0008)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
         {
             ConvertBaudResponse = false;
