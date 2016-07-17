@@ -419,6 +419,7 @@ namespace EdiabasLib
                         parity = SerialParity.None;
                         ParTransmitFunc = TransKwp1281;
                         ParIdleFunc = IdleKwp1281;
+                        ParFinishFunc = FinishKwp1281;
                         ParWakeAddress = (byte)CommParameterProtected[2];
                         ParTimeoutStd = (int)CommParameterProtected[5];
                         ParRegenTime = (int)CommParameterProtected[6];
@@ -2794,14 +2795,10 @@ namespace EdiabasLib
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "KWP2000 protocol");
                         break;
 
-                    case 0x8A:
+                    default:
                         KwpMode = KwpModes.Kwp1281;
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "KWP1281 protocol");
                         break;
-
-                    default:
-                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Invalid key bytes");
-                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0013;
                 }
 
                 keyBytesList.Add(Kwp1281Buffer[0]);
@@ -3158,15 +3155,7 @@ namespace EdiabasLib
                 }
 
                 case KwpModes.Kwp1281:
-                {
-                    int receiveLength;
-                    byte[] finishTel = { 0x03, 0x00, 0x06 };    // end output
-                    byte[] receiveData = new byte[256];
-                    List<byte> keyBytesList = null;
-                    EdiabasNet.ErrorCodes errorCode = ProcessKwp1281(finishTel, finishTel.Length, ref receiveData, out receiveLength, ref keyBytesList, true);
-                    EcuConnected = false;
-                    return errorCode;
-                }
+                    return FinishKwp1281();
             }
             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0014;   // concept not implemented
         }
@@ -3806,6 +3795,22 @@ namespace EdiabasLib
             LastKwp1281Cmd = Kwp1281Buffer[2];
 
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+        }
+
+        private EdiabasNet.ErrorCodes FinishKwp1281()
+        {
+            if (!EcuConnected)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+
+            int receiveLength;
+            byte[] finishTel = { 0x03, 0x00, 0x06 };    // end output
+            byte[] receiveData = new byte[256];
+            List<byte> keyBytesList = null;
+            EdiabasNet.ErrorCodes errorCode = ProcessKwp1281(finishTel, finishTel.Length, ref receiveData, out receiveLength, ref keyBytesList, true);
+            EcuConnected = false;
+            return errorCode;
         }
 
         private EdiabasNet.ErrorCodes InitKwp1281(ref List<byte> keyBytesList)
