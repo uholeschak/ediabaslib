@@ -19,6 +19,8 @@ namespace EdiabasLib
         public static byte KLINEF1_FAST_INIT = 0x40;
         public static byte KLINEF1_USE_KLINE = 0x80;
 
+        public static byte KLINEF2_KWP1281_DETECT = 0x01;
+
         public static byte CANF_NO_ECHO = 0x01;
         public static byte CANF_CAN_ERROR = 0x02;
         public static byte CANF_CONNECT_CHECK = 0x04;
@@ -112,7 +114,6 @@ namespace EdiabasLib
 
             uint baudHalf;
             byte flags1 = KLINEF1_NO_ECHO;
-            byte flags2 = 0x00;
             if (CurrentBaudRate == 115200)
             {
                 baudHalf = 0;
@@ -130,6 +131,13 @@ namespace EdiabasLib
                     flags1 |= KLINEF1_FAST_INIT;
                 }
             }
+
+            byte flags2 = 0x00;
+            if (CurrentProtocol == EdInterfaceObd.Protocol.Kwp)
+            {
+                flags2 |= KLINEF2_KWP1281_DETECT;
+            }
+
             resultArray[2] = (byte)(baudHalf >> 8);     // baud rate / 2 high
             resultArray[3] = (byte)baudHalf;            // baud rate / 2 low
             resultArray[4] = flags1;                    // flags 1
@@ -199,7 +207,6 @@ namespace EdiabasLib
 
             uint baudHalf = (uint)(CurrentBaudRate >> 1);
             byte flags1 = (byte)(KLINEF1_SEND_PULSE | KLINEF1_NO_ECHO);
-            byte flags2 = 0x00;
             if (bothLines)
             {
                 flags1 |= (byte)(KLINEF1_USE_LLINE | KLINEF1_USE_KLINE);
@@ -209,6 +216,13 @@ namespace EdiabasLib
                 flags1 |= KLINEF1_USE_LLINE;
             }
             flags1 |= CalcParityFlags();
+
+            byte flags2 = 0x00;
+            if (CurrentProtocol == EdInterfaceObd.Protocol.Kwp)
+            {
+                flags2 |= KLINEF2_KWP1281_DETECT;
+            }
+
             resultArray[2] = (byte)(baudHalf >> 8);     // baud rate / 2 high
             resultArray[3] = (byte)baudHalf;            // baud rate / 2 low
             resultArray[4] = flags1;                    // flags 1
@@ -372,7 +386,7 @@ namespace EdiabasLib
 
         public static bool SettingsUpdateRequired()
         {
-            if (CurrentProtocol != EdInterfaceObd.Protocol.Uart)
+            if (CurrentProtocol == EdInterfaceObd.Protocol.Tp20)
             {
                 return false;
             }
