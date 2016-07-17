@@ -99,7 +99,7 @@ namespace EdiabasLib
         protected bool EnableFtdiBitBang;
         protected bool ConnectedProtected;
         protected const int EchoTimeout = 100;
-        protected const int Kwp1281ByteTimeout = 50;
+        protected const int Kwp1281ByteTimeout = 100;   // default is 50
         protected bool UseExtInterfaceFunc;
         protected InterfaceConnectDelegate InterfaceConnectFuncProtected;
         protected InterfaceConnectDelegate InterfaceConnectFuncInt;
