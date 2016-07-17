@@ -66,6 +66,7 @@ namespace EdiabasLib
         public delegate bool InterfaceAdapterEchoDelegate();
         public delegate bool InterfaceHasPreciseTimeoutDelegate();
         public delegate bool InterfaceHasAutoBaudRateDelegate();
+        public delegate bool InterfaceHasAutoKwp1281Delegate();
         public delegate bool InterfaceSendDataDelegate(byte[] sendData, int length, bool setDtr, double dtrTimeCorr);
         public delegate bool InterfaceReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog);
         public delegate bool InterfaceSendPulseDelegate(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines, int autoKeyByteDelay);
@@ -124,6 +125,8 @@ namespace EdiabasLib
         protected InterfaceHasPreciseTimeoutDelegate InterfaceHasPreciseTimeoutFuncInt;
         protected InterfaceHasAutoBaudRateDelegate InterfaceHasAutoBaudRateFuncProtected;
         protected InterfaceHasAutoBaudRateDelegate InterfaceHasAutoBaudRateFuncInt;
+        protected InterfaceHasAutoKwp1281Delegate InterfaceHasAutoKwp1281FuncProtected;
+        protected InterfaceHasAutoKwp1281Delegate InterfaceHasAutoKwp1281FuncInt;
         protected InterfaceSendDataDelegate InterfaceSendDataFuncProtected;
         protected InterfaceSendDataDelegate InterfaceSendDataFuncInt;
         protected InterfaceReceiveDataDelegate InterfaceReceiveDataFuncProtected;
@@ -935,6 +938,7 @@ namespace EdiabasLib
                 InterfaceAdapterEchoFuncInt = null;
                 InterfaceHasPreciseTimeoutFuncInt = null;
                 InterfaceHasAutoBaudRateFuncInt = null;
+                InterfaceHasAutoKwp1281FuncInt = null;
                 InterfaceSendDataFuncInt = EdFtdiInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdFtdiInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = null;
@@ -955,6 +959,7 @@ namespace EdiabasLib
                 InterfaceAdapterEchoFuncInt = EdBluetoothInterface.InterfaceAdapterEcho;
                 InterfaceHasPreciseTimeoutFuncInt = EdBluetoothInterface.InterfaceHasPreciseTimeout;
                 InterfaceHasAutoBaudRateFuncInt = EdBluetoothInterface.InterfaceHasAutoBaudRate;
+                InterfaceHasAutoKwp1281FuncInt = EdBluetoothInterface.InterfaceHasAutoKwp1281;
                 InterfaceSendDataFuncInt = EdBluetoothInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdBluetoothInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = EdBluetoothInterface.InterfaceSendPulse;
@@ -974,6 +979,7 @@ namespace EdiabasLib
                 InterfaceAdapterEchoFuncInt = EdElmWifiInterface.InterfaceAdapterEcho;
                 InterfaceHasPreciseTimeoutFuncInt = EdElmWifiInterface.InterfaceHasPreciseTimeout;
                 InterfaceHasAutoBaudRateFuncInt = EdElmWifiInterface.InterfaceHasAutoBaudRate;
+                InterfaceHasAutoKwp1281FuncInt = EdElmWifiInterface.InterfaceHasAutoKwp1281;
                 InterfaceSendDataFuncInt = EdElmWifiInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdElmWifiInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = EdElmWifiInterface.InterfaceSendPulse;
@@ -993,6 +999,7 @@ namespace EdiabasLib
                 InterfaceAdapterEchoFuncInt = null;
                 InterfaceHasPreciseTimeoutFuncInt = null;
                 InterfaceHasAutoBaudRateFuncInt = null;
+                InterfaceHasAutoKwp1281FuncInt = null;
                 InterfaceSendDataFuncInt = null;
                 InterfaceReceiveDataFuncInt = null;
                 InterfaceSendPulseFuncInt = null;
@@ -1713,11 +1720,32 @@ namespace EdiabasLib
             }
         }
 
-        protected InterfaceHasAutoBaudRateDelegate InterfaceHasAutoBaudRateAutoBaudRateFuncUse
+        protected InterfaceHasAutoBaudRateDelegate InterfaceHasAutoBaudRateFuncUse
         {
             get
             {
                 return InterfaceHasAutoBaudRateFuncProtected ?? InterfaceHasAutoBaudRateFuncInt;
+            }
+        }
+
+        public InterfaceHasAutoKwp1281Delegate InterfaceHasAutoKwp1281Func
+        {
+            get
+            {
+                return InterfaceHasAutoKwp1281FuncProtected;
+            }
+            set
+            {
+                InterfaceHasAutoKwp1281FuncProtected = value;
+                UpdateUseExtInterfaceFunc();
+            }
+        }
+
+        protected InterfaceHasAutoKwp1281Delegate InterfaceHasAutoKwp1281FuncUse
+        {
+            get
+            {
+                return InterfaceHasAutoKwp1281FuncProtected ?? InterfaceHasAutoKwp1281FuncInt;
             }
         }
 
@@ -1830,7 +1858,7 @@ namespace EdiabasLib
         {
             get
             {
-                InterfaceHasAutoBaudRateDelegate autoBaudRateFunc = InterfaceHasAutoBaudRateAutoBaudRateFuncUse;
+                InterfaceHasAutoBaudRateDelegate autoBaudRateFunc = InterfaceHasAutoBaudRateFuncUse;
                 if (autoBaudRateFunc != null)
                 {
                     return autoBaudRateFunc();
@@ -1839,10 +1867,25 @@ namespace EdiabasLib
             }
         }
 
+        protected bool HasAutoKwp1281
+        {
+            get
+            {
+                InterfaceHasAutoKwp1281Delegate autoKwp1281Func = InterfaceHasAutoKwp1281FuncUse;
+                if (autoKwp1281Func != null)
+                {
+                    return autoKwp1281Func();
+                }
+                return true;
+            }
+        }
+
         protected void UpdateUseExtInterfaceFunc()
         {
             // these funtions are optional:
-            // InterfaceSetInterByteTimeFuncUse, InterfaceAdapterEchoFuncUse, InterfaceHasPreciseTimeoutFuncUse, InterfaceHasAutoBaudRateFuncUse, InterfaceSendPulseFuncUse
+            // InterfaceSetInterByteTimeFuncUse, InterfaceAdapterEchoFuncUse,
+            // InterfaceHasPreciseTimeoutFuncUse, InterfaceHasAutoBaudRateFuncUse,
+            // InterfaceHasAutoKwp1281FuncUse, InterfaceSendPulseFuncUse
             UseExtInterfaceFunc =
                 InterfaceConnectFuncUse != null &&
                 InterfaceDisconnectFuncUse != null &&
@@ -3953,7 +3996,7 @@ namespace EdiabasLib
 
         private EdiabasNet.ErrorCodes SendKwp1281Block(byte[] sendData, bool enableLog)
         {
-            bool autoKwp = HasAutoBaudRate;
+            bool autoKwp = HasAutoKwp1281;
             int blockLen = sendData[0];
             if (enableLog) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, blockLen, "Send");
             if (autoKwp)
@@ -4017,7 +4060,7 @@ namespace EdiabasLib
 
         private EdiabasNet.ErrorCodes ReceiveKwp1281Block(byte[] recData, bool enableLog, int addStartTimeout)
         {
-            bool autoKwp = HasAutoBaudRate;
+            bool autoKwp = HasAutoKwp1281;
             // block length
             if (!ReceiveData(recData, 0, 1, Kwp1281ByteTimeout + addStartTimeout, Kwp1281ByteTimeout + addStartTimeout))
             {
