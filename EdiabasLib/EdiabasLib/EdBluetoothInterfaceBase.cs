@@ -7,17 +7,17 @@ namespace EdiabasLib
     {
         // flags
         // ReSharper disable InconsistentNaming
-        public static byte KLINEF_PARITY_MASK = 0x7;
-        public static byte KLINEF_PARITY_NONE = 0x0;
-        public static byte KLINEF_PARITY_EVEN = 0x1;
-        public static byte KLINEF_PARITY_ODD = 0x2;
-        public static byte KLINEF_PARITY_MARK = 0x3;
-        public static byte KLINEF_PARITY_SPACE = 0x4;
-        public static byte KLINEF_USE_LLINE = 0x08;
-        public static byte KLINEF_SEND_PULSE = 0x10;
-        public static byte KLINEF_NO_ECHO = 0x20;
-        public static byte KLINEF_FAST_INIT = 0x40;
-        public static byte KLINEF_USE_KLINE = 0x80;
+        public static byte KLINEF1_PARITY_MASK = 0x7;
+        public static byte KLINEF1_PARITY_NONE = 0x0;
+        public static byte KLINEF1_PARITY_EVEN = 0x1;
+        public static byte KLINEF1_PARITY_ODD = 0x2;
+        public static byte KLINEF1_PARITY_MARK = 0x3;
+        public static byte KLINEF1_PARITY_SPACE = 0x4;
+        public static byte KLINEF1_USE_LLINE = 0x08;
+        public static byte KLINEF1_SEND_PULSE = 0x10;
+        public static byte KLINEF1_NO_ECHO = 0x20;
+        public static byte KLINEF1_FAST_INIT = 0x40;
+        public static byte KLINEF1_USE_KLINE = 0x80;
 
         public static byte CANF_NO_ECHO = 0x01;
         public static byte CANF_CAN_ERROR = 0x02;
@@ -105,12 +105,14 @@ namespace EdiabasLib
                 return null;
             }
 
-            byte[] resultArray = new byte[length + 9];
-            resultArray[0] = 0x00;   // header
-            resultArray[1] = 0x00;   // telegram type
+            byte telType = (byte)((AdapterVersion < 0x0008) ? 0x00 : 0x02);
+            byte[] resultArray = new byte[length + ((telType == 0x00) ? 9 : 10)];
+            resultArray[0] = 0x00;      // header
+            resultArray[1] = telType;   // telegram type
 
             uint baudHalf;
-            byte flags = KLINEF_NO_ECHO;
+            byte flags1 = KLINEF1_NO_ECHO;
+            byte flags2 = 0x00;
             if (CurrentBaudRate == 115200)
             {
                 baudHalf = 0;
@@ -120,22 +122,34 @@ namespace EdiabasLib
                 baudHalf = (uint) (CurrentBaudRate >> 1);
                 if (!setDtr)
                 {
-                    flags |= KLINEF_USE_LLINE;
+                    flags1 |= KLINEF1_USE_LLINE;
                 }
-                flags |= CalcParityFlags();
+                flags1 |= CalcParityFlags();
                 if (FastInit)
                 {
-                    flags |= KLINEF_FAST_INIT;
+                    flags1 |= KLINEF1_FAST_INIT;
                 }
             }
             resultArray[2] = (byte)(baudHalf >> 8);     // baud rate / 2 high
             resultArray[3] = (byte)baudHalf;            // baud rate / 2 low
-            resultArray[4] = flags;                 // flags
-            resultArray[5] = (byte)InterByteTime;   // interbyte time
-            resultArray[6] = (byte)(length >> 8);   // telegram length high
-            resultArray[7] = (byte)length;          // telegram length low
-            Array.Copy(sendData, 0, resultArray, 8, length);
-            resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
+            resultArray[4] = flags1;                    // flags 1
+            if (telType == 0x00)
+            {
+                resultArray[5] = (byte)InterByteTime;   // interbyte time
+                resultArray[6] = (byte)(length >> 8);   // telegram length high
+                resultArray[7] = (byte)length;          // telegram length low
+                Array.Copy(sendData, 0, resultArray, 8, length);
+                resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
+            }
+            else
+            {
+                resultArray[5] = flags2;                // flags 2
+                resultArray[6] = (byte)InterByteTime;   // interbyte time
+                resultArray[7] = (byte)(length >> 8);   // telegram length high
+                resultArray[8] = (byte)length;          // telegram length low
+                Array.Copy(sendData, 0, resultArray, 9, length);
+                resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
+            }
             return resultArray;
         }
 
@@ -177,33 +191,51 @@ namespace EdiabasLib
             }
             ConvertBaudResponse = (AdapterVersion < 0x0008) && (CurrentBaudRate == EdInterfaceBase.BaudAuto);
 
+            byte telType = (byte)((AdapterVersion < 0x0008) ? 0x00 : 0x02);
             int dataBytes = (length + 7) >> 3;
-            byte[] resultArray = new byte[dataBytes + 2 + 1 + 9];
-            resultArray[0] = 0x00;   // header
-            resultArray[1] = 0x00;   // telegram type
+            byte[] resultArray = new byte[dataBytes + 2 + 1 + ((telType == 0x00) ? 9 : 10)];
+            resultArray[0] = 0x00;      // header
+            resultArray[1] = telType;   // telegram type
 
             uint baudHalf = (uint)(CurrentBaudRate >> 1);
-            byte flags = (byte)(KLINEF_SEND_PULSE | KLINEF_NO_ECHO);
+            byte flags1 = (byte)(KLINEF1_SEND_PULSE | KLINEF1_NO_ECHO);
+            byte flags2 = 0x00;
             if (bothLines)
             {
-                flags |= (byte)(KLINEF_USE_LLINE | KLINEF_USE_KLINE);
+                flags1 |= (byte)(KLINEF1_USE_LLINE | KLINEF1_USE_KLINE);
             }
             else if (!setDtr)
             {
-                flags |= KLINEF_USE_LLINE;
+                flags1 |= KLINEF1_USE_LLINE;
             }
-            flags |= CalcParityFlags();
+            flags1 |= CalcParityFlags();
             resultArray[2] = (byte)(baudHalf >> 8);     // baud rate / 2 high
             resultArray[3] = (byte)baudHalf;            // baud rate / 2 low
-            resultArray[4] = flags;                 // flags
-            resultArray[5] = (byte)InterByteTime;   // interbyte time
-            resultArray[6] = 0x00;                  // telegram length high
-            resultArray[7] = (byte)(dataBytes + 2 + 1); // telegram length low
-            resultArray[8] = (byte)pulseWidth;
-            resultArray[9] = (byte)length;
-            for (int i = 0; i < dataBytes; i++)
+            resultArray[4] = flags1;                    // flags 1
+            if (telType == 0x00)
             {
-                resultArray[10 + i] = (byte)(dataBits >> (i << 3));
+                resultArray[5] = (byte) InterByteTime; // interbyte time
+                resultArray[6] = 0x00; // telegram length high
+                resultArray[7] = (byte) (dataBytes + 2 + 1); // telegram length low
+                resultArray[8] = (byte) pulseWidth;
+                resultArray[9] = (byte) length;
+                for (int i = 0; i < dataBytes; i++)
+                {
+                    resultArray[10 + i] = (byte) (dataBits >> (i << 3));
+                }
+            }
+            else
+            {
+                resultArray[5] = flags2;                // flags 2
+                resultArray[6] = (byte)InterByteTime;   // interbyte time
+                resultArray[7] = 0x00;                  // telegram length high
+                resultArray[8] = (byte)(dataBytes + 2 + 1); // telegram length low
+                resultArray[9] = (byte)pulseWidth;
+                resultArray[10] = (byte)length;
+                for (int i = 0; i < dataBytes; i++)
+                {
+                    resultArray[11 + i] = (byte)(dataBits >> (i << 3));
+                }
             }
             resultArray[resultArray.Length - 2] = (byte)autoKeyByteDelay;   // W4 auto key byte response delay [ms], 0 = off
             resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
@@ -308,23 +340,23 @@ namespace EdiabasLib
             switch (CurrentParity)
             {
                 case EdInterfaceObd.SerialParity.None:
-                    flags |= KLINEF_PARITY_NONE;
+                    flags |= KLINEF1_PARITY_NONE;
                     break;
 
                 case EdInterfaceObd.SerialParity.Odd:
-                    flags |= KLINEF_PARITY_ODD;
+                    flags |= KLINEF1_PARITY_ODD;
                     break;
 
                 case EdInterfaceObd.SerialParity.Even:
-                    flags |= KLINEF_PARITY_EVEN;
+                    flags |= KLINEF1_PARITY_EVEN;
                     break;
 
                 case EdInterfaceObd.SerialParity.Mark:
-                    flags |= KLINEF_PARITY_MARK;
+                    flags |= KLINEF1_PARITY_MARK;
                     break;
 
                 case EdInterfaceObd.SerialParity.Space:
-                    flags |= KLINEF_PARITY_SPACE;
+                    flags |= KLINEF1_PARITY_SPACE;
                     break;
             }
             return flags;
