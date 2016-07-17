@@ -1077,7 +1077,7 @@ bool kline_receive(bool auto_response)
                         start_kline_rec_timer();
                         if (kline_auto_response == 0 && auto_response)
                         {   // last key byte received
-                            kline_kwp1281_mode = (kline_flags2 & KLINEF2_KWP1281_DETECT) && (*read_ptr == 0x8A);
+                            kline_kwp1281_mode = (kline_flags2 & KLINEF2_KWP1281_DETECT) && (*read_ptr != 0x8F);
                             kline_kwp1281_len = 0;
                             ei();
                             // delay execution
