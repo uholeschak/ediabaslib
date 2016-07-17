@@ -36,11 +36,12 @@
             this.checkBoxVariableValues = new System.Windows.Forms.CheckBox();
             this.radioButtonBmwFast = new System.Windows.Forms.RadioButton();
             this.groupBoxConcepts = new System.Windows.Forms.GroupBox();
+            this.radioButtonTp20 = new System.Windows.Forms.RadioButton();
             this.radioButtonKwp2000 = new System.Windows.Forms.RadioButton();
             this.radioButtonKwp2000Bmw = new System.Windows.Forms.RadioButton();
             this.radioButtonConcept3 = new System.Windows.Forms.RadioButton();
             this.radioButtonConcept1 = new System.Windows.Forms.RadioButton();
-            this.radioButtonIso9141 = new System.Windows.Forms.RadioButton();
+            this.radioButtonKwp1281 = new System.Windows.Forms.RadioButton();
             this.radioButtonDs2 = new System.Windows.Forms.RadioButton();
             this.radioButtonKwp2000S = new System.Windows.Forms.RadioButton();
             this.listBoxResponseFiles = new System.Windows.Forms.ListBox();
@@ -51,7 +52,6 @@
             this.treeViewDirectories = new System.Windows.Forms.TreeView();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonRootFolder = new System.Windows.Forms.Button();
-            this.radioButtonTp20 = new System.Windows.Forms.RadioButton();
             this.groupBoxConcepts.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -118,7 +118,7 @@
             this.groupBoxConcepts.Controls.Add(this.radioButtonKwp2000Bmw);
             this.groupBoxConcepts.Controls.Add(this.radioButtonConcept3);
             this.groupBoxConcepts.Controls.Add(this.radioButtonConcept1);
-            this.groupBoxConcepts.Controls.Add(this.radioButtonIso9141);
+            this.groupBoxConcepts.Controls.Add(this.radioButtonKwp1281);
             this.groupBoxConcepts.Controls.Add(this.radioButtonDs2);
             this.groupBoxConcepts.Controls.Add(this.radioButtonKwp2000S);
             this.groupBoxConcepts.Controls.Add(this.radioButtonBmwFast);
@@ -128,6 +128,17 @@
             this.groupBoxConcepts.TabIndex = 6;
             this.groupBoxConcepts.TabStop = false;
             this.groupBoxConcepts.Text = "Concepts";
+            // 
+            // radioButtonTp20
+            // 
+            this.radioButtonTp20.AutoSize = true;
+            this.radioButtonTp20.Location = new System.Drawing.Point(6, 203);
+            this.radioButtonTp20.Name = "radioButtonTp20";
+            this.radioButtonTp20.Size = new System.Drawing.Size(88, 17);
+            this.radioButtonTp20.TabIndex = 28;
+            this.radioButtonTp20.TabStop = true;
+            this.radioButtonTp20.Text = "TP 2.0 (CAN)";
+            this.radioButtonTp20.UseVisualStyleBackColor = true;
             // 
             // radioButtonKwp2000
             // 
@@ -173,16 +184,16 @@
             this.radioButtonConcept1.Text = "Concept 1";
             this.radioButtonConcept1.UseVisualStyleBackColor = true;
             // 
-            // radioButtonIso9141
+            // radioButtonKwp1281
             // 
-            this.radioButtonIso9141.AutoSize = true;
-            this.radioButtonIso9141.Location = new System.Drawing.Point(6, 134);
-            this.radioButtonIso9141.Name = "radioButtonIso9141";
-            this.radioButtonIso9141.Size = new System.Drawing.Size(70, 17);
-            this.radioButtonIso9141.TabIndex = 25;
-            this.radioButtonIso9141.TabStop = true;
-            this.radioButtonIso9141.Text = "ISO 9141";
-            this.radioButtonIso9141.UseVisualStyleBackColor = true;
+            this.radioButtonKwp1281.AutoSize = true;
+            this.radioButtonKwp1281.Location = new System.Drawing.Point(6, 134);
+            this.radioButtonKwp1281.Name = "radioButtonKwp1281";
+            this.radioButtonKwp1281.Size = new System.Drawing.Size(128, 17);
+            this.radioButtonKwp1281.TabIndex = 25;
+            this.radioButtonKwp1281.TabStop = true;
+            this.radioButtonKwp1281.Text = "KWP1281 (ISO 9141)";
+            this.radioButtonKwp1281.UseVisualStyleBackColor = true;
             // 
             // radioButtonDs2
             // 
@@ -283,17 +294,6 @@
             this.buttonRootFolder.UseVisualStyleBackColor = true;
             this.buttonRootFolder.Click += new System.EventHandler(this.buttonRootFolder_Click);
             // 
-            // radioButtonTp20
-            // 
-            this.radioButtonTp20.AutoSize = true;
-            this.radioButtonTp20.Location = new System.Drawing.Point(6, 203);
-            this.radioButtonTp20.Name = "radioButtonTp20";
-            this.radioButtonTp20.Size = new System.Drawing.Size(88, 17);
-            this.radioButtonTp20.TabIndex = 28;
-            this.radioButtonTp20.TabStop = true;
-            this.radioButtonTp20.Text = "TP 2.0 (CAN)";
-            this.radioButtonTp20.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -334,7 +334,7 @@
         private System.Windows.Forms.RadioButton radioButtonDs2;
         private System.Windows.Forms.ListBox listBoxResponseFiles;
         private System.Windows.Forms.CheckBox checkBoxIgnitionOk;
-        private System.Windows.Forms.RadioButton radioButtonIso9141;
+        private System.Windows.Forms.RadioButton radioButtonKwp1281;
         private System.Windows.Forms.CheckBox checkBoxAdsAdapter;
         private System.Windows.Forms.RadioButton radioButtonConcept1;
         private System.Windows.Forms.RadioButton radioButtonConcept3;

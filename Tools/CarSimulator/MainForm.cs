@@ -286,7 +286,7 @@ namespace CarSimulator
 
                 bool messageShown = false;
                 // split multi telegram responses
-                if (conceptType == CommThread.ConceptType.ConceptIso9141)
+                if (conceptType == CommThread.ConceptType.ConceptKwp1281)
                 {
                     foreach (CommThread.ResponseEntry responseEntry in responseList)
                     {
@@ -479,7 +479,7 @@ namespace CarSimulator
                 if (radioButtonKwp2000S.Checked) conceptType = CommThread.ConceptType.ConceptKwp2000S;
                 if (radioButtonDs2.Checked) conceptType = CommThread.ConceptType.ConceptDs2;
                 if (radioButtonConcept1.Checked) conceptType = CommThread.ConceptType.Concept1;
-                if (radioButtonIso9141.Checked) conceptType = CommThread.ConceptType.ConceptIso9141;
+                if (radioButtonKwp1281.Checked) conceptType = CommThread.ConceptType.ConceptKwp1281;
                 if (radioButtonConcept3.Checked) conceptType = CommThread.ConceptType.Concept3;
                 if (radioButtonKwp2000.Checked) conceptType = CommThread.ConceptType.ConceptKwp2000;
                 if (radioButtonTp20.Checked) conceptType = CommThread.ConceptType.ConceptTp20;

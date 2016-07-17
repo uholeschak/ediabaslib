@@ -158,7 +158,7 @@ namespace CarSimulator
             ConceptKwp2000S,
             ConceptDs2,
             Concept1,
-            ConceptIso9141,     // Concept2
+            ConceptKwp1281,     // Concept2 (ISO9141)
             Concept3,
             ConceptKwp2000,     // VW
             ConceptTp20,        // VW CAN
@@ -666,8 +666,8 @@ namespace CarSimulator
                                 SerialConcept1Transmission();
                                 break;
 
-                            case ConceptType.ConceptIso9141:
-                                SerialIso9141Transmission();
+                            case ConceptType.ConceptKwp1281:
+                                SerialKwp1281Transmission();
                                 break;
 
                             case ConceptType.Concept3:
@@ -780,7 +780,7 @@ namespace CarSimulator
                         parity = Parity.Even;
                         break;
 
-                    case ConceptType.ConceptIso9141:
+                    case ConceptType.ConceptKwp1281:
                         baudRate = 10400;
                         //baudRate = 9600;
                         parity = Parity.None;
@@ -2981,7 +2981,7 @@ namespace CarSimulator
             return null;
         }
 
-        private bool SendIso9141Block(byte[] sendData)
+        private bool SendKwp1281Block(byte[] sendData)
         {
             int blockLen = sendData[0];
             byte[] buffer = new byte[1];
@@ -3015,7 +3015,7 @@ namespace CarSimulator
             return true;
         }
 
-        private bool ReceiveIso9141Block(byte[] recData)
+        private bool ReceiveKwp1281Block(byte[] recData)
         {
             // block length
             if (!ReceiveData(recData, 0, 1, IsoTimeout, IsoTimeout))
@@ -5557,7 +5557,7 @@ namespace CarSimulator
             }
         }
 
-        private void SerialIso9141Transmission()
+        private void SerialKwp1281Transmission()
         {
             bool initOk;
             do
@@ -5654,13 +5654,13 @@ namespace CarSimulator
                 }
                 _sendData[1] = blockCount++;    // block counter
 
-                if (!SendIso9141Block(_sendData))
+                if (!SendKwp1281Block(_sendData))
                 {
                     Debug.WriteLine("Send block failed");
                     break;
                 }
 
-                if (!ReceiveIso9141Block(_receiveData))
+                if (!ReceiveKwp1281Block(_receiveData))
                 {
                     Debug.WriteLine("Receive block failed");
                     break;
