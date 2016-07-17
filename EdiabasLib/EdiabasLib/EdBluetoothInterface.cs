@@ -354,10 +354,7 @@ namespace EdiabasLib
                     CommReceiveEvent.WaitOne(1, false);
                 }
                 StopWatch.Stop();
-                if (ediabasLog != null)
-                {
-                    ediabasLog.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, offset, recLen, "Rec ");
-                }
+                ediabasLog?.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, offset, recLen, "Rec ");
                 if (recLen < length)
                 {
                     return false;

@@ -26,8 +26,9 @@ namespace EdiabasLib
 
         public enum Protocol
         {
-            Uart = 0,
-            Tp20 = 1,
+            Uart,
+            Kwp,
+            Tp20,
         }
 
         protected enum KwpModes
@@ -145,7 +146,7 @@ namespace EdiabasLib
         protected int RecBufferFrequentLength;
         protected volatile EdiabasNet.ErrorCodes RecErrorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         protected byte[] Kwp1281Buffer = new byte[256];
-        protected byte[] Kwp1281BlockBuffer = new byte[1];
+        protected byte[] Kwp1281BlockBuffer = new byte[256];
         protected Dictionary<byte, int> Nr78Dict = new Dictionary<byte, int>();
         protected bool EcuConnected;
         protected KwpModes KwpMode;
@@ -2615,7 +2616,7 @@ namespace EdiabasLib
                 if (UseExtInterfaceFunc)
                 {
                     if (HasAutoBaudRate) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Auto baud rate");
-                    if (InterfaceSetConfigFuncUse(Protocol.Uart, HasAutoBaudRate ? BaudAuto : 9600, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                    if (InterfaceSetConfigFuncUse(Protocol.Kwp, HasAutoBaudRate ? BaudAuto : 9600, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
                     {
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -2675,7 +2676,7 @@ namespace EdiabasLib
                     CurrentParity = SerialParity.None;
                     if (UseExtInterfaceFunc)
                     {
-                        if (InterfaceSetConfigFuncUse(Protocol.Uart, CurrentBaudRate, 8, CurrentParity, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                        if (InterfaceSetConfigFuncUse(Protocol.Kwp, CurrentBaudRate, 8, CurrentParity, ParAllowBitBang) != InterfaceErrorResult.NoError)
                         {
                             EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -2705,7 +2706,7 @@ namespace EdiabasLib
                         EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate 10.4k detected");
                         if (UseExtInterfaceFunc)
                         {
-                            if (InterfaceSetConfigFuncUse(Protocol.Uart, 10400, 8, SerialParity.None, ParAllowBitBang) !=
+                            if (InterfaceSetConfigFuncUse(Protocol.Kwp, 10400, 8, SerialParity.None, ParAllowBitBang) !=
                                 InterfaceErrorResult.NoError)
                             {
                                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
@@ -3571,7 +3572,7 @@ namespace EdiabasLib
                 if (UseExtInterfaceFunc)
                 {
                     if (HasAutoBaudRate) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Auto baud rate");
-                    if (InterfaceSetConfigFuncUse(Protocol.Uart, HasAutoBaudRate ? BaudAuto : 9600, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                    if (InterfaceSetConfigFuncUse(Protocol.Kwp, HasAutoBaudRate ? BaudAuto : 9600, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
                     {
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -3631,7 +3632,7 @@ namespace EdiabasLib
                     CurrentParity = SerialParity.None;
                     if (UseExtInterfaceFunc)
                     {
-                        if (InterfaceSetConfigFuncUse(Protocol.Uart, CurrentBaudRate, 8, CurrentParity, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                        if (InterfaceSetConfigFuncUse(Protocol.Kwp, CurrentBaudRate, 8, CurrentParity, ParAllowBitBang) != InterfaceErrorResult.NoError)
                         {
                             EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -3661,7 +3662,7 @@ namespace EdiabasLib
                         EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Baud rate 10.4k detected");
                         if (UseExtInterfaceFunc)
                         {
-                            if (InterfaceSetConfigFuncUse(Protocol.Uart, 10400, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
+                            if (InterfaceSetConfigFuncUse(Protocol.Kwp, 10400, 8, SerialParity.None, ParAllowBitBang) != InterfaceErrorResult.NoError)
                             {
                                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
@@ -3952,8 +3953,34 @@ namespace EdiabasLib
 
         private EdiabasNet.ErrorCodes SendKwp1281Block(byte[] sendData, bool enableLog)
         {
+            bool autoKwp = HasAutoBaudRate;
             int blockLen = sendData[0];
             if (enableLog) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, blockLen, "Send");
+            if (autoKwp)
+            {
+                Array.Copy(sendData, Kwp1281BlockBuffer, blockLen);
+                Kwp1281BlockBuffer[blockLen] = 0x03;    // block end
+                if (!SendData(Kwp1281BlockBuffer, blockLen + 1, ParSendSetDtr))
+                {
+                    if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                }
+                if (!ReceiveData(Kwp1281BlockBuffer, 0, blockLen, Kwp1281ByteTimeout, Kwp1281ByteTimeout))
+                {
+                    if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No acks received");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                }
+                for (int i = 0; i < blockLen; i++)
+                {
+                    if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Info, "(A): {0:X02}", (byte)(~Kwp1281BlockBuffer[i]));
+                    if ((byte)(~Kwp1281BlockBuffer[i]) != sendData[i])
+                    {
+                        if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Response invalid: {0:X02} {1:X02}", (byte)(~Kwp1281BlockBuffer[i]), sendData[i]);
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
+                }
+                return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+            }
             for (int i = 0; i < blockLen; i++)
             {
                 Kwp1281BlockBuffer[0] = sendData[i];
@@ -3990,6 +4017,7 @@ namespace EdiabasLib
 
         private EdiabasNet.ErrorCodes ReceiveKwp1281Block(byte[] recData, bool enableLog, int addStartTimeout)
         {
+            bool autoKwp = HasAutoBaudRate;
             // block length
             if (!ReceiveData(recData, 0, 1, Kwp1281ByteTimeout + addStartTimeout, Kwp1281ByteTimeout + addStartTimeout))
             {
@@ -4001,11 +4029,14 @@ namespace EdiabasLib
             int blockLen = recData[0];
             for (int i = 0; i < blockLen; i++)
             {
-                Kwp1281BlockBuffer[0] = (byte)(~recData[i]);
-                if (!SendData(Kwp1281BlockBuffer, 1, ParSendSetDtr))
+                if (!autoKwp)
                 {
-                    if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    Kwp1281BlockBuffer[0] = (byte)(~recData[i]);
+                    if (!SendData(Kwp1281BlockBuffer, 1, ParSendSetDtr))
+                    {
+                        if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    }
                 }
                 if (!ReceiveData(recData, i + 1, 1, Kwp1281ByteTimeout, Kwp1281ByteTimeout))
                 {
