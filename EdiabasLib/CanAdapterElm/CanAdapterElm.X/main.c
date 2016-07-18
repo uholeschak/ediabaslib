@@ -1060,6 +1060,7 @@ bool kline_receive(bool auto_response)
                         }
                         kline_kwp1281_pos++;
                         ei();
+                        kline_flags1 = kline_flags1 & (KLINEF1_PARITY_MASK | KLINEF1_NO_ECHO);
                         temp_buffer_short[0] = ~(*read_ptr);
                         kline_send(temp_buffer_short, 1);
                         di();
