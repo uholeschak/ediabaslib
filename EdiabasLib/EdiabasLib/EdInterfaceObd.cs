@@ -2150,7 +2150,10 @@ namespace EdiabasLib
                 InterfaceSetInterByteTimeDelegate setInterByteTimeFunc = InterfaceSetInterByteTimeFuncUse;
                 if (setInterByteTimeFunc != null)
                 {
-                    setInterByteTimeFunc(interbyteTime);
+                    if (!setInterByteTimeFunc(interbyteTime))
+                    {
+                        return false;
+                    }
                 }
                 if (interbyteTime > 0 && setInterByteTimeFunc == null)
                 {
@@ -2664,6 +2667,15 @@ namespace EdiabasLib
                     {
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                    }
+                    InterfaceSetInterByteTimeDelegate setInterByteTimeFunc = InterfaceSetInterByteTimeFuncUse;
+                    if (setInterByteTimeFunc != null)
+                    {
+                        if (!setInterByteTimeFunc(2))
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set interbyte time failed");
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                        }
                     }
                 }
                 else
@@ -3608,6 +3620,15 @@ namespace EdiabasLib
                     {
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                    }
+                    InterfaceSetInterByteTimeDelegate setInterByteTimeFunc = InterfaceSetInterByteTimeFuncUse;
+                    if (setInterByteTimeFunc != null)
+                    {
+                        if (!setInterByteTimeFunc(2))
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set interbyte time failed");
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                        }
                     }
                 }
                 else
