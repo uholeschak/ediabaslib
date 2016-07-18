@@ -1060,6 +1060,16 @@ bool kline_receive(bool auto_response)
                         }
                         kline_kwp1281_pos++;
                         ei();
+                        if (kline_interbyte != 0)
+                        {
+                            // delay execution
+                            uint16_t start_tick = get_systick();
+                            uint16_t compare_tick = kline_interbyte * TIMER0_RESOL / 1000;
+                            while ((uint16_t) (get_systick() - start_tick) < compare_tick)
+                            {
+                                CLRWDT();
+                            }
+                        }
                         kline_flags1 = kline_flags1 & (KLINEF1_PARITY_MASK | KLINEF1_NO_ECHO);
                         temp_buffer_short[0] = ~(*read_ptr);
                         kline_send(temp_buffer_short, 1);
@@ -3088,6 +3098,16 @@ void main(void)
                     {
                         for (uint16_t i = 0; i < len; i++)
                         {
+                            if (kline_interbyte != 0 && i != 0)
+                            {
+                                // delay execution
+                                uint16_t start_tick = get_systick();
+                                uint16_t compare_tick = kline_interbyte * TIMER0_RESOL / 1000;
+                                while ((uint16_t) (get_systick() - start_tick) < compare_tick)
+                                {
+                                    CLRWDT();
+                                }
+                            }
                             temp_buffer_short[0] = temp_buffer[i];
                             kline_send(temp_buffer_short, 1);
                             // wait for inverted response
