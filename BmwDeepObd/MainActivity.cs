@@ -436,6 +436,13 @@ namespace BmwDeepObd
                 }
             }
 
+            IMenuItem manufacturerMenu = menu.FindItem(Resource.Id.menu_manufacturer);
+            if (manufacturerMenu != null)
+            {
+                manufacturerMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_manufacturer), _activityCommon.ManufacturerName()));
+                manufacturerMenu.SetEnabled(!commActive);
+            }
+
             IMenuItem scanMenu = menu.FindItem(Resource.Id.menu_scan);
             if (scanMenu != null)
             {
@@ -542,6 +549,14 @@ namespace BmwDeepObd
         {
             switch (item.ItemId)
             {
+                case Resource.Id.menu_manufacturer:
+                    _activityCommon.SelectManufacturer((sender, args) =>
+                    {
+                        SupportInvalidateOptionsMenu();
+                        UpdateDisplay();
+                    });
+                    return true;
+
                 case Resource.Id.menu_scan:
                     _autoStart = false;
                     _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice, _appDataPath);
@@ -885,6 +900,7 @@ namespace BmwDeepObd
                 ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", false);
                 ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", string.Empty);
                 ActivityCommon.AppId = prefs.GetString("AppId", string.Empty);
+                ActivityCommon.SelectedManufacturer = (ActivityCommon.ManufacturerType) prefs.GetInt("Manufacturer", (int)ActivityCommon.ManufacturerType.Bmw);
             }
             catch (Exception)
             {
@@ -907,6 +923,7 @@ namespace BmwDeepObd
                 prefsEdit.PutBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
                 prefsEdit.PutString("YandexApiKey", ActivityCommon.YandexApiKey ?? string.Empty);
                 prefsEdit.PutString("AppId", ActivityCommon.AppId);
+                prefsEdit.PutInt("Manufacturer", (int) ActivityCommon.SelectedManufacturer);
                 prefsEdit.Commit();
             }
             catch (Exception)

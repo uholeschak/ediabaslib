@@ -110,6 +110,7 @@
   <!-- Options Menu -->
   <string name="menu_settings">Einstellungen</string>
   <string name="menu_connect">Verbinden</string>
+  <string name="menu_manufacturer">Hersteller</string>
   <string name="menu_adapter">Adapter</string>
   <string name="menu_adapter_config">Adapter Konfiguration</string>
   <string name="menu_enet_ip">ENET IP</string>
@@ -147,6 +148,11 @@
   <string name="select_interface_enet">ENET</string>
   <string name="select_interface_elmwifi">ELM327 WIFI</string>
   <string name="select_interface_ftdi">USB (FTDI)</string>
+
+  <!-- Manufacturer selection -->
+  <string name="select_manufacturer">Hersteller auswählen</string>
+  <string name="select_manufacturer_bmw">BMW</string>
+  <string name="select_manufacturer_vw">VW</string>
 
   <!-- Wi-Fi-->
   <string name="connected_with_wifi_adapter">Sie sind im Moment mit einem Wi-Fi Adapter verbunden.\nFür den Internetzugriff muss der Adapter getrennt werden.\nWollen Sie Wi-Fi jetzt ausschalten?</string>

@@ -111,6 +111,7 @@
   <!-- Options Menu -->
   <string name="menu_settings">Settings</string>
   <string name="menu_connect">Connect</string>
+  <string name="menu_manufacturer">Manufacturer</string>
   <string name="menu_adapter">Adapter</string>
   <string name="menu_adapter_config">Adapter configuration</string>
   <string name="menu_enet_ip">ENET IP</string>
@@ -148,6 +149,11 @@
   <string name="select_interface_enet">ENET</string>
   <string name="select_interface_elmwifi">ELM327 WIFI</string>
   <string name="select_interface_ftdi">USB (FTDI)</string>
+
+  <!-- Manufacturer selection -->
+  <string name="select_manufacturer">Select manufacturer</string>
+  <string name="select_manufacturer_bmw">BMW</string>
+  <string name="select_manufacturer_vw">VW</string>
 
   <!-- Wi-Fi-->
   <string name="connected_with_wifi_adapter">You are currently connected to a Wi-Fi adapter.\nFor internet access disconnection of the adapter is required.\nDo you want to disable Wi-Fi now?</string>

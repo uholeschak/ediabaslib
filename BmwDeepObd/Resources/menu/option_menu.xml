@@ -24,6 +24,9 @@
           android:title="@string/menu_settings"
           app:showAsAction="always">
         <menu>
+          <item android:id="@+id/menu_manufacturer"
+                android:icon="@android:drawable/ic_menu_manage"
+                android:title="@string/menu_manufacturer" />
           <item android:id="@+id/menu_scan"
                 android:icon="@android:drawable/ic_menu_search"
                 android:title="@string/menu_adapter" />
