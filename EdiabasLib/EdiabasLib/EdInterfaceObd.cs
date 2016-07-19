@@ -3624,7 +3624,7 @@ namespace EdiabasLib
                     InterfaceSetInterByteTimeDelegate setInterByteTimeFunc = InterfaceSetInterByteTimeFuncUse;
                     if (setInterByteTimeFunc != null)
                     {
-                        if (!setInterByteTimeFunc(2))
+                        if (!setInterByteTimeFunc(0))
                         {
                             EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set interbyte time failed");
                             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
