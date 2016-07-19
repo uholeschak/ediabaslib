@@ -112,8 +112,10 @@ namespace BmwDeepObd
         private const string EcuDownloadUrlBmw = @"http://www.holeschak.de/BmwDeepObd/Ecu2.xml";
         private const string EcuDownloadUrlVw = @"http://www.holeschak.de/BmwDeepObd/EcuVw1.xml";
         private const string InfoXmlName = "Info.xml";
-        private const long EcuZipSize = 130000000;          // ecu zip file size
-        private const long EcuExtractSize = 1200000000;     // extracted ecu files size
+        private const long EcuZipSizeBmw = 130000000;           // BMW ecu zip file size
+        private const long EcuExtractSizeBmw = 1200000000;      // BMW extracted ecu files size
+        private const long EcuZipSizeVw = 5000000;              // VW ecu zip file size
+        private const long EcuExtractSizeVw = 34000000;         // VW extracted ecu files size
         private const int RequestPermissionExternalStorage = 0;
         private readonly string[] _permissionsExternalStorage =
         {
@@ -183,6 +185,32 @@ namespace BmwDeepObd
                         return EcuDownloadUrlVw;
                 }
                 return EcuDownloadUrlBmw;
+            }
+        }
+
+        private long ManufacturerEcuZipSize
+        {
+            get
+            {
+                switch (ActivityCommon.SelectedManufacturer)
+                {
+                    case ActivityCommon.ManufacturerType.Vw:
+                        return EcuZipSizeVw;
+                }
+                return EcuZipSizeBmw;
+            }
+        }
+
+        private long ManufacturerEcuExtractSize
+        {
+            get
+            {
+                switch (ActivityCommon.SelectedManufacturer)
+                {
+                    case ActivityCommon.ManufacturerType.Vw:
+                        return EcuExtractSizeVw;
+                }
+                return EcuExtractSizeBmw;
             }
         }
 
@@ -2225,7 +2253,7 @@ namespace BmwDeepObd
                 ActivityCommon.FileSystemBlockInfo blockInfo = ActivityCommon.GetFileSystemBlockInfo(_appDataPath);
                 long ecuDirSize = ActivityCommon.GetDirectorySize(ecuPath);
                 double freeSpace = blockInfo.AvailableSizeBytes + ecuDirSize;
-                long requiredSize = EcuExtractSize + EcuZipSize;
+                long requiredSize = ManufacturerEcuExtractSize + ManufacturerEcuZipSize;
                 if (freeSpace < requiredSize)
                 {
                     string message = string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download_free_space), requiredSize);
@@ -2302,7 +2330,7 @@ namespace BmwDeepObd
             if (!ValidEcuFiles(_ecuPath))
             {
                 string message = GetString(Resource.String.ecu_not_found) + "\n" +
-                    string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download), EcuZipSize);
+                    string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download), ManufacturerEcuZipSize);
 
                 _downloadEcuAlertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
@@ -2324,7 +2352,7 @@ namespace BmwDeepObd
                 if (!ValidEcuPackage(_ecuPath))
                 {
                     string message = GetString(Resource.String.ecu_package) + "\n" +
-                        string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download), EcuZipSize);
+                        string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download), ManufacturerEcuZipSize);
 
                     _downloadEcuAlertDialog = new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
