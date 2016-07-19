@@ -107,8 +107,10 @@ namespace BmwDeepObd
         private const char DataLogSeparator = '\t';
         private const string SharedAppName = "de.holeschak.bmw_deep_obd";
         private const string AppFolderName = "de.holeschak.bmw_deep_obd";
-        private const string EcuDirName = "Ecu";
-        private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Ecu2.xml";
+        private const string EcuDirNameBmw = "Ecu";
+        private const string EcuDirNameVw = "EcuVw";
+        private const string EcuDownloadUrlBmw = @"http://www.holeschak.de/BmwDeepObd/Ecu2.xml";
+        private const string EcuDownloadUrlVw = @"http://www.holeschak.de/BmwDeepObd/EcuVw1.xml";
         private const string InfoXmlName = "Info.xml";
         private const long EcuZipSize = 130000000;          // ecu zip file size
         private const long EcuExtractSize = 1200000000;     // extracted ecu files size
@@ -157,6 +159,32 @@ namespace BmwDeepObd
         private bool _translateActive;
         private List<string> _translationList;
         private List<string> _translatedList;
+
+        private string ManufacturerEcuDirName
+        {
+            get
+            {
+                switch (ActivityCommon.SelectedManufacturer)
+                {
+                    case ActivityCommon.ManufacturerType.Vw:
+                        return EcuDirNameVw;
+                }
+                return EcuDirNameBmw;
+            }
+        }
+
+        private string ManufacturerEcuDownloadUrl
+        {
+            get
+            {
+                switch (ActivityCommon.SelectedManufacturer)
+                {
+                    case ActivityCommon.ManufacturerType.Vw:
+                        return EcuDownloadUrlVw;
+                }
+                return EcuDownloadUrlBmw;
+            }
+        }
 
         public void OnTabReselected(ActionBar.Tab tab, FragmentTransaction ft)
         {
@@ -396,7 +424,7 @@ namespace BmwDeepObd
                     {
                         string zipFile = data.Extras.GetString(XmlToolActivity.ExtraFileName);
                         string fileName = Path.GetFileName(zipFile) ?? string.Empty;
-                        string ecuPath = Path.Combine(_appDataPath, EcuDirName);
+                        string ecuPath = Path.Combine(_appDataPath, ManufacturerEcuDirName);
 
                         XElement xmlInfo = new XElement("Info");
                         xmlInfo.Add(new XAttribute("Url", zipFile));
@@ -552,6 +580,8 @@ namespace BmwDeepObd
                 case Resource.Id.menu_manufacturer:
                     _activityCommon.SelectManufacturer((sender, args) =>
                     {
+                        UpdateDirectories();
+                        CheckForEcuFiles();
                         SupportInvalidateOptionsMenu();
                         UpdateDisplay();
                     });
@@ -987,16 +1017,16 @@ namespace BmwDeepObd
                     else
                     {
                         _appDataPath = Path.Combine(_activityCommon.ExternalPath, AppFolderName);
-                        _ecuPath = Path.Combine(_appDataPath, EcuDirName);
+                        _ecuPath = Path.Combine(_appDataPath, ManufacturerEcuDirName);
                     }
                 }
                 else
                 {
                     _appDataPath = _activityCommon.ExternalWritePath;
-                    _ecuPath = Path.Combine(_appDataPath, EcuDirName);
+                    _ecuPath = Path.Combine(_appDataPath, ManufacturerEcuDirName);
                     if (!ValidEcuFiles(_ecuPath))
                     {
-                        string userEcuPath = Path.Combine(_appDataPath, "../../../..", AppFolderName, EcuDirName);
+                        string userEcuPath = Path.Combine(_appDataPath, "../../../..", AppFolderName, ManufacturerEcuDirName);
                         if (ValidEcuFiles(userEcuPath))
                         {
                             _ecuPath = userEcuPath;
@@ -1008,7 +1038,7 @@ namespace BmwDeepObd
             else
             {
                 _appDataPath = Path.Combine(_activityCommon.CustomStorageMedia, AppFolderName);
-                _ecuPath = Path.Combine(_appDataPath, EcuDirName);
+                _ecuPath = Path.Combine(_appDataPath, ManufacturerEcuDirName);
             }
         }
 
@@ -2189,7 +2219,7 @@ namespace BmwDeepObd
 
         private void DownloadEcuFiles(bool manualRequest = false)
         {
-            string ecuPath = Path.Combine(_appDataPath, EcuDirName);
+            string ecuPath = Path.Combine(_appDataPath, ManufacturerEcuDirName);
             try
             {
                 ActivityCommon.FileSystemBlockInfo blockInfo = ActivityCommon.GetFileSystemBlockInfo(_appDataPath);
@@ -2220,7 +2250,7 @@ namespace BmwDeepObd
 
             if (manualRequest)
             {
-                string message = string.Format(GetString(Resource.String.download_manual), EcuDownloadUrl.Replace(".xml", ".zip"));
+                string message = string.Format(GetString(Resource.String.download_manual), ManufacturerEcuDownloadUrl.Replace(".xml", ".zip"));
 
                 AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
@@ -2229,7 +2259,7 @@ namespace BmwDeepObd
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
-                        DownloadFile(EcuDownloadUrl, Path.Combine(_appDataPath, ActivityCommon.DownloadDir), ecuPath);
+                        DownloadFile(ManufacturerEcuDownloadUrl, Path.Combine(_appDataPath, ActivityCommon.DownloadDir), ecuPath);
                     })
                     .SetMessage(Html.FromHtml(message))
                     .SetTitle(Resource.String.alert_title_question)
@@ -2242,7 +2272,7 @@ namespace BmwDeepObd
             }
             else
             {
-                DownloadFile(EcuDownloadUrl, Path.Combine(_appDataPath, ActivityCommon.DownloadDir), ecuPath);
+                DownloadFile(ManufacturerEcuDownloadUrl, Path.Combine(_appDataPath, ActivityCommon.DownloadDir), ecuPath);
             }
         }
 
@@ -2348,7 +2378,7 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                if (string.Compare(Path.GetFileNameWithoutExtension(nameAttr.Value), Path.GetFileNameWithoutExtension(EcuDownloadUrl), StringComparison.OrdinalIgnoreCase) != 0)
+                if (string.Compare(Path.GetFileNameWithoutExtension(nameAttr.Value), Path.GetFileNameWithoutExtension(ManufacturerEcuDownloadUrl), StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     return false;
                 }
