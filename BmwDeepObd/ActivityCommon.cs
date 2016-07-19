@@ -56,7 +56,7 @@ namespace BmwDeepObd
             /// </summary>
             public double FreeSizeBytes { get; set; }
         }
-        
+
         public enum InterfaceType
         {
             None,
@@ -64,6 +64,12 @@ namespace BmwDeepObd
             Enet,
             ElmWifi,
             Ftdi,
+        }
+
+        public enum ManufacturerType
+        {
+            Bmw = 0,
+            Vw = 1,
         }
 
         public delegate bool ProgressZipDelegate(int percent);
@@ -106,6 +112,7 @@ namespace BmwDeepObd
         private AlertDialog _activateAlertDialog;
         private AlertDialog _selectMediaAlertDialog;
         private AlertDialog _selectInterfaceAlertDialog;
+        private AlertDialog _selectManufacturerAlertDialog;
         private Android.App.ProgressDialog _translateProgress;
         private List<string> _yandexLangList;
         private List<string> _yandexTransList;
@@ -167,6 +174,8 @@ namespace BmwDeepObd
                 _appId = value;
             }
         }
+
+        public static ManufacturerType SelectedManufacturer { get; set; }
 
         public static string YandexApiKey { get; set; }
 
@@ -325,6 +334,19 @@ namespace BmwDeepObd
 
                 case InterfaceType.Ftdi:
                     return _activity.GetString(Resource.String.select_interface_ftdi);
+            }
+            return string.Empty;
+        }
+
+        public string ManufacturerName()
+        {
+            switch (SelectedManufacturer)
+            {
+                case ManufacturerType.Bmw:
+                    return _activity.GetString(Resource.String.select_manufacturer_bmw);
+
+                case ManufacturerType.Vw:
+                    return _activity.GetString(Resource.String.select_manufacturer_vw);
             }
             return string.Empty;
         }
@@ -969,6 +991,58 @@ namespace BmwDeepObd
                 });
             _selectInterfaceAlertDialog = builder.Show();
             _selectInterfaceAlertDialog.DismissEvent += (sender, args) => { _selectInterfaceAlertDialog = null; };
+        }
+
+        public void SelectManufacturer(EventHandler<DialogClickEventArgs> handler)
+        {
+            if (_selectManufacturerAlertDialog != null)
+            {
+                return;
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
+            builder.SetTitle(Resource.String.select_manufacturer);
+            ListView listView = new ListView(_activity);
+
+            List<string> manufacturerNames = new List<string>
+            {
+                _activity.GetString(Resource.String.select_manufacturer_bmw),
+                _activity.GetString(Resource.String.select_manufacturer_vw),
+            };
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity,
+                Android.Resource.Layout.SimpleListItemSingleChoice, manufacturerNames.ToArray());
+            listView.Adapter = adapter;
+            listView.ChoiceMode = ChoiceMode.Single;
+            switch (SelectedManufacturer)
+            {
+                case ManufacturerType.Bmw:
+                    listView.SetItemChecked(0, true);
+                    break;
+
+                case ManufacturerType.Vw:
+                    listView.SetItemChecked(1, true);
+                    break;
+            }
+            builder.SetView(listView);
+            builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+            {
+                switch (listView.CheckedItemPosition)
+                {
+                    case 0:
+                        SelectedManufacturer = ManufacturerType.Bmw;
+                        handler(sender, args);
+                        break;
+
+                    case 1:
+                        SelectedManufacturer = ManufacturerType.Vw;
+                        handler(sender, args);
+                        break;
+                }
+            });
+            builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
+            {
+            });
+            _selectManufacturerAlertDialog = builder.Show();
+            _selectManufacturerAlertDialog.DismissEvent += (sender, args) => { _selectManufacturerAlertDialog = null; };
         }
 
         public void EnableInterface()
