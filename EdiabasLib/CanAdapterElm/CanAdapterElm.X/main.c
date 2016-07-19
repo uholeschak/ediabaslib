@@ -436,7 +436,7 @@ bool kline_baud_detect()
     for (;;)
     {
         CLRWDT();
-        if (!KLINE_IN) T1CONbits.TMR1ON = 1;
+        if (!(KLINE_IN || KLINE_IN || KLINE_IN || KLINE_IN || KLINE_IN)) T1CONbits.TMR1ON = 1;
         if (T1CONbits.TMR1ON)
         {
             break;
@@ -461,7 +461,7 @@ bool kline_baud_detect()
     }
     for (uint8_t i = 0; i < 4 ; i++)
     {
-        while (!KLINE_IN)
+        while (!(KLINE_IN && KLINE_IN && KLINE_IN && KLINE_IN && KLINE_IN))
         {
             if (PIR1bits.TMR1IF)
             {   // timeout
@@ -471,7 +471,7 @@ bool kline_baud_detect()
                 return false;
             }
         }
-        while (KLINE_IN)
+        while (KLINE_IN || KLINE_IN || KLINE_IN || KLINE_IN || KLINE_IN)
         {
             if (PIR1bits.TMR1IF)
             {   // timeout
@@ -483,7 +483,7 @@ bool kline_baud_detect()
         }
     }
     // wait for stop bit
-    while (!KLINE_IN)
+    while (!(KLINE_IN && KLINE_IN && KLINE_IN && KLINE_IN && KLINE_IN))
     {
         if (PIR1bits.TMR1IF)
         {   // timeout
