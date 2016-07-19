@@ -660,6 +660,15 @@ namespace EdiabasLib
                         EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                         return;
                     }
+                    InterfaceSetInterByteTimeDelegate setInterByteTimeFunc = InterfaceSetInterByteTimeFuncUse;
+                    if (setInterByteTimeFunc != null)
+                    {
+                        if (!setInterByteTimeFunc(0))
+                        {
+                            EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
+                        }
+                    }
                 }
                 else
                 {
@@ -1353,7 +1362,7 @@ namespace EdiabasLib
                 receiveData = ByteArray0;
                 return true;
             }
-            if (SendBufferFrequentLength == 0)
+            if (EdicSimulation && SendBufferFrequentLength == 0)
             {
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Frequent mode not active");
                 receiveData = ByteArray0;
@@ -4144,6 +4153,15 @@ namespace EdiabasLib
                     {
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set baud rate failed");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                    }
+                    InterfaceSetInterByteTimeDelegate setInterByteTimeFunc = InterfaceSetInterByteTimeFuncUse;
+                    if (setInterByteTimeFunc != null)
+                    {
+                        if (!setInterByteTimeFunc(0))
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set interbyte time failed");
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
+                        }
                     }
                 }
                 else
