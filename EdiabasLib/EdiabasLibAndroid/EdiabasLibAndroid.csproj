@@ -62,6 +62,9 @@
     <Compile Include="..\EdiabasLib\EdFtdiInterfaceAndroid.cs">
       <Link>EdFtdiInterfaceAndroid.cs</Link>
     </Compile>
+    <Compile Include="..\EdiabasLib\EdInterfaceEdic.cs">
+      <Link>EdInterfaceEdic.cs</Link>
+    </Compile>
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="..\EdiabasLib\EdiabasNet.cs">
       <Link>EdiabasNet.cs</Link>

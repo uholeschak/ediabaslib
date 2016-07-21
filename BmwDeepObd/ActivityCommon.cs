@@ -931,12 +931,15 @@ namespace BmwDeepObd
             List<string> interfaceNames = new List<string>
             {
                 _activity.GetString(Resource.String.select_interface_bt),
-                _activity.GetString(Resource.String.select_interface_enet),
-                _activity.GetString(Resource.String.select_interface_elmwifi)
             };
-            if (UsbSupport)
+            if (SelectedManufacturer == ManufacturerType.Bmw)
             {
-                interfaceNames.Add(_activity.GetString(Resource.String.select_interface_ftdi));
+                interfaceNames.Add(_activity.GetString(Resource.String.select_interface_enet));
+                interfaceNames.Add(_activity.GetString(Resource.String.select_interface_elmwifi));
+                if (UsbSupport)
+                {
+                    interfaceNames.Add(_activity.GetString(Resource.String.select_interface_ftdi));
+                }
             }
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity,
                 Android.Resource.Layout.SimpleListItemSingleChoice, interfaceNames.ToArray());
@@ -1363,6 +1366,19 @@ namespace BmwDeepObd
                     // ignored
                 }
             }
+        }
+
+        public EdInterfaceBase GetEdiabasInterfaceClass()
+        {
+            if (SelectedManufacturer == ManufacturerType.Vw)
+            {
+                return new EdInterfaceEdic();
+            }
+            if (SelectedInterface == InterfaceType.Enet)
+            {
+                return new EdInterfaceEnet();
+            }
+            return new EdInterfaceObd();
         }
 
         public void SetEdiabasInterface(EdiabasNet ediabas, string btDeviceAddress)

@@ -88,22 +88,16 @@ namespace BmwDeepObd
         private bool _ediabasInitReq;
         private bool _ediabasJobAbort;
 
-        public EdiabasThread(string ecuPath, ActivityCommon.InterfaceType interfaceType)
+        public EdiabasThread(string ecuPath, ActivityCommon activityCommon)
         {
             _stopThread = false;
             _threadRunning = false;
             _workerThread = null;
-            Ediabas = new EdiabasNet();
-
-            if (interfaceType == ActivityCommon.InterfaceType.Enet)
+            Ediabas = new EdiabasNet
             {
-                Ediabas.EdInterfaceClass = new EdInterfaceEnet();
-            }
-            else
-            {
-                Ediabas.EdInterfaceClass = new EdInterfaceObd();
-            }
-            Ediabas.AbortJobFunc = AbortEdiabasJob;
+                EdInterfaceClass = activityCommon.GetEdiabasInterfaceClass(),
+                AbortJobFunc = AbortEdiabasJob
+            };
             Ediabas.SetConfigProperty("EcuPath", ecuPath);
 
             InitProperties();

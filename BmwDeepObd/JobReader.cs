@@ -169,6 +169,11 @@ namespace BmwDeepObd
             ReadXml(xmlName);
         }
 
+        public void Clear()
+        {
+            _pageList.Clear();
+        }
+
         public bool ReadXml(string xmlName)
         {
             _pageList.Clear();

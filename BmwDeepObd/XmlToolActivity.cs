@@ -616,16 +616,11 @@ namespace BmwDeepObd
         {
             if (_ediabas == null)
             {
-                _ediabas = new EdiabasNet();
-                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
+                _ediabas = new EdiabasNet
                 {
-                    _ediabas.EdInterfaceClass = new EdInterfaceEnet();
-                }
-                else
-                {
-                    _ediabas.EdInterfaceClass = new EdInterfaceObd();
-                }
-                _ediabas.AbortJobFunc = AbortEdiabasJob;
+                    EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
+                    AbortJobFunc = AbortEdiabasJob
+                };
                 _ediabas.SetConfigProperty("EcuPath", _ecuDir);
                 UpdateLogInfo();
             }
