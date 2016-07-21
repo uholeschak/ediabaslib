@@ -2409,6 +2409,7 @@ namespace EdiabasLib
         {
             if (UseExtInterfaceFunc)
             {
+                InterfacePurgeInBufferFuncUse();
                 if (InterfaceSendPulseFuncUse != null)
                 {
                     if (!InterfaceSendPulseFuncUse(0x02, 2, 25, setDtr, false, 0))
@@ -2468,6 +2469,7 @@ namespace EdiabasLib
         {
             if (UseExtInterfaceFunc)
             {
+                InterfacePurgeInBufferFuncUse();
                 if (InterfaceSendPulseFuncUse != null)
                 {
                     if (!InterfaceSendPulseFuncUse((UInt64) ((value << 1) | 0x0200), 10, 200, setDtr, bothLines, autoKeyByteDelay))
@@ -2477,7 +2479,6 @@ namespace EdiabasLib
                 }
                 else
                 {
-                    InterfacePurgeInBufferFuncUse();
                     long startTime = Stopwatch.GetTimestamp();
                     InterfaceSetBreakFuncUse(true);    // start bit
                     Thread.Sleep(180);
