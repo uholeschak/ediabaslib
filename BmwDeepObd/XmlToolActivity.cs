@@ -1572,7 +1572,7 @@ namespace BmwDeepObd
                 {
                     _ediabas.ResolveSgbdFile(ecuInfo.Sgbd);
 
-                    _ediabas.ArgString = string.Empty;
+                    _ediabas.ArgString = "ALL";
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
                     _ediabas.ExecuteJob("_JOBS");
