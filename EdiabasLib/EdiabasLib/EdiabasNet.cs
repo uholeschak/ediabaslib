@@ -2435,20 +2435,21 @@ namespace EdiabasLib
         private List<string> GetActiveArgStrings()
         {
             string args = _jobStd ? ArgStringStd : ArgString;
+            ArgInfo argInfo = _jobStd ? _argInfoStd : _argInfo;
 
-            if (_argInfo.StringList == null)
+            if (argInfo.StringList == null)
             {
-                _argInfo.StringList = new List<string>();
+                argInfo.StringList = new List<string>();
                 if (args.Length > 0)
                 {
                     string[] words = args.Split(';');
                     foreach (string word in words)
                     {
-                        _argInfo.StringList.Add(word);
+                        argInfo.StringList.Add(word);
                     }
                 }
             }
-            return _argInfo.StringList;
+            return argInfo.StringList;
         }
 
         public List<Dictionary<string, ResultData>> ResultSets
@@ -4788,9 +4789,15 @@ namespace EdiabasLib
         static private void VJobJobs(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
             const string entryJobName = "JOBNAME";
+
+            List<string> argStrings = ediabas.GetActiveArgStrings();
+            // the ALL argument is an EdiabasLib extensions
+            bool allJobs = (argStrings.Count >= 1) && (string.Compare(argStrings[0], "ALL", StringComparison.OrdinalIgnoreCase) == 0);
+            Dictionary<string, bool> jobNameDict = new Dictionary<string, bool>();
             foreach (JobInfo jobInfo in ediabas._jobInfos.JobInfoArray)
             {
-                if (jobInfo.UsesInfo == null)
+                string key = jobInfo.JobName.ToUpper(Culture);
+                if ((allJobs && !jobNameDict.ContainsKey(key)) || (jobInfo.UsesInfo == null))
                 {
                     Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>
                     {
@@ -4800,6 +4807,7 @@ namespace EdiabasLib
                     {
                         resultSets.Add(new Dictionary<string, ResultData>(resultDict));
                     }
+                    jobNameDict.Add(key, true);
                 }
             }
         }
