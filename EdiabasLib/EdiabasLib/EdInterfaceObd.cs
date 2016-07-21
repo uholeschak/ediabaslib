@@ -100,6 +100,7 @@ namespace EdiabasLib
         protected bool ConnectedProtected;
         protected const int EchoTimeout = 100;
         protected const int Kwp1281ByteTimeout = 100;   // default is 50
+        protected const int Kwp1281InitDelay = 2600;
         protected bool UseExtInterfaceFunc;
         protected InterfaceConnectDelegate InterfaceConnectFuncProtected;
         protected InterfaceConnectDelegate InterfaceConnectFuncInt;
@@ -2663,7 +2664,12 @@ namespace EdiabasLib
                 KwpMode = KwpModes.Undefined;
                 KeyBytesProtected = ByteArray0;
                 keyBytesList = new List<byte>();
-                while ((Stopwatch.GetTimestamp() - LastCommTick) < (ParEdicW5 + 1500) * TickResolMs)  // offset for simulator
+                long delayTime = ParEdicW1 + ParEdicW5 + 2000;
+                if (delayTime < Kwp1281InitDelay)
+                {
+                    delayTime = Kwp1281InitDelay;
+                }
+                while ((Stopwatch.GetTimestamp() - LastCommTick) < delayTime * TickResolMs)
                 {
                     Thread.Sleep(10);
                 }
@@ -3616,7 +3622,7 @@ namespace EdiabasLib
             {
                 KeyBytesProtected = ByteArray0;
                 keyBytesList = new List<byte>();
-                while ((Stopwatch.GetTimestamp() - LastCommTick) < 2600 * TickResolMs)
+                while ((Stopwatch.GetTimestamp() - LastCommTick) < Kwp1281InitDelay * TickResolMs)
                 {
                     Thread.Sleep(10);
                 }
@@ -4141,7 +4147,7 @@ namespace EdiabasLib
             {
                 KeyBytesProtected = ByteArray0;
                 keyBytesList = new List<byte>();
-                while ((Stopwatch.GetTimestamp() - LastCommTick) < 2600 * TickResolMs)
+                while ((Stopwatch.GetTimestamp() - LastCommTick) < Kwp1281InitDelay * TickResolMs)
                 {
                     Thread.Sleep(10);
                 }
