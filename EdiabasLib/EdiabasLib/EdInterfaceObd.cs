@@ -2664,11 +2664,7 @@ namespace EdiabasLib
                 KwpMode = KwpModes.Undefined;
                 KeyBytesProtected = ByteArray0;
                 keyBytesList = new List<byte>();
-                long delayTime = ParEdicW1 + ParEdicW5 + 2000;
-                if (delayTime < Kwp1281InitDelay)
-                {
-                    delayTime = Kwp1281InitDelay;
-                }
+                long delayTime = ParEdicW1 + 1500;
                 while ((Stopwatch.GetTimestamp() - LastCommTick) < delayTime * TickResolMs)
                 {
                     Thread.Sleep(10);

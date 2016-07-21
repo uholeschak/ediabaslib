@@ -481,6 +481,7 @@ namespace BmwDeepObd
         {
             bool commActive = _ediabasThread != null && _ediabasThread.ThreadRunning();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
+            bool bmwMode = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw;
 
             IMenuItem actionProviderConnect = menu.FindItem(Resource.Id.menu_action_provider_connect);
             if (actionProviderConnect != null)
@@ -536,7 +537,11 @@ namespace BmwDeepObd
             }
 
             IMenuItem xmlToolMenu = menu.FindItem(Resource.Id.menu_xml_tool);
-            xmlToolMenu?.SetEnabled(!commActive);
+            if (xmlToolMenu != null)
+            {
+                xmlToolMenu.SetEnabled(!commActive);
+                xmlToolMenu.SetVisible(bmwMode);
+            }
 
             IMenuItem ediabasToolMenu = menu.FindItem(Resource.Id.menu_ediabas_tool);
             ediabasToolMenu?.SetEnabled(!commActive);
@@ -608,6 +613,13 @@ namespace BmwDeepObd
                 case Resource.Id.menu_manufacturer:
                     _activityCommon.SelectManufacturer((sender, args) =>
                     {
+                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vw)
+                        {
+                            _activityCommon.SelectedInterface = ActivityCommon.InterfaceType.Bluetooth;
+                        }
+                        _jobReader.Clear();
+                        _configFileName = null;
+                        CreateActionBarTabs();
                         UpdateDirectories();
                         CheckForEcuFiles();
                         SupportInvalidateOptionsMenu();
@@ -827,7 +839,7 @@ namespace BmwDeepObd
             {
                 if (_ediabasThread == null)
                 {
-                    _ediabasThread = new EdiabasThread(string.IsNullOrEmpty(_jobReader.EcuPath) ? _ecuPath : _jobReader.EcuPath, _activityCommon.SelectedInterface);
+                    _ediabasThread = new EdiabasThread(string.IsNullOrEmpty(_jobReader.EcuPath) ? _ecuPath : _jobReader.EcuPath, _activityCommon);
                     _ediabasThread.DataUpdated += DataUpdated;
                     _ediabasThread.ThreadTerminated += ThreadTerminated;
                 }
