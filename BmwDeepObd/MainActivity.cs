@@ -1769,10 +1769,12 @@ namespace BmwDeepObd
         private void ReadConfigFile()
         {
             _jobReader.ReadXml(_configFileName);
+            ActivityCommon.SelectedManufacturer = _jobReader.Manufacturer;
             _activityCommon.SelectedInterface = (_jobReader.PageList.Count > 0) ? _jobReader.Interface : ActivityCommon.InterfaceType.None;
             _activityCommon.ClearTranslationCache();
             _translationList = null;
             _translatedList = null;
+            UpdateDirectories();
             RequestConfigSelect();
             CompileCode();
         }

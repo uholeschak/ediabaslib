@@ -146,6 +146,8 @@ namespace BmwDeepObd
         private string _logPath = string.Empty;
         private bool _appendLog;
         private string _interfaceName = string.Empty;
+        private string _manufacturerName = string.Empty;
+        private ActivityCommon.ManufacturerType _manufacturerType = ActivityCommon.ManufacturerType.Bmw;
         private ActivityCommon.InterfaceType _interfaceType = ActivityCommon.InterfaceType.None;
 
         public List<PageInfo> PageList => _pageList;
@@ -156,7 +158,11 @@ namespace BmwDeepObd
 
         public bool AppendLog => _appendLog;
 
+        public string ManufacturerName => _manufacturerName;
+
         public string InterfaceName => _interfaceName;
+
+        public ActivityCommon.ManufacturerType Manufacturer => _manufacturerType;
 
         public ActivityCommon.InterfaceType Interface => _interfaceType;
 
@@ -188,6 +194,7 @@ namespace BmwDeepObd
             string xmlDir = Path.GetDirectoryName(xmlName);
             _ecuPath = string.Empty;
             _logPath = string.Empty;
+            _manufacturerName = string.Empty;
             _interfaceName = string.Empty;
 
             try
@@ -236,11 +243,28 @@ namespace BmwDeepObd
                         _appendLog = XmlConvert.ToBoolean(attrib.Value);
                     }
 
+                    attrib = xnodeGlobal.Attributes["manufacturer"];
+                    if (attrib != null)
+                    {
+                        _manufacturerName = attrib.Value;
+                    }
+
                     attrib = xnodeGlobal.Attributes["interface"];
                     if (attrib != null)
                     {
                         _interfaceName = attrib.Value;
                     }
+                }
+
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                if (string.Compare(_manufacturerName, "VW", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    _manufacturerType = ActivityCommon.ManufacturerType.Vw;
+                    _interfaceName = "BLUETOOTH";
+                }
+                else
+                {
+                    _manufacturerType = ActivityCommon.ManufacturerType.Bmw;
                 }
 
                 if (string.Compare(_interfaceName, "ENET", StringComparison.OrdinalIgnoreCase) == 0)

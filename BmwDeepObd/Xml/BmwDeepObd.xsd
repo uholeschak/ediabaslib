@@ -28,6 +28,25 @@
     </xs:attribute>
   </xs:complexType>
 
+  <xs:simpleType name="manufacturer-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="BMW">
+        <xs:annotation>
+          <xs:documentation>
+            Manufacturer BMW
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="VW">
+        <xs:annotation>
+          <xs:documentation>
+            Manufacturer VW and Audi, Bentley, Scoda, Seat
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:simpleType name="interface-type">
     <xs:restriction base="xs:string">
       <xs:enumeration value="BLUETOOTH">
@@ -40,21 +59,21 @@
       <xs:enumeration value="ENET">
         <xs:annotation>
           <xs:documentation>
-            Ethernet interface
+            Ethernet interface, not allowed for VW
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
       <xs:enumeration value="ELMWIFI">
         <xs:annotation>
           <xs:documentation>
-            ELM 327 WIFI device
+            ELM 327 WIFI device, not allowed for VW
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
       <xs:enumeration value="FTDI">
         <xs:annotation>
           <xs:documentation>
-            FTDI USB device
+            FTDI USB device, not allowed for VW
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
@@ -83,6 +102,14 @@
       <xs:annotation>
         <xs:documentation>
           If true the log file is appended.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="manufacturer" type="manufacturer-type" default="BMW" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Name of the selected manufacturer
+          If ommited BMW is the default.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
