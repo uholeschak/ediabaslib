@@ -531,7 +531,7 @@ namespace BmwDeepObd
 
             foreach (string key in mergeDict.Keys)
             {
-                string newKey = prefix + key;
+                string newKey = (prefix + key).ToUpperInvariant();
                 if (!resultDict.ContainsKey(newKey))
                 {
                     resultDict.Add(newKey, mergeDict[key]);
