@@ -205,6 +205,15 @@
     <xs:sequence>
       <xs:element name="display" type="display-type" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:attribute name="id" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Id for job result identification.
+          If this element is specified the result name will be: [id]#[data set index]#[result],
+          otherwise: [name]#[result].
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="name" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>
