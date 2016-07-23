@@ -465,7 +465,24 @@ namespace BmwDeepObd
                             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = Ediabas.ResultSets;
                             if (resultSets != null && resultSets.Count >= 2)
                             {
-                                MergeResultDictionarys(ref resultDict, resultSets[1], jobInfo.Name + "#");
+                                if (string.IsNullOrEmpty(jobInfo.Id))
+                                {
+                                    MergeResultDictionarys(ref resultDict, resultSets[1], jobInfo.Name + "#");
+                                }
+                                else
+                                {
+                                    int dictIndex = 0;
+                                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                                    {
+                                        if (dictIndex == 0)
+                                        {
+                                            dictIndex++;
+                                            continue;
+                                        }
+                                        MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Id + "#" + dictIndex + "#");
+                                        dictIndex++;
+                                    }
+                                }
                             }
                         }
                     }
