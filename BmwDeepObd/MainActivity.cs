@@ -1341,56 +1341,65 @@ namespace BmwDeepObd
                                 }
                                 else
                                 {
-                                    string text1 = FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
-                                    string text2 = FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
-                                    if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
+                                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vw)
                                     {
-                                        int index = stringList.Count;
-                                        stringList.Add(text1);
-                                        stringList.Add(text2);
-                                        if (_translationList != null && _translatedList != null &&
-                                            _translationList.Count == _translatedList.Count)
-                                        {
-                                            if (index < _translatedList.Count)
-                                            {
-                                                if (string.Compare(text1, _translationList[index], StringComparison.Ordinal) == 0)
-                                                {
-                                                    text1 = _translatedList[index];
-                                                }
-                                            }
-                                            index++;
-                                            if (index < _translatedList.Count)
-                                            {
-                                                if (string.Compare(text2, _translationList[index], StringComparison.Ordinal) == 0)
-                                                {
-                                                    text2 = _translatedList[index];
-                                                }
-                                            }
-                                        }
+                                        string text = FormatResultInt64(errorReport.ErrorDict, "FNR_WERT", "{0}");
+                                        message += "\r\n";
+                                        message += GetString(Resource.String.error_code) + ": " + text;
                                     }
-                                    message += "\r\n";
-                                    message += text1;
-                                    message += ", ";
-                                    message += text2;
-
-                                    if (errorReport.ErrorDetailSet != null)
+                                    else
                                     {
-                                        string detailText = string.Empty;
-                                        foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
+                                        string text1 = FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
+                                        string text2 = FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
+                                        if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
                                         {
-                                            string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
-                                            if (kmText.Length > 0)
+                                            int index = stringList.Count;
+                                            stringList.Add(text1);
+                                            stringList.Add(text2);
+                                            if (_translationList != null && _translatedList != null &&
+                                                _translationList.Count == _translatedList.Count)
                                             {
-                                                if (detailText.Length > 0)
+                                                if (index < _translatedList.Count)
                                                 {
-                                                    detailText += ", ";
+                                                    if (string.Compare(text1, _translationList[index], StringComparison.Ordinal) == 0)
+                                                    {
+                                                        text1 = _translatedList[index];
+                                                    }
                                                 }
-                                                detailText += kmText + " km";
+                                                index++;
+                                                if (index < _translatedList.Count)
+                                                {
+                                                    if (string.Compare(text2, _translationList[index], StringComparison.Ordinal) == 0)
+                                                    {
+                                                        text2 = _translatedList[index];
+                                                    }
+                                                }
                                             }
                                         }
-                                        if (detailText.Length > 0)
+                                        message += "\r\n";
+                                        message += text1;
+                                        message += ", ";
+                                        message += text2;
+
+                                        if (errorReport.ErrorDetailSet != null)
                                         {
-                                            message += "\r\n" + detailText;
+                                            string detailText = string.Empty;
+                                            foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
+                                            {
+                                                string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
+                                                if (kmText.Length > 0)
+                                                {
+                                                    if (detailText.Length > 0)
+                                                    {
+                                                        detailText += ", ";
+                                                    }
+                                                    detailText += kmText + " km";
+                                                }
+                                            }
+                                            if (detailText.Length > 0)
+                                            {
+                                                message += "\r\n" + detailText;
+                                            }
                                         }
                                     }
                                 }
@@ -1425,8 +1434,7 @@ namespace BmwDeepObd
                             }
                             if (tempResultList.Count == 0)
                             {
-                                tempResultList.Add(
-                                    new TableResultItem(GetString(Resource.String.error_no_error), null));
+                                tempResultList.Add(new TableResultItem(GetString(Resource.String.error_no_error), null));
                             }
                         }
                         UpdateButtonErrorReset(buttonErrorReset, tempResultList);

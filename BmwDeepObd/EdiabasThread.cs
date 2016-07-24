@@ -307,7 +307,7 @@ namespace BmwDeepObd
                         {
                             if (errorResetList != null && errorResetList.Any(ecu => string.CompareOrdinal(ecu, ecuInfo.Name) == 0))
                             {   // error reset requested
-                                Ediabas.ExecuteJob("FS_LOESCHEN");
+                                Ediabas.ExecuteJob(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vw ? "Fehlerspeicher_loeschen" : "FS_LOESCHEN");
                             }
                         }
                         catch (Exception)
@@ -315,22 +315,43 @@ namespace BmwDeepObd
                             // ignored
                         }
 
-                        Ediabas.ExecuteJob("FS_LESEN");
+                        Ediabas.ExecuteJob(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vw ? "Fehlerspeicher_abfragen" : "FS_LESEN");
 
                         List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
 
                         bool jobOk = false;
-                        if (resultSets.Count > 1)
+                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vw)
                         {
-                            EdiabasNet.ResultData resultData;
-                            if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
+                            if (resultSets.Count > 0)
                             {
-                                if (resultData.OpData is string)
-                                {   // read details
-                                    string jobStatus = (string)resultData.OpData;
-                                    if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                                    {
-                                        jobOk = true;
+                                EdiabasNet.ResultData resultData;
+                                if (resultSets[0].TryGetValue("JOBSTATUS", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {   // read details
+                                        string jobStatus = (string)resultData.OpData;
+                                        if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            jobOk = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (resultSets.Count > 1)
+                            {
+                                EdiabasNet.ResultData resultData;
+                                if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {   // read details
+                                        string jobStatus = (string)resultData.OpData;
+                                        if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            jobOk = true;
+                                        }
                                     }
                                 }
                             }
@@ -348,6 +369,18 @@ namespace BmwDeepObd
                                 }
 
                                 EdiabasNet.ResultData resultData;
+                                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vw)
+                                {
+                                    if (resultDictLocal.TryGetValue("FNR_WERT", out resultData))
+                                    {
+                                        if (resultData.OpData is Int64)
+                                        {
+                                            errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictLocal, null));
+                                        }
+                                    }
+                                    dictIndex++;
+                                    continue;
+                                }
                                 if (resultDictLocal.TryGetValue("F_ORT_NR", out resultData))
                                 {
                                     if (resultData.OpData is Int64)
