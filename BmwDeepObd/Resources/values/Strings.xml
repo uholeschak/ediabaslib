@@ -23,6 +23,7 @@
   <string name="ecu_download">Do you want to download the ECU files now (File size approx. {0:fs0})?</string>
   <string name="error_no_error">No errors present</string>
   <string name="error_no_response">No response</string>
+  <string name="error_code">Error code</string>
   <string name="version_change_info_message">This open source project is hosted at:
 \n<a href='http://ediabaslib.codeplex.com'>ediabaslib.codeplex.com</a>
 \nFeel free to contribute or to report problems.

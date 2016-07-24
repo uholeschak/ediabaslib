@@ -23,6 +23,8 @@
   <string name="ecu_download">Хотите загрузить ECU файлы (размер файла примерно {0:fs0})?</string>
   <string name="error_no_error">Ошибки отсутствуют</string>
   <string name="error_no_response">Нет подтверждения</string>
+  <!-- Translate -->
+  <string name="error_code">Fehlercode</string>
   <string name="version_change_info_message">Этот проект с открытым исходным кодом размещен на:
 \n<a href='http://ediabaslib.codeplex.com'>ediabaslib.codeplex.com</a>
 \nВы можете принять участие в проекте или же сообщить об ошибках.
