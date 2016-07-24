@@ -168,7 +168,7 @@ namespace CarSimulator
             if (!File.Exists(fileName)) return false;
 
             List<byte[]> configList = _configData.ConfigList;
-            List<byte[]> responseOnlyList = _configData.ResponseOnlyList;
+            List<CommThread.ResponseEntry> responseOnlyList = _configData.ResponseOnlyList;
             List<CommThread.ResponseEntry> responseList = _configData.ResponseList;
             try
             {
@@ -177,6 +177,7 @@ namespace CarSimulator
                 responseList.Clear();
                 using (StreamReader streamReader = new StreamReader(fileName))
                 {
+                    List<byte> configData = null;
                     string line;
                     while ((line = streamReader.ReadLine()) != null)
                     {
@@ -186,7 +187,7 @@ namespace CarSimulator
                         string[] numberArray;
                         if (line.ToUpper().StartsWith("CFG:"))
                         {
-                            List<byte> configData = new List<byte>();
+                            configData = new List<byte>();
                             line = line.Substring(4);
                             numberArray = line.Split(' ');
                             foreach (string number in numberArray)
@@ -248,7 +249,7 @@ namespace CarSimulator
                         {   // empty request
                             if (listResponse.Count > 0)
                             {
-                                responseOnlyList.Add(listResponse.ToArray());
+                                responseOnlyList.Add(new CommThread.ResponseEntry(null, listResponse.ToArray(), configData?.ToArray()));
                             }
                         }
                         else if (listCompare.Count > 0 && listResponse.Count > 0)
@@ -257,8 +258,22 @@ namespace CarSimulator
                             bool addEntry = true;
                             foreach (CommThread.ResponseEntry responseEntry in responseList)
                             {
-                                if (listCompare.Count != responseEntry.Request.Length) continue;
                                 bool equal = true;
+                                if (listCompare.Count != responseEntry.Request.Length) continue;
+                                if (configData != null)
+                                {
+                                    byte[] configBytes = configData.ToArray();
+                                    if ((responseEntry.Config == null) || (responseEntry.Config.Length != configBytes.Length)) continue;
+                                    // ReSharper disable once LoopCanBeConvertedToQuery
+                                    for (int i = 0; i < configBytes.Length; i++)
+                                    {
+                                        if (configBytes[i] != responseEntry.Config[i])
+                                        {
+                                            equal = false;
+                                            break;
+                                        }
+                                    }
+                                }
                                 // ReSharper disable once LoopCanBeConvertedToQuery
                                 for (int i = 0; i < listCompare.Count; i++)
                                 {
@@ -278,7 +293,7 @@ namespace CarSimulator
 
                             if (addEntry)
                             {
-                                responseList.Add(new CommThread.ResponseEntry(listCompare.ToArray(), listResponse.ToArray()));
+                                responseList.Add(new CommThread.ResponseEntry(listCompare.ToArray(), listResponse.ToArray(), configData?.ToArray()));
                             }
                         }
                     }

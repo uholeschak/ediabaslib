@@ -24,11 +24,11 @@ namespace CarSimulator
             public ConfigData()
             {
                 ConfigList = new List<byte[]>();
-                ResponseOnlyList = new List<byte[]>();
+                ResponseOnlyList = new List<ResponseEntry>();
                 ResponseList = new List<ResponseEntry>();
             }
             public List<byte[]> ConfigList { get; }
-            public List<byte[]> ResponseOnlyList { get; }
+            public List<ResponseEntry> ResponseOnlyList { get; }
             public List<ResponseEntry> ResponseList { get; }
         }
 
@@ -36,11 +36,12 @@ namespace CarSimulator
         {
             private int _responseIndex;
 
-            public ResponseEntry(byte[] request, byte[] response)
+            public ResponseEntry(byte[] request, byte[] response, byte[] config)
             {
                 Request = request;
                 ResponseMultiList = new List<byte[]>();
                 ResponseList = new List<byte[]> {response};
+                Config = config;
                 _responseIndex = 0;
             }
 
@@ -66,6 +67,8 @@ namespace CarSimulator
             public List<byte[]> ResponseList { get; }
 
             public List<byte[]> ResponseMultiList { get; }
+
+            public byte[] Config { get; }
         }
 
         private class Tp20Channel
@@ -5559,11 +5562,11 @@ namespace CarSimulator
 
         private void SerialKwp1281Transmission()
         {
+            byte wakeAddress;
             bool initOk;
             do
             {
                 initOk = false;
-                byte wakeAddress = 0x00;
                 if (!ReceiveWakeUp(out wakeAddress))
                 {
                     break;
@@ -5627,11 +5630,26 @@ namespace CarSimulator
                     break;
                 }
 
-                if (initSequenceCount < _configData.ResponseOnlyList.Count)
+                ResponseEntry responseOnlyEntry = null;
+                for (;;)
                 {
-                    byte[] responseOnly = _configData.ResponseOnlyList[initSequenceCount];
+                    if (initSequenceCount >= _configData.ResponseOnlyList.Count)
+                    {
+                        break;
+                    }
+                    ResponseEntry entry = _configData.ResponseOnlyList[initSequenceCount++];
+                    if ((entry.Config == null) || (entry.Config.Length < 1 ) ||
+                        (entry.Config[0] != wakeAddress))
+                    {
+                        continue;
+                    }
+                    responseOnlyEntry = entry;
+                    break;
+                }
+                if (responseOnlyEntry != null)
+                {
+                    byte[] responseOnly = responseOnlyEntry.ResponseList[0];
                     Array.Copy(responseOnly, _sendData, responseOnly.Length);
-                    initSequenceCount++;
                 }
                 else
                 {
@@ -5690,6 +5708,11 @@ namespace CarSimulator
                     bool found = false;
                     foreach (ResponseEntry responseEntry in _configData.ResponseList)
                     {
+                        if ((responseEntry.Config == null) || (responseEntry.Config.Length < 1) ||
+                            responseEntry.Config[0] != wakeAddress)
+                        {
+                            continue;
+                        }
                         if (recLength != responseEntry.Request.Length) continue;
                         bool equal = true;
                         for (int i = 0; i < recLength; i++)
@@ -5722,13 +5745,13 @@ namespace CarSimulator
 
         private void SerialConcept3Transmission()
         {
+            byte wakeAddress;
             bool initOk;
             do
             {
                 initOk = false;
                 _serialPort.DataBits = 8;
                 _serialPort.Parity = Parity.None;
-                byte wakeAddress = 0x00;
                 if (!ReceiveWakeUp(out wakeAddress))
                 {
                     break;
@@ -5775,7 +5798,7 @@ namespace CarSimulator
                     break;
                 }
 
-                foreach (byte[] responseOnly in _configData.ResponseOnlyList)
+                foreach (ResponseEntry responseOnlyEntry in _configData.ResponseOnlyList)
                 {
                     if (_stopThread)
                     {
@@ -5789,6 +5812,12 @@ namespace CarSimulator
                         stopSend = true;
                         break;
                     }
+                    if ((responseOnlyEntry.Config == null) || (responseOnlyEntry.Config.Length < 1) ||
+                        (responseOnlyEntry.Config[0] != wakeAddress))
+                    {
+                        continue;
+                    }
+                    byte[] responseOnly = responseOnlyEntry.ResponseList[0];
                     int responseLen = responseOnly.Length;
                     if (responseLen > 0)
                     {
@@ -5804,6 +5833,7 @@ namespace CarSimulator
 
         private void SerialKwp2000Transmission()
         {
+            byte wakeAddress = 0x00;
             byte[] keyBytes = { 0xEF, 0x8F };
             if (_conceptType == ConceptType.ConceptKwp2000)
             {
@@ -5811,7 +5841,6 @@ namespace CarSimulator
                 do
                 {
                     initOk = false;
-                    byte wakeAddress = 0x00;
                     if (!ReceiveWakeUp(out wakeAddress))
                     {
                         break;
@@ -5974,6 +6003,14 @@ namespace CarSimulator
                     bool found = false;
                     foreach (ResponseEntry responseEntry in _configData.ResponseList)
                     {
+                        if (_conceptType == ConceptType.ConceptKwp2000)
+                        {
+                            if ((responseEntry.Config == null) || (responseEntry.Config.Length < 1) ||
+                            (responseEntry.Config[0] != wakeAddress))
+                            {
+                                continue;
+                            }
+                        }
                         if (recLength != responseEntry.Request.Length) continue;
                         bool equal = true;
                         // ReSharper disable once LoopVariableIsNeverChangedInsideLoop

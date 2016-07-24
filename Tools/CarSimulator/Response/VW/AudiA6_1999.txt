@@ -81,3 +81,133 @@ CFG: 01 01 8A
 04 00 28 4D : 0F D9 E7 10 00 00 10 00 00 10 00 00 10 00 00
 04 00 28 4E : 0F E5 E7 10 00 00 10 00 00 10 00 00 10 00 00
 04 00 28 62 : 0F F1 E7 10 00 00 10 00 00 10 00 00 10 00 00
+
+
+;for get_02.grp (ISO 9141)
+
+; wake address, key bytes (odd parity)
+CFG: 02 01 8A
+;ID
+: 0F 01 F6 34 42 30 39 32 37 31 35 36 42 41 20
+: 0F 03 F6 41 47 35 20 30 31 4C 20 34 2E 32 6C
+: 0F 05 F6 35 56 20 20 52 64 57 20 31 32 31 34
+: 08 07 F6 00 00 02 09 15
+
+; Fehlerspeicher_abfragen
+03 00 07 : 06 0F FC FF FF 88
+; Fehlerspeicher_loeschen
+03 00 05 : 06 13 FC FF FF 88
+
+; Messwerteblock_lesen#1;WertEinmalLesen
+; Messwerteblock_lesen#1;WertLesen
+; Messwerteblock_lesen#1;ZyklusAbbrechen
+; Messwerteblock_lesen#1;ZyklusEinleitenWertLesen
+04 00 29 01 : 0F 0F E7 01 A0 00 01 A0 00 01 A0 00 11 34 20
+04 00 29 02 : 0F 1B E7 11 44 53 21 FA 00 01 A0 00 11 34 20
+04 00 29 03 : 0F 5D E7 25 00 00 25 00 3F 07 C8 00 06 40 BD
+04 00 29 04 : 0F 3D E7 05 0A 87 11 00 50 10 0F 08 10 0F 00
+04 00 29 05 : 0F 31 E7 11 00 4F 11 00 4F 11 00 4F 11 34 20
+04 00 29 07 : 0F 87 E7 05 0A 87 18 08 12 25 00 3C 01 A0 00
+04 00 29 08 : 0C 51 E7 25 00 00 21 FA 00 25 00 00
+04 00 29 09 : 0C 93 E7 34 C8 87 01 A0 00 21 FA 00
+04 00 29 0A : 0C 7D E7 1F 20 50 01 A0 00 11 34 20
+04 00 29 0B : 0C 49 E7 11 00 50 25 00 00 25 00 00
+; Grundeinstellung#0;WertEinmalLesen
+03 00 11 : 04 27 0A 27
+
+
+;for bre_03.grp (ISO 9141)
+
+; wake address, key bytes (odd parity)
+CFG: 83 01 8A
+;ID
+: 0F 01 F6 38 44 30 39 30 37 33 38 39 41 20 20
+: 0F 03 F6 41 42 53 2F 45 53 50 20 61 6C 6C 72
+: 0E 05 F6 61 64 20 20 20 20 20 20 44 33 36
+: 08 07 F6 00 31 FA 00 01
+: 0F 09 F6 30 32 36 35 31 30 39 34 32 36 20 20
+: 0B 0B F6 42 42 20 33 35 31 30 32
+
+; Fehlerspeicher_abfragen
+03 00 07 : 06 13 FC FF FF 88
+; Fehlerspeicher_loeschen
+;03 00 05 : 03 17 09
+
+
+;for sch_17.grp (ISO 9141)
+
+; wake address, key bytes (odd parity)
+CFG: 97 01 8A
+;ID
+: 0F 01 F6 B4 42 30 39 32 30 39 33 34 46 20 20
+: 0F 03 F6 43 35 2D 4B 4F 4D 42 49 49 4E 53 54
+: 0E 05 F6 52 2E 20 56 44 4F 20 44 31 32 20
+: 08 07 F6 00 09 3E 3B 5A 03 03 09 09
+
+; Steuergeraeteversion_abfragen2
+03 00 00 : 0F 0B F6 57 41 55 5A 5A 5A 34 42 5A 58 4E 31 0F 0D F6 33 37 35 33 33 20 20 20 20 20 41 55 0F 0F F6 5A 37 5A 30 41 31 37 38 36 33 37 36
+
+
+;for nav_37.grp (ISO 9141)
+
+; wake address, key bytes (odd parity)
+CFG: 37 01 8A
+;ID
+: 0F 01 F6 34 42 30 30 33 35 31 39 32 4B 20 20
+: 0F 03 F6 52 4E 53 20 34 2E 32 20 48 30 36 20
+: 0E 05 F6 20 20 20 42 4E 4F 20 30 31 30 35
+: 04 07 F6 00
+
+; Fehlerspeicher_abfragen
+03 00 07 : 0C 0F FC 05 25 31 03 5E 24 03 63 03
+; Fehlerspeicher_loeschen
+03 00 05 : 03 13 09
+
+
+;for lwr_55.grp (ISO 9141)
+
+; wake address, key bytes (odd parity)
+CFG: D5 01 8A
+;ID
+: 0F 01 F6 34 42 30 39 30 37 33 35 37 42 20 20
+: 0F 03 F6 64 79 6E 61 6D 69 73 63 68 65 20 4C
+: 0F 05 F6 57 52 20 20 20 20 20 20 20 44 30 32
+: 08 07 F6 00 00 64 09 15
+
+; Fehlerspeicher_abfragen
+03 00 07 : 06 0F FC FF FF 88
+; Fehlerspeicher_loeschen
+03 00 05 : 06 13 FC FF FF 88
+
+
+;for eph_76.grp (ISO 9141)
+
+; wake address, key bytes (odd parity)
+CFG: 76 01 8A
+;ID
+: 0F 01 F6 34 42 30 39 31 39 32 38 33 20 20 50
+: 0F 03 F6 61 72 6B 69 6E 67 73 79 73 74 65 6D
+: 0E 05 F6 20 41 36 20 52 44 57 20 44 31 38
+: 08 07 F6 00 08 A4 09 15
+
+; Fehlerspeicher_abfragen
+03 00 07 : 06 0F FC FF FF 88
+; Fehlerspeicher_loeschen
+03 00 05 : 06 13 FC FF FF 88
+
+; Messwerteblock_lesen#1;WertEinmalLesen
+; Messwerteblock_lesen#1;WertLesen
+; Messwerteblock_lesen#1;ZyklusAbbrechen
+; Messwerteblock_lesen#1;ZyklusEinleitenWertLesen
+04 00 29 01 : 2A 0F E7 3F 20 20 2D 2D 2D 20 63 6D 20 20 20 20 2D 2D 2D 20 63 6D 20 20 20 20 2D 2D 2D 20 63 6D 20 20 20 20 2D 2D 2D 20 63 6D
+04 00 29 02 : 0C 5B E7 47 01 FF 07 64 00 25 01 44
+04 00 29 03 : 0C 1D E7 06 3D C6 25 01 46 25 01 48
+04 00 29 04 : 0F 25 E7 16 10 FF 16 10 FF 16 10 FF 16 10 FF
+04 00 29 06 : 04 3D 0A 3D
+
+; Anpassung_lesen#1;WertEinmalLesen
+04 00 21 01 : 06 45 E6 01 00 02
+; Anpassung_testen#1;Lautstaerke;WertEinmalLesen
+06 00 22 01 00 00 : 06 4B E6 01 00 02
+; Anpassung_lesen#2;WertEinmalLesen
+04 00 21 02 : 06 53 E6 02 00 03
