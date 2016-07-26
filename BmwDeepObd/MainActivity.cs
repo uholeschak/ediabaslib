@@ -114,8 +114,8 @@ namespace BmwDeepObd
         private const string InfoXmlName = "Info.xml";
         private const long EcuZipSizeBmw = 130000000;           // BMW ecu zip file size
         private const long EcuExtractSizeBmw = 1200000000;      // BMW extracted ecu files size
-        private const long EcuZipSizeVw = 5000000;              // VW ecu zip file size
-        private const long EcuExtractSizeVw = 34000000;         // VW extracted ecu files size
+        private const long EcuZipSizeVw = 15000000;             // VW ecu zip file size
+        private const long EcuExtractSizeVw = 250000000;        // VW extracted ecu files size
         private const int RequestPermissionExternalStorage = 0;
         private readonly string[] _permissionsExternalStorage =
         {
