@@ -549,31 +549,7 @@ namespace EdiabasLib
                 _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
                 LastCommTick = Stopwatch.GetTimestamp();
                 UpdateActiveSettings();
-                if (AdapterVersion >= 0x0008)
-                {
-                    // send keep alive telegram
-                    int pulseTime = pulseWidth*length;
-                    if (pulseTime > 100)
-                    {
-                        byte[] keepAlive = {0x00};
-                        long startTime = Stopwatch.GetTimestamp();
-                        while (Stopwatch.GetTimestamp() - startTime < pulseTime*TickResolMs)
-                        {
-                            Thread.Sleep(10);
-                            if (Stopwatch.GetTimestamp() - startTime < (pulseTime - 50)*TickResolMs)
-                            {
-                                // only send at the beginning
-                                _bluetoothOutStream.Write(keepAlive, 0, keepAlive.Length);
-                                LastCommTick = Stopwatch.GetTimestamp();
-                                //Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Keep Alive: {0}", (Stopwatch.GetTimestamp() - startTime) / TickResolMs);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    Thread.Sleep(pulseWidth * length);
-                }
+                Thread.Sleep(pulseWidth * length);
             }
             catch (Exception ex)
             {
