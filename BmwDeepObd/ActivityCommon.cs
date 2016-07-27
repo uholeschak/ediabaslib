@@ -224,6 +224,8 @@ namespace BmwDeepObd
 
         public Receiver BcReceiver => _bcReceiver;
 
+        public XDocument XmlDocDtcCodes { get; set; }
+
         public ActivityCommon(Android.App.Activity activity, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null, BcReceiverReceivedDelegate bcReceiverReceivedHandler = null)
         {
             _activity = activity;
@@ -1778,6 +1780,93 @@ namespace BmwDeepObd
                 return false;
             }
             return true;
+        }
+
+        public List<string> ConvertVwDtcCode(string ecuPath, uint code, uint symtom, bool kwp1281)
+        {
+            try
+            {
+                string codeName;
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                if (code >= 0x4000)
+                {
+                    codeName = string.Format("P{0:000000}", (code - 0x4000) * 100);
+                }
+                else
+                {
+                    codeName = string.Format("VAG{0:00000}", code);
+                }
+                string xmlFile = Path.Combine(ecuPath, "dat.ukd", "xml", "Zustand_KonzernASAM.xml");
+                if (XmlDocDtcCodes == null)
+                {
+                    XmlDocDtcCodes = XDocument.Load(xmlFile);
+                    if (XmlDocDtcCodes.Root == null)
+                    {
+                        XmlDocDtcCodes = null;
+                        return null;
+                    }
+                }
+                List<string> textList = ReadVwDtcEntry(XmlDocDtcCodes, "DTC-table", codeName);
+                string symptomName = string.Format(kwp1281 ? "FSE{0:X05}" : "FST{0:X05}", symtom);
+                string tableName = kwp1281 ? "DTC fault symptoms KWP 1281" : "DTC fault symptoms KWP 2000";
+                textList.AddRange(ReadVwDtcEntry(XmlDocDtcCodes, tableName, symptomName));
+                return textList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private List<string> ReadVwDtcEntry(XDocument xmlDoc, string tableName, string entryName)
+        {
+            List<string> textList = new List<string>();
+            try
+            {
+                if (xmlDoc.Root == null)
+                {
+                    return textList;
+                }
+                foreach (XElement tableNode in xmlDoc.Root.Elements("textTable"))
+                {
+                    XAttribute attrName = tableNode.Attribute("name");
+                    if (attrName == null)
+                    {
+                        continue;
+                    }
+                    if (string.Compare(attrName.Value, tableName, StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        continue;
+                    }
+                    // ReSharper disable once LoopCanBeConvertedToQuery
+                    foreach (XElement textNode in tableNode.Elements("text"))
+                    {
+                        XAttribute attrId = textNode.Attribute("id");
+                        if (attrId == null)
+                        {
+                            continue;
+                        }
+                        if (string.Compare(attrId.Value, entryName, StringComparison.OrdinalIgnoreCase) != 0)
+                        {
+                            continue;
+                        }
+                        foreach (XElement lineNode in textNode.Elements("line"))
+                        {
+                            using (XmlReader reader = lineNode.CreateReader())
+                            {
+                                reader.MoveToContent();
+                                textList.Add(reader.ReadInnerXml());
+                            }
+                        }
+                        return textList;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return textList;
+            }
+            return textList;
         }
 
         public static bool IsTranslationRequired()
