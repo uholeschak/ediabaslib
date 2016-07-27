@@ -69,7 +69,7 @@ namespace BmwDeepObd
         public enum ManufacturerType
         {
             Bmw = 0,
-            Vw = 1,
+            Vag = 1,
         }
 
         public delegate bool ProgressZipDelegate(int percent);
@@ -84,7 +84,7 @@ namespace BmwDeepObd
         public const string ActionUsbPermission = "de.holeschak.bmw_deep_obd.USB_PERMISSION";
         private const string MailInfoDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Mail.xml";
 
-        private static Dictionary<uint, string> _vwDtcSaeDict = new Dictionary<uint, string>
+        private static readonly Dictionary<uint, string> VagDtcSaeDict = new Dictionary<uint, string>
         {
             {16394, "P0010"}, {16395, "P0020"}, {16449, "P0065"}, {16450, "P0066"}, {16451, "P0067"},
             {16485, "P0101"}, {16486, "P0102"}, {16487, "P0103"}, {16489, "P0105"}, {16490, "P0106"},
@@ -506,7 +506,7 @@ namespace BmwDeepObd
                 case ManufacturerType.Bmw:
                     return _activity.GetString(Resource.String.select_manufacturer_bmw);
 
-                case ManufacturerType.Vw:
+                case ManufacturerType.Vag:
                     return _activity.GetString(Resource.String.select_manufacturer_vw);
             }
             return string.Empty;
@@ -1182,7 +1182,7 @@ namespace BmwDeepObd
                     listView.SetItemChecked(0, true);
                     break;
 
-                case ManufacturerType.Vw:
+                case ManufacturerType.Vag:
                     listView.SetItemChecked(1, true);
                     break;
             }
@@ -1197,7 +1197,7 @@ namespace BmwDeepObd
                         break;
 
                     case 1:
-                        SelectedManufacturer = ManufacturerType.Vw;
+                        SelectedManufacturer = ManufacturerType.Vag;
                         handler(sender, args);
                         break;
                 }
@@ -1531,7 +1531,7 @@ namespace BmwDeepObd
 
         public EdInterfaceBase GetEdiabasInterfaceClass()
         {
-            if (SelectedManufacturer == ManufacturerType.Vw)
+            if (SelectedManufacturer == ManufacturerType.Vag)
             {
                 return new EdInterfaceEdic();
             }
@@ -1941,7 +1941,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public List<string> ConvertVwDtcCode(string ecuPath, uint code, uint symtom, bool kwp1281)
+        public List<string> ConvertVagDtcCode(string ecuPath, uint code, uint type, bool kwp1281)
         {
             try
             {
@@ -1957,21 +1957,21 @@ namespace BmwDeepObd
                 }
                 string tableNameDtc = "DTC-table";
                 string codeName = string.Format("VAG{0:00000}", code);
-                List<string> textList = ReadVwDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName);
+                List<string> textList = ReadVagDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName);
                 if (textList.Count == 0)
                 {
-                    if (!_vwDtcSaeDict.TryGetValue(code, out codeName))
+                    if (!VagDtcSaeDict.TryGetValue(code, out codeName))
                     {
                         return null;
                     }
                     codeName += "00";
-                    textList = ReadVwDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName);
+                    textList = ReadVagDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName);
                 }
                 else
                 {
-                    string tableNameSymptom = kwp1281 ? "DTC fault symptoms KWP 1281" : "DTC fault symptoms KWP 2000";
-                    string symptomName = string.Format(kwp1281 ? "FSE{0:X05}" : "FST{0:X05}", symtom);
-                    textList.AddRange(ReadVwDtcEntry(XmlDocDtcCodes, tableNameSymptom, symptomName));
+                    string tableNameType = kwp1281 ? "DTC fault symptoms KWP 1281" : "DTC fault symptoms KWP 2000";
+                    string typeName = string.Format(kwp1281 ? "FSE{0:X05}" : "FST{0:X05}", type);
+                    textList.AddRange(ReadVagDtcEntry(XmlDocDtcCodes, tableNameType, typeName));
                 }
 
                 return textList;
@@ -1982,7 +1982,7 @@ namespace BmwDeepObd
             }
         }
 
-        private List<string> ReadVwDtcEntry(XDocument xmlDoc, string tableName, string entryName)
+        private List<string> ReadVagDtcEntry(XDocument xmlDoc, string tableName, string entryName)
         {
             List<string> textList = new List<string>();
             try

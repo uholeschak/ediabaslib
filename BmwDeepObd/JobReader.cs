@@ -262,7 +262,7 @@ namespace BmwDeepObd
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (string.Compare(_manufacturerName, "VW", StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    _manufacturerType = ActivityCommon.ManufacturerType.Vw;
+                    _manufacturerType = ActivityCommon.ManufacturerType.Vag;
                     _interfaceName = "BLUETOOTH";
                 }
                 else
