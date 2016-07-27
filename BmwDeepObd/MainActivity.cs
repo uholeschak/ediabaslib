@@ -110,12 +110,12 @@ namespace BmwDeepObd
         private const string EcuDirNameBmw = "Ecu";
         private const string EcuDirNameVw = "EcuVw";
         private const string EcuDownloadUrlBmw = @"http://www.holeschak.de/BmwDeepObd/Ecu2.xml";
-        private const string EcuDownloadUrlVw = @"http://www.holeschak.de/BmwDeepObd/EcuVw1.xml";
+        private const string EcuDownloadUrlVag = @"http://www.holeschak.de/BmwDeepObd/EcuVw1.xml";
         private const string InfoXmlName = "Info.xml";
         private const long EcuZipSizeBmw = 130000000;           // BMW ecu zip file size
         private const long EcuExtractSizeBmw = 1200000000;      // BMW extracted ecu files size
-        private const long EcuZipSizeVw = 15000000;             // VW ecu zip file size
-        private const long EcuExtractSizeVw = 250000000;        // VW extracted ecu files size
+        private const long EcuZipSizeVag = 15000000;            // VAG ecu zip file size
+        private const long EcuExtractSizeVag = 250000000;       // VAG extracted ecu files size
         private const int RequestPermissionExternalStorage = 0;
         private readonly string[] _permissionsExternalStorage =
         {
@@ -168,7 +168,7 @@ namespace BmwDeepObd
             {
                 switch (ActivityCommon.SelectedManufacturer)
                 {
-                    case ActivityCommon.ManufacturerType.Vw:
+                    case ActivityCommon.ManufacturerType.Vag:
                         return EcuDirNameVw;
                 }
                 return EcuDirNameBmw;
@@ -181,8 +181,8 @@ namespace BmwDeepObd
             {
                 switch (ActivityCommon.SelectedManufacturer)
                 {
-                    case ActivityCommon.ManufacturerType.Vw:
-                        return EcuDownloadUrlVw;
+                    case ActivityCommon.ManufacturerType.Vag:
+                        return EcuDownloadUrlVag;
                 }
                 return EcuDownloadUrlBmw;
             }
@@ -194,8 +194,8 @@ namespace BmwDeepObd
             {
                 switch (ActivityCommon.SelectedManufacturer)
                 {
-                    case ActivityCommon.ManufacturerType.Vw:
-                        return EcuZipSizeVw;
+                    case ActivityCommon.ManufacturerType.Vag:
+                        return EcuZipSizeVag;
                 }
                 return EcuZipSizeBmw;
             }
@@ -207,8 +207,8 @@ namespace BmwDeepObd
             {
                 switch (ActivityCommon.SelectedManufacturer)
                 {
-                    case ActivityCommon.ManufacturerType.Vw:
-                        return EcuExtractSizeVw;
+                    case ActivityCommon.ManufacturerType.Vag:
+                        return EcuExtractSizeVag;
                 }
                 return EcuExtractSizeBmw;
             }
@@ -613,7 +613,7 @@ namespace BmwDeepObd
                 case Resource.Id.menu_manufacturer:
                     _activityCommon.SelectManufacturer((sender, args) =>
                     {
-                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vw)
+                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
                         {
                             _activityCommon.SelectedInterface = ActivityCommon.InterfaceType.Bluetooth;
                         }
@@ -1341,11 +1341,48 @@ namespace BmwDeepObd
                                 }
                                 else
                                 {
-                                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vw)
+                                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
                                     {
-                                        string text = FormatResultInt64(errorReport.ErrorDict, "FNR_WERT", "{0}");
+                                        Int64 errorCode = 0;
+                                        EdiabasNet.ResultData resultData;
+                                        if (errorReport.ErrorDict.TryGetValue("FNR_WERT", out resultData))
+                                        {
+                                            if (resultData.OpData is Int64)
+                                            {
+                                                errorCode = (Int64)resultData.OpData;
+                                            }
+                                        }
+                                        Int64 errorType = 0;
+                                        if (errorReport.ErrorDict.TryGetValue("FART1_WERT", out resultData))
+                                        {
+                                            if (resultData.OpData is Int64)
+                                            {
+                                                errorType = (Int64)resultData.OpData;
+                                            }
+                                        }
+                                        bool kwp1281 = false;
+                                        if (errorReport.ErrorDict.TryGetValue("OBJECT", out resultData))
+                                        {
+                                            string objectName = resultData.OpData as string;
+                                            if (objectName != null)
+                                            {
+                                                if (objectName.Contains("1281"))
+                                                {
+                                                    kwp1281 = true;
+                                                }
+                                            }
+                                        }
+                                        List<string> textList = _activityCommon.ConvertVagDtcCode(_ecuPath, (uint)errorCode, (uint)errorType, kwp1281);
+
+                                        string textCode = FormatResultInt64(errorReport.ErrorDict, "FNR_WERT", "{0}");
+                                        string textType = FormatResultInt64(errorReport.ErrorDict, "FART1_WERT", "{0}");
                                         message += "\r\n";
-                                        message += GetString(Resource.String.error_code) + ": " + text;
+                                        message += GetString(Resource.String.error_code) + ": " + textCode + " " + textType;
+                                        // ReSharper disable once LoopCanBeConvertedToQuery
+                                        foreach (string text in textList)
+                                        {
+                                            message += "\r\n" + text;
+                                        }
                                     }
                                     else
                                     {

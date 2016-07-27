@@ -307,7 +307,7 @@ namespace BmwDeepObd
                         {
                             if (errorResetList != null && errorResetList.Any(ecu => string.CompareOrdinal(ecu, ecuInfo.Name) == 0))
                             {   // error reset requested
-                                Ediabas.ExecuteJob(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vw ? "Fehlerspeicher_loeschen" : "FS_LOESCHEN");
+                                Ediabas.ExecuteJob(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag ? "Fehlerspeicher_loeschen" : "FS_LOESCHEN");
                             }
                         }
                         catch (Exception)
@@ -315,12 +315,12 @@ namespace BmwDeepObd
                             // ignored
                         }
 
-                        Ediabas.ExecuteJob(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vw ? "Fehlerspeicher_abfragen" : "FS_LESEN");
+                        Ediabas.ExecuteJob(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag ? "Fehlerspeicher_abfragen" : "FS_LESEN");
 
                         List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
 
                         bool jobOk = false;
-                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vw)
+                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
                         {
                             if (resultSets.Count > 0)
                             {
@@ -359,23 +359,28 @@ namespace BmwDeepObd
 
                         if (jobOk)
                         {
+                            Dictionary<string, EdiabasNet.ResultData> resultDict0 = null;
                             int dictIndex = 0;
                             foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
                             {
+                                EdiabasNet.ResultData resultData;
                                 if (dictIndex == 0)
                                 {
+                                    resultDict0 = resultDictLocal;
                                     dictIndex++;
                                     continue;
                                 }
 
-                                EdiabasNet.ResultData resultData;
-                                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vw)
+                                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
                                 {
                                     if (resultDictLocal.TryGetValue("FNR_WERT", out resultData))
                                     {
                                         if (resultData.OpData is Int64)
                                         {
-                                            errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictLocal, null));
+                                            Dictionary<string, EdiabasNet.ResultData> resultDictTemp = null;
+                                            MergeResultDictionarys(ref resultDictTemp, resultDictLocal);
+                                            MergeResultDictionarys(ref resultDictTemp, resultDict0);
+                                            errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictTemp, null));
                                         }
                                     }
                                     dictIndex++;
