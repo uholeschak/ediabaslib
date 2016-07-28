@@ -2941,7 +2941,7 @@ namespace BmwDeepObd
 			public const int select_manufacturer_bmw = 2131099785;
 			
 			// aapt resource value: 0x7f06008a
-			public const int select_manufacturer_vw = 2131099786;
+			public const int select_manufacturer_vag = 2131099786;
 			
 			// aapt resource value: 0x7f06007f
 			public const int select_media = 2131099775;

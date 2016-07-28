@@ -156,7 +156,7 @@
   <!-- Translate -->
   <string name="select_manufacturer">Hersteller auswählen</string>
   <string name="select_manufacturer_bmw">BMW</string>
-  <string name="select_manufacturer_vw">VW</string>
+  <string name="select_manufacturer_vag">VAG</string>
 
   <!-- Wi-Fi-->
   <string name="connected_with_wifi_adapter">В настоящее время вы подключены к Wi-Fi адаптеру.\nДля получения доступа в интернет необходимо отключить адаптер.\nОтключить Wi-Fi?</string>
