@@ -507,7 +507,7 @@ namespace BmwDeepObd
                     return _activity.GetString(Resource.String.select_manufacturer_bmw);
 
                 case ManufacturerType.Vag:
-                    return _activity.GetString(Resource.String.select_manufacturer_vw);
+                    return _activity.GetString(Resource.String.select_manufacturer_vag);
             }
             return string.Empty;
         }
@@ -1170,7 +1170,7 @@ namespace BmwDeepObd
             List<string> manufacturerNames = new List<string>
             {
                 _activity.GetString(Resource.String.select_manufacturer_bmw),
-                _activity.GetString(Resource.String.select_manufacturer_vw),
+                _activity.GetString(Resource.String.select_manufacturer_vag),
             };
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity,
                 Android.Resource.Layout.SimpleListItemSingleChoice, manufacturerNames.ToArray());

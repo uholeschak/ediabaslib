@@ -1378,10 +1378,13 @@ namespace BmwDeepObd
                                         string textType = FormatResultInt64(errorReport.ErrorDict, "FART1_WERT", "{0}");
                                         message += "\r\n";
                                         message += GetString(Resource.String.error_code) + ": " + textCode + " " + textType;
-                                        // ReSharper disable once LoopCanBeConvertedToQuery
-                                        foreach (string text in textList)
+                                        if (textList != null)
                                         {
-                                            message += "\r\n" + text;
+                                            // ReSharper disable once LoopCanBeConvertedToQuery
+                                            foreach (string text in textList)
+                                            {
+                                                message += "\r\n" + text;
+                                            }
                                         }
                                     }
                                     else
