@@ -108,9 +108,9 @@ namespace BmwDeepObd
         private const string SharedAppName = "de.holeschak.bmw_deep_obd";
         private const string AppFolderName = "de.holeschak.bmw_deep_obd";
         private const string EcuDirNameBmw = "Ecu";
-        private const string EcuDirNameVw = "EcuVw";
+        private const string EcuDirNameVw = "EcuVag";
         private const string EcuDownloadUrlBmw = @"http://www.holeschak.de/BmwDeepObd/Ecu2.xml";
-        private const string EcuDownloadUrlVag = @"http://www.holeschak.de/BmwDeepObd/EcuVw1.xml";
+        private const string EcuDownloadUrlVag = @"http://www.holeschak.de/BmwDeepObd/EcuVag1.xml";
         private const string InfoXmlName = "Info.xml";
         private const long EcuZipSizeBmw = 130000000;           // BMW ecu zip file size
         private const long EcuExtractSizeBmw = 1200000000;      // BMW extracted ecu files size
