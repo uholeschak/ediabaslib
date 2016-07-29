@@ -1286,12 +1286,15 @@ namespace BmwDeepObd
                             // ignored
                         }
                     }
-                    Dictionary<string, EdiabasNet.ResultData> resultDict;
-                    string errorMessage;
+                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                    string errorMessage = string.Empty;
                     lock (EdiabasThread.DataLock)
                     {
-                        resultDict = _ediabasThread.EdiabasResultDict;
-                        errorMessage = _ediabasThread.EdiabasErrorMessage;
+                        if (_ediabasThread.ResultPageInfo == pageInfo)
+                        {
+                            resultDict = _ediabasThread.EdiabasResultDict;
+                            errorMessage = _ediabasThread.EdiabasErrorMessage;
+                        }
                     }
                     if (ActivityCommon.IsCommunicationError(errorMessage))
                     {
@@ -1320,10 +1323,13 @@ namespace BmwDeepObd
                     if (pageInfo.ErrorsInfo != null)
                     {   // read errors
                         List<string> stringList = new List<string>();
-                        List<EdiabasThread.EdiabasErrorReport> errorReportList;
+                        List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
                         lock (EdiabasThread.DataLock)
                         {
-                            errorReportList = _ediabasThread.EdiabasErrorReportList;
+                            if (_ediabasThread.ResultPageInfo == pageInfo)
+                            {
+                                errorReportList = _ediabasThread.EdiabasErrorReportList;
+                            }
                         }
                         if (errorReportList != null)
                         {
