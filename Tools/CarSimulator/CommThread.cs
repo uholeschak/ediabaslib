@@ -217,6 +217,7 @@ namespace CarSimulator
         private int _noResponseCount;
         private int _nr2123SendCount;
 #pragma warning disable 414
+        private int _kwp1281InvRespIndex;
         private int _kwp1281InvEchoIndex;
 #pragma warning restore 414
         private readonly Stopwatch[] _timeValveWrite = new Stopwatch[4];
@@ -579,6 +580,7 @@ namespace CarSimulator
             _receiveDataMotorBackup = new byte[_receiveData.Length];
             _noResponseCount = 0;
             _nr2123SendCount = 0;
+            _kwp1281InvRespIndex = 0;
             _kwp1281InvEchoIndex = 0;
             for (int i = 0; i < _timeValveWrite.Length; i++)
             {
@@ -657,6 +659,7 @@ namespace CarSimulator
                 _outputs = 0x00;
                 _noResponseCount = 0;
                 _nr2123SendCount = 0;
+                _kwp1281InvRespIndex = 0;
                 _kwp1281InvEchoIndex = 0;
                 _ecuErrorResetList.Clear();
                 ErrorDefault = false;
@@ -2994,34 +2997,53 @@ namespace CarSimulator
         {
             int blockLen = sendData[0];
             byte[] buffer = new byte[1];
-            for (int i = 0; i < blockLen; i++)
+            for (;;)
             {
-                if (_stopThread)
+                bool restart = false;
+                for (int i = 0; i < blockLen; i++)
+                {
+                    if (_stopThread)
+                    {
+                        return false;
+                    }
+                    Debug.WriteLine("Send {0:X02}", sendData[i]);
+                    if (!SendData(sendData, i, 1))
+                    {
+                        return false;
+                    }
+                    if (!ReceiveData(buffer, 0, 1, IsoTimeout, IsoTimeout))
+                    {
+                        return false;
+                    }
+#if false
+                    _kwp1281InvRespIndex++;
+                    if (_kwp1281InvRespIndex > 50)
+                    {
+                        Debug.WriteLine("Simulate invalid response");
+                        buffer[0]++;
+                        _kwp1281InvRespIndex = 0;
+                        Thread.Sleep(150);
+                    }
+#endif
+                    if ((byte)(~buffer[0]) != sendData[i])
+                    {
+                        Debug.WriteLine("Echo incorrect {0:X02}", (byte)(~buffer[0]));
+                        restart = true;
+                        break;
+                    }
+                }
+                if (restart)
+                {
+                    continue;
+                }
+                buffer[0] = 0x03;   // block end
+                Debug.WriteLine("Send {0:X02}", buffer[0]);
+                if (!SendData(buffer, 0, 1))
                 {
                     return false;
                 }
-                Debug.WriteLine("Send {0:X02}", sendData[i]);
-                if (!SendData(sendData, i, 1))
-                {
-                    return false;
-                }
-                if (!ReceiveData(buffer, 0, 1, IsoTimeout, IsoTimeout))
-                {
-                    return false;
-                }
-                if ((byte)(~buffer[0]) != sendData[i])
-                {
-                    Debug.WriteLine("Echo incorrect {0:X02}", (byte)(~buffer[0]));
-                    return false;
-                }
+                return true;
             }
-            buffer[0] = 0x03;   // block end
-            Debug.WriteLine("Send {0:X02}", buffer[0]);
-            if (!SendData(buffer, 0, 1))
-            {
-                return false;
-            }
-            return true;
         }
 
         private bool ReceiveKwp1281Block(byte[] recData)
