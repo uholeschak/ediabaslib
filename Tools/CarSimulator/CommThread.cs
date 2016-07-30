@@ -216,7 +216,9 @@ namespace CarSimulator
         private readonly byte[] _receiveDataMotorBackup;
         private int _noResponseCount;
         private int _nr2123SendCount;
-        private int _kwp1281NackIndex;
+#pragma warning disable 414
+        private int _kwp1281InvEchoIndex;
+#pragma warning restore 414
         private readonly Stopwatch[] _timeValveWrite = new Stopwatch[4];
         private byte _mode; // 2: conveyor, 4: transport
         private int _outputs; // 0:left, 1:right, 2:down, 3:comp
@@ -577,7 +579,7 @@ namespace CarSimulator
             _receiveDataMotorBackup = new byte[_receiveData.Length];
             _noResponseCount = 0;
             _nr2123SendCount = 0;
-            _kwp1281NackIndex = 0;
+            _kwp1281InvEchoIndex = 0;
             for (int i = 0; i < _timeValveWrite.Length; i++)
             {
                 _timeValveWrite[i] = new Stopwatch();
@@ -655,7 +657,7 @@ namespace CarSimulator
                 _outputs = 0x00;
                 _noResponseCount = 0;
                 _nr2123SendCount = 0;
-                _kwp1281NackIndex = 0;
+                _kwp1281InvEchoIndex = 0;
                 _ecuErrorResetList.Clear();
                 ErrorDefault = false;
                 while (!_stopThread)
@@ -3047,12 +3049,12 @@ namespace CarSimulator
                     }
                     buffer[0] = (byte)~recData[i];
 #if false
-                    _kwp1281NackIndex++;
-                    if (_kwp1281NackIndex > 40)
+                    _kwp1281InvEchoIndex++;
+                    if (_kwp1281InvEchoIndex > 40)
                     {
-                        Debug.WriteLine("Inject invalid ACK");
+                        Debug.WriteLine("Inject invalid echo");
                         buffer[0]++;
-                        _kwp1281NackIndex = 0;
+                        _kwp1281InvEchoIndex = 0;
                     }
 #endif
                     if (!SendData(buffer, 0, 1))
@@ -5642,10 +5644,11 @@ namespace CarSimulator
                     Debug.WriteLine("No init response");
                 }
             } while (!initOk);
-            _kwp1281NackIndex = 0;
+            _kwp1281InvEchoIndex = 0;
 
             Debug.WriteLine("Init done");
 
+            bool requestInvalid = false;
             byte blockCount = 1;
             int telBlockIndex = 0;
             int initSequenceCount = 0;
@@ -5681,8 +5684,9 @@ namespace CarSimulator
                 else
                 {
                     _sendData[0] = 0x03;    // block length
-                    _sendData[2] = 0x09;    // ACK
+                    _sendData[2] = (byte) (requestInvalid ? 0x0A : 0x09);    // NACK, ACK
                 }
+                requestInvalid = false;
 
                 if (activeResponse != null)
                 {
@@ -5765,6 +5769,7 @@ namespace CarSimulator
                     if (!found)
                     {
                         Debug.WriteLine("Not found: " + text);
+                        requestInvalid = true;
                     }
                 }
             }
