@@ -219,6 +219,7 @@ namespace CarSimulator
 #pragma warning disable 414
         private int _kwp1281InvRespIndex;
         private int _kwp1281InvEchoIndex;
+        private int _kwp1281InvBlockEndIndex;
 #pragma warning restore 414
         private readonly Stopwatch[] _timeValveWrite = new Stopwatch[4];
         private byte _mode; // 2: conveyor, 4: transport
@@ -582,6 +583,7 @@ namespace CarSimulator
             _nr2123SendCount = 0;
             _kwp1281InvRespIndex = 0;
             _kwp1281InvEchoIndex = 0;
+            _kwp1281InvBlockEndIndex = 0;
             for (int i = 0; i < _timeValveWrite.Length; i++)
             {
                 _timeValveWrite[i] = new Stopwatch();
@@ -661,6 +663,7 @@ namespace CarSimulator
                 _nr2123SendCount = 0;
                 _kwp1281InvRespIndex = 0;
                 _kwp1281InvEchoIndex = 0;
+                _kwp1281InvBlockEndIndex = 0;
                 _ecuErrorResetList.Clear();
                 ErrorDefault = false;
                 while (!_stopThread)
@@ -3043,6 +3046,15 @@ namespace CarSimulator
                     continue;
                 }
                 buffer[0] = 0x03;   // block end
+#if false
+                _kwp1281InvBlockEndIndex++;
+                if (_kwp1281InvBlockEndIndex > 3)
+                {
+                    Debug.WriteLine("Simulate invalid block end");
+                    buffer[0]++;
+                    _kwp1281InvBlockEndIndex = 0;
+                }
+#endif
                 Debug.WriteLine("Send {0:X02}", buffer[0]);
                 if (!SendData(buffer, 0, 1))
                 {
@@ -5729,7 +5741,13 @@ namespace CarSimulator
                         activeResponse = null;
                     }
                 }
+                resend:
                 _sendData[1] = blockCount++;    // block counter
+
+                if (_stopThread)
+                {
+                    break;
+                }
 
                 if (!SendKwp1281Block(_sendData))
                 {
@@ -5754,6 +5772,11 @@ namespace CarSimulator
                 {   // end output
                     Debug.WriteLine("Disconnect");
                     break;
+                }
+                if (command == 0x0A)
+                {   // NACK, resend last telegram
+                    Debug.WriteLine("NACK, resend telegram");
+                    goto resend;
                 }
                 if (command != 0x09)
                 {   // no ack
