@@ -277,6 +277,7 @@ static uint8_t kline_interbyte;     // K-line interbyte time [ms]
 static uint8_t kline_bit_delay;     // K-line read bit delay
 static uint8_t kline_auto_delay;    // K-line auto response W4 delay [ms], 0 = off
 static uint8_t kline_auto_response; // K-line auto response counter
+static int16_t kline_last_rec;      // last kline reception
 static bool kline_kwp1281_mode;          // K-line kwp1281 mode detected
 static uint8_t kline_kwp1281_len;   // KWP1281 block len
 static uint8_t kline_kwp1281_pos;   // KWP1281 current position
@@ -895,6 +896,7 @@ bool kline_receive(bool auto_response)
     uint16_t buffer_len = 0;
     uint8_t *write_ptr = temp_buffer;
     uint8_t *read_ptr = temp_buffer;
+    kline_last_rec = -1;
 
     if (kline_baud == 0)
     {   // BMW-FAST
@@ -1042,6 +1044,7 @@ bool kline_receive(bool auto_response)
                     TXREG = *read_ptr;
                     if (kline_kwp1281_mode)
                     {
+                        kline_last_rec = *read_ptr;
                         if (!auto_response)
                         {   // one byte received
                             kline_kwp1281_len = 0;
@@ -1799,6 +1802,7 @@ void reset_comm_states()
     kline_interbyte = 0;
     kline_auto_delay = 0;
     kline_auto_response = 0;
+    kline_last_rec = -1;
     kline_kwp1281_mode = false;
     kline_kwp1281_len = 0;
     kline_kwp1281_pos = 0;
@@ -3114,6 +3118,10 @@ void main(void)
                             bool auto_response = (i + 1) >= len;
                             if (kline_receive(auto_response))
                             {   // start of new send telegram
+                                break;
+                            }
+                            if (!auto_response && (kline_last_rec != (uint8_t) (~temp_buffer_short[0])))
+                            {   // incorrect response, abort transmission
                                 break;
                             }
                         }
