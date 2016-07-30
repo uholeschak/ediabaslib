@@ -100,6 +100,8 @@ namespace EdiabasLib
         protected bool ConnectedProtected;
         protected const int EchoTimeout = 100;
         protected const int Kwp1281ByteTimeout = 100;   // default is 50
+        protected const int Kwp1281ErrorDelay = 150;
+        protected const int Kwp1281ErrorRetries = 3;
         protected const int Kwp1281InitDelay = 2600;
         protected bool UseExtInterfaceFunc;
         protected InterfaceConnectDelegate InterfaceConnectFuncProtected;
@@ -4035,19 +4037,61 @@ namespace EdiabasLib
         private EdiabasNet.ErrorCodes SendKwp1281Block(byte[] sendData, bool enableLog)
         {
             bool autoKwp = HasAutoKwp1281;
+            int retries = 0;
             int blockLen = sendData[0];
             if (enableLog) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, blockLen, "Send");
             if (autoKwp)
             {
-                Array.Copy(sendData, Kwp1281BlockBuffer, blockLen);
-                Kwp1281BlockBuffer[blockLen] = 0x03;    // block end
-                if (!SendData(Kwp1281BlockBuffer, blockLen + 1, ParSendSetDtr))
+                for (;;)
                 {
-                    if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    Array.Copy(sendData, Kwp1281BlockBuffer, blockLen);
+                    Kwp1281BlockBuffer[blockLen] = 0x03;    // block end
+                    if (!SendData(Kwp1281BlockBuffer, blockLen + 1, ParSendSetDtr))
+                    {
+                        if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    }
+                    bool restart = false;
+                    for (int i = 0; i < blockLen; i++)
+                    {
+                        if (!ReceiveData(Kwp1281BlockBuffer, 0, 1, Kwp1281ByteTimeout, Kwp1281ByteTimeout))
+                        {
+                            if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No data ack received: {0}", i);
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                        }
+                        if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Info, "(A): {0:X02}", (byte)(~Kwp1281BlockBuffer[0]));
+                        if ((byte)(~Kwp1281BlockBuffer[0]) != sendData[i])
+                        {
+                            if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Response invalid: {0:X02} {1:X02}", (byte)(~Kwp1281BlockBuffer[0]), sendData[i]);
+                            retries++;
+                            if (retries > Kwp1281ErrorRetries)
+                            {
+                                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                            }
+                            if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Retry: {0}", retries);
+                            Thread.Sleep(Kwp1281ErrorDelay);
+                            restart = true;
+                            break;
+                        }
+                    }
+                    if (restart)
+                    {
+                        continue;
+                    }
+                    return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
                 }
+            }
+            for (;;)
+            {
+                bool restart = false;
                 for (int i = 0; i < blockLen; i++)
                 {
+                    Kwp1281BlockBuffer[0] = sendData[i];
+                    if (!SendData(Kwp1281BlockBuffer, 1, ParSendSetDtr))
+                    {
+                        if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    }
                     if (!ReceiveData(Kwp1281BlockBuffer, 0, 1, Kwp1281ByteTimeout, Kwp1281ByteTimeout))
                     {
                         if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No data ack received: {0}", i);
@@ -4057,38 +4101,29 @@ namespace EdiabasLib
                     if ((byte)(~Kwp1281BlockBuffer[0]) != sendData[i])
                     {
                         if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Response invalid: {0:X02} {1:X02}", (byte)(~Kwp1281BlockBuffer[0]), sendData[i]);
-                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                        retries++;
+                        if (retries > Kwp1281ErrorRetries)
+                        {
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                        }
+                        if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Retry: {0}", retries);
+                        Thread.Sleep(Kwp1281ErrorDelay);
+                        restart = true;
+                        break;
                     }
                 }
-                return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
-            }
-            for (int i = 0; i < blockLen; i++)
-            {
-                Kwp1281BlockBuffer[0] = sendData[i];
+                if (restart)
+                {
+                    continue;
+                }
+                Kwp1281BlockBuffer[0] = 0x03;   // block end
                 if (!SendData(Kwp1281BlockBuffer, 1, ParSendSetDtr))
                 {
                     if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
-                if (!ReceiveData(Kwp1281BlockBuffer, 0, 1, Kwp1281ByteTimeout, Kwp1281ByteTimeout))
-                {
-                    if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No data ack received: {0}", i);
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-                }
-                if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Info, "(A): {0:X02}", (byte)(~Kwp1281BlockBuffer[0]));
-                if ((byte)(~Kwp1281BlockBuffer[0]) != sendData[i])
-                {
-                    if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Response invalid: {0:X02} {1:X02}", (byte)(~Kwp1281BlockBuffer[0]), sendData[i]);
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-                }
+                return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
             }
-            Kwp1281BlockBuffer[0] = 0x03;   // block end
-            if (!SendData(Kwp1281BlockBuffer, 1, ParSendSetDtr))
-            {
-                if (enableLog) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-            }
-            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
         private EdiabasNet.ErrorCodes ReceiveKwp1281Block(byte[] recData, bool enableLog)
