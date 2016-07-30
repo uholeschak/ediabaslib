@@ -216,6 +216,7 @@ namespace CarSimulator
         private readonly byte[] _receiveDataMotorBackup;
         private int _noResponseCount;
         private int _nr2123SendCount;
+        private int _kwp1281NackIndex;
         private readonly Stopwatch[] _timeValveWrite = new Stopwatch[4];
         private byte _mode; // 2: conveyor, 4: transport
         private int _outputs; // 0:left, 1:right, 2:down, 3:comp
@@ -232,6 +233,7 @@ namespace CarSimulator
 
         private const double FilterConst = 0.95;
         private const int IsoTimeout = 2000;
+        private const int IsoAckTimeout = 100;
         private const int Tp20T1 = 100;
 
         // ReSharper disable InconsistentNaming
@@ -575,6 +577,7 @@ namespace CarSimulator
             _receiveDataMotorBackup = new byte[_receiveData.Length];
             _noResponseCount = 0;
             _nr2123SendCount = 0;
+            _kwp1281NackIndex = 0;
             for (int i = 0; i < _timeValveWrite.Length; i++)
             {
                 _timeValveWrite[i] = new Stopwatch();
@@ -652,6 +655,7 @@ namespace CarSimulator
                 _outputs = 0x00;
                 _noResponseCount = 0;
                 _nr2123SendCount = 0;
+                _kwp1281NackIndex = 0;
                 _ecuErrorResetList.Clear();
                 ErrorDefault = false;
                 while (!_stopThread)
@@ -3020,40 +3024,62 @@ namespace CarSimulator
 
         private bool ReceiveKwp1281Block(byte[] recData)
         {
-            // block length
-            if (!ReceiveData(recData, 0, 1, IsoTimeout, IsoTimeout))
+            long startTime = Stopwatch.GetTimestamp();
+            for (;;)
             {
-                Debug.WriteLine("Nothing received");
-                return false;
-            }
-            Debug.WriteLine("Rec {0:X02}", recData[0]);
-
-            int blockLen = recData[0];
-            byte[] buffer = new byte[1];
-            for (int i = 0; i < blockLen; i++)
-            {
-                if (_stopThread)
-                {
-                    return false;
-                }
-                buffer[0] = (byte)~recData[i];
-                if (!SendData(buffer, 0, 1))
-                {
-                    return false;
-                }
-                if (!ReceiveData(recData, i + 1, 1, IsoTimeout, IsoTimeout))
+                // block length
+                if (!ReceiveData(recData, 0, 1, IsoTimeout, IsoTimeout))
                 {
                     Debug.WriteLine("Nothing received");
                     return false;
                 }
-                Debug.WriteLine("Rec {0:X02}", recData[i + 1]);
+                long timeDiff = (Stopwatch.GetTimestamp() - startTime) / TickResolMs;
+                Debug.WriteLine("Rec {0:X02} t={1}", recData[0], timeDiff);
+
+                bool restart = false;
+                int blockLen = recData[0];
+                byte[] buffer = new byte[1];
+                for (int i = 0; i < blockLen; i++)
+                {
+                    if (_stopThread)
+                    {
+                        return false;
+                    }
+                    buffer[0] = (byte)~recData[i];
+#if false
+                    _kwp1281NackIndex++;
+                    if (_kwp1281NackIndex > 40)
+                    {
+                        Debug.WriteLine("Inject invalid ACK");
+                        buffer[0]++;
+                        _kwp1281NackIndex = 0;
+                    }
+#endif
+                    if (!SendData(buffer, 0, 1))
+                    {
+                        return false;
+                    }
+                    startTime = Stopwatch.GetTimestamp();
+                    if (!ReceiveData(recData, i + 1, 1, IsoAckTimeout, IsoAckTimeout))
+                    {
+                        Debug.WriteLine("ACK timeout");
+                        restart = true;
+                        break;
+                    }
+                    timeDiff = (Stopwatch.GetTimestamp() - startTime) / TickResolMs;
+                    Debug.WriteLine("Rec {0:X02} t={1}", recData[i + 1], timeDiff);
+                }
+                if (restart)
+                {
+                    continue;
+                }
+                if (recData[blockLen] != 0x03)
+                {
+                    Debug.WriteLine("Block end invalid {0:X02}", recData[blockLen]);
+                    return false;
+                }
+                return true;
             }
-            if (recData[blockLen] != 0x03)
-            {
-                Debug.WriteLine("Block end invalid {0:X02}", recData[blockLen]);
-                return false;
-            }
-            return true;
         }
 
         private byte IntToBcd(int value)
@@ -5616,6 +5642,7 @@ namespace CarSimulator
                     Debug.WriteLine("No init response");
                 }
             } while (!initOk);
+            _kwp1281NackIndex = 0;
 
             Debug.WriteLine("Init done");
 
