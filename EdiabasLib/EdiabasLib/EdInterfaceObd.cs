@@ -103,6 +103,7 @@ namespace EdiabasLib
         protected const int Kwp1281ErrorDelay = 150;
         protected const int Kwp1281ErrorRetries = 3;
         protected const int Kwp1281InitDelay = 2600;
+        protected const byte Kwp1281EndOutput = 0x06;
         protected const byte Kwp1281Ack = 0x09;
         protected const byte Kwp1281Nack = 0x0A;
         protected bool UseExtInterfaceFunc;
@@ -3842,7 +3843,7 @@ namespace EdiabasLib
             }
 
             int receiveLength;
-            byte[] finishTel = { 0x03, 0x00, 0x06 };    // end output
+            byte[] finishTel = { 0x03, 0x00, Kwp1281EndOutput };    // end output
             byte[] receiveData = new byte[256];
             List<byte> keyBytesList = null;
             EdiabasNet.ErrorCodes errorCode = ProcessKwp1281(finishTel, finishTel.Length, ref receiveData, out receiveLength, ref keyBytesList, true);
@@ -3962,7 +3963,7 @@ namespace EdiabasLib
                     return errorCode;
                 }
 
-                if (sendDataValid && sendDataLength == 3 && sendData[2] == 0x06)
+                if (sendDataValid && sendDataLength == 3 && sendData[2] == Kwp1281EndOutput)
                 {   // end output command
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Disconnect");
                     EcuConnected = false;
