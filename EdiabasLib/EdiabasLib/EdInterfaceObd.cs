@@ -161,6 +161,7 @@ namespace EdiabasLib
         protected KwpModes KwpMode;
         protected long LastCommTick;
         protected long LastResponseTick;
+        protected bool Kwp1281SendNack;
         protected int CurrentBaudRate;
         protected SerialParity CurrentParity;
         protected int CurrentDataBits;
@@ -304,6 +305,7 @@ namespace EdiabasLib
                 KwpMode = KwpModes.Undefined;
                 // don't init lastCommTick here
                 LastResponseTick = DateTime.MinValue.Ticks;
+                Kwp1281SendNack = false;
                 BlockCounter = 0;
                 LastKwp1281Cmd = 0x00;
 
@@ -2668,6 +2670,7 @@ namespace EdiabasLib
             if (!EcuConnected)
             {
                 KwpMode = KwpModes.Undefined;
+                Kwp1281SendNack = false;
                 KeyBytesProtected = ByteArray0;
                 keyBytesList = new List<byte>();
                 long delayTime = ParEdicW1 + 1000;
@@ -3622,6 +3625,7 @@ namespace EdiabasLib
 
             if (!EcuConnected)
             {
+                Kwp1281SendNack = false;
                 KeyBytesProtected = ByteArray0;
                 keyBytesList = new List<byte>();
                 while ((Stopwatch.GetTimestamp() - LastCommTick) < Kwp1281InitDelay * TickResolMs)
@@ -3891,6 +3895,7 @@ namespace EdiabasLib
             int recBlocks = 0;
             int maxRecBlocks = EdicSimulation ? int.MaxValue : CommAnswerLenProtected[0];
 
+            Kwp1281SendNack = false;
             int waitToSendCount = 0;
             bool waitToSend = true;
             bool transmitDone = false;
@@ -3898,57 +3903,66 @@ namespace EdiabasLib
             for (;;)
             {
                 bool sendDataValid = false;
-                if (LastKwp1281Cmd == Kwp1281Ack)
-                {   // ack
-                    if (waitToSend)
-                    {
-                        waitToSend = false;
-                        if (sendDataLength > 0)
-                        {
-                            Array.Copy(sendData, Kwp1281Buffer, sendDataLength);
-                            sendDataValid = true;
-                        }
-                        else
-                        {
-                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Receive ID finished");
-                            transmitDone = true;
-                        }
-                    }
-                    else
-                    {
-                        if (recBlocks > 0)
-                        {
-                            // at least one block received
-                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Transmission finished");
-                            transmitDone = true;
-                        }
-                    }
-                }
-
-                if (waitToSend)
+                if (Kwp1281SendNack)
                 {
-                    waitToSendCount++;
-                    if (waitToSendCount > 1000)
-                    {
-                        EcuConnected = false;
-                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Wait for first ACK failed");
-                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-                    }
-                }
-                if (sendDataValid)
-                {
-#if false
-                    // EDIABAS seems not to respect the regeneration time
-                    while ((Stopwatch.GetTimestamp() - this.lastResponseTick) < this.parRegenTime * tickResolMs)
-                    {
-                        Thread.Sleep(10);
-                    }
-#endif
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Send NACK");
+                    Kwp1281Buffer[0] = 0x03; // block length
+                    Kwp1281Buffer[2] = Kwp1281Nack;
                 }
                 else
                 {
-                    Kwp1281Buffer[0] = 0x03;    // block length
-                    Kwp1281Buffer[2] = Kwp1281Ack;
+                    if (LastKwp1281Cmd == Kwp1281Ack)
+                    {   // ack
+                        if (waitToSend)
+                        {
+                            waitToSend = false;
+                            if (sendDataLength > 0)
+                            {
+                                Array.Copy(sendData, Kwp1281Buffer, sendDataLength);
+                                sendDataValid = true;
+                            }
+                            else
+                            {
+                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Receive ID finished");
+                                transmitDone = true;
+                            }
+                        }
+                        else
+                        {
+                            if (recBlocks > 0)
+                            {
+                                // at least one block received
+                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Transmission finished");
+                                transmitDone = true;
+                            }
+                        }
+                    }
+
+                    if (waitToSend)
+                    {
+                        waitToSendCount++;
+                        if (waitToSendCount > 1000)
+                        {
+                            EcuConnected = false;
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Wait for first ACK failed");
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                        }
+                    }
+                    if (sendDataValid)
+                    {
+#if false
+                        // EDIABAS seems not to respect the regeneration time
+                        while ((Stopwatch.GetTimestamp() - this.lastResponseTick) < this.parRegenTime * tickResolMs)
+                        {
+                            Thread.Sleep(10);
+                        }
+#endif
+                    }
+                    else
+                    {
+                        Kwp1281Buffer[0] = 0x03;    // block length
+                        Kwp1281Buffer[2] = Kwp1281Ack;
+                    }
                 }
 
                 Thread.Sleep(50);
@@ -3979,6 +3993,10 @@ namespace EdiabasLib
                 }
                 BlockCounter++;
                 LastKwp1281Cmd = Kwp1281Buffer[2];
+                if (Kwp1281SendNack)
+                {
+                    continue;
+                }
 
                 if (!waitToSend)
                 {   // store received data
@@ -4136,6 +4154,7 @@ namespace EdiabasLib
 
         private EdiabasNet.ErrorCodes ReceiveKwp1281Block(byte[] recData, bool enableLog, int addStartTimeout)
         {
+            Kwp1281SendNack = false;
             bool autoKwp = HasAutoKwp1281;
             // block length
             if (!ReceiveData(recData, 0, 1, Kwp1281ByteTimeout + addStartTimeout, Kwp1281ByteTimeout + addStartTimeout))
@@ -4168,7 +4187,7 @@ namespace EdiabasLib
             if (recData[blockLen] != 0x03)
             {
                 if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Block end invalid: {0:X02}", recData[blockLen]);
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                Kwp1281SendNack = true;
             }
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
