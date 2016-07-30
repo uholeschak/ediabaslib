@@ -2995,6 +2995,7 @@ namespace CarSimulator
 
         private bool SendKwp1281Block(byte[] sendData)
         {
+            int retries = 0;
             int blockLen = sendData[0];
             byte[] buffer = new byte[1];
             for (;;)
@@ -3022,12 +3023,17 @@ namespace CarSimulator
                         Debug.WriteLine("Simulate invalid response");
                         buffer[0]++;
                         _kwp1281InvRespIndex = 0;
-                        Thread.Sleep(150);
+                        Thread.Sleep(150);  // min 70
                     }
 #endif
                     if ((byte)(~buffer[0]) != sendData[i])
                     {
-                        Debug.WriteLine("Echo incorrect {0:X02}", (byte)(~buffer[0]));
+                        retries++;
+                        Debug.WriteLine("Echo incorrect {0:X02}, Retry {1}", (byte)(~buffer[0]), retries);
+                        if (retries > 3)
+                        {
+                            return false;
+                        }
                         restart = true;
                         break;
                     }
