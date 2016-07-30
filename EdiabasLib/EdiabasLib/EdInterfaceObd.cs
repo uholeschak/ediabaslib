@@ -103,6 +103,8 @@ namespace EdiabasLib
         protected const int Kwp1281ErrorDelay = 150;
         protected const int Kwp1281ErrorRetries = 3;
         protected const int Kwp1281InitDelay = 2600;
+        protected const byte Kwp1281Ack = 0x09;
+        protected const byte Kwp1281Nack = 0x0A;
         protected bool UseExtInterfaceFunc;
         protected InterfaceConnectDelegate InterfaceConnectFuncProtected;
         protected InterfaceConnectDelegate InterfaceConnectFuncInt;
@@ -3807,7 +3809,7 @@ namespace EdiabasLib
             }
 
             Kwp1281Buffer[0] = 0x03;    // block length
-            Kwp1281Buffer[2] = 0x09;    // ACK
+            Kwp1281Buffer[2] = Kwp1281Ack;
 
             LastCommTick = Stopwatch.GetTimestamp();
             Kwp1281Buffer[1] = BlockCounter++;
@@ -3860,7 +3862,7 @@ namespace EdiabasLib
             }
             LastKwp1281Cmd = Kwp1281Buffer[2];
             BlockCounter++;
-            if (EdicSimulation || (LastKwp1281Cmd != 0x09))
+            if (EdicSimulation || (LastKwp1281Cmd != Kwp1281Ack))
             {
                 // store key bytes
                 int dataLen = Kwp1281Buffer[0] + 1;
@@ -3895,7 +3897,7 @@ namespace EdiabasLib
             for (;;)
             {
                 bool sendDataValid = false;
-                if (LastKwp1281Cmd == 0x09)
+                if (LastKwp1281Cmd == Kwp1281Ack)
                 {   // ack
                     if (waitToSend)
                     {
@@ -3945,7 +3947,7 @@ namespace EdiabasLib
                 else
                 {
                     Kwp1281Buffer[0] = 0x03;    // block length
-                    Kwp1281Buffer[2] = 0x09;    // ACK
+                    Kwp1281Buffer[2] = Kwp1281Ack;
                 }
 
                 Thread.Sleep(50);
@@ -3979,7 +3981,7 @@ namespace EdiabasLib
 
                 if (!waitToSend)
                 {   // store received data
-                    if ((recBlocks == 0) || (LastKwp1281Cmd != 0x09) || (!ackStored && appendAck))
+                    if ((recBlocks == 0) || (LastKwp1281Cmd != Kwp1281Ack) || (!ackStored && appendAck))
                     {
                         int blockLen = Kwp1281Buffer[0];
                         if (recLength + blockLen > receiveData.Length)
@@ -3992,7 +3994,7 @@ namespace EdiabasLib
                             Array.Copy(Kwp1281Buffer, 0, receiveData, recLength, blockLen);
                             recLength += blockLen;
                             recBlocks++;
-                            if (LastKwp1281Cmd == 0x09)
+                            if (LastKwp1281Cmd == Kwp1281Ack)
                             {
                                 ackStored = true;
                             }
@@ -4007,7 +4009,7 @@ namespace EdiabasLib
                 }
                 else
                 {
-                    if ((keyBytesList != null) && (EdicSimulation || (LastKwp1281Cmd != 0x09)))
+                    if ((keyBytesList != null) && (EdicSimulation || (LastKwp1281Cmd != Kwp1281Ack)))
                     {   // store key bytes
                         int dataLen = Kwp1281Buffer[0] + 1;
                         for (int i = 0; i < dataLen; i++)
