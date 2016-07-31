@@ -274,11 +274,12 @@ static uint32_t kline_baud;         // K-line baud rate, 0=115200 (BMW-FAST))
 static uint8_t kline_flags1;        // K-line flags 1
 static uint8_t kline_flags2;        // K-line flags 2
 static uint8_t kline_interbyte;     // K-line interbyte time [ms]
+static uint8_t kline_kwp1281_to;    // K-line KWP1281 timeout [ms]
 static uint8_t kline_bit_delay;     // K-line read bit delay
 static uint8_t kline_auto_delay;    // K-line auto response W4 delay [ms], 0 = off
 static uint8_t kline_auto_response; // K-line auto response counter
 static int16_t kline_last_rec;      // last kline reception
-static bool kline_kwp1281_mode;          // K-line kwp1281 mode detected
+static bool kline_kwp1281_mode;     // K-line kwp1281 mode detected
 static uint8_t kline_kwp1281_len;   // KWP1281 block len
 static uint8_t kline_kwp1281_pos;   // KWP1281 current position
 
@@ -1054,13 +1055,13 @@ bool kline_receive(bool auto_response)
                         }
                         uint16_t wait_tick = get_systick() - start_rec_tick;
                         bool restarted = false;
-                        if (wait_tick > 60 * TIMER0_RESOL / 1000)
+                        if (wait_tick > kline_kwp1281_to * TIMER0_RESOL / 1000)
                         {   // interbyte time too large, restart block
                             kline_kwp1281_len = 0;
                             restarted = true;
                         }
                         // calculate wait time for response
-                        uint32_t wait_time = (uint32_t) wait_tick * 100 / TIMER0_RESOL; // [10ms]
+                        uint32_t wait_time = wait_tick * 100ul / TIMER0_RESOL; // [10ms]
                         if (wait_time > 0x7F)
                         {
                             wait_time = 0x7F;
@@ -1298,6 +1299,7 @@ uint16_t uart_receive(uint8_t *buffer)
             {
                 kline_flags1 = rec_buffer[4];
                 kline_flags2 = 0x00;
+                kline_kwp1281_to = 0;
                 kline_interbyte = rec_buffer[5];
                 data_len = ((uint16_t) rec_buffer[6] << 8) + rec_buffer[7];
                 if (buffer != NULL)
@@ -1345,12 +1347,14 @@ uint16_t uart_receive(uint8_t *buffer)
             op_mode_new = op_mode_can;
         }
         else if (rec_buffer[1] == 0x02)
-        {   // K-LINE telegram 2
+        {
+            // K-LINE telegram 2
             // byte 2+3: baud rate (high/low) / 2
             // byte 4: flags 1
             // byte 5: flags 2
             // byte 6: interbyte time
-            // byte 7+8: telegram length (high/low)
+            // byte 7: KWP1281 timeout
+            // byte 8+9: telegram length (high/low)
             if (buffer != NULL && op_mode != op_mode_kline)
             {   // mode change
                 return 0;
@@ -1365,10 +1369,11 @@ uint16_t uart_receive(uint8_t *buffer)
                 kline_flags1 = rec_buffer[4];
                 kline_flags2 = rec_buffer[5];
                 kline_interbyte = rec_buffer[6];
-                data_len = ((uint16_t) rec_buffer[7] << 8) + rec_buffer[8];
+                kline_kwp1281_to = rec_buffer[7];
+                data_len = ((uint16_t) rec_buffer[8] << 8) + rec_buffer[9];
                 if (buffer != NULL)
                 {
-                    memcpy(buffer, rec_buffer + 9, data_len);
+                    memcpy(buffer, rec_buffer + 10, data_len);
                 }
                 op_mode_new = op_mode_kline;
             }
@@ -1827,6 +1832,7 @@ void reset_comm_states()
     kline_flags1 = 0;
     kline_flags2 = 0;
     kline_interbyte = 0;
+    kline_kwp1281_to = 0;
     kline_auto_delay = 0;
     kline_auto_response = 0;
     kline_last_rec = -1;
@@ -3337,10 +3343,11 @@ void interrupt high_priority high_isr (void)
                                     // byte 4: flags 1
                                     // byte 5: flags 2
                                     // byte 6: interbyte time
-                                    // byte 7+8: telegram length (high/low)
-                                    if (rec_len >= 9)
+                                    // byte 7: KWP1281 timeout
+                                    // byte 8+9: telegram length (high/low)
+                                    if (rec_len >= 10)
                                     {
-                                        tel_len = ((uint16_t) rec_buffer[7] << 8) + rec_buffer[8] + 10;
+                                        tel_len = ((uint16_t) rec_buffer[8] << 8) + rec_buffer[9] + 11;
                                     }
                                     else
                                     {
