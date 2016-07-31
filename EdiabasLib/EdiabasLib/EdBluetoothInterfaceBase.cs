@@ -7,28 +7,30 @@ namespace EdiabasLib
     {
         // flags
         // ReSharper disable InconsistentNaming
-        public static byte KLINEF1_PARITY_MASK = 0x7;
-        public static byte KLINEF1_PARITY_NONE = 0x0;
-        public static byte KLINEF1_PARITY_EVEN = 0x1;
-        public static byte KLINEF1_PARITY_ODD = 0x2;
-        public static byte KLINEF1_PARITY_MARK = 0x3;
-        public static byte KLINEF1_PARITY_SPACE = 0x4;
-        public static byte KLINEF1_USE_LLINE = 0x08;
-        public static byte KLINEF1_SEND_PULSE = 0x10;
-        public static byte KLINEF1_NO_ECHO = 0x20;
-        public static byte KLINEF1_FAST_INIT = 0x40;
-        public static byte KLINEF1_USE_KLINE = 0x80;
+        public const byte KLINEF1_PARITY_MASK = 0x7;
+        public const byte KLINEF1_PARITY_NONE = 0x0;
+        public const byte KLINEF1_PARITY_EVEN = 0x1;
+        public const byte KLINEF1_PARITY_ODD = 0x2;
+        public const byte KLINEF1_PARITY_MARK = 0x3;
+        public const byte KLINEF1_PARITY_SPACE = 0x4;
+        public const byte KLINEF1_USE_LLINE = 0x08;
+        public const byte KLINEF1_SEND_PULSE = 0x10;
+        public const byte KLINEF1_NO_ECHO = 0x20;
+        public const byte KLINEF1_FAST_INIT = 0x40;
+        public const byte KLINEF1_USE_KLINE = 0x80;
 
-        public static byte KLINEF2_KWP1281_DETECT = 0x01;
+        public const byte KLINEF2_KWP1281_DETECT = 0x01;
 
-        public static byte CANF_NO_ECHO = 0x01;
-        public static byte CANF_CAN_ERROR = 0x02;
-        public static byte CANF_CONNECT_CHECK = 0x04;
-        public static byte CANF_DISCONNECT = 0x08;
+        public const byte CANF_NO_ECHO = 0x01;
+        public const byte CANF_CAN_ERROR = 0x02;
+        public const byte CANF_CONNECT_CHECK = 0x04;
+        public const byte CANF_DISCONNECT = 0x08;
 
         // CAN protocols
-        public static byte CAN_PROT_BMW = 0x00;
-        public static byte CAN_PROT_TP20 = 0x01;
+        public const byte CAN_PROT_BMW = 0x00;
+        public const byte CAN_PROT_TP20 = 0x01;
+
+        public const byte KWP1281_TIMEOUT = 60;
         // ReSharper restore InconsistentNaming
 
         public static EdiabasNet Ediabas { get; set; }
@@ -108,7 +110,7 @@ namespace EdiabasLib
             }
 
             byte telType = (byte)((AdapterVersion < 0x0008) ? 0x00 : 0x02);
-            byte[] resultArray = new byte[length + ((telType == 0x00) ? 9 : 10)];
+            byte[] resultArray = new byte[length + ((telType == 0x00) ? 9 : 11)];
             resultArray[0] = 0x00;      // header
             resultArray[1] = telType;   // telegram type
 
@@ -153,9 +155,10 @@ namespace EdiabasLib
             {
                 resultArray[5] = flags2;                // flags 2
                 resultArray[6] = (byte)InterByteTime;   // interbyte time
-                resultArray[7] = (byte)(length >> 8);   // telegram length high
-                resultArray[8] = (byte)length;          // telegram length low
-                Array.Copy(sendData, 0, resultArray, 9, length);
+                resultArray[7] = KWP1281_TIMEOUT;       // KWP1281 timeout
+                resultArray[8] = (byte)(length >> 8);   // telegram length high
+                resultArray[9] = (byte)length;          // telegram length low
+                Array.Copy(sendData, 0, resultArray, 10, length);
                 resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
             }
             return resultArray;
@@ -201,7 +204,7 @@ namespace EdiabasLib
 
             byte telType = (byte)((AdapterVersion < 0x0008) ? 0x00 : 0x02);
             int dataBytes = (length + 7) >> 3;
-            byte[] resultArray = new byte[dataBytes + 2 + 1 + ((telType == 0x00) ? 9 : 10)];
+            byte[] resultArray = new byte[dataBytes + 2 + 1 + ((telType == 0x00) ? 9 : 11)];
             resultArray[0] = 0x00;      // header
             resultArray[1] = telType;   // telegram type
 
@@ -242,13 +245,14 @@ namespace EdiabasLib
             {
                 resultArray[5] = flags2;                // flags 2
                 resultArray[6] = (byte)InterByteTime;   // interbyte time
-                resultArray[7] = 0x00;                  // telegram length high
-                resultArray[8] = (byte)(dataBytes + 2 + 1); // telegram length low
-                resultArray[9] = (byte)pulseWidth;
-                resultArray[10] = (byte)length;
+                resultArray[7] = KWP1281_TIMEOUT;       // KWP1281 timeout
+                resultArray[8] = 0x00;                  // telegram length high
+                resultArray[9] = (byte)(dataBytes + 2 + 1); // telegram length low
+                resultArray[10] = (byte)pulseWidth;
+                resultArray[11] = (byte)length;
                 for (int i = 0; i < dataBytes; i++)
                 {
-                    resultArray[11 + i] = (byte)(dataBits >> (i << 3));
+                    resultArray[12 + i] = (byte)(dataBits >> (i << 3));
                 }
             }
             resultArray[resultArray.Length - 2] = (byte)autoKeyByteDelay;   // W4 auto key byte response delay [ms], 0 = off
