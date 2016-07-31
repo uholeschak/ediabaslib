@@ -1009,6 +1009,7 @@ bool kline_receive(bool auto_response)
     PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
     INTCONbits.TMR0IF = 0;  // clear timer 0 interrupt flag
     idle_counter = 0;
+    uint16_t start_rec_tick = get_systick();
     for (;;)
     {
         // wait for start bit
@@ -1051,6 +1052,24 @@ bool kline_receive(bool auto_response)
                             ei();
                             return false;
                         }
+                        uint16_t wait_tick = get_systick() - start_rec_tick;
+                        bool restarted = false;
+                        if (wait_tick > 60 * TIMER0_RESOL / 1000)
+                        {   // interbyte time too large, restart block
+                            kline_kwp1281_len = 0;
+                            restarted = true;
+                        }
+                        // calculate wait time for response
+                        uint32_t wait_time = (uint32_t) wait_tick * 100 / TIMER0_RESOL; // [10ms]
+                        if (wait_time > 0x7F)
+                        {
+                            wait_time = 0x7F;
+                        }
+                        if (restarted)
+                        {
+                            wait_time |= 0x80;
+                        }
+
                         if (kline_kwp1281_len == 0)
                         {   // get block length
                             kline_kwp1281_len = *read_ptr;
@@ -1058,6 +1077,9 @@ bool kline_receive(bool auto_response)
                         }
                         if (kline_kwp1281_pos >= kline_kwp1281_len)
                         {   // end of block reached
+                            // send status
+                            while (!TXSTAbits.TRMT) { }
+                            TXREG = wait_time;
                             ei();
                             return false;
                         }
@@ -1073,10 +1095,15 @@ bool kline_receive(bool auto_response)
                                 CLRWDT();
                             }
                         }
+                        // send status
+                        while (!TXSTAbits.TRMT) { }
+                        TXREG = wait_time;
+
                         kline_flags1 = kline_flags1 & (KLINEF1_PARITY_MASK | KLINEF1_NO_ECHO);
                         temp_buffer_short[0] = ~(*read_ptr);
                         kline_send(temp_buffer_short, 1);
                         di();
+                        start_rec_tick = get_systick();
                         // continue receiving
                         kline_baud_cfg();
                         PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
