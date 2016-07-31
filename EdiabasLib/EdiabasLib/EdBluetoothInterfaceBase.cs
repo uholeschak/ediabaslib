@@ -209,10 +209,10 @@ namespace EdiabasLib
             resultArray[1] = telType;   // telegram type
 
             uint baudHalf = (uint)(CurrentBaudRate >> 1);
-            byte flags1 = (byte)(KLINEF1_SEND_PULSE | KLINEF1_NO_ECHO);
+            byte flags1 = KLINEF1_SEND_PULSE | KLINEF1_NO_ECHO;
             if (bothLines)
             {
-                flags1 |= (byte)(KLINEF1_USE_LLINE | KLINEF1_USE_KLINE);
+                flags1 |= KLINEF1_USE_LLINE | KLINEF1_USE_KLINE;
             }
             else if (!setDtr)
             {
@@ -293,7 +293,7 @@ namespace EdiabasLib
             resultArray[0] = 0x00;   // header
             resultArray[1] = 0x01;   // telegram type
 
-            byte flags = (byte)(CANF_NO_ECHO | CANF_CAN_ERROR);
+            byte flags = CANF_NO_ECHO | CANF_CAN_ERROR;
             if (length == 5 && sendData[0] == 0x01)
             {
                 switch (sendData[3])
