@@ -56,15 +56,18 @@ namespace BmwDeepObd
 
         private class JobInfo
         {
-            public JobInfo(string name)
+            public JobInfo(string name, string objectName)
             {
                 Name = name;
+                ObjectName = objectName;
                 Comments = new List<string>();
                 Arguments = new List<ExtraInfo>();
                 Results = new List<ExtraInfo>();
             }
 
             public string Name { get; }
+
+            public string ObjectName { get; }
 
             public List<string> Comments { get; }
 
@@ -750,16 +753,26 @@ namespace BmwDeepObd
             }
             JobInfo jobInfo = GetSelectedJob();
             _resultSelectListAdapter.Items.Clear();
+            string defaultArgs = string.Empty;
             if (jobInfo != null)
             {
                 foreach (ExtraInfo result in jobInfo.Results.OrderBy(x => x.Name))
                 {
                     _resultSelectListAdapter.Items.Add(result);
                 }
+                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
+                {
+                    if ((string.Compare(jobInfo.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0) ||
+                        (string.Compare(jobInfo.Name, "Messwerteblock_lesen2", StringComparison.OrdinalIgnoreCase) == 0) ||
+                        (string.Compare(jobInfo.Name, "Grundeinstellung", StringComparison.OrdinalIgnoreCase) == 0))
+                    {
+                        defaultArgs = jobInfo.ObjectName.Contains("1281") ? "0;WertEinmalLesen" : "100;LESEN";
+                    }
+                }
             }
             _resultSelectListAdapter.NotifyDataSetChanged();
             _resultSelectLastItem = 0;
-            _editTextArgs.Text = string.Empty;
+            _editTextArgs.Text = defaultArgs;
         }
 
         private void DisplayJobComments()
@@ -924,20 +937,25 @@ namespace BmwDeepObd
                     List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                     if (resultSets != null && resultSets.Count >= 2)
                     {
+                        string objectName = string.Empty;
                         int dictIndex = 0;
                         foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
                         {
+                            EdiabasNet.ResultData resultData;
                             if (dictIndex == 0)
                             {
+                                if (resultDict.TryGetValue("OBJECT", out resultData))
+                                {
+                                    objectName = resultData.OpData as string ?? string.Empty;
+                                }
                                 dictIndex++;
                                 continue;
                             }
-                            EdiabasNet.ResultData resultData;
                             if (resultDict.TryGetValue("JOBNAME", out resultData))
                             {
                                 if (resultData.OpData is string)
                                 {
-                                    _jobList.Add(new JobInfo((string)resultData.OpData));
+                                    _jobList.Add(new JobInfo((string)resultData.OpData, objectName));
                                 }
                             }
                             dictIndex++;
