@@ -3087,8 +3087,11 @@ namespace EdiabasLib
                 {
                     LogString(EdLogLevel.Error, "CloseSgbdFs exception: " + GetExceptionText(ex));
                 }
-                _sgbdFs.Dispose();
-                _sgbdFs = null;
+                if (_sgbdFs != null)
+                {
+                    _sgbdFs.Dispose();
+                    _sgbdFs = null;
+                }
             }
         }
 
