@@ -1410,10 +1410,25 @@ namespace CarSimulator
                     identMessage[idx++] = (byte)'M';
                     identMessage[idx++] = (byte)'A';
                     identMessage[idx++] = (byte)'C';
+#if false
                     for (int i = 0; i < 12; i++)
                     {
                         identMessage[idx++] = (byte)('0'+ (i % 10));
                     }
+#else
+                    identMessage[idx++] = (byte)'0';
+                    identMessage[idx++] = (byte)'0';
+                    identMessage[idx++] = (byte)'1';
+                    identMessage[idx++] = (byte)'A';
+                    identMessage[idx++] = (byte)'3';
+                    identMessage[idx++] = (byte)'7';
+                    identMessage[idx++] = (byte)'5';
+                    identMessage[idx++] = (byte)'3';
+                    identMessage[idx++] = (byte)'5';
+                    identMessage[idx++] = (byte)'5';
+                    identMessage[idx++] = (byte)'E';
+                    identMessage[idx++] = (byte)'5';
+#endif
                     // VIN
                     identMessage[idx++] = (byte)'B';
                     identMessage[idx++] = (byte)'M';
@@ -1421,10 +1436,30 @@ namespace CarSimulator
                     identMessage[idx++] = (byte)'V';
                     identMessage[idx++] = (byte)'I';
                     identMessage[idx++] = (byte)'N';
+#if false
                     for (int i = 0; i < 17; i++)
                     {
                         identMessage[idx++] = (byte)('a' + i);
                     }
+#else
+                    identMessage[idx++] = (byte)'W';
+                    identMessage[idx++] = (byte)'B';
+                    identMessage[idx++] = (byte)'A';
+                    identMessage[idx++] = (byte)'3';
+                    identMessage[idx++] = (byte)'X';
+                    identMessage[idx++] = (byte)'1';
+                    identMessage[idx++] = (byte)'1';
+                    identMessage[idx++] = (byte)'0';
+                    identMessage[idx++] = (byte)'1';
+                    identMessage[idx++] = (byte)'0';
+                    identMessage[idx++] = (byte)'G';
+                    identMessage[idx++] = (byte)'V';
+                    identMessage[idx++] = (byte)'3';
+                    identMessage[idx++] = (byte)'5';
+                    identMessage[idx++] = (byte)'8';
+                    identMessage[idx++] = (byte)'5';
+                    identMessage[idx++] = (byte)'6';
+#endif
                     _udpClient.Send(identMessage, identMessage.Length, ip);
                 }
                 StartUdpListen();
