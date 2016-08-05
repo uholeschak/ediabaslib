@@ -481,7 +481,6 @@ namespace BmwDeepObd
         {
             bool commActive = _ediabasThread != null && _ediabasThread.ThreadRunning();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
-            bool bmwMode = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw;
 
             IMenuItem actionProviderConnect = menu.FindItem(Resource.Id.menu_action_provider_connect);
             if (actionProviderConnect != null)
@@ -537,11 +536,7 @@ namespace BmwDeepObd
             }
 
             IMenuItem xmlToolMenu = menu.FindItem(Resource.Id.menu_xml_tool);
-            if (xmlToolMenu != null)
-            {
-                xmlToolMenu.SetEnabled(!commActive);
-                xmlToolMenu.SetVisible(bmwMode);
-            }
+            xmlToolMenu?.SetEnabled(!commActive);
 
             IMenuItem ediabasToolMenu = menu.FindItem(Resource.Id.menu_ediabas_tool);
             ediabasToolMenu?.SetEnabled(!commActive);
