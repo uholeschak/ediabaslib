@@ -93,7 +93,8 @@ namespace BmwDeepObd
         private const string DisplayNamePage = "!PAGE_NAME";
         private const string DisplayNameJobPrefix = "!JOB#";
         private const string DisplayNameEcuPrefix = "!ECU#";
-        private const string ManualConfigName = "Manual";
+        private const string ManualConfigNameBmw = "Manual";
+        private const string ManualConfigNameVag = "ManualVag";
         private const string UnknownVinConfigName = "Unknown";
         private static readonly string[] EcuFileNames =
         {
@@ -139,6 +140,19 @@ namespace BmwDeepObd
         private string _vin = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
         private bool _ecuListTranslated;
+
+        private string ManualConfigName
+        {
+            get
+            {
+                switch (ActivityCommon.SelectedManufacturer)
+                {
+                    case ActivityCommon.ManufacturerType.Vag:
+                        return ManualConfigNameVag;
+                }
+                return ManualConfigNameBmw;
+            }
+        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -224,6 +238,10 @@ namespace BmwDeepObd
                 {
                     _manualConfigIdx = 0;
                 }
+            }
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag && _manualConfigIdx == 0)
+            {
+                _manualConfigIdx = 1;
             }
 
             EdiabasClose();
@@ -1040,10 +1058,11 @@ namespace BmwDeepObd
             builder.SetTitle(Resource.String.menu_xml_tool_cfg_type);
             ListView listView = new ListView(this);
 
-            List<string> manualNames = new List<string>
+            List<string> manualNames = new List<string>();
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
             {
-                GetString(Resource.String.xml_tool_auto_config)
-            };
+                manualNames.Add(GetString(Resource.String.xml_tool_auto_config));
+            }
             for (int i = 0; i < 4; i++)
             {
                 manualNames.Add(GetString(Resource.String.xml_tool_man_config) + " " + (i + 1).ToString(CultureInfo.InvariantCulture));
@@ -1052,12 +1071,26 @@ namespace BmwDeepObd
                 Android.Resource.Layout.SimpleListItemSingleChoice, manualNames.ToArray());
             listView.Adapter = adapter;
             listView.ChoiceMode = ChoiceMode.Single;
-            listView.SetItemChecked(_manualConfigIdx, true);
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+            {
+                listView.SetItemChecked(_manualConfigIdx, true);
+            }
+            else
+            {
+                listView.SetItemChecked(_manualConfigIdx - 1, true);
+            }
 
             builder.SetView(listView);
             builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
             {
-                _manualConfigIdx = listView.CheckedItemPosition >= 0 ? listView.CheckedItemPosition : 0;
+                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+                {
+                    _manualConfigIdx = listView.CheckedItemPosition >= 0 ? listView.CheckedItemPosition : 0;
+                }
+                else
+                {
+                    _manualConfigIdx = listView.CheckedItemPosition + 1;
+                }
                 _vin = string.Empty;
                 _ecuList.Clear();
                 _ecuListTranslated = false;
@@ -2504,6 +2537,8 @@ namespace BmwDeepObd
                 {
                     XAttribute attr = globalNode.Attribute("ecu_path");
                     attr?.Remove();
+                    attr = globalNode.Attribute("manufacturer");
+                    attr?.Remove();
                     attr = globalNode.Attribute("interface");
                     attr?.Remove();
                 }
@@ -2513,6 +2548,19 @@ namespace BmwDeepObd
                 {
                     globalNode.Add(new XAttribute("log_path", "Log"));
                 }
+
+                string manufacturerName = string.Empty;
+                switch (ActivityCommon.SelectedManufacturer)
+                {
+                    case ActivityCommon.ManufacturerType.Bmw:
+                        manufacturerName = "BMW";
+                        break;
+
+                    case ActivityCommon.ManufacturerType.Vag:
+                        manufacturerName = "VAG";
+                        break;
+                }
+                globalNode.Add(new XAttribute("manufacturer", manufacturerName));
 
                 string interfaceName = string.Empty;
                 switch (_activityCommon.SelectedInterface)
