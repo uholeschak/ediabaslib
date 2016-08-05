@@ -57,6 +57,20 @@ namespace BmwDeepObd
             public double FreeSizeBytes { get; set; }
         }
 
+        public class MwTabEntry
+        {
+            public MwTabEntry(int agValue, int afValue, string textValue)
+            {
+                AgValue = agValue;
+                AfValue = afValue;
+                TextValue = textValue;
+            }
+
+            public int AgValue { get; }
+            public int AfValue { get; }
+            public string TextValue { get; }
+        }
+
         public enum InterfaceType
         {
             None,
@@ -2031,6 +2045,82 @@ namespace BmwDeepObd
                 return textList;
             }
             return textList;
+        }
+
+        public static List<MwTabEntry> ReadVagMwTab(string fileName)
+        {
+            try
+            {
+                XDocument xmlDoc = XDocument.Load(fileName);
+                if (xmlDoc.Root == null)
+                {
+                    return null;
+                }
+                List<MwTabEntry> mwTabList = new List<MwTabEntry>();
+                foreach (XElement measureNode in xmlDoc.Root.Elements("Messwert"))
+                {
+                    try
+                    {
+                        XElement agNode = measureNode.Element("AG");
+                        if (agNode == null)
+                        {
+                            continue;
+                        }
+                        int agValue;
+                        using (XmlReader reader = agNode.CreateReader())
+                        {
+                            reader.MoveToContent();
+                            agValue = XmlConvert.ToInt32(reader.ReadInnerXml());
+                        }
+
+                        XElement afNode = measureNode.Element("AF");
+                        if (afNode == null)
+                        {
+                            continue;
+                        }
+                        int afValue;
+                        using (XmlReader reader = afNode.CreateReader())
+                        {
+                            reader.MoveToContent();
+                            afValue = XmlConvert.ToInt32(reader.ReadInnerXml());
+                        }
+
+                        string textValue = string.Empty;
+                        XElement nameNode = measureNode.Element("Name");
+                        if (nameNode == null)
+                        {
+                            continue;
+                        }
+                        foreach (XElement textNode in nameNode.Elements("Text"))
+                        {
+                            XAttribute tiAttrib = textNode.Attribute("TI");
+                            if (tiAttrib?.Value.Length > 0)
+                            {
+                                continue;
+                            }
+                            using (XmlReader reader = textNode.CreateReader())
+                            {
+                                reader.MoveToContent();
+                                textValue = reader.ReadInnerXml();
+                            }
+                        }
+                        if (string.IsNullOrEmpty(textValue))
+                        {
+                            continue;
+                        }
+                        mwTabList.Add(new MwTabEntry(agValue, afValue, textValue));
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+                return mwTabList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static bool IsTranslationRequired()
