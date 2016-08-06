@@ -22,11 +22,12 @@ namespace BmwDeepObd
     {
         public class ResultInfo
         {
-            public ResultInfo(string name, string type, List<string> comments )
+            public ResultInfo(string name, string type, List<string> comments, ActivityCommon.MwTabEntry mwTabEntry = null)
             {
                 Name = name;
                 Type = type;
                 Comments = comments;
+                MwTabEntry = mwTabEntry;
                 Selected = false;
                 Format = string.Empty;
                 DisplayText = name;
@@ -38,6 +39,8 @@ namespace BmwDeepObd
             public string Type { get; }
 
             public List<string> Comments { get; }
+
+            public ActivityCommon.MwTabEntry MwTabEntry { get; }
 
             public List<string> CommentsTrans { get; set; }
 
@@ -272,6 +275,15 @@ namespace BmwDeepObd
 
         public static bool IsValidJob(JobInfo job)
         {
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
+            {
+                if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0 ||
+                    string.Compare(job.Name, "Grundeinstellung", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return true;
+                }
+                return false;
+            }
             bool validResult = false;
             foreach (ResultInfo result in job.Results)
             {
@@ -609,7 +621,7 @@ namespace BmwDeepObd
                 }
                 if (_spinnerJobResultsAdapter.Items.Count > 0 && selection < 0)
                 {
-                    if (jobInfo.Selected)
+                    if (jobInfo.Selected && ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                     {   // no selection, auto select all value types
                         int index = 0;
                         foreach (ResultInfo result in _spinnerJobResultsAdapter.Items)
@@ -744,6 +756,10 @@ namespace BmwDeepObd
                     _ediabas.ResolveSgbdFile(_ecuInfo.Sgbd);
 
                     _ediabas.ArgString = string.Empty;
+                    if (_selectedResult.MwTabEntry != null)
+                    {
+                        _ediabas.ArgString = _selectedResult.MwTabEntry.AgValue.ToString(XmlToolActivity.Culture) + ";WertEinmalLesen";
+                    }
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
                     _ediabas.ExecuteJob(_selectedJob.Name);
@@ -760,6 +776,28 @@ namespace BmwDeepObd
                                 continue;
                             }
                             EdiabasNet.ResultData resultData;
+                            if (_selectedResult.MwTabEntry != null)
+                            {
+                                if (_selectedResult.MwTabEntry.AfValue == dictIndex)
+                                {
+                                    string unitsText = string.Empty;
+                                    if (resultDict.TryGetValue("MWEINH_TEXT", out resultData))
+                                    {
+                                        unitsText = resultData.OpData as string ?? string.Empty;
+                                    }
+                                    if (resultDict.TryGetValue("MW_WERT", out resultData))
+                                    {
+                                        resultText = EdiabasNet.FormatResult(resultData, _selectedResult.Format) ?? string.Empty;
+                                        if (!string.IsNullOrEmpty(resultText) && !string.IsNullOrEmpty(unitsText))
+                                        {
+                                            resultText += " " + unitsText;
+                                        }
+                                        break;
+                                    }
+                                }
+                                dictIndex++;
+                                continue;
+                            }
                             if (resultDict.TryGetValue(_selectedResult.Name.ToUpperInvariant(), out resultData))
                             {
                                 resultText = EdiabasNet.FormatResult(resultData, _selectedResult.Format) ?? string.Empty;

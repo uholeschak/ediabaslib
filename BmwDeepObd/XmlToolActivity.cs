@@ -52,6 +52,7 @@ namespace BmwDeepObd
                 PageName = name;
                 EcuName = name;
                 JobList = null;
+                MwTabList = null;
             }
 
             public string Name { get; set; }
@@ -75,6 +76,8 @@ namespace BmwDeepObd
             public string EcuName { get; set; }
 
             public List<XmlToolEcuActivity.JobInfo> JobList { get; set; }
+
+            public List<ActivityCommon.MwTabEntry> MwTabList { get; set; }
         }
 
         private const string XmlDocumentFrame =
@@ -1696,8 +1699,29 @@ namespace BmwDeepObd
                         }
                     }
 
+                    List<ActivityCommon.MwTabEntry> mwTabList = null;
+                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag &&
+                        string.Compare(ecuInfo.Sgbd, "Mot1281", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        string mwTabName = Path.Combine(_ecuDir, "dat.ukd", "vw", "mwtabs", "Mot_01____BKF_1_0904_66.xml");
+                        mwTabList = ActivityCommon.ReadVagMwTab(mwTabName);
+                        ecuInfo.MwTabList = mwTabList;
+                    }
                     foreach (XmlToolEcuActivity.JobInfo job in jobList)
                     {
+                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag && mwTabList != null)
+                        {
+                            if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0 ||
+                                string.Compare(job.Name, "Grundeinstellung", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                foreach (ActivityCommon.MwTabEntry mwTabEntry in mwTabList)
+                                {
+                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(string.Format("{0} ({1}, {2})", mwTabEntry.TextValue, mwTabEntry.AgValue, mwTabEntry.AfValue), "real", null, mwTabEntry));
+                                }
+                            }
+                            continue;
+                        }
+
                         _ediabas.ArgString = job.Name;
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
