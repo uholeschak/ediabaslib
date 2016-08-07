@@ -1732,8 +1732,7 @@ namespace BmwDeepObd
                     {
                         if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag && mwTabList != null)
                         {
-                            if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0 ||
-                                string.Compare(job.Name, "Grundeinstellung", StringComparison.OrdinalIgnoreCase) == 0)
+                            if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 foreach (ActivityCommon.MwTabEntry mwTabEntry in mwTabList)
                                 {
@@ -2038,6 +2037,14 @@ namespace BmwDeepObd
                     job.Selected = true;
                     foreach (XmlToolEcuActivity.ResultInfo result in job.Results)
                     {
+                        if (result.MwTabEntry != null)
+                        {
+                            jobNode = GetJobNode(job, ns, jobsNode, XmlToolEcuActivity.GetJobArgs(result.MwTabEntry, ecuInfo));
+                            if (jobNode == null)
+                            {
+                                continue;
+                            }
+                        }
                         XElement displayNode = GetDisplayNode(result, ns, jobNode);
                         if (displayNode != null)
                         {
@@ -2195,7 +2202,7 @@ namespace BmwDeepObd
                                     jobsNodeNew.Add(jobNodeNew);
                                 }
 
-                                string args = string.Format(Culture, "{0};{1}", result.MwTabEntry.BlockNumber, ecuInfo.ReadCommand);
+                                string args = XmlToolEcuActivity.GetJobArgs(result.MwTabEntry, ecuInfo);
                                 jobNodeOld = null;
                                 jobNodeNew = new XElement(ns + "job");
                                 if (jobsNodeOld != null)
@@ -2962,6 +2969,15 @@ namespace BmwDeepObd
 
         private XElement GetDisplayNode(XmlToolEcuActivity.ResultInfo result, XNamespace ns, XElement jobNode)
         {
+            if (result.MwTabEntry != null)
+            {
+                string resultName = string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndex, result.Name);
+                return (from node in jobNode.Elements(ns + "display")
+                        let nameAttrib = node.Attribute("result")
+                        where nameAttrib != null
+                        where string.Compare(nameAttrib.Value, resultName, StringComparison.OrdinalIgnoreCase) == 0
+                        select node).FirstOrDefault();
+            }
             return (from node in jobNode.Elements(ns + "display")
                     let nameAttrib = node.Attribute("result")
                     where nameAttrib != null
