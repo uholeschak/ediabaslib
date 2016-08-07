@@ -767,7 +767,7 @@ namespace BmwDeepObd
                     _ediabas.ArgString = string.Empty;
                     if (_selectedResult.MwTabEntry != null && !string.IsNullOrEmpty(_ecuInfo.ReadCommand))
                     {
-                        _ediabas.ArgString = _selectedResult.MwTabEntry.BlockNumber.ToString(XmlToolActivity.Culture) + ";" + _ecuInfo.ReadCommand;
+                        _ediabas.ArgString = string.Format(XmlToolActivity.Culture, "{0};{1}", _selectedResult.MwTabEntry.BlockNumber, _ecuInfo.ReadCommand);
                     }
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
