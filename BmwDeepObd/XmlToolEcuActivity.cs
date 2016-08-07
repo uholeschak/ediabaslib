@@ -277,8 +277,7 @@ namespace BmwDeepObd
         {
             if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
             {
-                if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0 ||
-                    string.Compare(job.Name, "Grundeinstellung", StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return true;
                 }
@@ -607,7 +606,17 @@ namespace BmwDeepObd
             if (jobInfo != null)
             {
                 _layoutJobConfig.Visibility = ViewStates.Visible;
-                foreach (ResultInfo result in _selectedJob.Results.OrderBy(x => x.Name))
+                IEnumerable<ResultInfo> orderedResults;
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
+                {
+                    orderedResults = _selectedJob.Results.OrderBy(x => x.MwTabEntry?.BlockNumber * 1000 + x.MwTabEntry?.ValueIndex);
+                }
+                else
+                {
+                    orderedResults = _selectedJob.Results.OrderBy(x => x.Name);
+                }
+                foreach (ResultInfo result in orderedResults)
                 {
                     if (string.Compare(result.Type, "binary", StringComparison.OrdinalIgnoreCase) == 0)
                     {   // ignore binary results
@@ -756,9 +765,9 @@ namespace BmwDeepObd
                     _ediabas.ResolveSgbdFile(_ecuInfo.Sgbd);
 
                     _ediabas.ArgString = string.Empty;
-                    if (_selectedResult.MwTabEntry != null)
+                    if (_selectedResult.MwTabEntry != null && !string.IsNullOrEmpty(_ecuInfo.ReadCommand))
                     {
-                        _ediabas.ArgString = _selectedResult.MwTabEntry.AgValue.ToString(XmlToolActivity.Culture) + ";WertEinmalLesen";
+                        _ediabas.ArgString = _selectedResult.MwTabEntry.BlockNumber.ToString(XmlToolActivity.Culture) + ";" + _ecuInfo.ReadCommand;
                     }
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
@@ -778,19 +787,22 @@ namespace BmwDeepObd
                             EdiabasNet.ResultData resultData;
                             if (_selectedResult.MwTabEntry != null)
                             {
-                                if (_selectedResult.MwTabEntry.AfValue == dictIndex)
+                                if (_selectedResult.MwTabEntry.ValueIndex == dictIndex)
                                 {
-                                    string unitsText = string.Empty;
-                                    if (resultDict.TryGetValue("MWEINH_TEXT", out resultData))
+                                    string valueUnit = _selectedResult.MwTabEntry.ValueUnit;
+                                    if (string.IsNullOrEmpty(valueUnit))
                                     {
-                                        unitsText = resultData.OpData as string ?? string.Empty;
+                                        if (resultDict.TryGetValue("MWEINH_TEXT", out resultData))
+                                        {
+                                            valueUnit = resultData.OpData as string ?? string.Empty;
+                                        }
                                     }
                                     if (resultDict.TryGetValue("MW_WERT", out resultData))
                                     {
                                         resultText = EdiabasNet.FormatResult(resultData, _selectedResult.Format) ?? string.Empty;
-                                        if (!string.IsNullOrEmpty(resultText) && !string.IsNullOrEmpty(unitsText))
+                                        if (!string.IsNullOrEmpty(resultText) && !string.IsNullOrEmpty(valueUnit))
                                         {
-                                            resultText += " " + unitsText;
+                                            resultText += " " + valueUnit;
                                         }
                                         break;
                                     }

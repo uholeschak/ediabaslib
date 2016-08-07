@@ -59,16 +59,26 @@ namespace BmwDeepObd
 
         public class MwTabEntry
         {
-            public MwTabEntry(int agValue, int afValue, string textValue)
+            public MwTabEntry(int blockNumber, int valueIndex, string description, string comment, string valueUnit, string valueType, double? valueMin, double? valueMax)
             {
-                AgValue = agValue;
-                AfValue = afValue;
-                TextValue = textValue;
+                BlockNumber = blockNumber;
+                ValueIndex = valueIndex;
+                Description = description;
+                Comment = comment;
+                ValueUnit = valueUnit;
+                ValueType = valueType;
+                ValueMin = valueMin;
+                ValueMax = valueMax;
             }
 
-            public int AgValue { get; }
-            public int AfValue { get; }
-            public string TextValue { get; }
+            public int BlockNumber { get; }
+            public int ValueIndex { get; }
+            public string Description { get; }
+            public string Comment { get; }
+            public string ValueUnit { get; }
+            public string ValueType { get; }
+            public double? ValueMin { get; }
+            public double? ValueMax { get; }
         }
 
         public enum InterfaceType
@@ -2061,31 +2071,31 @@ namespace BmwDeepObd
                 {
                     try
                     {
+                        int blockNumber;
                         XElement agNode = measureNode.Element("AG");
                         if (agNode == null)
                         {
                             continue;
                         }
-                        int agValue;
                         using (XmlReader reader = agNode.CreateReader())
                         {
                             reader.MoveToContent();
-                            agValue = XmlConvert.ToInt32(reader.ReadInnerXml());
+                            blockNumber = XmlConvert.ToInt32(reader.ReadInnerXml());
                         }
 
+                        int valueIndex;
                         XElement afNode = measureNode.Element("AF");
                         if (afNode == null)
                         {
                             continue;
                         }
-                        int afValue;
                         using (XmlReader reader = afNode.CreateReader())
                         {
                             reader.MoveToContent();
-                            afValue = XmlConvert.ToInt32(reader.ReadInnerXml());
+                            valueIndex = XmlConvert.ToInt32(reader.ReadInnerXml());
                         }
 
-                        string textValue = string.Empty;
+                        string description = string.Empty;
                         XElement nameNode = measureNode.Element("Name");
                         if (nameNode == null)
                         {
@@ -2101,14 +2111,92 @@ namespace BmwDeepObd
                             using (XmlReader reader = textNode.CreateReader())
                             {
                                 reader.MoveToContent();
-                                textValue = reader.ReadInnerXml();
+                                description = reader.ReadInnerXml();
                             }
                         }
-                        if (string.IsNullOrEmpty(textValue))
+                        if (string.IsNullOrEmpty(description))
                         {
                             continue;
                         }
-                        mwTabList.Add(new MwTabEntry(agValue, afValue, textValue));
+
+                        XElement commentNode = measureNode.Element("Meldungstext");
+                        string comment = string.Empty;
+                        if (commentNode != null)
+                        {
+                            using (XmlReader reader = commentNode.CreateReader())
+                            {
+                                reader.MoveToContent();
+                                comment = reader.ReadInnerXml();
+                            }
+                        }
+
+                        double? valueMin = null;
+                        XElement minNode = measureNode.Element("analogerSWunten");
+                        if (minNode != null)
+                        {
+                            using (XmlReader reader = minNode.CreateReader())
+                            {
+                                reader.MoveToContent();
+                                string value = reader.ReadInnerXml();
+                                if (!string.IsNullOrEmpty(value))
+                                {
+                                    try
+                                    {
+                                        valueMin = XmlConvert.ToDouble(value);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        valueMin = null;
+                                    }
+                                }
+                            }
+                        }
+
+                        double? valueMax = null;
+                        XElement maxNode = measureNode.Element("analogerSWoben");
+                        if (maxNode != null)
+                        {
+                            using (XmlReader reader = maxNode.CreateReader())
+                            {
+                                reader.MoveToContent();
+                                string value = reader.ReadInnerXml();
+                                if (!string.IsNullOrEmpty(value))
+                                {
+                                    try
+                                    {
+                                        valueMax = XmlConvert.ToDouble(value);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        valueMax = null;
+                                    }
+                                }
+                            }
+                        }
+
+                        string valueUnit = string.Empty;
+                        XElement sweNode = measureNode.Element("SWE");
+                        if (sweNode != null)
+                        {
+                            using (XmlReader reader = sweNode.CreateReader())
+                            {
+                                reader.MoveToContent();
+                                valueUnit = reader.ReadInnerXml();
+                            }
+                        }
+
+                        string valueType = string.Empty;
+                        XElement swfNode = measureNode.Element("SWF");
+                        if (swfNode != null)
+                        {
+                            using (XmlReader reader = swfNode.CreateReader())
+                            {
+                                reader.MoveToContent();
+                                valueType = reader.ReadInnerXml();
+                            }
+                        }
+
+                        mwTabList.Add(new MwTabEntry(blockNumber, valueIndex, description, comment, valueUnit, valueType, valueMin, valueMax));
                     }
                     catch (Exception)
                     {

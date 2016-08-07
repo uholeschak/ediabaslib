@@ -762,9 +762,7 @@ namespace BmwDeepObd
                 }
                 if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
                 {
-                    if ((string.Compare(jobInfo.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0) ||
-                        (string.Compare(jobInfo.Name, "Messwerteblock_lesen2", StringComparison.OrdinalIgnoreCase) == 0) ||
-                        (string.Compare(jobInfo.Name, "Grundeinstellung", StringComparison.OrdinalIgnoreCase) == 0))
+                    if (string.Compare(jobInfo.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         defaultArgs = jobInfo.ObjectName.Contains("1281") ? "0;WertEinmalLesen" : "100;LESEN";
                     }
