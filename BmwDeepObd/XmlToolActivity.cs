@@ -52,6 +52,8 @@ namespace BmwDeepObd
                 PageName = name;
                 EcuName = name;
                 JobList = null;
+                MwTabList = null;
+                ReadCommand = null;
             }
 
             public string Name { get; set; }
@@ -75,6 +77,10 @@ namespace BmwDeepObd
             public string EcuName { get; set; }
 
             public List<XmlToolEcuActivity.JobInfo> JobList { get; set; }
+
+            public List<ActivityCommon.MwTabEntry> MwTabList { get; set; }
+
+            public string ReadCommand { get; set; }
         }
 
         private const string XmlDocumentFrame =
@@ -1696,8 +1702,59 @@ namespace BmwDeepObd
                         }
                     }
 
+                    List<ActivityCommon.MwTabEntry> mwTabList = null;
+                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
+                    {
+                        string mwTabName = null;
+                        if (string.Compare(ecuInfo.Sgbd, "Mot2000", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            mwTabName = Path.Combine(_ecuDir, "dat.ukd", "vw", "mwtabs", "Mot_01_7L_BKS_1_0609_11.xml");
+                        }
+                        if (string.Compare(ecuInfo.Sgbd, "Mot1281", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            mwTabName = Path.Combine(_ecuDir, "dat.ukd", "audi", "mwtabs", "mot1281_vereinheitlichte_Messwertebloecke_V_1_27_0606_21.xml");
+                        }
+                        if (mwTabName != null)
+                        {
+                            mwTabList = ActivityCommon.ReadVagMwTab(mwTabName);
+                            ecuInfo.MwTabList = mwTabList;
+                            ecuInfo.ReadCommand = ecuInfo.Sgbd.Contains("1281") ? "WertEinmalLesen" : "LESEN";
+                        }
+                    }
                     foreach (XmlToolEcuActivity.JobInfo job in jobList)
                     {
+                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag && mwTabList != null)
+                        {
+                            if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0 ||
+                                string.Compare(job.Name, "Grundeinstellung", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                foreach (ActivityCommon.MwTabEntry mwTabEntry in mwTabList)
+                                {
+                                    string name = string.Format(Culture, "{0:000}/{1} {2} ", mwTabEntry.BlockNumber, mwTabEntry.ValueIndex, mwTabEntry.Description);
+                                    if (!string.IsNullOrEmpty(mwTabEntry.ValueUnit))
+                                    {
+                                        name += string.Format(Culture, " [{0}]", mwTabEntry.ValueUnit);
+                                    }
+                                    if (mwTabEntry.ValueMin != null && mwTabEntry.ValueMax != null)
+                                    {
+                                        name += string.Format(Culture, " {0} - {1}", mwTabEntry.ValueMin, mwTabEntry.ValueMax);
+                                    }
+                                    else if (mwTabEntry.ValueMin != null)
+                                    {
+                                        name += string.Format(Culture, " > {0} ", mwTabEntry.ValueMin);
+                                    }
+                                    else if (mwTabEntry.ValueMax != null)
+                                    {
+                                        name += string.Format(Culture, " < {0} ", mwTabEntry.ValueMax);
+                                    }
+
+                                    string type = (string.Compare(mwTabEntry.ValueType, "R", StringComparison.OrdinalIgnoreCase) == 0) ? "real" : "integer";
+                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, type, new List<string> { mwTabEntry.Comment}, mwTabEntry));
+                                }
+                            }
+                            continue;
+                        }
+
                         _ediabas.ArgString = job.Name;
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
