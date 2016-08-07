@@ -2752,20 +2752,35 @@ namespace BmwDeepObd
             {
                 return fromPath;
             }
-            System.Uri fromUri = new System.Uri(fromPath);
-            System.Uri toUri = new System.Uri(toPath);
+            System.Uri fromUri = new System.Uri(AppendDirectorySeparatorChar(fromPath));
+            System.Uri toUri = new System.Uri(AppendDirectorySeparatorChar(toPath));
 
-            if (fromUri.Scheme != toUri.Scheme) { return toPath; } // path can't be made relative.
+            if (fromUri.Scheme != toUri.Scheme)
+            {   // path can't be made relative.
+                return toPath; 
+            }
 
             System.Uri relativeUri = fromUri.MakeRelativeUri(toUri);
             String relativePath = System.Uri.UnescapeDataString(relativeUri.ToString());
 
-            if (toUri.Scheme.ToUpperInvariant() == "FILE")
+            if (string.Equals(toUri.Scheme, System.Uri.UriSchemeFile, StringComparison.OrdinalIgnoreCase))
             {
                 relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             }
 
             return relativePath;
+        }
+
+        public static string AppendDirectorySeparatorChar(string path)
+        {
+            // Append a slash only if the path is a directory and does not have a slash.
+            if (!Path.HasExtension(path) &&
+                !path.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                return path + Path.DirectorySeparatorChar;
+            }
+
+            return path;
         }
 
         public static bool CheckZipFile(string archiveFilename)

@@ -264,6 +264,13 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="mwtab" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Relative path of the used MwTab file. Only used for VAG configuration generator
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="ecu-type">
