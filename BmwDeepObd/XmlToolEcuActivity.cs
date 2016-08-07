@@ -60,6 +60,7 @@ namespace BmwDeepObd
                 Name = name;
                 Comments = new List<string>();
                 Results = new List<ResultInfo>();
+                ArgCount = 0;
                 Selected = false;
             }
 
@@ -300,6 +301,11 @@ namespace BmwDeepObd
                 validResult = true;
             }
             return job.ArgCount == 0 && validResult;
+        }
+
+        public static string GetJobArgs(ActivityCommon.MwTabEntry mwTabEntry, XmlToolActivity.EcuInfo ecuInfo)
+        {
+            return string.Format(XmlToolActivity.Culture, "{0};{1}", mwTabEntry.BlockNumber, ecuInfo.ReadCommand);
         }
 
         private void UpdateDisplay()
@@ -767,7 +773,7 @@ namespace BmwDeepObd
                     _ediabas.ArgString = string.Empty;
                     if (_selectedResult.MwTabEntry != null && !string.IsNullOrEmpty(_ecuInfo.ReadCommand))
                     {
-                        _ediabas.ArgString = string.Format(XmlToolActivity.Culture, "{0};{1}", _selectedResult.MwTabEntry.BlockNumber, _ecuInfo.ReadCommand);
+                        _ediabas.ArgString = GetJobArgs(_selectedResult.MwTabEntry, _ecuInfo);
                     }
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
