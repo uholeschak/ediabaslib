@@ -39,7 +39,7 @@ namespace BmwDeepObd
 
         public class EcuInfo
         {
-            public EcuInfo(string name, Int64 address, string description, string sgbd, string grp)
+            public EcuInfo(string name, Int64 address, string description, string sgbd, string grp, string mwTabFileName = null)
             {
                 Name = name;
                 Address = address;
@@ -52,8 +52,8 @@ namespace BmwDeepObd
                 PageName = name;
                 EcuName = name;
                 JobList = null;
+                MwTabFileName = mwTabFileName;
                 MwTabList = null;
-                MwTabFileName = null;
                 ReadCommand = null;
             }
 
@@ -79,9 +79,9 @@ namespace BmwDeepObd
 
             public List<XmlToolEcuActivity.JobInfo> JobList { get; set; }
 
-            public List<ActivityCommon.MwTabEntry> MwTabList { get; set; }
-
             public string MwTabFileName { get; set; }
+
+            public List<ActivityCommon.MwTabEntry> MwTabList { get; set; }
 
             public string ReadCommand { get; set; }
         }
@@ -1708,20 +1708,23 @@ namespace BmwDeepObd
                     List<ActivityCommon.MwTabEntry> mwTabList = null;
                     if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
                     {
-                        string mwTabName = null;
-                        if (string.Compare(ecuInfo.Sgbd, "Mot2000", StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.IsNullOrEmpty(ecuInfo.MwTabFileName))
                         {
-                            mwTabName = Path.Combine(_ecuDir, "dat.ukd", "vw", "mwtabs", "Mot_01_7L_BKS_1_0609_11.xml");
-                        }
-                        if (string.Compare(ecuInfo.Sgbd, "Mot1281", StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            mwTabName = Path.Combine(_ecuDir, "dat.ukd", "audi", "mwtabs", "mot1281_vereinheitlichte_Messwertebloecke_V_1_27_0606_21.xml");
-                        }
-                        if (mwTabName != null)
-                        {
-                            mwTabList = ActivityCommon.ReadVagMwTab(mwTabName);
-                            ecuInfo.MwTabList = mwTabList;
+                            string mwTabName = null;
+                            if (string.Compare(ecuInfo.Sgbd, "Mot2000", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                mwTabName = Path.Combine(_ecuDir, "dat.ukd", "vw", "mwtabs", "Mot_01_7L_BKS_1_0609_11.xml");
+                            }
+                            if (string.Compare(ecuInfo.Sgbd, "Mot1281", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                mwTabName = Path.Combine(_ecuDir, "dat.ukd", "audi", "mwtabs", "mot1281_vereinheitlichte_Messwertebloecke_V_1_27_0606_21.xml");
+                            }
                             ecuInfo.MwTabFileName = mwTabName;
+                        }
+                        if (!string.IsNullOrEmpty(ecuInfo.MwTabFileName))
+                        {
+                            mwTabList = ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
+                            ecuInfo.MwTabList = mwTabList;
                             ecuInfo.ReadCommand = ecuInfo.Sgbd.Contains("1281") ? "WertEinmalLesen" : "LESEN";
                         }
                     }
@@ -2064,8 +2067,9 @@ namespace BmwDeepObd
             }
         }
 
-        private string ReadPageSgbd(XDocument document)
+        private string ReadPageSgbd(XDocument document, out string mwTabFileName)
         {
+            mwTabFileName = null;
             if (document.Root == null)
             {
                 return null;
@@ -2078,6 +2082,11 @@ namespace BmwDeepObd
             }
             XElement jobsNode = pageNode.Element(ns + "jobs");
             XAttribute sgbdAttr = jobsNode?.Attribute("sgbd");
+            XAttribute mwtabAttr = jobsNode?.Attribute("mwtab");
+            if (mwtabAttr != null)
+            {
+                mwTabFileName = Path.Combine(_ecuDir, mwtabAttr.Value);
+            }
             return sgbdAttr?.Value;
         }
 
@@ -2437,10 +2446,11 @@ namespace BmwDeepObd
                     }
                     try
                     {
-                        string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile));
+                        string mwTabFileName;
+                        string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out mwTabFileName);
                         if (!string.IsNullOrEmpty(sgbdName))
                         {
-                            _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty)
+                            _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, mwTabFileName)
                             {
                                 Selected = true
                             });
@@ -2492,10 +2502,11 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile));
+                                string mwTabFileName;
+                                string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out mwTabFileName);
                                 if (!string.IsNullOrEmpty(sgbdName))
                                 {
-                                    _ecuList.Insert(0, new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty)
+                                    _ecuList.Insert(0, new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, mwTabFileName)
                                     {
                                         Selected = true
                                     });
