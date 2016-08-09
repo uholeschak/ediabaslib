@@ -1965,7 +1965,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public List<string> ConvertVagDtcCode(string ecuPath, uint code, uint type, bool kwp1281)
+        public List<string> ConvertVagDtcCode(string ecuPath, uint code, uint type, bool kwp1281, bool saeMode)
         {
             try
             {
@@ -1980,25 +1980,35 @@ namespace BmwDeepObd
                     }
                 }
                 string tableNameDtc = "DTC-table";
-                string codeName = string.Format("VAG{0:00000}", code);
-                List<string> textList = ReadVagDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName);
-                if (textList.Count == 0)
+                if (saeMode)
                 {
-                    if (!VagDtcSaeDict.TryGetValue(code, out codeName))
-                    {
-                        return null;
-                    }
-                    codeName += "00";
-                    textList = ReadVagDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName);
+                    string codeName = string.Format("P{0:0000}00", code);
+                    List<string> textList = ReadVagDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName);
+
+                    return textList;
                 }
                 else
                 {
-                    string tableNameType = kwp1281 ? "DTC fault symptoms KWP 1281" : "DTC fault symptoms KWP 2000";
-                    string typeName = string.Format(kwp1281 ? "FSE{0:X05}" : "FST{0:X05}", type);
-                    textList.AddRange(ReadVagDtcEntry(XmlDocDtcCodes, tableNameType, typeName));
-                }
+                    string codeName = string.Format("VAG{0:00000}", code);
+                    List<string> textList = ReadVagDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName);
+                    if (textList.Count == 0)
+                    {
+                        if (!VagDtcSaeDict.TryGetValue(code, out codeName))
+                        {
+                            return null;
+                        }
+                        codeName += "00";
+                        textList = ReadVagDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName);
+                    }
+                    else
+                    {
+                        string tableNameType = kwp1281 ? "DTC fault symptoms KWP 1281" : "DTC fault symptoms KWP 2000";
+                        string typeName = string.Format(kwp1281 ? "FSE{0:X05}" : "FST{0:X05}", type);
+                        textList.AddRange(ReadVagDtcEntry(XmlDocDtcCodes, tableNameType, typeName));
+                    }
 
-                return textList;
+                    return textList;
+                }
             }
             catch (Exception)
             {

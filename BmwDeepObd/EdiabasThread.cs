@@ -329,6 +329,7 @@ namespace BmwDeepObd
                         List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
 
                         bool jobOk = false;
+                        bool saeMode = false;
                         if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
                         {
                             if (resultSets.Count > 0)
@@ -361,6 +362,7 @@ namespace BmwDeepObd
                                             if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
                                             {
                                                 jobOk = true;
+                                                saeMode = true;
                                             }
                                         }
                                     }
@@ -409,6 +411,7 @@ namespace BmwDeepObd
                                             Dictionary<string, EdiabasNet.ResultData> resultDictTemp = null;
                                             MergeResultDictionarys(ref resultDictTemp, resultDictLocal);
                                             MergeResultDictionarys(ref resultDictTemp, resultDict0);
+                                            resultDictTemp.Add("SAE", new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeI, "SAE", (Int64)(saeMode ? 1 : 0)));
                                             errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictTemp, null));
                                         }
                                     }

@@ -1373,7 +1373,18 @@ namespace BmwDeepObd
                                                 }
                                             }
                                         }
-                                        List<string> textList = _activityCommon.ConvertVagDtcCode(_ecuPath, (uint)errorCode, (uint)errorType, kwp1281);
+                                        bool saeMode = false;
+                                        if (errorReport.ErrorDict.TryGetValue("SAE", out resultData))
+                                        {
+                                            if (resultData.OpData is Int64)
+                                            {
+                                                if ((Int64) resultData.OpData != 0)
+                                                {
+                                                    saeMode = true;
+                                                }
+                                            }
+                                        }
+                                        List<string> textList = _activityCommon.ConvertVagDtcCode(_ecuPath, (uint)errorCode, (uint)errorType, kwp1281, saeMode);
 
                                         string textCode = FormatResultInt64(errorReport.ErrorDict, "FNR_WERT", "{0}");
                                         string textType = FormatResultInt64(errorReport.ErrorDict, "FART1_WERT", "{0}");
