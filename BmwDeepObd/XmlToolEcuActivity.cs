@@ -22,19 +22,22 @@ namespace BmwDeepObd
     {
         public class ResultInfo
         {
-            public ResultInfo(string name, string type, List<string> comments, ActivityCommon.MwTabEntry mwTabEntry = null)
+            public ResultInfo(string name, string displayName, string type, List<string> comments, ActivityCommon.MwTabEntry mwTabEntry = null)
             {
                 Name = name;
+                DisplayName = displayName;
                 Type = type;
                 Comments = comments;
                 MwTabEntry = mwTabEntry;
                 Selected = false;
                 Format = string.Empty;
-                DisplayText = name;
+                DisplayText = displayName;
                 LogTag = name;
             }
 
             public string Name { get; }
+
+            public string DisplayName { get; }
 
             public string Type { get; }
 
@@ -981,7 +984,7 @@ namespace BmwDeepObd
 
                 TextView textJobName = view.FindViewById<TextView>(Resource.Id.textJobName);
                 TextView textJobDesc = view.FindViewById<TextView>(Resource.Id.textJobDesc);
-                textJobName.Text = item.Name + " (" + item.Type + ")";
+                textJobName.Text = item.DisplayName + " (" + item.Type + ")";
 
                 StringBuilder stringBuilderComments = new StringBuilder();
                 List<string> commentList = item.CommentsTrans ?? item.Comments;
