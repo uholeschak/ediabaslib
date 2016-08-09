@@ -1736,26 +1736,34 @@ namespace BmwDeepObd
                             {
                                 foreach (ActivityCommon.MwTabEntry mwTabEntry in mwTabList)
                                 {
-                                    string name = string.Format(Culture, "{0:000}/{1} {2}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndex, mwTabEntry.Description);
-                                    if (!string.IsNullOrEmpty(mwTabEntry.ValueUnit))
-                                    {
-                                        name += string.Format(Culture, " [{0}]", mwTabEntry.ValueUnit);
-                                    }
+                                    string name = string.Format(Culture, "{0}/{1}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndex);
+                                    string displayText = string.Format(Culture, "{0:000}/{1} {2}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndex, mwTabEntry.Description);
+                                    string comment = string.Empty;
                                     if (mwTabEntry.ValueMin != null && mwTabEntry.ValueMax != null)
                                     {
-                                        name += string.Format(Culture, " {0} - {1}", mwTabEntry.ValueMin, mwTabEntry.ValueMax);
+                                        comment = string.Format(Culture, "{0} - {1}", mwTabEntry.ValueMin, mwTabEntry.ValueMax);
                                     }
                                     else if (mwTabEntry.ValueMin != null)
                                     {
-                                        name += string.Format(Culture, " > {0}", mwTabEntry.ValueMin);
+                                        comment = string.Format(Culture, "> {0}", mwTabEntry.ValueMin);
                                     }
                                     else if (mwTabEntry.ValueMax != null)
                                     {
-                                        name += string.Format(Culture, " < {0}", mwTabEntry.ValueMax);
+                                        comment = string.Format(Culture, "< {0}", mwTabEntry.ValueMax);
                                     }
+                                    if (!string.IsNullOrEmpty(mwTabEntry.ValueUnit))
+                                    {
+                                        comment += string.Format(Culture, " [{0}]", mwTabEntry.ValueUnit);
+                                    }
+                                    List<string> commentList = new List<string>();
+                                    if (!string.IsNullOrEmpty(comment))
+                                    {
+                                        commentList.Add(comment);
+                                    }
+                                    commentList.Add(mwTabEntry.Comment);
 
                                     string type = (string.Compare(mwTabEntry.ValueType, "R", StringComparison.OrdinalIgnoreCase) == 0) ? "real" : "integer";
-                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, type, new List<string> { mwTabEntry.Comment}, mwTabEntry));
+                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, commentList, mwTabEntry));
                                 }
                             }
                             continue;
@@ -1809,7 +1817,7 @@ namespace BmwDeepObd
                                         break;
                                     }
                                 }
-                                job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, resultType, resultCommentList));
+                                job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, result, resultType, resultCommentList));
                                 dictIndex++;
                             }
                         }
