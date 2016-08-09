@@ -346,6 +346,26 @@ namespace BmwDeepObd
                                     }
                                 }
                             }
+                            if (!jobOk)
+                            {
+                                Ediabas.ExecuteJob("FehlerspeicherSAE_abfragen");
+                                resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
+                                if (resultSets.Count > 0)
+                                {
+                                    EdiabasNet.ResultData resultData;
+                                    if (resultSets[0].TryGetValue("JOBSTATUS", out resultData))
+                                    {
+                                        if (resultData.OpData is string)
+                                        {   // read details
+                                            string jobStatus = (string)resultData.OpData;
+                                            if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                            {
+                                                jobOk = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                         else
                         {
