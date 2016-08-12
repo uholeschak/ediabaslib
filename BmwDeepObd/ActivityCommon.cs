@@ -1982,7 +1982,7 @@ namespace BmwDeepObd
                 string tableNameDtc = "DTC-table";
                 if (saeMode)
                 {
-                    string codeName = string.Format("P{0:0000}00", code);
+                    string codeName = string.Format("P{0:X04}00", code);
                     List<string> textList = ReadVagDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName);
 
                     return textList;
