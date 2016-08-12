@@ -112,8 +112,7 @@
   <!-- Options Menu -->
   <string name="menu_settings">Настройки</string>
   <string name="menu_connect">Подключить</string>
-  <!-- Translate -->
-  <string name="menu_manufacturer">Hersteller</string>
+  <string name="menu_manufacturer">Производитель</string>
   <string name="menu_adapter">Устройство</string>
   <string name="menu_adapter_config">Настройки устройства</string>
   <string name="menu_enet_ip">ENET IP</string>
@@ -153,8 +152,7 @@
   <string name="select_interface_ftdi">USB (FTDI)</string>
 
   <!-- Manufacturer selection -->
-  <!-- Translate -->
-  <string name="select_manufacturer">Hersteller auswählen</string>
+  <string name="select_manufacturer">Выбрать производителя</string>
   <string name="select_manufacturer_bmw">BMW</string>
   <string name="select_manufacturer_vag">VAG</string>
 
