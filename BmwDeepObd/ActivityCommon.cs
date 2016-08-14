@@ -2079,6 +2079,9 @@ namespace BmwDeepObd
             return textList;
         }
 
+        // Convert russian mwtab xml files first with (linux):
+        // mkdir ../mwru
+        // find -name "*.xml" -exec sh -c "recode UTF8..ISO-8859-1 < '{}' | recode windows-1251..UTF8 > ../mwru/'{}'" \;
         public static List<MwTabEntry> ReadVagMwTab(string fileName)
         {
             try
