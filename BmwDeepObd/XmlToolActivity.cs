@@ -1711,13 +1711,14 @@ namespace BmwDeepObd
                         if (string.IsNullOrEmpty(ecuInfo.MwTabFileName))
                         {
                             string mwTabName = null;
+                            string datUkdPath = ActivityCommon.GetVagDatUkdDir(_ecuDir);
                             if (string.Compare(ecuInfo.Sgbd, "Mot2000", StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                mwTabName = Path.Combine(_ecuDir, "dat.ukd", "vw", "mwtabs", "Mot_01_7L_BKS_1_0609_11.xml");
+                                mwTabName = Path.Combine(datUkdPath, "vw", "mwtabs", "Mot_01_7L_BKS_1_0609_11.xml");
                             }
                             if (string.Compare(ecuInfo.Sgbd, "Mot1281", StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                mwTabName = Path.Combine(_ecuDir, "dat.ukd", "audi", "mwtabs", "mot1281_vereinheitlichte_Messwertebloecke_V_1_27_0606_21.xml");
+                                mwTabName = Path.Combine(datUkdPath, "audi", "mwtabs", "mot1281_vereinheitlichte_Messwertebloecke_V_1_27_0606_21.xml");
                             }
                             ecuInfo.MwTabFileName = mwTabName;
                         }

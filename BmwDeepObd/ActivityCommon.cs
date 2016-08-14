@@ -1965,11 +1965,23 @@ namespace BmwDeepObd
             return true;
         }
 
+        public static string GetVagDatUkdDir(string ecuPath)
+        {
+            string lang = Java.Util.Locale.Default.Language ?? "en";
+            string dirName = Path.Combine(ecuPath, "dat.ukd", lang);
+            if (!Directory.Exists(dirName))
+            {
+                dirName = Path.Combine(ecuPath, "dat.ukd", "en");
+            }
+            return dirName;
+        }
+
         public List<string> ConvertVagDtcCode(string ecuPath, uint code, uint type, bool kwp1281, bool saeMode)
         {
             try
             {
-                string xmlFile = Path.Combine(ecuPath, "dat.ukd", "xml", "Zustand_KonzernASAM.xml");
+                string datUkdPath = GetVagDatUkdDir(ecuPath);
+                string xmlFile = Path.Combine(datUkdPath, "xml", "Zustand_KonzernASAM.xml");
                 if (XmlDocDtcCodes == null)
                 {
                     XmlDocDtcCodes = XDocument.Load(xmlFile);
@@ -2224,6 +2236,10 @@ namespace BmwDeepObd
         public static bool IsTranslationRequired()
         {
 #if true
+            if (SelectedManufacturer == ManufacturerType.Vag)
+            {
+                return false;
+            }
             string lang = Java.Util.Locale.Default.Language ?? string.Empty;
             return string.Compare(lang, "de", StringComparison.OrdinalIgnoreCase) != 0;
 #else
