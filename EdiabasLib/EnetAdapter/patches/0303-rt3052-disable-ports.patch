@@ -1,0 +1,10 @@
+--- a/drivers/net/ethernet/ralink/esw_rt3052.c
++++ a/drivers/net/ethernet/ralink/esw_rt3052.c
+@@ -398,6 +398,7 @@
+ 	unsigned changed;
+ 	int i;
+ 
++	disable_mask |= 0x1E;
+ 	old_mask = esw_get_port_disable(esw);
+ 	changed = old_mask ^ disable_mask;
+ 	enable_mask = old_mask & disable_mask;
