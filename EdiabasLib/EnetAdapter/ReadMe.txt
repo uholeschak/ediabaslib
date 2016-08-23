@@ -4,16 +4,18 @@ Pepare build system according to:
 https://wiki.openwrt.org/doc/howto/build
 copy diffconfig to build directory
 copy patches/770-group_key_timeout.patch to package/network/services/hostapd/patches
+copy patches/0303-rt3052-disable-ports.patch to target/linux/ramips/patches-3.18
 
 cp diffconfig .config
 make defconfig
 make
+("make target/linux/clean" and "make target/linux/compile" builds the kernel only)
 
 If download of packages fails build with
 make V=s
 and copy the missing files to the dl directory.
 
-copy imagebulder from bin new location
+copy imagebuilder from bin new location
 extract imagebilder tar -xvjf ...
 copy files directory and build.sh to imagebilder build directory
 
@@ -22,6 +24,7 @@ sh build.sh
 Debuging hostadp:
 -----------------
 make menuconfig
+(make kernel_menuconfig for kernel modiifications)
 Network->wap-supplicant->Minimum debug message priority: 0
 Debug according to
 https://wiki.openwrt.org/doc/devel/debugging
