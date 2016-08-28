@@ -2236,6 +2236,49 @@ namespace BmwDeepObd
             }
         }
 
+        public static List<string> GetMatchingVagMwTabs(string wmTabDir, string sgName)
+        {
+            List<string> fileList = new List<string>();
+            try
+            {
+                string xmlEntry = string.Format("<SgVariante>{0}</SgVariante>", sgName);
+                string[] files = Directory.GetFiles(wmTabDir, "*.xml", SearchOption.TopDirectoryOnly);
+
+                foreach (string file in files)
+                {
+                    try
+                    {
+                        using (StreamReader streamReader = new StreamReader(file))
+                        {
+                            for (int i = 0; i < 10; i++)
+                            {
+                                string line = streamReader.ReadLine();
+                                if (line == null)
+                                {
+                                    break;
+                                }
+                                line = line.Trim();
+                                if (string.Compare(line, xmlEntry, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    fileList.Add(file);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            return fileList;
+        }
+
         public static bool IsTranslationRequired()
         {
 #if true
