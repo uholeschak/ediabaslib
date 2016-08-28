@@ -124,6 +124,8 @@ namespace BmwDeepObd
         public const string ExtraFileName = "file_name";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
 
+        public delegate void MwTabFileSelected(string fileName);
+
         private View _barView;
         private Button _buttonRead;
         private Button _buttonSafe;
@@ -1608,10 +1610,10 @@ namespace BmwDeepObd
             progress.SetMessage(GetString(Resource.String.xml_tool_analyze));
             progress.Show();
 
-            bool readFailed = false;
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
             {
+                bool readFailed = false;
                 try
                 {
                     _ediabas.ResolveSgbdFile(ecuInfo.Sgbd);
@@ -1707,7 +1709,6 @@ namespace BmwDeepObd
                         }
                     }
 
-                    List<ActivityCommon.MwTabEntry> mwTabList = null;
                     if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
                     {
                         if (string.IsNullOrEmpty(ecuInfo.MwTabFileName))
@@ -1715,8 +1716,48 @@ namespace BmwDeepObd
                             string mwTabName = null;
                             if (string.Compare(ecuInfo.Sgbd, "Mot2000", StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                mwTabName = Path.Combine(_datUkdDir, "vw", "mwtabs", "Mot_01_7L_BKS_1_0609_11.xml");
-                                //mwTabName = GetBestMatchingMwTab(ecuInfo);
+                                List<string> mwTabFileNames = GetBestMatchingMwTab(ecuInfo);
+                                if (mwTabFileNames.Count == 1)
+                                {
+                                    mwTabName = mwTabFileNames[0];
+                                }
+                                else
+                                {
+                                    RunOnUiThread(() =>
+                                    {
+                                        SelectMwTabFromList(mwTabFileNames, name =>
+                                        {
+                                            if (string.IsNullOrEmpty(name))
+                                            {
+                                                ReadJobThreadDone(ecuInfo, progress, true);
+                                            }
+                                            else
+                                            {
+                                                ecuInfo.MwTabFileName = name;
+                                                ecuInfo.MwTabList = ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
+                                                ecuInfo.ReadCommand = GetReadCommand(ecuInfo);
+                                                _jobThread = new Thread(() =>
+                                                {
+                                                    readFailed = false;
+                                                    try
+                                                    {
+                                                        JobsReadThreadPart2(ecuInfo, jobList);
+                                                    }
+                                                    catch (Exception)
+                                                    {
+                                                        readFailed = true;
+                                                    }
+                                                    RunOnUiThread(() =>
+                                                    {
+                                                        ReadJobThreadDone(ecuInfo, progress, readFailed);
+                                                    });
+                                                });
+                                                _jobThread.Start();
+                                            }
+                                        });
+                                    });
+                                    return;
+                                }
                             }
                             if (string.Compare(ecuInfo.Sgbd, "Mot1281", StringComparison.OrdinalIgnoreCase) == 0)
                             {
@@ -1726,124 +1767,12 @@ namespace BmwDeepObd
                         }
                         if (!string.IsNullOrEmpty(ecuInfo.MwTabFileName))
                         {
-                            mwTabList = ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
-                            ecuInfo.MwTabList = mwTabList;
-                            ecuInfo.ReadCommand = ecuInfo.Sgbd.Contains("1281") ? "WertEinmalLesen" : "LESEN";
-                        }
-                    }
-                    foreach (XmlToolEcuActivity.JobInfo job in jobList)
-                    {
-                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag && mwTabList != null)
-                        {
-                            if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                foreach (ActivityCommon.MwTabEntry mwTabEntry in mwTabList)
-                                {
-                                    string name = string.Format(Culture, "{0}/{1}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndex);
-                                    string displayText = string.Format(Culture, "{0:000}/{1} {2}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndex, mwTabEntry.Description);
-                                    string comment = string.Empty;
-                                    if (mwTabEntry.ValueMin != null && mwTabEntry.ValueMax != null)
-                                    {
-                                        comment = string.Format(Culture, "{0} - {1}", mwTabEntry.ValueMin, mwTabEntry.ValueMax);
-                                    }
-                                    else if (mwTabEntry.ValueMin != null)
-                                    {
-                                        comment = string.Format(Culture, "> {0}", mwTabEntry.ValueMin);
-                                    }
-                                    else if (mwTabEntry.ValueMax != null)
-                                    {
-                                        comment = string.Format(Culture, "< {0}", mwTabEntry.ValueMax);
-                                    }
-                                    if (!string.IsNullOrEmpty(mwTabEntry.ValueUnit))
-                                    {
-                                        comment += string.Format(Culture, " [{0}]", mwTabEntry.ValueUnit);
-                                    }
-                                    List<string> commentList = new List<string>();
-                                    if (!string.IsNullOrEmpty(comment))
-                                    {
-                                        commentList.Add(comment);
-                                    }
-                                    commentList.Add(mwTabEntry.Comment);
-
-                                    string type = (string.Compare(mwTabEntry.ValueType, "R", StringComparison.OrdinalIgnoreCase) == 0) ? "real" : "integer";
-                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, commentList, mwTabEntry));
-                                }
-                            }
-                            continue;
-                        }
-
-                        _ediabas.ArgString = job.Name;
-                        _ediabas.ArgBinaryStd = null;
-                        _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob("_RESULTS");
-
-                        resultSets = _ediabas.ResultSets;
-                        if (resultSets != null && resultSets.Count >= 2)
-                        {
-                            int dictIndex = 0;
-                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
-                            {
-                                if (dictIndex == 0)
-                                {
-                                    dictIndex++;
-                                    continue;
-                                }
-                                EdiabasNet.ResultData resultData;
-                                string result = string.Empty;
-                                string resultType = string.Empty;
-                                List<string> resultCommentList = new List<string>();
-                                if (resultDict.TryGetValue("RESULT", out resultData))
-                                {
-                                    if (resultData.OpData is string)
-                                    {
-                                        result = (string) resultData.OpData;
-                                    }
-                                }
-                                if (resultDict.TryGetValue("RESULTTYPE", out resultData))
-                                {
-                                    if (resultData.OpData is string)
-                                    {
-                                        resultType = (string) resultData.OpData;
-                                    }
-                                }
-                                for (int i = 0; ; i++)
-                                {
-                                    if (resultDict.TryGetValue("RESULTCOMMENT" + i.ToString(Culture), out resultData))
-                                    {
-                                        if (resultData.OpData is string)
-                                        {
-                                            resultCommentList.Add((string)resultData.OpData);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        break;
-                                    }
-                                }
-                                job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, result, resultType, resultCommentList));
-                                dictIndex++;
-                            }
+                            ecuInfo.MwTabList = ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
+                            ecuInfo.ReadCommand = GetReadCommand(ecuInfo);
                         }
                     }
 
-                    ecuInfo.JobList = jobList;
-
-                    string xmlFileDir = XmlFileDir();
-                    if (xmlFileDir != null)
-                    {
-                        string xmlFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
-                        if (File.Exists(xmlFile))
-                        {
-                            try
-                            {
-                                ReadPageXml(ecuInfo, XDocument.Load(xmlFile));
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
-                        }
-                    }
+                    JobsReadThreadPart2(ecuInfo, jobList);
                 }
                 catch (Exception)
                 {
@@ -1852,36 +1781,198 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
-                    progress.Hide();
-                    progress.Dispose();
-
-                    SupportInvalidateOptionsMenu();
-                    UpdateDisplay();
-                    if (readFailed || (ecuInfo.JobList.Count == 0))
-                    {
-                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_jobs_failed), Resource.String.alert_title_error);
-                    }
-                    else
-                    {
-                        _ecuListTranslated = false;
-                        if (!TranslateEcuText((sender, args) =>
-                        {
-                            SelectJobs(ecuInfo);
-                        }))
-                        {
-                            SelectJobs(ecuInfo);
-                        }
-                    }
+                    ReadJobThreadDone(ecuInfo, progress, readFailed);
                 });
             });
             _jobThread.Start();
         }
 
-        private string GetBestMatchingMwTab(EcuInfo ecuInfo)
+        private void JobsReadThreadPart2(EcuInfo ecuInfo, List<XmlToolEcuActivity.JobInfo> jobList)
+        {
+            foreach (XmlToolEcuActivity.JobInfo job in jobList)
+            {
+                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag && ecuInfo.MwTabList != null)
+                {
+                    if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        foreach (ActivityCommon.MwTabEntry mwTabEntry in ecuInfo.MwTabList)
+                        {
+                            string name = string.Format(Culture, "{0}/{1}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndex);
+                            string displayText = string.Format(Culture, "{0:000}/{1} {2}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndex, mwTabEntry.Description);
+                            string comment = string.Empty;
+                            if (mwTabEntry.ValueMin != null && mwTabEntry.ValueMax != null)
+                            {
+                                comment = string.Format(Culture, "{0} - {1}", mwTabEntry.ValueMin, mwTabEntry.ValueMax);
+                            }
+                            else if (mwTabEntry.ValueMin != null)
+                            {
+                                comment = string.Format(Culture, "> {0}", mwTabEntry.ValueMin);
+                            }
+                            else if (mwTabEntry.ValueMax != null)
+                            {
+                                comment = string.Format(Culture, "< {0}", mwTabEntry.ValueMax);
+                            }
+                            if (!string.IsNullOrEmpty(mwTabEntry.ValueUnit))
+                            {
+                                comment += string.Format(Culture, " [{0}]", mwTabEntry.ValueUnit);
+                            }
+                            List<string> commentList = new List<string>();
+                            if (!string.IsNullOrEmpty(comment))
+                            {
+                                commentList.Add(comment);
+                            }
+                            commentList.Add(mwTabEntry.Comment);
+
+                            string type = (string.Compare(mwTabEntry.ValueType, "R", StringComparison.OrdinalIgnoreCase) == 0) ? "real" : "integer";
+                            job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, commentList, mwTabEntry));
+                        }
+                    }
+                    continue;
+                }
+
+                _ediabas.ArgString = job.Name;
+                _ediabas.ArgBinaryStd = null;
+                _ediabas.ResultsRequests = string.Empty;
+                _ediabas.ExecuteJob("_RESULTS");
+
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                if (resultSets != null && resultSets.Count >= 2)
+                {
+                    int dictIndex = 0;
+                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                    {
+                        if (dictIndex == 0)
+                        {
+                            dictIndex++;
+                            continue;
+                        }
+                        EdiabasNet.ResultData resultData;
+                        string result = string.Empty;
+                        string resultType = string.Empty;
+                        List<string> resultCommentList = new List<string>();
+                        if (resultDict.TryGetValue("RESULT", out resultData))
+                        {
+                            if (resultData.OpData is string)
+                            {
+                                result = (string) resultData.OpData;
+                            }
+                        }
+                        if (resultDict.TryGetValue("RESULTTYPE", out resultData))
+                        {
+                            if (resultData.OpData is string)
+                            {
+                                resultType = (string) resultData.OpData;
+                            }
+                        }
+                        for (int i = 0;; i++)
+                        {
+                            if (resultDict.TryGetValue("RESULTCOMMENT" + i.ToString(Culture), out resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    resultCommentList.Add((string) resultData.OpData);
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, result, resultType, resultCommentList));
+                        dictIndex++;
+                    }
+                }
+            }
+
+            ecuInfo.JobList = jobList;
+
+            string xmlFileDir = XmlFileDir();
+            if (xmlFileDir != null)
+            {
+                string xmlFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
+                if (File.Exists(xmlFile))
+                {
+                    try
+                    {
+                        ReadPageXml(ecuInfo, XDocument.Load(xmlFile));
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+            }
+        }
+
+        private void ReadJobThreadDone(EcuInfo ecuInfo, Android.App.ProgressDialog progress, bool readFailed)
+        {
+            progress.Hide();
+            progress.Dispose();
+
+            SupportInvalidateOptionsMenu();
+            UpdateDisplay();
+            if (readFailed || (ecuInfo.JobList.Count == 0))
+            {
+                _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_jobs_failed), Resource.String.alert_title_error);
+            }
+            else
+            {
+                _ecuListTranslated = false;
+                if (!TranslateEcuText((sender, args) =>
+                {
+                    SelectJobs(ecuInfo);
+                }))
+                {
+                    SelectJobs(ecuInfo);
+                }
+            }
+        }
+
+        private string GetReadCommand(EcuInfo ecuInfo)
+        {
+            return ecuInfo.Sgbd.Contains("1281") ? "WertEinmalLesen" : "LESEN";
+        }
+
+        private void SelectMwTabFromList(List<string> fileNames, MwTabFileSelected handler)
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.SetTitle(Resource.String.xml_tool_select_ecu_type);
+            ListView listView = new ListView(this);
+            bool handlerCalled = false;
+
+            List<string> displayNames = fileNames.OrderBy(x => x).Select(Path.GetFileNameWithoutExtension).ToList();
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
+                Android.Resource.Layout.SimpleListItemSingleChoice, displayNames);
+            listView.Adapter = adapter;
+            listView.ChoiceMode = ChoiceMode.Single;
+            listView.SetItemChecked(0, true);
+            builder.SetView(listView);
+            builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+            {
+                string fileName = fileNames[listView.CheckedItemPosition];
+                handlerCalled = true;
+                handler(fileName);
+            });
+            builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
+            {
+                handlerCalled = true;
+                handler(null);
+            });
+            AlertDialog alertDialog = builder.Show();
+            alertDialog.DismissEvent += (sender, args) =>
+            {
+                if (!handlerCalled)
+                {
+                    handler(null);
+                }
+            };
+        }
+
+        private List<string> GetBestMatchingMwTab(EcuInfo ecuInfo)
         {
             List<ActivityCommon.MwTabFileEntry> wmTabList = ActivityCommon.GetMatchingVagMwTabs(Path.Combine(_datUkdDir, "vw", "mwtabs"), ecuInfo.Sgbd);
             SortedSet<int> mwBlocks = ActivityCommon.ExtractVagMwBlocks(wmTabList);
-            string readCommand = ecuInfo.Sgbd.Contains("1281") ? "WertEinmalLesen" : "LESEN";
+            string readCommand = GetReadCommand(ecuInfo);
             Dictionary<int, string> unitDict = new Dictionary<int, string>();
 
             try
@@ -1949,11 +2040,11 @@ namespace BmwDeepObd
                 mwTabFileEntry.MatchCount = matchCount;
                 if (compareCount > 0)
                 {
-                    mwTabFileEntry.MatchRatio = (double) matchCount/compareCount;
+                    mwTabFileEntry.MatchRatio = (long) matchCount * 1000 / compareCount;
                 }
                 else
                 {
-                    mwTabFileEntry.MatchRatio = 0.0;
+                    mwTabFileEntry.MatchRatio = 0;
                 }
             }
             List<ActivityCommon.MwTabFileEntry> wmTabListSorted = wmTabList.OrderByDescending(x => x.MatchRatio).ToList();
@@ -1961,7 +2052,7 @@ namespace BmwDeepObd
             {
                 return null;
             }
-            return wmTabListSorted[0].FileName;
+            return wmTabListSorted.TakeWhile(mwTabFileEntry => mwTabFileEntry.MatchRatio == wmTabListSorted[0].MatchRatio).Select(mwTabFileEntry => mwTabFileEntry.FileName).ToList();
         }
 
         private void ExecuteUpdateEcuInfo()
