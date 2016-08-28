@@ -81,15 +81,21 @@ namespace BmwDeepObd
             public double? ValueMax { get; }
         }
 
-        public class WmTabFileEntry
+        public class MwTabFileEntry
         {
-            public WmTabFileEntry(string fileName, List<MwTabEntry> mwTabList)
+            public MwTabFileEntry(string fileName, List<MwTabEntry> mwTabList)
             {
                 FileName = fileName;
                 MwTabList = mwTabList;
+                CompareCount = 0;
+                MatchCount = 0;
+                MatchRatio = 0.0;
             }
             public string FileName { get; }
             public List<MwTabEntry> MwTabList { get; }
+            public int CompareCount { get; set; }
+            public int MatchCount { get; set; }
+            public double MatchRatio { get; set; }
         }
 
         public enum InterfaceType
@@ -2294,9 +2300,9 @@ namespace BmwDeepObd
             }
         }
 
-        public static List<WmTabFileEntry> GetMatchingVagMwTabs(string mwTabDir, string sgName)
+        public static List<MwTabFileEntry> GetMatchingVagMwTabs(string mwTabDir, string sgName)
         {
-            List<WmTabFileEntry> mwTabFileList = new List<WmTabFileEntry>();
+            List<MwTabFileEntry> mwTabFileList = new List<MwTabFileEntry>();
             List<string> fileList = GetMatchingVagMwTabFiles(mwTabDir, sgName);
             if (fileList == null)
             {
@@ -2311,16 +2317,16 @@ namespace BmwDeepObd
                 {
                     continue;
                 }
-                mwTabFileList.Add(new WmTabFileEntry(fileName, mwTabList));
+                mwTabFileList.Add(new MwTabFileEntry(fileName, mwTabList));
             }
             return mwTabFileList;
         }
 
-        public static SortedSet<int> ExtractVagMwBlocks(List<WmTabFileEntry> mwTabFileList)
+        public static SortedSet<int> ExtractVagMwBlocks(List<MwTabFileEntry> mwTabFileList)
         {
             SortedSet<int> mwBlocks = new SortedSet<int>();
 
-            foreach (WmTabFileEntry mwTabFileEntry in mwTabFileList)
+            foreach (MwTabFileEntry mwTabFileEntry in mwTabFileList)
             {
                 foreach (MwTabEntry mwTabEntry in mwTabFileEntry.MwTabList)
                 {

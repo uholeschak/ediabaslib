@@ -1716,6 +1716,7 @@ namespace BmwDeepObd
                             if (string.Compare(ecuInfo.Sgbd, "Mot2000", StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 mwTabName = Path.Combine(_datUkdDir, "vw", "mwtabs", "Mot_01_7L_BKS_1_0609_11.xml");
+                                //mwTabName = GetBestMatchingMwTab(ecuInfo);
                             }
                             if (string.Compare(ecuInfo.Sgbd, "Mot1281", StringComparison.OrdinalIgnoreCase) == 0)
                             {
@@ -1874,6 +1875,93 @@ namespace BmwDeepObd
                 });
             });
             _jobThread.Start();
+        }
+
+        private string GetBestMatchingMwTab(EcuInfo ecuInfo)
+        {
+            List<ActivityCommon.MwTabFileEntry> wmTabList = ActivityCommon.GetMatchingVagMwTabs(Path.Combine(_datUkdDir, "vw", "mwtabs"), ecuInfo.Sgbd);
+            SortedSet<int> mwBlocks = ActivityCommon.ExtractVagMwBlocks(wmTabList);
+            string readCommand = ecuInfo.Sgbd.Contains("1281") ? "WertEinmalLesen" : "LESEN";
+            Dictionary<int, string> unitDict = new Dictionary<int, string>();
+
+            try
+            {
+                foreach (int block in mwBlocks)
+                {
+                    _ediabas.ArgString = string.Format("{0};{1}", block, readCommand);
+                    _ediabas.ArgBinaryStd = null;
+                    _ediabas.ResultsRequests = string.Empty;
+                    _ediabas.ExecuteJob("Messwerteblock_lesen");
+
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        int dictIndex = 0;
+                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                        {
+                            if (dictIndex == 0)
+                            {
+                                dictIndex++;
+                                continue;
+                            }
+                            EdiabasNet.ResultData resultData;
+                            string unitText = string.Empty;
+                            if (resultDict.TryGetValue("MWEINH_TEXT", out resultData))
+                            {
+                                unitText = resultData.OpData as string ?? string.Empty;
+                            }
+                            if (!string.IsNullOrWhiteSpace(unitText))
+                            {
+                                int key = (block << 16) + dictIndex;
+                                if (!unitDict.ContainsKey(key))
+                                {
+                                    unitDict.Add(key, unitText);
+                                }
+                            }
+                            dictIndex++;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            foreach (ActivityCommon.MwTabFileEntry mwTabFileEntry in wmTabList)
+            {
+                int compareCount = 0;
+                int matchCount = 0;
+                foreach (ActivityCommon.MwTabEntry mwTabEntry in mwTabFileEntry.MwTabList)
+                {
+                    int key = (mwTabEntry.BlockNumber << 16) + mwTabEntry.ValueIndex;
+                    string unitText;
+                    if (unitDict.TryGetValue(key, out unitText))
+                    {
+                        compareCount++;
+                        if (string.Compare(unitText, mwTabEntry.ValueUnit, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            matchCount++;
+                        }
+                    }
+                }
+                mwTabFileEntry.CompareCount = compareCount;
+                mwTabFileEntry.MatchCount = matchCount;
+                if (compareCount > 0)
+                {
+                    mwTabFileEntry.MatchRatio = (double) matchCount/compareCount;
+                }
+                else
+                {
+                    mwTabFileEntry.MatchRatio = 0.0;
+                }
+            }
+            List<ActivityCommon.MwTabFileEntry> wmTabListSorted = wmTabList.OrderByDescending(x => x.MatchRatio).ToList();
+            if (wmTabListSorted.Count == 0)
+            {
+                return null;
+            }
+            return wmTabListSorted[0].FileName;
         }
 
         private void ExecuteUpdateEcuInfo()
