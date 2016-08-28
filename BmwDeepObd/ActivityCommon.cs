@@ -89,13 +89,13 @@ namespace BmwDeepObd
                 MwTabList = mwTabList;
                 CompareCount = 0;
                 MatchCount = 0;
-                MatchRatio = 0.0;
+                MatchRatio = 0;
             }
             public string FileName { get; }
             public List<MwTabEntry> MwTabList { get; }
             public int CompareCount { get; set; }
             public int MatchCount { get; set; }
-            public double MatchRatio { get; set; }
+            public long MatchRatio { get; set; }
         }
 
         public enum InterfaceType

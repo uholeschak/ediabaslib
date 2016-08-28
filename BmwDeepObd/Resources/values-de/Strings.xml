@@ -205,6 +205,7 @@
   <string name="xml_tool_save_xml_failed">Konfiguration speichern fehlgeschlagen</string>
   <string name="xml_tool_msg_save_config">Wollen Sie die Konfiguration speichern?</string>
   <string name="xml_tool_msg_ecu_error">Für einige ECUs konnten keine Information ermittelt werden.</string>
+  <string name="xml_tool_select_ecu_type">ECU-Typ auswählen</string>
   <string name="xml_tool_ecu_list">Erkannte ECUs</string>
   <string name="xml_tool_info_sgbd">SGBD</string>
   <string name="xml_tool_info_grp">Gruppe</string>
