@@ -2316,6 +2316,24 @@ namespace BmwDeepObd
             return mwTabFileList;
         }
 
+        public static SortedSet<int> ExtractVagMwBlocks(List<WmTabFileEntry> mwTabFileList)
+        {
+            SortedSet<int> mwBlocks = new SortedSet<int>();
+
+            foreach (WmTabFileEntry mwTabFileEntry in mwTabFileList)
+            {
+                foreach (MwTabEntry mwTabEntry in mwTabFileEntry.MwTabList)
+                {
+                    if (!mwBlocks.Contains(mwTabEntry.BlockNumber))
+                    {
+                        mwBlocks.Add(mwTabEntry.BlockNumber);
+                    }
+                }
+            }
+
+            return mwBlocks;
+        }
+
         public static bool IsTranslationRequired()
         {
 #if true
