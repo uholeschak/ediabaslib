@@ -6181,6 +6181,20 @@ namespace CarSimulator
                     }
                     if (!found)
                     {
+                        if (_conceptType == ConceptType.ConceptKwp2000)
+                        {
+                            if (_receiveData.Length >= 5 && _receiveData[0] == 0x82 && _receiveData[3] == 0x21)
+                            {   // read mwblock
+                                found = true;
+                                Debug.WriteLine("Dummy mwblock: {0:X02}", _receiveData[4]);
+                                byte[] dummyResponse = { 0x9A, _receiveData[2], _receiveData[1], 0x61, _receiveData[4],
+                                    0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x00 };
+                                ObdSend(dummyResponse);
+                            }
+                        }
+                    }
+                    if (!found)
+                    {
                         string text = string.Empty;
                         for (int i = 0; i < recLength; i++)
                         {
