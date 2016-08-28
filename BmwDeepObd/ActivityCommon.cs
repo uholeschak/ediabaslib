@@ -81,6 +81,17 @@ namespace BmwDeepObd
             public double? ValueMax { get; }
         }
 
+        public class WmTabFileEntry
+        {
+            public WmTabFileEntry(string fileName, List<MwTabEntry> mwTabList)
+            {
+                FileName = fileName;
+                MwTabList = mwTabList;
+            }
+            public string FileName { get; }
+            public List<MwTabEntry> MwTabList { get; }
+        }
+
         public enum InterfaceType
         {
             None,
@@ -2082,7 +2093,7 @@ namespace BmwDeepObd
         // Convert russian mwtab xml files first with (linux):
         // mkdir ../mwru
         // find -name "*.xml" -exec sh -c "recode UTF8..ISO-8859-1 < '{}' | recode windows-1251..UTF8 > ../mwru/'{}'" \;
-        public static List<MwTabEntry> ReadVagMwTab(string fileName)
+        public static List<MwTabEntry> ReadVagMwTab(string fileName, bool ignoreEmptyUnits = false)
         {
             try
             {
@@ -2209,6 +2220,10 @@ namespace BmwDeepObd
                                 valueUnit = reader.ReadInnerXml();
                             }
                         }
+                        if (ignoreEmptyUnits && string.IsNullOrWhiteSpace(valueUnit))
+                        {
+                            continue;
+                        }
 
                         string valueType = string.Empty;
                         XElement swfNode = measureNode.Element("SWF");
@@ -2236,13 +2251,13 @@ namespace BmwDeepObd
             }
         }
 
-        public static List<string> GetMatchingVagMwTabs(string wmTabDir, string sgName)
+        public static List<string> GetMatchingVagMwTabFiles(string mwTabDir, string sgName)
         {
-            List<string> fileList = new List<string>();
             try
             {
+                List<string> fileList = new List<string>();
                 string xmlEntry = string.Format("<SgVariante>{0}</SgVariante>", sgName);
-                string[] files = Directory.GetFiles(wmTabDir, "*.xml", SearchOption.TopDirectoryOnly);
+                string[] files = Directory.GetFiles(mwTabDir, "*.xml", SearchOption.TopDirectoryOnly);
 
                 foreach (string file in files)
                 {
@@ -2271,12 +2286,34 @@ namespace BmwDeepObd
                         // ignored
                     }
                 }
+                return fileList;
             }
             catch (Exception)
             {
-                // ignored
+                return null;
             }
-            return fileList;
+        }
+
+        public static List<WmTabFileEntry> GetMatchingVagMwTabs(string mwTabDir, string sgName)
+        {
+            List<WmTabFileEntry> mwTabFileList = new List<WmTabFileEntry>();
+            List<string> fileList = GetMatchingVagMwTabFiles(mwTabDir, sgName);
+            if (fileList == null)
+            {
+                return mwTabFileList;
+            }
+
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (string fileName in fileList)
+            {
+                List<MwTabEntry> mwTabList = ReadVagMwTab(fileName, true);
+                if (mwTabList == null)
+                {
+                    continue;
+                }
+                mwTabFileList.Add(new WmTabFileEntry(fileName, mwTabList));
+            }
+            return mwTabFileList;
         }
 
         public static bool IsTranslationRequired()
