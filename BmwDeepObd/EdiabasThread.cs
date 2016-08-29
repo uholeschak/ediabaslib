@@ -316,7 +316,7 @@ namespace BmwDeepObd
                         {
                             if (errorResetList != null && errorResetList.Any(ecu => string.CompareOrdinal(ecu, ecuInfo.Name) == 0))
                             {   // error reset requested
-                                Ediabas.ExecuteJob(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag ? "Fehlerspeicher_loeschen" : "FS_LOESCHEN");
+                                Ediabas.ExecuteJob(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw ? "FS_LOESCHEN" : "Fehlerspeicher_loeschen");
                             }
                         }
                         catch (Exception)
@@ -324,13 +324,13 @@ namespace BmwDeepObd
                             // ignored
                         }
 
-                        Ediabas.ExecuteJob(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag ? "Fehlerspeicher_abfragen" : "FS_LESEN");
+                        Ediabas.ExecuteJob(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw ? "FS_LESEN" : "Fehlerspeicher_abfragen");
 
                         List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
 
                         bool jobOk = false;
                         bool saeMode = false;
-                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
+                        if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                         {
                             if (resultSets.Count > 0)
                             {
@@ -402,7 +402,7 @@ namespace BmwDeepObd
                                     continue;
                                 }
 
-                                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
+                                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                                 {
                                     if (resultDictLocal.TryGetValue("FNR_WERT", out resultData))
                                     {

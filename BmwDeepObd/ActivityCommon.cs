@@ -110,7 +110,8 @@ namespace BmwDeepObd
         public enum ManufacturerType
         {
             Bmw = 0,
-            Vag = 1,
+            Vw = 1,
+            Audi = 2,
         }
 
         public delegate bool ProgressZipDelegate(int percent);
@@ -547,8 +548,11 @@ namespace BmwDeepObd
                 case ManufacturerType.Bmw:
                     return _activity.GetString(Resource.String.select_manufacturer_bmw);
 
-                case ManufacturerType.Vag:
-                    return _activity.GetString(Resource.String.select_manufacturer_vag);
+                case ManufacturerType.Vw:
+                    return _activity.GetString(Resource.String.select_manufacturer_vw);
+
+                case ManufacturerType.Audi:
+                    return _activity.GetString(Resource.String.select_manufacturer_audi);
             }
             return string.Empty;
         }
@@ -1211,7 +1215,8 @@ namespace BmwDeepObd
             List<string> manufacturerNames = new List<string>
             {
                 _activity.GetString(Resource.String.select_manufacturer_bmw),
-                _activity.GetString(Resource.String.select_manufacturer_vag),
+                _activity.GetString(Resource.String.select_manufacturer_vw),
+                _activity.GetString(Resource.String.select_manufacturer_audi),
             };
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity,
                 Android.Resource.Layout.SimpleListItemSingleChoice, manufacturerNames.ToArray());
@@ -1223,8 +1228,12 @@ namespace BmwDeepObd
                     listView.SetItemChecked(0, true);
                     break;
 
-                case ManufacturerType.Vag:
+                case ManufacturerType.Vw:
                     listView.SetItemChecked(1, true);
+                    break;
+
+                case ManufacturerType.Audi:
+                    listView.SetItemChecked(2, true);
                     break;
             }
             builder.SetView(listView);
@@ -1238,7 +1247,12 @@ namespace BmwDeepObd
                         break;
 
                     case 1:
-                        SelectedManufacturer = ManufacturerType.Vag;
+                        SelectedManufacturer = ManufacturerType.Vw;
+                        handler(sender, args);
+                        break;
+
+                    case 2:
+                        SelectedManufacturer = ManufacturerType.Audi;
                         handler(sender, args);
                         break;
                 }
@@ -1572,7 +1586,7 @@ namespace BmwDeepObd
 
         public EdInterfaceBase GetEdiabasInterfaceClass()
         {
-            if (SelectedManufacturer == ManufacturerType.Vag)
+            if (SelectedManufacturer != ManufacturerType.Bmw)
             {
                 return new EdInterfaceEdic();
             }
@@ -1990,6 +2004,22 @@ namespace BmwDeepObd
             {
                 dirName = Path.Combine(ecuPath, "dat.ukd", "en");
             }
+
+            string manufactName = string.Empty;
+            switch (SelectedManufacturer)
+            {
+                case ManufacturerType.Vw:
+                    manufactName = "vw";
+                    break;
+
+                case ManufacturerType.Audi:
+                    manufactName = "audi";
+                    break;
+            }
+            if (!string.IsNullOrEmpty(manufactName))
+            {
+                dirName = Path.Combine(dirName, manufactName);
+            }
             return dirName;
         }
 
@@ -2343,7 +2373,7 @@ namespace BmwDeepObd
         public static bool IsTranslationRequired()
         {
 #if true
-            if (SelectedManufacturer == ManufacturerType.Vag)
+            if (SelectedManufacturer != ManufacturerType.Bmw)
             {
                 return false;
             }

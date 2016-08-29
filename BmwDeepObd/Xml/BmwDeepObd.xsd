@@ -37,10 +37,17 @@
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
-      <xs:enumeration value="VAG">
+      <xs:enumeration value="VW">
         <xs:annotation>
           <xs:documentation>
-            Manufacturer VAG (VW Audi, Bentley, Scoda, Seat)
+            Manufacturer VW
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Audi">
+        <xs:annotation>
+          <xs:documentation>
+            Manufacturer Audi
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>

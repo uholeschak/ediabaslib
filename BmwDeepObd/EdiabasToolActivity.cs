@@ -760,7 +760,7 @@ namespace BmwDeepObd
                 {
                     _resultSelectListAdapter.Items.Add(result);
                 }
-                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
+                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                 {
                     if (string.Compare(jobInfo.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
                     {
