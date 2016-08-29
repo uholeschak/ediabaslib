@@ -5854,6 +5854,18 @@ namespace CarSimulator
                     }
                     if (!found)
                     {
+                        if (_receiveData.Length >= 4 && _receiveData[0] == 0x04 && _receiveData[2] == 0x29)
+                        {   // read mwblock
+                            found = true;
+                            Debug.WriteLine("Dummy mwblock: {0:X02}", _receiveData[3]);
+                            byte[] dummyResponse = { 0x0F, 0x00, 0xE7, 0x10, 0x00, 0x00, 0x10, 0x00, 0x00, 0x10, 0x00, 0x00, 0x10, 0x00, 0x00 };
+                            activeResponse = new ResponseEntry(_receiveData, dummyResponse, null);
+                            activeResponse.ResponseMultiList.Add(dummyResponse);
+                            telBlockIndex = 0;
+                        }
+                    }
+                    if (!found)
+                    {
                         Debug.WriteLine("Not found: " + text);
                         requestInvalid = true;
                     }
