@@ -108,7 +108,7 @@ namespace BmwDeepObd
         private const string SharedAppName = "de.holeschak.bmw_deep_obd";
         private const string AppFolderName = "de.holeschak.bmw_deep_obd";
         private const string EcuDirNameBmw = "Ecu";
-        private const string EcuDirNameVw = "EcuVag";
+        private const string EcuDirNameVag = "EcuVag";
         private const string EcuDownloadUrlBmw = @"http://www.holeschak.de/BmwDeepObd/Ecu2.xml";
         private const string EcuDownloadUrlVag = @"http://www.holeschak.de/BmwDeepObd/EcuVag1.xml";
         private const string InfoXmlName = "Info.xml";
@@ -168,10 +168,10 @@ namespace BmwDeepObd
             {
                 switch (ActivityCommon.SelectedManufacturer)
                 {
-                    case ActivityCommon.ManufacturerType.Vag:
-                        return EcuDirNameVw;
+                    case ActivityCommon.ManufacturerType.Bmw:
+                        return EcuDirNameBmw;
                 }
-                return EcuDirNameBmw;
+                return EcuDirNameVag;
             }
         }
 
@@ -181,10 +181,10 @@ namespace BmwDeepObd
             {
                 switch (ActivityCommon.SelectedManufacturer)
                 {
-                    case ActivityCommon.ManufacturerType.Vag:
-                        return EcuDownloadUrlVag;
+                    case ActivityCommon.ManufacturerType.Bmw:
+                        return EcuDownloadUrlBmw;
                 }
-                return EcuDownloadUrlBmw;
+                return EcuDownloadUrlVag;
             }
         }
 
@@ -194,10 +194,10 @@ namespace BmwDeepObd
             {
                 switch (ActivityCommon.SelectedManufacturer)
                 {
-                    case ActivityCommon.ManufacturerType.Vag:
-                        return EcuZipSizeVag;
+                    case ActivityCommon.ManufacturerType.Bmw:
+                        return EcuZipSizeBmw;
                 }
-                return EcuZipSizeBmw;
+                return EcuZipSizeVag;
             }
         }
 
@@ -207,10 +207,10 @@ namespace BmwDeepObd
             {
                 switch (ActivityCommon.SelectedManufacturer)
                 {
-                    case ActivityCommon.ManufacturerType.Vag:
-                        return EcuExtractSizeVag;
+                    case ActivityCommon.ManufacturerType.Bmw:
+                        return EcuExtractSizeBmw;
                 }
-                return EcuExtractSizeBmw;
+                return EcuExtractSizeVag;
             }
         }
 
@@ -608,7 +608,7 @@ namespace BmwDeepObd
                 case Resource.Id.menu_manufacturer:
                     _activityCommon.SelectManufacturer((sender, args) =>
                     {
-                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
+                        if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                         {
                             _activityCommon.SelectedInterface = ActivityCommon.InterfaceType.Bluetooth;
                         }
@@ -1342,7 +1342,7 @@ namespace BmwDeepObd
                                 }
                                 else
                                 {
-                                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
+                                    if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                                     {
                                         Int64 errorCode = 0;
                                         EdiabasNet.ResultData resultData;

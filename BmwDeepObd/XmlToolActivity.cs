@@ -159,10 +159,10 @@ namespace BmwDeepObd
             {
                 switch (ActivityCommon.SelectedManufacturer)
                 {
-                    case ActivityCommon.ManufacturerType.Vag:
-                        return ManualConfigNameVag;
+                    case ActivityCommon.ManufacturerType.Bmw:
+                        return ManualConfigNameBmw;
                 }
-                return ManualConfigNameBmw;
+                return ManualConfigNameVag;
             }
         }
 
@@ -252,7 +252,7 @@ namespace BmwDeepObd
                     _manualConfigIdx = 0;
                 }
             }
-            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag && _manualConfigIdx == 0)
+            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && _manualConfigIdx == 0)
             {
                 _manualConfigIdx = 1;
             }
@@ -1709,9 +1709,9 @@ namespace BmwDeepObd
                         }
                     }
 
-                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
+                    if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                     {
-                        if (string.IsNullOrEmpty(ecuInfo.MwTabFileName))
+                        if (string.IsNullOrEmpty(ecuInfo.MwTabFileName) || !File.Exists(ecuInfo.MwTabFileName))
                         {
                             string mwTabName = null;
                             if (string.Compare(ecuInfo.Sgbd, "Mot2000", StringComparison.OrdinalIgnoreCase) == 0)
@@ -1761,7 +1761,7 @@ namespace BmwDeepObd
                             }
                             if (string.Compare(ecuInfo.Sgbd, "Mot1281", StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                mwTabName = Path.Combine(_datUkdDir, "audi", "mwtabs", "mot1281_vereinheitlichte_Messwertebloecke_V_1_27_0606_21.xml");
+                                mwTabName = Path.Combine(_datUkdDir, "mwtabs", "mot1281_vereinheitlichte_Messwertebloecke_V_1_27_0606_21.xml");
                             }
                             ecuInfo.MwTabFileName = mwTabName;
                         }
@@ -1791,7 +1791,7 @@ namespace BmwDeepObd
         {
             foreach (XmlToolEcuActivity.JobInfo job in jobList)
             {
-                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag && ecuInfo.MwTabList != null)
+                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && ecuInfo.MwTabList != null)
                 {
                     if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
                     {
@@ -1970,7 +1970,7 @@ namespace BmwDeepObd
 
         private List<string> GetBestMatchingMwTab(EcuInfo ecuInfo)
         {
-            List<ActivityCommon.MwTabFileEntry> wmTabList = ActivityCommon.GetMatchingVagMwTabs(Path.Combine(_datUkdDir, "vw", "mwtabs"), ecuInfo.Sgbd);
+            List<ActivityCommon.MwTabFileEntry> wmTabList = ActivityCommon.GetMatchingVagMwTabs(Path.Combine(_datUkdDir, "mwtabs"), ecuInfo.Sgbd);
             SortedSet<int> mwBlocks = ActivityCommon.ExtractVagMwBlocks(wmTabList);
             string readCommand = GetReadCommand(ecuInfo);
             Dictionary<int, string> unitDict = new Dictionary<int, string>();
@@ -2281,7 +2281,7 @@ namespace BmwDeepObd
             XAttribute mwtabAttr = jobsNode?.Attribute("mwtab");
             if (mwtabAttr != null)
             {
-                mwTabFileName = Path.Combine(_datUkdDir, mwtabAttr.Value);
+                mwTabFileName = Path.Combine(_ecuDir, mwtabAttr.Value);
             }
             return sgbdAttr?.Value;
         }
@@ -2346,7 +2346,7 @@ namespace BmwDeepObd
                 jobsNodeNew.Add(new XAttribute("sgbd", ecuInfo.Sgbd));
                 if (!string.IsNullOrEmpty(ecuInfo.MwTabFileName))
                 {
-                    string relativePath = ActivityCommon.MakeRelativePath(_datUkdDir, ecuInfo.MwTabFileName);
+                    string relativePath = ActivityCommon.MakeRelativePath(_ecuDir, ecuInfo.MwTabFileName);
                     if (!string.IsNullOrEmpty(relativePath))
                     {
                         jobsNodeNew.Add(new XAttribute("mwtab", relativePath));
@@ -2869,8 +2869,12 @@ namespace BmwDeepObd
                         manufacturerName = "BMW";
                         break;
 
-                    case ActivityCommon.ManufacturerType.Vag:
-                        manufacturerName = "VAG";
+                    case ActivityCommon.ManufacturerType.Vw:
+                        manufacturerName = "VW";
+                        break;
+
+                    case ActivityCommon.ManufacturerType.Audi:
+                        manufacturerName = "Audi";
                         break;
                 }
                 globalNode.Add(new XAttribute("manufacturer", manufacturerName));

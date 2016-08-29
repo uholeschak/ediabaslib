@@ -279,7 +279,7 @@ namespace BmwDeepObd
 
         public static bool IsValidJob(JobInfo job)
         {
-            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
+            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
                 if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
                 {
@@ -617,7 +617,7 @@ namespace BmwDeepObd
                 _layoutJobConfig.Visibility = ViewStates.Visible;
                 IEnumerable<ResultInfo> orderedResults;
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Vag)
+                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                 {
                     orderedResults = _selectedJob.Results.OrderBy(x => x.MwTabEntry?.BlockNumber * 1000 + x.MwTabEntry?.ValueIndex);
                 }
