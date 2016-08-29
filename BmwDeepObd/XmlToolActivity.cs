@@ -1713,62 +1713,50 @@ namespace BmwDeepObd
                     {
                         if (string.IsNullOrEmpty(ecuInfo.MwTabFileName) || !File.Exists(ecuInfo.MwTabFileName))
                         {
-                            string mwTabName = null;
-                            if (string.Compare(ecuInfo.Sgbd, "Mot2000", StringComparison.OrdinalIgnoreCase) == 0)
+                            List<string> mwTabFileNames = GetBestMatchingMwTab(ecuInfo);
+                            if (mwTabFileNames.Count == 1)
                             {
-                                List<string> mwTabFileNames = GetBestMatchingMwTab(ecuInfo);
-                                if (mwTabFileNames.Count == 1)
+                                ecuInfo.MwTabFileName = mwTabFileNames[0];
+                                ecuInfo.MwTabList = ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
+                                ecuInfo.ReadCommand = GetReadCommand(ecuInfo);
+                            }
+                            else
+                            {
+                                RunOnUiThread(() =>
                                 {
-                                    mwTabName = mwTabFileNames[0];
-                                }
-                                else
-                                {
-                                    RunOnUiThread(() =>
+                                    SelectMwTabFromList(mwTabFileNames, name =>
                                     {
-                                        SelectMwTabFromList(mwTabFileNames, name =>
+                                        if (string.IsNullOrEmpty(name))
                                         {
-                                            if (string.IsNullOrEmpty(name))
+                                            ReadJobThreadDone(ecuInfo, progress, true);
+                                        }
+                                        else
+                                        {
+                                            ecuInfo.MwTabFileName = name;
+                                            ecuInfo.MwTabList = ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
+                                            ecuInfo.ReadCommand = GetReadCommand(ecuInfo);
+                                            _jobThread = new Thread(() =>
                                             {
-                                                ReadJobThreadDone(ecuInfo, progress, true);
-                                            }
-                                            else
-                                            {
-                                                ecuInfo.MwTabFileName = name;
-                                                ecuInfo.MwTabList = ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
-                                                ecuInfo.ReadCommand = GetReadCommand(ecuInfo);
-                                                _jobThread = new Thread(() =>
+                                                readFailed = false;
+                                                try
                                                 {
-                                                    readFailed = false;
-                                                    try
-                                                    {
-                                                        JobsReadThreadPart2(ecuInfo, jobList);
-                                                    }
-                                                    catch (Exception)
-                                                    {
-                                                        readFailed = true;
-                                                    }
-                                                    RunOnUiThread(() =>
-                                                    {
-                                                        ReadJobThreadDone(ecuInfo, progress, readFailed);
-                                                    });
+                                                    JobsReadThreadPart2(ecuInfo, jobList);
+                                                }
+                                                catch (Exception)
+                                                {
+                                                    readFailed = true;
+                                                }
+                                                RunOnUiThread(() =>
+                                                {
+                                                    ReadJobThreadDone(ecuInfo, progress, readFailed);
                                                 });
-                                                _jobThread.Start();
-                                            }
-                                        });
+                                            });
+                                            _jobThread.Start();
+                                        }
                                     });
-                                    return;
-                                }
+                                });
+                                return;
                             }
-                            if (string.Compare(ecuInfo.Sgbd, "Mot1281", StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                mwTabName = Path.Combine(_datUkdDir, "mwtabs", "mot1281_vereinheitlichte_Messwertebloecke_V_1_27_0606_21.xml");
-                            }
-                            ecuInfo.MwTabFileName = mwTabName;
-                        }
-                        if (!string.IsNullOrEmpty(ecuInfo.MwTabFileName))
-                        {
-                            ecuInfo.MwTabList = ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
-                            ecuInfo.ReadCommand = GetReadCommand(ecuInfo);
                         }
                     }
 
