@@ -102,8 +102,7 @@ namespace BmwDeepObd
         private const string DisplayNamePage = "!PAGE_NAME";
         private const string DisplayNameJobPrefix = "!JOB#";
         private const string DisplayNameEcuPrefix = "!ECU#";
-        private const string ManualConfigNameBmw = "Manual";
-        private const string ManualConfigNameVag = "ManualVag";
+        private const string ManualConfigName = "Manual";
         private const string UnknownVinConfigName = "Unknown";
         private static readonly string[] EcuFileNames =
         {
@@ -152,19 +151,6 @@ namespace BmwDeepObd
         private string _vin = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
         private bool _ecuListTranslated;
-
-        private string ManualConfigName
-        {
-            get
-            {
-                switch (ActivityCommon.SelectedManufacturer)
-                {
-                    case ActivityCommon.ManufacturerType.Bmw:
-                        return ManualConfigNameBmw;
-                }
-                return ManualConfigNameVag;
-            }
-        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -3219,6 +3205,16 @@ namespace BmwDeepObd
                 return null;
             }
             string configBaseDir = Path.Combine(_appDataDir, "Configurations");
+            switch (ActivityCommon.SelectedManufacturer)
+            {
+                case ActivityCommon.ManufacturerType.Vw:
+                    configBaseDir += "Vw";
+                    break;
+
+                case ActivityCommon.ManufacturerType.Audi:
+                    configBaseDir += "Audi";
+                    break;
+            }
             string vin = _vin;
             if (_manualConfigIdx > 0)
             {
