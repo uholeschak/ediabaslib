@@ -259,14 +259,21 @@ namespace BmwDeepObd
                     }
                 }
 
-                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (string.Compare(_manufacturerName, "VW", StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    _manufacturerType = ActivityCommon.ManufacturerType.Vw;
-                }
-                else if (string.Compare(_manufacturerName, "Audi", StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(_manufacturerName, "Audi", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _manufacturerType = ActivityCommon.ManufacturerType.Audi;
+                }
+                else if (string.Compare(_manufacturerName, "Seat", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    _manufacturerType = ActivityCommon.ManufacturerType.Seat;
+                }
+                else if (string.Compare(_manufacturerName, "Skoda", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    _manufacturerType = ActivityCommon.ManufacturerType.Skoda;
+                }
+                else if (string.Compare(_manufacturerName, "VW", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    _manufacturerType = ActivityCommon.ManufacturerType.Vw;
                 }
                 else
                 {

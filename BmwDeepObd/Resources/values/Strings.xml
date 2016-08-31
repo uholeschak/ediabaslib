@@ -154,8 +154,10 @@
   <!-- Manufacturer selection -->
   <string name="select_manufacturer">Select manufacturer</string>
   <string name="select_manufacturer_bmw">BMW</string>
-  <string name="select_manufacturer_vw">VW</string>
   <string name="select_manufacturer_audi">Audi</string>
+  <string name="select_manufacturer_seat">Seat</string>
+  <string name="select_manufacturer_skoda">Skoda</string>
+  <string name="select_manufacturer_vw">VW</string>
 
   <!-- Wi-Fi-->
   <string name="connected_with_wifi_adapter">You are currently connected to a Wi-Fi adapter.\nFor internet access disconnection of the adapter is required.\nDo you want to disable Wi-Fi now?</string>
