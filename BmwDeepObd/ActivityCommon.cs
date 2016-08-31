@@ -2238,6 +2238,7 @@ namespace BmwDeepObd
                                 comment = reader.ReadInnerXml();
                             }
                         }
+                        comment = Regex.Replace(comment, @"\\.", string.Empty, RegexOptions.Multiline);
 
                         double? valueMin = null;
                         XElement minNode = measureNode.Element("analogerSWunten");
