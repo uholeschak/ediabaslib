@@ -2170,6 +2170,7 @@ namespace BmwDeepObd
         {
             try
             {
+                Regex commentRegex = new Regex(@"(^I|\\(N[YZ ]|.))", RegexOptions.Multiline);
                 XDocument xmlDoc = XDocument.Load(fileName);
                 if (xmlDoc.Root == null)
                 {
@@ -2238,7 +2239,7 @@ namespace BmwDeepObd
                                 comment = reader.ReadInnerXml();
                             }
                         }
-                        comment = Regex.Replace(comment, @"\\.", string.Empty, RegexOptions.Multiline);
+                        comment = commentRegex.Replace(comment, string.Empty);
 
                         double? valueMin = null;
                         XElement minNode = measureNode.Element("analogerSWunten");
