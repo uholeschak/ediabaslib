@@ -109,9 +109,11 @@ namespace BmwDeepObd
 
         public enum ManufacturerType
         {
-            Bmw = 0,
-            Vw = 1,
-            Audi = 2,
+            Bmw,
+            Audi,
+            Seat,
+            Skoda,
+            Vw,
         }
 
         public delegate bool ProgressZipDelegate(int percent);
@@ -548,11 +550,18 @@ namespace BmwDeepObd
                 case ManufacturerType.Bmw:
                     return _activity.GetString(Resource.String.select_manufacturer_bmw);
 
+                case ManufacturerType.Audi:
+                    return _activity.GetString(Resource.String.select_manufacturer_audi);
+
+                case ManufacturerType.Seat:
+                    return _activity.GetString(Resource.String.select_manufacturer_seat);
+
+                case ManufacturerType.Skoda:
+                    return _activity.GetString(Resource.String.select_manufacturer_skoda);
+
                 case ManufacturerType.Vw:
                     return _activity.GetString(Resource.String.select_manufacturer_vw);
 
-                case ManufacturerType.Audi:
-                    return _activity.GetString(Resource.String.select_manufacturer_audi);
             }
             return string.Empty;
         }
@@ -1215,8 +1224,10 @@ namespace BmwDeepObd
             List<string> manufacturerNames = new List<string>
             {
                 _activity.GetString(Resource.String.select_manufacturer_bmw),
-                _activity.GetString(Resource.String.select_manufacturer_vw),
                 _activity.GetString(Resource.String.select_manufacturer_audi),
+                _activity.GetString(Resource.String.select_manufacturer_seat),
+                _activity.GetString(Resource.String.select_manufacturer_skoda),
+                _activity.GetString(Resource.String.select_manufacturer_vw),
             };
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity,
                 Android.Resource.Layout.SimpleListItemSingleChoice, manufacturerNames.ToArray());
@@ -1228,12 +1239,20 @@ namespace BmwDeepObd
                     listView.SetItemChecked(0, true);
                     break;
 
-                case ManufacturerType.Vw:
+                case ManufacturerType.Audi:
                     listView.SetItemChecked(1, true);
                     break;
 
-                case ManufacturerType.Audi:
+                case ManufacturerType.Seat:
                     listView.SetItemChecked(2, true);
+                    break;
+
+                case ManufacturerType.Skoda:
+                    listView.SetItemChecked(3, true);
+                    break;
+
+                case ManufacturerType.Vw:
+                    listView.SetItemChecked(4, true);
                     break;
             }
             builder.SetView(listView);
@@ -1247,12 +1266,22 @@ namespace BmwDeepObd
                         break;
 
                     case 1:
-                        SelectedManufacturer = ManufacturerType.Vw;
+                        SelectedManufacturer = ManufacturerType.Audi;
                         handler(sender, args);
                         break;
 
                     case 2:
-                        SelectedManufacturer = ManufacturerType.Audi;
+                        SelectedManufacturer = ManufacturerType.Seat;
+                        handler(sender, args);
+                        break;
+
+                    case 3:
+                        SelectedManufacturer = ManufacturerType.Skoda;
+                        handler(sender, args);
+                        break;
+
+                    case 4:
+                        SelectedManufacturer = ManufacturerType.Vw;
                         handler(sender, args);
                         break;
                 }
@@ -2008,12 +2037,20 @@ namespace BmwDeepObd
             string manufactName = string.Empty;
             switch (SelectedManufacturer)
             {
-                case ManufacturerType.Vw:
-                    manufactName = "vw";
-                    break;
-
                 case ManufacturerType.Audi:
                     manufactName = "audi";
+                    break;
+
+                case ManufacturerType.Seat:
+                    manufactName = "seat";
+                    break;
+
+                case ManufacturerType.Skoda:
+                    manufactName = "skoda";
+                    break;
+
+                case ManufacturerType.Vw:
+                    manufactName = "vw";
                     break;
             }
             if (!string.IsNullOrEmpty(manufactName))

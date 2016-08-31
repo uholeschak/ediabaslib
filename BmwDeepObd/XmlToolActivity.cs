@@ -1703,8 +1703,6 @@ namespace BmwDeepObd
                             if (mwTabFileNames.Count == 1)
                             {
                                 ecuInfo.MwTabFileName = mwTabFileNames[0];
-                                ecuInfo.MwTabList = ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
-                                ecuInfo.ReadCommand = GetReadCommand(ecuInfo);
                             }
                             else
                             {
@@ -1745,6 +1743,8 @@ namespace BmwDeepObd
                             }
                         }
                     }
+                    ecuInfo.MwTabList = ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
+                    ecuInfo.ReadCommand = GetReadCommand(ecuInfo);
 
                     JobsReadThreadPart2(ecuInfo, jobList);
                 }
@@ -2843,12 +2843,20 @@ namespace BmwDeepObd
                         manufacturerName = "BMW";
                         break;
 
-                    case ActivityCommon.ManufacturerType.Vw:
-                        manufacturerName = "VW";
-                        break;
-
                     case ActivityCommon.ManufacturerType.Audi:
                         manufacturerName = "Audi";
+                        break;
+
+                    case ActivityCommon.ManufacturerType.Seat:
+                        manufacturerName = "Seat";
+                        break;
+
+                    case ActivityCommon.ManufacturerType.Skoda:
+                        manufacturerName = "Skoda";
+                        break;
+
+                    case ActivityCommon.ManufacturerType.Vw:
+                        manufacturerName = "VW";
                         break;
                 }
                 globalNode.Add(new XAttribute("manufacturer", manufacturerName));
@@ -3207,12 +3215,20 @@ namespace BmwDeepObd
             string configBaseDir = Path.Combine(_appDataDir, "Configurations");
             switch (ActivityCommon.SelectedManufacturer)
             {
-                case ActivityCommon.ManufacturerType.Vw:
-                    configBaseDir += "Vw";
-                    break;
-
                 case ActivityCommon.ManufacturerType.Audi:
                     configBaseDir += "Audi";
+                    break;
+
+                case ActivityCommon.ManufacturerType.Seat:
+                    configBaseDir += "Seat";
+                    break;
+
+                case ActivityCommon.ManufacturerType.Skoda:
+                    configBaseDir += "Skoda";
+                    break;
+
+                case ActivityCommon.ManufacturerType.Vw:
+                    configBaseDir += "Vw";
                     break;
             }
             string vin = _vin;

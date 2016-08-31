@@ -37,17 +37,31 @@
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
-      <xs:enumeration value="VW">
-        <xs:annotation>
-          <xs:documentation>
-            Manufacturer VW
-          </xs:documentation>
-        </xs:annotation>
-      </xs:enumeration>
       <xs:enumeration value="Audi">
         <xs:annotation>
           <xs:documentation>
             Manufacturer Audi
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Seat">
+        <xs:annotation>
+          <xs:documentation>
+            Manufacturer Seat
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Skoda">
+        <xs:annotation>
+          <xs:documentation>
+            Manufacturer Skoda
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="VW">
+        <xs:annotation>
+          <xs:documentation>
+            Manufacturer VW
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
