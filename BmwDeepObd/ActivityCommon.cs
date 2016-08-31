@@ -2191,7 +2191,20 @@ namespace BmwDeepObd
                 foreach (XElement ecuNode in ecuListNode.Elements("Ecu"))
                 {
                     XElement sysNode = ecuNode.Element("SysName");
-                    string sysName = sysNode?.Value;
+                    if (sysNode == null)
+                    {
+                        continue;
+                    }
+                    if (sysNode.Attribute("Type") != null)
+                    {
+                        continue;
+                    }
+                    string sysName;
+                    using (XmlReader reader = sysNode.CreateReader())
+                    {
+                        reader.MoveToContent();
+                        sysName = reader.ReadInnerXml();
+                    }
                     if (string.IsNullOrWhiteSpace(sysName))
                     {
                         continue;
