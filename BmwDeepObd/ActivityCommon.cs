@@ -57,6 +57,18 @@ namespace BmwDeepObd
             public double FreeSizeBytes { get; set; }
         }
 
+        public class VagEcuEntry
+        {
+            public VagEcuEntry(string sysName, int address)
+            {
+                SysName = sysName;
+                Address = address;
+            }
+
+            public string SysName { get; }
+            public int Address { get; }
+        }
+
         public class MwTabEntry
         {
             public MwTabEntry(int blockNumber, int valueIndex, string description, string comment, string valueUnit, string valueType, double? valueMin, double? valueMax)
@@ -2161,6 +2173,52 @@ namespace BmwDeepObd
                 return textList;
             }
             return textList;
+        }
+
+        public static List<VagEcuEntry> ReadVagEcuList(string ecuPath)
+        {
+            try
+            {
+                string datUkdPath = GetVagDatUkdDir(ecuPath);
+                string xmlFile = Path.Combine(datUkdPath, "xml", "GWVL-ECU_config.xml");
+                XDocument xmlDoc = XDocument.Load(xmlFile);
+                XElement ecuListNode = xmlDoc.Root?.Element("EcuList");
+                if (ecuListNode == null)
+                {
+                    return null;
+                }
+                List<VagEcuEntry> ecuList = new List<VagEcuEntry>();
+                foreach (XElement ecuNode in ecuListNode.Elements("Ecu"))
+                {
+                    XElement sysNode = ecuNode.Element("SysName");
+                    string sysName = sysNode?.Value;
+                    if (string.IsNullOrWhiteSpace(sysName))
+                    {
+                        continue;
+                    }
+
+                    XAttribute attrAddr = ecuNode.Attribute("AddrDez");
+                    if (attrAddr == null)
+                    {
+                        continue;
+                    }
+                    int address;
+                    try
+                    {
+                        address = XmlConvert.ToInt32(attrAddr.Value);
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+                    ecuList.Add(new VagEcuEntry(sysName, address));
+                }
+                return ecuList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         // Convert russian mwtab xml files first with (linux):
