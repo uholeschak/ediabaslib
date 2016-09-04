@@ -2148,6 +2148,7 @@ namespace BmwDeepObd
             {
                 int compareCount = 0;
                 int matchCount = 0;
+                //Log.Debug("Match", "File: " + mwTabFileEntry.FileName);
                 foreach (ActivityCommon.MwTabEntry mwTabEntry in mwTabFileEntry.MwTabList)
                 {
                     int key = (mwTabEntry.BlockNumber << 16) + mwTabEntry.ValueIndex;
@@ -2155,9 +2156,14 @@ namespace BmwDeepObd
                     if (unitDict.TryGetValue(key, out unitText))
                     {
                         compareCount++;
-                        if (string.Compare(unitText, mwTabEntry.ValueUnit, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (mwTabEntry.ValueUnit.ToLowerInvariant().Contains(unitText.ToLowerInvariant()))
                         {
+                            //Log.Debug("Match", "Match: '" + unitText + "' '" + mwTabEntry.ValueUnit + "'");
                             matchCount++;
+                        }
+                        else
+                        {
+                            //Log.Debug("Match", "Mismatch: '" + unitText + "' '" + mwTabEntry.ValueUnit + "'");
                         }
                     }
                 }
