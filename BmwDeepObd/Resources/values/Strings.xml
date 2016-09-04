@@ -201,7 +201,8 @@
   <string name="button_xml_tool_edit">Edit</string>
   <string name="button_xml_tool_save">Save</string>
   <string name="xml_tool_analyze">Reading vehicle data</string>
-  <string name="xml_tool_search_ecu">Searching for ECUs.\nDetected: {0}/{1}</string>
+  <string name="xml_tool_clear_ecus">Should the existing ECUs be removed?</string>
+  <string name="xml_tool_search_ecus">Searching for ECUs.\nDetected: {0}/{1}</string>
   <string name="xml_tool_select_sgbd">Select vehicle type</string>
   <string name="xml_tool_no_response">No response from vehicle</string>
   <string name="xml_tool_no_response_manual">No response from vehicle.\nFor K-LINE vehicles an USB or Deep OBD adapter is required.\nFor older vehicles only manual configuaration is possible.\nTherefore you have to identify the required .GRP or .PRG files on the info page of each ECU in INPA.\nDo you want to switch to <a href='http://ediabaslib.codeplex.com/wikipage?title=Configuration%20Generator#ManualConfiguration'>manual configuration</a>?</string>

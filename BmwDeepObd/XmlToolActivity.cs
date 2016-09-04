@@ -1119,6 +1119,26 @@ namespace BmwDeepObd
                 switch (args.Item.ItemId)
                 {
                     case Resource.Id.menu_xml_tool_edit_detect:
+                        if (_ecuList.Count > 0)
+                        {
+                            new AlertDialog.Builder(this)
+                                .SetPositiveButton(Resource.String.button_yes, (s, a) =>
+                                {
+                                    _ecuList.Clear();
+                                    _ecuListTranslated = false;
+                                    UpdateDisplay();
+                                    ExecuteAnalyzeJob();
+                                })
+                                .SetNegativeButton(Resource.String.button_no, (s, a) =>
+                                {
+                                    ExecuteAnalyzeJob();
+                                })
+                                .SetCancelable(true)
+                                .SetMessage(Resource.String.xml_tool_clear_ecus)
+                                .SetTitle(Resource.String.alert_title_question)
+                                .Show();
+                            break;
+                        }
                         ExecuteAnalyzeJob();
                         break;
 
@@ -1598,8 +1618,8 @@ namespace BmwDeepObd
 
         private void ExecuteAnalyzeJobVag()
         {
-            List<ActivityCommon.VagEcuEntry> ecuList = ActivityCommon.ReadVagEcuList(_ecuDir);
-            if ((ecuList == null) || (ecuList.Count == 0))
+            List<ActivityCommon.VagEcuEntry> ecuVagList = ActivityCommon.ReadVagEcuList(_ecuDir);
+            if ((ecuVagList == null) || (ecuVagList.Count == 0))
             {
                 _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_ecu_info_failed), Resource.String.alert_title_error);
                 return;
@@ -1607,9 +1627,6 @@ namespace BmwDeepObd
 
             EdiabasOpen();
             _vin = string.Empty;
-            _ecuList.Clear();
-            _ecuListTranslated = false;
-            UpdateDisplay();
 
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
             progress.SetCancelable(false);
@@ -1631,9 +1648,9 @@ namespace BmwDeepObd
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
             {
-                List<EcuInfo> ecuListTemp = new List<EcuInfo>();
                 int index = 0;
-                foreach (ActivityCommon.VagEcuEntry ecuEntry in ecuList)
+                int detectCount = 0;
+                foreach (ActivityCommon.VagEcuEntry ecuEntry in ecuVagList)
                 {
                     if (_ediabasJobAbort)
                     {
@@ -1646,13 +1663,13 @@ namespace BmwDeepObd
                     }
 #endif
                     int localIndex = index;
-                    int ecuCount = ecuListTemp.Count;
+                    int localDetectCount = detectCount;
                     RunOnUiThread(() =>
                     {
                         if (!_ediabasJobAbort)
                         {
-                            progress.Progress = 100 * localIndex / ecuList.Count;
-                            progress.SetMessage(string.Format(GetString(Resource.String.xml_tool_search_ecu), ecuCount, localIndex));
+                            progress.Progress = 100 * localIndex / ecuVagList.Count;
+                            progress.SetMessage(string.Format(GetString(Resource.String.xml_tool_search_ecus), localDetectCount, localIndex));
                         }
                     }
                     );
@@ -1676,8 +1693,13 @@ namespace BmwDeepObd
                                     string result = (string)resultData.OpData;
                                     if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
+                                        detectCount++;
                                         string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
-                                        ecuListTemp.Add(new EcuInfo(ecuName, ecuEntry.Address, string.Empty, ecuName, string.Empty));
+                                        bool ecuFound = _ecuList.Any(ecuInfo => string.Compare(ecuInfo.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0);
+                                        if (!ecuFound)
+                                        {
+                                            _ecuList.Add(new EcuInfo(ecuName, ecuEntry.Address, string.Empty, ecuName, string.Empty));
+                                        }
                                     }
                                 }
                             }
@@ -1688,10 +1710,6 @@ namespace BmwDeepObd
                         // ignored
                     }
                     index++;
-                }
-                if (!_ediabasJobAbort)
-                {
-                    _ecuList.AddRange(ecuListTemp);
                 }
 
                 RunOnUiThread(() =>
