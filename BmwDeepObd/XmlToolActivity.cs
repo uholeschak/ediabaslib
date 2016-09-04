@@ -1112,10 +1112,16 @@ namespace BmwDeepObd
         {
             Android.Support.V7.Widget.PopupMenu popupEdit = new Android.Support.V7.Widget.PopupMenu(this, anchor);
             popupEdit.Inflate(Resource.Menu.xml_tool_edit);
+            IMenuItem detectMenuMenu = popupEdit.Menu.FindItem(Resource.Id.menu_xml_tool_edit_detect);
+            detectMenuMenu?.SetVisible(ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw);
             popupEdit.MenuItemClick += (sender, args) =>
             {
                 switch (args.Item.ItemId)
                 {
+                    case Resource.Id.menu_xml_tool_edit_detect:
+                        ExecuteAnalyzeJob();
+                        break;
+
                     case Resource.Id.menu_xml_tool_edit_grp:
                     case Resource.Id.menu_xml_tool_edit_prg:
                         SelectSgbdFile(args.Item.ItemId == Resource.Id.menu_xml_tool_edit_grp);
@@ -1254,6 +1260,16 @@ namespace BmwDeepObd
         }
 
         private void ExecuteAnalyzeJob()
+        {
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+            {
+                ExecuteAnalyzeJobBmw();
+                return;
+            }
+            ExecuteAnalyzeJobVag();
+        }
+
+        private void ExecuteAnalyzeJobBmw()
         {
             EdiabasOpen();
             _vin = string.Empty;
@@ -1574,6 +1590,123 @@ namespace BmwDeepObd
                             _commErrorsOccured = true;
                             _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_msg_ecu_error), Resource.String.alert_title_warning);
                         }
+                    }
+                });
+            });
+            _jobThread.Start();
+        }
+
+        private void ExecuteAnalyzeJobVag()
+        {
+            List<ActivityCommon.VagEcuEntry> ecuList = ActivityCommon.ReadVagEcuList(_ecuDir);
+            if ((ecuList == null) || (ecuList.Count == 0))
+            {
+                _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_ecu_info_failed), Resource.String.alert_title_error);
+                return;
+            }
+
+            EdiabasOpen();
+            _vin = string.Empty;
+            _ecuList.Clear();
+            _ecuListTranslated = false;
+            UpdateDisplay();
+
+            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
+            progress.SetCancelable(false);
+            progress.SetMessage(GetString(Resource.String.xml_tool_analyze));
+            progress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
+            progress.Progress = 0;
+            progress.Max = 100;
+            progress.SetButton((int) DialogButtonType.Negative, GetString(Resource.String.button_abort), (sender, args) =>
+            {
+                _ediabasJobAbort = true;
+                progress = new Android.App.ProgressDialog(this);
+                progress.SetCancelable(false);
+                progress.SetMessage(GetString(Resource.String.xml_tool_aborting));
+                progress.Show();
+            });
+            progress.Show();
+            _activityCommon.SetScreenLock(true);
+
+            _ediabasJobAbort = false;
+            _jobThread = new Thread(() =>
+            {
+                List<EcuInfo> ecuListTemp = new List<EcuInfo>();
+                int index = 0;
+                foreach (ActivityCommon.VagEcuEntry ecuEntry in ecuList)
+                {
+                    if (_ediabasJobAbort)
+                    {
+                        break;
+                    }
+#if false
+                    if (index > 3)
+                    {
+                        break;
+                    }
+#endif
+                    int localIndex = index;
+                    int ecuCount = ecuListTemp.Count;
+                    RunOnUiThread(() =>
+                    {
+                        if (!_ediabasJobAbort)
+                        {
+                            progress.Progress = 100 * localIndex / ecuList.Count;
+                            progress.SetMessage(string.Format(GetString(Resource.String.xml_tool_search_ecu), ecuCount, localIndex));
+                        }
+                    }
+                    );
+                    try
+                    {
+                        _ediabas.ResolveSgbdFile(ecuEntry.SysName);
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+
+                        _ediabas.ExecuteJob("Steuergeraeteversion_abfragen");
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
+                            EdiabasNet.ResultData resultData;
+                            if (resultDict.TryGetValue("JOBSTATUS", out resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    string result = (string)resultData.OpData;
+                                    if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
+                                        ecuListTemp.Add(new EcuInfo(ecuName, ecuEntry.Address, string.Empty, ecuName, string.Empty));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    index++;
+                }
+                if (!_ediabasJobAbort)
+                {
+                    _ecuList.AddRange(ecuListTemp);
+                }
+
+                RunOnUiThread(() =>
+                {
+                    progress.Hide();
+                    progress.Dispose();
+                    _activityCommon.SetScreenLock(false);
+
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+
+                    if (!_ediabasJobAbort && _ecuList.Count == 0)
+                    {
+                        _commErrorsOccured = true;
+                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_no_response), Resource.String.alert_title_error);
                     }
                 });
             });
