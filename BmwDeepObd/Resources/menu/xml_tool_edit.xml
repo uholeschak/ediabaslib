@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:id="@+id/menu_xml_tool_edit_detect"
+        android:title="@string/menu_xml_tool_edit_detect" />
   <item android:id="@+id/menu_xml_tool_edit_grp"
         android:title="@string/menu_xml_tool_edit_grp" />
   <item android:id="@+id/menu_xml_tool_edit_prg"
