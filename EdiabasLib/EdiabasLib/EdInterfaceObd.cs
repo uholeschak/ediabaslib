@@ -2107,6 +2107,7 @@ namespace EdiabasLib
 
                     case CommThreadCommands.FrequentMode:
                         {
+                            RecErrorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
                             if (sendLength == 0)
                             {   // stop frequent
                                 SendBufferFrequentLength = 0;
