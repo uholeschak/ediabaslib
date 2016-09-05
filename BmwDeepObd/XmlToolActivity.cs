@@ -2065,7 +2065,7 @@ namespace BmwDeepObd
             ListView listView = new ListView(this);
             bool handlerCalled = false;
 
-            List<string> displayNames = fileNames.OrderBy(x => x).Select(Path.GetFileNameWithoutExtension).ToList();
+            List<string> displayNames = fileNames.Select(Path.GetFileNameWithoutExtension).ToList();
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
                 Android.Resource.Layout.SimpleListItemSingleChoice, displayNames);
             listView.Adapter = adapter;
@@ -2171,19 +2171,21 @@ namespace BmwDeepObd
                 mwTabFileEntry.MatchCount = matchCount;
                 if (compareCount > 0)
                 {
-                    mwTabFileEntry.MatchRatio = (long) matchCount * 1000 / compareCount;
+                    mwTabFileEntry.MatchRatio = matchCount * ActivityCommon.MwTabFileEntry.MaxMatchRatio / compareCount;
                 }
                 else
                 {
-                    mwTabFileEntry.MatchRatio = 0;
+                    mwTabFileEntry.MatchRatio = (mwTabFileEntry.MwTabList.Count == 0) ? ActivityCommon.MwTabFileEntry.MaxMatchRatio : 0;
                 }
             }
-            List<ActivityCommon.MwTabFileEntry> wmTabListSorted = wmTabList.OrderByDescending(x => x.MatchRatio).ToList();
+            List<ActivityCommon.MwTabFileEntry> wmTabListSorted = wmTabList.OrderByDescending(x => x).ToList();
             if (wmTabListSorted.Count == 0)
             {
                 return null;
             }
-            return wmTabListSorted.TakeWhile(mwTabFileEntry => mwTabFileEntry.MatchRatio == wmTabListSorted[0].MatchRatio).Select(mwTabFileEntry => mwTabFileEntry.FileName).ToList();
+            return wmTabListSorted.
+                TakeWhile(mwTabFileEntry =>mwTabFileEntry.MatchRatio == wmTabListSorted[0].MatchRatio && mwTabFileEntry.MatchCount >= wmTabListSorted[0].MatchCount / 2).
+                Select(mwTabFileEntry => mwTabFileEntry.FileName).ToList();
         }
 
         private void ExecuteUpdateEcuInfo()

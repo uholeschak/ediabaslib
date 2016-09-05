@@ -93,7 +93,7 @@ namespace BmwDeepObd
             public double? ValueMax { get; }
         }
 
-        public class MwTabFileEntry
+        public class MwTabFileEntry : IComparable<MwTabFileEntry>
         {
             public MwTabFileEntry(string fileName, List<MwTabEntry> mwTabList)
             {
@@ -103,11 +103,22 @@ namespace BmwDeepObd
                 MatchCount = 0;
                 MatchRatio = 0;
             }
+
+            public const int MaxMatchRatio = 1000;
             public string FileName { get; }
             public List<MwTabEntry> MwTabList { get; }
             public int CompareCount { get; set; }
             public int MatchCount { get; set; }
-            public long MatchRatio { get; set; }
+            public int MatchRatio { get; set; }
+
+            public int CompareTo(MwTabFileEntry mwTabFileEntry)
+            {
+                if (MatchRatio == mwTabFileEntry.MatchRatio)
+                {
+                    return MatchCount - mwTabFileEntry.MatchCount;
+                }
+                return MatchRatio - mwTabFileEntry.MatchRatio;
+            }
         }
 
         public enum InterfaceType
