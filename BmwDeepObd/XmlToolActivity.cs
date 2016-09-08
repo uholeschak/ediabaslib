@@ -2098,6 +2098,17 @@ namespace BmwDeepObd
             List<ActivityCommon.MwTabFileEntry> wmTabList = ActivityCommon.GetMatchingVagMwTabs(Path.Combine(_datUkdDir, "mwtabs"), ecuInfo.Sgbd);
             SortedSet<int> mwBlocks = ActivityCommon.ExtractVagMwBlocks(wmTabList);
             string readCommand = GetReadCommand(ecuInfo);
+#if false
+            {
+                StringBuilder sr = new StringBuilder();
+                sr.Append(string.Format("-s \"{0}\"", ecuInfo.Sgbd));
+                foreach (int block in mwBlocks)
+                {
+                    sr.Append(string.Format(" -j \"Messwerteblock_lesen#{0};{1}\"", block, readCommand));
+                }
+                Log.Debug("MwTab", sr.ToString());
+            }
+#endif
             Dictionary<int, string> unitDict = new Dictionary<int, string>();
 
             try
