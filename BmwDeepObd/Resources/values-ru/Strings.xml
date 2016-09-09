@@ -203,6 +203,7 @@
   <!--Translate-->
   <string name="xml_tool_clear_ecus">Sollen die bestehen ECUs gelöscht werden?</string>
   <string name="xml_tool_search_ecus">ECUs werden gesucht.\nErkannt: {0}/{1}</string>
+  <string name="xml_tool_no_mwtab">Es wurden keine Datentabellen für diese ECU gefuden</string>
   <string name="xml_tool_select_sgbd">Выбрать тип автомобиля</string>
   <string name="xml_tool_no_response">Автомобиль не отвечает</string>
   <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или Deep ОDB устройство.\nУ более старших моделей возможна только ручная настройка конфигурации.\nДля этого вам необходимо в INPA на информационной странице для каждого ECU найти необходимые .GRP и .PRG файлы.\nПерейти к <a href='http://ediabaslib.codeplex.com/wikipage?title=Configuration%20Generator#ManualConfiguration'>ручной настройке</a>?</string>
