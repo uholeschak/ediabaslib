@@ -930,6 +930,7 @@ namespace BmwDeepObd
                     _ediabas.ArgString = "ALL";
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
+                    _ediabas.NoInitForVJobs = true;
                     _ediabas.ExecuteJob("_JOBS");
 
                     List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
@@ -965,6 +966,7 @@ namespace BmwDeepObd
                         _ediabas.ArgString = job.Name;
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.NoInitForVJobs = true;
                         _ediabas.ExecuteJob("_JOBCOMMENTS");
 
                         resultSets = _ediabas.ResultSets;
@@ -994,6 +996,7 @@ namespace BmwDeepObd
                         _ediabas.ArgString = job.Name;
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.NoInitForVJobs = true;
                         _ediabas.ExecuteJob("_ARGUMENTS");
 
                         resultSets = _ediabas.ResultSets;
@@ -1050,6 +1053,7 @@ namespace BmwDeepObd
                         _ediabas.ArgString = job.Name;
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.NoInitForVJobs = true;
                         _ediabas.ExecuteJob("_RESULTS");
 
                         resultSets = _ediabas.ResultSets;
