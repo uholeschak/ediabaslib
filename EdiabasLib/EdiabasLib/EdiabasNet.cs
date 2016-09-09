@@ -2423,6 +2423,8 @@ namespace EdiabasLib
             }
         }
 
+        public bool NoInitForVJobs { get; set; }
+
         private byte[] GetActiveArgBinary()
         {
             if (_jobStd)
@@ -3081,7 +3083,10 @@ namespace EdiabasLib
             {
                 try
                 {
-                    ExecuteExitJob();
+                    if (!_requestInit)
+                    {
+                        ExecuteExitJob();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -4754,7 +4759,7 @@ namespace EdiabasLib
         // ReSharper disable once UnusedParameter.Local
         private void ExecuteVJob(Stream fs, VJobInfo vJobInfo)
         {
-            if (_requestInit)
+            if (_requestInit && !NoInitForVJobs)
             {
                 _requestInit = false;
                 ExecuteInitJob();
