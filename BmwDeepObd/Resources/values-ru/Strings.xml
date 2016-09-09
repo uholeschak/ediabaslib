@@ -200,22 +200,19 @@
   <string name="button_xml_tool_edit">Редактировать</string>
   <string name="button_xml_tool_save">Сохранить</string>
   <string name="xml_tool_analyze">Считать данные автомобиля</string>
-  <!--Translate-->
-  <string name="xml_tool_clear_ecus">Sollen die bestehen ECUs gelöscht werden?</string>
-  <string name="xml_tool_search_ecus">ECUs werden gesucht.\nErkannt: {0}/{1}</string>
-  <string name="xml_tool_no_mwtab">Es wurden keine Datentabellen für diese ECU gefuden</string>
+  <string name="xml_tool_clear_ecus">Удалить существующие ECU файлы?</string>
+  <string name="xml_tool_search_ecus">Поиск ECU файлов.\nОбнаружено: {0}/{1}</string>
+  <string name="xml_tool_no_mwtab">Не обнаружено таблиц данных для этого ECU файла</string>
   <string name="xml_tool_select_sgbd">Выбрать тип автомобиля</string>
   <string name="xml_tool_no_response">Автомобиль не отвечает</string>
   <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или Deep ОDB устройство.\nУ более старших моделей возможна только ручная настройка конфигурации.\nДля этого вам необходимо в INPA на информационной странице для каждого ECU найти необходимые .GRP и .PRG файлы.\nПерейти к <a href='http://ediabaslib.codeplex.com/wikipage?title=Configuration%20Generator#ManualConfiguration'>ручной настройке</a>?</string>
   <string name="xml_tool_read_jobs_failed">Не удалось считать Jobs</string>
-  <!--Translate-->
-  <string name="xml_tool_aborting">Vorgang wird abgebrochen</string>
+  <string name="xml_tool_aborting">Отмена операции</string>
   <string name="xml_tool_read_ecu_info_failed">Не удалось считать ECU информацию</string>
   <string name="xml_tool_save_xml_failed">Не удалось сохраноть конфигурацию</string>
   <string name="xml_tool_msg_save_config">Сохраноть конфигурацию?</string>
   <string name="xml_tool_msg_ecu_error">Для некоторых ECU информация не может быть найдена.</string>
-  <!--Translate-->
-  <string name="xml_tool_select_ecu_type">ECU-Typ auswählen</string>
+  <string name="xml_tool_select_ecu_type">Выбрать ECU-тип</string>
   <string name="xml_tool_ecu_list">Обнаруженные ECU</string>
   <string name="xml_tool_info_sgbd">SGBD</string>
   <string name="xml_tool_info_grp">Группа</string>
@@ -229,8 +226,7 @@
   <string name="menu_xml_tool_cfg_type">Конфигурация</string>
 
   <!-- XML Tool Edit Menu -->
-  <!--Translate-->
-  <string name="menu_xml_tool_edit_detect">ECUs erkennen</string>
+  <string name="menu_xml_tool_edit_detect">Определение ECU</string>
   <string name="menu_xml_tool_edit_grp">Добавить ECU (grp)</string>
   <string name="menu_xml_tool_edit_prg">Добавить ECU (prg)</string>
   <string name="menu_xml_tool_edit_del">Удалить неиспользуемые ECU</string>
