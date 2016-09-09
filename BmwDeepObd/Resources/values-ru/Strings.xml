@@ -230,7 +230,7 @@
 
   <!-- XML Tool Edit Menu -->
   <!--Translate-->
-  <string name="menu_xml_tool_edit_detect">Detect ECUs</string>
+  <string name="menu_xml_tool_edit_detect">ECUs erkennen</string>
   <string name="menu_xml_tool_edit_grp">Добавить ECU (grp)</string>
   <string name="menu_xml_tool_edit_prg">Добавить ECU (prg)</string>
   <string name="menu_xml_tool_edit_del">Удалить неиспользуемые ECU</string>
