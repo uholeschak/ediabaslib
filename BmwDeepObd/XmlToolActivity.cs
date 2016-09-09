@@ -1851,6 +1851,10 @@ namespace BmwDeepObd
                         if (string.IsNullOrEmpty(ecuInfo.MwTabFileName) || !File.Exists(ecuInfo.MwTabFileName))
                         {
                             List<string> mwTabFileNames = GetBestMatchingMwTab(ecuInfo);
+                            if (mwTabFileNames == null)
+                            {
+                                throw new Exception("Read mwtab jobs failed");
+                            }
                             if (mwTabFileNames.Count == 1)
                             {
                                 ecuInfo.MwTabFileName = mwTabFileNames[0];
@@ -1859,6 +1863,12 @@ namespace BmwDeepObd
                             {
                                 RunOnUiThread(() =>
                                 {
+                                    if (mwTabFileNames.Count == 0)
+                                    {
+                                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_no_mwtab), Resource.String.alert_title_error);
+                                        ReadJobThreadDone(ecuInfo, progress, false);
+                                        return;
+                                    }
                                     SelectMwTabFromList(mwTabFileNames, name =>
                                     {
                                         if (string.IsNullOrEmpty(name))
@@ -2036,6 +2046,10 @@ namespace BmwDeepObd
 
             SupportInvalidateOptionsMenu();
             UpdateDisplay();
+            if (ecuInfo.JobList == null)
+            {
+                return;
+            }
             if (readFailed || (ecuInfo.JobList.Count == 0))
             {
                 _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_jobs_failed), Resource.String.alert_title_error);
@@ -2192,7 +2206,7 @@ namespace BmwDeepObd
             List<ActivityCommon.MwTabFileEntry> wmTabListSorted = wmTabList.OrderByDescending(x => x).ToList();
             if (wmTabListSorted.Count == 0)
             {
-                return null;
+                return new List<string>();
             }
             return wmTabListSorted.
                 TakeWhile(mwTabFileEntry =>mwTabFileEntry.MatchRatio == wmTabListSorted[0].MatchRatio && mwTabFileEntry.MatchCount >= wmTabListSorted[0].MatchCount / 2).
