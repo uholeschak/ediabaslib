@@ -1745,7 +1745,16 @@ namespace BmwDeepObd
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
             progress.SetCancelable(false);
             progress.SetMessage(GetString(Resource.String.xml_tool_analyze));
+            progress.SetButton((int)DialogButtonType.Negative, GetString(Resource.String.button_abort), (sender, args) =>
+            {
+                _ediabasJobAbort = true;
+                progress = new Android.App.ProgressDialog(this);
+                progress.SetCancelable(false);
+                progress.SetMessage(GetString(Resource.String.xml_tool_aborting));
+                progress.Show();
+            });
             progress.Show();
+            _activityCommon.SetScreenLock(true);
 
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
@@ -2046,10 +2055,11 @@ namespace BmwDeepObd
         {
             progress.Hide();
             progress.Dispose();
+            _activityCommon.SetScreenLock(false);
 
             SupportInvalidateOptionsMenu();
             UpdateDisplay();
-            if (ecuInfo.JobList == null)
+            if (_ediabasJobAbort || ecuInfo.JobList == null)
             {
                 return;
             }
@@ -2132,6 +2142,10 @@ namespace BmwDeepObd
             {
                 foreach (int block in mwBlocks)
                 {
+                    if (_ediabasJobAbort)
+                    {
+                        return null;
+                    }
                     _ediabas.ArgString = string.Format("{0};{1}", block, readCommand);
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
