@@ -2680,6 +2680,23 @@ namespace BmwDeepObd
                     }
                 }
             }
+            if (_manualConfigIdx > 0)
+            {   // manual mode, add missing entries
+                foreach (XElement ecuNode in errorsNode.Elements(ns + "ecu"))
+                {
+                    XAttribute sgbdAttr = ecuNode.Attribute("sgbd");
+                    string sgbdName = sgbdAttr?.Value;
+                    if (string.IsNullOrEmpty(sgbdName))
+                    {
+                        continue;
+                    }
+                    bool ecuFound = _ecuList.Any(ecuInfo => string.Compare(sgbdName, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) == 0);
+                    if (!ecuFound)
+                    {
+                        _ecuList.Add(new EcuInfo(sgbdName, -1, string.Empty, sgbdName, string.Empty, string.Empty));
+                    }
+                }
+            }
         }
 
         private XDocument GenerateErrorsXml(XDocument documentOld)
