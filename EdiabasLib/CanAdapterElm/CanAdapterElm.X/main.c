@@ -1662,6 +1662,11 @@ bool init_bt()
     {
         result = false;
     }
+    if (!result)
+    {   // force init at next restart
+        eeprom_write(EEP_ADDR_BT_INIT, 0xFF);
+        eeprom_write(EEP_ADDR_BT_INIT + 1, 0xFF);
+    }
 #else
     if (init_bt_required)
     {
