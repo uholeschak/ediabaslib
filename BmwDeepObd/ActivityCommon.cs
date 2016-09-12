@@ -2048,7 +2048,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public static string GetVagDatUkdDir(string ecuPath)
+        public static string GetVagDatUkdDir(string ecuPath, bool ignoreManufacturer = false)
         {
             string lang = Java.Util.Locale.Default.Language ?? "en";
             string dirName = Path.Combine(ecuPath, "dat.ukd", lang);
@@ -2057,28 +2057,31 @@ namespace BmwDeepObd
                 dirName = Path.Combine(ecuPath, "dat.ukd", "en");
             }
 
-            string manufactName = string.Empty;
-            switch (SelectedManufacturer)
+            if (!ignoreManufacturer)
             {
-                case ManufacturerType.Audi:
-                    manufactName = "audi";
-                    break;
+                string manufactName = string.Empty;
+                switch (SelectedManufacturer)
+                {
+                    case ManufacturerType.Audi:
+                        manufactName = "audi";
+                        break;
 
-                case ManufacturerType.Seat:
-                    manufactName = "seat";
-                    break;
+                    case ManufacturerType.Seat:
+                        manufactName = "seat";
+                        break;
 
-                case ManufacturerType.Skoda:
-                    manufactName = "skoda";
-                    break;
+                    case ManufacturerType.Skoda:
+                        manufactName = "skoda";
+                        break;
 
-                case ManufacturerType.Vw:
-                    manufactName = "vw";
-                    break;
-            }
-            if (!string.IsNullOrEmpty(manufactName))
-            {
-                dirName = Path.Combine(dirName, manufactName);
+                    case ManufacturerType.Vw:
+                        manufactName = "vw";
+                        break;
+                }
+                if (!string.IsNullOrEmpty(manufactName))
+                {
+                    dirName = Path.Combine(dirName, manufactName);
+                }
             }
             return dirName;
         }
@@ -2489,6 +2492,62 @@ namespace BmwDeepObd
             }
 
             return mwBlocks;
+        }
+
+        public static Dictionary<int, string> GetVagEcuNamesDict(string ecuPath)
+        {
+            try
+            {
+                string datUkdBasePath = GetVagDatUkdDir(ecuPath, true);
+                string xmlFile = Path.Combine(datUkdBasePath, "xml", "ECU_Names.xml");
+                XDocument xmlDoc = XDocument.Load(xmlFile);
+                XElement ecuListNode = xmlDoc.Root?.Element("EcuList");
+                if (ecuListNode == null)
+                {
+                    return null;
+                }
+                Dictionary<int, string> ecuNamesDict = new Dictionary<int, string>();
+                foreach (XElement ecuNode in ecuListNode.Elements("Ecu"))
+                {
+                    XAttribute attrName = ecuNode.Attribute("Name");
+                    string ecuName = attrName?.Value;
+                    if (string.IsNullOrWhiteSpace(ecuName))
+                    {
+                        continue;
+                    }
+                    XAttribute attrAddr = ecuNode.Attribute("AddrHex");
+                    if (attrAddr == null)
+                    {
+                        continue;
+                    }
+                    int address;
+                    try
+                    {
+                        address = Convert.ToInt32(attrAddr.Value, 16);
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+                    string existingName;
+                    if (ecuNamesDict.TryGetValue(address, out existingName))
+                    {
+                        if (existingName.Length > ecuName.Length)
+                        {   // use shortest name
+                            ecuNamesDict[address] = ecuName;
+                        }
+                    }
+                    else
+                    {
+                        ecuNamesDict.Add(address, ecuName);
+                    }
+                }
+                return ecuNamesDict;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static bool IsTranslationRequired()
