@@ -2744,7 +2744,12 @@ namespace BmwDeepObd
                     bool ecuFound = _ecuList.Any(ecuInfo => string.Compare(sgbdName, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) == 0);
                     if (!ecuFound)
                     {
-                        _ecuList.Add(new EcuInfo(sgbdName, -1, string.Empty, sgbdName, string.Empty, string.Empty));
+                        EcuInfo ecuInfo = new EcuInfo(sgbdName.ToUpperInvariant(), -1, string.Empty, sgbdName, string.Empty, string.Empty)
+                        {
+                            PageName = string.Empty,
+                            EcuName = string.Empty
+                        };
+                        _ecuList.Add(ecuInfo);
                     }
                 }
             }
