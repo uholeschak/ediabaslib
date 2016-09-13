@@ -1700,7 +1700,7 @@ namespace BmwDeepObd
                                         if (!ecuFound)
                                         {
                                             string displayName;
-                                            if (!ecuNameDict.TryGetValue(ecuEntry.Address, out displayName))
+                                            if ((ecuNameDict == null) || !ecuNameDict.TryGetValue(ecuEntry.Address, out displayName))
                                             {
                                                 displayName = ecuName;
                                             }
