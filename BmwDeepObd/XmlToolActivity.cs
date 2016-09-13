@@ -1702,7 +1702,7 @@ namespace BmwDeepObd
                                             string displayName;
                                             if ((ecuNameDict == null) || !ecuNameDict.TryGetValue(ecuEntry.Address, out displayName))
                                             {
-                                                displayName = ecuName;
+                                                displayName = ecuName.ToUpperInvariant();
                                             }
                                             _ecuList.Add(new EcuInfo(displayName, ecuEntry.Address, string.Empty, ecuName, string.Empty));
                                         }
@@ -2251,6 +2251,13 @@ namespace BmwDeepObd
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
             {
+                List<ActivityCommon.VagEcuEntry> ecuVagList = null;
+                Dictionary<int, string> ecuNameDict = null;
+                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                {
+                    ecuVagList = ActivityCommon.ReadVagEcuList(_ecuDir);
+                    ecuNameDict = ActivityCommon.GetVagEcuNamesDict(_ecuDir);
+                }
                 for (int idx = 0; idx < _ecuList.Count; idx++)
                 {
                     EcuInfo ecuInfo = _ecuList[idx];
@@ -2309,7 +2316,32 @@ namespace BmwDeepObd
                             _ecuList.Remove(ecuInfo);
                             continue;
                         }
-                        ecuInfo.Name = ecuName.ToUpperInvariant();
+                        string displayName = ecuName.ToUpperInvariant();
+                        if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && ecuVagList != null && ecuNameDict != null)
+                        {
+                            string compareName = ecuInfo.Sgbd;
+                            bool limitString = false;
+                            if ((string.Compare(ecuInfo.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0) &&
+                                (compareName.Length > 3))
+                            {   // no group file selected
+                                compareName = compareName.Substring(0, 3);
+                                limitString = true;
+                            }
+                            foreach (ActivityCommon.VagEcuEntry entry in ecuVagList)
+                            {
+                                string entryName = entry.SysName;
+                                if (limitString && entryName.Length > 3)
+                                {
+                                    entryName = entryName.Substring(0, 3);
+                                }
+                                if (string.Compare(entryName, compareName, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    ecuNameDict.TryGetValue(entry.Address, out displayName);
+                                    break;
+                                }
+                            }
+                        }
+                        ecuInfo.Name = displayName;
                         ecuInfo.PageName = ecuInfo.Name;
                         ecuInfo.EcuName = ecuInfo.Name;
                         ecuInfo.Sgbd = ecuName;
