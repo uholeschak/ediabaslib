@@ -238,18 +238,16 @@ namespace BmwDeepObd
             ResetTestResult();
         }
 
-        protected override void OnStop()
-        {
-            base.OnStop();
-            UpdateResultSettings(_selectedResult);
-            _ecuInfo.PageName = _editTextPageName.Text;
-            _ecuInfo.EcuName = _editTextEcuName.Text;
-        }
-
         protected override void OnDestroy()
         {
             base.OnDestroy();
             _activityCommon.Dispose();
+        }
+
+        public override void OnBackPressed()
+        {
+            StoreResults();
+            base.OnBackPressed();
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
@@ -259,6 +257,7 @@ namespace BmwDeepObd
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
+                    StoreResults();
                     Finish();
                     return true;
             }
@@ -598,6 +597,13 @@ namespace BmwDeepObd
                 formatType = (FormatType)_spinnerFormatTypeAdapter.Items[_spinnerFormatType.SelectedItemPosition].Data;
             }
             UpdateFormatFields(resultInfo, formatType == FormatType.User);
+        }
+
+        private void StoreResults()
+        {
+            UpdateResultSettings(_selectedResult);
+            _ecuInfo.PageName = _editTextPageName.Text;
+            _ecuInfo.EcuName = _editTextEcuName.Text;
         }
 
         private void FormatItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
