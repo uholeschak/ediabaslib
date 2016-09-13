@@ -345,7 +345,12 @@ namespace BmwDeepObd
                         {
                             break;
                         }
-                        _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, ecuName, string.Empty));
+                        EcuInfo ecuInfoNew = new EcuInfo(ecuName, -1, string.Empty, ecuName, string.Empty)
+                        {
+                            PageName = string.Empty,
+                            EcuName = string.Empty
+                        };
+                        _ecuList.Add(ecuInfoNew);
                         ExecuteUpdateEcuInfo();
                         SupportInvalidateOptionsMenu();
                         UpdateDisplay();
@@ -1702,9 +1707,14 @@ namespace BmwDeepObd
                                             string displayName;
                                             if ((ecuNameDict == null) || !ecuNameDict.TryGetValue(ecuEntry.Address, out displayName))
                                             {
-                                                displayName = ecuName.ToUpperInvariant();
+                                                displayName = ecuName;
                                             }
-                                            _ecuList.Add(new EcuInfo(displayName, ecuEntry.Address, string.Empty, ecuName, string.Empty));
+                                            EcuInfo ecuInfo = new EcuInfo(ecuName.ToUpperInvariant(), ecuEntry.Address, string.Empty, ecuName, string.Empty)
+                                            {
+                                                PageName = displayName,
+                                                EcuName = displayName
+                                            };
+                                            _ecuList.Add(ecuInfo);
                                         }
                                     }
                                 }
@@ -2316,7 +2326,7 @@ namespace BmwDeepObd
                             _ecuList.Remove(ecuInfo);
                             continue;
                         }
-                        string displayName = ecuName.ToUpperInvariant();
+                        string displayName = ecuName;
                         if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && ecuVagList != null && ecuNameDict != null)
                         {
                             string compareName = ecuInfo.Sgbd;
@@ -2341,9 +2351,12 @@ namespace BmwDeepObd
                                 }
                             }
                         }
-                        ecuInfo.Name = displayName;
-                        ecuInfo.PageName = ecuInfo.Name;
-                        ecuInfo.EcuName = ecuInfo.Name;
+                        ecuInfo.Name = ecuName.ToUpperInvariant();
+                        if (string.IsNullOrEmpty(ecuInfo.PageName) && string.IsNullOrEmpty(ecuInfo.EcuName))
+                        {
+                            ecuInfo.PageName = displayName;
+                            ecuInfo.EcuName = displayName;
+                        }
                         ecuInfo.Sgbd = ecuName;
                         ecuInfo.Address = 0;
                     }
@@ -3545,7 +3558,7 @@ namespace BmwDeepObd
 
                 TextView textEcuName = view.FindViewById<TextView>(Resource.Id.textEcuName);
                 TextView textEcuDesc = view.FindViewById<TextView>(Resource.Id.textEcuDesc);
-                textEcuName.Text = item.Name + ": ";
+                textEcuName.Text = item.EcuName + ": ";
                 if (!string.IsNullOrEmpty(item.DescriptionTrans))
                 {
                     textEcuName.Text += item.DescriptionTrans;
