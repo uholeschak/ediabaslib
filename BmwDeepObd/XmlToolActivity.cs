@@ -1648,6 +1648,7 @@ namespace BmwDeepObd
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
             {
+                Dictionary<int, string> ecuNameDict = ActivityCommon.GetVagEcuNamesDict(_ecuDir);
                 int index = 0;
                 int detectCount = 0;
                 foreach (ActivityCommon.VagEcuEntry ecuEntry in ecuVagList)
@@ -1698,7 +1699,12 @@ namespace BmwDeepObd
                                         bool ecuFound = _ecuList.Any(ecuInfo => string.Compare(ecuInfo.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0);
                                         if (!ecuFound)
                                         {
-                                            _ecuList.Add(new EcuInfo(ecuName, ecuEntry.Address, string.Empty, ecuName, string.Empty));
+                                            string displayName;
+                                            if (!ecuNameDict.TryGetValue(ecuEntry.Address, out displayName))
+                                            {
+                                                displayName = ecuName;
+                                            }
+                                            _ecuList.Add(new EcuInfo(displayName, ecuEntry.Address, string.Empty, ecuName, string.Empty));
                                         }
                                     }
                                 }
