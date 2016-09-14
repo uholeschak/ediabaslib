@@ -2384,6 +2384,10 @@ namespace BmwDeepObd
                         {
                             continue;
                         }
+                        if (valueUnit.ToLowerInvariant().StartsWith("proz"))
+                        {
+                            valueUnit = "%";
+                        }
 
                         string valueType = string.Empty;
                         XElement swfNode = measureNode.Element("SWF");
