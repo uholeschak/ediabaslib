@@ -202,6 +202,7 @@
   <string name="xml_tool_analyze">Fahrzeugdaten lesen</string>
   <string name="xml_tool_clear_ecus">Sollen die bestehen ECUs gelöscht werden?</string>
   <string name="xml_tool_search_ecus">ECUs werden gesucht.\nErkannt: {0}/{1}</string>
+  <string name="xml_tool_sel_mwtab_info">Es wurden mehrere Datentabellen für diese ECU gefunden.\nBitte wählen Sie die Datentabelle, welche am Besten für Ihre ECU passt.\nWenn die 7. und 8. Stelle der FG-Nummer im Namen enthalten ist, sollte man diese Tabelle bevorzugen.</string>
   <string name="xml_tool_no_mwtab">Es wurden keine Datentabellen für diese ECU gefunden</string>
   <string name="xml_tool_select_sgbd">Fahrzeugtyp auswählen</string>
   <string name="xml_tool_no_response">Keine Antwort vom Fahrzeug</string>
