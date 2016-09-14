@@ -1896,7 +1896,7 @@ namespace BmwDeepObd
                                         ReadJobThreadDone(ecuInfo, progress, false);
                                         return;
                                     }
-                                    SelectMwTabFromList(mwTabFileNames, name =>
+                                    SelectMwTabFromListInfo(mwTabFileNames, name =>
                                     {
                                         if (string.IsNullOrEmpty(name))
                                         {
@@ -2099,6 +2099,32 @@ namespace BmwDeepObd
         private string GetReadCommand(EcuInfo ecuInfo)
         {
             return ecuInfo.Sgbd.Contains("1281") ? "WertEinmalLesen" : "LESEN";
+        }
+
+        private void SelectMwTabFromListInfo(List<string> fileNames, MwTabFileSelected handler)
+        {
+            bool handlerCalled = false;
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.SetMessage(Resource.String.xml_tool_sel_mwtab_info);
+            builder.SetTitle(Resource.String.alert_title_info);
+            builder.SetPositiveButton(Resource.String.button_ok, (s, e) =>
+            {
+                handlerCalled = true;
+                SelectMwTabFromList(fileNames, handler);
+            });
+            builder.SetNegativeButton(Resource.String.button_abort, (s, e) =>
+            {
+                handlerCalled = true;
+                handler(null);
+            });
+            AlertDialog alertDialog = builder.Show();
+            alertDialog.DismissEvent += (sender, args) =>
+            {
+                if (!handlerCalled)
+                {
+                    handler(null);
+                }
+            };
         }
 
         private void SelectMwTabFromList(List<string> fileNames, MwTabFileSelected handler)

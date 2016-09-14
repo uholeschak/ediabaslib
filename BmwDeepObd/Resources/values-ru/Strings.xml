@@ -202,6 +202,8 @@
   <string name="xml_tool_analyze">Считать данные автомобиля</string>
   <string name="xml_tool_clear_ecus">Удалить существующие ECU файлы?</string>
   <string name="xml_tool_search_ecus">Поиск ECU файлов.\nОбнаружено: {0}/{1}</string>
+  <!--Translate-->
+  <string name="xml_tool_sel_mwtab_info">Es wurden mehrere Datentabellen für diese ECU gefunden.\nBitte wählen Sie die Datentabelle, welche am Besten für Ihre ECU passt.\nWenn die 7. und 8. Stelle der FG-Nummer im Namen enthalten ist, sollte man diese Tabelle bevorzugen.</string>
   <string name="xml_tool_no_mwtab">Не обнаружено таблиц данных для этого ECU файла</string>
   <string name="xml_tool_select_sgbd">Выбрать тип автомобиля</string>
   <string name="xml_tool_no_response">Автомобиль не отвечает</string>
