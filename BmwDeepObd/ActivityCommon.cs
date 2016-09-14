@@ -115,6 +115,11 @@ namespace BmwDeepObd
             {
                 if (MatchRatio == mwTabFileEntry.MatchRatio)
                 {
+                    if (MatchCount == mwTabFileEntry.MatchCount)
+                    {
+                        // ReSharper disable once StringCompareToIsCultureSpecific
+                        return mwTabFileEntry.FileName.CompareTo(FileName);
+                    }
                     return MatchCount - mwTabFileEntry.MatchCount;
                 }
                 return MatchRatio - mwTabFileEntry.MatchRatio;
