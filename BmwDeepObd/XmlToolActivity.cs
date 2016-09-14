@@ -1166,6 +1166,21 @@ namespace BmwDeepObd
                         UpdateDisplay();
                         break;
                     }
+
+                    case Resource.Id.menu_xml_tool_edit_del_all:
+                        new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_yes, (s, a) =>
+                            {
+                                DeleteAllXml();
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (s, a) =>
+                            {
+                            })
+                            .SetCancelable(true)
+                            .SetMessage(Resource.String.xml_tool_del_all_info)
+                            .SetTitle(Resource.String.alert_title_question)
+                            .Show();
+                        break;
                 }
             };
             popupEdit.Show();
@@ -3395,6 +3410,28 @@ namespace BmwDeepObd
             {
                 return null;
             }
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool DeleteAllXml()
+        {
+            _ecuList.Clear();
+            _ecuListTranslated = false;
+            UpdateDisplay();
+            try
+            {
+                string xmlFileDir = XmlFileDir();
+                if (xmlFileDir == null)
+                {
+                    return false;
+                }
+                Directory.Delete(xmlFileDir, true);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local

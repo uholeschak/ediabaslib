@@ -202,6 +202,7 @@
   <string name="button_xml_tool_save">Save</string>
   <string name="xml_tool_analyze">Reading vehicle data</string>
   <string name="xml_tool_clear_ecus">Should the existing ECUs be removed?</string>
+  <string name="xml_tool_del_all_info">Should all information (including XML files) be removed for this configuration?</string>
   <string name="xml_tool_search_ecus">Searching for ECUs.\nDetected: {0}/{1}</string>
   <string name="xml_tool_sel_mwtab_info">Multiple data tables have been found for this ECU.\nPlease choose the data table that best fits your ECU.\nIf the digit 7. and 8. of the VIN is present in the name, this table should be preferred.</string>
   <string name="xml_tool_no_mwtab">No data tables have been found for this ECU</string>
@@ -232,6 +233,7 @@
   <string name="menu_xml_tool_edit_grp">Add ECU (grp)</string>
   <string name="menu_xml_tool_edit_prg">Add ECU (prg)</string>
   <string name="menu_xml_tool_edit_del">Delete unused ECUs</string>
+  <string name="menu_xml_tool_edit_del_all">Delete all ECU information</string>
 
   <!-- XML Tool context Menu -->
   <string name="menu_xml_tool_move_top">Move to top</string>

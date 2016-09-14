@@ -8,4 +8,6 @@
         android:title="@string/menu_xml_tool_edit_prg" />
   <item android:id="@+id/menu_xml_tool_edit_del"
         android:title="@string/menu_xml_tool_edit_del" />
+  <item android:id="@+id/menu_xml_tool_edit_del_all"
+        android:title="@string/menu_xml_tool_edit_del_all" />
 </menu>
