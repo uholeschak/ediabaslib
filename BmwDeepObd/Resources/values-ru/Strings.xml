@@ -201,11 +201,9 @@
   <string name="button_xml_tool_save">Сохранить</string>
   <string name="xml_tool_analyze">Считать данные автомобиля</string>
   <string name="xml_tool_clear_ecus">Удалить существующие ECU файлы?</string>
-  <!--Translate-->
-  <string name="xml_tool_del_all_info">Sollen alle informationen (inklusive der XML Dateien) für diese Konfiguration gelöscht werden?</string>
+  <string name="xml_tool_del_all_info">Удалить всю информацию (в том числе XML-файлы) для этой конфигурации?</string>
   <string name="xml_tool_search_ecus">Поиск ECU файлов.\nОбнаружено: {0}/{1}</string>
-  <!--Translate-->
-  <string name="xml_tool_sel_mwtab_info">Es wurden mehrere Datentabellen für diese ECU gefunden.\nBitte wählen Sie die Datentabelle, welche am Besten für Ihre ECU passt.\nWenn die 7. und 8. Stelle der FG-Nummer im Namen enthalten ist, sollte man diese Tabelle bevorzugen.</string>
+  <string name="xml_tool_sel_mwtab_info">Для этого ECU было найдено несколько таблиц данных.\nПожалуйста, выберите таблицу данных, которая лучше всего подходит для вашего ECU.\nСледует отдать предпочтение таблице, в названии которой присутствуют значения 7-ой и 8-ой позиции VIN-номера.</string>
   <string name="xml_tool_no_mwtab">Не обнаружено таблиц данных для этого ECU файла</string>
   <string name="xml_tool_select_sgbd">Выбрать тип автомобиля</string>
   <string name="xml_tool_no_response">Автомобиль не отвечает</string>
@@ -234,8 +232,7 @@
   <string name="menu_xml_tool_edit_grp">Добавить ECU (grp)</string>
   <string name="menu_xml_tool_edit_prg">Добавить ECU (prg)</string>
   <string name="menu_xml_tool_edit_del">Удалить неиспользуемые ECU</string>
-  <!--Tranlslate-->
-  <string name="menu_xml_tool_edit_del_all">Alle ECU-Informationen löschen</string>
+  <string name="menu_xml_tool_edit_del_all">Удалить всю ECU-информацию</string>
 
   <!-- XML Tool context Menu -->
   <string name="menu_xml_tool_move_top">Переместить в начало</string>
