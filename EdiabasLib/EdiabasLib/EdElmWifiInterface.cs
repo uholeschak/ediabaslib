@@ -19,7 +19,7 @@ namespace EdiabasLib
 
             public Android.Content.Context ParentContext { get; private set; }
 
-            public Android.Net.ConnectivityManager ConnectivityManager { get; private set; }
+            public Android.Net.ConnectivityManager ConnectivityManager { get; }
         }
 #endif
 
