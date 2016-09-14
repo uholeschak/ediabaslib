@@ -3563,15 +3563,14 @@ namespace BmwDeepObd
 
                 TextView textEcuName = view.FindViewById<TextView>(Resource.Id.textEcuName);
                 TextView textEcuDesc = view.FindViewById<TextView>(Resource.Id.textEcuDesc);
-                textEcuName.Text = item.EcuName + ": ";
-                if (!string.IsNullOrEmpty(item.DescriptionTrans))
-                {
-                    textEcuName.Text += item.DescriptionTrans;
-                }
-                else
-                {
-                    textEcuName.Text += item.Description;
-                }
+
+                StringBuilder stringBuilderName = new StringBuilder();
+                stringBuilderName.Append(!string.IsNullOrEmpty(item.EcuName) ? item.EcuName : item.Name);
+                stringBuilderName.Append(": ");
+                stringBuilderName.Append(!string.IsNullOrEmpty(item.DescriptionTrans)
+                    ? item.DescriptionTrans
+                    : item.Description);
+                textEcuName.Text = stringBuilderName.ToString();
 
                 StringBuilder stringBuilderInfo = new StringBuilder();
                 stringBuilderInfo.Append(_context.GetString(Resource.String.xml_tool_info_sgbd));
