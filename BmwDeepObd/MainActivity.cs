@@ -2164,14 +2164,6 @@ namespace BmwDeepObd
             });
         }
 
-        private void DownloadProgressCancel(object sender, EventArgs e)
-        {
-            if (_webClient.IsBusy)
-            {
-                _webClient.CancelAsync();
-            }
-        }
-
         private List<DownloadUrlInfo> GetDownloadUrls(string xmlFile)
         {
             List<DownloadUrlInfo> urlInfo = new List<DownloadUrlInfo>();
