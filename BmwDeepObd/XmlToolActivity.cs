@@ -1738,7 +1738,10 @@ namespace BmwDeepObd
                     }
                     catch (Exception)
                     {
-                        // ignored
+                        if (ecuEntry.Address == 1)
+                        {   // motor must be present, abort
+                            break;
+                        }
                     }
                     index++;
                 }
@@ -1752,7 +1755,7 @@ namespace BmwDeepObd
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
 
-                    if (!_ediabasJobAbort && _ecuList.Count == 0)
+                    if (!_ediabasJobAbort && ((_ecuList.Count == 0) || (detectCount == 0)))
                     {
                         _commErrorsOccured = true;
                         _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_no_response), Resource.String.alert_title_error);
