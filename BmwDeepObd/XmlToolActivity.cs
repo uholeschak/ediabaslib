@@ -1897,7 +1897,11 @@ namespace BmwDeepObd
                             {
                                 throw new Exception("Read mwtab jobs failed");
                             }
-                            if (mwTabFileNames.Count == 1)
+                            if (mwTabFileNames.Count == 0)
+                            {
+                                ecuInfo.MwTabFileName = string.Empty;
+                            }
+                            else if (mwTabFileNames.Count == 1)
                             {
                                 ecuInfo.MwTabFileName = mwTabFileNames[0];
                             }
@@ -1905,12 +1909,6 @@ namespace BmwDeepObd
                             {
                                 RunOnUiThread(() =>
                                 {
-                                    if (mwTabFileNames.Count == 0)
-                                    {
-                                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_no_mwtab), Resource.String.alert_title_error);
-                                        ReadJobThreadDone(ecuInfo, progress, false);
-                                        return;
-                                    }
                                     SelectMwTabFromListInfo(mwTabFileNames, name =>
                                     {
                                         if (string.IsNullOrEmpty(name))
@@ -1946,7 +1944,7 @@ namespace BmwDeepObd
                             }
                         }
                     }
-                    ecuInfo.MwTabList = ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
+                    ecuInfo.MwTabList = string.IsNullOrEmpty(ecuInfo.MwTabFileName) ? null : ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
                     ecuInfo.ReadCommand = GetReadCommand(ecuInfo);
 
                     JobsReadThreadPart2(ecuInfo, jobList);
@@ -2100,14 +2098,32 @@ namespace BmwDeepObd
             }
             else
             {
-                _ecuListTranslated = false;
-                if (!TranslateEcuText((sender, args) =>
+                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw &&
+                    ((ecuInfo.MwTabList == null) || (ecuInfo.MwTabList.Count == 0)))
                 {
-                    SelectJobs(ecuInfo);
-                }))
-                {
-                    SelectJobs(ecuInfo);
+                    new AlertDialog.Builder(this)
+                    .SetMessage(Resource.String.xml_tool_no_mwtab)
+                    .SetTitle(Resource.String.alert_title_info)
+                    .SetNeutralButton(Resource.String.button_ok, (s, e) =>
+                    {
+                        TranslateAndSelectJobs(ecuInfo);
+                    })
+                    .Show();
+                    return;
                 }
+                TranslateAndSelectJobs(ecuInfo);
+            }
+        }
+
+        private void TranslateAndSelectJobs(EcuInfo ecuInfo)
+        {
+            _ecuListTranslated = false;
+            if (!TranslateEcuText((sender, args) =>
+            {
+                SelectJobs(ecuInfo);
+            }))
+            {
+                SelectJobs(ecuInfo);
             }
         }
 
