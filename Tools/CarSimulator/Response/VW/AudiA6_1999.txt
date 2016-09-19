@@ -1,5 +1,4 @@
 ;for mot_01.grp (ISO 9141)
-
 ; wake address, key bytes (odd parity)
 CFG: 01 01 8A
 ;ID
@@ -82,9 +81,7 @@ CFG: 01 01 8A
 04 00 28 4E : 0F E5 E7 10 00 00 10 00 00 10 00 00 10 00 00
 04 00 28 62 : 0F F1 E7 10 00 00 10 00 00 10 00 00 10 00 00
 
-
 ;for get_02.grp (ISO 9141)
-
 ; wake address, key bytes (odd parity)
 CFG: 02 01 8A
 ;ID
@@ -117,7 +114,6 @@ CFG: 02 01 8A
 
 
 ;for bre_03.grp (ISO 9141)
-
 ; wake address, key bytes (odd parity)
 CFG: 83 01 8A
 ;ID
@@ -131,11 +127,10 @@ CFG: 83 01 8A
 ; Fehlerspeicher_abfragen
 03 00 07 : 06 13 FC FF FF 88
 ; Fehlerspeicher_loeschen
-;03 00 05 : 03 17 09
+03 00 05 : 06 13 FC FF FF 88
 
 
 ;for sch_17.grp (ISO 9141)
-
 ; wake address, key bytes (odd parity)
 CFG: 97 01 8A
 ;ID
@@ -147,9 +142,12 @@ CFG: 97 01 8A
 ; Steuergeraeteversion_abfragen2
 03 00 00 : 0F 0B F6 57 41 55 5A 5A 5A 34 42 5A 58 4E 31 0F 0D F6 33 37 35 33 33 20 20 20 20 20 41 55 0F 0F F6 5A 37 5A 30 41 31 37 38 36 33 37 36
 
+; Fehlerspeicher_abfragen
+03 00 07 : 06 0D FC FF FF 88
+; Fehlerspeicher_loeschen
+03 00 05 : 06 13 FC FF FF 88
 
 ;for nav_37.grp (ISO 9141)
-
 ; wake address, key bytes (odd parity)
 CFG: 37 01 8A
 ;ID
@@ -165,7 +163,6 @@ CFG: 37 01 8A
 
 
 ;for lwr_55.grp (ISO 9141)
-
 ; wake address, key bytes (odd parity)
 CFG: D5 01 8A
 ;ID
@@ -175,13 +172,12 @@ CFG: D5 01 8A
 : 08 07 F6 00 00 64 09 15
 
 ; Fehlerspeicher_abfragen
-03 00 07 : 06 0F FC FF FF 88
+03 00 07 : 06 0D FC FF FF 88
 ; Fehlerspeicher_loeschen
 03 00 05 : 06 13 FC FF FF 88
 
 
 ;for eph_76.grp (ISO 9141)
-
 ; wake address, key bytes (odd parity)
 CFG: 76 01 8A
 ;ID
