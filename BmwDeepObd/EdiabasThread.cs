@@ -99,6 +99,7 @@ namespace BmwDeepObd
         private Thread _workerThread;
         private bool _ediabasInitReq;
         private bool _ediabasJobAbort;
+        private JobReader.PageInfo _lastPageInfo;
 
         public EdiabasThread(string ecuPath, ActivityCommon activityCommon)
         {
@@ -180,6 +181,7 @@ namespace BmwDeepObd
                 InitProperties();
                 CommActive = commActive;
                 JobPageInfo = pageInfo;
+                _lastPageInfo = null;
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
                 _workerThread.Start();
@@ -220,7 +222,7 @@ namespace BmwDeepObd
         private void ThreadFunc()
         {
             DataUpdatedEvent();
-            JobReader.PageInfo lastPageInfo = null;
+            _lastPageInfo = null;
             while (!_stopThread)
             {
                 try
@@ -231,9 +233,9 @@ namespace BmwDeepObd
                     }
                     JobReader.PageInfo copyPageInfo = JobPageInfo;
 
-                    if (lastPageInfo != copyPageInfo)
+                    if (_lastPageInfo != copyPageInfo)
                     {
-                        lastPageInfo = copyPageInfo;
+                        _lastPageInfo = copyPageInfo;
                         InitProperties(true);
                     }
 
@@ -295,6 +297,10 @@ namespace BmwDeepObd
                 foreach (JobReader.EcuInfo ecuInfo in pageInfo.ErrorsInfo.EcuList)
                 {
                     index++;
+                    if (_lastPageInfo != JobPageInfo)
+                    {   // page change
+                        break;
+                    }
                     if (_ediabasJobAbort)
                     {
                         break;
