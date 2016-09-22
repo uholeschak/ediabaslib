@@ -75,6 +75,12 @@ namespace BmwDeepObd
             private set;
         }
 
+        public int UpdateProgress
+        {
+            get;
+            private set;
+        }
+
         public JobReader.PageInfo ResultPageInfo
         {
             get;
@@ -259,6 +265,7 @@ namespace BmwDeepObd
                     EdiabasErrorReportList = null;
                     EdiabasErrorMessage = "No Page info";
                     ResultPageInfo = null;
+                    UpdateProgress = 0;
                 }
                 Thread.Sleep(1000);
                 return false;
@@ -284,8 +291,10 @@ namespace BmwDeepObd
 
                 List<EdiabasErrorReport> errorReportList = new List<EdiabasErrorReport>();
 
+                int index = -1;
                 foreach (JobReader.EcuInfo ecuInfo in pageInfo.ErrorsInfo.EcuList)
                 {
+                    index++;
                     if (_ediabasJobAbort)
                     {
                         break;
@@ -469,6 +478,14 @@ namespace BmwDeepObd
                         Thread.Sleep(10);
                         continue;
                     }
+                    if (EdiabasErrorReportList == null)
+                    {   // first update
+                        lock (DataLock)
+                        {
+                            UpdateProgress = index * 100 / pageInfo.ErrorsInfo.EcuList.Count;
+                        }
+                        DataUpdatedEvent();
+                    }
                     Thread.Sleep(10);
                 }
 
@@ -478,6 +495,7 @@ namespace BmwDeepObd
                     EdiabasErrorReportList = errorReportList;
                     EdiabasErrorMessage = string.Empty;
                     ResultPageInfo = pageInfo;
+                    UpdateProgress = 100;
                 }
                 return true;
             }
@@ -508,6 +526,7 @@ namespace BmwDeepObd
                             EdiabasErrorReportList = null;
                             EdiabasErrorMessage = exText;
                             ResultPageInfo = pageInfo;
+                            UpdateProgress = 0;
                         }
                         Thread.Sleep(1000);
                         return false;
@@ -585,6 +604,7 @@ namespace BmwDeepObd
                     EdiabasErrorReportList = null;
                     EdiabasErrorMessage = exText;
                     ResultPageInfo = pageInfo;
+                    UpdateProgress = 0;
                 }
                 Thread.Sleep(1000);
                 return false;
@@ -596,6 +616,7 @@ namespace BmwDeepObd
                 EdiabasErrorReportList = null;
                 EdiabasErrorMessage = string.Empty;
                 ResultPageInfo = pageInfo;
+                UpdateProgress = 0;
             }
             Thread.Sleep(10);
             return true;
@@ -657,6 +678,7 @@ namespace BmwDeepObd
             EdiabasErrorReportList = null;
             ErrorResetList = null;
             ResultPageInfo = null;
+            UpdateProgress = 0;
 
             _ediabasInitReq = true;
             _ediabasJobAbort = deviceChange;

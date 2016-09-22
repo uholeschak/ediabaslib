@@ -1319,14 +1319,20 @@ namespace BmwDeepObd
                     {   // read errors
                         List<string> stringList = new List<string>();
                         List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
+                        int updateProgress = 0;
                         lock (EdiabasThread.DataLock)
                         {
                             if (_ediabasThread.ResultPageInfo == pageInfo)
                             {
                                 errorReportList = _ediabasThread.EdiabasErrorReportList;
                             }
+                            updateProgress = _ediabasThread.UpdateProgress;
                         }
-                        if (errorReportList != null)
+                        if (errorReportList == null)
+                        {
+                            tempResultList.Add(new TableResultItem(string.Format(GetString(Resource.String.error_reading_errors), updateProgress), null));
+                        }
+                        else
                         {
                             string lastEcuName = null;
                             foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
