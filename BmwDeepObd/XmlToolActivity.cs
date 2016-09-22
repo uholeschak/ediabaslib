@@ -1669,6 +1669,7 @@ namespace BmwDeepObd
             _jobThread = new Thread(() =>
             {
                 Dictionary<int, string> ecuNameDict = ActivityCommon.GetVagEcuNamesDict(_ecuDir);
+                int maxEcuAddress = 0xFF;
                 int index = 0;
                 int detectCount = 0;
                 foreach (ActivityCommon.VagEcuEntry ecuEntry in ecuVagList)
@@ -1683,6 +1684,11 @@ namespace BmwDeepObd
                         break;
                     }
 #endif
+                    if (ecuEntry.Address > maxEcuAddress)
+                    {
+                        index++;
+                        continue;
+                    }
                     int localIndex = index;
                     int localDetectCount = detectCount;
                     RunOnUiThread(() =>
@@ -1733,6 +1739,14 @@ namespace BmwDeepObd
                                         }
                                     }
                                 }
+                            }
+                        }
+                        if (ecuEntry.Address == 1)
+                        {   // motor ECU, check communication interface
+                            string sgbdFileName = _ediabas.SgbdFileName.ToUpperInvariant();
+                            if (sgbdFileName.Contains("2000") || sgbdFileName.Contains("1281"))
+                            {   // bit 8 is parity bit
+                                maxEcuAddress = 0x7F;
                             }
                         }
                     }
