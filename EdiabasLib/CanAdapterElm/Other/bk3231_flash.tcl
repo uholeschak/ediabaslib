@@ -92,7 +92,7 @@ proc flash_write_dword { ADDR VALUE SPACE_CTL {UNLOCK 1} } {
 }
 
 proc flash_read_area { FILENAME ADDR LEN {SPACE_CTL 0} } {
-	soft_reset_halt
+	reset init
 	set fp [open $FILENAME w]
 	fconfigure $fp -translation binary
 	for { set x 0 } { $x < $LEN } { set x [expr $x + 4]} {
@@ -124,7 +124,7 @@ proc flash_write_area { FILENAME ADDR {SPACE_CTL 0} } {
 		echo [format "file %s not existing" $FILENAME]
 		return
 	}
-	soft_reset_halt
+	reset init
 	if {$SPACE_CTL == $RDN_SPACE} {
 		echo "invalid space control"
 		return
@@ -159,7 +159,7 @@ proc flash_erase_area { ADDR LEN {SPACE_CTL 0} } {
 	global NVR_SPACE
 	global RDN_SPACE
 
-	soft_reset_halt
+	reset init
 	if {$SPACE_CTL == $RDN_SPACE} {
 		echo "invalid space control"
 		return
