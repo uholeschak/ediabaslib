@@ -115,7 +115,6 @@ __asm void init(void)
     BX  lr;
 }
 
-//void start(void) __attribute__((section(".ARM.__at_0x400000")));
 void start(void) __attribute__((section(".ARM.__at_0x3E000")));
 
 void start(void)
@@ -137,8 +136,12 @@ void start(void)
         __breakpoint(0x0001);
         for (;;) { }
     }
-    for (uint32_t i = 0; i < len; i++)
+    for (uint32_t i = 0; i < len; i += 4)
     {
+        if (flash_addr >= 0x3E000)
+        {   // prevent override own code
+            break;
+        }
         if ((flash_addr & 0xFF) == 0x00)
         {
             driver_mfc_erase_sector(MAIN_SPACE, flash_addr);
@@ -146,6 +149,8 @@ void start(void)
         driver_mfc_write_dword(MAIN_SPACE, flash_addr, REG32(i + 0x400000));
         flash_addr += 4;
     }
+    BK3000_MFC_WE_P2=0X00;
+    BK3000_MFC_WE_P1=0X00;
     __breakpoint(0x0000);
     for (;;) { }
 }
