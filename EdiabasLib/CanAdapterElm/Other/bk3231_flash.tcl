@@ -39,6 +39,33 @@ proc flash_erase_sector { ADDR SPACE_CTL } {
 	}
 }
 
+proc flash_erase_chip { } {
+	global BK3000_MFC_KEYWORD
+	global BK3000_MFC_CTL
+	global BK3000_MFC_ADDR
+	global BK3000_MFC_DATA
+	global BK3000_MFC_WE_P1
+	global BK3000_MFC_WE_P2
+	global BK3000_MFC_WE_P3
+	global MAIN_SPACE
+
+	set cmd [expr { (7 << 2) | ($MAIN_SPACE << 5) | 1 }]
+	mww $BK3000_MFC_WE_P1 0xA5
+	mww $BK3000_MFC_WE_P2 0xC3
+	mww $BK3000_MFC_ADDR 0
+	mww $BK3000_MFC_KEYWORD 0x58A9
+	mww $BK3000_MFC_KEYWORD 0xA958
+	mww $BK3000_MFC_CTL $cmd
+
+	while 1 {
+		mem2array data 32 $BK3000_MFC_CTL 1
+		#echo [format "ctl=0x%08X" $data(0)]
+		if {[expr { ($data(0) & 0x01) == 0x00}]} {
+			break
+		}
+	}
+}
+
 proc flash_read_dword { ADDR SPACE_CTL } {
 	global BK3000_MFC_KEYWORD
 	global BK3000_MFC_CTL
