@@ -1,5 +1,8 @@
 #include <stdint.h>
 
+#define xstr(a) str(a)
+#define str(a) #a
+
 #define REG32(x)            (*((volatile uint32_t *)(x)))
 
 #define BIT_0               0x00000001
@@ -115,7 +118,7 @@ __asm void init(void)
     BX  lr;
 }
 
-void start(void) __attribute__((section(".ARM.__at_0x3E000")));
+void start(void) __attribute__((section(".ARM.__at_" xstr(LOADER_ADDR))));
 
 void start(void)
 {
@@ -138,7 +141,7 @@ void start(void)
     }
     for (uint32_t i = 0; i < len; i += 4)
     {
-        if (flash_addr >= 0x3E000)
+        if (flash_addr >= LOADER_ADDR)
         {   // prevent override own code
             break;
         }
