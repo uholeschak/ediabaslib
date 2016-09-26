@@ -156,6 +156,12 @@ proc flash_write_area { FILENAME ADDR {SPACE_CTL 0} } {
 	close $fp
 }
 
+proc flash_write_loader { FILENAME } {
+	global LOADER_ADDR
+
+	flash_write_area $FILENAME $LOADER_ADDR
+}
+
 proc flash_write_area_fast { FILENAME ADDR } {
 	global cpu_halted
 	global LOADER_ADDR
@@ -165,6 +171,12 @@ proc flash_write_area_fast { FILENAME ADDR } {
 		return
 	}
 	reset init
+	mem2array data 32 $LOADER_ADDR 1
+	if {[expr $data(0) == 0xFFFFFFFF]} {
+		echo "No loader present. Write it with flash_write_loader first."
+		return
+	}
+
 	set fsize [file size $FILENAME]
 	set fp [open $FILENAME r]
 	fconfigure $fp -translation binary
