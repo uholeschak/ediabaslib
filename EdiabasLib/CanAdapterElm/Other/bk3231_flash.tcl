@@ -183,7 +183,7 @@ proc flash_write_area { FILENAME ADDR {SPACE_CTL 0} } {
 	close $fp
 }
 
-proc flash_write_loader { FILENAME } {
+proc flash_write_loader { {FILENAME "Bk3231Flash/write_flash.bin"} } {
 	global LOADER_ADDR
 
 	flash_write_area $FILENAME $LOADER_ADDR
