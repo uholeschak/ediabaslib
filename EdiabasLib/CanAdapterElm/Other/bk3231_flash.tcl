@@ -11,6 +11,8 @@ set MAIN_SPACE              0x00
 set NVR_SPACE               0x1
 set RDN_SPACE               0x2
 
+set LOADER_ADDR             0x3E000
+
 proc flash_erase_sector { ADDR SPACE_CTL } {
 	global BK3000_MFC_KEYWORD
 	global BK3000_MFC_CTL
@@ -151,6 +153,56 @@ proc flash_write_area { FILENAME ADDR {SPACE_CTL 0} } {
 	}
 	mww $BK3000_MFC_WE_P1 0x00
 	mww $BK3000_MFC_WE_P2 0x00
+	close $fp
+}
+
+proc flash_write_area_fast { FILENAME ADDR } {
+	global cpu_halted
+	global LOADER_ADDR
+
+	if {[file exists $FILENAME] == 0} {
+		echo [format "file %s not existing" $FILENAME]
+		return
+	}
+	reset init
+	set fsize [file size $FILENAME]
+	set fp [open $FILENAME r]
+	fconfigure $fp -translation binary
+
+	set flash_addr $ADDR
+	set flash_count 0
+	set data_list {}
+	for { set x 0 } { $x < $fsize } { set x [expr $x + 4]} {
+		set bin_data [read $fp 4]
+		binary scan $bin_data iu data
+		lappend data_list $flash_count $data
+		set flash_count [expr $flash_count + 1]
+		set flash_len [expr $flash_count * 4]
+		if {[expr {($flash_len >= 0x3000) || (($x + 4) >= $fsize})]} {
+			if {$flash_count == 0} {
+				break;
+			}
+			if {$flash_addr >= $LOADER_ADDR} {
+				break;
+			}
+			array set data_array $data_list
+			array2mem data_array 32 0x400000 $flash_count
+			mww 0x403E00 $flash_addr
+			mww 0x403E04 $flash_len
+			echo [format "addr=0x%08X, len=0x%04X" $flash_addr $flash_len]
+			set cpu_halted 0
+			resume $LOADER_ADDR
+			while 1 {
+				if {$cpu_halted != 0} {
+					break
+				}
+				sleep 10
+			}
+			set flash_addr [expr $flash_addr + $flash_len]
+			set flash_count 0
+			set data_list {}
+		}
+	}
 	close $fp
 }
 
