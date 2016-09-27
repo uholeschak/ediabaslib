@@ -1796,6 +1796,13 @@ namespace BmwDeepObd
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
             progress.SetCancelable(false);
             progress.SetMessage(GetString(Resource.String.xml_tool_analyze));
+            if ((ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) &&
+                (string.IsNullOrEmpty(ecuInfo.MwTabFileName) || !File.Exists(ecuInfo.MwTabFileName)))
+            {
+                progress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
+                progress.Progress = 0;
+                progress.Max = 100;
+            }
             progress.SetButton((int)DialogButtonType.Negative, GetString(Resource.String.button_abort), (sender, args) =>
             {
                 _ediabasJobAbort = true;
@@ -1912,7 +1919,7 @@ namespace BmwDeepObd
                     {
                         if (string.IsNullOrEmpty(ecuInfo.MwTabFileName) || !File.Exists(ecuInfo.MwTabFileName))
                         {
-                            List<string> mwTabFileNames = GetBestMatchingMwTab(ecuInfo);
+                            List<string> mwTabFileNames = GetBestMatchingMwTab(ecuInfo, progress);
                             if (mwTabFileNames == null)
                             {
                                 throw new Exception("Read mwtab jobs failed");
@@ -2213,7 +2220,7 @@ namespace BmwDeepObd
             };
         }
 
-        private List<string> GetBestMatchingMwTab(EcuInfo ecuInfo)
+        private List<string> GetBestMatchingMwTab(EcuInfo ecuInfo, Android.App.ProgressDialog progress)
         {
             List<ActivityCommon.MwTabFileEntry> wmTabList = ActivityCommon.GetMatchingVagMwTabs(Path.Combine(_datUkdDir, "mwtabs"), ecuInfo.Sgbd);
             SortedSet<int> mwBlocks = ActivityCommon.ExtractVagMwBlocks(wmTabList);
@@ -2233,12 +2240,21 @@ namespace BmwDeepObd
 
             try
             {
+                int blockIndex = 0;
                 foreach (int block in mwBlocks)
                 {
                     if (_ediabasJobAbort)
                     {
                         return null;
                     }
+                    int localBlockIndex = blockIndex;
+                    RunOnUiThread(() =>
+                    {
+                        if (progress != null)
+                        {
+                            progress.Progress = localBlockIndex * 100 / mwBlocks.Count;
+                        }
+                    });
                     _ediabas.ArgString = string.Format("{0};{1}", block, readCommand);
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
@@ -2272,6 +2288,7 @@ namespace BmwDeepObd
                             dictIndex++;
                         }
                     }
+                    blockIndex++;
                 }
             }
             catch (Exception)
