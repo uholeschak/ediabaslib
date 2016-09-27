@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">Deep OBD для BMW</string>
+  <!--Translate-->
+  <string name="app_name">Deep OBD для BMW and VAG</string>
   <string name="button_connected">Соеденено</string>
   <string name="button_disconnected">Разъеденено</string>
   <string name="button_yes">Да</string>
@@ -33,6 +34,8 @@
 \n\nИзменения в этой версии:
 \n- улучшена стабильность</string>
   <string name="app_info_message">Deep OBD для BMW\nВерсия: {0}\nId: {1}</string>
+  <!--Translate-->
+  <string name="vag_mode_info">Der VAG Modus ist noch experimentell.\nEs wird ein <a href='http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327'>Deep OBD Adapter</a> mit mindestens Firmwareversion 0.8 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281 und TP2.0 unterstützt.</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Информация</string>

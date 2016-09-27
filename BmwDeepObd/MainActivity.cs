@@ -141,6 +141,7 @@ namespace BmwDeepObd
         private bool _storageAccessGranted;
         private bool _createTabsPending;
         private bool _autoStart;
+        private bool _vagInfoShown;
         private ActivityCommon _activityCommon;
         private JobReader _jobReader;
         private Handler _updateHandler;
@@ -606,20 +607,27 @@ namespace BmwDeepObd
             switch (item.ItemId)
             {
                 case Resource.Id.menu_manufacturer:
-                    _activityCommon.SelectManufacturer((sender, args) =>
+                    if (!_vagInfoShown)
                     {
-                        if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                            {
+                                SelectManufacturer();
+                            })
+                            .SetNegativeButton(Resource.String.button_abort, (sender, args) => { })
+                            .SetCancelable(true)
+                            .SetMessage(Resource.String.vag_mode_info)
+                            .SetTitle(Resource.String.alert_title_info)
+                            .Show();
+                        TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                        if (messageView != null)
                         {
-                            _activityCommon.SelectedInterface = ActivityCommon.InterfaceType.Bluetooth;
+                            messageView.MovementMethod = new LinkMovementMethod();
                         }
-                        _jobReader.Clear();
-                        _configFileName = null;
-                        CreateActionBarTabs();
-                        UpdateDirectories();
-                        CheckForEcuFiles();
-                        SupportInvalidateOptionsMenu();
-                        UpdateDisplay();
-                    });
+                        _vagInfoShown = true;
+                        return true;
+                    }
+                    SelectManufacturer();
                     return true;
 
                 case Resource.Id.menu_scan:
@@ -1319,7 +1327,7 @@ namespace BmwDeepObd
                     {   // read errors
                         List<string> stringList = new List<string>();
                         List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
-                        int updateProgress = 0;
+                        int updateProgress;
                         lock (EdiabasThread.DataLock)
                         {
                             if (_ediabasThread.ResultPageInfo == pageInfo)
@@ -2498,6 +2506,24 @@ namespace BmwDeepObd
             {
                 return false;
             }
+        }
+
+        private void SelectManufacturer()
+        {
+            _activityCommon.SelectManufacturer((sender, args) =>
+            {
+                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                {
+                    _activityCommon.SelectedInterface = ActivityCommon.InterfaceType.Bluetooth;
+                }
+                _jobReader.Clear();
+                _configFileName = null;
+                CreateActionBarTabs();
+                UpdateDirectories();
+                CheckForEcuFiles();
+                SupportInvalidateOptionsMenu();
+                UpdateDisplay();
+            });
         }
 
         private void RequestConfigSelect()
