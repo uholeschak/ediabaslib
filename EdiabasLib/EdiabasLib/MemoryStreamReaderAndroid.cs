@@ -35,14 +35,6 @@ namespace EdiabasLib
         const int MapShared = 0x1;
         // ReSharper restore UnusedMember.Local
 
-        static MemoryStreamReader()
-        {
-            AppDomain.CurrentDomain.ProcessExit += (sender, args) =>
-            {
-                RemoveDirectoryObserver();
-            };
-        }
-
         public MemoryStreamReader(string path)
         {
             _filePos = 0;
@@ -333,7 +325,7 @@ namespace EdiabasLib
                     try
                     {
                         _directoryObserver.StopWatching();
-                        _directoryObserver.Dispose();
+                        // don't dispose the observer, otherwise it will crash at exit
                     }
                     catch (Exception)
                     {
