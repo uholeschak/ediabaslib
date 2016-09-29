@@ -2811,10 +2811,10 @@ namespace CarSimulator
                                 break;
 
                             case 0xA1: // parameter response (from channel test)
-                                if (canMsg.LEN <= 5)
+                                if (canMsg.LEN != 6)
                                 {
 #if CAN_DEBUG
-                                    Debug.WriteLine("Parameter response too short");
+                                    Debug.WriteLine("Parameter response length invalid");
 #endif
                                     break;
                                 }
