@@ -86,6 +86,7 @@ namespace CarSimulator
             private byte _t3;
 
             public long LastAccessTick { get; set; }
+            public long LastKeepAliveTick { get; set; }
             public byte EcuAddress { get; set; }
             public byte TelAddress { get; set; }
             public byte AppId { get; set; }
@@ -148,6 +149,7 @@ namespace CarSimulator
             public int SendBlock { get; set; }
             public bool WaitForAck { get; set; }
             public long AckWaitStartTick { get; set; }
+            public bool WaitForKeepAliveResp { get; set; }
             public bool SendDelay { get; set; }
             public long SendDelayStartTick { get; set; }
             public List<byte> RecData { get; set; }
@@ -2420,6 +2422,7 @@ namespace CarSimulator
                 for (int i = 0; i < _tp20Channels.Count; i++)
                 {
                     Tp20Channel channel = _tp20Channels[i];
+                    bool removeChannel = false;
                     if (channel.SendData.Count == 0)
                     {
                         if ((Stopwatch.GetTimestamp() - channel.LastAccessTick) > 5000 * TickResolMs)
@@ -2427,7 +2430,31 @@ namespace CarSimulator
 #if CAN_DEBUG
                             Debug.WriteLine("Timeout channel {0:X04}", channel.TxId);
 #endif
-                            _tp20Channels.Remove(channel);
+                            removeChannel = true;
+                        }
+                    }
+                    if (channel.WaitForKeepAliveResp)
+                    {
+                        if ((Stopwatch.GetTimestamp() - channel.LastKeepAliveTick) > 3000 * TickResolMs)
+                        {
+#if CAN_DEBUG
+                            Debug.WriteLine("Keep alive timeout channel {0:X04}", channel.TxId);
+#endif
+                            removeChannel = true;
+                        }
+                    }
+                    if (removeChannel)
+                    {
+                        _tp20Channels.Remove(channel);
+                        // send disconnect
+                        sendMsg.ID = (uint)(channel.RxId);
+                        sendMsg.LEN = 1;
+                        sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                        sendMsg.DATA[0] = 0xA8;
+                        stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
+                        if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                        {
+                            return false;
                         }
                     }
                 }
@@ -2435,6 +2462,24 @@ namespace CarSimulator
                 // check for send data
                 foreach (Tp20Channel channel in _tp20Channels)
                 {
+                    if (!channel.WaitForKeepAliveResp && ((Stopwatch.GetTimestamp() - channel.LastKeepAliveTick) > 1000 * TickResolMs))
+                    {
+#if CAN_DEBUG
+                        Debug.WriteLine("Send keep alive channel {0:X04}", channel.TxId);
+#endif
+                        sendMsg.ID = (uint)(channel.RxId);
+                        sendMsg.LEN = 1;
+                        sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                        sendMsg.DATA[0] = 0xA3;
+
+                        stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
+                        if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                        {
+                            return false;
+                        }
+                        channel.LastKeepAliveTick = Stopwatch.GetTimestamp();
+                        channel.WaitForKeepAliveResp = true;
+                    }
                     if (channel.WaitForAck)
                     {
                         if ((Stopwatch.GetTimestamp() - channel.AckWaitStartTick) > Tp20T1 * TickResolMs)
@@ -2598,7 +2643,8 @@ namespace CarSimulator
                             TelAddress = configData[1],
                             AppId = canMsg.DATA[6],
                             RxId = (canMsg.DATA[5] << 8) | canMsg.DATA[4],
-                            TxId = 0x700 + canMsg.DATA[0]   // no real id
+                            TxId = 0x700 + canMsg.DATA[0],   // no real id
+                            LastKeepAliveTick = Stopwatch.GetTimestamp()
                         };
                         _tp20Channels.Add(newChannel);
 #if CAN_DEBUG
@@ -2762,6 +2808,17 @@ namespace CarSimulator
                                 {
                                     return false;
                                 }
+                                break;
+
+                            case 0xA1: // parameter response (from channel test)
+                                if (canMsg.LEN <= 5)
+                                {
+#if CAN_DEBUG
+                                    Debug.WriteLine("Parameter response too short");
+#endif
+                                    break;
+                                }
+                                currChannel.WaitForKeepAliveResp = false;
                                 break;
 
                             case 0xA4: // break;
