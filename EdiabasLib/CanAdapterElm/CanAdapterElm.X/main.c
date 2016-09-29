@@ -178,6 +178,7 @@
 #define CAN_MIN_SEP_TIME    0       // min separation time (ms)
 #define CAN_TIMEOUT         1000    // can receive timeout (1ms)
 #define CAN_TP20_T1         100     // TP2.0 T1 ACK timeout
+#define CAN_TP20_ALIVE_TO   3000    // TP2.0 keep alive timeout (should be 5000, but is too large)
 
 #define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes)
 #define EEP_ADDR_BLOCKSIZE  0x02    // eeprom address for FC block size (2 bytes)
@@ -1934,7 +1935,7 @@ void read_eeprom()
     }
     if (name_buffer[0] == 0)
     {
-        static const char default_name[] = {"Deep OBD BMW"};
+        static const char default_name[] = {"Deep OBD"};
         memcpy(name_buffer, default_name, sizeof(default_name));
     }
 #endif
@@ -2717,7 +2718,7 @@ void can_tp20(bool new_can_msg)
                         can_tp20_state = tp20_send_alive;
                         break;
                     }
-                    // last telegram, resport status
+                    // last telegram, report status
                     temp_buffer[0] = 0x82;
                     temp_buffer[1] = 0xF1;
                     temp_buffer[2] = 0xF1;
@@ -2756,8 +2757,15 @@ void can_tp20(bool new_can_msg)
         case tp20_rec_par:              // receive parameter
         case tp20_send_wait_ack:        // send data, wait for ack
         case tp20_send_done_wait_ack:   // send data finished, wait for ack
-        case tp20_rec_alive:            // receive keep alive
             if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TP20_T1 * TIMER0_RESOL / 1000))
+            {
+                tp20_disconnect();
+                break;
+            }
+            break;
+
+        case tp20_rec_alive:            // receive keep alive
+            if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TP20_ALIVE_TO * TIMER0_RESOL / 1000))
             {
                 tp20_disconnect();
                 break;
@@ -2894,6 +2902,19 @@ void can_tp20(bool new_can_msg)
                                 break;
                             }
                             break;
+
+                        case 0xA3:  // channel test
+                            memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+                            can_out_msg.sid = can_tp20_txid;
+                            can_out_msg.dlc.bits.count = 6;
+                            can_out_msg.data[0] = 0xA1;     // Parameter response
+                            can_out_msg.data[1] = can_cfg_blocksize;     // block size
+                            can_out_msg.data[2] = 0x80 | (CAN_TP20_T1 / 10);    // T1: 100ms
+                            can_out_msg.data[3] = 0xFF;     // T2
+                            can_out_msg.data[4] = can_cfg_packet_interval;      // T3
+                            can_out_msg.data[5] = 0xFF;     // T4
+                            can_send_message_wait();
+                            break;
                     }
                     break;
 
@@ -2903,7 +2924,7 @@ void can_tp20(bool new_can_msg)
                         tp20_disconnect();
                         break;
                     }
-                    can_tp20_state = tp20_rec_alive;
+                    can_rec_time = get_systick();
                     break;
 
                 case 0x0B:  // ACK, ready for next packet
