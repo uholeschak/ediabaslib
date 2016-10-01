@@ -138,3 +138,28 @@ CFG: 05 58
 82 58 F1 1A 88 6D : 83 F1 58 7F 1A 12 77
 ; LangeCodierung_lesen
 82 58 F1 1A 9A 7F : 83 F1 58 7F 1A 12 77
+
+;Bfs_53.grp
+CFG: 19 2C
+; Steuergeraeteversion_abfragen2
+; Steuergeraeteversion_abfragen
+; ErwIdentifikation_abfragen
+82 2C F1 1A 9B 54 : B0 F1 2C 5A 9B 34 46 30 39 31 30 38 30 31 42 20 20 30 30 36 30 03 00 1B 6E 00 06 46 22 09 14 45 50 42 20 20 43 42 34 43 30 30 36 30 20 20 20 48 30 34 20 03
+82 2C F1 1A 91 4A : 91 F1 2C 5A 91 0E 34 46 30 39 30 37 38 30 31 41 20 20 20 FF 2A
+82 2C F1 1A 86 3F : A4 F1 2C 5A 86 01 20 47 4E 4F 2D 50 49 52 31 30 2E 30 37 2E 30 36 2D 2D 48 30 34 2D 2D 2D 30 30 33 30 31 30 35 39 FF 66
+; UnterstFunktionen_abfragen
+84 2C F1 31 B8 00 00 8A : 8E F1 2C 71 B8 01 01 01 02 01 03 01 04 01 06 01 07 F1
+; FlashStatus_abfragen
+82 2C F1 1A 9C 55 : 94 F1 2C 5A 9C 00 00 00 00 00 06 46 22 09 14 30 30 2E 30 30 2E 30 30 AE
+; Softwareversion_abfragen
+82 2C F1 1A 87 40 : 91 F1 2C 5A 87 06 50 30 30 30 30 08 41 30 30 30 30 30 41 FF 1E
+; Fahrgestellnr_abfragen
+82 2C F1 1A 90 49 : 83 F1 2C 7F 1A 12 4B
+; MotorOderSystemnr_abfragen
+82 2C F1 1A 97 50 : 83 F1 2C 7F 1A 12 4B
+; Typpruefnr_abfragen
+82 2C F1 1A 96 4F : 83 F1 2C 7F 1A 12 4B
+; Lebenslaufdaten_abfragen
+82 2C F1 1A 88 41 : 83 F1 2C 7F 1A 12 4B
+; LangeCodierung_lesen
+82 2C F1 1A 9A 53 : 83 F1 2C 7F 1A 12 4B
