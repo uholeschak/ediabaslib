@@ -231,6 +231,11 @@ namespace LogfileConverter
                 {
                     if (line.Length > 0)
                     {
+                        if (Regex.IsMatch(line, @"^ \(EDIC CommParameter"))
+                        {
+                            _edicCanMode = false;
+                        }
+
                         MatchCollection canEdicMatches = Regex.Matches(line, @"^EDIC CAN: (..), Tester: (..), Ecu: (..)");
                         if (canEdicMatches.Count == 1)
                         {
