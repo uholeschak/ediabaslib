@@ -8,8 +8,12 @@ namespace LogfileConverter
 {
     class Program
     {
-        static bool _responseFile;
-        static bool _cFormat;
+        private static bool _responseFile;
+        private static bool _cFormat;
+        private static bool _edicCanMode;
+        private static int _edicCanAddr;
+        private static int _edicCanTesterAddr;
+        private static int _edicCanEcuAddr;
 
         static int Main(string[] args)
         {
@@ -217,6 +221,7 @@ namespace LogfileConverter
 
         private static void ConvertTraceFile(string inputFile, StreamWriter streamWriter)
         {
+            _edicCanMode = false;
             using (StreamReader streamReader = new StreamReader(inputFile))
             {
                 string line;
@@ -226,6 +231,24 @@ namespace LogfileConverter
                 {
                     if (line.Length > 0)
                     {
+                        MatchCollection canEdicMatches = Regex.Matches(line, @"^EDIC CAN: (..), Tester: (..), Ecu: (..)");
+                        if (canEdicMatches.Count == 1)
+                        {
+                            if (canEdicMatches[0].Groups.Count == 4)
+                            {
+                                try
+                                {
+                                    _edicCanAddr = Convert.ToInt32(canEdicMatches[0].Groups[1].Value, 16);
+                                    _edicCanTesterAddr = Convert.ToInt32(canEdicMatches[0].Groups[2].Value, 16);
+                                    _edicCanEcuAddr = Convert.ToInt32(canEdicMatches[0].Groups[3].Value, 16);
+                                    _edicCanMode = true;
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
+                        }
                         if (Regex.IsMatch(line, @"^ \((Send|Resp)\):"))
                         {
                             bool send = Regex.IsMatch(line, @"^ \(Send\):");
@@ -284,7 +307,18 @@ namespace LogfileConverter
                                 }
                                 else
                                 {   // receive
-                                    readString += line;
+                                    bool addResponse = true;
+                                    if (_edicCanMode)
+                                    {
+                                        if (lineValues.Count == 6 && lineValues[1] == 0xF1 && lineValues[2] == 0xF1)
+                                        {   // filter adapter responses
+                                            addResponse = false;
+                                        }
+                                    }
+                                    if (addResponse)
+                                    {
+                                        readString += line;
+                                    }
                                     line = string.Empty;
                                 }
                             }
@@ -491,7 +525,7 @@ namespace LogfileConverter
             {
                 return false;
             }
-            if (!broadcast)
+            if (!broadcast && !_edicCanMode)
             {
                 if (request[1] != response[2])
                 {
@@ -510,6 +544,26 @@ namespace LogfileConverter
             string result = string.Empty;
 
             List<byte> values = NumberString2List(numberString);
+
+            if (_edicCanMode && values.Count >= 4)
+            {
+                bool updateChecksum = false;
+                if (values[1] == _edicCanAddr && values[2] == _edicCanTesterAddr)
+                {
+                    values[1] = (byte)_edicCanEcuAddr;
+                    updateChecksum = true;
+                }
+                else if (values[1] == 0x00 && values[2] == _edicCanAddr)
+                {
+                    values[1] = (byte)_edicCanTesterAddr;
+                    values[2] = (byte)_edicCanEcuAddr;
+                    updateChecksum = true;
+                }
+                if (updateChecksum)
+                {
+                    values[values.Count - 1] = CalcChecksumBmwFast(values, 0, values.Count - 1);
+                }
+            }
 
             foreach (byte value in values)
             {
