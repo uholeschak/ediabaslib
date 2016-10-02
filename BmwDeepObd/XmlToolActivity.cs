@@ -83,6 +83,8 @@ namespace BmwDeepObd
 
             public List<ActivityCommon.MwTabEntry> MwTabList { get; set; }
 
+            public bool IgnoreXmlFile { get; set; }
+
             public string ReadCommand { get; set; }
         }
 
@@ -2025,7 +2027,10 @@ namespace BmwDeepObd
                             {
                                 commentList.Add(comment);
                             }
-                            commentList.Add(mwTabEntry.Comment);
+                            if (!string.IsNullOrEmpty(mwTabEntry.Comment))
+                            {
+                                commentList.Add(mwTabEntry.Comment);
+                            }
 
                             string type = (string.Compare(mwTabEntry.ValueType, "R", StringComparison.OrdinalIgnoreCase) == 0) ? "real" : "integer";
                             job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, commentList, mwTabEntry));
@@ -2091,19 +2096,26 @@ namespace BmwDeepObd
 
             ecuInfo.JobList = jobList;
 
-            string xmlFileDir = XmlFileDir();
-            if (xmlFileDir != null)
+            if (ecuInfo.IgnoreXmlFile)
             {
-                string xmlFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
-                if (File.Exists(xmlFile))
+                ecuInfo.PageName = ecuInfo.EcuName;
+            }
+            else
+            {
+                string xmlFileDir = XmlFileDir();
+                if (xmlFileDir != null)
                 {
-                    try
+                    string xmlFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
+                    if (File.Exists(xmlFile))
                     {
-                        ReadPageXml(ecuInfo, XDocument.Load(xmlFile));
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
+                        try
+                        {
+                            ReadPageXml(ecuInfo, XDocument.Load(xmlFile));
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                     }
                 }
             }
@@ -2381,41 +2393,44 @@ namespace BmwDeepObd
                         _ediabas.NoInitForVJobs = true;
                         _ediabas.ExecuteJob("_VERSIONINFO");
 
-                        StringBuilder stringBuilderComment = new StringBuilder();
-                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                        if (resultSets != null && resultSets.Count >= 2)
+                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                         {
-                            int dictIndex = 0;
-                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                            StringBuilder stringBuilderComment = new StringBuilder();
+                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                            if (resultSets != null && resultSets.Count >= 2)
                             {
-                                if (dictIndex == 0)
+                                int dictIndex = 0;
+                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
                                 {
-                                    dictIndex++;
-                                    continue;
-                                }
-                                for (int i = 0; ; i++)
-                                {
-                                    EdiabasNet.ResultData resultData;
-                                    if (resultDict.TryGetValue("ECUCOMMENT" + i.ToString(Culture), out resultData))
+                                    if (dictIndex == 0)
                                     {
-                                        if (resultData.OpData is string)
+                                        dictIndex++;
+                                        continue;
+                                    }
+                                    for (int i = 0; ; i++)
+                                    {
+                                        EdiabasNet.ResultData resultData;
+                                        if (resultDict.TryGetValue("ECUCOMMENT" + i.ToString(Culture), out resultData))
                                         {
-                                            if (stringBuilderComment.Length > 0)
+                                            if (resultData.OpData is string)
                                             {
-                                                stringBuilderComment.Append(";");
+                                                if (stringBuilderComment.Length > 0)
+                                                {
+                                                    stringBuilderComment.Append(";");
+                                                }
+                                                stringBuilderComment.Append((string)resultData.OpData);
                                             }
-                                            stringBuilderComment.Append((string)resultData.OpData);
+                                        }
+                                        else
+                                        {
+                                            break;
                                         }
                                     }
-                                    else
-                                    {
-                                        break;
-                                    }
+                                    dictIndex++;
                                 }
-                                dictIndex++;
                             }
+                            ecuInfo.Description = stringBuilderComment.ToString();
                         }
-                        ecuInfo.Description = stringBuilderComment.ToString();
                         string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
                         if (_ecuList.Any(info => !info.Equals(ecuInfo) && string.Compare(info.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0))
                         {   // already existing
@@ -2485,6 +2500,30 @@ namespace BmwDeepObd
             if (ecuInfo.Selected)
             {
                 ExecuteJobsRead(ecuInfo);
+            }
+            else
+            {
+                int selectCount = 0;
+                if (ecuInfo.JobList != null)
+                {
+                    selectCount = ecuInfo.JobList.Count(job => job.Selected);
+                }
+                if ((selectCount > 0) || !string.IsNullOrEmpty(ecuInfo.MwTabFileName))
+                {
+                    new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                        {
+                            ecuInfo.JobList = null;
+                            ecuInfo.MwTabFileName = string.Empty;
+                            ecuInfo.MwTabList = null;
+                            ecuInfo.IgnoreXmlFile = true;
+                            UpdateDisplay();
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (sender, args) => { })
+                        .SetMessage(Resource.String.xml_tool_reset_ecu_setting)
+                        .SetTitle(Resource.String.alert_title_question)
+                        .Show();
+                }
             }
             UpdateDisplay();
         }
@@ -3684,10 +3723,13 @@ namespace BmwDeepObd
 
                 StringBuilder stringBuilderName = new StringBuilder();
                 stringBuilderName.Append(!string.IsNullOrEmpty(item.EcuName) ? item.EcuName : item.Name);
-                stringBuilderName.Append(": ");
-                stringBuilderName.Append(!string.IsNullOrEmpty(item.DescriptionTrans)
-                    ? item.DescriptionTrans
-                    : item.Description);
+                if (!string.IsNullOrEmpty(item.Description))
+                {
+                    stringBuilderName.Append(": ");
+                    stringBuilderName.Append(!string.IsNullOrEmpty(item.DescriptionTrans)
+                        ? item.DescriptionTrans
+                        : item.Description);
+                }
                 textEcuName.Text = stringBuilderName.ToString();
 
                 StringBuilder stringBuilderInfo = new StringBuilder();
