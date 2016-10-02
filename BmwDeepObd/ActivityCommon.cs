@@ -2180,7 +2180,11 @@ namespace BmwDeepObd
                             using (XmlReader reader = lineNode.CreateReader())
                             {
                                 reader.MoveToContent();
-                                textList.Add(reader.ReadInnerXml());
+                                string line = reader.ReadInnerXml();
+                                if (!string.IsNullOrWhiteSpace(line))
+                                {
+                                    textList.Add(line);
+                                }
                             }
                         }
                         return textList;
