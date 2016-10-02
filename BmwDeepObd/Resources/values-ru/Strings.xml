@@ -226,6 +226,7 @@
   <string name="xml_tool_errors_page">Ошибки</string>
   <string name="xml_tool_auto_config">Автоматически</string>
   <string name="xml_tool_man_config">Ручная настройка</string>
+  <string name="xml_tool_result_vin">VIN</string>
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Добавить страницу ошибок</string>
