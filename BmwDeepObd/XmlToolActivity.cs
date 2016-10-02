@@ -454,7 +454,9 @@ namespace BmwDeepObd
             if (cfgTypeSubMenu != null)
             {
                 cfgTypeSubMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_xml_tool_cfg_type),
-                    (_manualConfigIdx > 0) ? GetString(Resource.String.xml_tool_man_config) : GetString(Resource.String.xml_tool_auto_config)));
+                    (_manualConfigIdx > 0) ?
+                    GetString(Resource.String.xml_tool_man_config) + " " + _manualConfigIdx.ToString(CultureInfo.InvariantCulture) :
+                    GetString(Resource.String.xml_tool_auto_config)));
                 cfgTypeSubMenu.SetEnabled(interfaceAvailable && !commActive);
             }
 
