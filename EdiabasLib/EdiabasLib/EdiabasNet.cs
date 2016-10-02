@@ -337,13 +337,13 @@ namespace EdiabasLib
                                 len = arg3Data.GetValueData();
                             }
 
-                            EdValueType requiredLength = index + len;
+                            ulong requiredLength = (ulong) index + len;
                             if (requiredLength > _ediabas.ArrayMaxSize)
                             {
                                 _ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
                                 return ByteArray0;
                             }
-                            if (dataArray.Length < requiredLength)
+                            if (dataArray.Length < (long) requiredLength)
                             {
                                 if (dataArray.Length <= index)
                                 {
