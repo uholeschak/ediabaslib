@@ -31,7 +31,7 @@
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:
 \n- Kleinere Probleme behoben</string>
-  <string name="app_info_message">Deep OBD für BMW\nVersion: {0}\nId: {1}</string>
+  <string name="app_info_message">Deep OBD für BMW und VAG\nVersion: {0}\nId: {1}</string>
   <string name="vag_mode_info">Der VAG Modus ist noch experimentell.\nEs wird ein <a href='http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327'>Deep OBD Adapter</a> mit mindestens Firmwareversion 0.8 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281 und TP2.0 unterstützt.</string>
 
   <!-- Alert titles -->
