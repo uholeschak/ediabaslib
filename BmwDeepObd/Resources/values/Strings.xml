@@ -226,6 +226,8 @@
   <string name="xml_tool_errors_page">Errors</string>
   <string name="xml_tool_auto_config">Automatic</string>
   <string name="xml_tool_man_config">Manual</string>
+  <string name="xml_tool_job_read_mwblock">Read measurement value block</string>
+  <string name="xml_tool_job_read_vin">Read VIN</string>
   <string name="xml_tool_result_vin">VIN</string>
 
   <!-- XML Tool Options Menu -->
