@@ -2036,6 +2036,10 @@ namespace BmwDeepObd
                             job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, commentList, mwTabEntry));
                         }
                     }
+                    else if (string.Compare(job.Name, "Fahrgestellnr_abfragen", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        job.Results.Add(new XmlToolEcuActivity.ResultInfo("Fahrgestellnr", GetString(Resource.String.xml_tool_result_vin), "string", null));
+                    }
                     continue;
                 }
 

@@ -225,6 +225,7 @@
   <string name="xml_tool_errors_page">Fehler</string>
   <string name="xml_tool_auto_config">Automatisch</string>
   <string name="xml_tool_man_config">Manuell</string>
+  <string name="xml_tool_result_vin">Fahrgestellnummer</string>
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Fehlerseite hinzufügen</string>

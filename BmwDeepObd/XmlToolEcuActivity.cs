@@ -284,6 +284,10 @@ namespace BmwDeepObd
                 {
                     return true;
                 }
+                if (string.Compare(job.Name, "Fahrgestellnr_abfragen", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return true;
+                }
                 return false;
             }
             bool validResult = false;
@@ -312,19 +316,27 @@ namespace BmwDeepObd
 
         private void UpdateDisplay()
         {
+            int selection = 0;
             _spinnerJobsAdapter.Items.Clear();
             foreach (JobInfo job in _ecuInfo.JobList.OrderBy(x => x.Name))
             {
                 if (IsValidJob(job))
                 {
                     _spinnerJobsAdapter.Items.Add(job);
+                    if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                    {
+                        if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            selection = _spinnerJobsAdapter.Items.Count - 1;
+                        }
+                    }
                 }
             }
             _spinnerJobsAdapter.NotifyDataSetChanged();
             if (_spinnerJobsAdapter.Items.Count > 0)
             {
-                _spinnerJobs.SetSelection(0);
-                JobSelected(_spinnerJobsAdapter.Items[0]);
+                _spinnerJobs.SetSelection(selection);
+                JobSelected(_spinnerJobsAdapter.Items[selection]);
             }
             else
             {
@@ -643,28 +655,31 @@ namespace BmwDeepObd
                         selection = _spinnerJobResultsAdapter.Items.Count - 1;
                     }
                 }
-                if (_spinnerJobResultsAdapter.Items.Count > 0 && selection < 0)
+                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                 {
-                    if (jobInfo.Selected && ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
-                    {   // no selection, auto select all value types
-                        int index = 0;
-                        foreach (ResultInfo result in _spinnerJobResultsAdapter.Items)
-                        {
-                            if (result.Name.EndsWith("_WERT", StringComparison.OrdinalIgnoreCase) ||
-                                result.Name.StartsWith("STAT_", StringComparison.OrdinalIgnoreCase) || result.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase))
-                            {
-                                result.Selected = true;
-                                if (selection < 0)
-                                {
-                                    selection = index;
-                                }
-                            }
-                            index++;
-                        }
-                    }
-                    if (selection < 0)
+                    if (_spinnerJobResultsAdapter.Items.Count > 0 && selection < 0)
                     {
-                        selection = 0;
+                        if (jobInfo.Selected && ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+                        {   // no selection, auto select all value types
+                            int index = 0;
+                            foreach (ResultInfo result in _spinnerJobResultsAdapter.Items)
+                            {
+                                if (result.Name.EndsWith("_WERT", StringComparison.OrdinalIgnoreCase) ||
+                                    result.Name.StartsWith("STAT_", StringComparison.OrdinalIgnoreCase) || result.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    result.Selected = true;
+                                    if (selection < 0)
+                                    {
+                                        selection = index;
+                                    }
+                                }
+                                index++;
+                            }
+                        }
+                        if (selection < 0)
+                        {
+                            selection = 0;
+                        }
                     }
                 }
 
