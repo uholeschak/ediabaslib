@@ -550,23 +550,46 @@ namespace LogfileConverter
 
             List<byte> values = NumberString2List(numberString);
 
-            if (_edicCanMode && values.Count >= 4)
+            if (_edicCanMode && values.Count > 0)
             {
-                bool updateChecksum = false;
-                if (values[1] == _edicCanAddr && values[2] == _edicCanTesterAddr)
+
+                int offset = 0;
+                for (;;)
                 {
-                    values[1] = (byte)_edicCanEcuAddr;
-                    updateChecksum = true;
-                }
-                else if (values[1] == 0x00 && values[2] == _edicCanAddr)
-                {
-                    values[1] = (byte)_edicCanTesterAddr;
-                    values[2] = (byte)_edicCanEcuAddr;
-                    updateChecksum = true;
-                }
-                if (updateChecksum)
-                {
-                    values[values.Count - 1] = CalcChecksumBmwFast(values, 0, values.Count - 1);
+                    int dataLength = TelLengthBmwFast(values, offset);
+                    if (dataLength == 0) return string.Empty;
+                    if (values.Count - offset < dataLength + 1)
+                    {   // error
+                        break;
+                    }
+
+                    bool updateChecksum = false;
+                    if (values[1 + offset] == _edicCanAddr && values[2 + offset] == _edicCanTesterAddr)
+                    {
+                        values[1 + offset] = (byte)_edicCanEcuAddr;
+                        updateChecksum = true;
+                    }
+                    else if (values[1 + offset] == 0x00 && values[2 + offset] == _edicCanAddr)
+                    {
+                        values[1 + offset] = (byte)_edicCanTesterAddr;
+                        values[2 + offset] = (byte)_edicCanEcuAddr;
+                        updateChecksum = true;
+                    }
+                    if (updateChecksum)
+                    {
+                        byte sum = CalcChecksumBmwFast(values, offset, dataLength);
+                        values[dataLength + offset] = sum;
+                    }
+
+                    offset += dataLength + 1;    // checksum
+                    if (offset > values.Count)
+                    {   // error
+                        break;
+                    }
+                    if (offset == values.Count)
+                    {
+                        break;
+                    }
                 }
             }
 
