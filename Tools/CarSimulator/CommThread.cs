@@ -6250,7 +6250,8 @@ namespace CarSimulator
                     }
                     if (!found)
                     {
-                        if (_conceptType == ConceptType.ConceptKwp2000)
+                        if ((_conceptType == ConceptType.ConceptKwp2000) ||
+                            (_conceptType == ConceptType.ConceptTp20))
                         {
                             if (_receiveData.Length >= 5 && _receiveData[0] == 0x82 && _receiveData[3] == 0x21)
                             {   // read mwblock
