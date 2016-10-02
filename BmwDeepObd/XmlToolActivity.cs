@@ -2001,6 +2001,7 @@ namespace BmwDeepObd
                 {
                     if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
                     {
+                        job.Comments = new List<string> {GetString(Resource.String.xml_tool_job_read_mwblock)};
                         foreach (ActivityCommon.MwTabEntry mwTabEntry in ecuInfo.MwTabList)
                         {
                             string name = string.Format(Culture, "{0}/{1}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndex);
@@ -2038,6 +2039,7 @@ namespace BmwDeepObd
                     }
                     else if (string.Compare(job.Name, "Fahrgestellnr_abfragen", StringComparison.OrdinalIgnoreCase) == 0)
                     {
+                        job.Comments = new List<string> { GetString(Resource.String.xml_tool_job_read_vin) };
                         job.Results.Add(new XmlToolEcuActivity.ResultInfo("Fahrgestellnr", GetString(Resource.String.xml_tool_result_vin), "string", null));
                     }
                     continue;

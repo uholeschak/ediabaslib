@@ -226,6 +226,9 @@
   <string name="xml_tool_errors_page">Ошибки</string>
   <string name="xml_tool_auto_config">Автоматически</string>
   <string name="xml_tool_man_config">Ручная настройка</string>
+  <string name="xml_tool_job_read_mwblock">Messwerteblock lesen</string>
+  <!--Translate-->
+  <string name="xml_tool_job_read_vin">Fahrgestellnummer lesen</string>
   <string name="xml_tool_result_vin">VIN</string>
 
   <!-- XML Tool Options Menu -->

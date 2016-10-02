@@ -69,7 +69,7 @@ namespace BmwDeepObd
 
             public string Name { get; }
 
-            public List<string> Comments { get; }
+            public List<string> Comments { get; set; }
 
             public List<string> CommentsTrans { get; set; }
 
