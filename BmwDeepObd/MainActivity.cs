@@ -158,6 +158,7 @@ namespace BmwDeepObd
         private long _downloadFileSize;
         private List<DownloadUrlInfo> _downloadUrlInfoList;
         private AlertDialog _startAlertDialog;
+        private AlertDialog _configSelectAlertDialog;
         private AlertDialog _downloadEcuAlertDialog;
         private bool _translateActive;
         private List<string> _translationList;
@@ -2543,11 +2544,11 @@ namespace BmwDeepObd
 
         private void RequestConfigSelect()
         {
-            if (_jobReader.PageList.Count > 0)
+            if ((_configSelectAlertDialog != null) || (_jobReader.PageList.Count > 0))
             {
                 return;
             }
-            new AlertDialog.Builder(this)
+            _configSelectAlertDialog = new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_select, (sender, args) =>
                 {
                     SelectConfigFile();
@@ -2560,6 +2561,10 @@ namespace BmwDeepObd
                 .SetMessage(Resource.String.config_select)
                 .SetTitle(Resource.String.alert_title_question)
                 .Show();
+            _configSelectAlertDialog.DismissEvent += (sender, args) =>
+            {
+                _configSelectAlertDialog = null;
+            };
         }
 
         private void SelectDataLogging()
