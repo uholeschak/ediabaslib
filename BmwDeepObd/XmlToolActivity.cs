@@ -2365,6 +2365,10 @@ namespace BmwDeepObd
             EdiabasOpen();
 
             UpdateDisplay();
+            if (_ecuList.Count == 0)
+            {
+                return;
+            }
 
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
             progress.SetCancelable(false);
