@@ -693,7 +693,7 @@ namespace BmwDeepObd
                 case Resource.Id.menu_submenu_help:
                     _activityCommon.ShowWifiConnectedWarning(() =>
                     {
-                        StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://ediabaslib.codeplex.com/wikipage?title=Deep OBD for BMW")));
+                        StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"http://ediabaslib.codeplex.com/wikipage?title=Deep%20OBD%20for%20BMW")));
                     });
                     return true;
 
