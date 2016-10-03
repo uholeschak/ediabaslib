@@ -881,6 +881,7 @@ namespace BmwDeepObd
                             break;
 
                         case ActivityCommon.InterfaceType.Enet:
+                            connectParameter = new EdInterfaceEnet.ConnectParameterType(this, _activityCommon.MaConnectivity);
                             if (_activityCommon.Emulator)
                             {
                                 // broadcast is not working with emulator
@@ -888,7 +889,6 @@ namespace BmwDeepObd
                                 break;
                             }
                             portName = string.IsNullOrEmpty(_activityCommon.SelectedEnetIp) ? "auto:all" : _activityCommon.SelectedEnetIp;
-                            connectParameter = new EdInterfaceEnet.ConnectParameterType(this, _activityCommon.MaConnectivity);
                             break;
 
                         case ActivityCommon.InterfaceType.ElmWifi:
