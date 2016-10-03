@@ -30,7 +30,7 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
-\n- New: Diagnostics of VAG vehicles (VW, Audi, Skoda)
+\n- New: Diagnostics of VAG vehicles (VW, Audi, Seat, Skoda)
 \n- Support for new protocols: KWP2000, KWP1281, TP2.0
 \n- Automatic by type detection for Deep OBD adapter
 \n- Fixed minor problems</string>
