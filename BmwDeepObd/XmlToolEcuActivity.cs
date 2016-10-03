@@ -626,8 +626,8 @@ namespace BmwDeepObd
 
         private void JobSelected(JobInfo jobInfo)
         {
-            ResetTestResult();
             _selectedJob = jobInfo;
+            ResetTestResult();
             _spinnerJobResultsAdapter.Items.Clear();
             int selection = -1;
             if (jobInfo != null)
@@ -655,31 +655,40 @@ namespace BmwDeepObd
                         selection = _spinnerJobResultsAdapter.Items.Count - 1;
                     }
                 }
-                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+                if (_spinnerJobResultsAdapter.Items.Count > 0 && selection < 0 && jobInfo.Selected)
                 {
-                    if (_spinnerJobResultsAdapter.Items.Count > 0 && selection < 0)
+                    // no selection
+                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                     {
-                        if (jobInfo.Selected && ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
-                        {   // no selection, auto select all value types
-                            int index = 0;
-                            foreach (ResultInfo result in _spinnerJobResultsAdapter.Items)
-                            {
-                                if (result.Name.EndsWith("_WERT", StringComparison.OrdinalIgnoreCase) ||
-                                    result.Name.StartsWith("STAT_", StringComparison.OrdinalIgnoreCase) || result.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    result.Selected = true;
-                                    if (selection < 0)
-                                    {
-                                        selection = index;
-                                    }
-                                }
-                                index++;
-                            }
-                        }
-                        if (selection < 0)
+                        // auto select all value types
+                        int index = 0;
+                        foreach (ResultInfo result in _spinnerJobResultsAdapter.Items)
                         {
+                            if (result.Name.EndsWith("_WERT", StringComparison.OrdinalIgnoreCase) ||
+                                result.Name.StartsWith("STAT_", StringComparison.OrdinalIgnoreCase) ||
+                                result.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase))
+                            {
+                                result.Selected = true;
+                                if (selection < 0)
+                                {
+                                    selection = index;
+                                }
+                            }
+                            index++;
+                        }
+                    }
+                    else
+                    {
+                        // auto select single entry
+                        if (_spinnerJobResultsAdapter.Items.Count == 1)
+                        {
+                            _spinnerJobResultsAdapter.Items[0].Selected = true;
                             selection = 0;
                         }
+                    }
+                    if (selection < 0)
+                    {
+                        selection = 0;
                     }
                 }
 
@@ -711,12 +720,9 @@ namespace BmwDeepObd
 
         private void ResultSelected(int pos)
         {
-            ResetTestResult();
-            UpdateResultSettings(_selectedResult);
             if (pos >= 0)
             {
                 _selectedResult = _spinnerJobResultsAdapter.Items[pos];
-
                 _textViewResultCommentsTitle.Text = string.Format(GetString(Resource.String.xml_tool_ecu_result_comments), _selectedResult.Name);
 
                 StringBuilder stringBuilderComments = new StringBuilder();
@@ -743,6 +749,8 @@ namespace BmwDeepObd
                 _selectedResult = null;
                 _textViewResultComments.Text = string.Empty;
             }
+            UpdateResultSettings(_selectedResult);
+            ResetTestResult();
         }
 
         private void JobCheckChanged(JobInfo jobInfo)
