@@ -1018,6 +1018,7 @@ namespace BmwDeepObd
         private void StoragePermissonGranted()
         {
             _storageAccessGranted = true;
+            ActivityCommon.SetStoragePath();
             UpdateDirectories();
             _activityCommon.RequestUsbPermission(null);
             ReadConfigFile();

@@ -320,7 +320,6 @@ namespace BmwDeepObd
         private readonly BcReceiverUpdateDisplayDelegate _bcReceiverUpdateDisplayHandler;
         private readonly BcReceiverReceivedDelegate _bcReceiverReceivedHandler;
         private bool? _usbSupport;
-        private static bool _externalPathSet;
         private static string _externalPath;
         private static string _externalWritePath;
         private static string _customStorageMedia;
@@ -463,12 +462,6 @@ namespace BmwDeepObd
             _bcReceiverUpdateDisplayHandler = bcReceiverUpdateDisplayHandler;
             _bcReceiverReceivedHandler = bcReceiverReceivedHandler;
             Emulator = IsEmulator();
-            if (!_externalPathSet)
-            {
-                SetStoragePath();
-                _externalPathSet = true;
-            }
-
             _btAdapter = BluetoothAdapter.DefaultAdapter;
             _maWifi = (WifiManager)activity.GetSystemService(Context.WifiService);
             _maConnectivity = (ConnectivityManager)activity.GetSystemService(Context.ConnectivityService);
@@ -3474,7 +3467,7 @@ namespace BmwDeepObd
             return ParseStorageMedia(procMounts);
         }
 
-        private static void SetStoragePath()
+        public static void SetStoragePath()
         {
             _externalPath = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
             _externalWritePath = string.Empty;
