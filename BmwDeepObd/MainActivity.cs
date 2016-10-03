@@ -607,7 +607,7 @@ namespace BmwDeepObd
             switch (item.ItemId)
             {
                 case Resource.Id.menu_manufacturer:
-                    if (!_vagInfoShown)
+                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !_vagInfoShown)
                     {
                         AlertDialog alertDialog = new AlertDialog.Builder(this)
                             .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
@@ -2337,6 +2337,10 @@ namespace BmwDeepObd
                     {
                         _activityCommon.ShowAlert(GetString(ioError ? Resource.String.extract_failed_io : Resource.String.extract_failed), Resource.String.alert_title_error);
                     }
+                    else
+                    {
+                        RequestConfigSelect();
+                    }
                 });
             });
             extractThread.Start();
@@ -2527,7 +2531,10 @@ namespace BmwDeepObd
                 _configFileName = null;
                 CreateActionBarTabs();
                 UpdateDirectories();
-                CheckForEcuFiles();
+                if (CheckForEcuFiles())
+                {
+                    RequestConfigSelect();
+                }
                 SupportInvalidateOptionsMenu();
                 UpdateDisplay();
             });
