@@ -608,27 +608,7 @@ namespace BmwDeepObd
             switch (item.ItemId)
             {
                 case Resource.Id.menu_manufacturer:
-                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !_vagInfoShown)
-                    {
-                        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                            .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
-                            {
-                                SelectManufacturer();
-                            })
-                            .SetNegativeButton(Resource.String.button_abort, (sender, args) => { })
-                            .SetCancelable(true)
-                            .SetMessage(Resource.String.vag_mode_info)
-                            .SetTitle(Resource.String.alert_title_info)
-                            .Show();
-                        TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                        if (messageView != null)
-                        {
-                            messageView.MovementMethod = new LinkMovementMethod();
-                        }
-                        _vagInfoShown = true;
-                        return true;
-                    }
-                    SelectManufacturer();
+                    SelectManufacturerInfo();
                     return true;
 
                 case Resource.Id.menu_scan:
@@ -2433,7 +2413,8 @@ namespace BmwDeepObd
             if (!ValidEcuFiles(_ecuPath))
             {
                 string message = GetString(Resource.String.ecu_not_found) + "\n" +
-                    string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download), ManufacturerEcuZipSize);
+                    string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download), ManufacturerEcuZipSize) + "\n" +
+                    string.Format(GetString(Resource.String.manufacturer_select), _activityCommon.ManufacturerName());
 
                 _downloadEcuAlertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
@@ -2442,6 +2423,10 @@ namespace BmwDeepObd
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
+                    })
+                    .SetNeutralButton(Resource.String.button_abort, (sender, args) =>
+                    {
+                        SelectManufacturerInfo();
                     })
                     .SetMessage(message)
                     .SetTitle(Resource.String.alert_title_question)
@@ -2521,6 +2506,31 @@ namespace BmwDeepObd
             }
         }
 
+        private void SelectManufacturerInfo()
+        {
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !_vagInfoShown)
+            {
+                AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                    {
+                        SelectManufacturer();
+                    })
+                    .SetNegativeButton(Resource.String.button_abort, (sender, args) => { })
+                    .SetCancelable(true)
+                    .SetMessage(Resource.String.vag_mode_info)
+                    .SetTitle(Resource.String.alert_title_info)
+                    .Show();
+                TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                if (messageView != null)
+                {
+                    messageView.MovementMethod = new LinkMovementMethod();
+                }
+                _vagInfoShown = true;
+                return;
+            }
+            SelectManufacturer();
+        }
+
         private void SelectManufacturer()
         {
             _activityCommon.SelectManufacturer((sender, args) =>
@@ -2548,6 +2558,8 @@ namespace BmwDeepObd
             {
                 return;
             }
+            string message = GetString(Resource.String.config_select) + "\n" +
+                             string.Format(GetString(Resource.String.manufacturer_select), _activityCommon.ManufacturerName());
             _configSelectAlertDialog = new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_select, (sender, args) =>
                 {
@@ -2557,8 +2569,12 @@ namespace BmwDeepObd
                 {
                     StartXmlTool();
                 })
+                .SetNeutralButton(Resource.String.button_abort, (sender, args) =>
+                {
+                    SelectManufacturerInfo();
+                })
                 .SetCancelable(true)
-                .SetMessage(Resource.String.config_select)
+                .SetMessage(message)
                 .SetTitle(Resource.String.alert_title_question)
                 .Show();
             _configSelectAlertDialog.DismissEvent += (sender, args) =>
