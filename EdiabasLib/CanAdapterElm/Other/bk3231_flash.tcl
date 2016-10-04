@@ -263,3 +263,13 @@ proc flash_erase_area { ADDR LEN {SPACE_CTL 0} } {
 		}
 	}
 }
+
+proc set_cpu_speed {} {
+	mww 0x920000 0x01
+	mww 0x920004 0x00
+
+	adapter_khz 1000
+	arm7_9 dcc_downloads enable
+	arm7_9 fast_memory_access enable
+
+}
