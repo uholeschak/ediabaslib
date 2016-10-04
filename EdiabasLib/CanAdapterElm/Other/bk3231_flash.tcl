@@ -11,7 +11,7 @@ set MAIN_SPACE              0x00
 set NVR_SPACE               0x1
 set RDN_SPACE               0x2
 
-set LOADER_ADDR             0x3E000
+set LOADER_ADDR             0x3EE00
 
 proc flash_erase_sector { ADDR SPACE_CTL } {
 	global BK3000_MFC_KEYWORD

@@ -1,4 +1,4 @@
-LOADER_ADDR = 0x3E000
+LOADER_ADDR = 0x3EE00
 
 all: write_flash.bin
 
