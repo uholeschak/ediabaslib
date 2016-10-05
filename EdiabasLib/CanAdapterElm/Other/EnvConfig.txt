@@ -1,0 +1,43 @@
+// 0x3E000
+typedef struct _ENV_CONFIG_T
+{
+    // 0x0000
+    BTBYTE stand_key_map[8][19];
+    // keyboard mapping
+    // 0x0098
+    BTBYTE work_mode_selet;
+    // 0=HID
+    // 2=SPP
+    // 0x0099
+    BTBYTE baud_rate_set;
+    // 0=300
+    // 1=600
+    // 2=1200
+    // ...
+    // 6=19200
+    // 7=38400
+    // 8=57600
+    // 9=115200
+    // ...
+    // 0x009A
+    BTBYTE bt_device_name[32];
+    // Bluetooth device name
+    // 0x00BA
+    BTBYTE pincode[16];
+    // Bluetooth pin, 0 terminated, length 0=off
+    // 0x00CA
+    BTBYTE slave_addr[6];
+    // Bluetooth address
+    // 0x00D0
+    BTBYTE test_addr[6];
+    // Bluetooth address for auto connect
+    // 0x00D6
+    BTBYTE ssp_enable;
+    // 1=secure simple pairing enable
+    // 0x00D7
+    BTBYTE uart_open_enable;
+    // 1=enable debug output
+    // 0x00D8
+    BTBYTE lowpower_threshold;
+    // ADC low power compare value, set to 0
+} ENV_CONFIG_T,*ENV_CONFIG_P;
