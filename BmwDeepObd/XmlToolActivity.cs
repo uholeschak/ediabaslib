@@ -2299,6 +2299,10 @@ namespace BmwDeepObd
                             }
                             if (!string.IsNullOrWhiteSpace(unitText))
                             {
+                                if (unitText.ToLowerInvariant().StartsWith("mon"))
+                                {
+                                    unitText = "m/s²";
+                                }
                                 int key = (block << 16) + dictIndex;
                                 if (!unitDict.ContainsKey(key))
                                 {
