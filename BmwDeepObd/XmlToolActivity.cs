@@ -704,7 +704,7 @@ namespace BmwDeepObd
                 return;
             }
             _ecuListAdapter.Items.Clear();
-            if ((_ediabas == null) || (_ecuList.Count == 0))
+            if (_ecuList.Count == 0)
             {
                 _vin = string.Empty;
                 _ecuList.Clear();
