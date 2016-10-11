@@ -2299,10 +2299,6 @@ namespace BmwDeepObd
                             }
                             if (!string.IsNullOrWhiteSpace(unitText))
                             {
-                                if (unitText.ToLowerInvariant().StartsWith("mon"))
-                                {
-                                    unitText = "m/s²";
-                                }
                                 int key = (block << 16) + dictIndex;
                                 if (!unitDict.ContainsKey(key))
                                 {
@@ -2332,14 +2328,30 @@ namespace BmwDeepObd
                     if (unitDict.TryGetValue(key, out unitText))
                     {
                         compareCount++;
-                        if (mwTabEntry.ValueUnit.ToLowerInvariant().Contains(unitText.ToLowerInvariant()))
+                        // remove all spaces
+                        string valueUnit = mwTabEntry.ValueUnit;
+                        unitText = Regex.Replace(unitText, @"\s+", "");
+                        valueUnit = Regex.Replace(valueUnit, @"\s+", "");
+
+                        if (unitText.ToLowerInvariant().StartsWith("mon"))
                         {
-                            //Log.Debug("Match", "Match: '" + unitText + "' '" + mwTabEntry.ValueUnit + "'");
+                            unitText = "m/s²";
+                        }
+                        if (valueUnit.ToLowerInvariant().StartsWith("mon"))
+                        {
+                            valueUnit = "m/s²";
+                        }
+                        unitText = Regex.Replace(unitText, @"²", "2");
+                        valueUnit = Regex.Replace(valueUnit, @"²", "2");
+
+                        if (valueUnit.ToLowerInvariant().Contains(unitText.ToLowerInvariant()))
+                        {
+                            //Log.Debug("Match", "Match: '" + unitText + "' '" + valueUnit + "'");
                             matchCount++;
                         }
                         else
                         {
-                            //Log.Debug("Match", "Mismatch: '" + unitText + "' '" + mwTabEntry.ValueUnit + "'");
+                            //Log.Debug("Match", "Mismatch: '" + unitText + "' '" + valueUnit + "'");
                         }
                     }
                 }
@@ -2360,7 +2372,7 @@ namespace BmwDeepObd
                 return new List<string>();
             }
             return wmTabListSorted.
-                TakeWhile(mwTabFileEntry =>mwTabFileEntry.MatchRatio == wmTabListSorted[0].MatchRatio && mwTabFileEntry.MatchCount >= wmTabListSorted[0].MatchCount / 2).
+                TakeWhile(mwTabFileEntry => mwTabFileEntry.MatchRatio == wmTabListSorted[0].MatchRatio /*&& mwTabFileEntry.MatchCount >= wmTabListSorted[0].MatchCount / 10*/).
                 Select(mwTabFileEntry => mwTabFileEntry.FileName).ToList();
         }
 
