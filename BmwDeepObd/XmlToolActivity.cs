@@ -246,7 +246,7 @@ namespace BmwDeepObd
             }
 
             EdiabasClose();
-            if (_manualConfigIdx > 0 && !string.IsNullOrEmpty(configName))
+            if (_manualConfigIdx > 0)
             {
                 EdiabasOpen();
                 ReadAllXml();
