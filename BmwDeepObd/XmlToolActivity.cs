@@ -2344,7 +2344,9 @@ namespace BmwDeepObd
                         unitText = Regex.Replace(unitText, @"²", "2");
                         valueUnit = Regex.Replace(valueUnit, @"²", "2");
 
-                        if (valueUnit.ToLowerInvariant().Contains(unitText.ToLowerInvariant()))
+                        string valueUnitLower = valueUnit.ToLowerInvariant();
+                        string unitTextLower = unitText.ToLowerInvariant();
+                        if (valueUnitLower.Contains(unitTextLower) || unitTextLower.Contains(valueUnitLower))
                         {
                             //Log.Debug("Match", "Match: '" + unitText + "' '" + valueUnit + "'");
                             matchCount++;
