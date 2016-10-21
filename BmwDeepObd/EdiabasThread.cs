@@ -385,6 +385,10 @@ namespace BmwDeepObd
                                         }
                                     }
                                 }
+                                else
+                                {
+                                    jobOk = true;
+                                }
                             }
                         }
                         else
