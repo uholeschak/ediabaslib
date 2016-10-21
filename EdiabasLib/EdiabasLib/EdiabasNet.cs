@@ -3031,6 +3031,11 @@ namespace EdiabasLib
             }
         }
 
+        public bool IsJobExisting(string jobName)
+        {
+            return (_sgbdFs != null) && (GetJobInfo(jobName) != null);
+        }
+
         private JobInfo GetJobInfo(string jobName)
         {
             UInt32 jobIndex;
@@ -4494,7 +4499,7 @@ namespace EdiabasLib
 
                 try
                 {
-                    if (_sgbdFs != null && GetJobInfo(JobNameExit) != null)
+                    if (IsJobExisting(JobNameExit))
                     {
                         ExecuteJobPrivate(JobNameExit);
                     }
