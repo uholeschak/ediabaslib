@@ -11,7 +11,7 @@
     <AssemblyName>UsbSerialBinding</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <AndroidUseLatestPlatformSdk>False</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v6.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v7.0</TargetFrameworkVersion>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>UsbSerialBinding.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
