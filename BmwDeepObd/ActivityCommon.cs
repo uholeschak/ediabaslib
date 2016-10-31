@@ -3464,6 +3464,20 @@ namespace BmwDeepObd
 
         public static List<string> GetAllStorageMedia()
         {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+            {
+                List<string> storageList = new List<string>();
+                Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
+                // ReSharper disable once LoopCanBeConvertedToQuery
+                foreach (Java.IO.File file in externalFilesDirs)
+                {
+                    if (file != null && IsWritable(file.AbsolutePath))
+                    {
+                        storageList.Add(file.AbsolutePath);
+                    }
+                }
+                return storageList;
+            }
             string procMounts = ReadProcMounts();
             return ParseStorageMedia(procMounts);
         }
