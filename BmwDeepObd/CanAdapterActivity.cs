@@ -934,6 +934,7 @@ namespace BmwDeepObd
         private string PinDataToString(byte[] pinData)
         {
             string btPin = string.Empty;
+            // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (byte value in pinData)
             {
                 char digit = (char)value;
