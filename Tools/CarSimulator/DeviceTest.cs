@@ -159,6 +159,12 @@ namespace CarSimulator
             }
             sr.Append("Firmware: ");
             sr.Append(string.Format("{0}.{1}", firmware[2], firmware[3]));
+            if ((firmware[2] != 0x00) || (firmware[3] != 0x08))
+            {
+                sr.Append("Incorrect firmware version!");
+                _form.UpdateTestStatusText(sr.ToString());
+                return false;
+            }
 
             byte[] btName = AdapterCommandCustom(0x85, new byte[] { 0x85 });
             if (btName == null)
@@ -199,7 +205,7 @@ namespace CarSimulator
             sr.Append("Voltage: ");
             sr.Append(voltage[0] == 0x80 ? "--" : string.Format("{0,4:0.0}V", (double)voltage[0] / 10));
             _form.UpdateTestStatusText(sr.ToString());
-            if (voltage[0] < 120 || voltage[0] > 130)
+            if ((voltage[0] < 110) || (voltage[0] > 140))
             {
                 sr.Append("\r\n");
                 sr.Append("Voltage out of range!");
