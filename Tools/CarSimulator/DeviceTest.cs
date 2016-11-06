@@ -19,6 +19,24 @@ namespace CarSimulator
         private NetworkStream _btStream;
         private bool _disposed;
 
+        // ReSharper disable InconsistentNaming
+        public const byte KLINEF1_PARITY_MASK = 0x7;
+        public const byte KLINEF1_PARITY_NONE = 0x0;
+        public const byte KLINEF1_PARITY_EVEN = 0x1;
+        public const byte KLINEF1_PARITY_ODD = 0x2;
+        public const byte KLINEF1_PARITY_MARK = 0x3;
+        public const byte KLINEF1_PARITY_SPACE = 0x4;
+        public const byte KLINEF1_USE_LLINE = 0x08;
+        public const byte KLINEF1_SEND_PULSE = 0x10;
+        public const byte KLINEF1_NO_ECHO = 0x20;
+        public const byte KLINEF1_FAST_INIT = 0x40;
+        public const byte KLINEF1_USE_KLINE = 0x80;
+
+        public const byte KLINEF2_KWP1281_DETECT = 0x01;
+
+        public const byte KWP1281_TIMEOUT = 60;
+        // ReSharper restore InconsistentNaming
+
         public DeviceTest(MainForm form)
         {
             _form = form;
@@ -106,14 +124,14 @@ namespace CarSimulator
                 _form.UpdateTestStatusText("No COM port selected");
                 return false;
             }
-            _form.UpdateTestStatusText("Discover devices");
+            _form.UpdateTestStatusText("Discovering devices ...");
             BluetoothDeviceInfo device = DiscoverBtDevice();
             if (device == null)
             {
                 _form.UpdateTestStatusText("No device selected");
                 return false;
             }
-            _form.UpdateTestStatusText("Connecting");
+            _form.UpdateTestStatusText("Connecting ...");
             if (!ConnectBtDevice(device))
             {
                 _form.UpdateTestStatusText("Connection faild");
@@ -263,13 +281,44 @@ namespace CarSimulator
                     if (!BmwFastTest())
                     {
                         sr.Append("\r\n");
-                        sr.Append("CAN test failed");
+                        sr.Append("K-LINE test failed");
                         _form.UpdateTestStatusText(sr.ToString());
                         return false;
                     }
                 }
                 sr.Append("\r\n");
                 sr.Append("K-LINE test OK");
+                _form.UpdateTestStatusText(sr.ToString());
+            }
+            finally
+            {
+                _form.commThread.StopThread();
+            }
+
+            if (!_form.commThread.StartThread(comPort, CommThread.ConceptType.ConceptKwp2000Bmw, false, true,
+                CommThread.ResponseType.E61, _form.threadConfigData))
+            {
+                sr.Append("\r\n");
+                sr.Append("Start COM thread failed!");
+                _form.UpdateTestStatusText(sr.ToString());
+                return false;
+            }
+            Thread.Sleep(100);
+
+            try
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    if (!BmwFastTest(true))
+                    {
+                        sr.Append("\r\n");
+                        sr.Append("L-LINE test failed");
+                        _form.UpdateTestStatusText(sr.ToString());
+                        return false;
+                    }
+                }
+                sr.Append("\r\n");
+                sr.Append("L-LINE test OK");
                 _form.UpdateTestStatusText(sr.ToString());
             }
             finally
@@ -295,7 +344,7 @@ namespace CarSimulator
             {
                 return null;
             }
-            byte[] request = new byte[4 + data.Length + 1]; // +1 for checksum
+            byte[] request = new byte[4 + data.Length];
             request[0] = (byte)(0x81 + data.Length);
             request[1] = 0xF1;
             request[2] = 0xF1;
@@ -309,7 +358,7 @@ namespace CarSimulator
             byte[] response = new byte[0x100];
             // receive echo
             int echoLength = ReceiveBmwFast(response);
-            if (echoLength != request.Length - 1)
+            if (echoLength != request.Length)
             {
                 return null;
             }
@@ -323,9 +372,59 @@ namespace CarSimulator
             return result;
         }
 
-        private bool BmwFastTest()
+        private byte[] CreateAdapterTelegram(byte[] sendData, int length, int baudRate, byte parity, bool useLline)
         {
-            byte[] identRequest = { 0x82, 0x12, 0xF1, 0x1A, 0x80, 0x00 };
+            byte telType = 0x02;
+            byte[] resultArray = new byte[length + ((telType == 0x00) ? 9 : 11)];
+            resultArray[0] = 0x00;      // header
+            resultArray[1] = telType;   // telegram type
+
+            uint baudHalf;
+            byte flags1 = KLINEF1_NO_ECHO;
+            if (baudRate == 115200)
+            {
+                baudHalf = 0;
+            }
+            else
+            {
+                baudHalf = (uint)(baudRate >> 1);
+                if (useLline)
+                {
+                    flags1 |= KLINEF1_USE_LLINE;
+                }
+                flags1 |= parity;
+            }
+
+            byte flags2 = 0x00;
+            //flags2 |= KLINEF2_KWP1281_DETECT;
+
+            resultArray[2] = (byte)(baudHalf >> 8);     // baud rate / 2 high
+            resultArray[3] = (byte)baudHalf;            // baud rate / 2 low
+            resultArray[4] = flags1;                    // flags 1
+            if (telType == 0x00)
+            {
+                resultArray[5] = 0x00;                  // interbyte time
+                resultArray[6] = (byte)(length >> 8);   // telegram length high
+                resultArray[7] = (byte)length;          // telegram length low
+                Array.Copy(sendData, 0, resultArray, 8, length);
+                resultArray[resultArray.Length - 1] = CommThread.CalcChecksumBmwFast(resultArray, resultArray.Length - 1);
+            }
+            else
+            {
+                resultArray[5] = flags2;                // flags 2
+                resultArray[6] = 0x00;                  // interbyte time
+                resultArray[7] = KWP1281_TIMEOUT;       // KWP1281 timeout
+                resultArray[8] = (byte)(length >> 8);   // telegram length high
+                resultArray[9] = (byte)length;          // telegram length low
+                Array.Copy(sendData, 0, resultArray, 10, length);
+                resultArray[resultArray.Length - 1] = CommThread.CalcChecksumBmwFast(resultArray, resultArray.Length - 1);
+            }
+            return resultArray;
+        }
+
+        private bool BmwFastTest(bool lline = false)
+        {
+            byte[] identRequest = { 0x82, 0x12, 0xF1, 0x1A, 0x80};
             byte[] identResponse = {
             0xBC, 0xF1, 0x12, 0x5A, 0x80, 0x00, 0x00, 0x07, 0x80, 0x81,
             0x25, 0x00, 0x00, 0x00, 0x12, 0x4C, 0x50, 0x20, 0x08, 0x02,
@@ -335,16 +434,38 @@ namespace CarSimulator
             0x30, 0x30, 0x30, 0x38, 0x39, 0x51, 0x39, 0x30, 0x41, 0x39,
             0x34, 0x37, 0x42};
 
-            if (!SendBmwfast(identRequest))
+            if (lline)
             {
-                return false;
+                byte[] sendTel = new byte[identRequest.Length + 1];
+                Array.Copy(identRequest, sendTel, identRequest.Length);
+                sendTel[sendTel.Length - 1] = CommThread.CalcChecksumBmwFast(sendTel, sendTel.Length - 1);
+                byte[] adapterTel = CreateAdapterTelegram(sendTel, sendTel.Length, 10400, KLINEF1_PARITY_NONE, true);
+                try
+                {
+                    _btStream.Write(adapterTel, 0, adapterTel.Length);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
-            byte[] response = new byte[0x100];
-            // receive echo
-            int echoLength = ReceiveBmwFast(response);
-            if (echoLength != identRequest.Length - 1)
+            else
             {
-                return false;
+                if (!SendBmwfast(identRequest))
+                {
+                    return false;
+                }
+            }
+
+            byte[] response = new byte[0x100];
+            if (!lline)
+            {
+                // receive echo
+                int echoLength = ReceiveBmwFast(response);
+                if (echoLength != identRequest.Length)
+                {
+                    return false;
+                }
             }
             int dataLength = ReceiveBmwFast(response);
             if (dataLength != identResponse.Length)
@@ -360,20 +481,23 @@ namespace CarSimulator
             {
                 return false;
             }
-            int sendLength = sendData[0] & 0x3F;
+            byte[] telBuffer = new byte[sendData.Length + 1];
+            Array.Copy(sendData, telBuffer, sendData.Length);
+
+            int sendLength = telBuffer[0] & 0x3F;
             if (sendLength == 0)
             {   // with length byte
-                sendLength = sendData[3] + 4;
+                sendLength = telBuffer[3] + 4;
             }
             else
             {
                 sendLength += 3;
             }
-            sendData[sendLength] = CommThread.CalcChecksumBmwFast(sendData, sendLength);
+            telBuffer[sendLength] = CommThread.CalcChecksumBmwFast(telBuffer, sendLength);
             sendLength++;
             try
             {
-                _btStream.Write(sendData, 0, sendLength);
+                _btStream.Write(telBuffer, 0, sendLength);
             }
             catch (Exception)
             {
