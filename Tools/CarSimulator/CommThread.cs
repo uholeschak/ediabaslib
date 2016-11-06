@@ -17,7 +17,7 @@ using Peak.Can.Basic;
 
 namespace CarSimulator
 {
-    class CommThread
+    public class CommThread
     {
         public class ConfigData
         {

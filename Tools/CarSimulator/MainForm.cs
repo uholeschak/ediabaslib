@@ -19,6 +19,10 @@ namespace CarSimulator
         private int _lastPortCount;
         private readonly CommThread.ConfigData _configData;
 
+        public string responseDir => _responseDir;
+        public CommThread commThread => _commThread;
+        public CommThread.ConfigData threadConfigData => _configData;
+
         public MainForm()
         {
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.AboveNormal;
@@ -163,7 +167,7 @@ namespace CarSimulator
             listBoxResponseFiles.EndUpdate();
         }
 
-        private bool ReadResponseFile(string fileName, CommThread.ConceptType conceptType)
+        public bool ReadResponseFile(string fileName, CommThread.ConceptType conceptType)
         {
             if (!File.Exists(fileName)) return false;
 
@@ -469,8 +473,10 @@ namespace CarSimulator
 
         private void UpdateDisplay()
         {
-            buttonConnect.Text = _commThread.ThreadRunning() ? "Disconnect" : "Connect";
-            if (_commThread.ThreadRunning())
+            bool connected = _commThread.ThreadRunning();
+            buttonConnect.Text = connected ? "Disconnect" : "Connect";
+            buttonDeviceTest.Enabled = !connected;
+            if (connected)
             {
                 _commThread.Moving = checkBoxMoving.Checked;
                 _commThread.VariableValues = checkBoxVariableValues.Checked;
@@ -565,8 +571,10 @@ namespace CarSimulator
 
         public void UpdateTestStatusText(string text)
         {
-            labelTestStatus.Text = text;
-            labelTestStatus.Update();
+            textBoxTestResults.Text = text;
+            textBoxTestResults.SelectionStart = textBoxTestResults.TextLength;
+            textBoxTestResults.Update();
+            textBoxTestResults.ScrollToCaret();
         }
 
         private void buttonRootFolder_Click(object sender, EventArgs e)
@@ -583,7 +591,8 @@ namespace CarSimulator
         private void buttonDeviceTest_Click(object sender, EventArgs e)
         {
             DeviceTest deviceTest = new DeviceTest(this);
-            deviceTest.ExecuteTest();
+            string selectedPort = listPorts.SelectedItem.ToString();
+            deviceTest.ExecuteTest(selectedPort);
             deviceTest.Dispose();
         }
     }
