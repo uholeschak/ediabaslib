@@ -52,6 +52,8 @@
             this.treeViewDirectories = new System.Windows.Forms.TreeView();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonRootFolder = new System.Windows.Forms.Button();
+            this.buttonDeviceTest = new System.Windows.Forms.Button();
+            this.labelTestStatus = new System.Windows.Forms.Label();
             this.groupBoxConcepts.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -294,11 +296,30 @@
             this.buttonRootFolder.UseVisualStyleBackColor = true;
             this.buttonRootFolder.Click += new System.EventHandler(this.buttonRootFolder_Click);
             // 
+            // buttonDeviceTest
+            // 
+            this.buttonDeviceTest.Location = new System.Drawing.Point(356, 12);
+            this.buttonDeviceTest.Name = "buttonDeviceTest";
+            this.buttonDeviceTest.Size = new System.Drawing.Size(75, 23);
+            this.buttonDeviceTest.TabIndex = 11;
+            this.buttonDeviceTest.Text = "Device Test";
+            this.buttonDeviceTest.UseVisualStyleBackColor = true;
+            this.buttonDeviceTest.Click += new System.EventHandler(this.buttonDeviceTest_Click);
+            // 
+            // labelTestStatus
+            // 
+            this.labelTestStatus.Location = new System.Drawing.Point(437, 9);
+            this.labelTestStatus.Name = "labelTestStatus";
+            this.labelTestStatus.Size = new System.Drawing.Size(207, 76);
+            this.labelTestStatus.TabIndex = 12;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(657, 332);
+            this.Controls.Add(this.labelTestStatus);
+            this.Controls.Add(this.buttonDeviceTest);
             this.Controls.Add(this.buttonRootFolder);
             this.Controls.Add(this.treeViewDirectories);
             this.Controls.Add(this.buttonErrorDefault);
@@ -346,6 +367,8 @@
         private System.Windows.Forms.Button buttonRootFolder;
         private System.Windows.Forms.RadioButton radioButtonKwp2000;
         private System.Windows.Forms.RadioButton radioButtonTp20;
+        private System.Windows.Forms.Button buttonDeviceTest;
+        private System.Windows.Forms.Label labelTestStatus;
     }
 }
 

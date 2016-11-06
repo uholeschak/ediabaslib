@@ -563,6 +563,12 @@ namespace CarSimulator
             }
         }
 
+        public void UpdateTestStatusText(string text)
+        {
+            labelTestStatus.Text = text;
+            labelTestStatus.Update();
+        }
+
         private void buttonRootFolder_Click(object sender, EventArgs e)
         {
             folderBrowserDialog.SelectedPath = _rootFolder;
@@ -572,6 +578,13 @@ namespace CarSimulator
                 _rootFolder = folderBrowserDialog.SelectedPath;
                 UpdateDirectoryList(_rootFolder);
             }
+        }
+
+        private void buttonDeviceTest_Click(object sender, EventArgs e)
+        {
+            DeviceTest deviceTest = new DeviceTest(this);
+            deviceTest.ExecuteTest();
+            deviceTest.Dispose();
         }
     }
 }
