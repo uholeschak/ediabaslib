@@ -2265,9 +2265,12 @@ namespace BmwDeepObd
                     }
                     RunOnUiThread(() =>
                     {
-                        _downloadProgress.SetMessage(GetString(Resource.String.extract_file));
-                        _downloadProgress.SetCancelable(true);
-                        _downloadProgress.GetButton((int)DialogButtonType.Negative).Enabled = true;
+                        if (_downloadProgress != null)
+                        {
+                            _downloadProgress.SetMessage(GetString(Resource.String.extract_file));
+                            _downloadProgress.SetCancelable(true);
+                            _downloadProgress.GetButton((int) DialogButtonType.Negative).Enabled = true;
+                        }
                     });
 
                     ActivityCommon.ExtractZipFile(fileName, targetDirectory,
