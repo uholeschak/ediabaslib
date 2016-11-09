@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 // ReSharper disable IntroduceOptionalParameters.Local
 // ReSharper disable NotResolvedInText
@@ -3320,14 +3321,16 @@ namespace EdiabasLib
             char convertType;
             char exponent = '\0';
 
+            // remove whitespace
+            string formatBare = Regex.Replace(format, @"\s+", "");
             // parse format
-            if (string.IsNullOrEmpty(format))
+            if (string.IsNullOrEmpty(formatBare))
             {   // string
                 convertType = 'T';
             }
             else
             {
-                string parseString = format;
+                string parseString = formatBare;
                 if (parseString[0] == '-')
                 {
                     leftAlign = true;
