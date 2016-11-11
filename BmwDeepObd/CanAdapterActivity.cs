@@ -446,9 +446,9 @@ namespace BmwDeepObd
                 _textViewIgnitionState.Text = ignitionText;
 
                 string voltageText = string.Empty;
-                if (_batteryVoltage >= 0)
+                if (_adapterType > 1 && _batteryVoltage >= 0)
                 {
-                    voltageText = _batteryVoltage == 0x80 ? "--" : string.Format(ActivityMain.Culture, "{0,4:0.0}V", (double)_batteryVoltage / 10);
+                    voltageText = string.Format(ActivityMain.Culture, "{0,4:0.0}V", (double)_batteryVoltage / 10);
                 }
                 _textViewBatteryVoltage.Text = voltageText;
 
