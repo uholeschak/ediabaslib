@@ -74,20 +74,27 @@ namespace CarSimulator
 
         private BluetoothDeviceInfo DiscoverBtDevice()
         {
-            BluetoothClient cli = new BluetoothClient();
-            BluetoothDeviceInfo[] peers = cli.DiscoverDevices();
-            foreach (BluetoothDeviceInfo device in peers)
+            try
             {
-                Debug.WriteLine("{0} : {1}", device.DeviceAddress, device.DeviceName);
-            }
+                BluetoothClient cli = new BluetoothClient();
+                BluetoothDeviceInfo[] peers = cli.DiscoverDevices();
+                foreach (BluetoothDeviceInfo device in peers)
+                {
+                    Debug.WriteLine("{0} : {1}", device.DeviceAddress, device.DeviceName);
+                }
 
-            SelectBluetoothDeviceDialog dlg = new SelectBluetoothDeviceDialog();
-            DialogResult result = dlg.ShowDialog(_form);
-            if (result != DialogResult.OK)
+                SelectBluetoothDeviceDialog dlg = new SelectBluetoothDeviceDialog();
+                DialogResult result = dlg.ShowDialog(_form);
+                if (result != DialogResult.OK)
+                {
+                    return null;
+                }
+                return dlg.SelectedDevice;
+            }
+            catch (Exception)
             {
                 return null;
             }
-            return dlg.SelectedDevice;
         }
 
         private bool ConnectBtDevice(BluetoothDeviceInfo device)
@@ -203,7 +210,7 @@ namespace CarSimulator
             }
             sr.Append("\r\n");
             sr.Append("Voltage: ");
-            sr.Append(voltage[0] == 0x80 ? "--" : string.Format("{0,4:0.0}V", (double)voltage[0] / 10));
+            sr.Append(string.Format("{0,4:0.0}V", (double)voltage[0] / 10));
             _form.UpdateTestStatusText(sr.ToString());
             if ((voltage[0] < 110) || (voltage[0] > 140))
             {
