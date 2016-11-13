@@ -4465,8 +4465,7 @@ namespace EdiabasLib
                 {
                     LogString(EdLogLevel.Error, "executeInitJob Exception: " + ex.Message);
                     CloseSgbdFs();  // close file to force a reload
-                    SetError(ErrorCodes.EDIABAS_SYS_0010);
-                    return;
+                    throw;
                 }
                 if (_resultSets.Count > 1)
                 {
@@ -4475,6 +4474,7 @@ namespace EdiabasLib
                     {
                         if (result.OpData as Int64? == 1)
                         {
+                            _requestInit = false;
                             LogString(EdLogLevel.Info, "executeInitJob ok");
                             return;
                         }
@@ -4482,6 +4482,7 @@ namespace EdiabasLib
                 }
 
                 LogString(EdLogLevel.Error, "executeInitJob failed");
+                CloseSgbdFs();  // close file to force a reload
                 SetError(ErrorCodes.EDIABAS_SYS_0010);
             }
             finally
@@ -4647,9 +4648,9 @@ namespace EdiabasLib
 
         private void ExecuteJobPrivate(Stream fs, JobInfo jobInfo)
         {
-            if (_requestInit)
+            if (_requestInit &&
+                (string.Compare(jobInfo.JobName, JobNameInit, StringComparison.OrdinalIgnoreCase) != 0))
             {
-                _requestInit = false;
                 ExecuteInitJob();
             }
 
@@ -4769,7 +4770,6 @@ namespace EdiabasLib
         {
             if (_requestInit && !NoInitForVJobs)
             {
-                _requestInit = false;
                 ExecuteInitJob();
             }
 
