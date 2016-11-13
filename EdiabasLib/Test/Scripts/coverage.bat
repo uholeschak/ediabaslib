@@ -69,9 +69,13 @@ if exist "!OUTFILE!" del "!OUTFILE!"
 "%OPEN_COVER%" "-output:results14.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! --cfg=\"SystemResults=0\" -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"_VERSIONINFO\" -j "_JOBS" -j \"_JOBCOMMENTS#INITIALISIERUNG\" -j \"_JOBCOMMENTS#MISSING\" -j \"_JOBCOMMENTS\" -j \"TEST_SHMID###STDARG1\""
 set TIMESTR=%TIME:~0,2%;%TIME:~3,2%;%TIME:~6,2%
 set TIMESTR=!TIMESTR:^ =0!
-"%OPEN_COVER%" "-output:results12.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"TEST_TIME_FLAGS#!TIMESTR!\""
-"%OPEN_COVER%" "-output:results13_1.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_ERROR#2\""
-"%OPEN_COVER%" "-output:results13_2.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_ERROR#3\""
+"%OPEN_COVER%" "-output:results15.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"TEST_TIME_FLAGS#!TIMESTR!\""
+"%OPEN_COVER%" "-output:results16_1.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"TEST_SHMID###INIT_EXCEPTION\""
+"%OPEN_COVER%" "-output:results16_2.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"INITIALISIERUNG###INIT_EXCEPTION\""
+"%OPEN_COVER%" "-output:results16_3.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"TEST_SHMID###INIT_ERROR\""
+"%OPEN_COVER%" "-output:results16_4.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"INITIALISIERUNG###INIT_ERROR\""
+"%OPEN_COVER%" "-output:results17_1.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_ERROR#2\""
+"%OPEN_COVER%" "-output:results17_2.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_ERROR#3\""
 for /l %%x in (0, 1, 32) do (
 !EDIABAS_TEST! !ADD_ARGS! -s "!ECU_TEST_PATH!\cmd_test1.prg" -j "TEST_RAISE_ERROR#%%x"
 )
