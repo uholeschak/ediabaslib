@@ -4459,7 +4459,7 @@ namespace EdiabasLib
 
                 try
                 {
-                    ExecuteJobPrivate(JobNameInit);
+                    ExecuteJobPrivate(JobNameInit, true);
                 }
                 catch (Exception ex)
                 {
@@ -4564,7 +4564,7 @@ namespace EdiabasLib
             return string.Empty;
         }
 
-        private void ExecuteJobPrivate(string jobName)
+        private void ExecuteJobPrivate(string jobName, bool recursive = false)
         {
             LogFormat(EdLogLevel.Ifh, "executeJob({0}): {1}", SgbdFileName, jobName);
 
@@ -4598,7 +4598,7 @@ namespace EdiabasLib
                         _sgbdBaseFs = tempFs;
                         try
                         {
-                            ExecuteJobPrivate(tempFs, jobInfo);
+                            ExecuteJobPrivate(tempFs, jobInfo, recursive);
                         }
                         catch (Exception ex)
                         {
@@ -4620,7 +4620,7 @@ namespace EdiabasLib
             }
             else
             {
-                ExecuteJobPrivate(_sgbdFs, jobInfo);
+                ExecuteJobPrivate(_sgbdFs, jobInfo, recursive);
             }
             LogString(EdLogLevel.Info, "executeJob successfull");
         }
@@ -4646,10 +4646,9 @@ namespace EdiabasLib
             }
         }
 
-        private void ExecuteJobPrivate(Stream fs, JobInfo jobInfo)
+        private void ExecuteJobPrivate(Stream fs, JobInfo jobInfo, bool recursive)
         {
-            if (_requestInit &&
-                (string.Compare(jobInfo.JobName, JobNameInit, StringComparison.OrdinalIgnoreCase) != 0))
+            if (_requestInit && !recursive)
             {
                 ExecuteInitJob();
             }
