@@ -67,6 +67,7 @@ job(  name      : INITIALISIERUNG;
         comment : Werte: 1 = Initialisierung erfolgreich durchgefuehrt;
    ) 
 {
+    DONE = 1;
 #asm
 					clear		S0
 					pary		S0
@@ -75,8 +76,19 @@ job(  name      : INITIALISIERUNG;
 					move		S0,"CMD_TEST2_INIT"
 initpar:
 					shmset		"ID",S0
+
+					strcmp		S0,"INIT_EXCEPTION"
+					jz			initnoexcept
+					clrt
+					settmr		#$FFFFFFFF.L
+					sett		#6
+					eerr
+initnoexcept:
+					strcmp		S0,"INIT_ERROR"
+					jz			initdone
+					ergi		"DONE",#$0.I
+initdone:
 #endasm
-    DONE = 1;
 }
 
 ////////////////////////////////////////////////////////////////////////
