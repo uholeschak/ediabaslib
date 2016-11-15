@@ -230,7 +230,10 @@ namespace EdiabasTest
                         }
                         catch (Exception ex)
                         {
-                            //_outputWriter.WriteLine("ResolveSgbdFile failed: " + EdiabasNet.GetExceptionText(ex));
+                            if (!_compareOutput)
+                            {
+                                _outputWriter.WriteLine("ResolveSgbdFile failed: " + EdiabasNet.GetExceptionText(ex));
+                            }
                             return 1;
                         }
 
