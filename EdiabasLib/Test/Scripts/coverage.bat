@@ -3,7 +3,7 @@ SETLOCAL EnableDelayedExpansion
 
 set BATPATH=%~dp0
 set OPEN_COVER=%OPENCOVER_PATH%\OpenCover.Console.exe
-set REPORT_GENERATOR=%REPORTGENERATOR_PATH%\bin\ReportGenerator.exe
+set REPORT_GENERATOR=%REPORTGENERATOR_PATH%\ReportGenerator.exe
 set ECU_PATH=!BATPATH!\..\..\..\Ecu
 set ECU_TEST_PATH=!BATPATH!\..\Ecu
 set REPORTS_PATH=!BATPATH!\Reports
@@ -70,10 +70,13 @@ if exist "!OUTFILE!" del "!OUTFILE!"
 set TIMESTR=%TIME:~0,2%;%TIME:~3,2%;%TIME:~6,2%
 set TIMESTR=!TIMESTR:^ =0!
 "%OPEN_COVER%" "-output:results15.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"TEST_TIME_FLAGS#!TIMESTR!\""
-"%OPEN_COVER%" "-output:results16_1.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"TEST_SHMID###INIT_EXCEPTION\""
-"%OPEN_COVER%" "-output:results16_2.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"INITIALISIERUNG###INIT_EXCEPTION\""
-"%OPEN_COVER%" "-output:results16_3.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"TEST_SHMID###INIT_ERROR\""
-"%OPEN_COVER%" "-output:results16_4.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"INITIALISIERUNG###INIT_ERROR\""
+"%OPEN_COVER%" "-output:results16_1.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"TEST_SHMID###INIT_EXCEPTION1\""
+"%OPEN_COVER%" "-output:results16_2.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"INITIALISIERUNG###INIT_EXCEPTION2\""
+"%OPEN_COVER%" "-output:results16_3.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"INITIALISIERUNG#INIT_EXCEPTION1\""
+"%OPEN_COVER%" "-output:results16_4.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"INITIALISIERUNG#INIT_EXCEPTION1##INIT_EXCEPTION2\""
+"%OPEN_COVER%" "-output:results16_5.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"INITIALISIERUNG###EXIT_EXCEPTION\" -j \"INITIALISIERUNG####cmd_test1.prg\""
+"%OPEN_COVER%" "-output:results16_6.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"TEST_SHMID###INIT_ERROR\""
+"%OPEN_COVER%" "-output:results16_7.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"INITIALISIERUNG###INIT_ERROR\""
 "%OPEN_COVER%" "-output:results17_1.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_ERROR#2\""
 "%OPEN_COVER%" "-output:results17_2.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_ERROR#3\""
 for /l %%x in (0, 1, 32) do (
