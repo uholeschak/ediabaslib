@@ -77,13 +77,27 @@ job(  name      : INITIALISIERUNG;
 initpar:
 					shmset		"ID",S0
 
-					strcmp		S0,"INIT_EXCEPTION"
-					jz			initnoexcept
+					strcmp		S0,"INIT_EXCEPTION1"
+					jz			initnoexcept1
+					clrt
+					settmr		#$FFFFFFFF.L
+					sett		#2
+					eerr
+initnoexcept1:
+					strcmp		S0,"INIT_EXCEPTION2"
+					jz			initnoexcept2
 					clrt
 					settmr		#$FFFFFFFF.L
 					sett		#6
 					eerr
-initnoexcept:
+initnoexcept2:
+					strcmp		S0,"BOTH_EXCEPTION"
+					jz			initnoexcept3
+					clrt
+					settmr		#$FFFFFFFF.L
+					sett		#9
+					eerr
+initnoexcept3:
 					strcmp		S0,"INIT_ERROR"
 					jz			initdone
 					ergi		"DONE",#$0.I
@@ -104,6 +118,21 @@ job(  name      : ENDE;
 					move		S0,"CMD_TEST2_EXIT"
 exitpar:
 					shmset		"ID",S0
+
+					strcmp		S0,"EXIT_EXCEPTION"
+					jz			exitnoexcept1
+					clrt
+					settmr		#$FFFFFFFF.L
+					sett		#11
+					eerr
+exitnoexcept1:
+					strcmp		S0,"BOTH_EXCEPTION"
+					jz			exitnoexcept2
+					clrt
+					settmr		#$FFFFFFFF.L
+					sett		#12
+					eerr
+exitnoexcept2:
 #endasm
 }
 

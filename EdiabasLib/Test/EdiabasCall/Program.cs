@@ -213,6 +213,11 @@ namespace EdiabasCall
                             jobArgsStdData = Encoding.GetBytes(argString);
                         }
                     }
+                    string sgbdFileUse = sgbdBaseFile;
+                    if (parts.Length >= 5)
+                    {
+                        sgbdFileUse = Path.GetFileNameWithoutExtension(parts[4]);
+                    }
                     _outputWriter.WriteLine("JOB: " + jobName);
 
                     if (jobArgsStdData != null)
@@ -221,11 +226,11 @@ namespace EdiabasCall
                         {
                             jobArgsData = new byte[0];
                         }
-                        API.apiJobExt(sgbdBaseFile, jobName, jobArgsStdData, jobArgsStdData.Length, jobArgsData, jobArgsData.Length, jobResults, 0);
+                        API.apiJobExt(sgbdFileUse, jobName, jobArgsStdData, jobArgsStdData.Length, jobArgsData, jobArgsData.Length, jobResults, 0);
                     }
                     else if (jobArgs != null)
                     {
-                        API.apiJob(sgbdBaseFile, jobName, jobArgs, jobResults);
+                        API.apiJob(sgbdFileUse, jobName, jobArgs, jobResults);
                     }
                     else
                     {
@@ -237,9 +242,9 @@ namespace EdiabasCall
                         // for test of large buffer handling buffer
                         byte[] buffer = new byte[API.APIMAXBINARY];
                         Array.Copy(jobArgsData, buffer, jobArgsData.Length);
-                        API.apiJobData(sgbdBaseFile, jobName, buffer, jobArgsData.Length, jobResults);
+                        API.apiJobData(sgbdFileUse, jobName, buffer, jobArgsData.Length, jobResults);
 #else
-                        API.apiJobData(sgbdBaseFile, jobName, jobArgsData, jobArgsData.Length, jobResults);
+                        API.apiJobData(sgbdFileUse, jobName, jobArgsData, jobArgsData.Length, jobResults);
 #endif
                     }
 

@@ -217,10 +217,15 @@ namespace EdiabasTest
                                 ediabas.ArgStringStd = argString;
                             }
                         }
+                        string sgbdFileUse = sgbdFile;
+                        if (parts.Length >= 5)
+                        {
+                            sgbdFileUse = parts[4];
+                        }
 
                         try
                         {
-                            ediabas.ResolveSgbdFile(Path.GetFileNameWithoutExtension(sgbdFile));
+                            ediabas.ResolveSgbdFile(Path.GetFileNameWithoutExtension(sgbdFileUse));
                         }
                         catch (Exception ex)
                         {

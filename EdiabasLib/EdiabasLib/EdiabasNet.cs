@@ -2226,9 +2226,11 @@ namespace EdiabasLib
         private readonly object _apiLock = new object();
         private bool _jobRunning;
         private bool _jobStd;
+        private bool _jobStdExit;
         private readonly Stack<byte> _stackList = new Stack<byte>();
         private readonly ArgInfo _argInfo = new ArgInfo();
         private readonly ArgInfo _argInfoStd = new ArgInfo();
+        private readonly ArgInfo _argInfoStdExit = new ArgInfo();
         private readonly Dictionary<string, ResultData> _resultDict = new Dictionary<string, ResultData>();
         private readonly Dictionary<string, ResultData> _resultSysDict = new Dictionary<string, ResultData>();
         private readonly Dictionary<string, bool> _resultsRequestDict = new Dictionary<string, bool>();
@@ -2394,6 +2396,21 @@ namespace EdiabasLib
             }
         }
 
+        private string ArgStringStdExit
+        {
+            get
+            {
+                lock (_apiLock)
+                {
+                    if (_argInfoStdExit.BinData == null)
+                    {
+                        return string.Empty;
+                    }
+                    return Encoding.GetString(_argInfoStdExit.BinData, 0, _argInfoStdExit.BinData.Length);
+                }
+            }
+        }
+
         public byte[] ArgBinaryStd
         {
             get
@@ -2424,6 +2441,21 @@ namespace EdiabasLib
             }
         }
 
+        private byte[] ArgBinaryStdExit
+        {
+            get
+            {
+                lock (_apiLock)
+                {
+                    if (_argInfoStdExit.BinData == null)
+                    {
+                        return ByteArray0;
+                    }
+                    return _argInfoStdExit.BinData;
+                }
+            }
+        }
+
         public bool NoInitForVJobs { get; set; }
 
         private byte[] GetActiveArgBinary()
@@ -2432,13 +2464,17 @@ namespace EdiabasLib
             {
                 return ArgBinaryStd;
             }
+            if (_jobStdExit)
+            {
+                return ArgBinaryStdExit;
+            }
             return ArgBinary;
         }
 
         private List<string> GetActiveArgStrings()
         {
-            string args = _jobStd ? ArgStringStd : ArgString;
-            ArgInfo argInfo = _jobStd ? _argInfoStd : _argInfo;
+            string args = _jobStd ? ArgStringStd : (_jobStdExit ? ArgStringStdExit : ArgString);
+            ArgInfo argInfo = _jobStd ? _argInfoStd : (_jobStdExit ? _argInfoStdExit : _argInfo);
 
             if (argInfo.StringList == null)
             {
@@ -3294,7 +3330,7 @@ namespace EdiabasLib
                 _errorCodeLast = error;
             }
             ErrorRaisedDelegate errorFunc = ErrorRaisedFunc;
-            if (errorFunc != null)
+            if (errorFunc != null && !_jobStdExit)
             {
                 errorFunc(error);
             }
@@ -4456,6 +4492,10 @@ namespace EdiabasLib
             {
                 JobRunning = true;
                 _jobStd = true;
+                lock (_apiLock)
+                {
+                    _argInfoStdExit.BinData = _argInfoStd.BinData;
+                }
 
                 try
                 {
@@ -4495,11 +4535,11 @@ namespace EdiabasLib
         private void ExecuteExitJob()
         {
             bool jobRunningOld = JobRunning;
-            bool jobStdOld = _jobStd;
+            bool jobStdOld = _jobStdExit;
             try
             {
                 JobRunning = true;
-                _jobStd = true;
+                _jobStdExit = true;
 
                 try
                 {
@@ -4516,7 +4556,7 @@ namespace EdiabasLib
             }
             finally
             {
-                _jobStd = jobStdOld;
+                _jobStdExit = jobStdOld;
                 JobRunning = jobRunningOld;
             }
         }
