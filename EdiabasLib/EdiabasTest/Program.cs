@@ -223,17 +223,20 @@ namespace EdiabasTest
                             sgbdFileUse = parts[4];
                         }
 
+                        _outputWriter.WriteLine("JOB: " + jobName);
                         try
                         {
                             ediabas.ResolveSgbdFile(Path.GetFileNameWithoutExtension(sgbdFileUse));
                         }
                         catch (Exception ex)
                         {
-                            _outputWriter.WriteLine("ResolveSgbdFile failed: " + EdiabasNet.GetExceptionText(ex));
+                            if (!_compareOutput)
+                            {
+                                _outputWriter.WriteLine("ResolveSgbdFile failed: " + EdiabasNet.GetExceptionText(ex));
+                            }
                             return 1;
                         }
 
-                        _outputWriter.WriteLine("JOB: " + jobName);
                         try
                         {
                             ediabas.ExecuteJob(jobName);
