@@ -2227,6 +2227,7 @@ namespace EdiabasLib
         private bool _jobRunning;
         private bool _jobStd;
         private bool _jobStdExit;
+        private bool _closeSgbdFs;
         private readonly Stack<byte> _stackList = new Stack<byte>();
         private readonly ArgInfo _argInfo = new ArgInfo();
         private readonly ArgInfo _argInfoStd = new ArgInfo();
@@ -2654,7 +2655,7 @@ namespace EdiabasLib
                 }
                 if (changed)
                 {
-                    CloseSgbdFs();
+                    _closeSgbdFs = true;
                     lock (_apiLock)
                     {
                         _sgbdFileName = value;
@@ -3033,7 +3034,7 @@ namespace EdiabasLib
                     {
                         _ecuPath = ecuPath;
                     }
-                    CloseSgbdFs();
+                    _closeSgbdFs = true;
                 }
             }
             if (string.Compare(key, "TracePath", StringComparison.OrdinalIgnoreCase) == 0)
@@ -4592,6 +4593,11 @@ namespace EdiabasLib
         {
             LogFormat(EdLogLevel.Ifh, "executeJob({0}): {1}", SgbdFileName, jobName);
 
+            if (_closeSgbdFs)
+            {
+                _closeSgbdFs = false;
+                CloseSgbdFs();
+            }
             if (!OpenSgbdFs())
             {
                 throw new ArgumentOutOfRangeException("OpenSgbdFs", "ExecuteJobPrivate: Open SGBD failed");
