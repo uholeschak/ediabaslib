@@ -2650,7 +2650,7 @@ namespace EdiabasLib
                 bool changed;
                 lock (_apiLock)
                 {
-                    changed = _sgbdFileName != value;
+                    changed = string.Compare(_sgbdFileName, value, StringComparison.OrdinalIgnoreCase) != 0;
                 }
                 if (changed)
                 {
@@ -2873,7 +2873,14 @@ namespace EdiabasLib
                 {
                     // Dispose managed resources.
                     _abortJobFunc = null;    // prevent abort of exitJob
-                    CloseSgbdFs();
+                    try
+                    {
+                        CloseSgbdFs();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                     CloseTableFs();
                     CloseAllUserFiles();
                     if (_edInterfaceClass != null)
@@ -3013,11 +3020,21 @@ namespace EdiabasLib
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "SetConfigProperty: Job is running");
                 }
+                string ecuPath;
+                bool changed;
                 lock (_apiLock)
                 {
-                    _ecuPath = string.IsNullOrEmpty(value) ? _ecuPathDefault : value;
+                    ecuPath = string.IsNullOrEmpty(value) ? _ecuPathDefault : value;
+                    changed = string.Compare(_ecuPath, ecuPath, StringComparison.OrdinalIgnoreCase) != 0;
                 }
-                CloseSgbdFs();
+                if (changed)
+                {
+                    lock (_apiLock)
+                    {
+                        _ecuPath = ecuPath;
+                    }
+                    CloseSgbdFs();
+                }
             }
             if (string.Compare(key, "TracePath", StringComparison.OrdinalIgnoreCase) == 0)
             {
