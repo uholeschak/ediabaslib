@@ -534,7 +534,10 @@ namespace CarSimulator
                     int data = _btStream.ReadByte();
                     if (data < 0)
                     {
-                        _btStream.Flush();
+                        while (_btStream.DataAvailable)
+                        {
+                            _btStream.ReadByte();
+                        }
                         return 0;
                     }
                     receiveData[i] = (byte)data;
@@ -542,7 +545,10 @@ namespace CarSimulator
 
                 if ((receiveData[0] & 0x80) != 0x80)
                 {   // 0xC0: Broadcast
-                    _btStream.Flush();
+                    while (_btStream.DataAvailable)
+                    {
+                        _btStream.ReadByte();
+                    }
                     return 0;
                 }
                 int recLength = receiveData[0] & 0x3F;
@@ -560,7 +566,10 @@ namespace CarSimulator
                     int data = _btStream.ReadByte();
                     if (data < 0)
                     {
-                        _btStream.Flush();
+                        while (_btStream.DataAvailable)
+                        {
+                            _btStream.ReadByte();
+                        }
                         return 0;
                     }
                     receiveData[i + 4] = (byte)data;
@@ -568,7 +577,10 @@ namespace CarSimulator
 
                 if (CommThread.CalcChecksumBmwFast(receiveData, recLength) != receiveData[recLength])
                 {
-                    _btStream.Flush();
+                    while (_btStream.DataAvailable)
+                    {
+                        _btStream.ReadByte();
+                    }
                     return 0;
                 }
                 return recLength;
