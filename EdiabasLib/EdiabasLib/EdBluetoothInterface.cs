@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading;
 // ReSharper disable UseNullPropagation
 
@@ -15,6 +16,7 @@ namespace EdiabasLib
         private const int ReadTimeoutOffsetShort = 100;
         protected const int EchoTimeout = 500;
         protected static System.IO.Ports.SerialPort SerialPort;
+        protected static NetworkStream BtStream;
         protected static AutoResetEvent CommReceiveEvent;
         protected static Stopwatch StopWatch = new Stopwatch();
         private static bool _reconnectRequired;
@@ -29,7 +31,7 @@ namespace EdiabasLib
 
         public static bool InterfaceConnect(string port, object parameter)
         {
-            if (SerialPort.IsOpen)
+            if (IsInterfaceOpen())
             {
                 return true;
             }
@@ -54,16 +56,37 @@ namespace EdiabasLib
                 {
                     // special id
                     string portName = portData.Remove(0, 1);
-                    SerialPort.PortName = portName;
-                    SerialPort.BaudRate = 115200;
-                    SerialPort.DataBits = 8;
-                    SerialPort.Parity = System.IO.Ports.Parity.None;
-                    SerialPort.StopBits = System.IO.Ports.StopBits.One;
-                    SerialPort.Handshake = System.IO.Ports.Handshake.None;
-                    SerialPort.DtrEnable = false;
-                    SerialPort.RtsEnable = false;
-                    SerialPort.ReadTimeout = 1;
-                    SerialPort.Open();
+                    string[] stringList = portName.Split('#', ';');
+                    if (stringList.Length == 1)
+                    {
+                        SerialPort.PortName = portName;
+                        SerialPort.BaudRate = 115200;
+                        SerialPort.DataBits = 8;
+                        SerialPort.Parity = System.IO.Ports.Parity.None;
+                        SerialPort.StopBits = System.IO.Ports.StopBits.One;
+                        SerialPort.Handshake = System.IO.Ports.Handshake.None;
+                        SerialPort.DtrEnable = false;
+                        SerialPort.RtsEnable = false;
+                        SerialPort.ReadTimeout = 1;
+                        SerialPort.Open();
+                    }
+#if BLUETOOTH
+                    else if (stringList.Length == 2)
+                    {
+                        InTheHand.Net.BluetoothEndPoint ep =
+                            new InTheHand.Net.BluetoothEndPoint(InTheHand.Net.BluetoothAddress.Parse(stringList[0]), InTheHand.Net.Bluetooth.BluetoothService.SerialPort);
+                        InTheHand.Net.Sockets.BluetoothClient cli = new InTheHand.Net.Sockets.BluetoothClient();
+                        cli.SetPin(stringList[1]);
+                        cli.Connect(ep);
+                        BtStream = cli.GetStream();
+                        BtStream.ReadTimeout = 1;
+                    }
+#endif
+                    else
+                    {
+                        InterfaceDisconnect();
+                        return false;
+                    }
                 }
                 else
                 {
@@ -81,6 +104,7 @@ namespace EdiabasLib
 
         public static bool InterfaceDisconnect()
         {
+            bool result = true;
             try
             {
                 if (SerialPort.IsOpen)
@@ -90,14 +114,27 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
-                return false;
+                result = false;
             }
-            return true;
+            try
+            {
+                if (BtStream != null)
+                {
+                    BtStream.Close();
+                    BtStream.Dispose();
+                    BtStream = null;
+                }
+            }
+            catch (Exception)
+            {
+                result = false;
+            }
+            return result;
         }
 
         public static EdInterfaceObd.InterfaceErrorResult InterfaceSetConfig(EdInterfaceObd.Protocol protocol, int baudRate, int dataBits, EdInterfaceObd.SerialParity parity, bool allowBitBang)
         {
-            if (!SerialPort.IsOpen)
+            if (!IsInterfaceOpen())
             {
                 return EdInterfaceObd.InterfaceErrorResult.ConfigError;
             }
@@ -112,7 +149,7 @@ namespace EdiabasLib
 
         public static bool InterfaceSetDtr(bool dtr)
         {
-            if (!SerialPort.IsOpen)
+            if (!IsInterfaceOpen())
             {
                 return false;
             }
@@ -121,7 +158,7 @@ namespace EdiabasLib
 
         public static bool InterfaceSetRts(bool rts)
         {
-            if (!SerialPort.IsOpen)
+            if (!IsInterfaceOpen())
             {
                 return false;
             }
@@ -131,7 +168,7 @@ namespace EdiabasLib
         public static bool InterfaceGetDsr(out bool dsr)
         {
             dsr = true;
-            if (!SerialPort.IsOpen)
+            if (!IsInterfaceOpen())
             {
                 return false;
             }
@@ -151,13 +188,31 @@ namespace EdiabasLib
 
         public static bool InterfacePurgeInBuffer()
         {
-            if (!SerialPort.IsOpen)
+            if (!IsInterfaceOpen())
             {
                 return false;
             }
             try
             {
-                SerialPort.DiscardInBuffer();
+                if (BtStream != null)
+                {
+                    BtStream.ReadTimeout = 1;
+                    while (BtStream.DataAvailable)
+                    {
+                        try
+                        {
+                            BtStream.ReadByte();
+                        }
+                        catch (Exception)
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    SerialPort.DiscardInBuffer();
+                }
             }
             catch (Exception)
             {
@@ -198,7 +253,7 @@ namespace EdiabasLib
         {
             ConvertBaudResponse = false;
             AutoKeyByteResponse = false;
-            if (!SerialPort.IsOpen)
+            if (!IsInterfaceOpen())
             {
                 Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Port closed");
                 return false;
@@ -224,7 +279,14 @@ namespace EdiabasLib
                     {
                         return false;
                     }
-                    SerialPort.Write(adapterTel, 0, adapterTel.Length);
+                    if (BtStream != null)
+                    {
+                        BtStream.Write(adapterTel, 0, adapterTel.Length);
+                    }
+                    else
+                    {
+                        SerialPort.Write(adapterTel, 0, adapterTel.Length);
+                    }
                     LastCommTick = Stopwatch.GetTimestamp();
                     UpdateActiveSettings();
                     return true;
@@ -232,7 +294,14 @@ namespace EdiabasLib
                 if (CurrentBaudRate == 115200)
                 {
                     // BMW-FAST
-                    SerialPort.Write(sendData, 0, length);
+                    if (BtStream != null)
+                    {
+                        BtStream.Write(sendData, 0, length);
+                    }
+                    else
+                    {
+                        SerialPort.Write(sendData, 0, length);
+                    }
                     LastCommTick = Stopwatch.GetTimestamp();
                     // remove echo
                     byte[] receiveData = new byte[length];
@@ -257,7 +326,14 @@ namespace EdiabasLib
                     {
                         return false;
                     }
-                    SerialPort.Write(adapterTel, 0, adapterTel.Length);
+                    if (BtStream != null)
+                    {
+                        BtStream.Write(adapterTel, 0, adapterTel.Length);
+                    }
+                    else
+                    {
+                        SerialPort.Write(adapterTel, 0, adapterTel.Length);
+                    }
                     LastCommTick = Stopwatch.GetTimestamp();
                     UpdateActiveSettings();
                 }
@@ -279,7 +355,7 @@ namespace EdiabasLib
             ConvertBaudResponse = false;
             AutoKeyByteResponse = false;
 
-            if (!SerialPort.IsOpen)
+            if (!IsInterfaceOpen())
             {
                 return false;
             }
@@ -302,28 +378,16 @@ namespace EdiabasLib
                     {
                         return false;
                     }
-                    SerialPort.Write(adapterTel, 0, adapterTel.Length);
+                    if (BtStream != null)
+                    {
+                        BtStream.Write(adapterTel, 0, adapterTel.Length);
+                    }
+                    else
+                    {
+                        SerialPort.Write(adapterTel, 0, adapterTel.Length);
+                    }
                     LastCommTick = Stopwatch.GetTimestamp();
                     UpdateActiveSettings();
-                }
-
-                // wait for first byte
-                int lastBytesToRead;
-                StopWatch.Reset();
-                StopWatch.Start();
-                for (; ; )
-                {
-                    lastBytesToRead = SerialPort.BytesToRead;
-                    if (lastBytesToRead > 0)
-                    {
-                        break;
-                    }
-                    if (StopWatch.ElapsedMilliseconds > timeout)
-                    {
-                        StopWatch.Stop();
-                        return false;
-                    }
-                    CommReceiveEvent.WaitOne(1, false);
                 }
 
                 if (convertBaudResponse && length == 2)
@@ -332,41 +396,106 @@ namespace EdiabasLib
                     length = 1;
                     AutoKeyByteResponse = true;
                 }
+
                 int recLen = 0;
-                StopWatch.Reset();
-                StopWatch.Start();
-                for (; ; )
+                if (BtStream != null)
                 {
-                    int bytesToRead = SerialPort.BytesToRead;
-                    if (bytesToRead >= length)
+                    BtStream.ReadTimeout = timeout;
+                    int data;
+                    try
                     {
-                        int bytesRead = SerialPort.Read(receiveData, offset + recLen, length - recLen);
-                        if (bytesRead > 0)
-                        {
-                            LastCommTick = Stopwatch.GetTimestamp();
-                        }
-                        recLen += bytesRead;
+                        data = BtStream.ReadByte();
                     }
-                    if (recLen >= length)
+                    catch (Exception)
                     {
-                        break;
+                        data = -1;
                     }
-                    if (lastBytesToRead != bytesToRead)
-                    {   // bytes received
-                        StopWatch.Reset();
-                        StopWatch.Start();
-                        lastBytesToRead = bytesToRead;
-                    }
-                    else
+                    if (data < 0)
                     {
-                        if (StopWatch.ElapsedMilliseconds > timeoutTelEnd)
+                        return false;
+                    }
+                    receiveData[offset + recLen] = (byte)data;
+                    recLen++;
+
+                    BtStream.ReadTimeout = timeoutTelEnd;
+                    for (;;)
+                    {
+                        if (recLen >= length)
                         {
                             break;
                         }
+                        try
+                        {
+                            data = BtStream.ReadByte();
+                        }
+                        catch (Exception)
+                        {
+                            data = -1;
+                        }
+                        if (data < 0)
+                        {
+                            return false;
+                        }
+                        receiveData[offset + recLen] = (byte)data;
+                        recLen++;
                     }
-                    CommReceiveEvent.WaitOne(1, false);
                 }
-                StopWatch.Stop();
+                else
+                {
+                    // wait for first byte
+                    int lastBytesToRead;
+                    StopWatch.Reset();
+                    StopWatch.Start();
+                    for (;;)
+                    {
+                        lastBytesToRead = SerialPort.BytesToRead;
+                        if (lastBytesToRead > 0)
+                        {
+                            break;
+                        }
+                        if (StopWatch.ElapsedMilliseconds > timeout)
+                        {
+                            StopWatch.Stop();
+                            return false;
+                        }
+                        CommReceiveEvent.WaitOne(1, false);
+                    }
+
+                    StopWatch.Reset();
+                    StopWatch.Start();
+                    for (;;)
+                    {
+                        int bytesToRead = SerialPort.BytesToRead;
+                        if (bytesToRead >= length)
+                        {
+                            int bytesRead = SerialPort.Read(receiveData, offset + recLen, length - recLen);
+                            if (bytesRead > 0)
+                            {
+                                LastCommTick = Stopwatch.GetTimestamp();
+                            }
+                            recLen += bytesRead;
+                        }
+                        if (recLen >= length)
+                        {
+                            break;
+                        }
+                        if (lastBytesToRead != bytesToRead)
+                        {   // bytes received
+                            StopWatch.Reset();
+                            StopWatch.Start();
+                            lastBytesToRead = bytesToRead;
+                        }
+                        else
+                        {
+                            if (StopWatch.ElapsedMilliseconds > timeoutTelEnd)
+                            {
+                                break;
+                            }
+                        }
+                        CommReceiveEvent.WaitOne(1, false);
+                    }
+                    StopWatch.Stop();
+                }
                 ediabasLog?.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, offset, recLen, "Rec ");
                 if (recLen < length)
                 {
@@ -385,7 +514,14 @@ namespace EdiabasLib
                     {
                         return false;
                     }
-                    SerialPort.Write(adapterTel, 0, adapterTel.Length);
+                    if (BtStream != null)
+                    {
+                        BtStream.Write(adapterTel, 0, adapterTel.Length);
+                    }
+                    else
+                    {
+                        SerialPort.Write(adapterTel, 0, adapterTel.Length);
+                    }
                     LastCommTick = Stopwatch.GetTimestamp();
                 }
             }
@@ -401,7 +537,7 @@ namespace EdiabasLib
         public static bool InterfaceSendPulse(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines, int autoKeyByteDelay)
         {
             ConvertBaudResponse = false;
-            if (!SerialPort.IsOpen)
+            if (!IsInterfaceOpen())
             {
                 Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Port closed");
                 return false;
@@ -431,7 +567,14 @@ namespace EdiabasLib
                 {
                     return false;
                 }
-                SerialPort.Write(adapterTel, 0, adapterTel.Length);
+                if (BtStream != null)
+                {
+                    BtStream.Write(adapterTel, 0, adapterTel.Length);
+                }
+                else
+                {
+                    SerialPort.Write(adapterTel, 0, adapterTel.Length);
+                }
                 LastCommTick = Stopwatch.GetTimestamp();
                 UpdateActiveSettings();
                 Thread.Sleep(pulseWidth * length);
@@ -445,6 +588,11 @@ namespace EdiabasLib
             return true;
         }
 
+        private static bool IsInterfaceOpen()
+        {
+            return SerialPort.IsOpen || (BtStream != null);
+        }
+
         private static void SerialDataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
             CommReceiveEvent.Set();
@@ -453,7 +601,7 @@ namespace EdiabasLib
         // ReSharper disable once UnusedMethodReturnValue.Local
         private static bool UpdateAdapterInfo(bool forceUpdate = false)
         {
-            if (!SerialPort.IsOpen)
+            if (!IsInterfaceOpen())
             {
                 return false;
             }
@@ -467,22 +615,66 @@ namespace EdiabasLib
             {
                 const int versionRespLen = 9;
                 byte[] identTel = {0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E};
-                SerialPort.DiscardInBuffer();
-                SerialPort.Write(identTel, 0, identTel.Length);
+                if (BtStream != null)
+                {
+                    BtStream.ReadTimeout = 1;
+                    while (BtStream.DataAvailable)
+                    {
+                        try
+                        {
+                            BtStream.ReadByte();
+                        }
+                        catch (Exception)
+                        {
+                            break;
+                        }
+                    }
+                    BtStream.Write(identTel, 0, identTel.Length);
+                }
+                else
+                {
+                    SerialPort.DiscardInBuffer();
+                    SerialPort.Write(identTel, 0, identTel.Length);
+                }
                 LastCommTick = Stopwatch.GetTimestamp();
 
                 List<byte> responseList = new List<byte>();
                 long startTime = Stopwatch.GetTimestamp();
                 for (;;)
                 {
-                    while (SerialPort.BytesToRead > 0)
+                    if (BtStream != null)
                     {
-                        int data = SerialPort.ReadByte();
-                        if (data >= 0)
+                        BtStream.ReadTimeout = 1;
+                        while (BtStream.DataAvailable)
                         {
-                            LastCommTick = Stopwatch.GetTimestamp();
-                            responseList.Add((byte) data);
-                            startTime = Stopwatch.GetTimestamp();
+                            int data;
+                            try
+                            {
+                                data = BtStream.ReadByte();
+                            }
+                            catch (Exception)
+                            {
+                                data = -1;
+                            }
+                            if (data >= 0)
+                            {
+                                LastCommTick = Stopwatch.GetTimestamp();
+                                responseList.Add((byte)data);
+                                startTime = Stopwatch.GetTimestamp();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        while (SerialPort.BytesToRead > 0)
+                        {
+                            int data = SerialPort.ReadByte();
+                            if (data >= 0)
+                            {
+                                LastCommTick = Stopwatch.GetTimestamp();
+                                responseList.Add((byte)data);
+                                startTime = Stopwatch.GetTimestamp();
+                            }
                         }
                     }
                     if (responseList.Count >= identTel.Length + versionRespLen)
