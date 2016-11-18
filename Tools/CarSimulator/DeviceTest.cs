@@ -531,12 +531,27 @@ namespace CarSimulator
                 _btStream.ReadTimeout = 1000;
                 for (int i = 0; i < 4; i++)
                 {
-                    int data = _btStream.ReadByte();
+                    int data;
+                    try
+                    {
+                        data = _btStream.ReadByte();
+                    }
+                    catch (Exception)
+                    {
+                        data = -1;
+                    }
                     if (data < 0)
                     {
                         while (_btStream.DataAvailable)
                         {
-                            _btStream.ReadByte();
+                            try
+                            {
+                                _btStream.ReadByte();
+                            }
+                            catch (Exception)
+                            {
+                                break;
+                            }
                         }
                         return 0;
                     }
@@ -547,7 +562,14 @@ namespace CarSimulator
                 {   // 0xC0: Broadcast
                     while (_btStream.DataAvailable)
                     {
-                        _btStream.ReadByte();
+                        try
+                        {
+                            _btStream.ReadByte();
+                        }
+                        catch (Exception)
+                        {
+                            break;
+                        }
                     }
                     return 0;
                 }
@@ -563,12 +585,27 @@ namespace CarSimulator
 
                 for (int i = 0; i < recLength - 3; i++)
                 {
-                    int data = _btStream.ReadByte();
+                    int data;
+                    try
+                    {
+                        data = _btStream.ReadByte();
+                    }
+                    catch (Exception)
+                    {
+                        data = -1;
+                    }
                     if (data < 0)
                     {
                         while (_btStream.DataAvailable)
                         {
-                            _btStream.ReadByte();
+                            try
+                            {
+                                _btStream.ReadByte();
+                            }
+                            catch (Exception)
+                            {
+                                break;
+                            }
                         }
                         return 0;
                     }
@@ -579,7 +616,14 @@ namespace CarSimulator
                 {
                     while (_btStream.DataAvailable)
                     {
-                        _btStream.ReadByte();
+                        try
+                        {
+                            _btStream.ReadByte();
+                        }
+                        catch (Exception)
+                        {
+                            break;
+                        }
                     }
                     return 0;
                 }
