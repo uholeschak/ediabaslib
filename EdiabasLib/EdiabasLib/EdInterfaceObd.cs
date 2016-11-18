@@ -2660,9 +2660,7 @@ namespace EdiabasLib
             receiveLength = 0;
 
             EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Interface unsupported");
-            // should be EdiabasNet.ErrorCodes.EDIABAS_IFH_0011
-            // but the error code is hidden from the outer world
-            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0010;
+            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
         }
 
         private EdiabasNet.ErrorCodes TransBmwFast(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
