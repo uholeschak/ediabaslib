@@ -69,7 +69,7 @@ namespace EdiabasLib
                 if ((portData.Length > 0) && (portData[0] == ':'))
                 {   // special id
                     string addr = portData.Remove(0, 1);
-                    string[] stringList = addr.Split(';');
+                    string[] stringList = addr.Split('#', ';');
                     if (stringList.Length == 0)
                     {
                         InterfaceDisconnect();
