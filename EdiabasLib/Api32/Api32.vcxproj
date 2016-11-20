@@ -56,11 +56,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>/FU"$(TargetDir)ApiInternal.netmodule" %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/FU"$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule" /FU"$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\EdiabasLib.netmodule" %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(TargetDir)ApiInternal.netmodule;$(ProjectDir)..\32feetNET\InTheHand.Net.Personal\ITH.Net.Personal.FX4\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule;$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\EdiabasLib.netmodule;$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule</AdditionalDependencies>
       <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
       <SubSystem>Windows</SubSystem>
     </Link>
@@ -72,11 +72,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>/FU"$(TargetDir)ApiInternal.netmodule" %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/FU"$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule" /FU"$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\EdiabasLib.netmodule" %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(TargetDir)ApiInternal.netmodule;$(ProjectDir)..\32feetNET\InTheHand.Net.Personal\ITH.Net.Personal.FX4\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule;$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\EdiabasLib.netmodule;$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule</AdditionalDependencies>
       <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
       <SubSystem>Windows</SubSystem>
     </Link>
