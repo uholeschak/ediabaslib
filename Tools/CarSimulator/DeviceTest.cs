@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
@@ -76,14 +75,20 @@ namespace CarSimulator
         {
             try
             {
+#if false
                 BluetoothClient cli = new BluetoothClient();
                 BluetoothDeviceInfo[] peers = cli.DiscoverDevices();
                 foreach (BluetoothDeviceInfo device in peers)
                 {
                     Debug.WriteLine("{0} : {1}", device.DeviceAddress, device.DeviceName);
                 }
-
-                SelectBluetoothDeviceDialog dlg = new SelectBluetoothDeviceDialog();
+#endif
+                SelectBluetoothDeviceDialog dlg = new SelectBluetoothDeviceDialog
+                {
+                    ShowAuthenticated = true,
+                    ShowRemembered = false,
+                    ShowUnknown = true
+                };
                 dlg.ClassOfDevices.Clear();
                 dlg.ClassOfDevices.Add(new ClassOfDevice(DeviceClass.Uncategorized, ServiceClass.None));
                 DialogResult result = dlg.ShowDialog(_form);
