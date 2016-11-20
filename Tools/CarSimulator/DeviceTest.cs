@@ -84,6 +84,8 @@ namespace CarSimulator
                 }
 
                 SelectBluetoothDeviceDialog dlg = new SelectBluetoothDeviceDialog();
+                dlg.ClassOfDevices.Clear();
+                dlg.ClassOfDevices.Add(new ClassOfDevice(DeviceClass.Uncategorized, ServiceClass.None));
                 DialogResult result = dlg.ShowDialog(_form);
                 if (result != DialogResult.OK)
                 {
