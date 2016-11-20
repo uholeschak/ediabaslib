@@ -60,10 +60,12 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(TargetDir)ApiInternal.netmodule</AdditionalDependencies>
+      <AdditionalDependencies>$(TargetDir)ApiInternal.netmodule;$(ProjectDir)..\32feetNET\InTheHand.Net.Personal\ITH.Net.Personal.FX4\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule</AdditionalDependencies>
       <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
       <SubSystem>Windows</SubSystem>
     </Link>
+    <PreBuildEvent />
+    <PreBuildEvent />
     <PreBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -74,10 +76,12 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(TargetDir)ApiInternal.netmodule</AdditionalDependencies>
+      <AdditionalDependencies>$(TargetDir)ApiInternal.netmodule;$(ProjectDir)..\32feetNET\InTheHand.Net.Personal\ITH.Net.Personal.FX4\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule</AdditionalDependencies>
       <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
       <SubSystem>Windows</SubSystem>
     </Link>
+    <PreBuildEvent />
+    <PreBuildEvent />
     <PreBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -97,8 +101,8 @@
     <None Include="app.ico" />
     <CustomBuild Include="CompileNetmodule.bat">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call "$(ProjectDir)CompileNetmodule.bat" /out:"$(TargetDir)ApiInternal.netmodule" /debug+ /define:DEBUG</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call "$(ProjectDir)CompileNetmodule.bat" /out:"$(TargetDir)ApiInternal.netmodule" /optimize</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call "$(ProjectDir)CompileNetmodule.bat" "$(TargetDir)ApiInternal.netmodule" $(Configuration)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call "$(ProjectDir)CompileNetmodule.bat" "$(TargetDir)ApiInternal.netmodule" $(Configuration)</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create netmodule</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create netmodule</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(TargetDir)ApiInternal.netmodule</Outputs>

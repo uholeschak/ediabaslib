@@ -16,9 +16,9 @@
 /Alan tmp.ndoc
 /CustomDictionary.xml
 /InTheHand.Net.Personal.FxCop
-/InTheHand.Net.Personal.ncb
-/InTheHand.Net.Personal.sln
-/InTheHand.Net.Personal.vssscc
+/*.ncb
+/*.sln
+/*.vssscc
 /License.txt
 /MakeCeTest.cmd
 /MakeInstallerHack.cmd

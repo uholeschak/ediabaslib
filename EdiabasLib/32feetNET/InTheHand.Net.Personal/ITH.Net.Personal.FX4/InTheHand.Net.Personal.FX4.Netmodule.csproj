@@ -5,8 +5,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{40EA20B4-9CAF-486D-9952-1ABB3D414E92}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{456C7514-4CB5-4F5C-ADA9-F8CB446A7475}</ProjectGuid>
+    <OutputType>Module</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>InTheHand</RootNamespace>
     <AssemblyName>InTheHand.Net.Personal</AssemblyName>
@@ -44,7 +44,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\DebugModule\</OutputPath>
+    <IntermediateOutputPath>obj\DebugModule\</IntermediateOutputPath>
     <DefineConstants>TRACE;DEBUG;WinXP;V2;FX3_5;FX4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -56,11 +57,12 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\ReleaseModule\</OutputPath>
+    <IntermediateOutputPath>obj\ReleaseModule\</IntermediateOutputPath>
     <DefineConstants>TRACE;WinXP;V2;FX3_5;FX4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\InTheHand.Net.Personal.XML</DocumentationFile>
+    <DocumentationFile>bin\ReleaseModule\InTheHand.Net.Personal.XML</DocumentationFile>
     <NoWarn>3002;1591;1734</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'CodeAnalysis|AnyCPU' ">
@@ -740,8 +742,8 @@
     <Compile Include="..\InTheHand.Net.Personal\ObexUri.cs">
       <Link>ObexUri.cs</Link>
     </Compile>
-    <Compile Include="..\InTheHand.Net.Personal\Properties\AssemblyInfoMod.cs">
-      <Link>Properties\AssemblyInfoMod.cs</Link>
+    <Compile Include="..\InTheHand.Net.Personal\Properties\AssemblyInfoNetmodule.cs">
+      <Link>Properties\AssemblyInfoNetmodule.cs</Link>
     </Compile>
     <Compile Include="..\InTheHand.Net.Personal\Runtime\InteropServices\Marshal.cs">
       <Link>Runtime\InteropServices\Marshal.cs</Link>
@@ -792,9 +794,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\InTheHand.Net.Personal\app.config">
-      <Link>app.config</Link>
-    </None>
     <None Include="..\InTheHand.Net.Personal\BluetoothStacks.cd">
       <Link>BluetoothStacks.cd</Link>
     </None>

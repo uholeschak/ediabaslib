@@ -94,8 +94,9 @@ namespace EdiabasLib
                     return false;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Connect failure: {0}", ex.Message);
                 InterfaceDisconnect();
                 return false;
             }
