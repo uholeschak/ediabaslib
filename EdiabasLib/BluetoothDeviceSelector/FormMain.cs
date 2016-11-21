@@ -21,7 +21,7 @@ namespace BluetoothDeviceSelector
         {
             try
             {
-                IAsyncResult ar = _cli.BeginDiscoverDevices(1000, false, false, true, true, delegate(IAsyncResult result)
+                IAsyncResult ar = _cli.BeginDiscoverDevices(1000, true, false, true, true, delegate(IAsyncResult result)
                 {
                     BluetoothClient thisDevice = result.AsyncState as BluetoothClient;
                     if (result.IsCompleted)
