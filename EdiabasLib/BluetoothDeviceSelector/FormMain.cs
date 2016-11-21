@@ -71,9 +71,9 @@ namespace BluetoothDeviceSelector
                                 UpdateStatusText(Strings.SearchingFailed);
                             }
                         }
-                        textBoxStatus.SelectionLength = 0;
                         buttonSearch.Enabled = true;
                         buttonClose.Enabled = true;
+                        UpdateButtonStatus();
                     }));
                 };
                 bco.DiscoverDevicesAsync(1000, true, false, true, true, bco);
@@ -121,7 +121,17 @@ namespace BluetoothDeviceSelector
             listViewDevices.EndUpdate();
         }
 
-        public void UpdateStatusText(string text)
+        private void UpdateButtonStatus()
+        {
+            BluetoothDeviceInfo devInfo = null;
+            if (listViewDevices.SelectedItems.Count > 0)
+            {
+                devInfo = listViewDevices.SelectedItems[0].Tag as BluetoothDeviceInfo;
+            }
+            buttonTest.Enabled = buttonSearch.Enabled && devInfo != null;
+        }
+
+        private void UpdateStatusText(string text)
         {
             textBoxStatus.Text = text;
             textBoxStatus.SelectionStart = textBoxStatus.TextLength;
@@ -146,6 +156,7 @@ namespace BluetoothDeviceSelector
                 UpdateStatusText(Strings.Searching);
                 buttonSearch.Enabled = false;
                 buttonClose.Enabled = false;
+                UpdateButtonStatus();
             }
         }
 
@@ -170,7 +181,13 @@ namespace BluetoothDeviceSelector
 
         private void FormMain_Shown(object sender, EventArgs e)
         {
+            UpdateButtonStatus();
             buttonSearch_Click(buttonSearch, EventArgs.Empty);
+        }
+
+        private void listViewDevices_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateButtonStatus();
         }
     }
 }
