@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using InTheHand.Net.Bluetooth;
@@ -9,54 +10,68 @@ namespace BluetoothDeviceSelector
     public partial class FormMain : Form
     {
         private readonly BluetoothClient _cli;
+        private readonly List<BluetoothDeviceInfo> _deviceList;
 
         public FormMain()
         {
             InitializeComponent();
             listViewDevices.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.None);
             listViewDevices.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
-            _cli = new BluetoothClient();
+            try
+            {
+                _cli = new BluetoothClient();
+            }
+            catch (Exception ex)
+            {
+                UpdateStatusText(string.Format(Strings.BtInitError, ex.Message));
+                buttonSearch.Enabled = false;
+            }
+            _deviceList = new List<BluetoothDeviceInfo>();
         }
 
         private bool StartDeviceSearch()
         {
+            if (_cli == null)
+            {
+                return false;
+            }
             try
             {
+                _deviceList.Clear();
                 BluetoothComponent bco = new BluetoothComponent(_cli);
                 bco.DiscoverDevicesProgress += (sender, args) =>
                 {
+                    BeginInvoke((Action)(() =>
+                    {
+                        if (args.Error == null && !args.Cancelled)
+                        {
+                            UpdateDeviceList(args.Devices, false);
+                        }
+                    }));
                 };
 
                 bco.DiscoverDevicesComplete += (sender, args) =>
                 {
                     BeginInvoke((Action)(() =>
                     {
-                        listViewDevices.BeginUpdate();
-                        listViewDevices.Items.Clear();
-                        if (args.Error == null)
+                        if (args.Error == null && !args.Cancelled)
                         {
-                            try
-                            {
-                                foreach (BluetoothDeviceInfo device in args.Devices.OrderBy(dev => dev.DeviceAddress.ToString()))
-                                {
-                                    ListViewItem listViewItem =
-                                        new ListViewItem(new[] { device.DeviceAddress.ToString(), device.DeviceName })
-                                        {
-                                            Tag = device
-                                        };
-                                    listViewDevices.Items.Add(listViewItem);
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
+                            UpdateDeviceList(args.Devices, true);
+                            UpdateStatusText(string.Format(Strings.FoundDevices, args.Devices?.Length));
                         }
                         else
                         {
-                            listViewDevices.Items.Add(new ListViewItem(new[] { "Searching failed", args.Error.Message }));
+                            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                            if (args.Error != null)
+                            {
+                                UpdateStatusText(string.Format(Strings.SearchingFailedMessage, args.Error.Message));
+                            }
+                            else
+                            {
+                                UpdateStatusText(Strings.SearchingFailed);
+                            }
                         }
-                        listViewDevices.EndUpdate();
+                        textBoxStatus.SelectionLength = 0;
                         buttonSearch.Enabled = true;
                         buttonClose.Enabled = true;
                     }));
@@ -68,6 +83,50 @@ namespace BluetoothDeviceSelector
                 return false;
             }
             return true;
+        }
+
+        private void UpdateDeviceList(BluetoothDeviceInfo[] devices, bool completed)
+        {
+            listViewDevices.BeginUpdate();
+            listViewDevices.Items.Clear();
+            if (devices != null)
+            {
+                if (completed)
+                {
+                    _deviceList.Clear();
+                    _deviceList.AddRange(devices);
+                }
+                else
+                {
+                    foreach (BluetoothDeviceInfo device in devices.OrderBy(dev => dev.DeviceAddress.ToString()))
+                    {
+                        bool found = _deviceList.Any(dev => device.DeviceAddress == dev.DeviceAddress);
+                        if (!found)
+                        {
+                            _deviceList.Add(device);
+                        }
+                    }
+                }
+
+                foreach (BluetoothDeviceInfo device in _deviceList.OrderBy(dev => dev.DeviceAddress.ToString()))
+                {
+                    ListViewItem listViewItem =
+                        new ListViewItem(new[] {device.DeviceAddress.ToString(), device.DeviceName})
+                        {
+                            Tag = device
+                        };
+                    listViewDevices.Items.Add(listViewItem);
+                }
+            }
+            listViewDevices.EndUpdate();
+        }
+
+        public void UpdateStatusText(string text)
+        {
+            textBoxStatus.Text = text;
+            textBoxStatus.SelectionStart = textBoxStatus.TextLength;
+            textBoxStatus.Update();
+            textBoxStatus.ScrollToCaret();
         }
 
         private void buttonClose_Click(object sender, EventArgs e)
@@ -83,10 +142,8 @@ namespace BluetoothDeviceSelector
             }
             if (StartDeviceSearch())
             {
-                listViewDevices.BeginUpdate();
                 listViewDevices.Items.Clear();
-                listViewDevices.Items.Add(new ListViewItem(new[] { "Searching ...", string.Empty }));
-                listViewDevices.EndUpdate();
+                UpdateStatusText(Strings.Searching);
                 buttonSearch.Enabled = false;
                 buttonClose.Enabled = false;
             }
@@ -94,7 +151,7 @@ namespace BluetoothDeviceSelector
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
-            _cli.Dispose();
+            _cli?.Dispose();
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)

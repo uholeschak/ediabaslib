@@ -33,6 +33,8 @@
             this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.buttonSearch = new System.Windows.Forms.Button();
             this.buttonClose = new System.Windows.Forms.Button();
+            this.labelStatus = new System.Windows.Forms.Label();
+            this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // listViewDevices
@@ -65,7 +67,7 @@
             // 
             // buttonSearch
             // 
-            this.buttonSearch.Location = new System.Drawing.Point(12, 252);
+            this.buttonSearch.Location = new System.Drawing.Point(12, 331);
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(75, 23);
             this.buttonSearch.TabIndex = 1;
@@ -76,7 +78,7 @@
             // buttonClose
             // 
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonClose.Location = new System.Drawing.Point(462, 252);
+            this.buttonClose.Location = new System.Drawing.Point(462, 331);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 2;
@@ -84,11 +86,32 @@
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
+            // labelStatus
+            // 
+            this.labelStatus.AutoSize = true;
+            this.labelStatus.Location = new System.Drawing.Point(12, 247);
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(40, 13);
+            this.labelStatus.TabIndex = 3;
+            this.labelStatus.Text = "Status:";
+            // 
+            // textBoxStatus
+            // 
+            this.textBoxStatus.Location = new System.Drawing.Point(12, 263);
+            this.textBoxStatus.Multiline = true;
+            this.textBoxStatus.Name = "textBoxStatus";
+            this.textBoxStatus.ReadOnly = true;
+            this.textBoxStatus.Size = new System.Drawing.Size(525, 62);
+            this.textBoxStatus.TabIndex = 4;
+            this.textBoxStatus.TabStop = false;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(549, 287);
+            this.ClientSize = new System.Drawing.Size(549, 366);
+            this.Controls.Add(this.textBoxStatus);
+            this.Controls.Add(this.labelStatus);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.buttonSearch);
             this.Controls.Add(this.listViewDevices);
@@ -98,6 +121,7 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             this.Shown += new System.EventHandler(this.FormMain_Shown);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -108,6 +132,8 @@
         private System.Windows.Forms.ColumnHeader columnHeaderName;
         private System.Windows.Forms.Button buttonSearch;
         private System.Windows.Forms.Button buttonClose;
+        private System.Windows.Forms.Label labelStatus;
+        private System.Windows.Forms.TextBox textBoxStatus;
     }
 }
 
