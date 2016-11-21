@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
 
 namespace BluetoothDeviceSelector
@@ -21,47 +22,46 @@ namespace BluetoothDeviceSelector
         {
             try
             {
-                IAsyncResult ar = _cli.BeginDiscoverDevices(1000, true, false, true, true, delegate(IAsyncResult result)
+                BluetoothComponent bco = new BluetoothComponent(_cli);
+                bco.DiscoverDevicesProgress += (sender, args) =>
                 {
-                    BluetoothClient thisDevice = result.AsyncState as BluetoothClient;
-                    if (result.IsCompleted)
+                };
+
+                bco.DiscoverDevicesComplete += (sender, args) =>
+                {
+                    BeginInvoke((Action)(() =>
                     {
-                        if (thisDevice != null)
+                        listViewDevices.BeginUpdate();
+                        listViewDevices.Items.Clear();
+                        if (args.Error == null)
                         {
-                            //Get the list of obtained devices and end the discovery process
-                            BluetoothDeviceInfo[] devices = thisDevice.EndDiscoverDevices(result);
-                            //Do what is required with the array of devices
-                            BeginInvoke((Action) (() =>
+                            try
                             {
-                                listViewDevices.BeginUpdate();
-                                listViewDevices.Items.Clear();
-                                try
+                                foreach (BluetoothDeviceInfo device in args.Devices.OrderBy(dev => dev.DeviceAddress.ToString()))
                                 {
-                                    foreach (BluetoothDeviceInfo device in devices.OrderBy(dev => dev.DeviceAddress.ToString()))
-                                    {
-                                        ListViewItem listViewItem =
-                                            new ListViewItem(new[] { device.DeviceAddress.ToString(), device.DeviceName })
-                                            {
-                                                Tag = device
-                                            };
-                                        listViewDevices.Items.Add(listViewItem);
-                                    }
+                                    ListViewItem listViewItem =
+                                        new ListViewItem(new[] { device.DeviceAddress.ToString(), device.DeviceName })
+                                        {
+                                            Tag = device
+                                        };
+                                    listViewDevices.Items.Add(listViewItem);
                                 }
-                                catch (Exception)
-                                {
-                                    // ignored
-                                }
-                                listViewDevices.EndUpdate();
-                                buttonSearch.Enabled = true;
-                                buttonClose.Enabled = true;
-                            }));
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                         }
-                    }
-                }, _cli);
-                if (ar == null)
-                {
-                    return false;
-                }
+                        else
+                        {
+                            listViewDevices.Items.Add(new ListViewItem(new[] { "Searching failed", args.Error.Message }));
+                        }
+                        listViewDevices.EndUpdate();
+                        buttonSearch.Enabled = true;
+                        buttonClose.Enabled = true;
+                    }));
+                };
+                bco.DiscoverDevicesAsync(1000, true, false, true, true, bco);
             }
             catch (Exception)
             {
@@ -83,6 +83,10 @@ namespace BluetoothDeviceSelector
             }
             if (StartDeviceSearch())
             {
+                listViewDevices.BeginUpdate();
+                listViewDevices.Items.Clear();
+                listViewDevices.Items.Add(new ListViewItem(new[] { "Searching ...", string.Empty }));
+                listViewDevices.EndUpdate();
                 buttonSearch.Enabled = false;
                 buttonClose.Enabled = false;
             }
@@ -105,6 +109,11 @@ namespace BluetoothDeviceSelector
         {
             e.NewWidth = listViewDevices.Columns[e.ColumnIndex].Width;
             e.Cancel = true;
+        }
+
+        private void FormMain_Shown(object sender, EventArgs e)
+        {
+            buttonSearch_Click(buttonSearch, EventArgs.Empty);
         }
     }
 }
