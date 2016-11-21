@@ -56,12 +56,12 @@
             // columnHeaderAddress
             // 
             this.columnHeaderAddress.Text = "Address";
-            this.columnHeaderAddress.Width = 253;
+            this.columnHeaderAddress.Width = 193;
             // 
             // columnHeaderName
             // 
             this.columnHeaderName.Text = "Name";
-            this.columnHeaderName.Width = 262;
+            this.columnHeaderName.Width = 322;
             // 
             // buttonSearch
             // 
