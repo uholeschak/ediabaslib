@@ -35,6 +35,7 @@
             this.buttonClose = new System.Windows.Forms.Button();
             this.labelStatus = new System.Windows.Forms.Label();
             this.textBoxStatus = new System.Windows.Forms.TextBox();
+            this.buttonTest = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listViewDevices
@@ -54,6 +55,7 @@
             this.listViewDevices.UseCompatibleStateImageBehavior = false;
             this.listViewDevices.View = System.Windows.Forms.View.Details;
             this.listViewDevices.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.listViewDevices_ColumnWidthChanging);
+            this.listViewDevices.SelectedIndexChanged += new System.EventHandler(this.listViewDevices_SelectedIndexChanged);
             // 
             // columnHeaderAddress
             // 
@@ -105,11 +107,21 @@
             this.textBoxStatus.TabIndex = 4;
             this.textBoxStatus.TabStop = false;
             // 
+            // buttonTest
+            // 
+            this.buttonTest.Location = new System.Drawing.Point(93, 331);
+            this.buttonTest.Name = "buttonTest";
+            this.buttonTest.Size = new System.Drawing.Size(75, 23);
+            this.buttonTest.TabIndex = 5;
+            this.buttonTest.Text = "Test";
+            this.buttonTest.UseVisualStyleBackColor = true;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(549, 366);
+            this.Controls.Add(this.buttonTest);
             this.Controls.Add(this.textBoxStatus);
             this.Controls.Add(this.labelStatus);
             this.Controls.Add(this.buttonClose);
@@ -134,6 +146,7 @@
         private System.Windows.Forms.Button buttonClose;
         private System.Windows.Forms.Label labelStatus;
         private System.Windows.Forms.TextBox textBoxStatus;
+        private System.Windows.Forms.Button buttonTest;
     }
 }
 
