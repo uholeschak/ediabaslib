@@ -146,14 +146,21 @@ namespace CarSimulator
                 return false;
             }
             _form.UpdateTestStatusText("Connecting ...");
-            if (!ConnectBtDevice(device))
+            try
             {
-                _form.UpdateTestStatusText("Connection faild");
-                return false;
+                if (!ConnectBtDevice(device))
+                {
+                    _form.UpdateTestStatusText("Connection faild");
+                    return false;
+                }
+                if (!RunTest(comPort))
+                {
+                    return false;
+                }
             }
-            if (!RunTest(comPort))
+            finally
             {
-                return false;
+                DisconnectBtDevice();
             }
             return true;
         }
