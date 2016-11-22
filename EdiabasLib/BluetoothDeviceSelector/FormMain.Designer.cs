@@ -40,6 +40,8 @@
             this.labelBluetoothPin = new System.Windows.Forms.Label();
             this.labelBtDevices = new System.Windows.Forms.Label();
             this.checkBoxAutoMode = new System.Windows.Forms.CheckBox();
+            this.buttonUpdateConfigFile = new System.Windows.Forms.Button();
+            this.openFileDialogConfigFile = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // listViewDevices
@@ -116,9 +118,9 @@
             // 
             this.buttonTest.Location = new System.Drawing.Point(93, 402);
             this.buttonTest.Name = "buttonTest";
-            this.buttonTest.Size = new System.Drawing.Size(75, 23);
+            this.buttonTest.Size = new System.Drawing.Size(120, 23);
             this.buttonTest.TabIndex = 6;
-            this.buttonTest.Text = "Test";
+            this.buttonTest.Text = "Test Connection";
             this.buttonTest.UseVisualStyleBackColor = true;
             this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
             // 
@@ -159,12 +161,27 @@
             this.checkBoxAutoMode.Text = "Switch adapter to automatic mode";
             this.checkBoxAutoMode.UseVisualStyleBackColor = true;
             // 
+            // buttonUpdateConfigFile
+            // 
+            this.buttonUpdateConfigFile.Location = new System.Drawing.Point(219, 402);
+            this.buttonUpdateConfigFile.Name = "buttonUpdateConfigFile";
+            this.buttonUpdateConfigFile.Size = new System.Drawing.Size(120, 23);
+            this.buttonUpdateConfigFile.TabIndex = 9;
+            this.buttonUpdateConfigFile.Text = "Update Config File";
+            this.buttonUpdateConfigFile.UseVisualStyleBackColor = true;
+            this.buttonUpdateConfigFile.Click += new System.EventHandler(this.buttonUpdateConfigFile_Click);
+            // 
+            // openFileDialogConfigFile
+            // 
+            this.openFileDialogConfigFile.Filter = "EdiabasLib.config File|EdiabasLib.config| All Files|*.*";
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(549, 437);
+            this.Controls.Add(this.buttonUpdateConfigFile);
             this.Controls.Add(this.checkBoxAutoMode);
             this.Controls.Add(this.labelBtDevices);
             this.Controls.Add(this.labelBluetoothPin);
@@ -199,6 +216,8 @@
         private System.Windows.Forms.Label labelBluetoothPin;
         private System.Windows.Forms.Label labelBtDevices;
         private System.Windows.Forms.CheckBox checkBoxAutoMode;
+        private System.Windows.Forms.Button buttonUpdateConfigFile;
+        private System.Windows.Forms.OpenFileDialog openFileDialogConfigFile;
     }
 }
 

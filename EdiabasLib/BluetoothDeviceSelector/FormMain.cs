@@ -15,7 +15,9 @@ namespace BluetoothDeviceSelector
     {
         private readonly BluetoothClient _cli;
         private readonly List<BluetoothDeviceInfo> _deviceList;
+        private readonly string _ediabasDir;
         private volatile bool _searching;
+        private bool _testOk;
         private volatile Thread _testThread;
         private NetworkStream _btStream;
 
@@ -42,6 +44,7 @@ namespace BluetoothDeviceSelector
                 UpdateStatusText(string.Format(Strings.BtInitError, ex.Message));
             }
             _deviceList = new List<BluetoothDeviceInfo>();
+            _ediabasDir = Environment.GetEnvironmentVariable("ediabas_config_dir");
             UpdateButtonStatus();
         }
 
@@ -53,6 +56,7 @@ namespace BluetoothDeviceSelector
             }
             try
             {
+                _testOk = false;
                 _deviceList.Clear();
                 BluetoothComponent bco = new BluetoothComponent(_cli);
                 bco.DiscoverDevicesProgress += (sender, args) =>
@@ -161,6 +165,7 @@ namespace BluetoothDeviceSelector
                 devInfo = listViewDevices.SelectedItems[0].Tag as BluetoothDeviceInfo;
             }
             buttonTest.Enabled = buttonSearch.Enabled && devInfo != null && _testThread == null;
+            buttonUpdateConfigFile.Enabled = buttonTest.Enabled && _testOk;
             textBoxBluetoothPin.Enabled = _testThread == null;
             checkBoxAutoMode.Enabled = _testThread == null;
         }
@@ -171,6 +176,7 @@ namespace BluetoothDeviceSelector
             {
                 return false;
             }
+            _testOk = false;
             BluetoothDeviceInfo devInfo = null;
             if (listViewDevices.SelectedItems.Count > 0)
             {
@@ -192,7 +198,7 @@ namespace BluetoothDeviceSelector
                         UpdateStatusText(Strings.ConnectionFailed);
                         return;
                     }
-                    RunTest(autoMode);
+                    _testOk = RunTest(autoMode);
                 }
                 finally
                 {
@@ -565,6 +571,7 @@ namespace BluetoothDeviceSelector
 
         private void listViewDevices_SelectedIndexChanged(object sender, EventArgs e)
         {
+            _testOk = false;
             UpdateButtonStatus();
         }
 
@@ -580,6 +587,15 @@ namespace BluetoothDeviceSelector
         {
             ExecuteTest();
             UpdateButtonStatus();
+        }
+
+        private void buttonUpdateConfigFile_Click(object sender, EventArgs e)
+        {
+            openFileDialogConfigFile.InitialDirectory = _ediabasDir ?? string.Empty;
+            if (openFileDialogConfigFile.ShowDialog() == DialogResult.OK)
+            {
+                
+            }
         }
     }
 }
