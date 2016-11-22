@@ -174,7 +174,7 @@ namespace CarSimulator
             byte[] firmware = AdapterCommandCustom(0xFD, new byte[] { 0xFD });
             if ((firmware == null) || (firmware.Length < 4))
             {
-                sr.Append("Read adapter type failed!");
+                sr.Append("Read firmware version failed!");
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
             }

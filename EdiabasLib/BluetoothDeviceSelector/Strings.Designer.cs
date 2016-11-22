@@ -70,11 +70,137 @@ namespace BluetoothDeviceSelector {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Adapter mode: ähnelt.
+        /// </summary>
+        internal static string CanMode {
+            get {
+                return ResourceManager.GetString("CanMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die K-CAN ähnelt.
+        /// </summary>
+        internal static string CanMode100 {
+            get {
+                return ResourceManager.GetString("CanMode100", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die D-CAN ähnelt.
+        /// </summary>
+        internal static string CanMode500 {
+            get {
+                return ResourceManager.GetString("CanMode500", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Automatic ähnelt.
+        /// </summary>
+        internal static string CanModeAuto {
+            get {
+                return ResourceManager.GetString("CanModeAuto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die It&apos;s recommended to use the automatic adapter mode. ähnelt.
+        /// </summary>
+        internal static string CanModeNotAuto {
+            get {
+                return ResourceManager.GetString("CanModeNotAuto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die K-LINE ähnelt.
+        /// </summary>
+        internal static string CanModeOff {
+            get {
+                return ResourceManager.GetString("CanModeOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unknown ähnelt.
+        /// </summary>
+        internal static string CanModeUnknown {
+            get {
+                return ResourceManager.GetString("CanModeUnknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Connected ähnelt.
+        /// </summary>
+        internal static string Connected {
+            get {
+                return ResourceManager.GetString("Connected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Connecting ... ähnelt.
+        /// </summary>
+        internal static string Connecting {
+            get {
+                return ResourceManager.GetString("Connecting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Connection failed ähnelt.
+        /// </summary>
+        internal static string ConnectionFailed {
+            get {
+                return ResourceManager.GetString("ConnectionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Firmware too old, please update firmware with Deep OBD App. ähnelt.
+        /// </summary>
+        internal static string FirmwareTooOld {
+            get {
+                return ResourceManager.GetString("FirmwareTooOld", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Firmware: ähnelt.
+        /// </summary>
+        internal static string FirmwareVersion {
+            get {
+                return ResourceManager.GetString("FirmwareVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Found {0} devices ähnelt.
         /// </summary>
         internal static string FoundDevices {
             get {
                 return ResourceManager.GetString("FoundDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Read firmware version failed ähnelt.
+        /// </summary>
+        internal static string ReadFirmwareVersionFailed {
+            get {
+                return ResourceManager.GetString("ReadFirmwareVersionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Read adapter mode failed ähnelt.
+        /// </summary>
+        internal static string ReadModeFailed {
+            get {
+                return ResourceManager.GetString("ReadModeFailed", resourceCulture);
             }
         }
         
@@ -102,6 +228,15 @@ namespace BluetoothDeviceSelector {
         internal static string SearchingFailedMessage {
             get {
                 return ResourceManager.GetString("SearchingFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Test OK ähnelt.
+        /// </summary>
+        internal static string TestOk {
+            get {
+                return ResourceManager.GetString("TestOk", resourceCulture);
             }
         }
     }
