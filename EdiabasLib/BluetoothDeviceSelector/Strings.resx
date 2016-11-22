@@ -120,8 +120,50 @@
   <data name="BtInitError" xml:space="preserve">
     <value>Bluetooth init failed: {0}</value>
   </data>
+  <data name="CanMode" xml:space="preserve">
+    <value>Adapter mode:</value>
+  </data>
+  <data name="CanMode100" xml:space="preserve">
+    <value>K-CAN</value>
+  </data>
+  <data name="CanMode500" xml:space="preserve">
+    <value>D-CAN</value>
+  </data>
+  <data name="CanModeAuto" xml:space="preserve">
+    <value>Automatic</value>
+  </data>
+  <data name="CanModeNotAuto" xml:space="preserve">
+    <value>It's recommended to use the automatic adapter mode.</value>
+  </data>
+  <data name="CanModeOff" xml:space="preserve">
+    <value>K-LINE</value>
+  </data>
+  <data name="CanModeUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="Connected" xml:space="preserve">
+    <value>Connected</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Connecting ...</value>
+  </data>
+  <data name="ConnectionFailed" xml:space="preserve">
+    <value>Connection failed</value>
+  </data>
+  <data name="FirmwareTooOld" xml:space="preserve">
+    <value>Firmware too old, please update firmware with Deep OBD App.</value>
+  </data>
+  <data name="FirmwareVersion" xml:space="preserve">
+    <value>Firmware:</value>
+  </data>
   <data name="FoundDevices" xml:space="preserve">
     <value>Found {0} devices</value>
+  </data>
+  <data name="ReadFirmwareVersionFailed" xml:space="preserve">
+    <value>Read firmware version failed</value>
+  </data>
+  <data name="ReadModeFailed" xml:space="preserve">
+    <value>Read adapter mode failed</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>Searching ...</value>
@@ -131,5 +173,8 @@
   </data>
   <data name="SearchingFailedMessage" xml:space="preserve">
     <value>Searching failed: {0}</value>
+  </data>
+  <data name="TestOk" xml:space="preserve">
+    <value>Test OK</value>
   </data>
 </root>

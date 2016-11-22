@@ -19,6 +19,14 @@ namespace BluetoothDeviceSelector
         private volatile Thread _testThread;
         private NetworkStream _btStream;
 
+        private enum AdapterMode
+        {
+            CanOff = 0x00,
+            Can500 = 0x01,
+            Can100 = 0x09,
+            CanAuto = 0xFF,
+        }
+
         public FormMain()
         {
             InitializeComponent();
@@ -176,10 +184,10 @@ namespace BluetoothDeviceSelector
             {
                 try
                 {
-                    UpdateStatusText("Connecting");
+                    UpdateStatusText(Strings.Connecting);
                     if (!ConnectBtDevice(devInfo, pin))
                     {
-                        UpdateStatusText("Connection failed");
+                        UpdateStatusText(Strings.ConnectionFailed);
                         return;
                     }
                     RunTest();
@@ -199,21 +207,66 @@ namespace BluetoothDeviceSelector
         {
             StringBuilder sr = new StringBuilder();
 
+            sr.Append(Strings.Connected);
             byte[] firmware = AdapterCommandCustom(0xFD, new byte[] {0xFD});
             if ((firmware == null) || (firmware.Length < 4))
             {
-                sr.Append("Read adapter type failed!");
+                sr.Append("\r\n");
+                sr.Append(Strings.ReadFirmwareVersionFailed);
                 UpdateStatusText(sr.ToString());
                 return false;
             }
-            sr.Append("Firmware: ");
-            sr.Append(string.Format("{0}.{1}", firmware[2], firmware[3]));
-            if ((firmware[2] != 0x00) || (firmware[3] != 0x08))
+            sr.Append("\r\n");
+            sr.Append(Strings.FirmwareVersion);
+            sr.Append(string.Format(" {0}.{1}", firmware[2], firmware[3]));
+            int version = (firmware[2] << 8) + firmware[3];
+            if (version < 8)
             {
-                sr.Append("Incorrect firmware version!");
+                sr.Append("\r\n");
+                sr.Append(Strings.FirmwareTooOld);
                 UpdateStatusText(sr.ToString());
                 return false;
             }
+            byte[] canMode = AdapterCommandCustom(0x82, new byte[] { 0x00 });
+            if ((canMode == null) || (canMode.Length < 1))
+            {
+                sr.Append("\r\n");
+                sr.Append(Strings.ReadModeFailed);
+                UpdateStatusText(sr.ToString());
+                return false;
+            }
+            sr.Append("\r\n");
+            sr.Append(Strings.CanMode);
+            sr.Append(" ");
+            switch ((AdapterMode) canMode[0])
+            {
+                case AdapterMode.CanOff:
+                    sr.Append(Strings.CanModeOff);
+                    break;
+
+                case AdapterMode.Can500:
+                    sr.Append(Strings.CanMode500);
+                    break;
+
+                case AdapterMode.Can100:
+                    sr.Append(Strings.CanMode100);
+                    break;
+
+                case AdapterMode.CanAuto:
+                    sr.Append(Strings.CanModeAuto);
+                    break;
+
+                default:
+                    sr.Append(Strings.CanModeUnknown);
+                    break;
+            }
+            if ((AdapterMode)canMode[0] != AdapterMode.CanAuto)
+            {
+                sr.Append("\r\n");
+                sr.Append(Strings.CanModeNotAuto);
+            }
+            sr.Append("\r\n");
+            sr.Append(Strings.TestOk);
             UpdateStatusText(sr.ToString());
             return true;
         }
