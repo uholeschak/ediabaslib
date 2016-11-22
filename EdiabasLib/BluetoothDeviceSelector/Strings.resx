@@ -132,8 +132,14 @@
   <data name="CanModeAuto" xml:space="preserve">
     <value>Automatic</value>
   </data>
+  <data name="CanModeChangeAuto" xml:space="preserve">
+    <value>Changing CAN mode to automatic</value>
+  </data>
+  <data name="CanModeChangeFailed" xml:space="preserve">
+    <value>Changing CAN mode failed</value>
+  </data>
   <data name="CanModeNotAuto" xml:space="preserve">
-    <value>It's recommended to use the automatic adapter mode.</value>
+    <value>It's recommended to use automatic adapter mode.</value>
   </data>
   <data name="CanModeOff" xml:space="preserve">
     <value>K-LINE</value>
