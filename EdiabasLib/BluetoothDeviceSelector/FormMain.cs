@@ -162,6 +162,7 @@ namespace BluetoothDeviceSelector
             }
             buttonTest.Enabled = buttonSearch.Enabled && devInfo != null && _testThread == null;
             textBoxBluetoothPin.Enabled = _testThread == null;
+            checkBoxAutoMode.Enabled = _testThread == null;
         }
 
         private bool ExecuteTest()
@@ -180,6 +181,7 @@ namespace BluetoothDeviceSelector
                 return false;
             }
             string pin = textBoxBluetoothPin.Text;
+            bool autoMode = checkBoxAutoMode.Checked;
             _testThread = new Thread(() =>
             {
                 try
@@ -190,7 +192,7 @@ namespace BluetoothDeviceSelector
                         UpdateStatusText(Strings.ConnectionFailed);
                         return;
                     }
-                    RunTest();
+                    RunTest(autoMode);
                 }
                 finally
                 {
@@ -203,7 +205,7 @@ namespace BluetoothDeviceSelector
             return true;
         }
 
-        private bool RunTest()
+        private bool RunTest(bool autoMode)
         {
             StringBuilder sr = new StringBuilder();
 
@@ -262,8 +264,22 @@ namespace BluetoothDeviceSelector
             }
             if ((AdapterMode)canMode[0] != AdapterMode.CanAuto)
             {
-                sr.Append("\r\n");
-                sr.Append(Strings.CanModeNotAuto);
+                if (autoMode)
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Strings.CanModeChangeAuto);
+                    canMode = AdapterCommandCustom(0x02, new[] {(byte) AdapterMode.CanAuto});
+                    if ((canMode == null) || (canMode.Length < 1) || ((AdapterMode) canMode[0] != AdapterMode.CanAuto))
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(Strings.CanModeChangeFailed);
+                    }
+                }
+                else
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Strings.CanModeNotAuto);
+                }
             }
             sr.Append("\r\n");
             sr.Append(Strings.TestOk);

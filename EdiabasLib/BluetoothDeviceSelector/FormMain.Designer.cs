@@ -39,6 +39,7 @@
             this.textBoxBluetoothPin = new System.Windows.Forms.TextBox();
             this.labelBluetoothPin = new System.Windows.Forms.Label();
             this.labelBtDevices = new System.Windows.Forms.Label();
+            this.checkBoxAutoMode = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // listViewDevices
@@ -55,7 +56,7 @@
             this.listViewDevices.Name = "listViewDevices";
             this.listViewDevices.ShowGroups = false;
             this.listViewDevices.Size = new System.Drawing.Size(525, 232);
-            this.listViewDevices.TabIndex = 0;
+            this.listViewDevices.TabIndex = 1;
             this.listViewDevices.UseCompatibleStateImageBehavior = false;
             this.listViewDevices.View = System.Windows.Forms.View.Details;
             this.listViewDevices.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.listViewDevices_ColumnWidthChanging);
@@ -76,7 +77,7 @@
             this.buttonSearch.Location = new System.Drawing.Point(12, 402);
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(75, 23);
-            this.buttonSearch.TabIndex = 1;
+            this.buttonSearch.TabIndex = 5;
             this.buttonSearch.Text = "Search";
             this.buttonSearch.UseVisualStyleBackColor = true;
             this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
@@ -87,7 +88,7 @@
             this.buttonClose.Location = new System.Drawing.Point(462, 402);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
-            this.buttonClose.TabIndex = 2;
+            this.buttonClose.TabIndex = 0;
             this.buttonClose.Text = "Close";
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
@@ -108,7 +109,7 @@
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.Size = new System.Drawing.Size(525, 81);
-            this.textBoxStatus.TabIndex = 4;
+            this.textBoxStatus.TabIndex = 2;
             this.textBoxStatus.TabStop = false;
             // 
             // buttonTest
@@ -116,7 +117,7 @@
             this.buttonTest.Location = new System.Drawing.Point(93, 402);
             this.buttonTest.Name = "buttonTest";
             this.buttonTest.Size = new System.Drawing.Size(75, 23);
-            this.buttonTest.TabIndex = 5;
+            this.buttonTest.TabIndex = 6;
             this.buttonTest.Text = "Test";
             this.buttonTest.UseVisualStyleBackColor = true;
             this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
@@ -127,7 +128,7 @@
             this.textBoxBluetoothPin.MaxLength = 16;
             this.textBoxBluetoothPin.Name = "textBoxBluetoothPin";
             this.textBoxBluetoothPin.Size = new System.Drawing.Size(156, 20);
-            this.textBoxBluetoothPin.TabIndex = 6;
+            this.textBoxBluetoothPin.TabIndex = 3;
             this.textBoxBluetoothPin.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxBluetoothPin_KeyPress);
             // 
             // labelBluetoothPin
@@ -148,11 +149,23 @@
             this.labelBtDevices.TabIndex = 8;
             this.labelBtDevices.Text = "Bluetooth devices:";
             // 
+            // checkBoxAutoMode
+            // 
+            this.checkBoxAutoMode.AutoSize = true;
+            this.checkBoxAutoMode.Location = new System.Drawing.Point(174, 378);
+            this.checkBoxAutoMode.Name = "checkBoxAutoMode";
+            this.checkBoxAutoMode.Size = new System.Drawing.Size(187, 17);
+            this.checkBoxAutoMode.TabIndex = 4;
+            this.checkBoxAutoMode.Text = "Switch adapter to automatic mode";
+            this.checkBoxAutoMode.UseVisualStyleBackColor = true;
+            // 
             // FormMain
             // 
+            this.AcceptButton = this.buttonClose;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(549, 437);
+            this.Controls.Add(this.checkBoxAutoMode);
             this.Controls.Add(this.labelBtDevices);
             this.Controls.Add(this.labelBluetoothPin);
             this.Controls.Add(this.textBoxBluetoothPin);
@@ -185,6 +198,7 @@
         private System.Windows.Forms.TextBox textBoxBluetoothPin;
         private System.Windows.Forms.Label labelBluetoothPin;
         private System.Windows.Forms.Label labelBtDevices;
+        private System.Windows.Forms.CheckBox checkBoxAutoMode;
     }
 }
 

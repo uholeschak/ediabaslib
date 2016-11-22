@@ -106,7 +106,25 @@ namespace BluetoothDeviceSelector {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die It&apos;s recommended to use the automatic adapter mode. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Changing CAN mode to automatic ähnelt.
+        /// </summary>
+        internal static string CanModeChangeAuto {
+            get {
+                return ResourceManager.GetString("CanModeChangeAuto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Changing CAN mode failed ähnelt.
+        /// </summary>
+        internal static string CanModeChangeFailed {
+            get {
+                return ResourceManager.GetString("CanModeChangeFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die It&apos;s recommended to use automatic adapter mode. ähnelt.
         /// </summary>
         internal static string CanModeNotAuto {
             get {
