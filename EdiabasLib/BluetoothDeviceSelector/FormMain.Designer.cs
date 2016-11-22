@@ -38,6 +38,7 @@
             this.buttonTest = new System.Windows.Forms.Button();
             this.textBoxBluetoothPin = new System.Windows.Forms.TextBox();
             this.labelBluetoothPin = new System.Windows.Forms.Label();
+            this.labelBtDevices = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // listViewDevices
@@ -49,7 +50,7 @@
             this.listViewDevices.GridLines = true;
             this.listViewDevices.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listViewDevices.HideSelection = false;
-            this.listViewDevices.Location = new System.Drawing.Point(12, 12);
+            this.listViewDevices.Location = new System.Drawing.Point(12, 25);
             this.listViewDevices.MultiSelect = false;
             this.listViewDevices.Name = "listViewDevices";
             this.listViewDevices.ShowGroups = false;
@@ -72,7 +73,7 @@
             // 
             // buttonSearch
             // 
-            this.buttonSearch.Location = new System.Drawing.Point(12, 376);
+            this.buttonSearch.Location = new System.Drawing.Point(12, 402);
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(75, 23);
             this.buttonSearch.TabIndex = 1;
@@ -83,7 +84,7 @@
             // buttonClose
             // 
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonClose.Location = new System.Drawing.Point(462, 376);
+            this.buttonClose.Location = new System.Drawing.Point(462, 402);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 2;
@@ -94,7 +95,7 @@
             // labelStatus
             // 
             this.labelStatus.AutoSize = true;
-            this.labelStatus.Location = new System.Drawing.Point(12, 247);
+            this.labelStatus.Location = new System.Drawing.Point(12, 260);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(40, 13);
             this.labelStatus.TabIndex = 3;
@@ -102,17 +103,17 @@
             // 
             // textBoxStatus
             // 
-            this.textBoxStatus.Location = new System.Drawing.Point(12, 263);
+            this.textBoxStatus.Location = new System.Drawing.Point(12, 276);
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
-            this.textBoxStatus.Size = new System.Drawing.Size(525, 68);
+            this.textBoxStatus.Size = new System.Drawing.Size(525, 81);
             this.textBoxStatus.TabIndex = 4;
             this.textBoxStatus.TabStop = false;
             // 
             // buttonTest
             // 
-            this.buttonTest.Location = new System.Drawing.Point(93, 376);
+            this.buttonTest.Location = new System.Drawing.Point(93, 402);
             this.buttonTest.Name = "buttonTest";
             this.buttonTest.Size = new System.Drawing.Size(75, 23);
             this.buttonTest.TabIndex = 5;
@@ -122,7 +123,7 @@
             // 
             // textBoxBluetoothPin
             // 
-            this.textBoxBluetoothPin.Location = new System.Drawing.Point(12, 350);
+            this.textBoxBluetoothPin.Location = new System.Drawing.Point(12, 376);
             this.textBoxBluetoothPin.MaxLength = 16;
             this.textBoxBluetoothPin.Name = "textBoxBluetoothPin";
             this.textBoxBluetoothPin.Size = new System.Drawing.Size(156, 20);
@@ -132,17 +133,27 @@
             // labelBluetoothPin
             // 
             this.labelBluetoothPin.AutoSize = true;
-            this.labelBluetoothPin.Location = new System.Drawing.Point(12, 334);
+            this.labelBluetoothPin.Location = new System.Drawing.Point(9, 360);
             this.labelBluetoothPin.Name = "labelBluetoothPin";
             this.labelBluetoothPin.Size = new System.Drawing.Size(76, 13);
             this.labelBluetoothPin.TabIndex = 7;
             this.labelBluetoothPin.Text = "Bluetooth PIN:";
             // 
+            // labelBtDevices
+            // 
+            this.labelBtDevices.AutoSize = true;
+            this.labelBtDevices.Location = new System.Drawing.Point(12, 9);
+            this.labelBtDevices.Name = "labelBtDevices";
+            this.labelBtDevices.Size = new System.Drawing.Size(95, 13);
+            this.labelBtDevices.TabIndex = 8;
+            this.labelBtDevices.Text = "Bluetooth devices:";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(549, 411);
+            this.ClientSize = new System.Drawing.Size(549, 437);
+            this.Controls.Add(this.labelBtDevices);
             this.Controls.Add(this.labelBluetoothPin);
             this.Controls.Add(this.textBoxBluetoothPin);
             this.Controls.Add(this.buttonTest);
@@ -173,6 +184,7 @@
         private System.Windows.Forms.Button buttonTest;
         private System.Windows.Forms.TextBox textBoxBluetoothPin;
         private System.Windows.Forms.Label labelBluetoothPin;
+        private System.Windows.Forms.Label labelBtDevices;
     }
 }
 

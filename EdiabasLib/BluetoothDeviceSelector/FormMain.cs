@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
@@ -14,6 +15,8 @@ namespace BluetoothDeviceSelector
     {
         private readonly BluetoothClient _cli;
         private readonly List<BluetoothDeviceInfo> _deviceList;
+        private volatile bool _searching;
+        private volatile Thread _testThread;
         private NetworkStream _btStream;
 
         public FormMain()
@@ -29,9 +32,9 @@ namespace BluetoothDeviceSelector
             catch (Exception ex)
             {
                 UpdateStatusText(string.Format(Strings.BtInitError, ex.Message));
-                buttonSearch.Enabled = false;
             }
             _deviceList = new List<BluetoothDeviceInfo>();
+            UpdateButtonStatus();
         }
 
         private bool StartDeviceSearch()
@@ -57,6 +60,8 @@ namespace BluetoothDeviceSelector
 
                 bco.DiscoverDevicesComplete += (sender, args) =>
                 {
+                    _searching = false;
+                    UpdateButtonStatus();
                     BeginInvoke((Action)(() =>
                     {
                         if (args.Error == null && !args.Cancelled)
@@ -76,15 +81,17 @@ namespace BluetoothDeviceSelector
                                 UpdateStatusText(Strings.SearchingFailed);
                             }
                         }
-                        buttonSearch.Enabled = true;
-                        buttonClose.Enabled = true;
-                        UpdateButtonStatus();
                     }));
                 };
+                listViewDevices.Items.Clear();
                 bco.DiscoverDevicesAsync(1000, true, false, true, true, bco);
+                _searching = true;
+                UpdateStatusText(Strings.Searching);
+                UpdateButtonStatus();
             }
             catch (Exception)
             {
+                UpdateStatusText(Strings.SearchingFailed);
                 return false;
             }
             return true;
@@ -105,11 +112,15 @@ namespace BluetoothDeviceSelector
                 {
                     foreach (BluetoothDeviceInfo device in devices.OrderBy(dev => dev.DeviceAddress.ToString()))
                     {
-                        bool found = _deviceList.Any(dev => device.DeviceAddress == dev.DeviceAddress);
-                        if (!found)
+                        for (int i = 0; i < _deviceList.Count; i++)
                         {
-                            _deviceList.Add(device);
+                            if (_deviceList[i].DeviceAddress == device.DeviceAddress)
+                            {
+                                _deviceList.RemoveAt(i);
+                                i--;
+                            }
                         }
+                        _deviceList.Add(device);
                     }
                 }
 
@@ -128,16 +139,29 @@ namespace BluetoothDeviceSelector
 
         private void UpdateButtonStatus()
         {
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action) UpdateButtonStatus);
+                return;
+            }
+            buttonSearch.Enabled = !_searching && _cli != null;
+            buttonClose.Enabled = !_searching;
+
             BluetoothDeviceInfo devInfo = null;
             if (listViewDevices.SelectedItems.Count > 0)
             {
                 devInfo = listViewDevices.SelectedItems[0].Tag as BluetoothDeviceInfo;
             }
-            buttonTest.Enabled = buttonSearch.Enabled && devInfo != null;
+            buttonTest.Enabled = buttonSearch.Enabled && devInfo != null && _testThread == null;
+            textBoxBluetoothPin.Enabled = _testThread == null;
         }
 
         private bool ExecuteTest()
         {
+            if (_testThread != null)
+            {
+                return false;
+            }
             BluetoothDeviceInfo devInfo = null;
             if (listViewDevices.SelectedItems.Count > 0)
             {
@@ -147,18 +171,27 @@ namespace BluetoothDeviceSelector
             {
                 return false;
             }
-            try
+            string pin = textBoxBluetoothPin.Text;
+            _testThread = new Thread(() =>
             {
-                if (!ConnectBtDevice(devInfo, textBoxBluetoothPin.Text))
+                try
                 {
-                    return false;
+                    UpdateStatusText("Connecting");
+                    if (!ConnectBtDevice(devInfo, pin))
+                    {
+                        UpdateStatusText("Connection failed");
+                        return;
+                    }
+                    RunTest();
                 }
-                RunTest();
-            }
-            finally
-            {
-                DisconnectBtDevice();
-            }
+                finally
+                {
+                    DisconnectBtDevice();
+                    _testThread = null;
+                    UpdateButtonStatus();
+                }
+            });
+            _testThread.Start();
             return true;
         }
 
@@ -405,6 +438,14 @@ namespace BluetoothDeviceSelector
 
         private void UpdateStatusText(string text)
         {
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action) (() =>
+                {
+                    UpdateStatusText(text);
+                }));
+                return;
+            }
             textBoxStatus.Text = text;
             textBoxStatus.SelectionStart = textBoxStatus.TextLength;
             textBoxStatus.Update();
@@ -424,10 +465,6 @@ namespace BluetoothDeviceSelector
             }
             if (StartDeviceSearch())
             {
-                listViewDevices.Items.Clear();
-                UpdateStatusText(Strings.Searching);
-                buttonSearch.Enabled = false;
-                buttonClose.Enabled = false;
                 UpdateButtonStatus();
             }
         }
@@ -473,6 +510,7 @@ namespace BluetoothDeviceSelector
         private void buttonTest_Click(object sender, EventArgs e)
         {
             ExecuteTest();
+            UpdateButtonStatus();
         }
     }
 }
