@@ -126,7 +126,7 @@
             // 
             // textBoxBluetoothPin
             // 
-            this.textBoxBluetoothPin.Location = new System.Drawing.Point(12, 376);
+            this.textBoxBluetoothPin.Location = new System.Drawing.Point(12, 375);
             this.textBoxBluetoothPin.MaxLength = 16;
             this.textBoxBluetoothPin.Name = "textBoxBluetoothPin";
             this.textBoxBluetoothPin.Size = new System.Drawing.Size(156, 20);
