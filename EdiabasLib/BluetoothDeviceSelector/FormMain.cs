@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
@@ -79,7 +80,14 @@ namespace BluetoothDeviceSelector
                         if (args.Error == null && !args.Cancelled)
                         {
                             UpdateDeviceList(args.Devices, true);
-                            UpdateStatusText(string.Format(Strings.FoundDevices, args.Devices?.Length));
+                            StringBuilder sr = new StringBuilder();
+                            sr.Append(string.Format(Strings.FoundDevices, args.Devices?.Length));
+                            if (args.Devices?.Length > 0)
+                            {
+                                sr.Append("\r\n");
+                                sr.Append(Strings.SelectDeviceAndTest);
+                            }
+                            UpdateStatusText(sr.ToString());
                         }
                         else
                         {
@@ -149,6 +157,16 @@ namespace BluetoothDeviceSelector
             listViewDevices.EndUpdate();
         }
 
+        private BluetoothDeviceInfo GetSelectedBtDevice()
+        {
+            BluetoothDeviceInfo devInfo = null;
+            if (listViewDevices.SelectedItems.Count > 0)
+            {
+                devInfo = listViewDevices.SelectedItems[0].Tag as BluetoothDeviceInfo;
+            }
+            return devInfo;
+        }
+
         private void UpdateButtonStatus()
         {
             if (InvokeRequired)
@@ -159,17 +177,14 @@ namespace BluetoothDeviceSelector
             buttonSearch.Enabled = !_searching && _cli != null;
             buttonClose.Enabled = !_searching;
 
-            BluetoothDeviceInfo devInfo = null;
-            if (listViewDevices.SelectedItems.Count > 0)
-            {
-                devInfo = listViewDevices.SelectedItems[0].Tag as BluetoothDeviceInfo;
-            }
+            BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             buttonTest.Enabled = buttonSearch.Enabled && devInfo != null && _testThread == null;
             buttonUpdateConfigFile.Enabled = buttonTest.Enabled && _testOk;
             textBoxBluetoothPin.Enabled = _testThread == null;
             checkBoxAutoMode.Enabled = _testThread == null;
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool ExecuteTest()
         {
             if (_testThread != null)
@@ -177,11 +192,7 @@ namespace BluetoothDeviceSelector
                 return false;
             }
             _testOk = false;
-            BluetoothDeviceInfo devInfo = null;
-            if (listViewDevices.SelectedItems.Count > 0)
-            {
-                devInfo = listViewDevices.SelectedItems[0].Tag as BluetoothDeviceInfo;
-            }
+            BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             if (devInfo == null)
             {
                 return false;
@@ -511,6 +522,58 @@ namespace BluetoothDeviceSelector
             return sum;
         }
 
+        private void UpdateConfigNode(XElement settingsNode, string key, string value)
+        {
+            XElement node = (from addNode in settingsNode.Elements("add")
+                    let keyAttrib = addNode.Attribute("key") where keyAttrib != null
+                    where string.Compare(keyAttrib.Value, key, StringComparison.OrdinalIgnoreCase) == 0
+                    select addNode).FirstOrDefault();
+            if (node == null)
+            {
+                node = new XElement("add");
+                node.Add(new XAttribute("key", key));
+                settingsNode.AddFirst(node);
+            }
+            XAttribute valueAttrib = node.Attribute("value");
+            if (valueAttrib == null)
+            {
+                valueAttrib = new XAttribute("value", value);
+                node.Add(valueAttrib);
+            }
+            else
+            {
+                valueAttrib.Value = value;
+            }
+        }
+
+        private bool UpdateConfigFile(string fileName, BluetoothDeviceInfo device, string pin)
+        {
+            try
+            {
+                string interfaceValue = @"STD:OBD";
+                if (fileName.ToLowerInvariant().Contains(@"\SIDIS\home\DBaseSys2\".ToLowerInvariant()))
+                {   // VAS-PC instalation
+                    interfaceValue = @"EDIC";
+                }
+                string portValue = string.Format("BLUETOOTH:{0}#{1}", device.DeviceAddress, pin);
+
+                XDocument xDocument = XDocument.Load(fileName);
+                XElement settingsNode = xDocument.Root?.Element("appSettings");
+                if (settingsNode == null)
+                {
+                    return false;
+                }
+                UpdateConfigNode(settingsNode, "ObdComPort", portValue);
+                UpdateConfigNode(settingsNode, "Interface", interfaceValue);
+                xDocument.Save(fileName);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         private void UpdateStatusText(string text)
         {
             if (InvokeRequired)
@@ -591,10 +654,23 @@ namespace BluetoothDeviceSelector
 
         private void buttonUpdateConfigFile_Click(object sender, EventArgs e)
         {
+            BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
+            if (devInfo == null)
+            {
+                return;
+            }
             openFileDialogConfigFile.InitialDirectory = _ediabasDir ?? string.Empty;
             if (openFileDialogConfigFile.ShowDialog() == DialogResult.OK)
             {
-                
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                if (UpdateConfigFile(openFileDialogConfigFile.FileName, devInfo, textBoxBluetoothPin.Text))
+                {
+                    UpdateStatusText(Strings.ConfigUpdateOk);
+                }
+                else
+                {
+                    UpdateStatusText(Strings.ConfigUpdateFailed);
+                }
             }
         }
     }

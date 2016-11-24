@@ -151,6 +151,24 @@ namespace BluetoothDeviceSelector {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Update config file failed ähnelt.
+        /// </summary>
+        internal static string ConfigUpdateFailed {
+            get {
+                return ResourceManager.GetString("ConfigUpdateFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Update config file successful ähnelt.
+        /// </summary>
+        internal static string ConfigUpdateOk {
+            get {
+                return ResourceManager.GetString("ConfigUpdateOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Connected ähnelt.
         /// </summary>
         internal static string Connected {
@@ -246,6 +264,15 @@ namespace BluetoothDeviceSelector {
         internal static string SearchingFailedMessage {
             get {
                 return ResourceManager.GetString("SearchingFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Select the Bluetooth device and press &quot;Test Connection&quot;. ähnelt.
+        /// </summary>
+        internal static string SelectDeviceAndTest {
+            get {
+                return ResourceManager.GetString("SelectDeviceAndTest", resourceCulture);
             }
         }
         

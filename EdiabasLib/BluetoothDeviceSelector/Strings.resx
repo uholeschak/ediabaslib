@@ -147,6 +147,12 @@
   <data name="CanModeUnknown" xml:space="preserve">
     <value>Unknown</value>
   </data>
+  <data name="ConfigUpdateFailed" xml:space="preserve">
+    <value>Update config file failed</value>
+  </data>
+  <data name="ConfigUpdateOk" xml:space="preserve">
+    <value>Update config file successful</value>
+  </data>
   <data name="Connected" xml:space="preserve">
     <value>Connected</value>
   </data>
@@ -179,6 +185,9 @@
   </data>
   <data name="SearchingFailedMessage" xml:space="preserve">
     <value>Searching failed: {0}</value>
+  </data>
+  <data name="SelectDeviceAndTest" xml:space="preserve">
+    <value>Select the Bluetooth device and press "Test Connection".</value>
   </data>
   <data name="TestOk" xml:space="preserve">
     <value>Test OK</value>
