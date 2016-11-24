@@ -653,6 +653,11 @@ namespace BluetoothDeviceSelector
             UpdateButtonStatus();
         }
 
+        private void listViewDevices_DoubleClick(object sender, EventArgs e)
+        {
+            buttonTest_Click(sender, e);
+        }
+
         private void buttonUpdateConfigFile_Click(object sender, EventArgs e)
         {
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
