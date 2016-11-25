@@ -63,6 +63,13 @@ namespace BluetoothDeviceSelector
                 BluetoothComponent bco = new BluetoothComponent(_cli);
                 bco.DiscoverDevicesProgress += (sender, args) =>
                 {
+                    if (args.Error == null && !args.Cancelled && args.Devices != null)
+                    {
+                        foreach (BluetoothDeviceInfo device in args.Devices)
+                        {
+                            device.Update();
+                        }
+                    }
                     BeginInvoke((Action)(() =>
                     {
                         if (args.Error == null && !args.Cancelled)
