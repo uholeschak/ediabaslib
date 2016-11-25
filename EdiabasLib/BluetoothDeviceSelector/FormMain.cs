@@ -65,9 +65,16 @@ namespace BluetoothDeviceSelector
                 {
                     if (args.Error == null && !args.Cancelled && args.Devices != null)
                     {
-                        foreach (BluetoothDeviceInfo device in args.Devices)
+                        try
                         {
-                            device.Update();
+                            foreach (BluetoothDeviceInfo device in args.Devices)
+                            {
+                                device.Refresh();
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
                         }
                         BeginInvoke((Action)(() =>
                         {
