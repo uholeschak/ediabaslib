@@ -660,8 +660,11 @@ namespace BluetoothDeviceSelector
 
         private void buttonTest_Click(object sender, EventArgs e)
         {
-            ExecuteTest();
-            UpdateButtonStatus();
+            if (buttonTest.Enabled)
+            {
+                ExecuteTest();
+                UpdateButtonStatus();
+            }
         }
 
         private void listViewDevices_DoubleClick(object sender, EventArgs e)
