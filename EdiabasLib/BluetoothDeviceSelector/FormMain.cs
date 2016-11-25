@@ -69,14 +69,11 @@ namespace BluetoothDeviceSelector
                         {
                             device.Update();
                         }
-                    }
-                    BeginInvoke((Action)(() =>
-                    {
-                        if (args.Error == null && !args.Cancelled)
+                        BeginInvoke((Action)(() =>
                         {
                             UpdateDeviceList(args.Devices, false);
-                        }
-                    }));
+                        }));
+                    }
                 };
 
                 bco.DiscoverDevicesComplete += (sender, args) =>
