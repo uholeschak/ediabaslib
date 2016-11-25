@@ -33,7 +33,7 @@ namespace BluetoothDeviceSelector
         public FormMain()
         {
             InitializeComponent();
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            Icon = Properties.Resources.AppIcon;
             listViewDevices.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.None);
             listViewDevices.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
             textBoxBluetoothPin.Text = @"1234";
