@@ -50,6 +50,12 @@ namespace BluetoothDeviceSelector
             UpdateButtonStatus();
         }
 
+        private bool IsWinVistaOrHigher()
+        {
+            OperatingSystem os = Environment.OSVersion;
+            return (os.Platform == PlatformID.Win32NT) && (os.Version.Major >= 6);
+        }
+
         private bool StartDeviceSearch()
         {
             if (_cli == null)
@@ -116,7 +122,7 @@ namespace BluetoothDeviceSelector
                     }));
                 };
                 listViewDevices.Items.Clear();
-                bco.DiscoverDevicesAsync(1000, true, false, true, true, bco);
+                bco.DiscoverDevicesAsync(1000, true, false, true, IsWinVistaOrHigher(), bco);
                 _searching = true;
                 UpdateStatusText(Strings.Searching);
                 UpdateButtonStatus();
