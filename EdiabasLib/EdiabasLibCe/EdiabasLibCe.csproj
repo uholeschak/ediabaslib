@@ -77,6 +77,9 @@
     <Compile Include="..\EdiabasLib\Ftd2xx.cs">
       <Link>Ftd2xx.cs</Link>
     </Compile>
+    <Compile Include="..\EdiabasLib\IniFile.cs">
+      <Link>IniFile.cs</Link>
+    </Compile>
     <Compile Include="..\EdiabasLib\MemoryStreamReaderCe.cs">
       <Link>MemoryStreamReaderCe.cs</Link>
     </Compile>
