@@ -284,5 +284,23 @@ namespace BluetoothDeviceSelector {
                 return ResourceManager.GetString("TestOk", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Wi-Fi adapter ähnelt.
+        /// </summary>
+        internal static string WifiAdapter {
+            get {
+                return ResourceManager.GetString("WifiAdapter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die No Wi-Fi adapter found. ähnelt.
+        /// </summary>
+        internal static string WifiAdapterError {
+            get {
+                return ResourceManager.GetString("WifiAdapterError", resourceCulture);
+            }
+        }
     }
 }

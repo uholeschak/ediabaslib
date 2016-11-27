@@ -148,9 +148,9 @@
             this.labelBtDevices.AutoSize = true;
             this.labelBtDevices.Location = new System.Drawing.Point(12, 9);
             this.labelBtDevices.Name = "labelBtDevices";
-            this.labelBtDevices.Size = new System.Drawing.Size(95, 13);
+            this.labelBtDevices.Size = new System.Drawing.Size(124, 13);
             this.labelBtDevices.TabIndex = 8;
-            this.labelBtDevices.Text = "Bluetooth devices:";
+            this.labelBtDevices.Text = "Bluetooth/Wi-Fi devices:";
             // 
             // checkBoxAutoMode
             // 

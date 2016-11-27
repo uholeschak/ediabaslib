@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
+using SimpleWifi;
 
 namespace BluetoothDeviceSelector
 {
@@ -16,6 +17,7 @@ namespace BluetoothDeviceSelector
     {
         private readonly BluetoothClient _cli;
         private readonly List<BluetoothDeviceInfo> _deviceList;
+        private readonly Wifi _wifi;
         private readonly string _ediabasDir;
         private volatile bool _searching;
         private bool _testOk;
@@ -37,16 +39,27 @@ namespace BluetoothDeviceSelector
             listViewDevices.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.None);
             listViewDevices.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
             textBoxBluetoothPin.Text = @"1234";
+            StringBuilder sr = new StringBuilder();
             try
             {
                 _cli = new BluetoothClient();
             }
             catch (Exception ex)
             {
-                UpdateStatusText(string.Format(Strings.BtInitError, ex.Message));
+                sr.Append(string.Format(Strings.BtInitError, ex.Message));
             }
             _deviceList = new List<BluetoothDeviceInfo>();
+            _wifi = new Wifi();
+            if (_wifi.NoWifiAvailable)
+            {
+                if (sr.Length > 0)
+                {
+                    sr.Append("\r\n");
+                }
+                sr.Append(Strings.WifiAdapterError);
+            }
             _ediabasDir = Environment.GetEnvironmentVariable("ediabas_config_dir");
+            UpdateStatusText(sr.ToString());
             UpdateButtonStatus();
         }
 
@@ -56,8 +69,33 @@ namespace BluetoothDeviceSelector
             return (os.Platform == PlatformID.Win32NT) && (os.Version.Major >= 6);
         }
 
+        private void AddWifiAdapters(ListView listView)
+        {
+            try
+            {
+                foreach (AccessPoint ap in _wifi.GetAccessPoints())
+                {
+                    if (ap.IsConnected &&
+                        string.Compare(ap.Name, @"Deep OBD BMW", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        ListViewItem listViewItem =
+                            new ListViewItem(new[] { Strings.WifiAdapter, ap.Name })
+                            {
+                                Tag = ap
+                            };
+                        listView.Items.Add(listViewItem);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
         private bool StartDeviceSearch()
         {
+            UpdateDeviceList(null, true);
             if (_cli == null)
             {
                 return false;
@@ -121,7 +159,6 @@ namespace BluetoothDeviceSelector
                         }
                     }));
                 };
-                listViewDevices.Items.Clear();
                 bco.DiscoverDevicesAsync(1000, true, false, true, IsWinVistaOrHigher(), bco);
                 _searching = true;
                 UpdateStatusText(Strings.Searching);
@@ -139,6 +176,7 @@ namespace BluetoothDeviceSelector
         {
             listViewDevices.BeginUpdate();
             listViewDevices.Items.Clear();
+            AddWifiAdapters(listViewDevices);
             if (devices != null)
             {
                 if (completed)
@@ -192,7 +230,7 @@ namespace BluetoothDeviceSelector
                 BeginInvoke((Action) UpdateButtonStatus);
                 return;
             }
-            buttonSearch.Enabled = !_searching && _cli != null;
+            buttonSearch.Enabled = !_searching && ((_cli != null) || !_wifi.NoWifiAvailable);
             buttonClose.Enabled = !_searching;
 
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
