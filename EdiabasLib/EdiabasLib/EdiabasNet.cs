@@ -2239,7 +2239,6 @@ namespace EdiabasLib
         private readonly Dictionary<string, string> _configDict = new Dictionary<string, string>();
         private readonly Dictionary<string, string> _groupMappingDict = new Dictionary<string, string>();
         private readonly Dictionary<string, byte[]> _sharedDataDict = new Dictionary<string, byte[]>();
-        private readonly XmlDocument _xdocConfig;
         private long _infoProgressRange;
         private long _infoProgressPos;
         private string _infoProgressText = string.Empty;
@@ -2805,24 +2804,30 @@ namespace EdiabasLib
 
             bool withFile = false;
             string configFile = Path.Combine(assemblyPath, "EdiabasLib.config");
+            string iniFile = Path.Combine(assemblyPath, "EDIABAS.INI");
             if (!string.IsNullOrEmpty(config) && (config[0] == '@'))
             {
                 withFile = true;
                 configFile = config.Substring(1);
             }
 
+            if (File.Exists(iniFile))
+            {
+                ReadIniSettings(iniFile);
+            }
+
             if (File.Exists(configFile))
             {
-                _xdocConfig = new XmlDocument();
+                XmlDocument xdocConfig = new XmlDocument();
                 try
                 {
-                    _xdocConfig.Load(configFile);
+                    xdocConfig.Load(configFile);
                     SetConfigProperty("EdiabasIniPath", Path.GetDirectoryName(configFile));
-                    ReadAllSettingsProperties();
+                    ReadAllSettingsProperties(xdocConfig);
                 }
                 catch
                 {
-                    _xdocConfig = null;
+                    // ignored
                 }
             }
             _ecuPathDefault = _ecuPath;
@@ -2906,13 +2911,39 @@ namespace EdiabasLib
             }
         }
 
-        public void ReadAllSettingsProperties()
+        public bool ReadIniSettings(string iniFile)
         {
             try
             {
-                if (_xdocConfig != null)
+                IniFile ediabasIni = new IniFile(iniFile);
+                SetConfigPropertyFromIni(ediabasIni, "Interface");
+                SetConfigPropertyFromIni(ediabasIni, "EcuPath");
+                SetConfigPropertyFromIni(ediabasIni, "ApiTrace");
+                SetConfigPropertyFromIni(ediabasIni, "IfhTrace");
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private void SetConfigPropertyFromIni(IniFile ediabasIni, string property)
+        {
+            string value = ediabasIni.GetValue("Configuration", property, string.Empty);
+            if (!string.IsNullOrEmpty(value))
+            {
+                SetConfigProperty(property, value);
+            }
+        }
+
+        public void ReadAllSettingsProperties(XmlDocument xdocConfig)
+        {
+            try
+            {
+                if (xdocConfig != null)
                 {
-                    XmlNode xnodes = _xdocConfig.SelectSingleNode("/configuration/appSettings");
+                    XmlNode xnodes = xdocConfig.SelectSingleNode("/configuration/appSettings");
 
                     if (xnodes != null)
                     {
@@ -4589,7 +4620,12 @@ namespace EdiabasLib
             return string.Empty;
         }
 
-        private void ExecuteJobPrivate(string jobName, bool recursive = false)
+        private void ExecuteJobPrivate(string jobName)
+        {
+            ExecuteJobPrivate(jobName, false);
+        }
+
+        private void ExecuteJobPrivate(string jobName, bool recursive)
         {
             LogFormat(EdLogLevel.Ifh, "executeJob({0}): {1}", SgbdFileName, jobName);
 

@@ -66,6 +66,9 @@
     <Compile Include="..\EdiabasLib\EdInterfaceEdic.cs">
       <Link>EdInterfaceEdic.cs</Link>
     </Compile>
+    <Compile Include="..\EdiabasLib\IniFile.cs">
+      <Link>IniFile.cs</Link>
+    </Compile>
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="..\EdiabasLib\EdiabasNet.cs">
       <Link>EdiabasNet.cs</Link>
