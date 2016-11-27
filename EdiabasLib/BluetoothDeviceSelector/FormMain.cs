@@ -540,7 +540,7 @@ namespace BluetoothDeviceSelector
             return sum;
         }
 
-        private void UpdateConfigNode(XElement settingsNode, string key, string value)
+        private void UpdateConfigNode(XElement settingsNode, string key, string value, bool onlyExisting = false)
         {
             XElement node = (from addNode in settingsNode.Elements("add")
                     let keyAttrib = addNode.Attribute("key") where keyAttrib != null
@@ -548,6 +548,10 @@ namespace BluetoothDeviceSelector
                     select addNode).FirstOrDefault();
             if (node == null)
             {
+                if (onlyExisting)
+                {
+                    return;
+                }
                 node = new XElement("add");
                 node.Add(new XAttribute("key", key));
                 settingsNode.AddFirst(node);
@@ -582,7 +586,7 @@ namespace BluetoothDeviceSelector
                     return false;
                 }
                 UpdateConfigNode(settingsNode, "ObdComPort", portValue);
-                UpdateConfigNode(settingsNode, "Interface", interfaceValue);
+                UpdateConfigNode(settingsNode, "Interface", interfaceValue, true);
                 xDocument.Save(fileName);
             }
             catch (Exception)
