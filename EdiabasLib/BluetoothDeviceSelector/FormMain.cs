@@ -586,7 +586,7 @@ namespace BluetoothDeviceSelector
                     return false;
                 }
                 UpdateConfigNode(settingsNode, "ObdComPort", portValue);
-                UpdateConfigNode(settingsNode, "Interface", interfaceValue, true);
+                UpdateConfigNode(settingsNode, "Interface", interfaceValue);
                 xDocument.Save(fileName);
             }
             catch (Exception)

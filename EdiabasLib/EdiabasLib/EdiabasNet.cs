@@ -2920,6 +2920,7 @@ namespace EdiabasLib
                 SetConfigPropertyFromIni(ediabasIni, "EcuPath");
                 SetConfigPropertyFromIni(ediabasIni, "ApiTrace");
                 SetConfigPropertyFromIni(ediabasIni, "IfhTrace");
+                SetConfigPropertyFromIni(ediabasIni, "TraceBuffering");
             }
             catch (Exception)
             {
