@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
+using SimpleWifi;
 using SimpleWifi.Win32;
 using SimpleWifi.Win32.Interop;
 
@@ -20,12 +21,15 @@ namespace BluetoothDeviceSelector
     {
         private readonly BluetoothClient _cli;
         private readonly List<BluetoothDeviceInfo> _deviceList;
+        private readonly Wifi _wifi;
         private readonly WlanClient _wlanClient;
         private readonly string _ediabasDir;
         private volatile bool _searching;
         private bool _testOk;
         private volatile Thread _testThread;
         private NetworkStream _btStream;
+
+        private const string AdapterSsid = @"Deep OBD BMW";
 
         private enum AdapterMode
         {
@@ -52,8 +56,9 @@ namespace BluetoothDeviceSelector
                 sr.Append(string.Format(Strings.BtInitError, ex.Message));
             }
             _deviceList = new List<BluetoothDeviceInfo>();
+            _wifi = new Wifi();
             _wlanClient = new WlanClient();
-            if (_wlanClient.NoWifiAvailable)
+            if (_wifi.NoWifiAvailable || _wlanClient.NoWifiAvailable)
             {
                 if (sr.Length > 0)
                 {
@@ -82,13 +87,35 @@ namespace BluetoothDeviceSelector
                     {
                         WlanConnectionAttributes conn = wlanIface.CurrentConnection;
                         string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
-                        if (string.Compare(ssidString, @"Deep OBD BMW", StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare(ssidString, AdapterSsid, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             string bssString = conn.wlanAssociationAttributes.Dot11Bssid.ToString();
                             ListViewItem listViewItem =
                                 new ListViewItem(new[] { bssString, conn.profileName })
                                 {
                                     Tag = wlanIface
+                                };
+                            listView.Items.Add(listViewItem);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            try
+            {
+                foreach (AccessPoint ap in _wifi.GetAccessPoints())
+                {
+                    if (!ap.IsConnected)
+                    {
+                        if (string.Compare(ap.Name, AdapterSsid, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            ListViewItem listViewItem =
+                                new ListViewItem(new[] { Strings.DisconnectedAdapter, ap.Name })
+                                {
+                                    Tag = ap
                                 };
                             listView.Items.Add(listViewItem);
                         }
@@ -242,6 +269,16 @@ namespace BluetoothDeviceSelector
             return wlanIface;
         }
 
+        private AccessPoint GetSelectedAp()
+        {
+            AccessPoint ap = null;
+            if (listViewDevices.SelectedItems.Count > 0)
+            {
+                ap = listViewDevices.SelectedItems[0].Tag as AccessPoint;
+            }
+            return ap;
+        }
+
         private void UpdateButtonStatus()
         {
             if (InvokeRequired)
@@ -254,7 +291,8 @@ namespace BluetoothDeviceSelector
 
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             WlanInterface wlanIface = GetSelectedWifiDevice();
-            buttonTest.Enabled = buttonSearch.Enabled && (devInfo != null || wlanIface != null) && _testThread == null;
+            AccessPoint ap = GetSelectedAp();
+            buttonTest.Enabled = buttonSearch.Enabled && (devInfo != null || wlanIface != null || ap != null) && _testThread == null;
             buttonUpdateConfigFile.Enabled = buttonTest.Enabled && _testOk;
             textBoxBluetoothPin.Enabled = _testThread == null;
             checkBoxAutoMode.Enabled = _testThread == null;
@@ -268,6 +306,31 @@ namespace BluetoothDeviceSelector
                 return false;
             }
             _testOk = false;
+            AccessPoint ap = GetSelectedAp();
+            if (ap != null)
+            {
+                AuthRequest authRequest = new AuthRequest(ap);
+                if (authRequest.IsPasswordRequired)
+                {
+                    authRequest.Password = "deepobdbmw";
+                }
+                ap.ConnectAsync(authRequest, true, success =>
+                {
+                    BeginInvoke((Action)(() =>
+                    {
+                        if (!success)
+                        {
+                            UpdateStatusText(Strings.ConnectionFailed);
+                        }
+                        else
+                        {
+                            buttonSearch_Click(buttonSearch, EventArgs.Empty);
+                        }
+                    }));
+                });
+                return true;
+            }
+
             WlanInterface wlanIface = GetSelectedWifiDevice();
             if (wlanIface != null)
             {
@@ -276,14 +339,17 @@ namespace BluetoothDeviceSelector
                     IPInterfaceProperties ipProp = wlanIface.NetworkInterface.GetIPProperties();
                     if (ipProp == null)
                     {
+                        UpdateStatusText(Strings.ConnectionFailed);
                         return false;
                     }
                     string ipAddr = (from addr in ipProp.DhcpServerAddresses where addr.AddressFamily == AddressFamily.InterNetwork select addr.ToString()).FirstOrDefault();
                     if (string.IsNullOrEmpty(ipAddr))
                     {
+                        UpdateStatusText(Strings.ConnectionFailed);
                         return false;
                     }
                     Process.Start(string.Format("http://{0}", ipAddr));
+                    UpdateStatusText(Strings.WifiUrlOk);
                 }
                 catch (Exception)
                 {

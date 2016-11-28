@@ -196,6 +196,15 @@ namespace BluetoothDeviceSelector {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Disconnected Wi-Fi adapter ähnelt.
+        /// </summary>
+        internal static string DisconnectedAdapter {
+            get {
+                return ResourceManager.GetString("DisconnectedAdapter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Firmware too old, please update firmware with Deep OBD App. ähnelt.
         /// </summary>
         internal static string FirmwareTooOld {
@@ -291,6 +300,16 @@ namespace BluetoothDeviceSelector {
         internal static string WifiAdapterError {
             get {
                 return ResourceManager.GetString("WifiAdapterError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The adapter configuration page will be opened in the web browser.
+        ///The default root password is root. ähnelt.
+        /// </summary>
+        internal static string WifiUrlOk {
+            get {
+                return ResourceManager.GetString("WifiUrlOk", resourceCulture);
             }
         }
     }
