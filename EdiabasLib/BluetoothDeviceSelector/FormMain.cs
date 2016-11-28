@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -78,23 +78,20 @@ namespace BluetoothDeviceSelector
             {
                 foreach (WlanInterface wlanIface in _wlanClient.Interfaces)
                 {
-                    WlanConnectionAttributes conn = wlanIface.CurrentConnection;
-                    if (conn.isState == WlanInterfaceState.Connected &&
-                        string.Compare(conn.profileName, @"Deep OBD BMW", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (wlanIface.InterfaceState == WlanInterfaceState.Connected)
                     {
-                        foreach (IPAddress addr in wlanIface.NetworkInterface.GetIPProperties().DhcpServerAddresses)
+                        WlanConnectionAttributes conn = wlanIface.CurrentConnection;
+                        string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
+                        if (string.Compare(ssidString, @"Deep OBD BMW", StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            if (addr.AddressFamily == AddressFamily.InterNetwork)
-                            {
-                                Debug.WriteLine(addr.ToString());
-                            }
+                            string bssString = conn.wlanAssociationAttributes.Dot11Bssid.ToString();
+                            ListViewItem listViewItem =
+                                new ListViewItem(new[] { bssString, conn.profileName })
+                                {
+                                    Tag = wlanIface
+                                };
+                            listView.Items.Add(listViewItem);
                         }
-                        ListViewItem listViewItem =
-                            new ListViewItem(new[] { Strings.WifiAdapter, wlanIface.CurrentConnection.profileName })
-                            {
-                                Tag = wlanIface
-                            };
-                        listView.Items.Add(listViewItem);
                     }
                 }
             }
@@ -222,6 +219,7 @@ namespace BluetoothDeviceSelector
                 }
             }
             listViewDevices.EndUpdate();
+            UpdateButtonStatus();
         }
 
         private BluetoothDeviceInfo GetSelectedBtDevice()
@@ -232,6 +230,16 @@ namespace BluetoothDeviceSelector
                 devInfo = listViewDevices.SelectedItems[0].Tag as BluetoothDeviceInfo;
             }
             return devInfo;
+        }
+
+        private WlanInterface GetSelectedWifiDevice()
+        {
+            WlanInterface wlanIface = null;
+            if (listViewDevices.SelectedItems.Count > 0)
+            {
+                wlanIface = listViewDevices.SelectedItems[0].Tag as WlanInterface;
+            }
+            return wlanIface;
         }
 
         private void UpdateButtonStatus()
@@ -245,7 +253,8 @@ namespace BluetoothDeviceSelector
             buttonClose.Enabled = !_searching;
 
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
-            buttonTest.Enabled = buttonSearch.Enabled && devInfo != null && _testThread == null;
+            WlanInterface wlanIface = GetSelectedWifiDevice();
+            buttonTest.Enabled = buttonSearch.Enabled && (devInfo != null || wlanIface != null) && _testThread == null;
             buttonUpdateConfigFile.Enabled = buttonTest.Enabled && _testOk;
             textBoxBluetoothPin.Enabled = _testThread == null;
             checkBoxAutoMode.Enabled = _testThread == null;
@@ -259,6 +268,29 @@ namespace BluetoothDeviceSelector
                 return false;
             }
             _testOk = false;
+            WlanInterface wlanIface = GetSelectedWifiDevice();
+            if (wlanIface != null)
+            {
+                try
+                {
+                    IPInterfaceProperties ipProp = wlanIface.NetworkInterface.GetIPProperties();
+                    if (ipProp == null)
+                    {
+                        return false;
+                    }
+                    string ipAddr = (from addr in ipProp.DhcpServerAddresses where addr.AddressFamily == AddressFamily.InterNetwork select addr.ToString()).FirstOrDefault();
+                    if (string.IsNullOrEmpty(ipAddr))
+                    {
+                        return false;
+                    }
+                    Process.Start(string.Format("http://{0}", ipAddr));
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+                return true;
+            }
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             if (devInfo == null)
             {

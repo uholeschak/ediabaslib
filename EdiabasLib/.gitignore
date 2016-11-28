@@ -6,3 +6,4 @@ Package
 *.VC.opendb
 /.vs/
 *.VC.db
+/packages/
