@@ -192,9 +192,6 @@
   <data name="TestOk" xml:space="preserve">
     <value>Test OK</value>
   </data>
-  <data name="WifiAdapter" xml:space="preserve">
-    <value>Wi-Fi adapter</value>
-  </data>
   <data name="WifiAdapterError" xml:space="preserve">
     <value>No Wi-Fi adapter found.</value>
   </data>
