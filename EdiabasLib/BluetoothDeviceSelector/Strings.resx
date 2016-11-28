@@ -162,6 +162,9 @@
   <data name="ConnectionFailed" xml:space="preserve">
     <value>Connection failed</value>
   </data>
+  <data name="DisconnectedAdapter" xml:space="preserve">
+    <value>Disconnected Wi-Fi adapter</value>
+  </data>
   <data name="FirmwareTooOld" xml:space="preserve">
     <value>Firmware too old, please update firmware with Deep OBD App.</value>
   </data>
@@ -194,5 +197,9 @@
   </data>
   <data name="WifiAdapterError" xml:space="preserve">
     <value>No Wi-Fi adapter found.</value>
+  </data>
+  <data name="WifiUrlOk" xml:space="preserve">
+    <value>The adapter configuration page will be opened in the web browser.
+The default root password is root.</value>
   </data>
 </root>
