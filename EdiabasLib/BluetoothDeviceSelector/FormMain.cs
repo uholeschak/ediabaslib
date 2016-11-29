@@ -296,6 +296,18 @@ namespace BluetoothDeviceSelector
             buttonUpdateConfigFile.Enabled = buttonTest.Enabled && _testOk;
             textBoxBluetoothPin.Enabled = _testThread == null;
             checkBoxAutoMode.Enabled = _testThread == null;
+            if (devInfo != null)
+            {
+                buttonTest.Text = Strings.ButtonTestCheck;
+            }
+            if (wlanIface != null)
+            {
+                buttonTest.Text = Strings.ButtonTestConfiguration;
+            }
+            if (ap != null)
+            {
+                buttonTest.Text = Strings.ButtonTestConnect;
+            }
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local

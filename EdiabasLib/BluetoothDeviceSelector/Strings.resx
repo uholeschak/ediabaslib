@@ -120,6 +120,15 @@
   <data name="BtInitError" xml:space="preserve">
     <value>Bluetooth init failed: {0}</value>
   </data>
+  <data name="ButtonTestCheck" xml:space="preserve">
+    <value>Check Connection</value>
+  </data>
+  <data name="ButtonTestConfiguration" xml:space="preserve">
+    <value>Adapter Configuration</value>
+  </data>
+  <data name="ButtonTestConnect" xml:space="preserve">
+    <value>Connect</value>
+  </data>
   <data name="CanMode" xml:space="preserve">
     <value>Adapter mode:</value>
   </data>

@@ -70,6 +70,33 @@ namespace BluetoothDeviceSelector {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Check Connection ähnelt.
+        /// </summary>
+        internal static string ButtonTestCheck {
+            get {
+                return ResourceManager.GetString("ButtonTestCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Adapter Configuration ähnelt.
+        /// </summary>
+        internal static string ButtonTestConfiguration {
+            get {
+                return ResourceManager.GetString("ButtonTestConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Connect ähnelt.
+        /// </summary>
+        internal static string ButtonTestConnect {
+            get {
+                return ResourceManager.GetString("ButtonTestConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Adapter mode: ähnelt.
         /// </summary>
         internal static string CanMode {
