@@ -223,6 +223,24 @@ namespace BluetoothDeviceSelector {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Select a device to perform an operation. ähnelt.
+        /// </summary>
+        internal static string DevicesFound {
+            get {
+                return ResourceManager.GetString("DevicesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die No devices found. ähnelt.
+        /// </summary>
+        internal static string DevicesNotFound {
+            get {
+                return ResourceManager.GetString("DevicesNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Disconnected Wi-Fi adapter ähnelt.
         /// </summary>
         internal static string DisconnectedAdapter {
@@ -246,15 +264,6 @@ namespace BluetoothDeviceSelector {
         internal static string FirmwareVersion {
             get {
                 return ResourceManager.GetString("FirmwareVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Found {0} devices ähnelt.
-        /// </summary>
-        internal static string FoundDevices {
-            get {
-                return ResourceManager.GetString("FoundDevices", resourceCulture);
             }
         }
         
@@ -300,15 +309,6 @@ namespace BluetoothDeviceSelector {
         internal static string SearchingFailedMessage {
             get {
                 return ResourceManager.GetString("SearchingFailedMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Select the Bluetooth device and press &quot;Test Connection&quot;. ähnelt.
-        /// </summary>
-        internal static string SelectDeviceAndTest {
-            get {
-                return ResourceManager.GetString("SelectDeviceAndTest", resourceCulture);
             }
         }
         

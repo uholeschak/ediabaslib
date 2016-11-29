@@ -133,6 +133,7 @@ namespace BluetoothDeviceSelector
             UpdateDeviceList(null, true);
             if (_cli == null)
             {
+                UpdateStatusText(listViewDevices.Items.Count > 0 ? Strings.DevicesFound : Strings.DevicesNotFound);
                 return false;
             }
             try
@@ -171,14 +172,7 @@ namespace BluetoothDeviceSelector
                         if (args.Error == null && !args.Cancelled)
                         {
                             UpdateDeviceList(args.Devices, true);
-                            StringBuilder sr = new StringBuilder();
-                            sr.Append(string.Format(Strings.FoundDevices, args.Devices?.Length));
-                            if (args.Devices?.Length > 0)
-                            {
-                                sr.Append("\r\n");
-                                sr.Append(Strings.SelectDeviceAndTest);
-                            }
-                            UpdateStatusText(sr.ToString());
+                            UpdateStatusText(listViewDevices.Items.Count > 0 ? Strings.DevicesFound : Strings.DevicesNotFound);
                         }
                         else
                         {
@@ -293,7 +287,7 @@ namespace BluetoothDeviceSelector
             WlanInterface wlanIface = GetSelectedWifiDevice();
             AccessPoint ap = GetSelectedAp();
             buttonTest.Enabled = buttonSearch.Enabled && (devInfo != null || wlanIface != null || ap != null) && _testThread == null;
-            buttonUpdateConfigFile.Enabled = buttonTest.Enabled && _testOk;
+            buttonUpdateConfigFile.Enabled = buttonTest.Enabled && ((wlanIface != null) || ((devInfo != null) && _testOk));
             textBoxBluetoothPin.Enabled = _testThread == null;
             checkBoxAutoMode.Enabled = _testThread == null;
             if (devInfo != null)
@@ -727,25 +721,37 @@ namespace BluetoothDeviceSelector
             }
         }
 
-        private bool UpdateConfigFile(string fileName, BluetoothDeviceInfo device, string pin)
+        private bool UpdateConfigFile(string fileName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, string pin)
         {
             try
             {
-                string interfaceValue = @"STD:OBD";
-                if (fileName.ToLowerInvariant().Contains(@"\SIDIS\home\DBaseSys2\".ToLowerInvariant()))
-                {   // VAS-PC instalation
-                    interfaceValue = @"EDIC";
-                }
-                string portValue = string.Format("BLUETOOTH:{0}#{1}", device.DeviceAddress, pin);
-
                 XDocument xDocument = XDocument.Load(fileName);
                 XElement settingsNode = xDocument.Root?.Element("appSettings");
                 if (settingsNode == null)
                 {
                     return false;
                 }
-                UpdateConfigNode(settingsNode, "ObdComPort", portValue);
-                UpdateConfigNode(settingsNode, "Interface", interfaceValue);
+                if (wlanIface != null)
+                {
+                    UpdateConfigNode(settingsNode, @"EnetRemoteHost", @"auto:all");
+                    UpdateConfigNode(settingsNode, @"Interface", @"ENET");
+                }
+                else if (devInfo != null)
+                {
+                    string interfaceValue = @"STD:OBD";
+                    if (fileName.ToLowerInvariant().Contains(@"\SIDIS\home\DBaseSys2\".ToLowerInvariant()))
+                    {   // VAS-PC instalation
+                        interfaceValue = @"EDIC";
+                    }
+                    string portValue = string.Format("BLUETOOTH:{0}#{1}", devInfo.DeviceAddress, pin);
+
+                    UpdateConfigNode(settingsNode, @"ObdComPort", portValue);
+                    UpdateConfigNode(settingsNode, @"Interface", interfaceValue);
+                }
+                else
+                {
+                    return false;
+                }
                 xDocument.Save(fileName);
             }
             catch (Exception)
@@ -844,7 +850,8 @@ namespace BluetoothDeviceSelector
         private void buttonUpdateConfigFile_Click(object sender, EventArgs e)
         {
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
-            if (devInfo == null)
+            WlanInterface wlanIface = GetSelectedWifiDevice();
+            if (devInfo == null && wlanIface == null)
             {
                 return;
             }
@@ -852,7 +859,7 @@ namespace BluetoothDeviceSelector
             if (openFileDialogConfigFile.ShowDialog() == DialogResult.OK)
             {
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (UpdateConfigFile(openFileDialogConfigFile.FileName, devInfo, textBoxBluetoothPin.Text))
+                if (UpdateConfigFile(openFileDialogConfigFile.FileName, devInfo, wlanIface, textBoxBluetoothPin.Text))
                 {
                     UpdateStatusText(Strings.ConfigUpdateOk);
                 }

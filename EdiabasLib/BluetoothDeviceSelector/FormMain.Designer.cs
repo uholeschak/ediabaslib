@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.listViewDevices = new System.Windows.Forms.ListView();
             this.columnHeaderAddress = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -53,12 +54,10 @@
             this.listViewDevices.GridLines = true;
             this.listViewDevices.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listViewDevices.HideSelection = false;
-            this.listViewDevices.Location = new System.Drawing.Point(12, 25);
+            resources.ApplyResources(this.listViewDevices, "listViewDevices");
             this.listViewDevices.MultiSelect = false;
             this.listViewDevices.Name = "listViewDevices";
             this.listViewDevices.ShowGroups = false;
-            this.listViewDevices.Size = new System.Drawing.Size(525, 232);
-            this.listViewDevices.TabIndex = 1;
             this.listViewDevices.UseCompatibleStateImageBehavior = false;
             this.listViewDevices.View = System.Windows.Forms.View.Details;
             this.listViewDevices.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.listViewDevices_ColumnWidthChanging);
@@ -67,121 +66,84 @@
             // 
             // columnHeaderAddress
             // 
-            this.columnHeaderAddress.Text = "Address";
-            this.columnHeaderAddress.Width = 193;
+            resources.ApplyResources(this.columnHeaderAddress, "columnHeaderAddress");
             // 
             // columnHeaderName
             // 
-            this.columnHeaderName.Text = "Name";
-            this.columnHeaderName.Width = 322;
+            resources.ApplyResources(this.columnHeaderName, "columnHeaderName");
             // 
             // buttonSearch
             // 
-            this.buttonSearch.Location = new System.Drawing.Point(12, 402);
+            resources.ApplyResources(this.buttonSearch, "buttonSearch");
             this.buttonSearch.Name = "buttonSearch";
-            this.buttonSearch.Size = new System.Drawing.Size(75, 23);
-            this.buttonSearch.TabIndex = 5;
-            this.buttonSearch.Text = "Search";
             this.buttonSearch.UseVisualStyleBackColor = true;
             this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
             // 
             // buttonClose
             // 
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonClose.Location = new System.Drawing.Point(462, 402);
+            resources.ApplyResources(this.buttonClose, "buttonClose");
             this.buttonClose.Name = "buttonClose";
-            this.buttonClose.Size = new System.Drawing.Size(75, 23);
-            this.buttonClose.TabIndex = 0;
-            this.buttonClose.Text = "Close";
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
             // labelStatus
             // 
-            this.labelStatus.AutoSize = true;
-            this.labelStatus.Location = new System.Drawing.Point(12, 260);
+            resources.ApplyResources(this.labelStatus, "labelStatus");
             this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(40, 13);
-            this.labelStatus.TabIndex = 3;
-            this.labelStatus.Text = "Status:";
             // 
             // textBoxStatus
             // 
-            this.textBoxStatus.Location = new System.Drawing.Point(12, 276);
-            this.textBoxStatus.Multiline = true;
+            resources.ApplyResources(this.textBoxStatus, "textBoxStatus");
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
-            this.textBoxStatus.Size = new System.Drawing.Size(525, 81);
-            this.textBoxStatus.TabIndex = 2;
             this.textBoxStatus.TabStop = false;
             // 
             // buttonTest
             // 
-            this.buttonTest.Location = new System.Drawing.Point(93, 402);
+            resources.ApplyResources(this.buttonTest, "buttonTest");
             this.buttonTest.Name = "buttonTest";
-            this.buttonTest.Size = new System.Drawing.Size(120, 23);
-            this.buttonTest.TabIndex = 6;
-            this.buttonTest.Text = "Test Connection";
             this.buttonTest.UseVisualStyleBackColor = true;
             this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
             // 
             // textBoxBluetoothPin
             // 
-            this.textBoxBluetoothPin.Location = new System.Drawing.Point(12, 375);
-            this.textBoxBluetoothPin.MaxLength = 16;
+            resources.ApplyResources(this.textBoxBluetoothPin, "textBoxBluetoothPin");
             this.textBoxBluetoothPin.Name = "textBoxBluetoothPin";
-            this.textBoxBluetoothPin.Size = new System.Drawing.Size(156, 20);
-            this.textBoxBluetoothPin.TabIndex = 3;
             this.textBoxBluetoothPin.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxBluetoothPin_KeyPress);
             // 
             // labelBluetoothPin
             // 
-            this.labelBluetoothPin.AutoSize = true;
-            this.labelBluetoothPin.Location = new System.Drawing.Point(9, 360);
+            resources.ApplyResources(this.labelBluetoothPin, "labelBluetoothPin");
             this.labelBluetoothPin.Name = "labelBluetoothPin";
-            this.labelBluetoothPin.Size = new System.Drawing.Size(76, 13);
-            this.labelBluetoothPin.TabIndex = 7;
-            this.labelBluetoothPin.Text = "Bluetooth PIN:";
             // 
             // labelBtDevices
             // 
-            this.labelBtDevices.AutoSize = true;
-            this.labelBtDevices.Location = new System.Drawing.Point(12, 9);
+            resources.ApplyResources(this.labelBtDevices, "labelBtDevices");
             this.labelBtDevices.Name = "labelBtDevices";
-            this.labelBtDevices.Size = new System.Drawing.Size(124, 13);
-            this.labelBtDevices.TabIndex = 8;
-            this.labelBtDevices.Text = "Bluetooth/Wi-Fi devices:";
             // 
             // checkBoxAutoMode
             // 
-            this.checkBoxAutoMode.AutoSize = true;
-            this.checkBoxAutoMode.Location = new System.Drawing.Point(174, 378);
+            resources.ApplyResources(this.checkBoxAutoMode, "checkBoxAutoMode");
             this.checkBoxAutoMode.Name = "checkBoxAutoMode";
-            this.checkBoxAutoMode.Size = new System.Drawing.Size(187, 17);
-            this.checkBoxAutoMode.TabIndex = 4;
-            this.checkBoxAutoMode.Text = "Switch adapter to automatic mode";
             this.checkBoxAutoMode.UseVisualStyleBackColor = true;
             // 
             // buttonUpdateConfigFile
             // 
-            this.buttonUpdateConfigFile.Location = new System.Drawing.Point(219, 402);
+            resources.ApplyResources(this.buttonUpdateConfigFile, "buttonUpdateConfigFile");
             this.buttonUpdateConfigFile.Name = "buttonUpdateConfigFile";
-            this.buttonUpdateConfigFile.Size = new System.Drawing.Size(120, 23);
-            this.buttonUpdateConfigFile.TabIndex = 9;
-            this.buttonUpdateConfigFile.Text = "Update Config File";
             this.buttonUpdateConfigFile.UseVisualStyleBackColor = true;
             this.buttonUpdateConfigFile.Click += new System.EventHandler(this.buttonUpdateConfigFile_Click);
             // 
             // openFileDialogConfigFile
             // 
-            this.openFileDialogConfigFile.Filter = "EdiabasLib.config File|EdiabasLib.config| All Files|*.*";
+            resources.ApplyResources(this.openFileDialogConfigFile, "openFileDialogConfigFile");
             // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(549, 437);
             this.Controls.Add(this.buttonUpdateConfigFile);
             this.Controls.Add(this.checkBoxAutoMode);
             this.Controls.Add(this.labelBtDevices);
@@ -194,7 +156,6 @@
             this.Controls.Add(this.buttonSearch);
             this.Controls.Add(this.listViewDevices);
             this.Name = "FormMain";
-            this.Text = "Deep OBD Bluetooth Device Selector";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             this.Shown += new System.EventHandler(this.FormMain_Shown);
