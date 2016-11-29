@@ -171,6 +171,12 @@
   <data name="ConnectionFailed" xml:space="preserve">
     <value>Connection failed</value>
   </data>
+  <data name="DevicesFound" xml:space="preserve">
+    <value>Select a device to perform an operation.</value>
+  </data>
+  <data name="DevicesNotFound" xml:space="preserve">
+    <value>No devices found.</value>
+  </data>
   <data name="DisconnectedAdapter" xml:space="preserve">
     <value>Disconnected Wi-Fi adapter</value>
   </data>
@@ -179,9 +185,6 @@
   </data>
   <data name="FirmwareVersion" xml:space="preserve">
     <value>Firmware:</value>
-  </data>
-  <data name="FoundDevices" xml:space="preserve">
-    <value>Found {0} devices</value>
   </data>
   <data name="ReadFirmwareVersionFailed" xml:space="preserve">
     <value>Read firmware version failed</value>
@@ -197,9 +200,6 @@
   </data>
   <data name="SearchingFailedMessage" xml:space="preserve">
     <value>Searching failed: {0}</value>
-  </data>
-  <data name="SelectDeviceAndTest" xml:space="preserve">
-    <value>Select the Bluetooth device and press "Test Connection".</value>
   </data>
   <data name="TestOk" xml:space="preserve">
     <value>Test OK</value>
