@@ -43,6 +43,8 @@
             this.checkBoxAutoMode = new System.Windows.Forms.CheckBox();
             this.buttonUpdateConfigFile = new System.Windows.Forms.Button();
             this.openFileDialogConfigFile = new System.Windows.Forms.OpenFileDialog();
+            this.textBoxWifiPassword = new System.Windows.Forms.TextBox();
+            this.labelWiFiPassword = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // listViewDevices
@@ -139,11 +141,23 @@
             // 
             resources.ApplyResources(this.openFileDialogConfigFile, "openFileDialogConfigFile");
             // 
+            // textBoxWifiPassword
+            // 
+            resources.ApplyResources(this.textBoxWifiPassword, "textBoxWifiPassword");
+            this.textBoxWifiPassword.Name = "textBoxWifiPassword";
+            // 
+            // labelWiFiPassword
+            // 
+            resources.ApplyResources(this.labelWiFiPassword, "labelWiFiPassword");
+            this.labelWiFiPassword.Name = "labelWiFiPassword";
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.labelWiFiPassword);
+            this.Controls.Add(this.textBoxWifiPassword);
             this.Controls.Add(this.buttonUpdateConfigFile);
             this.Controls.Add(this.checkBoxAutoMode);
             this.Controls.Add(this.labelBtDevices);
@@ -180,6 +194,8 @@
         private System.Windows.Forms.CheckBox checkBoxAutoMode;
         private System.Windows.Forms.Button buttonUpdateConfigFile;
         private System.Windows.Forms.OpenFileDialog openFileDialogConfigFile;
+        private System.Windows.Forms.TextBox textBoxWifiPassword;
+        private System.Windows.Forms.Label labelWiFiPassword;
     }
 }
 

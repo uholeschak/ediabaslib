@@ -24,6 +24,7 @@ namespace BluetoothDeviceSelector
         private readonly Wifi _wifi;
         private readonly WlanClient _wlanClient;
         private readonly string _ediabasDir;
+        private string _initMessage;
         private volatile bool _searching;
         private bool _testOk;
         private volatile Thread _testThread;
@@ -46,6 +47,7 @@ namespace BluetoothDeviceSelector
             listViewDevices.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.None);
             listViewDevices.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
             textBoxBluetoothPin.Text = @"1234";
+            textBoxWifiPassword.Text = @"deepobdbmw";
             StringBuilder sr = new StringBuilder();
             try
             {
@@ -67,7 +69,8 @@ namespace BluetoothDeviceSelector
                 sr.Append(Strings.WifiAdapterError);
             }
             _ediabasDir = Environment.GetEnvironmentVariable("ediabas_config_dir");
-            UpdateStatusText(sr.ToString());
+            _initMessage = sr.ToString();
+            UpdateStatusText(string.Empty);
             UpdateButtonStatus();
         }
 
@@ -318,7 +321,7 @@ namespace BluetoothDeviceSelector
                 AuthRequest authRequest = new AuthRequest(ap);
                 if (authRequest.IsPasswordRequired)
                 {
-                    authRequest.Password = "deepobdbmw";
+                    authRequest.Password = textBoxWifiPassword.Text;
                 }
                 ap.ConnectAsync(authRequest, true, success =>
                 {
@@ -330,7 +333,7 @@ namespace BluetoothDeviceSelector
                         }
                         else
                         {
-                            buttonSearch_Click(buttonSearch, EventArgs.Empty);
+                            PerformSearch();
                         }
                     }));
                 });
@@ -761,6 +764,11 @@ namespace BluetoothDeviceSelector
             return true;
         }
 
+        private void ClearInitMessage()
+        {
+            _initMessage = string.Empty;
+        }
+
         private void UpdateStatusText(string text)
         {
             if (InvokeRequired)
@@ -771,18 +779,18 @@ namespace BluetoothDeviceSelector
                 }));
                 return;
             }
-            textBoxStatus.Text = text;
+            string message = text;
+            if (!string.IsNullOrEmpty(_initMessage))
+            {
+                message = _initMessage + "\r\n" + text;
+            }
+            textBoxStatus.Text = message;
             textBoxStatus.SelectionStart = textBoxStatus.TextLength;
             textBoxStatus.Update();
             textBoxStatus.ScrollToCaret();
         }
 
-        private void buttonClose_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        private void buttonSearch_Click(object sender, EventArgs e)
+        private void PerformSearch()
         {
             if (!buttonSearch.Enabled)
             {
@@ -792,6 +800,17 @@ namespace BluetoothDeviceSelector
             {
                 UpdateButtonStatus();
             }
+        }
+
+        private void buttonClose_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void buttonSearch_Click(object sender, EventArgs e)
+        {
+            ClearInitMessage();
+            PerformSearch();
         }
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
@@ -816,7 +835,7 @@ namespace BluetoothDeviceSelector
         private void FormMain_Shown(object sender, EventArgs e)
         {
             UpdateButtonStatus();
-            buttonSearch_Click(buttonSearch, EventArgs.Empty);
+            PerformSearch();
         }
 
         private void listViewDevices_SelectedIndexChanged(object sender, EventArgs e)
@@ -835,6 +854,7 @@ namespace BluetoothDeviceSelector
 
         private void buttonTest_Click(object sender, EventArgs e)
         {
+            ClearInitMessage();
             if (buttonTest.Enabled)
             {
                 ExecuteTest();
@@ -849,6 +869,7 @@ namespace BluetoothDeviceSelector
 
         private void buttonUpdateConfigFile_Click(object sender, EventArgs e)
         {
+            ClearInitMessage();
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             WlanInterface wlanIface = GetSelectedWifiDevice();
             if (devInfo == null && wlanIface == null)
