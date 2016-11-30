@@ -188,14 +188,14 @@
         private System.Windows.Forms.Label labelStatus;
         private System.Windows.Forms.TextBox textBoxStatus;
         private System.Windows.Forms.Button buttonTest;
-        private System.Windows.Forms.TextBox textBoxBluetoothPin;
         private System.Windows.Forms.Label labelBluetoothPin;
         private System.Windows.Forms.Label labelBtDevices;
-        private System.Windows.Forms.CheckBox checkBoxAutoMode;
         private System.Windows.Forms.Button buttonUpdateConfigFile;
         private System.Windows.Forms.OpenFileDialog openFileDialogConfigFile;
-        private System.Windows.Forms.TextBox textBoxWifiPassword;
         private System.Windows.Forms.Label labelWiFiPassword;
+        private System.Windows.Forms.TextBox textBoxBluetoothPin;
+        private System.Windows.Forms.CheckBox checkBoxAutoMode;
+        private System.Windows.Forms.TextBox textBoxWifiPassword;
     }
 }
 
