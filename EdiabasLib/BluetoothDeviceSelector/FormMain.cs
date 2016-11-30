@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -11,6 +12,7 @@ using System.Xml.Linq;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
+using Microsoft.Win32;
 using SimpleWifi;
 using SimpleWifi.Win32;
 using SimpleWifi.Win32.Interop;
@@ -23,7 +25,8 @@ namespace BluetoothDeviceSelector
         private readonly List<BluetoothDeviceInfo> _deviceList;
         private readonly Wifi _wifi;
         private readonly WlanClient _wlanClient;
-        private readonly string _ediabasDir;
+        private readonly string _ediabasDirBmw;
+        private readonly string _ediabasDirVag;
         private string _initMessage;
         private volatile bool _searching;
         private bool _testOk;
@@ -68,7 +71,37 @@ namespace BluetoothDeviceSelector
                 }
                 sr.Append(Strings.WifiAdapterError);
             }
-            _ediabasDir = Environment.GetEnvironmentVariable("ediabas_config_dir");
+            _ediabasDirBmw = Environment.GetEnvironmentVariable("ediabas_config_dir");
+            try
+            {
+                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Softing\EDIS-VW2"))
+                {
+                    string path = key?.GetValue("EDIABASPath", null) as string;
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        _ediabasDirVag = Path.Combine(path, @"bin");
+                    }
+                }
+                if (string.IsNullOrEmpty(_ediabasDirVag))
+                {
+                    using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"Software\SIDIS\ENV"))
+                    {
+                        _ediabasDirVag = key?.GetValue("FLASHINIPATH", null) as string;
+                    }
+                }
+                if (string.IsNullOrEmpty(_ediabasDirVag))
+                {
+                    using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Softing\VASEGD2"))
+                    {
+                        _ediabasDirVag = key?.GetValue("strEdiabasApi32Path", null) as string;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
             _initMessage = sr.ToString();
             UpdateStatusText(string.Empty);
             UpdateButtonStatus();
@@ -876,7 +909,8 @@ namespace BluetoothDeviceSelector
             {
                 return;
             }
-            openFileDialogConfigFile.InitialDirectory = _ediabasDir ?? string.Empty;
+            string initDir = !string.IsNullOrEmpty(_ediabasDirBmw) ? _ediabasDirBmw : _ediabasDirVag;
+            openFileDialogConfigFile.InitialDirectory = initDir ?? string.Empty;
             if (openFileDialogConfigFile.ShowDialog() == DialogResult.OK)
             {
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
