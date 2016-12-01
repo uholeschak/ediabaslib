@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
@@ -20,6 +22,7 @@ namespace BluetoothDeviceSelector
         private volatile Thread _testThread;
         private bool _disposed;
         public bool TestOk { get; set; }
+        public bool ConfigPossible { get; set; }
         public bool ThreadActive => _testThread != null;
 
         private enum AdapterMode
@@ -66,13 +69,14 @@ namespace BluetoothDeviceSelector
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        public bool ExecuteTest()
+        public bool ExecuteTest(bool configure)
         {
             if (_testThread != null)
             {
                 return false;
             }
             TestOk = false;
+            ConfigPossible = false;
             AccessPoint ap = _form.GetSelectedAp();
             if (ap != null)
             {
@@ -115,22 +119,46 @@ namespace BluetoothDeviceSelector
                         _form.UpdateStatusText(Strings.ConnectionFailed);
                         return false;
                     }
-                    Process.Start(string.Format("http://{0}", ipAddr));
-                    _form.UpdateStatusText(Strings.WifiUrlOk);
+                    if (configure)
+                    {
+                        Process.Start(string.Format("http://{0}", ipAddr));
+                        _form.UpdateStatusText(Strings.WifiUrlOk);
+                        TestOk = true;
+                        ConfigPossible = true;
+                        return true;
+                    }
+                    _testThread = new Thread(() =>
+                    {
+                        try
+                        {
+                            TestOk = RunWifiTest(ipAddr);
+                            if (TestOk)
+                            {
+                                ConfigPossible = true;
+                            }
+                        }
+                        finally
+                        {
+                            _testThread = null;
+                            _form.UpdateButtonStatus();
+                        }
+                    });
+                    _testThread.Start();
                 }
                 catch (Exception)
                 {
+                    _form.UpdateStatusText(Strings.ConnectionFailed);
                     return false;
                 }
                 return true;
             }
+
             BluetoothDeviceInfo devInfo = _form.GetSelectedBtDevice();
             if (devInfo == null)
             {
                 return false;
             }
             string pin = _form.BluetoothPin;
-            bool autoMode = _form.AutoMode;
             _testThread = new Thread(() =>
             {
                 try
@@ -141,7 +169,12 @@ namespace BluetoothDeviceSelector
                         _form.UpdateStatusText(Strings.ConnectionFailed);
                         return;
                     }
-                    TestOk = RunTest(autoMode);
+                    bool configRequired;
+                    TestOk = RunBtTest(configure, out configRequired);
+                    if (TestOk && configRequired)
+                    {
+                        ConfigPossible = true;
+                    }
                 }
                 finally
                 {
@@ -154,10 +187,57 @@ namespace BluetoothDeviceSelector
             return true;
         }
 
-        private bool RunTest(bool autoMode)
+        private bool RunWifiTest(string ipAddr)
         {
-            StringBuilder sr = new StringBuilder();
+            _form.UpdateStatusText(Strings.Connecting);
 
+            StringBuilder sr = new StringBuilder();
+            WebResponse response = null;
+            StreamReader reader = null;
+            try
+            {
+                WebRequest request = WebRequest.Create(string.Format("http://{0}", ipAddr));
+                response = request.GetResponse();
+
+                Stream dataStream = response.GetResponseStream();
+                if (dataStream == null)
+                {
+                    _form.UpdateStatusText(Strings.ConnectionFailed);
+                    return false;
+                }
+                sr.Append(Strings.Connected);
+                reader = new StreamReader(dataStream);
+                string responseFromServer = reader.ReadToEnd();
+                if (!responseFromServer.Contains(@"LuCI - Lua Configuration Interface"))
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Strings.HttpResponseIncorrect);
+                    _form.UpdateStatusText(sr.ToString());
+                    return false;
+                }
+                sr.Append("\r\n");
+                sr.Append(Strings.HttpResponseOk);
+            }
+            catch (Exception)
+            {
+                _form.UpdateStatusText(Strings.ConnectionFailed);
+                return false;
+            }
+            finally
+            {
+                reader?.Close();
+                response?.Close();
+            }
+            sr.Append("\r\n");
+            sr.Append(Strings.TestOk);
+            _form.UpdateStatusText(sr.ToString());
+            return true;
+        }
+
+        private bool RunBtTest(bool configure, out bool configRequired)
+        {
+            configRequired = false;
+            StringBuilder sr = new StringBuilder();
             sr.Append(Strings.Connected);
             byte[] firmware = AdapterCommandCustom(0xFD, new byte[] { 0xFD });
             if ((firmware == null) || (firmware.Length < 4))
@@ -213,7 +293,7 @@ namespace BluetoothDeviceSelector
             }
             if ((AdapterMode)canMode[0] != AdapterMode.CanAuto)
             {
-                if (autoMode)
+                if (configure)
                 {
                     sr.Append("\r\n");
                     sr.Append(Strings.CanModeChangeAuto);
@@ -226,6 +306,7 @@ namespace BluetoothDeviceSelector
                 }
                 else
                 {
+                    configRequired = true;
                     sr.Append("\r\n");
                     sr.Append(Strings.CanModeNotAuto);
                 }

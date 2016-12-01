@@ -117,14 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="columnHeaderAddress.Text" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="columnHeaderAddress.Width" type="System.Int32, mscorlib">
+    <value>193</value>
+  </data>
+  <data name="columnHeaderName.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="columnHeaderName.Width" type="System.Int32, mscorlib">
+    <value>322</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="listViewDevices.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 25</value>
   </data>
   <data name="listViewDevices.Size" type="System.Drawing.Size, System.Drawing">
-    <value>525, 232</value>
+    <value>525, 254</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="listViewDevices.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
@@ -138,19 +150,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;listViewDevices.ZOrder" xml:space="preserve">
-    <value>12</value>
-  </data>
-  <data name="columnHeaderAddress.Text" xml:space="preserve">
-    <value>Address</value>
-  </data>
-  <data name="columnHeaderAddress.Width" type="System.Int32, mscorlib">
-    <value>193</value>
-  </data>
-  <data name="columnHeaderName.Text" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="columnHeaderName.Width" type="System.Int32, mscorlib">
-    <value>322</value>
+    <value>11</value>
   </data>
   <data name="buttonSearch.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 424</value>
@@ -174,7 +174,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonSearch.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>10</value>
   </data>
   <data name="buttonClose.Location" type="System.Drawing.Point, System.Drawing">
     <value>462, 424</value>
@@ -198,13 +198,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonClose.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>9</value>
   </data>
   <data name="labelStatus.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="labelStatus.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 260</value>
+    <value>12, 282</value>
   </data>
   <data name="labelStatus.Size" type="System.Drawing.Size, System.Drawing">
     <value>40, 13</value>
@@ -225,10 +225,10 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;labelStatus.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>8</value>
   </data>
   <data name="textBoxStatus.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 276</value>
+    <value>12, 298</value>
   </data>
   <data name="textBoxStatus.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -249,7 +249,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;textBoxStatus.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>7</value>
   </data>
   <data name="buttonTest.Location" type="System.Drawing.Point, System.Drawing">
     <value>93, 424</value>
@@ -273,10 +273,10 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonTest.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>6</value>
   </data>
   <data name="textBoxBluetoothPin.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 375</value>
+    <value>12, 398</value>
   </data>
   <data name="textBoxBluetoothPin.MaxLength" type="System.Int32, mscorlib">
     <value>16</value>
@@ -297,13 +297,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;textBoxBluetoothPin.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>5</value>
   </data>
   <data name="labelBluetoothPin.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="labelBluetoothPin.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 360</value>
+    <value>12, 382</value>
   </data>
   <data name="labelBluetoothPin.Size" type="System.Drawing.Size, System.Drawing">
     <value>76, 13</value>
@@ -324,7 +324,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;labelBluetoothPin.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>4</value>
   </data>
   <data name="labelBtDevices.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -351,33 +351,6 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;labelBtDevices.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="checkBoxAutoMode.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="checkBoxAutoMode.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 401</value>
-  </data>
-  <data name="checkBoxAutoMode.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 17</value>
-  </data>
-  <data name="checkBoxAutoMode.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="checkBoxAutoMode.Text" xml:space="preserve">
-    <value>Switch adapter to automatic mode</value>
-  </data>
-  <data name="&gt;&gt;checkBoxAutoMode.Name" xml:space="preserve">
-    <value>checkBoxAutoMode</value>
-  </data>
-  <data name="&gt;&gt;checkBoxAutoMode.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkBoxAutoMode.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;checkBoxAutoMode.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
   <data name="buttonUpdateConfigFile.Location" type="System.Drawing.Point, System.Drawing">
@@ -411,7 +384,7 @@
     <value>EdiabasLib.config File|EdiabasLib.config| All Files|*.*</value>
   </data>
   <data name="textBoxWifiPassword.Location" type="System.Drawing.Point, System.Drawing">
-    <value>219, 375</value>
+    <value>219, 398</value>
   </data>
   <data name="textBoxWifiPassword.MaxLength" type="System.Int32, mscorlib">
     <value>63</value>
@@ -442,7 +415,7 @@
     <value>NoControl</value>
   </data>
   <data name="labelWiFiPassword.Location" type="System.Drawing.Point, System.Drawing">
-    <value>216, 359</value>
+    <value>216, 382</value>
   </data>
   <data name="labelWiFiPassword.Size" type="System.Drawing.Size, System.Drawing">
     <value>83, 13</value>

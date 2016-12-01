@@ -186,6 +186,12 @@
   <data name="FirmwareVersion" xml:space="preserve">
     <value>Firmware:</value>
   </data>
+  <data name="HttpResponseIncorrect" xml:space="preserve">
+    <value>HTTP response invalid</value>
+  </data>
+  <data name="HttpResponseOk" xml:space="preserve">
+    <value>HTTP response OK</value>
+  </data>
   <data name="ReadFirmwareVersionFailed" xml:space="preserve">
     <value>Read firmware version failed</value>
   </data>
