@@ -268,6 +268,24 @@ namespace BluetoothDeviceSelector {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die HTTP response invalid ähnelt.
+        /// </summary>
+        internal static string HttpResponseIncorrect {
+            get {
+                return ResourceManager.GetString("HttpResponseIncorrect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die HTTP response OK ähnelt.
+        /// </summary>
+        internal static string HttpResponseOk {
+            get {
+                return ResourceManager.GetString("HttpResponseOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Read firmware version failed ähnelt.
         /// </summary>
         internal static string ReadFirmwareVersionFailed {

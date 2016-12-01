@@ -40,7 +40,6 @@
             this.textBoxBluetoothPin = new System.Windows.Forms.TextBox();
             this.labelBluetoothPin = new System.Windows.Forms.Label();
             this.labelBtDevices = new System.Windows.Forms.Label();
-            this.checkBoxAutoMode = new System.Windows.Forms.CheckBox();
             this.buttonUpdateConfigFile = new System.Windows.Forms.Button();
             this.openFileDialogConfigFile = new System.Windows.Forms.OpenFileDialog();
             this.textBoxWifiPassword = new System.Windows.Forms.TextBox();
@@ -124,12 +123,6 @@
             resources.ApplyResources(this.labelBtDevices, "labelBtDevices");
             this.labelBtDevices.Name = "labelBtDevices";
             // 
-            // checkBoxAutoMode
-            // 
-            resources.ApplyResources(this.checkBoxAutoMode, "checkBoxAutoMode");
-            this.checkBoxAutoMode.Name = "checkBoxAutoMode";
-            this.checkBoxAutoMode.UseVisualStyleBackColor = true;
-            // 
             // buttonUpdateConfigFile
             // 
             resources.ApplyResources(this.buttonUpdateConfigFile, "buttonUpdateConfigFile");
@@ -159,7 +152,6 @@
             this.Controls.Add(this.labelWiFiPassword);
             this.Controls.Add(this.textBoxWifiPassword);
             this.Controls.Add(this.buttonUpdateConfigFile);
-            this.Controls.Add(this.checkBoxAutoMode);
             this.Controls.Add(this.labelBtDevices);
             this.Controls.Add(this.labelBluetoothPin);
             this.Controls.Add(this.textBoxBluetoothPin);
@@ -194,7 +186,6 @@
         private System.Windows.Forms.OpenFileDialog openFileDialogConfigFile;
         private System.Windows.Forms.Label labelWiFiPassword;
         private System.Windows.Forms.TextBox textBoxBluetoothPin;
-        private System.Windows.Forms.CheckBox checkBoxAutoMode;
         private System.Windows.Forms.TextBox textBoxWifiPassword;
     }
 }

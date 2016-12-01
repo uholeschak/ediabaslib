@@ -30,7 +30,6 @@ namespace BluetoothDeviceSelector
 
         public string BluetoothPin => textBoxBluetoothPin.Text;
         public string WifiPassword => textBoxWifiPassword.Text;
-        public bool AutoMode => checkBoxAutoMode.Checked;
 
         public FormMain()
         {
@@ -165,6 +164,7 @@ namespace BluetoothDeviceSelector
             try
             {
                 _test.TestOk = false;
+                _test.ConfigPossible = false;
                 _deviceList.Clear();
                 BluetoothComponent bco = new BluetoothComponent(_cli);
                 bco.DiscoverDevicesProgress += (sender, args) =>
@@ -306,27 +306,34 @@ namespace BluetoothDeviceSelector
                 BeginInvoke((Action) UpdateButtonStatus);
                 return;
             }
-            buttonSearch.Enabled = !_searching && ((_cli != null) || !_wlanClient.NoWifiAvailable);
-            buttonClose.Enabled = !_searching;
+            buttonSearch.Enabled = !_searching && !_test.ThreadActive && ((_cli != null) || !_wlanClient.NoWifiAvailable);
+            buttonClose.Enabled = !_searching && !_test.ThreadActive;
 
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             WlanInterface wlanIface = GetSelectedWifiDevice();
             AccessPoint ap = GetSelectedAp();
-            buttonTest.Enabled = buttonSearch.Enabled && (devInfo != null || wlanIface != null || ap != null) && !_test.ThreadActive;
-            buttonUpdateConfigFile.Enabled = buttonTest.Enabled && ((wlanIface != null) || ((devInfo != null) && _test.TestOk));
+            buttonTest.Enabled = buttonSearch.Enabled && ((devInfo != null) || (wlanIface != null) || (ap != null)) && !_test.ThreadActive;
+            buttonUpdateConfigFile.Enabled = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null));
             textBoxBluetoothPin.Enabled = !_test.ThreadActive;
-            checkBoxAutoMode.Enabled = !_test.ThreadActive;
-            if (devInfo != null)
+            textBoxWifiPassword.Enabled = !_test.ThreadActive;
+            if ((devInfo != null) || (wlanIface != null))
             {
-                buttonTest.Text = Strings.ButtonTestCheck;
+                if (_test.TestOk && _test.ConfigPossible)
+                {
+                    buttonTest.Text = Strings.ButtonTestConfiguration;
+                }
+                else
+                {
+                    buttonTest.Text = Strings.ButtonTestCheck;
+                }
             }
-            if (wlanIface != null)
-            {
-                buttonTest.Text = Strings.ButtonTestConfiguration;
-            }
-            if (ap != null)
+            else if (ap != null)
             {
                 buttonTest.Text = Strings.ButtonTestConnect;
+            }
+            else
+            {
+                buttonTest.Text = Strings.ButtonTestCheck;
             }
         }
 
@@ -476,6 +483,7 @@ namespace BluetoothDeviceSelector
         private void listViewDevices_SelectedIndexChanged(object sender, EventArgs e)
         {
             _test.TestOk = false;
+            _test.ConfigPossible = false;
             UpdateButtonStatus();
         }
 
@@ -492,7 +500,7 @@ namespace BluetoothDeviceSelector
             ClearInitMessage();
             if (buttonTest.Enabled)
             {
-                _test.ExecuteTest();
+                _test.ExecuteTest(_test.TestOk && _test.ConfigPossible);
                 UpdateButtonStatus();
             }
         }
