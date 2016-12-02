@@ -12,7 +12,7 @@ using SimpleWifi;
 using SimpleWifi.Win32;
 using SimpleWifi.Win32.Interop;
 
-namespace BluetoothDeviceSelector
+namespace EdiabasLibConfigTool
 {
     public partial class FormMain : Form
     {

@@ -13,7 +13,7 @@ using InTheHand.Net.Sockets;
 using SimpleWifi;
 using SimpleWifi.Win32;
 
-namespace BluetoothDeviceSelector
+namespace EdiabasLibConfigTool
 {
     class Test : IDisposable
     {
