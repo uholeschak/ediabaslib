@@ -7,8 +7,8 @@
     <ProjectGuid>{7D7FA80F-4C35-4AF4-8E6E-44C32E4DBD32}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BluetoothDeviceSelector</RootNamespace>
-    <AssemblyName>BluetoothDeviceSelector</AssemblyName>
+    <RootNamespace>EdiabasLibConfigTool</RootNamespace>
+    <AssemblyName>EdiabasLibConfigTool</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

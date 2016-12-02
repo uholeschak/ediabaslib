@@ -1,4 +1,4 @@
-﻿namespace BluetoothDeviceSelector
+﻿namespace EdiabasLibConfigTool
 {
     partial class FormMain
     {
