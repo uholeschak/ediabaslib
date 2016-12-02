@@ -156,12 +156,6 @@
   <data name="CanModeUnknown" xml:space="preserve">
     <value>Unknown</value>
   </data>
-  <data name="ConfigUpdateFailed" xml:space="preserve">
-    <value>Update config file failed</value>
-  </data>
-  <data name="ConfigUpdateOk" xml:space="preserve">
-    <value>Update config file successful</value>
-  </data>
   <data name="Connected" xml:space="preserve">
     <value>Connected</value>
   </data>
@@ -191,6 +185,33 @@
   </data>
   <data name="HttpResponseOk" xml:space="preserve">
     <value>HTTP response OK</value>
+  </data>
+  <data name="PatchApi32Missing" xml:space="preserve">
+    <value>EdiabasLib Api32.dll file is missing.</value>
+  </data>
+  <data name="PatchBackupFileExisting" xml:space="preserve">
+    <value>Backup file is already existing.</value>
+  </data>
+  <data name="PatchConfigExisting" xml:space="preserve">
+    <value>EdiabasLib.config file is already existing.</value>
+  </data>
+  <data name="PatchConfigMissing" xml:space="preserve">
+    <value>EdiabasLib.config file is missing.</value>
+  </data>
+  <data name="PatchConfigUpdateFailed" xml:space="preserve">
+    <value>Update config file failed.</value>
+  </data>
+  <data name="PatchConfigUpdateOk" xml:space="preserve">
+    <value>Update config file successful.</value>
+  </data>
+  <data name="PatchCopyFailed" xml:space="preserve">
+    <value>Copy files failed.</value>
+  </data>
+  <data name="PatchCreateBackupFile" xml:space="preserve">
+    <value>Creating backup file.</value>
+  </data>
+  <data name="PatchDirectory" xml:space="preserve">
+    <value>Patching EDIABAS at: '{0}'</value>
   </data>
   <data name="ReadFirmwareVersionFailed" xml:space="preserve">
     <value>Read firmware version failed</value>

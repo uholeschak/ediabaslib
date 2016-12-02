@@ -313,7 +313,7 @@ namespace EdiabasLibConfigTool
             WlanInterface wlanIface = GetSelectedWifiDevice();
             AccessPoint ap = GetSelectedAp();
             buttonTest.Enabled = buttonSearch.Enabled && ((devInfo != null) || (wlanIface != null) || (ap != null)) && !_test.ThreadActive;
-            buttonUpdateConfigFile.Enabled = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null));
+            buttonPatchEdiabas.Enabled = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null));
             textBoxBluetoothPin.Enabled = !_test.ThreadActive;
             textBoxWifiPassword.Enabled = !_test.ThreadActive;
             if ((devInfo != null) || (wlanIface != null))
@@ -335,74 +335,6 @@ namespace EdiabasLibConfigTool
             {
                 buttonTest.Text = Strings.ButtonTestCheck;
             }
-        }
-
-        private void UpdateConfigNode(XElement settingsNode, string key, string value, bool onlyExisting = false)
-        {
-            XElement node = (from addNode in settingsNode.Elements("add")
-                    let keyAttrib = addNode.Attribute("key") where keyAttrib != null
-                    where string.Compare(keyAttrib.Value, key, StringComparison.OrdinalIgnoreCase) == 0
-                    select addNode).FirstOrDefault();
-            if (node == null)
-            {
-                if (onlyExisting)
-                {
-                    return;
-                }
-                node = new XElement("add");
-                node.Add(new XAttribute("key", key));
-                settingsNode.AddFirst(node);
-            }
-            XAttribute valueAttrib = node.Attribute("value");
-            if (valueAttrib == null)
-            {
-                valueAttrib = new XAttribute("value", value);
-                node.Add(valueAttrib);
-            }
-            else
-            {
-                valueAttrib.Value = value;
-            }
-        }
-
-        private bool UpdateConfigFile(string fileName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, string pin)
-        {
-            try
-            {
-                XDocument xDocument = XDocument.Load(fileName);
-                XElement settingsNode = xDocument.Root?.Element("appSettings");
-                if (settingsNode == null)
-                {
-                    return false;
-                }
-                if (wlanIface != null)
-                {
-                    UpdateConfigNode(settingsNode, @"EnetRemoteHost", @"auto:all");
-                    UpdateConfigNode(settingsNode, @"Interface", @"ENET");
-                }
-                else if (devInfo != null)
-                {
-                    string interfaceValue = @"STD:OBD";
-                    if (fileName.ToLowerInvariant().Contains(@"\SIDIS\home\DBaseSys2\".ToLowerInvariant()))
-                    {   // VAS-PC instalation
-                        interfaceValue = @"EDIC";
-                    }
-                    string portValue = string.Format("BLUETOOTH:{0}#{1}", devInfo.DeviceAddress, pin);
-
-                    UpdateConfigNode(settingsNode, @"ObdComPort", portValue);
-                    UpdateConfigNode(settingsNode, @"Interface", interfaceValue);
-                }
-                else
-                {
-                    return false;
-                }
-                xDocument.Save(fileName);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
         }
 
         private void ClearInitMessage()
@@ -510,7 +442,7 @@ namespace EdiabasLibConfigTool
             buttonTest_Click(sender, e);
         }
 
-        private void buttonUpdateConfigFile_Click(object sender, EventArgs e)
+        private void buttonPatchEdiabas_Click(object sender, EventArgs e)
         {
             ClearInitMessage();
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
@@ -521,16 +453,15 @@ namespace EdiabasLibConfigTool
             }
             string initDir = !string.IsNullOrEmpty(_ediabasDirBmw) ? _ediabasDirBmw : _ediabasDirVag;
             openFileDialogConfigFile.InitialDirectory = initDir ?? string.Empty;
+            openFileDialogConfigFile.FileName = string.Empty;
             if (openFileDialogConfigFile.ShowDialog() == DialogResult.OK)
             {
-                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (UpdateConfigFile(openFileDialogConfigFile.FileName, devInfo, wlanIface, textBoxBluetoothPin.Text))
+                string dirName = Path.GetDirectoryName(openFileDialogConfigFile.FileName);
+                if (dirName != null)
                 {
-                    UpdateStatusText(Strings.ConfigUpdateOk);
-                }
-                else
-                {
-                    UpdateStatusText(Strings.ConfigUpdateFailed);
+                    StringBuilder sr = new StringBuilder();
+                    Patch.PatchEdiabas(sr, dirName, devInfo, wlanIface, textBoxBluetoothPin.Text);
+                    UpdateStatusText(sr.ToString());
                 }
             }
         }
