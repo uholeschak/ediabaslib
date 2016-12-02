@@ -117,19 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="columnHeaderAddress.Text" xml:space="preserve">
-    <value>Address</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="columnHeaderAddress.Width" type="System.Int32, mscorlib">
-    <value>193</value>
-  </data>
-  <data name="columnHeaderName.Text" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="columnHeaderName.Width" type="System.Int32, mscorlib">
-    <value>322</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="listViewDevices.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 25</value>
@@ -137,6 +124,7 @@
   <data name="listViewDevices.Size" type="System.Drawing.Size, System.Drawing">
     <value>525, 254</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="listViewDevices.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
@@ -151,6 +139,18 @@
   </data>
   <data name="&gt;&gt;listViewDevices.ZOrder" xml:space="preserve">
     <value>11</value>
+  </data>
+  <data name="columnHeaderAddress.Text" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="columnHeaderAddress.Width" type="System.Int32, mscorlib">
+    <value>193</value>
+  </data>
+  <data name="columnHeaderName.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="columnHeaderName.Width" type="System.Int32, mscorlib">
+    <value>322</value>
   </data>
   <data name="buttonSearch.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 424</value>
@@ -353,35 +353,35 @@
   <data name="&gt;&gt;labelBtDevices.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="buttonUpdateConfigFile.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="buttonPatchEdiabas.Location" type="System.Drawing.Point, System.Drawing">
     <value>219, 424</value>
   </data>
-  <data name="buttonUpdateConfigFile.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="buttonPatchEdiabas.Size" type="System.Drawing.Size, System.Drawing">
     <value>120, 23</value>
   </data>
-  <data name="buttonUpdateConfigFile.TabIndex" type="System.Int32, mscorlib">
+  <data name="buttonPatchEdiabas.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
-  <data name="buttonUpdateConfigFile.Text" xml:space="preserve">
-    <value>Update Config File</value>
+  <data name="buttonPatchEdiabas.Text" xml:space="preserve">
+    <value>Patch EDIABAS</value>
   </data>
-  <data name="&gt;&gt;buttonUpdateConfigFile.Name" xml:space="preserve">
-    <value>buttonUpdateConfigFile</value>
+  <data name="&gt;&gt;buttonPatchEdiabas.Name" xml:space="preserve">
+    <value>buttonPatchEdiabas</value>
   </data>
-  <data name="&gt;&gt;buttonUpdateConfigFile.Type" xml:space="preserve">
+  <data name="&gt;&gt;buttonPatchEdiabas.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;buttonUpdateConfigFile.Parent" xml:space="preserve">
+  <data name="&gt;&gt;buttonPatchEdiabas.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;buttonUpdateConfigFile.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;buttonPatchEdiabas.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
   <metadata name="openFileDialogConfigFile.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
   <data name="openFileDialogConfigFile.Filter" xml:space="preserve">
-    <value>EdiabasLib.config File|EdiabasLib.config| All Files|*.*</value>
+    <value>Api32.dll File|Api32.dll</value>
   </data>
   <data name="textBoxWifiPassword.Location" type="System.Drawing.Point, System.Drawing">
     <value>219, 398</value>

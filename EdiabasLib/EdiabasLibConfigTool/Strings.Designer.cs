@@ -178,24 +178,6 @@ namespace EdiabasLibConfigTool {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Update config file failed ähnelt.
-        /// </summary>
-        internal static string ConfigUpdateFailed {
-            get {
-                return ResourceManager.GetString("ConfigUpdateFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Update config file successful ähnelt.
-        /// </summary>
-        internal static string ConfigUpdateOk {
-            get {
-                return ResourceManager.GetString("ConfigUpdateOk", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Connected ähnelt.
         /// </summary>
         internal static string Connected {
@@ -282,6 +264,87 @@ namespace EdiabasLibConfigTool {
         internal static string HttpResponseOk {
             get {
                 return ResourceManager.GetString("HttpResponseOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die EdiabasLib Api32.dll file is missing. ähnelt.
+        /// </summary>
+        internal static string PatchApi32Missing {
+            get {
+                return ResourceManager.GetString("PatchApi32Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Backup file is already existing. ähnelt.
+        /// </summary>
+        internal static string PatchBackupFileExisting {
+            get {
+                return ResourceManager.GetString("PatchBackupFileExisting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die EdiabasLib.config file is already existing. ähnelt.
+        /// </summary>
+        internal static string PatchConfigExisting {
+            get {
+                return ResourceManager.GetString("PatchConfigExisting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die EdiabasLib.config file is missing. ähnelt.
+        /// </summary>
+        internal static string PatchConfigMissing {
+            get {
+                return ResourceManager.GetString("PatchConfigMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Update config file failed. ähnelt.
+        /// </summary>
+        internal static string PatchConfigUpdateFailed {
+            get {
+                return ResourceManager.GetString("PatchConfigUpdateFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Update config file successful. ähnelt.
+        /// </summary>
+        internal static string PatchConfigUpdateOk {
+            get {
+                return ResourceManager.GetString("PatchConfigUpdateOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Copy files failed. ähnelt.
+        /// </summary>
+        internal static string PatchCopyFailed {
+            get {
+                return ResourceManager.GetString("PatchCopyFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Creating backup file. ähnelt.
+        /// </summary>
+        internal static string PatchCreateBackupFile {
+            get {
+                return ResourceManager.GetString("PatchCreateBackupFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Patching EDIABAS at: &apos;{0}&apos; ähnelt.
+        /// </summary>
+        internal static string PatchDirectory {
+            get {
+                return ResourceManager.GetString("PatchDirectory", resourceCulture);
             }
         }
         

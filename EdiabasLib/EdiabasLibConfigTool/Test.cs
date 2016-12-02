@@ -15,7 +15,7 @@ using SimpleWifi.Win32;
 
 namespace EdiabasLibConfigTool
 {
-    class Test : IDisposable
+    public class Test : IDisposable
     {
         private readonly FormMain _form;
         private NetworkStream _btStream;

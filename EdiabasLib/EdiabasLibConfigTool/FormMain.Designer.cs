@@ -40,7 +40,7 @@
             this.textBoxBluetoothPin = new System.Windows.Forms.TextBox();
             this.labelBluetoothPin = new System.Windows.Forms.Label();
             this.labelBtDevices = new System.Windows.Forms.Label();
-            this.buttonUpdateConfigFile = new System.Windows.Forms.Button();
+            this.buttonPatchEdiabas = new System.Windows.Forms.Button();
             this.openFileDialogConfigFile = new System.Windows.Forms.OpenFileDialog();
             this.textBoxWifiPassword = new System.Windows.Forms.TextBox();
             this.labelWiFiPassword = new System.Windows.Forms.Label();
@@ -123,12 +123,12 @@
             resources.ApplyResources(this.labelBtDevices, "labelBtDevices");
             this.labelBtDevices.Name = "labelBtDevices";
             // 
-            // buttonUpdateConfigFile
+            // buttonPatchEdiabas
             // 
-            resources.ApplyResources(this.buttonUpdateConfigFile, "buttonUpdateConfigFile");
-            this.buttonUpdateConfigFile.Name = "buttonUpdateConfigFile";
-            this.buttonUpdateConfigFile.UseVisualStyleBackColor = true;
-            this.buttonUpdateConfigFile.Click += new System.EventHandler(this.buttonUpdateConfigFile_Click);
+            resources.ApplyResources(this.buttonPatchEdiabas, "buttonPatchEdiabas");
+            this.buttonPatchEdiabas.Name = "buttonPatchEdiabas";
+            this.buttonPatchEdiabas.UseVisualStyleBackColor = true;
+            this.buttonPatchEdiabas.Click += new System.EventHandler(this.buttonPatchEdiabas_Click);
             // 
             // openFileDialogConfigFile
             // 
@@ -151,7 +151,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.labelWiFiPassword);
             this.Controls.Add(this.textBoxWifiPassword);
-            this.Controls.Add(this.buttonUpdateConfigFile);
+            this.Controls.Add(this.buttonPatchEdiabas);
             this.Controls.Add(this.labelBtDevices);
             this.Controls.Add(this.labelBluetoothPin);
             this.Controls.Add(this.textBoxBluetoothPin);
@@ -182,7 +182,7 @@
         private System.Windows.Forms.Button buttonTest;
         private System.Windows.Forms.Label labelBluetoothPin;
         private System.Windows.Forms.Label labelBtDevices;
-        private System.Windows.Forms.Button buttonUpdateConfigFile;
+        private System.Windows.Forms.Button buttonPatchEdiabas;
         private System.Windows.Forms.OpenFileDialog openFileDialogConfigFile;
         private System.Windows.Forms.Label labelWiFiPassword;
         private System.Windows.Forms.TextBox textBoxBluetoothPin;
