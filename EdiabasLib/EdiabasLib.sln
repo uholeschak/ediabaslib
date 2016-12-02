@@ -21,7 +21,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IfhLog", "IfhLog\IfhLog.vcx
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InTheHand.Net.Personal.FX4.Mod", "32feetNET\InTheHand.Net.Personal\ITH.Net.Personal.FX4\InTheHand.Net.Personal.FX4.Mod.csproj", "{40EA20B4-9CAF-486D-9952-1ABB3D414E92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLibConfigTool", "BluetoothDeviceSelector\EdiabasLibConfigTool.csproj", "{7D7FA80F-4C35-4AF4-8E6E-44C32E4DBD32}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLibConfigTool", "EdiabasLibConfigTool\EdiabasLibConfigTool.csproj", "{7D7FA80F-4C35-4AF4-8E6E-44C32E4DBD32}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
