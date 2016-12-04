@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
 using Microsoft.Win32;
@@ -313,8 +312,17 @@ namespace EdiabasLibConfigTool
             WlanInterface wlanIface = GetSelectedWifiDevice();
             AccessPoint ap = GetSelectedAp();
             buttonTest.Enabled = buttonSearch.Enabled && ((devInfo != null) || (wlanIface != null) || (ap != null)) && !_test.ThreadActive;
-            buttonPatchEdiabas.Enabled = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null));
-            buttonRestoreEdiabas.Enabled = !_searching && !_test.ThreadActive;
+
+            bool allowPatch = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null));
+            bool allowRestore = !_searching && !_test.ThreadActive;
+            groupBoxEdiabas.Enabled = !string.IsNullOrEmpty(_ediabasDirBmw);
+            buttonPatchEdiabas.Enabled = !string.IsNullOrEmpty(_ediabasDirBmw) && allowPatch;
+            buttonRestoreEdiabas.Enabled = !string.IsNullOrEmpty(_ediabasDirBmw) && allowRestore && Patch.IsPatched(_ediabasDirBmw);
+
+            groupBoxVasPc.Enabled = !string.IsNullOrEmpty(_ediabasDirVag);
+            buttonPatchVasPc.Enabled = !string.IsNullOrEmpty(_ediabasDirVag) && allowPatch;
+            buttonRestoreVasPc.Enabled = !string.IsNullOrEmpty(_ediabasDirVag) && allowRestore && Patch.IsPatched(_ediabasDirVag);
+
             textBoxBluetoothPin.Enabled = !_test.ThreadActive;
             textBoxWifiPassword.Enabled = !_test.ThreadActive;
             if ((devInfo != null) || (wlanIface != null))
@@ -443,7 +451,7 @@ namespace EdiabasLibConfigTool
             buttonTest_Click(sender, e);
         }
 
-        private void buttonPatchEdiabas_Click(object sender, EventArgs e)
+        private void buttonPatch_Click(object sender, EventArgs e)
         {
             ClearInitMessage();
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
@@ -452,36 +460,60 @@ namespace EdiabasLibConfigTool
             {
                 return;
             }
-            string initDir = !string.IsNullOrEmpty(_ediabasDirBmw) ? _ediabasDirBmw : _ediabasDirVag;
-            openFileDialogConfigFile.InitialDirectory = initDir ?? string.Empty;
-            openFileDialogConfigFile.FileName = string.Empty;
-            if (openFileDialogConfigFile.ShowDialog() == DialogResult.OK)
+            string dirName = null;
+            if (sender == buttonPatchEdiabas)
             {
-                string dirName = Path.GetDirectoryName(openFileDialogConfigFile.FileName);
-                if (dirName != null)
+                dirName = _ediabasDirBmw;
+            }
+            else if (sender == buttonPatchVasPc)
+            {
+                dirName = _ediabasDirVag;
+            }
+            if (string.IsNullOrEmpty(dirName))
+            {
+                openFileDialogConfigFile.InitialDirectory = string.Empty;
+                openFileDialogConfigFile.FileName = string.Empty;
+                if (openFileDialogConfigFile.ShowDialog() == DialogResult.OK)
                 {
-                    StringBuilder sr = new StringBuilder();
-                    Patch.PatchEdiabas(sr, dirName, devInfo, wlanIface, textBoxBluetoothPin.Text);
-                    UpdateStatusText(sr.ToString());
+                    dirName = Path.GetDirectoryName(openFileDialogConfigFile.FileName);
                 }
             }
+            if (!string.IsNullOrEmpty(dirName))
+            {
+                StringBuilder sr = new StringBuilder();
+                Patch.PatchEdiabas(sr, dirName, devInfo, wlanIface, textBoxBluetoothPin.Text);
+                UpdateStatusText(sr.ToString());
+            }
+            UpdateButtonStatus();
         }
 
-        private void buttonRestoreEdiabas_Click(object sender, EventArgs e)
+        private void buttonRestore_Click(object sender, EventArgs e)
         {
-            string initDir = !string.IsNullOrEmpty(_ediabasDirBmw) ? _ediabasDirBmw : _ediabasDirVag;
-            openFileDialogConfigFile.InitialDirectory = initDir ?? string.Empty;
-            openFileDialogConfigFile.FileName = string.Empty;
-            if (openFileDialogConfigFile.ShowDialog() == DialogResult.OK)
+            string dirName = null;
+            if (sender == buttonRestoreEdiabas)
             {
-                string dirName = Path.GetDirectoryName(openFileDialogConfigFile.FileName);
-                if (dirName != null)
+                dirName = _ediabasDirBmw;
+            }
+            else if (sender == buttonRestoreVasPc)
+            {
+                dirName = _ediabasDirVag;
+            }
+            if (string.IsNullOrEmpty(dirName))
+            {
+                openFileDialogConfigFile.InitialDirectory = string.Empty;
+                openFileDialogConfigFile.FileName = string.Empty;
+                if (openFileDialogConfigFile.ShowDialog() == DialogResult.OK)
                 {
-                    StringBuilder sr = new StringBuilder();
-                    Patch.RestoreEdiabas(sr, dirName);
-                    UpdateStatusText(sr.ToString());
+                    dirName = Path.GetDirectoryName(openFileDialogConfigFile.FileName);
                 }
             }
+            if (!string.IsNullOrEmpty(dirName))
+            {
+                StringBuilder sr = new StringBuilder();
+                Patch.RestoreEdiabas(sr, dirName);
+                UpdateStatusText(sr.ToString());
+            }
+            UpdateButtonStatus();
         }
     }
 }
