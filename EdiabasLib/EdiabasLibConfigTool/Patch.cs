@@ -148,6 +148,34 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
+        public static bool RestoreFiles(StringBuilder sr, string dirName)
+        {
+            try
+            {
+                string dllFile = Path.Combine(dirName, ApiDllName);
+                string dllFileBackup = Path.Combine(dirName, ApiDllBackupName);
+                if (!File.Exists(dllFileBackup))
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Strings.RestoreNoBackupFile);
+                }
+                else
+                {
+                    File.Copy(dllFileBackup, dllFile, true);
+                    File.Delete(dllFileBackup);
+                    sr.Append("\r\n");
+                    sr.Append(Strings.RestoredApi32);
+                }
+            }
+            catch (Exception)
+            {
+                sr.Append("\r\n");
+                sr.Append(Strings.RestoreApi32Failed);
+                return false;
+            }
+            return true;
+        }
+
         public static bool PatchEdiabas(StringBuilder sr, string dirName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, string pin)
         {
             try
@@ -168,6 +196,18 @@ namespace EdiabasLibConfigTool
                 sr.Append(Strings.PatchConfigUpdateOk);
             }
             catch (Exception)
+            {
+                sr.Append("\r\n");
+                sr.Append(Strings.PatchConfigUpdateFailed);
+                return false;
+            }
+            return true;
+        }
+
+        public static bool RestoreEdiabas(StringBuilder sr, string dirName)
+        {
+            sr.AppendFormat(Strings.RestoreDirectory, dirName);
+            if (!RestoreFiles(sr, dirName))
             {
                 return false;
             }
