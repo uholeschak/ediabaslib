@@ -44,6 +44,7 @@
             this.openFileDialogConfigFile = new System.Windows.Forms.OpenFileDialog();
             this.textBoxWifiPassword = new System.Windows.Forms.TextBox();
             this.labelWiFiPassword = new System.Windows.Forms.Label();
+            this.buttonRestoreEdiabas = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listViewDevices
@@ -144,11 +145,19 @@
             resources.ApplyResources(this.labelWiFiPassword, "labelWiFiPassword");
             this.labelWiFiPassword.Name = "labelWiFiPassword";
             // 
+            // buttonRestoreEdiabas
+            // 
+            resources.ApplyResources(this.buttonRestoreEdiabas, "buttonRestoreEdiabas");
+            this.buttonRestoreEdiabas.Name = "buttonRestoreEdiabas";
+            this.buttonRestoreEdiabas.UseVisualStyleBackColor = true;
+            this.buttonRestoreEdiabas.Click += new System.EventHandler(this.buttonRestoreEdiabas_Click);
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.buttonRestoreEdiabas);
             this.Controls.Add(this.labelWiFiPassword);
             this.Controls.Add(this.textBoxWifiPassword);
             this.Controls.Add(this.buttonPatchEdiabas);
@@ -187,6 +196,7 @@
         private System.Windows.Forms.Label labelWiFiPassword;
         private System.Windows.Forms.TextBox textBoxBluetoothPin;
         private System.Windows.Forms.TextBox textBoxWifiPassword;
+        private System.Windows.Forms.Button buttonRestoreEdiabas;
     }
 }
 

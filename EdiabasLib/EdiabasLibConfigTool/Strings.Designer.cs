@@ -367,6 +367,42 @@ namespace EdiabasLibConfigTool {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Restoring original Api32.dll file failed. ähnelt.
+        /// </summary>
+        internal static string RestoreApi32Failed {
+            get {
+                return ResourceManager.GetString("RestoreApi32Failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Restored original Api32.dll file. ähnelt.
+        /// </summary>
+        internal static string RestoredApi32 {
+            get {
+                return ResourceManager.GetString("RestoredApi32", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Restoring EDIABAS at: &apos;{0}&apos; ähnelt.
+        /// </summary>
+        internal static string RestoreDirectory {
+            get {
+                return ResourceManager.GetString("RestoreDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die No backup file existing. ähnelt.
+        /// </summary>
+        internal static string RestoreNoBackupFile {
+            get {
+                return ResourceManager.GetString("RestoreNoBackupFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Searching ... ähnelt.
         /// </summary>
         internal static string Searching {

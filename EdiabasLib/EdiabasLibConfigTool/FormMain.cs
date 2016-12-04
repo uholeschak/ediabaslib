@@ -314,6 +314,7 @@ namespace EdiabasLibConfigTool
             AccessPoint ap = GetSelectedAp();
             buttonTest.Enabled = buttonSearch.Enabled && ((devInfo != null) || (wlanIface != null) || (ap != null)) && !_test.ThreadActive;
             buttonPatchEdiabas.Enabled = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null));
+            buttonRestoreEdiabas.Enabled = !_searching && !_test.ThreadActive;
             textBoxBluetoothPin.Enabled = !_test.ThreadActive;
             textBoxWifiPassword.Enabled = !_test.ThreadActive;
             if ((devInfo != null) || (wlanIface != null))
@@ -461,6 +462,23 @@ namespace EdiabasLibConfigTool
                 {
                     StringBuilder sr = new StringBuilder();
                     Patch.PatchEdiabas(sr, dirName, devInfo, wlanIface, textBoxBluetoothPin.Text);
+                    UpdateStatusText(sr.ToString());
+                }
+            }
+        }
+
+        private void buttonRestoreEdiabas_Click(object sender, EventArgs e)
+        {
+            string initDir = !string.IsNullOrEmpty(_ediabasDirBmw) ? _ediabasDirBmw : _ediabasDirVag;
+            openFileDialogConfigFile.InitialDirectory = initDir ?? string.Empty;
+            openFileDialogConfigFile.FileName = string.Empty;
+            if (openFileDialogConfigFile.ShowDialog() == DialogResult.OK)
+            {
+                string dirName = Path.GetDirectoryName(openFileDialogConfigFile.FileName);
+                if (dirName != null)
+                {
+                    StringBuilder sr = new StringBuilder();
+                    Patch.RestoreEdiabas(sr, dirName);
                     UpdateStatusText(sr.ToString());
                 }
             }

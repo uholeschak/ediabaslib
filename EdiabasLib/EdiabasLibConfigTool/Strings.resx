@@ -219,6 +219,18 @@
   <data name="ReadModeFailed" xml:space="preserve">
     <value>Read adapter mode failed</value>
   </data>
+  <data name="RestoreApi32Failed" xml:space="preserve">
+    <value>Restoring original Api32.dll file failed.</value>
+  </data>
+  <data name="RestoredApi32" xml:space="preserve">
+    <value>Restored original Api32.dll file.</value>
+  </data>
+  <data name="RestoreDirectory" xml:space="preserve">
+    <value>Restoring EDIABAS at: '{0}'</value>
+  </data>
+  <data name="RestoreNoBackupFile" xml:space="preserve">
+    <value>No backup file existing.</value>
+  </data>
   <data name="Searching" xml:space="preserve">
     <value>Searching ...</value>
   </data>
