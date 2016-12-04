@@ -20,8 +20,8 @@ namespace EdiabasLibConfigTool
         private readonly Wifi _wifi;
         private readonly WlanClient _wlanClient;
         private readonly Test _test;
-        private readonly string _ediabasDirBmw;
-        private readonly string _ediabasDirVag;
+        private string _ediabasDirBmw;
+        private string _ediabasDirVag;
         private string _initMessage;
         private volatile bool _searching;
 
@@ -59,36 +59,7 @@ namespace EdiabasLibConfigTool
                 }
                 sr.Append(Strings.WifiAdapterError);
             }
-            _ediabasDirBmw = Environment.GetEnvironmentVariable("ediabas_config_dir");
-            try
-            {
-                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Softing\EDIS-VW2"))
-                {
-                    string path = key?.GetValue("EDIABASPath", null) as string;
-                    if (!string.IsNullOrEmpty(path))
-                    {
-                        _ediabasDirVag = Path.Combine(path, @"bin");
-                    }
-                }
-                if (string.IsNullOrEmpty(_ediabasDirVag))
-                {
-                    using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"Software\SIDIS\ENV"))
-                    {
-                        _ediabasDirVag = key?.GetValue("FLASHINIPATH", null) as string;
-                    }
-                }
-                if (string.IsNullOrEmpty(_ediabasDirVag))
-                {
-                    using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Softing\VASEGD2"))
-                    {
-                        _ediabasDirVag = key?.GetValue("strEdiabasApi32Path", null) as string;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            GetDirectories();
 
             _initMessage = sr.ToString();
             UpdateStatusText(string.Empty);
@@ -99,6 +70,56 @@ namespace EdiabasLibConfigTool
         {
             OperatingSystem os = Environment.OSVersion;
             return (os.Platform == PlatformID.Win32NT) && (os.Version.Major >= 6);
+        }
+
+        private void GetDirectories()
+        {
+            string dirBmw = Environment.GetEnvironmentVariable("ediabas_config_dir");
+            if (Patch.IsValid(dirBmw))
+            {
+                _ediabasDirBmw = dirBmw;
+            }
+            try
+            {
+                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Softing\EDIS-VW2"))
+                {
+                    string path = key?.GetValue("EDIABASPath", null) as string;
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        string dirVag = Path.Combine(path, @"bin");
+                        if (Patch.IsValid(dirVag))
+                        {
+                            _ediabasDirVag = dirVag;
+                        }
+                    }
+                }
+                if (string.IsNullOrEmpty(_ediabasDirVag))
+                {
+                    using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"Software\SIDIS\ENV"))
+                    {
+                        string dirVag = key?.GetValue("FLASHINIPATH", null) as string;
+                        if (Patch.IsValid(dirVag))
+                        {
+                            _ediabasDirVag = dirVag;
+                        }
+                    }
+                }
+                if (string.IsNullOrEmpty(_ediabasDirVag))
+                {
+                    using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Softing\VASEGD2"))
+                    {
+                        string dirVag = key?.GetValue("strEdiabasApi32Path", null) as string;
+                        if (Patch.IsValid(dirVag))
+                        {
+                            _ediabasDirVag = dirVag;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private void AddWifiAdapters(ListView listView)
@@ -315,13 +336,16 @@ namespace EdiabasLibConfigTool
 
             bool allowPatch = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null));
             bool allowRestore = !_searching && !_test.ThreadActive;
-            groupBoxEdiabas.Enabled = !string.IsNullOrEmpty(_ediabasDirBmw);
-            buttonPatchEdiabas.Enabled = !string.IsNullOrEmpty(_ediabasDirBmw) && allowPatch;
-            buttonRestoreEdiabas.Enabled = !string.IsNullOrEmpty(_ediabasDirBmw) && allowRestore && Patch.IsPatched(_ediabasDirBmw);
 
-            groupBoxVasPc.Enabled = !string.IsNullOrEmpty(_ediabasDirVag);
-            buttonPatchVasPc.Enabled = !string.IsNullOrEmpty(_ediabasDirVag) && allowPatch;
-            buttonRestoreVasPc.Enabled = !string.IsNullOrEmpty(_ediabasDirVag) && allowRestore && Patch.IsPatched(_ediabasDirVag);
+            bool bmwValid = Patch.IsValid(_ediabasDirBmw);
+            groupBoxEdiabas.Enabled = bmwValid;
+            buttonPatchEdiabas.Enabled = bmwValid && allowPatch;
+            buttonRestoreEdiabas.Enabled = bmwValid && allowRestore && Patch.IsPatched(_ediabasDirBmw);
+
+            bool vagValid = Patch.IsValid(_ediabasDirVag);
+            groupBoxVasPc.Enabled = vagValid;
+            buttonPatchVasPc.Enabled = vagValid && allowPatch && Patch.IsValid(_ediabasDirVag);
+            buttonRestoreVasPc.Enabled = vagValid && allowRestore && Patch.IsPatched(_ediabasDirVag);
 
             textBoxBluetoothPin.Enabled = !_test.ThreadActive;
             textBoxWifiPassword.Enabled = !_test.ThreadActive;
