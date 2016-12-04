@@ -176,6 +176,27 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
+        public static bool IsPatched(string dirName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(dirName))
+                {
+                    return false;
+                }
+                string dllFileBackup = Path.Combine(dirName, ApiDllBackupName);
+                if (!File.Exists(dllFileBackup))
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static bool PatchEdiabas(StringBuilder sr, string dirName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, string pin)
         {
             try

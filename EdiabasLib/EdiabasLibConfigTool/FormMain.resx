@@ -177,7 +177,7 @@
     <value>11</value>
   </data>
   <data name="buttonClose.Location" type="System.Drawing.Point, System.Drawing">
-    <value>462, 453</value>
+    <value>462, 525</value>
   </data>
   <data name="buttonClose.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -354,16 +354,16 @@
     <value>4</value>
   </data>
   <data name="buttonPatchEdiabas.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 453</value>
+    <value>6, 19</value>
   </data>
   <data name="buttonPatchEdiabas.Size" type="System.Drawing.Size, System.Drawing">
-    <value>120, 23</value>
+    <value>75, 23</value>
   </data>
   <data name="buttonPatchEdiabas.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
   <data name="buttonPatchEdiabas.Text" xml:space="preserve">
-    <value>Patch EDIABAS</value>
+    <value>Patch</value>
   </data>
   <data name="&gt;&gt;buttonPatchEdiabas.Name" xml:space="preserve">
     <value>buttonPatchEdiabas</value>
@@ -372,10 +372,10 @@
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonPatchEdiabas.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>groupBoxEdiabas</value>
   </data>
   <data name="&gt;&gt;buttonPatchEdiabas.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>0</value>
   </data>
   <metadata name="openFileDialogConfigFile.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
@@ -405,7 +405,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;textBoxWifiPassword.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="labelWiFiPassword.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -436,22 +436,22 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;labelWiFiPassword.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="buttonRestoreEdiabas.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="buttonRestoreEdiabas.Location" type="System.Drawing.Point, System.Drawing">
-    <value>138, 453</value>
+    <value>87, 19</value>
   </data>
   <data name="buttonRestoreEdiabas.Size" type="System.Drawing.Size, System.Drawing">
-    <value>120, 23</value>
+    <value>75, 23</value>
   </data>
   <data name="buttonRestoreEdiabas.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
   <data name="buttonRestoreEdiabas.Text" xml:space="preserve">
-    <value>Revert Patch</value>
+    <value>Restore</value>
   </data>
   <data name="&gt;&gt;buttonRestoreEdiabas.Name" xml:space="preserve">
     <value>buttonRestoreEdiabas</value>
@@ -460,10 +460,136 @@
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonRestoreEdiabas.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>groupBoxEdiabas</value>
   </data>
   <data name="&gt;&gt;buttonRestoreEdiabas.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="groupBoxEdiabas.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 453</value>
+  </data>
+  <data name="groupBoxEdiabas.Size" type="System.Drawing.Size, System.Drawing">
+    <value>168, 48</value>
+  </data>
+  <data name="groupBoxEdiabas.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="groupBoxEdiabas.Text" xml:space="preserve">
+    <value>EDIABAS</value>
+  </data>
+  <data name="&gt;&gt;groupBoxEdiabas.Name" xml:space="preserve">
+    <value>groupBoxEdiabas</value>
+  </data>
+  <data name="&gt;&gt;groupBoxEdiabas.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxEdiabas.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;groupBoxEdiabas.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Name" xml:space="preserve">
+    <value>buttonPatchVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Parent" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Name" xml:space="preserve">
+    <value>buttonRestoreVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Parent" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="groupBoxVasPc.Location" type="System.Drawing.Point, System.Drawing">
+    <value>186, 453</value>
+  </data>
+  <data name="groupBoxVasPc.Size" type="System.Drawing.Size, System.Drawing">
+    <value>168, 48</value>
+  </data>
+  <data name="groupBoxVasPc.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="groupBoxVasPc.Text" xml:space="preserve">
+    <value>VAS-PC</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.Name" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="buttonPatchVasPc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="buttonPatchVasPc.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 19</value>
+  </data>
+  <data name="buttonPatchVasPc.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="buttonPatchVasPc.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="buttonPatchVasPc.Text" xml:space="preserve">
+    <value>Patch</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Name" xml:space="preserve">
+    <value>buttonPatchVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Parent" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="buttonRestoreVasPc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="buttonRestoreVasPc.Location" type="System.Drawing.Point, System.Drawing">
+    <value>87, 19</value>
+  </data>
+  <data name="buttonRestoreVasPc.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="buttonRestoreVasPc.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="buttonRestoreVasPc.Text" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Name" xml:space="preserve">
+    <value>buttonRestoreVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Parent" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -472,7 +598,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>549, 486</value>
+    <value>549, 560</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>EdiabasLib Config Tool</value>

@@ -45,6 +45,12 @@
             this.textBoxWifiPassword = new System.Windows.Forms.TextBox();
             this.labelWiFiPassword = new System.Windows.Forms.Label();
             this.buttonRestoreEdiabas = new System.Windows.Forms.Button();
+            this.groupBoxEdiabas = new System.Windows.Forms.GroupBox();
+            this.groupBoxVasPc = new System.Windows.Forms.GroupBox();
+            this.buttonPatchVasPc = new System.Windows.Forms.Button();
+            this.buttonRestoreVasPc = new System.Windows.Forms.Button();
+            this.groupBoxEdiabas.SuspendLayout();
+            this.groupBoxVasPc.SuspendLayout();
             this.SuspendLayout();
             // 
             // listViewDevices
@@ -129,7 +135,7 @@
             resources.ApplyResources(this.buttonPatchEdiabas, "buttonPatchEdiabas");
             this.buttonPatchEdiabas.Name = "buttonPatchEdiabas";
             this.buttonPatchEdiabas.UseVisualStyleBackColor = true;
-            this.buttonPatchEdiabas.Click += new System.EventHandler(this.buttonPatchEdiabas_Click);
+            this.buttonPatchEdiabas.Click += new System.EventHandler(this.buttonPatch_Click);
             // 
             // openFileDialogConfigFile
             // 
@@ -150,17 +156,45 @@
             resources.ApplyResources(this.buttonRestoreEdiabas, "buttonRestoreEdiabas");
             this.buttonRestoreEdiabas.Name = "buttonRestoreEdiabas";
             this.buttonRestoreEdiabas.UseVisualStyleBackColor = true;
-            this.buttonRestoreEdiabas.Click += new System.EventHandler(this.buttonRestoreEdiabas_Click);
+            this.buttonRestoreEdiabas.Click += new System.EventHandler(this.buttonRestore_Click);
+            // 
+            // groupBoxEdiabas
+            // 
+            this.groupBoxEdiabas.Controls.Add(this.buttonPatchEdiabas);
+            this.groupBoxEdiabas.Controls.Add(this.buttonRestoreEdiabas);
+            resources.ApplyResources(this.groupBoxEdiabas, "groupBoxEdiabas");
+            this.groupBoxEdiabas.Name = "groupBoxEdiabas";
+            this.groupBoxEdiabas.TabStop = false;
+            // 
+            // groupBoxVasPc
+            // 
+            this.groupBoxVasPc.Controls.Add(this.buttonPatchVasPc);
+            this.groupBoxVasPc.Controls.Add(this.buttonRestoreVasPc);
+            resources.ApplyResources(this.groupBoxVasPc, "groupBoxVasPc");
+            this.groupBoxVasPc.Name = "groupBoxVasPc";
+            this.groupBoxVasPc.TabStop = false;
+            // 
+            // buttonPatchVasPc
+            // 
+            resources.ApplyResources(this.buttonPatchVasPc, "buttonPatchVasPc");
+            this.buttonPatchVasPc.Name = "buttonPatchVasPc";
+            this.buttonPatchVasPc.UseVisualStyleBackColor = true;
+            // 
+            // buttonRestoreVasPc
+            // 
+            resources.ApplyResources(this.buttonRestoreVasPc, "buttonRestoreVasPc");
+            this.buttonRestoreVasPc.Name = "buttonRestoreVasPc";
+            this.buttonRestoreVasPc.UseVisualStyleBackColor = true;
             // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.buttonRestoreEdiabas);
+            this.Controls.Add(this.groupBoxVasPc);
+            this.Controls.Add(this.groupBoxEdiabas);
             this.Controls.Add(this.labelWiFiPassword);
             this.Controls.Add(this.textBoxWifiPassword);
-            this.Controls.Add(this.buttonPatchEdiabas);
             this.Controls.Add(this.labelBtDevices);
             this.Controls.Add(this.labelBluetoothPin);
             this.Controls.Add(this.textBoxBluetoothPin);
@@ -174,6 +208,8 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             this.Shown += new System.EventHandler(this.FormMain_Shown);
+            this.groupBoxEdiabas.ResumeLayout(false);
+            this.groupBoxVasPc.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -197,6 +233,10 @@
         private System.Windows.Forms.TextBox textBoxBluetoothPin;
         private System.Windows.Forms.TextBox textBoxWifiPassword;
         private System.Windows.Forms.Button buttonRestoreEdiabas;
+        private System.Windows.Forms.GroupBox groupBoxEdiabas;
+        private System.Windows.Forms.GroupBox groupBoxVasPc;
+        private System.Windows.Forms.Button buttonPatchVasPc;
+        private System.Windows.Forms.Button buttonRestoreVasPc;
     }
 }
 
