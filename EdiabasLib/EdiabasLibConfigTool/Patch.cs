@@ -176,6 +176,27 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
+        public static bool IsValid(string dirName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(dirName))
+                {
+                    return false;
+                }
+                string dllFile = Path.Combine(dirName, ApiDllName);
+                if (!File.Exists(dllFile))
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static bool IsPatched(string dirName)
         {
             try
