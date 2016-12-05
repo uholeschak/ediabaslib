@@ -277,6 +277,15 @@ namespace EdiabasLibConfigTool {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die API version: {0} ähnelt.
+        /// </summary>
+        internal static string PatchApiVersion {
+            get {
+                return ResourceManager.GetString("PatchApiVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Backup file is already existing. ähnelt.
         /// </summary>
         internal static string PatchBackupFileExisting {
@@ -345,6 +354,15 @@ namespace EdiabasLibConfigTool {
         internal static string PatchDirectory {
             get {
                 return ResourceManager.GetString("PatchDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unable to load Api32.dll. Is VS2015 C++ runtime installed? ähnelt.
+        /// </summary>
+        internal static string PatchLoadApi32Failed {
+            get {
+                return ResourceManager.GetString("PatchLoadApi32Failed", resourceCulture);
             }
         }
         

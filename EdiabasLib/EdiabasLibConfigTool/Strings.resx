@@ -250,4 +250,10 @@
     <value>The adapter configuration page will be opened in the web browser.
 The default root password is root.</value>
   </data>
+  <data name="PatchApiVersion" xml:space="preserve">
+    <value>API version: {0}</value>
+  </data>
+  <data name="PatchLoadApi32Failed" xml:space="preserve">
+    <value>Unable to load Api32.dll. Is VS2015 C++ runtime installed?</value>
+  </data>
 </root>

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml.Linq;
 using InTheHand.Net.Sockets;
@@ -14,6 +15,21 @@ namespace EdiabasLibConfigTool
         private const string ApiDllName = @"api32.dll";
         private const string ApiDllBackupName = @"api32.backup.dll";
         private const string ConfigFileName = @"EdiabasLib.config";
+
+        static class NativeMethods
+        {
+            [DllImport("kernel32.dll")]
+            public static extern IntPtr LoadLibrary(string dllToLoad);
+
+            [DllImport("kernel32.dll")]
+            public static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
+
+            [DllImport("kernel32.dll")]
+            public static extern bool FreeLibrary(IntPtr hModule);
+        }
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi)]
+        private delegate int ApiCheckVersion(int versionCompatibility, sbyte[] versionInfo);
 
         public static string AssemblyDirectory
         {
@@ -120,6 +136,48 @@ namespace EdiabasLibConfigTool
                     sr.Append(Strings.PatchApi32Missing);
                     return false;
                 }
+                IntPtr hDll = NativeMethods.LoadLibrary(sourceDll);
+                try
+                {
+                    if (hDll == IntPtr.Zero)
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(Strings.PatchLoadApi32Failed);
+                        return false;
+                    }
+                    IntPtr pApiCheckVersion = NativeMethods.GetProcAddress(hDll, "__apiCheckVersion");
+                    if (pApiCheckVersion == IntPtr.Zero)
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(Strings.PatchLoadApi32Failed);
+                        return false;
+                    }
+                    ApiCheckVersion apiCheckVersion = (ApiCheckVersion) Marshal.GetDelegateForFunctionPointer(pApiCheckVersion, typeof (ApiCheckVersion));
+                    sbyte[] versionInfo = new sbyte[0x100];
+                    if (apiCheckVersion(0x700, versionInfo) == 0)
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(Strings.PatchLoadApi32Failed);
+                        return false;
+                    }
+                    string version = Encoding.ASCII.GetString(versionInfo.TakeWhile(value => value != 0).Select(value => (byte) value).ToArray());
+                    sr.Append("\r\n");
+                    sr.Append(string.Format(Strings.PatchApiVersion, version));
+                }
+                catch (Exception)
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Strings.PatchLoadApi32Failed);
+                    return false;
+                }
+                finally
+                {
+                    if (hDll != IntPtr.Zero)
+                    {
+                        NativeMethods.FreeLibrary(hDll);
+                    }
+                }
+
                 File.Copy(sourceDll, dllFile, true);
                 string sourceConfig = Path.Combine(sourceDir, ConfigFileName);
                 if (!File.Exists(sourceConfig))
