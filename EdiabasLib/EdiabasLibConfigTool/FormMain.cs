@@ -346,7 +346,7 @@ namespace EdiabasLibConfigTool
 
             bool vagValid = Patch.IsValid(_ediabasDirVag);
             groupBoxVasPc.Enabled = vagValid;
-            buttonPatchVasPc.Enabled = vagValid && allowPatch;
+            buttonPatchVasPc.Enabled = vagValid && allowPatch && (devInfo != null);
             buttonRestoreVasPc.Enabled = vagValid && allowRestore && Patch.IsPatched(_ediabasDirVag);
 
             bool istadValid = Patch.IsValid(_ediabasDirIstad);
