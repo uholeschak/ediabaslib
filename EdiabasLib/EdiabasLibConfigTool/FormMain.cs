@@ -22,6 +22,7 @@ namespace EdiabasLibConfigTool
         private readonly Test _test;
         private string _ediabasDirBmw;
         private string _ediabasDirVag;
+        private string _ediabasDirIstad;
         private string _initMessage;
         private volatile bool _searching;
 
@@ -120,6 +121,7 @@ namespace EdiabasLibConfigTool
             {
                 // ignored
             }
+            _ediabasDirIstad = Properties.Settings.Default.IstadDir;
         }
 
         private void AddWifiAdapters(ListView listView)
@@ -344,8 +346,14 @@ namespace EdiabasLibConfigTool
 
             bool vagValid = Patch.IsValid(_ediabasDirVag);
             groupBoxVasPc.Enabled = vagValid;
-            buttonPatchVasPc.Enabled = vagValid && allowPatch && Patch.IsValid(_ediabasDirVag);
+            buttonPatchVasPc.Enabled = vagValid && allowPatch;
             buttonRestoreVasPc.Enabled = vagValid && allowRestore && Patch.IsPatched(_ediabasDirVag);
+
+            bool istadValid = Patch.IsValid(_ediabasDirIstad);
+            groupBoxIstad.Enabled = true;
+            buttonDirIstad.Enabled = allowRestore;
+            buttonPatchIstad.Enabled = istadValid && allowPatch;
+            buttonRestoreIstad.Enabled = istadValid && allowRestore && Patch.IsPatched(_ediabasDirIstad);
 
             textBoxBluetoothPin.Enabled = !_test.ThreadActive;
             textBoxWifiPassword.Enabled = !_test.ThreadActive;
@@ -423,6 +431,8 @@ namespace EdiabasLibConfigTool
         {
             _cli?.Dispose();
             _test?.Dispose();
+            Properties.Settings.Default.IstadDir = _ediabasDirIstad ?? string.Empty;
+            Properties.Settings.Default.Save();
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -493,14 +503,9 @@ namespace EdiabasLibConfigTool
             {
                 dirName = _ediabasDirVag;
             }
-            if (string.IsNullOrEmpty(dirName))
+            else if (sender == buttonPatchIstad)
             {
-                openFileDialogConfigFile.InitialDirectory = string.Empty;
-                openFileDialogConfigFile.FileName = string.Empty;
-                if (openFileDialogConfigFile.ShowDialog() == DialogResult.OK)
-                {
-                    dirName = Path.GetDirectoryName(openFileDialogConfigFile.FileName);
-                }
+                dirName = _ediabasDirIstad;
             }
             if (!string.IsNullOrEmpty(dirName))
             {
@@ -522,20 +527,26 @@ namespace EdiabasLibConfigTool
             {
                 dirName = _ediabasDirVag;
             }
-            if (string.IsNullOrEmpty(dirName))
+            else if (sender == buttonRestoreIstad)
             {
-                openFileDialogConfigFile.InitialDirectory = string.Empty;
-                openFileDialogConfigFile.FileName = string.Empty;
-                if (openFileDialogConfigFile.ShowDialog() == DialogResult.OK)
-                {
-                    dirName = Path.GetDirectoryName(openFileDialogConfigFile.FileName);
-                }
+                dirName = _ediabasDirIstad;
             }
             if (!string.IsNullOrEmpty(dirName))
             {
                 StringBuilder sr = new StringBuilder();
                 Patch.RestoreEdiabas(sr, dirName);
                 UpdateStatusText(sr.ToString());
+            }
+            UpdateButtonStatus();
+        }
+
+        private void buttonDirIstad_Click(object sender, EventArgs e)
+        {
+            openFileDialogConfigFile.InitialDirectory = _ediabasDirIstad??string.Empty;
+            openFileDialogConfigFile.FileName = string.Empty;
+            if (openFileDialogConfigFile.ShowDialog() == DialogResult.OK)
+            {
+                _ediabasDirIstad = Path.GetDirectoryName(openFileDialogConfigFile.FileName);
             }
             UpdateButtonStatus();
         }
