@@ -49,8 +49,13 @@
             this.groupBoxVasPc = new System.Windows.Forms.GroupBox();
             this.buttonPatchVasPc = new System.Windows.Forms.Button();
             this.buttonRestoreVasPc = new System.Windows.Forms.Button();
+            this.groupBoxIstad = new System.Windows.Forms.GroupBox();
+            this.buttonPatchIstad = new System.Windows.Forms.Button();
+            this.buttonRestoreIstad = new System.Windows.Forms.Button();
+            this.buttonDirIstad = new System.Windows.Forms.Button();
             this.groupBoxEdiabas.SuspendLayout();
             this.groupBoxVasPc.SuspendLayout();
+            this.groupBoxIstad.SuspendLayout();
             this.SuspendLayout();
             // 
             // listViewDevices
@@ -179,18 +184,51 @@
             resources.ApplyResources(this.buttonPatchVasPc, "buttonPatchVasPc");
             this.buttonPatchVasPc.Name = "buttonPatchVasPc";
             this.buttonPatchVasPc.UseVisualStyleBackColor = true;
+            this.buttonPatchVasPc.Click += new System.EventHandler(this.buttonPatch_Click);
             // 
             // buttonRestoreVasPc
             // 
             resources.ApplyResources(this.buttonRestoreVasPc, "buttonRestoreVasPc");
             this.buttonRestoreVasPc.Name = "buttonRestoreVasPc";
             this.buttonRestoreVasPc.UseVisualStyleBackColor = true;
+            this.buttonRestoreVasPc.Click += new System.EventHandler(this.buttonRestore_Click);
+            // 
+            // groupBoxIstad
+            // 
+            this.groupBoxIstad.Controls.Add(this.buttonDirIstad);
+            this.groupBoxIstad.Controls.Add(this.buttonPatchIstad);
+            this.groupBoxIstad.Controls.Add(this.buttonRestoreIstad);
+            resources.ApplyResources(this.groupBoxIstad, "groupBoxIstad");
+            this.groupBoxIstad.Name = "groupBoxIstad";
+            this.groupBoxIstad.TabStop = false;
+            // 
+            // buttonPatchIstad
+            // 
+            resources.ApplyResources(this.buttonPatchIstad, "buttonPatchIstad");
+            this.buttonPatchIstad.Name = "buttonPatchIstad";
+            this.buttonPatchIstad.UseVisualStyleBackColor = true;
+            this.buttonPatchIstad.Click += new System.EventHandler(this.buttonPatch_Click);
+            // 
+            // buttonRestoreIstad
+            // 
+            resources.ApplyResources(this.buttonRestoreIstad, "buttonRestoreIstad");
+            this.buttonRestoreIstad.Name = "buttonRestoreIstad";
+            this.buttonRestoreIstad.UseVisualStyleBackColor = true;
+            this.buttonRestoreIstad.Click += new System.EventHandler(this.buttonRestore_Click);
+            // 
+            // buttonDirIstad
+            // 
+            resources.ApplyResources(this.buttonDirIstad, "buttonDirIstad");
+            this.buttonDirIstad.Name = "buttonDirIstad";
+            this.buttonDirIstad.UseVisualStyleBackColor = true;
+            this.buttonDirIstad.Click += new System.EventHandler(this.buttonDirIstad_Click);
             // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.groupBoxIstad);
             this.Controls.Add(this.groupBoxVasPc);
             this.Controls.Add(this.groupBoxEdiabas);
             this.Controls.Add(this.labelWiFiPassword);
@@ -210,6 +248,7 @@
             this.Shown += new System.EventHandler(this.FormMain_Shown);
             this.groupBoxEdiabas.ResumeLayout(false);
             this.groupBoxVasPc.ResumeLayout(false);
+            this.groupBoxIstad.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -237,6 +276,10 @@
         private System.Windows.Forms.GroupBox groupBoxVasPc;
         private System.Windows.Forms.Button buttonPatchVasPc;
         private System.Windows.Forms.Button buttonRestoreVasPc;
+        private System.Windows.Forms.GroupBox groupBoxIstad;
+        private System.Windows.Forms.Button buttonPatchIstad;
+        private System.Windows.Forms.Button buttonRestoreIstad;
+        private System.Windows.Forms.Button buttonDirIstad;
     }
 }
 
