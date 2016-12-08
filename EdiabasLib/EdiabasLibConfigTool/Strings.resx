@@ -256,4 +256,7 @@ The default root password is root.</value>
   <data name="PatchLoadApi32Failed" xml:space="preserve">
     <value>Unable to load Api32.dll. Is VS2015 C++ runtime installed?</value>
   </data>
+  <data name="PatchNoValidBackupFile" xml:space="preserve">
+    <value>The Api32.dll backup file is not valid.</value>
+  </data>
 </root>

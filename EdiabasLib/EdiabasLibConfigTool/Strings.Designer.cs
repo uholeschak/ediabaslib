@@ -367,6 +367,15 @@ namespace EdiabasLibConfigTool {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The Api32.dll backup file is not valid. ähnelt.
+        /// </summary>
+        internal static string PatchNoValidBackupFile {
+            get {
+                return ResourceManager.GetString("PatchNoValidBackupFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Read firmware version failed ähnelt.
         /// </summary>
         internal static string ReadFirmwareVersionFailed {
