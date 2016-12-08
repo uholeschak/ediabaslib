@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -31,7 +32,7 @@ namespace EdiabasLibConfigTool
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi)]
         private delegate int ApiCheckVersion(int versionCompatibility, sbyte[] versionInfo);
 
-        public static string AssemblyDirectory
+        static public string AssemblyDirectory
         {
             get
             {
@@ -40,6 +41,31 @@ namespace EdiabasLibConfigTool
                 string path = Uri.UnescapeDataString(uri.Path);
                 return Path.GetDirectoryName(path);
             }
+        }
+
+        static public bool IsOriginalDll(string fileName)
+        {
+            try
+            {
+                if (!File.Exists(fileName))
+                {
+                    return false;
+                }
+                FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(fileName);
+                if (string.IsNullOrEmpty(fileVersion.LegalCopyright))
+                {
+                    return false;
+                }
+                if (!fileVersion.LegalCopyright.ToLowerInvariant().Contains("softing"))
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
         static public void UpdateConfigNode(XElement settingsNode, string key, string value, bool onlyExisting = false)
@@ -117,7 +143,7 @@ namespace EdiabasLibConfigTool
             {
                 string dllFile = Path.Combine(dirName, ApiDllName);
                 string dllFileBackup = Path.Combine(dirName, ApiDllBackupName);
-                if (!File.Exists(dllFileBackup))
+                if (!File.Exists(dllFileBackup) && IsOriginalDll(dllFile))
                 {
                     sr.Append("\r\n");
                     sr.Append(Strings.PatchCreateBackupFile);
@@ -178,6 +204,12 @@ namespace EdiabasLibConfigTool
                     }
                 }
 
+                if (!IsOriginalDll(dllFileBackup))
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Strings.PatchNoValidBackupFile);
+                    return false;
+                }
                 File.Copy(sourceDll, dllFile, true);
                 string sourceConfig = Path.Combine(sourceDir, ConfigFileName);
                 if (!File.Exists(sourceConfig))
