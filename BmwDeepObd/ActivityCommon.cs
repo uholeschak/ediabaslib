@@ -802,11 +802,8 @@ namespace BmwDeepObd
                     }
                     string[] stringList = deviceAddress.Split('#', ';');
                     if (stringList.Length > 1)
-                    {
-                        if (string.Compare(stringList[1], EdBluetoothInterface.Elm327Tag, StringComparison.OrdinalIgnoreCase) == 0)
-                        {   // ELM device
-                            return false;
-                        }
+                    {   // no deep obd adapter
+                        return false;
                     }
                     return true;
                 }
