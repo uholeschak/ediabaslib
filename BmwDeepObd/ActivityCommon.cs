@@ -800,7 +800,7 @@ namespace BmwDeepObd
                     {
                         return false;
                     }
-                    string[] stringList = deviceAddress.Split(';');
+                    string[] stringList = deviceAddress.Split('#', ';');
                     if (stringList.Length > 1)
                     {
                         if (string.Compare(stringList[1], EdBluetoothInterface.Elm327Tag, StringComparison.OrdinalIgnoreCase) == 0)
