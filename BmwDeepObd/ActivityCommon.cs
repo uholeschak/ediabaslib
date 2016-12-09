@@ -528,14 +528,28 @@ namespace BmwDeepObd
                     }
                     if (_wakeLockScreen != null)
                     {
-                        _wakeLockScreen.Release();
-                        _wakeLockScreen.Dispose();
+                        try
+                        {
+                            _wakeLockScreen.Release();
+                            _wakeLockScreen.Dispose();
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                         _wakeLockScreen = null;
                     }
                     if (_wakeLockCpu != null)
                     {
-                        _wakeLockCpu.Release();
-                        _wakeLockCpu.Dispose();
+                        try
+                        {
+                            _wakeLockCpu.Release();
+                            _wakeLockCpu.Dispose();
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                         _wakeLockCpu = null;
                     }
                 }
