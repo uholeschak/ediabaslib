@@ -46,7 +46,7 @@ namespace EdiabasLibConfigTool
             }
             catch (Exception ex)
             {
-                sr.Append(string.Format(Strings.BtInitError, ex.Message));
+                sr.Append(string.Format(Resources.Strings.BtInitError, ex.Message));
             }
             _deviceList = new List<BluetoothDeviceInfo>();
             _wifi = new Wifi();
@@ -58,7 +58,7 @@ namespace EdiabasLibConfigTool
                 {
                     sr.Append("\r\n");
                 }
-                sr.Append(Strings.WifiAdapterError);
+                sr.Append(Resources.Strings.WifiAdapterError);
             }
             GetDirectories();
 
@@ -160,7 +160,7 @@ namespace EdiabasLibConfigTool
                         if (string.Compare(ap.Name, AdapterSsid, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             ListViewItem listViewItem =
-                                new ListViewItem(new[] { Strings.DisconnectedAdapter, ap.Name })
+                                new ListViewItem(new[] { Resources.Strings.DisconnectedAdapter, ap.Name })
                                 {
                                     Tag = ap
                                 };
@@ -180,7 +180,7 @@ namespace EdiabasLibConfigTool
             UpdateDeviceList(null, true);
             if (_cli == null)
             {
-                UpdateStatusText(listViewDevices.Items.Count > 0 ? Strings.DevicesFound : Strings.DevicesNotFound);
+                UpdateStatusText(listViewDevices.Items.Count > 0 ? Resources.Strings.DevicesFound : Resources.Strings.DevicesNotFound);
                 return false;
             }
             try
@@ -220,30 +220,30 @@ namespace EdiabasLibConfigTool
                         if (args.Error == null && !args.Cancelled)
                         {
                             UpdateDeviceList(args.Devices, true);
-                            UpdateStatusText(listViewDevices.Items.Count > 0 ? Strings.DevicesFound : Strings.DevicesNotFound);
+                            UpdateStatusText(listViewDevices.Items.Count > 0 ? Resources.Strings.DevicesFound : Resources.Strings.DevicesNotFound);
                         }
                         else
                         {
                             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                             if (args.Error != null)
                             {
-                                UpdateStatusText(string.Format(Strings.SearchingFailedMessage, args.Error.Message));
+                                UpdateStatusText(string.Format(Resources.Strings.SearchingFailedMessage, args.Error.Message));
                             }
                             else
                             {
-                                UpdateStatusText(Strings.SearchingFailed);
+                                UpdateStatusText(Resources.Strings.SearchingFailed);
                             }
                         }
                     }));
                 };
                 bco.DiscoverDevicesAsync(1000, true, false, true, IsWinVistaOrHigher(), bco);
                 _searching = true;
-                UpdateStatusText(Strings.Searching);
+                UpdateStatusText(Resources.Strings.Searching);
                 UpdateButtonStatus();
             }
             catch (Exception)
             {
-                UpdateStatusText(Strings.SearchingFailed);
+                UpdateStatusText(Resources.Strings.SearchingFailed);
                 return false;
             }
             return true;
@@ -361,20 +361,20 @@ namespace EdiabasLibConfigTool
             {
                 if (_test.TestOk && _test.ConfigPossible)
                 {
-                    buttonTest.Text = Strings.ButtonTestConfiguration;
+                    buttonTest.Text = Resources.Strings.ButtonTestConfiguration;
                 }
                 else
                 {
-                    buttonTest.Text = Strings.ButtonTestCheck;
+                    buttonTest.Text = Resources.Strings.ButtonTestCheck;
                 }
             }
             else if (ap != null)
             {
-                buttonTest.Text = Strings.ButtonTestConnect;
+                buttonTest.Text = Resources.Strings.ButtonTestConnect;
             }
             else
             {
-                buttonTest.Text = Strings.ButtonTestCheck;
+                buttonTest.Text = Resources.Strings.ButtonTestCheck;
             }
         }
 
