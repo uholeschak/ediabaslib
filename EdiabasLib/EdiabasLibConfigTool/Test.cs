@@ -91,7 +91,7 @@ namespace EdiabasLibConfigTool
                     {
                         if (!success)
                         {
-                            _form.UpdateStatusText(Strings.ConnectionFailed);
+                            _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
                         }
                         else
                         {
@@ -110,19 +110,19 @@ namespace EdiabasLibConfigTool
                     IPInterfaceProperties ipProp = wlanIface.NetworkInterface.GetIPProperties();
                     if (ipProp == null)
                     {
-                        _form.UpdateStatusText(Strings.ConnectionFailed);
+                        _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
                         return false;
                     }
                     string ipAddr = (from addr in ipProp.DhcpServerAddresses where addr.AddressFamily == AddressFamily.InterNetwork select addr.ToString()).FirstOrDefault();
                     if (string.IsNullOrEmpty(ipAddr))
                     {
-                        _form.UpdateStatusText(Strings.ConnectionFailed);
+                        _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
                         return false;
                     }
                     if (configure)
                     {
                         Process.Start(string.Format("http://{0}", ipAddr));
-                        _form.UpdateStatusText(Strings.WifiUrlOk);
+                        _form.UpdateStatusText(Resources.Strings.WifiUrlOk);
                         TestOk = true;
                         ConfigPossible = true;
                         return true;
@@ -147,7 +147,7 @@ namespace EdiabasLibConfigTool
                 }
                 catch (Exception)
                 {
-                    _form.UpdateStatusText(Strings.ConnectionFailed);
+                    _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
                     return false;
                 }
                 return true;
@@ -163,10 +163,10 @@ namespace EdiabasLibConfigTool
             {
                 try
                 {
-                    _form.UpdateStatusText(Strings.Connecting);
+                    _form.UpdateStatusText(Resources.Strings.Connecting);
                     if (!ConnectBtDevice(devInfo, pin))
                     {
-                        _form.UpdateStatusText(Strings.ConnectionFailed);
+                        _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
                         return;
                     }
                     bool configRequired;
@@ -189,7 +189,7 @@ namespace EdiabasLibConfigTool
 
         private bool RunWifiTest(string ipAddr)
         {
-            _form.UpdateStatusText(Strings.Connecting);
+            _form.UpdateStatusText(Resources.Strings.Connecting);
 
             StringBuilder sr = new StringBuilder();
             WebResponse response = null;
@@ -202,25 +202,25 @@ namespace EdiabasLibConfigTool
                 Stream dataStream = response.GetResponseStream();
                 if (dataStream == null)
                 {
-                    _form.UpdateStatusText(Strings.ConnectionFailed);
+                    _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
                     return false;
                 }
-                sr.Append(Strings.Connected);
+                sr.Append(Resources.Strings.Connected);
                 reader = new StreamReader(dataStream);
                 string responseFromServer = reader.ReadToEnd();
                 if (!responseFromServer.Contains(@"LuCI - Lua Configuration Interface"))
                 {
                     sr.Append("\r\n");
-                    sr.Append(Strings.HttpResponseIncorrect);
+                    sr.Append(Resources.Strings.HttpResponseIncorrect);
                     _form.UpdateStatusText(sr.ToString());
                     return false;
                 }
                 sr.Append("\r\n");
-                sr.Append(Strings.HttpResponseOk);
+                sr.Append(Resources.Strings.HttpResponseOk);
             }
             catch (Exception)
             {
-                _form.UpdateStatusText(Strings.ConnectionFailed);
+                _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
                 return false;
             }
             finally
@@ -229,7 +229,7 @@ namespace EdiabasLibConfigTool
                 response?.Close();
             }
             sr.Append("\r\n");
-            sr.Append(Strings.TestOk);
+            sr.Append(Resources.Strings.TestOk);
             _form.UpdateStatusText(sr.ToString());
             return true;
         }
@@ -238,23 +238,23 @@ namespace EdiabasLibConfigTool
         {
             configRequired = false;
             StringBuilder sr = new StringBuilder();
-            sr.Append(Strings.Connected);
+            sr.Append(Resources.Strings.Connected);
             byte[] firmware = AdapterCommandCustom(0xFD, new byte[] { 0xFD });
             if ((firmware == null) || (firmware.Length < 4))
             {
                 sr.Append("\r\n");
-                sr.Append(Strings.ReadFirmwareVersionFailed);
+                sr.Append(Resources.Strings.ReadFirmwareVersionFailed);
                 _form.UpdateStatusText(sr.ToString());
                 return false;
             }
             sr.Append("\r\n");
-            sr.Append(Strings.FirmwareVersion);
+            sr.Append(Resources.Strings.FirmwareVersion);
             sr.Append(string.Format(" {0}.{1}", firmware[2], firmware[3]));
             int version = (firmware[2] << 8) + firmware[3];
             if (version < 8)
             {
                 sr.Append("\r\n");
-                sr.Append(Strings.FirmwareTooOld);
+                sr.Append(Resources.Strings.FirmwareTooOld);
                 _form.UpdateStatusText(sr.ToString());
                 return false;
             }
@@ -262,33 +262,33 @@ namespace EdiabasLibConfigTool
             if ((canMode == null) || (canMode.Length < 1))
             {
                 sr.Append("\r\n");
-                sr.Append(Strings.ReadModeFailed);
+                sr.Append(Resources.Strings.ReadModeFailed);
                 _form.UpdateStatusText(sr.ToString());
                 return false;
             }
             sr.Append("\r\n");
-            sr.Append(Strings.CanMode);
+            sr.Append(Resources.Strings.CanMode);
             sr.Append(" ");
             switch ((AdapterMode)canMode[0])
             {
                 case AdapterMode.CanOff:
-                    sr.Append(Strings.CanModeOff);
+                    sr.Append(Resources.Strings.CanModeOff);
                     break;
 
                 case AdapterMode.Can500:
-                    sr.Append(Strings.CanMode500);
+                    sr.Append(Resources.Strings.CanMode500);
                     break;
 
                 case AdapterMode.Can100:
-                    sr.Append(Strings.CanMode100);
+                    sr.Append(Resources.Strings.CanMode100);
                     break;
 
                 case AdapterMode.CanAuto:
-                    sr.Append(Strings.CanModeAuto);
+                    sr.Append(Resources.Strings.CanModeAuto);
                     break;
 
                 default:
-                    sr.Append(Strings.CanModeUnknown);
+                    sr.Append(Resources.Strings.CanModeUnknown);
                     break;
             }
             if ((AdapterMode)canMode[0] != AdapterMode.CanAuto)
@@ -296,23 +296,23 @@ namespace EdiabasLibConfigTool
                 if (configure)
                 {
                     sr.Append("\r\n");
-                    sr.Append(Strings.CanModeChangeAuto);
+                    sr.Append(Resources.Strings.CanModeChangeAuto);
                     canMode = AdapterCommandCustom(0x02, new[] { (byte)AdapterMode.CanAuto });
                     if ((canMode == null) || (canMode.Length < 1) || ((AdapterMode)canMode[0] != AdapterMode.CanAuto))
                     {
                         sr.Append("\r\n");
-                        sr.Append(Strings.CanModeChangeFailed);
+                        sr.Append(Resources.Strings.CanModeChangeFailed);
                     }
                 }
                 else
                 {
                     configRequired = true;
                     sr.Append("\r\n");
-                    sr.Append(Strings.CanModeNotAuto);
+                    sr.Append(Resources.Strings.CanModeNotAuto);
                 }
             }
             sr.Append("\r\n");
-            sr.Append(Strings.TestOk);
+            sr.Append(Resources.Strings.TestOk);
             _form.UpdateStatusText(sr.ToString());
             return true;
         }

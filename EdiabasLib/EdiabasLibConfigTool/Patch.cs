@@ -146,20 +146,20 @@ namespace EdiabasLibConfigTool
                 if (!File.Exists(dllFileBackup) && IsOriginalDll(dllFile))
                 {
                     sr.Append("\r\n");
-                    sr.Append(Strings.PatchCreateBackupFile);
+                    sr.Append(Resources.Strings.PatchCreateBackupFile);
                     File.Copy(dllFile, dllFileBackup, false);
                 }
                 else
                 {
                     sr.Append("\r\n");
-                    sr.Append(Strings.PatchBackupFileExisting);
+                    sr.Append(Resources.Strings.PatchBackupFileExisting);
                 }
                 string sourceDir = AssemblyDirectory;
                 string sourceDll = Path.Combine(sourceDir, ApiDllName);
                 if (!File.Exists(sourceDll))
                 {
                     sr.Append("\r\n");
-                    sr.Append(Strings.PatchApi32Missing);
+                    sr.Append(Resources.Strings.PatchApi32Missing);
                     return false;
                 }
                 IntPtr hDll = NativeMethods.LoadLibrary(sourceDll);
@@ -168,14 +168,14 @@ namespace EdiabasLibConfigTool
                     if (hDll == IntPtr.Zero)
                     {
                         sr.Append("\r\n");
-                        sr.Append(Strings.PatchLoadApi32Failed);
+                        sr.Append(Resources.Strings.PatchLoadApi32Failed);
                         return false;
                     }
                     IntPtr pApiCheckVersion = NativeMethods.GetProcAddress(hDll, "__apiCheckVersion");
                     if (pApiCheckVersion == IntPtr.Zero)
                     {
                         sr.Append("\r\n");
-                        sr.Append(Strings.PatchLoadApi32Failed);
+                        sr.Append(Resources.Strings.PatchLoadApi32Failed);
                         return false;
                     }
                     ApiCheckVersion apiCheckVersion = (ApiCheckVersion) Marshal.GetDelegateForFunctionPointer(pApiCheckVersion, typeof (ApiCheckVersion));
@@ -183,17 +183,17 @@ namespace EdiabasLibConfigTool
                     if (apiCheckVersion(0x700, versionInfo) == 0)
                     {
                         sr.Append("\r\n");
-                        sr.Append(Strings.PatchLoadApi32Failed);
+                        sr.Append(Resources.Strings.PatchLoadApi32Failed);
                         return false;
                     }
                     string version = Encoding.ASCII.GetString(versionInfo.TakeWhile(value => value != 0).Select(value => (byte) value).ToArray());
                     sr.Append("\r\n");
-                    sr.Append(string.Format(Strings.PatchApiVersion, version));
+                    sr.Append(string.Format(Resources.Strings.PatchApiVersion, version));
                 }
                 catch (Exception)
                 {
                     sr.Append("\r\n");
-                    sr.Append(Strings.PatchLoadApi32Failed);
+                    sr.Append(Resources.Strings.PatchLoadApi32Failed);
                     return false;
                 }
                 finally
@@ -207,7 +207,7 @@ namespace EdiabasLibConfigTool
                 if (!IsOriginalDll(dllFileBackup))
                 {
                     sr.Append("\r\n");
-                    sr.Append(Strings.PatchNoValidBackupFile);
+                    sr.Append(Resources.Strings.PatchNoValidBackupFile);
                     return false;
                 }
                 File.Copy(sourceDll, dllFile, true);
@@ -215,7 +215,7 @@ namespace EdiabasLibConfigTool
                 if (!File.Exists(sourceConfig))
                 {
                     sr.Append("\r\n");
-                    sr.Append(Strings.PatchConfigMissing);
+                    sr.Append(Resources.Strings.PatchConfigMissing);
                     return false;
                 }
                 string configFile = Path.Combine(dirName, ConfigFileName);
@@ -226,13 +226,13 @@ namespace EdiabasLibConfigTool
                 else
                 {
                     sr.Append("\r\n");
-                    sr.Append(Strings.PatchConfigExisting);
+                    sr.Append(Resources.Strings.PatchConfigExisting);
                 }
             }
             catch (Exception)
             {
                 sr.Append("\r\n");
-                sr.Append(Strings.PatchCopyFailed);
+                sr.Append(Resources.Strings.PatchCopyFailed);
                 return false;
             }
             return true;
@@ -247,20 +247,20 @@ namespace EdiabasLibConfigTool
                 if (!File.Exists(dllFileBackup))
                 {
                     sr.Append("\r\n");
-                    sr.Append(Strings.RestoreNoBackupFile);
+                    sr.Append(Resources.Strings.RestoreNoBackupFile);
                 }
                 else
                 {
                     File.Copy(dllFileBackup, dllFile, true);
                     File.Delete(dllFileBackup);
                     sr.Append("\r\n");
-                    sr.Append(Strings.RestoredApi32);
+                    sr.Append(Resources.Strings.RestoredApi32);
                 }
             }
             catch (Exception)
             {
                 sr.Append("\r\n");
-                sr.Append(Strings.RestoreApi32Failed);
+                sr.Append(Resources.Strings.RestoreApi32Failed);
                 return false;
             }
             return true;
@@ -312,7 +312,7 @@ namespace EdiabasLibConfigTool
         {
             try
             {
-                sr.AppendFormat(Strings.PatchDirectory, dirName);
+                sr.AppendFormat(Resources.Strings.PatchDirectory, dirName);
                 if (!PatchFiles(sr, dirName))
                 {
                     return false;
@@ -321,16 +321,16 @@ namespace EdiabasLibConfigTool
                 if (!UpdateConfigFile(configFile, devInfo, wlanIface, pin))
                 {
                     sr.Append("\r\n");
-                    sr.Append(Strings.PatchConfigUpdateFailed);
+                    sr.Append(Resources.Strings.PatchConfigUpdateFailed);
                     return false;
                 }
                 sr.Append("\r\n");
-                sr.Append(Strings.PatchConfigUpdateOk);
+                sr.Append(Resources.Strings.PatchConfigUpdateOk);
             }
             catch (Exception)
             {
                 sr.Append("\r\n");
-                sr.Append(Strings.PatchConfigUpdateFailed);
+                sr.Append(Resources.Strings.PatchConfigUpdateFailed);
                 return false;
             }
             return true;
@@ -338,7 +338,7 @@ namespace EdiabasLibConfigTool
 
         public static bool RestoreEdiabas(StringBuilder sr, string dirName)
         {
-            sr.AppendFormat(Strings.RestoreDirectory, dirName);
+            sr.AppendFormat(Resources.Strings.RestoreDirectory, dirName);
             if (!RestoreFiles(sr, dirName))
             {
                 return false;
