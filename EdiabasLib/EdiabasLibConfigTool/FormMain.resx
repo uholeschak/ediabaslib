@@ -383,6 +383,9 @@
   <data name="openFileDialogConfigFile.Filter" xml:space="preserve">
     <value>Api32.dll File|Api32.dll</value>
   </data>
+  <data name="openFileDialogConfigFile.Title" xml:space="preserve">
+    <value>Select ISTA-D EDIABAS\bin directory</value>
+  </data>
   <data name="textBoxWifiPassword.Location" type="System.Drawing.Point, System.Drawing">
     <value>236, 398</value>
   </data>

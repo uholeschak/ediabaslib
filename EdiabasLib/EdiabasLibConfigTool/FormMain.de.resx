@@ -180,4 +180,7 @@
   <data name="buttonClose.Text" xml:space="preserve">
     <value>Schließen</value>
   </data>
+  <data name="openFileDialogConfigFile.Title" xml:space="preserve">
+    <value>ISTA-D EDIABAS\bin Verzeichnis auswählen</value>
+  </data>
 </root>
