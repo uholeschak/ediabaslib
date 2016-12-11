@@ -53,6 +53,8 @@
             this.buttonDirIstad = new System.Windows.Forms.Button();
             this.buttonPatchIstad = new System.Windows.Forms.Button();
             this.buttonRestoreIstad = new System.Windows.Forms.Button();
+            this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
+            this.labelLanguage = new System.Windows.Forms.Label();
             this.groupBoxEdiabas.SuspendLayout();
             this.groupBoxVasPc.SuspendLayout();
             this.groupBoxIstad.SuspendLayout();
@@ -223,11 +225,26 @@
             this.buttonRestoreIstad.UseVisualStyleBackColor = true;
             this.buttonRestoreIstad.Click += new System.EventHandler(this.buttonRestore_Click);
             // 
+            // comboBoxLanguage
+            // 
+            this.comboBoxLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxLanguage.FormattingEnabled = true;
+            resources.ApplyResources(this.comboBoxLanguage, "comboBoxLanguage");
+            this.comboBoxLanguage.Name = "comboBoxLanguage";
+            this.comboBoxLanguage.SelectedIndexChanged += new System.EventHandler(this.comboBoxLanguage_SelectedIndexChanged);
+            // 
+            // labelLanguage
+            // 
+            resources.ApplyResources(this.labelLanguage, "labelLanguage");
+            this.labelLanguage.Name = "labelLanguage";
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.labelLanguage);
+            this.Controls.Add(this.comboBoxLanguage);
             this.Controls.Add(this.groupBoxIstad);
             this.Controls.Add(this.groupBoxVasPc);
             this.Controls.Add(this.groupBoxEdiabas);
@@ -280,6 +297,8 @@
         private System.Windows.Forms.Button buttonPatchIstad;
         private System.Windows.Forms.Button buttonRestoreIstad;
         private System.Windows.Forms.Button buttonDirIstad;
+        private System.Windows.Forms.ComboBox comboBoxLanguage;
+        private System.Windows.Forms.Label labelLanguage;
     }
 }
 

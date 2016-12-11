@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
@@ -10,6 +12,7 @@ using Microsoft.Win32;
 using SimpleWifi;
 using SimpleWifi.Win32;
 using SimpleWifi.Win32.Interop;
+using System.ComponentModel;
 
 namespace EdiabasLibConfigTool
 {
@@ -31,14 +34,58 @@ namespace EdiabasLibConfigTool
         public string BluetoothPin => textBoxBluetoothPin.Text;
         public string WifiPassword => textBoxWifiPassword.Text;
 
+        private class LanguageInfo
+        {
+            public LanguageInfo(string name, string culture)
+            {
+                Name = name;
+                Culture = culture;
+            }
+            // ReSharper disable once MemberCanBePrivate.Local
+            public string Name { get; }
+            public string Culture { get; }
+            public override string ToString()
+            {
+                return Name;
+            }
+        }
+
         public FormMain()
         {
             InitializeComponent();
             Icon = Properties.Resources.AppIcon;
+
+            string language = Properties.Settings.Default.Language;
+            if (!string.IsNullOrEmpty(language))
+            {
+                SetCulture(language);
+            }
+
+            comboBoxLanguage.Items.Clear();
+            comboBoxLanguage.BeginUpdate();
+            comboBoxLanguage.Items.Add(new LanguageInfo(Resources.Strings.LanguageEn, "en"));
+            comboBoxLanguage.Items.Add(new LanguageInfo(Resources.Strings.LanguageDe, "de"));
+            //comboBoxLanguage.Items.Add(new LanguageInfo(Resources.Strings.LanguageRu, "ru"));
+            comboBoxLanguage.EndUpdate();
+
+            string culture = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+            int index = 0;
+            int selIndex = -1;
+            foreach (LanguageInfo languageInfo in comboBoxLanguage.Items)
+            {
+                if (string.Compare(languageInfo.Culture, culture, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    selIndex = index;
+                }
+                index++;
+            }
+            comboBoxLanguage.SelectedIndex = selIndex;
+
             listViewDevices.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.None);
             listViewDevices.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
             textBoxBluetoothPin.Text = @"1234";
             textBoxWifiPassword.Text = @"deepobdbmw";
+
             StringBuilder sr = new StringBuilder();
             try
             {
@@ -67,6 +114,33 @@ namespace EdiabasLibConfigTool
             UpdateButtonStatus();
         }
 
+        private void SetCulture(string culture)
+        {
+            try
+            {
+                CultureInfo cultureInfo = new CultureInfo(culture);
+                Thread.CurrentThread.CurrentCulture = cultureInfo;
+                Thread.CurrentThread.CurrentUICulture = cultureInfo;
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(FormMain));
+                resources.ApplyResources(this, "$this");
+                ApplyResources(resources, Controls);
+                UpdateStatusText(string.Empty);
+                UpdateButtonStatus();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        private void ApplyResources(ComponentResourceManager resources, Control.ControlCollection ctls)
+        {
+            foreach (Control ctl in ctls)
+            {
+                resources.ApplyResources(ctl, ctl.Name);
+                ApplyResources(resources, ctl.Controls);
+            }
+        }
         private bool IsWinVistaOrHigher()
         {
             OperatingSystem os = Environment.OSVersion;
@@ -328,6 +402,7 @@ namespace EdiabasLibConfigTool
                 BeginInvoke((Action) UpdateButtonStatus);
                 return;
             }
+            comboBoxLanguage.Enabled = !_searching && !_test.ThreadActive;
             buttonSearch.Enabled = !_searching && !_test.ThreadActive && ((_cli != null) || !_wlanClient.NoWifiAvailable);
             buttonClose.Enabled = !_searching && !_test.ThreadActive;
 
@@ -432,6 +507,7 @@ namespace EdiabasLibConfigTool
             _cli?.Dispose();
             _test?.Dispose();
             Properties.Settings.Default.IstadDir = _ediabasDirIstad ?? string.Empty;
+            Properties.Settings.Default.Language = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
             Properties.Settings.Default.Save();
         }
 
@@ -549,6 +625,15 @@ namespace EdiabasLibConfigTool
                 _ediabasDirIstad = Path.GetDirectoryName(openFileDialogConfigFile.FileName);
             }
             UpdateButtonStatus();
+        }
+
+        private void comboBoxLanguage_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LanguageInfo languageInfo = comboBoxLanguage.SelectedItem as LanguageInfo;
+            if (languageInfo != null)
+            {
+                SetCulture(languageInfo.Culture);
+            }
         }
     }
 }
