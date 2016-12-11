@@ -50,9 +50,9 @@
             this.buttonPatchVasPc = new System.Windows.Forms.Button();
             this.buttonRestoreVasPc = new System.Windows.Forms.Button();
             this.groupBoxIstad = new System.Windows.Forms.GroupBox();
+            this.buttonDirIstad = new System.Windows.Forms.Button();
             this.buttonPatchIstad = new System.Windows.Forms.Button();
             this.buttonRestoreIstad = new System.Windows.Forms.Button();
-            this.buttonDirIstad = new System.Windows.Forms.Button();
             this.groupBoxEdiabas.SuspendLayout();
             this.groupBoxVasPc.SuspendLayout();
             this.groupBoxIstad.SuspendLayout();
@@ -60,6 +60,7 @@
             // 
             // listViewDevices
             // 
+            resources.ApplyResources(this.listViewDevices, "listViewDevices");
             this.listViewDevices.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderAddress,
             this.columnHeaderName});
@@ -67,7 +68,6 @@
             this.listViewDevices.GridLines = true;
             this.listViewDevices.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listViewDevices.HideSelection = false;
-            resources.ApplyResources(this.listViewDevices, "listViewDevices");
             this.listViewDevices.MultiSelect = false;
             this.listViewDevices.Name = "listViewDevices";
             this.listViewDevices.ShowGroups = false;
@@ -94,8 +94,8 @@
             // 
             // buttonClose
             // 
-            this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
             resources.ApplyResources(this.buttonClose, "buttonClose");
+            this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
@@ -165,17 +165,17 @@
             // 
             // groupBoxEdiabas
             // 
+            resources.ApplyResources(this.groupBoxEdiabas, "groupBoxEdiabas");
             this.groupBoxEdiabas.Controls.Add(this.buttonPatchEdiabas);
             this.groupBoxEdiabas.Controls.Add(this.buttonRestoreEdiabas);
-            resources.ApplyResources(this.groupBoxEdiabas, "groupBoxEdiabas");
             this.groupBoxEdiabas.Name = "groupBoxEdiabas";
             this.groupBoxEdiabas.TabStop = false;
             // 
             // groupBoxVasPc
             // 
+            resources.ApplyResources(this.groupBoxVasPc, "groupBoxVasPc");
             this.groupBoxVasPc.Controls.Add(this.buttonPatchVasPc);
             this.groupBoxVasPc.Controls.Add(this.buttonRestoreVasPc);
-            resources.ApplyResources(this.groupBoxVasPc, "groupBoxVasPc");
             this.groupBoxVasPc.Name = "groupBoxVasPc";
             this.groupBoxVasPc.TabStop = false;
             // 
@@ -195,12 +195,19 @@
             // 
             // groupBoxIstad
             // 
+            resources.ApplyResources(this.groupBoxIstad, "groupBoxIstad");
             this.groupBoxIstad.Controls.Add(this.buttonDirIstad);
             this.groupBoxIstad.Controls.Add(this.buttonPatchIstad);
             this.groupBoxIstad.Controls.Add(this.buttonRestoreIstad);
-            resources.ApplyResources(this.groupBoxIstad, "groupBoxIstad");
             this.groupBoxIstad.Name = "groupBoxIstad";
             this.groupBoxIstad.TabStop = false;
+            // 
+            // buttonDirIstad
+            // 
+            resources.ApplyResources(this.buttonDirIstad, "buttonDirIstad");
+            this.buttonDirIstad.Name = "buttonDirIstad";
+            this.buttonDirIstad.UseVisualStyleBackColor = true;
+            this.buttonDirIstad.Click += new System.EventHandler(this.buttonDirIstad_Click);
             // 
             // buttonPatchIstad
             // 
@@ -215,13 +222,6 @@
             this.buttonRestoreIstad.Name = "buttonRestoreIstad";
             this.buttonRestoreIstad.UseVisualStyleBackColor = true;
             this.buttonRestoreIstad.Click += new System.EventHandler(this.buttonRestore_Click);
-            // 
-            // buttonDirIstad
-            // 
-            resources.ApplyResources(this.buttonDirIstad, "buttonDirIstad");
-            this.buttonDirIstad.Name = "buttonDirIstad";
-            this.buttonDirIstad.UseVisualStyleBackColor = true;
-            this.buttonDirIstad.Click += new System.EventHandler(this.buttonDirIstad_Click);
             // 
             // FormMain
             // 
