@@ -268,6 +268,33 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Deutsch ähnelt.
+        /// </summary>
+        internal static string LanguageDe {
+            get {
+                return ResourceManager.GetString("LanguageDe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die English ähnelt.
+        /// </summary>
+        internal static string LanguageEn {
+            get {
+                return ResourceManager.GetString("LanguageEn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Pусский ähnelt.
+        /// </summary>
+        internal static string LanguageRu {
+            get {
+                return ResourceManager.GetString("LanguageRu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die EdiabasLib Api32.dll file is missing. ähnelt.
         /// </summary>
         internal static string PatchApi32Missing {

@@ -183,4 +183,7 @@
   <data name="openFileDialogConfigFile.Title" xml:space="preserve">
     <value>ISTA-D EDIABAS\bin Verzeichnis auswählen</value>
   </data>
+  <data name="labelLanguage.Text" xml:space="preserve">
+    <value>Sprache:</value>
+  </data>
 </root>

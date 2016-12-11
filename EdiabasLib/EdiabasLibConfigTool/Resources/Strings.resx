@@ -259,4 +259,13 @@ The default root password is root.</value>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>The Api32.dll backup file is not valid.</value>
   </data>
+  <data name="LanguageDe" xml:space="preserve">
+    <value>Deutsch</value>
+  </data>
+  <data name="LanguageEn" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="LanguageRu" xml:space="preserve">
+    <value>Pусский</value>
+  </data>
 </root>
