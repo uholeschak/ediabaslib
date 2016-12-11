@@ -118,594 +118,654 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="buttonDirIstad.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 23</value>
-  </data>
-  <data name="buttonDirIstad.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 19</value>
-  </data>
-  <data name="&gt;&gt;labelBtDevices.Name" xml:space="preserve">
-    <value>labelBtDevices</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="buttonClose.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;labelBtDevices.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="buttonDirIstad.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="labelBtDevices.Size" type="System.Drawing.Size, System.Drawing">
-    <value>124, 13</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="buttonRestoreVasPc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreVasPc.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="buttonTest.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="labelBluetoothPin.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;textBoxStatus.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="labelWiFiPassword.Location" type="System.Drawing.Point, System.Drawing">
-    <value>216, 382</value>
-  </data>
-  <data name="&gt;&gt;groupBoxIstad.Name" xml:space="preserve">
-    <value>groupBoxIstad</value>
-  </data>
-  <data name="buttonPatchIstad.Text" xml:space="preserve">
-    <value>Patch</value>
-  </data>
-  <data name="labelWiFiPassword.Size" type="System.Drawing.Size, System.Drawing">
-    <value>83, 13</value>
-  </data>
-  <data name="buttonPatchVasPc.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;labelStatus.Name" xml:space="preserve">
-    <value>labelStatus</value>
-  </data>
-  <data name="textBoxWifiPassword.Location" type="System.Drawing.Point, System.Drawing">
-    <value>219, 398</value>
-  </data>
-  <data name="&gt;&gt;buttonSearch.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="buttonClose.Text" xml:space="preserve">
-    <value>Close</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreVasPc.Parent" xml:space="preserve">
-    <value>groupBoxVasPc</value>
-  </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>549, 569</value>
-  </data>
-  <data name="buttonDirIstad.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="buttonRestoreVasPc.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;groupBoxVasPc.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="buttonRestoreVasPc.Text" xml:space="preserve">
-    <value>Restore</value>
-  </data>
-  <data name="buttonPatchVasPc.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 19</value>
-  </data>
-  <data name="buttonRestoreEdiabas.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="&gt;&gt;columnHeaderName.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>EdiabasLib Config Tool</value>
-  </data>
-  <data name="&gt;&gt;buttonTest.Name" xml:space="preserve">
-    <value>buttonTest</value>
-  </data>
-  <data name="buttonRestoreIstad.Text" xml:space="preserve">
-    <value>Restore</value>
-  </data>
-  <data name="&gt;&gt;buttonTest.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
   <data name="listViewDevices.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 25</value>
-  </data>
-  <data name="textBoxWifiPassword.MaxLength" type="System.Int32, mscorlib">
-    <value>63</value>
-  </data>
-  <data name="labelWiFiPassword.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="buttonTest.Location" type="System.Drawing.Point, System.Drawing">
-    <value>93, 424</value>
-  </data>
-  <data name="&gt;&gt;listViewDevices.Name" xml:space="preserve">
-    <value>listViewDevices</value>
-  </data>
-  <data name="buttonSearch.Text" xml:space="preserve">
-    <value>Search</value>
-  </data>
-  <data name="groupBoxEdiabas.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 453</value>
-  </data>
-  <data name="&gt;&gt;labelBluetoothPin.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;openFileDialogConfigFile.Type" xml:space="preserve">
-    <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreEdiabas.Parent" xml:space="preserve">
-    <value>groupBoxEdiabas</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchEdiabas.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchIstad.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchIstad.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelWiFiPassword.Name" xml:space="preserve">
-    <value>labelWiFiPassword</value>
-  </data>
-  <data name="labelWiFiPassword.Text" xml:space="preserve">
-    <value>Wi-Fi Password:</value>
-  </data>
-  <data name="&gt;&gt;buttonClose.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;textBoxWifiPassword.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="textBoxBluetoothPin.MaxLength" type="System.Int32, mscorlib">
-    <value>16</value>
-  </data>
-  <data name="textBoxWifiPassword.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 20</value>
-  </data>
-  <data name="&gt;&gt;groupBoxVasPc.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="buttonPatchIstad.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="&gt;&gt;textBoxBluetoothPin.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;groupBoxEdiabas.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="textBoxBluetoothPin.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 398</value>
-  </data>
-  <data name="textBoxStatus.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 298</value>
-  </data>
-  <data name="labelBtDevices.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 9</value>
-  </data>
-  <data name="&gt;&gt;buttonSearch.ZOrder" xml:space="preserve">
-    <value>12</value>
-  </data>
-  <data name="labelStatus.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchVasPc.Name" xml:space="preserve">
-    <value>buttonPatchVasPc</value>
   </data>
   <data name="listViewDevices.Size" type="System.Drawing.Size, System.Drawing">
     <value>525, 254</value>
   </data>
-  <data name="buttonClose.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="&gt;&gt;textBoxBluetoothPin.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="buttonRestoreIstad.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="buttonPatchIstad.TabIndex" type="System.Int32, mscorlib">
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="listViewDevices.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="columnHeaderName.Width" type="System.Int32, mscorlib">
-    <value>322</value>
+  <data name="&gt;&gt;listViewDevices.Name" xml:space="preserve">
+    <value>listViewDevices</value>
   </data>
-  <data name="buttonPatchEdiabas.Text" xml:space="preserve">
-    <value>Patch</value>
-  </data>
-  <data name="labelStatus.Text" xml:space="preserve">
-    <value>Status:</value>
-  </data>
-  <data name="&gt;&gt;groupBoxIstad.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="columnHeaderAddress.Text" xml:space="preserve">
-    <value>Address</value>
-  </data>
-  <data name="&gt;&gt;textBoxBluetoothPin.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="buttonRestoreIstad.Location" type="System.Drawing.Point, System.Drawing">
-    <value>261, 19</value>
-  </data>
-  <data name="&gt;&gt;buttonDirIstad.Parent" xml:space="preserve">
-    <value>groupBoxIstad</value>
-  </data>
-  <data name="buttonTest.Size" type="System.Drawing.Size, System.Drawing">
-    <value>120, 23</value>
-  </data>
-  <data name="buttonPatchEdiabas.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;buttonDirIstad.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="labelBluetoothPin.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 382</value>
+  <data name="&gt;&gt;listViewDevices.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;listViewDevices.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="textBoxStatus.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
   <data name="&gt;&gt;listViewDevices.ZOrder" xml:space="preserve">
     <value>13</value>
   </data>
-  <data name="buttonRestoreEdiabas.Text" xml:space="preserve">
-    <value>Restore</value>
+  <data name="columnHeaderAddress.Text" xml:space="preserve">
+    <value>Address</value>
   </data>
-  <data name="&gt;&gt;buttonPatchVasPc.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchIstad.Name" xml:space="preserve">
-    <value>buttonPatchIstad</value>
-  </data>
-  <data name="labelWiFiPassword.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchIstad.Parent" xml:space="preserve">
-    <value>groupBoxIstad</value>
-  </data>
-  <data name="buttonRestoreEdiabas.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="textBoxBluetoothPin.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 20</value>
-  </data>
-  <data name="buttonPatchVasPc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="&gt;&gt;groupBoxEdiabas.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="labelWiFiPassword.TabIndex" type="System.Int32, mscorlib">
-    <value>11</value>
-  </data>
-  <data name="labelBluetoothPin.Text" xml:space="preserve">
-    <value>Bluetooth PIN:</value>
-  </data>
-  <data name="labelBtDevices.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="groupBoxEdiabas.Size" type="System.Drawing.Size, System.Drawing">
-    <value>168, 48</value>
-  </data>
-  <data name="&gt;&gt;groupBoxIstad.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreEdiabas.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreIstad.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelBluetoothPin.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;labelWiFiPassword.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="labelBtDevices.Text" xml:space="preserve">
-    <value>Bluetooth/Wi-Fi devices:</value>
-  </data>
-  <data name="groupBoxIstad.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchVasPc.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxWifiPassword.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="buttonPatchIstad.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="&gt;&gt;groupBoxEdiabas.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="buttonPatchIstad.Location" type="System.Drawing.Point, System.Drawing">
-    <value>180, 19</value>
-  </data>
-  <data name="buttonRestoreVasPc.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="&gt;&gt;buttonSearch.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelWiFiPassword.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;columnHeaderName.Name" xml:space="preserve">
-    <value>columnHeaderName</value>
+  <data name="columnHeaderAddress.Width" type="System.Int32, mscorlib">
+    <value>193</value>
   </data>
   <data name="columnHeaderName.Text" xml:space="preserve">
     <value>Name</value>
   </data>
-  <data name="&gt;&gt;buttonRestoreVasPc.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="columnHeaderName.Width" type="System.Int32, mscorlib">
+    <value>322</value>
   </data>
-  <data name="buttonTest.Text" xml:space="preserve">
-    <value>Test</value>
+  <data name="buttonSearch.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 424</value>
   </data>
-  <data name="&gt;&gt;buttonRestoreIstad.Name" xml:space="preserve">
-    <value>buttonRestoreIstad</value>
+  <data name="buttonSearch.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
   </data>
-  <data name="&gt;&gt;labelStatus.Parent" xml:space="preserve">
+  <data name="buttonSearch.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="buttonSearch.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="&gt;&gt;buttonSearch.Name" xml:space="preserve">
+    <value>buttonSearch</value>
+  </data>
+  <data name="&gt;&gt;buttonSearch.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonSearch.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="textBoxBluetoothPin.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="&gt;&gt;buttonSearch.ZOrder" xml:space="preserve">
+    <value>12</value>
   </data>
-  <data name="labelStatus.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 282</value>
+  <data name="buttonClose.Location" type="System.Drawing.Point, System.Drawing">
+    <value>462, 532</value>
   </data>
-  <data name="&gt;&gt;buttonDirIstad.ZOrder" xml:space="preserve">
+  <data name="buttonClose.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="buttonClose.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;openFileDialogConfigFile.Name" xml:space="preserve">
-    <value>openFileDialogConfigFile</value>
+  <data name="buttonClose.Text" xml:space="preserve">
+    <value>Close</value>
   </data>
-  <data name="buttonDirIstad.Text" xml:space="preserve">
-    <value>Select Location</value>
+  <data name="&gt;&gt;buttonClose.Name" xml:space="preserve">
+    <value>buttonClose</value>
   </data>
   <data name="&gt;&gt;buttonClose.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="buttonPatchVasPc.Text" xml:space="preserve">
-    <value>Patch</value>
+  <data name="&gt;&gt;buttonClose.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
-  <data name="groupBoxEdiabas.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;textBoxWifiPassword.Name" xml:space="preserve">
-    <value>textBoxWifiPassword</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreEdiabas.Name" xml:space="preserve">
-    <value>buttonRestoreEdiabas</value>
-  </data>
-  <data name="buttonRestoreIstad.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+  <data name="&gt;&gt;buttonClose.ZOrder" xml:space="preserve">
+    <value>11</value>
   </data>
   <data name="labelStatus.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="&gt;&gt;columnHeaderAddress.Name" xml:space="preserve">
-    <value>columnHeaderAddress</value>
+  <data name="labelStatus.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 282</value>
   </data>
-  <data name="&gt;&gt;buttonRestoreEdiabas.Type" xml:space="preserve">
+  <data name="labelStatus.Size" type="System.Drawing.Size, System.Drawing">
+    <value>40, 13</value>
+  </data>
+  <data name="labelStatus.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="labelStatus.Text" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="&gt;&gt;labelStatus.Name" xml:space="preserve">
+    <value>labelStatus</value>
+  </data>
+  <data name="&gt;&gt;labelStatus.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelStatus.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;labelStatus.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="textBoxStatus.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 298</value>
+  </data>
+  <data name="textBoxStatus.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="textBoxStatus.Size" type="System.Drawing.Size, System.Drawing">
+    <value>525, 81</value>
+  </data>
+  <data name="textBoxStatus.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;textBoxStatus.Name" xml:space="preserve">
+    <value>textBoxStatus</value>
+  </data>
+  <data name="&gt;&gt;textBoxStatus.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxStatus.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;textBoxStatus.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="buttonTest.Location" type="System.Drawing.Point, System.Drawing">
+    <value>118, 424</value>
+  </data>
+  <data name="buttonTest.Size" type="System.Drawing.Size, System.Drawing">
+    <value>120, 23</value>
+  </data>
+  <data name="buttonTest.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="buttonTest.Text" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="&gt;&gt;buttonTest.Name" xml:space="preserve">
+    <value>buttonTest</value>
+  </data>
+  <data name="&gt;&gt;buttonTest.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonTest.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;buttonTest.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="textBoxBluetoothPin.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 398</value>
+  </data>
+  <data name="textBoxBluetoothPin.MaxLength" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="textBoxBluetoothPin.Size" type="System.Drawing.Size, System.Drawing">
+    <value>156, 20</value>
+  </data>
+  <data name="textBoxBluetoothPin.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;textBoxBluetoothPin.Name" xml:space="preserve">
+    <value>textBoxBluetoothPin</value>
+  </data>
+  <data name="&gt;&gt;textBoxBluetoothPin.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxBluetoothPin.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;textBoxBluetoothPin.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="labelBluetoothPin.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="labelBluetoothPin.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 382</value>
+  </data>
+  <data name="labelBluetoothPin.Size" type="System.Drawing.Size, System.Drawing">
+    <value>76, 13</value>
+  </data>
+  <data name="labelBluetoothPin.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="labelBluetoothPin.Text" xml:space="preserve">
+    <value>Bluetooth PIN:</value>
+  </data>
+  <data name="&gt;&gt;labelBluetoothPin.Name" xml:space="preserve">
+    <value>labelBluetoothPin</value>
+  </data>
+  <data name="&gt;&gt;labelBluetoothPin.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelBluetoothPin.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;labelBluetoothPin.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="labelBtDevices.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="labelBtDevices.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 9</value>
+  </data>
+  <data name="labelBtDevices.Size" type="System.Drawing.Size, System.Drawing">
+    <value>124, 13</value>
+  </data>
+  <data name="labelBtDevices.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="labelBtDevices.Text" xml:space="preserve">
+    <value>Bluetooth/Wi-Fi devices:</value>
+  </data>
+  <data name="&gt;&gt;labelBtDevices.Name" xml:space="preserve">
+    <value>labelBtDevices</value>
+  </data>
+  <data name="&gt;&gt;labelBtDevices.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelBtDevices.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;labelBtDevices.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="buttonPatchEdiabas.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 19</value>
+  </data>
+  <data name="buttonPatchEdiabas.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="buttonPatchEdiabas.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="buttonPatchEdiabas.Text" xml:space="preserve">
+    <value>Patch</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchEdiabas.Name" xml:space="preserve">
+    <value>buttonPatchEdiabas</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchEdiabas.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonPatchEdiabas.Parent" xml:space="preserve">
     <value>groupBoxEdiabas</value>
   </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>FormMain</value>
-  </data>
-  <data name="openFileDialogConfigFile.Filter" xml:space="preserve">
-    <value>Api32.dll File|Api32.dll</value>
-  </data>
-  <data name="&gt;&gt;buttonTest.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="buttonRestoreEdiabas.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="buttonSearch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 424</value>
-  </data>
-  <data name="&gt;&gt;textBoxBluetoothPin.Name" xml:space="preserve">
-    <value>textBoxBluetoothPin</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchEdiabas.Name" xml:space="preserve">
-    <value>buttonPatchEdiabas</value>
-  </data>
-  <data name="&gt;&gt;labelStatus.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="buttonRestoreEdiabas.Location" type="System.Drawing.Point, System.Drawing">
-    <value>87, 19</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchEdiabas.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="labelStatus.Size" type="System.Drawing.Size, System.Drawing">
-    <value>40, 13</value>
-  </data>
-  <data name="&gt;&gt;listViewDevices.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxStatus.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="columnHeaderAddress.Width" type="System.Int32, mscorlib">
-    <value>193</value>
-  </data>
-  <data name="&gt;&gt;labelBtDevices.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="buttonPatchEdiabas.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="groupBoxVasPc.Size" type="System.Drawing.Size, System.Drawing">
-    <value>168, 48</value>
-  </data>
-  <data name="labelBluetoothPin.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="buttonSearch.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;buttonClose.Name" xml:space="preserve">
-    <value>buttonClose</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreVasPc.Name" xml:space="preserve">
-    <value>buttonRestoreVasPc</value>
-  </data>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
-  </data>
-  <data name="&gt;&gt;buttonClose.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
-  <data name="buttonRestoreIstad.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="buttonSearch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="textBoxWifiPassword.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="textBoxStatus.Size" type="System.Drawing.Size, System.Drawing">
-    <value>525, 81</value>
-  </data>
-  <data name="&gt;&gt;buttonDirIstad.Name" xml:space="preserve">
-    <value>buttonDirIstad</value>
-  </data>
-  <data name="&gt;&gt;groupBoxEdiabas.Name" xml:space="preserve">
-    <value>groupBoxEdiabas</value>
-  </data>
-  <data name="&gt;&gt;textBoxStatus.Name" xml:space="preserve">
-    <value>textBoxStatus</value>
-  </data>
-  <data name="&gt;&gt;groupBoxVasPc.Name" xml:space="preserve">
-    <value>groupBoxVasPc</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreIstad.Parent" xml:space="preserve">
-    <value>groupBoxIstad</value>
-  </data>
-  <data name="groupBoxIstad.Text" xml:space="preserve">
-    <value>ISTA-D</value>
-  </data>
-  <data name="labelBtDevices.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="textBoxStatus.Multiline" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="buttonPatchVasPc.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="groupBoxVasPc.Text" xml:space="preserve">
-    <value>VAS-PC</value>
-  </data>
-  <data name="&gt;&gt;labelBluetoothPin.Name" xml:space="preserve">
-    <value>labelBluetoothPin</value>
-  </data>
-  <data name="&gt;&gt;buttonTest.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxWifiPassword.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="groupBoxIstad.Size" type="System.Drawing.Size, System.Drawing">
-    <value>342, 48</value>
-  </data>
-  <data name="&gt;&gt;columnHeaderAddress.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreIstad.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="groupBoxVasPc.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;groupBoxIstad.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;buttonPatchEdiabas.ZOrder" xml:space="preserve">
     <value>0</value>
-  </data>
-  <data name="listViewDevices.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;labelBluetoothPin.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="labelBluetoothPin.Size" type="System.Drawing.Size, System.Drawing">
-    <value>76, 13</value>
-  </data>
-  <data name="&gt;&gt;groupBoxVasPc.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;labelBtDevices.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="groupBoxEdiabas.Text" xml:space="preserve">
-    <value>EDIABAS</value>
-  </data>
-  <data name="buttonRestoreVasPc.Location" type="System.Drawing.Point, System.Drawing">
-    <value>87, 19</value>
-  </data>
-  <data name="buttonPatchEdiabas.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 19</value>
-  </data>
-  <data name="buttonClose.Location" type="System.Drawing.Point, System.Drawing">
-    <value>462, 532</value>
-  </data>
-  <data name="groupBoxIstad.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 507</value>
-  </data>
-  <data name="&gt;&gt;buttonSearch.Name" xml:space="preserve">
-    <value>buttonSearch</value>
-  </data>
-  <data name="&gt;&gt;textBoxStatus.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="groupBoxVasPc.Location" type="System.Drawing.Point, System.Drawing">
-    <value>186, 453</value>
-  </data>
-  <data name="&gt;&gt;labelStatus.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchVasPc.Parent" xml:space="preserve">
-    <value>groupBoxVasPc</value>
-  </data>
-  <data name="&gt;&gt;labelWiFiPassword.ZOrder" xml:space="preserve">
-    <value>3</value>
   </data>
   <metadata name="openFileDialogConfigFile.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="openFileDialogConfigFile.Filter" xml:space="preserve">
+    <value>Api32.dll File|Api32.dll</value>
+  </data>
+  <data name="textBoxWifiPassword.Location" type="System.Drawing.Point, System.Drawing">
+    <value>236, 398</value>
+  </data>
+  <data name="textBoxWifiPassword.MaxLength" type="System.Int32, mscorlib">
+    <value>63</value>
+  </data>
+  <data name="textBoxWifiPassword.Size" type="System.Drawing.Size, System.Drawing">
+    <value>156, 20</value>
+  </data>
+  <data name="textBoxWifiPassword.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;textBoxWifiPassword.Name" xml:space="preserve">
+    <value>textBoxWifiPassword</value>
+  </data>
+  <data name="&gt;&gt;textBoxWifiPassword.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxWifiPassword.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;textBoxWifiPassword.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="labelWiFiPassword.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="labelWiFiPassword.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="labelWiFiPassword.Location" type="System.Drawing.Point, System.Drawing">
+    <value>233, 382</value>
+  </data>
+  <data name="labelWiFiPassword.Size" type="System.Drawing.Size, System.Drawing">
+    <value>83, 13</value>
+  </data>
+  <data name="labelWiFiPassword.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="labelWiFiPassword.Text" xml:space="preserve">
+    <value>Wi-Fi Password:</value>
+  </data>
+  <data name="&gt;&gt;labelWiFiPassword.Name" xml:space="preserve">
+    <value>labelWiFiPassword</value>
+  </data>
+  <data name="&gt;&gt;labelWiFiPassword.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelWiFiPassword.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;labelWiFiPassword.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="buttonRestoreEdiabas.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="buttonRestoreEdiabas.Location" type="System.Drawing.Point, System.Drawing">
+    <value>112, 19</value>
+  </data>
+  <data name="buttonRestoreEdiabas.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="buttonRestoreEdiabas.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="buttonRestoreEdiabas.Text" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreEdiabas.Name" xml:space="preserve">
+    <value>buttonRestoreEdiabas</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreEdiabas.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreEdiabas.Parent" xml:space="preserve">
+    <value>groupBoxEdiabas</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreEdiabas.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="groupBoxEdiabas.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 453</value>
+  </data>
+  <data name="groupBoxEdiabas.Size" type="System.Drawing.Size, System.Drawing">
+    <value>218, 48</value>
+  </data>
+  <data name="groupBoxEdiabas.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="groupBoxEdiabas.Text" xml:space="preserve">
+    <value>EDIABAS</value>
+  </data>
+  <data name="&gt;&gt;groupBoxEdiabas.Name" xml:space="preserve">
+    <value>groupBoxEdiabas</value>
+  </data>
+  <data name="&gt;&gt;groupBoxEdiabas.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxEdiabas.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;groupBoxEdiabas.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Name" xml:space="preserve">
+    <value>buttonPatchVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Parent" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Name" xml:space="preserve">
+    <value>buttonRestoreVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Parent" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="groupBoxVasPc.Location" type="System.Drawing.Point, System.Drawing">
+    <value>236, 453</value>
+  </data>
+  <data name="groupBoxVasPc.Size" type="System.Drawing.Size, System.Drawing">
+    <value>218, 48</value>
+  </data>
+  <data name="groupBoxVasPc.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="groupBoxVasPc.Text" xml:space="preserve">
+    <value>VAS-PC</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.Name" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="buttonPatchVasPc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="buttonPatchVasPc.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 19</value>
+  </data>
+  <data name="buttonPatchVasPc.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="buttonPatchVasPc.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="buttonPatchVasPc.Text" xml:space="preserve">
+    <value>Patch</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Name" xml:space="preserve">
+    <value>buttonPatchVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Parent" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="buttonRestoreVasPc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="buttonRestoreVasPc.Location" type="System.Drawing.Point, System.Drawing">
+    <value>112, 19</value>
+  </data>
+  <data name="buttonRestoreVasPc.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="buttonRestoreVasPc.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="buttonRestoreVasPc.Text" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Name" xml:space="preserve">
+    <value>buttonRestoreVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Parent" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;buttonDirIstad.Name" xml:space="preserve">
+    <value>buttonDirIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonDirIstad.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonDirIstad.Parent" xml:space="preserve">
+    <value>groupBoxIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonDirIstad.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchIstad.Name" xml:space="preserve">
+    <value>buttonPatchIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchIstad.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchIstad.Parent" xml:space="preserve">
+    <value>groupBoxIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchIstad.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.Name" xml:space="preserve">
+    <value>buttonRestoreIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.Parent" xml:space="preserve">
+    <value>groupBoxIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="groupBoxIstad.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 507</value>
+  </data>
+  <data name="groupBoxIstad.Size" type="System.Drawing.Size, System.Drawing">
+    <value>442, 48</value>
+  </data>
+  <data name="groupBoxIstad.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="groupBoxIstad.Text" xml:space="preserve">
+    <value>ISTA-D</value>
+  </data>
+  <data name="&gt;&gt;groupBoxIstad.Name" xml:space="preserve">
+    <value>groupBoxIstad</value>
+  </data>
+  <data name="&gt;&gt;groupBoxIstad.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxIstad.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;groupBoxIstad.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="buttonDirIstad.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="buttonDirIstad.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 19</value>
+  </data>
+  <data name="buttonDirIstad.Size" type="System.Drawing.Size, System.Drawing">
+    <value>156, 23</value>
+  </data>
+  <data name="buttonDirIstad.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="buttonDirIstad.Text" xml:space="preserve">
+    <value>Select Location</value>
+  </data>
+  <data name="&gt;&gt;buttonDirIstad.Name" xml:space="preserve">
+    <value>buttonDirIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonDirIstad.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonDirIstad.Parent" xml:space="preserve">
+    <value>groupBoxIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonDirIstad.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="buttonPatchIstad.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="buttonPatchIstad.Location" type="System.Drawing.Point, System.Drawing">
+    <value>230, 19</value>
+  </data>
+  <data name="buttonPatchIstad.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="buttonPatchIstad.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="buttonPatchIstad.Text" xml:space="preserve">
+    <value>Patch</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchIstad.Name" xml:space="preserve">
+    <value>buttonPatchIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchIstad.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchIstad.Parent" xml:space="preserve">
+    <value>groupBoxIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchIstad.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="buttonRestoreIstad.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="buttonRestoreIstad.Location" type="System.Drawing.Point, System.Drawing">
+    <value>336, 19</value>
+  </data>
+  <data name="buttonRestoreIstad.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="buttonRestoreIstad.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="buttonRestoreIstad.Text" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.Name" xml:space="preserve">
+    <value>buttonRestoreIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.Parent" xml:space="preserve">
+    <value>groupBoxIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>549, 569</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>EdiabasLib Config Tool</value>
+  </data>
+  <data name="&gt;&gt;columnHeaderAddress.Name" xml:space="preserve">
+    <value>columnHeaderAddress</value>
+  </data>
+  <data name="&gt;&gt;columnHeaderAddress.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeaderName.Name" xml:space="preserve">
+    <value>columnHeaderName</value>
+  </data>
+  <data name="&gt;&gt;columnHeaderName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;openFileDialogConfigFile.Name" xml:space="preserve">
+    <value>openFileDialogConfigFile</value>
+  </data>
+  <data name="&gt;&gt;openFileDialogConfigFile.Type" xml:space="preserve">
+    <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>FormMain</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>
