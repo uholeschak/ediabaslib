@@ -1145,22 +1145,25 @@ namespace Ediabas
 
         public int apiState()
         {
-            logFormat(ApiLogLevel.Normal, "apiState()");
-            logFormat(ApiLogLevel.Normal, "={0} ()", _apiStateValue);
+            if (_apiStateValue != APIBUSY)
+            {
+                logFormat(ApiLogLevel.Normal, "apiState()={0}", _apiStateValue);
+            }
             return _apiStateValue;
         }
 
         public int apiStateExt(int suspendTime)
         {
-            logFormat(ApiLogLevel.Normal, "apiState({0})", suspendTime);
-
             int state = _apiStateValue;
             if (state == APIBUSY)
             {
                 Thread.Sleep(suspendTime);
             }
 
-            logFormat(ApiLogLevel.Normal, "={0} ()", _apiStateValue);
+            if (state != APIBUSY)
+            {
+                logFormat(ApiLogLevel.Normal, "apiStateExt({0})={1}", suspendTime, state);
+            }
             return state;
         }
 
@@ -1177,20 +1180,26 @@ namespace Ediabas
 
         public int apiErrorCode()
         {
-            logFormat(ApiLogLevel.Normal, "apiErrorCode()");
+            //logFormat(ApiLogLevel.Normal, "apiErrorCode()");
 
             if (_localError != EDIABAS_ERR_NONE)
             {
+                logFormat(ApiLogLevel.Normal, "apiErrorCode()");
                 logFormat(ApiLogLevel.Normal, "={0} ()", (EdiabasNet.ErrorCodes)_localError);
                 return _localError;
             }
             if (_ediabas == null)
             {
+                logFormat(ApiLogLevel.Normal, "apiErrorCode()");
                 logFormat(ApiLogLevel.Normal, "={0} ()", EDIABAS_API_0006);
                 return EDIABAS_API_0006;
             }
 
-            logFormat(ApiLogLevel.Normal, "={0} ()", _ediabas.ErrorCodeLast);
+            if (_ediabas.ErrorCodeLast != EDIABAS_ERR_NONE)
+            {
+                logFormat(ApiLogLevel.Normal, "apiErrorCode()");
+                logFormat(ApiLogLevel.Normal, "={0} ()", _ediabas.ErrorCodeLast);
+            }
             return (int)_ediabas.ErrorCodeLast;
         }
 
