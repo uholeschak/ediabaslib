@@ -385,6 +385,16 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Hint: In ISTA-D Administration -&gt; VCI Config select as Interface type:
+        ///Ediabas default settings (ediabas.ini) ähnelt.
+        /// </summary>
+        internal static string PatchInstadInfo {
+            get {
+                return ResourceManager.GetString("PatchInstadInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Unable to load Api32.dll. Is VS2015 C++ runtime installed? ähnelt.
         /// </summary>
         internal static string PatchLoadApi32Failed {

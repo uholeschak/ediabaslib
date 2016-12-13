@@ -571,22 +571,26 @@ namespace EdiabasLibConfigTool
                 return;
             }
             string dirName = null;
+            Patch.PatchType patchType = Patch.PatchType.Ediabas;
             if (sender == buttonPatchEdiabas)
             {
                 dirName = _ediabasDirBmw;
+                patchType = Patch.PatchType.Ediabas;
             }
             else if (sender == buttonPatchVasPc)
             {
                 dirName = _ediabasDirVag;
+                patchType = Patch.PatchType.VasPc;
             }
             else if (sender == buttonPatchIstad)
             {
                 dirName = _ediabasDirIstad;
+                patchType = Patch.PatchType.Istad;
             }
             if (!string.IsNullOrEmpty(dirName))
             {
                 StringBuilder sr = new StringBuilder();
-                Patch.PatchEdiabas(sr, dirName, devInfo, wlanIface, textBoxBluetoothPin.Text);
+                Patch.PatchEdiabas(sr, patchType, dirName, devInfo, wlanIface, textBoxBluetoothPin.Text);
                 UpdateStatusText(sr.ToString());
             }
             UpdateButtonStatus();

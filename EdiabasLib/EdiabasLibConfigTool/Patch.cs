@@ -32,6 +32,13 @@ namespace EdiabasLibConfigTool
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi)]
         private delegate int ApiCheckVersion(int versionCompatibility, sbyte[] versionInfo);
 
+        public enum PatchType
+        {
+            Ediabas,
+            VasPc,
+            Istad,
+        }
+
         static public string AssemblyDirectory
         {
             get
@@ -308,7 +315,7 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        public static bool PatchEdiabas(StringBuilder sr, string dirName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, string pin)
+        public static bool PatchEdiabas(StringBuilder sr, PatchType patchType, string dirName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, string pin)
         {
             try
             {
@@ -326,6 +333,11 @@ namespace EdiabasLibConfigTool
                 }
                 sr.Append("\r\n");
                 sr.Append(Resources.Strings.PatchConfigUpdateOk);
+                if (patchType == PatchType.Istad)
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.PatchInstadInfo);
+                }
             }
             catch (Exception)
             {
