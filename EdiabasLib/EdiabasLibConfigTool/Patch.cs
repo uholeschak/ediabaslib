@@ -39,14 +39,7 @@ namespace EdiabasLibConfigTool
             Istad,
         }
 
-        static public string AssemblyDirectory
-        {
-            get
-            {
-                string location = Assembly.GetEntryAssembly().Location;
-                return Path.GetDirectoryName(location);
-            }
-        }
+        static public string AssemblyDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
         static public bool IsOriginalDll(string fileName)
         {
