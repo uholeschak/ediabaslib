@@ -139,19 +139,6 @@ namespace EdiabasLibConfigTool
         {
             try
             {
-                string dllFile = Path.Combine(dirName, ApiDllName);
-                string dllFileBackup = Path.Combine(dirName, ApiDllBackupName);
-                if (!File.Exists(dllFileBackup) && IsOriginalDll(dllFile))
-                {
-                    sr.Append("\r\n");
-                    sr.Append(Resources.Strings.PatchCreateBackupFile);
-                    File.Copy(dllFile, dllFileBackup, false);
-                }
-                else
-                {
-                    sr.Append("\r\n");
-                    sr.Append(Resources.Strings.PatchBackupFileExisting);
-                }
                 string sourceDir = AssemblyDirectory;
                 string sourceDll = Path.Combine(sourceDir, ApiDllName);
                 if (!File.Exists(sourceDll))
@@ -200,6 +187,20 @@ namespace EdiabasLibConfigTool
                     {
                         NativeMethods.FreeLibrary(hDll);
                     }
+                }
+
+                string dllFile = Path.Combine(dirName, ApiDllName);
+                string dllFileBackup = Path.Combine(dirName, ApiDllBackupName);
+                if (!File.Exists(dllFileBackup) && IsOriginalDll(dllFile))
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.PatchCreateBackupFile);
+                    File.Copy(dllFile, dllFileBackup, false);
+                }
+                else
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.PatchBackupFileExisting);
                 }
 
                 if (!IsOriginalDll(dllFileBackup))
