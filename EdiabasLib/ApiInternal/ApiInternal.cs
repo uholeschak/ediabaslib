@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -26,12 +27,14 @@ namespace Ediabas
 
         private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
         private static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
+        protected static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private static bool _firstLog = true;
 
         private volatile EdiabasNet _ediabas;
         private readonly object _apiLogLock = new object();
         private StreamWriter _swLog;
         private int _logLevelApi = -1;
+        private int _busyCount;
         private volatile int _apiStateValue;
         private volatile int _localError;
         private volatile Thread _jobThread;
@@ -428,6 +431,7 @@ namespace Ediabas
         public ApiInternal()
         {
             _ediabas = null;
+            _busyCount = 0;
             _apiStateValue = APIREADY;
             _localError = EDIABAS_ERR_NONE;
             _jobThread = null;
@@ -462,6 +466,7 @@ namespace Ediabas
                 return true;
             }
 
+            _busyCount = 0;
             _apiStateValue = APIREADY;
             _localError = EDIABAS_ERR_NONE;
             _jobThread = null;
@@ -1147,7 +1152,12 @@ namespace Ediabas
         {
             if (_apiStateValue != APIBUSY)
             {
-                logFormat(ApiLogLevel.Normal, "apiState()={0}", _apiStateValue);
+                logFormat(ApiLogLevel.Normal, "apiState()={0} busy={1}", _apiStateValue, _busyCount);
+                _busyCount = 0;
+            }
+            else
+            {
+                _busyCount++;
             }
             return _apiStateValue;
         }
@@ -1157,12 +1167,26 @@ namespace Ediabas
             int state = _apiStateValue;
             if (state == APIBUSY)
             {
-                Thread.Sleep(suspendTime);
+                long startTime = Stopwatch.GetTimestamp();
+                while ((Stopwatch.GetTimestamp() - startTime) < suspendTime * TickResolMs)
+                {
+                    state = _apiStateValue;
+                    if (state != APIBUSY)
+                    {
+                        break;
+                    }
+                    Thread.Sleep(10);
+                }
             }
 
             if (state != APIBUSY)
             {
-                logFormat(ApiLogLevel.Normal, "apiStateExt({0})={1}", suspendTime, state);
+                logFormat(ApiLogLevel.Normal, "apiStateExt({0})={1} busy={2}", suspendTime, state, _busyCount);
+                _busyCount = 0;
+            }
+            else
+            {
+                _busyCount++;
             }
             return state;
         }
