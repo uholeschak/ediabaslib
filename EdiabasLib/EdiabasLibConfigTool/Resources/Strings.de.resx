@@ -259,4 +259,8 @@ Das Standard root Password ist root.</value>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>Die Api32.dll Backup-Datei ist ungültig.</value>
   </data>
+  <data name="PatchInstadInfo" xml:space="preserve">
+    <value>Hinweis: In ISTA-D Administration -&gt; VCI Konfiguration als Interface Typ auswählen:
+Ediabas Standardeinstellungen (ediabas.ini)</value>
+  </data>
 </root>
