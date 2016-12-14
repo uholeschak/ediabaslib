@@ -36,7 +36,7 @@
 \n- Автоматическое определение интерфейса для Deep OBD устройства.
 \n- улучшена стабильность</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
-  <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.8.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 протоколы.</string>
+  <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.8.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 (Автомобили до 4.2012) протоколы.</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Информация</string>
