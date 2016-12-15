@@ -19,6 +19,8 @@ namespace CarSimulator
         private bool _disposed;
 
         // ReSharper disable InconsistentNaming
+        // ReSharper disable UnusedMember.Global
+        // ReSharper disable MemberCanBePrivate.Global
         public const byte KLINEF1_PARITY_MASK = 0x7;
         public const byte KLINEF1_PARITY_NONE = 0x0;
         public const byte KLINEF1_PARITY_EVEN = 0x1;
@@ -35,6 +37,8 @@ namespace CarSimulator
 
         public const byte KWP1281_TIMEOUT = 60;
         // ReSharper restore InconsistentNaming
+        // ReSharper restore UnusedMember.Global
+        // ReSharper restore MemberCanBePrivate.Global
 
         public DeviceTest(MainForm form)
         {
