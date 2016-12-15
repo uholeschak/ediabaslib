@@ -719,7 +719,7 @@ namespace BmwDeepObd
         /// <param name="info">Complete device info text</param>
         /// <param name="name">Device name</param>
         /// <param name="address">Device address</param>
-        static private bool ExtractDeviceInfo(string info, out string name, out string address)
+        private static bool ExtractDeviceInfo(string info, out string name, out string address)
         {
             string[] parts = info.Split('\n');
             if (parts.Length < 2)
