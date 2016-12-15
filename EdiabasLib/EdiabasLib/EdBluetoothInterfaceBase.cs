@@ -342,7 +342,7 @@ namespace EdiabasLib
             receiveData[offset + 1] = (byte)baudRate;
         }
 
-        static public byte CalcChecksumBmwFast(byte[] data, int offset, int length)
+        public static byte CalcChecksumBmwFast(byte[] data, int offset, int length)
         {
             byte sum = 0;
             for (int i = 0; i < length; i++)

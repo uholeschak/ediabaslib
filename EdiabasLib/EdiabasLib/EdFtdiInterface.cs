@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace EdiabasLib
 {
-    static public class EdFtdiInterface
+    public static class EdFtdiInterface
     {
         public const string PortId = "FTDI";
         private const int WriteTimeout = 500;       // write timeout [ms]

@@ -52,7 +52,7 @@ namespace EdiabasLib
             return IsValidInterfaceNameStatic(name);
         }
 
-        public static new bool IsValidInterfaceNameStatic(string name)
+        public new static bool IsValidInterfaceNameStatic(string name)
         {
             if (string.Compare(name, "EDIC", StringComparison.OrdinalIgnoreCase) == 0)
             {
