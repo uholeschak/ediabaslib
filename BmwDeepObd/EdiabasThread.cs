@@ -91,7 +91,7 @@ namespace BmwDeepObd
 
         public EdiabasNet Ediabas { get; private set; }
 
-        static public readonly Object DataLock = new Object();
+        public static readonly Object DataLock = new Object();
 
         private bool _disposed;
         private volatile bool _stopThread;
