@@ -1666,7 +1666,7 @@ namespace EdiabasLib
             private EdiabasNet _ediabas;
         }
 
-        static private readonly Register[] RegisterList =
+        private static readonly Register[] RegisterList =
         {
             new Register(0x00, RegisterType.RegAb, 0),
             new Register(0x01, RegisterType.RegAb, 1),
@@ -4871,7 +4871,7 @@ namespace EdiabasLib
             }
         }
 
-        static private void VJobJobs(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        private static void VJobJobs(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
             const string entryJobName = "JOBNAME";
 
@@ -4897,7 +4897,7 @@ namespace EdiabasLib
             }
         }
 
-        static private void VJobJobComments(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        private static void VJobJobComments(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
             Stream fs = ediabas._sgbdFs;
 
@@ -4947,7 +4947,7 @@ namespace EdiabasLib
             }
         }
 
-        static private void VJobJobArgs(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        private static void VJobJobArgs(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
             Stream fs = ediabas._sgbdFs;
 
@@ -5025,7 +5025,7 @@ namespace EdiabasLib
             }
         }
 
-        static private void VJobJobResults(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        private static void VJobJobResults(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
             Stream fs = ediabas._sgbdFs;
 
@@ -5103,7 +5103,7 @@ namespace EdiabasLib
             }
         }
 
-        static private void VJobVerinfos(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        private static void VJobVerinfos(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
             Stream fs = ediabas._sgbdFs;
 
@@ -5194,7 +5194,7 @@ namespace EdiabasLib
             }
         }
 
-        static private void VJobTables(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        private static void VJobTables(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
             const string entryTableName = "TABLE";
             foreach (TableInfo tableInfo in ediabas._tableInfos.TableInfoArray)
@@ -5210,7 +5210,7 @@ namespace EdiabasLib
             }
         }
 
-        static private void VJobTable(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        private static void VJobTable(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
             List<string> argStrings = ediabas.GetActiveArgStrings();
             if (argStrings.Count < 1)
@@ -5312,7 +5312,7 @@ namespace EdiabasLib
                             Int64 buffering = 0;
                             if (traceBuffering != null)
                             {
-                                buffering = EdiabasNet.StringToValue(traceBuffering);
+                                buffering = StringToValue(traceBuffering);
                             }
 
 #if COMPRESS_TRACE
