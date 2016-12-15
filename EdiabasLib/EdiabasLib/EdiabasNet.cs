@@ -2776,6 +2776,7 @@ namespace EdiabasLib
             SetConfigProperty("ApiTrace", "0");
             SetConfigProperty("IfhTrace", "0");
             SetConfigProperty("TraceBuffering", "0");
+            SetConfigProperty("IfhTraceBuffering", "1");
             SetConfigProperty("AppendTrace", "0");
 #if COMPRESS_TRACE
             SetConfigProperty("CompressTrace", "0");
@@ -5306,6 +5307,14 @@ namespace EdiabasLib
                             {
                                 traceFileName = propName;
                             }
+
+                            string traceBuffering = GetConfigProperty("IfhTraceBuffering");
+                            Int64 buffering = 0;
+                            if (traceBuffering != null)
+                            {
+                                buffering = EdiabasNet.StringToValue(traceBuffering);
+                            }
+
 #if COMPRESS_TRACE
                             int compressTrace = 0;
                             string propCompress = GetConfigProperty("CompressTrace");
@@ -5368,7 +5377,10 @@ namespace EdiabasLib
                                     fileMode = FileMode.Create;
                                 }
                                 _swLog = new StreamWriter(
-                                    new FileStream(Path.Combine(tracePath, traceFileName), fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding);
+                                    new FileStream(Path.Combine(tracePath, traceFileName), fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding)
+                                    {
+                                        AutoFlush = buffering == 0
+                                    };
                             }
                             _firstLog = false;
                         }
