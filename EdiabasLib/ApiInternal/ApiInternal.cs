@@ -1027,7 +1027,7 @@ namespace Ediabas
                 logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
-            if (rset > _resultSets.Count)
+            if (rset >= _resultSets.Count)
             {
                 setLocalError(EDIABAS_API_0014);
                 logFormat(ApiLogLevel.Normal, "={0}", false);
@@ -1057,7 +1057,7 @@ namespace Ediabas
                 logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
-            if (rset > _resultSets.Count)
+            if (rset >= _resultSets.Count)
             {
                 setLocalError(EDIABAS_API_0014);
                 logFormat(ApiLogLevel.Normal, "={0}", false);
@@ -1377,7 +1377,7 @@ namespace Ediabas
                 setLocalError(EDIABAS_API_0014);
                 return null;
             }
-            if (rset > _resultSets.Count)
+            if (rset >= _resultSets.Count)
             {
                 setLocalError(EDIABAS_API_0014);
                 return null;
