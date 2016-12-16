@@ -57,9 +57,6 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
-  <PropertyGroup>
-    <RunPostBuildEvent>Always</RunPostBuildEvent>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="SimpleWifi, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SimpleWifi.1.0.0.0\lib\net40\SimpleWifi.dll</HintPath>
