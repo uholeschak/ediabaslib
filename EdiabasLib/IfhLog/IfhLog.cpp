@@ -80,6 +80,7 @@ static int compatNo = IFH_COMPATIBILITY_NO;
 static int iAppendLog = 0;
 static int iStatusLog = 0;
 static int iFlushLog = 0;
+static int iRawMode = 0;
 
 static const FUNCTION functions[] = 
 {
@@ -278,6 +279,7 @@ static BOOL OpenLogFile()
     iAppendLog = GetPrivateProfileInt(TEXT("IfhLog"), TEXT("AppendLog"), 0, iniFileName.c_str());
     iStatusLog = GetPrivateProfileInt(TEXT("IfhLog"), TEXT("StatusLog"), 0, iniFileName.c_str());
     iFlushLog = GetPrivateProfileInt(TEXT("IfhLog"), TEXT("FlushLog"), 0, iniFileName.c_str());
+    iRawMode = GetPrivateProfileInt(TEXT("IfhLog"), TEXT("RawMode"), 0, iniFileName.c_str());
 
     if (!AquireMutex())
     {
@@ -362,21 +364,29 @@ static BOOL LogFormat(const TCHAR *format, ...)
     return TRUE;
 }
 
-static BOOL LogData(UCHAR *data, unsigned int length)
+static BOOL LogData(std::wstring dataPrefix, UCHAR *data, unsigned int length)
 {
-    if (data != NULL && length > 0)
+    if (data == NULL)
     {
-        std::wstring dataString;
-        for (unsigned int i = 0; i < length; i++)
+        return TRUE;
+    }
+    std::wstring dataString;
+    if (iRawMode)
+    {
+        dataString = dataPrefix;
+    }
+    for (unsigned int i = 0; i < length; i++)
+    {
+        if (!iRawMode && (i > 0) && (i % 16 == 0))
         {
-            if ((i > 0) && (i % 16 == 0))
-            {
-                dataString += TEXT("\n");
-            }
-            TCHAR buffer[100];
-            swprintf(buffer, 100, TEXT("%02X "), (unsigned int)data[i]);
-            dataString += buffer;
+            dataString += TEXT("\n");
         }
+        TCHAR buffer[100];
+        swprintf(buffer, 100, TEXT("%02X "), (unsigned int)data[i]);
+        dataString += buffer;
+    }
+    if (dataString.length() > 0)
+    {
         return LogString(dataString.c_str());
     }
     return TRUE;
@@ -415,6 +425,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
     );
 
     BOOL printData = TRUE;
+    std::wstring dataPrefix = TEXT("(") + std::wstring(fktName) + TEXT("): ");
     switch (msgTmp->fktNo)
     {
         case 2:
@@ -527,7 +538,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
     }
     if (printData)
     {
-        LogData(msgTmp->data, msgTmp->len);
+        LogData(dataPrefix, msgTmp->data, msgTmp->len);
     }
 }
 
