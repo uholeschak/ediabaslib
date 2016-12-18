@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using NDesk.Options;
 
@@ -93,7 +94,7 @@ namespace LogfileConverter
             return 0;
         }
 
-        static private bool ConvertLog(List<string> inputFiles, string outputFile)
+        private static bool ConvertLog(List<string> inputFiles, string outputFile)
         {
             try
             {
@@ -107,7 +108,26 @@ namespace LogfileConverter
                         }
                         else
                         {
-                            ConvertPortLogFile(inputFile, streamWriter);
+                            bool ifhLog = false;
+                            using (StreamReader streamReader = new StreamReader(inputFile))
+                            {
+                                string line = streamReader.ReadLine();
+                                if (line != null)
+                                {
+                                    if (Regex.IsMatch(line, @"^dllStartupIFH"))
+                                    {
+                                        ifhLog = true;
+                                    }
+                                }
+                            }
+                            if (ifhLog)
+                            {
+                                ConvertIfhlogFile(inputFile, streamWriter);
+                            }
+                            else
+                            {
+                                ConvertPortLogFile(inputFile, streamWriter);
+                            }
                         }
                     }
                 }
@@ -121,6 +141,7 @@ namespace LogfileConverter
 
         private static void ConvertPortLogFile(string inputFile, StreamWriter streamWriter)
         {
+            _edicCanMode = false;
             using (StreamReader streamReader = new StreamReader(inputFile))
             {
                 string line;
@@ -358,6 +379,113 @@ namespace LogfileConverter
             }
         }
 
+        private static void ConvertIfhlogFile(string inputFile, StreamWriter streamWriter)
+        {
+            _edicCanMode = false;
+            using (StreamReader streamReader = new StreamReader(inputFile))
+            {
+                string line;
+                string writeString = string.Empty;
+                bool ignoreResponse = false;
+                while ((line = streamReader.ReadLine()) != null)
+                {
+                    if (line.Length > 0)
+                    {
+                        if (Regex.IsMatch(line, @"^msgIn:"))
+                        {
+                            if (!Regex.IsMatch(line, @"^msgIn:.*('ifhSendTelegram'|'ifhGetResult')"))
+                            {
+                                ignoreResponse = true;
+                                writeString = string.Empty;
+                            }
+                        }
+                        if (Regex.IsMatch(line, @"^\((ifhSendTelegram|ifhGetResult)\): "))
+                        {
+                            bool send = Regex.IsMatch(line, @"^\(ifhSendTelegram\): ");
+                            line = Regex.Replace(line, @"^.*\:[\s]*", String.Empty);
+
+                            List<byte> lineValues = NumberString2List(line);
+                            if (line.Length > 0)
+                            {
+                                if (send)
+                                {
+                                    if (lineValues.Count > 0)
+                                    {
+                                        lineValues = CreateBmwFastTel(lineValues, 0x00, 0xF1);
+                                        line = List2NumberString(lineValues);
+                                    }
+                                    bool validWrite = ChecksumValid(lineValues);
+                                    if (_responseFile)
+                                    {
+                                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                                        if (validWrite)
+                                        {
+                                            writeString = NumberString2String(line, _responseFile || !_cFormat);
+                                        }
+                                        else
+                                        {
+                                            writeString = string.Empty;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (validWrite)
+                                        {
+                                            line = "w: " + NumberString2String(line, _responseFile || !_cFormat);
+                                        }
+                                        else
+                                        {
+                                            line = "w (Invalid): " +
+                                                   NumberString2String(line, _responseFile || !_cFormat);
+                                        }
+                                    }
+                                }
+                                else
+                                {   // receive
+                                    if (!ignoreResponse)
+                                    {
+                                        string readString = line;
+                                        if (_responseFile)
+                                        {
+                                            if (writeString.Length > 0 && readString.Length > 0)
+                                            {
+                                                List<byte> writeValues = NumberString2List(writeString);
+                                                List<byte> readValues = NumberString2List(readString);
+                                                if (UpdateRequestAddr(writeValues, readValues))
+                                                {
+                                                    writeString = List2NumberString(writeValues);
+                                                    if (ValidResponse(writeValues, readValues))
+                                                    {
+                                                        streamWriter.Write(NumberString2String(writeString, _responseFile || !_cFormat));
+                                                        StoreReadString(streamWriter, readString);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            StoreReadString(streamWriter, readString);
+                                        }
+                                    }
+                                    writeString = string.Empty;
+                                    line = string.Empty;
+                                }
+                            }
+                            else
+                            {
+                                writeString = string.Empty;
+                            }
+                            if (!_responseFile && line.Length > 0)
+                            {
+                                streamWriter.WriteLine(line);
+                            }
+                            ignoreResponse = false;
+                        }
+                    }
+                }
+            }
+        }
+
         private static int LineComparer(string x, string y)
         {
             string lineX = x.Substring(3);
@@ -366,7 +494,7 @@ namespace LogfileConverter
             return String.Compare(lineX, lineY, StringComparison.Ordinal);
         }
 
-        static private bool SortLines(string fileName)
+        private static bool SortLines(string fileName)
         {
             try
             {
@@ -392,7 +520,7 @@ namespace LogfileConverter
             return true;
         }
 
-        static private void StoreReadString(StreamWriter streamWriter, string readString)
+        private static void StoreReadString(StreamWriter streamWriter, string readString)
         {
             try
             {
@@ -430,7 +558,7 @@ namespace LogfileConverter
             }
         }
 
-        static private List<byte> NumberString2List(string numberString)
+        private static List<byte> NumberString2List(string numberString)
         {
             List<byte> values = new List<byte>();
             string[] numberArray = numberString.Split(' ');
@@ -452,7 +580,17 @@ namespace LogfileConverter
             return values;
         }
 
-        static private byte CalcChecksumBmwFast(List<byte> data, int offset, int length)
+        private static string List2NumberString(List<byte> dataList)
+        {
+            StringBuilder sr = new StringBuilder();
+            foreach (byte data in dataList)
+            {
+                sr.Append($"{data:X02} ");
+            }
+            return sr.ToString();
+        }
+
+        private static byte CalcChecksumBmwFast(List<byte> data, int offset, int length)
         {
             byte sum = 0;
             for (int i = 0; i < length; i++)
@@ -463,7 +601,7 @@ namespace LogfileConverter
         }
 
         // telegram length without checksum
-        static private int TelLengthBmwFast(List<byte> telegram, int offset)
+        private static int TelLengthBmwFast(List<byte> telegram, int offset)
         {
             if (telegram.Count - offset < 4)
             {
@@ -492,7 +630,28 @@ namespace LogfileConverter
             return telLength;
         }
 
-        static private bool ChecksumValid(List<byte> telegram)
+        private static List<byte> CreateBmwFastTel(List<byte> data, byte dest, byte source)
+        {
+            List<byte> result = new List<byte>();
+            if (data.Count > 0x3F)
+            {
+                result.Add(0x80);
+                result.Add(dest);
+                result.Add(source);
+                result.Add((byte)data.Count);
+            }
+            else
+            {
+                result.Add((byte) (0x80 | data.Count));
+                result.Add(dest);
+                result.Add(source);
+            }
+            result.AddRange(data);
+            result.Add(CalcChecksumBmwFast(result, 0, result.Count));
+            return result;
+        }
+
+        private static bool ChecksumValid(List<byte> telegram)
         {
             int offset = 0;
             for (; ; )
@@ -523,7 +682,7 @@ namespace LogfileConverter
             return true;
         }
 
-        static private bool ValidResponse(List<byte> request, List<byte> response)
+        private static bool ValidResponse(List<byte> request, List<byte> response)
         {
             bool broadcast = (request[0] & 0xC0) != 0x80;
             if (!ChecksumValid(request) || !ChecksumValid(response))
@@ -544,7 +703,23 @@ namespace LogfileConverter
             return true;
         }
 
-        static private string NumberString2String(string numberString, bool simpleFormat)
+        private static bool UpdateRequestAddr(List<byte> request, List<byte> response)
+        {
+            if (!ChecksumValid(request) || !ChecksumValid(response))
+            {
+                return false;
+            }
+            if (request.Count < 4)
+            {
+                return false;
+            }
+            request[1] = response[2];
+            request[2] = response[1];
+            request[request.Count - 1] = CalcChecksumBmwFast(request, 0, request.Count - 1);
+            return true;
+        }
+
+        private static string NumberString2String(string numberString, bool simpleFormat)
         {
             string result = string.Empty;
 
@@ -601,7 +776,7 @@ namespace LogfileConverter
                     {
                         result += " ";
                     }
-                    result += string.Format("{0:X02}", value);
+                    result += $"{value:X02}";
                 }
                 else
                 {
@@ -609,7 +784,7 @@ namespace LogfileConverter
                     {
                         result += ", ";
                     }
-                    result += string.Format("0x{0:X02}", value);
+                    result += $"0x{value:X02}";
                 }
             }
 
@@ -619,7 +794,7 @@ namespace LogfileConverter
         static void ShowHelp(OptionSet p)
         {
             Console.WriteLine("Usage: " + Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName) + " [OPTIONS]");
-            Console.WriteLine("Convert BMW ODB log files");
+            Console.WriteLine("Convert OBD log files");
             Console.WriteLine();
             Console.WriteLine("Options:");
             p.WriteOptionDescriptions(Console.Out);
