@@ -387,13 +387,18 @@ namespace LogfileConverter
                 string line;
                 string writeString = string.Empty;
                 bool ignoreResponse = false;
+                bool keyBytes = false;
                 while ((line = streamReader.ReadLine()) != null)
                 {
                     if (line.Length > 0)
                     {
                         if (Regex.IsMatch(line, @"^msgIn:"))
                         {
-                            if (!Regex.IsMatch(line, @"^msgIn:.*('ifhSendTelegram'|'ifhGetResult')"))
+                            if (Regex.IsMatch(line, @"^.*'ifhRequestKeyBytes"))
+                            {
+                                keyBytes = true;
+                            }
+                            if (!Regex.IsMatch(line, @"^.*('ifhSendTelegram'|'ifhGetResult')"))
                             {
                                 ignoreResponse = true;
                                 writeString = string.Empty;
@@ -442,6 +447,15 @@ namespace LogfileConverter
                                 }
                                 else
                                 {   // receive
+                                    if (keyBytes)
+                                    {
+                                        string readString = line;
+                                        List<byte> readValues = NumberString2List(readString);
+                                        if (readValues.Count >= 5)
+                                        {
+                                            streamWriter.WriteLine($"CFG: 00 {readValues[0]:X02} {readValues[1]:X02}");
+                                        }
+                                    }
                                     if (!ignoreResponse)
                                     {
                                         string readString = line;
@@ -480,6 +494,7 @@ namespace LogfileConverter
                                 streamWriter.WriteLine(line);
                             }
                             ignoreResponse = false;
+                            keyBytes = false;
                         }
                     }
                 }
