@@ -453,7 +453,7 @@ namespace LogfileConverter
                                         List<byte> readValues = NumberString2List(readString);
                                         if (readValues.Count >= 5)
                                         {
-                                            streamWriter.WriteLine($"CFG: 00 {readValues[0]:X02} {readValues[1]:X02}");
+                                            streamWriter.WriteLine($"CFG: {(readValues[2] ^ 0xFF) & 0x7F:X02} {readValues[0]:X02} {readValues[1]:X02}");
                                         }
                                     }
                                     if (!ignoreResponse)
