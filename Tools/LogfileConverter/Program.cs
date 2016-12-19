@@ -388,6 +388,7 @@ namespace LogfileConverter
                 string writeString = string.Empty;
                 bool ignoreResponse = false;
                 bool keyBytes = false;
+                int remoteAddr = -1;
                 while ((line = streamReader.ReadLine()) != null)
                 {
                     if (line.Length > 0)
@@ -397,6 +398,10 @@ namespace LogfileConverter
                             if (Regex.IsMatch(line, @"^.*'ifhRequestKeyBytes"))
                             {
                                 keyBytes = true;
+                            }
+                            if (Regex.IsMatch(line, @"^.*'ifhSetParameter"))
+                            {
+                                remoteAddr = -1;
                             }
                             if (!Regex.IsMatch(line, @"^.*('ifhSendTelegram'|'ifhGetResult')"))
                             {
@@ -453,7 +458,25 @@ namespace LogfileConverter
                                         List<byte> readValues = NumberString2List(readString);
                                         if (readValues.Count >= 5)
                                         {
-                                            streamWriter.WriteLine($"CFG: {(readValues[2] ^ 0xFF) & 0x7F:X02} {readValues[0]:X02} {readValues[1]:X02}");
+                                            if (_responseFile)
+                                            {
+                                                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                                                if (readValues[0] == 0xDA)
+                                                {   // TP20
+                                                    if (remoteAddr >= 0)
+                                                    {
+                                                        streamWriter.WriteLine($"CFG: {readValues[2]:X02} {remoteAddr:X02}");
+                                                    }
+                                                }
+                                                else
+                                                {   // KWP2000
+                                                    streamWriter.WriteLine($"CFG: {(readValues[2] ^ 0xFF) & 0x7F:X02} {readValues[0]:X02} {readValues[1]:X02}");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                streamWriter.WriteLine("KEY: " + NumberString2String(readString, _responseFile || !_cFormat));
+                                            }
                                         }
                                     }
                                     if (!ignoreResponse)
@@ -467,6 +490,7 @@ namespace LogfileConverter
                                                 List<byte> readValues = NumberString2List(readString);
                                                 if (UpdateRequestAddr(writeValues, readValues))
                                                 {
+                                                    remoteAddr = writeValues[1];
                                                     writeString = List2NumberString(writeValues);
                                                     if (ValidResponse(writeValues, readValues))
                                                     {
