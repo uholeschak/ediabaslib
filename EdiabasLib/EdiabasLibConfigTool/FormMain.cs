@@ -65,7 +65,7 @@ namespace EdiabasLibConfigTool
             comboBoxLanguage.BeginUpdate();
             comboBoxLanguage.Items.Add(new LanguageInfo(Resources.Strings.LanguageEn, "en"));
             comboBoxLanguage.Items.Add(new LanguageInfo(Resources.Strings.LanguageDe, "de"));
-            //comboBoxLanguage.Items.Add(new LanguageInfo(Resources.Strings.LanguageRu, "ru"));
+            comboBoxLanguage.Items.Add(new LanguageInfo(Resources.Strings.LanguageRu, "ru"));
             comboBoxLanguage.EndUpdate();
 
             string culture = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
