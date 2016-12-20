@@ -1,0 +1,266 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BtInitError" xml:space="preserve">
+    <value>Ошибка инициализации Bluetooth: {0}</value>
+  </data>
+  <data name="ButtonTestCheck" xml:space="preserve">
+    <value>Проверка соединения</value>
+  </data>
+  <data name="ButtonTestConfiguration" xml:space="preserve">
+    <value>Конфигурация ODB устройства</value>
+  </data>
+  <data name="ButtonTestConnect" xml:space="preserve">
+    <value>Соединить</value>
+  </data>
+  <data name="CanMode" xml:space="preserve">
+    <value>Режим ODB устройства:</value>
+  </data>
+  <data name="CanMode100" xml:space="preserve">
+    <value>K-CAN</value>
+  </data>
+  <data name="CanMode500" xml:space="preserve">
+    <value>D-CAN</value>
+  </data>
+  <data name="CanModeAuto" xml:space="preserve">
+    <value>Автоматический</value>
+  </data>
+  <data name="CanModeChangeAuto" xml:space="preserve">
+    <value>Изменение CAN режима на автоматический</value>
+  </data>
+  <data name="CanModeChangeFailed" xml:space="preserve">
+    <value>Ошибка при изменении CAN режима</value>
+  </data>
+  <data name="CanModeNotAuto" xml:space="preserve">
+    <value>Рекомендуется использовать автоматический режим ODB устройства.</value>
+  </data>
+  <data name="CanModeOff" xml:space="preserve">
+    <value>K-LINE</value>
+  </data>
+  <data name="CanModeUnknown" xml:space="preserve">
+    <value>Неизвестный</value>
+  </data>
+  <data name="Connected" xml:space="preserve">
+    <value>Подключено</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Соединение ...</value>
+  </data>
+  <data name="ConnectionFailed" xml:space="preserve">
+    <value>Ошибка подключения</value>
+  </data>
+  <data name="DevicesFound" xml:space="preserve">
+    <value>Выберите устройство для выполнения операции.</value>
+  </data>
+  <data name="DevicesNotFound" xml:space="preserve">
+    <value>Устройство не найдено.</value>
+  </data>
+  <data name="DisconnectedAdapter" xml:space="preserve">
+    <value>Не подключённое Wi-Fi устройство</value>
+  </data>
+  <data name="FirmwareTooOld" xml:space="preserve">
+    <value>Прошивка ODB устройства устарела, пожалуйста, обновите прошивку при помощи приложения Deep OBD.</value>
+  </data>
+  <data name="FirmwareVersion" xml:space="preserve">
+    <value>Версия прошивки:</value>
+  </data>
+  <data name="HttpResponseIncorrect" xml:space="preserve">
+    <value>HTTP ответ недействительный</value>
+  </data>
+  <data name="HttpResponseOk" xml:space="preserve">
+    <value>HTTP ответ OK</value>
+  </data>
+  <data name="PatchApi32Missing" xml:space="preserve">
+    <value>EdiabasLib Api32.dll файл отсутствует.</value>
+  </data>
+  <data name="PatchBackupFileExisting" xml:space="preserve">
+    <value>Файл резервной копии уже существует.</value>
+  </data>
+  <data name="PatchConfigExisting" xml:space="preserve">
+    <value>Die EdiabasLib.config файл уже существует.</value>
+  </data>
+  <data name="PatchConfigMissing" xml:space="preserve">
+    <value>Die EdiabasLib.config файл отсутствует.</value>
+  </data>
+  <data name="PatchConfigUpdateFailed" xml:space="preserve">
+    <value>Не удалось обновить конфигурационный файл.</value>
+  </data>
+  <data name="PatchConfigUpdateOk" xml:space="preserve">
+    <value>Конфигурационный файл успешно обновлён.</value>
+  </data>
+  <data name="PatchCopyFailed" xml:space="preserve">
+    <value>Не удалось скопировать файлы.</value>
+  </data>
+  <data name="PatchCreateBackupFile" xml:space="preserve">
+    <value>Создание файла резервной копии.</value>
+  </data>
+  <data name="PatchDirectory" xml:space="preserve">
+    <value>Заплатка EDIABAS: '{0}'</value>
+  </data>
+  <data name="ReadFirmwareVersionFailed" xml:space="preserve">
+    <value>Не удалось считать версию прошивки</value>
+  </data>
+  <data name="ReadModeFailed" xml:space="preserve">
+    <value>Не удалось установить режим устройства</value>
+  </data>
+  <data name="RestoreApi32Failed" xml:space="preserve">
+    <value>Не удалось восстановить исходный Api32.dll файл.</value>
+  </data>
+  <data name="RestoredApi32" xml:space="preserve">
+    <value>Оригинальный Api32.dll файл восстановлен.</value>
+  </data>
+  <data name="RestoreDirectory" xml:space="preserve">
+    <value>Восстановление EDIABAS: '{0}'</value>
+  </data>
+  <data name="RestoreNoBackupFile" xml:space="preserve">
+    <value>Файл резервной копии отсутствует.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Поиск ...</value>
+  </data>
+  <data name="SearchingFailed" xml:space="preserve">
+    <value>Не удалось выполнить поиск</value>
+  </data>
+  <data name="SearchingFailedMessage" xml:space="preserve">
+    <value>Не удалось выполнить поиск: {0}</value>
+  </data>
+  <data name="TestOk" xml:space="preserve">
+    <value>Тест OK</value>
+  </data>
+  <data name="WifiAdapterError" xml:space="preserve">
+    <value>Wi-Fi устройство не найдено.</value>
+  </data>
+  <data name="WifiUrlOk" xml:space="preserve">
+    <value>Страница конфигурации адаптера открывается в браузере.
+Пароль по умолчанию - root.</value>
+  </data>
+  <data name="PatchApiVersion" xml:space="preserve">
+    <value>API версия: {0}</value>
+  </data>
+  <data name="PatchLoadApi32Failed" xml:space="preserve">
+    <value>Не удалось загрузить Api32.dll. Устеновлено VS2015 C++ Runtime?</value>
+  </data>
+  <data name="PatchNoValidBackupFile" xml:space="preserve">
+    <value>Api32.dll файл резервной копии повреждён или не является таковым.</value>
+  </data>
+  <data name="PatchInstadInfo" xml:space="preserve">
+    <value>Указание: В ISTA-D администрировании -&gt; VCI конфигурация выберите тип интерфейса:
+Ediabas настройки по умолчанию (ediabas.ini)</value>
+  </data>
+</root>
