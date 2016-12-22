@@ -325,10 +325,17 @@ namespace EdiabasLibConfigTool
                 }
                 sr.Append("\r\n");
                 sr.Append(Resources.Strings.PatchConfigUpdateOk);
-                if (patchType == PatchType.Istad)
+                switch (patchType)
                 {
-                    sr.Append("\r\n");
-                    sr.Append(Resources.Strings.PatchInstadInfo);
+                    case PatchType.Istad:
+                        sr.Append("\r\n");
+                        sr.Append(Resources.Strings.PatchInstadInfo);
+                        break;
+
+                    case PatchType.VasPc:
+                        sr.Append("\r\n");
+                        sr.Append(Resources.Strings.PatchVaspcInfo);
+                        break;
                 }
             }
             catch (Exception)
