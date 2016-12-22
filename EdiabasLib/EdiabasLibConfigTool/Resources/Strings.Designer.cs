@@ -386,7 +386,7 @@ namespace EdiabasLibConfigTool.Resources {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Hint: In ISTA-D Administration -&gt; VCI Config select as Interface type:
-        ///Ediabas default settings (ediabas.ini) ähnelt.
+        ///Ediabas default settings (ediabas.ini). ähnelt.
         /// </summary>
         internal static string PatchInstadInfo {
             get {
@@ -409,6 +409,16 @@ namespace EdiabasLibConfigTool.Resources {
         internal static string PatchNoValidBackupFile {
             get {
                 return ResourceManager.GetString("PatchNoValidBackupFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Hint: In VAS-PC only &quot;Guided Fault Finding&quot; and &quot;Guided Functions&quot;
+        ///are supported with EdiabasLib. ähnelt.
+        /// </summary>
+        internal static string PatchVaspcInfo {
+            get {
+                return ResourceManager.GetString("PatchVaspcInfo", resourceCulture);
             }
         }
         

@@ -261,6 +261,10 @@ Das Standard root Password ist root.</value>
   </data>
   <data name="PatchInstadInfo" xml:space="preserve">
     <value>Hinweis: In ISTA-D Administration -&gt; VCI Konfiguration als Interface Typ auswählen:
-Ediabas Standardeinstellungen (ediabas.ini)</value>
+Ediabas Standardeinstellungen (ediabas.ini).</value>
+  </data>
+  <data name="PatchVaspcInfo" xml:space="preserve">
+    <value>Hinweis: In VAS-PC werden nur "Geführte Fehlerkennung" und "Geführte Funktionen"
+mit EdiabasLib unterstützt.</value>
   </data>
 </root>
