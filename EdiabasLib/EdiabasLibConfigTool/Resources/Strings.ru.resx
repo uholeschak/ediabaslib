@@ -263,4 +263,7 @@
     <value>Указание: В ISTA-D администрировании -&gt; VCI конфигурация выберите тип интерфейса:
 Ediabas настройки по умолчанию (ediabas.ini).</value>
   </data>
+  <data name="PatchVaspcInfo" xml:space="preserve">
+    <value>В VAS-PC с EdiabasLib поддерживаются только "Вед. поиск неисправн." и "Ведомые функции".</value>
+  </data>
 </root>
