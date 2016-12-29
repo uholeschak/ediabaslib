@@ -131,7 +131,7 @@ namespace EdiabasLibConfigTool
                     {
                         try
                         {
-                            TestOk = RunWifiTest(ipAddr);
+                            TestOk = RunWifiTestRetry(ipAddr);
                             if (TestOk)
                             {
                                 ConfigPossible = true;
@@ -185,6 +185,18 @@ namespace EdiabasLibConfigTool
             });
             _testThread.Start();
             return true;
+        }
+
+        private bool RunWifiTestRetry(string ipAddr)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                if (RunWifiTest(ipAddr))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private bool RunWifiTest(string ipAddr)
