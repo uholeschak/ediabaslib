@@ -388,6 +388,7 @@ namespace LogfileConverter
                 string writeString = string.Empty;
                 bool ignoreResponse = false;
                 bool keyBytes = false;
+                bool kwp1281 = false;
                 int remoteAddr = -1;
                 while ((line = streamReader.ReadLine()) != null)
                 {
@@ -401,6 +402,7 @@ namespace LogfileConverter
                             }
                             if (Regex.IsMatch(line, @"^.*'ifhSetParameter"))
                             {
+                                //kwp1281 = false;
                                 remoteAddr = -1;
                             }
                             if (!Regex.IsMatch(line, @"^.*('ifhSendTelegram'|'ifhGetResult')"))
@@ -421,10 +423,22 @@ namespace LogfileConverter
                                 {
                                     if (lineValues.Count > 0)
                                     {
-                                        lineValues = CreateBmwFastTel(lineValues, 0x00, 0xF1);
+                                        if (!kwp1281)
+                                        {
+                                            lineValues = CreateBmwFastTel(lineValues, 0x00, 0xF1);
+                                        }
                                         line = List2NumberString(lineValues);
                                     }
-                                    bool validWrite = ChecksumValid(lineValues);
+                                    bool validWrite;
+                                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                                    if (kwp1281)
+                                    {
+                                        validWrite = CheckKwp1281Tel(lineValues);
+                                    }
+                                    else
+                                    {
+                                        validWrite = ChecksumValid(lineValues);
+                                    }
                                     if (_responseFile)
                                     {
                                         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
@@ -458,19 +472,46 @@ namespace LogfileConverter
                                         List<byte> readValues = NumberString2List(readString);
                                         if (readValues.Count >= 5)
                                         {
+                                            bool kpw1281Found = readValues[1] != 0x8F;
+                                            if (kpw1281Found)
+                                            {
+                                                kwp1281 = true;
+                                            }
                                             if (_responseFile)
                                             {
-                                                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                                                if (readValues[0] == 0xDA)
-                                                {   // TP20
-                                                    if (remoteAddr >= 0)
-                                                    {
-                                                        streamWriter.WriteLine($"CFG: {readValues[2]:X02} {remoteAddr:X02}");
+                                                if (!kpw1281Found)
+                                                {
+                                                    if (readValues[1] == 0x8F)
+                                                    {   // TP20
+                                                        if (remoteAddr >= 0)
+                                                        {
+                                                            streamWriter.WriteLine($"CFG: {readValues[2]:X02} {remoteAddr:X02}");
+                                                        }
+                                                    }
+                                                    else
+                                                    {   // KWP2000
+                                                        streamWriter.WriteLine($"CFG: {(readValues[2] ^ 0xFF) & 0x7F:X02} {readValues[0]:X02} {readValues[1]:X02}");
                                                     }
                                                 }
                                                 else
-                                                {   // KWP2000
-                                                    streamWriter.WriteLine($"CFG: {(readValues[2] ^ 0xFF) & 0x7F:X02} {readValues[0]:X02} {readValues[1]:X02}");
+                                                {   // KWP1281
+                                                    readValues = CleanKwp1281Tel(readValues, true);
+                                                    if (readValues.Count > 0)
+                                                    {
+                                                        streamWriter.WriteLine($"CFG: 00 {readValues[0]:X02} {readValues[1]:X02}");
+                                                        streamWriter.WriteLine(";ID");
+                                                        int offset = 5;
+                                                        for (;;)
+                                                        {
+                                                            if (offset >= readValues.Count)
+                                                            {
+                                                                break;
+                                                            }
+                                                            byte len = readValues[offset];
+                                                            streamWriter.WriteLine(": " + List2NumberString(readValues.GetRange(offset, len)));
+                                                            offset += len;
+                                                        }
+                                                    }
                                                 }
                                             }
                                             else
@@ -488,21 +529,41 @@ namespace LogfileConverter
                                             {
                                                 List<byte> writeValues = NumberString2List(writeString);
                                                 List<byte> readValues = NumberString2List(readString);
-                                                if (UpdateRequestAddr(writeValues, readValues))
+                                                if (kwp1281)
                                                 {
-                                                    remoteAddr = writeValues[1];
-                                                    writeString = List2NumberString(writeValues);
-                                                    if (ValidResponse(writeValues, readValues))
+                                                    readValues = CleanKwp1281Tel(readValues);
+                                                    if (readValues.Count > 0)
                                                     {
+                                                        readString = List2NumberString(readValues);
                                                         streamWriter.Write(NumberString2String(writeString, _responseFile || !_cFormat));
-                                                        StoreReadString(streamWriter, readString);
+                                                        streamWriter.WriteLine(" : " + NumberString2String(readString, _responseFile || !_cFormat));
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (UpdateRequestAddr(writeValues, readValues))
+                                                    {
+                                                        remoteAddr = writeValues[1];
+                                                        writeString = List2NumberString(writeValues);
+                                                        if (ValidResponse(writeValues, readValues))
+                                                        {
+                                                            streamWriter.Write(NumberString2String(writeString, _responseFile || !_cFormat));
+                                                            StoreReadString(streamWriter, readString);
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
                                         else
                                         {
-                                            StoreReadString(streamWriter, readString);
+                                            if (kwp1281)
+                                            {
+                                                streamWriter.WriteLine("r: " + NumberString2String(readString, _responseFile || !_cFormat));
+                                            }
+                                            else
+                                            {
+                                                StoreReadString(streamWriter, readString);
+                                            }
                                         }
                                     }
                                     writeString = string.Empty;
@@ -755,6 +816,74 @@ namespace LogfileConverter
             request[1] = response[2];
             request[2] = response[1];
             request[request.Count - 1] = CalcChecksumBmwFast(request, 0, request.Count - 1);
+            return true;
+        }
+
+        private static List<byte> CleanKwp1281Tel(List<byte> tel, bool keyBytes = false)
+        {
+            List<byte> result = new List<byte>();
+            int offset = 0;
+            if (keyBytes)
+            {
+                offset = 5;
+                if (tel.Count < offset)
+                {
+                    return new List<byte>();
+                }
+                result.AddRange(tel.GetRange(0, offset));
+            }
+            for (;;)
+            {
+                if (offset >= tel.Count)
+                {
+                    break;
+                }
+                byte len = tel[offset];
+                if (tel.Count < offset + len + 1)
+                {
+                    return new List<byte>();
+                }
+                if (tel[offset + len] != 0x03)
+                {
+                    return new List<byte>();
+                }
+                if (len != 3 || tel[offset + 2] != 0x09)
+                {   // ack
+                    result.AddRange(tel.GetRange(offset, len));
+                }
+                offset += len + 1;
+            }
+            return result;
+        }
+
+        private static bool CheckKwp1281Tel(List<byte> tel)
+        {
+            if (tel.Count == 0)
+            {
+                return false;
+            }
+            int offset = 0;
+            for (;;)
+            {
+                if (offset >= tel.Count)
+                {
+                    break;
+                }
+                byte len = tel[offset];
+                if (len == 0)
+                {
+                    return false;
+                }
+                if (tel.Count < offset + len)
+                {
+                    return false;
+                }
+                if (len == 3 && tel[offset + 2] == 0x09)
+                {   // ack
+                    return false;
+                }
+                offset += len;
+            }
             return true;
         }
 
