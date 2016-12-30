@@ -385,13 +385,17 @@ namespace LogfileConverter
             _edicCanMode = false;
             using (StreamReader streamReader = new StreamReader(inputFile))
             {
+                Regex regexCleanLine = new Regex(@"^.*\:[\s]*");
                 string line;
                 string writeString = string.Empty;
                 bool ignoreResponse = false;
                 bool keyBytes = false;
                 bool kwp1281 = false;
                 int remoteAddr = -1;
+                int wakeAddrPar = -1;
                 string lastCfgLine = string.Empty;
+                List<byte> lineValuesPar = null;
+                List<byte> lineValuesPreface = null;
                 while ((line = streamReader.ReadLine()) != null)
                 {
                     if (line.Length > 0)
@@ -413,12 +417,45 @@ namespace LogfileConverter
                                 writeString = string.Empty;
                             }
                         }
+                        if (Regex.IsMatch(line, @"^\((ifhSetParameter|ifhSetTelPreface)\): "))
+                        {
+                            bool par = Regex.IsMatch(line, @"^\(ifhSetParameter\): ");
+                            line = regexCleanLine.Replace(line, String.Empty);
+                            List<byte> lineValues = NumberString2List(line);
+                            if (par)
+                            {
+                                lineValuesPar = lineValues;
+                            }
+                            else
+                            {
+                                lineValuesPreface = lineValues;
+                            }
+                            continue;
+                        }
                         if (Regex.IsMatch(line, @"^\((ifhSendTelegram|ifhGetResult)\): "))
                         {
                             bool send = Regex.IsMatch(line, @"^\(ifhSendTelegram\): ");
-                            line = Regex.Replace(line, @"^.*\:[\s]*", String.Empty);
+                            line = regexCleanLine.Replace(line, String.Empty);
 
                             List<byte> lineValues = NumberString2List(line);
+                            if (send && lineValues.Count == 0)
+                            {
+                                if (lineValuesPar?.Count >= 6 && lineValuesPreface?.Count >= 4 &&
+                                    lineValuesPar[4] == 0x81 && lineValuesPreface[2] == 0x02 && lineValuesPreface[3] == 0x00)
+                                {
+                                    byte wakeAddress = (byte)(lineValuesPar[5] & 0x7F);
+                                    bool oddParity = true;
+                                    for (int i = 0; i < 7; i++)
+                                    {
+                                        oddParity ^= (wakeAddress & (1 << i)) != 0;
+                                    }
+                                    if (oddParity)
+                                    {
+                                        wakeAddress |= 0x80;
+                                    }
+                                    wakeAddrPar = wakeAddress;
+                                }
+                            }
                             if (line.Length > 0)
                             {
                                 if (send)
@@ -510,9 +547,9 @@ namespace LogfileConverter
                                                 {
                                                     // KWP1281
                                                     readValues = CleanKwp1281Tel(readValues, true);
-                                                    if (readValues.Count > 5)
+                                                    if (wakeAddrPar >= 0 && readValues.Count > 5)
                                                     {
-                                                        string cfgLine = $"CFG: 00 {readValues[0]:X02} {readValues[1]:X02}" +
+                                                        string cfgLine = $"CFG: {wakeAddrPar:X02} {readValues[0]:X02} {readValues[1]:X02}" +
                                                             "\r\n: " + List2NumberString(readValues.GetRange(5, readValues.Count - 5));
 
                                                         if (string.Compare(lastCfgLine, cfgLine, StringComparison.Ordinal) != 0)
