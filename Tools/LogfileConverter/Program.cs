@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using NDesk.Options;
@@ -390,6 +391,7 @@ namespace LogfileConverter
                 bool keyBytes = false;
                 bool kwp1281 = false;
                 int remoteAddr = -1;
+                string lastCfgLine = string.Empty;
                 while ((line = streamReader.ReadLine()) != null)
                 {
                     if (line.Length > 0)
@@ -459,8 +461,7 @@ namespace LogfileConverter
                                         }
                                         else
                                         {
-                                            line = "w (Invalid): " +
-                                                   NumberString2String(line, _responseFile || !_cFormat);
+                                            line = "w (Invalid): " + NumberString2String(line, _responseFile || !_cFormat);
                                         }
                                     }
                                 }
@@ -481,35 +482,43 @@ namespace LogfileConverter
                                             {
                                                 if (!kpw1281Found)
                                                 {
-                                                    if (readValues[1] == 0x8F)
-                                                    {   // TP20
+                                                    if (readValues[4] > 0x40)
+                                                    {
+                                                        // TP20
                                                         if (remoteAddr >= 0)
                                                         {
-                                                            streamWriter.WriteLine($"CFG: {readValues[2]:X02} {remoteAddr:X02}");
+                                                            string cfgLine = $"CFG: {readValues[2]:X02} {remoteAddr:X02}";
+                                                            if (string.Compare(lastCfgLine, cfgLine, StringComparison.Ordinal) != 0)
+                                                            {
+                                                                streamWriter.WriteLine(cfgLine);
+                                                                lastCfgLine = cfgLine;
+                                                            }
                                                         }
                                                     }
                                                     else
-                                                    {   // KWP2000
-                                                        streamWriter.WriteLine($"CFG: {(readValues[2] ^ 0xFF) & 0x7F:X02} {readValues[0]:X02} {readValues[1]:X02}");
+                                                    {
+                                                        // KWP2000
+                                                        string cfgLine = $"CFG: {(readValues[2] ^ 0xFF) & 0x7F:X02} {readValues[0]:X02} {readValues[1]:X02}";
+                                                        if (string.Compare(lastCfgLine, cfgLine, StringComparison.Ordinal) != 0)
+                                                        {
+                                                            streamWriter.WriteLine(cfgLine);
+                                                            lastCfgLine = cfgLine;
+                                                        }
                                                     }
                                                 }
                                                 else
-                                                {   // KWP1281
+                                                {
+                                                    // KWP1281
                                                     readValues = CleanKwp1281Tel(readValues, true);
-                                                    if (readValues.Count > 0)
+                                                    if (readValues.Count > 5)
                                                     {
-                                                        streamWriter.WriteLine($"CFG: 00 {readValues[0]:X02} {readValues[1]:X02}");
-                                                        streamWriter.WriteLine(";ID");
-                                                        int offset = 5;
-                                                        for (;;)
+                                                        string cfgLine = $"CFG: 00 {readValues[0]:X02} {readValues[1]:X02}" +
+                                                            "\r\n: " + List2NumberString(readValues.GetRange(5, readValues.Count - 5));
+
+                                                        if (string.Compare(lastCfgLine, cfgLine, StringComparison.Ordinal) != 0)
                                                         {
-                                                            if (offset >= readValues.Count)
-                                                            {
-                                                                break;
-                                                            }
-                                                            byte len = readValues[offset];
-                                                            streamWriter.WriteLine(": " + List2NumberString(readValues.GetRange(offset, len)));
-                                                            offset += len;
+                                                            streamWriter.WriteLine(cfgLine);
+                                                            lastCfgLine = cfgLine;
                                                         }
                                                     }
                                                 }
