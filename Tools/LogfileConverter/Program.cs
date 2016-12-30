@@ -535,7 +535,7 @@ namespace LogfileConverter
                                                     else
                                                     {
                                                         // KWP2000
-                                                        string cfgLine = $"CFG: {(readValues[2] ^ 0xFF) & 0x7F:X02} {readValues[0]:X02} {readValues[1]:X02}";
+                                                        string cfgLine = $"CFG: {readValues[2] ^ 0xFF:X02} {readValues[0]:X02} {readValues[1]:X02}";
                                                         if (string.Compare(lastCfgLine, cfgLine, StringComparison.Ordinal) != 0)
                                                         {
                                                             streamWriter.WriteLine(cfgLine);
