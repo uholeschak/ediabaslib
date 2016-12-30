@@ -307,8 +307,12 @@ namespace CarSimulator
                 // split multi telegram responses
                 if (conceptType == CommThread.ConceptType.ConceptKwp1281)
                 {
-                    foreach (CommThread.ResponseEntry responseEntry in responseList)
+                    List<CommThread.ResponseEntry> combinedList = new List<CommThread.ResponseEntry>();
+                    combinedList.AddRange(responseList);
+                    combinedList.AddRange(responseOnlyList);
+                    foreach (CommThread.ResponseEntry responseEntry in combinedList)
                     {
+                        if (responseEntry.Request != null)
                         {
                             if (responseEntry.Request.Length < 3)
                             {

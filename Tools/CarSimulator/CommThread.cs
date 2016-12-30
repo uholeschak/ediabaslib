@@ -5780,6 +5780,18 @@ namespace CarSimulator
 
             Debug.WriteLine("Init done");
 
+            ResponseEntry responseOnlyEntry = null;
+            foreach (ResponseEntry responseEntry in _configData.ResponseOnlyList)
+            {
+                if ((responseEntry.Config == null) || (responseEntry.Config.Length < 1) ||
+                    (responseEntry.Config[0] != wakeAddress))
+                {
+                    continue;
+                }
+                responseOnlyEntry = responseEntry;
+                break;
+            }
+
             bool requestInvalid = false;
             byte blockCount = 1;
             int telBlockIndex = 0;
@@ -5792,26 +5804,14 @@ namespace CarSimulator
                     break;
                 }
 
-                ResponseEntry responseOnlyEntry = null;
-                for (;;)
+                byte[] responseOnlyData = null;
+                if (responseOnlyEntry != null && initSequenceCount < responseOnlyEntry.ResponseMultiList.Count)
                 {
-                    if (initSequenceCount >= _configData.ResponseOnlyList.Count)
-                    {
-                        break;
-                    }
-                    ResponseEntry entry = _configData.ResponseOnlyList[initSequenceCount++];
-                    if ((entry.Config == null) || (entry.Config.Length < 1 ) ||
-                        (entry.Config[0] != wakeAddress))
-                    {
-                        continue;
-                    }
-                    responseOnlyEntry = entry;
-                    break;
+                    responseOnlyData = responseOnlyEntry.ResponseMultiList[initSequenceCount++];
                 }
-                if (responseOnlyEntry != null)
+                if (responseOnlyData != null)
                 {
-                    byte[] responseOnly = responseOnlyEntry.ResponseList[0];
-                    Array.Copy(responseOnly, _sendData, responseOnly.Length);
+                    Array.Copy(responseOnlyData, _sendData, responseOnlyData.Length);
                 }
                 else
                 {
