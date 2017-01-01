@@ -55,10 +55,17 @@ namespace EdiabasLibConfigTool
             InitializeComponent();
             Icon = Properties.Resources.AppIcon;
 
-            string language = Properties.Settings.Default.Language;
-            if (!string.IsNullOrEmpty(language))
+            try
             {
-                SetCulture(language);
+                string language = Properties.Settings.Default.Language;
+                if (!string.IsNullOrEmpty(language))
+                {
+                    SetCulture(language);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
 
             comboBoxLanguage.Items.Clear();
@@ -195,7 +202,14 @@ namespace EdiabasLibConfigTool
             {
                 // ignored
             }
-            _ediabasDirIstad = Properties.Settings.Default.IstadDir;
+            try
+            {
+                _ediabasDirIstad = Properties.Settings.Default.IstadDir;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private void AddWifiAdapters(ListView listView)
@@ -506,9 +520,16 @@ namespace EdiabasLibConfigTool
         {
             _cli?.Dispose();
             _test?.Dispose();
-            Properties.Settings.Default.IstadDir = _ediabasDirIstad ?? string.Empty;
-            Properties.Settings.Default.Language = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
-            Properties.Settings.Default.Save();
+            try
+            {
+                Properties.Settings.Default.IstadDir = _ediabasDirIstad ?? string.Empty;
+                Properties.Settings.Default.Language = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+                Properties.Settings.Default.Save();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
