@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -75,6 +76,7 @@ namespace EdiabasLibConfigTool
             {
                 return false;
             }
+            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
             TestOk = false;
             ConfigPossible = false;
             AccessPoint ap = _form.GetSelectedAp();
@@ -131,6 +133,8 @@ namespace EdiabasLibConfigTool
                     {
                         try
                         {
+                            Thread.CurrentThread.CurrentCulture = cultureInfo;
+                            Thread.CurrentThread.CurrentUICulture = cultureInfo;
                             TestOk = RunWifiTestRetry(ipAddr);
                             if (TestOk)
                             {
@@ -163,6 +167,8 @@ namespace EdiabasLibConfigTool
             {
                 try
                 {
+                    Thread.CurrentThread.CurrentCulture = cultureInfo;
+                    Thread.CurrentThread.CurrentUICulture = cultureInfo;
                     _form.UpdateStatusText(Resources.Strings.Connecting);
                     if (!ConnectBtDevice(devInfo, pin))
                     {
@@ -537,7 +543,7 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        static public byte CalcChecksumBmwFast(byte[] data, int length)
+        public static byte CalcChecksumBmwFast(byte[] data, int length)
         {
             byte sum = 0;
             for (int i = 0; i < length; i++)
