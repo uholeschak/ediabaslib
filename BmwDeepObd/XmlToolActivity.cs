@@ -1753,7 +1753,8 @@ namespace BmwDeepObd
                             if (sgbdFileName.Contains("2000") || sgbdFileName.Contains("1281"))
                             {   // bit 7 is parity bit
                                 maxEcuAddress = 0x7F;
-                                ecuCount = ecuVagList.Count(x => x.Address <= maxEcuAddress);
+                                int addressTemp = maxEcuAddress;    // prevent warning
+                                ecuCount = ecuVagList.Count(x => x.Address <= addressTemp);
                             }
                         }
                     }
