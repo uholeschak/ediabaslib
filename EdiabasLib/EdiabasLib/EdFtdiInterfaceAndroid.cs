@@ -13,7 +13,7 @@ using Hoho.Android.UsbSerial.Util;
 
 namespace EdiabasLib
 {
-    static public class EdFtdiInterface
+    public static class EdFtdiInterface
     {
         public class ConnectParameterType
         {

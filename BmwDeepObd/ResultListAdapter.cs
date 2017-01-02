@@ -13,7 +13,7 @@ namespace BmwDeepObd
         private readonly float _textWeight;
         private readonly bool _showCheckBox;
         private bool _ignoreCheckEvent;
-        private Android.Content.Res.ColorStateList _defaultTextColors;
+        private readonly Android.Content.Res.ColorStateList _defaultTextColors;
 
         public ResultListAdapter(Activity context, float textWeight, bool showCheckBox)
         {

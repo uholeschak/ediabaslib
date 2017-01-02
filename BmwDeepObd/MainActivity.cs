@@ -20,7 +20,6 @@ using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Support.V4.View;
 using Android.Support.V7.App;
-using Android.Text;
 using Android.Text.Method;
 using Android.Util;
 using Android.Views;
@@ -109,7 +108,7 @@ namespace BmwDeepObd
         private const string AppFolderName = "de.holeschak.bmw_deep_obd";
         private const string EcuDirNameBmw = "Ecu";
         private const string EcuDirNameVag = "EcuVag";
-        private const string EcuDownloadUrlBmw = @"http://www.holeschak.de/BmwDeepObd/Ecu2.xml";
+        private const string EcuDownloadUrlBmw = @"http://www.holeschak.de/BmwDeepObd/Ecu3.xml";
         private const string EcuDownloadUrlVag = @"http://www.holeschak.de/BmwDeepObd/EcuVag1.xml";
         private const string InfoXmlName = "Info.xml";
         private const long EcuZipSizeBmw = 130000000;           // BMW ecu zip file size
@@ -2375,7 +2374,7 @@ namespace BmwDeepObd
                     {
                         DownloadFile(ManufacturerEcuDownloadUrl, Path.Combine(_appDataPath, ActivityCommon.DownloadDir), ecuPath);
                     })
-                    .SetMessage(Html.FromHtml(message))
+                    .SetMessage(ActivityCommon.FromHtml(message))
                     .SetTitle(Resource.String.alert_title_question)
                     .Show();
                 TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);

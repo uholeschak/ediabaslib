@@ -178,6 +178,7 @@ namespace EdiabasLib
 
         public void PerformFlush()
         {
+            if (_mFileName == null) return;
             // *** If local cache was not modified, exit ***
             if (!_mCacheModified) return;
             _mCacheModified = false;
@@ -187,6 +188,7 @@ namespace EdiabasLib
 
             // *** Get temporary file name ***
             string tmpFileName = Path.ChangeExtension(_mFileName, "$n$");
+            if (tmpFileName == null) return;
 
             // *** Copy content of original file to temporary file, replace modified values ***
             StreamWriter sw = null;

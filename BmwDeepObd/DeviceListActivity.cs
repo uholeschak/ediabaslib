@@ -25,7 +25,6 @@ using Android.Bluetooth;
 using Android.Content;
 using Android.OS;
 using Android.Support.V7.App;
-using Android.Text;
 using Android.Views;
 using Android.Widget;
 using EdiabasLib;
@@ -405,7 +404,7 @@ namespace BmwDeepObd
                                 {
                                 })
                                 .SetCancelable(true)
-                                .SetMessage(Html.FromHtml(message))
+                                .SetMessage(ActivityCommon.FromHtml(message))
                                 .SetTitle(Resource.String.alert_title_error)
                                 .Show();
                             _altertInfoDialog.DismissEvent += (sender, args) =>

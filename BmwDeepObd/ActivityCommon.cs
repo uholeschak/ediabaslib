@@ -1804,7 +1804,7 @@ namespace BmwDeepObd
 
                     StringBuilder sb = new StringBuilder();
                     sb.Append("Deep OBD Trace info");
-                    sb.Append(string.Format("\nDate: {0}", DateTime.Now.ToString("u")));
+                    sb.Append(string.Format("\nDate: {0:u}", DateTime.Now));
                     sb.Append(string.Format("\nLanguage: {0}", Java.Util.Locale.Default.Language ?? string.Empty));
                     sb.Append(string.Format("\nAndroid version: {0}", Build.VERSION.Sdk));
                     sb.Append(string.Format("\nAndroid model: {0}", Build.Model));
@@ -2790,7 +2790,8 @@ namespace BmwDeepObd
                     else
                     {
                         string langPair = "de-" + _yandexCurrentLang;
-                        if (_yandexLangList.All(lang => string.Compare(lang, langPair, StringComparison.OrdinalIgnoreCase) != 0))
+                        string langPairTemp = langPair;     // prevent warning
+                        if (_yandexLangList.All(lang => string.Compare(lang, langPairTemp, StringComparison.OrdinalIgnoreCase) != 0))
                         {
                             // language not found
                             langPair = "de-en";
@@ -3101,6 +3102,17 @@ namespace BmwDeepObd
             {
                 return null;
             }
+        }
+
+        public static Java.Lang.ICharSequence FromHtml(string source)
+        {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+            {
+                return Android.Text.Html.FromHtml(source, Android.Text.FromHtmlOptions.ModeLegacy);
+            }
+#pragma warning disable 618
+            return Android.Text.Html.FromHtml(source);
+#pragma warning restore 618
         }
 
         public static string MakeRelativePath(string fromPath, string toPath)
