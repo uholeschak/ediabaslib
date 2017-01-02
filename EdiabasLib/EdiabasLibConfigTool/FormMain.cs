@@ -28,6 +28,8 @@ namespace EdiabasLibConfigTool
         private string _ediabasDirIstad;
         private string _initMessage;
         private volatile bool _searching;
+        private ListViewItem _selectedItem;
+        private bool _ignoreSelection;
 
         private const string AdapterSsid = @"Deep OBD BMW";
 
@@ -339,6 +341,7 @@ namespace EdiabasLibConfigTool
 
         private void UpdateDeviceList(BluetoothDeviceInfo[] devices, bool completed)
         {
+            _ignoreSelection = true;
             listViewDevices.BeginUpdate();
             listViewDevices.Items.Clear();
             AddWifiAdapters(listViewDevices);
@@ -375,7 +378,24 @@ namespace EdiabasLibConfigTool
                     listViewDevices.Items.Add(listViewItem);
                 }
             }
+            // select last selected item
+            if (_selectedItem != null)
+            {
+                foreach (ListViewItem listViewItem in listViewDevices.Items)
+                {
+                    if (listViewItem.Tag.GetType() != _selectedItem.Tag.GetType())
+                    {
+                        continue;
+                    }
+                    if (string.Compare(listViewItem.SubItems[0].Text, _selectedItem.SubItems[0].Text, StringComparison.Ordinal) == 0)
+                    {
+                        listViewItem.Selected = true;
+                        break;
+                    }
+                }
+            }
             listViewDevices.EndUpdate();
+            _ignoreSelection = false;
             UpdateButtonStatus();
         }
 
@@ -554,6 +574,14 @@ namespace EdiabasLibConfigTool
 
         private void listViewDevices_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_ignoreSelection)
+            {
+                return;
+            }
+            if (listViewDevices.SelectedItems.Count > 0)
+            {
+                _selectedItem = listViewDevices.SelectedItems[0];
+            }
             _test.TestOk = false;
             _test.ConfigPossible = false;
             UpdateButtonStatus();
