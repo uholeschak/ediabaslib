@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using Android.Content;
@@ -27,14 +28,7 @@ using Android.Widget;
 using BmwDeepObd.FilePicker;
 using EdiabasLib;
 using Java.Interop;
-using Java.Lang;
 using Mono.CSharp;
-using Double = System.Double;
-using Exception = System.Exception;
-using Object = Java.Lang.Object;
-using String = System.String;
-using StringBuilder = System.Text.StringBuilder;
-using Thread = System.Threading.Thread;
 
 #if APP_USB_FILTER
 [assembly: Android.App.UsesFeature("android.hardware.usb.host")]
@@ -2745,11 +2739,11 @@ namespace BmwDeepObd
 
             public override int Count => _pageList.Count;
 
-            public override void RestoreState(IParcelable state, ClassLoader loader)
+            public override void RestoreState(IParcelable state, Java.Lang.ClassLoader loader)
             {
             }
 
-            public override int GetItemPosition(Object @object)
+            public override int GetItemPosition(Java.Lang.Object @object)
             {
                 return PositionNone;
             }
