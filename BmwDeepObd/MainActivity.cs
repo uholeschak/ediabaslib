@@ -9,13 +9,13 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using Android.Content;
 using Android.Content.PM;
 using Android.Hardware.Usb;
 using Android.OS;
+using Android.Support.Design.Widget;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Support.V4.View;
@@ -27,7 +27,14 @@ using Android.Widget;
 using BmwDeepObd.FilePicker;
 using EdiabasLib;
 using Java.Interop;
+using Java.Lang;
 using Mono.CSharp;
+using Double = System.Double;
+using Exception = System.Exception;
+using Object = Java.Lang.Object;
+using String = System.String;
+using StringBuilder = System.Text.StringBuilder;
+using Thread = System.Threading.Thread;
 
 #if APP_USB_FILTER
 [assembly: Android.App.UsesFeature("android.hardware.usb.host")]
@@ -45,7 +52,7 @@ namespace BmwDeepObd
     [Android.App.IntentFilter(new[] { UsbManager.ActionUsbDeviceAttached })]
     [Android.App.MetaData(UsbManager.ActionUsbDeviceAttached, Resource = "@xml/device_filter")]
 #endif
-    public class ActivityMain : AppCompatActivity, ActionBar.ITabListener
+    public class ActivityMain : AppCompatActivity, TabLayout.IOnTabSelectedListener
     {
         private enum ActivityRequest
         {
@@ -148,8 +155,9 @@ namespace BmwDeepObd
         private StreamWriter _swDataLog;
         private string _dataLogDir;
         private string _traceDir;
-        private List<Fragment> _fragmentList;
-        private Fragment _lastFragment;
+        private TabLayout _tabLayout;
+        private ViewPager _viewPager;
+        private TabsFragmentPagerAdapter _fragmentPagerAdapter;
         private readonly ConnectButtonInfo _connectButtonInfo = new ConnectButtonInfo();
         private ImageView _imageBackground;
         private WebClient _webClient;
@@ -215,42 +223,31 @@ namespace BmwDeepObd
             }
         }
 
-        public void OnTabReselected(ActionBar.Tab tab, FragmentTransaction ft)
+        public void OnTabReselected(TabLayout.Tab tab)
         {
-            //Log.Debug(Tag, "The tab {0} was re-selected.", tab.Text);
         }
 
-        public void OnTabSelected(ActionBar.Tab tab, FragmentTransaction ft)
+        public void OnTabSelected(TabLayout.Tab tab)
         {
-            //Log.Debug(Tag, "The tab {0} has been selected.", tab.Text);
-            Fragment frag = _fragmentList[tab.Position];
-            ft.Replace(Resource.Id.tabFrameLayout, frag);
-            _lastFragment = frag;
             UpdateSelectedPage();
         }
 
-        public void OnTabUnselected(ActionBar.Tab tab, FragmentTransaction ft)
+        public void OnTabUnselected(TabLayout.Tab tab)
         {
-            // perform any extra work associated with saving fragment state here.
-            //Log.Debug(Tag, "The tab {0} as been unselected.", tab.Text);
-            if (_lastFragment != null)
-            {
-                ft.Remove(_lastFragment);
-                _lastFragment = null;
-            }
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
-            SupportActionBar.NavigationMode = Android.Support.V7.App.ActionBar.NavigationModeStandard;
-            SupportActionBar.SetHomeButtonEnabled(false);
-            SupportActionBar.SetDisplayShowHomeEnabled(true);
-            SupportActionBar.SetDisplayUseLogoEnabled(false);
-            SupportActionBar.SetDisplayShowTitleEnabled(true);
-            SupportActionBar.SetIcon(Resource.Drawable.icon);
             SetContentView(Resource.Layout.main);
+
+            _fragmentPagerAdapter = new TabsFragmentPagerAdapter(SupportFragmentManager);
+            _viewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
+            _viewPager.Adapter = _fragmentPagerAdapter;
+            _tabLayout = FindViewById<TabLayout>(Resource.Id.sliding_tabs);
+            _tabLayout.SetupWithViewPager(_viewPager);
+            _tabLayout.AddOnTabSelectedListener(this);
 
             _activityCommon = new ActivityCommon(this, () =>
             {
@@ -280,19 +277,10 @@ namespace BmwDeepObd
                     // ignored
                 }
             }
-            _fragmentList = new List<Fragment>();
 
             _webClient = new WebClient();
             _webClient.DownloadProgressChanged += DownloadProgressChanged;
             _webClient.DownloadFileCompleted += DownloadCompleted;
-        }
-
-        void AddTabToActionBar(string label)
-        {
-            ActionBar.Tab tab = SupportActionBar.NewTab()
-                .SetText(label)
-                .SetTabListener(this);
-            SupportActionBar.AddTab(tab);
         }
 
         void CreateActionBarTabs()
@@ -303,9 +291,10 @@ namespace BmwDeepObd
                 return;
             }
             _createTabsPending = false;
-            SupportActionBar.RemoveAllTabs();
-            _fragmentList.Clear();
-            SupportActionBar.NavigationMode = Android.Support.V7.App.ActionBar.NavigationModeStandard;
+            _fragmentPagerAdapter.ClearPages();
+            _fragmentPagerAdapter.NotifyDataSetChanged();
+            _tabLayout.Visibility = ViewStates.Gone;
+
             int index = 0;
             foreach (JobReader.PageInfo pageInfo in _jobReader.PageList)
             {
@@ -320,12 +309,12 @@ namespace BmwDeepObd
                 }
 
                 Fragment fragmentPage = TabContentFragment.NewInstance(resourceId, index);
-                _fragmentList.Add(fragmentPage);
                 pageInfo.InfoObject = fragmentPage;
-                AddTabToActionBar(GetPageString(pageInfo, pageInfo.Name));
+                _fragmentPagerAdapter.AddPage(fragmentPage, GetPageString(pageInfo, pageInfo.Name));
                 index++;
             }
-            SupportActionBar.NavigationMode = (_jobReader.PageList.Count > 0) ? Android.Support.V7.App.ActionBar.NavigationModeTabs : Android.Support.V7.App.ActionBar.NavigationModeStandard;
+            _tabLayout.Visibility = (_jobReader.PageList.Count > 0) ? ViewStates.Visible : ViewStates.Gone;
+            _fragmentPagerAdapter.NotifyDataSetChanged();
             UpdateDisplay();
         }
 
@@ -1121,13 +1110,10 @@ namespace BmwDeepObd
         private JobReader.PageInfo GetSelectedPage()
         {
             JobReader.PageInfo pageInfo = null;
-            if (SupportActionBar.SelectedTab != null)
+            int index = _tabLayout.SelectedTabPosition;
+            if (index >= 0 && index < (_jobReader.PageList.Count))
             {
-                int index = SupportActionBar.SelectedTab.Position;
-                if (index >= 0 && index < (_jobReader.PageList.Count))
-                {
-                    pageInfo = _jobReader.PageList[index];
-                }
+                pageInfo = _jobReader.PageList[index];
             }
             return pageInfo;
         }
@@ -2734,6 +2720,67 @@ namespace BmwDeepObd
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _deviceAddress);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEdiabasTool);
+        }
+
+        public class TabsFragmentPagerAdapter : FragmentStatePagerAdapter
+        {
+            private class TabPageInfo
+            {
+                public TabPageInfo(Fragment fragment, string title)
+                {
+                    Fragment = fragment;
+                    Title = title;
+                }
+
+                public Fragment Fragment { get; }
+                public string Title { get; }
+            }
+
+            private readonly List<TabPageInfo> _pageList;
+
+            public TabsFragmentPagerAdapter(FragmentManager fm) : base(fm)
+            {
+                _pageList = new List<TabPageInfo>();
+            }
+
+            public override int Count => _pageList.Count;
+
+            public override void RestoreState(IParcelable state, ClassLoader loader)
+            {
+            }
+
+            public override int GetItemPosition(Object @object)
+            {
+                return PositionNone;
+            }
+
+            public override Fragment GetItem(int position)
+            {
+                if (position >= _pageList.Count)
+                {
+                    return null;
+                }
+                return _pageList[position].Fragment;
+            }
+
+            public override Java.Lang.ICharSequence GetPageTitleFormatted(int position)
+            {
+                if (position >= _pageList.Count)
+                {
+                    return null;
+                }
+                return new Java.Lang.String(_pageList[position].Title);
+            }
+
+            public void ClearPages()
+            {
+                _pageList.Clear();
+            }
+
+            public void AddPage(Fragment fragment, string title)
+            {
+                _pageList.Add(new TabPageInfo(fragment, title));
+            }
         }
 
         public class TabContentFragment : Fragment
