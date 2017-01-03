@@ -524,12 +524,19 @@ namespace EdiabasLib
 
         public static List<IUsbSerialDriver> GetDriverList(UsbManager usbManager)
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.HoneycombMr1)
+            try
+            {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.HoneycombMr1)
+                {
+                    return new List<IUsbSerialDriver>();
+                }
+                IList<IUsbSerialDriver> availableDrivers = UsbSerialProber.DefaultProber.FindAllDrivers(usbManager);
+                return availableDrivers.Where(driver => IsValidUsbDevice(driver.Device)).ToList();
+            }
+            catch (Exception)
             {
                 return new List<IUsbSerialDriver>();
             }
-            IList<IUsbSerialDriver> availableDrivers = UsbSerialProber.DefaultProber.FindAllDrivers(usbManager);
-            return availableDrivers.Where(driver => IsValidUsbDevice(driver.Device)).ToList();
         }
     }
 }
