@@ -228,6 +228,7 @@ namespace BmwDeepObd
 
         public void OnTabUnselected(TabLayout.Tab tab)
         {
+            ClearPage(tab.Position);
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -1130,6 +1131,25 @@ namespace BmwDeepObd
                 _ediabasThread.CommActive = newCommActive;
                 _ediabasThread.JobPageInfo = newPageInfo;
                 CloseDataLog();
+            }
+        }
+
+        private void ClearPage(int index)
+        {
+            if (index >= 0 && index < (_jobReader.PageList.Count))
+            {
+                JobReader.PageInfo pageInfo = _jobReader.PageList[index];
+                Fragment dynamicFragment = (Fragment)pageInfo.InfoObject;
+                if (dynamicFragment?.View != null)
+                {
+                    ListView listViewResult = dynamicFragment.View.FindViewById<ListView>(Resource.Id.resultList);
+                    ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult.Adapter;
+                    if (resultListAdapter != null)
+                    {
+                        resultListAdapter.Items.Clear();
+                        resultListAdapter.NotifyDataSetChanged();
+                    }
+                }
             }
         }
 
