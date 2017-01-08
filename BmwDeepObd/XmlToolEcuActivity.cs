@@ -865,8 +865,12 @@ namespace BmwDeepObd
                             }
                             if (resultDict.TryGetValue(_selectedResult.Name.ToUpperInvariant(), out resultData))
                             {
-                                resultText = EdiabasNet.FormatResult(resultData, _selectedResult.Format) ?? string.Empty;
-                                break;
+                                string text = EdiabasNet.FormatResult(resultData, _selectedResult.Format) ?? string.Empty;
+                                if (!string.IsNullOrEmpty(text) && !string.IsNullOrEmpty(resultText))
+                                {
+                                    resultText += "; ";
+                                }
+                                resultText += text;
                             }
                             dictIndex++;
                         }
