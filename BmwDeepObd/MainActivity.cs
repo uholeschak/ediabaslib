@@ -1270,7 +1270,7 @@ namespace BmwDeepObd
                             // ignored
                         }
                     }
-                    Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+                    MultiMap<string, EdiabasNet.ResultData> resultDict = null;
                     string errorMessage = string.Empty;
                     lock (EdiabasThread.DataLock)
                     {
@@ -1551,11 +1551,11 @@ namespace BmwDeepObd
                                     {
                                         if (formatResultColor)
                                         {
-                                            result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result, ref textColor);
+                                            result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict.ToDictionary(), displayInfo.Result, ref textColor);
                                         }
                                         else if (formatResult)
                                         {
-                                            result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result);
+                                            result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict.ToDictionary(), displayInfo.Result);
                                         }
                                     }
                                     catch (Exception)
@@ -1598,7 +1598,7 @@ namespace BmwDeepObd
 
                     if (updateResult)
                     {
-                        pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict, tempResultList);
+                        pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict?.ToDictionary(), tempResultList);
                     }
 
                     // check if list has changed
@@ -1721,28 +1721,37 @@ namespace BmwDeepObd
             return string.Empty;
         }
 
-        public static String FormatResultEdiabas(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
+        public static String FormatResultEdiabas(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
         {
-            string result = string.Empty;
-            EdiabasNet.ResultData resultData;
-            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultData))
+            StringBuilder sbResult = new StringBuilder();
+            IList<EdiabasNet.ResultData> resultDataList;
+            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultDataList))
             {
-                if (resultData.OpData.GetType() == typeof(byte[]))
+                foreach (EdiabasNet.ResultData resultData in resultDataList)
                 {
-                    StringBuilder sb = new StringBuilder();
-                    byte[] data = (byte[])resultData.OpData;
-                    foreach (byte value in data)
+                    string result = string.Empty;
+                    if (resultData.OpData.GetType() == typeof(byte[]))
                     {
-                        sb.Append(string.Format(Culture, "{0:X02} ", value));
+                        StringBuilder sb = new StringBuilder();
+                        byte[] data = (byte[])resultData.OpData;
+                        foreach (byte value in data)
+                        {
+                            sb.Append(string.Format(Culture, "{0:X02} ", value));
+                        }
+                        result = sb.ToString();
                     }
-                    result = sb.ToString();
-                }
-                else
-                {
-                    result = EdiabasNet.FormatResult(resultData, format) ?? "?";
+                    else
+                    {
+                        result = EdiabasNet.FormatResult(resultData, format) ?? "?";
+                    }
+                    if (sbResult.Length > 0)
+                    {
+                        sbResult.Append("\r\n");
+                    }
+                    sbResult.Append(result);
                 }
             }
-            return result;
+            return sbResult.ToString();
         }
 
         public static Int64 GetResultInt64(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
