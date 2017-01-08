@@ -12,6 +12,12 @@ namespace BmwDeepObd
             _storage = new Dictionary<TKey, IList<TValue>>();
         }
 
+        public MultiMap(Dictionary<TKey, TValue> dict)
+        {
+            _storage = new Dictionary<TKey, IList<TValue>>();
+            Add(dict);
+        }
+
         public void Add(TKey key, TValue value)
         {
             if (!_storage.ContainsKey(key))
@@ -19,6 +25,14 @@ namespace BmwDeepObd
                 _storage.Add(key, new List<TValue>());
             }
             _storage[key].Add(value);
+        }
+
+        public void Add(Dictionary<TKey, TValue> dict)
+        {
+            foreach (TKey key in dict.Keys)
+            {
+                Add(key, dict[key]);
+            }
         }
 
         public IEnumerable<TKey> Keys => _storage.Keys;
