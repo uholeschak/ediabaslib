@@ -204,6 +204,7 @@
   <string name="button_xml_tool_edit">Bearbeiten</string>
   <string name="button_xml_tool_save">Speichern</string>
   <string name="xml_tool_analyze">Fahrzeugdaten lesen</string>
+  <string name="xml_tool_continue_search">Wollen Sie den letzten abgebrochenen Suchvorgang fortsetzen?</string>
   <string name="xml_tool_clear_ecus">Sollen die bestehenden ECUs gelöscht werden?</string>
   <string name="xml_tool_del_all_info">Sollen alle informationen (inklusive der XML Dateien) für diese Konfiguration gelöscht werden?</string>
   <string name="xml_tool_reset_ecu_setting">Sollen alle Einstellungen für diese ECU gelöscht werden?</string>
