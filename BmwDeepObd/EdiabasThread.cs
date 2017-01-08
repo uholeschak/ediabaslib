@@ -63,7 +63,7 @@ namespace BmwDeepObd
             private set;
         }
 
-        public Dictionary<string, EdiabasNet.ResultData> EdiabasResultDict
+        public MultiMap<string, EdiabasNet.ResultData> EdiabasResultDict
         {
             get;
             private set;
@@ -549,7 +549,7 @@ namespace BmwDeepObd
                 _ediabasInitReq = false;
             }
 
-            Dictionary<string, EdiabasNet.ResultData> resultDict = null;
+            MultiMap<string, EdiabasNet.ResultData> resultDict = null;
             try
             {
                 if ((pageInfo.JobsInfo != null) && (pageInfo.JobsInfo.JobList.Count > 0))
@@ -573,23 +573,23 @@ namespace BmwDeepObd
                             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = Ediabas.ResultSets;
                             if (resultSets != null && resultSets.Count >= 2)
                             {
-                                if (string.IsNullOrEmpty(jobInfo.Id))
+                                int dictIndex = 0;
+                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
                                 {
-                                    MergeResultDictionarys(ref resultDict, resultSets[1], jobInfo.Name + "#");
-                                }
-                                else
-                                {
-                                    int dictIndex = 0;
-                                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                                    if (dictIndex == 0)
                                     {
-                                        if (dictIndex == 0)
-                                        {
-                                            dictIndex++;
-                                            continue;
-                                        }
-                                        MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Id + "#" + dictIndex + "#");
                                         dictIndex++;
+                                        continue;
                                     }
+                                    if (string.IsNullOrEmpty(jobInfo.Id))
+                                    {
+                                        MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Name + "#");
+                                    }
+                                    else
+                                    {
+                                        MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Id + "#" + dictIndex + "#");
+                                    }
+                                    dictIndex++;
                                 }
                             }
                         }
@@ -599,7 +599,12 @@ namespace BmwDeepObd
                 {
                     if (pageInfo.ClassObject != null)
                     {
-                        pageInfo.ClassObject.ExecuteJob(Ediabas, ref resultDict, firstRequestCall);
+                        Dictionary<string, EdiabasNet.ResultData> resultDictLocal = null;
+                        pageInfo.ClassObject.ExecuteJob(Ediabas, ref resultDictLocal, firstRequestCall);
+                        if (resultDictLocal != null)
+                        {
+                            MergeResultDictionarys(ref resultDict, resultDictLocal);
+                        }
                     }
                 }
             }
@@ -635,38 +640,42 @@ namespace BmwDeepObd
             return true;
         }
 
-        public static void MergeResultDictionarys(ref Dictionary<string, EdiabasNet.ResultData> resultDict, Dictionary<string, EdiabasNet.ResultData> mergeDict)
+        public static void MergeResultDictionarys(ref Dictionary<string, EdiabasNet.ResultData> resultDict, Dictionary<string, EdiabasNet.ResultData> mergeDict, string prefix = null)
         {
             if (resultDict == null)
             {
-                resultDict = mergeDict;
-            }
-            else
-            {   // merge both dicts
-                foreach (string key in mergeDict.Keys)
-                {
-                    if (!resultDict.ContainsKey(key))
-                    {
-                        resultDict.Add(key, mergeDict[key]);
-                    }
-                }
-            }
-        }
-
-        public static void MergeResultDictionarys(ref Dictionary<string, EdiabasNet.ResultData> resultDict, Dictionary<string, EdiabasNet.ResultData> mergeDict, string prefix)
-        {
-            if (resultDict == null)
-            {
-                resultDict = new Dictionary<string,EdiabasNet.ResultData>();
+                resultDict = new Dictionary<string, EdiabasNet.ResultData>();
             }
 
             foreach (string key in mergeDict.Keys)
             {
-                string newKey = (prefix + key).ToUpperInvariant();
+                string newKey = key;
+                if (prefix != null)
+                {
+                    newKey = (prefix + key).ToUpperInvariant();
+                }
                 if (!resultDict.ContainsKey(newKey))
                 {
                     resultDict.Add(newKey, mergeDict[key]);
                 }
+            }
+        }
+
+        public static void MergeResultDictionarys(ref MultiMap<string, EdiabasNet.ResultData> resultDict, Dictionary<string, EdiabasNet.ResultData> mergeDict, string prefix = null)
+        {
+            if (resultDict == null)
+            {
+                resultDict = new MultiMap<string,EdiabasNet.ResultData>();
+            }
+
+            foreach (string key in mergeDict.Keys)
+            {
+                string newKey = key;
+                if (prefix != null)
+                {
+                    newKey = (prefix + key).ToUpperInvariant();
+                }
+                resultDict.Add(newKey, mergeDict[key]);
             }
         }
 
