@@ -1756,14 +1756,23 @@ namespace BmwDeepObd
 
         public static Int64 GetResultInt64(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
         {
+            return GetResultInt64(new MultiMap<string, EdiabasNet.ResultData>(resultDict), dataName, 0, out found);
+        }
+
+        public static Int64 GetResultInt64(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, int index, out bool found)
+        {
             found = false;
-            EdiabasNet.ResultData resultData;
-            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultData))
+            IList<EdiabasNet.ResultData> resultDataList;
+            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultDataList))
             {
-                if (resultData.OpData is Int64)
+                if (index >= 0 && index < resultDataList.Count)
                 {
-                    found = true;
-                    return (Int64)resultData.OpData;
+                    EdiabasNet.ResultData resultData = resultDataList[index];
+                    if (resultData.OpData is Int64)
+                    {
+                        found = true;
+                        return (Int64) resultData.OpData;
+                    }
                 }
             }
             return 0;
@@ -1771,14 +1780,23 @@ namespace BmwDeepObd
 
         public static Double GetResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
         {
+            return GetResultDouble(new MultiMap<string, EdiabasNet.ResultData>(resultDict), dataName, 0, out found);
+        }
+
+        public static Double GetResultDouble(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, int index, out bool found)
+        {
             found = false;
-            EdiabasNet.ResultData resultData;
-            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultData))
+            IList<EdiabasNet.ResultData> resultDataList;
+            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultDataList))
             {
-                if (resultData.OpData is Double)
+                if (index >= 0 && index < resultDataList.Count)
                 {
-                    found = true;
-                    return (Double)resultData.OpData;
+                    EdiabasNet.ResultData resultData = resultDataList[index];
+                    if (resultData.OpData is Double)
+                    {
+                        found = true;
+                        return (Double) resultData.OpData;
+                    }
                 }
             }
             return 0;
@@ -1786,15 +1804,24 @@ namespace BmwDeepObd
 
         public static String GetResultString(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
         {
+            return GetResultString(new MultiMap<string, EdiabasNet.ResultData>(resultDict), dataName, 0, out found);
+        }
+
+        public static String GetResultString(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, int index, out bool found)
+        {
             found = false;
-            EdiabasNet.ResultData resultData;
-            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultData))
+            IList<EdiabasNet.ResultData> resultDataList;
+            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultDataList))
             {
-                // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
-                if (resultData.OpData is String)
+                if (index >= 0 && index < resultDataList.Count)
                 {
-                    found = true;
-                    return (String)resultData.OpData;
+                    EdiabasNet.ResultData resultData = resultDataList[index];
+                    // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
+                    if (resultData.OpData is String)
+                    {
+                        found = true;
+                        return (String)resultData.OpData;
+                    }
                 }
             }
             return string.Empty;
