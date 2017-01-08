@@ -31,6 +31,8 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную инфирмацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:
+\n- Главная страница с вкладками Android N
+\n- Возможность возобновления прерванного поиска VAG
 \n- улучшена стабильность</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.8.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 (Автомобили до 4.2012) протоколы.</string>
@@ -203,7 +205,7 @@
   <string name="button_xml_tool_edit">Редактировать</string>
   <string name="button_xml_tool_save">Сохранить</string>
   <string name="xml_tool_analyze">Считать данные автомобиля</string>
-  <string name="xml_tool_continue_search">Wollen Sie den letzten abgebrochenen Suchvorgang fortsetzen?</string>
+  <string name="xml_tool_continue_search">Хотите продолжить последний прерванный поиск?</string>
   <string name="xml_tool_clear_ecus">Удалить существующие ECU файлы?</string>
   <string name="xml_tool_del_all_info">Удалить всю информацию (в том числе XML-файлы) для этой конфигурации?</string>
   <string name="xml_tool_reset_ecu_setting">Удалить все настройки для этого ECU?</string>
