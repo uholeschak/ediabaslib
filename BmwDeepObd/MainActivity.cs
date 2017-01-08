@@ -1287,6 +1287,7 @@ namespace BmwDeepObd
 
                     bool formatResult = false;
                     bool formatResultColor = false;
+                    bool formatResultMulti = false;
                     bool formatErrorResult = false;
                     bool updateResult = false;
                     if (pageInfo.ClassObject != null)
@@ -1294,6 +1295,7 @@ namespace BmwDeepObd
                         Type pageType = pageInfo.ClassObject.GetType();
                         formatResult = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary< string, EdiabasNet.ResultData >), typeof(string) }) != null;
                         formatResultColor = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() }) != null;
+                        formatResultMulti = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() }) != null;
                         formatErrorResult = pageType.GetMethod("FormatErrorResult") != null;
                         updateResult = pageType.GetMethod("UpdateResultList") != null;
                     }
@@ -1549,7 +1551,11 @@ namespace BmwDeepObd
                                 {
                                     try
                                     {
-                                        if (formatResultColor)
+                                        if (formatResultMulti)
+                                        {
+                                            result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result, ref textColor);
+                                        }
+                                        else if (formatResultColor)
                                         {
                                             result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict.ToDictionary(), displayInfo.Result, ref textColor);
                                         }
