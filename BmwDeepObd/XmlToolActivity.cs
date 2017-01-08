@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Xml;
 using System.Xml.Linq;
 using Android.Content;
 using Android.Hardware.Usb;
@@ -96,6 +97,7 @@ namespace BmwDeepObd
             </{0}>";
         private const string XsdFileName = "BmwDeepObd.xsd";
         private const string TranslationFileName = "Translation.xml";
+        private const int MotorAddrVag = 1;
 
         private const string PageExtension = ".ccpage";
         private const string ErrorsFileName = "Errors.ccpage";
@@ -153,6 +155,7 @@ namespace BmwDeepObd
         private string _vin = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
         private bool _ecuListTranslated;
+        private int _ecuSearchAbortIndex = -1;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -672,6 +675,14 @@ namespace BmwDeepObd
             return true;
         }
 
+        private void ClearEcuList()
+        {
+            _vin = string.Empty;
+            _ecuList.Clear();
+            _ecuListTranslated = false;
+            _ecuSearchAbortIndex = -1;
+        }
+
         private bool IsJobRunning()
         {
             if (_jobThread == null)
@@ -706,9 +717,7 @@ namespace BmwDeepObd
             _ecuListAdapter.Items.Clear();
             if (_ecuList.Count == 0)
             {
-                _vin = string.Empty;
-                _ecuList.Clear();
-                _ecuListTranslated = false;
+                ClearEcuList();
             }
             else
             {
@@ -1099,9 +1108,7 @@ namespace BmwDeepObd
                 {
                     _manualConfigIdx = listView.CheckedItemPosition + 1;
                 }
-                _vin = string.Empty;
-                _ecuList.Clear();
-                _ecuListTranslated = false;
+                ClearEcuList();
                 if (_manualConfigIdx > 0)
                 {
                     EdiabasOpen();
@@ -1117,6 +1124,25 @@ namespace BmwDeepObd
             builder.Show();
         }
 
+        private void RequestClearEcu()
+        {
+            new AlertDialog.Builder(this)
+                .SetPositiveButton(Resource.String.button_yes, (s, a) =>
+                {
+                    ClearEcuList();
+                    UpdateDisplay();
+                    ExecuteAnalyzeJob();
+                })
+                .SetNegativeButton(Resource.String.button_no, (s, a) =>
+                {
+                    ExecuteAnalyzeJob();
+                })
+                .SetCancelable(true)
+                .SetMessage(Resource.String.xml_tool_clear_ecus)
+                .SetTitle(Resource.String.alert_title_question)
+                .Show();
+        }
+
         private void ShowEditMenu(View anchor)
         {
             Android.Support.V7.Widget.PopupMenu popupEdit = new Android.Support.V7.Widget.PopupMenu(this, anchor);
@@ -1130,22 +1156,24 @@ namespace BmwDeepObd
                     case Resource.Id.menu_xml_tool_edit_detect:
                         if (_ecuList.Count > 0)
                         {
-                            new AlertDialog.Builder(this)
-                                .SetPositiveButton(Resource.String.button_yes, (s, a) =>
-                                {
-                                    _ecuList.Clear();
-                                    _ecuListTranslated = false;
-                                    UpdateDisplay();
-                                    ExecuteAnalyzeJob();
-                                })
-                                .SetNegativeButton(Resource.String.button_no, (s, a) =>
-                                {
-                                    ExecuteAnalyzeJob();
-                                })
-                                .SetCancelable(true)
-                                .SetMessage(Resource.String.xml_tool_clear_ecus)
-                                .SetTitle(Resource.String.alert_title_question)
-                                .Show();
+                            if (_ecuSearchAbortIndex >= 0)
+                            {
+                                new AlertDialog.Builder(this)
+                                    .SetPositiveButton(Resource.String.button_yes, (s, a) =>
+                                    {
+                                        ExecuteAnalyzeJob(_ecuSearchAbortIndex);
+                                    })
+                                    .SetNegativeButton(Resource.String.button_no, (s, a) =>
+                                    {
+                                        RequestClearEcu();
+                                    })
+                                    .SetCancelable(true)
+                                    .SetMessage(Resource.String.xml_tool_continue_search)
+                                    .SetTitle(Resource.String.alert_title_question)
+                                    .Show();
+                                break;
+                            }
+                            RequestClearEcu();
                             break;
                         }
                         ExecuteAnalyzeJob();
@@ -1303,22 +1331,20 @@ namespace BmwDeepObd
             ExecuteAnalyzeJob();
         }
 
-        private void ExecuteAnalyzeJob()
+        private void ExecuteAnalyzeJob(int searchStartIndex = -1)
         {
             if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
             {
                 ExecuteAnalyzeJobBmw();
                 return;
             }
-            ExecuteAnalyzeJobVag();
+            ExecuteAnalyzeJobVag(searchStartIndex);
         }
 
         private void ExecuteAnalyzeJobBmw()
         {
             EdiabasOpen();
-            _vin = string.Empty;
-            _ecuList.Clear();
-            _ecuListTranslated = false;
+            ClearEcuList();
             UpdateDisplay();
 
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
@@ -1640,7 +1666,7 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
-        private void ExecuteAnalyzeJobVag()
+        private void ExecuteAnalyzeJobVag(int searchStartIndex)
         {
             List<ActivityCommon.VagEcuEntry> ecuVagList = ActivityCommon.ReadVagEcuList(_ecuDir);
             if ((ecuVagList == null) || (ecuVagList.Count == 0))
@@ -1651,6 +1677,7 @@ namespace BmwDeepObd
 
             EdiabasOpen();
             _vin = string.Empty;
+            _ecuSearchAbortIndex = -1;
 
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
             progress.SetCancelable(false);
@@ -1677,10 +1704,15 @@ namespace BmwDeepObd
                 int ecuCount = ecuVagList.Count;
                 int index = 0;
                 int detectCount = 0;
+                if (searchStartIndex >= 0)
+                {
+                    detectCount = _ecuList.Count;
+                }
                 foreach (ActivityCommon.VagEcuEntry ecuEntry in ecuVagList)
                 {
                     if (_ediabasJobAbort)
                     {
+                        _ecuSearchAbortIndex = (index > 0) ? index - 1 : 0;
                         break;
                     }
 #if false
@@ -1689,6 +1721,11 @@ namespace BmwDeepObd
                         break;
                     }
 #endif
+                    if (ecuEntry.Address != MotorAddrVag && searchStartIndex >= 0 && index < searchStartIndex)
+                    {
+                        index++;
+                        continue;
+                    }
                     if (ecuEntry.Address > maxEcuAddress)
                     {
                         index++;
@@ -1726,9 +1763,12 @@ namespace BmwDeepObd
                                     string result = (string)resultData.OpData;
                                     if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
-                                        detectCount++;
                                         string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
                                         bool ecuFound = _ecuList.Any(ecuInfo => string.Compare(ecuInfo.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0);
+                                        if ((searchStartIndex < 0) || !ecuFound)
+                                        {
+                                            detectCount++;
+                                        }
                                         if (!ecuFound)
                                         {
                                             string displayName;
@@ -1747,7 +1787,7 @@ namespace BmwDeepObd
                                 }
                             }
                         }
-                        if (ecuEntry.Address == 1)
+                        if (ecuEntry.Address == MotorAddrVag)
                         {   // motor ECU, check communication interface
                             string sgbdFileName = _ediabas.SgbdFileName.ToUpperInvariant();
                             if (sgbdFileName.Contains("2000") || sgbdFileName.Contains("1281"))
@@ -3029,8 +3069,7 @@ namespace BmwDeepObd
 
             if (_manualConfigIdx > 0)
             {   // manual mode, create ecu list
-                _ecuList.Clear();
-                _ecuListTranslated = false;
+                ClearEcuList();
                 foreach (XElement node in pagesNode.Elements(ns + "include"))
                 {
                     XAttribute fileAttrib = node.Attribute("filename");
@@ -3234,6 +3273,34 @@ namespace BmwDeepObd
             }
         }
 
+        private void ReadConfigXml(XDocument document)
+        {
+            _ecuSearchAbortIndex = -1;
+            if (document.Root == null)
+            {
+                return;
+            }
+            XNamespace ns = document.Root.GetDefaultNamespace();
+            XElement globalNode = document.Root.Element(ns + "global");
+            // ReSharper disable once UseNullPropagation
+            if (globalNode == null)
+            {
+                return;
+            }
+            XAttribute abortAttrib = globalNode.Attribute("search_abort_index");
+            if (abortAttrib != null)
+            {
+                try
+                {
+                    _ecuSearchAbortIndex = XmlConvert.ToInt32(abortAttrib.Value);
+                }
+                catch (Exception)
+                {
+                    _ecuSearchAbortIndex = -1;
+                }
+            }
+        }
+
         private XDocument GenerateConfigXml(XDocument documentOld)
         {
             string xmlFileDir = XmlFileDir();
@@ -3266,6 +3333,8 @@ namespace BmwDeepObd
                     attr = globalNode.Attribute("manufacturer");
                     attr?.Remove();
                     attr = globalNode.Attribute("interface");
+                    attr?.Remove();
+                    attr = globalNode.Attribute("search_abort_index");
                     attr?.Remove();
                 }
 
@@ -3320,6 +3389,10 @@ namespace BmwDeepObd
                         break;
                 }
                 globalNode.Add(new XAttribute("interface", interfaceName));
+                if (_ecuSearchAbortIndex >= 0)
+                {
+                    globalNode.Add(new XAttribute("search_abort_index", _ecuSearchAbortIndex));
+                }
 
                 XElement includeNode = document.Root.Element(ns + "include");
                 if (includeNode == null)
@@ -3344,6 +3417,7 @@ namespace BmwDeepObd
             {
                 return;
             }
+
             string xmlPagesFile = Path.Combine(xmlFileDir, PagesFileName);
             if (File.Exists(xmlPagesFile))
             {
@@ -3364,6 +3438,19 @@ namespace BmwDeepObd
                 {
                     XDocument documentPages = XDocument.Load(xmlErrorsFile);
                     ReadErrorsXml(documentPages);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+            string xmlConfigFile = ConfigFileName(xmlFileDir);
+            if (File.Exists(xmlConfigFile))
+            {
+                try
+                {
+                    XDocument documentPages = XDocument.Load(xmlConfigFile);
+                    ReadConfigXml(documentPages);
                 }
                 catch (Exception)
                 {
@@ -3472,35 +3559,7 @@ namespace BmwDeepObd
                 }
 
                 // config file
-                string interfaceType = string.Empty;
-                switch (_activityCommon.SelectedInterface)
-                {
-                    case ActivityCommon.InterfaceType.Bluetooth:
-                        interfaceType = "Bt";
-                        break;
-
-                    case ActivityCommon.InterfaceType.Enet:
-                        interfaceType = "Enet";
-                        break;
-
-                    case ActivityCommon.InterfaceType.ElmWifi:
-                        interfaceType = "ElmWifi";
-                        break;
-
-                    case ActivityCommon.InterfaceType.Ftdi:
-                        interfaceType = "Ftdi";
-                        break;
-                }
-                string prefix;
-                if (_manualConfigIdx > 0)
-                {
-                    prefix = ManualConfigName + _manualConfigIdx.ToString(CultureInfo.InvariantCulture);
-                }
-                else
-                {
-                    prefix = string.IsNullOrEmpty(_vin) ? UnknownVinConfigName : ActivityCommon.CreateValidFileName(_vin);
-                }
-                string xmlConfigFile = Path.Combine(xmlFileDir, prefix + "_" + interfaceType + ConfigFileExtension);
+                string xmlConfigFile = ConfigFileName(xmlFileDir);
                 XDocument documentConfig = null;
                 if (File.Exists(xmlConfigFile))
                 {
@@ -3538,8 +3597,7 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool DeleteAllXml()
         {
-            _ecuList.Clear();
-            _ecuListTranslated = false;
+            ClearEcuList();
             UpdateDisplay();
             try
             {
@@ -3709,6 +3767,40 @@ namespace BmwDeepObd
             {
                 return null;
             }
+        }
+
+        private string ConfigFileName(string xmlFileDir)
+        {
+            string interfaceType = string.Empty;
+            switch (_activityCommon.SelectedInterface)
+            {
+                case ActivityCommon.InterfaceType.Bluetooth:
+                    interfaceType = "Bt";
+                    break;
+
+                case ActivityCommon.InterfaceType.Enet:
+                    interfaceType = "Enet";
+                    break;
+
+                case ActivityCommon.InterfaceType.ElmWifi:
+                    interfaceType = "ElmWifi";
+                    break;
+
+                case ActivityCommon.InterfaceType.Ftdi:
+                    interfaceType = "Ftdi";
+                    break;
+            }
+
+            string prefix;
+            if (_manualConfigIdx > 0)
+            {
+                prefix = ManualConfigName + _manualConfigIdx.ToString(CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                prefix = string.IsNullOrEmpty(_vin) ? UnknownVinConfigName : ActivityCommon.CreateValidFileName(_vin);
+            }
+            return Path.Combine(xmlFileDir, prefix + "_" + interfaceType + ConfigFileExtension);
         }
 
         private class EcuListAdapter : BaseAdapter<EcuInfo>
