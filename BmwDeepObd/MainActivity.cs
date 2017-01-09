@@ -1290,6 +1290,7 @@ namespace BmwDeepObd
                     bool formatResultMulti = false;
                     bool formatErrorResult = false;
                     bool updateResult = false;
+                    bool updateResultMulti = false;
                     if (pageInfo.ClassObject != null)
                     {
                         Type pageType = pageInfo.ClassObject.GetType();
@@ -1297,7 +1298,8 @@ namespace BmwDeepObd
                         formatResultColor = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() }) != null;
                         formatResultMulti = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() }) != null;
                         formatErrorResult = pageType.GetMethod("FormatErrorResult") != null;
-                        updateResult = pageType.GetMethod("UpdateResultList") != null;
+                        updateResult = pageType.GetMethod("UpdateResultList", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(List<TableResultItem>) } ) != null;
+                        updateResultMulti = pageType.GetMethod("UpdateResultList", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(List<TableResultItem>) }) != null;
                     }
                     string currDateTime = string.Empty;
                     if (_dataLogActive)
@@ -1602,7 +1604,11 @@ namespace BmwDeepObd
                         }
                     }
 
-                    if (updateResult)
+                    if (updateResultMulti)
+                    {
+                        pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict, tempResultList);
+                    }
+                    else if (updateResult)
                     {
                         pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict?.ToDictionary(), tempResultList);
                     }

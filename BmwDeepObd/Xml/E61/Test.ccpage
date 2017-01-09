@@ -233,7 +233,7 @@
             Thread.Sleep(20);
         }
 
-        public void UpdateResultList(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, List<TableResultItem> resultList)
+        public void UpdateResultList(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, List<TableResultItem> resultList)
         {
             string resultText;
             lock (EdiabasThread.DataLock)
