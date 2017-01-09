@@ -91,7 +91,7 @@
       <![CDATA[
     class PageClass
     {
-        public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName)
+        public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor)
         {
             string result = string.Empty;
             bool found;
@@ -99,23 +99,23 @@
             switch (resultName)
             {
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_UBATT2_WERT":
-                    result = string.Format(ActivityMain.Culture, "{0,7:0.00}", ActivityMain.GetResultDouble(resultDict, resultName, out found) / 1000.0);
+                    result = string.Format(ActivityMain.Culture, "{0,7:0.00}", ActivityMain.GetResultDouble(resultDict, resultName, 0, out found) / 1000.0);
                     if (!found) result = string.Empty;
                     break;
 
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT":
-                    result = string.Format(ActivityMain.Culture, "{0,6:0.0}", ActivityMain.GetResultDouble(resultDict, resultName, out found) / 1000.0);
+                    result = string.Format(ActivityMain.Culture, "{0,6:0.0}", ActivityMain.GetResultDouble(resultDict, resultName, 0, out found) / 1000.0);
                     if (!found) result = string.Empty;
                     break;
 
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_OELDRUCKSCHALTER_EIN_WERT":
-                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) > 0.5) && found) ? "1" : "0";
+                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) > 0.5) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
                     break;
 
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_PFltRgn_numRgn_WERT":  // Regenerationsanforderung
                 {
-                    double tempValue = ActivityMain.GetResultDouble (resultDict, resultName, out found);
+                    double tempValue = ActivityMain.GetResultDouble (resultDict, resultName, 0, out found);
                     result = ((tempValue > 3.5) && (tempValue < 6.5) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
                     break;
@@ -123,14 +123,14 @@
 
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_CoEOM_stOpModeAct_WERT":   // Regenerationsstatus
                 {
-                    double tempValue = ActivityMain.GetResultDouble (resultDict, resultName, out found);
+                    double tempValue = ActivityMain.GetResultDouble (resultDict, resultName, 0, out found);
                     result = ((((int)(tempValue + 0.5) & 0x02) != 0) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
                     break;
                 }
 
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT":
-                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, out found) < 0.5) && found) ? "1" : "0";
+                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) < 0.5) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
                     break;
             }
