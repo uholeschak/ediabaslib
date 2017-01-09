@@ -118,7 +118,7 @@
         private string testResult = string.Empty;
         private int updateCount = 0;
 
-        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
+        public void ExecuteJob(EdiabasNet ediabas, ref MultiMap<string, EdiabasNet.ResultData> resultDict, bool firstCall)
         {
             if (firstCall)
             {
