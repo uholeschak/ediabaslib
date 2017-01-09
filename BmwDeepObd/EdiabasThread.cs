@@ -600,8 +600,8 @@ namespace BmwDeepObd
                 {
                     if (pageInfo.ClassObject != null)
                     {
-                        bool executeJob = true;
-                        bool executeJobMulti = true;
+                        bool executeJob = false;
+                        bool executeJobMulti = false;
                         Type pageType = pageInfo.ClassObject.GetType();
                         MethodInfo methodInfoJob = pageType.GetMethod("ExecuteJob");
                         if (methodInfoJob != null)
