@@ -1702,8 +1702,13 @@ namespace BmwDeepObd
 
         public static String FormatResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
         {
+            return FormatResultDouble(new MultiMap<string, EdiabasNet.ResultData>(resultDict), dataName, format);
+        }
+
+        public static String FormatResultDouble(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, string format, int index = 0)
+        {
             bool found;
-            double value = GetResultDouble(resultDict, dataName, out found);
+            double value = GetResultDouble(resultDict, dataName, index, out found);
             if (found)
             {
                 return string.Format(Culture, format, value);
@@ -1713,8 +1718,13 @@ namespace BmwDeepObd
 
         public static String FormatResultInt64(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
         {
+            return FormatResultInt64(new MultiMap<string, EdiabasNet.ResultData>(resultDict), dataName, format);
+        }
+
+        public static String FormatResultInt64(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, string format, int index = 0)
+        {
             bool found;
-            Int64 value = GetResultInt64(resultDict, dataName, out found);
+            Int64 value = GetResultInt64(resultDict, dataName, index, out found);
             if (found)
             {
                 return string.Format(Culture, format, value);
@@ -1724,8 +1734,13 @@ namespace BmwDeepObd
 
         public static String FormatResultString(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
         {
+            return FormatResultString(new MultiMap<string, EdiabasNet.ResultData>(resultDict), dataName, format);
+        }
+
+        public static String FormatResultString(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, string format, int index = 0)
+        {
             bool found;
-            string value = GetResultString(resultDict, dataName, out found);
+            string value = GetResultString(resultDict, dataName, index, out found);
             if (found)
             {
                 return string.Format(Culture, format, value);
@@ -1741,7 +1756,7 @@ namespace BmwDeepObd
             {
                 foreach (EdiabasNet.ResultData resultData in resultDataList)
                 {
-                    string result = string.Empty;
+                    string result;
                     if (resultData.OpData.GetType() == typeof(byte[]))
                     {
                         StringBuilder sb = new StringBuilder();

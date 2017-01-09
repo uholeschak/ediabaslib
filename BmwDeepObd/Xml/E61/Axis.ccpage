@@ -326,7 +326,7 @@
             }
         }
 
-        public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName)
+        public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor)
         {
             string result = string.Empty;
             bool found;
@@ -335,7 +335,7 @@
             {
                 case "MODE_CTRL_LESEN_WERT":
                 {
-                    Int64 axisMode = ActivityMain.GetResultInt64 (resultDict, resultName, out found);
+                    Int64 axisMode = ActivityMain.GetResultInt64 (resultDict, resultName, 0, out found);
                     if (found)
                     {
                       if ((axisMode & AxisModeConveyor) != 0x00)
@@ -359,20 +359,20 @@
                 }
 
                 case "ORGFASTFILTER_RL":
-                    result = ActivityMain.FormatResultInt64(resultDict, resultName, "{0,4}");
+                    result = ActivityMain.FormatResultInt64(resultDict, resultName, "{0,4}", 0);
                     if (result.Length > 0) result += " / ";
-                    result += ActivityMain.FormatResultInt64(resultDict, "FASTFILTER_RL", "{0,4}");
+                    result += ActivityMain.FormatResultInt64(resultDict, "FASTFILTER_RL", "{0,4}", 0);
                     break;
 
                 case "ORGFASTFILTER_RR":
-                    result = ActivityMain.FormatResultInt64(resultDict, resultName, "{0,4}");
+                    result = ActivityMain.FormatResultInt64(resultDict, resultName, "{0,4}", 0);
                     if (result.Length > 0) result += " / ";
-                    result += ActivityMain.FormatResultInt64(resultDict, "FASTFILTER_RR", "{0,4}");
+                    result += ActivityMain.FormatResultInt64(resultDict, "FASTFILTER_RR", "{0,4}", 0);
                     break;
 
                 case "ANALOG_U_KL30":
                 {
-                    Int64 voltage = ActivityMain.GetResultInt64(resultDict, resultName, out found);
+                    Int64 voltage = ActivityMain.GetResultInt64(resultDict, resultName, 0, out found);
                     if (found)
                     {
                         result = string.Format(ActivityMain.Culture, "{0,6:0.00}", (double)voltage / 1000);
@@ -383,7 +383,7 @@
                 case "STATUS_SIGNALE_NUMERISCH":
                     for (int channel = 0; channel < 4; channel++)
                     {
-                        result = ActivityMain.FormatResultInt64(resultDict, string.Format(ActivityMain.Culture, "STATUS_SIGNALE_NUMERISCH{0}_WERT", channel), "{0}") + result;
+                        result = ActivityMain.FormatResultInt64(resultDict, string.Format(ActivityMain.Culture, "STATUS_SIGNALE_NUMERISCH{0}_WERT", channel), "{0}", 0) + result;
                     }
                     break;
             }
