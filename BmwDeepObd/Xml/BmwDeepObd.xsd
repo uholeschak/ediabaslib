@@ -355,6 +355,7 @@
         public void DestroyLayout(JobReader.PageInfo pageInfo);
         public void UpdateLayout(JobReader.PageInfo pageInfo, bool pageValid, bool threadActive);
         public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData=""> resultDict, bool firstCall);
+        public void ExecuteJob(EdiabasNet ediabas, ref MultiMap<string, EdiabasNet.ResultData=""> resultDict, bool firstCall);
         public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName);
         public string FormatResult(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor);
         public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor);

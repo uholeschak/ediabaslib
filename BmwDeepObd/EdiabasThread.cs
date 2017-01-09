@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using EdiabasLib;
 
@@ -599,11 +600,41 @@ namespace BmwDeepObd
                 {
                     if (pageInfo.ClassObject != null)
                     {
-                        Dictionary<string, EdiabasNet.ResultData> resultDictLocal = null;
-                        pageInfo.ClassObject.ExecuteJob(Ediabas, ref resultDictLocal, firstRequestCall);
-                        if (resultDictLocal != null)
+                        bool executeJob = true;
+                        bool executeJobMulti = true;
+                        Type pageType = pageInfo.ClassObject.GetType();
+                        MethodInfo methodInfoJob = pageType.GetMethod("ExecuteJob");
+                        if (methodInfoJob != null)
                         {
-                            MergeResultDictionarys(ref resultDict, resultDictLocal);
+                            ParameterInfo[] parInfo = methodInfoJob.GetParameters();
+                            if (parInfo.Length == 3)
+                            {
+                                if (parInfo[0].ParameterType == typeof(EdiabasNet) && parInfo[2].ParameterType == typeof(bool))
+                                {
+                                    if (parInfo[1].ParameterType == typeof(Dictionary<string, EdiabasNet.ResultData>).MakeByRefType())
+                                    {
+                                        executeJob = true;
+                                    }
+                                    if (parInfo[1].ParameterType == typeof(MultiMap<string, EdiabasNet.ResultData>).MakeByRefType())
+                                    {
+                                        executeJobMulti = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (executeJobMulti)
+                        {
+                            pageInfo.ClassObject.ExecuteJob(Ediabas, ref resultDict, firstRequestCall);
+                        }
+                        else if (executeJob)
+                        {
+                            Dictionary<string, EdiabasNet.ResultData> resultDictLocal = null;
+                            pageInfo.ClassObject.ExecuteJob(Ediabas, ref resultDictLocal, firstRequestCall);
+                            if (resultDictLocal != null)
+                            {
+                                MergeResultDictionarys(ref resultDict, resultDictLocal);
+                            }
                         }
                     }
                 }

@@ -59,8 +59,8 @@
         private int updateStep = 0;
         private int opMode = OpModeStatus;
         private Int64 currentSpeed = 0;
-        private Dictionary<string, EdiabasNet.ResultData> tempDict;
-        private Dictionary<string, EdiabasNet.ResultData> dynDict;
+        private MultiMap<string, EdiabasNet.ResultData> tempDict;
+        private MultiMap<string, EdiabasNet.ResultData> dynDict;
 
         public void CreateLayout(ActivityMain activity, JobReader.PageInfo pageInfo, LinearLayout pageLayout)
         {
@@ -174,7 +174,7 @@
             }
         }
 
-        public void ExecuteJob(EdiabasNet ediabas, ref Dictionary<string, EdiabasNet.ResultData> resultDict, bool firstCall)
+        public void ExecuteJob(EdiabasNet ediabas, ref MultiMap<string, EdiabasNet.ResultData> resultDict, bool firstCall)
         {
             if (firstCall)
             {
@@ -314,9 +314,10 @@
 
             {
                 Int64 speed = 0;
-                EdiabasNet.ResultData resultData;
-                if (resultDict.TryGetValue("STATE_SPEED", out resultData))
+                IList<EdiabasNet.ResultData> resultDataList;
+                if (resultDict.TryGetValue("STATE_SPEED", out resultDataList))
                 {
+                    EdiabasNet.ResultData resultData = resultDataList[0];
                     if (resultData.OpData is Int64)
                     {
                         speed = ((Int64)resultData.OpData);
