@@ -302,7 +302,9 @@ namespace BmwDeepObd
                     validResult = true;
                 }
             }
-            if (job.Name.StartsWith("STAT_", StringComparison.OrdinalIgnoreCase) || job.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase))
+            if (job.Name.StartsWith("STAT_", StringComparison.OrdinalIgnoreCase) ||
+                job.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase) ||
+                job.Name.StartsWith("FS_", StringComparison.OrdinalIgnoreCase))
             {
                 validResult = true;
             }
