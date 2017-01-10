@@ -310,6 +310,10 @@ namespace BmwDeepObd
             }
             _tabLayout.Visibility = (_jobReader.PageList.Count > 0) ? ViewStates.Visible : ViewStates.Gone;
             _fragmentPagerAdapter.NotifyDataSetChanged();
+            if (_tabLayout.TabCount > 0)
+            {
+                _tabLayout.GetTabAt(0).Select();
+            }
             UpdateDisplay();
         }
 
