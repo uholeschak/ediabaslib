@@ -243,6 +243,7 @@ namespace BmwDeepObd
             _tabLayout = FindViewById<TabLayout>(Resource.Id.sliding_tabs);
             _tabLayout.SetupWithViewPager(_viewPager);
             _tabLayout.AddOnTabSelectedListener(this);
+            _tabLayout.Visibility = ViewStates.Gone;
 
             _activityCommon = new ActivityCommon(this, () =>
             {
