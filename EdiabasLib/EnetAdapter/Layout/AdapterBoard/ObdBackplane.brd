@@ -246,7 +246,57 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </package>
 </packages>
 </library>
-<library name="rcl">
+<library name="obd_special">
+<packages>
+<package name="FPC-FFC-CONNECTOR-08-1MM-L">
+<smd name="1" x="3.5052" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
+<smd name="2" x="2.4892" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
+<smd name="3" x="1.4986" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
+<smd name="4" x="0.508" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
+<smd name="5" x="-0.508" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
+<smd name="6" x="-1.4986" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
+<smd name="7" x="-2.4892" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
+<smd name="8" x="-3.5052" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
+<wire x1="4.1402" y1="0.3048" x2="4.0386" y2="0.127" width="0.1524" layer="21"/>
+<wire x1="-4.2418" y1="0.3048" x2="4.1402" y2="0.3048" width="0.1524" layer="21"/>
+<wire x1="4.1402" y1="0.3048" x2="4.2418" y2="0.3048" width="0.1524" layer="21"/>
+<wire x1="4.1402" y1="0.3048" x2="3.5052" y2="-0.9652" width="0.1524" layer="51"/>
+<wire x1="2.8702" y1="0.3048" x2="3.5052" y2="-0.9652" width="0.1524" layer="51"/>
+<wire x1="-4.318" y1="0.3048" x2="2.8702" y2="0.3048" width="0.1524" layer="51"/>
+<wire x1="2.8702" y1="0.3048" x2="4.1402" y2="0.3048" width="0.1524" layer="51"/>
+<wire x1="4.1402" y1="0.3048" x2="4.318" y2="0.3048" width="0.1524" layer="51"/>
+<wire x1="4.318" y1="0.3048" x2="4.318" y2="3.1496" width="0.1524" layer="51"/>
+<wire x1="4.318" y1="3.1496" x2="-4.318" y2="3.1496" width="0.1524" layer="51"/>
+<wire x1="-4.318" y1="3.1496" x2="-4.318" y2="0.3048" width="0.1524" layer="51"/>
+<text x="-5.0038" y="3.937" size="2.0828" layer="25" ratio="10" rot="SR0">&gt;NAME</text>
+<text x="-5.715" y="-6.9342" size="2.0828" layer="27" ratio="10" rot="SR0">&gt;VALUE</text>
+</package>
+<package name="FPC-FFC-CONNECTOR-08-1MM">
+<smd name="1" x="3.5052" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
+<smd name="2" x="2.4892" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
+<smd name="3" x="1.4986" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
+<smd name="4" x="0.508" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
+<smd name="5" x="-0.508" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
+<smd name="6" x="-1.4986" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
+<smd name="7" x="-2.4892" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
+<smd name="8" x="-3.5052" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
+<wire x1="4.1402" y1="0.3048" x2="4.0386" y2="0.127" width="0.1524" layer="21"/>
+<wire x1="-4.2418" y1="0.3048" x2="4.1402" y2="0.3048" width="0.1524" layer="21"/>
+<wire x1="4.1402" y1="0.3048" x2="4.2418" y2="0.3048" width="0.1524" layer="21"/>
+<wire x1="4.1402" y1="0.3048" x2="3.5052" y2="-0.9652" width="0.1524" layer="51"/>
+<wire x1="2.8702" y1="0.3048" x2="3.5052" y2="-0.9652" width="0.1524" layer="51"/>
+<wire x1="-4.318" y1="0.3048" x2="2.8702" y2="0.3048" width="0.1524" layer="51"/>
+<wire x1="2.8702" y1="0.3048" x2="4.1402" y2="0.3048" width="0.1524" layer="51"/>
+<wire x1="4.1402" y1="0.3048" x2="4.318" y2="0.3048" width="0.1524" layer="51"/>
+<wire x1="4.318" y1="0.3048" x2="4.318" y2="3.1496" width="0.1524" layer="51"/>
+<wire x1="4.318" y1="3.1496" x2="-4.318" y2="3.1496" width="0.1524" layer="51"/>
+<wire x1="-4.318" y1="3.1496" x2="-4.318" y2="0.3048" width="0.1524" layer="51"/>
+<text x="-5.0038" y="3.937" size="2.0828" layer="25" ratio="10" rot="SR0">&gt;NAME</text>
+<text x="-5.715" y="-5.1562" size="2.0828" layer="27" ratio="10" rot="SR0">&gt;VALUE</text>
+</package>
+</packages>
+</library>
+<library name="resistor">
 <description>&lt;b&gt;Resistors, Capacitors, Inductors&lt;/b&gt;&lt;p&gt;
 Based on the previous libraries:
 &lt;ul&gt;
@@ -264,13 +314,33 @@ for Electrolyt Capacitors see also :&lt;p&gt;
 www.bccomponents.com &lt;p&gt;
 www.panasonic.com&lt;p&gt;
 www.kemet.com&lt;p&gt;
-http://www.secc.co.jp/pdf/os_e/2004/e_os_all.pdf &lt;b&gt;(SANYO)&lt;/b&gt;
 &lt;p&gt;
 for trimmer refence see : &lt;u&gt;www.electrospec-inc.com/cross_references/trimpotcrossref.asp&lt;/u&gt;&lt;p&gt;
 
-&lt;table border=0 cellspacing=0 cellpadding=0 width="100%" cellpaddding=0&gt;
+&lt;map name="nav_main"&gt;
+&lt;area shape="rect" coords="0,1,140,23" href="../military_specs.asp" title=""&gt;
+&lt;area shape="rect" coords="0,24,140,51" href="../about.asp" title=""&gt;
+&lt;area shape="rect" coords="1,52,140,77" href="../rfq.asp" title=""&gt;
+&lt;area shape="rect" coords="0,78,139,103" href="../products.asp" title=""&gt;
+&lt;area shape="rect" coords="1,102,138,128" href="../excess_inventory.asp" title=""&gt;
+&lt;area shape="rect" coords="1,129,138,150" href="../edge.asp" title=""&gt;
+&lt;area shape="rect" coords="1,151,139,178" href="../industry_links.asp" title=""&gt;
+&lt;area shape="rect" coords="0,179,139,201" href="../comments.asp" title=""&gt;
+&lt;area shape="rect" coords="1,203,138,231" href="../directory.asp" title=""&gt;
+&lt;area shape="default" nohref&gt;
+&lt;/map&gt;
+
+&lt;html&gt;
+
+&lt;title&gt;&lt;/title&gt;
+
+ &lt;LINK REL="StyleSheet" TYPE="text/css" HREF="style-sheet.css"&gt;
+
+&lt;body bgcolor="#ffffff" text="#000000" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0"&gt;
+&lt;table border=0 cellspacing=0 cellpadding=0 width="100%" cellpaddding=0 height="55%"&gt;
 &lt;tr valign="top"&gt;
 
+&lt;/td&gt;
 &lt;! &lt;td width="10"&gt;&amp;nbsp;&lt;/td&gt;
 &lt;td width="90%"&gt;
 
@@ -1293,72 +1363,24 @@ for trimmer refence see : &lt;u&gt;www.electrospec-inc.com/cross_references/trim
 &lt;P&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
-&lt;/table&gt;</description>
+&lt;/table&gt;
+&lt;/BODY&gt;&lt;/HTML&gt;</description>
 <packages>
-<package name="R2010">
+<package name="R2512">
 <description>&lt;b&gt;RESISTOR&lt;/b&gt;</description>
-<wire x1="-1.662" y1="1.245" x2="1.662" y2="1.245" width="0.1524" layer="51"/>
-<wire x1="-1.637" y1="-1.245" x2="1.687" y2="-1.245" width="0.1524" layer="51"/>
-<wire x1="-3.473" y1="1.483" x2="3.473" y2="1.483" width="0.0508" layer="39"/>
-<wire x1="3.473" y1="1.483" x2="3.473" y2="-1.483" width="0.0508" layer="39"/>
-<wire x1="3.473" y1="-1.483" x2="-3.473" y2="-1.483" width="0.0508" layer="39"/>
-<wire x1="-3.473" y1="-1.483" x2="-3.473" y2="1.483" width="0.0508" layer="39"/>
-<smd name="1" x="-2.2" y="0" dx="1.8" dy="2.7" layer="1"/>
-<smd name="2" x="2.2" y="0" dx="1.8" dy="2.7" layer="1"/>
-<text x="-3.175" y="1.905" size="1.27" layer="25">&gt;NAME</text>
-<text x="-3.175" y="-3.175" size="1.27" layer="27">&gt;VALUE</text>
-<rectangle x1="-2.4892" y1="-1.3208" x2="-1.6393" y2="1.3292" layer="51"/>
-<rectangle x1="1.651" y1="-1.3208" x2="2.5009" y2="1.3292" layer="51"/>
-</package>
-</packages>
-</library>
-<library name="obd_special">
-<packages>
-<package name="FPC-FFC-CONNECTOR-08-1MM-L">
-<smd name="1" x="3.5052" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<smd name="2" x="2.4892" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<smd name="3" x="1.4986" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<smd name="4" x="0.508" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<smd name="5" x="-0.508" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<smd name="6" x="-1.4986" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<smd name="7" x="-2.4892" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<smd name="8" x="-3.5052" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<wire x1="4.1402" y1="0.3048" x2="4.0386" y2="0.127" width="0.1524" layer="21"/>
-<wire x1="-4.2418" y1="0.3048" x2="4.1402" y2="0.3048" width="0.1524" layer="21"/>
-<wire x1="4.1402" y1="0.3048" x2="4.2418" y2="0.3048" width="0.1524" layer="21"/>
-<wire x1="4.1402" y1="0.3048" x2="3.5052" y2="-0.9652" width="0.1524" layer="51"/>
-<wire x1="2.8702" y1="0.3048" x2="3.5052" y2="-0.9652" width="0.1524" layer="51"/>
-<wire x1="-4.318" y1="0.3048" x2="2.8702" y2="0.3048" width="0.1524" layer="51"/>
-<wire x1="2.8702" y1="0.3048" x2="4.1402" y2="0.3048" width="0.1524" layer="51"/>
-<wire x1="4.1402" y1="0.3048" x2="4.318" y2="0.3048" width="0.1524" layer="51"/>
-<wire x1="4.318" y1="0.3048" x2="4.318" y2="3.1496" width="0.1524" layer="51"/>
-<wire x1="4.318" y1="3.1496" x2="-4.318" y2="3.1496" width="0.1524" layer="51"/>
-<wire x1="-4.318" y1="3.1496" x2="-4.318" y2="0.3048" width="0.1524" layer="51"/>
-<text x="-5.0038" y="3.937" size="2.0828" layer="25" ratio="10" rot="SR0">&gt;NAME</text>
-<text x="-5.715" y="-6.9342" size="2.0828" layer="27" ratio="10" rot="SR0">&gt;VALUE</text>
-</package>
-<package name="FPC-FFC-CONNECTOR-08-1MM">
-<smd name="1" x="3.5052" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<smd name="2" x="2.4892" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<smd name="3" x="1.4986" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<smd name="4" x="0.508" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<smd name="5" x="-0.508" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<smd name="6" x="-1.4986" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<smd name="7" x="-2.4892" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<smd name="8" x="-3.5052" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<wire x1="4.1402" y1="0.3048" x2="4.0386" y2="0.127" width="0.1524" layer="21"/>
-<wire x1="-4.2418" y1="0.3048" x2="4.1402" y2="0.3048" width="0.1524" layer="21"/>
-<wire x1="4.1402" y1="0.3048" x2="4.2418" y2="0.3048" width="0.1524" layer="21"/>
-<wire x1="4.1402" y1="0.3048" x2="3.5052" y2="-0.9652" width="0.1524" layer="51"/>
-<wire x1="2.8702" y1="0.3048" x2="3.5052" y2="-0.9652" width="0.1524" layer="51"/>
-<wire x1="-4.318" y1="0.3048" x2="2.8702" y2="0.3048" width="0.1524" layer="51"/>
-<wire x1="2.8702" y1="0.3048" x2="4.1402" y2="0.3048" width="0.1524" layer="51"/>
-<wire x1="4.1402" y1="0.3048" x2="4.318" y2="0.3048" width="0.1524" layer="51"/>
-<wire x1="4.318" y1="0.3048" x2="4.318" y2="3.1496" width="0.1524" layer="51"/>
-<wire x1="4.318" y1="3.1496" x2="-4.318" y2="3.1496" width="0.1524" layer="51"/>
-<wire x1="-4.318" y1="3.1496" x2="-4.318" y2="0.3048" width="0.1524" layer="51"/>
-<text x="-5.0038" y="3.937" size="2.0828" layer="25" ratio="10" rot="SR0">&gt;NAME</text>
-<text x="-5.715" y="-5.1562" size="2.0828" layer="27" ratio="10" rot="SR0">&gt;VALUE</text>
+<wire x1="-2.362" y1="1.473" x2="2.387" y2="1.473" width="0.1524" layer="51"/>
+<wire x1="-2.362" y1="-1.473" x2="2.387" y2="-1.473" width="0.1524" layer="51"/>
+<wire x1="-3.973" y1="1.983" x2="3.973" y2="1.983" width="0.0508" layer="39"/>
+<wire x1="3.973" y1="1.983" x2="3.973" y2="-1.983" width="0.0508" layer="39"/>
+<wire x1="3.973" y1="-1.983" x2="-3.973" y2="-1.983" width="0.0508" layer="39"/>
+<wire x1="-3.973" y1="-1.983" x2="-3.973" y2="1.983" width="0.0508" layer="39"/>
+<smd name="1" x="-2.8" y="0" dx="1.8" dy="3.2" layer="1"/>
+<smd name="2" x="2.8" y="0" dx="1.8" dy="3.2" layer="1"/>
+<text x="-2.54" y="1.905" size="1.27" layer="25">&gt;NAME</text>
+<text x="-2.54" y="-3.175" size="1.27" layer="27">&gt;VALUE</text>
+<rectangle x1="-3.2004" y1="-1.5494" x2="-2.3505" y2="1.5507" layer="51"/>
+<rectangle x1="2.3622" y1="-1.5494" x2="3.2121" y2="1.5507" layer="51"/>
+<rectangle x1="-0.5001" y1="-1" x2="0.5001" y2="1" layer="35"/>
 </package>
 </packages>
 </library>
@@ -1563,7 +1585,7 @@ Covered vias can be set in Masks (Limit).
 </element>
 <element name="OUT+" library="pinhead" package="1X01" value="5V" x="3.81" y="2.54"/>
 <element name="OUT-" library="pinhead" package="1X01" value="GND" x="12.7" y="2.54"/>
-<element name="R1" library="rcl" package="R2010" value="511" x="6.35" y="10.16"/>
+<element name="R1" library="resistor" package="R2512" value="511" x="6.35" y="10.16"/>
 <element name="POWER+" library="pinhead" package="1X01" value="5V" x="31.75" y="2.54"/>
 <element name="POWER-" library="pinhead" package="1X01" value="GND" x="31.75" y="10.16"/>
 <element name="U1" library="obd_special" package="FPC-FFC-CONNECTOR-08-1MM" value="FPC-FFC-CONNECTOR-08-1MM" x="18.2" y="16.51" rot="R180">
@@ -1610,17 +1632,17 @@ Covered vias can be set in Masks (Limit).
 <contactref element="D1" pad="A"/>
 <polygon width="0.254" layer="1" isolate="0.4064">
 <vertex x="1.905" y="19.685"/>
-<vertex x="1.905" y="8.255"/>
-<vertex x="10.795" y="8.255"/>
+<vertex x="1.905" y="7.62"/>
+<vertex x="10.795" y="7.62"/>
 <vertex x="10.795" y="19.685"/>
 </polygon>
 </signal>
 <signal name="N$2">
 <contactref element="J1" pad="8"/>
 <contactref element="R1" pad="1"/>
-<wire x1="4.15" y1="10.16" x2="4.03" y2="10.16" width="0.8128" layer="1"/>
-<wire x1="4.15" y1="10.16" x2="4.15" y2="5.87" width="0.8128" layer="1"/>
-<wire x1="4.15" y1="5.87" x2="4.23" y2="5.79" width="0.8128" layer="1"/>
+<wire x1="3.55" y1="10.16" x2="4.03" y2="10.16" width="0.8128" layer="1"/>
+<wire x1="4.03" y1="10.16" x2="4.03" y2="5.99" width="0.8128" layer="1"/>
+<wire x1="4.03" y1="5.99" x2="4.23" y2="5.79" width="0.8128" layer="1"/>
 </signal>
 <signal name="N$1">
 <contactref element="D1" pad="C"/>
