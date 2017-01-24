@@ -196,6 +196,7 @@
 
   <!-- Ediabas Tool Options Menu -->
   <string name="menu_tool_sel_interface">Интерфейс</string>
+  <string name="menu_tool_offline">отсутствует</string>
   <string name="menu_tool_sel_sgbd_grp">SGBD (grp)</string>
   <string name="menu_tool_sel_sgbd_prg">SGBD (prg)</string>
 
