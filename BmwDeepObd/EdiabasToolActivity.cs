@@ -113,6 +113,7 @@ namespace BmwDeepObd
         private string _sgbdFileName = string.Empty;
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
+        private bool _offline;
         private bool _traceActive = true;
         private bool _traceAppend;
         private bool _dataLogActive;
@@ -318,11 +319,18 @@ namespace BmwDeepObd
             bool commActive = IsJobRunning();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
 
+            IMenuItem offlineMenu = menu.FindItem(Resource.Id.menu_tool_offline);
+            if (offlineMenu != null)
+            {
+                offlineMenu.SetEnabled(!commActive);
+                offlineMenu.SetChecked(_offline);
+            }
+
             IMenuItem selInterfaceMenu = menu.FindItem(Resource.Id.menu_tool_sel_interface);
             if (selInterfaceMenu != null)
             {
                 selInterfaceMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_tool_sel_interface), _activityCommon.InterfaceName()));
-                selInterfaceMenu.SetEnabled(!commActive);
+                selInterfaceMenu.SetEnabled(!commActive && !_offline);
             }
 
             IMenuItem selSgbdGrpMenu = menu.FindItem(Resource.Id.menu_tool_sel_sgbd_grp);
@@ -338,7 +346,7 @@ namespace BmwDeepObd
                     }
                 }
                 selSgbdGrpMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_tool_sel_sgbd_grp), fileName));
-                selSgbdGrpMenu.SetEnabled(!commActive && interfaceAvailable);
+                selSgbdGrpMenu.SetEnabled(!commActive && interfaceAvailable && !_offline);
             }
 
             IMenuItem selSgbdPrgMenu = menu.FindItem(Resource.Id.menu_tool_sel_sgbd_prg);
@@ -360,14 +368,14 @@ namespace BmwDeepObd
             if (scanMenu != null)
             {
                 scanMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_adapter), _deviceName));
-                scanMenu.SetEnabled(!commActive && interfaceAvailable);
+                scanMenu.SetEnabled(!commActive && interfaceAvailable && !_offline);
                 scanMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
             }
 
             IMenuItem adapterConfigMenu = menu.FindItem(Resource.Id.menu_adapter_config);
             if (adapterConfigMenu != null)
             {
-                adapterConfigMenu.SetEnabled(interfaceAvailable && !commActive);
+                adapterConfigMenu.SetEnabled(interfaceAvailable && !commActive && !_offline);
                 adapterConfigMenu.SetVisible(_activityCommon.AllowAdapterConfig(_deviceAddress));
             }
 
@@ -376,12 +384,12 @@ namespace BmwDeepObd
             {
                 enetIpMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_enet_ip),
                     string.IsNullOrEmpty(_activityCommon.SelectedEnetIp) ? GetString(Resource.String.select_enet_ip_auto) : _activityCommon.SelectedEnetIp));
-                enetIpMenu.SetEnabled(interfaceAvailable && !commActive);
+                enetIpMenu.SetEnabled(interfaceAvailable && !commActive && !_offline);
                 enetIpMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet);
             }
 
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
-            logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
+            logSubMenu?.SetEnabled(interfaceAvailable && !commActive &&!_offline);
 
             return base.OnPrepareOptionsMenu(menu);
         }
@@ -405,6 +413,19 @@ namespace BmwDeepObd
                     }
                     return true;
 
+                case Resource.Id.menu_tool_offline:
+                    if (IsJobRunning())
+                    {
+                        return true;
+                    }
+                    if (EdiabasClose())
+                    {
+                        _offline = !_offline;
+                        InvalidateOptionsMenu();
+                        UpdateDisplay();
+                    }
+                    return true;
+
                 case Resource.Id.menu_tool_sel_interface:
                     if (IsJobRunning())
                     {
@@ -420,26 +441,29 @@ namespace BmwDeepObd
                         return true;
                     }
                     _autoStart = false;
-                    if (string.IsNullOrEmpty(_deviceAddress))
+                    if (!_offline)
                     {
-                        if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _appDataDir, (sender, args) =>
+                        if (string.IsNullOrEmpty(_deviceAddress))
+                        {
+                            if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _appDataDir, (sender, args) =>
                             {
                                 _autoStart = true;
                                 _autoStartItemId = item.ItemId;
                             }))
+                            {
+                                return true;
+                            }
+                        }
+                        if (_activityCommon.ShowWifiWarning(noAction =>
+                        {
+                            if (noAction)
+                            {
+                                OnOptionsItemSelected(item);
+                            }
+                        }))
                         {
                             return true;
                         }
-                    }
-                    if (_activityCommon.ShowWifiWarning(noAction =>
-                    {
-                        if (noAction)
-                        {
-                            OnOptionsItemSelected(item);
-                        }
-                    }))
-                    {
-                        return true;
                     }
                     SelectSgbdFile(item.ItemId == Resource.Id.menu_tool_sel_sgbd_grp);
                     return true;
@@ -593,11 +617,14 @@ namespace BmwDeepObd
                     buttonConnectEnable = false;
                 }
             }
-            if (IsJobRunning())
+            if (IsJobRunning() || _offline)
             {
                 checkContinuousEnable = false;
                 buttonConnectEnable = _runContinuous;
-                inputsEnabled = false;
+                if (!_offline)
+                {
+                    inputsEnabled = false;
+                }
             }
             _checkBoxContinuous.Enabled = checkContinuousEnable;
             _buttonConnect.Enabled = buttonConnectEnable;
@@ -1154,6 +1181,10 @@ namespace BmwDeepObd
             _infoListAdapter.Items.Clear();
             _infoListAdapter.NotifyDataSetChanged();
             if (_ediabas == null)
+            {
+                return;
+            }
+            if (_offline)
             {
                 return;
             }

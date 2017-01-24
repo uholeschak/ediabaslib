@@ -6,6 +6,10 @@
           android:title="@string/menu_settings"
           app:showAsAction="always">
       <menu>
+        <item android:id="@+id/menu_tool_offline"
+              android:icon="@android:drawable/ic_menu_manage"
+              android:title="@string/menu_tool_offline"
+              android:checkable="true" />
         <item android:id="@+id/menu_tool_sel_interface"
               android:icon="@android:drawable/ic_menu_manage"
               android:title="@string/menu_tool_sel_interface" />
