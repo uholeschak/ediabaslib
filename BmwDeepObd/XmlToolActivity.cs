@@ -1624,6 +1624,16 @@ namespace BmwDeepObd
                 }
                 _ediabas.EdInterfaceClass.EnableTransmitCache = false;
 
+                if (ecuListBest == null)
+                {
+                    ecuListBest = DetectVehicleByEws();
+                    if (ecuListBest != null)
+                    {
+                        _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
+                        ReadAllXml();
+                    }
+                }
+
                 RunOnUiThread(() =>
                 {
                     progress.Hide();
@@ -1664,6 +1674,159 @@ namespace BmwDeepObd
                 });
             });
             _jobThread.Start();
+        }
+
+        private List<EcuInfo> DetectVehicleByEws()
+        {
+            try
+            {
+                List<EcuInfo> ecuList = new List<EcuInfo>();
+
+                _ediabas.ResolveSgbdFile("ews3");
+
+                _ediabas.ArgString = "6";
+                _ediabas.ArgBinaryStd = null;
+                _ediabas.ResultsRequests = string.Empty;
+                _ediabas.ExecuteJob("KD_DATEN_LESEN");
+
+                string kdData1 = null;
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                if (resultSets != null && resultSets.Count >= 2)
+                {
+                    Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                    EdiabasNet.ResultData resultData;
+                    if (resultDict.TryGetValue("KD_DATEN_TEXT", out resultData))
+                    {
+                        if (resultData.OpData is string)
+                        {
+                            kdData1 = (string)resultData.OpData;
+                        }
+                    }
+                }
+
+                _ediabas.ArgString = "7";
+                _ediabas.ArgBinaryStd = null;
+                _ediabas.ResultsRequests = string.Empty;
+                _ediabas.ExecuteJob("KD_DATEN_LESEN");
+
+                string kdData2 = null;
+                resultSets = _ediabas.ResultSets;
+                if (resultSets != null && resultSets.Count >= 2)
+                {
+                    Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                    EdiabasNet.ResultData resultData;
+                    if (resultDict.TryGetValue("KD_DATEN_TEXT", out resultData))
+                    {
+                        if (resultData.OpData is string)
+                        {
+                            kdData2 = (string)resultData.OpData;
+                        }
+                    }
+                }
+
+                string groupFiles = null;
+                if (!string.IsNullOrEmpty(kdData1) && !string.IsNullOrEmpty(kdData2))
+                {
+                    _ediabas.ResolveSgbdFile("grpliste");
+
+                    _ediabas.ArgString = kdData1 + kdData2 + ";ja";
+                    _ediabas.ArgBinaryStd = null;
+                    _ediabas.ResultsRequests = string.Empty;
+                    _ediabas.ExecuteJob("GRUPPENDATEI_ERZEUGE_LISTE_AUS_DATEN");
+
+                    resultSets = _ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                        EdiabasNet.ResultData resultData;
+                        if (resultDict.TryGetValue("GRUPPENDATEI", out resultData))
+                        {
+                            if (resultData.OpData is string)
+                            {
+                                groupFiles = (string)resultData.OpData;
+                            }
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(groupFiles))
+                {
+                    string[] groupList = groupFiles.Split(',');
+
+                    foreach (string ecuGroup in groupList)
+                    {
+                        string ecuName = ecuGroup;
+                        string ecuDesc = ecuGroup;
+#if false
+                        try
+                        {
+                            _ediabas.ResolveSgbdFile(ecuGroup);
+
+                            _ediabas.ArgString = string.Empty;
+                            _ediabas.ArgBinaryStd = null;
+                            _ediabas.ResultsRequests = string.Empty;
+                            _ediabas.NoInitForVJobs = true;
+                            _ediabas.ExecuteJob("_VERSIONINFO");
+
+                            StringBuilder stringBuilderComment = new StringBuilder();
+                            resultSets = _ediabas.ResultSets;
+                            if (resultSets != null && resultSets.Count >= 2)
+                            {
+                                int dictIndex = 0;
+                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                                {
+                                    if (dictIndex == 0)
+                                    {
+                                        dictIndex++;
+                                        continue;
+                                    }
+                                    for (int i = 0;; i++)
+                                    {
+                                        EdiabasNet.ResultData resultData;
+                                        if (resultDict.TryGetValue("ECUCOMMENT" + i.ToString(Culture), out resultData))
+                                        {
+                                            if (resultData.OpData is string)
+                                            {
+                                                if (stringBuilderComment.Length > 0)
+                                                {
+                                                    stringBuilderComment.Append(";");
+                                                }
+                                                stringBuilderComment.Append((string) resultData.OpData);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    dictIndex++;
+                                }
+                            }
+                            ecuDesc = stringBuilderComment.ToString();
+                            ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+#endif
+
+                        if (!string.IsNullOrEmpty(ecuName))
+                        {
+                            ecuList.Add(new EcuInfo(ecuName.ToUpperInvariant(), -1, ecuDesc, ecuName, ecuGroup));
+                        }
+                    }
+                }
+                if (ecuList.Count == 0)
+                {
+                    return null;
+                }
+                return ecuList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private void ExecuteAnalyzeJobVag(int searchStartIndex)
