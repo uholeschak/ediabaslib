@@ -1350,7 +1350,19 @@ namespace BmwDeepObd
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
             progress.SetCancelable(false);
             progress.SetMessage(GetString(Resource.String.xml_tool_analyze));
+            progress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
+            progress.Progress = 0;
+            progress.Max = 100;
+            progress.SetButton((int)DialogButtonType.Negative, GetString(Resource.String.button_abort), (sender, args) =>
+            {
+                _ediabasJobAbort = true;
+                progress = new Android.App.ProgressDialog(this);
+                progress.SetCancelable(false);
+                progress.SetMessage(GetString(Resource.String.xml_tool_aborting));
+                progress.Show();
+            });
             progress.Show();
+            progress.GetButton((int)DialogButtonType.Negative).Enabled = false;
 
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
@@ -1360,11 +1372,20 @@ namespace BmwDeepObd
                 List<EcuInfo> ecuListBest = null;
                 string ecuFileNameBest = null;
                 _ediabas.EdInterfaceClass.EnableTransmitCache = true;
+                int index = 0;
                 foreach (string fileName in EcuFileNames)
                 {
                     try
                     {
                         int invalidEcuCount = 0;
+                        int localIndex = index;
+                        RunOnUiThread(() =>
+                        {
+                            if (progress != null)
+                            {
+                                progress.Progress = 100 * localIndex / EcuFileNames.Length;
+                            }
+                        });
 
                         _ediabas.ResolveSgbdFile(fileName);
 
@@ -1520,6 +1541,7 @@ namespace BmwDeepObd
                     {
                         // ignored
                     }
+                    index++;
                 }
                 if (ecuListBest != null)
                 {
@@ -1626,7 +1648,7 @@ namespace BmwDeepObd
 
                 if (ecuListBest == null)
                 {
-                    ecuListBest = DetectVehicleByEws();
+                    ecuListBest = DetectVehicleByEws(progress);
                     if (ecuListBest != null)
                     {
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
@@ -1676,7 +1698,7 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
-        private List<EcuInfo> DetectVehicleByEws()
+        private List<EcuInfo> DetectVehicleByEws(Android.App.ProgressDialog progress)
         {
             try
             {
@@ -1753,13 +1775,35 @@ namespace BmwDeepObd
                 {
                     string[] groupList = groupFiles.Split(',');
 
+                    RunOnUiThread(() =>
+                    {
+                        if (progress != null)
+                        {
+                            progress.GetButton((int) DialogButtonType.Negative).Enabled = true;
+                        }
+                    });
+
+                    int index = 0;
                     foreach (string ecuGroup in groupList)
                     {
                         string ecuName = ecuGroup;
                         string ecuDesc = ecuGroup;
-#if false
+                        if (_ediabasJobAbort)
+                        {
+                            break;
+                        }
+#if true
                         try
                         {
+                            int localIndex = index;
+                            RunOnUiThread(() =>
+                            {
+                                if (progress != null)
+                                {
+                                    progress.Progress = 100 * localIndex / groupList.Length;
+                                }
+                            });
+
                             _ediabas.ResolveSgbdFile(ecuGroup);
 
                             _ediabas.ArgString = string.Empty;
@@ -1815,6 +1859,7 @@ namespace BmwDeepObd
                         {
                             ecuList.Add(new EcuInfo(ecuName.ToUpperInvariant(), -1, ecuDesc, ecuName, ecuGroup));
                         }
+                        index++;
                     }
                 }
                 if (ecuList.Count == 0)
@@ -1899,7 +1944,7 @@ namespace BmwDeepObd
                     int localEcuCount = ecuCount;
                     RunOnUiThread(() =>
                     {
-                        if (!_ediabasJobAbort)
+                        if (!_ediabasJobAbort && progress != null)
                         {
                             progress.Progress = 100 * localIndex / localEcuCount;
                             progress.SetMessage(string.Format(GetString(Resource.String.xml_tool_search_ecus), localDetectCount, localIndex));
