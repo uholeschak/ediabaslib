@@ -1704,7 +1704,7 @@ namespace BmwDeepObd
             {
                 List<EcuInfo> ecuList = new List<EcuInfo>();
 
-                _ediabas.ResolveSgbdFile("ews3");
+                _ediabas.ResolveSgbdFile("d_0044");
 
                 _ediabas.ArgString = "6";
                 _ediabas.ArgBinaryStd = null;
