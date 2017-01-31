@@ -1219,7 +1219,7 @@ namespace CarSimulator
                         if (dataLength == 0)
                         {   // with length byte
                             dataLength = sendData[3];
-                            Array.Copy(sendData, 0, tempArray, 0, dataLength + 3);
+                            Array.Copy(sendData, 0, tempArray, 0, dataLength + 4);
                             tempArray[0] = 0xB8;
                         }
                         else
