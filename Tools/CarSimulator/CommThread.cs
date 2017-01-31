@@ -1073,6 +1073,10 @@ namespace CarSimulator
 
         private bool ReceiveData(byte[] receiveData, int offset, int length)
         {
+            if (length < 0)
+            {
+                return false;
+            }
             try
             {
                 UpdateOutState();
