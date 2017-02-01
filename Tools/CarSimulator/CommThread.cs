@@ -186,6 +186,7 @@ namespace CarSimulator
         private Thread _workerThread;
         private string _comPort;
         private ConceptType _conceptType;
+        private ConceptType _responseConcept;
         private bool _adsAdapter;
         private bool _klineResponder;
         private ResponseType _responseType;
@@ -615,6 +616,7 @@ namespace CarSimulator
                 _stopThread = false;
                 _comPort = comPort;
                 _conceptType = conceptType;
+                _responseConcept = conceptType;
                 _adsAdapter = adsAdapter;
                 _klineResponder = klineResponder;
                 _responseType = responseType;
@@ -1201,7 +1203,7 @@ namespace CarSimulator
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool ObdSend(byte[] sendData)
         {
-            switch (_conceptType)
+            switch (_responseConcept)
             {
                 case ConceptType.ConceptBwmFast:
                 case ConceptType.ConceptKwp2000Bmw:
@@ -1277,6 +1279,7 @@ namespace CarSimulator
 
         private bool ObdReceive(byte[] receiveData)
         {
+            _responseConcept = _conceptType;
             switch (_conceptType)
             {
                 case ConceptType.ConceptBwmFast:
@@ -1319,12 +1322,34 @@ namespace CarSimulator
 
                 case ConceptType.ConceptDs2:
                     {
-                        if (!ReceiveDs2(receiveData))
+                        bool kwp2000S;
+                        if (!ReceiveDs2(receiveData, out kwp2000S))
                         {
                             return false;
                         }
                         // convert to BMW-FAST
-                        int dataLength = receiveData[1] - 3;
+                        int dataLength;
+                        if (kwp2000S)
+                        {   // KWP2000*
+                            _responseConcept = ConceptType.ConceptKwp2000S;
+                            dataLength = receiveData[3];
+                            if (dataLength > 0x3F)
+                            {   // with length byte
+                                receiveData[0] = 0x80;
+                                receiveData[dataLength + 4] = CalcChecksumBmwFast(receiveData, dataLength + 4);
+                            }
+                            else
+                            {   // without length byte
+                                byte[] tempArray = new byte[260];
+                                Array.Copy(receiveData, 4, tempArray, 0, dataLength);
+                                Array.Copy(tempArray, 0, receiveData, 3, dataLength);
+                                receiveData[0] = (byte)(0x80 | dataLength);
+                                receiveData[dataLength + 3] = CalcChecksumBmwFast(receiveData, dataLength + 3);
+                            }
+                            return true;
+                        }
+                        // DS2
+                        dataLength = receiveData[1] - 3;
                         if (dataLength > 0x3F)
                         {   // with length byte
                             byte[] tempArray = new byte[260];
@@ -3047,16 +3072,31 @@ namespace CarSimulator
             return true;
         }
 
-        private bool ReceiveDs2(byte[] receiveData)
+        private bool ReceiveDs2(byte[] receiveData, out bool kwp2000S)
         {
+            kwp2000S = false;
             // header byte
-            if (!ReceiveData(receiveData, 0, 2))
+            if (!ReceiveData(receiveData, 0, 4))
             {
                 _serialPort.DiscardInBuffer();
                 return false;
             }
-            int recLength = receiveData[1] - 1;
-            if (!ReceiveData(receiveData, 2, recLength - 1))
+            int recLength;
+            if (receiveData[0] == 0xB8 && receiveData[2] == 0xF1)
+            {   // KPW2000*
+                recLength = receiveData[3] + 4;
+                kwp2000S = true;
+            }
+            else
+            {
+                recLength = receiveData[1] - 1;
+            }
+            if (recLength < 3)
+            {
+                _serialPort.DiscardInBuffer();
+                return false;
+            }
+            if (!ReceiveData(receiveData, 4, recLength - 3))
             {
                 _serialPort.DiscardInBuffer();
                 return false;
