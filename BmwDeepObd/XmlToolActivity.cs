@@ -1776,9 +1776,10 @@ namespace BmwDeepObd
                 {
                     string[] groupArray = groupFiles.Split(',');
                     List<string> groupList = new List<string>();
+                    Regex regex = new Regex(@"^d_00[0-9a-f]{2}$", RegexOptions.IgnoreCase);
                     foreach (string group in groupArray)
                     {
-                        if (Regex.IsMatch(group, "^d_00[0-9a-f]{2}$", RegexOptions.IgnoreCase))
+                        if (regex.IsMatch(group))
                         {
                             groupList.Add(group);
                         }
