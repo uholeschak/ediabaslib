@@ -116,6 +116,7 @@ namespace BmwDeepObd
         {
             "C_FG_LESEN_FUNKTIONAL", "PROG_FG_NR_LESEN_FUNKTIONAL", "AIF_LESEN_FUNKTIONAL"
         };
+        private readonly Regex _vinRegex = new Regex(@"^[a-zA-Z][a-zA-Z0-9]+$");
 
         // Intent extra
         public const string ExtraInitDir = "init_dir";
@@ -1573,7 +1574,6 @@ namespace BmwDeepObd
                             throw new Exception("Read VIN failed");
                         }
 
-                        Regex regex = new Regex(@"^[a-zA-Z][a-zA-Z0-9]+$");
                         List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
@@ -1616,7 +1616,7 @@ namespace BmwDeepObd
                                         ecuVin = (string) resultData.OpData;
                                     }
                                 }
-                                if (!string.IsNullOrEmpty(ecuVin) && regex.IsMatch(ecuVin))
+                                if (!string.IsNullOrEmpty(ecuVin) && _vinRegex.IsMatch(ecuVin))
                                 {
                                     foreach (EcuInfo ecuInfo in _ecuList)
                                     {
@@ -1648,7 +1648,7 @@ namespace BmwDeepObd
 
                 if (ecuListBest == null)
                 {
-                    ecuListBest = DetectVehicleByEws(progress);
+                    ecuListBest = DetectVehicleByEws(progress, out _vin);
                     if (ecuListBest != null)
                     {
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
@@ -1698,8 +1698,9 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
-        private List<EcuInfo> DetectVehicleByEws(Android.App.ProgressDialog progress)
+        private List<EcuInfo> DetectVehicleByEws(Android.App.ProgressDialog progress, out string vin)
         {
+            vin = string.Empty;
             try
             {
                 List<EcuInfo> ecuList = new List<EcuInfo>();
@@ -1773,7 +1774,15 @@ namespace BmwDeepObd
 
                 if (!string.IsNullOrEmpty(groupFiles))
                 {
-                    string[] groupList = groupFiles.Split(',');
+                    string[] groupArray = groupFiles.Split(',');
+                    List<string> groupList = new List<string>();
+                    foreach (string group in groupArray)
+                    {
+                        if (Regex.IsMatch(group, "^d_00[0-9a-f]{2}$", RegexOptions.IgnoreCase))
+                        {
+                            groupList.Add(group);
+                        }
+                    }
 
                     RunOnUiThread(() =>
                     {
@@ -1786,13 +1795,13 @@ namespace BmwDeepObd
                     int index = 0;
                     foreach (string ecuGroup in groupList)
                     {
-                        string ecuName = ecuGroup;
-                        string ecuDesc = ecuGroup;
+                        string ecuName = string.Empty;
+                        string ecuDesc = string.Empty;
                         if (_ediabasJobAbort)
                         {
                             break;
                         }
-#if true
+
                         try
                         {
                             int localIndex = index;
@@ -1800,7 +1809,7 @@ namespace BmwDeepObd
                             {
                                 if (progress != null)
                                 {
-                                    progress.Progress = 100 * localIndex / groupList.Length;
+                                    progress.Progress = 100 * localIndex / groupList.Count;
                                 }
                             });
 
@@ -1853,11 +1862,61 @@ namespace BmwDeepObd
                         {
                             // ignored
                         }
-#endif
 
+                        EcuInfo ecuInfo = null;
                         if (!string.IsNullOrEmpty(ecuName))
                         {
-                            ecuList.Add(new EcuInfo(ecuName.ToUpperInvariant(), -1, ecuDesc, ecuName, ecuGroup));
+                            ecuInfo = new EcuInfo(ecuName.ToUpperInvariant(), -1, ecuDesc, ecuName, ecuGroup);
+                            ecuList.Add(ecuInfo);
+                        }
+
+                        if (ecuInfo != null)
+                        {
+                            try
+                            {
+                                _ediabas.ArgString = string.Empty;
+                                _ediabas.ArgBinaryStd = null;
+                                _ediabas.ResultsRequests = string.Empty;
+                                _ediabas.ExecuteJob("AIF_LESEN");
+
+                                resultSets = _ediabas.ResultSets;
+                                if (resultSets != null && resultSets.Count >= 2)
+                                {
+                                    int dictIndex = 0;
+                                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                                    {
+                                        if (dictIndex == 0)
+                                        {
+                                            dictIndex++;
+                                            continue;
+                                        }
+                                        string ecuVin = string.Empty;
+                                        EdiabasNet.ResultData resultData;
+                                        if (resultDict.TryGetValue("AIF_FG_NR", out resultData))
+                                        {
+                                            if (resultData.OpData is string)
+                                            {
+                                                ecuVin = (string)resultData.OpData;
+                                            }
+                                        }
+                                        if (!string.IsNullOrEmpty(ecuVin) && _vinRegex.IsMatch(ecuVin))
+                                        {
+                                            ecuInfo.Vin = ecuVin;
+                                            if (string.IsNullOrEmpty(vin))
+                                            {
+                                                vin = ecuVin;
+                                            }
+                                            vin = ecuVin;
+                                            break;
+                                        }
+                                        dictIndex++;
+                                    }
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                         }
                         index++;
                     }
