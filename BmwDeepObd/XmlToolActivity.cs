@@ -1637,21 +1637,18 @@ namespace BmwDeepObd
                     }
 
                     // get vin
-                    var vinInfo = _ecuList.GroupBy(x => x.Vin)
-                        .Where(x => !string.IsNullOrEmpty(x.Key))
-                        .OrderByDescending(x => x.Count())
-                        .FirstOrDefault();
-                    _vin = vinInfo != null ? vinInfo.Key : string.Empty;
+                    _vin = GetBestVin(_ecuList);
                     ReadAllXml();
                 }
                 _ediabas.EdInterfaceClass.EnableTransmitCache = false;
 
                 if (ecuListBest == null)
                 {
-                    ecuListBest = DetectVehicleByEws(progress, out _vin);
+                    ecuListBest = DetectVehicleByEws(progress);
                     if (ecuListBest != null)
                     {
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
+                        _vin = GetBestVin(_ecuList);
                         ReadAllXml();
                     }
                 }
@@ -1698,9 +1695,8 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
-        private List<EcuInfo> DetectVehicleByEws(Android.App.ProgressDialog progress, out string vin)
+        private List<EcuInfo> DetectVehicleByEws(Android.App.ProgressDialog progress)
         {
-            vin = string.Empty;
             try
             {
                 List<EcuInfo> ecuList = new List<EcuInfo>();
@@ -1822,41 +1818,7 @@ namespace BmwDeepObd
                             _ediabas.NoInitForVJobs = true;
                             _ediabas.ExecuteJob("_VERSIONINFO");
 
-                            StringBuilder stringBuilderComment = new StringBuilder();
-                            resultSets = _ediabas.ResultSets;
-                            if (resultSets != null && resultSets.Count >= 2)
-                            {
-                                int dictIndex = 0;
-                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
-                                {
-                                    if (dictIndex == 0)
-                                    {
-                                        dictIndex++;
-                                        continue;
-                                    }
-                                    for (int i = 0;; i++)
-                                    {
-                                        EdiabasNet.ResultData resultData;
-                                        if (resultDict.TryGetValue("ECUCOMMENT" + i.ToString(Culture), out resultData))
-                                        {
-                                            if (resultData.OpData is string)
-                                            {
-                                                if (stringBuilderComment.Length > 0)
-                                                {
-                                                    stringBuilderComment.Append(";");
-                                                }
-                                                stringBuilderComment.Append((string) resultData.OpData);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            break;
-                                        }
-                                    }
-                                    dictIndex++;
-                                }
-                            }
-                            ecuDesc = stringBuilderComment.ToString();
+                            ecuDesc = GetEcuComment(_ediabas.ResultSets);
                             ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
                         }
                         catch (Exception)
@@ -1867,7 +1829,7 @@ namespace BmwDeepObd
                         EcuInfo ecuInfo = null;
                         if (!string.IsNullOrEmpty(ecuName))
                         {
-                            ecuInfo = new EcuInfo(ecuName.ToUpperInvariant(), -1, ecuDesc, ecuName, ecuGroup);
+                            ecuInfo = new EcuInfo(ecuName.ToUpperInvariant(), 0, ecuDesc, ecuName, ecuGroup);
                             ecuList.Add(ecuInfo);
                         }
 
@@ -1903,11 +1865,6 @@ namespace BmwDeepObd
                                         if (!string.IsNullOrEmpty(ecuVin) && _vinRegex.IsMatch(ecuVin))
                                         {
                                             ecuInfo.Vin = ecuVin;
-                                            if (string.IsNullOrEmpty(vin))
-                                            {
-                                                vin = ecuVin;
-                                            }
-                                            vin = ecuVin;
                                             break;
                                         }
                                         dictIndex++;
@@ -1932,6 +1889,15 @@ namespace BmwDeepObd
             {
                 return null;
             }
+        }
+
+        private string GetBestVin(List<EcuInfo> ecuList)
+        {
+            var vinInfo = ecuList.GroupBy(x => x.Vin)
+                .Where(x => !string.IsNullOrEmpty(x.Key))
+                .OrderByDescending(x => x.Count())
+                .FirstOrDefault();
+            return vinInfo != null ? vinInfo.Key : string.Empty;
         }
 
         private void ExecuteAnalyzeJobVag(int searchStartIndex)
@@ -2732,41 +2698,7 @@ namespace BmwDeepObd
 
                         if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                         {
-                            StringBuilder stringBuilderComment = new StringBuilder();
-                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                            if (resultSets != null && resultSets.Count >= 2)
-                            {
-                                int dictIndex = 0;
-                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
-                                {
-                                    if (dictIndex == 0)
-                                    {
-                                        dictIndex++;
-                                        continue;
-                                    }
-                                    for (int i = 0; ; i++)
-                                    {
-                                        EdiabasNet.ResultData resultData;
-                                        if (resultDict.TryGetValue("ECUCOMMENT" + i.ToString(Culture), out resultData))
-                                        {
-                                            if (resultData.OpData is string)
-                                            {
-                                                if (stringBuilderComment.Length > 0)
-                                                {
-                                                    stringBuilderComment.Append(";");
-                                                }
-                                                stringBuilderComment.Append((string)resultData.OpData);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            break;
-                                        }
-                                    }
-                                    dictIndex++;
-                                }
-                            }
-                            ecuInfo.Description = stringBuilderComment.ToString();
+                            ecuInfo.Description = GetEcuComment(_ediabas.ResultSets);
                         }
                         string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
                         if (_ecuList.Any(info => !info.Equals(ecuInfo) && string.Compare(info.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0))
@@ -2830,6 +2762,44 @@ namespace BmwDeepObd
                 });
             });
             _jobThread.Start();
+        }
+
+        private string GetEcuComment(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            if (resultSets != null && resultSets.Count >= 2)
+            {
+                int dictIndex = 0;
+                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                {
+                    if (dictIndex == 0)
+                    {
+                        dictIndex++;
+                        continue;
+                    }
+                    for (int i = 0; ; i++)
+                    {
+                        EdiabasNet.ResultData resultData;
+                        if (resultDict.TryGetValue("ECUCOMMENT" + i.ToString(Culture), out resultData))
+                        {
+                            if (resultData.OpData is string)
+                            {
+                                if (stringBuilder.Length > 0)
+                                {
+                                    stringBuilder.Append(";");
+                                }
+                                stringBuilder.Append((string)resultData.OpData);
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    dictIndex++;
+                }
+            }
+            return stringBuilder.ToString();
         }
 
         private void EcuCheckChanged(EcuInfo ecuInfo)
