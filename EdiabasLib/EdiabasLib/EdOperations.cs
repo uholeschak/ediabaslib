@@ -2367,8 +2367,8 @@ namespace EdiabasLib
                 return;
             }
             if (ediabas._tableRowIndex < 0)
-            {
-                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
+            {   // EDIABAS failure, exception is not raised!
+                arg0.SetStringData(string.Empty);
                 return;
             }
             string entry = ediabas.GetTableEntry(ediabas.GetTableFs(), ediabas._tableIndex, ediabas._tableRowIndex, arg1.GetStringData());

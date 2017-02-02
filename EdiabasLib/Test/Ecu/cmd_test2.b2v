@@ -4388,6 +4388,20 @@ job(  name      : TEST_TABLE_FLAGS;
 
 #asm
 					enewset
+					clrc
+					clear		S4
+					move 		S4,"UNDEF"
+					tabget		S4,"VALUE"
+#endasm
+	calc_flags();
+// don't print result, string contains garbage, but no exception is raised
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
 					clear		S2
 					move		S2,"LINE2"
 					clrc
