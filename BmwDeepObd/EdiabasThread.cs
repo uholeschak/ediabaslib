@@ -340,145 +340,153 @@ namespace BmwDeepObd
                             // ignored
                         }
 
-                        Ediabas.ExecuteJob(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw ? "FS_LESEN" : "Fehlerspeicher_abfragen");
-
-                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
-
-                        bool jobOk = false;
-                        bool saeMode = false;
-                        if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                        Ediabas.ExecuteJob("_JOBS");    // force to load file
+                        string errorJob = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw ? "FS_LESEN" : "Fehlerspeicher_abfragen";
+                        if (Ediabas.IsJobExisting(errorJob))
                         {
-                            if (resultSets.Count > 0)
+                            Ediabas.ExecuteJob(errorJob);
+
+                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
+
+                            bool jobOk = false;
+                            bool saeMode = false;
+                            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                             {
-                                EdiabasNet.ResultData resultData;
-                                if (resultSets[0].TryGetValue("JOBSTATUS", out resultData))
+                                if (resultSets.Count > 0)
                                 {
-                                    if (resultData.OpData is string)
-                                    {   // read details
-                                        string jobStatus = (string)resultData.OpData;
-                                        if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                                        {
-                                            jobOk = true;
-                                        }
-                                    }
-                                }
-                            }
-                            if (!jobOk)
-                            {
-                                if (Ediabas.IsJobExisting("FehlerspeicherSAE_abfragen"))
-                                {
-                                    Ediabas.ExecuteJob("FehlerspeicherSAE_abfragen");
-                                    resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
-                                    if (resultSets.Count > 0)
+                                    EdiabasNet.ResultData resultData;
+                                    if (resultSets[0].TryGetValue("JOBSTATUS", out resultData))
                                     {
-                                        EdiabasNet.ResultData resultData;
-                                        if (resultSets[0].TryGetValue("JOBSTATUS", out resultData))
+                                        if (resultData.OpData is string)
                                         {
-                                            if (resultData.OpData is string)
-                                            {   // read details
-                                                string jobStatus = (string)resultData.OpData;
-                                                if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                                                {
-                                                    jobOk = true;
-                                                    saeMode = true;
-                                                }
+                                            // read details
+                                            string jobStatus = (string) resultData.OpData;
+                                            if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                            {
+                                                jobOk = true;
                                             }
                                         }
                                     }
                                 }
-                                else
+                                if (!jobOk)
                                 {
-                                    jobOk = true;
+                                    if (Ediabas.IsJobExisting("FehlerspeicherSAE_abfragen"))
+                                    {
+                                        Ediabas.ExecuteJob("FehlerspeicherSAE_abfragen");
+                                        resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
+                                        if (resultSets.Count > 0)
+                                        {
+                                            EdiabasNet.ResultData resultData;
+                                            if (resultSets[0].TryGetValue("JOBSTATUS", out resultData))
+                                            {
+                                                if (resultData.OpData is string)
+                                                {
+                                                    // read details
+                                                    string jobStatus = (string) resultData.OpData;
+                                                    if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                                    {
+                                                        jobOk = true;
+                                                        saeMode = true;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        jobOk = true;
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            if (resultSets.Count > 1)
+                            else
                             {
-                                EdiabasNet.ResultData resultData;
-                                if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
+                                if (resultSets.Count > 1)
                                 {
-                                    if (resultData.OpData is string)
-                                    {   // read details
-                                        string jobStatus = (string)resultData.OpData;
-                                        if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                    EdiabasNet.ResultData resultData;
+                                    if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
+                                    {
+                                        if (resultData.OpData is string)
                                         {
-                                            jobOk = true;
+                                            // read details
+                                            string jobStatus = (string) resultData.OpData;
+                                            if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                            {
+                                                jobOk = true;
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
 
-                        if (jobOk)
-                        {
-                            Dictionary<string, EdiabasNet.ResultData> resultDict0 = null;
-                            int dictIndex = 0;
-                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                            if (jobOk)
                             {
-                                EdiabasNet.ResultData resultData;
-                                if (dictIndex == 0)
+                                Dictionary<string, EdiabasNet.ResultData> resultDict0 = null;
+                                int dictIndex = 0;
+                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
                                 {
-                                    resultDict0 = resultDictLocal;
-                                    dictIndex++;
-                                    continue;
-                                }
+                                    EdiabasNet.ResultData resultData;
+                                    if (dictIndex == 0)
+                                    {
+                                        resultDict0 = resultDictLocal;
+                                        dictIndex++;
+                                        continue;
+                                    }
 
-                                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
-                                {
-                                    if (resultDictLocal.TryGetValue("FNR_WERT", out resultData))
+                                    if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                                    {
+                                        if (resultDictLocal.TryGetValue("FNR_WERT", out resultData))
+                                        {
+                                            if (resultData.OpData is Int64)
+                                            {
+                                                Dictionary<string, EdiabasNet.ResultData> resultDictTemp = null;
+                                                MergeResultDictionarys(ref resultDictTemp, resultDictLocal);
+                                                MergeResultDictionarys(ref resultDictTemp, resultDict0);
+                                                resultDictTemp.Add("SAE", new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeI, "SAE", (Int64) (saeMode ? 1 : 0)));
+                                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictTemp, null));
+                                            }
+                                        }
+                                        dictIndex++;
+                                        continue;
+                                    }
+                                    if (resultDictLocal.TryGetValue("F_ORT_NR", out resultData))
                                     {
                                         if (resultData.OpData is Int64)
                                         {
-                                            Dictionary<string, EdiabasNet.ResultData> resultDictTemp = null;
-                                            MergeResultDictionarys(ref resultDictTemp, resultDictLocal);
-                                            MergeResultDictionarys(ref resultDictTemp, resultDict0);
-                                            resultDictTemp.Add("SAE", new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeI, "SAE", (Int64)(saeMode ? 1 : 0)));
-                                            errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictTemp, null));
+                                            // read details
+                                            Ediabas.ArgString = string.Format("0x{0:X02}", (Int64) resultData.OpData);
+                                            Ediabas.ArgBinaryStd = null;
+                                            Ediabas.ResultsRequests = ecuInfo.Results;
+
+                                            bool details;
+                                            try
+                                            {
+                                                Ediabas.ExecuteJob("FS_LESEN_DETAIL");
+                                                details = true;
+                                            }
+                                            catch (Exception)
+                                            {
+                                                // no details
+                                                details = false;
+                                            }
+
+                                            if (details)
+                                            {
+                                                List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
+                                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictLocal, new List<Dictionary<string, EdiabasNet.ResultData>>(resultSetsDetail)));
+                                            }
+                                            else
+                                            {
+                                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictLocal, null));
+                                            }
                                         }
                                     }
                                     dictIndex++;
-                                    continue;
                                 }
-                                if (resultDictLocal.TryGetValue("F_ORT_NR", out resultData))
-                                {
-                                    if (resultData.OpData is Int64)
-                                    {   // read details
-                                        Ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.OpData);
-                                        Ediabas.ArgBinaryStd = null;
-                                        Ediabas.ResultsRequests = ecuInfo.Results;
-
-                                        bool details;
-                                        try
-                                        {
-                                            Ediabas.ExecuteJob("FS_LESEN_DETAIL");
-                                            details = true;
-                                        }
-                                        catch (Exception)
-                                        {
-                                            // no details
-                                            details = false;
-                                        }
-
-                                        if (details)
-                                        {
-                                            List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
-                                            errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictLocal,
-                                                new List<Dictionary<string, EdiabasNet.ResultData>>(resultSetsDetail)));
-                                        }
-                                        else
-                                        {
-                                            errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictLocal, null));
-                                        }
-                                    }
-                                }
-                                dictIndex++;
                             }
-                        }
-                        else
-                        {
-                            errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, null, null));
+                            else
+                            {
+                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, null, null));
+                            }
                         }
                     }
                     catch (Exception ex)
