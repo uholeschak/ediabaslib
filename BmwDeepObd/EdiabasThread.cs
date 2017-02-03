@@ -322,16 +322,15 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    Ediabas.ArgString = string.Empty;
-                    Ediabas.ArgBinaryStd = null;
-                    Ediabas.ResultsRequests = "";
-
                     try
                     {
                         try
                         {
                             if (errorResetList != null && errorResetList.Any(ecu => string.CompareOrdinal(ecu, ecuInfo.Name) == 0))
                             {   // error reset requested
+                                Ediabas.ArgString = string.Empty;
+                                Ediabas.ArgBinaryStd = null;
+                                Ediabas.ResultsRequests = string.Empty;
                                 Ediabas.ExecuteJob(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw ? "FS_LOESCHEN" : "Fehlerspeicher_loeschen");
                             }
                         }
@@ -340,10 +339,18 @@ namespace BmwDeepObd
                             // ignored
                         }
 
+                        Ediabas.ArgString = "ALL";
+                        Ediabas.ArgBinaryStd = null;
+                        Ediabas.ResultsRequests = string.Empty;
+                        Ediabas.NoInitForVJobs = true;
                         Ediabas.ExecuteJob("_JOBS");    // force to load file
+
                         string errorJob = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw ? "FS_LESEN" : "Fehlerspeicher_abfragen";
                         if (Ediabas.IsJobExisting(errorJob))
                         {
+                            Ediabas.ArgString = string.Empty;
+                            Ediabas.ArgBinaryStd = null;
+                            Ediabas.ResultsRequests = string.Empty;
                             Ediabas.ExecuteJob(errorJob);
 
                             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
@@ -372,6 +379,9 @@ namespace BmwDeepObd
                                 {
                                     if (Ediabas.IsJobExisting("FehlerspeicherSAE_abfragen"))
                                     {
+                                        Ediabas.ArgString = string.Empty;
+                                        Ediabas.ArgBinaryStd = null;
+                                        Ediabas.ResultsRequests = string.Empty;
                                         Ediabas.ExecuteJob("FehlerspeicherSAE_abfragen");
                                         resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
                                         if (resultSets.Count > 0)
