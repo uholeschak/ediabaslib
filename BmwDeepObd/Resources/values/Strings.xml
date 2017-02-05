@@ -31,7 +31,7 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:
-\n- Added Ediabas tool offline mode
+\n- Added detection of E38, E39, E46 and E53 vehicles
 \n- Fixed minor problems</string>
   <string name="app_info_message">Deep OBD for BMW and VAG\nVersion: {0}\nId: {1}</string>
   <string name="vag_mode_info">The VAG mode ist still experimental.\nA <a href='http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327'>Deep OBD Adapter</a> with al least firmware version 0.8 is required.\nAt the moment only the protocols KWP2000, KWP1281 and TP2.0 (vehicles until 4.2012) are supported.</string>
