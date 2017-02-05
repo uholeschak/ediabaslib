@@ -1921,6 +1921,7 @@ namespace BmwDeepObd
                 _compileCodePending = true;
                 return;
             }
+            _compileCodePending = false;
             if (_jobReader.PageList.Count == 0)
             {
                 _updateHandler.Post(CreateActionBarTabs);
