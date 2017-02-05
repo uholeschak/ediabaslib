@@ -1363,7 +1363,6 @@ namespace BmwDeepObd
                 progress.Show();
             });
             progress.Show();
-            progress.GetButton((int)DialogButtonType.Negative).Enabled = false;
 
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
@@ -1378,6 +1377,11 @@ namespace BmwDeepObd
                 {
                     try
                     {
+                        if (_ediabasJobAbort)
+                        {
+                            ecuListBest = null;
+                            break;
+                        }
                         int invalidEcuCount = 0;
                         int localIndex = index;
                         RunOnUiThread(() =>
@@ -1560,6 +1564,10 @@ namespace BmwDeepObd
                         {
                             try
                             {
+                                if (_ediabasJobAbort)
+                                {
+                                    break;
+                                }
                                 _ediabas.ExecuteJob(vinJob);
                                 readVinOk = true;
                                 break;
@@ -1642,7 +1650,7 @@ namespace BmwDeepObd
                 }
                 _ediabas.EdInterfaceClass.EnableTransmitCache = false;
 
-                if (ecuListBest == null)
+                if (!_ediabasJobAbort && ecuListBest == null)
                 {
                     ecuListBest = DetectVehicleByEws(progress);
                     if (ecuListBest != null)
@@ -1661,33 +1669,36 @@ namespace BmwDeepObd
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
 
-                    if (ecuListBest == null)
+                    if (!_ediabasJobAbort)
                     {
-                        _commErrorsOccured = true;
-                        AlertDialog altertDialog = new AlertDialog.Builder(this)
-                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                            {
-                                SelectConfigTypeRequest();
-                            })
-                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                            {
-                            })
-                            .SetCancelable(true)
-                            .SetMessage(Resource.String.xml_tool_no_response_manual)
-                            .SetTitle(Resource.String.alert_title_warning)
-                            .Show();
-                        TextView messageView = altertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                        if (messageView != null)
-                        {
-                            messageView.MovementMethod = new LinkMovementMethod();
-                        }
-                    }
-                    else
-                    {
-                        if (bestInvalidCount > 0)
+                        if (ecuListBest == null)
                         {
                             _commErrorsOccured = true;
-                            _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_msg_ecu_error), Resource.String.alert_title_warning);
+                            AlertDialog altertDialog = new AlertDialog.Builder(this)
+                                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                {
+                                    SelectConfigTypeRequest();
+                                })
+                                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                {
+                                })
+                                .SetCancelable(true)
+                                .SetMessage(Resource.String.xml_tool_no_response_manual)
+                                .SetTitle(Resource.String.alert_title_warning)
+                                .Show();
+                            TextView messageView = altertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                            if (messageView != null)
+                            {
+                                messageView.MovementMethod = new LinkMovementMethod();
+                            }
+                        }
+                        else
+                        {
+                            if (bestInvalidCount > 0)
+                            {
+                                _commErrorsOccured = true;
+                                _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_msg_ecu_error), Resource.String.alert_title_warning);
+                            }
                         }
                     }
                 });
@@ -1744,7 +1755,7 @@ namespace BmwDeepObd
                 }
 
                 string groupFiles = null;
-                if (!string.IsNullOrEmpty(kdData1) && !string.IsNullOrEmpty(kdData2))
+                if (!_ediabasJobAbort && !string.IsNullOrEmpty(kdData1) && !string.IsNullOrEmpty(kdData2))
                 {
                     _ediabas.ResolveSgbdFile("grpliste");
 
@@ -1780,14 +1791,6 @@ namespace BmwDeepObd
                             groupList.Add(group);
                         }
                     }
-
-                    RunOnUiThread(() =>
-                    {
-                        if (progress != null)
-                        {
-                            progress.GetButton((int) DialogButtonType.Negative).Enabled = true;
-                        }
-                    });
 
                     int index = 0;
                     foreach (string ecuGroup in groupList)
