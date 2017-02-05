@@ -140,6 +140,7 @@ namespace BmwDeepObd
         private bool _onResumeExecuted;
         private bool _storageAccessGranted;
         private bool _createTabsPending;
+        private bool _compileCodePending;
         private bool _autoStart;
         private bool _vagInfoShown;
         private ActivityCommon _activityCommon;
@@ -336,6 +337,10 @@ namespace BmwDeepObd
                 RequestStoragePermissions();
             }
             _activityActive = true;
+            if (_compileCodePending)
+            {
+                _updateHandler.Post(CompileCode);
+            }
             if (_createTabsPending)
             {
                 _updateHandler.Post(CreateActionBarTabs);
@@ -1911,6 +1916,11 @@ namespace BmwDeepObd
 
         private void CompileCode()
         {
+            if (!_activityActive)
+            {
+                _compileCodePending = true;
+                return;
+            }
             if (_jobReader.PageList.Count == 0)
             {
                 _updateHandler.Post(CreateActionBarTabs);
