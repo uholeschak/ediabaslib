@@ -611,7 +611,12 @@ namespace EdiabasLib
                                     if (interfaceAddress.Broadcast != null)
                                     {
                                         string broadcastAddressName = interfaceAddress.Broadcast.HostAddress;
-                                        if (!broadcastAddressName.StartsWith("127."))
+                                        // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
+                                        if (broadcastAddressName == null)
+                                        {
+                                            broadcastAddressName = interfaceAddress.Broadcast.HostName;
+                                        }
+                                        if (broadcastAddressName != null && !broadcastAddressName.StartsWith("127."))
                                         {
                                             try
                                             {
