@@ -1499,7 +1499,10 @@ namespace BmwDeepObd
 
             Thread detectThread = new Thread(() =>
             {
-                EdInterfaceEnet edInterface = new EdInterfaceEnet();
+                EdInterfaceEnet edInterface = new EdInterfaceEnet
+                {
+                    ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_activity, _maConnectivity)
+                };
                 List<IPAddress> detectedVehicles = edInterface.DetectedVehicles("auto:all");
                 edInterface.Dispose();
                 _activity.RunOnUiThread(() =>
