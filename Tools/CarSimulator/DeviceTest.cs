@@ -18,8 +18,8 @@ namespace CarSimulator
         private NetworkStream _btStream;
         private bool _disposed;
 
-        private const string defaultBtName = "Deep OBD";
-        private const string defaultBtPin = "1234";
+        private const string DefaultBtName = "Deep OBD";
+        private const string DefaultBtPin = "1234";
 
         // ReSharper disable InconsistentNaming
         // ReSharper disable UnusedMember.Global
@@ -208,12 +208,12 @@ namespace CarSimulator
             string nameText = Encoding.UTF8.GetString(btName, 0, nameLength);
             sr.Append(nameText);
             _form.UpdateTestStatusText(sr.ToString());
-            if (string.Compare(nameText, defaultBtName, StringComparison.Ordinal) != 0)
+            if (string.Compare(nameText, DefaultBtName, StringComparison.Ordinal) != 0)
             {
                 sr.Append("\r\n");
                 sr.Append("Setting default name!");
                 _form.UpdateTestStatusText(sr.ToString());
-                byte[] response = AdapterCommandCustom(0x05, Encoding.UTF8.GetBytes(defaultBtName));
+                byte[] response = AdapterCommandCustom(0x05, Encoding.UTF8.GetBytes(DefaultBtName));
                 if (response == null)
                 {
                     sr.Append("\r\n");
@@ -237,12 +237,12 @@ namespace CarSimulator
             string pinText = Encoding.ASCII.GetString(btPin, 0, pinLength);
             sr.Append(pinText);
             _form.UpdateTestStatusText(sr.ToString());
-            if (string.Compare(pinText, defaultBtPin, StringComparison.Ordinal) != 0)
+            if (string.Compare(pinText, DefaultBtPin, StringComparison.Ordinal) != 0)
             {
                 sr.Append("\r\n");
                 sr.Append("Setting default pin!");
                 _form.UpdateTestStatusText(sr.ToString());
-                byte[] response = AdapterCommandCustom(0x04, Encoding.ASCII.GetBytes(defaultBtPin));
+                byte[] response = AdapterCommandCustom(0x04, Encoding.ASCII.GetBytes(DefaultBtPin));
                 if (response == null)
                 {
                     sr.Append("\r\n");
