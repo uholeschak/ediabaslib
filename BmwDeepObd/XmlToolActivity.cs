@@ -1363,6 +1363,7 @@ namespace BmwDeepObd
                 progress.Show();
             });
             progress.Show();
+            _activityCommon.SetScreenLock(true);
 
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
@@ -1665,6 +1666,7 @@ namespace BmwDeepObd
                 {
                     progress.Hide();
                     progress.Dispose();
+                    _activityCommon.SetScreenLock(false);
 
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
@@ -1782,6 +1784,7 @@ namespace BmwDeepObd
                 if (!string.IsNullOrEmpty(groupFiles))
                 {
                     string[] groupArray = groupFiles.Split(',');
+#if false
                     List<string> groupList = new List<string>();
                     Regex regex = new Regex(@"^d_00[0-9a-f]{2}$", RegexOptions.IgnoreCase);
                     foreach (string group in groupArray)
@@ -1791,6 +1794,9 @@ namespace BmwDeepObd
                             groupList.Add(group);
                         }
                     }
+#else
+                    List<string> groupList = groupArray.ToList();
+#endif
 
                     int index = 0;
                     foreach (string ecuGroup in groupList)
@@ -1822,6 +1828,9 @@ namespace BmwDeepObd
                             _ediabas.ExecuteJob("_VERSIONINFO");
 
                             ecuDesc = GetEcuComment(_ediabas.ResultSets);
+
+                            _ediabas.ExecuteJob("IDENT");
+
                             ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
                         }
                         catch (Exception)
@@ -1832,8 +1841,12 @@ namespace BmwDeepObd
                         EcuInfo ecuInfo = null;
                         if (!string.IsNullOrEmpty(ecuName))
                         {
-                            ecuInfo = new EcuInfo(ecuName.ToUpperInvariant(), 0, ecuDesc, ecuName, ecuGroup);
-                            ecuList.Add(ecuInfo);
+                            bool ecuPresent = ecuList.Any(ecuInfoTemp => string.Compare(ecuInfoTemp.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0);
+                            if (!ecuPresent)
+                            {
+                                ecuInfo = new EcuInfo(ecuName.ToUpperInvariant(), 0, ecuDesc, ecuName, ecuGroup);
+                                ecuList.Add(ecuInfo);
+                            }
                         }
 
                         if (ecuInfo != null)
