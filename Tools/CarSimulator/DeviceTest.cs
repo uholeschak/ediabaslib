@@ -18,6 +18,9 @@ namespace CarSimulator
         private NetworkStream _btStream;
         private bool _disposed;
 
+        private const string defaultBtName = "Deep OBD";
+        private const string defaultBtPin = "1234";
+
         // ReSharper disable InconsistentNaming
         // ReSharper disable UnusedMember.Global
         // ReSharper disable MemberCanBePrivate.Global
@@ -201,9 +204,53 @@ namespace CarSimulator
             }
             sr.Append("\r\n");
             sr.Append("Name: ");
-            int length = btName.TakeWhile(value => value != 0x00).Count();
-            sr.Append(Encoding.UTF8.GetString(btName, 0, length));
+            int nameLength = btName.TakeWhile(value => value != 0x00).Count();
+            string nameText = Encoding.UTF8.GetString(btName, 0, nameLength);
+            sr.Append(nameText);
             _form.UpdateTestStatusText(sr.ToString());
+            if (string.Compare(nameText, defaultBtName, StringComparison.Ordinal) != 0)
+            {
+                sr.Append("\r\n");
+                sr.Append("Setting default name!");
+                _form.UpdateTestStatusText(sr.ToString());
+                byte[] response = AdapterCommandCustom(0x05, Encoding.UTF8.GetBytes(defaultBtName));
+                if (response == null)
+                {
+                    sr.Append("\r\n");
+                    sr.Append("Settings name failed!");
+                    _form.UpdateTestStatusText(sr.ToString());
+                    return false;
+                }
+            }
+
+            byte[] btPin = AdapterCommandCustom(0x84, new byte[] { 0x85 });
+            if (btPin == null)
+            {
+                sr.Append("\r\n");
+                sr.Append("Read pin failed!");
+                _form.UpdateTestStatusText(sr.ToString());
+                return false;
+            }
+            sr.Append("\r\n");
+            sr.Append("Pin: ");
+            int pinLength = btPin.TakeWhile(value => value != 0x00).Count();
+            string pinText = Encoding.ASCII.GetString(btPin, 0, pinLength);
+            sr.Append(pinText);
+            _form.UpdateTestStatusText(sr.ToString());
+            if (string.Compare(pinText, defaultBtPin, StringComparison.Ordinal) != 0)
+            {
+                sr.Append("\r\n");
+                sr.Append("Setting default pin!");
+                _form.UpdateTestStatusText(sr.ToString());
+                byte[] response = AdapterCommandCustom(0x04, Encoding.ASCII.GetBytes(defaultBtPin));
+                if (response == null)
+                {
+                    sr.Append("\r\n");
+                    sr.Append("Settings pin failed!");
+                    _form.UpdateTestStatusText(sr.ToString());
+                    return false;
+                }
+            }
 
             byte[] serialNumber = AdapterCommandCustom(0xFB, new byte[] { 0xFB });
             if (serialNumber == null)
