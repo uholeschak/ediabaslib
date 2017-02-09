@@ -881,7 +881,18 @@ namespace BmwDeepObd
             byte[] ipByteArray = Java.Math.BigInteger.ValueOf(ipAddress).ToByteArray();
             try
             {
-                return Java.Net.InetAddress.GetByAddress(ipByteArray).HostAddress;
+                Java.Net.InetAddress inetAddress = Java.Net.InetAddress.GetByAddress(ipByteArray);
+                string address = inetAddress.HostAddress;
+                if (address == null)
+                {
+                    string text = inetAddress.ToString();
+                    Match match = Regex.Match(text, @"\d+\.\d+\.\d+\.\d+$", RegexOptions.Singleline);
+                    if (match.Success)
+                    {
+                        address = match.Value;
+                    }
+                }
+                return address;
             }
             catch (Exception)
             {

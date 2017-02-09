@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+
 // ReSharper disable ConvertPropertyToExpressionBody
 // ReSharper disable UseNullPropagation
 
@@ -614,7 +616,12 @@ namespace EdiabasLib
                                         // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
                                         if (broadcastAddressName == null)
                                         {
-                                            broadcastAddressName = interfaceAddress.Broadcast.HostName;
+                                            string text = interfaceAddress.Broadcast.ToString();
+                                            Match match = Regex.Match(text, @"\d+\.\d+\.\d+\.\d+$", RegexOptions.Singleline);
+                                            if (match.Success)
+                                            {
+                                                broadcastAddressName = match.Value;
+                                            }
                                         }
                                         if (broadcastAddressName != null && !broadcastAddressName.StartsWith("127."))
                                         {
