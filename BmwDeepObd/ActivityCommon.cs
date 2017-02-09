@@ -148,7 +148,7 @@ namespace BmwDeepObd
         public delegate void BcReceiverUpdateDisplayDelegate();
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
         public delegate void TranslateDelegate(List<string> transList);
-        public delegate void EnetSsidWarnDelegate(bool noAction);
+        public delegate void EnetSsidWarnDelegate(bool retry);
         public delegate void WifiConnectedWarnDelegate();
         public const string EmulatorEnetIp = "192.168.10.244";
         public const string AdapterSsid = "Deep OBD BMW";
@@ -986,10 +986,10 @@ namespace BmwDeepObd
                 {
                     if (!ignoreDismiss)
                     {
-                        handler(true);
+                        handler(false);
                     }
                 };
-                return false;
+                return true;
             }
 
             if (_selectedInterface == InterfaceType.Enet)

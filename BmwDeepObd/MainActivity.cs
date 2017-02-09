@@ -727,9 +727,9 @@ namespace BmwDeepObd
                     return;
                 }
             }
-            if (_activityCommon.ShowWifiWarning(noAction => 
+            if (_activityCommon.ShowWifiWarning(retry => 
             {
-                if (noAction)
+                if (retry)
                 {
                     ButtonConnectClick(sender, e);
                 }
