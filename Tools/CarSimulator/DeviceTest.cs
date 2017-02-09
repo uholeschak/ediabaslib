@@ -202,24 +202,27 @@ namespace CarSimulator
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
             }
-            sr.Append("\r\n");
-            sr.Append("Name: ");
-            int nameLength = btName.TakeWhile(value => value != 0x00).Count();
-            string nameText = Encoding.UTF8.GetString(btName, 0, nameLength);
-            sr.Append(nameText);
-            _form.UpdateTestStatusText(sr.ToString());
-            if (string.Compare(nameText, DefaultBtName, StringComparison.Ordinal) != 0)
+            if (btName.Length > 0)
             {
                 sr.Append("\r\n");
-                sr.Append("Setting default name!");
+                sr.Append("Name: ");
+                int nameLength = btName.TakeWhile(value => value != 0x00).Count();
+                string nameText = Encoding.UTF8.GetString(btName, 0, nameLength);
+                sr.Append(nameText);
                 _form.UpdateTestStatusText(sr.ToString());
-                byte[] response = AdapterCommandCustom(0x05, Encoding.UTF8.GetBytes(DefaultBtName));
-                if (response == null)
+                if (string.Compare(nameText, DefaultBtName, StringComparison.Ordinal) != 0)
                 {
                     sr.Append("\r\n");
-                    sr.Append("Settings name failed!");
+                    sr.Append("Setting default name!");
                     _form.UpdateTestStatusText(sr.ToString());
-                    return false;
+                    byte[] response = AdapterCommandCustom(0x05, Encoding.UTF8.GetBytes(DefaultBtName));
+                    if (response == null)
+                    {
+                        sr.Append("\r\n");
+                        sr.Append("Settings name failed!");
+                        _form.UpdateTestStatusText(sr.ToString());
+                        return false;
+                    }
                 }
             }
 
@@ -231,24 +234,27 @@ namespace CarSimulator
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
             }
-            sr.Append("\r\n");
-            sr.Append("Pin: ");
-            int pinLength = btPin.TakeWhile(value => value != 0x00).Count();
-            string pinText = Encoding.ASCII.GetString(btPin, 0, pinLength);
-            sr.Append(pinText);
-            _form.UpdateTestStatusText(sr.ToString());
-            if (string.Compare(pinText, DefaultBtPin, StringComparison.Ordinal) != 0)
+            if (btPin.Length > 0)
             {
                 sr.Append("\r\n");
-                sr.Append("Setting default pin!");
+                sr.Append("Pin: ");
+                int pinLength = btPin.TakeWhile(value => value != 0x00).Count();
+                string pinText = Encoding.ASCII.GetString(btPin, 0, pinLength);
+                sr.Append(pinText);
                 _form.UpdateTestStatusText(sr.ToString());
-                byte[] response = AdapterCommandCustom(0x04, Encoding.ASCII.GetBytes(DefaultBtPin));
-                if (response == null)
+                if (string.Compare(pinText, DefaultBtPin, StringComparison.Ordinal) != 0)
                 {
                     sr.Append("\r\n");
-                    sr.Append("Settings pin failed!");
+                    sr.Append("Setting default pin!");
                     _form.UpdateTestStatusText(sr.ToString());
-                    return false;
+                    byte[] response = AdapterCommandCustom(0x04, Encoding.ASCII.GetBytes(DefaultBtPin));
+                    if (response == null)
+                    {
+                        sr.Append("\r\n");
+                        sr.Append("Settings pin failed!");
+                        _form.UpdateTestStatusText(sr.ToString());
+                        return false;
+                    }
                 }
             }
 
