@@ -116,6 +116,13 @@ namespace BmwDeepObd
         {
             "C_FG_LESEN_FUNKTIONAL", "PROG_FG_NR_LESEN_FUNKTIONAL", "AIF_LESEN_FUNKTIONAL"
         };
+        private static readonly Tuple<string, string>[] ReadZcsJobs =
+        {
+            new Tuple<string, string>("d_0044", "ZCS_LESEN"),
+            new Tuple<string, string>("d_0080", "ZCS_LESEN"),
+            new Tuple<string, string>("ZCS_ALL", "AIF_ZCS_LESEN"),
+            new Tuple<string, string>("d_0080", "AIF_ZENTRALCODE_LESEN"),
+        };
         private readonly Regex _vinRegex = new Regex(@"^[a-zA-Z][a-zA-Z0-9]+$");
 
         // Intent extra
@@ -1713,6 +1720,61 @@ namespace BmwDeepObd
             try
             {
                 List<EcuInfo> ecuList = new List<EcuInfo>();
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
+
+                string zcs = null;
+                foreach (Tuple<string, string> job in ReadZcsJobs)
+                {
+                    try
+                    {
+                        _ediabas.ResolveSgbdFile(job.Item1);
+
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(job.Item2);
+
+                        string gm = null;
+                        string sa = null;
+                        string vm = null;
+                        resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                            EdiabasNet.ResultData resultData;
+                            if (resultDict.TryGetValue("GM", out resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    gm = (string)resultData.OpData;
+                                }
+                            }
+                            if (resultDict.TryGetValue("SA", out resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    sa = (string)resultData.OpData;
+                                }
+                            }
+                            if (resultDict.TryGetValue("VM", out resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    vm = (string)resultData.OpData;
+                                }
+                            }
+                        }
+                        if (!string.IsNullOrEmpty(gm) && !string.IsNullOrEmpty(sa) && !string.IsNullOrEmpty(vm))
+                        {
+                            zcs = string.Format("{0}-{1}-{2}", gm, sa, vm);
+                            break;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
 
                 _ediabas.ResolveSgbdFile("d_0044");
 
@@ -1722,7 +1784,7 @@ namespace BmwDeepObd
                 _ediabas.ExecuteJob("KD_DATEN_LESEN");
 
                 string kdData1 = null;
-                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                resultSets = _ediabas.ResultSets;
                 if (resultSets != null && resultSets.Count >= 2)
                 {
                     Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
@@ -1784,19 +1846,15 @@ namespace BmwDeepObd
                 if (!string.IsNullOrEmpty(groupFiles))
                 {
                     string[] groupArray = groupFiles.Split(',');
-#if false
                     List<string> groupList = new List<string>();
-                    Regex regex = new Regex(@"^d_00[0-9a-f]{2}$", RegexOptions.IgnoreCase);
                     foreach (string group in groupArray)
                     {
-                        if (regex.IsMatch(group))
+                        VehicleInfo.IEcuLogisticsEntry entry = VehicleInfo.GetEcuLogisticsByGroupName(VehicleInfo.EcuLogisticsE38, group);
+                        if (entry != null)
                         {
                             groupList.Add(group);
                         }
                     }
-#else
-                    List<string> groupList = groupArray.ToList();
-#endif
 
                     int index = 0;
                     foreach (string ecuGroup in groupList)

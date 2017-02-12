@@ -142,6 +142,7 @@
     <Compile Include="PicBootloader.cs" />
     <Compile Include="StringAdapter.cs" />
     <Compile Include="StringObjAdapter.cs" />
+    <Compile Include="VehicleInfo.cs" />
     <Compile Include="XmlToolActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
