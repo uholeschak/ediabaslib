@@ -3741,6 +3741,13 @@ namespace EdiabasLib
 
         private void SetResultData(ResultData resultData)
         {
+#if false
+            string resultString = resultData.OpData as string;
+            if (!string.IsNullOrEmpty(resultString) && resultString == @"WBAGG41090DN63599")
+            {
+                resultData = new ResultData(resultData.ResType, resultData.Name, "5UXFB53586LV26066");
+            }
+#endif
             string key = resultData.Name.ToUpper(Culture);
             if (_resultDict.ContainsKey(key))
             {
