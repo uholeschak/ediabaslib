@@ -1400,7 +1400,7 @@ namespace BmwDeepObd
                         {
                             if (progress != null)
                             {
-                                progress.Progress = 100 * (localIndex + 1) / EcuFileNames.Length;
+                                progress.Progress = 100 * localIndex / EcuFileNames.Length;
                             }
                         });
 
@@ -1732,6 +1732,14 @@ namespace BmwDeepObd
                 List<EcuInfo> ecuList = new List<EcuInfo>();
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
 
+                RunOnUiThread(() =>
+                {
+                    if (progress != null)
+                    {
+                        progress.Progress = 0;
+                    }
+                });
+
                 string groupFiles = null;
                 try
                 {
@@ -1819,7 +1827,7 @@ namespace BmwDeepObd
                             {
                                 if (progress != null)
                                 {
-                                    progress.Progress = 100 * (localIndex + 1) / ReadVinJobsDs2.Length;
+                                    progress.Progress = 100 * localIndex / ReadVinJobsDs2.Length;
                                 }
                             });
 
@@ -1867,7 +1875,7 @@ namespace BmwDeepObd
                             {
                                 if (progress != null)
                                 {
-                                    progress.Progress = 100 * (localIndex + 1) / ReadMotorJobsDs2.Length;
+                                    progress.Progress = 100 * localIndex / ReadMotorJobsDs2.Length;
                                 }
                             });
 
@@ -1945,7 +1953,7 @@ namespace BmwDeepObd
                             {
                                 if (progress != null)
                                 {
-                                    progress.Progress = 100 * (localIndex + 1) / groupList.Count;
+                                    progress.Progress = 100 * localIndex / groupList.Count;
                                 }
                             });
 
@@ -2118,7 +2126,7 @@ namespace BmwDeepObd
                     {
                         if (!_ediabasJobAbort && progress != null)
                         {
-                            progress.Progress = 100 * (localIndex + 1) / localEcuCount;
+                            progress.Progress = 100 * localIndex / localEcuCount;
                             progress.SetMessage(string.Format(GetString(Resource.String.xml_tool_search_ecus), localDetectCount, localIndex));
                         }
                     }
@@ -2693,7 +2701,7 @@ namespace BmwDeepObd
                     {
                         if (progress != null)
                         {
-                            progress.Progress = 100 * (localBlockIndex + 1) / mwBlocks.Count;
+                            progress.Progress = 100 * localBlockIndex / mwBlocks.Count;
                         }
                     });
                     _ediabas.ArgString = string.Format("{0};{1}", block, readCommand);
