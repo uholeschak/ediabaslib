@@ -3521,7 +3521,7 @@ namespace BmwDeepObd
 
         public static void SetStoragePath()
         {
-            _externalPath = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
+            _externalPath = Android.OS.Environment.ExternalStorageDirectory?.AbsolutePath;
             _externalWritePath = string.Empty;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
             {   // writing to external disk is only allowed in special directories.
