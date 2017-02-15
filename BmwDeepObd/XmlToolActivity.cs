@@ -123,6 +123,10 @@ namespace BmwDeepObd
             new Tuple<string, string, string>("D_0080", "AIF_FG_NR_LESEN", "AIF_FG_NR"),
             new Tuple<string, string, string>("D_0010", "AIF_LESEN", "AIF_FG_NR"),
         };
+        private static readonly string[] ReadMotorJobsDs2 =
+        {
+            "D_0012", "D_MOTOR"
+        };
         private readonly Regex _vinRegex = new Regex(@"^[a-zA-Z][a-zA-Z0-9]+$");
 
         // Intent extra
@@ -1658,9 +1662,10 @@ namespace BmwDeepObd
                 }
                 _ediabas.EdInterfaceClass.EnableTransmitCache = false;
 
+                bool pin78ConnRequire = false;
                 if (!_ediabasJobAbort && ecuListBest == null)
                 {
-                    ecuListBest = DetectVehicleByEws(progress);
+                    ecuListBest = DetectVehicleByEws(progress, out pin78ConnRequire);
                     if (ecuListBest != null)
                     {
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
@@ -1703,7 +1708,11 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            if (bestInvalidCount > 0)
+                            if (pin78ConnRequire)
+                            {
+                                _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_msg_pin78), Resource.String.alert_title_warning);
+                            }
+                            else if (bestInvalidCount > 0)
                             {
                                 _commErrorsOccured = true;
                                 _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_msg_ecu_error), Resource.String.alert_title_warning);
@@ -1715,112 +1724,162 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
-        private List<EcuInfo> DetectVehicleByEws(Android.App.ProgressDialog progress)
+        private List<EcuInfo> DetectVehicleByEws(Android.App.ProgressDialog progress, out bool pin78ConnRequire)
         {
+            pin78ConnRequire = false;
             try
             {
                 List<EcuInfo> ecuList = new List<EcuInfo>();
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
 
-                string detectVin = null;
-                foreach (Tuple<string, string, string> job in ReadVinJobsDs2)
+                string groupFiles = null;
+                try
                 {
-                    try
-                    {
-                        _ediabas.ResolveSgbdFile(job.Item1);
+                    _ediabas.ResolveSgbdFile("d_0044");
 
-                        _ediabas.ArgString = string.Empty;
+                    _ediabas.ArgString = "6";
+                    _ediabas.ArgBinaryStd = null;
+                    _ediabas.ResultsRequests = string.Empty;
+                    _ediabas.ExecuteJob("KD_DATEN_LESEN");
+
+                    string kdData1 = null;
+                    resultSets = _ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                        EdiabasNet.ResultData resultData;
+                        if (resultDict.TryGetValue("KD_DATEN_TEXT", out resultData))
+                        {
+                            if (resultData.OpData is string)
+                            {
+                                kdData1 = (string)resultData.OpData;
+                            }
+                        }
+                    }
+
+                    _ediabas.ArgString = "7";
+                    _ediabas.ArgBinaryStd = null;
+                    _ediabas.ResultsRequests = string.Empty;
+                    _ediabas.ExecuteJob("KD_DATEN_LESEN");
+
+                    string kdData2 = null;
+                    resultSets = _ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                        EdiabasNet.ResultData resultData;
+                        if (resultDict.TryGetValue("KD_DATEN_TEXT", out resultData))
+                        {
+                            if (resultData.OpData is string)
+                            {
+                                kdData2 = (string)resultData.OpData;
+                            }
+                        }
+                    }
+
+                    if (!_ediabasJobAbort && !string.IsNullOrEmpty(kdData1) && !string.IsNullOrEmpty(kdData2))
+                    {
+                        _ediabas.ResolveSgbdFile("grpliste");
+
+                        _ediabas.ArgString = kdData1 + kdData2 + ";ja";
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob(job.Item2);
+                        _ediabas.ExecuteJob("GRUPPENDATEI_ERZEUGE_LISTE_AUS_DATEN");
 
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
                             EdiabasNet.ResultData resultData;
-                            if (resultDict.TryGetValue(job.Item3, out resultData))
+                            if (resultDict.TryGetValue("GRUPPENDATEI", out resultData))
                             {
                                 if (resultData.OpData is string)
                                 {
-                                    detectVin = (string) resultData.OpData;
-                                    if (!string.IsNullOrEmpty(detectVin))
-                                    {
-                                        break;
-                                    }
+                                    groupFiles = (string)resultData.OpData;
                                 }
                             }
                         }
                     }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
 
-                _ediabas.ResolveSgbdFile("d_0044");
-
-                _ediabas.ArgString = "6";
-                _ediabas.ArgBinaryStd = null;
-                _ediabas.ResultsRequests = string.Empty;
-                _ediabas.ExecuteJob("KD_DATEN_LESEN");
-
-                string kdData1 = null;
-                resultSets = _ediabas.ResultSets;
-                if (resultSets != null && resultSets.Count >= 2)
+                string detectVin = null;
+                if (!string.IsNullOrEmpty(groupFiles))
                 {
-                    Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                    EdiabasNet.ResultData resultData;
-                    if (resultDict.TryGetValue("KD_DATEN_TEXT", out resultData))
+                    foreach (Tuple<string, string, string> job in ReadVinJobsDs2)
                     {
-                        if (resultData.OpData is string)
+                        try
                         {
-                            kdData1 = (string)resultData.OpData;
-                        }
-                    }
-                }
+                            _ediabas.ResolveSgbdFile(job.Item1);
 
-                _ediabas.ArgString = "7";
-                _ediabas.ArgBinaryStd = null;
-                _ediabas.ResultsRequests = string.Empty;
-                _ediabas.ExecuteJob("KD_DATEN_LESEN");
+                            _ediabas.ArgString = string.Empty;
+                            _ediabas.ArgBinaryStd = null;
+                            _ediabas.ResultsRequests = string.Empty;
+                            _ediabas.ExecuteJob(job.Item2);
 
-                string kdData2 = null;
-                resultSets = _ediabas.ResultSets;
-                if (resultSets != null && resultSets.Count >= 2)
-                {
-                    Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                    EdiabasNet.ResultData resultData;
-                    if (resultDict.TryGetValue("KD_DATEN_TEXT", out resultData))
-                    {
-                        if (resultData.OpData is string)
-                        {
-                            kdData2 = (string)resultData.OpData;
-                        }
-                    }
-                }
-
-                string groupFiles = null;
-                if (!_ediabasJobAbort && !string.IsNullOrEmpty(kdData1) && !string.IsNullOrEmpty(kdData2))
-                {
-                    _ediabas.ResolveSgbdFile("grpliste");
-
-                    _ediabas.ArgString = kdData1 + kdData2 + ";ja";
-                    _ediabas.ArgBinaryStd = null;
-                    _ediabas.ResultsRequests = string.Empty;
-                    _ediabas.ExecuteJob("GRUPPENDATEI_ERZEUGE_LISTE_AUS_DATEN");
-
-                    resultSets = _ediabas.ResultSets;
-                    if (resultSets != null && resultSets.Count >= 2)
-                    {
-                        Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                        EdiabasNet.ResultData resultData;
-                        if (resultDict.TryGetValue("GRUPPENDATEI", out resultData))
-                        {
-                            if (resultData.OpData is string)
+                            resultSets = _ediabas.ResultSets;
+                            if (resultSets != null && resultSets.Count >= 2)
                             {
-                                groupFiles = (string)resultData.OpData;
+                                Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                                EdiabasNet.ResultData resultData;
+                                if (resultDict.TryGetValue(job.Item3, out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        detectVin = (string) resultData.OpData;
+                                        if (!string.IsNullOrEmpty(detectVin))
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
                             }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (string fileName in ReadMotorJobsDs2)
+                    {
+                        try
+                        {
+                            _ediabas.ResolveSgbdFile(fileName);
+
+                            _ediabas.ArgString = string.Empty;
+                            _ediabas.ArgBinaryStd = null;
+                            _ediabas.ResultsRequests = string.Empty;
+                            _ediabas.ExecuteJob("IDENT");
+
+                            resultSets = _ediabas.ResultSets;
+                            if (resultSets != null && resultSets.Count >= 2)
+                            {
+                                Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                                EdiabasNet.ResultData resultData;
+                                if (resultDict.TryGetValue("JOB_STATUS", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        string status = (string)resultData.OpData;
+                                        if (String.Compare(status, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            groupFiles = fileName;
+                                            pin78ConnRequire = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
                         }
                     }
                 }
