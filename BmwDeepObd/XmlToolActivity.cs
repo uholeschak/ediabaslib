@@ -1809,10 +1809,20 @@ namespace BmwDeepObd
                 string detectVin = null;
                 if (!string.IsNullOrEmpty(groupFiles))
                 {
+                    int index = 0;
                     foreach (Tuple<string, string, string> job in ReadVinJobsDs2)
                     {
                         try
                         {
+                            int localIndex = index;
+                            RunOnUiThread(() =>
+                            {
+                                if (progress != null)
+                                {
+                                    progress.Progress = 100 * (localIndex + 1) / ReadVinJobsDs2.Length;
+                                }
+                            });
+
                             _ediabas.ResolveSgbdFile(job.Item1);
 
                             _ediabas.ArgString = string.Empty;
@@ -1842,14 +1852,25 @@ namespace BmwDeepObd
                         {
                             // ignored
                         }
+                        index++;
                     }
                 }
                 else
                 {
+                    int index = 0;
                     foreach (string fileName in ReadMotorJobsDs2)
                     {
                         try
                         {
+                            int localIndex = index;
+                            RunOnUiThread(() =>
+                            {
+                                if (progress != null)
+                                {
+                                    progress.Progress = 100 * (localIndex + 1) / ReadMotorJobsDs2.Length;
+                                }
+                            });
+
                             _ediabas.ResolveSgbdFile(fileName);
 
                             _ediabas.ArgString = string.Empty;
@@ -1881,6 +1902,7 @@ namespace BmwDeepObd
                         {
                             // ignored
                         }
+                        index++;
                     }
                 }
 
