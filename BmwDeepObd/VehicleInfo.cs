@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace BmwDeepObd
@@ -1538,6 +1539,11 @@ namespace BmwDeepObd
                 return null;
             }
             string typeKey = vin.Substring(3, 4);
+            // temporary hack for typ key mapping
+            if (string.Compare(typeKey, "FB53", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                typeKey = "FB63";
+            }
             string vehicleType;
             if (!TypeKeyDict.TryGetValue(typeKey.ToUpperInvariant(), out vehicleType))
             {
