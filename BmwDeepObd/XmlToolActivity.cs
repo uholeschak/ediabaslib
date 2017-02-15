@@ -125,7 +125,7 @@ namespace BmwDeepObd
         };
         private static readonly string[] ReadMotorJobsDs2 =
         {
-            "D_0012", "D_MOTOR"
+            "D_0012", "D_MOTOR", "D_0010", "D_0013", "D_0014"
         };
         private readonly Regex _vinRegex = new Regex(@"^[a-zA-Z][a-zA-Z0-9]+$");
 
