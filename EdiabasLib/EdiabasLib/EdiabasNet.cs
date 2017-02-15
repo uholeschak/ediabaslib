@@ -4735,6 +4735,10 @@ namespace EdiabasLib
             _stackList.Clear();
             SetConfigProperty("BipEcuFile", Path.GetFileNameWithoutExtension(SgbdFileName));
             _flags.Init();
+            for (int i = 0; i < _stringRegisters.Length; i++)
+            {
+                _stringRegisters[i].ClearData();
+            }
             _errorTrapBitNr = -1;
             _errorTrapMask = 0;
             _errorCodeLast = ErrorCodes.EDIABAS_ERR_NONE;
