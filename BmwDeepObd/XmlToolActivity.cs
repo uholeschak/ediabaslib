@@ -480,15 +480,15 @@ namespace BmwDeepObd
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
             logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
 
+            IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
+            sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _traceActive && ActivityCommon.IsTraceFilePresent(_traceDir));
+
             IMenuItem translationSubmenu = menu.FindItem(Resource.Id.menu_translation_submenu);
             if (translationSubmenu != null)
             {
                 translationSubmenu.SetEnabled(true);
                 translationSubmenu.SetVisible(ActivityCommon.IsTranslationRequired());
             }
-
-            IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
-            sendTraceMenu?.SetEnabled(interfaceAvailable && _traceActive && ActivityCommon.IsTraceFilePresent(_traceDir));
 
             IMenuItem translationEnableMenu = menu.FindItem(Resource.Id.menu_translation_enable);
             if (translationEnableMenu != null)
@@ -724,17 +724,24 @@ namespace BmwDeepObd
         {
             if (_commErrorsOccured && _traceActive && !string.IsNullOrEmpty(_traceDir))
             {
-                EdiabasClose();
+                if (!EdiabasClose())
+                {
+                    return false;
+                }
                 return _activityCommon.RequestSendTraceFile(_appDataDir, _traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType(), handler);
             }
             return false;
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool SendTraceFileAlways(EventHandler<EventArgs> handler)
         {
             if (_traceActive && !string.IsNullOrEmpty(_traceDir))
             {
-                EdiabasClose();
+                if (!EdiabasClose())
+                {
+                    return false;
+                }
                 return _activityCommon.SendTraceFile(_appDataDir, _traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType(), handler);
             }
             return false;
@@ -1313,7 +1320,10 @@ namespace BmwDeepObd
 
         private void AdapterConfig()
         {
-            EdiabasClose();
+            if (!EdiabasClose())
+            {
+                return;
+            }
             if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
             {
                 _activityCommon.EnetAdapterConfig();
@@ -1327,7 +1337,10 @@ namespace BmwDeepObd
 
         private void EnetIpConfig()
         {
-            EdiabasClose();
+            if (!EdiabasClose())
+            {
+                return;
+            }
             _activityCommon.SelectEnetIp((sender, args) =>
             {
                 SupportInvalidateOptionsMenu();
