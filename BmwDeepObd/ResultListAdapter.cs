@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Android.App;
 using Android.Views;
@@ -75,36 +76,58 @@ namespace BmwDeepObd
 
             TextView textView1 = view.FindViewById<TextView>(Resource.Id.ListText1);
             TextView textView2 = view.FindViewById<TextView>(Resource.Id.ListText2);
-            textView1.Text = item.Text1;
-            if (item.TextColor != null)
+
+            if (textView1 != null)
             {
-                textView1.SetTextColor(item.TextColor.Value);
+                try
+                {
+                    textView1.Text = item.Text1;
+                    if (item.TextColor != null)
+                    {
+                        textView1.SetTextColor(item.TextColor.Value);
+                    }
+                    else
+                    {
+                        textView1.SetTextColor(_defaultTextColors);
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
-            else
-            {
-                textView1.SetTextColor(_defaultTextColors);
-            }
+
             if (item.Text2 == null)
             {
                 textView2.Visibility = ViewStates.Gone;
             }
             else
             {
-                textView2.Visibility = ViewStates.Visible;
-                textView2.Text = item.Text2;
-                if (item.TextColor != null)
+                if (textView2 != null)
                 {
-                    textView2.SetTextColor(item.TextColor.Value);
-                }
-                else
-                {
-                    textView2.SetTextColor(_defaultTextColors);
-                }
-                if (_textWeight >= 0)
-                {
-                    LinearLayout.LayoutParams layoutPar = (LinearLayout.LayoutParams)textView2.LayoutParameters;
-                    layoutPar.Weight = _textWeight;
-                    textView2.LayoutParameters = layoutPar;
+                    try
+                    {
+                        textView2.Visibility = ViewStates.Visible;
+                        textView2.Text = item.Text2;
+                        if (item.TextColor != null)
+                        {
+                            textView2.SetTextColor(item.TextColor.Value);
+                        }
+                        else
+                        {
+                            textView2.SetTextColor(_defaultTextColors);
+                        }
+                        if (_textWeight >= 0)
+                        {
+                            LinearLayout.LayoutParams layoutPar = (LinearLayout.LayoutParams)textView2.LayoutParameters;
+                            layoutPar.Weight = _textWeight;
+                            textView2.LayoutParameters = layoutPar;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
             }
 

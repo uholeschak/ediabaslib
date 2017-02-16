@@ -550,6 +550,9 @@ namespace BmwDeepObd
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
             logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
 
+            IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
+            sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _traceActive && ActivityCommon.IsTraceFilePresent(_traceDir));
+
             IMenuItem translationSubmenu = menu.FindItem(Resource.Id.menu_translation_submenu);
             if (translationSubmenu != null)
             {
@@ -639,6 +642,10 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_submenu_log:
                     SelectDataLogging();
+                    return true;
+
+                case Resource.Id.menu_send_trace:
+                    SendTraceFileAlways(null);
                     return true;
 
                 case Resource.Id.menu_translation_enable:
@@ -1110,6 +1117,20 @@ namespace BmwDeepObd
             {
                 _activityCommon.RequestSendTraceFile(_appDataPath, _traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType());
             }
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool SendTraceFileAlways(EventHandler<EventArgs> handler)
+        {
+            if (_ediabasThread != null && _ediabasThread.ThreadRunning())
+            {
+                return false;
+            }
+            if (_traceActive && !string.IsNullOrEmpty(_traceDir))
+            {
+                return _activityCommon.SendTraceFile(_appDataPath, _traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType(), handler);
+            }
+            return false;
         }
 
         private JobReader.PageInfo GetSelectedPage()
