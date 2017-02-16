@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Reflection;
+using EdiabasLib;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace BmwDeepObd
 {
@@ -1515,6 +1519,91 @@ namespace BmwDeepObd
         // ReSharper restore CoVariantArrayConversion
         // ReSharper restore RedundantExplicitArrayCreation
 
+        public static string GetTypeKeyFromVin(string vin, EdiabasNet ediabas)
+        {
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Type key from VIN: {0}", vin ?? "No VIN");
+            if (vin == null)
+            {
+                return null;
+            }
+            string serialNumber;
+            if (vin.Length == 7)
+            {
+                serialNumber = vin;
+            }
+            else if (vin.Length == 17)
+            {
+                serialNumber = vin.Substring(10, 7);
+            }
+            else
+            {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "VIN length invalid");
+                return null;
+            }
+
+            try
+            {
+                ZipFile zf = null;
+                try
+                {
+                    Stream fs = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(XmlToolActivity).Namespace + ".Database.Database.zip");
+                    if (fs == null)
+                    {
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Open database failed");
+                    }
+                    zf = new ZipFile(fs);
+                    foreach (ZipEntry zipEntry in zf)
+                    {
+                        if (!zipEntry.IsFile)
+                        {
+                            continue; // Ignore directories
+                        }
+                        if (string.Compare(zipEntry.Name, "vinranges.txt", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            Stream zipStream = zf.GetInputStream(zipEntry);
+                            using (StreamReader sr = new StreamReader(zipStream))
+                            {
+                                while (sr.Peek() >= 0)
+                                {
+                                    string line = sr.ReadLine();
+                                    if (line == null)
+                                    {
+                                        break;
+                                    }
+                                    string[] lineArray = line.Split(',');
+                                    if (lineArray.Length == 3 &&
+                                        lineArray[0].Length == 7 && lineArray[1].Length == 7)
+                                    {
+                                        if (string.Compare(serialNumber, lineArray[0], StringComparison.OrdinalIgnoreCase) >= 0 &&
+                                            string.Compare(serialNumber, lineArray[1], StringComparison.OrdinalIgnoreCase) <= 0)
+                                        {
+                                            return lineArray[2];
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Type key not found in vin ranges");
+                    return null;
+                }
+                finally
+                {
+                    if (zf != null)
+                    {
+                        zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                        zf.Close(); // Ensure we release resources
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Type key from VIN exception: {0}", ex.Message);
+                return null;
+            }
+        }
+
         public static IEcuLogisticsEntry GetEcuLogisticsByGroupName(ReadOnlyCollection<IEcuLogisticsEntry> ecuLogisticsList, string name)
         {
             string nameLower = name.ToLowerInvariant();
@@ -1528,33 +1617,28 @@ namespace BmwDeepObd
             return null;
         }
 
-        public static string GetVehicleTypeFromVin(string vin)
+        public static string GetVehicleTypeFromVin(string vin, EdiabasNet ediabas)
         {
-            if (vin == null)
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle type from VIN: {0}", vin ?? "No VIN");
+            string typeKey = GetTypeKeyFromVin(vin, ediabas);
+            if (typeKey == null)
             {
                 return null;
-            }
-            if (vin.Length < 7)
-            {
-                return null;
-            }
-            string typeKey = vin.Substring(3, 4);
-            // temporary hack for typ key mapping
-            if (string.Compare(typeKey, "FB53", StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                typeKey = "FB63";
             }
             string vehicleType;
             if (!TypeKeyDict.TryGetValue(typeKey.ToUpperInvariant(), out vehicleType))
             {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type not found");
                 return null;
             }
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle type: {0}", vehicleType);
             return vehicleType;
         }
 
-        public static ReadOnlyCollection<IEcuLogisticsEntry> GetEcuLogisticsFromVin(string vin)
+        public static ReadOnlyCollection<IEcuLogisticsEntry> GetEcuLogisticsFromVin(string vin, EdiabasNet ediabas)
         {
-            string vehicleType = GetVehicleTypeFromVin(vin);
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU logistics from VIN: {0}", vin?? "No VIN");
+            string vehicleType = GetVehicleTypeFromVin(vin, ediabas);
             if (vehicleType == null)
             {
                 return null;
@@ -1586,6 +1670,7 @@ namespace BmwDeepObd
                 case "E86":
                     return EcuLogisticsE85;
             }
+            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type unknown");
             return null;
         }
     }
