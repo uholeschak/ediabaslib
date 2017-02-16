@@ -1726,6 +1726,7 @@ namespace BmwDeepObd
 
         private List<EcuInfo> DetectVehicleByEws(Android.App.ProgressDialog progress, out bool pin78ConnRequire)
         {
+            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Try to detect vehicle by EWS");
             pin78ConnRequire = false;
             try
             {
@@ -1804,6 +1805,7 @@ namespace BmwDeepObd
                                 if (resultData.OpData is string)
                                 {
                                     groupFiles = (string)resultData.OpData;
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "KD group files: {0}", groupFiles);
                                 }
                             }
                         }
@@ -1811,6 +1813,7 @@ namespace BmwDeepObd
                 }
                 catch (Exception)
                 {
+                    _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Read KD data failed");
                     // ignored
                 }
 
@@ -1820,6 +1823,7 @@ namespace BmwDeepObd
                     int index = 0;
                     foreach (Tuple<string, string, string> job in ReadVinJobsDs2)
                     {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read VIN job: {0}", job.Item1);
                         try
                         {
                             int localIndex = index;
@@ -1850,6 +1854,7 @@ namespace BmwDeepObd
                                         detectVin = (string) resultData.OpData;
                                         if (!string.IsNullOrEmpty(detectVin))
                                         {
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected VIN: {0}", detectVin);
                                             break;
                                         }
                                     }
@@ -1858,6 +1863,7 @@ namespace BmwDeepObd
                         }
                         catch (Exception)
                         {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No VIN response");
                             // ignored
                         }
                         index++;
@@ -1870,6 +1876,7 @@ namespace BmwDeepObd
                     {
                         try
                         {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read motor job: {0}", fileName);
                             int localIndex = index;
                             RunOnUiThread(() =>
                             {
@@ -1900,6 +1907,7 @@ namespace BmwDeepObd
                                         {
                                             groupFiles = fileName;
                                             pin78ConnRequire = true;
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Motor ECUs detected: {0}", groupFiles);
                                             break;
                                         }
                                     }
@@ -1916,7 +1924,8 @@ namespace BmwDeepObd
 
                 if (!string.IsNullOrEmpty(groupFiles))
                 {
-                    ReadOnlyCollection<VehicleInfo.IEcuLogisticsEntry> ecuLogistics = VehicleInfo.GetEcuLogisticsFromVin(detectVin);
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group files: {0}", groupFiles);
+                    ReadOnlyCollection<VehicleInfo.IEcuLogisticsEntry> ecuLogistics = VehicleInfo.GetEcuLogisticsFromVin(detectVin, _ediabas);
                     string[] groupArray = groupFiles.Split(',');
                     List<string> groupList;
                     if (ecuLogistics != null)
@@ -1935,10 +1944,12 @@ namespace BmwDeepObd
                     {
                         groupList = groupArray.ToList();
                     }
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Final group list: {0}", string.Join(",", groupList.ToArray()));
 
                     int index = 0;
                     foreach (string ecuGroup in groupList)
                     {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detect ECU: {0}", ecuGroup);
                         string ecuName = string.Empty;
                         string ecuDesc = string.Empty;
                         if (_ediabasJobAbort)
@@ -1973,12 +1984,14 @@ namespace BmwDeepObd
                         }
                         catch (Exception)
                         {
+                            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No ECU response");
                             // ignored
                         }
 
                         EcuInfo ecuInfo = null;
                         if (!string.IsNullOrEmpty(ecuName))
                         {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU name: {0}", ecuName);
                             bool ecuPresent = ecuList.Any(ecuInfoTemp => string.Compare(ecuInfoTemp.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0);
                             if (!ecuPresent)
                             {
@@ -2014,6 +2027,7 @@ namespace BmwDeepObd
                                             if (resultData.OpData is string)
                                             {
                                                 ecuVin = (string)resultData.OpData;
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VIN found: {0}", ecuVin);
                                             }
                                         }
                                         if (!string.IsNullOrEmpty(ecuVin) && _vinRegex.IsMatch(ecuVin))
