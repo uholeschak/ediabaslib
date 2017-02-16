@@ -487,6 +487,9 @@ namespace BmwDeepObd
                 translationSubmenu.SetVisible(ActivityCommon.IsTranslationRequired());
             }
 
+            IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
+            sendTraceMenu?.SetEnabled(interfaceAvailable && _traceActive && ActivityCommon.IsTraceFilePresent(_traceDir));
+
             IMenuItem translationEnableMenu = menu.FindItem(Resource.Id.menu_translation_enable);
             if (translationEnableMenu != null)
             {
@@ -596,6 +599,14 @@ namespace BmwDeepObd
                         return true;
                     }
                     SelectDataLogging();
+                    return true;
+
+                case Resource.Id.menu_send_trace:
+                    if (IsJobRunning())
+                    {
+                        return true;
+                    }
+                    SendTraceFileAlways(null);
                     return true;
 
                 case Resource.Id.menu_translation_enable:
@@ -715,6 +726,16 @@ namespace BmwDeepObd
             {
                 EdiabasClose();
                 return _activityCommon.RequestSendTraceFile(_appDataDir, _traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType(), handler);
+            }
+            return false;
+        }
+
+        private bool SendTraceFileAlways(EventHandler<EventArgs> handler)
+        {
+            if (_traceActive && !string.IsNullOrEmpty(_traceDir))
+            {
+                EdiabasClose();
+                return _activityCommon.SendTraceFile(_appDataDir, _traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType(), handler);
             }
             return false;
         }
