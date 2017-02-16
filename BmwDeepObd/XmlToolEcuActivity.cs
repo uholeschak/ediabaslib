@@ -824,6 +824,8 @@ namespace BmwDeepObd
                     _ediabas.ArgString = string.Empty;
                     if (_selectedResult.MwTabEntry != null && !string.IsNullOrEmpty(_ecuInfo.ReadCommand))
                     {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB file: {0}", _ecuInfo.MwTabFileName ?? "No file");
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB Block={0} Index={1}", _selectedResult.MwTabEntry.BlockNumber, _selectedResult.MwTabEntry.ValueIndex);
                         _ediabas.ArgString = GetJobArgs(_selectedResult.MwTabEntry, _ecuInfo);
                     }
                     _ediabas.ArgBinaryStd = null;
@@ -846,17 +848,26 @@ namespace BmwDeepObd
                             {
                                 if (_selectedResult.MwTabEntry.ValueIndex == dictIndex)
                                 {
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB index found: {0}", dictIndex);
                                     string valueUnit = _selectedResult.MwTabEntry.ValueUnit;
                                     if (string.IsNullOrEmpty(valueUnit))
                                     {
                                         if (resultDict.TryGetValue("MWEINH_TEXT", out resultData))
                                         {
                                             valueUnit = resultData.OpData as string ?? string.Empty;
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWEINH_TEXT: {0}", valueUnit);
                                         }
+                                    }
+                                    else
+                                    {
+                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB unit: {0}", valueUnit);
                                     }
                                     if (resultDict.TryGetValue("MW_WERT", out resultData))
                                     {
+                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Data type: {0}", resultData.ResType.ToString());
+                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
                                         resultText = EdiabasNet.FormatResult(resultData, _selectedResult.Format) ?? string.Empty;
+                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", resultText ?? "No result");
                                         if (!string.IsNullOrEmpty(resultText) && !string.IsNullOrEmpty(valueUnit))
                                         {
                                             resultText += " " + valueUnit;
@@ -869,7 +880,10 @@ namespace BmwDeepObd
                             }
                             if (resultDict.TryGetValue(_selectedResult.Name.ToUpperInvariant(), out resultData))
                             {
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Data type: {0}", resultData.ResType.ToString());
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
                                 string text = EdiabasNet.FormatResult(resultData, _selectedResult.Format) ?? string.Empty;
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", text ?? "No result");
                                 if (!string.IsNullOrEmpty(text) && !string.IsNullOrEmpty(resultText))
                                 {
                                     resultText += "; ";
