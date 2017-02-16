@@ -150,6 +150,7 @@ namespace BmwDeepObd
         public delegate void TranslateDelegate(List<string> transList);
         public delegate void EnetSsidWarnDelegate(bool retry);
         public delegate void WifiConnectedWarnDelegate();
+        public const string TraceFileName = "ifh.trc.zip";
         public const string EmulatorEnetIp = "192.168.10.244";
         public const string AdapterSsid = "Deep OBD BMW";
         public const string DownloadDir = "Download";
@@ -1706,11 +1707,21 @@ namespace BmwDeepObd
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }
 
+        public static bool IsTraceFilePresent(string traceDir)
+        {
+            if (string.IsNullOrEmpty(traceDir))
+            {
+                return false;
+            }
+            string traceFile = Path.Combine(traceDir, TraceFileName);
+            return File.Exists(traceFile);
+        }
+
         public bool RequestSendTraceFile(string appDataDir, string traceDir, PackageInfo packageInfo, Type classType, EventHandler<EventArgs> handler = null)
         {
             try
             {
-                string traceFile = Path.Combine(traceDir, "ifh.trc.zip");
+                string traceFile = Path.Combine(traceDir, TraceFileName);
                 if (!File.Exists(traceFile))
                 {
                     return false;
@@ -1730,6 +1741,24 @@ namespace BmwDeepObd
                     .SetMessage(message)
                     .SetTitle(Resource.String.alert_title_question)
                     .Show();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool SendTraceFile(string appDataDir, string traceDir, PackageInfo packageInfo, Type classType, EventHandler<EventArgs> handler = null)
+        {
+            try
+            {
+                string traceFile = Path.Combine(traceDir, TraceFileName);
+                if (!File.Exists(traceFile))
+                {
+                    return false;
+                }
+                SendTraceFile(appDataDir, traceFile, null, packageInfo, classType, handler, true);
             }
             catch (Exception)
             {
