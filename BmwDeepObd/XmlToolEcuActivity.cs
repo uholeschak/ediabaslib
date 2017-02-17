@@ -867,7 +867,7 @@ namespace BmwDeepObd
                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Data type: {0}", resultData.ResType.ToString());
                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
                                         resultText = EdiabasNet.FormatResult(resultData, _selectedResult.Format) ?? string.Empty;
-                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", resultText ?? "No result");
+                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", resultText);
                                         if (!string.IsNullOrEmpty(resultText) && !string.IsNullOrEmpty(valueUnit))
                                         {
                                             resultText += " " + valueUnit;
@@ -883,7 +883,7 @@ namespace BmwDeepObd
                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Data type: {0}", resultData.ResType.ToString());
                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
                                 string text = EdiabasNet.FormatResult(resultData, _selectedResult.Format) ?? string.Empty;
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", text ?? "No result");
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", text);
                                 if (!string.IsNullOrEmpty(text) && !string.IsNullOrEmpty(resultText))
                                 {
                                     resultText += "; ";
