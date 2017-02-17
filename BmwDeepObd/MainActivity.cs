@@ -262,18 +262,6 @@ namespace BmwDeepObd
             _jobReader = new JobReader();
 
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
-            string backgroundImageFile = Path.Combine(_appDataPath, "Images", "Background.jpg");
-            if (File.Exists(backgroundImageFile))
-            {
-                try
-                {
-                    _imageBackground.SetImageBitmap(Android.Graphics.BitmapFactory.DecodeFile(backgroundImageFile));
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            }
 
             _webClient = new WebClient();
             _webClient.DownloadProgressChanged += DownloadProgressChanged;
@@ -1064,6 +1052,19 @@ namespace BmwDeepObd
             {
                 _appDataPath = Path.Combine(_activityCommon.CustomStorageMedia, AppFolderName);
                 _ecuPath = Path.Combine(_appDataPath, ManufacturerEcuDirName);
+            }
+
+            string backgroundImageFile = Path.Combine(_appDataPath, "Images", "Background.jpg");
+            if (File.Exists(backgroundImageFile))
+            {
+                try
+                {
+                    _imageBackground.SetImageBitmap(Android.Graphics.BitmapFactory.DecodeFile(backgroundImageFile));
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
         }
 
