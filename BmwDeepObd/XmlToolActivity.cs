@@ -2734,6 +2734,7 @@ namespace BmwDeepObd
             }
 #endif
             Dictionary<int, string> unitDict = new Dictionary<int, string>();
+            int valueCount = 0;
 
             try
             {
@@ -2769,6 +2770,10 @@ namespace BmwDeepObd
                                 continue;
                             }
                             EdiabasNet.ResultData resultData;
+                            if (resultDict.TryGetValue("MW_WERT", out resultData))
+                            {
+                                valueCount++;
+                            }
                             string unitText = string.Empty;
                             if (resultDict.TryGetValue("MWEINH_TEXT", out resultData))
                             {
@@ -2791,6 +2796,10 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 return null;
+            }
+            if (valueCount == 0)
+            {
+                return new List<string>();
             }
 
             foreach (ActivityCommon.MwTabFileEntry mwTabFileEntry in wmTabList)
