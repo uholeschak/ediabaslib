@@ -296,7 +296,15 @@
     <xs:attribute name="mwtab" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>
-          Relative path of the used MwTab file. Only used for VAG configuration generator
+          Relative path of the used MwTab file. Only used for VAG configuration generator.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="mwdata" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          MwTab data from ECU. Only used for VAG configuration generator.
+          The format is : [block],[index],[type],[unit base 64 encoded];[block],[index] ...
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>

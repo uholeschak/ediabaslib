@@ -5960,6 +5960,7 @@ namespace CarSimulator
                             found = true;
                             Debug.WriteLine("Dummy mwblock: {0:X02}", _receiveData[3]);
                             byte[] dummyResponse = { 0x0F, 0x00, 0xE7, 0x10, 0x00, 0x00, 0x10, 0x00, 0x00, 0x10, 0x00, 0x00, 0x10, 0x00, 0x00 };
+                            //byte[] dummyResponse = { 0x04, 0x00, 0x0A, 0x0F };
                             activeResponse = new ResponseEntry(_receiveData, dummyResponse, null);
                             activeResponse.ResponseMultiList.Add(dummyResponse);
                             telBlockIndex = 0;
