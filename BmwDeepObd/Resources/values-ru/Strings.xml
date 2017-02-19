@@ -265,6 +265,8 @@
   <string name="xml_tool_ecu_ecu_name">Название ECU</string>
   <string name="xml_tool_ecu_jobs_name">Job список</string>
   <string name="xml_tool_ecu_results">Job результат</string>
+  <!--Translate-->
+  <string name="xml_tool_ecu_show_all_results">Show all results</string>
   <string name="xml_tool_ecu_display_text">Выведенный текст</string>
   <string name="xml_tool_ecu_log_tag">Тег для протоколированных данных</string>
   <string name="xml_tool_ecu_test_format">Тестировать формат</string>

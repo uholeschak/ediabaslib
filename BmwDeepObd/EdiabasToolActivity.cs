@@ -823,7 +823,7 @@ namespace BmwDeepObd
                 }
                 if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                 {
-                    if (string.Compare(jobInfo.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(jobInfo.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         defaultArgs = jobInfo.ObjectName.Contains("1281") ? "0;WertEinmalLesen" : "100;LESEN";
                     }

@@ -129,6 +129,8 @@ namespace BmwDeepObd
         };
         private readonly Regex _vinRegex = new Regex(@"^[a-zA-Z][a-zA-Z0-9]+$");
 
+        public const string JobReadMwBlock = @"Messwerteblock_lesen";
+
         // Intent extra
         public const string ExtraInitDir = "init_dir";
         public const string ExtraAppDataDir = "app_data_dir";
@@ -1699,11 +1701,19 @@ namespace BmwDeepObd
                 bool pin78ConnRequire = false;
                 if (!_ediabasJobAbort && ecuListBest == null)
                 {
-                    ecuListBest = DetectVehicleByEws(progress, out pin78ConnRequire);
+                    string detectedVin;
+                    ecuListBest = DetectVehicleByEws(progress, out detectedVin, out pin78ConnRequire);
                     if (ecuListBest != null)
                     {
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
-                        _vin = GetBestVin(_ecuList);
+                        if (!string.IsNullOrEmpty(detectedVin))
+                        {
+                            _vin = detectedVin;
+                        }
+                        else
+                        {
+                            _vin = GetBestVin(_ecuList);
+                        }
                         ReadAllXml();
                     }
                 }
@@ -1758,9 +1768,10 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
-        private List<EcuInfo> DetectVehicleByEws(Android.App.ProgressDialog progress, out bool pin78ConnRequire)
+        private List<EcuInfo> DetectVehicleByEws(Android.App.ProgressDialog progress, out string detectedVin, out bool pin78ConnRequire)
         {
             _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Try to detect vehicle by EWS");
+            detectedVin = null;
             pin78ConnRequire = false;
             try
             {
@@ -1851,7 +1862,6 @@ namespace BmwDeepObd
                     // ignored
                 }
 
-                string detectVin = null;
                 if (!string.IsNullOrEmpty(groupFiles))
                 {
                     int index = 0;
@@ -1885,10 +1895,10 @@ namespace BmwDeepObd
                                 {
                                     if (resultData.OpData is string)
                                     {
-                                        detectVin = (string) resultData.OpData;
-                                        if (!string.IsNullOrEmpty(detectVin))
+                                        detectedVin = (string) resultData.OpData;
+                                        if (!string.IsNullOrEmpty(detectedVin))
                                         {
-                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected VIN: {0}", detectVin);
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected VIN: {0}", detectedVin);
                                             break;
                                         }
                                     }
@@ -1959,7 +1969,7 @@ namespace BmwDeepObd
                 if (!string.IsNullOrEmpty(groupFiles))
                 {
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group files: {0}", groupFiles);
-                    ReadOnlyCollection<VehicleInfo.IEcuLogisticsEntry> ecuLogistics = VehicleInfo.GetEcuLogisticsFromVin(detectVin, _ediabas);
+                    ReadOnlyCollection<VehicleInfo.IEcuLogisticsEntry> ecuLogistics = VehicleInfo.GetEcuLogisticsFromVin(detectedVin, _ediabas);
                     string[] groupArray = groupFiles.Split(',');
                     List<string> groupList;
                     if (ecuLogistics != null)
@@ -2474,44 +2484,72 @@ namespace BmwDeepObd
         {
             foreach (XmlToolEcuActivity.JobInfo job in jobList)
             {
-                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && ecuInfo.MwTabList != null)
+                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                 {
-                    if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(job.Name, JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        job.Comments = new List<string> {GetString(Resource.String.xml_tool_job_read_mwblock)};
-                        foreach (ActivityCommon.MwTabEntry mwTabEntry in ecuInfo.MwTabList)
+                        if (ecuInfo.MwTabList != null)
                         {
-                            string name = string.Format(Culture, "{0}/{1}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndex);
-                            string displayText = string.Format(Culture, "{0:000}/{1} {2}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndex, mwTabEntry.Description);
-                            string comment = string.Empty;
-                            if (mwTabEntry.ValueMin != null && mwTabEntry.ValueMax != null)
+                            job.Comments = new List<string> { GetString(Resource.String.xml_tool_job_read_mwblock) };
+                            foreach (ActivityCommon.MwTabEntry mwTabEntry in ecuInfo.MwTabList)
                             {
-                                comment = string.Format(Culture, "{0} - {1}", mwTabEntry.ValueMin, mwTabEntry.ValueMax);
-                            }
-                            else if (mwTabEntry.ValueMin != null)
-                            {
-                                comment = string.Format(Culture, "> {0}", mwTabEntry.ValueMin);
-                            }
-                            else if (mwTabEntry.ValueMax != null)
-                            {
-                                comment = string.Format(Culture, "< {0}", mwTabEntry.ValueMax);
-                            }
-                            if (!string.IsNullOrEmpty(mwTabEntry.ValueUnit))
-                            {
-                                comment += string.Format(Culture, " [{0}]", mwTabEntry.ValueUnit);
-                            }
-                            List<string> commentList = new List<string>();
-                            if (!string.IsNullOrEmpty(comment))
-                            {
-                                commentList.Add(comment);
-                            }
-                            if (!string.IsNullOrEmpty(mwTabEntry.Comment))
-                            {
-                                commentList.Add(mwTabEntry.Comment);
-                            }
+                                string name = string.Format(Culture, "{0}/{1}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndex);
+                                string displayText = string.Format(Culture, "{0:000}/{1} {2}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndex, mwTabEntry.Description);
+                                string comment = string.Empty;
+                                if (mwTabEntry.ValueMin != null && mwTabEntry.ValueMax != null)
+                                {
+                                    comment = string.Format(Culture, "{0} - {1}", mwTabEntry.ValueMin, mwTabEntry.ValueMax);
+                                }
+                                else if (mwTabEntry.ValueMin != null)
+                                {
+                                    comment = string.Format(Culture, "> {0}", mwTabEntry.ValueMin);
+                                }
+                                else if (mwTabEntry.ValueMax != null)
+                                {
+                                    comment = string.Format(Culture, "< {0}", mwTabEntry.ValueMax);
+                                }
+                                if (!string.IsNullOrEmpty(mwTabEntry.ValueUnit))
+                                {
+                                    comment += string.Format(Culture, " [{0}]", mwTabEntry.ValueUnit);
+                                }
+                                List<string> commentList = new List<string>();
+                                if (!string.IsNullOrEmpty(comment))
+                                {
+                                    commentList.Add(comment);
+                                }
+                                if (!string.IsNullOrEmpty(mwTabEntry.Comment))
+                                {
+                                    commentList.Add(mwTabEntry.Comment);
+                                }
 
-                            string type = (string.Compare(mwTabEntry.ValueType, "R", StringComparison.OrdinalIgnoreCase) == 0) ? "real" : "integer";
-                            job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, commentList, mwTabEntry));
+                                string type = (string.Compare(mwTabEntry.ValueType, "R", StringComparison.OrdinalIgnoreCase) == 0) ? "real" : "integer";
+                                job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, commentList, mwTabEntry));
+                            }
+                        }
+                        // fill up with virtual entries
+                        for (int block = 0; block < 0x100; block++)
+                        {
+                            for (int index = 1; index <= 4; index++)
+                            {
+                                bool entryFound = false;
+                                foreach (XmlToolEcuActivity.ResultInfo resultInfo in job.Results)
+                                {
+                                    if (resultInfo.MwTabEntry.BlockNumber == block &&
+                                        resultInfo.MwTabEntry.ValueIndex == index)
+                                    {
+                                        entryFound = true;
+                                        break;
+                                    }
+                                }
+                                if (!entryFound)
+                                {
+                                    string name = string.Format(Culture, "{0}/{1}", block, index);
+                                    string displayText = string.Format(Culture, "{0:000}/{1}", block, index);
+                                    ActivityCommon.MwTabEntry mwTabEntry =
+                                        new ActivityCommon.MwTabEntry(block, index, string.Empty, string.Empty, string.Empty, string.Empty, null, null, true);
+                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, string.Empty, null, mwTabEntry));
+                                }
+                            }
                         }
                     }
                     else if (string.Compare(job.Name, "Fahrgestellnr_abfragen", StringComparison.OrdinalIgnoreCase) == 0)
@@ -2728,7 +2766,7 @@ namespace BmwDeepObd
                 sr.Append(string.Format("-s \"{0}\"", ecuInfo.Sgbd));
                 foreach (int block in mwBlocks)
                 {
-                    sr.Append(string.Format(" -j \"Messwerteblock_lesen#{0};{1}\"", block, readCommand));
+                    sr.Append(string.Format(" -j \"" + XmlToolActivity.JobReadMwBlock + "#{0};{1}\"", block, readCommand));
                 }
                 Log.Debug("MwTab", sr.ToString());
             }
@@ -2738,6 +2776,7 @@ namespace BmwDeepObd
 
             try
             {
+                int errorCount = 0;
                 int blockIndex = 0;
                 foreach (int block in mwBlocks)
                 {
@@ -2753,41 +2792,56 @@ namespace BmwDeepObd
                             progress.Progress = 100 * localBlockIndex / mwBlocks.Count;
                         }
                     });
-                    _ediabas.ArgString = string.Format("{0};{1}", block, readCommand);
-                    _ediabas.ArgBinaryStd = null;
-                    _ediabas.ResultsRequests = string.Empty;
-                    _ediabas.ExecuteJob("Messwerteblock_lesen");
-
-                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                    if (resultSets != null && resultSets.Count >= 2)
+                    for (int retry = 0; retry < 2; retry++)
                     {
-                        int dictIndex = 0;
-                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                        try
                         {
-                            if (dictIndex == 0)
+                            _ediabas.ArgString = string.Format("{0};{1}", block, readCommand);
+                            _ediabas.ArgBinaryStd = null;
+                            _ediabas.ResultsRequests = string.Empty;
+                            _ediabas.ExecuteJob(JobReadMwBlock);
+
+                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                            if (resultSets != null && resultSets.Count >= 2)
                             {
-                                dictIndex++;
-                                continue;
-                            }
-                            EdiabasNet.ResultData resultData;
-                            if (resultDict.TryGetValue("MW_WERT", out resultData))
-                            {
-                                valueCount++;
-                            }
-                            string unitText = string.Empty;
-                            if (resultDict.TryGetValue("MWEINH_TEXT", out resultData))
-                            {
-                                unitText = resultData.OpData as string ?? string.Empty;
-                            }
-                            if (!string.IsNullOrWhiteSpace(unitText))
-                            {
-                                int key = (block << 16) + dictIndex;
-                                if (!unitDict.ContainsKey(key))
+                                int dictIndex = 0;
+                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
                                 {
-                                    unitDict.Add(key, unitText);
+                                    if (dictIndex == 0)
+                                    {
+                                        dictIndex++;
+                                        continue;
+                                    }
+                                    EdiabasNet.ResultData resultData;
+                                    if (resultDict.TryGetValue("MW_WERT", out resultData))
+                                    {
+                                        valueCount++;
+                                    }
+                                    string unitText = string.Empty;
+                                    if (resultDict.TryGetValue("MWEINH_TEXT", out resultData))
+                                    {
+                                        unitText = resultData.OpData as string ?? string.Empty;
+                                    }
+                                    if (!string.IsNullOrWhiteSpace(unitText))
+                                    {
+                                        int key = (block << 16) + dictIndex;
+                                        if (!unitDict.ContainsKey(key))
+                                        {
+                                            unitDict.Add(key, unitText);
+                                        }
+                                    }
+                                    dictIndex++;
                                 }
                             }
-                            dictIndex++;
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            errorCount++;
+                            if (errorCount > 10)
+                            {
+                                return null;
+                            }
                         }
                     }
                     blockIndex++;
