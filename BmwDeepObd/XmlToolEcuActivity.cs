@@ -185,10 +185,18 @@ namespace BmwDeepObd
             bool showAll = false;
             foreach (JobInfo jobInfo in _ecuInfo.JobList)
             {
-                if (jobInfo.Results.Any(resultInfo => resultInfo.Selected && resultInfo.MwTabEntry != null && resultInfo.MwTabEntry.Dummy))
+                if (string.Compare(jobInfo.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    showAll = true;
-                    break;
+                    if (jobInfo.Results.All(resultInfo => resultInfo.MwTabEntry != null && resultInfo.MwTabEntry.Dummy))
+                    {
+                        showAll = true;
+                        break;
+                    }
+                    if (jobInfo.Results.Any(resultInfo => resultInfo.Selected && resultInfo.MwTabEntry != null && resultInfo.MwTabEntry.Dummy))
+                    {
+                        showAll = true;
+                        break;
+                    }
                 }
             }
             _checkBoxShowAllResults.Checked = showAll;
@@ -421,8 +429,8 @@ namespace BmwDeepObd
 
             _ignoreFormatSelection = true;
 
-            bool resultBinary = string.Compare(resultInfo.Type, "binary", StringComparison.OrdinalIgnoreCase) == 0;
-            bool resultString = string.Compare(resultInfo.Type, "string", StringComparison.OrdinalIgnoreCase) == 0;
+            bool resultBinary = string.Compare(resultInfo.Type, XmlToolActivity.DataTypeBinary, StringComparison.OrdinalIgnoreCase) == 0;
+            bool resultString = string.Compare(resultInfo.Type, XmlToolActivity.DataTypeString, StringComparison.OrdinalIgnoreCase) == 0;
 
             _spinnerFormatTypeAdapter.Items.Clear();
             _spinnerFormatTypeAdapter.Items.Add(new StringObjType("--", FormatType.None));
@@ -672,7 +680,7 @@ namespace BmwDeepObd
                     {
                         showResults.AddRange(_selectedJob.Results.Where(result => result.MwTabEntry != null && !result.MwTabEntry.Dummy));
                     }
-                    orderedResults = showResults.OrderBy(x => x.MwTabEntry?.BlockNumber * 1000 + x.MwTabEntry?.ValueIndex);
+                    orderedResults = showResults.OrderBy(x => (x.MwTabEntry?.BlockNumber << 16) + x.MwTabEntry?.ValueIndex);
                 }
                 else
                 {
@@ -680,7 +688,7 @@ namespace BmwDeepObd
                 }
                 foreach (ResultInfo result in orderedResults)
                 {
-                    if (string.Compare(result.Type, "binary", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(result.Type, XmlToolActivity.DataTypeBinary, StringComparison.OrdinalIgnoreCase) == 0)
                     {   // ignore binary results
                         continue;
                     }
@@ -899,7 +907,7 @@ namespace BmwDeepObd
                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
                                         resultText = EdiabasNet.FormatResult(resultData, _selectedResult.Format) ?? string.Empty;
                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", resultText);
-                                        if (!string.IsNullOrEmpty(resultText) && !string.IsNullOrEmpty(valueUnit))
+                                        if (!string.IsNullOrWhiteSpace(resultText) && !string.IsNullOrWhiteSpace(valueUnit))
                                         {
                                             resultText += " " + valueUnit;
                                         }
@@ -915,7 +923,7 @@ namespace BmwDeepObd
                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
                                 string text = EdiabasNet.FormatResult(resultData, _selectedResult.Format) ?? string.Empty;
                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", text);
-                                if (!string.IsNullOrEmpty(text) && !string.IsNullOrEmpty(resultText))
+                                if (!string.IsNullOrWhiteSpace(text) && !string.IsNullOrWhiteSpace(resultText))
                                 {
                                     resultText += "; ";
                                 }

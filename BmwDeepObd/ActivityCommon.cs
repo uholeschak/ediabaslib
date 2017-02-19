@@ -101,6 +101,7 @@ namespace BmwDeepObd
             {
                 FileName = fileName;
                 MwTabList = mwTabList;
+                ExistCount = 0;
                 CompareCount = 0;
                 MatchCount = 0;
                 MatchRatio = 0;
@@ -109,6 +110,7 @@ namespace BmwDeepObd
             public const int MaxMatchRatio = 1000;
             public string FileName { get; }
             public List<MwTabEntry> MwTabList { get; }
+            public int ExistCount { get; set; }
             public int CompareCount { get; set; }
             public int MatchCount { get; set; }
             public int MatchRatio { get; set; }
