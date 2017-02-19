@@ -1706,6 +1706,7 @@ namespace BmwDeepObd
                     if (ecuListBest != null)
                     {
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
+                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                         if (!string.IsNullOrEmpty(detectedVin))
                         {
                             _vin = detectedVin;
@@ -2529,7 +2530,8 @@ namespace BmwDeepObd
                         // fill up with virtual entries
                         for (int block = 0; block < 0x100; block++)
                         {
-                            for (int index = 1; index <= 4; index++)
+                            int maxIndex = (block == 0) ? 10 : 4;
+                            for (int index = 1; index <= maxIndex; index++)
                             {
                                 bool entryFound = false;
                                 foreach (XmlToolEcuActivity.ResultInfo resultInfo in job.Results)
