@@ -9,6 +9,8 @@ CFG: 01 01 8A
 ; Fehlerspeicher_loeschen
 03 00 05 : 06 13 FC FF FF 88
 
+; Messwerteblock_lesen#0;WertEinmalLesen
+03 00 12 : 0D 13 F4 32 78 31 00 51 10 00 0C 41 00
 ; Messwerteblock_lesen#1;WertEinmalLesen
 04 00 29 01 : 20 13 02 80 20 00 8C 28 11 00 10 20 30 40 50 60 70 80 90 A0 B0 C0 D0 E0 F0 FF 85 05 00 88 FF 00 07 15 F4 00 68 31 01 
 04 00 29 02 : 20 23 02 80 20 00 89 66 00 85 1A 00 8C 28 11 00 10 20 30 40 50 60 70 80 90 A0 B0 C0 D0 E0 F0 FF 07 25 F4 00 11 7E 4D 
@@ -107,9 +109,13 @@ CFG: 83 01 8A
 ; Fehlerspeicher_loeschen
 03 00 05 : 06 13 FC FF FF 88
 
+; Messwerteblock_lesen#0;WertEinmalLesen
+03 00 12 : 04 11 0A 11
 ; Messwerteblock_lesen#1;WertEinmalLesen
-04 00 29 01 : 0F 11 E7 07 64 00 07 64 00 07 64 00 07 64 00
+04 00 29 01 : 0F 11 E7 07 64 00 07 64 00 07 64 00 07 64 00 
+04 00 29 02 : 0F 0F E7 07 64 FF 07 64 FF 07 64 FF 07 64 FF 
 04 00 29 03 : 06 1F E7 10 01 00 
+04 00 29 04 : 04 0F 0A 0F 
 04 00 29 05 : 04 2D 0A 2D 
 04 00 29 06 : 04 3B 0A 3B 
 04 00 29 09 : 04 49 0A 49 
@@ -125,7 +131,12 @@ CFG: 25 01 8A
 ; Fehlerspeicher_loeschen
 03 00 05 : 06 13 FC FF FF 88
 
+; Messwerteblock_lesen#00;WertEinmalLesen
+03 00 12 : 04 11 0A 11 
 ; Messwerteblock_lesen#22;WertEinmalLesen
+04 00 29 01 : 0C 35 E7 11 20 31 11 20 31 11 20 31 
+04 00 29 02 : 04 5B 0A 5B 
+04 00 29 03 : 04 0F 0A 0F 
 04 00 29 16 : 04 81 0A 81 
 
 ;for air_15.grp (ISO 9141)
