@@ -129,6 +129,7 @@ namespace BmwDeepObd
         };
         private readonly Regex _vinRegex = new Regex(@"^[a-zA-Z][a-zA-Z0-9]+$");
 
+        public const string EmptyMwTab = "-";
         public const string JobReadMwBlock = @"Messwerteblock_lesen";
 
         // Intent extra
@@ -1706,6 +1707,7 @@ namespace BmwDeepObd
                     if (ecuListBest != null)
                     {
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
+                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                         if (!string.IsNullOrEmpty(detectedVin))
                         {
                             _vin = detectedVin;
@@ -2103,6 +2105,11 @@ namespace BmwDeepObd
             }
         }
 
+        private bool IsMwTabEmpty(string mwTabFileName)
+        {
+            return string.Compare(mwTabFileName, EmptyMwTab, StringComparison.OrdinalIgnoreCase) == 0;
+        }
+
         private string GetBestVin(List<EcuInfo> ecuList)
         {
             var vinInfo = ecuList.GroupBy(x => x.Vin)
@@ -2288,7 +2295,9 @@ namespace BmwDeepObd
             progress.SetCancelable(false);
             progress.SetMessage(GetString(Resource.String.xml_tool_analyze));
             if ((ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) &&
-                (string.IsNullOrEmpty(ecuInfo.MwTabFileName) || !File.Exists(ecuInfo.MwTabFileName)))
+                (string.IsNullOrEmpty(ecuInfo.MwTabFileName) ||
+                (!IsMwTabEmpty(ecuInfo.MwTabFileName) && !File.Exists(ecuInfo.MwTabFileName)))
+                )
             {
                 progress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
                 progress.Progress = 0;
@@ -2408,7 +2417,8 @@ namespace BmwDeepObd
 
                     if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                     {
-                        if (string.IsNullOrEmpty(ecuInfo.MwTabFileName) || !File.Exists(ecuInfo.MwTabFileName))
+                        if (string.IsNullOrEmpty(ecuInfo.MwTabFileName) ||
+                            (!IsMwTabEmpty(ecuInfo.MwTabFileName) && !File.Exists(ecuInfo.MwTabFileName)))
                         {
                             List<string> mwTabFileNames = GetBestMatchingMwTab(ecuInfo, progress);
                             if (mwTabFileNames == null)
@@ -2417,7 +2427,7 @@ namespace BmwDeepObd
                             }
                             if (mwTabFileNames.Count == 0)
                             {
-                                ecuInfo.MwTabFileName = string.Empty;
+                                ecuInfo.MwTabFileName = EmptyMwTab;
                             }
                             else if (mwTabFileNames.Count == 1)
                             {
@@ -2462,7 +2472,8 @@ namespace BmwDeepObd
                             }
                         }
                     }
-                    ecuInfo.MwTabList = string.IsNullOrEmpty(ecuInfo.MwTabFileName) ? null : ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
+                    ecuInfo.MwTabList = (!string.IsNullOrEmpty(ecuInfo.MwTabFileName) && !IsMwTabEmpty(ecuInfo.MwTabFileName)) ?
+                        ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName) : null;
                     ecuInfo.ReadCommand = GetReadCommand(ecuInfo);
 
                     JobsReadThreadPart2(ecuInfo, jobList);
@@ -2529,7 +2540,8 @@ namespace BmwDeepObd
                         // fill up with virtual entries
                         for (int block = 0; block < 0x100; block++)
                         {
-                            for (int index = 1; index <= 4; index++)
+                            int maxIndex = (block == 0) ? 10 : 4;
+                            for (int index = 1; index <= maxIndex; index++)
                             {
                                 bool entryFound = false;
                                 foreach (XmlToolEcuActivity.ResultInfo resultInfo in job.Results)
@@ -3215,7 +3227,7 @@ namespace BmwDeepObd
             XAttribute mwtabAttr = jobsNode?.Attribute("mwtab");
             if (mwtabAttr != null)
             {
-                mwTabFileName = Path.Combine(_ecuDir, mwtabAttr.Value);
+                mwTabFileName = !IsMwTabEmpty(mwtabAttr.Value) ? Path.Combine(_ecuDir, mwtabAttr.Value) : mwtabAttr.Value;
             }
             return sgbdAttr?.Value;
         }
@@ -3280,10 +3292,17 @@ namespace BmwDeepObd
                 jobsNodeNew.Add(new XAttribute("sgbd", ecuInfo.Sgbd));
                 if (!string.IsNullOrEmpty(ecuInfo.MwTabFileName))
                 {
-                    string relativePath = ActivityCommon.MakeRelativePath(_ecuDir, ecuInfo.MwTabFileName);
-                    if (!string.IsNullOrEmpty(relativePath))
+                    if (!IsMwTabEmpty(ecuInfo.MwTabFileName))
                     {
-                        jobsNodeNew.Add(new XAttribute("mwtab", relativePath));
+                        string relativePath = ActivityCommon.MakeRelativePath(_ecuDir, ecuInfo.MwTabFileName);
+                        if (!string.IsNullOrEmpty(relativePath))
+                        {
+                            jobsNodeNew.Add(new XAttribute("mwtab", relativePath));
+                        }
+                    }
+                    else
+                    {
+                        jobsNodeNew.Add(new XAttribute("mwtab", ecuInfo.MwTabFileName));
                     }
                 }
 
