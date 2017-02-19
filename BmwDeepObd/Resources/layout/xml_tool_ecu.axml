@@ -69,6 +69,11 @@
                 android:id="@+id/spinnerJobResults"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <CheckBox
+                android:id="@+id/checkBoxShowAllResults"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/xml_tool_ecu_show_all_results" />
             <TextView
                 android:id="@+id/textViewResultCommentsTitle"
                 android:layout_width="match_parent"

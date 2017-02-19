@@ -71,7 +71,7 @@ namespace BmwDeepObd
 
         public class MwTabEntry
         {
-            public MwTabEntry(int blockNumber, int valueIndex, string description, string comment, string valueUnit, string valueType, double? valueMin, double? valueMax)
+            public MwTabEntry(int blockNumber, int valueIndex, string description, string comment, string valueUnit, string valueType, double? valueMin, double? valueMax, bool dummy = false)
             {
                 BlockNumber = blockNumber;
                 ValueIndex = valueIndex;
@@ -81,6 +81,7 @@ namespace BmwDeepObd
                 ValueType = valueType;
                 ValueMin = valueMin;
                 ValueMax = valueMax;
+                Dummy = dummy;
             }
 
             public int BlockNumber { get; }
@@ -91,6 +92,7 @@ namespace BmwDeepObd
             public string ValueType { get; }
             public double? ValueMin { get; }
             public double? ValueMax { get; }
+            public bool Dummy { get; }
         }
 
         public class MwTabFileEntry : IComparable<MwTabFileEntry>

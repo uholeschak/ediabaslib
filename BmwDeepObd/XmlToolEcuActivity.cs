@@ -107,6 +107,7 @@ namespace BmwDeepObd
         private LinearLayout _layoutJobConfig;
         private Spinner _spinnerJobResults;
         private ResultListAdapter _spinnerJobResultsAdapter;
+        private CheckBox _checkBoxShowAllResults;
         private TextView _textViewResultCommentsTitle;
         private TextView _textViewResultComments;
         private EditText _editTextDisplayText;
@@ -178,6 +179,22 @@ namespace BmwDeepObd
             _spinnerJobResults.ItemSelected += (sender, args) =>
             {
                 ResultSelected(args.Position);
+            };
+
+            _checkBoxShowAllResults = FindViewById<CheckBox>(Resource.Id.checkBoxShowAllResults);
+            bool showAll = false;
+            foreach (JobInfo jobInfo in _ecuInfo.JobList)
+            {
+                if (jobInfo.Results.Any(resultInfo => resultInfo.Selected && resultInfo.MwTabEntry != null && resultInfo.MwTabEntry.Dummy))
+                {
+                    showAll = true;
+                    break;
+                }
+            }
+            _checkBoxShowAllResults.Checked = showAll;
+            _checkBoxShowAllResults.Click += (sender, args) =>
+            {
+                JobSelected(_selectedJob);
             };
 
             _textViewResultCommentsTitle = FindViewById<TextView>(Resource.Id.textViewResultCommentsTitle);
@@ -280,7 +297,7 @@ namespace BmwDeepObd
         {
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
-                if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(job.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return true;
                 }
@@ -329,7 +346,7 @@ namespace BmwDeepObd
                     _spinnerJobsAdapter.Items.Add(job);
                     if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                     {
-                        if (string.Compare(job.Name, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare(job.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             selection = _spinnerJobsAdapter.Items.Count - 1;
                         }
@@ -631,6 +648,11 @@ namespace BmwDeepObd
         private void JobSelected(JobInfo jobInfo)
         {
             _selectedJob = jobInfo;
+
+            bool jobReadMwTab = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
+            _checkBoxShowAllResults.Visibility = (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) && jobReadMwTab ?
+                ViewStates.Visible : ViewStates.Gone;
+
             ResetTestResult();
             _spinnerJobResultsAdapter.Items.Clear();
             int selection = -1;
@@ -639,9 +661,18 @@ namespace BmwDeepObd
                 _layoutJobConfig.Visibility = ViewStates.Visible;
                 IEnumerable<ResultInfo> orderedResults;
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                if ((ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) && jobReadMwTab)
                 {
-                    orderedResults = _selectedJob.Results.OrderBy(x => x.MwTabEntry?.BlockNumber * 1000 + x.MwTabEntry?.ValueIndex);
+                    List<ResultInfo> showResults = new List<ResultInfo>();
+                    if (_checkBoxShowAllResults.Checked && _checkBoxShowAllResults.Visibility == ViewStates.Visible)
+                    {
+                        showResults = _selectedJob.Results;
+                    }
+                    else
+                    {
+                        showResults.AddRange(_selectedJob.Results.Where(result => result.MwTabEntry != null && !result.MwTabEntry.Dummy));
+                    }
+                    orderedResults = showResults.OrderBy(x => x.MwTabEntry?.BlockNumber * 1000 + x.MwTabEntry?.ValueIndex);
                 }
                 else
                 {
@@ -1050,7 +1081,11 @@ namespace BmwDeepObd
 
                 TextView textJobName = view.FindViewById<TextView>(Resource.Id.textJobName);
                 TextView textJobDesc = view.FindViewById<TextView>(Resource.Id.textJobDesc);
-                textJobName.Text = item.DisplayName + " (" + item.Type + ")";
+                textJobName.Text = item.DisplayName;
+                if (!string.IsNullOrEmpty(item.Type))
+                {
+                    textJobName.Text += " (" + item.Type + ")";
+                }
 
                 StringBuilder stringBuilderComments = new StringBuilder();
                 List<string> commentList = item.CommentsTrans ?? item.Comments;
