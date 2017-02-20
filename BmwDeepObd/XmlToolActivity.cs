@@ -142,6 +142,11 @@ namespace BmwDeepObd
             new Tuple<string, string, string>("D_0080", "AIF_FG_NR_LESEN", "AIF_FG_NR"),
             new Tuple<string, string, string>("D_0010", "AIF_LESEN", "AIF_FG_NR"),
         };
+        private static readonly Tuple<string, string, string>[] ReadIdentJobsDs2 =
+        {
+            new Tuple<string, string, string>("FZGIDENT", "GRUNDMERKMALE_LESEN", "BR_TXT"),
+            new Tuple<string, string, string>("FZGIDENT", "STRINGS_LESEN", "BR_TXT"),
+        };
         private static readonly string[] ReadMotorJobsDs2 =
         {
             "D_0012", "D_MOTOR", "D_0010", "D_0013", "D_0014"
@@ -1993,6 +1998,49 @@ namespace BmwDeepObd
                             // ignored
                         }
                         index++;
+                    }
+                }
+
+                string vehicleType = null;
+                if (!string.IsNullOrEmpty(detectedVin) && detectedVin.Length == 17)
+                {
+                    string typeSnr = detectedVin.Substring(3, 4);
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Type SNR: {0}", typeSnr);
+                    foreach (Tuple<string, string, string> job in ReadIdentJobsDs2)
+                    {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read vehicle type job: {0},{1}", job.Item1, job.Item2);
+                        try
+                        {
+                            _ediabas.ResolveSgbdFile(job.Item1);
+
+                            _ediabas.ArgString = typeSnr;
+                            _ediabas.ArgBinaryStd = null;
+                            _ediabas.ResultsRequests = string.Empty;
+                            _ediabas.ExecuteJob(job.Item2);
+
+                            resultSets = _ediabas.ResultSets;
+                            if (resultSets != null && resultSets.Count >= 2)
+                            {
+                                Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                                EdiabasNet.ResultData resultData;
+                                if (resultDict.TryGetValue(job.Item3, out resultData))
+                                {
+                                    string detectedType = resultData.OpData as string;
+                                    if (!string.IsNullOrEmpty(vehicleType) &&
+                                        string.Compare(vehicleType, "UNBEK", StringComparison.OrdinalIgnoreCase) != 0)
+                                    {
+                                        vehicleType = detectedType;
+                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected Vehicle type: {0}", vehicleType);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No vehicle type response");
+                            // ignored
+                        }
                     }
                 }
 
