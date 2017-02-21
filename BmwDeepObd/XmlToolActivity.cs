@@ -1928,14 +1928,12 @@ namespace BmwDeepObd
                                 EdiabasNet.ResultData resultData;
                                 if (resultDict.TryGetValue(job.Item3, out resultData))
                                 {
-                                    if (resultData.OpData is string)
+                                    string vin = resultData.OpData as string;
+                                    if (!string.IsNullOrEmpty(vin) && _vinRegex.IsMatch(vin))
                                     {
-                                        detectedVin = (string) resultData.OpData;
-                                        if (!string.IsNullOrEmpty(detectedVin))
-                                        {
-                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected VIN: {0}", detectedVin);
-                                            break;
-                                        }
+                                        detectedVin = vin;
+                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected VIN: {0}", detectedVin);
+                                        break;
                                     }
                                 }
                             }
