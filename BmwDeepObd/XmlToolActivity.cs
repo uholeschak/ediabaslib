@@ -2154,6 +2154,7 @@ namespace BmwDeepObd
                                         }
                                         if (!string.IsNullOrEmpty(ecuVin) && _vinRegex.IsMatch(ecuVin))
                                         {
+                                            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "VIN valid");
                                             ecuInfo.Vin = ecuVin;
                                             break;
                                         }
