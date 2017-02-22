@@ -2078,8 +2078,27 @@ namespace BmwDeepObd
                         if (!readEcus)
                         {
                             _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Keep existing ECU list");
-                            ecuList = _ecuList;
+                            ecuList = new List<EcuInfo>(_ecuList);
                             ClearEcuList();
+                            foreach (EcuInfo ecuInfo in ecuList)
+                            {
+                                try
+                                {
+                                    _ediabas.ResolveSgbdFile(ecuInfo.Sgbd);
+
+                                    _ediabas.ArgString = string.Empty;
+                                    _ediabas.ArgBinaryStd = null;
+                                    _ediabas.ResultsRequests = string.Empty;
+                                    _ediabas.NoInitForVJobs = true;
+                                    _ediabas.ExecuteJob("_VERSIONINFO");
+
+                                    ecuInfo.Description = GetEcuComment(_ediabas.ResultSets);
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
                             return ecuList;
                         }
                         _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Read ECU list from vehicle");
