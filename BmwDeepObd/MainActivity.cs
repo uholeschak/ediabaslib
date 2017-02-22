@@ -672,6 +672,35 @@ namespace BmwDeepObd
                         PackageManager.GetPackageInfo(PackageName, 0).VersionName, ActivityCommon.AppId);
                     new AlertDialog.Builder(this)
                         .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
+                        .SetPositiveButton(Resource.String.button_copy, (sender, args) =>
+                        {
+                            try
+                            {
+                                ClipboardManager clipboardManagerNew = _activityCommon.ClipboardManager as ClipboardManager;
+                                if (clipboardManagerNew != null)
+                                {
+                                    ClipData clipData = ClipData.NewPlainText(@"text", message);
+                                    if (clipData != null)
+                                    {
+                                        clipboardManagerNew.PrimaryClip = clipData;
+                                    }
+                                }
+                                else
+                                {
+#pragma warning disable 618
+                                    Android.Text.ClipboardManager clipboardManagerOld = _activityCommon.ClipboardManager as Android.Text.ClipboardManager;
+#pragma warning restore 618
+                                    if (clipboardManagerOld != null)
+                                    {
+                                        clipboardManagerOld.Text = message;
+                                    }
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        })
                         .SetCancelable(true)
                         .SetMessage(message)
                         .SetTitle(Resource.String.alert_title_info)

@@ -330,6 +330,7 @@ namespace BmwDeepObd
         private static string _customStorageMedia;
         private static string _appId;
         private readonly BluetoothAdapter _btAdapter;
+        private readonly Java.Lang.Object _clipboardManager;
         private readonly WifiManager _maWifi;
         private readonly ConnectivityManager _maConnectivity;
         private readonly UsbManager _usbManager;
@@ -447,6 +448,8 @@ namespace BmwDeepObd
             }
         }
 
+        public Java.Lang.Object ClipboardManager => _clipboardManager;
+
         public BluetoothAdapter BtAdapter => _btAdapter;
 
         public WifiManager MaWifi => _maWifi;
@@ -467,6 +470,7 @@ namespace BmwDeepObd
             _bcReceiverUpdateDisplayHandler = bcReceiverUpdateDisplayHandler;
             _bcReceiverReceivedHandler = bcReceiverReceivedHandler;
             Emulator = IsEmulator();
+            _clipboardManager = activity.GetSystemService(Context.ClipboardService);
             _btAdapter = BluetoothAdapter.DefaultAdapter;
             _maWifi = (WifiManager)activity.GetSystemService(Context.WifiService);
             _maConnectivity = (ConnectivityManager)activity.GetSystemService(Context.ConnectivityService);
