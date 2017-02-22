@@ -9,6 +9,8 @@
   <string name="button_abort">Отменить</string>
   <string name="button_select">Выбрать</string>
   <string name="button_generate">Генерировать</string>
+  <!--Translate-->
+  <string name="button_copy">Copy</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения</string>
   <string name="bt_enable">Bluetooth не активирован.\nХотите его активировать?</string>

@@ -9,6 +9,7 @@
   <string name="button_abort">Abbrechen</string>
   <string name="button_select">Auswählen</string>
   <string name="button_generate">Generieren</string>
+  <string name="button_copy">Copy</string>
   <string name="no_ext_storage">Kein externer Speicher verfügbar</string>
   <string name="access_denied_ext_storage">Zugriff auf den externen Speicher ist notwendig um die App auszuführen</string>
   <string name="bt_enable">Bluetooth ist nicht aktiviert.\nWollen Sie es jetzt aktivieren?</string>
