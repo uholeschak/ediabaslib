@@ -151,7 +151,7 @@ namespace BmwDeepObd
         {
             "D_0012", "D_MOTOR", "D_0010", "D_0013", "D_0014"
         };
-        private readonly Regex _vinRegex = new Regex(@"^[a-zA-Z][a-zA-Z0-9]+$");
+        private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
 
         public const string EmptyMwTab = "-";
         public const string JobReadMwBlock = @"Messwerteblock_lesen";
@@ -2044,6 +2044,47 @@ namespace BmwDeepObd
 
                 if (!string.IsNullOrEmpty(groupFiles))
                 {
+                    if (!string.IsNullOrEmpty(detectedVin))
+                    {
+                        _vin = detectedVin;
+                        ReadAllXml();
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECUs found for VIN: {0}", _ecuList.Count);
+                        bool readEcus = true;
+                        if (_ecuList.Count > 0)
+                        {
+                            readEcus = false;
+                            Semaphore waitSem = new Semaphore(0, 1);
+                            RunOnUiThread(() =>
+                            {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                                builder.SetMessage(Resource.String.xml_tool_read_ecu_again);
+                                builder.SetTitle(Resource.String.alert_title_question);
+                                builder.SetPositiveButton(Resource.String.button_yes, (s, e) =>
+                                {
+                                    readEcus = true;
+                                });
+                                builder.SetNegativeButton(Resource.String.button_no, (s, e) =>
+                                {
+                                    readEcus = false;
+                                });
+                                AlertDialog alertDialog = builder.Show();
+                                alertDialog.DismissEvent += (sender, args) =>
+                                {
+                                    waitSem.Release();
+                                };
+                            });
+                            waitSem.WaitOne();
+                        }
+                        if (!readEcus)
+                        {
+                            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Keep existing ECU list");
+                            ecuList = _ecuList;
+                            ClearEcuList();
+                            return ecuList;
+                        }
+                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Read ECU list from vehicle");
+                        ClearEcuList();
+                    }
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group files: {0}", groupFiles);
                     ReadOnlyCollection<VehicleInfo.IEcuLogisticsEntry> ecuLogistics = VehicleInfo.GetEcuLogisticsFromVin(detectedVin, _ediabas);
                     string[] groupArray = groupFiles.Split(',');

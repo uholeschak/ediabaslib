@@ -210,6 +210,7 @@
   <string name="xml_tool_clear_ecus">Sollen die bestehenden ECUs gelöscht werden?</string>
   <string name="xml_tool_del_all_info">Sollen alle informationen (inklusive der XML Dateien) für diese Konfiguration gelöscht werden?</string>
   <string name="xml_tool_reset_ecu_setting">Sollen alle Einstellungen für diese ECU gelöscht werden?</string>
+  <string name="xml_tool_read_ecu_again">Wollen Sie die vollständige ECU-Liste erneut vom Fahrzeug lesen?</string>
   <string name="xml_tool_search_ecus">ECUs werden gesucht.\nErkannt: {0}/{1}</string>
   <string name="xml_tool_sel_mwtab_info">Es wurden mehrere Datentabellen für diese ECU gefunden.\nBitte wählen Sie die Datentabelle, welche am Besten für Ihre ECU passt.\nWenn die 7. und 8. Stelle der FG-Nummer im Namen enthalten ist, sollte man diese Tabelle bevorzugen.</string>
   <string name="xml_tool_no_mwtab">Es wurden keine Datentabellen für diese ECU gefunden</string>

@@ -210,6 +210,8 @@
   <string name="xml_tool_clear_ecus">Удалить существующие ECU файлы?</string>
   <string name="xml_tool_del_all_info">Удалить всю информацию (в том числе XML-файлы) для этой конфигурации?</string>
   <string name="xml_tool_reset_ecu_setting">Удалить все настройки для этого ECU?</string>
+  <!--Translate-->
+  <string name="xml_tool_read_ecu_again">Do you want to read the complete ECU list from the vehicle again?</string>
   <string name="xml_tool_search_ecus">Поиск ECU файлов.\nОбнаружено: {0}/{1}</string>
   <string name="xml_tool_sel_mwtab_info">Для этого ECU найдено несколько таблиц данных.\nПожалуйста, выберите таблицу данных, которая лучше всего подходит для вашего ECU.\nСледует отдать предпочтение таблице, в названии которой присутствуют значения 7-ой и 8-ой позиции VIN-номера.</string>
   <string name="xml_tool_no_mwtab">Не обнаружено таблиц данных для этого ECU файла</string>
