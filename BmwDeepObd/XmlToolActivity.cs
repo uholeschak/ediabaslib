@@ -2047,7 +2047,7 @@ namespace BmwDeepObd
                     if (!string.IsNullOrEmpty(detectedVin))
                     {
                         _vin = detectedVin;
-                        ReadAllXml();
+                        ReadAllXml(true);
                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECUs found for VIN: {0}", _ecuList.Count);
                         bool readEcus = true;
                         if (_ecuList.Count > 0)
@@ -3661,7 +3661,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void ReadErrorsXml(XDocument document)
+        private void ReadErrorsXml(XDocument document, bool addUnusedEcus)
         {
             if (document.Root == null)
             {
@@ -3696,7 +3696,7 @@ namespace BmwDeepObd
                     }
                 }
             }
-            if (_manualConfigIdx > 0)
+            if (addUnusedEcus || (_manualConfigIdx > 0))
             {   // manual mode, add missing entries
                 foreach (XElement ecuNode in errorsNode.Elements(ns + "ecu"))
                 {
@@ -4172,7 +4172,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void ReadAllXml()
+        private void ReadAllXml(bool addUnusedEcus = false)
         {
             _addErrorsPage = true;
             string xmlFileDir = XmlFileDir();
@@ -4200,7 +4200,7 @@ namespace BmwDeepObd
                 try
                 {
                     XDocument documentPages = XDocument.Load(xmlErrorsFile);
-                    ReadErrorsXml(documentPages);
+                    ReadErrorsXml(documentPages, addUnusedEcus);
                 }
                 catch (Exception)
                 {
