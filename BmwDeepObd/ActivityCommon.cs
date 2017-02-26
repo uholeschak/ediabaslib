@@ -329,6 +329,7 @@ namespace BmwDeepObd
         private static string _externalWritePath;
         private static string _customStorageMedia;
         private static string _appId;
+        private static bool _btEnableFailed;
         private readonly BluetoothAdapter _btAdapter;
         private readonly Java.Lang.Object _clipboardManager;
         private readonly WifiManager _maWifi;
@@ -448,6 +449,7 @@ namespace BmwDeepObd
             }
         }
 
+        // ReSharper disable once ConvertToAutoProperty
         public Java.Lang.Object ClipboardManager => _clipboardManager;
 
         public BluetoothAdapter BtAdapter => _btAdapter;
@@ -1360,12 +1362,15 @@ namespace BmwDeepObd
                         try
                         {
 #pragma warning disable 0618
-                            _btAdapter.Enable();
+                            if (!_btAdapter.Enable())
+                            {
+                                _btEnableFailed = true;
+                            }
 #pragma warning restore 0618
                         }
                         catch (Exception)
                         {
-                            // ignored
+                            _btEnableFailed = true;
                         }
                     }
                     break;
@@ -1411,6 +1416,10 @@ namespace BmwDeepObd
             switch (_selectedInterface)
             {
                 case InterfaceType.Bluetooth:
+                    if (_btEnableFailed)
+                    {
+                        return false;
+                    }
                     _activateAlertDialog = new AlertDialog.Builder(_activity)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
