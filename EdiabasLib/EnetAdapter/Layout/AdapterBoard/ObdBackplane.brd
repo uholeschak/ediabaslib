@@ -140,10 +140,10 @@
 </layers>
 <board>
 <plain>
-<wire x1="0" y1="0" x2="36" y2="0" width="0" layer="20"/>
-<wire x1="36" y1="0" x2="36" y2="20" width="0" layer="20"/>
-<wire x1="36" y1="20" x2="0" y2="20" width="0" layer="20"/>
-<wire x1="0" y1="20" x2="0" y2="0" width="0" layer="20"/>
+<wire x1="1" y1="0" x2="34" y2="0" width="0" layer="20"/>
+<wire x1="34" y1="0" x2="34" y2="20" width="0" layer="20"/>
+<wire x1="34" y1="20" x2="1" y2="20" width="0" layer="20"/>
+<wire x1="1" y1="20" x2="1" y2="0" width="0" layer="20"/>
 </plain>
 <libraries>
 <library name="diode">
@@ -270,29 +270,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="-4.318" y1="3.1496" x2="-4.318" y2="0.3048" width="0.1524" layer="51"/>
 <text x="-5.0038" y="3.937" size="2.0828" layer="25" ratio="10" rot="SR0">&gt;NAME</text>
 <text x="-5.715" y="-6.9342" size="2.0828" layer="27" ratio="10" rot="SR0">&gt;VALUE</text>
-</package>
-<package name="FPC-FFC-CONNECTOR-08-1MM">
-<smd name="1" x="3.5052" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<smd name="2" x="2.4892" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<smd name="3" x="1.4986" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<smd name="4" x="0.508" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<smd name="5" x="-0.508" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<smd name="6" x="-1.4986" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<smd name="7" x="-2.4892" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<smd name="8" x="-3.5052" y="-1.2954" dx="2.54" dy="0.6096" layer="1" rot="R270"/>
-<wire x1="4.1402" y1="0.3048" x2="4.0386" y2="0.127" width="0.1524" layer="21"/>
-<wire x1="-4.2418" y1="0.3048" x2="4.1402" y2="0.3048" width="0.1524" layer="21"/>
-<wire x1="4.1402" y1="0.3048" x2="4.2418" y2="0.3048" width="0.1524" layer="21"/>
-<wire x1="4.1402" y1="0.3048" x2="3.5052" y2="-0.9652" width="0.1524" layer="51"/>
-<wire x1="2.8702" y1="0.3048" x2="3.5052" y2="-0.9652" width="0.1524" layer="51"/>
-<wire x1="-4.318" y1="0.3048" x2="2.8702" y2="0.3048" width="0.1524" layer="51"/>
-<wire x1="2.8702" y1="0.3048" x2="4.1402" y2="0.3048" width="0.1524" layer="51"/>
-<wire x1="4.1402" y1="0.3048" x2="4.318" y2="0.3048" width="0.1524" layer="51"/>
-<wire x1="4.318" y1="0.3048" x2="4.318" y2="3.1496" width="0.1524" layer="51"/>
-<wire x1="4.318" y1="3.1496" x2="-4.318" y2="3.1496" width="0.1524" layer="51"/>
-<wire x1="-4.318" y1="3.1496" x2="-4.318" y2="0.3048" width="0.1524" layer="51"/>
-<text x="-5.0038" y="3.937" size="2.0828" layer="25" ratio="10" rot="SR0">&gt;NAME</text>
-<text x="-5.715" y="-5.1562" size="2.0828" layer="27" ratio="10" rot="SR0">&gt;VALUE</text>
 </package>
 </packages>
 </library>
@@ -1393,90 +1370,88 @@ for trimmer refence see : &lt;u&gt;www.electrospec-inc.com/cross_references/trim
 <class number="0" name="default" width="0" drill="0">
 </class>
 </classes>
-<designrules name="PCB-POOL Standard">
-<description language="de">&lt;b&gt;EAGLE Design Rules Prototypen  für PCB-POOL(R)&lt;/b&gt;
+<designrules name="Elecrow_2-layer_PCB_eagle_rule">
+<description language="de">&lt;b&gt;EAGLE Design Rules&lt;/b&gt;
 &lt;p&gt;
-Wir haben in diesem DRU File alle notwendigen Design Einstellungen vorgenommen, damit Sie Ihre Leiterplatte 
-gemaess unseren Mindestanforderungen im Standard bestellen koennen. Die Optionen Shapes und Misc sind dabei nicht relevant.
-Der minimale und maximale Wert für Roundness Shapes kann frei gewählt werden.
-Bitte beachten Sie, daß die Mindesteinstellungen nicht geaendert werden, da ansonsten keine Gewaehrleistung für eine 
-fehlerfreie Produktion übernommen werden kann.&lt;br&gt;
-Abzudeckende Vias koennen in Masks (unter Limit) eingestellt werden.
-&lt;/p&gt;Ihr Beta LAYOUT Team
-&lt;p&gt;&lt;p&gt;
-&lt;b&gt;EAGLE Design Rules Prototypes to use with PCB-POOL(R)&lt;/b&gt;
+Die Standard-Design-Rules sind so gewählt, dass sie für 
+die meisten Anwendungen passen. Sollte ihre Platine 
+besondere Anforderungen haben, treffen Sie die erforderlichen
+Einstellungen hier und speichern die Design Rules unter 
+einem neuen Namen ab.</description>
+<description language="en">&lt;b&gt;EAGLE Design Rules&lt;/b&gt;
 &lt;p&gt;
-The design rules in this DRU file have been set to cover our minimum standard requirements, the options Shapes and  Misc are not
-relevant. Values for Roundness (Shapes) can be chosen freely. Please do not change these minimum
-requirements to avoid problems during production.&lt;br&gt;
-Covered vias can be set in Masks (Limit).
-
-&lt;/p&gt;Your Beta LAYOUT Team</description>
+The default Design Rules have been set to cover
+a wide range of applications. Your particular design
+may have different requirements, so please make the
+necessary adjustments and save your customized
+design rules under a new name.</description>
+<description language="zh">&lt;b&gt;Elecrow PCB EAGLE Design Rules&lt;/b&gt;
+</description>
 <param name="layerSetup" value="(1*16)"/>
 <param name="mtCopper" value="0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm"/>
-<param name="mtIsolate" value="1.5mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm"/>
-<param name="mdWireWire" value="0.15mm"/>
-<param name="mdWirePad" value="0.15mm"/>
-<param name="mdWireVia" value="0.15mm"/>
-<param name="mdPadPad" value="0.15mm"/>
-<param name="mdPadVia" value="0.15mm"/>
-<param name="mdViaVia" value="0.15mm"/>
-<param name="mdSmdPad" value="0.15mm"/>
-<param name="mdSmdVia" value="0.15mm"/>
-<param name="mdSmdSmd" value="0.15mm"/>
-<param name="mdViaViaSameLayer" value="0.2mm"/>
+<param name="mtIsolate" value="1.6mm 1.2mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm"/>
+<param name="mdWireWire" value="6mil"/>
+<param name="mdWirePad" value="8mil"/>
+<param name="mdWireVia" value="6mil"/>
+<param name="mdPadPad" value="12mil"/>
+<param name="mdPadVia" value="8mil"/>
+<param name="mdViaVia" value="12mil"/>
+<param name="mdSmdPad" value="0mil"/>
+<param name="mdSmdVia" value="0mil"/>
+<param name="mdSmdSmd" value="0mil"/>
+<param name="mdViaViaSameLayer" value="8mil"/>
 <param name="mnLayersViaInSmd" value="2"/>
-<param name="mdCopperDimension" value="0.3mm"/>
-<param name="mdDrill" value="0.2mm"/>
+<param name="mdCopperDimension" value="20mil"/>
+<param name="mdDrill" value="10mil"/>
 <param name="mdSmdStop" value="0mil"/>
-<param name="msWidth" value="0.15mm"/>
-<param name="msDrill" value="0.3mm"/>
-<param name="msMicroVia" value="25mm"/>
+<param name="msWidth" value="6mil"/>
+<param name="msDrill" value="12mil"/>
+<param name="msMicroVia" value="12mil"/>
 <param name="msBlindViaRatio" value="0.5"/>
-<param name="rvPadTop" value="0"/>
-<param name="rvPadInner" value="0"/>
-<param name="rvPadBottom" value="0"/>
-<param name="rvViaOuter" value="0.4"/>
-<param name="rvViaInner" value="0.4"/>
-<param name="rvMicroViaOuter" value="0"/>
-<param name="rvMicroViaInner" value="0"/>
-<param name="rlMinPadTop" value="0.2mm"/>
-<param name="rlMaxPadTop" value="2.5mm"/>
-<param name="rlMinPadInner" value="0.2mm"/>
-<param name="rlMaxPadInner" value="2.5mm"/>
-<param name="rlMinPadBottom" value="0.2mm"/>
-<param name="rlMaxPadBottom" value="2.5mm"/>
-<param name="rlMinViaOuter" value="0.15mm"/>
-<param name="rlMaxViaOuter" value="2.5mm"/>
-<param name="rlMinViaInner" value="0.15mm"/>
-<param name="rlMaxViaInner" value="2.5mm"/>
-<param name="rlMinMicroViaOuter" value="2.5mm"/>
-<param name="rlMaxMicroViaOuter" value="25mm"/>
-<param name="rlMinMicroViaInner" value="2.5mm"/>
-<param name="rlMaxMicroViaInner" value="25mm"/>
+<param name="rvPadTop" value="0.25"/>
+<param name="rvPadInner" value="0.25"/>
+<param name="rvPadBottom" value="0.25"/>
+<param name="rvViaOuter" value="0.25"/>
+<param name="rvViaInner" value="0.25"/>
+<param name="rvMicroViaOuter" value="0.25"/>
+<param name="rvMicroViaInner" value="0.25"/>
+<param name="rlMinPadTop" value="6mil"/>
+<param name="rlMaxPadTop" value="20mil"/>
+<param name="rlMinPadInner" value="6mil"/>
+<param name="rlMaxPadInner" value="20mil"/>
+<param name="rlMinPadBottom" value="6mil"/>
+<param name="rlMaxPadBottom" value="20mil"/>
+<param name="rlMinViaOuter" value="6mil"/>
+<param name="rlMaxViaOuter" value="20mil"/>
+<param name="rlMinViaInner" value="6mil"/>
+<param name="rlMaxViaInner" value="20mil"/>
+<param name="rlMinMicroViaOuter" value="4mil"/>
+<param name="rlMaxMicroViaOuter" value="20mil"/>
+<param name="rlMinMicroViaInner" value="4mil"/>
+<param name="rlMaxMicroViaInner" value="20mil"/>
 <param name="psTop" value="-1"/>
 <param name="psBottom" value="-1"/>
-<param name="psFirst" value="-1"/>
+<param name="psFirst" value="0"/>
 <param name="psElongationLong" value="100"/>
 <param name="psElongationOffset" value="100"/>
-<param name="mvStopFrame" value="0"/>
+<param name="mvStopFrame" value="1"/>
 <param name="mvCreamFrame" value="0"/>
-<param name="mlMinStopFrame" value="0.075mm"/>
-<param name="mlMaxStopFrame" value="0.2mm"/>
+<param name="mlMinStopFrame" value="0mil"/>
+<param name="mlMaxStopFrame" value="0mil"/>
 <param name="mlMinCreamFrame" value="0mil"/>
-<param name="mlMaxCreamFrame" value="0.2mm"/>
-<param name="mlViaStopLimit" value="0mil"/>
+<param name="mlMaxCreamFrame" value="0mil"/>
+<param name="mlViaStopLimit" value="100mil"/>
 <param name="srRoundness" value="0"/>
 <param name="srMinRoundness" value="0mil"/>
 <param name="srMaxRoundness" value="0mil"/>
-<param name="slThermalIsolate" value="0.2mm"/>
+<param name="slThermalIsolate" value="10mil"/>
 <param name="slThermalsForVias" value="0"/>
 <param name="dpMaxLengthDifference" value="10mm"/>
 <param name="dpGapFactor" value="2.5"/>
 <param name="checkGrid" value="0"/>
 <param name="checkAngle" value="0"/>
 <param name="checkFont" value="1"/>
-<param name="checkRestrict" value="1"/>
+<param name="checkRestrict" value="0"/>
 <param name="useDiameter" value="13"/>
 <param name="maxErrors" value="50"/>
 </designrules>
@@ -1586,16 +1561,9 @@ Covered vias can be set in Masks (Limit).
 <element name="OUT+" library="pinhead" package="1X01" value="5V" x="3.81" y="2.54"/>
 <element name="OUT-" library="pinhead" package="1X01" value="GND" x="12.7" y="2.54"/>
 <element name="R1" library="resistor" package="R2512" value="511" x="6.35" y="10.16"/>
-<element name="POWER+" library="pinhead" package="1X01" value="5V" x="31.75" y="2.54"/>
-<element name="POWER-" library="pinhead" package="1X01" value="GND" x="31.75" y="10.16"/>
-<element name="U1" library="obd_special" package="FPC-FFC-CONNECTOR-08-1MM" value="FPC-FFC-CONNECTOR-08-1MM" x="18.2" y="16.51" rot="R180">
-<attribute name="OC_NEWARK" value="07P8553" x="18.2" y="16.51" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="OC_FARNELL" value="-" x="18.2" y="16.51" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="MPN" value="52207-0885" x="18.2" y="16.51" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="SUPPLIER" value="Molex" x="18.2" y="16.51" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="PACKAGE" value="SOCKET FPC, SMT, 1MM, 8 WAY" x="18.2" y="16.51" size="1.778" layer="27" rot="R180" display="off"/>
-</element>
-<element name="U2" library="obd_special" package="FPC-FFC-CONNECTOR-08-1MM-L" value="FPC-FFC-CONNECTOR-08-1MM-L" x="21" y="7.62" rot="R180"/>
+<element name="POWER+" library="pinhead" package="1X01" value="5V" x="27.94" y="2.54"/>
+<element name="POWER-" library="pinhead" package="1X01" value="GND" x="27.94" y="10.16"/>
+<element name="U1" library="obd_special" package="FPC-FFC-CONNECTOR-08-1MM-L" value="FPC-FFC-CONNECTOR-08-1MM-L" x="20.32" y="7.747" rot="R180"/>
 </elements>
 <signals>
 <signal name="GND">
@@ -1605,26 +1573,10 @@ Covered vias can be set in Masks (Limit).
 <contactref element="POWER-" pad="1"/>
 <wire x1="12.7" y1="2.54" x2="12.7" y2="3.01" width="0.8128" layer="1"/>
 <wire x1="12.7" y1="3.01" x2="16.08" y2="5.79" width="0.8128" layer="1"/>
-<polygon width="0.254" layer="1" spacing="0.254" isolate="0.4064">
-<vertex x="12.065" y="11.43"/>
-<vertex x="12.065" y="4.445"/>
-<vertex x="15.875" y="4.445"/>
-<vertex x="15.875" y="3.175"/>
-<vertex x="29.21" y="3.175"/>
-<vertex x="29.21" y="4.445"/>
-<vertex x="34.29" y="4.445"/>
-<vertex x="34.29" y="11.43"/>
-</polygon>
-<contactref element="IN-" pad="1"/>
-<polygon width="0.254" layer="1" spacing="0.254" isolate="0.4064">
-<vertex x="12.065" y="11.43"/>
-<vertex x="12.065" y="19.685"/>
-<vertex x="13.97" y="19.685"/>
-<vertex x="13.97" y="15.875"/>
-<vertex x="14.605" y="15.24"/>
-<vertex x="14.605" y="11.43"/>
-<vertex x="12.7" y="11.43"/>
-</polygon>
+<wire x1="20.03" y1="5.79" x2="20.03" y2="9.87" width="0.8128" layer="16"/>
+<wire x1="20.03" y1="9.87" x2="20.32" y2="10.16" width="0.8128" layer="16"/>
+<wire x1="20.32" y1="10.16" x2="27.94" y2="10.16" width="0.8128" layer="16"/>
+<wire x1="16.08" y1="5.79" x2="20.03" y2="5.79" width="0.8128" layer="1"/>
 </signal>
 <signal name="+12V">
 <contactref element="J1" pad="16"/>
@@ -1636,6 +1588,10 @@ Covered vias can be set in Masks (Limit).
 <vertex x="10.795" y="7.62"/>
 <vertex x="10.795" y="19.685"/>
 </polygon>
+<wire x1="4.23" y1="14.19" x2="4.23" y2="13.55" width="0.8128" layer="1"/>
+<wire x1="4.23" y1="13.55" x2="6.35" y2="11.43" width="0.8128" layer="1"/>
+<wire x1="6.35" y1="11.43" x2="6.35" y2="10.16" width="0.8128" layer="1"/>
+<wire x1="6.35" y1="10.16" x2="9.15" y2="10.16" width="0.8128" layer="1"/>
 </signal>
 <signal name="N$2">
 <contactref element="J1" pad="8"/>
@@ -1652,68 +1608,38 @@ Covered vias can be set in Masks (Limit).
 <signal name="+5V">
 <contactref element="OUT+" pad="1"/>
 <contactref element="POWER+" pad="1"/>
-<polygon width="0.254" layer="1" spacing="0.254" isolate="0.4064">
-<vertex x="1.905" y="0.635"/>
-<vertex x="34.29" y="0.635"/>
-<vertex x="34.29" y="3.175"/>
-<vertex x="30.48" y="3.175"/>
-<vertex x="30.48" y="1.905"/>
-<vertex x="14.605" y="1.905"/>
-<vertex x="14.605" y="3.175"/>
-<vertex x="1.905" y="3.175"/>
+<polygon width="0.254" layer="16" spacing="0.254" isolate="0.4064">
+<vertex x="3.175" y="0.635"/>
+<vertex x="29.21" y="0.635"/>
+<vertex x="29.21" y="3.175"/>
+<vertex x="3.175" y="3.175"/>
 </polygon>
 </signal>
 <signal name="N$3">
 <contactref element="J1" pad="3"/>
 <contactref element="U1" pad="8"/>
-<contactref element="U2" pad="8"/>
-<wire x1="34.29" y1="16.51" x2="32.9946" y2="17.8054" width="0.4064" layer="1"/>
-<wire x1="21.7052" y1="17.8054" x2="32.9946" y2="17.8054" width="0.4064" layer="1"/>
-<wire x1="33.02" y1="12.065" x2="34.29" y2="13.335" width="0.4064" layer="1"/>
-<wire x1="34.29" y1="13.335" x2="34.29" y2="16.51" width="0.4064" layer="1"/>
-<wire x1="24.5052" y1="9.6774" x2="24.5052" y2="11.8052" width="0.4064" layer="1"/>
-<wire x1="24.5052" y1="11.8052" x2="24.765" y2="12.065" width="0.4064" layer="1"/>
-<wire x1="24.765" y1="12.065" x2="33.02" y2="12.065" width="0.4064" layer="1"/>
-<wire x1="24.5052" y1="9.6774" x2="24.5052" y2="6.3152" width="0.4064" layer="1"/>
-<wire x1="24.5052" y1="6.3152" x2="23.98" y2="5.79" width="0.4064" layer="1"/>
+<wire x1="23.8252" y1="9.8044" x2="23.8252" y2="5.9448" width="0.4064" layer="1"/>
+<wire x1="23.8252" y1="5.9448" x2="23.98" y2="5.79" width="0.4064" layer="1"/>
 </signal>
 <signal name="N$4">
 <contactref element="J1" pad="11"/>
-<contactref element="U2" pad="7"/>
 <contactref element="U1" pad="7"/>
-<wire x1="23.4892" y1="9.6774" x2="23.4892" y2="13.3292" width="0.4064" layer="1"/>
-<wire x1="23.4892" y1="13.3292" x2="23.495" y2="13.335" width="0.4064" layer="1"/>
-<wire x1="23.495" y1="13.335" x2="23.495" y2="13.705" width="0.4064" layer="1"/>
-<wire x1="23.495" y1="13.705" x2="23.98" y2="14.19" width="0.4064" layer="1"/>
-<wire x1="20.6892" y1="17.8054" x2="20.6892" y2="16.1408" width="0.4064" layer="1"/>
-<wire x1="20.6892" y1="16.1408" x2="20.955" y2="15.875" width="0.4064" layer="1"/>
-<wire x1="20.955" y1="15.875" x2="22.295" y2="15.875" width="0.4064" layer="1"/>
-<wire x1="22.295" y1="15.875" x2="23.98" y2="14.19" width="0.4064" layer="1"/>
+<wire x1="22.8092" y1="9.8044" x2="22.8092" y2="13.0192" width="0.4064" layer="1"/>
+<wire x1="22.8092" y1="13.0192" x2="23.98" y2="14.19" width="0.4064" layer="1"/>
 </signal>
 <signal name="N$5">
 <contactref element="J1" pad="12"/>
 <contactref element="U1" pad="6"/>
-<contactref element="U2" pad="6"/>
-<wire x1="22.4986" y1="9.6774" x2="22.4986" y2="13.0614" width="0.4064" layer="1"/>
-<wire x1="22.4986" y1="13.0614" x2="22.225" y2="13.335" width="0.4064" layer="1"/>
-<wire x1="22.225" y1="13.335" x2="20.885" y2="13.335" width="0.4064" layer="1"/>
-<wire x1="19.6986" y1="17.8054" x2="19.6986" y2="14.5214" width="0.4064" layer="1"/>
-<wire x1="19.6986" y1="14.5214" x2="20.03" y2="14.19" width="0.4064" layer="1"/>
-<wire x1="20.885" y1="13.335" x2="20.03" y2="14.19" width="0.4064" layer="1"/>
+<wire x1="21.8186" y1="9.8044" x2="21.8186" y2="12.4014" width="0.4064" layer="1"/>
+<wire x1="21.8186" y1="12.4014" x2="20.03" y2="14.19" width="0.4064" layer="1"/>
 </signal>
 <signal name="N$6">
 <contactref element="J1" pad="13"/>
-<contactref element="U1" pad="5"/>
-<contactref element="U2" pad="5"/>
-<wire x1="21.508" y1="9.6774" x2="21.508" y2="12.147" width="0.4064" layer="1"/>
-<wire x1="21.508" y1="12.147" x2="21.2725" y2="12.3825" width="0.4064" layer="1"/>
-<wire x1="21.2725" y1="12.3825" x2="19.05" y2="12.3825" width="0.4064" layer="1"/>
-<wire x1="19.05" y1="12.3825" x2="17.4625" y2="13.97" width="0.4064" layer="1"/>
-<wire x1="17.4625" y1="13.97" x2="17.145" y2="13.97" width="0.4064" layer="1"/>
-<wire x1="17.145" y1="13.97" x2="16.3" y2="13.97" width="0.4064" layer="1"/>
-<wire x1="16.3" y1="13.97" x2="16.08" y2="14.19" width="0.4064" layer="1"/>
-<wire x1="18.708" y1="17.8054" x2="18.708" y2="15.533" width="0.4064" layer="1"/>
-<wire x1="18.708" y1="15.533" x2="17.145" y2="13.97" width="0.4064" layer="1"/>
+<contactref element="U1" pad="3"/>
+<wire x1="18.8214" y1="9.8044" x2="18.8214" y2="12.2936" width="0.4064" layer="1"/>
+<wire x1="18.8214" y1="12.2936" x2="18.415" y2="12.7" width="0.4064" layer="1"/>
+<wire x1="18.415" y1="12.7" x2="17.57" y2="12.7" width="0.4064" layer="1"/>
+<wire x1="17.57" y1="12.7" x2="16.08" y2="14.19" width="0.4064" layer="1"/>
 </signal>
 </signals>
 <errors>
