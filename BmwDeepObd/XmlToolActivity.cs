@@ -37,6 +37,7 @@ namespace BmwDeepObd
             RequestCanAdapterConfig,
             RequestSelectJobs,
             RequestYandexKey,
+            RequestEdiabasTool,
         }
 
         public class EcuInfo
@@ -442,6 +443,11 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestYandexKey:
                     ActivityCommon.EnableTranslation = !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey);
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                    break;
+
+                case ActivityRequest.RequestEdiabasTool:
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
                     break;
@@ -1048,6 +1054,23 @@ namespace BmwDeepObd
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestYandexKey);
         }
 
+        private void StartEdiabasTool(EcuInfo ecuInfo)
+        {
+            if (!EdiabasClose())
+            {
+                return;
+            }
+            Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _ecuDir);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _appDataDir);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraSgbdFile, Path.Combine(_ecuDir, ecuInfo.Sgbd));
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _deviceName);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _deviceAddress);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEdiabasTool);
+        }
+
         private void SelectInterface()
         {
             if (IsJobRunning())
@@ -1305,6 +1328,9 @@ namespace BmwDeepObd
             IMenuItem moveBottomMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_bottom);
             moveBottomMenu?.SetEnabled((itemPos + 1) < _ecuListAdapter.Items.Count);
 
+            IMenuItem ediabasToolMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_ediabas_tool);
+            ediabasToolMenu?.SetEnabled(itemPos >= 0 && itemPos < _ecuListAdapter.Items.Count && !IsJobRunning());
+
             popupContext.MenuItemClick += (sender, args) =>
             {
                 switch (args.Item.ItemId)
@@ -1342,6 +1368,13 @@ namespace BmwDeepObd
                         _ecuList.RemoveAt(itemPos);
                         _ecuList.Add(oldItem);
                         UpdateDisplay();
+                        break;
+                    }
+
+                    case Resource.Id.menu_xml_tool_ediabas_tool:
+                    {
+                        EcuInfo ecuInfo = _ecuList[itemPos];
+                        StartEdiabasTool(ecuInfo);
                         break;
                     }
                 }

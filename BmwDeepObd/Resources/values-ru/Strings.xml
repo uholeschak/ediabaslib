@@ -254,6 +254,7 @@
   <string name="menu_xml_tool_move_up">Переместить вверх</string>
   <string name="menu_xml_tool_move_down">Переместить вниз</string>
   <string name="menu_xml_tool_move_bottom">Переместить в конец</string>
+  <string name="menu_xml_tool_ediabas_tool">Ediabas утилита</string>
 
   <!-- XML Tool Ecu Activity -->
   <string name="xml_tool_ecu_title">Jobs для ECU: {0}</string>
