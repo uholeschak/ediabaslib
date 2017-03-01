@@ -51,6 +51,8 @@ namespace BmwDeepObd
 
             public List<string> CommentList { get; }
 
+            public List<string> CommentListTrans { get; set; }
+
             public bool Selected { get; set; }
         }
 
@@ -70,6 +72,8 @@ namespace BmwDeepObd
             public string ObjectName { get; }
 
             public List<string> Comments { get; }
+
+            public List<string> CommentsTrans { get; set; }
 
             public List<ExtraInfo> Arguments { get; }
 
@@ -121,6 +125,7 @@ namespace BmwDeepObd
         private bool _dataLogActive;
         private bool _commErrorsOccured;
         private bool _activityActive;
+        private bool _jobListTranslated;
         private readonly List<JobInfo> _jobList = new List<JobInfo>();
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -858,7 +863,8 @@ namespace BmwDeepObd
                 StringBuilder stringBuilderComments = new StringBuilder();
                 stringBuilderComments.Append(jobInfo.Name);
                 stringBuilderComments.Append(":");
-                foreach (string comment in jobInfo.Comments)
+                List<string> commentList = jobInfo.CommentsTrans ?? jobInfo.Comments;
+                foreach (string comment in commentList)
                 {
                     stringBuilderComments.Append("\r\n");
                     stringBuilderComments.Append(comment);
@@ -923,6 +929,179 @@ namespace BmwDeepObd
                 }
             }
             _infoListAdapter.NotifyDataSetChanged();
+        }
+
+        private bool IsTranslationRequired()
+        {
+            if (string.IsNullOrEmpty(_sgbdFileNameInitial))
+            {
+                return false;
+            }
+            return ActivityCommon.IsTranslationRequired();
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool TranslateEcuText(EventHandler<EventArgs> handler = null)
+        {
+            if (IsTranslationRequired() && ActivityCommon.EnableTranslation)
+            {
+                if (!_jobListTranslated)
+                {
+                    _jobListTranslated = true;
+                    List<string> stringList = new List<string>();
+                    foreach (JobInfo jobInfo in _jobList)
+                    {
+                        if (jobInfo.Comments != null && jobInfo.CommentsTrans == null)
+                        {
+                            foreach (string comment in jobInfo.Comments)
+                            {
+                                if (!string.IsNullOrEmpty(comment))
+                                {
+                                    stringList.Add(comment);
+                                }
+                            }
+                        }
+                        if (jobInfo.Arguments != null)
+                        {
+                            foreach (ExtraInfo extraInfo in jobInfo.Arguments)
+                            {
+                                if (extraInfo.CommentList != null && extraInfo.CommentListTrans == null)
+                                {
+                                    foreach (string comment in extraInfo.CommentList)
+                                    {
+                                        if (!string.IsNullOrEmpty(comment))
+                                        {
+                                            stringList.Add(comment);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (jobInfo.Results != null)
+                        {
+                            foreach (ExtraInfo extraInfo in jobInfo.Results)
+                            {
+                                if (extraInfo.CommentList != null && extraInfo.CommentListTrans == null)
+                                {
+                                    foreach (string comment in extraInfo.CommentList)
+                                    {
+                                        if (!string.IsNullOrEmpty(comment))
+                                        {
+                                            stringList.Add(comment);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (stringList.Count == 0)
+                    {
+                        return false;
+                    }
+                    if (_activityCommon.TranslateStrings(stringList, transList =>
+                    {
+                        try
+                        {
+                            if (transList != null && transList.Count == stringList.Count)
+                            {
+                                int transIndex = 0;
+                                foreach (JobInfo jobInfo in _jobList)
+                                {
+                                    if (jobInfo.Comments != null && jobInfo.CommentsTrans == null)
+                                    {
+                                        jobInfo.CommentsTrans = new List<string>();
+                                        foreach (string comment in jobInfo.Comments)
+                                        {
+                                            if (!string.IsNullOrEmpty(comment))
+                                            {
+                                                if (transIndex < transList.Count)
+                                                {
+                                                    jobInfo.CommentsTrans.Add(transList[transIndex++]);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (jobInfo.Arguments != null)
+                                    {
+                                        foreach (ExtraInfo extraInfo in jobInfo.Arguments)
+                                        {
+                                            if (extraInfo.CommentList != null && extraInfo.CommentListTrans == null)
+                                            {
+                                                extraInfo.CommentListTrans = new List<string>();
+                                                foreach (string comment in extraInfo.CommentList)
+                                                {
+                                                    if (!string.IsNullOrEmpty(comment))
+                                                    {
+                                                        if (transIndex < transList.Count)
+                                                        {
+                                                            extraInfo.CommentListTrans.Add(transList[transIndex++]);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (jobInfo.Results != null)
+                                    {
+                                        foreach (ExtraInfo extraInfo in jobInfo.Results)
+                                        {
+                                            if (extraInfo.CommentList != null && extraInfo.CommentListTrans == null)
+                                            {
+                                                extraInfo.CommentListTrans = new List<string>();
+                                                foreach (string comment in extraInfo.CommentList)
+                                                {
+                                                    if (!string.IsNullOrEmpty(comment))
+                                                    {
+                                                        if (transIndex < transList.Count)
+                                                        {
+                                                            extraInfo.CommentListTrans.Add(transList[transIndex++]);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                        handler?.Invoke(this, new EventArgs());
+                    }))
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                ResetTranslations();
+            }
+            return false;
+        }
+
+        private void ResetTranslations()
+        {
+            foreach (JobInfo jobInfo in _jobList)
+            {
+                jobInfo.CommentsTrans = null;
+                if (jobInfo.Arguments != null)
+                {
+                    foreach (ExtraInfo extraInfo in jobInfo.Arguments)
+                    {
+                        extraInfo.CommentListTrans = null;
+                    }
+                }
+                if (jobInfo.Results != null)
+                {
+                    foreach (ExtraInfo extraInfo in jobInfo.Results)
+                    {
+                        extraInfo.CommentListTrans = null;
+                    }
+                }
+            }
         }
 
         private void UpdateLogInfo()
@@ -1215,6 +1394,13 @@ namespace BmwDeepObd
 
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
+
+                    _jobListTranslated = false;
+                    TranslateEcuText((sender, args) =>
+                    {
+                        _jobListAdapter.NotifyDataSetChanged();
+                        NewJobSelected();
+                    });
                 });
             });
             _jobThread.Start();
@@ -1556,10 +1742,11 @@ namespace BmwDeepObd
                 TextView textName = view.FindViewById<TextView>(Resource.Id.textJobName);
                 TextView textDesc = view.FindViewById<TextView>(Resource.Id.textJobDesc);
                 textName.Text = item.Name;
-                if (item.Comments.Count > 0)
+                List<string> commentList = item.CommentsTrans ?? item.Comments;
+                if (commentList.Count > 0)
                 {
                     StringBuilder stringBuilderComments = new StringBuilder();
-                    foreach (string comment in item.Comments)
+                    foreach (string comment in commentList)
                     {
                         stringBuilderComments.Append(comment + " ");
                     }
@@ -1618,10 +1805,11 @@ namespace BmwDeepObd
                 TextView textResultName = view.FindViewById<TextView>(Resource.Id.textResultName);
                 TextView textResultDesc = view.FindViewById<TextView>(Resource.Id.textResultDesc);
                 textResultName.Text = item.Name;
-                if (item.CommentList.Count > 0)
+                List<string> commentList = item.CommentListTrans ?? item.CommentList;
+                if (commentList.Count > 0)
                 {
                     StringBuilder stringBuilderComments = new StringBuilder();
-                    foreach (string comment in item.CommentList)
+                    foreach (string comment in commentList)
                     {
                         stringBuilderComments.Append(comment + " ");
                     }
