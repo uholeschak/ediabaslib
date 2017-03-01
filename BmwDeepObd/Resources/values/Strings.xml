@@ -255,6 +255,7 @@
   <string name="menu_xml_tool_move_up">Move up</string>
   <string name="menu_xml_tool_move_down">Move down</string>
   <string name="menu_xml_tool_move_bottom">Move to bottom</string>
+  <string name="menu_xml_tool_ediabas_tool">Ediabas tool</string>
 
   <!-- XML Tool Ecu Activity -->
   <string name="xml_tool_ecu_title">Jobs for ECU: {0}</string>
