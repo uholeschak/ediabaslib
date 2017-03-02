@@ -1061,6 +1061,7 @@ namespace BmwDeepObd
                 return;
             }
             Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
+            EdiabasToolActivity.IntentTranslateActivty = _activityCommon;
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _ecuDir);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _appDataDir);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraSgbdFile, Path.Combine(_ecuDir, ecuInfo.Sgbd));

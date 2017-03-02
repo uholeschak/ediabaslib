@@ -90,6 +90,7 @@ namespace BmwDeepObd
         public const string ExtraEnetIp = "enet_ip";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
 
+        public static ActivityCommon IntentTranslateActivty { get; set; }
         private InputMethodManager _imm;
         private View _contentView;
         private View _barView;
@@ -209,7 +210,7 @@ namespace BmwDeepObd
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
                 }
-            }, BroadcastReceived)
+            }, BroadcastReceived, IntentTranslateActivty)
             {
                 SelectedInterface = (ActivityCommon.InterfaceType)
                     Intent.GetIntExtra(ExtraInterface, (int) ActivityCommon.InterfaceType.None)
@@ -931,19 +932,10 @@ namespace BmwDeepObd
             _infoListAdapter.NotifyDataSetChanged();
         }
 
-        private bool IsTranslationRequired()
-        {
-            if (string.IsNullOrEmpty(_sgbdFileNameInitial))
-            {
-                return false;
-            }
-            return ActivityCommon.IsTranslationRequired();
-        }
-
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool TranslateEcuText(EventHandler<EventArgs> handler = null)
         {
-            if (IsTranslationRequired() && ActivityCommon.EnableTranslation)
+            if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
             {
                 if (!_jobListTranslated)
                 {
@@ -1400,6 +1392,7 @@ namespace BmwDeepObd
                     {
                         _jobListAdapter.NotifyDataSetChanged();
                         NewJobSelected();
+                        DisplayJobComments();
                     });
                 });
             });
