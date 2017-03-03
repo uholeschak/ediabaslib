@@ -2220,8 +2220,8 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0b00b9
 			public const int action_image = 2131427513;
 			
-			// aapt resource value: 0x7f0b0110
-			public const int action_menu = 2131427600;
+			// aapt resource value: 0x7f0b0114
+			public const int action_menu = 2131427604;
 			
 			// aapt resource value: 0x7f0b0005
 			public const int action_menu_divider = 2131427333;
@@ -2241,8 +2241,8 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0b0043
 			public const int action_mode_close_button = 2131427395;
 			
-			// aapt resource value: 0x7f0b010e
-			public const int action_search = 2131427598;
+			// aapt resource value: 0x7f0b0112
+			public const int action_search = 2131427602;
 			
 			// aapt resource value: 0x7f0b00ba
 			public const int action_text = 2131427514;
@@ -2550,17 +2550,17 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0b00be
 			public const int media_actions = 2131427518;
 			
-			// aapt resource value: 0x7f0b010f
-			public const int menu_action_provider_connect = 2131427599;
+			// aapt resource value: 0x7f0b0113
+			public const int menu_action_provider_connect = 2131427603;
 			
 			// aapt resource value: 0x7f0b0109
 			public const int menu_adapter_config = 2131427593;
 			
-			// aapt resource value: 0x7f0b0116
-			public const int menu_download_ecu = 2131427606;
+			// aapt resource value: 0x7f0b011a
+			public const int menu_download_ecu = 2131427610;
 			
-			// aapt resource value: 0x7f0b0114
-			public const int menu_ediabas_tool = 2131427604;
+			// aapt resource value: 0x7f0b0118
+			public const int menu_ediabas_tool = 2131427608;
 			
 			// aapt resource value: 0x7f0b010a
 			public const int menu_enet_ip = 2131427594;
@@ -2571,23 +2571,23 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0b011b
 			public const int menu_info = 2131427611;
 			
-			// aapt resource value: 0x7f0b0111
-			public const int menu_manufacturer = 2131427601;
+			// aapt resource value: 0x7f0b0115
+			public const int menu_manufacturer = 2131427605;
 			
 			// aapt resource value: 0x7f0b0108
 			public const int menu_scan = 2131427592;
 			
-			// aapt resource value: 0x7f0b0112
-			public const int menu_sel_cfg = 2131427602;
+			// aapt resource value: 0x7f0b0116
+			public const int menu_sel_cfg = 2131427606;
 			
-			// aapt resource value: 0x7f0b0115
-			public const int menu_sel_media = 2131427605;
+			// aapt resource value: 0x7f0b0119
+			public const int menu_sel_media = 2131427609;
 			
 			// aapt resource value: 0x7f0b010c
 			public const int menu_send_trace = 2131427596;
 			
-			// aapt resource value: 0x7f0b010d
-			public const int menu_submenu_help = 2131427597;
+			// aapt resource value: 0x7f0b0111
+			public const int menu_submenu_help = 2131427601;
 			
 			// aapt resource value: 0x7f0b010b
 			public const int menu_submenu_log = 2131427595;
@@ -2604,20 +2604,20 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0b0107
 			public const int menu_tool_sel_sgbd_prg = 2131427591;
 			
-			// aapt resource value: 0x7f0b011a
-			public const int menu_translation_clear_cache = 2131427610;
+			// aapt resource value: 0x7f0b0110
+			public const int menu_translation_clear_cache = 2131427600;
 			
-			// aapt resource value: 0x7f0b0118
-			public const int menu_translation_enable = 2131427608;
+			// aapt resource value: 0x7f0b010e
+			public const int menu_translation_enable = 2131427598;
+			
+			// aapt resource value: 0x7f0b010d
+			public const int menu_translation_submenu = 2131427597;
+			
+			// aapt resource value: 0x7f0b010f
+			public const int menu_translation_yandex_key = 2131427599;
 			
 			// aapt resource value: 0x7f0b0117
-			public const int menu_translation_submenu = 2131427607;
-			
-			// aapt resource value: 0x7f0b0119
-			public const int menu_translation_yandex_key = 2131427609;
-			
-			// aapt resource value: 0x7f0b0113
-			public const int menu_xml_tool = 2131427603;
+			public const int menu_xml_tool = 2131427607;
 			
 			// aapt resource value: 0x7f0b0127
 			public const int menu_xml_tool_add_errors_page = 2131427623;

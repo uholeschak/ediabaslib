@@ -33,6 +33,7 @@ namespace BmwDeepObd
             RequestSelectSgbd,
             RequestSelectDevice,
             RequestCanAdapterConfig,
+            RequestYandexKey,
         }
 
         private class ExtraInfo
@@ -90,6 +91,7 @@ namespace BmwDeepObd
         public const string ExtraEnetIp = "enet_ip";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
 
+        public static ActivityCommon IntentTranslateActivty { get; set; }
         private InputMethodManager _imm;
         private View _contentView;
         private View _barView;
@@ -209,7 +211,7 @@ namespace BmwDeepObd
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
                 }
-            }, BroadcastReceived)
+            }, BroadcastReceived, IntentTranslateActivty)
             {
                 SelectedInterface = (ActivityCommon.InterfaceType)
                     Intent.GetIntExtra(ExtraInterface, (int) ActivityCommon.InterfaceType.None)
@@ -237,12 +239,13 @@ namespace BmwDeepObd
             base.OnResume();
 
             _activityActive = true;
-            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None)
+            if (!_activityCommon.RequestEnableTranslate((sender, args) =>
             {
-                SelectInterface();
+                HandleStartDialogs();
+            }))
+            {
+                HandleStartDialogs();
             }
-            SelectInterfaceEnable();
-            SupportInvalidateOptionsMenu();
         }
 
         protected override void OnPause()
@@ -317,6 +320,12 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestCanAdapterConfig:
+                    break;
+
+                case ActivityRequest.RequestYandexKey:
+                    ActivityCommon.EnableTranslation = !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey);
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
                     break;
             }
         }
@@ -408,6 +417,35 @@ namespace BmwDeepObd
 
             IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
             sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && !_offline && _traceActive && ActivityCommon.IsTraceFilePresent(_traceDir));
+
+            IMenuItem translationSubmenu = menu.FindItem(Resource.Id.menu_translation_submenu);
+            if (translationSubmenu != null)
+            {
+                translationSubmenu.SetEnabled(true);
+                translationSubmenu.SetVisible(ActivityCommon.IsTranslationRequired());
+            }
+
+            IMenuItem translationEnableMenu = menu.FindItem(Resource.Id.menu_translation_enable);
+            if (translationEnableMenu != null)
+            {
+                translationEnableMenu.SetEnabled(!commActive || !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey));
+                translationEnableMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                translationEnableMenu.SetChecked(ActivityCommon.EnableTranslation);
+            }
+
+            IMenuItem translationYandexKeyMenu = menu.FindItem(Resource.Id.menu_translation_yandex_key);
+            if (translationYandexKeyMenu != null)
+            {
+                translationYandexKeyMenu.SetEnabled(!commActive);
+                translationYandexKeyMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+            }
+
+            IMenuItem translationClearCacheMenu = menu.FindItem(Resource.Id.menu_translation_clear_cache);
+            if (translationClearCacheMenu != null)
+            {
+                translationClearCacheMenu.SetEnabled(!_activityCommon.IsTranslationCacheEmpty());
+                translationClearCacheMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+            }
 
             return base.OnPrepareOptionsMenu(menu);
         }
@@ -527,6 +565,31 @@ namespace BmwDeepObd
                     SendTraceFileAlways(null);
                     return true;
 
+                case Resource.Id.menu_translation_enable:
+                    if (!ActivityCommon.EnableTranslation && string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey))
+                    {
+                        EditYandexKey();
+                        return true;
+                    }
+                    ActivityCommon.EnableTranslation = !ActivityCommon.EnableTranslation;
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                    UpdateTranslationText();
+                    return true;
+
+                case Resource.Id.menu_translation_yandex_key:
+                    EditYandexKey();
+                    return true;
+
+                case Resource.Id.menu_translation_clear_cache:
+                    _activityCommon.ClearTranslationCache();
+                    ResetTranslations();
+                    _jobListTranslated = false;
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                    UpdateTranslationText();
+                    return true;
+
                 case Resource.Id.menu_submenu_help:
                     _activityCommon.ShowWifiConnectedWarning(() =>
                     {
@@ -559,6 +622,17 @@ namespace BmwDeepObd
                     break;
             }
             return false;
+        }
+
+        private void HandleStartDialogs()
+        {
+            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None)
+            {
+                SelectInterface();
+            }
+            SelectInterfaceEnable();
+            SupportInvalidateOptionsMenu();
+            UpdateDisplay();
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
@@ -636,8 +710,20 @@ namespace BmwDeepObd
             return false;
         }
 
+        private void UpdateTranslationText()
+        {
+            _jobListAdapter.NotifyDataSetChanged();
+            NewJobSelected();
+            DisplayJobComments();
+        }
+
         private void UpdateDisplay()
         {
+            if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation && string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey))
+            {
+                EditYandexKey();
+                return;
+            }
             bool checkContinuousEnable = true;
             bool buttonConnectEnable = true;
             bool inputsEnabled = true;
@@ -659,7 +745,21 @@ namespace BmwDeepObd
                 {
                     buttonConnectEnable = false;
                 }
+                if (TranslateEcuText((sender, args) =>
+                {
+                    UpdateDisplay();
+                    UpdateTranslationText();
+                }))
+                {
+                    return;
+                }
             }
+
+            if (!ActivityCommon.EnableTranslation)
+            {
+                _jobListTranslated = false;
+            }
+
             if (IsJobRunning() || _offline)
             {
                 checkContinuousEnable = false;
@@ -799,6 +899,12 @@ namespace BmwDeepObd
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestCanAdapterConfig);
         }
 
+        private void EditYandexKey()
+        {
+            Intent serverIntent = new Intent(this, typeof(YandexKeyActivity));
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestYandexKey);
+        }
+
         private void EnetIpConfig()
         {
             if (!EdiabasClose())
@@ -931,19 +1037,10 @@ namespace BmwDeepObd
             _infoListAdapter.NotifyDataSetChanged();
         }
 
-        private bool IsTranslationRequired()
-        {
-            if (string.IsNullOrEmpty(_sgbdFileNameInitial))
-            {
-                return false;
-            }
-            return ActivityCommon.IsTranslationRequired();
-        }
-
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool TranslateEcuText(EventHandler<EventArgs> handler = null)
         {
-            if (IsTranslationRequired() && ActivityCommon.EnableTranslation)
+            if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
             {
                 if (!_jobListTranslated)
                 {
@@ -1392,15 +1489,9 @@ namespace BmwDeepObd
                     }
                     _jobListAdapter.NotifyDataSetChanged();
 
+                    _jobListTranslated = false;
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
-
-                    _jobListTranslated = false;
-                    TranslateEcuText((sender, args) =>
-                    {
-                        _jobListAdapter.NotifyDataSetChanged();
-                        NewJobSelected();
-                    });
                 });
             });
             _jobThread.Start();

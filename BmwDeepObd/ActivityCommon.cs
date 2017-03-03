@@ -448,6 +448,7 @@ namespace BmwDeepObd
             }
         }
 
+        // ReSharper disable once ConvertToAutoProperty
         public Java.Lang.Object ClipboardManager => _clipboardManager;
 
         public BluetoothAdapter BtAdapter => _btAdapter;
@@ -464,7 +465,8 @@ namespace BmwDeepObd
 
         public XDocument XmlDocDtcCodes { get; set; }
 
-        public ActivityCommon(Android.App.Activity activity, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null, BcReceiverReceivedDelegate bcReceiverReceivedHandler = null)
+        public ActivityCommon(Android.App.Activity activity, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null,
+            BcReceiverReceivedDelegate bcReceiverReceivedHandler = null, ActivityCommon cacheActivity = null)
         {
             _activity = activity;
             _bcReceiverUpdateDisplayHandler = bcReceiverUpdateDisplayHandler;
@@ -485,7 +487,7 @@ namespace BmwDeepObd
                 _wakeLockCpu.SetReferenceCounted(false);
             }
             _selectedInterface = InterfaceType.None;
-            _yandexTransDict = new Dictionary<string, Dictionary<string, string>>();
+            _yandexTransDict = cacheActivity?._yandexTransDict ?? new Dictionary<string, Dictionary<string, string>>();
 
             if ((_bcReceiverUpdateDisplayHandler != null) || (_bcReceiverReceivedHandler != null))
             {
