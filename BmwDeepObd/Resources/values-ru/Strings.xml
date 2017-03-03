@@ -274,6 +274,9 @@
   <string name="xml_tool_ecu_log_tag">Тег для протоколированных данных</string>
   <string name="xml_tool_ecu_test_format">Тестировать формат</string>
   <string name="xml_tool_button_test_format">Считать</string>
+  <!--Translate-->
+  <string name="xml_tool_ecu_add_functions">Additional functions</string>
+  <string name="xml_tool_button_ediabas_tool">Ediabas утилита</string>
   <string name="xml_tool_execute_test_job">Выполнение Job</string>
   <string name="xml_tool_read_test_job_failed">Не удалось выполнить Job</string>
 

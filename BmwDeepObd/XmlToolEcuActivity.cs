@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Text;
+using Android.Content;
 using Android.Content.Res;
 using Android.OS;
 using Android.Support.V7.App;
@@ -92,6 +93,7 @@ namespace BmwDeepObd
 
         // Intent extra
         public const string ExtraEcuName = "ecu_name";
+        public const string ExtraCallEdiabasTool = "ediabas_tool";
         private static readonly int[] LengthValues = {0, 1, 2, 3, 4, 5, 6, 8, 10, 15, 20, 25, 30, 35, 40};
 
         public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
@@ -124,6 +126,7 @@ namespace BmwDeepObd
         private StringObjAdapter _spinnerFormatTypeAdapter;
         private Button _buttonTestFormat;
         private TextView _textViewTestFormatOutput;
+        private Button _buttonEdiabasTool;
         private ActivityCommon _activityCommon;
         private XmlToolActivity.EcuInfo _ecuInfo;
         private EdiabasNet _ediabas;
@@ -257,6 +260,16 @@ namespace BmwDeepObd
                 ExecuteTestFormat();
             };
             _textViewTestFormatOutput = FindViewById<TextView>(Resource.Id.textViewTestFormatOutput);
+
+            _buttonEdiabasTool = FindViewById<Button>(Resource.Id.buttonEdiabasTool);
+            _buttonEdiabasTool.Enabled = true;
+            _buttonEdiabasTool.Click += (sender, args) =>
+            {
+                Intent intent = new Intent();
+                intent.PutExtra(ExtraCallEdiabasTool, true);
+                SetResult(Android.App.Result.Ok, intent);
+                Finish();
+            };
 
             _layoutJobConfig.Visibility = ViewStates.Gone;
             UpdateDisplay();

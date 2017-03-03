@@ -274,6 +274,8 @@
   <string name="xml_tool_ecu_log_tag">Tag für Datenaufzeichnung</string>
   <string name="xml_tool_ecu_test_format">Format testen</string>
   <string name="xml_tool_button_test_format">Lesen</string>
+  <string name="xml_tool_ecu_add_functions">Zusätzliche Funtionen</string>
+  <string name="xml_tool_button_ediabas_tool">Ediabas tool</string>
   <string name="xml_tool_execute_test_job">Job wird ausgeführt</string>
   <string name="xml_tool_read_test_job_failed">Ausführen des Jobs fehlgeschlagen</string>
 

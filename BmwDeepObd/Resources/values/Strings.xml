@@ -275,6 +275,8 @@
   <string name="xml_tool_ecu_log_tag">Tag for data logging</string>
   <string name="xml_tool_ecu_test_format">Test format</string>
   <string name="xml_tool_button_test_format">Read</string>
+  <string name="xml_tool_ecu_add_functions">Additional functions</string>
+  <string name="xml_tool_button_ediabas_tool">Ediabas tool</string>
   <string name="xml_tool_execute_test_job">Executing job</string>
   <string name="xml_tool_read_test_job_failed">Executing job failed</string>
 
