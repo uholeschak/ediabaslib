@@ -1061,10 +1061,9 @@ namespace BmwDeepObd
             return vehicleType;
         }
 
-        public static ReadOnlyCollection<IEcuLogisticsEntry> GetEcuLogisticsFromVin(string vin, EdiabasNet ediabas)
+        public static ReadOnlyCollection<IEcuLogisticsEntry> GetEcuLogisticsFromVehicleType(string vehicleType, EdiabasNet ediabas)
         {
-            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU logistics from VIN: {0}", vin?? "No VIN");
-            string vehicleType = GetVehicleTypeFromVin(vin, ediabas);
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU logistics from vehicle type: {0}", vehicleType ?? "No type");
             if (vehicleType == null)
             {
                 return null;

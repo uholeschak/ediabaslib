@@ -2151,7 +2151,11 @@ namespace BmwDeepObd
                         ClearEcuList();
                     }
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group files: {0}", groupFiles);
-                    ReadOnlyCollection<VehicleInfo.IEcuLogisticsEntry> ecuLogistics = VehicleInfo.GetEcuLogisticsFromVin(detectedVin, _ediabas);
+                    if (string.IsNullOrEmpty(vehicleType))
+                    {
+                        vehicleType = VehicleInfo.GetVehicleTypeFromVin(detectedVin, _ediabas);
+                    }
+                    ReadOnlyCollection<VehicleInfo.IEcuLogisticsEntry> ecuLogistics = VehicleInfo.GetEcuLogisticsFromVehicleType(vehicleType, _ediabas);
                     string[] groupArray = groupFiles.Split(',');
                     List<string> groupList;
                     if (ecuLogistics != null)
