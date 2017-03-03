@@ -186,6 +186,18 @@
                     android:layout_height="wrap_content"
                     android:singleLine="true" />
             </LinearLayout>
+            <TextView
+                android:id="@+id/textViewAddFunctions"
+                android:text="@+string/xml_tool_ecu_add_functions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#666"
+                android:textColor="#fff" />
+            <Button
+                android:id="@+id/buttonEdiabasTool"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/xml_tool_button_ediabas_tool" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

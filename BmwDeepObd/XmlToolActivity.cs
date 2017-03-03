@@ -439,6 +439,14 @@ namespace BmwDeepObd
                         _ecuListAdapter.NotifyDataSetChanged();
                         UpdateDisplay();
                     }
+                    if (data != null && resultCode == Android.App.Result.Ok)
+                    {
+                        bool callEdiabasTool = data.Extras.GetBoolean(XmlToolEcuActivity.ExtraCallEdiabasTool, false);
+                        if (callEdiabasTool)
+                        {
+                            StartEdiabasTool(XmlToolEcuActivity.IntentEcuInfo);
+                        }
+                    }
                     break;
 
                 case ActivityRequest.RequestYandexKey:
@@ -1056,6 +1064,10 @@ namespace BmwDeepObd
 
         private void StartEdiabasTool(EcuInfo ecuInfo)
         {
+            if (ecuInfo == null)
+            {
+                return;
+            }
             if (!EdiabasClose())
             {
                 return;
