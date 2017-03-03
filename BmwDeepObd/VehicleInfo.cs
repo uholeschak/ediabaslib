@@ -1068,7 +1068,7 @@ namespace BmwDeepObd
             {
                 return null;
             }
-            switch (vehicleType)
+            switch (vehicleType.ToUpperInvariant())
             {
                 case "E36":
                     return EcuLogisticsE36;
