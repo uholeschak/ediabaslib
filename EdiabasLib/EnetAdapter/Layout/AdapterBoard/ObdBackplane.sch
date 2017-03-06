@@ -2590,56 +2590,98 @@ DIN A4, landscape with extra doc field</description>
 </library>
 <library name="obd_special">
 <packages>
-<package name="FPC-FFC-CONNECTOR-08-1MM-L">
-<smd name="1" x="3.5052" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<smd name="2" x="2.4892" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<smd name="3" x="1.4986" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<smd name="4" x="0.508" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<smd name="5" x="-0.508" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<smd name="6" x="-1.4986" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<smd name="7" x="-2.4892" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<smd name="8" x="-3.5052" y="-2.0574" dx="4.064" dy="0.6096" layer="1" rot="R270"/>
-<wire x1="4.1402" y1="0.3048" x2="4.0386" y2="0.127" width="0.1524" layer="21"/>
-<wire x1="-4.2418" y1="0.3048" x2="4.1402" y2="0.3048" width="0.1524" layer="21"/>
-<wire x1="4.1402" y1="0.3048" x2="4.2418" y2="0.3048" width="0.1524" layer="21"/>
-<wire x1="4.1402" y1="0.3048" x2="3.5052" y2="-0.9652" width="0.1524" layer="51"/>
-<wire x1="2.8702" y1="0.3048" x2="3.5052" y2="-0.9652" width="0.1524" layer="51"/>
-<wire x1="-4.318" y1="0.3048" x2="2.8702" y2="0.3048" width="0.1524" layer="51"/>
-<wire x1="2.8702" y1="0.3048" x2="4.1402" y2="0.3048" width="0.1524" layer="51"/>
-<wire x1="4.1402" y1="0.3048" x2="4.318" y2="0.3048" width="0.1524" layer="51"/>
-<wire x1="4.318" y1="0.3048" x2="4.318" y2="3.1496" width="0.1524" layer="51"/>
-<wire x1="4.318" y1="3.1496" x2="-4.318" y2="3.1496" width="0.1524" layer="51"/>
-<wire x1="-4.318" y1="3.1496" x2="-4.318" y2="0.3048" width="0.1524" layer="51"/>
-<text x="-5.0038" y="3.937" size="2.0828" layer="25" ratio="10" rot="SR0">&gt;NAME</text>
-<text x="-5.715" y="-6.9342" size="2.0828" layer="27" ratio="10" rot="SR0">&gt;VALUE</text>
+<package name="1X08M">
+<description>&lt;b&gt;PIN HEADER&lt;/b&gt; - 2</description>
+<wire x1="8.25" y1="1.25" x2="8.25" y2="-1.25" width="0.2032" layer="21"/>
+<wire x1="8.25" y1="-1.25" x2="-8.25" y2="-1.25" width="0.2032" layer="21"/>
+<wire x1="-8.25" y1="-1.25" x2="-8.25" y2="1.25" width="0.2032" layer="21"/>
+<wire x1="-8.25" y1="1.25" x2="8.25" y2="1.25" width="0.2032" layer="21"/>
+<pad name="1" x="-7" y="0" drill="0.9144" shape="square"/>
+<pad name="2" x="-5" y="0" drill="0.9144"/>
+<pad name="3" x="-3" y="0" drill="0.9144" rot="R270"/>
+<pad name="4" x="-1" y="0" drill="0.9144" rot="R270"/>
+<pad name="5" x="1" y="0" drill="0.9144" rot="R270"/>
+<pad name="6" x="3" y="0" drill="0.9144" rot="R270"/>
+<pad name="7" x="5" y="0" drill="0.9144" rot="R270"/>
+<pad name="8" x="7" y="0" drill="0.9144" rot="R270"/>
+<text x="-9" y="-1" size="1.016" layer="25" ratio="14" rot="R90">&gt;NAME</text>
+<text x="10" y="-1" size="0.8128" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
+<rectangle x1="-5.25" y1="-0.25" x2="-4.75" y2="0.25" layer="51"/>
+<rectangle x1="-7.25" y1="-0.25" x2="-6.75" y2="0.25" layer="51"/>
+<rectangle x1="-1.25" y1="-0.25" x2="-0.75" y2="0.25" layer="51" rot="R270"/>
+<rectangle x1="-3.25" y1="-0.25" x2="-2.75" y2="0.25" layer="51" rot="R270"/>
+<rectangle x1="2.75" y1="-0.25" x2="3.25" y2="0.25" layer="51" rot="R270"/>
+<rectangle x1="0.75" y1="-0.25" x2="1.25" y2="0.25" layer="51" rot="R270"/>
+<rectangle x1="6.75" y1="-0.25" x2="7.25" y2="0.25" layer="51" rot="R270"/>
+<rectangle x1="4.75" y1="-0.25" x2="5.25" y2="0.25" layer="51" rot="R270"/>
+</package>
+<package name="1X08M-1MM">
+<description>&lt;b&gt;PIN HEADER&lt;/b&gt; - 1</description>
+<wire x1="4.75" y1="1.25" x2="4.75" y2="-1.25" width="0.2032" layer="21"/>
+<wire x1="4.75" y1="-1.25" x2="-4.75" y2="-1.25" width="0.2032" layer="21"/>
+<wire x1="-4.75" y1="-1.25" x2="-4.75" y2="1.25" width="0.2032" layer="21"/>
+<wire x1="-4.75" y1="1.25" x2="4.75" y2="1.25" width="0.2032" layer="21"/>
+<pad name="1" x="-3.5" y="0" drill="0.3048" shape="square"/>
+<pad name="2" x="-2.5" y="0" drill="0.3048"/>
+<pad name="3" x="-1.5" y="0" drill="0.3048" rot="R270"/>
+<pad name="4" x="-0.5" y="0" drill="0.3048" rot="R270"/>
+<pad name="5" x="0.5" y="0" drill="0.3048" rot="R270"/>
+<pad name="6" x="1.5" y="0" drill="0.3048" rot="R270"/>
+<pad name="7" x="2.5" y="0" drill="0.3048" rot="R270"/>
+<pad name="8" x="3.5" y="0" drill="0.3048" rot="R270"/>
+<text x="-5.5" y="-1" size="1.016" layer="25" ratio="14" rot="R90">&gt;NAME</text>
+<text x="6" y="-1" size="0.8128" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
+<rectangle x1="-2.6" y1="-0.1" x2="-2.4" y2="0.1" layer="51"/>
+<rectangle x1="-3.6" y1="-0.1" x2="-3.4" y2="0.1" layer="51"/>
+<rectangle x1="-1.6" y1="-0.1" x2="-1.4" y2="0.1" layer="51"/>
+<rectangle x1="-0.6" y1="-0.1" x2="-0.4" y2="0.1" layer="51"/>
+<rectangle x1="0.4" y1="-0.1" x2="0.6" y2="0.1" layer="51"/>
+<rectangle x1="1.4" y1="-0.1" x2="1.6" y2="0.1" layer="51"/>
+<rectangle x1="2.4" y1="-0.1" x2="2.6" y2="0.1" layer="51"/>
+<rectangle x1="3.4" y1="-0.1" x2="3.6" y2="0.1" layer="51"/>
 </package>
 </packages>
 <symbols>
-<symbol name="PPC-FFC-CONNECTOR-08-1MM">
-<pin name="1" x="-17.78" y="2.54" length="middle" direction="pas"/>
-<pin name="3" x="-17.78" y="0" length="middle" direction="pas"/>
-<pin name="5" x="-17.78" y="-2.54" length="middle" direction="pas"/>
-<pin name="7" x="-17.78" y="-5.08" length="middle" direction="pas"/>
-<pin name="2" x="17.78" y="2.54" length="middle" direction="pas" rot="R180"/>
-<pin name="4" x="17.78" y="0" length="middle" direction="pas" rot="R180"/>
-<pin name="6" x="17.78" y="-2.54" length="middle" direction="pas" rot="R180"/>
-<pin name="8" x="17.78" y="-5.08" length="middle" direction="pas" rot="R180"/>
-<wire x1="-12.7" y1="7.62" x2="-12.7" y2="-10.16" width="0.4064" layer="94"/>
-<wire x1="-12.7" y1="-10.16" x2="12.7" y2="-10.16" width="0.4064" layer="94"/>
-<wire x1="12.7" y1="-10.16" x2="12.7" y2="7.62" width="0.4064" layer="94"/>
-<wire x1="12.7" y1="7.62" x2="-12.7" y2="7.62" width="0.4064" layer="94"/>
-<text x="-4.7244" y="11.6586" size="2.0828" layer="95" ratio="10" rot="SR0">&gt;NAME</text>
-<text x="-5.6134" y="-14.6304" size="2.0828" layer="96" ratio="10" rot="SR0">&gt;VALUE</text>
+<symbol name="PINHD8">
+<wire x1="-6.35" y1="-10.16" x2="1.27" y2="-10.16" width="0.4064" layer="94"/>
+<wire x1="1.27" y1="-10.16" x2="1.27" y2="12.7" width="0.4064" layer="94"/>
+<wire x1="1.27" y1="12.7" x2="-6.35" y2="12.7" width="0.4064" layer="94"/>
+<wire x1="-6.35" y1="12.7" x2="-6.35" y2="-10.16" width="0.4064" layer="94"/>
+<text x="-6.35" y="13.335" size="1.778" layer="95">&gt;NAME</text>
+<text x="-6.35" y="-12.7" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="1" x="-2.54" y="10.16" visible="pad" length="short" direction="pas" function="dot"/>
+<pin name="2" x="-2.54" y="7.62" visible="pad" length="short" direction="pas" function="dot"/>
+<pin name="3" x="-2.54" y="5.08" visible="pad" length="short" direction="pas" function="dot"/>
+<pin name="4" x="-2.54" y="2.54" visible="pad" length="short" direction="pas" function="dot"/>
+<pin name="5" x="-2.54" y="0" visible="pad" length="short" direction="pas" function="dot"/>
+<pin name="6" x="-2.54" y="-2.54" visible="pad" length="short" direction="pas" function="dot"/>
+<pin name="7" x="-2.54" y="-5.08" visible="pad" length="short" direction="pas" function="dot"/>
+<pin name="8" x="-2.54" y="-7.62" visible="pad" length="short" direction="pas" function="dot"/>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="FPC-FFC-CONNECTOR-08-1MM-L" prefix="U">
-<description>FPC FFC CONNECTOR 8 PIN 1MM direct connection</description>
+<deviceset name="PINHD-1X8" prefix="JP" uservalue="yes">
+<description>&lt;b&gt;PIN HEADER&lt;/b&gt;</description>
 <gates>
-<gate name="A" symbol="PPC-FFC-CONNECTOR-08-1MM" x="0" y="0"/>
+<gate name="A" symbol="PINHD8" x="0" y="0"/>
 </gates>
 <devices>
-<device name="" package="FPC-FFC-CONNECTOR-08-1MM-L">
+<device name="_2.00" package="1X08M">
+<connects>
+<connect gate="A" pin="1" pad="1"/>
+<connect gate="A" pin="2" pad="2"/>
+<connect gate="A" pin="3" pad="3"/>
+<connect gate="A" pin="4" pad="4"/>
+<connect gate="A" pin="5" pad="5"/>
+<connect gate="A" pin="6" pad="6"/>
+<connect gate="A" pin="7" pad="7"/>
+<connect gate="A" pin="8" pad="8"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="_1.00" package="1X08M-1MM">
 <connects>
 <connect gate="A" pin="1" pad="1"/>
 <connect gate="A" pin="2" pad="2"/>
@@ -6108,7 +6150,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <part name="P+2" library="supply1" deviceset="+5V" device=""/>
 <part name="POWER+" library="pinhead" deviceset="PINHD-1X1" device="_2.54" value="5V"/>
 <part name="POWER-" library="pinhead" deviceset="PINHD-1X1" device="_2.54" value="GND"/>
-<part name="U1" library="obd_special" deviceset="FPC-FFC-CONNECTOR-08-1MM-L" device="" value="FPC-FFC-CONNECTOR-08-1MM-L"/>
+<part name="JP1" library="obd_special" deviceset="PINHD-1X8" device="_1.00"/>
 </parts>
 <sheets>
 <sheet>
@@ -6129,7 +6171,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <instance part="P+2" gate="1" x="60.96" y="175.26"/>
 <instance part="POWER+" gate="G$1" x="73.66" y="149.86"/>
 <instance part="POWER-" gate="G$1" x="91.44" y="149.86"/>
-<instance part="U1" gate="A" x="-7.62" y="261.62"/>
+<instance part="JP1" gate="A" x="-7.62" y="266.7" rot="R90"/>
 </instances>
 <busses>
 </busses>
@@ -6202,41 +6244,39 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <pinref part="J1" gate="G$1" pin="3"/>
 <wire x1="-30.48" y1="210.82" x2="-38.1" y2="210.82" width="0.1524" layer="91"/>
 <wire x1="-38.1" y1="210.82" x2="-38.1" y2="243.84" width="0.1524" layer="91"/>
-<wire x1="-38.1" y1="243.84" x2="15.24" y2="243.84" width="0.1524" layer="91"/>
-<pinref part="U1" gate="A" pin="8"/>
-<wire x1="10.16" y1="256.54" x2="15.24" y2="256.54" width="0.1524" layer="91"/>
-<wire x1="15.24" y1="256.54" x2="15.24" y2="243.84" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$4" class="0">
-<segment>
-<pinref part="J1" gate="G$1" pin="11"/>
-<wire x1="15.24" y1="210.82" x2="22.86" y2="210.82" width="0.1524" layer="91"/>
-<wire x1="22.86" y1="210.82" x2="22.86" y2="228.6" width="0.1524" layer="91"/>
-<wire x1="22.86" y1="228.6" x2="-30.48" y2="228.6" width="0.1524" layer="91"/>
-<wire x1="-30.48" y1="228.6" x2="-30.48" y2="256.54" width="0.1524" layer="91"/>
-<pinref part="U1" gate="A" pin="7"/>
-<wire x1="-30.48" y1="256.54" x2="-25.4" y2="256.54" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$5" class="0">
-<segment>
-<pinref part="J1" gate="G$1" pin="12"/>
-<wire x1="15.24" y1="208.28" x2="25.4" y2="208.28" width="0.1524" layer="91"/>
-<wire x1="25.4" y1="208.28" x2="25.4" y2="259.08" width="0.1524" layer="91"/>
-<pinref part="U1" gate="A" pin="6"/>
-<wire x1="25.4" y1="259.08" x2="10.16" y2="259.08" width="0.1524" layer="91"/>
+<wire x1="-38.1" y1="243.84" x2="0" y2="243.84" width="0.1524" layer="91"/>
+<pinref part="JP1" gate="A" pin="8"/>
+<wire x1="0" y1="243.84" x2="0" y2="264.16" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$6" class="0">
 <segment>
 <pinref part="J1" gate="G$1" pin="13"/>
-<wire x1="15.24" y1="205.74" x2="20.32" y2="205.74" width="0.1524" layer="91"/>
-<pinref part="U1" gate="A" pin="3"/>
-<wire x1="-25.4" y1="261.62" x2="-33.02" y2="261.62" width="0.1524" layer="91"/>
-<wire x1="-33.02" y1="261.62" x2="-33.02" y2="226.06" width="0.1524" layer="91"/>
-<wire x1="-33.02" y1="226.06" x2="20.32" y2="226.06" width="0.1524" layer="91"/>
-<wire x1="20.32" y1="226.06" x2="20.32" y2="205.74" width="0.1524" layer="91"/>
+<wire x1="15.24" y1="205.74" x2="30.48" y2="205.74" width="0.1524" layer="91"/>
+<wire x1="30.48" y1="205.74" x2="30.48" y2="254" width="0.1524" layer="91"/>
+<wire x1="30.48" y1="254" x2="-12.7" y2="254" width="0.1524" layer="91"/>
+<pinref part="JP1" gate="A" pin="3"/>
+<wire x1="-12.7" y1="254" x2="-12.7" y2="264.16" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$7" class="0">
+<segment>
+<pinref part="J1" gate="G$1" pin="11"/>
+<wire x1="15.24" y1="210.82" x2="25.4" y2="210.82" width="0.1524" layer="91"/>
+<wire x1="25.4" y1="210.82" x2="25.4" y2="248.92" width="0.1524" layer="91"/>
+<wire x1="25.4" y1="248.92" x2="-2.54" y2="248.92" width="0.1524" layer="91"/>
+<pinref part="JP1" gate="A" pin="7"/>
+<wire x1="-2.54" y1="248.92" x2="-2.54" y2="264.16" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$4" class="0">
+<segment>
+<pinref part="J1" gate="G$1" pin="12"/>
+<wire x1="15.24" y1="208.28" x2="27.94" y2="208.28" width="0.1524" layer="91"/>
+<wire x1="27.94" y1="208.28" x2="27.94" y2="251.46" width="0.1524" layer="91"/>
+<wire x1="27.94" y1="251.46" x2="-5.08" y2="251.46" width="0.1524" layer="91"/>
+<pinref part="JP1" gate="A" pin="6"/>
+<wire x1="-5.08" y1="251.46" x2="-5.08" y2="264.16" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
