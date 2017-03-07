@@ -2621,14 +2621,14 @@ DIN A4, landscape with extra doc field</description>
 <wire x1="4.75" y1="-1.25" x2="-4.75" y2="-1.25" width="0.2032" layer="21"/>
 <wire x1="-4.75" y1="-1.25" x2="-4.75" y2="1.25" width="0.2032" layer="21"/>
 <wire x1="-4.75" y1="1.25" x2="4.75" y2="1.25" width="0.2032" layer="21"/>
-<pad name="1" x="-3.5" y="0" drill="0.3048" shape="square"/>
-<pad name="2" x="-2.5" y="0" drill="0.3048"/>
-<pad name="3" x="-1.5" y="0" drill="0.3048" rot="R270"/>
-<pad name="4" x="-0.5" y="0" drill="0.3048" rot="R270"/>
-<pad name="5" x="0.5" y="0" drill="0.3048" rot="R270"/>
-<pad name="6" x="1.5" y="0" drill="0.3048" rot="R270"/>
-<pad name="7" x="2.5" y="0" drill="0.3048" rot="R270"/>
-<pad name="8" x="3.5" y="0" drill="0.3048" rot="R270"/>
+<pad name="1" x="-3.5" y="0" drill="0.3048" shape="long" rot="R90"/>
+<pad name="2" x="-2.5" y="0" drill="0.3048" shape="long" rot="R90"/>
+<pad name="3" x="-1.5" y="0" drill="0.3048" shape="long" rot="R90"/>
+<pad name="4" x="-0.5" y="0" drill="0.3048" shape="long" rot="R90"/>
+<pad name="5" x="0.5" y="0" drill="0.3048" shape="long" rot="R90"/>
+<pad name="6" x="1.5" y="0" drill="0.3048" shape="long" rot="R90"/>
+<pad name="7" x="2.5" y="0" drill="0.3048" shape="long" rot="R90"/>
+<pad name="8" x="3.5" y="0" drill="0.3048" shape="long" rot="R90"/>
 <text x="-5.5" y="-1" size="1.016" layer="25" ratio="14" rot="R90">&gt;NAME</text>
 <text x="6" y="-1" size="0.8128" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
 <rectangle x1="-2.6" y1="-0.1" x2="-2.4" y2="0.1" layer="51"/>
@@ -6150,7 +6150,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <part name="P+2" library="supply1" deviceset="+5V" device=""/>
 <part name="POWER+" library="pinhead" deviceset="PINHD-1X1" device="_2.54" value="5V"/>
 <part name="POWER-" library="pinhead" deviceset="PINHD-1X1" device="_2.54" value="GND"/>
-<part name="JP1" library="obd_special" deviceset="PINHD-1X8" device="_1.00"/>
+<part name="JP1" library="obd_special" deviceset="PINHD-1X8" device="_1.00" value="ETHERNET"/>
 </parts>
 <sheets>
 <sheet>
