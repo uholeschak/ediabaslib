@@ -347,6 +347,11 @@ namespace BmwDeepObd
                 OnBackPressedContinue();
                 return;
             }
+            int resourceId = Resource.String.xml_tool_msg_save_config;
+            if (!_ecuList.Any(x => x.Selected))
+            {
+                resourceId = Resource.String.xml_tool_msg_save_config_empty;
+            }
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
@@ -356,7 +361,10 @@ namespace BmwDeepObd
                 {
                     OnBackPressedContinue();
                 })
-                .SetMessage(Resource.String.xml_tool_msg_save_config)
+                .SetNeutralButton(Resource.String.button_abort, (sender, args) =>
+                {
+                })
+                .SetMessage(resourceId)
                 .SetTitle(Resource.String.alert_title_question)
                 .Show();
         }
@@ -572,6 +580,11 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     if (_buttonSafe.Enabled)
                     {
+                        int resourceId = Resource.String.xml_tool_msg_save_config;
+                        if (!_ecuList.Any(x => x.Selected))
+                        {
+                            resourceId = Resource.String.xml_tool_msg_save_config_empty;
+                        }
                         new AlertDialog.Builder(this)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                             {
@@ -581,7 +594,10 @@ namespace BmwDeepObd
                             {
                                 FinishContinue();
                             })
-                            .SetMessage(Resource.String.xml_tool_msg_save_config)
+                            .SetNeutralButton(Resource.String.button_abort, (sender, args) =>
+                            {
+                            })
+                            .SetMessage(resourceId)
                             .SetTitle(Resource.String.alert_title_question)
                             .Show();
                     }
@@ -1165,6 +1181,9 @@ namespace BmwDeepObd
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
                         SelectConfigType();
+                    })
+                    .SetNeutralButton(Resource.String.button_abort, (sender, args) =>
+                    {
                     })
                     .SetMessage(Resource.String.xml_tool_msg_save_config)
                     .SetTitle(Resource.String.alert_title_question)
