@@ -17,7 +17,6 @@ namespace BmwDeepObd
                                Android.Content.PM.ConfigChanges.ScreenSize)]
     public class YandexKeyActivity : AppCompatActivity, View.IOnTouchListener
     {
-        private Java.Lang.Object _clipboardManager;
         private InputMethodManager _imm;
         private Timer _clipboardCheckTimer;
         private ActivityCommon _activityCommon;
@@ -40,7 +39,6 @@ namespace BmwDeepObd
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SetContentView(Resource.Layout.yandex_key_select);
 
-            _clipboardManager = GetSystemService(ClipboardService);
             _imm = (InputMethodManager)GetSystemService(InputMethodService);
             _contentView = FindViewById<View>(Android.Resource.Id.Content);
 
@@ -80,35 +78,11 @@ namespace BmwDeepObd
             _buttonYandexApiKeyPaste.SetOnTouchListener(this);
             _buttonYandexApiKeyPaste.Click += (sender, args) =>
             {
-                ClipboardManager clipboardManagerNew = _clipboardManager as ClipboardManager;
-                if (clipboardManagerNew != null)
+                string clipText = _activityCommon.GetClipboardText();
+                if (!string.IsNullOrWhiteSpace(clipText))
                 {
-                    if (clipboardManagerNew.HasPrimaryClip)
-                    {
-                        string clipText = string.Empty;
-                        ClipData.Item item = clipboardManagerNew.PrimaryClip.GetItemAt(0);
-                        if (item != null)
-                        {
-                            clipText = clipboardManagerNew.PrimaryClipDescription.HasMimeType(ClipDescription.MimetypeTextPlain) ?
-                                item.Text : item.CoerceToText(this);
-                        }
-                        if (!string.IsNullOrWhiteSpace(clipText))
-                        {
-                            _editTextYandexApiKey.Text = clipText.Trim();
-                            UpdateDisplay();
-                        }
-                    }
-                }
-                else
-                {
-#pragma warning disable 618
-                    Android.Text.ClipboardManager clipboardManagerOld = _clipboardManager as Android.Text.ClipboardManager;
-#pragma warning restore 618
-                    if (!string.IsNullOrWhiteSpace(clipboardManagerOld?.Text))
-                    {
-                        _editTextYandexApiKey.Text = clipboardManagerOld.Text.Trim();
-                        UpdateDisplay();
-                    }
+                    _editTextYandexApiKey.Text = clipText.Trim();
+                    UpdateDisplay();
                 }
             };
             _buttonYandexApiKeyPaste.TextChanged += (sender, args) =>
@@ -216,33 +190,11 @@ namespace BmwDeepObd
         private void UpdateDisplay()
         {
             bool pasteEnable = false;
-            ClipboardManager clipboardManagerNew = _clipboardManager as ClipboardManager;
-            if (clipboardManagerNew != null)
+
+            string clipText = _activityCommon.GetClipboardText();
+            if (!string.IsNullOrWhiteSpace(clipText))
             {
-                if (clipboardManagerNew.HasPrimaryClip)
-                {
-                    string clipText = string.Empty;
-                    ClipData.Item item = clipboardManagerNew.PrimaryClip.GetItemAt(0);
-                    if (item != null)
-                    {
-                        clipText = clipboardManagerNew.PrimaryClipDescription.HasMimeType(ClipDescription.MimetypeTextPlain) ?
-                            item.Text : item.CoerceToText(this);
-                    }
-                    if (!string.IsNullOrWhiteSpace(clipText))
-                    {
-                        pasteEnable = true;
-                    }
-                }
-            }
-            else
-            {
-#pragma warning disable 618
-                Android.Text.ClipboardManager clipboardManagerOld = _clipboardManager as Android.Text.ClipboardManager;
-#pragma warning restore 618
-                if (!string.IsNullOrWhiteSpace(clipboardManagerOld?.Text))
-                {
-                    pasteEnable = true;
-                }
+                pasteEnable = true;
             }
             _buttonYandexApiKeyPaste.Enabled = pasteEnable;
             _buttonYandexApiKeyTest.Enabled = !string.IsNullOrWhiteSpace(_editTextYandexApiKey.Text);

@@ -449,7 +449,6 @@ namespace BmwDeepObd
             }
         }
 
-        // ReSharper disable once ConvertToAutoProperty
         public Java.Lang.Object ClipboardManager => _clipboardManager;
 
         public BluetoothAdapter BtAdapter => _btAdapter;
@@ -1699,6 +1698,70 @@ namespace BmwDeepObd
                 {
                     // ignored
                 }
+            }
+        }
+
+        public bool SetClipboardText(string text)
+        {
+            try
+            {
+                ClipboardManager clipboardManagerNew = _clipboardManager as ClipboardManager;
+                if (clipboardManagerNew != null)
+                {
+                    ClipData clipData = ClipData.NewPlainText(@"text", text);
+                    if (clipData != null)
+                    {
+                        clipboardManagerNew.PrimaryClip = clipData;
+                    }
+                }
+                else
+                {
+#pragma warning disable 618
+                    Android.Text.ClipboardManager clipboardManagerOld = _clipboardManager as Android.Text.ClipboardManager;
+#pragma warning restore 618
+                    if (clipboardManagerOld != null)
+                    {
+                        clipboardManagerOld.Text = text;
+                    }
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public string GetClipboardText()
+        {
+            try
+            {
+                string clipText = null;
+                ClipboardManager clipboardManagerNew = _clipboardManager as ClipboardManager;
+                if (clipboardManagerNew != null)
+                {
+                    if (clipboardManagerNew.HasPrimaryClip)
+                    {
+                        ClipData.Item item = clipboardManagerNew.PrimaryClip.GetItemAt(0);
+                        if (item != null)
+                        {
+                            clipText = clipboardManagerNew.PrimaryClipDescription.HasMimeType(ClipDescription.MimetypeTextPlain) ?
+                                item.Text : item.CoerceToText(_activity);
+                        }
+                    }
+                }
+                else
+                {
+#pragma warning disable 618
+                    Android.Text.ClipboardManager clipboardManagerOld = _clipboardManager as Android.Text.ClipboardManager;
+#pragma warning restore 618
+                    clipText = clipboardManagerOld?.Text;
+                }
+                return clipText;
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 
