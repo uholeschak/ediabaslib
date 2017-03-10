@@ -680,32 +680,7 @@ namespace BmwDeepObd
                         .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                         .SetPositiveButton(Resource.String.button_copy, (sender, args) =>
                         {
-                            try
-                            {
-                                ClipboardManager clipboardManagerNew = _activityCommon.ClipboardManager as ClipboardManager;
-                                if (clipboardManagerNew != null)
-                                {
-                                    ClipData clipData = ClipData.NewPlainText(@"text", message);
-                                    if (clipData != null)
-                                    {
-                                        clipboardManagerNew.PrimaryClip = clipData;
-                                    }
-                                }
-                                else
-                                {
-#pragma warning disable 618
-                                    Android.Text.ClipboardManager clipboardManagerOld = _activityCommon.ClipboardManager as Android.Text.ClipboardManager;
-#pragma warning restore 618
-                                    if (clipboardManagerOld != null)
-                                    {
-                                        clipboardManagerOld.Text = message;
-                                    }
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
+                            _activityCommon.SetClipboardText(message);
                         })
                         .SetCancelable(true)
                         .SetMessage(message)
