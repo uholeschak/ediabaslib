@@ -794,6 +794,35 @@ namespace BmwDeepObd
             }
         }
 
+        [Export("onCopyErrorsClick")]
+        public void OnCopyErrorsClick(View v)
+        {
+            if ((_ediabasThread == null) || !_ediabasThread.ThreadRunning())
+            {
+                return;
+            }
+            View parent = v.Parent as View;
+            parent = parent?.Parent as View;
+            ListView listViewResult = parent?.FindViewById<ListView>(Resource.Id.resultList);
+            ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult?.Adapter;
+            if (resultListAdapter != null)
+            {
+                StringBuilder sr = new StringBuilder();
+                foreach (TableResultItem resultItem in resultListAdapter.Items)
+                {
+                    if (!string.IsNullOrEmpty(resultItem.Text1))
+                    {
+                        if (sr.Length > 0)
+                        {
+                            sr.Append("\r\n\r\n");
+                        }
+                        sr.Append(resultItem.Text1);
+                    }
+                }
+                _activityCommon.SetClipboardText(sr.ToString());
+            }
+        }
+
         private void HandleStartDialogs(bool firstStart)
         {
             if (!_activityCommon.RequestInterfaceEnable((sender, args) =>
@@ -1257,9 +1286,11 @@ namespace BmwDeepObd
                     buttonActive = dynamicFragment.View.FindViewById<ToggleButton>(Resource.Id.button_active);
                 }
                 Button buttonErrorReset = null;
+                Button buttonErrorCopy = null;
                 if (pageInfo.ErrorsInfo != null)
                 {
                     buttonErrorReset = dynamicFragment.View.FindViewById<Button>(Resource.Id.button_error_reset);
+                    buttonErrorCopy = dynamicFragment.View.FindViewById<Button>(Resource.Id.button_copy);
                 }
 
                 if (dynamicValid)
@@ -1531,6 +1562,7 @@ namespace BmwDeepObd
                             }
                         }
                         UpdateButtonErrorReset(buttonErrorReset, tempResultList);
+                        UpdateButtonErrorCopy(buttonErrorCopy, tempResultList);
 
                         if (stringList.Count > 0)
                         {
@@ -1694,6 +1726,7 @@ namespace BmwDeepObd
                     resultListAdapter.Items.Clear();
                     resultListAdapter.NotifyDataSetChanged();
                     UpdateButtonErrorReset(buttonErrorReset, null);
+                    UpdateButtonErrorCopy(buttonErrorCopy, null);
                 }
 
                 if (pageInfo.ClassObject != null)
@@ -1740,6 +1773,20 @@ namespace BmwDeepObd
                 selected = resultItems.Any(resultItem => resultItem.CheckVisible && resultItem.Selected);
             }
             buttonErrorReset.Enabled = selected;
+        }
+
+        private void UpdateButtonErrorCopy(Button buttonErrorCopy, List<TableResultItem> resultItems)
+        {
+            if (buttonErrorCopy == null)
+            {
+                return;
+            }
+            bool selected = false;
+            if (resultItems != null)
+            {
+                selected = resultItems.Any(resultItem => !string.IsNullOrEmpty(resultItem.Text1));
+            }
+            buttonErrorCopy.Enabled = selected;
         }
 
         public static String FormatResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
