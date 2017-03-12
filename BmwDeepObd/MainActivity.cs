@@ -1562,7 +1562,7 @@ namespace BmwDeepObd
                             }
                         }
                         UpdateButtonErrorReset(buttonErrorReset, tempResultList);
-                        UpdateButtonErrorCopy(buttonErrorCopy, tempResultList);
+                        UpdateButtonErrorCopy(buttonErrorCopy, (errorReportList != null) ? tempResultList : null);
 
                         if (stringList.Count > 0)
                         {
@@ -1781,12 +1781,12 @@ namespace BmwDeepObd
             {
                 return;
             }
-            bool selected = false;
+            bool present = false;
             if (resultItems != null)
             {
-                selected = resultItems.Any(resultItem => !string.IsNullOrEmpty(resultItem.Text1));
+                present = resultItems.Any(resultItem => !string.IsNullOrEmpty(resultItem.Text1));
             }
-            buttonErrorCopy.Enabled = selected;
+            buttonErrorCopy.Enabled = present;
         }
 
         public static String FormatResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
