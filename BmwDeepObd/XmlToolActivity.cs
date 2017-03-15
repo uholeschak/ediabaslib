@@ -198,6 +198,7 @@ namespace BmwDeepObd
         private Thread _jobThread;
         private string _vin = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
+        private bool _translateEnabled;
         private bool _translateActive;
         private bool _ecuListTranslated;
         private int _ecuSearchAbortIndex = -1;
@@ -861,7 +862,7 @@ namespace BmwDeepObd
 
         private bool TranslateEcuText(EventHandler<EventArgs> handler = null)
         {
-            if (!_translateActive && ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
+            if (_translateEnabled && !_translateActive && ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
             {
                 if (!_ecuListTranslated)
                 {
@@ -1492,6 +1493,7 @@ namespace BmwDeepObd
 
         private void ExecuteAnalyzeJobBmw()
         {
+            _translateEnabled = false;
             EdiabasOpen();
             ClearEcuList();
             UpdateDisplay();
@@ -1826,6 +1828,7 @@ namespace BmwDeepObd
                     progress.Dispose();
                     _activityCommon.SetScreenLock(false);
 
+                    _translateEnabled = true;
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
 
@@ -2499,6 +2502,7 @@ namespace BmwDeepObd
                 SelectJobs(ecuInfo);
                 return;
             }
+            _translateEnabled = false;
 
             UpdateDisplay();
             bool mwTabNotPresent = string.IsNullOrEmpty(ecuInfo.MwTabFileName) || (ecuInfo.MwTabEcuDict == null) ||
@@ -2910,6 +2914,7 @@ namespace BmwDeepObd
         private void TranslateAndSelectJobs(EcuInfo ecuInfo)
         {
             _ecuListTranslated = false;
+            _translateEnabled = true;
             if (!TranslateEcuText((sender, args) =>
             {
                 SelectJobs(ecuInfo);
@@ -3192,11 +3197,13 @@ namespace BmwDeepObd
 
         private void ExecuteUpdateEcuInfo()
         {
+            _translateEnabled = false;
             EdiabasOpen();
 
             UpdateDisplay();
             if ((_ecuList.Count == 0) || (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None))
             {
+                _translateEnabled = true;
                 return;
             }
 
@@ -3289,6 +3296,7 @@ namespace BmwDeepObd
                     progress.Dispose();
 
                     _ecuListTranslated = false;
+                    _translateEnabled = true;
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
                     if (readFailed)
