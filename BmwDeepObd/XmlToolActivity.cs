@@ -198,6 +198,7 @@ namespace BmwDeepObd
         private Thread _jobThread;
         private string _vin = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
+        private bool _translateActive;
         private bool _ecuListTranslated;
         private int _ecuSearchAbortIndex = -1;
 
@@ -860,7 +861,7 @@ namespace BmwDeepObd
 
         private bool TranslateEcuText(EventHandler<EventArgs> handler = null)
         {
-            if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
+            if (!_translateActive && ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
             {
                 if (!_ecuListTranslated)
                 {
@@ -912,55 +913,60 @@ namespace BmwDeepObd
                     {
                         return false;
                     }
+                    _translateActive = true;
                     if (_activityCommon.TranslateStrings(stringList, transList =>
                     {
-                        try
+                        RunOnUiThread(() =>
                         {
-                            if (transList != null && transList.Count == stringList.Count)
+                            _translateActive = false;
+                            try
                             {
-                                int transIndex = 0;
-                                foreach (EcuInfo ecu in _ecuList)
+                                if (transList != null && transList.Count == stringList.Count)
                                 {
-                                    if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTrans == null)
+                                    int transIndex = 0;
+                                    foreach (EcuInfo ecu in _ecuList)
                                     {
-                                        if (transIndex < transList.Count)
+                                        if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTrans == null)
                                         {
-                                            ecu.DescriptionTrans = transList[transIndex++];
-                                        }
-                                    }
-                                    if (ecu.JobList != null)
-                                    {
-                                        foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
-                                        {
-                                            if (jobInfo.Comments != null && jobInfo.CommentsTrans == null &&
-                                                XmlToolEcuActivity.IsValidJob(jobInfo))
+                                            if (transIndex < transList.Count)
                                             {
-                                                jobInfo.CommentsTrans = new List<string>();
-                                                foreach (string comment in jobInfo.Comments)
+                                                ecu.DescriptionTrans = transList[transIndex++];
+                                            }
+                                        }
+                                        if (ecu.JobList != null)
+                                        {
+                                            foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
+                                            {
+                                                if (jobInfo.Comments != null && jobInfo.CommentsTrans == null &&
+                                                    XmlToolEcuActivity.IsValidJob(jobInfo))
                                                 {
-                                                    if (!string.IsNullOrEmpty(comment))
+                                                    jobInfo.CommentsTrans = new List<string>();
+                                                    foreach (string comment in jobInfo.Comments)
                                                     {
-                                                        if (transIndex < transList.Count)
+                                                        if (!string.IsNullOrEmpty(comment))
                                                         {
-                                                            jobInfo.CommentsTrans.Add(transList[transIndex++]);
+                                                            if (transIndex < transList.Count)
+                                                            {
+                                                                jobInfo.CommentsTrans.Add(transList[transIndex++]);
+                                                            }
                                                         }
                                                     }
                                                 }
-                                            }
-                                            if (jobInfo.Results != null)
-                                            {
-                                                foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
+                                                if (jobInfo.Results != null)
                                                 {
-                                                    if (result.Comments != null && result.CommentsTrans == null)
+                                                    foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
                                                     {
-                                                        result.CommentsTrans = new List<string>();
-                                                        foreach (string comment in result.Comments)
+                                                        if (result.Comments != null && result.CommentsTrans == null)
                                                         {
-                                                            if (!string.IsNullOrEmpty(comment))
+                                                            result.CommentsTrans = new List<string>();
+                                                            foreach (string comment in result.Comments)
                                                             {
-                                                                if (transIndex < transList.Count)
+                                                                if (!string.IsNullOrEmpty(comment))
                                                                 {
-                                                                    result.CommentsTrans.Add(transList[transIndex++]);
+                                                                    if (transIndex < transList.Count)
+                                                                    {
+                                                                        result.CommentsTrans.Add(transList[transIndex++]);
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -971,16 +977,17 @@ namespace BmwDeepObd
                                     }
                                 }
                             }
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                        handler?.Invoke(this, new EventArgs());
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                            handler?.Invoke(this, new EventArgs());
+                        });
                     }))
                     {
                         return true;
                     }
+                    _translateActive = false;
                 }
             }
             else
