@@ -607,7 +607,7 @@ namespace BmwDeepObd
                 if (_spinnerFormatLength1.SelectedItemPosition >= 0)
                 {
                     int value = (int) _spinnerFormatLength1Adapter.Items[_spinnerFormatLength1.SelectedItemPosition].Data;
-                    if (value > 0)
+                    if (value >= 0)
                     {
                         stringBuilder.Append(value.ToString());
                     }
@@ -615,7 +615,7 @@ namespace BmwDeepObd
                 if (_spinnerFormatLength2.SelectedItemPosition >= 0)
                 {
                     int value = (int)_spinnerFormatLength2Adapter.Items[_spinnerFormatLength2.SelectedItemPosition].Data;
-                    if (value > 0)
+                    if (value >= 0)
                     {
                         stringBuilder.Append(".");
                         stringBuilder.Append(value.ToString());
