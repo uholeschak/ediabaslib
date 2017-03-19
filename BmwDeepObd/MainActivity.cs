@@ -362,7 +362,8 @@ namespace BmwDeepObd
             StoreSettings();
             if (_activityCommon != null)
             {
-                if (!_btInitiallyEnabled && ActivityCommon.IsBluetoothEnabledByApp())
+                if (!_btInitiallyEnabled && ActivityCommon.IsBluetoothEnabledByApp() && 
+                    !_activityCommon.IsBluetoothConnected())
                 {
                     _activityCommon.BluetoothDisable();
                 }
