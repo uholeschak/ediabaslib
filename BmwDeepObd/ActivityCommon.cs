@@ -351,6 +351,7 @@ namespace BmwDeepObd
         private AlertDialog _selectInterfaceAlertDialog;
         private AlertDialog _selectManufacturerAlertDialog;
         private Android.App.ProgressDialog _translateProgress;
+        private WebClient _translateWebClient;
         private List<string> _yandexLangList;
         private List<string> _yandexTransList;
         private List<string> _yandexReducedStringList;
@@ -2912,12 +2913,20 @@ namespace BmwDeepObd
                 _translateProgress = new Android.App.ProgressDialog(_activity);
                 _translateProgress.SetMessage(_activity.GetString(Resource.String.translate_text));
                 _translateProgress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
+                _translateProgress.SetButton((int)DialogButtonType.Negative, _activity.GetString(Resource.String.button_abort), (sender, args) =>
+                {
+                    if (_translateWebClient != null && _translateWebClient.IsBusy)
+                    {
+                        _translateWebClient.CancelAsync();
+                    }
+                });
+                _translateProgress.SetCancelable(false);
                 _translateProgress.Progress = 0;
                 _translateProgress.Max = 100;
                 _translateProgress.Show();
                 SetCpuLock(true);
             }
-            _translateProgress.SetCancelable(false);
+            _translateProgress.GetButton((int)DialogButtonType.Negative).Enabled = false;
             _translateProgress.Progress = (_yandexTransList?.Count ?? 0) * 100 / _yandexReducedStringList.Count;
             SetPreferredNetworkInterface();
 
@@ -2926,7 +2935,7 @@ namespace BmwDeepObd
                 try
                 {
                     int stringCount = 0;
-                    WebClient webClient = new WebClient();
+                    _translateWebClient = new WebClient();
                     StringBuilder sbUrl = new StringBuilder();
                     if (_yandexLangList == null)
                     {
@@ -2962,7 +2971,7 @@ namespace BmwDeepObd
                             }
                         }
                     }
-                    webClient.DownloadStringCompleted += (sender, args) =>
+                    _translateWebClient.DownloadStringCompleted += (sender, args) =>
                     {
                         if (!args.Cancelled && (args.Error == null))
                         {
@@ -3001,10 +3010,16 @@ namespace BmwDeepObd
                                     }
                                 }
                                 else
-                                {   // error
+                                {
+                                    // error
                                     _yandexTransList = null;
                                 }
                             }
+                        }
+                        else
+                        {
+                            // error
+                            _yandexTransList = null;
                         }
                         _activity.RunOnUiThread(() =>
                         {
@@ -3104,20 +3119,12 @@ namespace BmwDeepObd
                     {
                         if (_translateProgress != null)
                         {
-                            _translateProgress.CancelEvent += (sender, args) =>
-                            {
-                                if (webClient.IsBusy)
-                                {
-                                    webClient.CancelAsync();
-                                }
-                            };
-                            _translateProgress.SetCancelable(true);
+                            _translateProgress.GetButton((int)DialogButtonType.Negative).Enabled = true;
                         }
                     });
                     ServicePointManager.ServerCertificateValidationCallback =
                         (sender, certificate, chain, errors) => true;
-                    _translateProgress.SetCancelable(true);
-                    webClient.DownloadStringAsync(new System.Uri(sbUrl.ToString()));
+                    _translateWebClient.DownloadStringAsync(new System.Uri(sbUrl.ToString()));
                 }
                 catch (Exception)
                 {
