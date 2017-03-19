@@ -352,6 +352,7 @@ namespace BmwDeepObd
         private AlertDialog _selectManufacturerAlertDialog;
         private Android.App.ProgressDialog _translateProgress;
         private WebClient _translateWebClient;
+        private bool _translateLockAquired;
         private List<string> _yandexLangList;
         private List<string> _yandexTransList;
         private List<string> _yandexReducedStringList;
@@ -1658,48 +1659,70 @@ namespace BmwDeepObd
             }
         }
 
-        public void SetScreenLock(bool enable)
+        public bool SetScreenLock(bool enable)
         {
             if (_wakeLockScreen != null)
             {
+                bool result = true;
                 try
                 {
                     if (enable)
                     {
+                        if (_wakeLockScreen.IsHeld)
+                        {
+                            result = false;
+                        }
                         _wakeLockScreen.Acquire();
                     }
                     else
                     {
+                        if (!_wakeLockScreen.IsHeld)
+                        {
+                            result = false;
+                        }
                         _wakeLockScreen.Release();
                     }
                 }
                 catch (Exception)
                 {
-                    // ignored
+                    result = false;
                 }
+                return result;
             }
+            return false;
         }
 
-        public void SetCpuLock(bool enable)
+        public bool SetCpuLock(bool enable)
         {
             if (_wakeLockCpu != null)
             {
+                bool result = true;
                 try
                 {
                     if (enable)
                     {
+                        if (_wakeLockCpu.IsHeld)
+                        {
+                            result = false;
+                        }
                         _wakeLockCpu.Acquire();
                     }
                     else
                     {
+                        if (!_wakeLockCpu.IsHeld)
+                        {
+                            result = false;
+                        }
                         _wakeLockCpu.Release();
                     }
                 }
                 catch (Exception)
                 {
-                    // ignored
+                    result = false;
                 }
+                return result;
             }
+            return false;
         }
 
         public bool SetClipboardText(string text)
@@ -2924,7 +2947,7 @@ namespace BmwDeepObd
                 _translateProgress.Progress = 0;
                 _translateProgress.Max = 100;
                 _translateProgress.Show();
-                SetCpuLock(true);
+                _translateLockAquired = SetCpuLock(true);
             }
             _translateProgress.GetButton((int)DialogButtonType.Negative).Enabled = false;
             _translateProgress.Progress = (_yandexTransList?.Count ?? 0) * 100 / _yandexReducedStringList.Count;
@@ -3028,7 +3051,11 @@ namespace BmwDeepObd
                                 _translateProgress.Hide();
                                 _translateProgress.Dispose();
                                 _translateProgress = null;
-                                SetCpuLock(false);
+                                if (_translateLockAquired)
+                                {
+                                    SetCpuLock(false);
+                                    _translateLockAquired = false;
+                                }
                             }
                             if ((_yandexLangList == null) || (_yandexTransList == null))
                             {
@@ -3135,7 +3162,11 @@ namespace BmwDeepObd
                             _translateProgress.Hide();
                             _translateProgress.Dispose();
                             _translateProgress = null;
-                            SetCpuLock(false);
+                            if (_translateLockAquired)
+                            {
+                                SetCpuLock(false);
+                                _translateLockAquired = false;
+                            }
                         }
                         bool yesSelected = false;
                         AlertDialog altertDialog = new AlertDialog.Builder(_activity)
