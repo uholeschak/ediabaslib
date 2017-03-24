@@ -23,6 +23,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using Android.Content.PM;
+using Android.Telephony;
 using Android.Text.Method;
 
 namespace BmwDeepObd
@@ -330,8 +331,8 @@ namespace BmwDeepObd
         private static string _customStorageMedia;
         private static string _appId;
         private static int _btEnableCounter;
-        private BluetoothManager _btManager;
         private readonly BluetoothAdapter _btAdapter;
+        private readonly TelephonyManager _telManager;
         private readonly Java.Lang.Object _clipboardManager;
         private readonly WifiManager _maWifi;
         private readonly ConnectivityManager _maConnectivity;
@@ -454,9 +455,9 @@ namespace BmwDeepObd
 
         public Java.Lang.Object ClipboardManager => _clipboardManager;
 
-        public BluetoothManager BtManager => _btManager;
-
         public BluetoothAdapter BtAdapter => _btAdapter;
+
+        public TelephonyManager TelManager => _telManager;
 
         public WifiManager MaWifi => _maWifi;
 
@@ -478,8 +479,8 @@ namespace BmwDeepObd
             _bcReceiverReceivedHandler = bcReceiverReceivedHandler;
             Emulator = IsEmulator();
             _clipboardManager = activity.GetSystemService(Context.ClipboardService);
-            _btManager = (BluetoothManager)_activity.GetSystemService(Context.BluetoothService);
             _btAdapter = BluetoothAdapter.DefaultAdapter;
+            _telManager = (TelephonyManager)_activity.GetSystemService(Context.TelephonyService);
             _maWifi = (WifiManager)activity.GetSystemService(Context.WifiService);
             _maConnectivity = (ConnectivityManager)activity.GetSystemService(Context.ConnectivityService);
             _usbManager = activity.GetSystemService(Context.UsbService) as UsbManager;
@@ -1490,19 +1491,21 @@ namespace BmwDeepObd
 
         public bool IsBluetoothConnected()
         {
-            if (_btManager == null)
+            if (!IsBluetoothEnabled())
+            {
+                return false;
+            }
+            if (_telManager == null)
             {
                 return false;
             }
             try
             {
-                IList<BluetoothDevice> btGattServerList = _btManager.GetConnectedDevices(ProfileType.GattServer);
-                if (btGattServerList != null && btGattServerList.Count > 0)
+                if (_telManager.DataState != DataConnectionStatus.Disconnected)
                 {
                     return true;
                 }
-                IList<BluetoothDevice> btGattList = _btManager.GetConnectedDevices(ProfileType.Gatt);
-                if (btGattList != null && btGattList.Count > 0)
+                if (_telManager.CallState != CallState.Idle)
                 {
                     return true;
                 }
