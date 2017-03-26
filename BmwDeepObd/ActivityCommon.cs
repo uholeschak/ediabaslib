@@ -1492,19 +1492,22 @@ namespace BmwDeepObd
             }
 
             bool result = false;
-            foreach (ProfileType profile in Enum.GetValues(typeof(ProfileType)))
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.IceCreamSandwich)
             {
-                try
+                foreach (ProfileType profile in Enum.GetValues(typeof(ProfileType)))
                 {
-                    if (_btAdapter.GetProfileConnectionState(profile) != ProfileState.Disconnected)
+                    try
                     {
-                        result = true;
-                        break;
+                        if (_btAdapter.GetProfileConnectionState(profile) != ProfileState.Disconnected)
+                        {
+                            result = true;
+                            break;
+                        }
                     }
-                }
-                catch (Exception)
-                {
-                    // ignored
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
             }
             return result;
