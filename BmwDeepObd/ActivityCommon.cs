@@ -23,7 +23,6 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using Android.Content.PM;
-using Android.Telephony;
 using Android.Text.Method;
 
 namespace BmwDeepObd
@@ -332,7 +331,6 @@ namespace BmwDeepObd
         private static string _appId;
         private static int _btEnableCounter;
         private readonly BluetoothAdapter _btAdapter;
-        private readonly TelephonyManager _telManager;
         private readonly Java.Lang.Object _clipboardManager;
         private readonly WifiManager _maWifi;
         private readonly ConnectivityManager _maConnectivity;
@@ -457,8 +455,6 @@ namespace BmwDeepObd
 
         public BluetoothAdapter BtAdapter => _btAdapter;
 
-        public TelephonyManager TelManager => _telManager;
-
         public WifiManager MaWifi => _maWifi;
 
         public ConnectivityManager MaConnectivity => _maConnectivity;
@@ -480,7 +476,6 @@ namespace BmwDeepObd
             Emulator = IsEmulator();
             _clipboardManager = activity.GetSystemService(Context.ClipboardService);
             _btAdapter = BluetoothAdapter.DefaultAdapter;
-            _telManager = (TelephonyManager)_activity.GetSystemService(Context.TelephonyService);
             _maWifi = (WifiManager)activity.GetSystemService(Context.WifiService);
             _maConnectivity = (ConnectivityManager)activity.GetSystemService(Context.ConnectivityService);
             _usbManager = activity.GetSystemService(Context.UsbService) as UsbManager;
@@ -1495,26 +1490,24 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            if (_telManager == null)
+
+            bool result = false;
+            foreach (ProfileType profile in Enum.GetValues(typeof(ProfileType)))
             {
-                return false;
-            }
-            try
-            {
-                if (_telManager.DataState != DataConnectionStatus.Disconnected)
+                try
                 {
-                    return true;
+                    if (_btAdapter.GetProfileConnectionState(profile) != ProfileState.Disconnected)
+                    {
+                        result = true;
+                        break;
+                    }
                 }
-                if (_telManager.CallState != CallState.Idle)
+                catch (Exception)
                 {
-                    return true;
+                    // ignored
                 }
             }
-            catch (Exception)
-            {
-                return false;
-            }
-            return false;
+            return result;
         }
 
         public bool BluetoothDisable()
