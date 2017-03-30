@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,11 +12,12 @@ using SimpleWifi.Win32;
 
 namespace EdiabasLibConfigTool
 {
-    static public class Patch
+    public static class Patch
     {
         private const string ApiDllName = @"api32.dll";
         private const string ApiDllBackupName = @"api32.backup.dll";
         private const string ConfigFileName = @"EdiabasLib.config";
+        private static readonly string[] RuntimeFiles = { "api-ms-win*.dll", "ucrtbase.dll", "msvcp140.dll", "vcruntime140.dll" };
 
         static class NativeMethods
         {
@@ -39,9 +41,9 @@ namespace EdiabasLibConfigTool
             Istad,
         }
 
-        static public string AssemblyDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        public static string AssemblyDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-        static public bool IsOriginalDll(string fileName)
+        public static bool IsOriginalDll(string fileName)
         {
             try
             {
@@ -66,7 +68,25 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        static public void UpdateConfigNode(XElement settingsNode, string key, string value, bool onlyExisting = false)
+        public static List<string> GetRuntimeFiles(string dirName)
+        {
+            List<string> fileList = new List<string>();
+            foreach (string filePattern in RuntimeFiles)
+            {
+                try
+                {
+                    string[] fileArray = Directory.GetFiles(dirName, filePattern, SearchOption.TopDirectoryOnly);
+                    fileList.AddRange(fileArray);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+            return fileList;
+        }
+
+        public static void UpdateConfigNode(XElement settingsNode, string key, string value, bool onlyExisting = false)
         {
             XElement node = (from addNode in settingsNode.Elements("add")
                              let keyAttrib = addNode.Attribute("key")
@@ -95,7 +115,7 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        static public bool UpdateConfigFile(string fileName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, string pin)
+        public static bool UpdateConfigFile(string fileName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, string pin)
         {
             try
             {
@@ -227,6 +247,16 @@ namespace EdiabasLibConfigTool
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigExisting);
                 }
+                List<string> runtimeFiles = GetRuntimeFiles(sourceDir);
+                foreach (string file in runtimeFiles)
+                {
+                    string baseFile = Path.GetFileName(file);
+                    if (baseFile != null)
+                    {
+                        string destFile = Path.Combine(dirName, baseFile);
+                        File.Copy(file, destFile, true);
+                    }
+                }
             }
             catch (Exception)
             {
@@ -254,6 +284,11 @@ namespace EdiabasLibConfigTool
                     File.Delete(dllFileBackup);
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.RestoredApi32);
+                }
+                List<string> runtimeFiles = GetRuntimeFiles(dirName);
+                foreach (string file in runtimeFiles)
+                {
+                    File.Delete(file);
                 }
             }
             catch (Exception)

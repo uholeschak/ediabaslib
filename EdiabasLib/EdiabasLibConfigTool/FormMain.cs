@@ -436,6 +436,10 @@ namespace EdiabasLibConfigTool
                 BeginInvoke((Action) UpdateButtonStatus);
                 return;
             }
+            if (_test == null)
+            {
+                return;
+            }
             comboBoxLanguage.Enabled = !_searching && !_test.ThreadActive;
             buttonSearch.Enabled = !_searching && !_test.ThreadActive && ((_cli != null) || !_wlanClient.NoWifiAvailable);
             buttonClose.Enabled = !_searching && !_test.ThreadActive;
