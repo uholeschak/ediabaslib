@@ -152,7 +152,26 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /y "$(ProjectDir)..\Api32\$(ConfigurationName)\Api32.dll" "$(TargetDir)"
-copy /y "$(ProjectDir)..\EdiabasLib\EdiabasLib.config" "$(TargetDir)"</PostBuildEvent>
+copy /y "$(ProjectDir)..\EdiabasLib\EdiabasLib.config" "$(TargetDir)"
+
+if /I NOT "$(ConfigurationName)" == "Release" (
+ EXIT /B
+)
+set RuntimeDir=%25PROGRAMFILES(X86)%25\Windows Kits\10\Redist\ucrt\DLLs\x86\
+set SystemDir=%25WINDIR%25\SysWOW64\
+IF NOT EXIST "%25SystemDir%25" (
+ set SystemDir=%25WINDIR%25\System32\
+)
+echo "System dir: %25SystemDir%25"
+copy /y "%25SystemDir%25msvcp140.dll" "$(TargetDir)"
+copy /y "%25SystemDir%25vcruntime140.dll" "$(TargetDir)"
+
+IF EXIST "%25RuntimeDir%25" (
+ copy /y "%25RuntimeDir%25*.*" "$(TargetDir)"
+) ELSE (
+ ECHO No WIN10 DSK installed!
+)
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
