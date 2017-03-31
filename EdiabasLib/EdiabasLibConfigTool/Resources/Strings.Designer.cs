@@ -367,6 +367,15 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die No VC runtime files installed, copy files locally. ähnelt.
+        /// </summary>
+        internal static string PatchCopyRuntime {
+            get {
+                return ResourceManager.GetString("PatchCopyRuntime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Creating backup file. ähnelt.
         /// </summary>
         internal static string PatchCreateBackupFile {
@@ -395,11 +404,20 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Unable to load Api32.dll. Is VS2015 C++ runtime installed? ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unable to load Api32.dll. Has the archive been extracted correctly? ähnelt.
         /// </summary>
         internal static string PatchLoadApi32Failed {
             get {
                 return ResourceManager.GetString("PatchLoadApi32Failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unable to load the Api32.dll in the EDIABAS directory. ähnelt.
+        /// </summary>
+        internal static string PatchLoadApi32FailedDest {
+            get {
+                return ResourceManager.GetString("PatchLoadApi32FailedDest", resourceCulture);
             }
         }
         
