@@ -86,6 +86,39 @@ namespace EdiabasLibConfigTool
             return fileList;
         }
 
+        public static string EdiabasLibVersion(string fileName)
+        {
+            IntPtr hDll = NativeMethods.LoadLibrary(fileName);
+            try
+            {
+                if (hDll == IntPtr.Zero)
+                {
+                    return null;
+                }
+                IntPtr pApiCheckVersion = NativeMethods.GetProcAddress(hDll, "__apiCheckVersion");
+                if (pApiCheckVersion == IntPtr.Zero)
+                {
+                    return null;
+                }
+                ApiCheckVersion apiCheckVersion = (ApiCheckVersion)Marshal.GetDelegateForFunctionPointer(pApiCheckVersion, typeof(ApiCheckVersion));
+                sbyte[] versionInfo = new sbyte[0x100];
+                if (apiCheckVersion(0x700, versionInfo) == 0)
+                {
+                    return null;
+                }
+                string version = Encoding.ASCII.GetString(versionInfo.TakeWhile(value => value != 0).Select(value => (byte)value).ToArray());
+                return version;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            finally
+            {
+                NativeMethods.FreeLibrary(hDll);
+            }
+        }
+
         public static void UpdateConfigNode(XElement settingsNode, string key, string value, bool onlyExisting = false)
         {
             XElement node = (from addNode in settingsNode.Elements("add")
@@ -167,47 +200,15 @@ namespace EdiabasLibConfigTool
                     sr.Append(Resources.Strings.PatchApi32Missing);
                     return false;
                 }
-                IntPtr hDll = NativeMethods.LoadLibrary(sourceDll);
-                try
-                {
-                    if (hDll == IntPtr.Zero)
-                    {
-                        sr.Append("\r\n");
-                        sr.Append(Resources.Strings.PatchLoadApi32Failed);
-                        return false;
-                    }
-                    IntPtr pApiCheckVersion = NativeMethods.GetProcAddress(hDll, "__apiCheckVersion");
-                    if (pApiCheckVersion == IntPtr.Zero)
-                    {
-                        sr.Append("\r\n");
-                        sr.Append(Resources.Strings.PatchLoadApi32Failed);
-                        return false;
-                    }
-                    ApiCheckVersion apiCheckVersion = (ApiCheckVersion) Marshal.GetDelegateForFunctionPointer(pApiCheckVersion, typeof (ApiCheckVersion));
-                    sbyte[] versionInfo = new sbyte[0x100];
-                    if (apiCheckVersion(0x700, versionInfo) == 0)
-                    {
-                        sr.Append("\r\n");
-                        sr.Append(Resources.Strings.PatchLoadApi32Failed);
-                        return false;
-                    }
-                    string version = Encoding.ASCII.GetString(versionInfo.TakeWhile(value => value != 0).Select(value => (byte) value).ToArray());
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.PatchApiVersion, version));
-                }
-                catch (Exception)
+                string version = EdiabasLibVersion(sourceDll);
+                if (string.IsNullOrEmpty(version))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchLoadApi32Failed);
                     return false;
                 }
-                finally
-                {
-                    if (hDll != IntPtr.Zero)
-                    {
-                        NativeMethods.FreeLibrary(hDll);
-                    }
-                }
+                sr.Append("\r\n");
+                sr.Append(string.Format(Resources.Strings.PatchApiVersion, version));
 
                 string dllFile = Path.Combine(dirName, ApiDllName);
                 string dllFileBackup = Path.Combine(dirName, ApiDllBackupName);
@@ -247,14 +248,27 @@ namespace EdiabasLibConfigTool
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigExisting);
                 }
-                List<string> runtimeFiles = GetRuntimeFiles(sourceDir);
-                foreach (string file in runtimeFiles)
+
+                if (string.IsNullOrEmpty(EdiabasLibVersion(dllFile)))
                 {
-                    string baseFile = Path.GetFileName(file);
-                    if (baseFile != null)
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.PatchCopyRuntime);
+
+                    List<string> runtimeFiles = GetRuntimeFiles(sourceDir);
+                    foreach (string file in runtimeFiles)
                     {
-                        string destFile = Path.Combine(dirName, baseFile);
-                        File.Copy(file, destFile, true);
+                        string baseFile = Path.GetFileName(file);
+                        if (baseFile != null)
+                        {
+                            string destFile = Path.Combine(dirName, baseFile);
+                            File.Copy(file, destFile, true);
+                        }
+                    }
+                    if (string.IsNullOrEmpty(EdiabasLibVersion(dllFile)))
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(Resources.Strings.PatchLoadApi32FailedDest);
+                        return false;
                     }
                 }
             }

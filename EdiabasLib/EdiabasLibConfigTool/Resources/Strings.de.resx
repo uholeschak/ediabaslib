@@ -254,7 +254,7 @@ Das Standard root Password ist root.</value>
     <value>API version: {0}</value>
   </data>
   <data name="PatchLoadApi32Failed" xml:space="preserve">
-    <value>Kann Api32.dll nicht laden. Ist die VS2015 C++ Runtime installiert?</value>
+    <value>Kann Api32.dll nicht laden. Wurde das Archiv korrekt extrahiert?</value>
   </data>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>Die Api32.dll Backup-Datei ist ungültig.</value>
@@ -266,5 +266,11 @@ Ediabas Standardeinstellungen (ediabas.ini).</value>
   <data name="PatchVaspcInfo" xml:space="preserve">
     <value>Hinweis: In VAS-PC werden nur "Geführte Fehlerkennung" und "Geführte Funktionen"
 mit EdiabasLib unterstützt.</value>
+  </data>
+  <data name="PatchCopyRuntime" xml:space="preserve">
+    <value>Keine VC Runtime-Dateien installiert, kopiere Dateien lokal.</value>
+  </data>
+  <data name="PatchLoadApi32FailedDest" xml:space="preserve">
+    <value>Kann die Api32.dll im EDIABAS Verzeichnis nicht laden.</value>
   </data>
 </root>

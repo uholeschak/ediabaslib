@@ -254,7 +254,7 @@
     <value>API версия: {0}</value>
   </data>
   <data name="PatchLoadApi32Failed" xml:space="preserve">
-    <value>Не удалось загрузить Api32.dll. Устеновлено VS2015 C++ Runtime?</value>
+    <value>Не удалось загрузить Api32.dll. Has the archive been extracted correctly?</value>
   </data>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>Api32.dll файл резервной копии повреждён или не является таковым.</value>
@@ -265,5 +265,11 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
   </data>
   <data name="PatchVaspcInfo" xml:space="preserve">
     <value>В VAS-PC с EdiabasLib поддерживаются только "Вед. поиск неисправн." и "Ведомые функции".</value>
+  </data>
+  <data name="PatchCopyRuntime" xml:space="preserve">
+    <value>No VC runtime files installed, copy files locally.</value>
+  </data>
+  <data name="PatchLoadApi32FailedDest" xml:space="preserve">
+    <value>Unable to load the Api32.dll in the EDIABAS directory.</value>
   </data>
 </root>
