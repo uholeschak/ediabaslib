@@ -86,7 +86,7 @@ namespace EdiabasLibConfigTool
             return fileList;
         }
 
-        public static string EdiabasLibVersion(string fileName)
+        public static string EdiabasLibVersion(string fileName, bool dummyLoad = false)
         {
             IntPtr hDll = NativeMethods.LoadLibrary(fileName);
             try
@@ -99,6 +99,10 @@ namespace EdiabasLibConfigTool
                 if (pApiCheckVersion == IntPtr.Zero)
                 {
                     return null;
+                }
+                if (dummyLoad)
+                {
+                    return "0";
                 }
                 ApiCheckVersion apiCheckVersion = (ApiCheckVersion)Marshal.GetDelegateForFunctionPointer(pApiCheckVersion, typeof(ApiCheckVersion));
                 sbyte[] versionInfo = new sbyte[0x100];
@@ -249,7 +253,7 @@ namespace EdiabasLibConfigTool
                     sr.Append(Resources.Strings.PatchConfigExisting);
                 }
 
-                if (string.IsNullOrEmpty(EdiabasLibVersion(dllFile)))
+                if (string.IsNullOrEmpty(EdiabasLibVersion(dllFile, true)))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchCopyRuntime);
@@ -264,7 +268,7 @@ namespace EdiabasLibConfigTool
                             File.Copy(file, destFile, true);
                         }
                     }
-                    if (string.IsNullOrEmpty(EdiabasLibVersion(dllFile)))
+                    if (string.IsNullOrEmpty(EdiabasLibVersion(dllFile, true)))
                     {
                         sr.Append("\r\n");
                         sr.Append(Resources.Strings.PatchLoadApi32FailedDest);
