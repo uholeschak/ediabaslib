@@ -367,7 +367,7 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die No VC runtime files installed, copy files locally. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die No VC runtime files installed, copying files locally. ähnelt.
         /// </summary>
         internal static string PatchCopyRuntime {
             get {

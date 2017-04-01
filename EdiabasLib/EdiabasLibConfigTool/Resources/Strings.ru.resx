@@ -267,6 +267,6 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
     <value>В VAS-PC с EdiabasLib поддерживаются только "Вед. поиск неисправн." и "Ведомые функции".</value>
   </data>
   <data name="PatchCopyRuntime" xml:space="preserve">
-    <value>No VC runtime files installed, copy files locally.</value>
+    <value>No VC runtime files installed, copying files locally.</value>
   </data>
 </root>
