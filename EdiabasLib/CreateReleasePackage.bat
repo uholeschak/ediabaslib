@@ -7,7 +7,7 @@ set DATESTR=%date:~6,4%%date:~3,2%%date:~0,2%
 echo !DATESTR!
 set PACKAGEPATH="!BATPATH!Package\"
 set EDIABASTESTPATH="!PACKAGEPATH!EdiabasTest\"
-set API32PATH="!PACKAGEPATH!Api32\"
+set TOOLPATH="!PACKAGEPATH!EdiabasLibConfigTool\"
 set APINET32PATH="!PACKAGEPATH!ApiNet32\"
 set CANADAPTERPATH="!PACKAGEPATH!CanAdapter\"
 set ENETADAPTERPATH="!PACKAGEPATH!EnetAdapter\"
@@ -20,15 +20,19 @@ copy "!BATPATH!EdiabasTest\bin\Release\EdiabasTest.exe" "!EDIABASTESTPATH!"
 copy "!BATPATH!EdiabasTest\bin\Release\*.dll" "!EDIABASTESTPATH!"
 copy "!BATPATH!EdiabasTest\bin\Release\EdiabasLib.config" "!EDIABASTESTPATH!"
 
-mkdir "!API32PATH!"
-copy "!BATPATH!EdiabasLibConfigTool\bin\x86\Release\*.dll" "!API32PATH!"
-copy "!BATPATH!EdiabasLibConfigTool\bin\x86\Release\EdiabasLib.config" "!API32PATH!"
-copy "!BATPATH!EdiabasLibConfigTool\bin\x86\Release\EdiabasLibConfigTool.exe" "!API32PATH!"
-copy "!BATPATH!EdiabasLibConfigTool\bin\x86\Release\EdiabasLibConfigTool.exe.config" "!API32PATH!"
-mkdir "!API32PATH!de"
-copy "!BATPATH!EdiabasLibConfigTool\bin\x86\Release\de\*.dll" "!API32PATH!de"
-mkdir "!API32PATH!ru"
-copy "!BATPATH!EdiabasLibConfigTool\bin\x86\Release\ru\*.dll" "!API32PATH!ru"
+mkdir "!TOOLPATH!"
+copy "!BATPATH!EdiabasLibConfigTool\bin\x86\Release\*.dll" "!TOOLPATH!"
+copy "!BATPATH!EdiabasLibConfigTool\bin\x86\Release\EdiabasLibConfigTool.exe" "!TOOLPATH!"
+copy "!BATPATH!EdiabasLibConfigTool\bin\x86\Release\EdiabasLibConfigTool.exe.config" "!TOOLPATH!"
+
+mkdir "!TOOLPATH!de"
+copy "!BATPATH!EdiabasLibConfigTool\bin\x86\Release\de\*.dll" "!TOOLPATH!de"
+
+mkdir "!TOOLPATH!ru"
+copy "!BATPATH!EdiabasLibConfigTool\bin\x86\Release\ru\*.dll" "!TOOLPATH!ru"
+
+mkdir "!TOOLPATH!Api32"
+xcopy /s /y "!BATPATH!EdiabasLibConfigTool\bin\x86\Release\Api32" "!TOOLPATH!Api32"
 
 mkdir "!APINET32PATH!"
 copy "!BATPATH!apiNET32\bin\Release\*.dll" "!APINET32PATH!"
