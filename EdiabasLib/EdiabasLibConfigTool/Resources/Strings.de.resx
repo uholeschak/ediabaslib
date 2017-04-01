@@ -268,6 +268,6 @@ Ediabas Standardeinstellungen (ediabas.ini).</value>
 mit EdiabasLib unterstützt.</value>
   </data>
   <data name="PatchCopyRuntime" xml:space="preserve">
-    <value>Keine VC Runtime-Dateien installiert, kopiere Dateien lokal.</value>
+    <value>Keine VC Runtime-Dateien installiert, Dateien werden lokal kopiert.</value>
   </data>
 </root>
