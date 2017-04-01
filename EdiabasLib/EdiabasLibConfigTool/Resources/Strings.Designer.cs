@@ -413,15 +413,6 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Unable to load the Api32.dll in the EDIABAS directory. ähnelt.
-        /// </summary>
-        internal static string PatchLoadApi32FailedDest {
-            get {
-                return ResourceManager.GetString("PatchLoadApi32FailedDest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The Api32.dll backup file is not valid. ähnelt.
         /// </summary>
         internal static string PatchNoValidBackupFile {

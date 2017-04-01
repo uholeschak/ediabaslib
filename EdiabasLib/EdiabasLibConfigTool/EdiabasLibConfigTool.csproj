@@ -152,8 +152,10 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>SETLOCAL EnableDelayedExpansion
-copy /y "$(ProjectDir)..\Api32\$(ConfigurationName)\Api32.dll" "$(TargetDir)"
-copy /y "$(ProjectDir)..\EdiabasLib\EdiabasLib.config" "$(TargetDir)"
+set "ApiDir=$(TargetDir)Api32"
+IF NOT EXIST "!ApiDir!" mkdir "!ApiDir!"
+copy /y "$(ProjectDir)..\Api32\$(ConfigurationName)\Api32.dll" "!ApiDir!"
+copy /y "$(ProjectDir)..\EdiabasLib\EdiabasLib.config" "!ApiDir!"
 
 if /I "$(ConfigurationName)" == "Release" (
 
@@ -164,17 +166,16 @@ IF NOT EXIST "!SystemDir!" (
  set "RuntimeDir=%25PROGRAMFILES%25\Windows Kits\10\Redist\ucrt\DLLs\x86\"
 )
 echo "System dir: !SystemDir!"
-copy /y "!SystemDir!msvcp140.dll" "$(TargetDir)"
-copy /y "!SystemDir!vcruntime140.dll" "$(TargetDir)"
+copy /y "!SystemDir!msvcp140.dll" "!ApiDir!"
+copy /y "!SystemDir!vcruntime140.dll" "!ApiDir!"
 
 IF EXIST "!RuntimeDir!" (
- copy /y "!RuntimeDir!*.*" "$(TargetDir)"
+ copy /y "!RuntimeDir!*.*" "!ApiDir!"
 ) ELSE (
  ECHO No WIN10 DSK installed!
 )
 
-)
-</PostBuildEvent>
+)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

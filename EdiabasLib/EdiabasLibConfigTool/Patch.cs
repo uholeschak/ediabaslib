@@ -14,6 +14,7 @@ namespace EdiabasLibConfigTool
 {
     public static class Patch
     {
+        private const string ApiDirName = @"Api32";
         private const string ApiDllName = @"api32.dll";
         private const string ApiDllBackupName = @"api32.backup.dll";
         private const string ConfigFileName = @"EdiabasLib.config";
@@ -29,6 +30,26 @@ namespace EdiabasLibConfigTool
 
             [DllImport("kernel32.dll")]
             public static extern bool FreeLibrary(IntPtr hModule);
+
+            [DllImport("kernel32.dll")]
+            public static extern bool SetDllDirectory(string lpPathName);
+
+            [DllImport("kernel32.dll")]
+            public static extern ErrorModes SetErrorMode(ErrorModes uMode);
+
+            [Flags]
+            // ReSharper disable UnusedMember.Local
+            // ReSharper disable InconsistentNaming
+            public enum ErrorModes : uint
+            {
+                SYSTEM_DEFAULT = 0x0,
+                SEM_FAILCRITICALERRORS = 0x0001,
+                SEM_NOALIGNMENTFAULTEXCEPT = 0x0004,
+                SEM_NOGPFAULTERRORBOX = 0x0002,
+                SEM_NOOPENFILEERRORBOX = 0x8000
+            }
+            // ReSharper restore UnusedMember.Local
+            // ReSharper restore InconsistentNaming
         }
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi)]
@@ -40,6 +61,8 @@ namespace EdiabasLibConfigTool
             VasPc,
             Istad,
         }
+
+        public static bool CopyRuntimeRequired { get; private set; }
 
         public static string AssemblyDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
@@ -86,8 +109,18 @@ namespace EdiabasLibConfigTool
             return fileList;
         }
 
-        public static string EdiabasLibVersion(string fileName, bool dummyLoad = false)
+        public static string EdiabasLibVersion(string fileName, bool setSearchDir)
         {
+            NativeMethods.SetErrorMode(NativeMethods.ErrorModes.SEM_FAILCRITICALERRORS);
+            string searchDir = null;
+            if (setSearchDir)
+            {
+                searchDir = Path.GetDirectoryName(fileName);
+            }
+            if (!NativeMethods.SetDllDirectory(searchDir))
+            {
+                return null;
+            }
             IntPtr hDll = NativeMethods.LoadLibrary(fileName);
             try
             {
@@ -99,10 +132,6 @@ namespace EdiabasLibConfigTool
                 if (pApiCheckVersion == IntPtr.Zero)
                 {
                     return null;
-                }
-                if (dummyLoad)
-                {
-                    return "0";
                 }
                 ApiCheckVersion apiCheckVersion = (ApiCheckVersion)Marshal.GetDelegateForFunctionPointer(pApiCheckVersion, typeof(ApiCheckVersion));
                 sbyte[] versionInfo = new sbyte[0x100];
@@ -196,7 +225,7 @@ namespace EdiabasLibConfigTool
         {
             try
             {
-                string sourceDir = AssemblyDirectory;
+                string sourceDir = Path.Combine(AssemblyDirectory, ApiDirName);
                 string sourceDll = Path.Combine(sourceDir, ApiDllName);
                 if (!File.Exists(sourceDll))
                 {
@@ -204,12 +233,17 @@ namespace EdiabasLibConfigTool
                     sr.Append(Resources.Strings.PatchApi32Missing);
                     return false;
                 }
-                string version = EdiabasLibVersion(sourceDll);
+                string version = EdiabasLibVersion(sourceDll, false);
                 if (string.IsNullOrEmpty(version))
                 {
-                    sr.Append("\r\n");
-                    sr.Append(Resources.Strings.PatchLoadApi32Failed);
-                    return false;
+                    CopyRuntimeRequired = true;
+                    version = EdiabasLibVersion(sourceDll, true);
+                    if (string.IsNullOrEmpty(version))
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(Resources.Strings.PatchLoadApi32Failed);
+                        return false;
+                    }
                 }
                 sr.Append("\r\n");
                 sr.Append(string.Format(Resources.Strings.PatchApiVersion, version));
@@ -253,7 +287,7 @@ namespace EdiabasLibConfigTool
                     sr.Append(Resources.Strings.PatchConfigExisting);
                 }
 
-                if (string.IsNullOrEmpty(EdiabasLibVersion(dllFile, true)))
+                if (CopyRuntimeRequired)
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchCopyRuntime);
@@ -267,12 +301,6 @@ namespace EdiabasLibConfigTool
                             string destFile = Path.Combine(dirName, baseFile);
                             File.Copy(file, destFile, true);
                         }
-                    }
-                    if (string.IsNullOrEmpty(EdiabasLibVersion(dllFile, true)))
-                    {
-                        sr.Append("\r\n");
-                        sr.Append(Resources.Strings.PatchLoadApi32FailedDest);
-                        return false;
                     }
                 }
             }

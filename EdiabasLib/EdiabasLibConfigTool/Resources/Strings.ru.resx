@@ -269,7 +269,4 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
   <data name="PatchCopyRuntime" xml:space="preserve">
     <value>No VC runtime files installed, copy files locally.</value>
   </data>
-  <data name="PatchLoadApi32FailedDest" xml:space="preserve">
-    <value>Unable to load the Api32.dll in the EDIABAS directory.</value>
-  </data>
 </root>
