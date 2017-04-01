@@ -270,7 +270,4 @@ mit EdiabasLib unterstützt.</value>
   <data name="PatchCopyRuntime" xml:space="preserve">
     <value>Keine VC Runtime-Dateien installiert, kopiere Dateien lokal.</value>
   </data>
-  <data name="PatchLoadApi32FailedDest" xml:space="preserve">
-    <value>Kann die Api32.dll im EDIABAS Verzeichnis nicht laden.</value>
-  </data>
 </root>
