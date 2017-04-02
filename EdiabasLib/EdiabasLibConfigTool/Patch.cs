@@ -111,15 +111,22 @@ namespace EdiabasLibConfigTool
 
         public static string EdiabasLibVersion(string fileName, bool setSearchDir)
         {
-            NativeMethods.SetErrorMode(NativeMethods.ErrorModes.SEM_FAILCRITICALERRORS);
-            string searchDir = null;
-            if (setSearchDir)
+            try
             {
-                searchDir = Path.GetDirectoryName(fileName);
+                NativeMethods.SetErrorMode(NativeMethods.ErrorModes.SEM_FAILCRITICALERRORS);
+                string searchDir = null;
+                if (setSearchDir)
+                {
+                    searchDir = Path.GetDirectoryName(fileName);
+                }
+                if (!NativeMethods.SetDllDirectory(searchDir))
+                {
+                    return null;
+                }
             }
-            if (!NativeMethods.SetDllDirectory(searchDir))
+            catch (Exception)
             {
-                return null;
+                // ignored
             }
             IntPtr hDll = NativeMethods.LoadLibrary(fileName);
             try
