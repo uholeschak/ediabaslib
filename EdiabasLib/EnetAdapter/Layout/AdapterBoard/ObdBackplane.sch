@@ -2617,9 +2617,7 @@ DIN A4, landscape with extra doc field</description>
 </package>
 <package name="1X08M-1MM">
 <description>&lt;b&gt;PIN HEADER&lt;/b&gt; - 1</description>
-<wire x1="4.75" y1="1.25" x2="4.75" y2="-1.25" width="0.2032" layer="21"/>
 <wire x1="4.75" y1="-1.25" x2="-4.75" y2="-1.25" width="0.2032" layer="21"/>
-<wire x1="-4.75" y1="-1.25" x2="-4.75" y2="1.25" width="0.2032" layer="21"/>
 <wire x1="-4.75" y1="1.25" x2="4.75" y2="1.25" width="0.2032" layer="21"/>
 <pad name="1" x="-3.5" y="0" drill="0.3048" shape="long" rot="R90"/>
 <pad name="2" x="-2.5" y="0" drill="0.3048" shape="long" rot="R90"/>
@@ -2629,8 +2627,8 @@ DIN A4, landscape with extra doc field</description>
 <pad name="6" x="1.5" y="0" drill="0.3048" shape="long" rot="R90"/>
 <pad name="7" x="2.5" y="0" drill="0.3048" shape="long" rot="R90"/>
 <pad name="8" x="3.5" y="0" drill="0.3048" shape="long" rot="R90"/>
-<text x="-5.5" y="-1" size="1.016" layer="25" ratio="14" rot="R90">&gt;NAME</text>
-<text x="6" y="-1" size="0.8128" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
+<text x="-7.5" y="-1" size="1.016" layer="25" ratio="14" rot="R90">&gt;NAME</text>
+<text x="8.5" y="-1" size="0.8128" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
 <rectangle x1="-2.6" y1="-0.1" x2="-2.4" y2="0.1" layer="51"/>
 <rectangle x1="-3.6" y1="-0.1" x2="-3.4" y2="0.1" layer="51"/>
 <rectangle x1="-1.6" y1="-0.1" x2="-1.4" y2="0.1" layer="51"/>
@@ -2639,6 +2637,10 @@ DIN A4, landscape with extra doc field</description>
 <rectangle x1="1.4" y1="-0.1" x2="1.6" y2="0.1" layer="51"/>
 <rectangle x1="2.4" y1="-0.1" x2="2.6" y2="0.1" layer="51"/>
 <rectangle x1="3.4" y1="-0.1" x2="3.6" y2="0.1" layer="51"/>
+<smd name="PAD1" x="-6" y="0" dx="2" dy="4" layer="1" thermals="no"/>
+<smd name="PAD2" x="6" y="0" dx="2" dy="4" layer="1" thermals="no"/>
+<wire x1="-7.25" y1="-1.25" x2="-7.25" y2="1.25" width="0.2032" layer="21"/>
+<wire x1="7.25" y1="1.25" x2="7.25" y2="-1.25" width="0.2032" layer="21"/>
 </package>
 </packages>
 <symbols>
@@ -6137,7 +6139,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 </class>
 </classes>
 <parts>
-<part name="J1" library="SparkFun-Connectors" deviceset="OBDII" device=""/>
+<part name="OBDII" library="SparkFun-Connectors" deviceset="OBDII" device=""/>
 <part name="D1" library="diode" deviceset="DIODE-" device="DO214AC"/>
 <part name="R1" library="resistor" deviceset="R-EU_" device="R2512" value="511"/>
 <part name="FRAME1" library="frames" deviceset="DINA4_L" device=""/>
@@ -6148,8 +6150,8 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <part name="OUT+" library="pinhead" deviceset="PINHD-1X1" device="_2.54" value="5V"/>
 <part name="OUT-" library="pinhead" deviceset="PINHD-1X1" device="_2.54" value="GND"/>
 <part name="P+2" library="supply1" deviceset="+5V" device=""/>
-<part name="POWER+" library="pinhead" deviceset="PINHD-1X1" device="_2.54" value="5V"/>
-<part name="POWER-" library="pinhead" deviceset="PINHD-1X1" device="_2.54" value="GND"/>
+<part name="P+" library="pinhead" deviceset="PINHD-1X1" device="_2.54" value="5V"/>
+<part name="P-" library="pinhead" deviceset="PINHD-1X1" device="_2.54" value="GND"/>
 <part name="JP1" library="obd_special" deviceset="PINHD-1X8" device="_1.00" value="ETHERNET"/>
 </parts>
 <sheets>
@@ -6157,7 +6159,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <plain>
 </plain>
 <instances>
-<instance part="J1" gate="G$1" x="-7.62" y="205.74"/>
+<instance part="OBDII" gate="G$1" x="-7.62" y="205.74"/>
 <instance part="D1" gate="G$1" x="58.42" y="210.82"/>
 <instance part="R1" gate="G$1" x="-7.62" y="185.42"/>
 <instance part="FRAME1" gate="G$1" x="-53.34" y="99.06"/>
@@ -6169,8 +6171,8 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <instance part="OUT+" gate="G$1" x="73.66" y="170.18"/>
 <instance part="OUT-" gate="G$1" x="91.44" y="170.18"/>
 <instance part="P+2" gate="1" x="60.96" y="175.26"/>
-<instance part="POWER+" gate="G$1" x="73.66" y="149.86"/>
-<instance part="POWER-" gate="G$1" x="91.44" y="149.86"/>
+<instance part="P+" gate="G$1" x="73.66" y="149.86"/>
+<instance part="P-" gate="G$1" x="91.44" y="149.86"/>
 <instance part="JP1" gate="A" x="-7.62" y="266.7" rot="R90"/>
 </instances>
 <busses>
@@ -6178,8 +6180,8 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <nets>
 <net name="GND" class="0">
 <segment>
-<pinref part="J1" gate="G$1" pin="SIGGND"/>
-<pinref part="J1" gate="G$1" pin="CHASGND"/>
+<pinref part="OBDII" gate="G$1" pin="SIGGND"/>
+<pinref part="OBDII" gate="G$1" pin="CHASGND"/>
 <wire x1="-30.48" y1="208.28" x2="-38.1" y2="208.28" width="0.1524" layer="91"/>
 <wire x1="-38.1" y1="208.28" x2="-38.1" y2="205.74" width="0.1524" layer="91"/>
 <wire x1="-38.1" y1="205.74" x2="-30.48" y2="205.74" width="0.1524" layer="91"/>
@@ -6193,13 +6195,13 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <junction x="-38.1" y="180.34"/>
 <wire x1="88.9" y1="170.18" x2="88.9" y2="149.86" width="0.1524" layer="91"/>
 <junction x="88.9" y="170.18"/>
-<pinref part="POWER-" gate="G$1" pin="1"/>
+<pinref part="P-" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="+12V" class="0">
 <segment>
 <pinref part="P+1" gate="1" pin="+12V"/>
-<pinref part="J1" gate="G$1" pin="BATTPOWER"/>
+<pinref part="OBDII" gate="G$1" pin="BATTPOWER"/>
 <wire x1="48.26" y1="223.52" x2="48.26" y2="210.82" width="0.1524" layer="91"/>
 <wire x1="48.26" y1="210.82" x2="48.26" y2="198.12" width="0.1524" layer="91"/>
 <wire x1="48.26" y1="198.12" x2="15.24" y2="198.12" width="0.1524" layer="91"/>
@@ -6214,7 +6216,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 </net>
 <net name="N$2" class="0">
 <segment>
-<pinref part="J1" gate="G$1" pin="8"/>
+<pinref part="OBDII" gate="G$1" pin="8"/>
 <wire x1="-30.48" y1="198.12" x2="-33.02" y2="198.12" width="0.1524" layer="91"/>
 <wire x1="-33.02" y1="198.12" x2="-33.02" y2="185.42" width="0.1524" layer="91"/>
 <pinref part="R1" gate="G$1" pin="1"/>
@@ -6236,12 +6238,12 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <wire x1="60.96" y1="170.18" x2="71.12" y2="170.18" width="0.1524" layer="91"/>
 <wire x1="71.12" y1="170.18" x2="71.12" y2="149.86" width="0.1524" layer="91"/>
 <junction x="71.12" y="170.18"/>
-<pinref part="POWER+" gate="G$1" pin="1"/>
+<pinref part="P+" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$3" class="0">
 <segment>
-<pinref part="J1" gate="G$1" pin="3"/>
+<pinref part="OBDII" gate="G$1" pin="3"/>
 <wire x1="-30.48" y1="210.82" x2="-38.1" y2="210.82" width="0.1524" layer="91"/>
 <wire x1="-38.1" y1="210.82" x2="-38.1" y2="243.84" width="0.1524" layer="91"/>
 <wire x1="-38.1" y1="243.84" x2="0" y2="243.84" width="0.1524" layer="91"/>
@@ -6251,7 +6253,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 </net>
 <net name="N$6" class="0">
 <segment>
-<pinref part="J1" gate="G$1" pin="13"/>
+<pinref part="OBDII" gate="G$1" pin="13"/>
 <wire x1="15.24" y1="205.74" x2="30.48" y2="205.74" width="0.1524" layer="91"/>
 <wire x1="30.48" y1="205.74" x2="30.48" y2="254" width="0.1524" layer="91"/>
 <wire x1="30.48" y1="254" x2="-12.7" y2="254" width="0.1524" layer="91"/>
@@ -6261,7 +6263,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 </net>
 <net name="N$7" class="0">
 <segment>
-<pinref part="J1" gate="G$1" pin="11"/>
+<pinref part="OBDII" gate="G$1" pin="11"/>
 <wire x1="15.24" y1="210.82" x2="25.4" y2="210.82" width="0.1524" layer="91"/>
 <wire x1="25.4" y1="210.82" x2="25.4" y2="248.92" width="0.1524" layer="91"/>
 <wire x1="25.4" y1="248.92" x2="-2.54" y2="248.92" width="0.1524" layer="91"/>
@@ -6271,7 +6273,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 </net>
 <net name="N$4" class="0">
 <segment>
-<pinref part="J1" gate="G$1" pin="12"/>
+<pinref part="OBDII" gate="G$1" pin="12"/>
 <wire x1="15.24" y1="208.28" x2="27.94" y2="208.28" width="0.1524" layer="91"/>
 <wire x1="27.94" y1="208.28" x2="27.94" y2="251.46" width="0.1524" layer="91"/>
 <wire x1="27.94" y1="251.46" x2="-5.08" y2="251.46" width="0.1524" layer="91"/>

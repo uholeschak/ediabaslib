@@ -131,9 +131,7 @@
 </package>
 <package name="1X08M-1MM">
 <description>&lt;b&gt;PIN HEADER&lt;/b&gt; - 1</description>
-<wire x1="4.75" y1="1.25" x2="4.75" y2="-1.25" width="0.2032" layer="21"/>
 <wire x1="4.75" y1="-1.25" x2="-4.75" y2="-1.25" width="0.2032" layer="21"/>
-<wire x1="-4.75" y1="-1.25" x2="-4.75" y2="1.25" width="0.2032" layer="21"/>
 <wire x1="-4.75" y1="1.25" x2="4.75" y2="1.25" width="0.2032" layer="21"/>
 <pad name="1" x="-3.5" y="0" drill="0.3048" shape="long" rot="R90"/>
 <pad name="2" x="-2.5" y="0" drill="0.3048" shape="long" rot="R90"/>
@@ -143,8 +141,8 @@
 <pad name="6" x="1.5" y="0" drill="0.3048" shape="long" rot="R90"/>
 <pad name="7" x="2.5" y="0" drill="0.3048" shape="long" rot="R90"/>
 <pad name="8" x="3.5" y="0" drill="0.3048" shape="long" rot="R90"/>
-<text x="-5.5" y="-1" size="1.016" layer="25" ratio="14" rot="R90">&gt;NAME</text>
-<text x="6" y="-1" size="0.8128" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
+<text x="-7.5" y="-1" size="1.016" layer="25" ratio="14" rot="R90">&gt;NAME</text>
+<text x="8.5" y="-1" size="0.8128" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
 <rectangle x1="-2.6" y1="-0.1" x2="-2.4" y2="0.1" layer="51"/>
 <rectangle x1="-3.6" y1="-0.1" x2="-3.4" y2="0.1" layer="51"/>
 <rectangle x1="-1.6" y1="-0.1" x2="-1.4" y2="0.1" layer="51"/>
@@ -153,6 +151,10 @@
 <rectangle x1="1.4" y1="-0.1" x2="1.6" y2="0.1" layer="51"/>
 <rectangle x1="2.4" y1="-0.1" x2="2.6" y2="0.1" layer="51"/>
 <rectangle x1="3.4" y1="-0.1" x2="3.6" y2="0.1" layer="51"/>
+<smd name="PAD1" x="-6" y="0" dx="2" dy="4" layer="1" thermals="no"/>
+<smd name="PAD2" x="6" y="0" dx="2" dy="4" layer="1" thermals="no"/>
+<wire x1="-7.25" y1="-1.25" x2="-7.25" y2="1.25" width="0.2032" layer="21"/>
+<wire x1="7.25" y1="1.25" x2="7.25" y2="-1.25" width="0.2032" layer="21"/>
 </package>
 </packages>
 <symbols>
