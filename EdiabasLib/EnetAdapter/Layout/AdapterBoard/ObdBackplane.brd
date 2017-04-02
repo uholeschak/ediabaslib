@@ -14,38 +14,38 @@
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
 <layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="yes"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="yes"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="yes"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="yes"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="no" active="yes"/>
-<layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
-<layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
-<layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
-<layer number="32" name="bCream" color="7" fill="5" visible="no" active="yes"/>
-<layer number="33" name="tFinish" color="6" fill="3" visible="no" active="yes"/>
-<layer number="34" name="bFinish" color="6" fill="6" visible="no" active="yes"/>
-<layer number="35" name="tGlue" color="7" fill="4" visible="no" active="yes"/>
-<layer number="36" name="bGlue" color="7" fill="5" visible="no" active="yes"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="no" active="yes"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="no" active="yes"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="29" name="tStop" color="7" fill="3" visible="yes" active="yes"/>
+<layer number="30" name="bStop" color="7" fill="6" visible="yes" active="yes"/>
+<layer number="31" name="tCream" color="7" fill="4" visible="yes" active="yes"/>
+<layer number="32" name="bCream" color="7" fill="5" visible="yes" active="yes"/>
+<layer number="33" name="tFinish" color="6" fill="3" visible="yes" active="yes"/>
+<layer number="34" name="bFinish" color="6" fill="6" visible="yes" active="yes"/>
+<layer number="35" name="tGlue" color="7" fill="4" visible="yes" active="yes"/>
+<layer number="36" name="bGlue" color="7" fill="5" visible="yes" active="yes"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="yes" active="yes"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="yes" active="yes"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="yes" active="yes"/>
 <layer number="42" name="bRestrict" color="1" fill="10" visible="yes" active="yes"/>
 <layer number="43" name="vRestrict" color="2" fill="10" visible="yes" active="yes"/>
-<layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
-<layer number="45" name="Holes" color="7" fill="1" visible="no" active="yes"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
-<layer number="48" name="Document" color="7" fill="1" visible="no" active="yes"/>
+<layer number="44" name="Drills" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="45" name="Holes" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="yes"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="yes"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="yes"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
 <layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
 <layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
@@ -141,9 +141,9 @@
 <board>
 <plain>
 <wire x1="2" y1="0" x2="34" y2="0" width="0" layer="20"/>
-<wire x1="34" y1="0" x2="34" y2="20" width="0" layer="20"/>
-<wire x1="34" y1="20" x2="2" y2="20" width="0" layer="20"/>
-<wire x1="2" y1="20" x2="2" y2="0" width="0" layer="20"/>
+<wire x1="34" y1="0" x2="34" y2="19.5" width="0" layer="20"/>
+<wire x1="34" y1="19.5" x2="2" y2="19.5" width="0" layer="20"/>
+<wire x1="2" y1="19.5" x2="2" y2="0" width="0" layer="20"/>
 </plain>
 <libraries>
 <library name="diode">
@@ -250,9 +250,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <packages>
 <package name="1X08M-1MM">
 <description>&lt;b&gt;PIN HEADER&lt;/b&gt; - 1</description>
-<wire x1="4.75" y1="1.25" x2="4.75" y2="-1.25" width="0.2032" layer="21"/>
 <wire x1="4.75" y1="-1.25" x2="-4.75" y2="-1.25" width="0.2032" layer="21"/>
-<wire x1="-4.75" y1="-1.25" x2="-4.75" y2="1.25" width="0.2032" layer="21"/>
 <wire x1="-4.75" y1="1.25" x2="4.75" y2="1.25" width="0.2032" layer="21"/>
 <pad name="1" x="-3.5" y="0" drill="0.3048" shape="long" rot="R90"/>
 <pad name="2" x="-2.5" y="0" drill="0.3048" shape="long" rot="R90"/>
@@ -262,8 +260,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pad name="6" x="1.5" y="0" drill="0.3048" shape="long" rot="R90"/>
 <pad name="7" x="2.5" y="0" drill="0.3048" shape="long" rot="R90"/>
 <pad name="8" x="3.5" y="0" drill="0.3048" shape="long" rot="R90"/>
-<text x="-5.5" y="-1" size="1.016" layer="25" ratio="14" rot="R90">&gt;NAME</text>
-<text x="6" y="-1" size="0.8128" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
+<text x="-7.5" y="-1" size="1.016" layer="25" ratio="14" rot="R90">&gt;NAME</text>
+<text x="8.5" y="-1" size="0.8128" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
 <rectangle x1="-2.6" y1="-0.1" x2="-2.4" y2="0.1" layer="51"/>
 <rectangle x1="-3.6" y1="-0.1" x2="-3.4" y2="0.1" layer="51"/>
 <rectangle x1="-1.6" y1="-0.1" x2="-1.4" y2="0.1" layer="51"/>
@@ -272,6 +270,10 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <rectangle x1="1.4" y1="-0.1" x2="1.6" y2="0.1" layer="51"/>
 <rectangle x1="2.4" y1="-0.1" x2="2.6" y2="0.1" layer="51"/>
 <rectangle x1="3.4" y1="-0.1" x2="3.6" y2="0.1" layer="51"/>
+<smd name="PAD1" x="-6" y="0" dx="2" dy="4" layer="1" thermals="no"/>
+<smd name="PAD2" x="6" y="0" dx="2" dy="4" layer="1" thermals="no"/>
+<wire x1="-7.25" y1="-1.25" x2="-7.25" y2="1.25" width="0.2032" layer="21"/>
+<wire x1="7.25" y1="1.25" x2="7.25" y2="-1.25" width="0.2032" layer="21"/>
 </package>
 </packages>
 </library>
@@ -1554,44 +1556,70 @@ design rules under a new name.</description>
 </pass>
 </autorouter>
 <elements>
-<element name="D1" library="diode" package="DO214AC" value="" x="8.255" y="17.78"/>
-<element name="IN+" library="pinhead" package="1X01" value="12V" x="3.81" y="17.78"/>
-<element name="IN-" library="pinhead" package="1X01" value="GND" x="12.7" y="17.78"/>
-<element name="J1" library="SparkFun-Connectors" package="OBDII" value="OBDII" x="18.2" y="9.6">
-<attribute name="SF_ID" value="DEV-09911" x="18.2" y="9.6" size="1.778" layer="27" display="off"/>
+<element name="D1" library="diode" package="DO214AC" value="" x="8.255" y="17.78" smashed="yes">
+<attribute name="NAME" x="9.425" y="15.891" size="0.4064" layer="25" ratio="10"/>
+<attribute name="VALUE" x="5.615" y="15.224" size="1.27" layer="27" ratio="10"/>
 </element>
-<element name="OUT+" library="pinhead" package="1X01" value="5V" x="3.81" y="2.54"/>
-<element name="OUT-" library="pinhead" package="1X01" value="GND" x="12.7" y="2.54"/>
-<element name="R1" library="resistor" package="R2512" value="511" x="6.35" y="10.16"/>
-<element name="POWER+" library="pinhead" package="1X01" value="5V" x="27.94" y="2.54"/>
-<element name="POWER-" library="pinhead" package="1X01" value="GND" x="27.94" y="10.16"/>
-<element name="JP1" library="obd_special" package="1X08M-1MM" value="ETHERNET" x="20.2" y="10"/>
+<element name="IN+" library="pinhead" package="1X01" value="12V" x="3.81" y="17.78" smashed="yes">
+<attribute name="NAME" x="2.54" y="15.875" size="0.4064" layer="25" ratio="10"/>
+</element>
+<element name="IN-" library="pinhead" package="1X01" value="GND" x="12.7" y="17.78" smashed="yes">
+<attribute name="NAME" x="14.5288" y="17.7038" size="0.8128" layer="25" ratio="10"/>
+<attribute name="VALUE" x="14.605" y="16.51" size="0.8128" layer="27"/>
+</element>
+<element name="OBDII" library="SparkFun-Connectors" package="OBDII" value="OBDII" x="18.2" y="9.6" smashed="yes">
+<attribute name="SF_ID" value="DEV-09911" x="18.2" y="9.6" size="1.778" layer="27" display="off"/>
+<attribute name="NAME" x="19.089" y="17.347" size="0.8128" layer="25" font="vector" ratio="20"/>
+</element>
+<element name="OUT+" library="pinhead" package="1X01" value="5V" x="3.81" y="2.54" smashed="yes">
+<attribute name="NAME" x="5.6388" y="2.4638" size="0.8128" layer="25" ratio="10"/>
+<attribute name="VALUE" x="5.715" y="1.27" size="0.8128" layer="27"/>
+</element>
+<element name="OUT-" library="pinhead" package="1X01" value="GND" x="12.7" y="2.54" smashed="yes">
+<attribute name="NAME" x="14.5288" y="2.4638" size="0.8128" layer="25" ratio="10"/>
+<attribute name="VALUE" x="14.605" y="1.27" size="0.8128" layer="27"/>
+</element>
+<element name="R1" library="resistor" package="R2512" value="511" x="6.35" y="10.16" smashed="yes">
+<attribute name="NAME" x="10.795" y="10.16" size="0.8128" layer="25"/>
+<attribute name="VALUE" x="10.795" y="8.89" size="0.8128" layer="27"/>
+</element>
+<element name="P+" library="pinhead" package="1X01" value="5V" x="29.21" y="2.54" smashed="yes">
+<attribute name="NAME" x="31.0388" y="2.4638" size="0.8128" layer="25" ratio="10"/>
+<attribute name="VALUE" x="31.115" y="1.27" size="0.8128" layer="27"/>
+</element>
+<element name="P-" library="pinhead" package="1X01" value="GND" x="29.21" y="10.16" smashed="yes">
+<attribute name="NAME" x="31.0388" y="10.0838" size="0.8128" layer="25" ratio="10"/>
+<attribute name="VALUE" x="30.48" y="8.89" size="0.8128" layer="27"/>
+</element>
+<element name="JP1" library="obd_special" package="1X08M-1MM" value="ETHERNET" x="20.2" y="10" smashed="yes">
+<attribute name="NAME" x="19.05" y="8.365" size="0.8128" layer="25" ratio="14" rot="R180"/>
+</element>
 </elements>
 <signals>
 <signal name="GND">
-<contactref element="J1" pad="5"/>
-<contactref element="J1" pad="4"/>
+<contactref element="OBDII" pad="5"/>
+<contactref element="OBDII" pad="4"/>
 <contactref element="OUT-" pad="1"/>
-<contactref element="POWER-" pad="1"/>
+<contactref element="P-" pad="1"/>
 <wire x1="12.7" y1="2.54" x2="12.7" y2="3.01" width="0.8128" layer="1"/>
 <wire x1="12.7" y1="3.01" x2="16.08" y2="5.79" width="0.8128" layer="1"/>
 <wire x1="16.08" y1="5.79" x2="20.03" y2="5.79" width="0.8128" layer="1"/>
 <polygon width="0.254" layer="16" spacing="0.254" isolate="0.4064">
-<vertex x="29.21" y="6.35"/>
-<vertex x="29.21" y="19.05"/>
-<vertex x="12.065" y="19.05"/>
+<vertex x="30.48" y="6.35"/>
+<vertex x="30.48" y="12.7"/>
+<vertex x="12.065" y="12.7"/>
 <vertex x="12.065" y="6.35"/>
 </polygon>
 </signal>
 <signal name="+12V">
-<contactref element="J1" pad="16"/>
+<contactref element="OBDII" pad="16"/>
 <contactref element="R1" pad="2"/>
 <contactref element="D1" pad="A"/>
 <polygon width="0.254" layer="1" isolate="0.4064">
-<vertex x="2.54" y="19.685"/>
+<vertex x="2.54" y="19.05"/>
 <vertex x="2.54" y="7.62"/>
 <vertex x="10.795" y="7.62"/>
-<vertex x="10.795" y="19.685"/>
+<vertex x="10.795" y="19.05"/>
 </polygon>
 <wire x1="4.23" y1="14.19" x2="4.23" y2="13.55" width="0.8128" layer="1"/>
 <wire x1="4.23" y1="13.55" x2="6.35" y2="11.43" width="0.8128" layer="1"/>
@@ -1599,7 +1627,7 @@ design rules under a new name.</description>
 <wire x1="6.35" y1="10.16" x2="9.15" y2="10.16" width="0.8128" layer="1"/>
 </signal>
 <signal name="N$2">
-<contactref element="J1" pad="8"/>
+<contactref element="OBDII" pad="8"/>
 <contactref element="R1" pad="1"/>
 <wire x1="3.55" y1="10.16" x2="4.03" y2="10.16" width="0.8128" layer="1"/>
 <wire x1="4.03" y1="10.16" x2="4.03" y2="5.99" width="0.8128" layer="1"/>
@@ -1612,22 +1640,22 @@ design rules under a new name.</description>
 </signal>
 <signal name="+5V">
 <contactref element="OUT+" pad="1"/>
-<contactref element="POWER+" pad="1"/>
+<contactref element="P+" pad="1"/>
 <polygon width="0.254" layer="16" spacing="0.254" isolate="0.4064">
 <vertex x="3.175" y="0.635"/>
-<vertex x="29.21" y="0.635"/>
-<vertex x="29.21" y="4.445"/>
+<vertex x="30.48" y="0.635"/>
+<vertex x="30.48" y="4.445"/>
 <vertex x="3.175" y="4.445"/>
 </polygon>
 </signal>
 <signal name="N$3">
-<contactref element="J1" pad="3"/>
+<contactref element="OBDII" pad="3"/>
 <contactref element="JP1" pad="8"/>
 <wire x1="23.7" y1="10" x2="23.7" y2="6.07" width="0.4064" layer="1"/>
 <wire x1="23.7" y1="6.07" x2="23.98" y2="5.79" width="0.4064" layer="1"/>
 </signal>
 <signal name="N$6">
-<contactref element="J1" pad="13"/>
+<contactref element="OBDII" pad="13"/>
 <contactref element="JP1" pad="3"/>
 <wire x1="18.7" y1="10" x2="18.7" y2="11.78" width="0.4064" layer="1"/>
 <wire x1="18.7" y1="11.78" x2="16.51" y2="13.97" width="0.4064" layer="1"/>
@@ -1635,7 +1663,7 @@ design rules under a new name.</description>
 <wire x1="16.3" y1="13.97" x2="16.08" y2="14.19" width="0.4064" layer="1"/>
 </signal>
 <signal name="N$7">
-<contactref element="J1" pad="11"/>
+<contactref element="OBDII" pad="11"/>
 <contactref element="JP1" pad="7"/>
 <wire x1="22.7" y1="10" x2="22.7" y2="12.54" width="0.4064" layer="1"/>
 <wire x1="22.7" y1="12.54" x2="23.495" y2="13.335" width="0.4064" layer="1"/>
@@ -1643,7 +1671,7 @@ design rules under a new name.</description>
 <wire x1="23.495" y1="13.705" x2="23.98" y2="14.19" width="0.4064" layer="1"/>
 </signal>
 <signal name="N$4">
-<contactref element="J1" pad="12"/>
+<contactref element="OBDII" pad="12"/>
 <contactref element="JP1" pad="6"/>
 <wire x1="21.7" y1="10" x2="21.7" y2="12.59" width="0.4064" layer="1"/>
 <wire x1="21.7" y1="12.59" x2="20.32" y2="13.97" width="0.4064" layer="1"/>
@@ -1652,16 +1680,14 @@ design rules under a new name.</description>
 </signal>
 </signals>
 <errors>
-<approved hash="4,1,2d75415264b17166"/>
-<approved hash="4,1,dfb41cad7667fdd2"/>
-<approved hash="4,1,2d5752ba9b3afb47"/>
-<approved hash="4,1,02e9e90ecc6aea96"/>
-<approved hash="4,1,1e4c08929ee8d577"/>
-<approved hash="4,1,549b9e3e123dd485"/>
-<approved hash="4,1,6b3960348964991a"/>
-<approved hash="4,1,52c768cba76be117"/>
-<approved hash="4,1,660e08710a2f309c"/>
-<approved hash="4,1,4826fc456f330fb4"/>
+<approved hash="18,29,6881b02c40fc9121"/>
+<approved hash="18,29,1f5e5c9a5c7c1fb8"/>
+<approved hash="18,29,86c6c17bf0dcaaa1"/>
+<approved hash="18,29,fb01488ca7fbf669"/>
+<approved hash="18,29,23656a256ad92399"/>
+<approved hash="18,29,1b23d330c94e41c4"/>
+<approved hash="18,29,a1ec1645537d64b9"/>
+<approved hash="18,29,5241a4b2fe2acb3d"/>
 </errors>
 </board>
 </drawing>
