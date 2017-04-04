@@ -4,3 +4,4 @@ mklink /j D:\Projects\EdiabasLibUH\Tools\CarSimulator D:\Projects\EdiabasLib\Too
 mklink /j D:\Projects\EdiabasLibUH\Tools\Mono D:\Projects\EdiabasLib\Tools\Mono
 mklink /j D:\Projects\EdiabasLibUH\ToolsSetup D:\Projects\EdiabasLib\ToolsSetup
 mklink /j D:\Projects\EdiabasLibUH\EdiabasLib D:\Projects\EdiabasLib\EdiabasLib
+mklink /j D:\Projects\EdiabasLibUH\docs D:\Projects\EdiabasLib\docs
