@@ -1,6 +1,6 @@
 # EdiabasTest command line parameters
 For testing of the EdiabasLib.dll there is a console application EdiabasTest.exe which accepts command line parameters. The following parameters are supported:
-* _{"--cfg="<property1>=<value1>;<property2>=<value2>"}_: This parameter allows to override default values of the [EdiabasLib.config file](EdiabasLib.config-file).
+* _{"--cfg="<property1>=<value1>;<property2>=<value2>"}_: This parameter allows to override default values of the [EdiabasLib.config file](EdiabasLib.config file.md).
 * _{"-s or --sgbd="}_: Specify a SGBD (ECU) file to execute.
 * _{"-p or --port="}_: Specify a COM port for communication.
 * _{"-o or --out="}_: This parameter specifies a file name for the output. If the parameter is missing, the output is written to the console.
