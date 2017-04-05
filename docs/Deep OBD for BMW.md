@@ -1,6 +1,6 @@
 # Deep OBD for BMW and VAG
-This page describes how to use _Deep OBD for BMW and VAG_.
-Download app from Google Play: [https://play.google.com/store/apps/details?id=de.holeschak.bmw_deep_obd](https://play.google.com/store/apps/details?id=de.holeschak.bmw_deep_obd)
+This page describes how to use _Deep OBD for BMW and VAG_.  
+Download app from Google Play: [https://play.google.com/store/apps/details?id=de.holeschak.bmw_deep_obd](https://play.google.com/store/apps/details?id=de.holeschak.bmw_deep_obd)  
 Table of contents:
 * [Manufacturers](#manufacturers)
 * [Supported adapters](#supported-adapters)
@@ -24,8 +24,8 @@ _Deep OBD for BMW and VAG_ supports several OBD II adapters:
 * [ENET WiFi adapters](ENET WiFi Adapter.md) (for BMW F-models)
 
 ## First start
-At the first start of Deep OBD for BMW and VAG you will be asked to download the ECU files. The file package is very large (100MB) and requires approximately 1GB on the external SDCard after extraction. When using VAG as manufacturer a different ECU package is required.
-In the next step a configuration _(*.cccfg file)_ must be created. The easiest way to do so is to use the [configuration generator](#ConfigurationGenerator). For complex scenarios you could manually create configuration files (see [HowTo create Deep OBD pages](Page specification.md)). After loading and compiling the configuration file, all tabs included in the file will be visible on the main page.
+At the first start of Deep OBD for BMW and VAG you will be asked to download the ECU files. The file package is very large (100MB) and requires approximately 1GB on the external SDCard after extraction. When using VAG as manufacturer a different ECU package is required.  
+In the next step a configuration _(*.cccfg file)_ must be created. The easiest way to do so is to use the [configuration generator](#ConfigurationGenerator). For complex scenarios you could manually create configuration files (see [HowTo create Deep OBD pages](Page specification.md)). After loading and compiling the configuration file, all tabs included in the file will be visible on the main page.  
 Before connecting to the vehicle via Bluetooth a [Bluetooth adapter](Build Bluetooth D-CAN adapter.md) has to be selected (or you will be asked when connecting). It's recommended to pair the adapter in the android Bluetooth menu before using it in _Deep OBD for BMW and VAG_, because this way a connection password could be assigned.
 
 ![E61Bt.cccfg](Deep OBD for BMW_AppOfflineSmall.png) ![Select Bluetooth device](Deep OBD for BMW_AppSelectBluetoothSmall.png)
@@ -62,8 +62,8 @@ Below are some screenshots from the example E61 configuration:
 ![Motor page](Deep OBD for BMW_AppMotorSmall.png) ![Motor page](Deep OBD for BMW_AppClimateSmall.png) ![Motor page](Deep OBD for BMW_AppAxisSmall.png) ![Motor page](Deep OBD for BMW_AppReadAllErrorsSmall.png)
 
 ## Log and trace files location
-The location of the log and trace files depends from the Android version.
-Beginning with Android KitKat (4.4) writing to the external SdCard is not possible any more. For older Android versions log and trace files are stored in a subdirectory relative to _de.holeschak.bmw_deep_obd_ on the external SDCard. For KitKat and above the data could be found in the directory _Android\data\de.holeschak.bmw_deep_obd\files_ of the external SDCard.
+The location of the log and trace files depends from the Android version.  
+Beginning with Android KitKat (4.4) writing to the external SdCard is not possible any more. For older Android versions log and trace files are stored in a subdirectory relative to _de.holeschak.bmw_deep_obd_ on the external SDCard. For KitKat and above the data could be found in the directory _Android\data\de.holeschak.bmw_deep_obd\files_ of the external SDCard.  
 The standard log files are stored in the subdirectory _Log_, whereas the [Ediabas tool](Ediabas Tool.md) uses the subdirectory _LogEdiabasTool_ and the [configuration generator](Configuration Generator.md) the subdirectory _LogConfigTool_.
 
 ## Background image

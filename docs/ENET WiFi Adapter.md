@@ -1,5 +1,5 @@
 # ENET WiFi Adapter
-For the BMW F-models there is a WiFi adapter available, that allows to communicate directly using the BMW ENET protocol.
+For the BMW F-models there is a WiFi adapter available, that allows to communicate directly using the BMW ENET protocol.  
 It is based on the hardware of an [A5-V11 3G/4G Router](https://wiki.openwrt.org/toh/unbranded/a5-v11). The adapter has the following features:
 * MediaTek/Ralink RT5350F processor with 350MHz
 * DC/DC converter for improved power consumption
@@ -19,12 +19,12 @@ It is based on the hardware of an [A5-V11 3G/4G Router](https://wiki.openwrt.org
 ![ENET adapter closed](ENET WiFi Adapter_EnetAdapterClosedSmall.png) ![Web interface](ENET WiFi Adapter_WebInterfaceSmall.png) 
 
 ## Buy an adapter
-New adapters are available.
-You could buy the [ENET WiFi adapter](http://www.ebay.de/itm/252803784836) from EBAY.
+New adapters are available.  
+You could buy the [ENET WiFi adapter](http://www.ebay.de/itm/252803784836) from EBAY.  
 For BMW pre F-models use the [Bluetooth adapter](Replacement firmware for ELM327.md)
 
 ## Factory reset
-If the adapter gets unreachable after a misconfiguration there is a possibility to perform a factory reset.
+If the adapter gets unreachable after a misconfiguration there is a possibility to perform a factory reset.  
 You have to open the adapter and press the reset button after the adapter has booted.
 
 ## Use the adapter with INPA, Tool32 or ISTA-D
