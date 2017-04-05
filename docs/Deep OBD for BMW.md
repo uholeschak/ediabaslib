@@ -25,7 +25,7 @@ _Deep OBD for BMW and VAG_ supports several OBD II adapters:
 
 ## First start
 At the first start of Deep OBD for BMW and VAG you will be asked to download the ECU files. The file package is very large (100MB) and requires approximately 1GB on the external SDCard after extraction. When using VAG as manufacturer a different ECU package is required.
-In the next step a configuration {"(*.cccfg file)"} must be created. The easiest way to do so is to use the [configuration generator](#ConfigurationGenerator). For complex scenarios you could manually create configuration files (see [HowTo create Deep OBD pages](Page-specification)). After loading and compiling the configuration file, all tabs included in the file will be visible on the main page.
+In the next step a configuration {"(*.cccfg file)"} must be created. The easiest way to do so is to use the [configuration generator](#ConfigurationGenerator). For complex scenarios you could manually create configuration files (see [HowTo create Deep OBD pages](Page specification.md)). After loading and compiling the configuration file, all tabs included in the file will be visible on the main page.
 Before connecting to the vehicle via Bluetooth a [Bluetooth adapter](Build Bluetooth D-CAN adapter.md) has to be selected (or you will be asked when connecting). It's recommended to pair the adapter in the android Bluetooth menu before using it in _Deep OBD for BMW and VAG_, because this way a connection password could be assigned.
 
 ![E61Bt.cccfg](Deep OBD for BMW_AppOfflineSmall.png) ![Select Bluetooth device](Deep OBD for BMW_AppSelectBluetoothSmall.png)
@@ -56,6 +56,7 @@ The application has a configuration menu with the following options:
 * _App info_: Displays the app version and unique id.
 
 ![Menu](Deep OBD for BMW_AppMenuSmall.png)
+
 Below are some screenshots from the example E61 configuration:
 
 ![Motor page](Deep OBD for BMW_AppMotorSmall.png) ![Motor page](Deep OBD for BMW_AppClimateSmall.png) ![Motor page](Deep OBD for BMW_AppAxisSmall.png) ![Motor page](Deep OBD for BMW_AppReadAllErrorsSmall.png)
