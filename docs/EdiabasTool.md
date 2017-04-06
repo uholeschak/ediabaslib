@@ -14,7 +14,7 @@ The tool options menu has the following entries:
 When selecting .grp or .prg files the search field in the caption could be used to filter files. This speeds up file selection.  
 Only those files will be displayed that contain the text of the search field.
 
-![Tool menu](Ediabas Tool_AppToolMenuSmall.png) ![File selection](Ediabas Tool_AppToolSelectGrpSmall.png)
+![Tool menu](EdiabasTool_AppToolMenuSmall.png) ![File selection](EdiabasTool_AppToolSelectGrpSmall.png)
 
 In the next step a job must be selected in the _Jobs_ drop down. In this case we select _FS_LESEN_ to read the module errors.  
 Optionally the result values could be filtered by selecting check boxes in the _Results_ drop down (if implemented in the ECU file). If no results are selected, all results will be generated.  
@@ -23,6 +23,6 @@ The _Informations_ area displays informations for the last selected field above 
 With a click on the _DISCONNECTED_ button the job will be executed once or continuously, if the check box _Continuous_ has been checked. The job results are displayed in the _Informations_ area.  
 If the job name is _FS_LESEN_ additionally _FS_LESEN_DETAIL_ will be called for every error entry automatically.  
 
-![Select job](Ediabas Tool_AppToolInfosSmall.png) ![Select job](Ediabas Tool_AppToolSelectJobSmall.png)
+![Select job](EdiabasTool_AppToolInfosSmall.png) ![Select job](EdiabasTool_AppToolSelectJobSmall.png)
 
-![Select result](Ediabas Tool_AppToolSelectResultSmall.png) ![After obj execution](Ediabas Tool_AppToolReadErrorSmall.png)
+![Select result](EdiabasTool_AppToolSelectResultSmall.png) ![After obj execution](EdiabasTool_AppToolReadErrorSmall.png)

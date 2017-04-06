@@ -8,7 +8,7 @@ Table of contents:
 * [The main menu](#the-main-menu)
 	* [Configuration generator](Configuration Generator.md)
 	* [HowTo create Deep OBD for BMW and VAG pages](Page specification.md)
-	* [Ediabas tool](Ediabas Tool.md)
+	* [Ediabas tool](EdiabasTool.md)
 * [Log and trace files location](#log-and-trace-files-location)
 * [Background image](#background-image)
 
@@ -41,7 +41,7 @@ The application has a configuration menu with the following options:
 	* _Firmware update_: If a new firmware is available for the adapter, the update could be initiated with this button.
 * _Configuration generator_: Simple [XML configuration files](Page specification.md) could be generated automatically using the informations obtained from the vehicle. This menu opens the [configuration generator](Configuration Generator.md) which allows to create new or modify existing XML files by simply selecting the ECU and job informations.
 * _Configuration_: This menu allows the selection of the [configuration file](Page specification.md) _(*.cccfg file)_. When using the [configuration generator](Configuration Generator.md) the configuration is selected automatically. After selection the file will be compiled.
-* _Ediabas tool_: This is a port of the tool32.exe windows application. Selecting the menu will open the [Ediabas tool](Ediabas Tool.md) page.
+* _Ediabas tool_: This is a port of the tool32.exe windows application. Selecting the menu will open the [Ediabas tool](EdiabasTool.md) page.
 * _Storage media_: If the default storage media for the ECU files is not appropriate, a different media could be selected in this sub menu. The application storage directory on the media will be always fixed to _de.holeschak.bmw_deep_obd_.
 * _Download ECU files_: Since the BMW ECU files are very large (100MB), they are not included in the application package. When starting the application for the first time the ECU file download is requested automatically. With this menu entry the file download could be initiated manually if the ECU files are damaged.
 * _Data logging_: Selecting this menu entry will open a sub menu with multiple data logging options:
@@ -64,7 +64,7 @@ Below are some screenshots from the example E61 configuration:
 ## Log and trace files location
 The location of the log and trace files depends from the Android version.  
 Beginning with Android KitKat (4.4) writing to the external SdCard is not possible any more. For older Android versions log and trace files are stored in a subdirectory relative to _de.holeschak.bmw_deep_obd_ on the external SDCard. For KitKat and above the data could be found in the directory _Android\data\de.holeschak.bmw_deep_obd\files_ of the external SDCard.  
-The standard log files are stored in the subdirectory _Log_, whereas the [Ediabas tool](Ediabas Tool.md) uses the subdirectory _LogEdiabasTool_ and the [configuration generator](Configuration Generator.md) the subdirectory _LogConfigTool_.
+The standard log files are stored in the subdirectory _Log_, whereas the [Ediabas tool](EdiabasTool.md) uses the subdirectory _LogEdiabasTool_ and the [configuration generator](Configuration Generator.md) the subdirectory _LogConfigTool_.
 
 ## Background image
 It's possible to replace the background image. Simply store a custom _Background.jpg_ file in the subdirectory _Images_ of the current _de.holeschak.bmw_deep_obd_ data directory.
