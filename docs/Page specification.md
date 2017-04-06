@@ -598,7 +598,7 @@ If the same of pages are required in multiple configuration, it's useful to grou
 	</fragment>
 
 # The configuration file
-Now all _*.page_ or _*.pages_ can be added to a configuration file _*.cccfg_. This file could be loaded by _[Deep OBD for BMW and VAG](Deep OBD for BMW.md)_. In the _global_ node of the file the following properties could be specified:
+Now all _*.page_ or _*.pages_ can be added to a configuration file _*.cccfg_. This file could be loaded by _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_. In the _global_ node of the file the following properties could be specified:
 * _ecu_path_: Directory of the ecu files _(*.grp and *.prg)_ relative to the configuration file.
 * _log_path_: Directory for the data logging files. Logging could be enabled by adding a _log_tag_ property to the _display_ node of the _*.page_ file. If the directory is not existing it will be created.
 * _append_log_: Setting this property to true will always append the log file.

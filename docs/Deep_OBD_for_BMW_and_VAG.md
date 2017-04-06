@@ -28,7 +28,7 @@ At the first start of Deep OBD for BMW and VAG you will be asked to download the
 In the next step a configuration _(*.cccfg file)_ must be created. The easiest way to do so is to use the [configuration generator](#ConfigurationGenerator). For complex scenarios you could manually create configuration files (see [HowTo create Deep OBD pages](Page specification.md)). After loading and compiling the configuration file, all tabs included in the file will be visible on the main page.  
 Before connecting to the vehicle via Bluetooth a [Bluetooth adapter](Build Bluetooth D-CAN adapter.md) has to be selected (or you will be asked when connecting). It's recommended to pair the adapter in the android Bluetooth menu before using it in _Deep OBD for BMW and VAG_, because this way a connection password could be assigned.
 
-![E61Bt.cccfg](Deep OBD for BMW_AppOfflineSmall.png) ![Select Bluetooth device](Deep OBD for BMW_AppSelectBluetoothSmall.png)
+![E61Bt.cccfg](Deep_OBD_for_BMW_and_VAG_AppOfflineSmall.png) ![Select Bluetooth device](Deep_OBD_for_BMW_and_VAG_AppSelectBluetoothSmall.png)
 
 ## The main menu
 The application has a configuration menu with the following options:
@@ -55,11 +55,11 @@ The application has a configuration menu with the following options:
 * _Online help_: Displays this help page.
 * _App info_: Displays the app version and unique id.
 
-![Menu](Deep OBD for BMW_AppMenuSmall.png)
+![Menu](Deep_OBD_for_BMW_and_VAG_AppMenuSmall.png)
 
 Below are some screenshots from the example E61 configuration:
 
-![Motor page](Deep OBD for BMW_AppMotorSmall.png) ![Motor page](Deep OBD for BMW_AppClimateSmall.png) ![Motor page](Deep OBD for BMW_AppAxisSmall.png) ![Motor page](Deep OBD for BMW_AppReadAllErrorsSmall.png)
+![Motor page](Deep_OBD_for_BMW_and_VAG_AppMotorSmall.png) ![Motor page](Deep_OBD_for_BMW_and_VAG_AppClimateSmall.png) ![Motor page](Deep_OBD_for_BMW_and_VAG_AppAxisSmall.png) ![Motor page](Deep_OBD_for_BMW_and_VAG_AppReadAllErrorsSmall.png)
 
 ## Log and trace files location
 The location of the log and trace files depends from the Android version.  

@@ -4,7 +4,7 @@ The tool options menu has the following entries:
 * _Interface_: If a configuration has been loaded on the main page, the same communication interface is also used by the tools as default. With this menu entry a different communication interface could be selected.
 * _SGBD (grp)_: Opens a file explorer for selecting a group ECU file. Only files with .grp extension are displayed. After selection the group file the corresponding .prg file is automatically selected if possible. The selected .prg file is displayed in the _SGBD (prg)_ menu entry.
 * _SGBD (prg)_: Opens a file explorer for selecting a SGBD ECU file. Only files with .prg extension are displayed.
-* _Device_: With this menu the [Bluetooth adapter](Deep OBD for BMW.md#supported-adapters) could be selected. If the device is not coupled already, searching for new devices is possible. This menu is only enabled if interface type _BLUETOOTH_ has been selected.
+* _Device_: With this menu the [Bluetooth adapter](Deep_OBD_for_BMW_and_VAG.md#supported-adapters) could be selected. If the device is not coupled already, searching for new devices is possible. This menu is only enabled if interface type _BLUETOOTH_ has been selected.
 * _CAN adapter configuration_: When using a FTDI USB or Bluetooth (non ELM327) adapter with this menu the adapter could be configured. Depending on the adapter type only the CAN baudrate/K-Line interface or more specific parameters could be specified.
 * _Data logging_: Selecting this menu entry will open a sub menu with multiple data logging options:
 	* _Create trace file_: If the checkbox of this menu is active, a _ifh.trc_ file will be created when executing jobs. The trace file will be created in the _LogEdiabasTools_ subdirectory.

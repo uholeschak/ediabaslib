@@ -4,7 +4,7 @@ There is now a replacement firmware available for ELM327 based Bluetooth adapter
 * K-Line support (all protocols).
 * New: Support for the VAG protocols KWP2000, KWP1281, TP2.0 (cars until 4.2012).
 * Contains a bootstrap loader that allows firmware update without opening the device.
-* Firmware updates are possible with _[Deep OBD for BMW](Deep OBD for BMW.md)_.
+* Firmware updates are possible with _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.
 * Reduced power consumption due to use of sleep mode.
 * Two firmware versions are available:
 	* Unmodified Bluetooth adapter: Baud rate 38400.
@@ -33,4 +33,4 @@ You could use the Bluetooth adapter on a windows PC with INPA, Tool32 or ISTA-D 
 ## Programming of the processor
 For the first programming of the processor simply attach a PICKit 3 programmer to the corresponding test points of the circuit board.  
 The source for the firmware could be found in the subdirectory _CanAdapterElm_. In this subdirectory there is also a flash tool (subdirectory _UpdateLoader_) that allows firmware updates using the bootstrap loader once the firmware is programed.  
-The latest firmware version will be always included in _[Deep OBD for BMW](Deep OBD for BMW.md)_.
+The latest firmware version will be always included in _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.
