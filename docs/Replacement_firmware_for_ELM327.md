@@ -10,7 +10,7 @@ There is now a replacement firmware available for ELM327 based Bluetooth adapter
 	* Unmodified Bluetooth adapter: Baud rate 38400.
 	* Modified Bluetooth adapter (recommended) with replaced [OpenSource Bluetooth firmware](Custom Bluetooth firmware.md): Baud rate 115200 and alterable Bluetooth pin (16 digits) and name (31 chars).
 
-![Bluetooth adapter top](Replacement firmware for ELM327_BluetoothAdapterTopSmall.png) ![Bluetooth adapter bottom](Replacement firmware for ELM327_BluetoothAdapterBottomSmall.png)
+![Bluetooth adapter top](Replacement_firmware_for_ELM327_BluetoothAdapterTopSmall.png) ![Bluetooth adapter bottom](Replacement_firmware_for_ELM327_BluetoothAdapterBottomSmall.png)
 
 ## Buy an adapter
 New adapters are available.  
@@ -28,7 +28,7 @@ You could use the Bluetooth adapter on a windows PC with INPA, Tool32 or ISTA-D 
 * For ISTA-D: You have to select the _EDIABAS\bin_ directory inside ISTA-D first.
 * For ISTA-D: In _Administration_ -> _VCI Config_ select as _Interface type_: _Ediabas default settings (ediabas.ini)_
 
-![EdiabasLib Config Tool](Replacement firmware for ELM327_ConfigToolBluetoothSmall.png)
+![EdiabasLib Config Tool](Replacement_firmware_for_ELM327_ConfigToolBluetoothSmall.png)
 
 ## Programming of the processor
 For the first programming of the processor simply attach a PICKit 3 programmer to the corresponding test points of the circuit board.  

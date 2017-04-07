@@ -33,7 +33,7 @@ Since Android devices normally have no COM ports, it's possible to connect via B
 To select a specific Bluetooth device use BLUETOOTH:<device address> instead of COMx.
 When using ELM327 adapters append ";ELM327" after the Bluetooth address to specify ELM327 mode.
 ## Bluetooth (PC)
-It's possible to use the [Replacement firmware for ELM327](Replacement-firmware-for-ELM327) also with a PC. When connecting the adapter with the PC two serial COM ports are created (incoming and outgoing).
+It's possible to use the [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md) also with a PC. When connecting the adapter with the PC two serial COM ports are created (incoming and outgoing).
 To use the adapter specify _STD:OBD_ for the _interface_ and _BLUETOOTH:<outgoing COM port>_ for _ObdComPort_.
 ## ELM327 WiFi
 It's possible to use an ELM327 WiFi adapter. You have to specify _STD:OBD_ for the _interface_ and _ELM327WIFI_ for _ObdComPort_.
