@@ -14,9 +14,9 @@ It is based on the hardware of an [A5-V11 3G/4G Router](https://wiki.openwrt.org
 * Default root password: root
 * At the moment a new power supply concept is in preparation, by replacing the DC/DC converters with a TPS560200, that is able to use a maximum power supply voltage of 17V. The feedback resistors have to be changed to 49.9K/20K and 61.9K/20K because the feedback voltage is different. Additionally one input capacitor has to be replaced with a higher voltage type.
 
-![ENET adapter open](ENET WiFi Adapter_EnetAdapterOpenSmall.png)
+![ENET adapter open](ENET_WiFi_Adapter_EnetAdapterOpenSmall.png)
 
-![ENET adapter closed](ENET WiFi Adapter_EnetAdapterClosedSmall.png) ![Web interface](ENET WiFi Adapter_WebInterfaceSmall.png) 
+![ENET adapter closed](ENET_WiFi_Adapter_EnetAdapterClosedSmall.png) ![Web interface](ENET_WiFi_Adapter_WebInterfaceSmall.png) 
 
 ## Buy an adapter
 New adapters are available.  
@@ -35,4 +35,4 @@ You could use the Bluetooth adapter on a windows PC with INPA, Tool32 or ISTA-D 
 * For ISTA-D: You have to select the _EDIABAS\bin_ directory inside ISTA-D first.
 * Optionally you could also open the adapter configuration page in the web browser.
 * For ISTA-D: In _Administration_ -> _VCI Config_ select as _Interface type_: _Ediabas default settings (ediabas.ini)_
-![EdiabasLib Config Tool](ENET WiFi Adapter_ConfigToolWiFiSmall.png)
+![EdiabasLib Config Tool](ENET_WiFi_Adapter_ConfigToolWiFiSmall.png)

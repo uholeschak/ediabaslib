@@ -34,7 +34,7 @@ _Deep OBD for BMW_ supports several OBD II adapters:
 
 ![Bluetooth adapter top](Home_BluetoothAdapterTopSmall.png)
 * Custom [Bluetooth D-CAN/K-Line adapter](Build Bluetooth D-CAN adapter.md) (BMW-FAST protocol over D-CAN and K-Line)
-* [ENET WiFi adapters](ENET WiFi Adapter.md) (for BMW F-models)
+* [ENET WiFi adapters](ENET_WiFi_Adapter.md) (for BMW F-models)
 
 ![ENET adapter](Home_EnetAdapterClosedSmall.png)
 ![BMW deep OBD and VAG](Home_AppMotorSmall.png)

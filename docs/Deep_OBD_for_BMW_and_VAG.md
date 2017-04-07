@@ -21,7 +21,7 @@ _Deep OBD for BMW and VAG_ supports several OBD II adapters:
 * ELM327 based Bluetooth and WiFi adapters. Recommended ELM327 versions are 1.4b, 1.5 and origin 2.1, which are based on PIC18F2480 processor (no MCP2515 chip) (D-CAN protocol only) 
 * Custom [Bluetooth D-CAN/K-Line adapter](Build Bluetooth D-CAN adapter.md) (BMW-FAST protocol over D-CAN and K-Line)
 * ELM327 based adapters with [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md) D-CAN and K-Line (all protocols!). When VAG has been selected as manufacturer, only this adapter could be used.
-* [ENET WiFi adapters](ENET WiFi Adapter.md) (for BMW F-models)
+* [ENET WiFi adapters](ENET_WiFi_Adapter.md) (for BMW F-models)
 
 ## First start
 At the first start of Deep OBD for BMW and VAG you will be asked to download the ECU files. The file package is very large (100MB) and requires approximately 1GB on the external SDCard after extraction. When using VAG as manufacturer a different ECU package is required.  

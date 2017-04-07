@@ -4,7 +4,7 @@
 * [Ediabas result types and formats](EDIABAS-result-types-and-formats)
 * [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md)
 	* [Open Source Bluetooth firmware](Custom-Bluetooth-firmware)
-* [ENET WiFi Adapter](ENET-WiFi-Adapter)
+* [ENET WiFi Adapter](ENET_WiFi_Adapter.md)
 * [Build a Bluetooth D-CAN/K-Line adapter](Build-Bluetooth-D-CAN-adapter)
 * [Command line parameters for EdiabasTest](EdiabasTest-parameters)
 * [Properties of the EdiabasLib.config file](EdiabasLib.config-file)
