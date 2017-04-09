@@ -7,4 +7,4 @@
 * [ENET WiFi Adapter](ENET_WiFi_Adapter.md)
 * [Build a Bluetooth D-CAN/K-Line adapter](Build-Bluetooth-D-CAN-adapter)
 * [Command line parameters for EdiabasTest](EdiabasTest-parameters)
-* [Properties of the EdiabasLib.config file](EdiabasLib.config-file)
+* [Properties of the EdiabasLib.config file](EdiabasLib.config_file.md)
