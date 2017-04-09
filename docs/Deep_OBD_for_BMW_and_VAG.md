@@ -19,21 +19,21 @@ Basically _Deep OBD for BMW and VAG_ can operate in two modes, either BMW or VAG
 _Deep OBD for BMW and VAG_ supports several OBD II adapters:
 * Standard FTDI based USB "INPA compatible" D-CAN/K-Line adapters (all protocols)
 * ELM327 based Bluetooth and WiFi adapters. Recommended ELM327 versions are 1.4b, 1.5 and origin 2.1, which are based on PIC18F2480 processor (no MCP2515 chip) (D-CAN protocol only) 
-* Custom [Bluetooth D-CAN/K-Line adapter](Build Bluetooth D-CAN adapter.md) (BMW-FAST protocol over D-CAN and K-Line)
+* Custom [Bluetooth D-CAN/K-Line adapter](Build_Bluetooth_D-CAN_adapter.md) (BMW-FAST protocol over D-CAN and K-Line)
 * ELM327 based adapters with [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md) D-CAN and K-Line (all protocols!). When VAG has been selected as manufacturer, only this adapter could be used.
 * [ENET WiFi adapters](ENET_WiFi_Adapter.md) (for BMW F-models)
 
 ## First start
 At the first start of Deep OBD for BMW and VAG you will be asked to download the ECU files. The file package is very large (100MB) and requires approximately 1GB on the external SDCard after extraction. When using VAG as manufacturer a different ECU package is required.  
 In the next step a configuration _(*.cccfg file)_ must be created. The easiest way to do so is to use the [configuration generator](#ConfigurationGenerator). For complex scenarios you could manually create configuration files (see [HowTo create Deep OBD pages](Page_specification.md)). After loading and compiling the configuration file, all tabs included in the file will be visible on the main page.  
-Before connecting to the vehicle via Bluetooth a [Bluetooth adapter](Build Bluetooth D-CAN adapter.md) has to be selected (or you will be asked when connecting). It's recommended to pair the adapter in the android Bluetooth menu before using it in _Deep OBD for BMW and VAG_, because this way a connection password could be assigned.
+Before connecting to the vehicle via Bluetooth a [Bluetooth adapter](Build_Bluetooth_D-CAN_adapter.md) has to be selected (or you will be asked when connecting). It's recommended to pair the adapter in the android Bluetooth menu before using it in _Deep OBD for BMW and VAG_, because this way a connection password could be assigned.
 
 ![E61Bt.cccfg](Deep_OBD_for_BMW_and_VAG_AppOfflineSmall.png) ![Select Bluetooth device](Deep_OBD_for_BMW_and_VAG_AppSelectBluetoothSmall.png)
 
 ## The main menu
 The application has a configuration menu with the following options:
 * _Manufacturer_: Select the car manufacturer with this menu point first. The default is BMW, the other manufacturers are from the VAG group (VW, Audi, Skoda). The VAG mode is still experimental and requires a [Bluetooth D-CAN/K-Line adapter](Build Bluetooth D-CAN adapter.md).
-* _Device_: With this menu the [Bluetooth adapter](Build Bluetooth D-CAN adapter.md) could be selected.  If the device is not coupled already, searching for new devices is possible. This menu is only enabled if a configuration with _interface_ type _BLUETOOTH_ has been selected.
+* _Device_: With this menu the [Bluetooth adapter](Build_Bluetooth_D-CAN_adapter.md) could be selected.  If the device is not coupled already, searching for new devices is possible. This menu is only enabled if a configuration with _interface_ type _BLUETOOTH_ has been selected.
 * _Adapter configuration_: When using a FTDI USB or Bluetooth (non ELM327) adapter, this menu item opens the adapter configuration page. The following settings are available (depending from adapter type):
 	* _CAN baud rate_: (500kbit/100kbit) or K-Line (CAN off)
 	* _Separation time_: Separation time between CAN telegrams. The default is 0, only change this value if there are communication problems.
