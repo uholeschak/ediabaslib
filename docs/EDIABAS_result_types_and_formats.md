@@ -16,7 +16,7 @@ _\[Specifications\] Conversion characters_
 | `T[EXT](EXT)` | **APITEXT APITEXT** |
 
 Specifications:
-
+```
          [-](-) [digit1](digit1)       [.digit2](.digit2)      [e,E](e,E)
          |   |              |              |
          |   |              |              |__  APIREAL: exponential representation
@@ -31,7 +31,7 @@ Specifications:
 
     (2)  Pad with blanks for short arguments
          Expand to required number of digits for long arguments
-
+```
 Examples:  
 Formatting instruction `"B"`: Converts a result (if convertible) to the **APIBYTE** format, then further converting and return of a right-justified **APITEXT** string.  
 Formatting instruction `"20T"`: Converts a result (if convertible) to the **APITEXT** format, then further converting and return of a right-justified **APITEXT** string with a total of 20 digits.  
