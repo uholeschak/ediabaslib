@@ -31,8 +31,9 @@ You have to open the adapter and press the reset button after the adapter has bo
 You could use the Bluetooth adapter on a windows PC with INPA, Tool32 or ISTA-D as a replacement for an ENET adapter cable. The following steps are required to establish the connection:
 * Install [.NET framework 4.0](https://www.microsoft.com/de-de/download/details.aspx?id=17718) or higher and [VS2015 C++ runtime](https://www.microsoft.com/de-de/download/details.aspx?id=48145) (recommended, but not required)
 * Optionally connect the ENET adapter with the PC. The PC automatically gets an IP address from the adapter DHCP server.
-* Download the latest _Binary_ package and extract the .zip file. Start _Api32\EdiabasLibConfigTool.exe_ and follow the instructions in the status window: Search the adapter, select it, optionally click _Connect_, click _Check Connection_ and patch the required EDIABAS installations.
-* For ISTA-D: You have to select the _EDIABAS\bin_ directory inside ISTA-D first.
+* Download the latest _Binary_ package and extract the .zip file. Start `Api32\EdiabasLibConfigTool.exe` and follow the instructions in the status window: Search the adapter, select it, optionally click `Connect`, click `Check Connection` and patch the required EDIABAS installations.
+* For ISTA-D: You have to select the `EDIABAS\bin` directory inside ISTA-D first.
 * Optionally you could also open the adapter configuration page in the web browser.
-* For ISTA-D: In _Administration_ -> _VCI Config_ select as _Interface type_: _Ediabas default settings (ediabas.ini)_
+* For ISTA-D: In `Administration` -> `VCI Config` select as `Interface type`: `Ediabas default settings (ediabas.ini)`
+
 ![EdiabasLib Config Tool](ENET_WiFi_Adapter_ConfigToolWiFiSmall.png)

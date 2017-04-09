@@ -1,5 +1,5 @@
 # Defining pages for _Deep OBD for BMW and VAG_
-Each page (tab) is defined in a single XML (*.ccpage) file. A general documentation of all XML tags could be found in the BmwDeepObd.xsd file. The documentation will be displayed in the XML editor when the xsd is added as xs:shema in the XML file.  
+Each page (tab) is defined in a single XML (`*.ccpage`) file. A general documentation of all XML tags could be found in the `BmwDeepObd.xsd` file. The documentation will be displayed in the XML editor when the `.xsd` is added as `xs:shema` in the XML file.  
 Table of contents:
 * [Simple jobs](#simple-jobs)
 * [Reading errors](#reading-errors)
@@ -19,7 +19,7 @@ If only some EDIABAS jobs with fixed arguments are required for one display page
 	<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
 			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			  xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-	  <page name ="tab_ihk">
+	  <page name="tab_ihk">
 		<strings>
 		  <string name="tab_ihk">Climate</string>
 		  <string name="label_ihk_in_temp">Indoor temperature [°C](°C):</string>
@@ -90,24 +90,24 @@ If only some EDIABAS jobs with fixed arguments are required for one display page
 	  </page>
 	</fragment>
 
-The _page_ _name_ property specifies the title of the page and is a reference to the _strings_ nodes. With _logfile_ a log file name could be specified, that allows to log the display data. If the symbol _{D}_ is used inside the log file name, it will be replaced by the current date and time.  
-The _strings_ nodes contains the all the string used on this display page. If the current language is not matching the _lang_ tag, the default language (without tag) is used. The _lang_ property could be either the short form e.g. 'de' or the long one 'de-DE'.
+The `page name` property specifies the title of the page and is a reference to the `strings` nodes. With `logfile` a log file name could be specified, that allows to log the display data. If the symbol `{D}` is used inside the log file name, it will be replaced by the current date and time.  
+The `strings` nodes contains the all the string used on this display page. If the current language is not matching the `lang` tag, the default language (without tag) is used. The `lang` property could be either the short form e.g. `'de'` or the long one `'de-DE'`.
 
-The _jobs_ node groups all EDIABAS jobs to execute. The property _sgbd_ specifies the name of the group (.grp) or the sgbd (.prg) file to use. In VAG mode the property _mwtab_ could be used to store the file name of the associated mwtab file.  
-Within the _jobs_ node multiple _job_ nodes specify the EDIABAS jobs to execute. They contain the following properties:
-* _name_: Name of the job to execute
-* _args_first_: Allows to specify semicolon separated job arguments for the first job call.
-* _args_: Allows to specify semicolon separated job arguments. If this is the first call and _args_first_ is present _args_first_ will be used instead.
-* _result_: Allows to specify the required results. If omitted, all results will be generated, which may require more processing time.
-* _log_tag=\<tag name\>_: Adding this property allows to log the display data to a log file when activating the _Log data_ menu in the application. The _logfile_ property in the _page_ node has to be specified as well to activate logging.
-* Each _display_ node specifies one line of the display output. _Name_ is again a reference to the text translation in the _strings_ nodes. With _result_ the EDIABAS job result name is selected, that contains the data. The _format_ property allows to format the result with the EDIABAS aspiResultText format specification [EDIABAS result types and formats](EDIABAS result types and formats.md).
-The _page_ node can optionally contain _display_ nodes like the _job_ node. They will be only used for [User defined code](#user-defined-code).  
+The `jobs` node groups all EDIABAS jobs to execute. The property _sgbd_ specifies the name of the group (`.grp`) or the sgbd (`.prg`) file to use. In VAG mode the property `mwtab` could be used to store the file name of the associated mwtab file.  
+Within the `jobs` node multiple `job` nodes specify the EDIABAS jobs to execute. They contain the following properties:
+* `name`: Name of the job to execute
+* `args_first`: Allows to specify semicolon separated job arguments for the first job call.
+* `args`: Allows to specify semicolon separated job arguments. If this is the first call and `args_first` is present `args_first` will be used instead.
+* `result`: Allows to specify the required results. If omitted, all results will be generated, which may require more processing time.
+* `log_tag=<tag name>`: Adding this property allows to log the display data to a log file when activating the _Log data_ menu in the application. The `logfile` property in the `page` node has to be specified as well to activate logging.
+* Each `display` node specifies one line of the display output. `Name` is again a reference to the text translation in the _strings_ nodes. With `result` the EDIABAS job result name is selected, that contains the data. The `format` property allows to format the result with the EDIABAS aspiResultText format specification [EDIABAS result types and formats](EDIABAS result types and formats.md).
+The `page` node can optionally contain `display` nodes like the `job` node. They will be only used for [User defined code](#user-defined-code).  
 This is how the resulting page will look like:
 
 ![Climate page](Page_specification_AppClimateSmall.png)
 
 ## Reading errors
-With the _read_errors_ node it's possible to read an error summary of all ECUs. Simply list all ECU names and the corresponding sgbd file names in a separate _ecu_ node, like in the example below.  
+With the `read_errors` node it's possible to read an error summary of all ECUs. Simply list all ECU names and the corresponding sgbd file names in a separate `ecu` node, like in the example below.  
 The error message is generated by the sgbd file and is in the language of the sgbd.  
 The page also allows to selectively reset ECU errors.
 
@@ -177,12 +177,12 @@ The page also allows to selectively reset ECU errors.
 	  </page>
 	</fragment>
 
-In the _ecu_ node the property _name_ is a link to a _string_ node and _sgbd_ is the name of the sgbd file. The output looks similar to this page:
+In the `ecu` node the property `name` is a link to a `string` node and `sgbd` is the name of the sgbd file. The output looks similar to this page:
 
 ![Erros E90](Page_specification_AppReadAllErrorsSmall.png)
 
 # User defined code
-If the jobs and display output is getting more complex, user defined code will be required. In this case a C# class could be added to a _code_ node, which defines a set of optional callback functions. If the _show_warnings_ property is set to true, also warnings will be reported during compilation of the code.
+If the jobs and display output is getting more complex, user defined code will be required. In this case a C# class could be added to a `code` node, which defines a set of optional callback functions. If the `show_warnings` property is set to true, also warnings will be reported during compilation of the code.
 
     <code show_warnigs="true">
       <![CDATA[
@@ -236,7 +236,7 @@ If the jobs and display output is getting more complex, user defined code will b
     </code>
 
 ## Formatting results (FormatResult)
-For special formatting of the result data, the callback _FormatResult_ could be used. For each result of the EDIABAS results this function will be called with _resultName_ set to the current result name. If the _display_ node is a subnode of a _job_ node the job name is prefixed with # as separator to the result name. If the _job_ node contains an _id_ attribute, the job name is _\<id\>#\<result name\>_. The function will be only called if there is **no** _format_ property in the _display_ node. Here is an example from the motor page:
+For special formatting of the result data, the callback `FormatResult` could be used. For each result of the EDIABAS results this function will be called with `resultName` set to the current result name. If the `display` node is a subnode of a `job` node the job name is prefixed with # as separator to the result name. If the `job` node contains an `id` attribute, the job name is `<id>#<result name>`. The function will be only called if there is **no** `format` property in the `display` node. Here is an example from the motor page:
 
         public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor)
         {
@@ -289,8 +289,8 @@ For special formatting of the result data, the callback _FormatResult_ could be 
         }
 
 ## Formatting error results (FormatErrorResult)
-For special formatting of the error result data, the callback _FormatErrorResult_ could be used. For each error entry this function will be called with _defaultMessage_ set to the default error message output.  
-Here is an example from the errors page, that adds a RPM value to the error message. You have to add a _results_ property to the _ecu_ node specifying the results you want to be generated by the _FS_LESEN_DETAIL_ job.
+For special formatting of the error result data, the callback `FormatErrorResult` could be used. For each error entry this function will be called with `defaultMessage` set to the default error message output.  
+Here is an example from the errors page, that adds a RPM value to the error message. You have to add a `results` property to the `ecu` node specifying the results you want to be generated by the `FS_LESEN_DETAIL` job.
 
     <read_errors>
       <ecu name="CAS" sgbd="d_cas" />
@@ -334,7 +334,7 @@ Here is an example from the errors page, that adds a RPM value to the error mess
 
 ## Control output of the page (UpdateResultList)
 Sometimes you want to dynamically control the number and the content of the output lines.  
-If the callback _UpdateResultList_ is defined, you could directly fill the contents of the _resultListAdapter_ which displays the results of the page. In this example from the (standard) _Adapter_ page the adapter configuration result will be displayed. Additionally only one column for output is used by setting the second argument of _resultListAdapter.Items.Add_ to null. With _ActivityMain.GetPageString_ it's possible to retrieve a string from the translation table.
+If the callback `UpdateResultList` is defined, you could directly fill the contents of the `resultListAdapter` which displays the results of the page. In this example from the (standard) _Adapter_ page the adapter configuration result will be displayed. Additionally only one column for output is used by setting the second argument of `resultListAdapter.Items.Add` to null. With `ActivityMain.GetPageString` it's possible to retrieve a string from the translation table.
 
         public void UpdateResultList(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, List<TableResultItem> resultList)
         {
@@ -351,7 +351,7 @@ If the callback _UpdateResultList_ is defined, you could directly fill the conte
         }
 
 ## Executing own jobs (ExecuteJob)
-If more than one job has to be executed or the job requires special arguments, _ediabas.ExecuteJob_ could be called in the _ExecuteJob_ callback. Here is an example from the adapter page for calling a list of jobs. _EdiabasThread.MergeResultDictionarys_ adds the results of the current job to the internal job list. The callback _ExecuteJob_ will be executed in it's own thread. When using ExecuteJob it's recommended to add the _display_ nodes to the _page_ node because no _job_ nodes will be present.
+If more than one job has to be executed or the job requires special arguments, `ediabas.ExecuteJob` could be called in the `ExecuteJob` callback. Here is an example from the adapter page for calling a list of jobs. `EdiabasThread.MergeResultDictionarys` adds the results of the current job to the internal job list. The callback `ExecuteJob` will be executed in it's own thread. When using ExecuteJob it's recommended to add the `display` nodes to the `page` node because no `job` nodes will be present.
 
     class PageClass
     {
@@ -435,9 +435,9 @@ If more than one job has to be executed or the job requires special arguments, _
     }
 
 ## Adding controls to the layout
-The standard layout only allows to display information, but there is no way to control outputs. With the callbacks _CreateLayout_, _DestroyLayout_ and _UpdateLayout_ there is a possibility to add own controls to the layout (in most cases buttons).  
-In this example from the AdapterCustom.ccpage buttons will be added to control the CAN block size, CAN separation time and the CAN mode. The _CreateLayout_ adds the controls, _DestroyLayout_ removes the controls and _UpdateLayout_ is used to modify the state of the controls (depending form the connection state).  
-For every button there is a _Click_ delegate that allows to set a global variable which is used for EDIABAS job control.
+The standard layout only allows to display information, but there is no way to control outputs. With the callbacks `CreateLayout`, `DestroyLayout` and `UpdateLayout` there is a possibility to add own controls to the layout (in most cases buttons).  
+In this example from the AdapterCustom.ccpage buttons will be added to control the CAN block size, CAN separation time and the CAN mode. The `CreateLayout` adds the controls, `DestroyLayout` removes the controls and `UpdateLayout` is used to modify the state of the controls (depending form the connection state).  
+For every button there is a `Click` delegate that allows to set a global variable which is used for EDIABAS job control.
 
         private Button buttonBlockSize;
         private Button buttonSepTime0;
@@ -584,7 +584,7 @@ The resulting page will look like this:
 ![Adapter page](Page_specification_AdapterConfigSmall.png)
 
 # Grouping pages
-If the same of pages are required in multiple configuration, it's useful to group the together. This could be done with _*.ccpages_ files. Simply include the _*.ccpage_ files withing the _pages_ node. The specifified path is relative to the _*.ccpages_ file location. The file has the following layout:
+If the same of pages are required in multiple configuration, it's useful to group the together. This could be done with `*.ccpages` files. Simply include the `*.ccpage` files withing the `pages` node. The specifified path is relative to the `*.ccpages` file location. The file has the following layout:
 
 	<?xml version="1.0" encoding="utf-8" ?>
 	<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
@@ -598,12 +598,12 @@ If the same of pages are required in multiple configuration, it's useful to grou
 	</fragment>
 
 # The configuration file
-Now all _*.page_ or _*.pages_ can be added to a configuration file _*.cccfg_. This file could be loaded by _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_. In the _global_ node of the file the following properties could be specified:
-* _ecu_path_: Directory of the ecu files _(*.grp and *.prg)_ relative to the configuration file.
-* _log_path_: Directory for the data logging files. Logging could be enabled by adding a _log_tag_ property to the _display_ node of the _*.page_ file. If the directory is not existing it will be created.
-* _append_log_: Setting this property to true will always append the log file.
-* _manufacturer_: Select the car manufacturer with this property. Possible values are _BWM_, _VW_, _Audi_, _Seat_ and _Skoda_.
-* _interface_: Specify the communication interface in this property. Possible values are _BLUETOOTH_ , _ENET_, _ELMWIFI_ and _FTDI_. When using a manufacturer from the VAG group, only _BLUETOOTH_ is allowed.
+Now all `*.page` or `*.pages` can be added to a configuration file `*.cccfg`. This file could be loaded by _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_. In the `global` node of the file the following properties could be specified:
+* `ecu_path`: Directory of the ecu files (`*.grp` and `*.prg`) relative to the configuration file.
+* `log_path`: Directory for the data logging files. Logging could be enabled by adding a `log_tag` property to the `display` node of the `*.page` file. If the directory is not existing it will be created.
+* `append_log`: Setting this property to true will always append the log file.
+* `manufacturer`: Select the car manufacturer with this property. Possible values are `BWM`, `VW`, `Audi`, `Seat` and `Skoda`.
+* `interface`: Specify the communication interface in this property. Possible values are `BLUETOOTH` , `ENET`, `ELMWIFI` and `FTDI`. When using a manufacturer from the VAG group, only `BLUETOOTH` is allowed.
 
 <!-- -->
 
