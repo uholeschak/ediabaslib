@@ -33,7 +33,7 @@ The page has the following properties:
 * _Job result_: Here one ore more job results could be selected (with a check mark) that will be displayed later on the page) For the currently selected result the data type and comment will be shown below.
 * _Display text_: This is the text that will be displayed on the page beside the job result.
 * _Tag for data logging_: If the _Log data_ option is enabled on the main page the result data will get this tag in the log file. If the entry is empty no data will be logged.
-* _Output format_: Here the output format of the result data could be modified. The format specification is in the form of [Ediabas result types and formats](EDIABAS-result-types-and-formats). Depending on the job data type more or less result types will be listed.
+* _Output format_: Here the output format of the result data could be modified. The format specification is in the form of [Ediabas result types and formats](EDIABAS_result_types_and formats.md). Depending on the job data type more or less result types will be listed.
 * _Read_: This button executes the selected job and displays the result in the specified format next to the button.
 With the _Save_ button the configuration will be stored and used as default on the main page.
 Hint: A long click on the ECU list opens a submenu that allows to change the order of the ECU entries in the list.

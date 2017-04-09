@@ -100,7 +100,7 @@ Within the `jobs` node multiple `job` nodes specify the EDIABAS jobs to execute.
 * `args`: Allows to specify semicolon separated job arguments. If this is the first call and `args_first` is present `args_first` will be used instead.
 * `result`: Allows to specify the required results. If omitted, all results will be generated, which may require more processing time.
 * `log_tag=<tag name>`: Adding this property allows to log the display data to a log file when activating the _Log data_ menu in the application. The `logfile` property in the `page` node has to be specified as well to activate logging.
-* Each `display` node specifies one line of the display output. `Name` is again a reference to the text translation in the _strings_ nodes. With `result` the EDIABAS job result name is selected, that contains the data. The `format` property allows to format the result with the EDIABAS aspiResultText format specification [EDIABAS result types and formats](EDIABAS result types and formats.md).
+* Each `display` node specifies one line of the display output. `Name` is again a reference to the text translation in the _strings_ nodes. With `result` the EDIABAS job result name is selected, that contains the data. The `format` property allows to format the result with the EDIABAS aspiResultText format specification [EDIABAS result types and formats](EDIABAS_result_types_and_formats.md).
 The `page` node can optionally contain `display` nodes like the `job` node. They will be only used for [User defined code](#user-defined-code).  
 This is how the resulting page will look like:
 

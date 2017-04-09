@@ -1,7 +1,7 @@
 # Documentation table of contents
 * _[Deep OBD for BMW and VAG](Deep-OBD-for-BMW)_
 	* [HowTo create Deep OBD for BMW and VAG pages](Page-specification)
-* [Ediabas result types and formats](EDIABAS-result-types-and-formats)
+* [Ediabas result types and formats](EDIABAS_result_types_and formats.md)
 * [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md)
 	* [Open Source Bluetooth firmware](Custom-Bluetooth-firmware)
 * [ENET WiFi Adapter](ENET_WiFi_Adapter.md)
