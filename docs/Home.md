@@ -12,7 +12,7 @@ The library can directly read and interpret .GRP and .PRG files, the internal in
 At the moment the D-CAN, BMW-FAST, KWP-2000*, KWP-2000 BMW, DS2, DS1, Concept 3, ISO9141 (Concept 2) and Concept 1 concepts are supported. If you send me EDIABAS log files from other concepts I could add them if possible.  
 Now a variant that can be used with cars from the VAG group has been released, but it requires an adapter with the [replacement firmware for ELM327](Replacement_firmware_for_ELM327.md). In this mode the protocols KWP2000, KWP1281 and TP2.0 are supported (cars until 4.2012).  
 
-For testing there is a console application [EdiabasTest](EdiabasTest parameters.md) with command line parameters.  
+For testing there is a console application [EdiabasTest](EdiabasTest_parameters.md) with command line parameters.  
 More informations could be found in the [Documentation](Documentation.md) section.
 
 # Binary Compatibility
