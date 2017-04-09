@@ -14,82 +14,82 @@ Table of contents:
 
 ## Simple jobs
 If only some EDIABAS jobs with fixed arguments are required for one display page, the XML code is relative simple. Below is the example code to display climate data for a E61 vehicle:
-
-	<?xml version="1.0" encoding="utf-8" ?>
-	<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
-			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			  xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-	  <page name="tab_ihk">
-		<strings>
-		  <string name="tab_ihk">Climate</string>
-		  <string name="label_ihk_in_temp">Indoor temperature [°C](°C):</string>
-		  <string name="label_ihk_in_temp_delay">Indoor temperature delayed [°C](°C):</string>
-		  <string name="label_ihk_out_temp">Outdoor temperature [°C](°C):</string>
-		  <string name="label_ihk_setpoint">Setpoint [°C](°C):</string>
-		  <string name="label_ihk_heat_ex_temp">Heat exchanger temperature [°C](°C):</string>
-		  <string name="label_ihk_heat_ex_setpoint">Heat exchanger setpoint [°C](°C):</string>
-		  <string name="label_ihk_heat_ex_actuator">Heat exchanger actuator [%](%):</string>
-		  <string name="label_ihk_main_actuator">Main actuator [%](%):</string>
-		  <string name="label_ihk_evap_temp">Evaporator temperature [°C](°C):</string>
-		  <string name="label_ihk_press_sense">Pressure sensor [bar](bar):</string>
-		  <string name="label_ihk_circ_air_left">Circulating air left [%](%):</string>
-		  <string name="label_ihk_circ_air_right">Circulating air right [%](%):</string>
-		  <string name="label_ihk_defrost">Defrost [%](%):</string>
-		  <string name="label_ihk_vent">Ventilation [%](%):</string>
-		  <string name="label_ihk_cold_air">Cold air [%](%):</string>
-		  <string name="label_ihk_legroom">Leg room [%](%):</string>
-		  <string name="label_ihk_refrig_comp">Refrigerating compressor [%](%):</string>
-		</strings>
-		<strings lang="de">
-		  <string name="tab_ihk">Klima</string>
-		  <string name="label_ihk_in_temp">Innentemperatur [°C](°C):</string>
-		  <string name="label_ihk_in_temp_delay">Innentemperatur verzögert [°C](°C):</string>
-		  <string name="label_ihk_out_temp">Außentemperatur [°C](°C):</string>
-		  <string name="label_ihk_setpoint">Sollwert [°C](°C):</string>
-		  <string name="label_ihk_heat_ex_temp">Wärmetauschertemperatur [°C](°C):</string>
-		  <string name="label_ihk_heat_ex_setpoint">Wärmetauschersollwert [°C](°C):</string>
-		  <string name="label_ihk_heat_ex_actuator">Wärmetauscherstellgröße [%](%):</string>
-		  <string name="label_ihk_main_actuator">Hauptstellgröße [%](%):</string>
-		  <string name="label_ihk_evap_temp">Verdampfertemperatur [°C](°C):</string>
-		  <string name="label_ihk_press_sense">Drucksensor [bar](bar):</string>
-		  <string name="label_ihk_circ_air_left">Umluft links [%](%):</string>
-		  <string name="label_ihk_circ_air_right">Umluft rechts [%](%):</string>
-		  <string name="label_ihk_defrost">Abtauen [%](%):</string>
-		  <string name="label_ihk_vent">Belüftung [%](%):</string>
-		  <string name="label_ihk_cold_air">Kaltluft [%](%):</string>
-		  <string name="label_ihk_legroom">Fußraum [%](%):</string>
-		  <string name="label_ihk_refrig_comp">Kältemittelverdichter [%](%):</string>
-		</strings>
-		<jobs sgbd="d_klima">
-		  <job name="STATUS_REGLERGROESSEN" results="STAT_TINNEN_WERT;STAT_TINNEN_VERZOEGERT_WERT;STAT_TAUSSEN_WERT;STAT_SOLL_LI_KORRIGIERT_WERT;STAT_WT_RE_WERT;STAT_WTSOLL_RE_WERT;STAT_YWT_RE_WERT;STAT_Y_RE_WERT">
-			<display name="label_ihk_in_temp" result="STAT_TINNEN_WERT" format="6.1R" />
-			<display name="label_ihk_in_temp_delay" result="STAT_TINNEN_VERZOEGERT_WERT" format="6.1R" />
-			<display name="label_ihk_out_temp" result="STAT_TAUSSEN_WERT" format="6.1R" />
-			<display name="label_ihk_setpoint" result="STAT_SOLL_LI_KORRIGIERT_WERT" format="6.1R" />
-			<display name="label_ihk_heat_ex_temp" result="STAT_WT_RE_WERT" format="6.1R" />
-			<display name="label_ihk_heat_ex_setpoint" result="STAT_WTSOLL_RE_WERT" format="6.1R" />
-			<display name="label_ihk_heat_ex_actuator" result="STAT_YWT_RE_WERT" format="3L" />
-			<display name="label_ihk_main_actuator" result="STAT_Y_RE_WERT" format="3L" />
-		  </job>
-		  <job name="STATUS_ANALOGEINGAENGE" results="STAT_TEMP_VERDAMFER_WERT;STAT_DRUCKSENSOR_WERT">
-			<display name="label_ihk_evap_temp" result="STAT_TEMP_VERDAMFER_WERT" format="6.1R" />
-			<display name="label_ihk_press_sense" result="STAT_DRUCKSENSOR_WERT" format="6.1R" />
-		  </job>
-		  <job name="STATUS_MOTOR_KLAPPENPOSITION" results="STAT_FRISCHLUFT_UMLUFT_LI_WERT;STAT_FRISCHLUFT_UMLUFT_RE_WERT;STAT_DEFROST_WERT;STAT_BELUEFTUNG_WERT;STAT_KALTLUFT_WERT;STAT_FUSSRAUM_WERT">
-			<display name="label_ihk_circ_air_left" result="STAT_FRISCHLUFT_UMLUFT_LI_WERT" format="3L" />
-			<display name="label_ihk_circ_air_right" result="STAT_FRISCHLUFT_UMLUFT_RE_WERT" format="3L" />
-			<display name="label_ihk_defrost" result="STAT_DEFROST_WERT" format="3L" />
-			<display name="label_ihk_vent" result="STAT_BELUEFTUNG_WERT" format="3L" />
-			<display name="label_ihk_cold_air" result="STAT_KALTLUFT_WERT" format="3L" />
-			<display name="label_ihk_legroom" result="STAT_FUSSRAUM_WERT" format="3L" />
-		  </job>
-		  <job name="STATUS_IO" results="STAT_STEUERUNG_KMV_WERT">
-			<display name="label_ihk_refrig_comp" result="STAT_STEUERUNG_KMV_WERT" format="3L" />
-		  </job>
-		</jobs>
-	  </page>
-	</fragment>
-
+```
+<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name="tab_ihk">
+    <strings>
+      <string name="tab_ihk">Climate</string>
+      <string name="label_ihk_in_temp">Indoor temperature [°C](°C):</string>
+      <string name="label_ihk_in_temp_delay">Indoor temperature delayed [°C](°C):</string>
+      <string name="label_ihk_out_temp">Outdoor temperature [°C](°C):</string>
+      <string name="label_ihk_setpoint">Setpoint [°C](°C):</string>
+      <string name="label_ihk_heat_ex_temp">Heat exchanger temperature [°C](°C):</string>
+      <string name="label_ihk_heat_ex_setpoint">Heat exchanger setpoint [°C](°C):</string>
+      <string name="label_ihk_heat_ex_actuator">Heat exchanger actuator [%](%):</string>
+      <string name="label_ihk_main_actuator">Main actuator [%](%):</string>
+      <string name="label_ihk_evap_temp">Evaporator temperature [°C](°C):</string>
+      <string name="label_ihk_press_sense">Pressure sensor [bar](bar):</string>
+      <string name="label_ihk_circ_air_left">Circulating air left [%](%):</string>
+      <string name="label_ihk_circ_air_right">Circulating air right [%](%):</string>
+      <string name="label_ihk_defrost">Defrost [%](%):</string>
+      <string name="label_ihk_vent">Ventilation [%](%):</string>
+      <string name="label_ihk_cold_air">Cold air [%](%):</string>
+      <string name="label_ihk_legroom">Leg room [%](%):</string>
+      <string name="label_ihk_refrig_comp">Refrigerating compressor [%](%):</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_ihk">Klima</string>
+      <string name="label_ihk_in_temp">Innentemperatur [°C](°C):</string>
+      <string name="label_ihk_in_temp_delay">Innentemperatur verzögert [°C](°C):</string>
+      <string name="label_ihk_out_temp">Außentemperatur [°C](°C):</string>
+      <string name="label_ihk_setpoint">Sollwert [°C](°C):</string>
+      <string name="label_ihk_heat_ex_temp">Wärmetauschertemperatur [°C](°C):</string>
+      <string name="label_ihk_heat_ex_setpoint">Wärmetauschersollwert [°C](°C):</string>
+      <string name="label_ihk_heat_ex_actuator">Wärmetauscherstellgröße [%](%):</string>
+      <string name="label_ihk_main_actuator">Hauptstellgröße [%](%):</string>
+      <string name="label_ihk_evap_temp">Verdampfertemperatur [°C](°C):</string>
+      <string name="label_ihk_press_sense">Drucksensor [bar](bar):</string>
+      <string name="label_ihk_circ_air_left">Umluft links [%](%):</string>
+      <string name="label_ihk_circ_air_right">Umluft rechts [%](%):</string>
+      <string name="label_ihk_defrost">Abtauen [%](%):</string>
+      <string name="label_ihk_vent">Belüftung [%](%):</string>
+      <string name="label_ihk_cold_air">Kaltluft [%](%):</string>
+      <string name="label_ihk_legroom">Fußraum [%](%):</string>
+      <string name="label_ihk_refrig_comp">Kältemittelverdichter [%](%):</string>
+    </strings>
+    <jobs sgbd="d_klima">
+      <job name="STATUS_REGLERGROESSEN" results="STAT_TINNEN_WERT;STAT_TINNEN_VERZOEGERT_WERT;STAT_TAUSSEN_WERT;STAT_SOLL_LI_KORRIGIERT_WERT;STAT_WT_RE_WERT;STAT_WTSOLL_RE_WERT;STAT_YWT_RE_WERT;STAT_Y_RE_WERT">
+        <display name="label_ihk_in_temp" result="STAT_TINNEN_WERT" format="6.1R" />
+        <display name="label_ihk_in_temp_delay" result="STAT_TINNEN_VERZOEGERT_WERT" format="6.1R" />
+        <display name="label_ihk_out_temp" result="STAT_TAUSSEN_WERT" format="6.1R" />
+        <display name="label_ihk_setpoint" result="STAT_SOLL_LI_KORRIGIERT_WERT" format="6.1R" />
+        <display name="label_ihk_heat_ex_temp" result="STAT_WT_RE_WERT" format="6.1R" />
+        <display name="label_ihk_heat_ex_setpoint" result="STAT_WTSOLL_RE_WERT" format="6.1R" />
+        <display name="label_ihk_heat_ex_actuator" result="STAT_YWT_RE_WERT" format="3L" />
+        <display name="label_ihk_main_actuator" result="STAT_Y_RE_WERT" format="3L" />
+      </job>
+      <job name="STATUS_ANALOGEINGAENGE" results="STAT_TEMP_VERDAMFER_WERT;STAT_DRUCKSENSOR_WERT">
+        <display name="label_ihk_evap_temp" result="STAT_TEMP_VERDAMFER_WERT" format="6.1R" />
+        <display name="label_ihk_press_sense" result="STAT_DRUCKSENSOR_WERT" format="6.1R" />
+      </job>
+      <job name="STATUS_MOTOR_KLAPPENPOSITION" results="STAT_FRISCHLUFT_UMLUFT_LI_WERT;STAT_FRISCHLUFT_UMLUFT_RE_WERT;STAT_DEFROST_WERT;STAT_BELUEFTUNG_WERT;STAT_KALTLUFT_WERT;STAT_FUSSRAUM_WERT">
+        <display name="label_ihk_circ_air_left" result="STAT_FRISCHLUFT_UMLUFT_LI_WERT" format="3L" />
+        <display name="label_ihk_circ_air_right" result="STAT_FRISCHLUFT_UMLUFT_RE_WERT" format="3L" />
+        <display name="label_ihk_defrost" result="STAT_DEFROST_WERT" format="3L" />
+        <display name="label_ihk_vent" result="STAT_BELUEFTUNG_WERT" format="3L" />
+        <display name="label_ihk_cold_air" result="STAT_KALTLUFT_WERT" format="3L" />
+        <display name="label_ihk_legroom" result="STAT_FUSSRAUM_WERT" format="3L" />
+      </job>
+      <job name="STATUS_IO" results="STAT_STEUERUNG_KMV_WERT">
+        <display name="label_ihk_refrig_comp" result="STAT_STEUERUNG_KMV_WERT" format="3L" />
+      </job>
+    </jobs>
+  </page>
+</fragment>
+```
 The `page name` property specifies the title of the page and is a reference to the `strings` nodes. With `logfile` a log file name could be specified, that allows to log the display data. If the symbol `{D}` is used inside the log file name, it will be replaced by the current date and time.  
 The `strings` nodes contains the all the string used on this display page. If the current language is not matching the `lang` tag, the default language (without tag) is used. The `lang` property could be either the short form e.g. `'de'` or the long one `'de-DE'`.
 
@@ -110,80 +110,79 @@ This is how the resulting page will look like:
 With the `read_errors` node it's possible to read an error summary of all ECUs. Simply list all ECU names and the corresponding sgbd file names in a separate `ecu` node, like in the example below.  
 The error message is generated by the sgbd file and is in the language of the sgbd.  
 The page also allows to selectively reset ECU errors.
+```
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name ="tab_errors">
+    <strings>
+      <string name="tab_errors">Errors</string>
 
-	<?xml version="1.0" encoding="utf-8" ?>
-	<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
-			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			  xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-	  <page name ="tab_errors">
-		<strings>
-		  <string name="tab_errors">Errors</string>
+      <string name="ACSM">ACSM Crash security module</string>
+      <string name="CAS">CAS Car access system</string>
+      <string name="CCCBO">CCC-BO Front panel</string>
+      <string name="CCCGW">CCC-GW Gateway</string>
+      <string name="DDE">DDE Diesel elektronic</string>
+      <string name="DSC">DSC Dynamic stability control</string>
+      <string name="EKPS">EKPS Fuel pump control</string>
+      <string name="IHK">IHK Integrated heating climate automatic</string>
+      <string name="KBM">KBM Chassis basic module</string>
+      <string name="KGM">KGM Chassis gateway module</string>
+      <string name="KOMBI">KOMBI Combination instrument</string>
+      <string name="PDC">PDC Park distance control</string>
+      <string name="RLS">RLS Rain main beam sensor</string>
+      <string name="EPS">EPS Electric power steering</string>
+      <string name="ULF">ULF Universal hands-free system</string>
+      <string name="FZD">FZD Roof switch unit</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_errors">Fehler</string>
 
-		  <string name="ACSM">ACSM Crash security module</string>
-		  <string name="CAS">CAS Car access system</string>
-		  <string name="CCCBO">CCC-BO Front panel</string>
-		  <string name="CCCGW">CCC-GW Gateway</string>
-		  <string name="DDE">DDE Diesel elektronic</string>
-		  <string name="DSC">DSC Dynamic stability control</string>
-		  <string name="EKPS">EKPS Fuel pump control</string>
-		  <string name="IHK">IHK Integrated heating climate automatic</string>
-		  <string name="KBM">KBM Chassis basic module</string>
-		  <string name="KGM">KGM Chassis gateway module</string>
-		  <string name="KOMBI">KOMBI Combination instrument</string>
-		  <string name="PDC">PDC Park distance control</string>
-		  <string name="RLS">RLS Rain main beam sensor</string>
-		  <string name="EPS">EPS Electric power steering</string>
-		  <string name="ULF">ULF Universal hands-free system</string>
-		  <string name="FZD">FZD Roof switch unit</string>
-		</strings>
-		<strings lang="de">
-		  <string name="tab_errors">Fehler</string>
-
-		  <string name="ACSM">ACSM Crash-Sicherheits-Modul</string>
-		  <string name="CAS">CAS Car Access System</string>
-		  <string name="CCCBO">CCC-BO Bedienoberfläche</string>
-		  <string name="CCCGW">CCC-GW Gateway</string>
-		  <string name="DDE">DDE Diesel Elektronik</string>
-		  <string name="DSC">DSC Dynamische Stabilitätskontrolle</string>
-		  <string name="EKPS">EKPS Kraftstoffpumpensteuerung</string>
-		  <string name="IHK">IHK Integrierte Heiz-Klima-Automatik</string>
-		  <string name="KBM">KBM Karosserie-Basismodul</string>
-		  <string name="KGM">KGM Karosserie-Gateway-Modul</string>
-		  <string name="KOMBI">KOMBI Instrumentenkombination</string>
-		  <string name="PDC">PDC Park-Distance-Control</string>
-		  <string name="RLS">RLS Regen-Fahrlicht-Sensor</string>
-		  <string name="EPS">EPS Elektromechanische Servolenkung</string>
-		  <string name="ULF">ULF Universale Ladefreisprechelektronik</string>
-		  <string name="FZD">FZD Funtionszentrum Dach</string>
-		</strings>
-		<read_errors>
-		  <ecu name="CAS" sgbd="d_cas" />
-		  <ecu name="DDE" sgbd="d_motor" />
-		  <ecu name="EKPS" sgbd="d_ekp" />
-		  <ecu name="DSC" sgbd="d_dsc" />
-		  <ecu name="ACSM" sgbd="d_sim" />
-		  <ecu name="CCCBO" sgbd="d_mmi" />
-		  <ecu name="CCCGW" sgbd="d_mostgw" />
-		  <ecu name="IHK" sgbd="d_klima" />
-		  <ecu name="KBM" sgbd="d_kbm" />
-		  <ecu name="KGM" sgbd="d_zgm" />
-		  <ecu name="KOMBI" sgbd="d_kombi" />
-		  <ecu name="PDC" sgbd="d_pdc" />
-		  <ecu name="RLS" sgbd="d_rls" />
-		  <ecu name="EPS" sgbd="d_eps" />
-		  <ecu name="ULF" sgbd="d_ispb" />
-		  <ecu name="FZD" sgbd="d_fzd" />
-		</read_errors>
-	  </page>
-	</fragment>
-
+      <string name="ACSM">ACSM Crash-Sicherheits-Modul</string>
+      <string name="CAS">CAS Car Access System</string>
+      <string name="CCCBO">CCC-BO Bedienoberfläche</string>
+      <string name="CCCGW">CCC-GW Gateway</string>
+      <string name="DDE">DDE Diesel Elektronik</string>
+      <string name="DSC">DSC Dynamische Stabilitätskontrolle</string>
+      <string name="EKPS">EKPS Kraftstoffpumpensteuerung</string>
+      <string name="IHK">IHK Integrierte Heiz-Klima-Automatik</string>
+      <string name="KBM">KBM Karosserie-Basismodul</string>
+      <string name="KGM">KGM Karosserie-Gateway-Modul</string>
+      <string name="KOMBI">KOMBI Instrumentenkombination</string>
+      <string name="PDC">PDC Park-Distance-Control</string>
+      <string name="RLS">RLS Regen-Fahrlicht-Sensor</string>
+      <string name="EPS">EPS Elektromechanische Servolenkung</string>
+      <string name="ULF">ULF Universale Ladefreisprechelektronik</string>
+      <string name="FZD">FZD Funtionszentrum Dach</string>
+    </strings>
+    <read_errors>
+      <ecu name="CAS" sgbd="d_cas" />
+      <ecu name="DDE" sgbd="d_motor" />
+      <ecu name="EKPS" sgbd="d_ekp" />
+      <ecu name="DSC" sgbd="d_dsc" />
+      <ecu name="ACSM" sgbd="d_sim" />
+      <ecu name="CCCBO" sgbd="d_mmi" />
+      <ecu name="CCCGW" sgbd="d_mostgw" />
+      <ecu name="IHK" sgbd="d_klima" />
+      <ecu name="KBM" sgbd="d_kbm" />
+      <ecu name="KGM" sgbd="d_zgm" />
+      <ecu name="KOMBI" sgbd="d_kombi" />
+      <ecu name="PDC" sgbd="d_pdc" />
+      <ecu name="RLS" sgbd="d_rls" />
+      <ecu name="EPS" sgbd="d_eps" />
+      <ecu name="ULF" sgbd="d_ispb" />
+      <ecu name="FZD" sgbd="d_fzd" />
+    </read_errors>
+  </page>
+</fragment>
+```
 In the `ecu` node the property `name` is a link to a `string` node and `sgbd` is the name of the sgbd file. The output looks similar to this page:
 
 ![Erros E90](Page_specification_AppReadAllErrorsSmall.png)
 
 # User defined code
 If the jobs and display output is getting more complex, user defined code will be required. In this case a C# class could be added to a `code` node, which defines a set of optional callback functions. If the `show_warnings` property is set to true, also warnings will be reported during compilation of the code.
-
+```
     <code show_warnigs="true">
       <![CDATA[
     class PageClass
@@ -234,10 +233,10 @@ If the jobs and display output is getting more complex, user defined code will b
     }
       ]]>
     </code>
-
+```
 ## Formatting results (FormatResult)
 For special formatting of the result data, the callback `FormatResult` could be used. For each result of the EDIABAS results this function will be called with `resultName` set to the current result name. If the `display` node is a subnode of a `job` node the job name is prefixed with # as separator to the result name. If the `job` node contains an `id` attribute, the job name is `<id>#<result name>`. The function will be only called if there is **no** `format` property in the `display` node. Here is an example from the motor page:
-
+```
         public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor)
         {
             string result = string.Empty;
@@ -287,11 +286,11 @@ For special formatting of the result data, the callback `FormatResult` could be 
             }
             return result;
         }
-
+```
 ## Formatting error results (FormatErrorResult)
 For special formatting of the error result data, the callback `FormatErrorResult` could be used. For each error entry this function will be called with `defaultMessage` set to the default error message output.  
 Here is an example from the errors page, that adds a RPM value to the error message. You have to add a `results` property to the `ecu` node specifying the results you want to be generated by the `FS_LESEN_DETAIL` job.
-
+```
     <read_errors>
       <ecu name="CAS" sgbd="d_cas" />
       <ecu name="DDE" sgbd="d_motor" results="F_UW_KM;F_UW_ANZ" />
@@ -331,11 +330,11 @@ Here is an example from the errors page, that adds a RPM value to the error mess
     }
       ]]>
   </code>
-
+```
 ## Control output of the page (UpdateResultList)
 Sometimes you want to dynamically control the number and the content of the output lines.  
 If the callback `UpdateResultList` is defined, you could directly fill the contents of the `resultListAdapter` which displays the results of the page. In this example from the (standard) _Adapter_ page the adapter configuration result will be displayed. Additionally only one column for output is used by setting the second argument of `resultListAdapter.Items.Add` to null. With `ActivityMain.GetPageString` it's possible to retrieve a string from the translation table.
-
+```
         public void UpdateResultList(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, List<TableResultItem> resultList)
         {
             int result = configResult;
@@ -349,10 +348,10 @@ If the callback `UpdateResultList` is defined, you could directly fill the conte
                 resultList.Add(new TableResultItem(ActivityMain.GetPageString(pageInfo, "adapter_config_error"), null));
             }
         }
-
+```
 ## Executing own jobs (ExecuteJob)
 If more than one job has to be executed or the job requires special arguments, `ediabas.ExecuteJob` could be called in the `ExecuteJob` callback. Here is an example from the adapter page for calling a list of jobs. `EdiabasThread.MergeResultDictionarys` adds the results of the current job to the internal job list. The callback `ExecuteJob` will be executed in it's own thread. When using ExecuteJob it's recommended to add the `display` nodes to the `page` node because no `job` nodes will be present.
-
+```
     class PageClass
     {
         private class EdiabasJob
@@ -433,12 +432,12 @@ If more than one job has to be executed or the job requires special arguments, `
             }
         }
     }
-
+```
 ## Adding controls to the layout
 The standard layout only allows to display information, but there is no way to control outputs. With the callbacks `CreateLayout`, `DestroyLayout` and `UpdateLayout` there is a possibility to add own controls to the layout (in most cases buttons).  
 In this example from the AdapterCustom.ccpage buttons will be added to control the CAN block size, CAN separation time and the CAN mode. The `CreateLayout` adds the controls, `DestroyLayout` removes the controls and `UpdateLayout` is used to modify the state of the controls (depending form the connection state).  
 For every button there is a `Click` delegate that allows to set a global variable which is used for EDIABAS job control.
-
+```
         private Button buttonBlockSize;
         private Button buttonSepTime0;
         private Button buttonSepTime1;
@@ -578,25 +577,25 @@ For every button there is a `Click` delegate that allows to set a global variabl
             buttonCanOff.Enabled = enabled;
         }
     }
-
+```
 The resulting page will look like this:
 
 ![Adapter page](Page_specification_AdapterConfigSmall.png)
 
 # Grouping pages
 If the same of pages are required in multiple configuration, it's useful to group the together. This could be done with `*.ccpages` files. Simply include the `*.ccpage` files withing the `pages` node. The specifified path is relative to the `*.ccpages` file location. The file has the following layout:
-
-	<?xml version="1.0" encoding="utf-8" ?>
-	<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
-			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			  xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-	  <pages>
-		<include filename="Axis.ccpage"/>
-		<include filename="Motor.ccpage"/>
-		<include filename="../AdapterCustom.ccpage"/>
-	  </pages>
-	</fragment>
-
+```
+<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <pages>
+    <include filename="Axis.ccpage"/>
+    <include filename="Motor.ccpage"/>
+    <include filename="../AdapterCustom.ccpage"/>
+  </pages>
+</fragment>
+```
 # The configuration file
 Now all `*.page` or `*.pages` can be added to a configuration file `*.cccfg`. This file could be loaded by _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_. In the `global` node of the file the following properties could be specified:
 * `ecu_path`: Directory of the ecu files (`*.grp` and `*.prg`) relative to the configuration file.
@@ -604,14 +603,12 @@ Now all `*.page` or `*.pages` can be added to a configuration file `*.cccfg`. Th
 * `append_log`: Setting this property to true will always append the log file.
 * `manufacturer`: Select the car manufacturer with this property. Possible values are `BWM`, `VW`, `Audi`, `Seat` and `Skoda`.
 * `interface`: Specify the communication interface in this property. Possible values are `BLUETOOTH` , `ENET`, `ELMWIFI` and `FTDI`. When using a manufacturer from the VAG group, only `BLUETOOTH` is allowed.
-
-<!-- -->
-
-	<?xml version="1.0" encoding="utf-8"?>
-	<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
-			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			  xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-	  <global ecu_path="../Ecu" log_path="Log" append_log="true" manufacturer="BMW" interface="BLUETOOTH" />
-	  <include filename="E61.ccpages"/>
-	</fragment>
-
+```
+<?xml version="1.0" encoding="utf-8"?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <global ecu_path="../Ecu" log_path="Log" append_log="true" manufacturer="BMW" interface="BLUETOOTH" />
+  <include filename="E61.ccpages"/>
+</fragment>
+```
