@@ -104,7 +104,7 @@ Within the _jobs_ node multiple _job_ nodes specify the EDIABAS jobs to execute.
 The _page_ node can optionally contain _display_ nodes like the _job_ node. They will be only used for [User defined code](#user-defined-code).  
 This is how the resulting page will look like:
 
-![Climate page](Page specification_AppClimateSmall.png)
+![Climate page](Page_specification_AppClimateSmall.png)
 
 ## Reading errors
 With the _read_errors_ node it's possible to read an error summary of all ECUs. Simply list all ECU names and the corresponding sgbd file names in a separate _ecu_ node, like in the example below.  
@@ -179,7 +179,7 @@ The page also allows to selectively reset ECU errors.
 
 In the _ecu_ node the property _name_ is a link to a _string_ node and _sgbd_ is the name of the sgbd file. The output looks similar to this page:
 
-![Erros E90](Page specification_AppReadAllErrorsSmall.png)
+![Erros E90](Page_specification_AppReadAllErrorsSmall.png)
 
 # User defined code
 If the jobs and display output is getting more complex, user defined code will be required. In this case a C# class could be added to a _code_ node, which defines a set of optional callback functions. If the _show_warnings_ property is set to true, also warnings will be reported during compilation of the code.
@@ -581,7 +581,7 @@ For every button there is a _Click_ delegate that allows to set a global variabl
 
 The resulting page will look like this:
 
-![Adapter page](Page specification_AdapterConfigSmall.png)
+![Adapter page](Page_specification_AdapterConfigSmall.png)
 
 # Grouping pages
 If the same of pages are required in multiple configuration, it's useful to group the together. This could be done with _*.ccpages_ files. Simply include the _*.ccpage_ files withing the _pages_ node. The specifified path is relative to the _*.ccpages_ file location. The file has the following layout:

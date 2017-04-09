@@ -1,5 +1,5 @@
 # Configuration generator
-The configuration generator is a tool that simplifies generation of [XML configuration files](Page-specification).
+The configuration generator is a tool that simplifies generation of [XML configuration files](Page_specification.md).
 The generator options menu has the following entries:
 * _Interface_: If a configuration has been loaded on the main page, the same communication interface is also used by the generator as default. With this menu entry a different communication interface could be selected.
 * _Adapter_: With this menu the [Bluetooth adapter](#SupportedAdapters) could be selected. If the device is not coupled already, searching for new devices is possible. This menu is only enabled if interface type _BLUETOOTH_ has been selected.
@@ -8,7 +8,7 @@ The generator options menu has the following entries:
 * _Configuration_: With this submenu you could select if the configuration is created automatically or manually:
 	* _Automatic_: The ECU configuration will be read from the vehicle with the _Read_ button. This option is only available in BMW mode.
 	* {anchor:ManualConfiguration}_ Manual X_: A manual configuration is stored in the storage with the number X. The ECUs for the configuration have to be added manually with the submenu from the _Edit_ button. Therefore you have to identify the required .GRP or .PRG files on the info page of each ECU in INPA.
-![INPA info page](Configuration Generator_InpaInfo.png)
+![INPA info page](Configuration_Generator_InpaInfo.png)
 .GRP file name is _{"D_MOTOR.GRP"}_ and .PRG file name is _{"D60M47A0.PRG"}_
 * _Data logging_: Selecting this menu entry will open a sub menu with multiple data logging options:
 	* _Create trace file_: If the checkbox of this menu is active, a _ifh.trc_ file will be created when executing jobs. The trace file will be created in the _LogConfigTools_ subdirectory.
@@ -21,7 +21,7 @@ The generator options menu has the following entries:
 The vehicle type is detected automatically when pressing the _Read_ button (_automatic mode_).
 If the _manual mode_ is used this button is named _Edit_ and opens a submenu that allows to add or remove ECU files. Therefore you have to identify the required .GRP or .PRG files on the info page of each ECU in INPA. In VAG mode it's possible to search for ECUs, but this process is very time consuming.
 
-![Generator menu](Configuration Generator_AppGeneratorMenuSmall.png)
+![Generator menu](Configuration_Generator_AppGeneratorMenuSmall.png)
 {anchor:EdiabasTool}
 If the analysis is successful, the detected ECUs are listed and the VIN is displayed in the title bar. The VIN will later be used as subdirectory name for storing the generated configuration.
 If an ECU is completely silent (defective) it will not show up in the list!
@@ -38,4 +38,4 @@ The page has the following properties:
 With the _Save_ button the configuration will be stored and used as default on the main page.
 Hint: A long click on the ECU list opens a submenu that allows to change the order of the ECU entries in the list.
 
-![ECU list](Configuration Generator_AppGeneratorEcusSmall.png) ![Job selection](Configuration Generator_AppGeneratorJobSmall.png)
+![ECU list](Configuration_Generator_AppGeneratorEcusSmall.png) ![Job selection](Configuration_Generator_AppGeneratorJobSmall.png)
