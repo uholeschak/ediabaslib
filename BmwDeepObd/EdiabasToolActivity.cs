@@ -595,7 +595,7 @@ namespace BmwDeepObd
                 case Resource.Id.menu_submenu_help:
                     _activityCommon.ShowWifiConnectedWarning(() =>
                     {
-                        StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"http://ediabaslib.codeplex.com/wikipage?title=Ediabas%20Tool")));
+                        StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://github.com/uholeschak/ediabaslib/blob/master/docs/EdiabasTool.md")));
                     });
                     return true;
             }

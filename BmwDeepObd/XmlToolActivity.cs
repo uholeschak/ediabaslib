@@ -698,7 +698,7 @@ namespace BmwDeepObd
                 case Resource.Id.menu_submenu_help:
                     _activityCommon.ShowWifiConnectedWarning(() =>
                     {
-                        StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"http://ediabaslib.codeplex.com/wikipage?title=Configuration%20Generator")));
+                        StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md")));
                     });
                     return true;
             }

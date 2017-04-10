@@ -28,13 +28,13 @@
   <string name="error_no_response">Keine Antwort</string>
   <string name="error_code">Fehlercode</string>
   <string name="version_change_info_message">Dieses Open Source Projekt wird gehostet auf:
-\n<a href='http://ediabaslib.codeplex.com'>ediabaslib.codeplex.com</a>
+\n<a href='https://github.com/uholeschak/ediabaslib'>github.com/uholeschak/ediabaslib</a>
 \nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:
 \n- Kleinere Probleme behoben</string>
   <string name="app_info_message">Deep OBD für BMW und VAG\nVersion: {0}\nId: {1}</string>
-  <string name="vag_mode_info">Der VAG Modus ist noch experimentell.\nEs wird ein <a href='http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327'>Deep OBD Adapter</a> mit mindestens Firmwareversion 0.8 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281 und TP2.0 (Fahrzeuge bis 4.2012) unterstützt.</string>
+  <string name="vag_mode_info">Der VAG Modus ist noch experimentell.\nEs wird ein <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD Adapter</a> mit mindestens Firmwareversion 0.8 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281 und TP2.0 (Fahrzeuge bis 4.2012) unterstützt.</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Information</string>
@@ -100,8 +100,8 @@
   <string name="unknown_adapter_type">Der Adaptertyp wurde nicht erkannt.\nWollen Sie trotzdem diesen Adapter verwenden (die Telegramme werden unverändert gesendet)?</string>
   <string name="invalid_adapter_type">Der ELM327 Adapter unterstützt nicht all notwendigen Kommandos und ist inkompatibel mit dieser Software.</string>
   <string name="fake_elm_adapter_type">The ELM327 Adapter ist eine gefälschte 2.1 Version und inkompatibel mit dieser Software.</string>
-  <string formatted="false" name="recommened_adapter_type">Es wird ein ELM327 v1.4b, v1.5 oder original v2.1 Adapter empfohlen,&lt;br&gt;welcher auf einem PIC18F25K80 Prozessor basiert (kein MCP2515 Chip).&lt;br&gt;Auf &lt;a href=\'http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327\'&gt;ediabaslib.codeplex.com&lt;/a&gt; befindet sich eine verbesserte Firmware.</string>
-  <string name="adapter_elm_replacement">ELM327 Adapter sind langsam und unterstützen nur D-CAN (Fahrzeuge ab 3/2007).\nSie können jetzt Adapter mit Ersatzfirware kaufen unter\n<a href='http://ediabaslib.codeplex.com/wikipage?title=Replacement%20firmware%20for%20ELM327'>ediabaslib.codeplex.com</a>,\nwelche viele Verbesserungen aufweist.</string>
+  <string formatted="false" name="recommened_adapter_type">Es wird ein ELM327 v1.4b, v1.5 oder original v2.1 Adapter empfohlen,&lt;br&gt;welcher auf einem PIC18F25K80 Prozessor basiert (kein MCP2515 Chip).&lt;br&gt;Auf &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt; befindet sich eine verbesserte Firmware.</string>
+  <string name="adapter_elm_replacement">ELM327 Adapter sind langsam und unterstützen nur D-CAN (Fahrzeuge ab 3/2007).\nSie können jetzt Adapter mit Ersatzfirware kaufen unter\n<a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>github.com/uholeschak/ediabaslib</a>,\nwelche viele Verbesserungen aufweist.</string>
   <string name="adapter_cfg_required">Der Adapter muss unter Umständen noch konfiguriert werden.\nWollen Sie die Adapter Konfiguration aufrufen?</string>
   <string name="adapter_fw_update">Es ist ein Firmwareupdate für diesen Adapter verfügbar.\nWollen Sie die Adapter Konfiguration aufrufen um das Update zu installieren?</string>
 
@@ -216,7 +216,7 @@
   <string name="xml_tool_no_mwtab">Es wurden keine Datentabellen für diese ECU gefunden</string>
   <string name="xml_tool_select_sgbd">Fahrzeugtyp auswählen</string>
   <string name="xml_tool_no_response">Keine Antwort vom Fahrzeug</string>
-  <string name="xml_tool_no_response_manual">Keine Antwort vom Fahrzeug.\nBei K-LINE Fahrzeugen wird ein USB oder Deep OBD Adapter benötigt.\nBei älteren Fahrzeuge ist nur eine manuelle Konfiguration möglich.\nHierfür müssen Sie in INPA die notwenigen .GRP oder .PRG Dateien auf der Info Seite jeder ECU ermitteln.\nWollen Sie auf <a href='http://ediabaslib.codeplex.com/wikipage?title=Configuration%20Generator#ManualConfiguration'>manuelle Konfiguration</a> umschalten?</string>
+  <string name="xml_tool_no_response_manual">Keine Antwort vom Fahrzeug.\nBei K-LINE Fahrzeugen wird ein USB oder Deep OBD Adapter benötigt.\nBei älteren Fahrzeuge ist nur eine manuelle Konfiguration möglich.\nHierfür müssen Sie in INPA die notwenigen .GRP oder .PRG Dateien auf der Info Seite jeder ECU ermitteln.\nWollen Sie auf <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>manuelle Konfiguration</a> umschalten?</string>
   <string name="xml_tool_read_jobs_failed">Jobs lesen fehlgeschlagen</string>
   <string name="xml_tool_aborting">Vorgang wird abgebrochen</string>
   <string name="xml_tool_read_ecu_info_failed">ECU Information lesen fehlgeschlagen</string>
