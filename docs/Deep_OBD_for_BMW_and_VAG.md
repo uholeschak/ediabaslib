@@ -13,7 +13,7 @@ Table of contents:
 * [Background image](#background-image)
 
 ## Manufacturers
-Basically _Deep OBD for BMW and VAG_ can operate in two modes, either BMW or VAG. You have to select the car manufacturer first. The VAG group mode (VW, Audi, Seat, Skoda) is still experimental and only supports the protocols KPW2000, KWP1281 and TP2.0. A [Bluetooth D-CAN/K-Line adapter](Build-Bluetooth-D-CAN-adapter) is required for this mode.
+Basically _Deep OBD for BMW and VAG_ can operate in two modes, either BMW or VAG. You have to select the car manufacturer first. The VAG group mode (VW, Audi, Seat, Skoda) is still experimental and only supports the protocols KPW2000, KWP1281 and TP2.0. A [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md) adapter is required for this mode.
 
 ## Supported adapters
 _Deep OBD for BMW and VAG_ supports several OBD II adapters:
