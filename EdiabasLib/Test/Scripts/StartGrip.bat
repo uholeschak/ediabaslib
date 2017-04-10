@@ -2,4 +2,4 @@
 SETLOCAL EnableDelayedExpansion
 
 set BATPATH=%~dp0
-"%PATH_PYTHON%\python.exe" -m grip "!BATPATH!\..\..\..\docs"
+"%PATH_PYTHON%\python.exe" -m grip "!BATPATH!\..\..\.."
