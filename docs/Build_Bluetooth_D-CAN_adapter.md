@@ -27,7 +27,8 @@ For the first programming of the new firmware you have to connect the MISO, MOSI
 | Low | 0xFD |
 | High | 0xDC |
 | Extended | 0xF9 |
-The next time the firmware update is possible with `UpdateLoader.exe` (using `CanAdapter.hex`).
+
+Next time the firmware update is possible with `UpdateLoader.exe` (using `CanAdapter.hex`).
 
 ![](Build_Bluetooth_D-CAN_adapter_ProgrammerSmall.png)
 
