@@ -7,7 +7,7 @@ Basically two components are required:
 * A standard D-CAN/K-Line Adapter. There are multiple manufactures who sell such adapters which are basically identical. I have used one with a PLCC AFT16V8B, because it's easier to replace the chip.
 * A HC-05 bluetooth board. It's important that it has an integrated 5V to 3.3V power regulator.
 ## Step1: Replace the PLD
-A big problem of the standard adapters is the high power consumption which results in a very high inner temperature. The main reason for this is the used PLD type. The ATF16V8B requires 50mA in standby. It's possible to replace this chip with a ATF16V8BQL type, which only requires 5mA. You could remove the existing PLD with hot air and attach a PLCC20 socket instead. With a PLC programmer program the {"custom.jed"} file into the ATF16V8BQL (The {"standard.jed"} file is the original program). The custom program adds an additional RXD input to the unused pin 1.
+A big problem of the standard adapters is the high power consumption which results in a very high inner temperature. The main reason for this is the used PLD type. The ATF16V8B requires 50mA in standby. It's possible to replace this chip with a ATF16V8BQL type, which only requires 5mA. You could remove the existing PLD with hot air and attach a PLCC20 socket instead. With a PLC programmer program the `custom.jed` file into the ATF16V8BQL (The `standard.jed` file is the original program). The custom program adds an additional RXD input to the unused pin 1.
 
 ![](Build_Bluetooth_D-CAN_adapter_PldSmall.png)
 
