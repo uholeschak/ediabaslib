@@ -43,7 +43,7 @@
 #define USART_TXC_vect  USART0_TXC_vect
 
 #define ADAPTER_TYPE        0x01
-#define ADAPTER_VERSION     0x0001
+#define ADAPTER_VERSION     0x0002
 
 #define BAUDRATEFACTOR      3            // Calculated baud rate factor: 115200bps @ 7.38 MHz
 #define TIMER0_PRESCALE     ((1<<CS01) | (1<<CS00))     // prescaler 64
@@ -320,8 +320,8 @@ void update_led()
         }
     }
 #endif
-    if ((can_mode != 0) || IGNITION_STATE())
-    {   // CAN interface don't support ignition state
+    if (IGNITION_STATE())
+    {
         DSR_ON();
     }
     else
@@ -554,7 +554,6 @@ bool internal_telegram(uint16_t len)
         if ((temp_buffer[3] == 0xFE) && (temp_buffer[4] == 0xFE))
         {      // read ignition state
             temp_buffer[4] = IGNITION_STATE() ? 0x01 : 0x00;
-            temp_buffer[4] |= (can_mode != 0) ? 0x80 : 0x00;
             temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
