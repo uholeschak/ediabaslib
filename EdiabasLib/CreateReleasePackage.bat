@@ -12,6 +12,8 @@ set APINET32PATH="!PACKAGEPATH!ApiNet32\"
 set CANADAPTERPATH="!PACKAGEPATH!CanAdapter\"
 set CANADAPTERELMPATH="!PACKAGEPATH!CanAdapterElm\"
 set ENETADAPTERPATH="!PACKAGEPATH!EnetAdapter\"
+set ANDROIDSAMPLEPATH="!PACKAGEPATH!AndroidSamples\"
+set ECUPATH="!PACKAGEPATH!Ecu\"
 if exist "!PACKAGEPATH!" rmdir /s /q "!PACKAGEPATH!"
 timeout /T 1 /NOBREAK > nul
 mkdir "!PACKAGEPATH!"
@@ -56,6 +58,12 @@ mkdir "!ENETADAPTERPATH!"
 copy "!BATPATH!EnetAdapter\Release\mini.bin" "!ENETADAPTERPATH!"
 copy "!BATPATH!EnetAdapter\Release\openwrt*.bin" "!ENETADAPTERPATH!"
 copy "!BATPATH!EnetAdapter\Release\*.img" "!ENETADAPTERPATH!"
+
+mkdir "!ANDROIDSAMPLEPATH!"
+xcopy /y /e "!BATPATH!..\BmwDeepObd\Xml\*.*" "!ANDROIDSAMPLEPATH!"
+
+mkdir "!ECUPATH!"
+copy "!BATPATH!Test\Ecu\adapter_prg.prg" "!ECUPATH!"
 
 set PACKAGEZIP="!BATPATH!Binaries-!DATESTR!.zip"
 if exist "!PACKAGEZIP!" del /f /q "!PACKAGEZIP!"
