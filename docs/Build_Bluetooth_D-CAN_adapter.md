@@ -1,10 +1,12 @@
 # Build a Bluetooth - D-CAN/K-Line Adapter
-**This firmware is here only for historical reasons, please use [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md) instead!**
+**To build a Bluetooth adapter it's now recommended to use the [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md) instead!**  
+You could still use the firmware as a replacement for FTDI based adapters (Only [Steps 1](#step1-replace-the-pld) and [Steps 2](#step2-program-the-processor) is required, the [Firmware update](#firmware-update) is also possible).
 
 This chapter describes how to build a D-CAN/K-Line adapter with bluetooth support.  
 If you have problems building the adapter please contact me.
 
 ![](Build_Bluetooth_D-CAN_adapter_AdapterSmall.png)
+
 Basically two components are required:
 * A standard D-CAN/K-Line Adapter. There are multiple manufactures who sell such adapters which are basically identical. I have used one with a PLCC AFT16V8B, because it's easier to replace the chip.
 * A HC-05 bluetooth board. It's important that it has an integrated 5V to 3.3V power regulator.
@@ -22,7 +24,8 @@ There is a replacement firmware available that has the following advantages over
 * Allows to read the ignitions status with a telegram, this is required if you want to communicate over bluetooth.
 * Contains a bootstrap loader that allows firmware update without opening the device.
 * Reduced power consumption due to use of sleep mode.
-For the first programming of the new firmware you have to connect the MISO, MOSI, SCK, RESET, GND and +5V to a standard AVR programmer (also supply the adapter with 12V). The 'combined.hex' file contains the bootstrap loader and the firmware. The fuses have to be set as follows:
+
+For the first programming of the new firmware you have to connect the MISO, MOSI, SCK, RESET, GND and +5V to a standard AVR programmer (also supply the adapter with 12V). The `combined.hex` file contains the bootstrap loader and the firmware. The fuses have to be set as follows:
 
 | Fuse | Value (hex) |
 | ---- | ----------- |
