@@ -1,6 +1,6 @@
 # Build a Bluetooth - D-CAN/K-Line Adapter
 **To build a Bluetooth adapter it's now recommended to use the [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md) instead!**  
-You could still use the firmware as a replacement for FTDI based adapters (Only [Steps 1](#step1-replace-the-pld) and [Steps 2](#step2-program-the-processor) is required, the [Firmware update](#firmware-update) is also possible).
+You could still use the firmware as a replacement for FTDI based adapters (Only [Steps 1](#step1-replace-the-pld) and [Steps 2](#step2-program-the-processor) is required, the [firmware update](#firmware-update) is also possible).
 
 This chapter describes how to build a D-CAN/K-Line adapter with bluetooth support.  
 If you have problems building the adapter please contact me.
