@@ -12,11 +12,11 @@ It is based on the hardware of an [A5-V11 3G/4G Router](https://wiki.openwrt.org
 * Default Wifi password: deepobdbmw
 * Default IP address: 192.168.100.1
 * Default root password: root
-* At the moment a new power supply concept is in preparation, by replacing the DC/DC converters with a TPS560200, that is able to use a maximum power supply voltage of 17V. The feedback resistors have to be changed to 49.9K/20K and 61.9K/20K because the feedback voltage is different. Additionally one input capacitor has to be replaced with a higher voltage type.
+* The adapter has been redesigned with a smaller housing.
 
-![ENET adapter open](ENET_WiFi_Adapter_EnetAdapterOpenSmall.png)
+![ENET adapter open](ENET_WiFi_Adapter_EnetAdapter2OpenSmall.png)
 
-![ENET adapter closed](ENET_WiFi_Adapter_EnetAdapterClosedSmall.png) ![Web interface](ENET_WiFi_Adapter_WebInterfaceSmall.png) 
+![ENET adapter closed](ENET_WiFi_Adapter_EnetAdapter2ClosedSmall.png) ![Web interface](ENET_WiFi_Adapter_WebInterfaceSmall.png) 
 
 ## Buy an adapter
 New adapters are available.  
