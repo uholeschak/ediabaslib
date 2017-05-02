@@ -73,6 +73,9 @@
                     android:title="@string/menu_translation_clear_cache"/>
             </menu>
           </item>
+          <item android:id="@+id/menu_global_settings"
+                android:icon="@android:drawable/ic_menu_manage"
+                android:title="@string/menu_global_settings" />
           <item android:id="@+id/menu_submenu_help"
                 android:icon="@android:drawable/ic_menu_help"
                 android:title="@string/menu_submenu_help" />

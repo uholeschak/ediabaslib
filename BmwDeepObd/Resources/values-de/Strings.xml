@@ -127,6 +127,7 @@
   <string name="menu_download_ecu">ECU Dateien herunterladen</string>
   <string name="menu_submenu_log">Datenaufzeichnung</string>
   <string name="menu_send_trace">Trace Datei senden</string>
+  <string name="menu_global_settings">Globale Einstellungen</string>
   <string name="menu_submenu_help">Onlinehilfe</string>
   <string name="menu_info">App Info</string>
   <string name="menu_exit">App beenden</string>
@@ -179,6 +180,15 @@
 
   <!-- ELM327 Wi-Fi -->
   <string name="elmwifi_adapter_warn">Sie sind nicht mit einem ELM327 Wi-Fi Adapter verbunden.\nWollen Sie einen anderen Access Point auswählen?</string>
+
+  <!--  GlobalSettingsActivity -->
+  <string name="settings_title">Globale Einstellungen</string>
+  <string name="settings_caption_bluetooth_enable">Bluetooth einschalten</string>
+  <string name="settings_always_enable_bt">Immer Bluetooth einschalten ohne Nachfrage</string>
+  <string name="settings_ask_for_bt_enable">Nachfragen ob Bluetooth eingeschaltet werden soll</string>
+  <string name="settings_no_bt_handling">Keine automatische Bluetooth-Behandlung</string>
+  <string name="settings_caption_bluetooth_disable">Bluetooth ausschalten</string>
+  <string name="settings_disable_bt_at_exit">Bluetooth beim Beenden auschalten, wenn nicht verwendet und von App eingeschaltet</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas Tool</string>

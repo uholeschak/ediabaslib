@@ -136,6 +136,7 @@
     <Compile Include="FilePicker\FilePickerActivity.cs" />
     <Compile Include="FilePicker\Helpers.cs" />
     <Compile Include="FileSizeFormatProvider.cs" />
+    <Compile Include="GlobalSettingsActivity.cs" />
     <Compile Include="JobReader.cs" />
     <Compile Include="MultiMap.cs" />
     <Compile Include="PicBootloader.cs" />
@@ -212,6 +213,9 @@
     </AndroidResource>
     <AndroidResource Include="Resources\layout\yandex_key_select.axml">
       <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\settings.axml">
+      <SubType>Designer</SubType>
     </AndroidResource>
     <None Include="Xml\AdapterCustom.ccpage">
       <SubType>Designer</SubType>

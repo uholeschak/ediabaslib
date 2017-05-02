@@ -127,6 +127,8 @@
   <string name="menu_download_ecu">Скачать ECU файл.</string>
   <string name="menu_submenu_log">Протокол данных</string>
   <string name="menu_send_trace">Отправить журнал данных</string>
+  <!--  Translate -->
+  <string name="menu_global_settings">Global settings</string>
   <string name="menu_submenu_help">Онлайн помощь</string>
   <string name="menu_info">Информация о приложении</string>
   <string name="menu_exit">Завершить приложение</string>
@@ -179,6 +181,16 @@
 
   <!-- ELM327 Wi-Fi -->
   <string name="elmwifi_adapter_warn">Вы соединены не с ELM327 Wi-Fi устройством.\nВыбрать другую точку доступа?</string>
+
+  <!--  GlobalSettingsActivity -->
+  <!--  Translate -->
+  <string name="settings_title">Global Settings</string>
+  <string name="settings_caption_bluetooth_enable">Bluetooth enable</string>
+  <string name="settings_always_enable_bt">Always enable Bluetooth without request</string>
+  <string name="settings_ask_for_bt_enable">Ask for Bluetooth enable</string>
+  <string name="settings_no_bt_handling">No automatic Bluetooth handling</string>
+  <string name="settings_caption_bluetooth_disable">Bluetooth disable</string>
+  <string name="settings_disable_bt_at_exit">Disable Bluetooth at exit, if unused and enabled by app</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>
