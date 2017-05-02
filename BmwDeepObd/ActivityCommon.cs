@@ -148,6 +148,19 @@ namespace BmwDeepObd
             Vw,
         }
 
+        public enum BtEnbleType
+        {
+            Ask,                    // ask for enbale
+            Always,                 // always enable
+            Nothing                 // no handling
+        }
+
+        public enum BtDisableType
+        {
+            DisableIfByApp,     // disable if enabled by app
+            Nothing             // no handling
+        }
+
         public delegate bool ProgressZipDelegate(int percent);
         public delegate void BcReceiverUpdateDisplayDelegate();
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
@@ -415,6 +428,10 @@ namespace BmwDeepObd
         }
 
         public static ManufacturerType SelectedManufacturer { get; set; }
+
+        public static BtEnbleType BtEnbaleHandling { get; set; }
+
+        public static BtDisableType BtDisableHandling { get; set; }
 
         public static string YandexApiKey { get; set; }
 

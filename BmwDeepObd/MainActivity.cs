@@ -57,6 +57,7 @@ namespace BmwDeepObd
             RequestEdiabasTool,
             RequestSelectEcuZip,
             RequestYandexKey,
+            RequestGlobalSettings,
         }
 
         private class DownloadInfo
@@ -457,6 +458,11 @@ namespace BmwDeepObd
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
                     break;
+
+                case ActivityRequest.RequestGlobalSettings:
+                    SupportInvalidateOptionsMenu();
+                    UpdateDisplay();
+                    break;
             }
         }
 
@@ -577,6 +583,9 @@ namespace BmwDeepObd
                 translationClearCacheMenu.SetVisible(ActivityCommon.IsTranslationRequired());
             }
 
+            IMenuItem globalSettingsMenu = menu.FindItem(Resource.Id.menu_global_settings);
+            globalSettingsMenu?.SetEnabled(!commActive);
+
             IMenuItem infoSubMenu = menu.FindItem(Resource.Id.menu_info);
             infoSubMenu?.SetEnabled(!commActive);
 
@@ -664,6 +673,10 @@ namespace BmwDeepObd
                     _translatedList = null;
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
+                    return true;
+
+                case Resource.Id.menu_global_settings:
+                    EditGlobalSettings();
                     return true;
 
                 case Resource.Id.menu_submenu_help:
@@ -2805,6 +2818,12 @@ namespace BmwDeepObd
         {
             Intent serverIntent = new Intent(this, typeof(YandexKeyActivity));
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestYandexKey);
+        }
+
+        private void EditGlobalSettings()
+        {
+            Intent serverIntent = new Intent(this, typeof(GlobalSettingsActivity));
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestGlobalSettings);
         }
 
         private void AdapterConfig()
