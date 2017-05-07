@@ -62,11 +62,11 @@ namespace BmwDeepObd
         {
             switch (ActivityCommon.BtEnbaleHandling)
             {
-                case ActivityCommon.BtEnbleType.Ask:
+                case ActivityCommon.BtEnableType.Ask:
                     _radioButtonAskForBtEnable.Checked = true;
                     break;
 
-                case ActivityCommon.BtEnbleType.Always:
+                case ActivityCommon.BtEnableType.Always:
                     _radioButtonAlwaysEnableBt.Checked = true;
                     break;
 
@@ -81,15 +81,15 @@ namespace BmwDeepObd
         {
             if (_radioButtonAskForBtEnable.Checked)
             {
-                ActivityCommon.BtEnbaleHandling = ActivityCommon.BtEnbleType.Ask;
+                ActivityCommon.BtEnbaleHandling = ActivityCommon.BtEnableType.Ask;
             }
             else if (_radioButtonAlwaysEnableBt.Checked)
             {
-                ActivityCommon.BtEnbaleHandling = ActivityCommon.BtEnbleType.Always;
+                ActivityCommon.BtEnbaleHandling = ActivityCommon.BtEnableType.Always;
             }
             else
             {
-                ActivityCommon.BtEnbaleHandling = ActivityCommon.BtEnbleType.Nothing;
+                ActivityCommon.BtEnbaleHandling = ActivityCommon.BtEnableType.Nothing;
             }
 
             ActivityCommon.BtDisableHandling = _checkBoxDisableBtAtExit.Checked ? ActivityCommon.BtDisableType.DisableIfByApp : ActivityCommon.BtDisableType.Nothing;

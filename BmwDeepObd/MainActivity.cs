@@ -996,6 +996,8 @@ namespace BmwDeepObd
                 ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", string.Empty);
                 ActivityCommon.AppId = prefs.GetString("AppId", string.Empty);
                 ActivityCommon.SelectedManufacturer = (ActivityCommon.ManufacturerType) prefs.GetInt("Manufacturer", (int)ActivityCommon.ManufacturerType.Bmw);
+                ActivityCommon.BtEnbaleHandling = (ActivityCommon.BtEnableType)prefs.GetInt("BtEnable", (int)ActivityCommon.BtEnableType.Ask);
+                ActivityCommon.BtDisableHandling = (ActivityCommon.BtDisableType)prefs.GetInt("BtDisable", (int)ActivityCommon.BtDisableType.DisableIfByApp);
             }
             catch (Exception)
             {
@@ -1019,6 +1021,8 @@ namespace BmwDeepObd
                 prefsEdit.PutString("YandexApiKey", ActivityCommon.YandexApiKey ?? string.Empty);
                 prefsEdit.PutString("AppId", ActivityCommon.AppId);
                 prefsEdit.PutInt("Manufacturer", (int) ActivityCommon.SelectedManufacturer);
+                prefsEdit.PutInt("BtEnable", (int)ActivityCommon.BtEnbaleHandling);
+                prefsEdit.PutInt("BtDisable", (int) ActivityCommon.BtDisableHandling);
                 prefsEdit.Commit();
             }
             catch (Exception)

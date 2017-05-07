@@ -148,7 +148,7 @@ namespace BmwDeepObd
             Vw,
         }
 
-        public enum BtEnbleType
+        public enum BtEnableType
         {
             Ask,                    // ask for enbale
             Always,                 // always enable
@@ -429,7 +429,7 @@ namespace BmwDeepObd
 
         public static ManufacturerType SelectedManufacturer { get; set; }
 
-        public static BtEnbleType BtEnbaleHandling { get; set; }
+        public static BtEnableType BtEnbaleHandling { get; set; }
 
         public static BtDisableType BtDisableHandling { get; set; }
 
