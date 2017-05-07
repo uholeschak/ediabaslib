@@ -1433,6 +1433,18 @@ namespace BmwDeepObd
             switch (_selectedInterface)
             {
                 case InterfaceType.Bluetooth:
+                    switch (BtEnbaleHandling)
+                    {
+                        case BtEnableType.Ask:
+                            break;
+
+                        case BtEnableType.Always:
+                            EnableInterface();
+                            return false;
+
+                        default:
+                            return false;
+                    }
                     _activateAlertDialog = new AlertDialog.Builder(_activity)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
