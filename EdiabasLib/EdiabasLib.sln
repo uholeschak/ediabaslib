@@ -28,7 +28,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLibConfigTool", "Edi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7B9636BF-0907-48A9-99D4-28DBAEA781F7}"
 	ProjectSection(SolutionItems) = preProject
-		..\docs\Build Bluetooth D-CAN adapter_UpdateSmall.png = ..\docs\Build Bluetooth D-CAN adapter_UpdateSmall.png
 		..\docs\Build_Bluetooth_D-CAN_adapter.md = ..\docs\Build_Bluetooth_D-CAN_adapter.md
 		..\docs\Build_Bluetooth_D-CAN_adapter_AdapterSmall.png = ..\docs\Build_Bluetooth_D-CAN_adapter_AdapterSmall.png
 		..\docs\Build_Bluetooth_D-CAN_adapter_BluetoothConnectionSmall.png = ..\docs\Build_Bluetooth_D-CAN_adapter_BluetoothConnectionSmall.png
@@ -37,6 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7B9636BF-0
 		..\docs\Build_Bluetooth_D-CAN_adapter_PldSmall.png = ..\docs\Build_Bluetooth_D-CAN_adapter_PldSmall.png
 		..\docs\Build_Bluetooth_D-CAN_adapter_PowerSwitchSmall.png = ..\docs\Build_Bluetooth_D-CAN_adapter_PowerSwitchSmall.png
 		..\docs\Build_Bluetooth_D-CAN_adapter_ProgrammerSmall.png = ..\docs\Build_Bluetooth_D-CAN_adapter_ProgrammerSmall.png
+		..\docs\Build_Bluetooth_D-CAN_adapter_UpdateSmall.png = ..\docs\Build_Bluetooth_D-CAN_adapter_UpdateSmall.png
 		..\docs\Configuration_Generator.md = ..\docs\Configuration_Generator.md
 		..\docs\Configuration_Generator_AppGeneratorEcusSmall.png = ..\docs\Configuration_Generator_AppGeneratorEcusSmall.png
 		..\docs\Configuration_Generator_AppGeneratorJobSmall.png = ..\docs\Configuration_Generator_AppGeneratorJobSmall.png
