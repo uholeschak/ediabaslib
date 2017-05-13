@@ -123,7 +123,6 @@
   <string name="menu_sel_cfg">Конфигурация</string>
   <string name="menu_xml_tool">Генератор конфигураций</string>
   <string name="menu_ediabas_tool">Ediabas утилита</string>
-  <string name="menu_sel_media">Носитель памяти</string>
   <string name="menu_download_ecu">Скачать ECU файл.</string>
   <string name="menu_submenu_log">Протокол данных</string>
   <string name="menu_send_trace">Отправить журнал данных</string>
@@ -148,7 +147,6 @@
   <!-- Storage media selection -->
   <string name="select_media">Выбрать носитель памяти</string>
   <string name="default_media">По умолчанию</string>
-  <string name="custom_media">Пользователь</string>
   <string name="free_space">Свободно</string>
 
   <!-- Interface selection -->
@@ -193,6 +191,7 @@
   <string name="settings_disable_bt_at_exit">Disable Bluetooth at exit, if unused and enabled by app</string>
   <string name="settings_caption_logfiles">Data logging</string>
   <string name="settings_store_data_log_settings">Store log data settings</string>
+  <string name="settings_caption_storage">Носитель памяти</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>

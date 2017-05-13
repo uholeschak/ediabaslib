@@ -460,8 +460,10 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestGlobalSettings:
+                    UpdateDirectories();
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
+                    CheckForEcuFiles();
                     break;
             }
         }
@@ -536,14 +538,6 @@ namespace BmwDeepObd
 
             IMenuItem ediabasToolMenu = menu.FindItem(Resource.Id.menu_ediabas_tool);
             ediabasToolMenu?.SetEnabled(!commActive);
-
-            IMenuItem selectMedia = menu.FindItem(Resource.Id.menu_sel_media);
-            if (selectMedia != null)
-            {
-                selectMedia.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_sel_media),
-                    string.IsNullOrEmpty(_activityCommon.CustomStorageMedia) ? GetString(Resource.String.default_media) : GetString(Resource.String.custom_media)));
-                selectMedia.SetEnabled(!commActive);
-            }
 
             IMenuItem downloadEcu = menu.FindItem(Resource.Id.menu_download_ecu);
             downloadEcu?.SetEnabled(!commActive);
@@ -634,10 +628,6 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_ediabas_tool:
                     StartEdiabasTool();
-                    return true;
-
-                case Resource.Id.menu_sel_media:
-                    SelectMedia();
                     return true;
 
                 case Resource.Id.menu_download_ecu:
@@ -2138,12 +2128,7 @@ namespace BmwDeepObd
 
         private void SelectMedia()
         {
-            _activityCommon.SelectMedia((sender, args) =>
-            {
-                UpdateDirectories();
-                SupportInvalidateOptionsMenu();
-                CheckForEcuFiles();
-            });
+            EditGlobalSettings(GlobalSettingsActivity.SelectionStorageLocation);
         }
 
         private void DownloadFile(string url, string downloadDir, string unzipTargetDir = null, long fileSize = -1)
@@ -2833,9 +2818,13 @@ namespace BmwDeepObd
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestYandexKey);
         }
 
-        private void EditGlobalSettings()
+        private void EditGlobalSettings(string selection = null)
         {
             Intent serverIntent = new Intent(this, typeof(GlobalSettingsActivity));
+            if (selection != null)
+            {
+                serverIntent.PutExtra(GlobalSettingsActivity.ExtraSelection, selection);
+            }
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestGlobalSettings);
         }
 
