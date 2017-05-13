@@ -123,7 +123,6 @@
   <string name="menu_sel_cfg">Konfiguration</string>
   <string name="menu_xml_tool">Konfigurationsgenerator</string>
   <string name="menu_ediabas_tool">Ediabas Tool</string>
-  <string name="menu_sel_media">Speichermedium</string>
   <string name="menu_download_ecu">ECU Dateien herunterladen</string>
   <string name="menu_submenu_log">Datenaufzeichnung</string>
   <string name="menu_send_trace">Trace Datei senden</string>
@@ -147,7 +146,6 @@
   <!-- Storage media selection -->
   <string name="select_media">Speichermedium auswählen</string>
   <string name="default_media">Standard</string>
-  <string name="custom_media">Anwender</string>
   <string name="free_space">frei</string>
 
   <!-- Interface selection -->
@@ -191,6 +189,7 @@
   <string name="settings_disable_bt_at_exit">Bluetooth beim Beenden auschalten, wenn nicht verwendet und von App eingeschaltet</string>
   <string name="settings_caption_logfiles">Datenaufzeichnung</string>
   <string name="settings_store_data_log_settings">Speichern der Logdaten-Einstellungen</string>
+  <string name="settings_caption_storage">Speichermedium</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas Tool</string>

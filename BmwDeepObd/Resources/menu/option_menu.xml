@@ -45,9 +45,6 @@
           <item android:id="@+id/menu_ediabas_tool"
                 android:icon="@android:drawable/ic_menu_manage"
                 android:title="@string/menu_ediabas_tool" />
-          <item android:id="@+id/menu_sel_media"
-                android:icon="@android:drawable/ic_menu_manage"
-                android:title="@string/menu_sel_media" />
           <item android:id="@+id/menu_download_ecu"
                 android:icon="@android:drawable/ic_menu_save"
                 android:title="@string/menu_download_ecu" />

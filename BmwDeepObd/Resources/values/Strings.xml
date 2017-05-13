@@ -124,7 +124,6 @@
   <string name="menu_sel_cfg">Configuration</string>
   <string name="menu_xml_tool">Configuration generator</string>
   <string name="menu_ediabas_tool">Ediabas tool</string>
-  <string name="menu_sel_media">Storage media</string>
   <string name="menu_download_ecu">Download ECU files</string>
   <string name="menu_submenu_log">Data logging</string>
   <string name="menu_send_trace">Send trace file</string>
@@ -148,7 +147,6 @@
   <!-- Storage media selection -->
   <string name="select_media">Select storage media</string>
   <string name="default_media">Default</string>
-  <string name="custom_media">Custom</string>
   <string name="free_space">free</string>
 
   <!-- Interface selection -->
@@ -192,6 +190,7 @@
   <string name="settings_disable_bt_at_exit">Disable Bluetooth at exit, if unused and enabled by app</string>
   <string name="settings_caption_logfiles">Data logging</string>
   <string name="settings_store_data_log_settings">Store log data settings</string>
+  <string name="settings_caption_storage">Storage media</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas tool</string>
