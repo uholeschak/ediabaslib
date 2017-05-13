@@ -134,6 +134,10 @@ namespace BmwDeepObd
 
         private void CheckSelection(string selection)
         {
+            if (selection == null)
+            {
+                return;
+            }
             switch (selection)
             {
                 case SelectionStorageLocation:
