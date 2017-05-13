@@ -7,7 +7,7 @@
     android:focusableInTouchMode="true">
     <TextView
         android:text="@+string/settings_caption_bluetooth_enable"
-        android:id="@+id/textViewArgs"
+        android:id="@+id/textViewCaptionBtEnable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#666"
@@ -34,7 +34,7 @@
     </RadioGroup>
     <TextView
         android:text="@+string/settings_caption_bluetooth_disable"
-        android:id="@+id/textViewArgs"
+        android:id="@+id/textViewCaptionBtDisable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#666"
@@ -44,4 +44,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/settings_disable_bt_at_exit" />
+    <TextView
+        android:text="@+string/settings_caption_logfiles"
+        android:id="@+id/textViewCaptionLogfiles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#666"
+        android:textColor="#fff" />
+    <CheckBox
+        android:id="@+id/checkBoxStoreDataLogSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_store_data_log_settings" />
 </LinearLayout>

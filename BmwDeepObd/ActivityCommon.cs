@@ -433,6 +433,8 @@ namespace BmwDeepObd
 
         public static BtDisableType BtDisableHandling { get; set; }
 
+        public static bool StoreDataLogSettings { get; set; }
+
         public static string YandexApiKey { get; set; }
 
         public static bool EnableTranslation { get; set; }

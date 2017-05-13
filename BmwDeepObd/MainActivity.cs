@@ -998,6 +998,12 @@ namespace BmwDeepObd
                 ActivityCommon.SelectedManufacturer = (ActivityCommon.ManufacturerType) prefs.GetInt("Manufacturer", (int)ActivityCommon.ManufacturerType.Bmw);
                 ActivityCommon.BtEnbaleHandling = (ActivityCommon.BtEnableType)prefs.GetInt("BtEnable", (int)ActivityCommon.BtEnableType.Ask);
                 ActivityCommon.BtDisableHandling = (ActivityCommon.BtDisableType)prefs.GetInt("BtDisable", (int)ActivityCommon.BtDisableType.DisableIfByApp);
+                ActivityCommon.StoreDataLogSettings = prefs.GetBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
+                if (ActivityCommon.StoreDataLogSettings)
+                {
+                    _dataLogActive = prefs.GetBoolean("DataLogActive", _dataLogActive);
+                    _dataLogAppend = prefs.GetBoolean("DataLogAppend", _dataLogAppend);
+                }
             }
             catch (Exception)
             {
@@ -1023,6 +1029,9 @@ namespace BmwDeepObd
                 prefsEdit.PutInt("Manufacturer", (int) ActivityCommon.SelectedManufacturer);
                 prefsEdit.PutInt("BtEnable", (int)ActivityCommon.BtEnbaleHandling);
                 prefsEdit.PutInt("BtDisable", (int) ActivityCommon.BtDisableHandling);
+                prefsEdit.PutBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
+                prefsEdit.PutBoolean("DataLogActive", _dataLogActive);
+                prefsEdit.PutBoolean("DataLogAppend", _dataLogAppend);
                 prefsEdit.Commit();
             }
             catch (Exception)
