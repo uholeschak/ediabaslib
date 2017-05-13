@@ -17,6 +17,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonAlwaysEnableBt;
         private RadioButton _radioButtonNoBtHandling;
         private CheckBox _checkBoxDisableBtAtExit;
+        private CheckBox _checkBoxStoreDataLogSettings;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -35,6 +36,7 @@ namespace BmwDeepObd
             _radioButtonAlwaysEnableBt = FindViewById<RadioButton>(Resource.Id.radioButtonAlwaysEnableBt);
             _radioButtonNoBtHandling = FindViewById<RadioButton>(Resource.Id.radioButtonNoBtHandling);
             _checkBoxDisableBtAtExit = FindViewById<CheckBox>(Resource.Id.checkBoxDisableBtAtExit);
+            _checkBoxStoreDataLogSettings = FindViewById<CheckBox>(Resource.Id.checkBoxStoreDataLogSettings);
 
             ReadSettings();
         }
@@ -75,6 +77,7 @@ namespace BmwDeepObd
                     break;
             }
             _checkBoxDisableBtAtExit.Checked = ActivityCommon.BtDisableHandling == ActivityCommon.BtDisableType.DisableIfByApp;
+            _checkBoxStoreDataLogSettings.Checked = ActivityCommon.StoreDataLogSettings;
         }
 
         private void StoreSettings()
@@ -93,6 +96,7 @@ namespace BmwDeepObd
             }
 
             ActivityCommon.BtDisableHandling = _checkBoxDisableBtAtExit.Checked ? ActivityCommon.BtDisableType.DisableIfByApp : ActivityCommon.BtDisableType.Nothing;
+            ActivityCommon.StoreDataLogSettings = _checkBoxStoreDataLogSettings.Checked;
         }
     }
 }
