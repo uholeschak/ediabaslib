@@ -182,7 +182,7 @@ In the `ecu` node the property `name` is a link to a `string` node and `sgbd` is
 
 # User defined code
 If the jobs and display output is getting more complex, user defined code will be required. In this case a C# class could be added to a `code` node, which defines a set of optional callback functions. If the `show_warnings` property is set to true, also warnings will be reported during compilation of the code.  
-**In the current Mono CSharp compiler there is a bug that crashes the app, if initialized arrays are used in the user defined code. To prevent this, initialize the array (or list) in the constructor of `PageClass`!**
+**In the current Mono CSharp compiler there is a bug that reports an error, if initialized arrays are used in the user defined code. To prevent this, initialize the array (or list) in the constructor of `PageClass`!**
 ``` xml
     <code show_warnigs="true">
       <![CDATA[
