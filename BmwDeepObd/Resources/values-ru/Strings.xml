@@ -32,6 +32,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:
+\n- Добавлено меню "Глобальные настройки"
 \n- улучшена стабильность</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.8.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 (Автомобили до 4.2012) протоколы.</string>
@@ -125,8 +126,7 @@
   <string name="menu_download_ecu">Скачать ECU файл.</string>
   <string name="menu_submenu_log">Протокол данных</string>
   <string name="menu_send_trace">Отправить журнал данных</string>
-  <!--  Translate -->
-  <string name="menu_global_settings">Global settings</string>
+  <string name="menu_global_settings">Глобальные настройки</string>
   <string name="menu_submenu_help">Онлайн помощь</string>
   <string name="menu_info">Информация о приложении</string>
   <string name="menu_exit">Завершить приложение</string>
@@ -180,16 +180,15 @@
   <string name="elmwifi_adapter_warn">Вы соединены не с ELM327 Wi-Fi устройством.\nВыбрать другую точку доступа?</string>
 
   <!--  GlobalSettingsActivity -->
-  <!--  Translate -->
-  <string name="settings_title">Global Settings</string>
-  <string name="settings_caption_bluetooth_enable">Bluetooth enable</string>
-  <string name="settings_always_enable_bt">Always enable Bluetooth without request</string>
-  <string name="settings_ask_for_bt_enable">Ask for Bluetooth enable</string>
-  <string name="settings_no_bt_handling">No automatic Bluetooth handling</string>
-  <string name="settings_caption_bluetooth_disable">Bluetooth disable</string>
-  <string name="settings_disable_bt_at_exit">Disable Bluetooth at exit, if unused and enabled by app</string>
-  <string name="settings_caption_logfiles">Data logging</string>
-  <string name="settings_store_data_log_settings">Store log data settings</string>
+  <string name="settings_title">Глобальные настройки</string>
+  <string name="settings_caption_bluetooth_enable">Включение Bluetooth</string>
+  <string name="settings_always_enable_bt">Всегда включать Bluetooth без запроса</string>
+  <string name="settings_ask_for_bt_enable">Запрос для включения Bluetooth</string>
+  <string name="settings_no_bt_handling">Без автоматического управления Bluetooth</string>
+  <string name="settings_caption_bluetooth_disable">Выключение Bluetooth</string>
+  <string name="settings_disable_bt_at_exit">Выключать Bluetooth при выходе из приложения</string>
+  <string name="settings_caption_logfiles">Регистрация данных</string>
+  <string name="settings_store_data_log_settings">Сохранять настройки записи данных</string>
   <string name="settings_caption_storage">Носитель памяти</string>
 
   <!--  EdiabasToolActivity -->
