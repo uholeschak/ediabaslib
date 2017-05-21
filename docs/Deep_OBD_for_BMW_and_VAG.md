@@ -42,7 +42,6 @@ The application has a configuration menu with the following options:
 * _Configuration generator_: Simple [XML configuration files](Page_specification.md) could be generated automatically using the informations obtained from the vehicle. This menu opens the [configuration generator](Configuration_Generator.md) which allows to create new or modify existing XML files by simply selecting the ECU and job informations.
 * _Configuration_: This menu allows the selection of the [configuration file](Page_specification.md) _(*.cccfg file)_. When using the [configuration generator](Configuration_Generator.md) the configuration is selected automatically. After selection the file will be compiled.
 * _Ediabas tool_: This is a port of the tool32.exe windows application. Selecting the menu will open the [Ediabas tool](EdiabasTool.md) page.
-* _Storage media_: If the default storage media for the ECU files is not appropriate, a different media could be selected in this sub menu. The application storage directory on the media will be always fixed to _de.holeschak.bmw_deep_obd_.
 * _Download ECU files_: Since the BMW ECU files are very large (100MB), they are not included in the application package. When starting the application for the first time the ECU file download is requested automatically. With this menu entry the file download could be initiated manually if the ECU files are damaged.
 * _Data logging_: Selecting this menu entry will open a sub menu with multiple data logging options:
 	* _Create trace file_: If the checkbox of this menu is active, a _ifh.trc_ file will be created when the application is connected. The trace file will be created in the _Log_ subdirectory.
@@ -52,6 +51,7 @@ The application has a configuration menu with the following options:
 	* _Translate ECU text_: If this menu item is checked, automatic ECU text translation is active.
 	* _Yandex API Key_: For automatic translation with Yantex.Translate a free API Key is required, that allows a limited amount of translations per day. To get this key, a Yandex account is required. This menu provides a GUI that assists in obtaining the API Key.
 	* _Clear translation cache_: To enforce a new translation this menu resets the translation cache.
+* _Global settings_: Opens the [global app settings](GlobalSettings.md) page.
 * _Online help_: Displays this help page.
 * _App info_: Displays the app version and unique id.
 
