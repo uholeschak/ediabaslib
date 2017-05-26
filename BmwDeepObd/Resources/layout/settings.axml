@@ -1,70 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:focusable="true"
-    android:focusableInTouchMode="true">
-    <TextView
-        android:text="@+string/settings_caption_bluetooth_enable"
-        android:id="@+id/textViewCaptionBtEnable"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#666"
-        android:textColor="#fff" />
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <RadioButton
-            android:id="@+id/radioButtonAskForBtEnable"
-            android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+        <TextView
+            android:text="@+string/settings_caption_bluetooth_enable"
+            android:id="@+id/textViewCaptionBtEnable"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_ask_for_bt_enable" />
-        <RadioButton
-            android:id="@+id/radioButtonAlwaysEnableBt"
-            android:layout_width="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <RadioGroup
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_always_enable_bt" />
-        <RadioButton
-            android:id="@+id/radioButtonNoBtHandling"
-            android:layout_width="wrap_content"
+            android:orientation="vertical">
+            <RadioButton
+                android:id="@+id/radioButtonAskForBtEnable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_ask_for_bt_enable" />
+            <RadioButton
+                android:id="@+id/radioButtonAlwaysEnableBt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_always_enable_bt" />
+            <RadioButton
+                android:id="@+id/radioButtonNoBtHandling"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_no_bt_handling" />
+        </RadioGroup>
+        <TextView
+            android:text="@+string/settings_caption_bluetooth_disable"
+            android:id="@+id/textViewCaptionBtDisable"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_no_bt_handling" />
-    </RadioGroup>
-    <TextView
-        android:text="@+string/settings_caption_bluetooth_disable"
-        android:id="@+id/textViewCaptionBtDisable"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#666"
-        android:textColor="#fff" />
-    <CheckBox
-        android:id="@+id/checkBoxDisableBtAtExit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_disable_bt_at_exit" />
-    <TextView
-        android:text="@+string/settings_caption_logfiles"
-        android:id="@+id/textViewCaptionLogfiles"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#666"
-        android:textColor="#fff" />
-    <CheckBox
-        android:id="@+id/checkBoxStoreDataLogSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_store_data_log_settings" />
-    <TextView
-        android:text="@+string/settings_caption_storage"
-        android:id="@+id/textViewCaptionStorage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#666"
-        android:textColor="#fff" />
-    <Button
-        android:id="@+id/buttonStorageLocation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-</LinearLayout>
+            android:background="#666"
+            android:textColor="#fff" />
+        <CheckBox
+            android:id="@+id/checkBoxDisableBtAtExit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_disable_bt_at_exit" />
+        <TextView
+            android:text="@+string/settings_caption_lock_communication"
+            android:id="@+id/textViewCaptionLockComm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RadioButton
+                android:id="@+id/radioButtonCommLockNone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_lock_none" />
+            <RadioButton
+                android:id="@+id/radioButtonCommLockCpu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_lock_cpu" />
+            <RadioButton
+                android:id="@+id/radioButtonCommLockDim"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_lock_dim" />
+            <RadioButton
+                android:id="@+id/radioButtonCommLockBright"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_lock_bright" />
+        </RadioGroup>
+        <TextView
+            android:text="@+string/settings_caption_lock_logging"
+            android:id="@+id/textViewCaptionLockLogging"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RadioButton
+                android:id="@+id/radioButtonLogLockNone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_lock_none" />
+            <RadioButton
+                android:id="@+id/radioButtonLogLockCpu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_lock_cpu" />
+            <RadioButton
+                android:id="@+id/radioButtonLogLockDim"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_lock_dim" />
+            <RadioButton
+                android:id="@+id/radioButtonLogLockBright"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_lock_bright" />
+        </RadioGroup>
+        <TextView
+            android:text="@+string/settings_caption_logfiles"
+            android:id="@+id/textViewCaptionLogfiles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <CheckBox
+            android:id="@+id/checkBoxStoreDataLogSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_store_data_log_settings" />
+        <TextView
+            android:text="@+string/settings_caption_storage"
+            android:id="@+id/textViewCaptionStorage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <Button
+            android:id="@+id/buttonStorageLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</ScrollView>

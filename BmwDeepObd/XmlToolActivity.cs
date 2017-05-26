@@ -1513,7 +1513,7 @@ namespace BmwDeepObd
                 progress.Show();
             });
             progress.Show();
-            _activityCommon.SetScreenLock(true);
+            _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
 
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
@@ -1826,7 +1826,7 @@ namespace BmwDeepObd
                 {
                     progress.Hide();
                     progress.Dispose();
-                    _activityCommon.SetScreenLock(false);
+                    _activityCommon.SetLock(ActivityCommon.LockType.None);
 
                     _translateEnabled = true;
                     SupportInvalidateOptionsMenu();
@@ -2361,7 +2361,7 @@ namespace BmwDeepObd
                 progress.Show();
             });
             progress.Show();
-            _activityCommon.SetScreenLock(true);
+            _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
 
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
@@ -2479,7 +2479,7 @@ namespace BmwDeepObd
                 {
                     progress.Hide();
                     progress.Dispose();
-                    _activityCommon.SetScreenLock(false);
+                    _activityCommon.SetLock(ActivityCommon.LockType.None);
 
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
@@ -2527,7 +2527,7 @@ namespace BmwDeepObd
                 progress.Show();
             });
             progress.Show();
-            _activityCommon.SetScreenLock(true);
+            _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
 
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
@@ -2880,7 +2880,7 @@ namespace BmwDeepObd
         {
             progress.Hide();
             progress.Dispose();
-            _activityCommon.SetScreenLock(false);
+            _activityCommon.SetLock(ActivityCommon.LockType.None);
 
             SupportInvalidateOptionsMenu();
             UpdateDisplay();
