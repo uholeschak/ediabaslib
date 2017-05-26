@@ -22,6 +22,14 @@ namespace BmwDeepObd
         private RadioButton _radioButtonAlwaysEnableBt;
         private RadioButton _radioButtonNoBtHandling;
         private CheckBox _checkBoxDisableBtAtExit;
+        private RadioButton _radioButtonCommLockNone;
+        private RadioButton _radioButtonCommLockCpu;
+        private RadioButton _radioButtonCommLockDim;
+        private RadioButton _radioButtonCommLockBright;
+        private RadioButton _radioButtonLogLockNone;
+        private RadioButton _radioButtonLogLockCpu;
+        private RadioButton _radioButtonLogLockDim;
+        private RadioButton _radioButtonLogLockBright;
         private CheckBox _checkBoxStoreDataLogSettings;
         private Button _buttonStorageLocation;
 
@@ -42,7 +50,19 @@ namespace BmwDeepObd
             _radioButtonAskForBtEnable = FindViewById<RadioButton>(Resource.Id.radioButtonAskForBtEnable);
             _radioButtonAlwaysEnableBt = FindViewById<RadioButton>(Resource.Id.radioButtonAlwaysEnableBt);
             _radioButtonNoBtHandling = FindViewById<RadioButton>(Resource.Id.radioButtonNoBtHandling);
+
             _checkBoxDisableBtAtExit = FindViewById<CheckBox>(Resource.Id.checkBoxDisableBtAtExit);
+
+            _radioButtonCommLockNone = FindViewById<RadioButton>(Resource.Id.radioButtonCommLockNone);
+            _radioButtonCommLockCpu = FindViewById<RadioButton>(Resource.Id.radioButtonCommLockCpu);
+            _radioButtonCommLockDim = FindViewById<RadioButton>(Resource.Id.radioButtonCommLockDim);
+            _radioButtonCommLockBright = FindViewById<RadioButton>(Resource.Id.radioButtonCommLockBright);
+
+            _radioButtonLogLockNone = FindViewById<RadioButton>(Resource.Id.radioButtonLogLockNone);
+            _radioButtonLogLockCpu = FindViewById<RadioButton>(Resource.Id.radioButtonLogLockCpu);
+            _radioButtonLogLockDim = FindViewById<RadioButton>(Resource.Id.radioButtonLogLockDim);
+            _radioButtonLogLockBright = FindViewById<RadioButton>(Resource.Id.radioButtonLogLockBright);
+
             _checkBoxStoreDataLogSettings = FindViewById<CheckBox>(Resource.Id.checkBoxStoreDataLogSettings);
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
             _buttonStorageLocation.Click += (sender, args) =>
@@ -90,26 +110,106 @@ namespace BmwDeepObd
                     break;
             }
             _checkBoxDisableBtAtExit.Checked = ActivityCommon.BtDisableHandling == ActivityCommon.BtDisableType.DisableIfByApp;
+
+            switch (ActivityCommon.LockTypeCommunication)
+            {
+                case ActivityCommon.LockType.None:
+                    _radioButtonCommLockNone.Checked = true;
+                    break;
+
+                case ActivityCommon.LockType.Cpu:
+                    _radioButtonCommLockCpu.Checked = true;
+                    break;
+
+                case ActivityCommon.LockType.ScreenDim:
+                    _radioButtonCommLockDim.Checked = true;
+                    break;
+
+                case ActivityCommon.LockType.ScreenBright:
+                    _radioButtonCommLockBright.Checked = true;
+                    break;
+            }
+
+            switch (ActivityCommon.LockTypeLogging)
+            {
+                case ActivityCommon.LockType.None:
+                    _radioButtonLogLockNone.Checked = true;
+                    break;
+
+                case ActivityCommon.LockType.Cpu:
+                    _radioButtonLogLockCpu.Checked = true;
+                    break;
+
+                case ActivityCommon.LockType.ScreenDim:
+                    _radioButtonLogLockDim.Checked = true;
+                    break;
+
+                case ActivityCommon.LockType.ScreenBright:
+                    _radioButtonLogLockBright.Checked = true;
+                    break;
+            }
+
             _checkBoxStoreDataLogSettings.Checked = ActivityCommon.StoreDataLogSettings;
             UpdateDisplay();
         }
 
         private void StoreSettings()
         {
+            ActivityCommon.BtEnableType enableType = ActivityCommon.BtEnbaleHandling;
             if (_radioButtonAskForBtEnable.Checked)
             {
-                ActivityCommon.BtEnbaleHandling = ActivityCommon.BtEnableType.Ask;
+                enableType = ActivityCommon.BtEnableType.Ask;
             }
             else if (_radioButtonAlwaysEnableBt.Checked)
             {
-                ActivityCommon.BtEnbaleHandling = ActivityCommon.BtEnableType.Always;
+                enableType = ActivityCommon.BtEnableType.Always;
             }
-            else
+            else if (_radioButtonNoBtHandling.Checked)
             {
-                ActivityCommon.BtEnbaleHandling = ActivityCommon.BtEnableType.Nothing;
+                enableType = ActivityCommon.BtEnableType.Nothing;
             }
+            ActivityCommon.BtEnbaleHandling = enableType;
 
             ActivityCommon.BtDisableHandling = _checkBoxDisableBtAtExit.Checked ? ActivityCommon.BtDisableType.DisableIfByApp : ActivityCommon.BtDisableType.Nothing;
+
+            ActivityCommon.LockType lockType = ActivityCommon.LockTypeCommunication;
+            if (_radioButtonCommLockNone.Checked)
+            {
+                lockType = ActivityCommon.LockType.None;
+            }
+            else if(_radioButtonCommLockCpu.Checked)
+            {
+                lockType = ActivityCommon.LockType.Cpu;
+            }
+            else if (_radioButtonCommLockDim.Checked)
+            {
+                lockType = ActivityCommon.LockType.ScreenDim;
+            }
+            else if (_radioButtonCommLockBright.Checked)
+            {
+                lockType = ActivityCommon.LockType.ScreenBright;
+            }
+            ActivityCommon.LockTypeCommunication = lockType;
+
+            lockType = ActivityCommon.LockTypeLogging;
+            if (_radioButtonLogLockNone.Checked)
+            {
+                lockType = ActivityCommon.LockType.None;
+            }
+            else if (_radioButtonLogLockCpu.Checked)
+            {
+                lockType = ActivityCommon.LockType.Cpu;
+            }
+            else if (_radioButtonLogLockDim.Checked)
+            {
+                lockType = ActivityCommon.LockType.ScreenDim;
+            }
+            else if (_radioButtonLogLockBright.Checked)
+            {
+                lockType = ActivityCommon.LockType.ScreenBright;
+            }
+            ActivityCommon.LockTypeLogging = lockType;
+
             ActivityCommon.StoreDataLogSettings = _checkBoxStoreDataLogSettings.Checked;
         }
 

@@ -1547,11 +1547,11 @@ namespace BmwDeepObd
             _runContinuous = continuous;
             if (_dataLogActive)
             {
-                _activityCommon.SetCpuLock(true);
+                _activityCommon.SetLock(ActivityCommon.LockTypeLogging);
             }
             else
             {
-                _activityCommon.SetScreenLock(true);
+                _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
             }
 
             _jobThread = new Thread(() =>
@@ -1677,8 +1677,7 @@ namespace BmwDeepObd
                     {
                         _jobThread.Join();
                     }
-                    _activityCommon.SetScreenLock(false);
-                    _activityCommon.SetCpuLock(false);
+                    _activityCommon.SetLock(ActivityCommon.LockType.None);
                     SupportInvalidateOptionsMenu();
                     UpdateDisplay();
                 });

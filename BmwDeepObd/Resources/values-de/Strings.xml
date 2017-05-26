@@ -186,6 +186,12 @@
   <string name="settings_no_bt_handling">Keine automatische Bluetooth-Behandlung</string>
   <string name="settings_caption_bluetooth_disable">Bluetooth ausschalten</string>
   <string name="settings_disable_bt_at_exit">Bluetooth beim Beenden auschalten, wenn nicht verwendet und von App eingeschaltet</string>
+  <string name="settings_caption_lock_communication">Sperre während der Kommunikation</string>
+  <string name="settings_caption_lock_logging">Sperre während der Datenaufzeichnung</string>
+  <string name="settings_lock_none">Gerät wechselt in den Standby</string>
+  <string name="settings_lock_cpu">CPU bleibt aktiv</string>
+  <string name="settings_lock_dim">Bildschirm wird gedimmt</string>
+  <string name="settings_lock_bright">Bildschirm bleibt hell</string>
   <string name="settings_caption_logfiles">Datenaufzeichnung</string>
   <string name="settings_store_data_log_settings">Speichern der Logdaten-Einstellungen</string>
   <string name="settings_caption_storage">Speichermedium</string>

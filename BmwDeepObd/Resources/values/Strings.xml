@@ -187,6 +187,12 @@
   <string name="settings_no_bt_handling">No automatic Bluetooth handling</string>
   <string name="settings_caption_bluetooth_disable">Bluetooth disable</string>
   <string name="settings_disable_bt_at_exit">Disable Bluetooth at exit, if unused and enabled by app</string>
+  <string name="settings_caption_lock_communication">Lock during communication</string>
+  <string name="settings_caption_lock_logging">Lock during data logging</string>
+  <string name="settings_lock_none">Device enters standby</string>
+  <string name="settings_lock_cpu">Keep CPU active</string>
+  <string name="settings_lock_dim">Screen dimmed</string>
+  <string name="settings_lock_bright">Screen bright</string>
   <string name="settings_caption_logfiles">Data logging</string>
   <string name="settings_store_data_log_settings">Store log data settings</string>
   <string name="settings_caption_storage">Storage media</string>

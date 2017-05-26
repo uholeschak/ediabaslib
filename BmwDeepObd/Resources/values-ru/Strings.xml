@@ -186,6 +186,13 @@
   <string name="settings_no_bt_handling">Без автоматического управления Bluetooth</string>
   <string name="settings_caption_bluetooth_disable">Выключение Bluetooth</string>
   <string name="settings_disable_bt_at_exit">Выключать Bluetooth при выходе из приложения</string>
+  <!--Translate-->
+  <string name="settings_caption_lock_communication">Lock during communication</string>
+  <string name="settings_caption_lock_logging">Lock during data logging</string>
+  <string name="settings_lock_none">Device enters standby</string>
+  <string name="settings_lock_cpu">Keep CPU active</string>
+  <string name="settings_lock_dim">Screen dimmed</string>
+  <string name="settings_lock_bright">Screen bright</string>
   <string name="settings_caption_logfiles">Регистрация данных</string>
   <string name="settings_store_data_log_settings">Сохранять настройки записи данных</string>
   <string name="settings_caption_storage">Носитель памяти</string>

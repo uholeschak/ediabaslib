@@ -349,7 +349,22 @@ namespace BmwDeepObd
             base.OnPause();
 
             _activityActive = false;
+            bool stop = false;
             if (_swDataLog == null)
+            {
+                if (ActivityCommon.LockTypeCommunication == ActivityCommon.LockType.None)
+                {
+                    stop = true;
+                }
+            }
+            else
+            {
+                if (ActivityCommon.LockTypeLogging == ActivityCommon.LockType.None)
+                {
+                    stop = true;
+                }
+            }
+            if (stop)
             {
                 StopEdiabasThread(false);
             }
@@ -916,11 +931,11 @@ namespace BmwDeepObd
                     _ediabasThread.StartThread(portName, connectParameter, _traceDir, _traceAppend, pageInfo, true);
                     if (_dataLogActive)
                     {
-                        _activityCommon.SetCpuLock(true);
+                        _activityCommon.SetLock(ActivityCommon.LockTypeLogging);
                     }
                     else
                     {
-                        _activityCommon.SetScreenLock(true);
+                        _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
                     }
                 }
             }
@@ -952,11 +967,7 @@ namespace BmwDeepObd
                     return;
                 }
             }
-            if (_activityCommon != null)
-            {
-                _activityCommon.SetScreenLock(false);
-                _activityCommon.SetCpuLock(false);
-            }
+            _activityCommon?.SetLock(ActivityCommon.LockType.None);
             CloseDataLog();
             SupportInvalidateOptionsMenu();
         }
@@ -988,6 +999,8 @@ namespace BmwDeepObd
                 ActivityCommon.SelectedManufacturer = (ActivityCommon.ManufacturerType) prefs.GetInt("Manufacturer", (int)ActivityCommon.ManufacturerType.Bmw);
                 ActivityCommon.BtEnbaleHandling = (ActivityCommon.BtEnableType)prefs.GetInt("BtEnable", (int)ActivityCommon.BtEnableType.Ask);
                 ActivityCommon.BtDisableHandling = (ActivityCommon.BtDisableType)prefs.GetInt("BtDisable", (int)ActivityCommon.BtDisableType.DisableIfByApp);
+                ActivityCommon.LockTypeCommunication = (ActivityCommon.LockType)prefs.GetInt("LockComm", (int)ActivityCommon.LockType.ScreenDim);
+                ActivityCommon.LockTypeLogging = (ActivityCommon.LockType)prefs.GetInt("LockLog", (int)ActivityCommon.LockType.Cpu);
                 ActivityCommon.StoreDataLogSettings = prefs.GetBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
                 if (ActivityCommon.StoreDataLogSettings)
                 {
@@ -1019,6 +1032,8 @@ namespace BmwDeepObd
                 prefsEdit.PutInt("Manufacturer", (int) ActivityCommon.SelectedManufacturer);
                 prefsEdit.PutInt("BtEnable", (int)ActivityCommon.BtEnbaleHandling);
                 prefsEdit.PutInt("BtDisable", (int) ActivityCommon.BtDisableHandling);
+                prefsEdit.PutInt("LockComm", (int)ActivityCommon.LockTypeCommunication);
+                prefsEdit.PutInt("LockLog", (int)ActivityCommon.LockTypeLogging);
                 prefsEdit.PutBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
                 prefsEdit.PutBoolean("DataLogActive", _dataLogActive);
                 prefsEdit.PutBoolean("DataLogAppend", _dataLogAppend);
@@ -2157,7 +2172,7 @@ namespace BmwDeepObd
                 _downloadProgress.DismissEvent += (sender, args) =>
                 {
                     _downloadProgress = null;
-                   _activityCommon.SetScreenLock(false);
+                    _activityCommon.SetLock(ActivityCommon.LockType.None);
                 };
                 _downloadUrlInfoList = null;
             }
@@ -2168,7 +2183,7 @@ namespace BmwDeepObd
             _downloadProgress.Show();
             _downloadProgress.GetButton((int)DialogButtonType.Negative).Enabled = true;
             _downloadFileSize = fileSize;
-            _activityCommon.SetScreenLock(true);
+            _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
             _activityCommon.SetPreferredNetworkInterface();
 
             Thread downloadThread = new Thread(() =>
@@ -2202,7 +2217,7 @@ namespace BmwDeepObd
                             _downloadProgress.Hide();
                             _downloadProgress.Dispose();
                             _downloadProgress = null;
-                            _activityCommon.SetScreenLock(false);
+                            _activityCommon.SetLock(ActivityCommon.LockType.None);
                         }
                         _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
                     });
@@ -2278,7 +2293,7 @@ namespace BmwDeepObd
                     _downloadProgress.Hide();
                     _downloadProgress.Dispose();
                     _downloadProgress = null;
-                    _activityCommon.SetScreenLock(false);
+                    _activityCommon.SetLock(ActivityCommon.LockType.None);
                     _downloadUrlInfoList = null;
                     if ((!e.Cancelled && e.Error != null) || error)
                     {
@@ -2393,7 +2408,7 @@ namespace BmwDeepObd
                 _downloadProgress = new Android.App.ProgressDialog(this);
                 _downloadProgress.SetCancelable(false);
                 _downloadProgress.DismissEvent += (sender, args) => { _downloadProgress = null; };
-                _activityCommon.SetScreenLock(true);
+                _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
             }
             _downloadProgress.SetMessage(GetString(Resource.String.extract_cleanup));
             _downloadProgress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
@@ -2484,7 +2499,7 @@ namespace BmwDeepObd
                         _downloadProgress.Hide();
                         _downloadProgress.Dispose();
                         _downloadProgress = null;
-                        _activityCommon.SetScreenLock(false);
+                        _activityCommon.SetLock(ActivityCommon.LockType.None);
                     }
                     if (extractFailed)
                     {

@@ -148,6 +148,14 @@ namespace BmwDeepObd
             Vw,
         }
 
+        public enum LockType
+        {
+            None,                   // no lock
+            Cpu,                    // CPU lock
+            ScreenDim,              // screen dim lock
+            ScreenBright,           // screen bright lock
+        }
+
         public enum BtEnableType
         {
             Ask,                    // ask for enbale
@@ -349,7 +357,8 @@ namespace BmwDeepObd
         private readonly ConnectivityManager _maConnectivity;
         private readonly UsbManager _usbManager;
         private readonly PowerManager _powerManager;
-        private PowerManager.WakeLock _wakeLockScreen;
+        private PowerManager.WakeLock _wakeLockScreenBright;
+        private PowerManager.WakeLock _wakeLockScreenDim;
         private PowerManager.WakeLock _wakeLockCpu;
         private CellularCallback _cellularCallback;
         private Network _mobileNetwork;
@@ -433,6 +442,10 @@ namespace BmwDeepObd
 
         public static BtDisableType BtDisableHandling { get; set; }
 
+        public static LockType LockTypeCommunication { get; set; }
+
+        public static LockType LockTypeLogging { get; set; }
+
         public static bool StoreDataLogSettings { get; set; }
 
         public static string YandexApiKey { get; set; }
@@ -501,8 +514,11 @@ namespace BmwDeepObd
             _powerManager = activity.GetSystemService(Context.PowerService) as PowerManager;
             if (_powerManager != null)
             {
-                _wakeLockScreen = _powerManager.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.OnAfterRelease, "ScreenLock");
-                _wakeLockScreen.SetReferenceCounted(false);
+                _wakeLockScreenBright = _powerManager.NewWakeLock(WakeLockFlags.ScreenBright | WakeLockFlags.OnAfterRelease, "ScreenBrightLock");
+                _wakeLockScreenBright.SetReferenceCounted(false);
+
+                _wakeLockScreenDim = _powerManager.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.OnAfterRelease, "ScreenDimLock");
+                _wakeLockScreenDim.SetReferenceCounted(false);
 
                 _wakeLockCpu = _powerManager.NewWakeLock(WakeLockFlags.Partial, "PartialLock");
                 _wakeLockCpu.SetReferenceCounted(false);
@@ -558,18 +574,31 @@ namespace BmwDeepObd
                         _activity.UnregisterReceiver(_bcReceiver);
                         _bcReceiver = null;
                     }
-                    if (_wakeLockScreen != null)
+                    if (_wakeLockScreenBright != null)
                     {
                         try
                         {
-                            _wakeLockScreen.Release();
-                            _wakeLockScreen.Dispose();
+                            _wakeLockScreenBright.Release();
+                            _wakeLockScreenBright.Dispose();
                         }
                         catch (Exception)
                         {
                             // ignored
                         }
-                        _wakeLockScreen = null;
+                        _wakeLockScreenBright = null;
+                    }
+                    if (_wakeLockScreenDim != null)
+                    {
+                        try
+                        {
+                            _wakeLockScreenDim.Release();
+                            _wakeLockScreenDim.Dispose();
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                        _wakeLockScreenDim = null;
                     }
                     if (_wakeLockCpu != null)
                     {
@@ -1610,7 +1639,7 @@ namespace BmwDeepObd
             progress.SetCancelable(false);
             progress.SetMessage(_activity.GetString(Resource.String.select_enet_ip_search));
             progress.Show();
-            SetCpuLock(true);
+            SetLock(LockTypeCommunication);
 
             Thread detectThread = new Thread(() =>
             {
@@ -1627,7 +1656,7 @@ namespace BmwDeepObd
                         progress.Hide();
                         progress.Dispose();
                         progress = null;
-                        SetCpuLock(false);
+                        SetLock(LockType.None);
                     }
                     AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
                     builder.SetTitle(Resource.String.select_enet_ip);
@@ -1719,70 +1748,75 @@ namespace BmwDeepObd
             }
         }
 
-        public bool SetScreenLock(bool enable)
+        public bool SetLock(LockType lockType)
         {
-            if (_wakeLockScreen != null)
+            bool result = true;
+            PowerManager.WakeLock[] lockArray = { _wakeLockCpu, _wakeLockScreenDim, _wakeLockScreenBright };
+            PowerManager.WakeLock wakeLock = null;
+            switch (lockType)
             {
-                bool result = true;
-                try
-                {
-                    if (enable)
-                    {
-                        if (_wakeLockScreen.IsHeld)
-                        {
-                            result = false;
-                        }
-                        _wakeLockScreen.Acquire();
-                    }
-                    else
-                    {
-                        if (!_wakeLockScreen.IsHeld)
-                        {
-                            result = false;
-                        }
-                        _wakeLockScreen.Release();
-                    }
-                }
-                catch (Exception)
-                {
-                    result = false;
-                }
-                return result;
-            }
-            return false;
-        }
+                case LockType.None:
+                    break;
 
-        public bool SetCpuLock(bool enable)
-        {
-            if (_wakeLockCpu != null)
+                case LockType.Cpu:
+                    wakeLock = _wakeLockCpu;
+                    break;
+
+                case LockType.ScreenDim:
+                    wakeLock = _wakeLockScreenDim;
+                    break;
+
+                case LockType.ScreenBright:
+                    wakeLock = _wakeLockScreenBright;
+                    break;
+            }
+
+            bool lockHeld = false;
+            foreach (PowerManager.WakeLock tempLock in lockArray)
             {
-                bool result = true;
-                try
+                if (tempLock.IsHeld)
                 {
-                    if (enable)
-                    {
-                        if (_wakeLockCpu.IsHeld)
-                        {
-                            result = false;
-                        }
-                        _wakeLockCpu.Acquire();
-                    }
-                    else
-                    {
-                        if (!_wakeLockCpu.IsHeld)
-                        {
-                            result = false;
-                        }
-                        _wakeLockCpu.Release();
-                    }
+                    lockHeld = true;
+                    break;
                 }
-                catch (Exception)
+            }
+
+            if (wakeLock != null)
+            {
+                if (lockHeld)
                 {
                     result = false;
                 }
-                return result;
+                else
+                {
+                    try
+                    {
+                        wakeLock.Acquire();
+                    }
+                    catch (Exception)
+                    {
+                        result = false;
+                    }
+                }
             }
-            return false;
+            else
+            {
+                foreach (PowerManager.WakeLock tempLock in lockArray)
+                {
+                    try
+                    {
+                        if (tempLock.IsHeld)
+                        {
+                            tempLock.Release();
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        result = false;
+                    }
+                }
+            }
+            return result;
         }
 
         public bool SetClipboardText(string text)
@@ -1996,7 +2030,7 @@ namespace BmwDeepObd
             progress.SetCancelable(false);
             progress.SetMessage(_activity.GetString(Resource.String.send_trace_file));
             progress.Show();
-            SetCpuLock(true);
+            SetLock(LockTypeCommunication);
             SetPreferredNetworkInterface();
 
             Thread sendThread = new Thread(() =>
@@ -2114,7 +2148,7 @@ namespace BmwDeepObd
                                 progress.Hide();
                                 progress.Dispose();
                                 progress = null;
-                                SetCpuLock(false);
+                                SetLock(LockType.None);
                             }
                             if (e.Cancelled || cancelled)
                             {
@@ -2173,7 +2207,7 @@ namespace BmwDeepObd
                             progress.Hide();
                             progress.Dispose();
                             progress = null;
-                            SetCpuLock(false);
+                            SetLock(LockType.None);
                         }
                         new AlertDialog.Builder(_activity)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
@@ -3007,7 +3041,7 @@ namespace BmwDeepObd
                 _translateProgress.Progress = 0;
                 _translateProgress.Max = 100;
                 _translateProgress.Show();
-                _translateLockAquired = SetCpuLock(true);
+                _translateLockAquired = SetLock(LockTypeCommunication);
             }
             _translateProgress.GetButton((int)DialogButtonType.Negative).Enabled = false;
             _translateProgress.Progress = (_yandexTransList?.Count ?? 0) * 100 / _yandexReducedStringList.Count;
@@ -3113,7 +3147,7 @@ namespace BmwDeepObd
                                 _translateProgress = null;
                                 if (_translateLockAquired)
                                 {
-                                    SetCpuLock(false);
+                                    SetLock(LockType.None);
                                     _translateLockAquired = false;
                                 }
                             }
@@ -3224,7 +3258,7 @@ namespace BmwDeepObd
                             _translateProgress = null;
                             if (_translateLockAquired)
                             {
-                                SetCpuLock(false);
+                                SetLock(LockType.None);
                                 _translateLockAquired = false;
                             }
                         }
