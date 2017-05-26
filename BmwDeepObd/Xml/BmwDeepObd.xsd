@@ -101,6 +101,32 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:simpleType name="fontsize-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="small">
+        <xs:annotation>
+          <xs:documentation>
+            Small font appearence
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="medium">
+        <xs:annotation>
+          <xs:documentation>
+            Medium font appearence
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="large">
+        <xs:annotation>
+          <xs:documentation>
+            Large font appearence
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:complexType name="global-type">
     <xs:annotation>
       <xs:documentation>Global specifications for all pages.</xs:documentation>
@@ -412,6 +438,15 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+
+    <xs:attribute name="fontsize" type="fontsize-type" default="small" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Font size appearence, the default size is small.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
     <xs:attribute name="logfile" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>
