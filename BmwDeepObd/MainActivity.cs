@@ -929,6 +929,7 @@ namespace BmwDeepObd
                             break;
                     }
                     _ediabasThread.StartThread(portName, connectParameter, _traceDir, _traceAppend, pageInfo, true);
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (_dataLogActive)
                     {
                         _activityCommon.SetLock(ActivityCommon.LockTypeLogging);
@@ -1309,7 +1310,7 @@ namespace BmwDeepObd
                 ListView listViewResult = dynamicFragment.View.FindViewById<ListView>(Resource.Id.resultList);
                 if (listViewResult.Adapter == null)
                 {
-                    listViewResult.Adapter = new ResultListAdapter(this, pageInfo.Weight, pageInfo.ErrorsInfo != null);
+                    listViewResult.Adapter = new ResultListAdapter(this, pageInfo.Weight, pageInfo.TextResId, pageInfo.ErrorsInfo != null);
                 }
                 ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult.Adapter;
                 ToggleButton buttonActive = null;

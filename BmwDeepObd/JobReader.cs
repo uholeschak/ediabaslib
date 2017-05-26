@@ -103,10 +103,11 @@ namespace BmwDeepObd
 
         public class PageInfo
         {
-            public PageInfo(string name, float weight, string logFile, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, ErrorsInfo errorsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
+            public PageInfo(string name, float weight, int textResId, string logFile, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, ErrorsInfo errorsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
             {
                 Name = name;
                 Weight = weight;
+                TextResId = textResId;
                 LogFile = logFile;
                 JobActivate = jobActivate;
                 ClassCode = classCode;
@@ -122,6 +123,8 @@ namespace BmwDeepObd
             public string Name { get; }
 
             public float Weight { get; }
+
+            public int TextResId { get; }
 
             public string LogFile { get; }
 
@@ -308,6 +311,7 @@ namespace BmwDeepObd
                     {
                         string pageName = string.Empty;
                         float pageWeight = -1;
+                        int textResId = 0;
                         string logFile = string.Empty;
                         bool jobActivate = false;
                         if (xnodePage.Attributes != null)
@@ -324,6 +328,25 @@ namespace BmwDeepObd
                                 catch
                                 {
                                     // ignored
+                                }
+                            }
+                            attrib = xnodePage.Attributes["fontsize"];
+                            if (attrib != null)
+                            {
+                                string size = attrib.Value.ToLowerInvariant();
+                                switch (size)
+                                {
+                                    case "small":
+                                        textResId = Android.Resource.Style.TextAppearanceSmall;
+                                        break;
+
+                                    case "medium":
+                                        textResId = Android.Resource.Style.TextAppearanceMedium;
+                                        break;
+
+                                    case "large":
+                                        textResId = Android.Resource.Style.TextAppearanceLarge;
+                                        break;
                                 }
                             }
                             attrib = xnodePage.Attributes["logfile"];
@@ -444,7 +467,7 @@ namespace BmwDeepObd
                         if (string.IsNullOrEmpty(pageName)) continue;
                         if (string.IsNullOrWhiteSpace(classCode)) classCode = null;
 
-                        _pageList.Add(new PageInfo(pageName, pageWeight, logFile, jobActivate, classCode, codeShowWarnings, jobsInfo, errorsInfo, displayList, stringList));
+                        _pageList.Add(new PageInfo(pageName, pageWeight, textResId, logFile, jobActivate, classCode, codeShowWarnings, jobsInfo, errorsInfo, displayList, stringList));
                     }
                 }
                 return true;

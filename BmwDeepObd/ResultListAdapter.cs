@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Android.App;
+using Android.OS;
 using Android.Views;
 using Android.Widget;
 
@@ -12,28 +13,35 @@ namespace BmwDeepObd
         public List<TableResultItem> Items => _items;
         private readonly Activity _context;
         private readonly float _textWeight;
+        private readonly int _textResId;
         private readonly bool _showCheckBox;
         private bool _ignoreCheckEvent;
         private readonly Android.Content.Res.ColorStateList _defaultTextColors;
 
-        public ResultListAdapter(Activity context, float textWeight, bool showCheckBox)
+        public ResultListAdapter(Activity context, float textWeight, int textResId, bool showCheckBox)
         {
             _context = context;
             _items = new List<TableResultItem> ();
             _textWeight = textWeight;
+            _textResId = textResId;
             _showCheckBox = showCheckBox;
 
             TextView dummy = new TextView(context);
             _defaultTextColors = dummy.TextColors;
         }
 
+        public ResultListAdapter(Activity context, float textWeight, int textResId)
+            : this(context, textWeight, textResId, false)
+        {
+        }
+
         public ResultListAdapter(Activity context, float textWeight)
-            : this(context, textWeight, false)
+            : this(context, textWeight, 0, false)
         {
         }
 
         public ResultListAdapter(Activity context)
-            : this(context, -1, false)
+            : this(context, -1, 0, false)
         {
         }
 
@@ -82,6 +90,7 @@ namespace BmwDeepObd
                 try
                 {
                     textView1.Text = item.Text1;
+                    SetTextApperance(textView1, _textResId);
                     if (item.TextColor != null)
                     {
                         textView1.SetTextColor(item.TextColor.Value);
@@ -109,6 +118,7 @@ namespace BmwDeepObd
                     {
                         textView2.Visibility = ViewStates.Visible;
                         textView2.Text = item.Text2;
+                        SetTextApperance(textView2, _textResId);
                         if (item.TextColor != null)
                         {
                             textView2.SetTextColor(item.TextColor.Value);
@@ -145,6 +155,24 @@ namespace BmwDeepObd
                     tagInfo.Info.Selected = args.IsChecked;
                     NotifyDataSetChanged();
                 }
+            }
+        }
+
+        private void SetTextApperance(TextView textView, int resId)
+        {
+            if (resId == 0)
+            {
+                return;
+            }
+            if (Build.VERSION.SdkInt < BuildVersionCodes.M)
+            {
+#pragma warning disable 618
+                textView.SetTextAppearance(_context, resId);
+#pragma warning restore 618
+            }
+            else
+            {
+                textView.SetTextAppearance(resId);
             }
         }
 
