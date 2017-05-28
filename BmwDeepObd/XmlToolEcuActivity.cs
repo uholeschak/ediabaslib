@@ -102,6 +102,8 @@ namespace BmwDeepObd
         private View _contentView;
         private EditText _editTextPageName;
         private EditText _editTextEcuName;
+        private Spinner _spinnerFontSize;
+        private StringObjAdapter _spinnerFontSizeAdapter;
         private Spinner _spinnerJobs;
         private JobListAdapter _spinnerJobsAdapter;
         private TextView _textViewJobCommentsTitle;
@@ -159,6 +161,25 @@ namespace BmwDeepObd
 
             _editTextEcuName = FindViewById<EditText>(Resource.Id.editTextEcuName);
             _editTextEcuName.Text = _ecuInfo.EcuName;
+
+            _spinnerFontSize = FindViewById<Spinner>(Resource.Id.spinnerFontSize);
+            _spinnerFontSizeAdapter = new StringObjAdapter(this);
+            _spinnerFontSize.Adapter = _spinnerFontSizeAdapter;
+            _spinnerFontSizeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_font_size_small), XmlToolActivity.DisplayFontSize.Small));
+            _spinnerFontSizeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_font_size_medium), XmlToolActivity.DisplayFontSize.Medium));
+            _spinnerFontSizeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_font_size_large), XmlToolActivity.DisplayFontSize.Large));
+            _spinnerFontSizeAdapter.NotifyDataSetChanged();
+
+            int fontSelection = 0;
+            for (int i = 0; i < _spinnerFontSizeAdapter.Count; i++)
+            {
+                if ((XmlToolActivity.DisplayFontSize)_spinnerFontSizeAdapter.Items[i].Data == _ecuInfo.FontSize)
+                {
+                    fontSelection = i;
+                }
+            }
+            _spinnerFontSize.SetSelection(fontSelection);
+            _spinnerFontSize.ItemSelected += FontItemSelected;
 
             _spinnerJobs = FindViewById<Spinner>(Resource.Id.spinnerJobs);
             _spinnerJobsAdapter = new JobListAdapter(this);
@@ -658,6 +679,18 @@ namespace BmwDeepObd
             UpdateResultSettings(_selectedResult);
             _ecuInfo.PageName = _editTextPageName.Text;
             _ecuInfo.EcuName = _editTextEcuName.Text;
+
+            XmlToolActivity.DisplayFontSize fontSize = XmlToolActivity.DisplayFontSize.Small;
+            if (_spinnerFontSize.SelectedItemPosition >= 0)
+            {
+                fontSize = (XmlToolActivity.DisplayFontSize)_spinnerFontSizeAdapter.Items[_spinnerFontSize.SelectedItemPosition].Data;
+            }
+            _ecuInfo.FontSize = fontSize;
+        }
+
+        private void FontItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+        {
+            HideKeyboard();
         }
 
         private void FormatItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)

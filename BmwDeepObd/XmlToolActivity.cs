@@ -40,9 +40,16 @@ namespace BmwDeepObd
             RequestEdiabasTool,
         }
 
+        public enum DisplayFontSize
+        {
+            Small,
+            Medium,
+            Large
+        }
+
         public class EcuInfo
         {
-            public EcuInfo(string name, Int64 address, string description, string sgbd, string grp, string mwTabFileName = null, Dictionary<int, EcuMwTabEntry> mwTabEcuDict = null)
+            public EcuInfo(string name, Int64 address, string description, string sgbd, string grp, DisplayFontSize fontSize = DisplayFontSize.Small, string mwTabFileName = null, Dictionary<int, EcuMwTabEntry> mwTabEcuDict = null)
             {
                 Name = name;
                 Address = address;
@@ -54,6 +61,7 @@ namespace BmwDeepObd
                 Vin = null;
                 PageName = name;
                 EcuName = name;
+                FontSize = fontSize;
                 JobList = null;
                 MwTabFileName = mwTabFileName;
                 MwTabList = null;
@@ -80,6 +88,8 @@ namespace BmwDeepObd
             public string PageName { get; set; }
 
             public string EcuName { get; set; }
+
+            public DisplayFontSize FontSize { get; set; }
 
             public List<XmlToolEcuActivity.JobInfo> JobList { get; set; }
 
@@ -3416,6 +3426,17 @@ namespace BmwDeepObd
             {
                 return;
             }
+
+            XAttribute fontSizeAttr = pageNode.Attribute("fontsize");
+            if (fontSizeAttr != null)
+            {
+                DisplayFontSize fontSize;
+                if (Enum.TryParse(fontSizeAttr.Value, true, out fontSize))
+                {
+                    ecuInfo.FontSize = fontSize;
+                }
+            }
+
             XElement stringsNode = GetDefaultStringsNode(ns, pageNode);
             XElement jobsNode = pageNode.Element(ns + "jobs");
             if (jobsNode == null)
@@ -3477,8 +3498,9 @@ namespace BmwDeepObd
             }
         }
 
-        private string ReadPageSgbd(XDocument document, out string mwTabFileName, out Dictionary<int, EcuMwTabEntry> mwTabEcuDict)
+        private string ReadPageSgbd(XDocument document, out DisplayFontSize fontSize, out string mwTabFileName, out Dictionary<int, EcuMwTabEntry> mwTabEcuDict)
         {
+            fontSize = DisplayFontSize.Small;
             mwTabFileName = null;
             mwTabEcuDict = null;
             if (document.Root == null)
@@ -3491,6 +3513,15 @@ namespace BmwDeepObd
             {
                 return null;
             }
+            XAttribute fontSizeAttr = pageNode.Attribute("fontsize");
+            if (fontSizeAttr != null)
+            {
+                if (!Enum.TryParse(fontSizeAttr.Value, true, out fontSize))
+                {
+                    fontSize = DisplayFontSize.Small;
+                }
+            }
+
             XElement jobsNode = pageNode.Element(ns + "jobs");
             XAttribute sgbdAttr = jobsNode?.Attribute("sgbd");
             XAttribute mwTabAttr = jobsNode?.Attribute("mwtab");
@@ -3555,6 +3586,16 @@ namespace BmwDeepObd
                 if (pageNameAttr == null)
                 {
                     pageNode.Add(new XAttribute("name", DisplayNamePage));
+                }
+                string fontSizeName = ecuInfo.FontSize.ToString().ToLowerInvariant();
+                XAttribute pageFontSizeAttr = pageNode.Attribute("fontsize");
+                if (pageFontSizeAttr == null)
+                {
+                    pageNode.Add(new XAttribute("fontsize", fontSizeName));
+                }
+                else
+                {
+                    pageFontSizeAttr.Value = fontSizeName;
                 }
                 XAttribute pageLogFileAttr = pageNode.Attribute("logfile");
                 if (pageLogFileAttr == null)
@@ -3793,7 +3834,7 @@ namespace BmwDeepObd
                     bool ecuFound = _ecuList.Any(ecuInfo => string.Compare(sgbdName, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) == 0);
                     if (!ecuFound)
                     {
-                        EcuInfo ecuInfo = new EcuInfo(sgbdName.ToUpperInvariant(), -1, string.Empty, sgbdName, string.Empty, string.Empty)
+                        EcuInfo ecuInfo = new EcuInfo(sgbdName.ToUpperInvariant(), -1, string.Empty, sgbdName, string.Empty, DisplayFontSize.Small, string.Empty)
                         {
                             PageName = string.Empty,
                             EcuName = string.Empty
@@ -3939,12 +3980,13 @@ namespace BmwDeepObd
                     }
                     try
                     {
+                        DisplayFontSize fontSize;
                         string mwTabFileName;
                         Dictionary<int, EcuMwTabEntry> mwTabEcuDict;
-                        string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out mwTabFileName, out mwTabEcuDict);
+                        string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out fontSize, out mwTabFileName, out mwTabEcuDict);
                         if (!string.IsNullOrEmpty(sgbdName))
                         {
-                            _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, mwTabFileName, mwTabEcuDict)
+                            _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, fontSize, mwTabFileName, mwTabEcuDict)
                             {
                                 Selected = true
                             });
@@ -3996,12 +4038,13 @@ namespace BmwDeepObd
                         {
                             try
                             {
+                                DisplayFontSize fontSize;
                                 string mwTabFileName;
                                 Dictionary<int, EcuMwTabEntry> mwTabEcuDict;
-                                string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out mwTabFileName, out mwTabEcuDict);
+                                string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out fontSize, out mwTabFileName, out mwTabEcuDict);
                                 if (!string.IsNullOrEmpty(sgbdName))
                                 {
-                                    _ecuList.Insert(0, new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, mwTabFileName, mwTabEcuDict)
+                                    _ecuList.Insert(0, new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, fontSize, mwTabFileName, mwTabEcuDict)
                                     {
                                         Selected = true
                                     });
