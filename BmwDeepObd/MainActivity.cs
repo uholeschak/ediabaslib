@@ -2084,19 +2084,25 @@ namespace BmwDeepObd
                                 using System.Threading;"
                                 + infoLocal.ClassCode;
                             evaluator.Compile(classCode);
-                            infoLocal.ClassObject = evaluator.Evaluate("new PageClass()");
+                            dynamic classObject = evaluator.Evaluate("new PageClass()");
                             if (((infoLocal.JobsInfo == null) || (infoLocal.JobsInfo.JobList.Count == 0)) &&
                                 ((infoLocal.ErrorsInfo == null) || (infoLocal.ErrorsInfo.EcuList.Count == 0)))
                             {
-                                Type pageType = infoLocal.ClassObject.GetType();
+                                if (classObject == null)
+                                {
+                                    throw new Exception("Compiling PageClass failed");
+                                }
+                                Type pageType = classObject.GetType();
                                 if (pageType.GetMethod("ExecuteJob") == null)
                                 {
                                     throw new Exception("No ExecuteJob method");
                                 }
                             }
+                            infoLocal.ClassObject = classObject;
                         }
                         catch (Exception ex)
                         {
+                            infoLocal.ClassObject = null;
                             result = reportWriter.ToString();
                             if (string.IsNullOrEmpty(result))
                             {
