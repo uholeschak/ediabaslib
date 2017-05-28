@@ -1545,6 +1545,7 @@ namespace BmwDeepObd
             }
             string jobResults = stringBuilderResults.ToString();
             _runContinuous = continuous;
+            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
             if (_dataLogActive)
             {
                 _activityCommon.SetLock(ActivityCommon.LockTypeLogging);

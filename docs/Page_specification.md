@@ -19,7 +19,7 @@ If only some EDIABAS jobs with fixed arguments are required for one display page
 <fragment xmlns="http://www.holeschak.de/BmwDeepObd"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-  <page name="tab_ihk">
+  <page name="tab_ihk" fontsize="medium">
     <strings>
       <string name="tab_ihk">Climate</string>
       <string name="label_ihk_in_temp">Indoor temperature [°C](°C):</string>
@@ -90,7 +90,9 @@ If only some EDIABAS jobs with fixed arguments are required for one display page
   </page>
 </fragment>
 ```
-The `page name` property specifies the title of the page and is a reference to the `strings` nodes. With `logfile` a log file name could be specified, that allows to log the display data. If the symbol `{D}` is used inside the log file name, it will be replaced by the current date and time.  
+The `page name` property specifies the title of the page and is a reference to the `strings` nodes.  
+The attribute `fontsize` allows to specify the font size of the display data in three steps (`small`, `medium` and `large`).  
+With `logfile` a log file name could be specified, that allows to log the display data. If the symbol `{D}` is used inside the log file name, it will be replaced by the current date and time.  
 The `strings` nodes contains the all the string used on this display page. If the current language is not matching the `lang` tag, the default language (without tag) is used. The `lang` property could be either the short form e.g. `'de'` or the long one `'de-DE'`.
 
 The `jobs` node groups all EDIABAS jobs to execute. The property _sgbd_ specifies the name of the group (`.grp`) or the sgbd (`.prg`) file to use. In VAG mode the property `mwtab` could be used to store the file name of the associated mwtab file.  
@@ -114,7 +116,7 @@ The page also allows to selectively reset ECU errors.
 <fragment xmlns="http://www.holeschak.de/BmwDeepObd"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-  <page name ="tab_errors">
+  <page name="tab_errors" fontsize="small">
     <strings>
       <string name="tab_errors">Errors</string>
 
