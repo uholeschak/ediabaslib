@@ -44,6 +44,8 @@
 
   <!-- Compile -->
   <string name="compile_start">Компилировать код пользователя</string>
+  <!-- Translate -->
+  <string name="compile_crash">The app crashed during compilation of the user code.\nThere is a known compiler bug:\nDon\'t use complex initialized structures or arrays in the code,\ninitialize them in the constructor.</string>
 
   <!-- Download -->
   <string formatted="false" name="download_manual">Если у вас возникли проблемы с автоматической загрузкой ECU файлов - загрузите их с&lt;br&gt;&lt;a href=\'{0}\'&gt;{0}&lt;/a&gt;&lt;br&gt;и установите вручную.&lt;br&gt;Использовать ручную установку?</string>

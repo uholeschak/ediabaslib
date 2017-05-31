@@ -46,6 +46,7 @@
 
   <!-- Compile -->
   <string name="compile_start">Anwendercode kompilieren</string>
+  <string name="compile_crash">Die App ist beim Kompilieren des Anwerdercodes abgestürzt.\nEs gibt einen bekannten Compilerfehler:\nVerwenden Sie keine komplexen initialisierten Strukturen oder Arrays, initialisieren Sie diese im Konstruktor.</string>
 
   <!-- Download -->
   <string formatted="false" name="download_manual">Wenn Sie Probleme mit dem automatischen Download der ECU Dateien haben, können Sie diese von&lt;br&gt;&lt;a href=\'{0}\'&gt;{0}&lt;/a&gt;&lt;br&gt;herunterladen und manuell installieren.&lt;br&gt;Wollen Sie die manuelle Installation verwenden?</string>

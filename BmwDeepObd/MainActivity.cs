@@ -60,6 +60,14 @@ namespace BmwDeepObd
             RequestGlobalSettings,
         }
 
+        private enum LastAppState
+        {
+            Init,
+            Compile,
+            TabsCreated,
+            Terminated,
+        }
+
         private class DownloadInfo
         {
             public DownloadInfo(string fileName, string downloadDir, string targetDir, XElement infoXml = null)
@@ -124,6 +132,7 @@ namespace BmwDeepObd
         };
 
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
+        private LastAppState _lastAppState = LastAppState.Init;
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
         private string _configFileName = string.Empty;
@@ -260,6 +269,7 @@ namespace BmwDeepObd
             _btInitiallyEnabled = _activityCommon.IsBluetoothEnabled();
 
             GetSettings();
+            StoreLastAppState(LastAppState.Init);
 
             _updateHandler = new Handler();
             _jobReader = new JobReader();
@@ -308,6 +318,7 @@ namespace BmwDeepObd
                 _tabLayout.GetTabAt(0).Select();
             }
             UpdateDisplay();
+            StoreLastAppState(LastAppState.TabsCreated);
         }
 
         protected override void OnStop()
@@ -398,6 +409,7 @@ namespace BmwDeepObd
                 _webClient = null;
             }
             MemoryStreamReader.CleanUp();
+            StoreLastAppState(LastAppState.Terminated);
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
@@ -988,6 +1000,11 @@ namespace BmwDeepObd
             {
                 _currentVersionCode = PackageManager.GetPackageInfo(PackageName, 0).VersionCode;
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
+                string stateString = prefs.GetString("LastAppState", string.Empty);
+                if (!System.Enum.TryParse(stateString, true, out _lastAppState))
+                {
+                    _lastAppState = LastAppState.Init;
+                }
                 _deviceName = prefs.GetString("DeviceName", string.Empty);
                 _deviceAddress = prefs.GetString("DeviceAddress", string.Empty);
                 _activityCommon.SelectedEnetIp = prefs.GetString("EnetIp", string.Empty);
@@ -1038,6 +1055,21 @@ namespace BmwDeepObd
                 prefsEdit.PutBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
                 prefsEdit.PutBoolean("DataLogActive", _dataLogActive);
                 prefsEdit.PutBoolean("DataLogAppend", _dataLogAppend);
+                prefsEdit.Commit();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        private void StoreLastAppState(LastAppState lastAppState)
+        {
+            try
+            {
+                ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
+                ISharedPreferencesEditor prefsEdit = prefs.Edit();
+                prefsEdit.PutString("LastAppState", lastAppState.ToString());
                 prefsEdit.Commit();
             }
             catch (Exception)
@@ -2039,6 +2071,7 @@ namespace BmwDeepObd
                 _updateHandler.Post(CreateActionBarTabs);
                 return;
             }
+            StoreLastAppState(LastAppState.Compile);
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
             progress.SetCancelable(false);
             progress.SetMessage(GetString(Resource.String.compile_start));
@@ -2751,6 +2784,23 @@ namespace BmwDeepObd
             {
                 return;
             }
+            if (_lastAppState == LastAppState.Compile)
+            {
+                _lastAppState = LastAppState.Init;
+                _configFileName = string.Empty;
+                _configSelectAlertDialog = new AlertDialog.Builder(this)
+                    .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
+                    .SetCancelable(true)
+                    .SetMessage(Resource.String.compile_crash)
+                    .SetTitle(Resource.String.alert_title_error)
+                    .Show();
+                _configSelectAlertDialog.DismissEvent += (sender, args) =>
+                {
+                    _configSelectAlertDialog = null;
+                };
+                return;
+            }
+
             string message = GetString(Resource.String.config_select) + "\n" +
                              string.Format(GetString(Resource.String.manufacturer_select), _activityCommon.ManufacturerName());
             _configSelectAlertDialog = new AlertDialog.Builder(this)
