@@ -2040,7 +2040,11 @@ namespace BmwDeepObd
 
         private void ReadConfigFile()
         {
-            _jobReader.ReadXml(_configFileName);
+            _jobReader.Clear();
+            if (_lastAppState != LastAppState.Compile)
+            {
+                _jobReader.ReadXml(_configFileName);
+            }
             if (_jobReader.PageList.Count > 0)
             {
                 ActivityCommon.SelectedManufacturer = _jobReader.Manufacturer;
@@ -2780,7 +2784,7 @@ namespace BmwDeepObd
 
         private void RequestConfigSelect()
         {
-            if ((_configSelectAlertDialog != null) || (_jobReader.PageList.Count > 0))
+            if (_configSelectAlertDialog != null)
             {
                 return;
             }
@@ -2798,6 +2802,10 @@ namespace BmwDeepObd
                 {
                     _configSelectAlertDialog = null;
                 };
+                return;
+            }
+            if (_jobReader.PageList.Count > 0)
+            {
                 return;
             }
 
