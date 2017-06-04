@@ -191,7 +191,7 @@
   <string name="settings_disable_bt_at_exit">Bluetooth beim Beenden auschalten, wenn nicht verwendet und von App eingeschaltet</string>
   <string name="settings_caption_lock_communication">Sperre während der Kommunikation</string>
   <string name="settings_caption_lock_logging">Sperre während der Datenaufzeichnung</string>
-  <string name="settings_lock_none">Gerät wechselt in den Eneriesparmodus</string>
+  <string name="settings_lock_none">Gerät wechselt in den Energiesparmodus, Kommunikation wird beendet</string>
   <string name="settings_lock_cpu">CPU bleibt aktiv</string>
   <string name="settings_lock_dim">Bildschirm wird gedimmt</string>
   <string name="settings_lock_bright">Bildschirm bleibt hell</string>

@@ -191,7 +191,7 @@
   <!--Translate-->
   <string name="settings_caption_lock_communication">Lock during communication</string>
   <string name="settings_caption_lock_logging">Lock during data logging</string>
-  <string name="settings_lock_none">Device enters energy saving mode</string>
+  <string name="settings_lock_none">Device enters energy saving mode, communication will be stopped</string>
   <string name="settings_lock_cpu">Keep CPU active</string>
   <string name="settings_lock_dim">Screen dimmed</string>
   <string name="settings_lock_bright">Screen bright</string>
