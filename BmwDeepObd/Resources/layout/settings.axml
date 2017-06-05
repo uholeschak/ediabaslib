@@ -124,6 +124,18 @@
             android:layout_height="wrap_content"
             android:text="@string/settings_store_data_log_settings" />
         <TextView
+            android:text="@+string/settings_caption_app_exit"
+            android:id="@+id/textViewCaptionAppExit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <CheckBox
+            android:id="@+id/checkBoxDoubleClickForAppExit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_double_click_for_app_exit" />
+        <TextView
             android:text="@+string/settings_caption_storage"
             android:id="@+id/textViewCaptionStorage"
             android:layout_width="match_parent"

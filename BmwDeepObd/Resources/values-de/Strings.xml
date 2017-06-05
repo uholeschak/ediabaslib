@@ -10,6 +10,7 @@
   <string name="button_select">Auswählen</string>
   <string name="button_generate">Generieren</string>
   <string name="button_copy">Kopieren</string>
+  <string name="back_button_twice_for_exit">Die Schaltfläche zwei mal drücken zum Beenden</string>
   <string name="no_ext_storage">Kein externer Speicher verfügbar</string>
   <string name="access_denied_ext_storage">Zugriff auf den externen Speicher ist notwendig um die App auszuführen</string>
   <string name="bt_enable">Bluetooth ist nicht aktiviert.\nWollen Sie es jetzt aktivieren?</string>
@@ -191,12 +192,14 @@
   <string name="settings_disable_bt_at_exit">Bluetooth beim Beenden auschalten, wenn nicht verwendet und von App eingeschaltet</string>
   <string name="settings_caption_lock_communication">Sperre während der Kommunikation</string>
   <string name="settings_caption_lock_logging">Sperre während der Datenaufzeichnung</string>
-  <string name="settings_lock_none">Gerät wechselt in den Energiesparmodus, Kommunikation wird beendet</string>
+  <string name="settings_lock_none">Gerät wechselt in den Energiesparmodus und die Kommunikation wird beendet</string>
   <string name="settings_lock_cpu">CPU bleibt aktiv</string>
   <string name="settings_lock_dim">Bildschirm wird gedimmt</string>
   <string name="settings_lock_bright">Bildschirm bleibt hell</string>
   <string name="settings_caption_logfiles">Datenaufzeichnung</string>
   <string name="settings_store_data_log_settings">Speichern der Logdaten-Einstellungen</string>
+  <string name="settings_caption_app_exit">App beenden</string>
+  <string name="settings_double_click_for_app_exit">Doppelklick notwendig um App zu beenden</string>
   <string name="settings_caption_storage">Speichermedium</string>
 
   <!--  EdiabasToolActivity -->
