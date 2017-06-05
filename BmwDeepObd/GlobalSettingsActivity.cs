@@ -31,6 +31,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonLogLockDim;
         private RadioButton _radioButtonLogLockBright;
         private CheckBox _checkBoxStoreDataLogSettings;
+        private CheckBox _checkBoxDoubleClickForAppExit;
         private Button _buttonStorageLocation;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -64,6 +65,8 @@ namespace BmwDeepObd
             _radioButtonLogLockBright = FindViewById<RadioButton>(Resource.Id.radioButtonLogLockBright);
 
             _checkBoxStoreDataLogSettings = FindViewById<CheckBox>(Resource.Id.checkBoxStoreDataLogSettings);
+            _checkBoxDoubleClickForAppExit = FindViewById<CheckBox>(Resource.Id.checkBoxDoubleClickForAppExit);
+
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
             _buttonStorageLocation.Click += (sender, args) =>
             {
@@ -150,6 +153,7 @@ namespace BmwDeepObd
             }
 
             _checkBoxStoreDataLogSettings.Checked = ActivityCommon.StoreDataLogSettings;
+            _checkBoxDoubleClickForAppExit.Checked = ActivityCommon.DoubleClickForAppExit;
             UpdateDisplay();
         }
 
@@ -211,6 +215,7 @@ namespace BmwDeepObd
             ActivityCommon.LockTypeLogging = lockType;
 
             ActivityCommon.StoreDataLogSettings = _checkBoxStoreDataLogSettings.Checked;
+            ActivityCommon.DoubleClickForAppExit = _checkBoxDoubleClickForAppExit.Checked;
         }
 
         private void UpdateDisplay()

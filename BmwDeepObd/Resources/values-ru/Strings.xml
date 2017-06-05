@@ -10,6 +10,8 @@
   <string name="button_select">Выбрать</string>
   <string name="button_generate">Генерировать</string>
   <string name="button_copy">Копировать</string>
+  <!-- Translate -->
+  <string name="back_button_twice_for_exit">Press button twice in order to exit</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения</string>
   <string name="bt_enable">Bluetooth не активирован.\nХотите его активировать?</string>
@@ -191,12 +193,15 @@
   <!--Translate-->
   <string name="settings_caption_lock_communication">Lock during communication</string>
   <string name="settings_caption_lock_logging">Lock during data logging</string>
-  <string name="settings_lock_none">Device enters energy saving mode, communication will be stopped</string>
+  <string name="settings_lock_none">Device enters energy saving mode and the communication will be stopped</string>
   <string name="settings_lock_cpu">Keep CPU active</string>
   <string name="settings_lock_dim">Screen dimmed</string>
   <string name="settings_lock_bright">Screen bright</string>
   <string name="settings_caption_logfiles">Регистрация данных</string>
   <string name="settings_store_data_log_settings">Сохранять настройки записи данных</string>
+  <!-- Translate -->
+  <string name="settings_caption_app_exit">App exit</string>
+  <string name="settings_double_click_for_app_exit">Double click required for app exit</string>
   <string name="settings_caption_storage">Носитель памяти</string>
 
   <!--  EdiabasToolActivity -->

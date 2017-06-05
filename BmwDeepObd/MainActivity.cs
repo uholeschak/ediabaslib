@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -113,6 +114,7 @@ namespace BmwDeepObd
             public bool Checked { get; set; }
         }
 
+        private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const char DataLogSeparator = '\t';
         private const string SharedAppName = "de.holeschak.bmw_deep_obd";
         private const string AppFolderName = "de.holeschak.bmw_deep_obd";
@@ -133,6 +135,8 @@ namespace BmwDeepObd
 
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         private LastAppState _lastAppState = LastAppState.Init;
+        private bool _backPressed;
+        private long _lastBackPressesTime;
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
         private string _configFileName = string.Empty;
@@ -410,6 +414,31 @@ namespace BmwDeepObd
             }
             MemoryStreamReader.CleanUp();
             StoreLastAppState(LastAppState.Terminated);
+        }
+
+        public override void OnBackPressed()
+        {
+            if (!ActivityCommon.DoubleClickForAppExit)
+            {
+                _backPressed = false;
+                base.OnBackPressed();
+                return;
+            }
+            if (_backPressed)
+            {
+                _backPressed = false;
+                if (Stopwatch.GetTimestamp() - _lastBackPressesTime < 2000 * TickResolMs)
+                {
+                    base.OnBackPressed();
+                    return;
+                }
+            }
+            if (!_backPressed)
+            {
+                _backPressed = true;
+                _lastBackPressesTime = Stopwatch.GetTimestamp();
+                Toast.MakeText(this, GetString(Resource.String.back_button_twice_for_exit), ToastLength.Short).Show();
+            }
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
@@ -1025,6 +1054,7 @@ namespace BmwDeepObd
                     _dataLogActive = prefs.GetBoolean("DataLogActive", _dataLogActive);
                     _dataLogAppend = prefs.GetBoolean("DataLogAppend", _dataLogAppend);
                 }
+                ActivityCommon.DoubleClickForAppExit = prefs.GetBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
             }
             catch (Exception)
             {
@@ -1055,6 +1085,7 @@ namespace BmwDeepObd
                 prefsEdit.PutBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
                 prefsEdit.PutBoolean("DataLogActive", _dataLogActive);
                 prefsEdit.PutBoolean("DataLogAppend", _dataLogAppend);
+                prefsEdit.PutBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
                 prefsEdit.Commit();
             }
             catch (Exception)
