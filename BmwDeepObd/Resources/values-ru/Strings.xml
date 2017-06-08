@@ -10,8 +10,7 @@
   <string name="button_select">Выбрать</string>
   <string name="button_generate">Генерировать</string>
   <string name="button_copy">Копировать</string>
-  <!-- Translate -->
-  <string name="back_button_twice_for_exit">Press button twice in order to exit</string>
+  <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения</string>
   <string name="bt_enable">Bluetooth не активирован.\nХотите его активировать?</string>
@@ -34,6 +33,8 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:
+\n- Добавлены опции режима энергосбережения.
+\n- Добавлена возможность изменения размера шрифта для основных страниц в генераторе конфигурации.
 \n- улучшена стабильность</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.8.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 (Автомобили до 4.2012) протоколы.</string>
@@ -46,8 +47,7 @@
 
   <!-- Compile -->
   <string name="compile_start">Компилировать код пользователя</string>
-  <!-- Translate -->
-  <string name="compile_crash">The app crashed during compilation of the user code.\nThere is a known compiler bug:\nDon\'t use complex initialized structures or arrays in the code,\ninitialize them in the constructor.</string>
+  <string name="compile_crash">Сбой приложения при компиляции кода пользователя.\nСуществует известная ошибка компилятора:\nне используйте сложно инициализированные структуры или массивы в коде,\nинициализируйте их в конструкторе.</string>
 
   <!-- Download -->
   <string formatted="false" name="download_manual">Если у вас возникли проблемы с автоматической загрузкой ECU файлов - загрузите их с&lt;br&gt;&lt;a href=\'{0}\'&gt;{0}&lt;/a&gt;&lt;br&gt;и установите вручную.&lt;br&gt;Использовать ручную установку?</string>
@@ -190,18 +190,16 @@
   <string name="settings_no_bt_handling">Без автоматического управления Bluetooth</string>
   <string name="settings_caption_bluetooth_disable">Выключение Bluetooth</string>
   <string name="settings_disable_bt_at_exit">Выключать Bluetooth при выходе из приложения</string>
-  <!--Translate-->
-  <string name="settings_caption_lock_communication">Lock during communication</string>
-  <string name="settings_caption_lock_logging">Lock during data logging</string>
-  <string name="settings_lock_none">Device enters energy saving mode and the communication will be stopped</string>
-  <string name="settings_lock_cpu">Keep CPU active</string>
-  <string name="settings_lock_dim">Screen dimmed</string>
-  <string name="settings_lock_bright">Screen bright</string>
+  <string name="settings_caption_lock_communication">Блокировка во время соединения</string>
+  <string name="settings_caption_lock_logging">Блокировка во время регистрации данных</string>
+  <string name="settings_lock_none">Устройство переходит в режим энергосбережения</string>
+  <string name="settings_lock_cpu">Поддерживать активность процессора</string>
+  <string name="settings_lock_dim">Яркость экрана уменьшена</string>
+  <string name="settings_lock_bright">Экран яркий</string>
   <string name="settings_caption_logfiles">Регистрация данных</string>
   <string name="settings_store_data_log_settings">Сохранять настройки записи данных</string>
-  <!-- Translate -->
-  <string name="settings_caption_app_exit">App exit</string>
-  <string name="settings_double_click_for_app_exit">Double click required for app exit</string>
+  <string name="settings_caption_app_exit">Выход из приложения</string>
+  <string name="settings_double_click_for_app_exit">Для выхода из приложения требуется двойное нажатие</string>
   <string name="settings_caption_storage">Носитель памяти</string>
 
   <!--  EdiabasToolActivity -->
@@ -291,11 +289,10 @@
   <string name="xml_tool_ecu_format_left">Влево</string>
   <string name="xml_tool_ecu_page_name">Название страницы</string>
   <string name="xml_tool_ecu_ecu_name">Название ECU</string>
-  <!--Translate-->
-  <string name="xml_tool_ecu_font_size">Font size</string>
-  <string name="xml_tool_ecu_font_size_small">Small</string>
-  <string name="xml_tool_ecu_font_size_medium">Medium</string>
-  <string name="xml_tool_ecu_font_size_large">Large</string>
+  <string name="xml_tool_ecu_font_size">Размер шрифта</string>
+  <string name="xml_tool_ecu_font_size_small">Мелкий</string>
+  <string name="xml_tool_ecu_font_size_medium">Средний</string>
+  <string name="xml_tool_ecu_font_size_large">Большой</string>
   <string name="xml_tool_ecu_jobs_name">Job список</string>
   <string name="xml_tool_ecu_results">Job результат</string>
   <string name="xml_tool_ecu_show_all_results">Показывать все результаты</string>
