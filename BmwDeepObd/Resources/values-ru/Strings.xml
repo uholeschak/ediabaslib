@@ -194,8 +194,8 @@
   <string name="settings_caption_lock_logging">Блокировка во время регистрации данных</string>
   <string name="settings_lock_none">Устройство переходит в режим энергосбережения</string>
   <string name="settings_lock_cpu">Поддерживать активность процессора</string>
-  <string name="settings_lock_dim">Яркость экрана уменьшена</string>
-  <string name="settings_lock_bright">Экран яркий</string>
+  <string name="settings_lock_dim">Уменьшенная яркость экрана</string>
+  <string name="settings_lock_bright">Яркий экран</string> 
   <string name="settings_caption_logfiles">Регистрация данных</string>
   <string name="settings_store_data_log_settings">Сохранять настройки записи данных</string>
   <string name="settings_caption_app_exit">Выход из приложения</string>
