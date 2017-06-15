@@ -86,7 +86,7 @@
 #define DEBUG_PIN           0   // enable debug pin
 #define ID_LOCATION         0x200000    // location of ID memory
 
-#define ADAPTER_VERSION     0x0008
+#define ADAPTER_VERSION     0x0009
 
 #if ADAPTER_TYPE != 0x02
 #if ADAPTER_TYPE == 0x03
@@ -173,6 +173,11 @@
 // CAN protocols
 #define CAN_PROT_BMW        0x00
 #define CAN_PROT_TP20       0x01
+#define CAN_PROT_ISOTP      0x02
+
+// ISO-TP response telegram types
+#define ISOTP_TELTYPE_DATA  0x01    // data telegram
+#define ISOTP_TELTYPE_STAT  0x02    // status telegram
 
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
 #define CAN_MIN_SEP_TIME    0       // min separation time (ms)
@@ -243,6 +248,12 @@ typedef enum
     tp20_status_can_error = 3,
 } tp20_status;
 
+typedef enum
+{
+    isotp_status_ok = 0,
+    isotp_status_can_error = 1,
+} isotp_status;
+
 // constants in rom
 static const uint16_t adapter_type @ _ROMSIZE - 4 = ADAPTER_TYPE;
 static const uint16_t adapter_version @ _ROMSIZE - 6 = ADAPTER_VERSION;
@@ -288,9 +299,11 @@ static uint8_t kline_kwp1281_pos;   // KWP1281 current position
 static uint8_t can_cfg_protocol;    // CAN protocol
 static uint8_t can_cfg_baud;        // CAN baud rate (table)
 static uint8_t can_cfg_flags;       // CAN flags
-static uint8_t can_cfg_blocksize;   // CAN blocksize
-static uint8_t can_cfg_packet_interval; // CAN packet inverval time
-static uint16_t can_cfg_idle_time;   // CAN idle time [ms]
+static uint8_t can_cfg_blocksize;   // CAN blocksize (TP2.0)
+static uint8_t can_cfg_packet_interval; // CAN packet inverval time (TP2.0)
+static uint16_t can_cfg_idle_time;  // CAN idle time [ms] (TP2.0)
+static uint16_t can_cfg_isotp_txid; // CAN TX ID (ISO-TP)
+static uint16_t can_cfg_isotp_rxid; // CAN RX ID (ISO-TP)
 
 static uint8_t temp_buffer[TEMP_BUF_SIZE];
 static uint8_t temp_buffer_short[10];
@@ -300,18 +313,20 @@ static uint8_t can_mode;
 static uint8_t can_blocksize;
 static uint8_t can_sep_time;
 
-// can sender variables
+// CAN sender variables
 static bool can_send_active;
 static bool can_send_wait_for_fc;
 static bool can_send_wait_sep_time;
+static bool can_check_status;
 static uint16_t can_send_pos;
 static uint8_t can_send_block_count;
 static uint8_t can_send_block_size;
 static uint8_t can_send_sep_time;
 static uint16_t can_send_sep_time_start;
 static uint16_t can_send_time;
+static uint16_t can_send_data_len;
 
-// can receiver variables
+// CAN receiver variables
 static uint8_t *can_rec_buffer_offset;
 static uint8_t can_rec_source_addr;
 static uint8_t can_rec_target_addr;
@@ -322,7 +337,7 @@ static uint16_t can_rec_rec_len;
 static uint16_t can_rec_data_len;
 static bool can_rec_tel_valid;
 
-// can TP2.0 variables
+// CAN TP2.0 variables
 static tp20_states can_tp20_state;
 static uint8_t can_tp20_ecu_addr;
 static uint16_t can_tp20_rxid;
@@ -1293,7 +1308,7 @@ uint16_t uart_receive(uint8_t *buffer)
             }
             kline_baud = (((uint32_t) rec_buffer[2] << 8) + rec_buffer[3]) << 1;
             if ((kline_baud != 0) && (kline_baud != 2) && ((kline_baud < MIN_BAUD) || (kline_baud > MAX_BAUD)))
-            {   // baud date invalid
+            {   // baud rate invalid
                 data_len = 0;
             }
             else
@@ -1316,7 +1331,7 @@ uint16_t uart_receive(uint8_t *buffer)
             kline_kwp1281_pos = 0;
         }
         else if (rec_buffer[1] == 0x01)
-        {   // CAN telegram
+        {   // CAN telegram 1
             // byte 2: protocol
             // byte 3: baud rate
             // byte 4: flags
@@ -1337,9 +1352,19 @@ uint16_t uart_receive(uint8_t *buffer)
             }
             can_cfg_baud = rec_buffer[3];
             can_cfg_flags = rec_buffer[4];
-            can_cfg_blocksize = rec_buffer[5];
-            can_cfg_packet_interval = rec_buffer[6];
-            can_cfg_idle_time = (uint16_t) rec_buffer[7] * 10;
+            switch (op_mode_can)
+            {
+                case CAN_PROT_ISOTP:
+                    can_cfg_isotp_txid = ((uint16_t) rec_buffer[5] << 8) + rec_buffer[6];
+                    can_cfg_isotp_rxid = 0x7E8;
+                    break;
+
+                default:
+                    can_cfg_blocksize = rec_buffer[5];
+                    can_cfg_packet_interval = rec_buffer[6];
+                    can_cfg_idle_time = (uint16_t) rec_buffer[7] * 10;
+                    break;
+            }
             data_len = ((uint16_t) rec_buffer[8] << 8) + rec_buffer[9];
             if (buffer != NULL)
             {
@@ -1362,7 +1387,7 @@ uint16_t uart_receive(uint8_t *buffer)
             }
             kline_baud = (((uint32_t) rec_buffer[2] << 8) + rec_buffer[3]) << 1;
             if ((kline_baud != 0) && (kline_baud != 2) && ((kline_baud < MIN_BAUD) || (kline_baud > MAX_BAUD)))
-            {   // baud date invalid
+            {   // baud rate invalid
                 data_len = 0;
             }
             else
@@ -1386,6 +1411,48 @@ uint16_t uart_receive(uint8_t *buffer)
             }
             kline_kwp1281_len = 0;
             kline_kwp1281_pos = 0;
+        }
+        else if (rec_buffer[1] == 0x03)
+        {   // CAN telegram 2
+            // byte 2: protocol
+            // byte 3: baud rate
+            // byte 4: flags
+            // for TP2.0 configuration is like CAN tel 1, the following is for ISO-TP
+            // byte 5+6: CAN TX ID (high/low)
+            // byte 7+8: CAN RX ID (high/low)
+            // byte 9+10: telegram length (high/low)
+            if ((buffer != NULL) &&
+                ((op_mode != op_mode_can) || (can_cfg_protocol != rec_buffer[2]))
+                )
+            {   // mode or protocol change
+                return 0;
+            }
+            can_cfg_protocol = rec_buffer[2];
+            if (can_cfg_baud != rec_buffer[3])
+            {
+                can_init_required = true;
+            }
+            can_cfg_baud = rec_buffer[3];
+            can_cfg_flags = rec_buffer[4];
+            switch (op_mode_can)
+            {
+                case CAN_PROT_ISOTP:
+                    can_cfg_isotp_txid = ((uint16_t) rec_buffer[5] << 8) + rec_buffer[6];
+                    can_cfg_isotp_rxid = ((uint16_t) rec_buffer[7] << 8) + rec_buffer[8];
+                    break;
+
+                default:
+                    can_cfg_blocksize = rec_buffer[5];
+                    can_cfg_packet_interval = rec_buffer[6];
+                    can_cfg_idle_time = (uint16_t) rec_buffer[7] * 10;
+                    break;
+            }
+            data_len = ((uint16_t) rec_buffer[9] << 8) + rec_buffer[10];
+            if (buffer != NULL)
+            {
+                memcpy(buffer, rec_buffer + 11, data_len);
+            }
+            op_mode_new = op_mode_can;
         }
     }
     else
@@ -1799,12 +1866,21 @@ void can_config()
             {
                 bitrate = 1;
             }
-            if (can_cfg_protocol == CAN_PROT_TP20)
+            switch (can_cfg_protocol)
             {
-                sid1 = 0x200;
-                mask1 = 0x700;
-                sid2 = 0x300;
-                mask2 = 0x700;
+                case CAN_PROT_TP20:
+                    sid1 = 0x200;
+                    mask1 = 0x700;
+                    sid2 = 0x300;
+                    mask2 = 0x700;
+                    break;
+
+                case CAN_PROT_ISOTP:
+                    sid1 = can_cfg_isotp_rxid;
+                    mask1 = 0x7FF;
+                    sid2 = can_cfg_isotp_rxid;
+                    mask2 = 0x7FF;
+                    break;
             }
             break;
     }
@@ -1846,12 +1922,16 @@ void reset_comm_states()
     kline_kwp1281_len = 0;
     kline_kwp1281_pos = 0;
 
+    can_check_status = false;
+
     can_cfg_protocol = CAN_PROT_BMW;
     can_cfg_baud = CAN_MODE_500;
     can_cfg_flags = 0;
     can_cfg_blocksize = 0;
     can_cfg_packet_interval = 0;
     can_cfg_idle_time = 0;
+    can_cfg_isotp_txid = 0x000;
+    can_cfg_isotp_rxid = 0x000;
 
     can_tp20_state = tp20_idle;
 }
@@ -2435,6 +2515,312 @@ void can_receiver(bool new_can_msg)
                 temp_buffer[2] = can_rec_source_addr;
                 len = can_rec_data_len + 3;
             }
+
+            temp_buffer[len] = calc_checkum(temp_buffer, len);
+            len++;
+            if (uart_send(temp_buffer, len))
+            {
+                can_rec_tel_valid = false;
+            }
+            else
+            {   // send failed, keep message alive
+                can_rec_time = get_systick();
+            }
+        }
+    }
+    else
+    {
+        if (can_rec_tel_valid)
+        {   // check for timeout
+            if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TIMEOUT * TIMER0_RESOL / 1000))
+            {
+                can_rec_tel_valid = false;
+            }
+        }
+    }
+}
+
+void can_isotp_sender(bool new_can_msg)
+{
+    if (!can_enabled)
+    {
+        return;
+    }
+    if (!can_send_active && !PIE1bits.TXIE)
+    {
+        uint16_t len = uart_receive(temp_buffer);
+        if (len > 0)
+        {
+            if (can_error())
+            {
+                can_config();
+            }
+            can_send_active = true;
+            can_send_wait_sep_time = false;
+            can_send_pos = 0;
+            can_send_data_len = len;
+            can_check_status = true;
+        }
+    }
+    if (can_check_status && can_error())
+    {
+        if ((can_cfg_flags & CANF_CAN_ERROR) != 0)
+        {
+            temp_buffer_short[0] = ISOTP_TELTYPE_STAT;
+            temp_buffer_short[1] = 0x00;    // len high
+            temp_buffer_short[2] = 0x01;    // len low
+            temp_buffer_short[3] = isotp_status_can_error;
+            temp_buffer_short[4] = calc_checkum(temp_buffer_short, 4);
+            uart_send(temp_buffer_short, 5);
+        }
+        can_check_status = false;
+        can_send_active = false;
+        return;
+    }
+    if (can_send_active)
+    {
+        idle_counter = 0;
+        uint8_t *data_offset = &temp_buffer[0];
+        uint16_t data_len = can_send_data_len;
+        if (can_send_pos == 0)
+        {   // start sending
+            if (data_len <= 7)
+            {   // single frame
+                memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+                can_out_msg.sid = can_cfg_isotp_txid;
+                can_out_msg.dlc.bits.count = 8;
+                can_out_msg.data[0] = 0x00 | data_len;      // single frame + length
+                memcpy(can_out_msg.data + 1, data_offset, data_len);
+
+                can_send_message_wait();
+                can_send_active = false;
+                return;
+            }
+            // first frame
+            memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+            can_out_msg.sid = can_cfg_isotp_txid;
+            can_out_msg.dlc.bits.count = 8;
+            can_out_msg.data[0] = 0x10 | ((data_len >> 8) & 0xFF);      // first frame + length
+            can_out_msg.data[1] = data_len;
+            uint8_t len = 6;
+            memcpy(can_out_msg.data + 2, data_offset, len);
+            can_send_pos += len;
+
+            can_send_message_wait();
+            can_send_wait_for_fc = true;
+            can_send_block_count = 1;
+            can_send_time = get_systick();
+            return;
+        }
+        if (can_send_wait_for_fc)
+        {
+            if (new_can_msg)
+            {
+                if ((can_in_msg.sid == can_cfg_isotp_rxid) &&
+                    (can_in_msg.dlc.bits.count >= 3) &&
+                    ((can_in_msg.data[1] & 0xF0) == 0x30)  // FC
+                    )
+                {
+                    switch (can_in_msg.data[0] & 0x0F)
+                    {
+                        case 0: // CTS
+                            can_send_wait_for_fc = false;
+                            break;
+
+                        case 1: // Wait
+                            can_send_time = get_systick();
+                            break;
+
+                        default:    // invalid
+                            break;
+                    }
+                    can_send_block_size = can_in_msg.data[1];
+                    can_send_sep_time = can_in_msg.data[2];
+                }
+            }
+            if (can_send_wait_for_fc)
+            {
+                if ((uint16_t) (get_systick() - can_send_time) > (CAN_TIMEOUT * TIMER0_RESOL / 1000))
+                {   // FC timeout
+                    can_send_active = false;
+                    return;
+                }
+            }
+            return;
+        }
+        if (can_send_wait_sep_time)
+        {
+            if ((uint16_t) (get_systick() - can_send_sep_time_start) <= ((uint16_t) (can_send_sep_time * TIMER0_RESOL / 1000)))
+            {
+                return;
+            }
+            can_send_wait_sep_time = false;
+        }
+        // consecutive frame
+        memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+        can_out_msg.sid = can_cfg_isotp_txid;
+        can_out_msg.dlc.bits.count = 8;
+        can_out_msg.data[0] = 0x20 | (can_send_block_count & 0x0F);      // consecutive frame + block count
+        uint8_t len = data_len - can_send_pos;
+        if (len > 7)
+        {
+            len = 7;
+        }
+        memcpy(can_out_msg.data + 1, data_offset + can_send_pos, len);
+        can_send_pos += len;
+        can_send_block_count++;
+
+        can_send_message_wait();
+
+        if (can_send_pos >= data_len)
+        {   // all blocks transmitted
+            can_send_active = false;
+            return;
+        }
+        can_send_wait_for_fc = false;
+        if (can_send_block_size > 0)
+        {
+            if (can_send_block_size == 1)
+            {
+                can_send_wait_for_fc = true;
+                can_send_time = get_systick();
+            }
+            can_send_block_size--;
+        }
+        if (!can_send_wait_for_fc && can_send_sep_time > 0)
+        {
+            can_send_wait_sep_time = true;
+            can_send_sep_time_start = get_systick();
+        }
+    }
+}
+
+void can_isotp_receiver(bool new_can_msg)
+{
+    if (!can_enabled)
+    {
+        return;
+    }
+    if (new_can_msg)
+    {
+        idle_counter = 0;
+        if (can_in_msg.sid == can_cfg_isotp_rxid && can_in_msg.dlc.bits.count >= 1)
+        {
+            uint8_t frame_type = (can_in_msg.data[0] >> 4) & 0x0F;
+            switch (frame_type)
+            {
+                case 0:     // single frame
+                {
+                    uint8_t rec_data_len = can_in_msg.data[0] & 0x0F;
+                    if (rec_data_len > (can_in_msg.dlc.bits.count - 1))
+                    {   // invalid length
+                        break;
+                    }
+                    temp_buffer_short[0] = ISOTP_TELTYPE_DATA;
+                    temp_buffer_short[1] = 0x00;
+                    temp_buffer_short[2] = rec_data_len;
+                    memcpy(temp_buffer_short + 3, can_in_msg.data + 1, rec_data_len);
+                    uint8_t len = rec_data_len + 3;
+
+                    temp_buffer_short[len] = calc_checkum(temp_buffer_short, len);
+                    len++;
+                    uart_send(temp_buffer_short, len);
+                    break;
+                }
+
+                case 1:     // first frame
+                    if (can_rec_tel_valid)
+                    {   // ignore new first frames during reception
+                        break;
+                    }
+                    if (can_in_msg.dlc.bits.count < 8)
+                    {   // invalid length
+                        break;
+                    }
+                    can_rec_data_len = (((uint16_t) can_in_msg.data[0] & 0x0F) << 8) + can_in_msg.data[1];
+                    if (can_rec_data_len > sizeof(temp_buffer) - 4)
+                    {   // too long
+                        can_rec_tel_valid = false;
+                        break;
+                    }
+                    can_rec_buffer_offset = temp_buffer + 3;
+                    memcpy(can_rec_buffer_offset, can_in_msg.data + 2, 6);
+                    can_rec_rec_len = 6;
+                    can_rec_block_count = 1;
+
+                    memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+                    can_out_msg.sid = can_cfg_isotp_txid;
+                    can_out_msg.dlc.bits.count = 8;
+                    can_out_msg.data[0] = 0x30;     // FC
+                    can_out_msg.data[1] = can_blocksize;       // block size
+                    can_out_msg.data[2] = can_sep_time;        // min sep. time
+                    can_rec_fc_count = can_blocksize;
+                    can_rec_tel_valid = true;
+
+                    // wait for free send buffer
+                    for (;;)
+                    {
+                        uint16_t volatile temp_len;
+                        di();
+                        temp_len = send_len;
+                        ei();
+                        if ((sizeof(send_buffer) - temp_len) >= (can_rec_data_len + 6))
+                        {
+                            break;
+                        }
+                        do_idle();
+                    }
+                    can_send_message_wait();
+                    can_rec_time = get_systick();
+                    break;
+
+                case 2:     // consecutive frame
+                    if (can_rec_tel_valid &&
+                        ((can_in_msg.data[0] & 0x0F) == (can_rec_block_count & 0x0F))
+                    )
+                    {
+                        uint16_t copy_len = can_rec_data_len - can_rec_rec_len;
+                        if (copy_len > 7)
+                        {
+                            copy_len = 7;
+                        }
+                        if (copy_len > (can_in_msg.dlc.bits.count - 1))
+                        {   // invalid length
+                            break;
+                        }
+                        memcpy(can_rec_buffer_offset + can_rec_rec_len, can_in_msg.data + 1, copy_len);
+                        can_rec_rec_len += copy_len;
+                        can_rec_block_count++;
+
+                        if (can_rec_fc_count > 0 && (can_rec_rec_len < can_rec_data_len))
+                        {
+                            can_rec_fc_count--;
+                            if (can_rec_fc_count == 0)
+                            {
+                                memset(&can_out_msg, 0x00, sizeof(can_out_msg));
+                                can_out_msg.sid = can_cfg_isotp_txid;
+                                can_out_msg.dlc.bits.count = 8;
+                                can_out_msg.data[0] = 0x30;     // FC
+                                can_out_msg.data[1] = can_blocksize;       // block size
+                                can_out_msg.data[2] = can_sep_time;        // min sep. time
+                                can_rec_fc_count = can_blocksize;
+
+                                can_send_message_wait();
+                            }
+                        }
+                        can_rec_time = get_systick();
+                    }
+                    break;
+            }
+        }
+
+        if (can_rec_tel_valid && can_rec_rec_len >= can_rec_data_len)
+        {
+            uint16_t len = can_rec_data_len + 3;
+            // create response telegram
+            temp_buffer[0] = ISOTP_TELTYPE_DATA;
+            temp_buffer[1] = can_rec_data_len >> 8;
+            temp_buffer[2] = can_rec_data_len;
 
             temp_buffer[len] = calc_checkum(temp_buffer, len);
             len++;
@@ -3137,6 +3523,11 @@ void main(void)
                     can_tp20(new_can_msg);
                     break;
 
+                case CAN_PROT_ISOTP:
+                    can_isotp_receiver(new_can_msg);
+                    can_isotp_sender(new_can_msg);
+                    break;
+
                 default:
                     can_receiver(new_can_msg);
                     can_sender(new_can_msg);
@@ -3345,7 +3736,7 @@ void interrupt high_priority high_isr (void)
                                     break;
 
                                 case 0x01:
-                                    // CAN telegram
+                                    // CAN telegram 1
                                     // byte 2: protocol
                                     // byte 3: baud rate
                                     // byte 4: flags
@@ -3374,6 +3765,25 @@ void interrupt high_priority high_isr (void)
                                     if (rec_len >= 10)
                                     {
                                         tel_len = ((uint16_t) rec_buffer[8] << 8) + rec_buffer[9] + 11;
+                                    }
+                                    else
+                                    {
+                                        tel_len = 0;
+                                    }
+                                    break;
+
+                                case 0x03:
+                                    // CAN telegram 2
+                                    // byte 2: protocol
+                                    // byte 3: baud rate
+                                    // byte 4: flags
+                                    // for TP2.0 configuration is like CAN tel 1, the following is for ISO-TP
+                                    // byte 5+6: CAN TX ID (high/low)
+                                    // byte 7+8: CAN RX ID (high/low)
+                                    // byte 9+10: telegram length (high/low)
+                                    if (rec_len >= 11)
+                                    {
+                                        tel_len = ((uint16_t) rec_buffer[9] << 8) + rec_buffer[10] + 12;
                                     }
                                     else
                                     {
