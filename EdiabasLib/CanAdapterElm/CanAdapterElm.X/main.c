@@ -1352,7 +1352,7 @@ uint16_t uart_receive(uint8_t *buffer)
             }
             can_cfg_baud = rec_buffer[3];
             can_cfg_flags = rec_buffer[4];
-            switch (op_mode_can)
+            switch (can_cfg_protocol)
             {
                 case CAN_PROT_ISOTP:
                     can_cfg_isotp_txid = ((uint16_t) rec_buffer[5] << 8) + rec_buffer[6];
@@ -1434,7 +1434,7 @@ uint16_t uart_receive(uint8_t *buffer)
             }
             can_cfg_baud = rec_buffer[3];
             can_cfg_flags = rec_buffer[4];
-            switch (op_mode_can)
+            switch (can_cfg_protocol)
             {
                 case CAN_PROT_ISOTP:
                     can_cfg_isotp_txid = ((uint16_t) rec_buffer[5] << 8) + rec_buffer[6];
