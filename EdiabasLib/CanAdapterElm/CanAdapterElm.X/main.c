@@ -2618,7 +2618,7 @@ void can_isotp_sender(bool new_can_msg)
             {
                 if ((can_in_msg.sid == can_cfg_isotp_rxid) &&
                     (can_in_msg.dlc.bits.count >= 3) &&
-                    ((can_in_msg.data[1] & 0xF0) == 0x30)  // FC
+                    ((can_in_msg.data[0] & 0xF0) == 0x30)  // FC
                     )
                 {
                     switch (can_in_msg.data[0] & 0x0F)
