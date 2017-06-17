@@ -1345,6 +1345,10 @@ uint16_t uart_receive(uint8_t *buffer)
             {   // mode or protocol change
                 return 0;
             }
+            if (can_cfg_protocol != rec_buffer[2])
+            {
+                can_init_required = true;
+            }
             can_cfg_protocol = rec_buffer[2];
             if (can_cfg_baud != rec_buffer[3])
             {
@@ -1426,6 +1430,10 @@ uint16_t uart_receive(uint8_t *buffer)
                 )
             {   // mode or protocol change
                 return 0;
+            }
+            if (can_cfg_protocol != rec_buffer[2])
+            {
+                can_init_required = true;
             }
             can_cfg_protocol = rec_buffer[2];
             if (can_cfg_baud != rec_buffer[3])
