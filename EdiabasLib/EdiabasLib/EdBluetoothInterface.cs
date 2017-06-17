@@ -187,6 +187,13 @@ namespace EdiabasLib
             return true;
         }
 
+        public static bool InterfaceSetCanIds(int canTxId, int canRxId)
+        {
+            CanTxId = canTxId;
+            CanRxId = canRxId;
+            return true;
+        }
+
         public static bool InterfacePurgeInBuffer()
         {
             if (!IsInterfaceOpen())
@@ -272,7 +279,8 @@ namespace EdiabasLib
             }
             try
             {
-                if (CurrentProtocol == EdInterfaceObd.Protocol.Tp20)
+                if ((CurrentProtocol == EdInterfaceObd.Protocol.Tp20) ||
+                    (CurrentProtocol == EdInterfaceObd.Protocol.IsoTp))
                 {
                     UpdateAdapterInfo();
                     byte[] adapterTel = CreateCanTelegram(sendData, length);

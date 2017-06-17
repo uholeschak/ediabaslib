@@ -160,6 +160,11 @@ namespace EdiabasLib
             return true;
         }
 
+        public static bool InterfaceSetCanIds(int canTxId, int canRxId)
+        {
+            return true;
+        }
+
         public static bool InterfacePurgeInBuffer()
         {
             if (TcpElmStream == null)

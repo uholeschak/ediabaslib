@@ -29,6 +29,7 @@ namespace EdiabasLib
         // CAN protocols
         public const byte CAN_PROT_BMW = 0x00;
         public const byte CAN_PROT_TP20 = 0x01;
+        public const byte CAN_PROT_ISOTP = 0x02;
 
         public const byte KWP1281_TIMEOUT = 60;
         // ReSharper restore InconsistentNaming
@@ -55,6 +56,10 @@ namespace EdiabasLib
 
         public static bool FastInit { get; protected set; }
 
+        public static int CanTxId { get; protected set; }
+
+        public static int CanRxId { get; protected set; }
+
         public static bool ConvertBaudResponse { get; protected set; }
 
         public static bool AutoKeyByteResponse { get; protected set; }
@@ -76,6 +81,8 @@ namespace EdiabasLib
             CurrentParity = EdInterfaceObd.SerialParity.None;
             ActiveParity = EdInterfaceObd.SerialParity.None;
             InterByteTime = 0;
+            CanTxId = -1;
+            CanRxId = -1;
             AdapterType = -1;
             AdapterVersion = -1;
         }
@@ -272,13 +279,39 @@ namespace EdiabasLib
                 }
                 return null;
             }
-            if (CurrentProtocol != EdInterfaceObd.Protocol.Tp20)
+            byte protocol;
+            switch (CurrentProtocol)
             {
-                if (Ediabas != null)
-                {
-                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateCanTelegram, invalid protocol: {0}", CurrentProtocol);
-                }
-                return null;
+                case EdInterfaceObd.Protocol.Tp20:
+                    protocol = CAN_PROT_TP20;
+                    break;
+
+                case EdInterfaceObd.Protocol.IsoTp:
+                    if (AdapterVersion < 0x0009)
+                    {
+                        if (Ediabas != null)
+                        {
+                            Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ISO-TP not supported by adapter");
+                        }
+                        return null;
+                    }
+                    if (CanTxId < 0 || CanRxId < 0)
+                    {
+                        if (Ediabas != null)
+                        {
+                            Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No CAN IDs present for ISO-TP");
+                        }
+                        return null;
+                    }
+                    protocol = CAN_PROT_ISOTP;
+                    break;
+
+                default:
+                    if (Ediabas != null)
+                    {
+                        Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateCanTelegram, invalid protocol: {0}", CurrentProtocol);
+                    }
+                    return null;
             }
             if ((CurrentBaudRate != 500000) && (CurrentBaudRate != 100000))
             {
@@ -289,9 +322,10 @@ namespace EdiabasLib
                 return null;
             }
 
-            byte[] resultArray = new byte[length + 11];
-            resultArray[0] = 0x00;   // header
-            resultArray[1] = 0x01;   // telegram type
+            byte telType = (byte)((AdapterVersion < 0x0009) ? 0x01 : 0x03);
+            byte[] resultArray = new byte[length + ((telType == 0x01) ? 11 : 12)];
+            resultArray[0] = 0x00;      // header
+            resultArray[1] = telType;   // telegram type
 
             byte flags = CANF_NO_ECHO | CANF_CAN_ERROR;
             if (length == 5 && sendData[0] == 0x01)
@@ -308,16 +342,36 @@ namespace EdiabasLib
                 }
                 sendData[0] = 0x81;
             }
-            resultArray[2] = CAN_PROT_TP20;         // protocol TP2.0
+            resultArray[2] = protocol;              // protocol
             resultArray[3] = (byte)((CurrentBaudRate == 500000) ? 0x01 : 0x09);     // baud rate
             resultArray[4] = flags;                 // flags
-            resultArray[5] = 0x0F;                  // block size
-            resultArray[6] = 0x0A;                  // packet interval (1ms)
-            resultArray[7] = 1000 / 10;             // idle time (10ms)
-            resultArray[8] = (byte)(length >> 8);   // telegram length high
-            resultArray[9] = (byte)length;          // telegram length low
-            Array.Copy(sendData, 0, resultArray, 10, length);
-            resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
+            if (protocol == CAN_PROT_TP20)
+            {
+                resultArray[5] = 0x0F;                  // block size
+                resultArray[6] = 0x0A;                  // packet interval (1ms)
+                resultArray[7] = 1000 / 10;             // idle time (10ms)
+            }
+            else
+            {
+                resultArray[5] = (byte)(CanTxId >> 8);  // CAN TX ID high
+                resultArray[6] = (byte)CanTxId;         // CAN TX ID low
+                resultArray[7] = (byte)(CanRxId >> 8);  // CAN RX ID high
+                resultArray[8] = (byte)CanRxId;         // CAN RX ID low
+            }
+            if (telType == 0x01)
+            {
+                resultArray[8] = (byte)(length >> 8);   // telegram length high
+                resultArray[9] = (byte)length;          // telegram length low
+                Array.Copy(sendData, 0, resultArray, 10, length);
+                resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
+            }
+            else
+            {
+                resultArray[9] = (byte)(length >> 8);   // telegram length high
+                resultArray[10] = (byte)length;         // telegram length low
+                Array.Copy(sendData, 0, resultArray, 11, length);
+                resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
+            }
             return resultArray;
         }
 
@@ -390,9 +444,11 @@ namespace EdiabasLib
 
         public static bool SettingsUpdateRequired()
         {
-            if (CurrentProtocol == EdInterfaceObd.Protocol.Tp20)
+            switch (CurrentProtocol)
             {
-                return false;
+                case EdInterfaceObd.Protocol.Tp20:
+                case EdInterfaceObd.Protocol.IsoTp:
+                    return false;
             }
             if (CurrentBaudRate == 115200)
             {
