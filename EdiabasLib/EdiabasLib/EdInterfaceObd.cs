@@ -29,6 +29,7 @@ namespace EdiabasLib
             Uart,
             Kwp,
             Tp20,
+            IsoTp,
         }
 
         protected enum KwpModes
@@ -62,6 +63,7 @@ namespace EdiabasLib
         public delegate bool InterfaceGetDsrDelegate(out bool dsr);
         public delegate bool InterfaceSetBreakDelegate(bool enable);
         public delegate bool InterfaceSetInterByteTimeDelegate(int time);
+        public delegate bool InterfaceSetCanIdsDelegate(int canTxId, int canRxId);
         public delegate bool InterfacePurgeInBufferDelegate();
         public delegate bool InterfaceAdapterEchoDelegate();
         public delegate bool InterfaceHasPreciseTimeoutDelegate();
@@ -124,6 +126,8 @@ namespace EdiabasLib
         protected InterfaceSetBreakDelegate InterfaceSetBreakFuncInt;
         protected InterfaceSetInterByteTimeDelegate InterfaceSetInterByteTimeFuncProtected;
         protected InterfaceSetInterByteTimeDelegate InterfaceSetInterByteTimeFuncInt;
+        protected InterfaceSetCanIdsDelegate InterfaceSetCanIdsFuncProtected;
+        protected InterfaceSetCanIdsDelegate InterfaceSetCanIdsFuncInt;
         protected InterfacePurgeInBufferDelegate InterfacePurgeInBufferFuncProtected;
         protected InterfacePurgeInBufferDelegate InterfacePurgeInBufferFuncInt;
         protected InterfaceAdapterEchoDelegate InterfaceAdapterEchoFuncProtected;
@@ -187,6 +191,8 @@ namespace EdiabasLib
         protected byte ParEdicWakeAddress;
         protected byte ParEdicTesterAddress;
         protected byte ParEdicEcuAddress;
+        protected ushort ParEdicTesterCanId;
+        protected ushort ParEdicEcuCanId;
         protected int ParEdicW1;
         protected int ParEdicW2;
         protected int ParEdicW3;
@@ -358,6 +364,15 @@ namespace EdiabasLib
                                 if (!UseExtInterfaceFunc || (InterfaceSetConfigFuncUse(Protocol.Tp20, 500000, 8, SerialParity.None, false) != InterfaceErrorResult.NoError))
                                 {
                                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set TP2.0 protocol failed");
+                                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                                }
+                                break;
+
+                            case 0xAA:      // ISO-TP
+                                ParTransmitFunc = TransIsoTp;
+                                if (!UseExtInterfaceFunc || (InterfaceSetConfigFuncUse(Protocol.IsoTp, 500000, 8, SerialParity.None, false) != InterfaceErrorResult.NoError))
+                                {
+                                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set ISO-TP protocol failed");
                                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                                 }
                                 break;
@@ -953,6 +968,7 @@ namespace EdiabasLib
                 InterfaceGetDsrFuncInt = EdFtdiInterface.InterfaceGetDsr;
                 InterfaceSetBreakFuncInt = EdFtdiInterface.InterfaceSetBreak;
                 InterfaceSetInterByteTimeFuncInt = null;
+                InterfaceSetCanIdsFuncInt = null;
                 InterfacePurgeInBufferFuncInt = EdFtdiInterface.InterfacePurgeInBuffer;
                 InterfaceAdapterEchoFuncInt = null;
                 InterfaceHasPreciseTimeoutFuncInt = null;
@@ -974,6 +990,7 @@ namespace EdiabasLib
                 InterfaceGetDsrFuncInt = EdBluetoothInterface.InterfaceGetDsr;
                 InterfaceSetBreakFuncInt = EdBluetoothInterface.InterfaceSetBreak;
                 InterfaceSetInterByteTimeFuncInt = EdBluetoothInterface.InterfaceSetInterByteTime;
+                InterfaceSetCanIdsFuncInt = EdBluetoothInterface.InterfaceSetCanIds;
                 InterfacePurgeInBufferFuncInt = EdBluetoothInterface.InterfacePurgeInBuffer;
                 InterfaceAdapterEchoFuncInt = EdBluetoothInterface.InterfaceAdapterEcho;
                 InterfaceHasPreciseTimeoutFuncInt = EdBluetoothInterface.InterfaceHasPreciseTimeout;
@@ -994,6 +1011,7 @@ namespace EdiabasLib
                 InterfaceGetDsrFuncInt = EdElmWifiInterface.InterfaceGetDsr;
                 InterfaceSetBreakFuncInt = EdElmWifiInterface.InterfaceSetBreak;
                 InterfaceSetInterByteTimeFuncInt = EdElmWifiInterface.InterfaceSetInterByteTime;
+                InterfaceSetCanIdsFuncInt = EdElmWifiInterface.InterfaceSetCanIds;
                 InterfacePurgeInBufferFuncInt = EdElmWifiInterface.InterfacePurgeInBuffer;
                 InterfaceAdapterEchoFuncInt = EdElmWifiInterface.InterfaceAdapterEcho;
                 InterfaceHasPreciseTimeoutFuncInt = EdElmWifiInterface.InterfaceHasPreciseTimeout;
@@ -1014,6 +1032,7 @@ namespace EdiabasLib
                 InterfaceGetDsrFuncInt = null;
                 InterfaceSetBreakFuncInt = null;
                 InterfaceSetInterByteTimeFuncInt = null;
+                InterfaceSetCanIdsFuncInt = null;
                 InterfacePurgeInBufferFuncInt = null;
                 InterfaceAdapterEchoFuncInt = null;
                 InterfaceHasPreciseTimeoutFuncInt = null;
@@ -1116,11 +1135,6 @@ namespace EdiabasLib
         public override bool TransmitData(byte[] sendData, out byte[] receiveData)
         {
             receiveData = null;
-            if (CommParameterProtected == null)
-            {
-                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
-                return false;
-            }
             if (EdicSimulation)
             {
                 if (SendBufferFrequentLength != 0)
@@ -1136,7 +1150,7 @@ namespace EdiabasLib
                     switch (CommAnswerLenProtected[1])
                     {
                         case 0x0001:    // parameter set 1
-                            if (CommParameterProtected.Length >= 89 && CommParameterProtected[4] == 0x81)
+                            if (CommParameterProtected != null && CommParameterProtected.Length >= 89 && CommParameterProtected[4] == 0x81)
                             {
                                 ParEdicTesterAddress = (byte)CommParameterProtected[88];
                                 ParEdicEcuAddress = (byte)CommParameterProtected[5];
@@ -1185,7 +1199,7 @@ namespace EdiabasLib
                             return true;
 
                         case 0x0002:    // parameter set 2
-                            if (CommParameterProtected.Length >= 6 && CommParameterProtected[4] == 0x81)
+                            if (CommParameterProtected != null && CommParameterProtected.Length >= 6 && CommParameterProtected[4] == 0x81)
                             {
                                 byte wakeAddress = (byte) (CommParameterProtected[5] & 0x7F);
                                 bool oddParity = true;
@@ -1203,7 +1217,7 @@ namespace EdiabasLib
                             return true;
 
                         case 0x0004:    // parameter set 4
-                            if (CommParameterProtected.Length >= 74 && CommParameterProtected[4] == 0xA5)
+                            if (CommParameterProtected != null && CommParameterProtected.Length >= 74 && CommParameterProtected[4] == 0xA5)
                             {
                                 ParEdicWakeAddress = (byte)CommParameterProtected[5];
                                 ParEdicTesterAddress = (byte) CommParameterProtected[70];
@@ -1227,13 +1241,56 @@ namespace EdiabasLib
                             }
                             return true;
 
+                        case 0x0091:    // parameter set 0x91
+                            if (CommParameterProtected != null && CommParameterProtected.Length >= 86 && CommParameterProtected[4] == 0xAA && sendData.Length >= 15 && sendData[1] == 0xAA)
+                            {
+                                ParEdicTesterCanId = (ushort)(sendData[15] << 8 | sendData[14]);
+                                ParEdicEcuCanId = (ushort)(sendData[11] << 8 | sendData[10]);
+
+                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC ISO-TP: Tester: {0:X03}, Ecu: {1:X03}", ParEdicTesterCanId, ParEdicEcuCanId);
+
+                                ParEdicTesterPresentTelLen = (byte)CommParameterProtected[76];
+                                if (ParTesterPresentTelLen > 10)
+                                {
+                                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0010);
+                                    return false;
+                                }
+                                for (int i = 0; i < ParEdicTesterPresentTelLen; i++)
+                                {
+                                    ParEdicTesterPresentTel[i] = (byte)CommParameterProtected[i + 77];
+                                }
+                                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, ParEdicTesterPresentTel, 0, ParEdicTesterPresentTelLen, "EDIC tester present");
+
+                                ParEdicAddRetries = 3;
+                                // set standard timeouts
+                                ParTimeoutStd = 600;    // max timeout, use ParTimeoutNr78
+                                ParTimeoutTelEnd = 20;
+                                ParInterbyteTime = 0;
+                                ParRegenTime = 0;
+                                ParRequestTimeNr21 = 1;
+                                ParRequestTimeNr23 = 1;
+                                ParRetryNr21 = 240;     // 2 min
+                                ParRetryNr23 = 240;     // 2 min
+                                ParTimeoutNr78 = 600;
+                                ParRetryNr78 = 50;      // VAG is only using interface deadlock timeout
+                            }
+                            return true;
+
                         case 0x0010:    // start communication
                             break;
+
+                        case 0x0011:    // stop communication
+                            return true;
 
                         default:
                             return true;
                     }
                 }
+            }
+            if (CommParameterProtected == null)
+            {
+                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
+                return false;
             }
             if (sendData.Length > SendBuffer.Length)
             {
@@ -1663,6 +1720,27 @@ namespace EdiabasLib
             }
         }
 
+        public InterfaceSetCanIdsDelegate InterfaceSetCanIdsFunc
+        {
+            get
+            {
+                return InterfaceSetCanIdsFuncProtected;
+            }
+            set
+            {
+                InterfaceSetCanIdsFuncProtected = value;
+                UpdateUseExtInterfaceFunc();
+            }
+        }
+
+        protected InterfaceSetCanIdsDelegate InterfaceSetCanIdsFuncUse
+        {
+            get
+            {
+                return InterfaceSetCanIdsFuncProtected ?? InterfaceSetCanIdsFuncInt;
+            }
+        }
+
         public InterfacePurgeInBufferDelegate InterfacePurgeInBufferFunc
         {
             get
@@ -1902,7 +1980,8 @@ namespace EdiabasLib
         protected void UpdateUseExtInterfaceFunc()
         {
             // these funtions are optional:
-            // InterfaceSetInterByteTimeFuncUse, InterfaceAdapterEchoFuncUse,
+            // InterfaceSetInterByteTimeFuncUse, InterfaceSetCanIdsFuncUse,
+            // InterfaceAdapterEchoFuncUse,
             // InterfaceHasPreciseTimeoutFuncUse, InterfaceHasAutoBaudRateFuncUse,
             // InterfaceHasAutoKwp1281FuncUse, InterfaceSendPulseFuncUse
             UseExtInterfaceFunc =
@@ -3304,6 +3383,73 @@ namespace EdiabasLib
             int receiveLength;
             byte[] finishTel = { 0x01, ParEdicWakeAddress, ParEdicTesterAddress, 0x01, 0x00 };
             return TransTp20(finishTel, finishTel.Length - 1, ref Kwp1281Buffer, out receiveLength, true);
+        }
+
+        private EdiabasNet.ErrorCodes TransIsoTp(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
+        {
+            receiveLength = 0;
+            if (sendDataLength == 0)
+            {
+                // connect check command
+                return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+            }
+
+            if (!InterfaceSetCanIdsFuncUse(ParEdicEcuCanId, ParEdicTesterCanId))
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Setting CAN IDs failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+            }
+            if (!SendData(sendData, sendDataLength, false, 0))
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+            }
+            if (!ReceiveData(receiveData, 0, 3, ParTimeoutStd, ParTimeoutTelEnd))
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No header received");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+            int dataLength = (receiveData[1] << 8) | receiveData[2];
+            byte[] tempBuffer = new byte[dataLength + 4];
+            Array.Copy(receiveData, tempBuffer, 3);
+            if (!ReceiveData(tempBuffer, 3, dataLength + 1, ParTimeoutTelEnd, ParTimeoutTelEnd))
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No tail received");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+            if (CalcChecksumBmwFast(tempBuffer, dataLength + 3) != tempBuffer[dataLength + 3])
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Checksum incorrect");
+                ReceiveData(receiveData, 0, receiveData.Length, ParTimeoutStd, ParTimeoutTelEnd);
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+            switch (tempBuffer[0])
+            {
+                case 0x01:  // data telegram
+                    break;
+
+                case 0x02:  // status telegram
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Adapter status: {0:X02}", tempBuffer[3]);
+                    if (tempBuffer[3] == 0x01)
+                    {
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CAN error");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
+                    }
+                    return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+
+                default:
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Unknown telegram type: {0:X02}", tempBuffer[0]);
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+            if (dataLength > receiveData.Length)
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receive buffer too small");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+            }
+            Array.Copy(tempBuffer, 3, receiveData, 0, dataLength);
+            receiveLength = dataLength;
+
+            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
         // telegram length without checksum
