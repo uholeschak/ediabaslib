@@ -378,6 +378,7 @@ namespace EdiabasLib
 
                             case 0xAA:      // ISO-TP
                                 ParTransmitFunc = TransIsoTp;
+                                ParIdleFunc = IdleIsoTp;
                                 if (!UseExtInterfaceFunc || (InterfaceSetConfigFuncUse(Protocol.IsoTp, 500000, 8, SerialParity.None, false) != InterfaceErrorResult.NoError))
                                 {
                                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set ISO-TP protocol failed");
@@ -1257,6 +1258,7 @@ namespace EdiabasLib
 
                                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC ISO-TP: Tester: {0:X03}, Ecu: {1:X03}", ParEdicTesterCanId, ParEdicEcuCanId);
 
+                                ParEdicTesterPresentTime = 500;
                                 ParEdicTesterPresentTelLen = (byte)CommParameterProtected[76];
                                 if (ParTesterPresentTelLen > 10)
                                 {
@@ -3427,7 +3429,7 @@ namespace EdiabasLib
             int sendLen = sendDataLength;
             receiveLength = 0;
             CanFlags canFlags = CanFlags.Empty;
-            if (sendLen == 0)
+            if ((sendDataBuffer == null) || (sendLen == 0))
             {
                 // connect check command
                 if (ParEdicTesterPresentTelLen <= 0)
@@ -3445,6 +3447,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
             }
             if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendDataBuffer, 0, sendLen, "Send");
+            LastCommTick = Stopwatch.GetTimestamp();
             if (!SendData(sendDataBuffer, sendLen, false, 0))
             {
                 if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
@@ -3463,6 +3466,7 @@ namespace EdiabasLib
                 if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No tail received");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
+            LastCommTick = Stopwatch.GetTimestamp();
             if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, tempBuffer, 0, dataLength + 4, "Resp");
             if (CalcChecksumBmwFast(tempBuffer, dataLength + 3) != tempBuffer[dataLength + 3])
             {
@@ -3502,6 +3506,20 @@ namespace EdiabasLib
             receiveLength = dataLength;
 
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+        }
+
+        private EdiabasNet.ErrorCodes IdleIsoTp()
+        {
+            int receiveLength;
+
+            while ((Stopwatch.GetTimestamp() - LastCommTick) < ParEdicTesterPresentTime * TickResolMs)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+            }
+
+            EdiabasNet.ErrorCodes errorCode = TransIsoTp(null, 0, ref Kwp1281Buffer, out receiveLength, false);
+            LastCommTick = Stopwatch.GetTimestamp();
+            return errorCode;
         }
 
         // telegram length without checksum
