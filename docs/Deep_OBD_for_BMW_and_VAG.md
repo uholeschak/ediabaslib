@@ -18,7 +18,7 @@ Basically _Deep OBD for BMW and VAG_ can operate in two modes, either BMW or VAG
 ## Supported adapters
 _Deep OBD for BMW and VAG_ supports several OBD II adapters:
 * Standard FTDI based USB "INPA compatible" D-CAN/K-Line adapters (all protocols)
-* ELM327 based Bluetooth and WiFi adapters. Recommended ELM327 versions are 1.4b, 1.5 and origin 2.1, which are based on PIC18F2480 processor (no MCP2515 chip) (D-CAN protocol only) 
+* ELM327 based Bluetooth and WiFi adapters. Recommended ELM327 versions are 1.4b, 1.5 and origin 2.1, which are based on PIC18F25K80 processor (no MCP2515 chip) (D-CAN protocol only) 
 * Custom [Bluetooth D-CAN/K-Line adapter](Build_Bluetooth_D-CAN_adapter.md) (BMW-FAST protocol over D-CAN and K-Line)
 * ELM327 based adapters with [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md) D-CAN and K-Line (all protocols!). When VAG has been selected as manufacturer, only this adapter could be used.
 * [ENET WiFi adapters](ENET_WiFi_Adapter.md) (for BMW F-models)
