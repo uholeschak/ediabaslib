@@ -32,6 +32,14 @@ namespace EdiabasLib
             IsoTp,
         }
 
+        [Flags]
+        public enum CanFlags
+        {
+            Empty = 0x00,
+            BusCheck = 0x01,
+            Disconnect = 0x02,
+        }
+
         protected enum KwpModes
         {
             Undefined,
@@ -63,7 +71,7 @@ namespace EdiabasLib
         public delegate bool InterfaceGetDsrDelegate(out bool dsr);
         public delegate bool InterfaceSetBreakDelegate(bool enable);
         public delegate bool InterfaceSetInterByteTimeDelegate(int time);
-        public delegate bool InterfaceSetCanIdsDelegate(int canTxId, int canRxId);
+        public delegate bool InterfaceSetCanIdsDelegate(int canTxId, int canRxId, CanFlags canFlags);
         public delegate bool InterfacePurgeInBufferDelegate();
         public delegate bool InterfaceAdapterEchoDelegate();
         public delegate bool InterfaceHasPreciseTimeoutDelegate();
@@ -3334,6 +3342,29 @@ namespace EdiabasLib
                 // replace ecu address with the CAN address
                 sendData[1] = ParEdicWakeAddress;
             }
+            CanFlags canFlags = CanFlags.Empty;
+            if (sendDataLength == 4 && sendData[0] == 0x01)
+            {
+                switch (sendData[3])
+                {
+                    case 0x00:  // connect check
+                        canFlags = CanFlags.BusCheck;
+                        break;
+
+                    default:  // disconnect
+                        canFlags = CanFlags.Disconnect;
+                        break;
+                }
+                sendData[0] = 0x81;
+            }
+
+            if (!InterfaceSetCanIdsFuncUse(-1, -1, canFlags))
+            {
+                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Setting CAN IDs failed");
+                receiveLength = 0;
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+            }
+
             EdiabasNet.ErrorCodes errorCode = TransKwp2000(sendData, sendDataLength, ref receiveData, out receiveLength, enableLogging);
             if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
@@ -3387,26 +3418,41 @@ namespace EdiabasLib
 
         private EdiabasNet.ErrorCodes TransIsoTp(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
+            return TransIsoTp(sendData, sendDataLength, ref receiveData, out receiveLength, true);
+        }
+
+        private EdiabasNet.ErrorCodes TransIsoTp(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength, bool enableLogging)
+        {
+            byte[] sendDataBuffer = sendData;
+            int sendLen = sendDataLength;
             receiveLength = 0;
-            if (sendDataLength == 0)
+            CanFlags canFlags = CanFlags.Empty;
+            if (sendLen == 0)
             {
                 // connect check command
-                return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                if (ParEdicTesterPresentTelLen <= 0)
+                {   // no check telegram present
+                    return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                }
+                canFlags = CanFlags.BusCheck;
+                sendDataBuffer = ParEdicTesterPresentTel;
+                sendLen = ParEdicTesterPresentTelLen;
             }
 
-            if (!InterfaceSetCanIdsFuncUse(ParEdicEcuCanId, ParEdicTesterCanId))
+            if (!InterfaceSetCanIdsFuncUse(ParEdicEcuCanId, ParEdicTesterCanId, canFlags))
             {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Setting CAN IDs failed");
+                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Setting CAN IDs failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
             }
-            if (!SendData(sendData, sendDataLength, false, 0))
+            if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendDataBuffer, 0, sendLen, "Send");
+            if (!SendData(sendDataBuffer, sendLen, false, 0))
             {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
+                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
             }
             if (!ReceiveData(receiveData, 0, 3, ParTimeoutStd, ParTimeoutTelEnd))
             {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No header received");
+                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No header received");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
             int dataLength = (receiveData[1] << 8) | receiveData[2];
@@ -3414,12 +3460,13 @@ namespace EdiabasLib
             Array.Copy(receiveData, tempBuffer, 3);
             if (!ReceiveData(tempBuffer, 3, dataLength + 1, ParTimeoutTelEnd, ParTimeoutTelEnd))
             {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No tail received");
+                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No tail received");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
+            if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, tempBuffer, 0, dataLength + 4, "Resp");
             if (CalcChecksumBmwFast(tempBuffer, dataLength + 3) != tempBuffer[dataLength + 3])
             {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Checksum incorrect");
+                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Checksum incorrect");
                 ReceiveData(receiveData, 0, receiveData.Length, ParTimeoutStd, ParTimeoutTelEnd);
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
@@ -3429,21 +3476,26 @@ namespace EdiabasLib
                     break;
 
                 case 0x02:  // status telegram
-                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Adapter status: {0:X02}", tempBuffer[3]);
-                    if (tempBuffer[3] == 0x01)
+                    if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Adapter status: {0:X02}", tempBuffer[3]);
+                    switch (tempBuffer[3])
                     {
-                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CAN error");
-                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
+                        case 0x00:  // bus ok
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "CAN bus OK");
+                            break;
+
+                        case 0x01:  // CAN error
+                            if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CAN error");
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
                     }
                     return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
 
                 default:
-                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Unknown telegram type: {0:X02}", tempBuffer[0]);
+                    if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Unknown telegram type: {0:X02}", tempBuffer[0]);
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
             if (dataLength > receiveData.Length)
             {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receive buffer too small");
+                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receive buffer too small");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
             }
             Array.Copy(tempBuffer, 3, receiveData, 0, dataLength);
