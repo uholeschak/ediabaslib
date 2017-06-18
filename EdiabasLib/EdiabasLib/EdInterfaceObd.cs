@@ -1258,7 +1258,8 @@ namespace EdiabasLib
 
                                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC ISO-TP: Tester: {0:X03}, Ecu: {1:X03}", ParEdicTesterCanId, ParEdicEcuCanId);
 
-                                ParEdicTesterPresentTime = 500;
+                                ParEdicTesterPresentTime = (int)(CommParameterProtected[72] + (CommParameterProtected[73] << 8));
+                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC Tester present time: {0}", ParEdicTesterPresentTime);
                                 ParEdicTesterPresentTelLen = (byte)CommParameterProtected[76];
                                 if (ParTesterPresentTelLen > 10)
                                 {
@@ -1273,16 +1274,11 @@ namespace EdiabasLib
 
                                 ParEdicAddRetries = 3;
                                 // set standard timeouts
-                                ParTimeoutStd = 600;    // max timeout, use ParTimeoutNr78
+                                ParTimeoutStd = (int)(CommParameterProtected[48] + (CommParameterProtected[49] << 8));
+                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC Response timeout: {0}", ParTimeoutStd);
                                 ParTimeoutTelEnd = 20;
                                 ParInterbyteTime = 0;
                                 ParRegenTime = 0;
-                                ParRequestTimeNr21 = 1;
-                                ParRequestTimeNr23 = 1;
-                                ParRetryNr21 = 240;     // 2 min
-                                ParRetryNr23 = 240;     // 2 min
-                                ParTimeoutNr78 = 600;
-                                ParRetryNr78 = 50;      // VAG is only using interface deadlock timeout
                             }
                             return true;
 
@@ -3484,7 +3480,7 @@ namespace EdiabasLib
                     switch (tempBuffer[3])
                     {
                         case 0x00:  // bus ok
-                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "CAN bus OK");
+                            if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "CAN bus OK");
                             break;
 
                         case 0x01:  // CAN error
