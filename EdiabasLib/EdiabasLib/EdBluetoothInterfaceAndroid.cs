@@ -261,6 +261,14 @@ namespace EdiabasLib
             return true;
         }
 
+        public static bool InterfaceSetCanIds(int canTxId, int canRxId, EdInterfaceObd.CanFlags canFlags)
+        {
+            CanTxId = canTxId;
+            CanRxId = canRxId;
+            CanFlags = canFlags;
+            return true;
+        }
+
         public static bool InterfacePurgeInBuffer()
         {
             if ((_bluetoothSocket == null) || (_bluetoothInStream == null))
@@ -358,7 +366,8 @@ namespace EdiabasLib
             }
             try
             {
-                if (CurrentProtocol == EdInterfaceObd.Protocol.Tp20)
+                if ((CurrentProtocol == EdInterfaceObd.Protocol.Tp20) ||
+                    (CurrentProtocol == EdInterfaceObd.Protocol.IsoTp))
                 {
                     UpdateAdapterInfo();
                     byte[] adapterTel = CreateCanTelegram(sendData, length);
