@@ -60,6 +60,8 @@ namespace EdiabasLib
 
         public static int CanRxId { get; protected set; }
 
+        public static EdInterfaceObd.CanFlags CanFlags { get; protected set; }
+
         public static bool ConvertBaudResponse { get; protected set; }
 
         public static bool AutoKeyByteResponse { get; protected set; }
@@ -83,6 +85,7 @@ namespace EdiabasLib
             InterByteTime = 0;
             CanTxId = -1;
             CanRxId = -1;
+            CanFlags = EdInterfaceObd.CanFlags.Empty;
             AdapterType = -1;
             AdapterVersion = -1;
         }
@@ -328,20 +331,15 @@ namespace EdiabasLib
             resultArray[1] = telType;   // telegram type
 
             byte flags = CANF_NO_ECHO | CANF_CAN_ERROR;
-            if (length == 5 && sendData[0] == 0x01)
+            if ((CanFlags & EdInterfaceObd.CanFlags.BusCheck) != 0x00)
             {
-                switch (sendData[3])
-                {
-                    case 0x00:  // connect check
-                        flags |= CANF_CONNECT_CHECK;
-                        break;
-
-                    default:  // disconnect
-                        flags |= CANF_DISCONNECT;
-                        break;
-                }
-                sendData[0] = 0x81;
+                flags |= CANF_CONNECT_CHECK;
             }
+            if ((CanFlags & EdInterfaceObd.CanFlags.Disconnect) != 0x00)
+            {
+                flags |= CANF_DISCONNECT;
+            }
+
             resultArray[2] = protocol;              // protocol
             resultArray[3] = (byte)((CurrentBaudRate == 500000) ? 0x01 : 0x09);     // baud rate
             resultArray[4] = flags;                 // flags

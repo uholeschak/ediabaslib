@@ -182,6 +182,7 @@
 #define CAN_BLOCK_SIZE      0       // 0 is disabled
 #define CAN_MIN_SEP_TIME    0       // min separation time (ms)
 #define CAN_TIMEOUT         1000    // can receive timeout (1ms)
+#define CAN_CHECK_TIMEOUT   20      // can bus check timeout
 #define CAN_TP20_T1         100     // TP2.0 T1 ACK timeout
 #define CAN_TP20_ALIVE_TO   3000    // TP2.0 keep alive timeout (should be 5000, but is too large)
 
@@ -250,7 +251,7 @@ typedef enum
 
 typedef enum
 {
-    isotp_status_ok = 0,
+    isotp_status_can_ok = 0,
     isotp_status_can_error = 1,
 } isotp_status;
 
@@ -325,6 +326,7 @@ static uint8_t can_send_sep_time;
 static uint16_t can_send_sep_time_start;
 static uint16_t can_send_time;
 static uint16_t can_send_data_len;
+static uint16_t can_check_time;
 
 // CAN receiver variables
 static uint8_t *can_rec_buffer_offset;
@@ -1502,7 +1504,7 @@ uint16_t uart_receive(uint8_t *buffer)
                     iface_mode = iface_mode_kline;
                     break;
                 }
-                if ((uint16_t) (get_systick() - start_tick) > (20 * TIMER0_RESOL / 1000))
+                if ((uint16_t) (get_systick() - start_tick) > (CAN_CHECK_TIMEOUT * TIMER0_RESOL / 1000))
                 {
                     iface_mode = iface_mode_can;
                     break;
@@ -2567,24 +2569,44 @@ void can_isotp_sender(bool new_can_msg)
             can_send_wait_sep_time = false;
             can_send_pos = 0;
             can_send_data_len = len;
+            can_check_time = get_systick();
             can_check_status = true;
         }
     }
-    if (can_check_status && can_error())
+    if (can_check_status)
     {
-        if ((can_cfg_flags & CANF_CAN_ERROR) != 0)
+        if (can_error())
         {
-            temp_buffer_short[0] = ISOTP_TELTYPE_STAT;
-            temp_buffer_short[1] = 0x00;    // len high
-            temp_buffer_short[2] = 0x01;    // len low
-            temp_buffer_short[3] = isotp_status_can_error;
-            temp_buffer_short[4] = calc_checkum(temp_buffer_short, 4);
-            uart_send(temp_buffer_short, 5);
+            if ((can_cfg_flags & CANF_CAN_ERROR) != 0)
+            {
+                temp_buffer_short[0] = ISOTP_TELTYPE_STAT;
+                temp_buffer_short[1] = 0x00;    // len high
+                temp_buffer_short[2] = 0x01;    // len low
+                temp_buffer_short[3] = isotp_status_can_error;
+                temp_buffer_short[4] = calc_checkum(temp_buffer_short, 4);
+                uart_send(temp_buffer_short, 5);
+            }
+            can_check_status = false;
+            can_send_active = false;
+            return;
         }
-        can_check_status = false;
-        can_send_active = false;
-        return;
+        if (new_can_msg ||
+                ((uint16_t) (get_systick() - can_check_time) > (CAN_CHECK_TIMEOUT * TIMER0_RESOL / 1000))
+            )
+        {
+            if (((can_cfg_flags & CANF_CONNECT_CHECK) != 0))
+            {
+                temp_buffer_short[0] = ISOTP_TELTYPE_STAT;
+                temp_buffer_short[1] = 0x00;    // len high
+                temp_buffer_short[2] = 0x01;    // len low
+                temp_buffer_short[3] = isotp_status_can_ok;
+                temp_buffer_short[4] = calc_checkum(temp_buffer_short, 4);
+                uart_send(temp_buffer_short, 5);
+            }
+            can_check_status = false;
+        }
     }
+
     if (can_send_active)
     {
         idle_counter = 0;

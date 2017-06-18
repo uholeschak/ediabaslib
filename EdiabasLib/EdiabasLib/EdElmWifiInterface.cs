@@ -160,7 +160,7 @@ namespace EdiabasLib
             return true;
         }
 
-        public static bool InterfaceSetCanIds(int canTxId, int canRxId)
+        public static bool InterfaceSetCanIds(int canTxId, int canRxId, EdInterfaceObd.CanFlags canFlags)
         {
             return true;
         }
