@@ -96,7 +96,7 @@ namespace CarSimulator
             public byte T1
             {
                 // ReSharper disable once UnusedMember.Local
-                get { return _t1; }
+                get => _t1;
                 set
                 {
                     _t1 = value;
@@ -108,7 +108,7 @@ namespace CarSimulator
             public byte T3
             {
                 // ReSharper disable once UnusedMember.Local
-                get { return _t3; }
+                get => _t3;
                 set
                 {
                     _t3 = value;
@@ -3465,7 +3465,7 @@ namespace CarSimulator
             return true;
         }
 
-        static public byte CalcChecksumBmwFast(byte[] data, int length)
+        public static byte CalcChecksumBmwFast(byte[] data, int length)
         {
             byte sum = 0;
             for (int i = 0; i < length; i++)
@@ -3574,7 +3574,7 @@ namespace CarSimulator
             return true;
         }
 
-        static public byte CalcChecksumXor(byte[] data, int length)
+        public static byte CalcChecksumXor(byte[] data, int length)
         {
             byte sum = 0;
             for (int i = 0; i < length; i++)
