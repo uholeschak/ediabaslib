@@ -2426,8 +2426,14 @@ namespace BmwDeepObd
                         _ediabas.ArgString = string.Empty;
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob("_JOBS");    // force to load file
 
-                        _ediabas.ExecuteJob("Steuergeraeteversion_abfragen");
+                        string jobName = "Steuergeraeteversion_abfragen";
+                        if (!_ediabas.IsJobExisting(jobName))
+                        {
+                            jobName = "Steuergeraeteversion_abfragen2";
+                        }
+                        _ediabas.ExecuteJob(jobName);
                         List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
