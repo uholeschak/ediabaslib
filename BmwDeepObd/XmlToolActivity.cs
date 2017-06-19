@@ -2444,7 +2444,7 @@ namespace BmwDeepObd
                                 if (resultData.OpData is string)
                                 {
                                     string result = (string)resultData.OpData;
-                                    if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                    //if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
                                         bool ecuFound = _ecuList.Any(ecuInfo => string.Compare(ecuInfo.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0);
