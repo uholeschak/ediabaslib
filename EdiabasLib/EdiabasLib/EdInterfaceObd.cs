@@ -3498,8 +3498,16 @@ namespace EdiabasLib
                 if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receive buffer too small");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
             }
-            Array.Copy(tempBuffer, 3, receiveData, 0, dataLength);
-            receiveLength = dataLength;
+
+            int dataOffset = 18;
+            Array.Clear(receiveData, 0, dataOffset);
+            receiveData[0] = (byte) ParEdicTesterCanId;
+            receiveData[1] = (byte)(ParEdicTesterCanId >> 8);
+            receiveData[15] = 0x01;
+            receiveData[16] = (byte) dataLength;
+            receiveData[17] = (byte) (dataLength >> 8);
+            Array.Copy(tempBuffer, 3, receiveData, dataOffset, dataLength);
+            receiveLength = dataLength + dataOffset;
 
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
