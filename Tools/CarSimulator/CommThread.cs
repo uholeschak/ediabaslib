@@ -6800,13 +6800,26 @@ namespace CarSimulator
                         if ((_conceptType == ConceptType.ConceptKwp2000) ||
                             (_conceptType == ConceptType.ConceptTp20))
                         {
-                            if (_receiveData.Length >= 5 && _receiveData[0] == 0x82 && _receiveData[3] == 0x21)
-                            {   // read mwblock
-                                found = true;
-                                Debug.WriteLine("Dummy mwblock: {0:X02}", _receiveData[4]);
-                                byte[] dummyResponse = { 0x9A, _receiveData[2], _receiveData[1], 0x61, _receiveData[4],
-                                    0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x00 };
-                                ObdSend(dummyResponse);
+                            if (_isoTpMode)
+                            {
+                                if (_receiveData.Length >= 6 && _receiveData[0] == 0x83 && _receiveData[3] == 0x22)
+                                {   // service 22
+                                    found = true;
+                                    Debug.WriteLine("Dummy service22: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
+                                    byte[] dummyResponse = { 0x83, _receiveData[1], _receiveData[2], 0x7F, _receiveData[3], 0x12, 0x00 };
+                                    ObdSend(dummyResponse);
+                                }
+                            }
+                            else
+                            {
+                                if (_receiveData.Length >= 5 && _receiveData[0] == 0x82 && _receiveData[3] == 0x21)
+                                {   // read mwblock
+                                    found = true;
+                                    Debug.WriteLine("Dummy mwblock: {0:X02}", _receiveData[4]);
+                                    byte[] dummyResponse = { 0x9A, _receiveData[2], _receiveData[1], 0x61, _receiveData[4],
+                                        0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x00 };
+                                    ObdSend(dummyResponse);
+                                }
                             }
                         }
                     }
