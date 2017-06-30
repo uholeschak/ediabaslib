@@ -71,7 +71,7 @@ namespace BmwDeepObd
 
         public class MwTabEntry
         {
-            public MwTabEntry(int blockNumber, int valueIndex, string description, string comment, string valueUnit, string valueType, double? valueMin, double? valueMax, bool dummy = false)
+            public MwTabEntry(int blockNumber, int? valueIndex, string description, string comment, string valueUnit, string valueType, double? valueMin, double? valueMax, bool dummy = false)
             {
                 BlockNumber = blockNumber;
                 ValueIndex = valueIndex;
@@ -85,7 +85,7 @@ namespace BmwDeepObd
             }
 
             public int BlockNumber { get; }
-            public int ValueIndex { get; }
+            public int? ValueIndex { get; }
             public string Description { get; }
             public string Comment { get; }
             public string ValueUnit { get; }
@@ -2560,16 +2560,22 @@ namespace BmwDeepObd
                             blockNumber = XmlConvert.ToInt32(reader.ReadInnerXml());
                         }
 
-                        int valueIndex;
+                        int? valueIndex = null;
                         XElement afNode = measureNode.Element("AF");
-                        if (afNode == null)
+                        if (afNode != null)
                         {
-                            continue;
-                        }
-                        using (XmlReader reader = afNode.CreateReader())
-                        {
-                            reader.MoveToContent();
-                            valueIndex = XmlConvert.ToInt32(reader.ReadInnerXml());
+                            using (XmlReader reader = afNode.CreateReader())
+                            {
+                                reader.MoveToContent();
+                                try
+                                {
+                                    valueIndex = XmlConvert.ToInt32(reader.ReadInnerXml());
+                                }
+                                catch (Exception)
+                                {
+                                    valueIndex = null;
+                                }
+                            }
                         }
 
                         string description = string.Empty;
@@ -2581,7 +2587,7 @@ namespace BmwDeepObd
                         foreach (XElement textNode in nameNode.Elements("Text"))
                         {
                             XAttribute tiAttrib = textNode.Attribute("TI");
-                            if (tiAttrib?.Value.Length > 0)
+                            if (tiAttrib?.Value.Length > 0 && valueIndex.HasValue)
                             {
                                 continue;
                             }
@@ -2697,6 +2703,20 @@ namespace BmwDeepObd
             }
         }
 
+        public static List<string> GetMatchingVagMwTabUdsFiles(string mwTabDir, long ecuAddr)
+        {
+            try
+            {
+                string fileMask = string.Format("UDS_{0:X02}_*.xml", ecuAddr);
+                string[] files = Directory.GetFiles(mwTabDir, fileMask, SearchOption.TopDirectoryOnly);
+                return files.ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public static List<string> GetMatchingVagMwTabFiles(string mwTabDir, string sgName)
         {
             try
@@ -2740,6 +2760,29 @@ namespace BmwDeepObd
             }
         }
 
+        public static List<MwTabFileEntry> GetMatchingVagMwTabsUds(string mwTabDir, long ecuAddr)
+        {
+            List<MwTabFileEntry> mwTabFileList = new List<MwTabFileEntry>();
+            List<string> fileList = GetMatchingVagMwTabUdsFiles(mwTabDir, ecuAddr);
+            if (fileList == null)
+            {
+                return mwTabFileList;
+            }
+
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (string fileName in fileList)
+            {
+                List<MwTabEntry> mwTabList = ReadVagMwTab(fileName);
+                if (mwTabList == null)
+                {
+                    continue;
+                }
+                List<MwTabEntry> mwTabListCleaned = mwTabList.Where(entry => !entry.ValueIndex.HasValue).ToList();
+                mwTabFileList.Add(new MwTabFileEntry(fileName, mwTabListCleaned));
+            }
+            return mwTabFileList;
+        }
+
         public static List<MwTabFileEntry> GetMatchingVagMwTabs(string mwTabDir, string sgName)
         {
             List<MwTabFileEntry> mwTabFileList = new List<MwTabFileEntry>();
@@ -2757,7 +2800,8 @@ namespace BmwDeepObd
                 {
                     continue;
                 }
-                mwTabFileList.Add(new MwTabFileEntry(fileName, mwTabList));
+                List<MwTabEntry> mwTabListCleaned = mwTabList.Where(entry => entry.ValueIndex.HasValue).ToList();
+                mwTabFileList.Add(new MwTabFileEntry(fileName, mwTabListCleaned));
             }
             return mwTabFileList;
         }
