@@ -910,7 +910,14 @@ namespace BmwDeepObd
                     if (_selectedResult.MwTabEntry != null && !string.IsNullOrEmpty(_ecuInfo.ReadCommand))
                     {
                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB file: {0}", _ecuInfo.MwTabFileName ?? "No file");
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB Block={0} Index={1}", _selectedResult.MwTabEntry.BlockNumber, _selectedResult.MwTabEntry.ValueIndex);
+                        if (_selectedResult.MwTabEntry.ValueIndex.HasValue)
+                        {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB Block={0} Index={1}", _selectedResult.MwTabEntry.BlockNumber, _selectedResult.MwTabEntry.ValueIndex.Value);
+                        }
+                        else
+                        {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB Block={0}", _selectedResult.MwTabEntry.BlockNumber);
+                        }
                         _ediabas.ArgString = GetJobArgs(_selectedResult.MwTabEntry, _ecuInfo);
                     }
                     _ediabas.ArgBinaryStd = null;
@@ -931,7 +938,7 @@ namespace BmwDeepObd
                             EdiabasNet.ResultData resultData;
                             if (_selectedResult.MwTabEntry != null)
                             {
-                                if (_selectedResult.MwTabEntry.ValueIndex == dictIndex)
+                                if (_selectedResult.MwTabEntry.ValueIndex.HasValue && _selectedResult.MwTabEntry.ValueIndex.Value == dictIndex)
                                 {
                                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB index found: {0}", dictIndex);
                                     string valueUnit = _selectedResult.MwTabEntry.ValueUnit;
