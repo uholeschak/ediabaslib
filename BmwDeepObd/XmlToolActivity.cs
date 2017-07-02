@@ -3972,7 +3972,7 @@ namespace BmwDeepObd
                         string resultName = result.Name;
                         if (result.MwTabEntry != null)
                         {
-                            resultName = string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndexTrans);
+                            resultName = result.MwTabEntry.ValueIndex.HasValue ? string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndexTrans) : "1#ERGEBNIS1WERT";
                         }
                         displayNodeNew.Add(new XAttribute("result", resultName));
                         displayNodeNew.Add(new XAttribute("format", result.Format));
@@ -4771,7 +4771,7 @@ namespace BmwDeepObd
         {
             if (result.MwTabEntry != null)
             {
-                string resultName = string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndexTrans, result.Name);
+                string resultName = result.MwTabEntry.ValueIndex.HasValue ? string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndexTrans, result.Name) : "1#ERGEBNIS1WERT";
                 return (from node in jobNode.Elements(ns + "display")
                         let nameAttrib = node.Attribute("result")
                         where nameAttrib != null
