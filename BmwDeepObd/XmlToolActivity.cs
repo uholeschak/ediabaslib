@@ -2728,23 +2728,33 @@ namespace BmwDeepObd
             {
                 if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                 {
-                    if (string.Compare(job.Name, JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (XmlToolEcuActivity.IsVagReadJob(job))
                     {
                         if (ecuInfo.MwTabList != null)
                         {
                             job.Comments = new List<string> { GetString(Resource.String.xml_tool_job_read_mwblock) };
                             foreach (ActivityCommon.MwTabEntry mwTabEntry in ecuInfo.MwTabList)
                             {
-                                if (ecuInfo.MwTabEcuDict != null && mwTabEntry.ValueIndex.HasValue)
+                                if (ecuInfo.MwTabEcuDict != null)
                                 {
-                                    long key = (mwTabEntry.BlockNumber << 16) + mwTabEntry.ValueIndex.Value;
+                                    long key = (mwTabEntry.BlockNumber << 16) + mwTabEntry.ValueIndexTrans;
                                     if (!ecuInfo.MwTabEcuDict.ContainsKey(key))
                                     {
                                         continue;
                                     }
                                 }
-                                string name = string.Format(Culture, "{0}/{1}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndex);
-                                string displayText = string.Format(Culture, "{0:000}/{1} {2}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndex, mwTabEntry.Description);
+                                string name;
+                                string displayText;
+                                if (mwTabEntry.ValueIndex.HasValue)
+                                {
+                                    name = string.Format(Culture, "{0}/{1}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndexTrans);
+                                    displayText = string.Format(Culture, "{0:000}/{1} {2}", mwTabEntry.BlockNumber, mwTabEntry.ValueIndexTrans, mwTabEntry.Description);
+                                }
+                                else
+                                {
+                                    name = string.Format(Culture, "{0}", mwTabEntry.BlockNumber);
+                                    displayText = string.Format(Culture, "{0:000} {1}", mwTabEntry.BlockNumber, mwTabEntry.Description);
+                                }
                                 string comment = string.Empty;
                                 if (mwTabEntry.ValueMin != null && mwTabEntry.ValueMax != null)
                                 {
@@ -2784,20 +2794,41 @@ namespace BmwDeepObd
                             int index = ecuMwTabEntry.ValueIndex;
                             bool entryFound = false;
 
+                            bool udsJob = string.Compare(job.Name, XmlToolActivity.JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0;
                             foreach (XmlToolEcuActivity.ResultInfo resultInfo in job.Results)
                             {
-                                if (resultInfo.MwTabEntry.ValueIndex.HasValue &&
-                                    resultInfo.MwTabEntry.BlockNumber == block &&
-                                    resultInfo.MwTabEntry.ValueIndex.Value == index)
+                                if (udsJob)
                                 {
-                                    entryFound = true;
-                                    break;
+                                    if (resultInfo.MwTabEntry.BlockNumber == block)
+                                    {
+                                        entryFound = true;
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    if (resultInfo.MwTabEntry.BlockNumber == block &&
+                                        resultInfo.MwTabEntry.ValueIndex == index)
+                                    {
+                                        entryFound = true;
+                                        break;
+                                    }
                                 }
                             }
                             if (!entryFound)
                             {
-                                string name = string.Format(Culture, "{0}/{1}", block, index);
-                                string displayText = string.Format(Culture, "{0:000}/{1}", block, index);
+                                string name;
+                                string displayText;
+                                if (!udsJob)
+                                {
+                                    name = string.Format(Culture, "{0}/{1}", block, index);
+                                    displayText = string.Format(Culture, "{0:000}/{1}", block, index);
+                                }
+                                else
+                                {
+                                    name = string.Format(Culture, "{0}", block);
+                                    displayText = string.Format(Culture, "{0:000}", block);
+                                }
                                 ActivityCommon.MwTabEntry mwTabEntry =
                                     new ActivityCommon.MwTabEntry(block, index, string.Empty, string.Empty, string.Empty, string.Empty, null, null, true);
                                 job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, ecuMwTabEntry.ValueUnit, null, mwTabEntry));
@@ -2944,6 +2975,10 @@ namespace BmwDeepObd
 
         private string GetReadCommand(EcuInfo ecuInfo)
         {
+            if (ecuInfo.Sgbd.Contains("7000"))
+            {
+                return string.Empty;
+            }
             return ecuInfo.Sgbd.Contains("1281") ? "WertEinmalLesen" : "LESEN";
         }
 
@@ -3224,7 +3259,7 @@ namespace BmwDeepObd
 
         private List<string> GetBestMatchingMwTabUds(EcuInfo ecuInfo, Android.App.ProgressDialog progress)
         {
-            List<ActivityCommon.MwTabFileEntry> wmTabList = ActivityCommon.GetMatchingVagMwTabsUds(Path.Combine(_datUkdDir, "mwtabs"), 1/*ecuInfo.Address*/);
+            List<ActivityCommon.MwTabFileEntry> wmTabList = ActivityCommon.GetMatchingVagMwTabsUds(Path.Combine(_datUkdDir, "mwtabs"), ecuInfo.Address);
             SortedSet<int> mwIds = ActivityCommon.ExtractVagMwBlocks(wmTabList);
 
             Dictionary<long, EcuMwTabEntry> mwTabEcuDict = new Dictionary<long, EcuMwTabEntry>();
@@ -3280,49 +3315,40 @@ namespace BmwDeepObd
                                     break;
                                 }
 
-                                int dictIndex = 0;
-                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                                Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
+                                string valueType = string.Empty;
+                                if (resultDict1.TryGetValue("ERGEBNIS1WERT", out resultData))
                                 {
-                                    if (dictIndex == 0)
+                                    if (resultData.OpData is string)
                                     {
-                                        dictIndex++;
-                                        continue;
-                                    }
-                                    string valueType = string.Empty;
-                                    if (resultDict.TryGetValue(string.Format("ERGEBNIS{0}WERT", dictIndex), out resultData))
-                                    {
-                                        if (resultData.OpData is string)
+                                        // ReSharper disable once TryCastAlwaysSucceeds
+                                        string value = resultData.OpData as string;
+                                        if (!string.IsNullOrWhiteSpace(value))
                                         {
-                                            // ReSharper disable once TryCastAlwaysSucceeds
-                                            string value = resultData.OpData as string;
-                                            if (!string.IsNullOrWhiteSpace(value))
-                                            {
-                                                valueType = DataTypeString;
-                                            }
-                                        }
-                                        else if (resultData.OpData is double)
-                                        {
-                                            valueType = DataTypeReal;
-                                        }
-                                        else if (resultData.OpData is long)
-                                        {
-                                            valueType = DataTypeInteger;
-                                        }
-                                        else if (resultData.OpData is byte[])
-                                        {
-                                            valueType = DataTypeBinary;
-                                        }
-                                        if (!string.IsNullOrWhiteSpace(valueType))
-                                        {
-                                            valueCount++;
+                                            valueType = DataTypeString;
                                         }
                                     }
-                                    long key = (id << 16) + dictIndex;
-                                    if (!mwTabEcuDict.ContainsKey(key))
+                                    else if (resultData.OpData is double)
                                     {
-                                        mwTabEcuDict.Add(key, new EcuMwTabEntry(id, dictIndex, valueType, string.Empty));
+                                        valueType = DataTypeReal;
                                     }
-                                    dictIndex++;
+                                    else if (resultData.OpData is long)
+                                    {
+                                        valueType = DataTypeInteger;
+                                    }
+                                    else if (resultData.OpData is byte[])
+                                    {
+                                        valueType = DataTypeBinary;
+                                    }
+                                    if (!string.IsNullOrWhiteSpace(valueType))
+                                    {
+                                        valueCount++;
+                                    }
+                                }
+                                long key = (id << 16) + 0;
+                                if (!mwTabEcuDict.ContainsKey(key))
+                                {
+                                    mwTabEcuDict.Add(key, new EcuMwTabEntry(id, 0, valueType, string.Empty));
                                 }
                             }
                             break;
@@ -3349,7 +3375,41 @@ namespace BmwDeepObd
                 return new List<string>();
             }
 
-            return wmTabList.Select(mwTabFileEntry => mwTabFileEntry.FileName).ToList();
+            foreach (ActivityCommon.MwTabFileEntry mwTabFileEntry in wmTabList)
+            {
+                int compareCount = 0;
+                int matchCount = 0;
+                //Log.Debug("Match", "File: " + mwTabFileEntry.FileName);
+                foreach (ActivityCommon.MwTabEntry mwTabEntry in mwTabFileEntry.MwTabList)
+                {
+                    compareCount++;
+                    long key = (mwTabEntry.BlockNumber << 16) + 0;
+                    EcuMwTabEntry ecuMwTabEntry;
+                    if (mwTabEcuDict.TryGetValue(key, out ecuMwTabEntry))
+                    {
+                        matchCount++;
+                    }
+                }
+                mwTabFileEntry.ExistCount = 1;
+                mwTabFileEntry.CompareCount = compareCount;
+                mwTabFileEntry.MatchCount = matchCount;
+                if (compareCount > 0)
+                {
+                    mwTabFileEntry.MatchRatio = matchCount * ActivityCommon.MwTabFileEntry.MaxMatchRatio / compareCount;
+                }
+                else
+                {
+                    mwTabFileEntry.MatchRatio = (mwTabFileEntry.MwTabList.Count == 0) ? ActivityCommon.MwTabFileEntry.MaxMatchRatio : 0;
+                }
+            }
+            List<ActivityCommon.MwTabFileEntry> wmTabListSorted = wmTabList.Where(x => x.ExistCount > 0).OrderByDescending(x => x).ToList();
+            if (wmTabListSorted.Count == 0)
+            {
+                return new List<string>();
+            }
+            return wmTabListSorted.
+                TakeWhile(mwTabFileEntry => mwTabFileEntry.MatchRatio == wmTabListSorted[0].MatchRatio /*&& mwTabFileEntry.MatchCount >= wmTabListSorted[0].MatchCount / 10*/).
+                Select(mwTabFileEntry => mwTabFileEntry.FileName).ToList();
         }
 
         private void ExecuteUpdateEcuInfo()
@@ -3408,6 +3468,7 @@ namespace BmwDeepObd
                             continue;
                         }
                         string displayName = ecuName;
+                        int address = 0;
                         if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && ecuVagList != null && ecuNameDict != null)
                         {
                             string compareName = ecuInfo.Sgbd;
@@ -3428,6 +3489,7 @@ namespace BmwDeepObd
                                 if (string.Compare(entryName, compareName, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
                                     ecuNameDict.TryGetValue(entry.Address, out displayName);
+                                    address = entry.Address;
                                     break;
                                 }
                             }
@@ -3439,7 +3501,7 @@ namespace BmwDeepObd
                             ecuInfo.EcuName = displayName;
                         }
                         ecuInfo.Sgbd = ecuName;
-                        ecuInfo.Address = 0;
+                        ecuInfo.Address = address;
                     }
                     catch (Exception)
                     {
@@ -3901,9 +3963,9 @@ namespace BmwDeepObd
                             displayNodeNew.Add(new XAttribute("name", displayTag));
                         }
                         string resultName = result.Name;
-                        if (result.MwTabEntry != null && result.MwTabEntry.ValueIndex.HasValue)
+                        if (result.MwTabEntry != null)
                         {
-                            resultName = string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndex);
+                            resultName = string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndexTrans);
                         }
                         displayNodeNew.Add(new XAttribute("result", resultName));
                         displayNodeNew.Add(new XAttribute("format", result.Format));
@@ -4700,9 +4762,9 @@ namespace BmwDeepObd
 
         private XElement GetDisplayNode(XmlToolEcuActivity.ResultInfo result, XNamespace ns, XElement jobNode)
         {
-            if (result.MwTabEntry != null && result.MwTabEntry.ValueIndex.HasValue)
+            if (result.MwTabEntry != null)
             {
-                string resultName = string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndex, result.Name);
+                string resultName = string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndexTrans, result.Name);
                 return (from node in jobNode.Elements(ns + "display")
                         let nameAttrib = node.Attribute("result")
                         where nameAttrib != null

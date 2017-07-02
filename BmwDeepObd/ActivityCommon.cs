@@ -86,6 +86,17 @@ namespace BmwDeepObd
 
             public int BlockNumber { get; }
             public int? ValueIndex { get; }
+            public int ValueIndexTrans
+            {
+                get
+                {
+                    if (!ValueIndex.HasValue)
+                    {
+                        return 0;
+                    }
+                    return ValueIndex.Value;
+                }
+            }
             public string Description { get; }
             public string Comment { get; }
             public string ValueUnit { get; }
