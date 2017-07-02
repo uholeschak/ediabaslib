@@ -2817,20 +2817,23 @@ namespace BmwDeepObd
                             }
                             if (!entryFound)
                             {
+                                int? indexStore;
                                 string name;
                                 string displayText;
                                 if (!udsJob)
                                 {
+                                    indexStore = index;
                                     name = string.Format(Culture, "{0}/{1}", block, index);
                                     displayText = string.Format(Culture, "{0:000}/{1}", block, index);
                                 }
                                 else
                                 {
+                                    indexStore = null;
                                     name = string.Format(Culture, "{0}", block);
                                     displayText = string.Format(Culture, "{0:000}", block);
                                 }
                                 ActivityCommon.MwTabEntry mwTabEntry =
-                                    new ActivityCommon.MwTabEntry(block, index, string.Empty, string.Empty, string.Empty, string.Empty, null, null, true);
+                                    new ActivityCommon.MwTabEntry(block, indexStore, string.Empty, string.Empty, string.Empty, string.Empty, null, null, true);
                                 job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, ecuMwTabEntry.ValueUnit, null, mwTabEntry));
                             }
                         }
