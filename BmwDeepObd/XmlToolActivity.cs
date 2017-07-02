@@ -2794,7 +2794,7 @@ namespace BmwDeepObd
                             int index = ecuMwTabEntry.ValueIndex;
                             bool entryFound = false;
 
-                            bool udsJob = string.Compare(job.Name, XmlToolActivity.JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0;
+                            bool udsJob = string.Compare(job.Name, JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0;
                             foreach (XmlToolEcuActivity.ResultInfo resultInfo in job.Results)
                             {
                                 if (udsJob)
@@ -3410,9 +3410,13 @@ namespace BmwDeepObd
             {
                 return new List<string>();
             }
+#if false
             return wmTabListSorted.
                 TakeWhile(mwTabFileEntry => mwTabFileEntry.MatchRatio == wmTabListSorted[0].MatchRatio /*&& mwTabFileEntry.MatchCount >= wmTabListSorted[0].MatchCount / 10*/).
                 Select(mwTabFileEntry => mwTabFileEntry.FileName).ToList();
+#else
+            return wmTabListSorted.Select(mwTabFileEntry => mwTabFileEntry.FileName).ToList();
+#endif
         }
 
         private void ExecuteUpdateEcuInfo()
