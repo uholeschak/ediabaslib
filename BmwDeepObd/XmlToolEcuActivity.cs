@@ -209,7 +209,7 @@ namespace BmwDeepObd
             bool showAll = false;
             foreach (JobInfo jobInfo in _ecuInfo.JobList)
             {
-                if (string.Compare(jobInfo.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
+                if (IsVagReadJob(jobInfo))
                 {
                     if (jobInfo.Results.All(resultInfo => resultInfo.MwTabEntry != null && resultInfo.MwTabEntry.Dummy))
                     {
@@ -335,11 +335,17 @@ namespace BmwDeepObd
             return false;
         }
 
+        public static bool IsVagReadJob(JobInfo job)
+        {
+            return (string.Compare(job.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0) ||
+                    (string.Compare(job.Name, XmlToolActivity.JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0);
+        }
+
         public static bool IsValidJob(JobInfo job)
         {
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
-                if (string.Compare(job.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
+                if (IsVagReadJob(job))
                 {
                     return true;
                 }
@@ -374,7 +380,26 @@ namespace BmwDeepObd
 
         public static string GetJobArgs(ActivityCommon.MwTabEntry mwTabEntry, XmlToolActivity.EcuInfo ecuInfo)
         {
+            if (string.IsNullOrEmpty(ecuInfo.ReadCommand))
+            {
+                return string.Format(XmlToolActivity.Culture, "{0}", mwTabEntry.BlockNumber);
+            }
             return string.Format(XmlToolActivity.Culture, "{0};{1}", mwTabEntry.BlockNumber, ecuInfo.ReadCommand);
+        }
+
+        public static string FormatResult(EdiabasNet.ResultData resultData, string format)
+        {
+            if (resultData.OpData.GetType() == typeof(byte[]))
+            {
+                StringBuilder sb = new StringBuilder();
+                byte[] data = (byte[]) resultData.OpData;
+                foreach (byte value in data)
+                {
+                    sb.Append(string.Format(XmlToolActivity.Culture, "{0:X02} ", value));
+                }
+                return sb.ToString();
+            }
+            return EdiabasNet.FormatResult(resultData, format) ?? string.Empty;
         }
 
         private void UpdateDisplay()
@@ -388,7 +413,7 @@ namespace BmwDeepObd
                     _spinnerJobsAdapter.Items.Add(job);
                     if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                     {
-                        if (string.Compare(job.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (IsVagReadJob(job))
                         {
                             selection = _spinnerJobsAdapter.Items.Count - 1;
                         }
@@ -703,8 +728,8 @@ namespace BmwDeepObd
         {
             _selectedJob = jobInfo;
 
-            bool jobReadMwTab = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
-            _checkBoxShowAllResults.Visibility = (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) && jobReadMwTab ?
+            bool vagReadJob = IsVagReadJob(_selectedJob);
+            _checkBoxShowAllResults.Visibility = (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) && vagReadJob ?
                 ViewStates.Visible : ViewStates.Gone;
 
             ResetTestResult();
@@ -715,7 +740,7 @@ namespace BmwDeepObd
                 _layoutJobConfig.Visibility = ViewStates.Visible;
                 IEnumerable<ResultInfo> orderedResults;
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if ((ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) && jobReadMwTab)
+                if ((ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) && vagReadJob)
                 {
                     List<ResultInfo> showResults = new List<ResultInfo>();
                     if (_checkBoxShowAllResults.Checked && _checkBoxShowAllResults.Visibility == ViewStates.Visible)
@@ -726,7 +751,7 @@ namespace BmwDeepObd
                     {
                         showResults.AddRange(_selectedJob.Results.Where(result => result.MwTabEntry != null && !result.MwTabEntry.Dummy));
                     }
-                    orderedResults = showResults.OrderBy(x => (x.MwTabEntry?.BlockNumber << 16) + x.MwTabEntry?.ValueIndex);
+                    orderedResults = showResults.OrderBy(x => (x.MwTabEntry?.BlockNumber << 16) + x.MwTabEntry?.ValueIndexTrans);
                 }
                 else
                 {
@@ -790,10 +815,11 @@ namespace BmwDeepObd
                             selection = 0;
                         }
                     }
-                    if (selection < 0)
-                    {
-                        selection = 0;
-                    }
+                }
+
+                if (_spinnerJobResultsAdapter.Items.Count > 0 && selection < 0)
+                {
+                    selection = 0;
                 }
 
                 _textViewJobCommentsTitle.Text = string.Format(GetString(Resource.String.xml_tool_ecu_job_comments), _selectedJob.Name);
@@ -907,12 +933,12 @@ namespace BmwDeepObd
                     _ediabas.ResolveSgbdFile(_ecuInfo.Sgbd);
 
                     _ediabas.ArgString = string.Empty;
-                    if (_selectedResult.MwTabEntry != null && !string.IsNullOrEmpty(_ecuInfo.ReadCommand))
+                    if (_selectedResult.MwTabEntry != null && _ecuInfo.ReadCommand != null)
                     {
                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB file: {0}", _ecuInfo.MwTabFileName ?? "No file");
                         if (_selectedResult.MwTabEntry.ValueIndex.HasValue)
                         {
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB Block={0} Index={1}", _selectedResult.MwTabEntry.BlockNumber, _selectedResult.MwTabEntry.ValueIndex.Value);
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB Block={0} Index={1}", _selectedResult.MwTabEntry.BlockNumber, _selectedResult.MwTabEntry.ValueIndexTrans);
                         }
                         else
                         {
@@ -938,32 +964,46 @@ namespace BmwDeepObd
                             EdiabasNet.ResultData resultData;
                             if (_selectedResult.MwTabEntry != null)
                             {
-                                if (_selectedResult.MwTabEntry.ValueIndex.HasValue && _selectedResult.MwTabEntry.ValueIndex.Value == dictIndex)
+                                if (_selectedResult.MwTabEntry.ValueIndex.HasValue)
                                 {
-                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB index found: {0}", dictIndex);
-                                    string valueUnit = _selectedResult.MwTabEntry.ValueUnit;
-                                    if (string.IsNullOrEmpty(valueUnit))
+                                    if (_selectedResult.MwTabEntry.ValueIndex.Value == dictIndex)
                                     {
-                                        if (resultDict.TryGetValue("MWEINH_TEXT", out resultData))
+                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB index found: {0}", dictIndex);
+                                        string valueUnit = _selectedResult.MwTabEntry.ValueUnit;
+                                        if (string.IsNullOrEmpty(valueUnit))
                                         {
-                                            valueUnit = resultData.OpData as string ?? string.Empty;
-                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWEINH_TEXT: {0}", valueUnit);
+                                            if (resultDict.TryGetValue("MWEINH_TEXT", out resultData))
+                                            {
+                                                valueUnit = resultData.OpData as string ?? string.Empty;
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWEINH_TEXT: {0}", valueUnit);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB unit: {0}", valueUnit);
+                                        }
+                                        if (resultDict.TryGetValue("MW_WERT", out resultData))
+                                        {
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Data type: {0}", resultData.ResType.ToString());
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
+                                            resultText = FormatResult(resultData, _selectedResult.Format);
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", resultText);
+                                            if (!string.IsNullOrWhiteSpace(resultText) && !string.IsNullOrWhiteSpace(valueUnit))
+                                            {
+                                                resultText += " " + valueUnit;
+                                            }
+                                            break;
                                         }
                                     }
-                                    else
-                                    {
-                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB unit: {0}", valueUnit);
-                                    }
-                                    if (resultDict.TryGetValue("MW_WERT", out resultData))
+                                }
+                                else
+                                {
+                                    if (resultDict.TryGetValue("ERGEBNIS1WERT", out resultData))
                                     {
                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Data type: {0}", resultData.ResType.ToString());
                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
-                                        resultText = EdiabasNet.FormatResult(resultData, _selectedResult.Format) ?? string.Empty;
+                                        resultText = FormatResult(resultData, _selectedResult.Format);
                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", resultText);
-                                        if (!string.IsNullOrWhiteSpace(resultText) && !string.IsNullOrWhiteSpace(valueUnit))
-                                        {
-                                            resultText += " " + valueUnit;
-                                        }
                                         break;
                                     }
                                 }
@@ -974,7 +1014,7 @@ namespace BmwDeepObd
                             {
                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Data type: {0}", resultData.ResType.ToString());
                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
-                                string text = EdiabasNet.FormatResult(resultData, _selectedResult.Format) ?? string.Empty;
+                                string text = FormatResult(resultData, _selectedResult.Format);
                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", text);
                                 if (!string.IsNullOrWhiteSpace(text) && !string.IsNullOrWhiteSpace(resultText))
                                 {
