@@ -29,6 +29,9 @@ CFG: 01 07 E0
 ;MesswerteS22_Lesen#0x1000
 83 07 E0 22 10 00 8D : 8B 07 E0 62 10 00 AB CD EF 12 05 06 07 08 00
 
+;Fehlerspeicher_abfragen
+83 07 E0 19 02 0C 91 : 93 07 E0 59 02 0C 01 02 03 00 05 06 07 00 09 0A 0B 00 0D 0E 0F 00 00
+
 ;bre_03.grp
 CFG: 03 28
 ; Steuergeraeteversion_abfragen
