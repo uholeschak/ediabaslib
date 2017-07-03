@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -93,6 +94,7 @@ namespace BmwDeepObd
         public EdiabasNet Ediabas { get; private set; }
 
         public static readonly Object DataLock = new Object();
+        private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
 
         private bool _disposed;
         private volatile bool _stopThread;
@@ -101,6 +103,7 @@ namespace BmwDeepObd
         private bool _ediabasInitReq;
         private bool _ediabasJobAbort;
         private JobReader.PageInfo _lastPageInfo;
+        private long _lastUpdateTime;
 
         public EdiabasThread(string ecuPath, ActivityCommon activityCommon)
         {
@@ -183,6 +186,7 @@ namespace BmwDeepObd
                 CommActive = commActive;
                 JobPageInfo = pageInfo;
                 _lastPageInfo = null;
+                _lastUpdateTime = Stopwatch.GetTimestamp();
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
                 _workerThread.Start();
@@ -270,7 +274,6 @@ namespace BmwDeepObd
                     ResultPageInfo = null;
                     UpdateProgress = 0;
                 }
-                Thread.Sleep(1000);
                 return false;
             }
 
@@ -318,7 +321,6 @@ namespace BmwDeepObd
                             exText = EdiabasNet.GetExceptionText(ex);
                         }
                         errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, null, null, exText));
-                        Thread.Sleep(10);
                         continue;
                     }
 
@@ -507,7 +509,6 @@ namespace BmwDeepObd
                             exText = EdiabasNet.GetExceptionText(ex);
                         }
                         errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, null, null, exText));
-                        Thread.Sleep(10);
                         continue;
                     }
                     if (EdiabasErrorReportList == null)
@@ -518,7 +519,6 @@ namespace BmwDeepObd
                         }
                         DataUpdatedEvent();
                     }
-                    Thread.Sleep(10);
                 }
 
                 lock (DataLock)
@@ -560,7 +560,6 @@ namespace BmwDeepObd
                             ResultPageInfo = pageInfo;
                             UpdateProgress = 0;
                         }
-                        Thread.Sleep(1000);
                         return false;
                     }
                 }
@@ -673,7 +672,6 @@ namespace BmwDeepObd
                     ResultPageInfo = pageInfo;
                     UpdateProgress = 0;
                 }
-                Thread.Sleep(1000);
                 return false;
             }
 
@@ -685,7 +683,6 @@ namespace BmwDeepObd
                 ResultPageInfo = pageInfo;
                 UpdateProgress = 0;
             }
-            Thread.Sleep(10);
             return true;
         }
 
@@ -757,6 +754,15 @@ namespace BmwDeepObd
 
         private void DataUpdatedEvent()
         {
+            while (Stopwatch.GetTimestamp() - _lastUpdateTime < 500 * TickResolMs)
+            {
+                if (AbortEdiabasJob())
+                {
+                    break;
+                }
+                Thread.Sleep(100);
+            }
+            _lastUpdateTime = Stopwatch.GetTimestamp();
             DataUpdated?.Invoke(this, EventArgs.Empty);
         }
 
