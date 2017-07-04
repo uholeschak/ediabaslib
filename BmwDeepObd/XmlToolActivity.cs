@@ -3048,7 +3048,8 @@ namespace BmwDeepObd
 
         private List<string> GetBestMatchingMwTab(EcuInfo ecuInfo, Android.App.ProgressDialog progress)
         {
-            if (_ediabas.IsJobExisting(JobReadMwUds))
+            string readCommand = GetReadCommand(ecuInfo);
+            if (string.IsNullOrEmpty(readCommand))
             {
                 return GetBestMatchingMwTabUds(ecuInfo, progress);
             }
@@ -3063,7 +3064,6 @@ namespace BmwDeepObd
                 mwBlocks.Add(i);
             }
 #endif
-            string readCommand = GetReadCommand(ecuInfo);
 #if false
             {
                 StringBuilder sr = new StringBuilder();
