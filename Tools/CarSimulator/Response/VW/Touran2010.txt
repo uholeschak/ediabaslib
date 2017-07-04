@@ -38,90 +38,154 @@ CFG: 03 28
 ;busy:
 ;82 28 F1 1A 9B 50 : 83 F1 28 7F 1A 21 56
 82 28 F1 1A 9B 50 : 83 F1 28 7F 1A 11 46
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 28 F1 18 02 FF 00 EE : 82 F1 28 58 00 2B
+82 28 F1 1A 86 3B : B2 F1 28 5A 86 0F 30 30 30 30 30 30 30 30 30 30 30 30 30 30 20 42 50 41 2D 30 38 35 31 37 2E 30 38 2E 30 36 30 30 30 30 30 30 30 30 30 30 32 34 38 30 30 33 FF B9
+82 28 F1 1A 87 3C : 93 F1 28 5A 87 07 42 4C 20 32 2E 30 09 20 20 34 2E 37 2E 37 63 FF 7B
+82 28 F1 1A 88 3D : 83 F1 28 7F 1A 12 47
+82 28 F1 1A 90 45 : 83 F1 28 7F 1A 12 47
+82 28 F1 1A 91 46 : 98 F1 28 5A 91 0E 34 46 30 36 31 34 35 31 37 52 20 20 20 04 20 20 20 03 20 20 FF E4
+82 28 F1 1A 96 4B : 83 F1 28 7F 1A 12 47
+82 28 F1 1A 97 4C : 83 F1 28 7F 1A 12 47
+82 28 F1 1A 9A 4F : 83 F1 28 7F 1A 12 47
+82 28 F1 1A 9B 50 : B0 F1 28 5A 9B 34 46 30 39 31 30 35 31 37 41 42 20 30 30 34 30 03 00 43 68 07 5A 44 2E 00 01 45 53 50 20 38 2E 30 20 71 75 61 74 74 72 6F 20 48 30 35 20 43
+82 28 F1 1A 9C 51 : 86 F1 28 5A 9C 00 00 00 00 95
 
 ;eze_09.grp
 CFG: 20 A4
 ; Steuergeraeteversion_abfragen
 82 A4 F1 1A 9B CC : 83 F1 A4 7F 1A 11 C2
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 A4 F1 18 02 FF 00 EE : 82 F1 A4 58 00 2B
 
 ;stl_0d.grp
 CFG: 24 B0
 ; Steuergeraeteversion_abfragen
 82 B0 F1 1A 9B D8 : B0 F1 B0 5A 9B 35 4B 30 39 35 39 37 30 33 41 20 20 B2 31 30 34 03 00 00 90 7B 9A 40 28 05 2C 54 75 65 72 2D 53 47 20 20 20 20 20 20 20 20 20 30 30 37 20 7E
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 B0 F1 18 02 FF 00 EE : 82 F1 B0 58 00 2B
 
 ;air_15.grp
 CFG: 05 58
 ; Steuergeraeteversion_abfragen
 82 58 F1 1A 9B 80 : B0 F1 58 5A 9B 31 54 30 39 30 39 36 30 35 45 20 20 B0 31 30 30 03 00 30 32 00 06 40 28 05 2C 30 32 20 41 49 52 42 41 47 20 56 57 38 20 20 20 30 32 32 20 EB
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 58 F1 18 02 FF 00 EE : 82 F1 58 58 00 2B
 
 ;zst_18.grp
 CFG: 2F 99
 ; Steuergeraeteversion_abfragen
 82 99 F1 1A 9B C1 : B0 F1 99 5A 9B 35 4B 30 39 36 33 32 37 31 43 20 20 32 36 30 36 03 00 00 0B 00 06 40 28 05 2C 5A 75 68 65 69 7A 65 72 20 20 20 20 20 20 20 20 30 35 31 20 25
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 99 F1 18 02 FF 00 EE : 82 F1 99 58 00 2B
 
 ;did_19.grp
 CFG: 1F 40
 ; Steuergeraeteversion_abfragen
 82 40 F1 1A 9B 68 : B0 F1 40 5A 9B 37 4E 30 39 30 37 35 33 30 41 20 20 35 36 30 33 10 00 00 00 00 06 40 28 05 2C 4A 35 33 33 20 20 47 61 74 65 77 61 79 20 20 20 48 32 35 20 E7
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 40 F1 18 02 FF 00 EE : 82 F1 40 58 00 2B
 
 ;m3p_2e.grp
 CFG: 54 86
 ; Steuergeraeteversion_abfragen
 82 86 F1 1A 9B AE : 83 F1 86 7F 1A 11 A4
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 86 F1 18 02 FF 00 EE : 82 F1 86 58 00 2B
 
 ;tfa_42.grp
 CFG: 22 A9
 ; Steuergeraeteversion_abfragen
 82 A9 F1 1A 9B D1 : B0 F1 A9 5A 9B 31 54 30 39 35 39 37 30 31 41 41 20 32 31 31 31 03 00 10 B7 00 06 40 28 05 2C 54 75 65 72 2D 53 47 20 20 20 20 20 20 20 20 20 30 30 39 20 43
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 A9 F1 18 02 FF 00 EE : 82 F1 A9 58 00 2B
 
 ;lkh_44.grp
 CFG: 09 31
 ; Steuergeraeteversion_abfragen
 82 31 F1 1A 9B 59 : B0 F1 31 5A 9B 35 4E 31 39 30 39 31 34 34 4C 20 20 30 38 30 32 03 00 01 02 00 06 40 28 05 2C 4A 35 30 30 5F 5F 41 50 41 2D 42 53 20 4B 4C 2E 32 33 34 20 80
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 31 F1 18 02 FF 00 EE : 82 F1 31 58 00 2B
 
 ;ezz_4f.grp
 CFG: 28 B1
 ; Steuergeraeteversion_abfragen
 82 B1 F1 1A 9B D9 : 83 F1 B1 7F 1A 11 CF
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 B1 F1 18 02 FF 00 EE : 82 F1 B1 58 00 2B
 
 ;tbf_52.grp
 CFG: 23 AA
 ; Steuergeraeteversion_abfragen
 82 AA F1 1A 9B D2 : B0 F1 AA 5A 9B 31 54 30 39 35 39 37 30 32 53 20 20 32 31 31 31 03 00 11 B7 00 06 40 28 05 2C 54 75 65 72 2D 53 47 20 20 20 20 20 20 20 20 20 30 30 39 20 37
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 AA F1 18 02 FF 00 EE : 82 F1 AA 58 00 2B
 
 ;bar_61.grp
 CFG: 33 42
 ; Steuergeraeteversion_abfragen
 82 42 F1 1A 9B 6A : 83 F1 42 7F 1A 11 60
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 42 F1 18 02 FF 00 EE : 82 F1 42 58 00 2B
 
 ;thl_62.grp
 CFG: 24 AB
 ; Steuergeraeteversion_abfragen
 82 AB F1 1A 9B D3 : B0 F1 AB 5A 9B 35 4B 30 39 35 39 37 30 33 41 20 20 B2 31 30 34 03 00 00 90 7B 9A 40 28 05 2C 54 75 65 72 2D 53 47 20 20 20 20 20 20 20 20 20 30 30 37 20 79
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 AB F1 18 02 FF 00 EE : 82 F1 AB 58 00 2B
 
 ;ahf_69.grp
 CFG: 43 41
 ; Steuergeraeteversion_abfragen
 82 41 F1 1A 9B 69 : 83 F1 41 7F 1A 11 5F
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 43 F1 18 02 FF 00 EE : 82 F1 43 58 00 2B
 
 ;thr_72.grp
 CFG: 25 AC
 ; Steuergeraeteversion_abfragen
 82 AC F1 1A 9B D4 : B0 F1 AC 5A 9B 35 4B 30 39 35 39 37 30 34 41 20 20 B2 31 30 34 03 00 00 90 7B 9A 40 28 05 2C 54 75 65 72 2D 53 47 20 20 20 20 20 20 20 20 20 30 30 37 20 7B
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 AC F1 18 02 FF 00 EE : 82 F1 AC 58 00 2B
 
 ;sbt_78.grp
 CFG: 25 A7
 ; Steuergeraeteversion_abfragen
 82 A7 F1 1A 9B CF : B0 F1 A7 5A 9B 35 4B 30 39 35 39 37 30 34 41 20 20 B2 31 30 34 03 00 00 90 7B 9A 40 28 05 2C 54 75 65 72 2D 53 47 20 20 20 20 20 20 20 20 20 30 30 37 20 76
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 A7 F1 18 02 FF 00 EE : 82 F1 A7 58 00 2B
 
 ;ymo_01.grp
 ;file not found
 CFG: 03 10
 ; Steuergeraeteversion_abfragen
 82 10 F1 1A 9B 38 : 83 F1 10 7F 1A 21 3E
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 10 F1 18 02 FF 00 EE : 82 F1 10 58 00 2B
 
 ;yff_93.grp
 ;file not found
 CFG: 05 93
 ; Steuergeraeteversion_abfragen
 82 93 F1 1A 9B BB : B0 F1 93 5A 9B 31 54 30 39 30 39 36 30 35 45 20 20 B0 31 30 30 03 00 30 32 00 06 40 28 05 2C 30 32 20 41 49 52 42 41 47 20 56 57 38 20 20 20 30 32 32 20 26
+; dummy data
+; Fehlerspeicher_abfragen: MW_LESEN
+84 93 F1 18 02 FF 00 EE : 82 F1 93 58 00 2B
