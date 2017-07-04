@@ -326,7 +326,7 @@ namespace EdiabasLib
             }
 
             byte telType = (byte)((AdapterVersion < 0x0009) ? 0x01 : 0x03);
-            byte[] resultArray = new byte[length + ((telType == 0x01) ? 11 : 12)];
+            byte[] resultArray = new byte[length + ((telType == 0x01) ? 11 : 14)];
             resultArray[0] = 0x00;      // header
             resultArray[1] = telType;   // telegram type
 
@@ -351,10 +351,12 @@ namespace EdiabasLib
             }
             else
             {
-                resultArray[5] = (byte)(CanTxId >> 8);  // CAN TX ID high
-                resultArray[6] = (byte)CanTxId;         // CAN TX ID low
-                resultArray[7] = (byte)(CanRxId >> 8);  // CAN RX ID high
-                resultArray[8] = (byte)CanRxId;         // CAN RX ID low
+                resultArray[5] = 0x00;                  // block size (off)
+                resultArray[6] = 0x00;                  // separation time (off)
+                resultArray[7] = (byte)(CanTxId >> 8);  // CAN TX ID high
+                resultArray[8] = (byte)CanTxId;         // CAN TX ID low
+                resultArray[9] = (byte)(CanRxId >> 8);  // CAN RX ID high
+                resultArray[10] = (byte)CanRxId;        // CAN RX ID low
             }
             if (telType == 0x01)
             {
@@ -365,9 +367,9 @@ namespace EdiabasLib
             }
             else
             {
-                resultArray[9] = (byte)(length >> 8);   // telegram length high
-                resultArray[10] = (byte)length;         // telegram length low
-                Array.Copy(sendData, 0, resultArray, 11, length);
+                resultArray[11] = (byte)(length >> 8);  // telegram length high
+                resultArray[12] = (byte)length;         // telegram length low
+                Array.Copy(sendData, 0, resultArray, 13, length);
                 resultArray[resultArray.Length - 1] = CalcChecksumBmwFast(resultArray, 0, resultArray.Length - 1);
             }
             return resultArray;
