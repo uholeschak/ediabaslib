@@ -303,6 +303,8 @@ static uint8_t can_cfg_flags;       // CAN flags
 static uint8_t can_cfg_blocksize;   // CAN blocksize (TP2.0)
 static uint8_t can_cfg_packet_interval; // CAN packet inverval time (TP2.0)
 static uint16_t can_cfg_idle_time;  // CAN idle time [ms] (TP2.0)
+static uint8_t can_cfg_isotp_blocksize; // CAN blocksize (ISO-TP)
+static uint8_t can_cfg_isotp_sep_time;  // CAN separation time (ISO-TP)
 static uint16_t can_cfg_isotp_txid; // CAN TX ID (ISO-TP)
 static uint16_t can_cfg_isotp_rxid; // CAN RX ID (ISO-TP)
 
@@ -1361,6 +1363,8 @@ uint16_t uart_receive(uint8_t *buffer)
             switch (can_cfg_protocol)
             {
                 case CAN_PROT_ISOTP:
+                    can_cfg_isotp_blocksize = can_blocksize;
+                    can_cfg_isotp_sep_time = can_sep_time;
                     can_cfg_isotp_txid = ((uint16_t) rec_buffer[5] << 8) + rec_buffer[6];
                     can_cfg_isotp_rxid = 0x7E8;
                     break;
@@ -1424,9 +1428,11 @@ uint16_t uart_receive(uint8_t *buffer)
             // byte 3: baud rate
             // byte 4: flags
             // for TP2.0 configuration is like CAN tel 1, the following is for ISO-TP
-            // byte 5+6: CAN TX ID (high/low)
-            // byte 7+8: CAN RX ID (high/low)
-            // byte 9+10: telegram length (high/low)
+            // byte 5: block size
+            // byte 6: separation time
+            // byte 7+8: CAN TX ID (high/low)
+            // byte 9+10: CAN RX ID (high/low)
+            // byte 11+12: telegram length (high/low)
             if ((buffer != NULL) &&
                 ((op_mode != op_mode_can) || (can_cfg_protocol != rec_buffer[2]))
                 )
@@ -1447,8 +1453,10 @@ uint16_t uart_receive(uint8_t *buffer)
             switch (can_cfg_protocol)
             {
                 case CAN_PROT_ISOTP:
-                    can_cfg_isotp_txid = ((uint16_t) rec_buffer[5] << 8) + rec_buffer[6];
-                    can_cfg_isotp_rxid = ((uint16_t) rec_buffer[7] << 8) + rec_buffer[8];
+                    can_cfg_isotp_blocksize = rec_buffer[5];
+                    can_cfg_isotp_sep_time = rec_buffer[6];
+                    can_cfg_isotp_txid = ((uint16_t) rec_buffer[7] << 8) + rec_buffer[8];
+                    can_cfg_isotp_rxid = ((uint16_t) rec_buffer[9] << 8) + rec_buffer[10];
                     break;
 
                 default:
@@ -1457,10 +1465,10 @@ uint16_t uart_receive(uint8_t *buffer)
                     can_cfg_idle_time = (uint16_t) rec_buffer[7] * 10;
                     break;
             }
-            data_len = ((uint16_t) rec_buffer[9] << 8) + rec_buffer[10];
+            data_len = ((uint16_t) rec_buffer[11] << 8) + rec_buffer[12];
             if (buffer != NULL)
             {
-                memcpy(buffer, rec_buffer + 11, data_len);
+                memcpy(buffer, rec_buffer + 13, data_len);
             }
             op_mode_new = op_mode_can;
         }
@@ -2782,9 +2790,9 @@ void can_isotp_receiver(bool new_can_msg)
                     can_out_msg.sid = can_cfg_isotp_txid;
                     can_out_msg.dlc.bits.count = 8;
                     can_out_msg.data[0] = 0x30;     // FC
-                    can_out_msg.data[1] = can_blocksize;       // block size
-                    can_out_msg.data[2] = can_sep_time;        // min sep. time
-                    can_rec_fc_count = can_blocksize;
+                    can_out_msg.data[1] = can_cfg_isotp_blocksize;       // block size
+                    can_out_msg.data[2] = can_cfg_isotp_sep_time;        // min sep. time
+                    can_rec_fc_count = can_cfg_isotp_blocksize;
                     can_rec_tel_valid = true;
 
                     // wait for free send buffer
@@ -2831,9 +2839,9 @@ void can_isotp_receiver(bool new_can_msg)
                                 can_out_msg.sid = can_cfg_isotp_txid;
                                 can_out_msg.dlc.bits.count = 8;
                                 can_out_msg.data[0] = 0x30;     // FC
-                                can_out_msg.data[1] = can_blocksize;       // block size
-                                can_out_msg.data[2] = can_sep_time;        // min sep. time
-                                can_rec_fc_count = can_blocksize;
+                                can_out_msg.data[1] = can_cfg_isotp_blocksize;       // block size
+                                can_out_msg.data[2] = can_cfg_isotp_sep_time;        // min sep. time
+                                can_rec_fc_count = can_cfg_isotp_blocksize;
 
                                 can_send_message_wait();
                             }
@@ -3808,12 +3816,14 @@ void interrupt high_priority high_isr (void)
                                     // byte 3: baud rate
                                     // byte 4: flags
                                     // for TP2.0 configuration is like CAN tel 1, the following is for ISO-TP
-                                    // byte 5+6: CAN TX ID (high/low)
-                                    // byte 7+8: CAN RX ID (high/low)
-                                    // byte 9+10: telegram length (high/low)
-                                    if (rec_len >= 11)
+                                    // byte 5: block size
+                                    // byte 6: separation time
+                                    // byte 7+8: CAN TX ID (high/low)
+                                    // byte 9+10: CAN RX ID (high/low)
+                                    // byte 11+12: telegram length (high/low)
+                                    if (rec_len >= 13)
                                     {
-                                        tel_len = ((uint16_t) rec_buffer[9] << 8) + rec_buffer[10] + 12;
+                                        tel_len = ((uint16_t) rec_buffer[11] << 8) + rec_buffer[12] + 14;
                                     }
                                     else
                                     {
