@@ -3854,6 +3854,11 @@ void interrupt high_priority high_isr (void)
                                 tel_len += 4;
                             }
                         }
+                        if (tel_len > sizeof(rec_buffer))
+                        {
+                            rec_state = rec_state_error;
+                            break;
+                        }
                         if (tel_len != 0 && rec_len >= tel_len)
                         {   // complete tel received
                             if (rec_chksum != rec_data)
