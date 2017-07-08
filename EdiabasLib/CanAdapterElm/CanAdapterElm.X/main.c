@@ -141,6 +141,8 @@
 
 #define TIMER0_RESOL        15625ul         // 16526 Hz
 #define TIMER1_RELOAD       (0x10000-500)   // 1 ms
+#define UART_LONG_TEL       100             // limit for long telegram (start of Bluetooth telegram gaps)
+#define UART_LONG_TIMOUT    50              // long timeout for Bluetooth telegrams gaps [ms]
 
 // K-LINE flags 1
 #define KLINEF1_PARITY_MASK     0x7
@@ -270,6 +272,7 @@ static uint8_t name_buffer[BT_NAME_LENGTH];
 
 static volatile rec_states rec_state;
 static volatile uint16_t rec_len;
+static volatile uint8_t rec_timeout_count;
 static volatile bool rec_bt_mode;
 static uint8_t rec_chksum;
 static volatile uint8_t rec_buffer[275];
@@ -3661,6 +3664,7 @@ void interrupt high_priority high_isr (void)
         {
             uint8_t rec_data = RCREG;
             // restart timeout timer
+            rec_timeout_count = 0;
             TMR1H = TIMER1_RELOAD >> 8;
             TMR1L = TIMER1_RELOAD;
             PIR1bits.TMR1IF = 0;    // clear interrupt flag
@@ -3900,6 +3904,23 @@ void interrupt high_priority high_isr (void)
     }
     if (PIE1bits.TMR1IE && PIR1bits.TMR1IF)
     {   // timeout timer
+        if (rec_len > UART_LONG_TEL)
+        {
+            if (rec_timeout_count < UART_LONG_TIMOUT)
+            {
+                rec_timeout_count++;
+                // restart timeout timer
+                TMR1H = TIMER1_RELOAD >> 8;
+                TMR1L = TIMER1_RELOAD;
+                PIR1bits.TMR1IF = 0;    // clear interrupt flag
+                T1CONbits.TMR1ON = 1;   // start timeout timer
+                return;
+            }
+        }
+        else
+        {
+            rec_timeout_count = 0;
+        }
         T1CONbits.TMR1ON = 0;   // stop timer
         PIR1bits.TMR1IF = 0;
         switch (rec_state)
