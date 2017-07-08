@@ -142,7 +142,7 @@
 #define TIMER0_RESOL        15625ul         // 16526 Hz
 #define TIMER1_RELOAD       (0x10000-500)   // 1 ms
 #define UART_LONG_TEL       100             // limit for long telegram (start of Bluetooth telegram gaps)
-#define UART_LONG_TIMOUT    50              // long timeout for Bluetooth telegrams gaps [ms]
+#define UART_LONG_TIMOUT    100             // long timeout for Bluetooth telegram gaps [ms]
 
 // K-LINE flags 1
 #define KLINEF1_PARITY_MASK     0x7
