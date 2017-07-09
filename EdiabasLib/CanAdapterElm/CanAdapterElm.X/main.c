@@ -88,7 +88,9 @@
 
 #define ADAPTER_VERSION     0x0009
 
-#if ADAPTER_TYPE != 0x02
+#if ADAPTER_TYPE == 0x02
+#define REQUIRES_BT_REC_TIMOUT
+#else
 #if ADAPTER_TYPE == 0x03
 // BC04
 #define ALLOW_FACTORY_RESET
@@ -100,6 +102,7 @@
 #define BT_RESPONSE_TIMEOUT 500
 #define BT_PIN_LENGTH 4
 #define BT_NAME_LENGTH 16
+#define REQUIRES_BT_REC_TIMOUT
 #elif ADAPTER_TYPE == 0x04
 // HC04
 #define ALLOW_FACTORY_RESET
@@ -272,7 +275,9 @@ static uint8_t name_buffer[BT_NAME_LENGTH];
 
 static volatile rec_states rec_state;
 static volatile uint16_t rec_len;
+#if defined(REQUIRES_BT_REC_TIMOUT)
 static volatile uint8_t rec_timeout_count;
+#endif
 static volatile bool rec_bt_mode;
 static uint8_t rec_chksum;
 static volatile uint8_t rec_buffer[275];
@@ -3664,7 +3669,9 @@ void interrupt high_priority high_isr (void)
         {
             uint8_t rec_data = RCREG;
             // restart timeout timer
+#if defined(REQUIRES_BT_REC_TIMOUT)
             rec_timeout_count = 0;
+#endif
             TMR1H = TIMER1_RELOAD >> 8;
             TMR1L = TIMER1_RELOAD;
             PIR1bits.TMR1IF = 0;    // clear interrupt flag
@@ -3904,6 +3911,7 @@ void interrupt high_priority high_isr (void)
     }
     if (PIE1bits.TMR1IE && PIR1bits.TMR1IF)
     {   // timeout timer
+#if defined(REQUIRES_BT_REC_TIMOUT)
         if (rec_len > UART_LONG_TEL)
         {
             if (rec_timeout_count < UART_LONG_TIMOUT)
@@ -3921,6 +3929,7 @@ void interrupt high_priority high_isr (void)
         {
             rec_timeout_count = 0;
         }
+#endif
         T1CONbits.TMR1ON = 0;   // stop timer
         PIR1bits.TMR1IF = 0;
         switch (rec_state)
