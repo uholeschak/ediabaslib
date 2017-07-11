@@ -1274,8 +1274,10 @@ namespace EdiabasLib
 
                                 ParEdicAddRetries = 3;
                                 // set standard timeouts
-                                ParTimeoutStd = (int)(CommParameterProtected[48] + (CommParameterProtected[49] << 8));
-                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC Response timeout: {0}", ParTimeoutStd);
+                                ParTimeoutStd = (int)(CommParameterProtected[48] + (CommParameterProtected[49] << 8) + (CommParameterProtected[50] << 16) + (CommParameterProtected[51] << 24));
+                                ParTimeoutNr78 = (int)(CommParameterProtected[56] + (CommParameterProtected[57] << 8) + (CommParameterProtected[58] << 16) + (CommParameterProtected[59] << 24));
+                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC UDS P2={0}, P2Ext={1}", ParTimeoutStd, ParTimeoutNr78);
+                                ParRetryNr78 = 10;
                                 ParTimeoutTelEnd = 20;
                                 ParInterbyteTime = 0;
                                 ParRegenTime = 0;
@@ -3449,67 +3451,89 @@ namespace EdiabasLib
                 if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
             }
-            if (!ReceiveData(receiveData, 0, 3, ParTimeoutStd, ParTimeoutTelEnd))
+            int timeout = ParTimeoutStd;
+            for (int retry = 0; retry < ParRetryNr78; retry++)
             {
-                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No header received");
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-            }
-            int dataLength = (receiveData[1] << 8) | receiveData[2];
-            byte[] tempBuffer = new byte[dataLength + 4];
-            Array.Copy(receiveData, tempBuffer, 3);
-            if (!ReceiveData(tempBuffer, 3, dataLength + 1, ParTimeoutTelEnd, ParTimeoutTelEnd))
-            {
-                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No tail received");
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-            }
-            LastCommTick = Stopwatch.GetTimestamp();
-            if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, tempBuffer, 0, dataLength + 4, "Resp");
-            if (CalcChecksumBmwFast(tempBuffer, dataLength + 3) != tempBuffer[dataLength + 3])
-            {
-                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Checksum incorrect");
-                ReceiveData(receiveData, 0, receiveData.Length, ParTimeoutStd, ParTimeoutTelEnd);
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-            }
-            switch (tempBuffer[0])
-            {
-                case 0x01:  // data telegram
-                    break;
-
-                case 0x02:  // status telegram
-                    if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Adapter status: {0:X02}", tempBuffer[3]);
-                    switch (tempBuffer[3])
-                    {
-                        case 0x00:  // bus ok
-                            if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "CAN bus OK");
-                            break;
-
-                        case 0x01:  // CAN error
-                            if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CAN error");
-                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
-                    }
-                    return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
-
-                default:
-                    if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Unknown telegram type: {0:X02}", tempBuffer[0]);
+                if (!ReceiveData(receiveData, 0, 3, timeout, ParTimeoutTelEnd))
+                {
+                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No header received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
-            }
-            if (dataLength > receiveData.Length)
-            {
-                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receive buffer too small");
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-            }
+                }
+                int dataLength = (receiveData[1] << 8) | receiveData[2];
+                byte[] tempBuffer = new byte[dataLength + 4];
+                Array.Copy(receiveData, tempBuffer, 3);
+                if (!ReceiveData(tempBuffer, 3, dataLength + 1, ParTimeoutTelEnd, ParTimeoutTelEnd))
+                {
+                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No tail received");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                }
+                LastCommTick = Stopwatch.GetTimestamp();
+                if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, tempBuffer, 0, dataLength + 4, "Resp");
+                if (CalcChecksumBmwFast(tempBuffer, dataLength + 3) != tempBuffer[dataLength + 3])
+                {
+                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Checksum incorrect");
+                    ReceiveData(receiveData, 0, receiveData.Length, ParTimeoutStd, ParTimeoutTelEnd);
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                }
+                switch (tempBuffer[0])
+                {
+                    case 0x01:  // data telegram
+                        break;
 
-            int dataOffset = 18;
-            Array.Clear(receiveData, 0, dataOffset);
-            receiveData[0] = (byte) ParEdicTesterCanId;
-            receiveData[1] = (byte)(ParEdicTesterCanId >> 8);
-            receiveData[15] = 0x01;
-            receiveData[16] = (byte) dataLength;
-            receiveData[17] = (byte) (dataLength >> 8);
-            Array.Copy(tempBuffer, 3, receiveData, dataOffset, dataLength);
-            receiveLength = dataLength + dataOffset;
+                    case 0x02:  // status telegram
+                        if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Adapter status: {0:X02}", tempBuffer[3]);
+                        switch (tempBuffer[3])
+                        {
+                            case 0x00:  // bus ok
+                                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "CAN bus OK");
+                                break;
 
-            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                            case 0x01:  // CAN error
+                                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CAN error");
+                                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
+                        }
+                        return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+
+                    default:
+                        if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Unknown telegram type: {0:X02}", tempBuffer[0]);
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                }
+
+                if (dataLength >= 3 && tempBuffer[3] == 0x7F && tempBuffer[4] == sendDataBuffer[0] && tempBuffer[5] == 0x78)
+                {
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "NR78");
+                    timeout = ParTimeoutNr78;
+                    continue;
+                }
+
+                if (sendDataLength >= 2 && sendDataBuffer[0] == 0x10)
+                {   // session control
+                    if (dataLength >= 6 && tempBuffer[3] == 0x50)
+                    {   // positive response
+                        int timeoutP2 = (tempBuffer[5] << 8) + tempBuffer[6];
+                        int timeoutP2Ext = ((tempBuffer[7] << 8) + tempBuffer[8]) * 10;
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UDS P2={0}, P2Ext={1}", timeoutP2, timeoutP2Ext);
+                    }
+                }
+
+                if (dataLength > receiveData.Length)
+                {
+                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receive buffer too small");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                }
+
+                int dataOffset = 18;
+                Array.Clear(receiveData, 0, dataOffset);
+                receiveData[0] = (byte)ParEdicTesterCanId;
+                receiveData[1] = (byte)(ParEdicTesterCanId >> 8);
+                receiveData[15] = 0x01;
+                receiveData[16] = (byte)dataLength;
+                receiveData[17] = (byte)(dataLength >> 8);
+                Array.Copy(tempBuffer, 3, receiveData, dataOffset, dataLength);
+                receiveLength = dataLength + dataOffset;
+                return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+            }
+            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
         }
 
         private EdiabasNet.ErrorCodes IdleIsoTp()
