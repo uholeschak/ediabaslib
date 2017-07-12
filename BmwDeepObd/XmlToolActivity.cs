@@ -2486,7 +2486,7 @@ namespace BmwDeepObd
                     {
                         if (ecuEntry.Address == MotorAddrVag)
                         {   // motor must be present, abort
-                            //break;
+                            break;
                         }
                     }
                     index++;
