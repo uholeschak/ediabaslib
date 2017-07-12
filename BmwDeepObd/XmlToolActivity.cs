@@ -891,7 +891,7 @@ namespace BmwDeepObd
                             foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
                             {
                                 if (jobInfo.Comments != null && jobInfo.CommentsTrans == null &&
-                                    XmlToolEcuActivity.IsValidJob(jobInfo))
+                                    XmlToolEcuActivity.IsValidJob(jobInfo, ecu))
                                 {
                                     foreach (string comment in jobInfo.Comments)
                                     {
@@ -950,7 +950,7 @@ namespace BmwDeepObd
                                             foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
                                             {
                                                 if (jobInfo.Comments != null && jobInfo.CommentsTrans == null &&
-                                                    XmlToolEcuActivity.IsValidJob(jobInfo))
+                                                    XmlToolEcuActivity.IsValidJob(jobInfo, ecu))
                                                 {
                                                     jobInfo.CommentsTrans = new List<string>();
                                                     foreach (string comment in jobInfo.Comments)
@@ -2486,7 +2486,7 @@ namespace BmwDeepObd
                     {
                         if (ecuEntry.Address == MotorAddrVag)
                         {   // motor must be present, abort
-                            break;
+                            //break;
                         }
                     }
                     index++;
@@ -2728,7 +2728,7 @@ namespace BmwDeepObd
             {
                 if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                 {
-                    if (XmlToolEcuActivity.IsVagReadJob(job))
+                    if (XmlToolEcuActivity.IsVagReadJob(job, ecuInfo))
                     {
                         if (ecuInfo.MwTabList != null)
                         {

@@ -209,7 +209,7 @@ namespace BmwDeepObd
             bool showAll = false;
             foreach (JobInfo jobInfo in _ecuInfo.JobList)
             {
-                if (IsVagReadJob(jobInfo))
+                if (IsVagReadJob(jobInfo, _ecuInfo))
                 {
                     if (jobInfo.Results.All(resultInfo => resultInfo.MwTabEntry != null && resultInfo.MwTabEntry.Dummy))
                     {
@@ -335,17 +335,20 @@ namespace BmwDeepObd
             return false;
         }
 
-        public static bool IsVagReadJob(JobInfo job)
+        public static bool IsVagReadJob(JobInfo job, XmlToolActivity.EcuInfo ecuInfo)
         {
-            return (string.Compare(job.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0) ||
-                    (string.Compare(job.Name, XmlToolActivity.JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0);
+            if (ecuInfo.Sgbd.Contains("7000"))
+            {
+                return string.Compare(job.Name, XmlToolActivity.JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0;
+            }
+            return string.Compare(job.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
-        public static bool IsValidJob(JobInfo job)
+        public static bool IsValidJob(JobInfo job, XmlToolActivity.EcuInfo ecuInfo)
         {
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
-                if (IsVagReadJob(job))
+                if (IsVagReadJob(job, ecuInfo))
                 {
                     return true;
                 }
@@ -408,12 +411,12 @@ namespace BmwDeepObd
             _spinnerJobsAdapter.Items.Clear();
             foreach (JobInfo job in _ecuInfo.JobList.OrderBy(x => x.Name))
             {
-                if (IsValidJob(job))
+                if (IsValidJob(job, _ecuInfo))
                 {
                     _spinnerJobsAdapter.Items.Add(job);
                     if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                     {
-                        if (IsVagReadJob(job))
+                        if (IsVagReadJob(job, _ecuInfo))
                         {
                             selection = _spinnerJobsAdapter.Items.Count - 1;
                         }
@@ -728,7 +731,7 @@ namespace BmwDeepObd
         {
             _selectedJob = jobInfo;
 
-            bool vagReadJob = IsVagReadJob(_selectedJob);
+            bool vagReadJob = IsVagReadJob(_selectedJob, _ecuInfo);
             _checkBoxShowAllResults.Visibility = (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) && vagReadJob ?
                 ViewStates.Visible : ViewStates.Gone;
 
