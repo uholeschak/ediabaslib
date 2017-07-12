@@ -1277,7 +1277,7 @@ namespace EdiabasLib
                                 ParTimeoutStd = (int)(CommParameterProtected[48] + (CommParameterProtected[49] << 8) + (CommParameterProtected[50] << 16) + (CommParameterProtected[51] << 24));
                                 ParTimeoutNr78 = (int)(CommParameterProtected[56] + (CommParameterProtected[57] << 8) + (CommParameterProtected[58] << 16) + (CommParameterProtected[59] << 24));
                                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC UDS P2={0}, P2Ext={1}", ParTimeoutStd, ParTimeoutNr78);
-                                ParRetryNr78 = 10;
+                                ParRetryNr78 = 50;  // VAG has no limit
                                 ParTimeoutTelEnd = 20;
                                 ParInterbyteTime = 0;
                                 ParRegenTime = 0;
@@ -3512,7 +3512,7 @@ namespace EdiabasLib
                     {   // positive response
                         int timeoutP2 = (tempBuffer[5] << 8) + tempBuffer[6];
                         int timeoutP2Ext = ((tempBuffer[7] << 8) + tempBuffer[8]) * 10;
-                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UDS P2={0}, P2Ext={1}", timeoutP2, timeoutP2Ext);
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Info: UDS P2={0}, P2Ext={1}", timeoutP2, timeoutP2Ext);
                     }
                 }
 
