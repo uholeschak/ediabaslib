@@ -10,6 +10,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using Peak.Can.Basic;
 // ReSharper disable RedundantAssignment
@@ -581,8 +582,8 @@ namespace CarSimulator
             _serialPort.DataReceived += SerialDataReceived;
             _serialReceiveEvent = new AutoResetEvent(false);
             _pcanReceiveEvent = new AutoResetEvent(false);
-            _sendData = new byte[260];
-            _receiveData = new byte[260];
+            _sendData = new byte[0x400];
+            _receiveData = new byte[0x400];
             _receiveDataMotorBackup = new byte[_receiveData.Length];
             _noResponseCount = 0;
             _nr2123SendCount = 0;
@@ -1207,6 +1208,15 @@ namespace CarSimulator
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool ObdSend(byte[] sendData)
         {
+#if false
+            StringBuilder sr = new StringBuilder();
+            sr.Append("Response: ");
+            foreach (byte data in sendData)
+            {
+                sr.Append(string.Format("{0:X02} ", data));
+            }
+            Debug.WriteLine(sr.ToString());
+#endif
             switch (_responseConcept)
             {
                 case ConceptType.ConceptBwmFast:
@@ -2713,12 +2723,26 @@ namespace CarSimulator
             // create BMW-FAST telegram
             if (dataBuffer.Length > 0x3F)
             {
-                receiveData[0] = 0x80;
-                receiveData[1] = (byte)(targetAddr >> 8);
-                receiveData[2] = (byte)targetAddr;
-                receiveData[3] = (byte)dataBuffer.Length;
-                Array.Copy(dataBuffer, 0, receiveData, 4, dataBuffer.Length);
-                len = dataBuffer.Length + 4;
+                if (dataBuffer.Length > 0xFF)
+                {
+                    receiveData[0] = 0x80;
+                    receiveData[1] = (byte)(targetAddr >> 8);
+                    receiveData[2] = (byte)targetAddr;
+                    receiveData[3] = 0x00;
+                    receiveData[4] = (byte)(dataBuffer.Length >> 8);
+                    receiveData[5] = (byte)dataBuffer.Length;
+                    Array.Copy(dataBuffer, 0, receiveData, 6, dataBuffer.Length);
+                    len = dataBuffer.Length + 6;
+                }
+                else
+                {
+                    receiveData[0] = 0x80;
+                    receiveData[1] = (byte)(targetAddr >> 8);
+                    receiveData[2] = (byte)targetAddr;
+                    receiveData[3] = (byte)dataBuffer.Length;
+                    Array.Copy(dataBuffer, 0, receiveData, 4, dataBuffer.Length);
+                    len = dataBuffer.Length + 4;
+                }
             }
             else
             {
@@ -2749,8 +2773,16 @@ namespace CarSimulator
             int dataLength = sendData[0] & 0x3F;
             if (dataLength == 0)
             {   // with length byte
-                dataLength = sendData[3];
-                dataOffset = 4;
+                if (sendData[3] == 0)
+                {   // two length bytes
+                    dataLength = (sendData[4] << 8) + sendData[5];
+                    dataOffset = 6;
+                }
+                else
+                {
+                    dataLength = sendData[3];
+                    dataOffset = 4;
+                }
             }
 
             if ((Stopwatch.GetTimestamp() - _lastCanSendTick) < 10 * TickResolMs)
@@ -4053,12 +4085,13 @@ namespace CarSimulator
 
                 if (!found)
                 {
-                    string text = string.Empty;
+                    StringBuilder sr = new StringBuilder();
+                    sr.Append("Not found: ");
                     for (int i = 0; i < recLength; i++)
                     {
-                        text += string.Format("{0:X02} ", _receiveData[i]);
+                        sr.Append(string.Format("{0:X02} ", _receiveData[i]));
                     }
-                    Debug.WriteLine("Not found: " + text);
+                    Debug.WriteLine(sr.ToString());
                 }
             }
         }
@@ -6233,12 +6266,13 @@ namespace CarSimulator
             }
             if (!found)
             {
-                string text = string.Empty;
+                StringBuilder sr = new StringBuilder();
+                sr.Append("Not found: ");
                 for (int i = 0; i < recLength; i++)
                 {
-                    text += string.Format("{0:X02} ", _receiveData[i]);
+                    sr.Append(string.Format("{0:X02} ", _receiveData[i]));
                 }
-                Debug.WriteLine("Not found: " + text);
+                Debug.WriteLine(sr.ToString());
             }
         }
 
@@ -6641,12 +6675,13 @@ namespace CarSimulator
                 recLength += 1; // checksum
 #if true
                 {
-                    string text = string.Empty;
+                    StringBuilder sr = new StringBuilder();
+                    sr.Append("Request: ");
                     for (int i = 0; i < recLength; i++)
                     {
-                        text += string.Format("{0:X02} ", _receiveData[i]);
+                        sr.Append(string.Format("{0:X02} ", _receiveData[i]));
                     }
-                    Debug.WriteLine("Request: " + text);
+                    Debug.WriteLine(sr.ToString());
                 }
 #endif
                 if (!_adsAdapter && !_klineResponder)
@@ -6825,12 +6860,13 @@ namespace CarSimulator
                     }
                     if (!found)
                     {
-                        string text = string.Empty;
+                        StringBuilder sr = new StringBuilder();
+                        sr.Append("Not found: ");
                         for (int i = 0; i < recLength; i++)
                         {
-                            text += string.Format("{0:X02} ", _receiveData[i]);
+                            sr.Append(string.Format("{0:X02} ", _receiveData[i]));
                         }
-                        Debug.WriteLine("Not found: " + text);
+                        Debug.WriteLine(sr.ToString());
                     }
                 }
             }
