@@ -26,6 +26,10 @@
       <string name="label_motor_temp">Motor temperature [°C]:</string>
       <string name="label_motor_temp_before_cat">Temp. before catalyst [°C]:</string>
       <string name="label_motor_temp_before_filter">Temp. before part. filter [°C]:</string>
+      <string name="label_motor_break_light">Break light:</string>
+      <string name="label_motor_pedal_value">Pedal value [%]:</string>
+      <string name="label_motor_speed">Speed [km/h]:</string>
+      <string name="label_motor_accel">Acceleration [m/s^2]:</string>
     </strings>
     <strings lang="de">
       <string name="tab_motor">Motor</string>
@@ -50,11 +54,15 @@
       <string name="label_motor_temp">Motortemperatur [°C]:</string>
       <string name="label_motor_temp_before_cat">Temp. vor Katalysator [°C]:</string>
       <string name="label_motor_temp_before_filter">Temp. vor Partikelfilter [°C]:</string>
+      <string name="label_motor_break_light">Bremslicht:</string>
+      <string name="label_motor_pedal_value">Pedalwert [%]:</string>
+      <string name="label_motor_speed">Geschwindigkeit [km/h]:</string>
+      <string name="label_motor_accel">Beschleunigung [m/s^2]:</string>
     </strings>
     <jobs sgbd="d_motor">
       <job name="STATUS_MESSWERTBLOCK_LESEN"
-           args_first="JA;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED"
-           args="NEIN;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED">
+           args_first="JA;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED;ISBLS;IFPWG;IVKMH;IAFZG"
+           args="NEIN;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED;ISBLS;IFPWG;IVKMH;IAFZG">
         <display name="label_motor_bat_voltage" result="STAT_UBATT_WERT" />
         <display name="label_motor_temp" result="STAT_CTSCD_tClntLin_WERT" format="6.2R" />
         <display name="label_motor_air_mass" result="STAT_LUFTMASSE_WERT" format="7.2R" />
@@ -76,6 +84,10 @@
         <display name="label_motor_part_filt_request" result="STAT_REGENERATIONSANFORDERUNG_WERT" log_tag="part_filt_requ" />
         <display name="label_motor_part_filt_status" result="STAT_EGT_st_WERT" log_tag="part_filt_status" />
         <display name="label_motor_part_filt_unblocked" result="STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT" log_tag="part_filt_unblocked" />
+        <display name="label_motor_break_light" result="STAT_BREMSLICHTSCHALTER_EIN_WERT" />
+        <display name="label_motor_pedal_value" result="STAT_FAHRERWUNSCH_PEDAL_WERT" format="6.2R" />
+        <display name="label_motor_speed" result="STAT_GESCHWINDIGKEIT_WERT" format="6.2R" />
+        <display name="label_motor_accel" result="STAT_FAHRZEUGBESCHLEUNIGUNG_WERT" format="6.2R" />
       </job>
     </jobs>
     <code show_warnigs="true">
@@ -126,6 +138,11 @@
 
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT":
                     result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) < 0.5) && found) ? "1" : "0";
+                    if (!found) result = string.Empty;
+                    break;
+
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_BREMSLICHTSCHALTER_EIN_WERT":
+                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) > 0.5) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
                     break;
             }
