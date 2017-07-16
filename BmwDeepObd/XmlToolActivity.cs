@@ -3390,6 +3390,7 @@ namespace BmwDeepObd
                     EcuMwTabEntry ecuMwTabEntry;
                     if (mwTabEcuDict.TryGetValue(key, out ecuMwTabEntry))
                     {
+                        //Log.Debug("Match", "Match: {0}", mwTabEntry.BlockNumber);
                         matchCount++;
                     }
                 }
