@@ -754,7 +754,7 @@ namespace BmwDeepObd
 
         private void DataUpdatedEvent()
         {
-            while (Stopwatch.GetTimestamp() - _lastUpdateTime < 500 * TickResolMs)
+            while (Stopwatch.GetTimestamp() - _lastUpdateTime < 100 * TickResolMs)
             {
                 if (AbortEdiabasJob())
                 {
