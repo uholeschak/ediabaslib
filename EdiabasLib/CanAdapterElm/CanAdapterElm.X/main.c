@@ -2437,7 +2437,6 @@ void can_receiver(bool new_can_msg)
                     can_rec_data_len = (((uint16_t) can_in_msg.data[1] & 0x0F) << 8) + can_in_msg.data[2];
                     if (can_rec_data_len > 0xFF)
                     {   // too long
-                        can_rec_tel_valid = false;
                         break;
                     }
                     if (can_rec_data_len > 0x3F)
@@ -2786,7 +2785,6 @@ void can_isotp_receiver(bool new_can_msg)
                     can_rec_data_len = (((uint16_t) can_in_msg.data[0] & 0x0F) << 8) + can_in_msg.data[1];
                     if (can_rec_data_len > sizeof(temp_buffer) - 4)
                     {   // too long
-                        can_rec_tel_valid = false;
                         break;
                     }
                     can_rec_buffer_offset = temp_buffer + 3;
