@@ -86,7 +86,7 @@ namespace EdiabasLib
         protected delegate EdiabasNet.ErrorCodes FinishDelegate();
 
         private bool _disposed;
-        protected const int TransBufferSize = 1024; // transmit buffer size
+        protected const int TransBufferSize = 0x800; // transmit buffer size
         protected static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         protected static readonly byte[] ByteArray0 = new byte[0];
         protected static readonly long TickResolMs = Stopwatch.Frequency / 1000;
