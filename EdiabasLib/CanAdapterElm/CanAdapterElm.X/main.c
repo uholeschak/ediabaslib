@@ -2808,7 +2808,7 @@ void can_isotp_receiver(bool new_can_msg)
                         di();
                         temp_len = send_len;
                         ei();
-                        if ((sizeof(send_buffer) - temp_len) >= (can_rec_data_len + 6))
+                        if ((sizeof(send_buffer) - temp_len) >= (can_rec_data_len + 4))
                         {
                             break;
                         }
