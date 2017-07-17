@@ -198,7 +198,7 @@
 #define EEP_ADDR_BT_PIN     0x08    // eeprom address for Blutooth pin (16 bytes)
 #define EEP_ADDR_BT_NAME    0x18    // eeprom address for Blutooth pin (32 bytes)
 
-#define TEMP_BUF_SIZE       0x0800  // temp buffer size
+#define TEMP_BUF_SIZE       0x0500  // temp buffer size
 
 #if (TEMP_BUF_SIZE & 0xFF) != 0
 #error TEMP_BUF_SIZE must be divisible by 256
@@ -285,7 +285,7 @@ static volatile uint8_t rec_buffer[275];
 static uint16_t send_set_idx;
 static uint16_t send_get_idx;
 static volatile uint16_t send_len;
-static volatile uint8_t send_buffer[280];   // larger send buffer for multi responses
+static volatile uint8_t send_buffer[TEMP_BUF_SIZE + 10];   // larger send buffer for telegram frames
 
 static op_modes op_mode;        // current operation mode
 static iface_modes iface_mode;  // current interface mode
@@ -2437,7 +2437,6 @@ void can_receiver(bool new_can_msg)
                     can_rec_data_len = (((uint16_t) can_in_msg.data[1] & 0x0F) << 8) + can_in_msg.data[2];
                     if (can_rec_data_len > 0xFF)
                     {   // too long
-                        can_rec_tel_valid = false;
                         break;
                     }
                     if (can_rec_data_len > 0x3F)
@@ -2786,7 +2785,6 @@ void can_isotp_receiver(bool new_can_msg)
                     can_rec_data_len = (((uint16_t) can_in_msg.data[0] & 0x0F) << 8) + can_in_msg.data[1];
                     if (can_rec_data_len > sizeof(temp_buffer) - 4)
                     {   // too long
-                        can_rec_tel_valid = false;
                         break;
                     }
                     can_rec_buffer_offset = temp_buffer + 3;
@@ -2810,7 +2808,7 @@ void can_isotp_receiver(bool new_can_msg)
                         di();
                         temp_len = send_len;
                         ei();
-                        if ((sizeof(send_buffer) - temp_len) >= (can_rec_data_len + 6))
+                        if ((sizeof(send_buffer) - temp_len) >= (can_rec_data_len + 4))
                         {
                             break;
                         }
