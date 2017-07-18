@@ -166,18 +166,28 @@ namespace BmwDeepObd
         {
             new Tuple<string, string>("Steuergeraeteversion_abfragen", ""),
             new Tuple<string, string>("Steuergeraeteversion_abfragen2", ""),
+            new Tuple<string, string>("Fahrgestellnr_abfragen", ""),
             new Tuple<string, string>("ErwIdentifikation_abfragen", ""),
             new Tuple<string, string>("UnterstFunktionen_abfragen", ""),
+            new Tuple<string, string>("Verbauliste_abfragen", ""),
             new Tuple<string, string>("Fehlerspeicher_abfragen", ""),
             new Tuple<string, string>("FehlerspeicherSAE_abfragen", ""),
-            new Tuple<string, string>("Messwerteblock_lesen", "1"),
-            new Tuple<string, string>("Messwerteblock_lesen", "12"),
-            new Tuple<string, string>("Messwerteblock_lesen", "34"),
-            new Tuple<string, string>("Messwerteblock_lesen", "81"),
-            new Tuple<string, string>("Messwerteblock_lesen", "100"),
-            new Tuple<string, string>("Messwerteblock_lesen", "101"),
-            new Tuple<string, string>("Messwerteblock_lesen", "102"),
-            new Tuple<string, string>("Messwerteblock_lesen", "103"),
+            new Tuple<string, string>("CodierungS22_lesen", "-1"),
+            new Tuple<string, string>("IdentDatenMasterS22_abfragen", "VWDataSetNumberOrECUDataContainerNumber"),
+            new Tuple<string, string>("IdentDatenMasterS22_abfragen", "VWDataSetVersionNumber"),
+            new Tuple<string, string>("IdentDatenMasterS22_abfragen", "VWFAZITIdentificationString"),
+            new Tuple<string, string>("IdentDatenMasterS22_abfragen", "VehicleEquipmentCodeAndPRNumberCombination"),
+            new Tuple<string, string>("LangeCodierung_lesen", ";CAN_HS;500;TP20"),
+            new Tuple<string, string>("Messwerteblock_lesen", "1;"),
+            new Tuple<string, string>("Messwerteblock_lesen", "4;"),
+            new Tuple<string, string>("Messwerteblock_lesen", "12;"),
+            new Tuple<string, string>("Messwerteblock_lesen", "34;"),
+            new Tuple<string, string>("Messwerteblock_lesen", "81;"),
+            new Tuple<string, string>("Messwerteblock_lesen", "100;"),
+            new Tuple<string, string>("Messwerteblock_lesen", "101;"),
+            new Tuple<string, string>("Messwerteblock_lesen", "102;"),
+            new Tuple<string, string>("Messwerteblock_lesen", "103;"),
+            new Tuple<string, string>("Messwerteblock_lesen", ";CAN_HS;500;TP20"),
         };
 
         private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
@@ -2503,9 +2513,9 @@ namespace BmwDeepObd
                                         string jobArgs = job.Item2;
                                         if (!string.IsNullOrEmpty(readCommand))
                                         {
-                                            if (string.Compare(job.Item1, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
+                                            if (string.Compare(job.Item1, JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0 && jobArgs.EndsWith(";"))
                                             {
-                                                jobArgs += ";" + readCommand;
+                                                jobArgs += readCommand;
                                             }
                                         }
                                         _ediabas.ArgString = jobArgs;
