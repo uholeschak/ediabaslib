@@ -162,6 +162,24 @@ namespace BmwDeepObd
         {
             "D_0012", "D_MOTOR", "D_0010", "D_0013", "D_0014"
         };
+        private static readonly Tuple<string, string>[] EcuInfoVagJobs =
+        {
+            new Tuple<string, string>("Steuergeraeteversion_abfragen", ""),
+            new Tuple<string, string>("Steuergeraeteversion_abfragen2", ""),
+            new Tuple<string, string>("ErwIdentifikation_abfragen", ""),
+            new Tuple<string, string>("UnterstFunktionen_abfragen", ""),
+            new Tuple<string, string>("Fehlerspeicher_abfragen", ""),
+            new Tuple<string, string>("FehlerspeicherSAE_abfragen", ""),
+            new Tuple<string, string>("Messwerteblock_lesen", "1"),
+            new Tuple<string, string>("Messwerteblock_lesen", "12"),
+            new Tuple<string, string>("Messwerteblock_lesen", "34"),
+            new Tuple<string, string>("Messwerteblock_lesen", "81"),
+            new Tuple<string, string>("Messwerteblock_lesen", "100"),
+            new Tuple<string, string>("Messwerteblock_lesen", "101"),
+            new Tuple<string, string>("Messwerteblock_lesen", "102"),
+            new Tuple<string, string>("Messwerteblock_lesen", "103"),
+        };
+
         private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
 
         public const string EmptyMwTab = "-";
@@ -2434,6 +2452,7 @@ namespace BmwDeepObd
                         {
                             jobName = "Steuergeraeteversion_abfragen2";
                         }
+                        EcuInfo thisEcuInfo = null;
                         _ediabas.ExecuteJob(jobName);
                         List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
@@ -2448,26 +2467,56 @@ namespace BmwDeepObd
                                     //if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
-                                        bool ecuFound = _ecuList.Any(ecuInfo => string.Compare(ecuInfo.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0);
-                                        if ((searchStartIndex < 0) || !ecuFound)
+                                        thisEcuInfo = _ecuList.FirstOrDefault(ecuInfo => string.Compare(ecuInfo.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0);
+                                        if ((searchStartIndex < 0) || (thisEcuInfo == null))
                                         {
                                             detectCount++;
                                         }
-                                        if (!ecuFound)
+                                        if (thisEcuInfo == null)
                                         {
                                             string displayName;
                                             if ((ecuNameDict == null) || !ecuNameDict.TryGetValue(ecuEntry.Address, out displayName))
                                             {
                                                 displayName = ecuName;
                                             }
-                                            EcuInfo ecuInfo = new EcuInfo(ecuName.ToUpperInvariant(), ecuEntry.Address, string.Empty, ecuName, string.Empty)
+                                            thisEcuInfo = new EcuInfo(ecuName.ToUpperInvariant(), ecuEntry.Address, string.Empty, ecuName, string.Empty)
                                             {
                                                 PageName = displayName,
                                                 EcuName = displayName
                                             };
-                                            _ecuList.Add(ecuInfo);
+                                            _ecuList.Add(thisEcuInfo);
                                         }
                                     }
+                                }
+                            }
+                        }
+                        if (thisEcuInfo != null)
+                        {
+                            // get more ecu infos
+                            string readCommand = GetReadCommand(thisEcuInfo);
+                            foreach (Tuple<string, string> job in EcuInfoVagJobs)
+                            {
+                                try
+                                {
+                                    if (_ediabas.IsJobExisting(job.Item1))
+                                    {
+                                        string jobArgs = job.Item2;
+                                        if (!string.IsNullOrEmpty(readCommand))
+                                        {
+                                            if (string.Compare(job.Item1, "Messwerteblock_lesen", StringComparison.OrdinalIgnoreCase) == 0)
+                                            {
+                                                jobArgs += ";" + readCommand;
+                                            }
+                                        }
+                                        _ediabas.ArgString = jobArgs;
+                                        _ediabas.ArgBinaryStd = null;
+                                        _ediabas.ResultsRequests = string.Empty;
+                                        _ediabas.ExecuteJob(job.Item1);
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
                                 }
                             }
                         }
