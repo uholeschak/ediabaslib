@@ -10,6 +10,8 @@
     <include filename="MotorPm.ccpage"/>
     <include filename="Ccc.ccpage"/>
     <include filename="Ihk.ccpage"/>
+    <include filename="Dsc.ccpage"/>
+    <include filename="Pdc.ccpage"/>
     <include filename="Errors.ccpage"/>
     <include filename="Test.ccpage"/>
   </pages>
