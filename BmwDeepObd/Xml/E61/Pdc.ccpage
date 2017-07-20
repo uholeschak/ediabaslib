@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name ="tab_pdc">
+    <strings>
+      <string name="tab_pdc">PDC</string>
+      <string name="label_pdc_vl">Front left [cm]:</string>
+      <string name="label_pdc_vml">Front middle left [cm]:</string>
+      <string name="label_pdc_vmr">Front middle right [cm]:</string>
+      <string name="label_pdc_vr">Front right [cm]:</string>
+      <string name="label_pdc_hl">Back left [cm]:</string>
+      <string name="label_pdc_hml">Back middle left [cm]:</string>
+      <string name="label_pdc_hmr">Back middle right [cm]:</string>
+      <string name="label_pdc_hr">Back right [cm]:</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_pdc">PDC</string>
+      <string name="label_pdc_vl">Vorne links [cm]:</string>
+      <string name="label_pdc_vml">Vorne Mitte links [cm]:</string>
+      <string name="label_pdc_vmr">Vorne Mitte rechts [cm]:</string>
+      <string name="label_pdc_vr">Vorne rechts [cm]:</string>
+      <string name="label_pdc_hl">Hinten links [cm]:</string>
+      <string name="label_pdc_hml">Hinten Mitte links [cm]:</string>
+      <string name="label_pdc_hmr">Hinten Mitte rechts [cm]:</string>
+      <string name="label_pdc_hr">Hinten rechts [cm]:</string>
+    </strings>
+    <jobs sgbd="d_pdc">
+      <job name="STATUS_ABSTAND" results="STAT_VL_WERT;STAT_VML_WERT;STAT_VMR_WERT;STAT_VR_WERT;STAT_HL_WERT;STAT_HML_WERT;STAT_HMR_WERT;STAT_HR_WERT">
+        <display name="label_pdc_vl" result="STAT_VL_WERT" format="3L" />
+        <display name="label_pdc_vml" result="STAT_VML_WERT" format="3L" />
+        <display name="label_pdc_vmr" result="STAT_VMR_WERT" format="3L" />
+        <display name="label_pdc_vr" result="STAT_VR_WERT" format="3L" />
+        <display name="label_pdc_hl" result="STAT_HL_WERT" format="3L" />
+        <display name="label_pdc_hml" result="STAT_HML_WERT" format="3L" />
+        <display name="label_pdc_hmr" result="STAT_HMR_WERT" format="3L" />
+        <display name="label_pdc_hr" result="STAT_HR_WERT" format="3L" />
+      </job>
+    </jobs>
+  </page>
+</fragment>
