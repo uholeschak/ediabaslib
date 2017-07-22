@@ -1235,7 +1235,7 @@ namespace EdiabasLib
 
                                 ParEdicAddRetries = 3;
                                 // set standard timeouts
-                                ParTimeoutStd = 2000;   // 600 is too short, max timeout, use ParTimeoutNr78
+                                ParTimeoutStd = 1200;   // 600 is too short, max timeout, use ParTimeoutNr78
                                 ParTimeoutTelEnd = 20;
                                 ParInterbyteTime = 0;
                                 ParRegenTime = 0;
@@ -1243,7 +1243,7 @@ namespace EdiabasLib
                                 ParRequestTimeNr23 = 1;
                                 ParRetryNr21 = 240;     // 2 min
                                 ParRetryNr23 = 240;     // 2 min
-                                ParTimeoutNr78 = 2000;
+                                ParTimeoutNr78 = 1200;
                                 ParRetryNr78 = 50;      // VAG is only using interface deadlock timeout
 
                                 KeyBytesProtected = new byte[] { 0xDA, 0x8F, ParEdicWakeAddress, 0x54, 0x50 };
