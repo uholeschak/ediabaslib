@@ -302,7 +302,9 @@
     <None Include="Xml\E61\Ccc.ccpage">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Xml\E61\E61.ccpages" />
+    <None Include="Xml\E61\E61.ccpages">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Xml\E61\E61Enet.cccfg" />
     <None Include="Xml\E61\Ihk.ccpage" />
     <None Include="Xml\E61\Errors.ccpage">
@@ -357,7 +359,9 @@
   <ItemGroup>
     <AndroidResource Include="Resources\menu\xml_tool_context.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Xml\E61\Dsc.ccpage" />
+  </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values-ru\Strings.xml">
       <SubType>Designer</SubType>
