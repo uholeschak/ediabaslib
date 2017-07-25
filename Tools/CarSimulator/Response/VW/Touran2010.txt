@@ -23,6 +23,17 @@ CFG: 01 07 E0
 83 07 E0 22 F1 7C 00 : 9A 07 E0 62 F1 7C 42 50 47 2D 38 31 30 30 33 2E 30 39 2E 31 30 31 32 33 35 31 30 39 34 00
 
 ;Fehlerspeicher_abfragen
+; Request: 1 Byte Requested status bits
+; Response: 1 Byte supported status bits, 3 Byte error code, 1 Byte status, 3 Byte error code, 1 Byte status ...
+; DTC status bits
+; 0x01 	testFailed 	DTC failed at the time of the request
+; 0x02 	testFailedThisOperationCycle 	DTC failed on the current operation cycle
+; 0x04 	pendingDTC 	DTC failed on the current or previous operation cycle
+; 0x08 	confirmedDTC 	DTC is confirmed at the time of the request
+; 0x10 	testNotCompletedSinceLastClear 	DTC test not completed since the last code clear
+; 0x20 	testFailedSinceLastClear 	DTC test failed at least once since last code clear
+; 0x40 	testNotCompletedThisOperationCycle 	DTC test not completed this operation cycle
+; 0x80 	warningIndicatorRequested 	Server is requesting warningIndicator to be active 
 ;83 07 E0 19 02 0C 91 : 93 07 E0 59 02 0C 01 02 03 00 05 06 07 00 09 0A 0B 00 0D 0E 0F 00 00
 83 07 E0 19 02 0C 91 : 83 07 E0 7F 19 78 00  83 07 E0 59 02 FF 00
 
