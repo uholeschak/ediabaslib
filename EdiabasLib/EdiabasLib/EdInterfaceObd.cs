@@ -3419,6 +3419,10 @@ namespace EdiabasLib
 
                     case 0x01:  // disconnected
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Disconnect OK");
+                        if (CurrentCanStatus != CanStatus.CanError)
+                        {
+                            CurrentCanStatus = CanStatus.CanOk;
+                        }
                         break;
 
                     case 0x02:  // receive complete
