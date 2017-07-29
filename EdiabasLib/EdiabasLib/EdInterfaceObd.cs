@@ -103,6 +103,7 @@ namespace EdiabasLib
         protected static volatile uint CommThreadResCount;
 
         protected string ComPortProtected = string.Empty;
+        protected int UdsDtcStatusOverrideProtected = -1;
         protected double DtrTimeCorrCom = 0.3;
         protected double DtrTimeCorrFtdi = 0.3;
         protected int AddRecTimeout = 20;
@@ -241,6 +242,12 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     ComPortProtected = prop;
+                }
+
+                prop = EdiabasProtected.GetConfigProperty("ObdUdsDtcStatusOverride");
+                if (prop != null)
+                {
+                    UdsDtcStatusOverride = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected.GetConfigProperty("ObdDtrTimeCorrCom");
@@ -1557,6 +1564,18 @@ namespace EdiabasLib
             set
             {
                 ComPortProtected = value;
+            }
+        }
+
+        public int UdsDtcStatusOverride
+        {
+            get
+            {
+                return UdsDtcStatusOverrideProtected;
+            }
+            set
+            {
+                UdsDtcStatusOverrideProtected = value;
             }
         }
 
@@ -3438,11 +3457,12 @@ namespace EdiabasLib
                 sendDataBuffer = ParEdicTesterPresentTel;
                 sendLen = ParEdicTesterPresentTelLen;
             }
-            if (sendLen == 3 && sendDataBuffer[0] == 0x19 && sendDataBuffer[1] == 0x02 && sendDataBuffer[2] == 0x0C)
+            if (UdsDtcStatusOverride >= 0 && 
+                sendLen == 3 && sendDataBuffer[0] == 0x19 && sendDataBuffer[1] == 0x02 && sendDataBuffer[2] == 0x0C)
             {
                 // request error memory pendingDTC and confirmedDTC
-                sendDataBuffer[2] |= 0x20;  // add testFailedSinceLastClear
-                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Adding testFailedSinceLastClear to error request");
+                sendDataBuffer[2] = (byte) UdsDtcStatusOverride;
+                if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS DTC status with {0:X02}", (byte) UdsDtcStatusOverride);
             }
 
             if (!InterfaceSetCanIdsFuncUse(ParEdicEcuCanId, ParEdicTesterCanId, canFlags))

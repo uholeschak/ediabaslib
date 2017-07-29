@@ -161,6 +161,7 @@ namespace BmwDeepObd
                 _stopThread = false;
                 if (Ediabas.EdInterfaceClass is EdInterfaceObd)
                 {
+                    ((EdInterfaceObd)Ediabas.EdInterfaceClass).UdsDtcStatusOverride = ActivityCommon.UdsDtcStatusOverride;
                     ((EdInterfaceObd)Ediabas.EdInterfaceClass).ComPort = comPort;
                 }
                 else if (Ediabas.EdInterfaceClass is EdInterfaceEnet)
