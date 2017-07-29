@@ -40,6 +40,13 @@ namespace EdiabasLib
             Disconnect = 0x02,
         }
 
+        protected enum CanStatus
+        {
+            Undefined,
+            CanOk,
+            CanError
+        }
+
         protected enum KwpModes
         {
             Undefined,
@@ -179,6 +186,7 @@ namespace EdiabasLib
         protected int CurrentBaudRate;
         protected SerialParity CurrentParity;
         protected int CurrentDataBits;
+        protected CanStatus CurrentCanStatus;
         protected byte BlockCounter;
         protected byte LastKwp1281Cmd;
 
@@ -1063,6 +1071,7 @@ namespace EdiabasLib
             CurrentBaudRate = 9600;
             CurrentParity = SerialParity.None;
             CurrentDataBits = 8;
+            CurrentCanStatus = CanStatus.Undefined;
 
             if (UseExtInterfaceFunc)
             {
@@ -2781,6 +2790,11 @@ namespace EdiabasLib
 
             if (!EcuConnected)
             {
+                if (CurrentCanStatus == CanStatus.CanOk)
+                {
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** KWP2000 aborted because of CAN support");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                }
                 KwpMode = KwpModes.Undefined;
                 Kwp1281SendNack = false;
                 KeyBytesProtected = ByteArray0;
@@ -3400,6 +3414,7 @@ namespace EdiabasLib
                 {
                     case 0x00:  // connected
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Connect OK");
+                        CurrentCanStatus = CanStatus.CanOk;
                         break;
 
                     case 0x01:  // disconnected
@@ -3412,6 +3427,7 @@ namespace EdiabasLib
 
                     case 0x03:  // CAN error
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CAN error");
+                        CurrentCanStatus = CanStatus.CanError;
                         errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
                         break;
                 }
@@ -3512,10 +3528,12 @@ namespace EdiabasLib
                         {
                             case 0x00:  // bus ok
                                 if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "CAN bus OK");
+                                CurrentCanStatus = CanStatus.CanOk;
                                 break;
 
                             case 0x01:  // CAN error
                                 if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CAN error");
+                                CurrentCanStatus = CanStatus.CanError;
                                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
                         }
                         return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
