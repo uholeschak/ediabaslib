@@ -3438,6 +3438,12 @@ namespace EdiabasLib
                 sendDataBuffer = ParEdicTesterPresentTel;
                 sendLen = ParEdicTesterPresentTelLen;
             }
+            if (sendLen == 3 && sendDataBuffer[0] == 0x19 && sendDataBuffer[1] == 0x02 && sendDataBuffer[2] == 0x0C)
+            {
+                // request error memory pendingDTC and confirmedDTC
+                sendDataBuffer[2] |= 0x20;  // add testFailedSinceLastClear
+                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Adding testFailedSinceLastClear to error request");
+            }
 
             if (!InterfaceSetCanIdsFuncUse(ParEdicEcuCanId, ParEdicTesterCanId, canFlags))
             {
