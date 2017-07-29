@@ -186,6 +186,7 @@ namespace BmwDeepObd
         public delegate void TranslateDelegate(List<string> transList);
         public delegate void EnetSsidWarnDelegate(bool retry);
         public delegate void WifiConnectedWarnDelegate();
+        public const int UdsDtcStatusOverride = 0x2C;
         public const string TraceFileName = "ifh.trc.zip";
         public const string EmulatorEnetIp = "192.168.10.244";
         public const string AdapterSsid = "Deep OBD BMW";
@@ -1915,6 +1916,7 @@ namespace BmwDeepObd
             // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
             if (ediabas.EdInterfaceClass is EdInterfaceObd)
             {
+                ((EdInterfaceObd) ediabas.EdInterfaceClass).UdsDtcStatusOverride = UdsDtcStatusOverride;
                 if (SelectedInterface == InterfaceType.Ftdi)
                 {
                     ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "FTDI0";
