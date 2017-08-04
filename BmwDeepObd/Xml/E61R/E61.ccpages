@@ -4,9 +4,5 @@
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd BmwDeepObd.xsd">
   <pages>
     <include filename="Combined.ccpage"/>
-    <include filename="Motor.ccpage"/>
-    <include filename="Dsc.ccpage"/>
-    <include filename="Pdc.ccpage"/>
-    <include filename="Acc.ccpage"/>
   </pages>
 </fragment>
