@@ -42,9 +42,10 @@ namespace BmwDeepObd
 
         public class JobInfo
         {
-            public JobInfo(string id, string name, string argsFirst, string args, string results)
+            public JobInfo(string id, string sgbd, string name, string argsFirst, string args, string results)
             {
                 Id = id;
+                Sgbd = sgbd;
                 Name = name;
                 ArgsFirst = argsFirst;
                 Args = args;
@@ -52,6 +53,8 @@ namespace BmwDeepObd
             }
 
             public string Id { get; }
+
+            public string Sgbd { get; }
 
             public string Name { get; }
 
@@ -406,6 +409,7 @@ namespace BmwDeepObd
                                     if (string.Compare(xnodeJobsChild.Name, "job", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         string jobId = string.Empty;
+                                        string jobSgbd = string.Empty;
                                         string jobName = string.Empty;
                                         string jobArgsFirst = string.Empty;
                                         string jobArgs = string.Empty;
@@ -414,6 +418,8 @@ namespace BmwDeepObd
                                         {
                                             attrib = xnodeJobsChild.Attributes["id"];
                                             if (attrib != null) jobId = attrib.Value;
+                                            attrib = xnodeJobsChild.Attributes["sgbd"];
+                                            if (attrib != null) jobSgbd = attrib.Value;
                                             attrib = xnodeJobsChild.Attributes["name"];
                                             if (attrib != null) jobName = attrib.Value;
                                             attrib = xnodeJobsChild.Attributes["args_first"];
@@ -423,7 +429,7 @@ namespace BmwDeepObd
                                             attrib = xnodeJobsChild.Attributes["results"];
                                             if (attrib != null) jobResults = attrib.Value;
                                         }
-                                        jobList.Add(new JobInfo(jobId, jobName, jobArgsFirst, jobArgs, jobResults));
+                                        jobList.Add(new JobInfo(jobId, jobSgbd, jobName, jobArgsFirst, jobArgs, jobResults));
                                         foreach (XmlNode xnodeJobChild in xnodeJobsChild.ChildNodes)
                                         {
                                             ReadDisplayNode(xnodeJobChild, displayList, (string.IsNullOrEmpty(jobId) ? jobName : jobId) + "#", ref logEnabled);

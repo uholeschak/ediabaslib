@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd BmwDeepObd.xsd">
+  <page name ="tab_combinded" fontsize="small" logfile="combined-{D}.log">
+    <strings>
+      <string name="tab_combinded">All values</string>
+      <string name="label_motor_break_light">Break light:</string>
+      <string name="label_motor_pedal_value">Pedal value [%]:</string>
+      <string name="label_motor_speed">Speed [km/h]:</string>
+      <string name="label_motor_accel">Acceleration [m/s^2]:</string>
+      <string name="label_pdc_vl">Front left [cm]:</string>
+      <string name="label_pdc_vml">Front middle left [cm]:</string>
+      <string name="label_pdc_vmr">Front middle right [cm]:</string>
+      <string name="label_pdc_vr">Front right [cm]:</string>
+      <string name="label_pdc_hl">Back left [cm]:</string>
+      <string name="label_pdc_hml">Back middle left [cm]:</string>
+      <string name="label_pdc_hmr">Back middle right [cm]:</string>
+      <string name="label_pdc_hr">Back right [cm]:</string>
+      <string name="label_dsc_long_acc">Long. acceleration [m/s^2]:</string>
+      <string name="label_dsc_lat_acc">Lat. acceleration [m/s^2]:</string>
+      <string name="label_dsc_steer_angle">Lenkwinkel [°]:</string>
+      <string name="label_acc_dist">Radar Distance [m]:</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_combinded">Alle Werte</string>
+      <string name="label_motor_break_light">Bremslicht:</string>
+      <string name="label_motor_pedal_value">Pedalwert [%]:</string>
+      <string name="label_motor_speed">Geschwindigkeit [km/h]:</string>
+      <string name="label_motor_accel">Beschleunigung [m/s^2]:</string>
+      <string name="label_pdc_vl">Vorne links [cm]:</string>
+      <string name="label_pdc_vml">Vorne Mitte links [cm]:</string>
+      <string name="label_pdc_vmr">Vorne Mitte rechts [cm]:</string>
+      <string name="label_pdc_vr">Vorne rechts [cm]:</string>
+      <string name="label_pdc_hl">Hinten links [cm]:</string>
+      <string name="label_pdc_hml">Hinten Mitte links [cm]:</string>
+      <string name="label_pdc_hmr">Hinten Mitte rechts [cm]:</string>
+      <string name="label_pdc_hr">Hinten rechts [cm]:</string>
+      <string name="label_dsc_long_acc">Längsbeschleunigung [m/s^2]:</string>
+      <string name="label_dsc_lat_acc">Querbeschleunigung [m/s^2]:</string>
+      <string name="label_dsc_steer_angle">Lenkwinkel [°]:</string>
+      <string name="label_acc_dist">Radar Abstand [m]:</string>
+    </strings>
+    <jobs>
+      <job sgbd="d_motor" name="STATUS_MESSWERTBLOCK_LESEN"
+           args_first="JA;ISBLS;IFPWG;IVKMH;IAFZG"
+           args="NEIN;ISBLS;IFPWG;IVKMH;IAFZG">
+        <display name="label_motor_break_light" result="STAT_BREMSLICHTSCHALTER_EIN_WERT" log_tag="break_light" />
+        <display name="label_motor_pedal_value" result="STAT_FAHRERWUNSCH_PEDAL_WERT" format="6.2R" log_tag="pedal_value" />
+        <display name="label_motor_speed" result="STAT_GESCHWINDIGKEIT_WERT" format="6.2R" log_tag="speed" />
+        <display name="label_motor_accel" result="STAT_FAHRZEUGBESCHLEUNIGUNG_WERT" format="6.2R" log_tag="accel" />
+      </job>
+      <job sgbd="d_pdc" name="STATUS_ABSTAND" results="STAT_VL_WERT;STAT_VML_WERT;STAT_VMR_WERT;STAT_VR_WERT;STAT_HL_WERT;STAT_HML_WERT;STAT_HMR_WERT;STAT_HR_WERT">
+        <display name="label_pdc_vl" result="STAT_VL_WERT" format="3L" log_tag="pdc_vl" />
+        <display name="label_pdc_vml" result="STAT_VML_WERT" format="3L" log_tag="pdc_vml" />
+        <display name="label_pdc_vmr" result="STAT_VMR_WERT" format="3L" log_tag="pdc_vmr" />
+        <display name="label_pdc_vr" result="STAT_VR_WERT" format="3L" log_tag="pdc_vr" />
+        <display name="label_pdc_hl" result="STAT_HL_WERT" format="3L" log_tag="pdc_hl" />
+        <display name="label_pdc_hml" result="STAT_HML_WERT" format="3L" log_tag="pdc_hml" />
+        <display name="label_pdc_hmr" result="STAT_HMR_WERT" format="3L" log_tag="pdc_hmr" />
+        <display name="label_pdc_hr" result="STAT_HR_WERT" format="3L" log_tag="pdc_hr" />
+      </job>
+      <job sgbd="d_dsc" name="STATUS_ANALOG" results="STAT_LAENGSBESCHLEUNIGUNG_WERT;STAT_QUERBESCHLEUNIGUNG_WERT_1;STAT_SUMMEN_LENKWINKEL_WERT_AFS">
+        <display name="label_dsc_long_acc" result="STAT_LAENGSBESCHLEUNIGUNG_WERT" format="6.4R" log_tag="long_acc" />
+        <display name="label_dsc_lat_acc" result="STAT_QUERBESCHLEUNIGUNG_WERT_1" format="6.4R" log_tag="lat_acc" />
+        <display name="label_dsc_steer_angle" result="STAT_SUMMEN_LENKWINKEL_WERT_AFS" format="6.1R" log_tag="steer_angle" />
+      </job>
+      <job sgbd="d_acc" name="STATUS_RADARZIEL_ONLINE" results="STAT_ABSTAND_1_WERT">
+        <display name="label_acc_dist" result="STAT_ABSTAND_1_WERT" format="6.4R" log_tag="radar_dist" />
+      </job>
+    </jobs>
+    <code show_warnigs="true">
+      <![CDATA[
+    class PageClass
+    {
+        public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor)
+        {
+            string result = string.Empty;
+            bool found;
+
+            switch (resultName)
+            {
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_BREMSLICHTSCHALTER_EIN_WERT":
+                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) > 0.5) && found) ? "1" : "0";
+                    if (!found) result = string.Empty;
+                    break;
+            }
+            return result;
+        }
+    }
+      ]]>
+    </code>
+  </page>
+</fragment>

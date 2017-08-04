@@ -269,6 +269,15 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="sgbd" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Name of the SGBD file to load.
+          This overrides the SGBD file from the jobs node.
+          It's recommended to combine this with the id attribute.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="name" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>
