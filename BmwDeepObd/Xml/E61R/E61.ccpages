@@ -6,5 +6,6 @@
     <include filename="Motor.ccpage"/>
     <include filename="Dsc.ccpage"/>
     <include filename="Pdc.ccpage"/>
+    <include filename="Acc.ccpage"/>
   </pages>
 </fragment>
