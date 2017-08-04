@@ -535,6 +535,7 @@ namespace BmwDeepObd
             // execute jobs
 
             bool firstRequestCall = false;
+            string currentSgbd = string.Empty;
             if (_ediabasInitReq)
             {
                 firstRequestCall = true;
@@ -563,6 +564,7 @@ namespace BmwDeepObd
                         }
                         return false;
                     }
+                    currentSgbd = pageInfo.JobsInfo.Sgbd;
                 }
 
                 _ediabasInitReq = false;
@@ -577,6 +579,23 @@ namespace BmwDeepObd
                     {
                         if (!string.IsNullOrEmpty(jobInfo.Name))
                         {
+                            string sgbd = string.Empty;
+                            if (!string.IsNullOrEmpty(jobInfo.Sgbd))
+                            {
+                                sgbd = jobInfo.Sgbd;
+                            }
+                            else if (!string.IsNullOrEmpty(pageInfo.JobsInfo.Sgbd))
+                            {
+                                sgbd = pageInfo.JobsInfo.Sgbd;
+                            }
+
+                            if (!string.IsNullOrEmpty(sgbd) &&
+                                string.Compare(currentSgbd, sgbd, StringComparison.OrdinalIgnoreCase) != 0)
+                            {
+                                Ediabas.ResolveSgbdFile(sgbd);
+                                currentSgbd = sgbd;
+                            }
+
                             if (firstRequestCall && !string.IsNullOrEmpty(jobInfo.ArgsFirst))
                             {
                                 Ediabas.ArgString = jobInfo.ArgsFirst;
