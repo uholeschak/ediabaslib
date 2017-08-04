@@ -21,10 +21,10 @@
       <job name="STATUS_MESSWERTBLOCK_LESEN"
            args_first="JA;ISBLS;IFPWG;IVKMH;IAFZG"
            args="NEIN;ISBLS;IFPWG;IVKMH;IAFZG">
-        <display name="label_motor_break_light" result="STAT_BREMSLICHTSCHALTER_EIN_WERT" />
-        <display name="label_motor_pedal_value" result="STAT_FAHRERWUNSCH_PEDAL_WERT" format="6.2R" />
-        <display name="label_motor_speed" result="STAT_GESCHWINDIGKEIT_WERT" format="6.2R" />
-        <display name="label_motor_accel" result="STAT_FAHRZEUGBESCHLEUNIGUNG_WERT" format="6.2R" />
+        <display name="label_motor_break_light" result="STAT_BREMSLICHTSCHALTER_EIN_WERT" log_tag="break_light" />
+        <display name="label_motor_pedal_value" result="STAT_FAHRERWUNSCH_PEDAL_WERT" format="6.2R" log_tag="pedal_value" />
+        <display name="label_motor_speed" result="STAT_GESCHWINDIGKEIT_WERT" format="6.2R" log_tag="speed" />
+        <display name="label_motor_accel" result="STAT_FAHRZEUGBESCHLEUNIGUNG_WERT" format="6.2R" log_tag="accel" />
       </job>
     </jobs>
     <code show_warnigs="true">
