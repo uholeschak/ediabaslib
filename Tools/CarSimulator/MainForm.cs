@@ -510,22 +510,24 @@ namespace CarSimulator
                 if (radioButtonTp20.Checked) conceptType = CommThread.ConceptType.ConceptTp20;
 
                 string responseFile = (string)listBoxResponseFiles.SelectedItem;
-                CommThread.ResponseType responseType = CommThread.ResponseType.Standard;
-                if (responseFile != null)
+                if (responseFile == null)
                 {
-                    if (string.Compare(responseFile, StdResponseFile, StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        responseType = CommThread.ResponseType.E61;
-                    }
-                    if (string.Compare(responseFile, "e90.txt", StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        responseType = CommThread.ResponseType.E90;
-                    }
+                    return;
+                }
 
-                    if (!ReadResponseFile(Path.Combine(_responseDir, responseFile), conceptType))
-                    {
-                        MessageBox.Show("Reading response file failed!");
-                    }
+                CommThread.ResponseType responseType = CommThread.ResponseType.Standard;
+                if (string.Compare(responseFile, StdResponseFile, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    responseType = CommThread.ResponseType.E61;
+                }
+                if (string.Compare(responseFile, "e90.txt", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    responseType = CommThread.ResponseType.E90;
+                }
+
+                if (!ReadResponseFile(Path.Combine(_responseDir, responseFile), conceptType))
+                {
+                    MessageBox.Show("Reading response file failed!");
                 }
 
                 _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, checkBoxKLineResponder.Checked, responseType, _configData);
