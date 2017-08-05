@@ -95,9 +95,11 @@ The attribute `fontsize` allows to specify the font size of the display data in 
 With `logfile` a log file name could be specified, that allows to log the display data. If the symbol `{D}` is used inside the log file name, it will be replaced by the current date and time.  
 The `strings` nodes contains the all the string used on this display page. If the current language is not matching the `lang` tag, the default language (without tag) is used. The `lang` property could be either the short form e.g. `'de'` or the long one `'de-DE'`.
 
-The `jobs` node groups all EDIABAS jobs to execute. The property _sgbd_ specifies the name of the group (`.grp`) or the sgbd (`.prg`) file to use. In VAG mode the property `mwtab` could be used to store the file name of the associated mwtab file.  
+The `jobs` node groups all EDIABAS jobs to execute. The property `sgbd` specifies the name of the group (`.grp`) or the sgbd (`.prg`) file to use. In VAG mode the property `mwtab` could be used to store the file name of the associated mwtab file.  
 Within the `jobs` node multiple `job` nodes specify the EDIABAS jobs to execute. They contain the following properties:
 * `name`: Name of the job to execute
+* `id`: Id for job result identification. If this element is specified the result name will be: `[id]#[data set index]#[result]`, otherwise it's: `[name]#[result]`.
+* `sgbd`: Name of the SGBD file to load. This overrides the SGBD file from the `jobs` node. It's recommended to combine this with the id attribute.
 * `args_first`: Allows to specify semicolon separated job arguments for the first job call.
 * `args`: Allows to specify semicolon separated job arguments. If this is the first call and `args_first` is present `args_first` will be used instead.
 * `result`: Allows to specify the required results. If omitted, all results will be generated, which may require more processing time.
