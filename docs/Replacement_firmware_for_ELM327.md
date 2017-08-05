@@ -32,5 +32,11 @@ You could use the Bluetooth adapter on a windows PC with INPA, Tool32 or ISTA-D 
 
 ## Programming of the processor
 For the first programming of the processor simply attach a PICKit 3 programmer to the corresponding test points of the circuit board.  
-The source for the firmware could be found in the subdirectory _CanAdapterElm_. In this subdirectory there is also a flash tool (subdirectory _UpdateLoader_) that allows firmware updates using the bootstrap loader once the firmware is programed.  
+The source for the firmware could be found in the subdirectory `CanAdapterElm`.  
+There are two firmware files, the complete file (`CanAdapterElm.X.production.unified.hex`) and the update file (`CanAdapterElm.X.production.hex`) without bootloader, that is needed only by _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.  
+The subdirectory names below are the Bluetooth chip types:
+* `default`: Unmodified ELM327 Bluetooth chip (Baud rate 38400)
+* `bc04`: BC-04 Bluetooth chip with BK3231 processor
+* `hc04`: HC-04 Bluetooth chip with BC417 processor
+
 The latest firmware version will be always included in _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.
