@@ -324,7 +324,7 @@
       <xs:annotation>
         <xs:documentation>
           Name of the SGBD file to load.
-          If omitted the SGBD must be loaded in ExecuteJob().
+          If omitted the SGBD must be specified in the job node or loaded in ExecuteJob().
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
