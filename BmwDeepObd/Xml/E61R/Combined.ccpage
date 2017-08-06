@@ -9,6 +9,14 @@
       <string name="label_motor_pedal_value">Pedal value [%]:</string>
       <string name="label_motor_speed">Speed [km/h]:</string>
       <string name="label_motor_accel">Acceleration [m/s^2]:</string>
+      <string name="label_szl_indicator_right">Indicator right tip:</string>
+      <string name="label_szl_indicator_right_perm">Indicator right permanent:</string>
+      <string name="label_szl_indicator_left">Indicator left tip:</string>
+      <string name="label_szl_indicator_left_perm">Indicator left permanent:</string>
+      <string name="label_dsc_long_acc">Long. acceleration [m/s^2]:</string>
+      <string name="label_dsc_lat_acc">Lat. acceleration [m/s^2]:</string>
+      <string name="label_dsc_steer_angle">Lenkwinkel [°]:</string>
+      <string name="label_acc_dist">Radar Distance [m]:</string>
       <string name="label_pdc_vl">Front left [cm]:</string>
       <string name="label_pdc_vml">Front middle left [cm]:</string>
       <string name="label_pdc_vmr">Front middle right [cm]:</string>
@@ -17,10 +25,6 @@
       <string name="label_pdc_hml">Back middle left [cm]:</string>
       <string name="label_pdc_hmr">Back middle right [cm]:</string>
       <string name="label_pdc_hr">Back right [cm]:</string>
-      <string name="label_dsc_long_acc">Long. acceleration [m/s^2]:</string>
-      <string name="label_dsc_lat_acc">Lat. acceleration [m/s^2]:</string>
-      <string name="label_dsc_steer_angle">Lenkwinkel [°]:</string>
-      <string name="label_acc_dist">Radar Distance [m]:</string>
     </strings>
     <strings lang="de">
       <string name="tab_combinded">Alle Werte</string>
@@ -28,6 +32,14 @@
       <string name="label_motor_pedal_value">Pedalwert [%]:</string>
       <string name="label_motor_speed">Geschwindigkeit [km/h]:</string>
       <string name="label_motor_accel">Beschleunigung [m/s^2]:</string>
+      <string name="label_szl_indicator_right">Blinker rechts Tipp:</string>
+      <string name="label_szl_indicator_right_perm">Blinker rechts Dauer:</string>
+      <string name="label_szl_indicator_left">Blinker links Tipp:</string>
+      <string name="label_szl_indicator_left_perm">Blinker links Dauer:</string>
+      <string name="label_dsc_long_acc">Längsbeschleunigung [m/s^2]:</string>
+      <string name="label_dsc_lat_acc">Querbeschleunigung [m/s^2]:</string>
+      <string name="label_dsc_steer_angle">Lenkwinkel [°]:</string>
+      <string name="label_acc_dist">Radar Abstand [m]:</string>
       <string name="label_pdc_vl">Vorne links [cm]:</string>
       <string name="label_pdc_vml">Vorne Mitte links [cm]:</string>
       <string name="label_pdc_vmr">Vorne Mitte rechts [cm]:</string>
@@ -36,10 +48,6 @@
       <string name="label_pdc_hml">Hinten Mitte links [cm]:</string>
       <string name="label_pdc_hmr">Hinten Mitte rechts [cm]:</string>
       <string name="label_pdc_hr">Hinten rechts [cm]:</string>
-      <string name="label_dsc_long_acc">Längsbeschleunigung [m/s^2]:</string>
-      <string name="label_dsc_lat_acc">Querbeschleunigung [m/s^2]:</string>
-      <string name="label_dsc_steer_angle">Lenkwinkel [°]:</string>
-      <string name="label_acc_dist">Radar Abstand [m]:</string>
     </strings>
     <jobs>
       <job id="1" sgbd="d_motor" name="STATUS_MESSWERTBLOCK_LESEN"
@@ -50,15 +58,11 @@
         <display name="label_motor_speed" result="1#STAT_GESCHWINDIGKEIT_WERT" format="6.2R" log_tag="speed" />
         <display name="label_motor_accel" result="1#STAT_FAHRZEUGBESCHLEUNIGUNG_WERT" format="6.2R" log_tag="accel" />
       </job>
-      <job id="2" sgbd="d_pdc" name="STATUS_ABSTAND" results="STAT_VL_WERT;STAT_VML_WERT;STAT_VMR_WERT;STAT_VR_WERT;STAT_HL_WERT;STAT_HML_WERT;STAT_HMR_WERT;STAT_HR_WERT">
-        <display name="label_pdc_vl" result="1#STAT_VL_WERT" format="3L" log_tag="pdc_vl" />
-        <display name="label_pdc_vml" result="1#STAT_VML_WERT" format="3L" log_tag="pdc_vml" />
-        <display name="label_pdc_vmr" result="1#STAT_VMR_WERT" format="3L" log_tag="pdc_vmr" />
-        <display name="label_pdc_vr" result="1#STAT_VR_WERT" format="3L" log_tag="pdc_vr" />
-        <display name="label_pdc_hl" result="1#STAT_HL_WERT" format="3L" log_tag="pdc_hl" />
-        <display name="label_pdc_hml" result="1#STAT_HML_WERT" format="3L" log_tag="pdc_hml" />
-        <display name="label_pdc_hmr" result="1#STAT_HMR_WERT" format="3L" log_tag="pdc_hmr" />
-        <display name="label_pdc_hr" result="1#STAT_HR_WERT" format="3L" log_tag="pdc_hr" />
+      <job id="2" sgbd="d_szl" name="STATUS_LESEN" results="STAT_ABBLENDSCHALT_BLINK_RE;STAT_ABBLENDSCHALT_BLINK_RE_DAUER;STAT_ABBLENDSCHALT_BLINK_LI;STAT_ABBLENDSCHALT_BLINK_LI_DAUER">
+        <display name="label_szl_indicator_right" result="1#STAT_ABBLENDSCHALT_BLINK_RE" format="1L" log_tag="indicator_right" />
+        <display name="label_szl_indicator_right_perm" result="1#STAT_ABBLENDSCHALT_BLINK_RE_DAUER" format="1L" log_tag="indicator_right_perm" />
+        <display name="label_szl_indicator_left" result="1#STAT_ABBLENDSCHALT_BLINK_LI" format="1L" log_tag="indicator_left" />
+        <display name="label_szl_indicator_left_perm" result="1#STAT_ABBLENDSCHALT_BLINK_LI_DAUER" format="1L" log_tag="indicator_left_perm" />
       </job>
       <job id="3" sgbd="d_dsc" name="STATUS_ANALOG" results="STAT_LAENGSBESCHLEUNIGUNG_WERT;STAT_QUERBESCHLEUNIGUNG_WERT_1;STAT_SUMMEN_LENKWINKEL_WERT_AFS">
         <display name="label_dsc_long_acc" result="1#STAT_LAENGSBESCHLEUNIGUNG_WERT" format="6.4R" log_tag="long_acc" />
@@ -67,6 +71,16 @@
       </job>
       <job id="4" sgbd="d_acc" name="STATUS_RADARZIEL_ONLINE" results="STAT_ABSTAND_1_WERT">
         <display name="label_acc_dist" result="1#STAT_ABSTAND_1_WERT" format="6.4R" log_tag="radar_dist" />
+      </job>
+      <job id="5" sgbd="d_pdc" name="STATUS_ABSTAND" results="STAT_VL_WERT;STAT_VML_WERT;STAT_VMR_WERT;STAT_VR_WERT;STAT_HL_WERT;STAT_HML_WERT;STAT_HMR_WERT;STAT_HR_WERT">
+        <display name="label_pdc_vl" result="1#STAT_VL_WERT" format="3L" log_tag="pdc_vl" />
+        <display name="label_pdc_vml" result="1#STAT_VML_WERT" format="3L" log_tag="pdc_vml" />
+        <display name="label_pdc_vmr" result="1#STAT_VMR_WERT" format="3L" log_tag="pdc_vmr" />
+        <display name="label_pdc_vr" result="1#STAT_VR_WERT" format="3L" log_tag="pdc_vr" />
+        <display name="label_pdc_hl" result="1#STAT_HL_WERT" format="3L" log_tag="pdc_hl" />
+        <display name="label_pdc_hml" result="1#STAT_HML_WERT" format="3L" log_tag="pdc_hml" />
+        <display name="label_pdc_hmr" result="1#STAT_HMR_WERT" format="3L" log_tag="pdc_hmr" />
+        <display name="label_pdc_hr" result="1#STAT_HR_WERT" format="3L" log_tag="pdc_hr" />
       </job>
     </jobs>
     <code show_warnigs="true">
