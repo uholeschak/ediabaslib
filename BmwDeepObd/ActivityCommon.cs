@@ -891,7 +891,11 @@ namespace BmwDeepObd
                     }
                     string[] stringList = deviceAddress.Split('#', ';');
                     if (stringList.Length > 1)
-                    {   // no deep obd adapter
+                    {
+                        if (string.Compare(stringList[1], EdBluetoothInterface.RawTag, StringComparison.OrdinalIgnoreCase) == 0)
+                        {   // allow flashing of corrupted Deep OBD adapters
+                            return true;
+                        }
                         return false;
                     }
                     return true;
