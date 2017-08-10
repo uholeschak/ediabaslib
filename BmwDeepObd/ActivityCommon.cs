@@ -2424,10 +2424,21 @@ namespace BmwDeepObd
                 if (saeMode)
                 {
                     string codeName = SaeCode16ToString(code >> 8);
-                    List<string> textList = ReadVagDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName + string.Format("{0:X02}", code & 0xFF));
-                    if (textList.Count == 0)
+                    long detailCode = code & 0xFF;
+                    string detailName = string.Format("{0:X02}", detailCode);
+                    List<string> textList = ReadVagDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName + detailName);
+                    if (textList.Count == 0 && detailCode != 0x00)
                     {
                         textList = ReadVagDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName + "00");
+                        if (textList.Count > 0)
+                        {
+                            // get detail text from other entry
+                            List<string> textListDetail =  ReadVagDtcEntry(XmlDocDtcCodes, tableNameDtc, "[PCBU][0-9A-F]{4}" + detailName);
+                            if (textListDetail.Count >= 2)
+                            {
+                                textList.Add(textListDetail[1]);
+                            }
+                        }
                     }
                     return textList;
                 }
@@ -2460,7 +2471,7 @@ namespace BmwDeepObd
             }
         }
 
-        private List<string> ReadVagDtcEntry(XDocument xmlDoc, string tableName, string entryName)
+        private List<string> ReadVagDtcEntry(XDocument xmlDoc, string tableName, string entryRegex)
         {
             List<string> textList = new List<string>();
             try
@@ -2469,6 +2480,7 @@ namespace BmwDeepObd
                 {
                     return textList;
                 }
+                Regex regex = new Regex(entryRegex, RegexOptions.IgnoreCase);
                 foreach (XElement tableNode in xmlDoc.Root.Elements("textTable"))
                 {
                     XAttribute attrName = tableNode.Attribute("name");
@@ -2488,7 +2500,7 @@ namespace BmwDeepObd
                         {
                             continue;
                         }
-                        if (string.Compare(attrId.Value, entryName, StringComparison.OrdinalIgnoreCase) != 0)
+                        if (!regex.IsMatch(attrId.Value))
                         {
                             continue;
                         }
