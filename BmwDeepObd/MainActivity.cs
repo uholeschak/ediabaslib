@@ -1503,10 +1503,11 @@ namespace BmwDeepObd
                                 {
                                     _commErrorsOccured = true;
                                 }
-                                string message = string.Format(Culture, "{0}: ", GetPageString(pageInfo, errorReport.EcuName));
+                                StringBuilder srMessage = new StringBuilder();
+                                srMessage.Append(string.Format(Culture, "{0}: ", GetPageString(pageInfo, errorReport.EcuName)));
                                 if (errorReport.ErrorDict == null)
                                 {
-                                    message += GetString(Resource.String.error_no_response);
+                                    srMessage.Append(GetString(Resource.String.error_no_response));
                                 }
                                 else
                                 {
@@ -1530,6 +1531,7 @@ namespace BmwDeepObd
                                             }
                                         }
                                         bool kwp1281 = false;
+                                        bool saeMode = false;
                                         if (errorReport.ErrorDict.TryGetValue("OBJECT", out resultData))
                                         {
                                             string objectName = resultData.OpData as string;
@@ -1539,9 +1541,12 @@ namespace BmwDeepObd
                                                 {
                                                     kwp1281 = true;
                                                 }
+                                                else if (objectName.Contains("7000"))
+                                                {
+                                                    saeMode = true;
+                                                }
                                             }
                                         }
-                                        bool saeMode = false;
                                         if (errorReport.ErrorDict.TryGetValue("SAE", out resultData))
                                         {
                                             if (resultData.OpData is Int64)
@@ -1549,21 +1554,35 @@ namespace BmwDeepObd
                                                 if ((Int64) resultData.OpData != 0)
                                                 {
                                                     saeMode = true;
+                                                    errorCode <<= 8;
                                                 }
                                             }
                                         }
-                                        List<string> textList = _activityCommon.ConvertVagDtcCode(_ecuPath, (uint)errorCode, (uint)errorType, kwp1281, saeMode);
+                                        List<string> textList = _activityCommon.ConvertVagDtcCode(_ecuPath, errorCode, errorType, kwp1281, saeMode);
 
                                         string textCode = FormatResultInt64(errorReport.ErrorDict, "FNR_WERT", "{0}");
-                                        string textType = FormatResultInt64(errorReport.ErrorDict, "FART1_WERT", "{0}");
-                                        message += "\r\n";
-                                        message += GetString(Resource.String.error_code) + ": " + textCode + " " + textType;
+                                        srMessage.Append("\r\n");
+                                        srMessage.Append(GetString(Resource.String.error_code));
+                                        srMessage.Append(": ");
+                                        srMessage.Append(textCode);
+                                        if (saeMode)
+                                        {
+                                            srMessage.Append("\r\n");
+                                            srMessage.Append(string.Format("{0}-{1:X02}", ActivityCommon.SaeCode16ToString(errorCode >> 8), errorCode & 0xFF));
+                                        }
+                                        else
+                                        {
+                                            string textType = FormatResultInt64(errorReport.ErrorDict, "FART1_WERT", "{0}");
+                                            srMessage.Append(" ");
+                                            srMessage.Append(textType);
+                                        }
                                         if (textList != null)
                                         {
                                             // ReSharper disable once LoopCanBeConvertedToQuery
                                             foreach (string text in textList)
                                             {
-                                                message += "\r\n" + text;
+                                                srMessage.Append("\r\n");
+                                                srMessage.Append(text);
                                             }
                                         }
                                     }
@@ -1596,10 +1615,10 @@ namespace BmwDeepObd
                                                 }
                                             }
                                         }
-                                        message += "\r\n";
-                                        message += text1;
-                                        message += ", ";
-                                        message += text2;
+                                        srMessage.Append("\r\n");
+                                        srMessage.Append(text1);
+                                        srMessage.Append(", ");
+                                        srMessage.Append(text2);
 
                                         if (errorReport.ErrorDetailSet != null)
                                         {
@@ -1618,11 +1637,13 @@ namespace BmwDeepObd
                                             }
                                             if (detailText.Length > 0)
                                             {
-                                                message += "\r\n" + detailText;
+                                                srMessage.Append("\r\n");
+                                                srMessage.Append(detailText);
                                             }
                                         }
                                     }
                                 }
+                                string message = srMessage.ToString();
                                 if (formatErrorResult)
                                 {
                                     try

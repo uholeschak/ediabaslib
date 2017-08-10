@@ -194,7 +194,7 @@ namespace BmwDeepObd
         public const string ActionUsbPermission = "de.holeschak.bmw_deep_obd.USB_PERMISSION";
         private const string MailInfoDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Mail.xml";
 
-        private static readonly Dictionary<uint, string> VagDtcSaeDict = new Dictionary<uint, string>
+        private static readonly Dictionary<long, string> VagDtcSaeDict = new Dictionary<long, string>
         {
             {16394, "P0010"}, {16395, "P0020"}, {16449, "P0065"}, {16450, "P0066"}, {16451, "P0067"},
             {16485, "P0101"}, {16486, "P0102"}, {16487, "P0103"}, {16489, "P0105"}, {16490, "P0106"},
@@ -2381,7 +2381,31 @@ namespace BmwDeepObd
             return dirName;
         }
 
-        public List<string> ConvertVagDtcCode(string ecuPath, uint code, uint type, bool kwp1281, bool saeMode)
+        public static string SaeCode16ToString(long code)
+        {
+            string locationName;
+            switch ((code >> 14) & 0x03)
+            {
+                default:    // power train
+                    locationName = "P";
+                    break;
+
+                case 0x1:  // chassis
+                    locationName = "C";
+                    break;
+
+                case 0x2:  // body
+                    locationName = "B";
+                    break;
+
+                case 0x3:  // network
+                    locationName = "U";
+                    break;
+            }
+            return string.Format("{0}{1:X04}", locationName, code & 0x3FFF);
+        }
+
+        public List<string> ConvertVagDtcCode(string ecuPath, long code, long type, bool kwp1281, bool saeMode)
         {
             try
             {
@@ -2399,9 +2423,12 @@ namespace BmwDeepObd
                 string tableNameDtc = "DTC-table";
                 if (saeMode)
                 {
-                    string codeName = string.Format("P{0:X04}00", code);
-                    List<string> textList = ReadVagDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName);
-
+                    string codeName = SaeCode16ToString(code >> 8);
+                    List<string> textList = ReadVagDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName + string.Format("{0:X02}", code & 0xFF));
+                    if (textList.Count == 0)
+                    {
+                        textList = ReadVagDtcEntry(XmlDocDtcCodes, tableNameDtc, codeName + "00");
+                    }
                     return textList;
                 }
                 else
