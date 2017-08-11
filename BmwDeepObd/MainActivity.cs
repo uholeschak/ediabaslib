@@ -1519,16 +1519,22 @@ namespace BmwDeepObd
                                         {
                                             if (resultData.OpData is Int64)
                                             {
-                                                errorCode = (Int64)resultData.OpData;
+                                                errorCode = (Int64) resultData.OpData;
                                             }
                                         }
-                                        Int64 errorType = 0;
-                                        if (errorReport.ErrorDict.TryGetValue("FART1_WERT", out resultData))
+                                        List<long> errorTypeList = new List<long>();
+                                        for (int i = 0; i < 1000; i++)
                                         {
-                                            if (resultData.OpData is Int64)
+                                            if (!errorReport.ErrorDict.TryGetValue(string.Format(Culture, "FART{0}_WERT", i + 1), out resultData))
                                             {
-                                                errorType = (Int64)resultData.OpData;
+                                                break;
                                             }
+                                            if (!(resultData.OpData is Int64))
+                                            {
+                                                break;
+                                            }
+                                            Int64 errorType = (Int64) resultData.OpData;
+                                            errorTypeList.Add(errorType);
                                         }
                                         bool kwp1281 = false;
                                         bool saeMode = false;
@@ -1558,23 +1564,20 @@ namespace BmwDeepObd
                                                 }
                                             }
                                         }
-                                        List<string> textList = _activityCommon.ConvertVagDtcCode(_ecuPath, errorCode, errorType, kwp1281, saeMode);
+                                        List<string> textList = _activityCommon.ConvertVagDtcCode(_ecuPath, errorCode, errorTypeList, kwp1281, saeMode);
 
-                                        string textCode = FormatResultInt64(errorReport.ErrorDict, "FNR_WERT", "{0}");
                                         srMessage.Append("\r\n");
                                         srMessage.Append(GetString(Resource.String.error_code));
                                         srMessage.Append(": ");
-                                        srMessage.Append(textCode);
+                                        srMessage.Append(string.Format("0x{0:X}", errorCode));
+                                        foreach (long errorType in errorTypeList)
+                                        {
+                                            srMessage.Append(string.Format(";{0}", errorType));
+                                        }
                                         if (saeMode)
                                         {
                                             srMessage.Append("\r\n");
                                             srMessage.Append(string.Format("{0}-{1:X02}", ActivityCommon.SaeCode16ToString(errorCode >> 8), errorCode & 0xFF));
-                                        }
-                                        else
-                                        {
-                                            string textType = FormatResultInt64(errorReport.ErrorDict, "FART1_WERT", "{0}");
-                                            srMessage.Append(" ");
-                                            srMessage.Append(textType);
                                         }
                                         if (textList != null)
                                         {
