@@ -39,6 +39,12 @@
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.8.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 (Автомобили до 4.2012) протоколы.</string>
 
+  <!-- Error codes -->
+  <!-- Translate! -->
+  <string name="error_code_error_temporary">Error temporary</string>
+  <string name="error_code_error_present">Error present</string>
+  <string name="error_code_error_stored">Error stored</string>
+
   <!-- Alert titles -->
   <string name="alert_title_info">Информация</string>
   <string name="alert_title_warning">Предупреждение</string>
