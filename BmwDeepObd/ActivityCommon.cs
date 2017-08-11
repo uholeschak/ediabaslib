@@ -2470,6 +2470,24 @@ namespace BmwDeepObd
                             }
                         }
                     }
+                    if (typeList.Count == 8)
+                    {
+                        if (typeList[3] != 0)
+                        {
+                            textList.Add(_activity.GetString(Resource.String.error_code_error_present));
+                        }
+                        else
+                        {
+                            if (typeList[2] != 0)
+                            {
+                                textList.Add(_activity.GetString(Resource.String.error_code_error_temporary));
+                            }
+                        }
+                        if (typeList[5] != 0)
+                        {
+                            textList.Add(_activity.GetString(Resource.String.error_code_error_stored));
+                        }
+                    }
 
                     _vagDtcCodeDict.Add(dictKey, textList);
                     return textList;
