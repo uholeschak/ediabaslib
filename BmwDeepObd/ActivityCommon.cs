@@ -393,6 +393,7 @@ namespace BmwDeepObd
         private string _yandexCurrentLang;
         private readonly Dictionary<string, Dictionary<string, string>> _yandexTransDict;
         private Dictionary<string, string> _yandexCurrentLangDict;
+        private Dictionary<string, List<string>> _vagDtcCodeDict;
         private string _lastEnetSsid = string.Empty;
 
         public bool Emulator { get; }
@@ -2090,7 +2091,7 @@ namespace BmwDeepObd
                     StringBuilder sb = new StringBuilder();
                     sb.Append("Deep OBD Trace info");
                     sb.Append(string.Format("\nDate: {0:u}", DateTime.Now));
-                    sb.Append(string.Format("\nLanguage: {0}", Java.Util.Locale.Default.Language ?? string.Empty));
+                    sb.Append(string.Format("\nLanguage: {0}", GetCurrentLanguage()));
                     sb.Append(string.Format("\nAndroid version: {0}", Build.VERSION.Sdk));
                     sb.Append(string.Format("\nAndroid model: {0}", Build.Model));
                     sb.Append(string.Format("\nApp version name: {0}", packageInfo.VersionName));
@@ -2343,9 +2344,14 @@ namespace BmwDeepObd
             return true;
         }
 
+        public static string GetCurrentLanguage()
+        {
+            return Java.Util.Locale.Default.Language ?? "en";
+        }
+
         public static string GetVagDatUkdDir(string ecuPath, bool ignoreManufacturer = false)
         {
-            string lang = Java.Util.Locale.Default.Language ?? "en";
+            string lang = GetCurrentLanguage();
             string dirName = Path.Combine(ecuPath, "dat.ukd", lang);
             if (!Directory.Exists(dirName))
             {
@@ -2409,6 +2415,17 @@ namespace BmwDeepObd
         {
             try
             {
+                if (_vagDtcCodeDict == null)
+                {
+                    _vagDtcCodeDict = new Dictionary<string, List<string>>();
+                }
+                string dictKey = string.Format("{0};{1};{2};{3};{4}", GetCurrentLanguage(), code, type, kwp1281, saeMode);
+                List<string> textListDict;
+                if (_vagDtcCodeDict.TryGetValue(dictKey, out textListDict))
+                {
+                    return textListDict;
+                }
+
                 string datUkdPath = GetVagDatUkdDir(ecuPath);
                 string xmlFile = Path.Combine(datUkdPath, "xml", "Zustand_KonzernASAM.xml");
                 if (XmlDocDtcCodes == null)
@@ -2440,6 +2457,8 @@ namespace BmwDeepObd
                             }
                         }
                     }
+
+                    _vagDtcCodeDict.Add(dictKey, textList);
                     return textList;
                 }
                 else
@@ -2462,6 +2481,7 @@ namespace BmwDeepObd
                         textList.AddRange(ReadVagDtcEntry(XmlDocDtcCodes, tableNameType, typeName));
                     }
 
+                    _vagDtcCodeDict.Add(dictKey, textList);
                     return textList;
                 }
             }
@@ -2943,7 +2963,7 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            string lang = Java.Util.Locale.Default.Language ?? string.Empty;
+            string lang = GetCurrentLanguage();
             return string.Compare(lang, "de", StringComparison.OrdinalIgnoreCase) != 0;
 #else
             return false;
@@ -3102,7 +3122,7 @@ namespace BmwDeepObd
             {
                 _yandexTransList = null;
                 // try to translate with cache first
-                _yandexCurrentLang = (Java.Util.Locale.Default.Language ?? "en").ToLowerInvariant();
+                _yandexCurrentLang = (GetCurrentLanguage()).ToLowerInvariant();
 
                 if (!_yandexTransDict.TryGetValue(_yandexCurrentLang, out _yandexCurrentLangDict) || (_yandexCurrentLangDict == null))
                 {
