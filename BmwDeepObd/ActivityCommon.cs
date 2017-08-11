@@ -2411,7 +2411,7 @@ namespace BmwDeepObd
             return string.Format("{0}{1:X04}", locationName, code & 0x3FFF);
         }
 
-        public List<string> ConvertVagDtcCode(string ecuPath, long code, long type, bool kwp1281, bool saeMode)
+        public List<string> ConvertVagDtcCode(string ecuPath, long code, List<long> typeList, bool kwp1281, bool saeMode)
         {
             try
             {
@@ -2419,7 +2419,20 @@ namespace BmwDeepObd
                 {
                     _vagDtcCodeDict = new Dictionary<string, List<string>>();
                 }
-                string dictKey = string.Format("{0};{1};{2};{3};{4}", GetCurrentLanguage(), code, type, kwp1281, saeMode);
+                StringBuilder srKey = new StringBuilder();
+                srKey.Append("L=");
+                srKey.Append(GetCurrentLanguage());
+                srKey.Append(";P=");
+                srKey.Append(ecuPath);
+                srKey.Append(string.Format(";C={0}", code));
+                foreach (long errorType in typeList)
+                {
+                    srKey.Append(string.Format(";T={0}", errorType));
+                }
+                srKey.Append(string.Format(";K={0}", kwp1281));
+                srKey.Append(string.Format(";S={0}", saeMode));
+
+                string dictKey = srKey.ToString();
                 List<string> textListDict;
                 if (_vagDtcCodeDict.TryGetValue(dictKey, out textListDict))
                 {
@@ -2476,9 +2489,12 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        string tableNameType = kwp1281 ? "DTC fault symptoms KWP 1281" : "DTC fault symptoms KWP 2000";
-                        string typeName = string.Format(kwp1281 ? "FSE{0:X05}" : "FST{0:X05}", type);
-                        textList.AddRange(ReadVagDtcEntry(XmlDocDtcCodes, tableNameType, typeName));
+                        if (typeList.Count > 0)
+                        {
+                            string tableNameType = kwp1281 ? "DTC fault symptoms KWP 1281" : "DTC fault symptoms KWP 2000";
+                            string typeName = string.Format(kwp1281 ? "FSE{0:X05}" : "FST{0:X05}", typeList[0]);
+                            textList.AddRange(ReadVagDtcEntry(XmlDocDtcCodes, tableNameType, typeName));
+                        }
                     }
 
                     _vagDtcCodeDict.Add(dictKey, textList);
