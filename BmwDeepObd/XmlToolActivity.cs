@@ -2476,7 +2476,23 @@ namespace BmwDeepObd
                     );
                     try
                     {
-                        _ediabas.ResolveSgbdFile(ecuEntry.SysName);
+                        try
+                        {
+                            _ediabas.ResolveSgbdFile(ecuEntry.SysName);
+                        }
+                        catch (Exception)
+                        {
+                            if (string.Compare(ecuEntry.SysName, "sch_17", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                // sch_17 is not resolving sch7000
+                                _ediabas.ResolveSgbdFile("sch7000");
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+
                         _ediabas.ArgString = string.Empty;
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
