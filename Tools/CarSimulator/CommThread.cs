@@ -244,7 +244,6 @@ namespace CarSimulator
         private const int IsoTimeout = 2000;
         private const int IsoAckTimeout = 100;
         private const int Tp20T1 = 100;
-        private const int IsoTpVwTesterId = 0x7E8;
 
         // ReSharper disable InconsistentNaming
         // 0x38 EHC
@@ -1415,7 +1414,7 @@ namespace CarSimulator
                             return false;
                         }
 
-                        if (IsIsoTpCanId(canMsg.ID))
+                        if (GetIsoTpConfigData(canMsg.ID) != null)
                         {
                             _isoTpMode = true;
                             return ReceiveCanVw(receiveData, canMsg);
@@ -2489,6 +2488,7 @@ namespace CarSimulator
             int len;
             byte blockCount = 0;
             uint targetAddr = 0;
+            uint testerAddr = 0;
             byte[] dataBuffer = null;
 
             int recLen = 0;
@@ -2528,6 +2528,18 @@ namespace CarSimulator
                     if (recLen == 0)
                     {   // first telegram
                         targetAddr = canMsg.ID;
+                        int testerId = GetIsoTpTesterId(canMsg.ID);
+                        if (testerId < 0)
+                        {
+#if CAN_DEBUG
+                            Debug.WriteLine("No tester ID found!");
+#endif
+                            return false;
+                        }
+                        testerAddr = (uint) testerId;
+#if CAN_DEBUG
+                        // Debug.WriteLine("Tester ID {0:X03}", testerAddr);
+#endif
                         switch (frameType)
                         {
                             case 0: // single frame
@@ -2557,7 +2569,7 @@ namespace CarSimulator
                                     TPCANMsg sendMsg = new TPCANMsg
                                     {
                                         DATA = new byte[8],
-                                        ID = IsoTpVwTesterId,
+                                        ID = testerAddr,
 #if CAN_DYN_LEN
                                         LEN = 4,
 #else
@@ -2632,7 +2644,7 @@ namespace CarSimulator
                                 TPCANMsg sendMsg = new TPCANMsg
                                 {
                                     DATA = new byte[8],
-                                    ID = IsoTpVwTesterId,
+                                    ID = testerAddr,
 #if CAN_DYN_LEN
                                     LEN = 4,
 #else
@@ -2769,6 +2781,18 @@ namespace CarSimulator
             byte sepTime = 0;
 
             uint sourceAddr = (uint) (sendData[1] << 8) + sendData[2];
+            int testerId = GetIsoTpTesterId(sourceAddr);
+            if (testerId < 0)
+            {
+#if CAN_DEBUG
+                Debug.WriteLine("No tester ID found!");
+#endif
+                return false;
+            }
+            uint testerAddr = (uint)testerId;
+#if CAN_DEBUG
+            // Debug.WriteLine("Tester ID {0:X03}", testerAddr);
+#endif
             int dataOffset = 3;
             int dataLength = sendData[0] & 0x3F;
             if (dataLength == 0)
@@ -2796,7 +2820,7 @@ namespace CarSimulator
 
             if (dataLength <= 7)
             {   // single frame
-                sendMsg.ID = IsoTpVwTesterId;
+                sendMsg.ID = testerAddr;
 #if CAN_DYN_LEN
                 sendMsg.LEN = (byte)(1 + dataLength);
 #else
@@ -2814,7 +2838,7 @@ namespace CarSimulator
                 return true;
             }
             // first frame
-            sendMsg.ID = IsoTpVwTesterId;
+            sendMsg.ID = testerAddr;
             sendMsg.LEN = 8;
             sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
             sendMsg.DATA[0] = (byte)(0x10 | ((dataLength >> 8) & 0xFF));  // FF
@@ -2885,7 +2909,7 @@ namespace CarSimulator
                 {
                     len = 7;
                 }
-                sendMsg.ID = IsoTpVwTesterId;
+                sendMsg.ID = testerAddr;
 #if CAN_DYN_LEN
                 sendMsg.LEN = (byte)(1 + len);
 #else
@@ -3629,17 +3653,27 @@ namespace CarSimulator
             return null;
         }
 
-        private bool IsIsoTpCanId(uint canId)
+        private byte[] GetIsoTpConfigData(uint canId)
         {
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (byte[] configData in _configData.ConfigList)
             {
-                if (configData.Length == 3 && ((configData[1] << 8) | configData[2]) == canId)
+                if (configData.Length == 5 && ((configData[1] << 8) | configData[2]) == canId)
                 {
-                    return true;
+                    return configData;
                 }
             }
-            return false;
+            return null;
+        }
+
+        private int GetIsoTpTesterId(uint canId)
+        {
+            byte[] configData = GetIsoTpConfigData(canId);
+            if (configData == null)
+            {
+                return -1;
+            }
+            return ((configData[3] << 8) | configData[4]);
         }
 
         private bool SendKwp1281Block(byte[] sendData)

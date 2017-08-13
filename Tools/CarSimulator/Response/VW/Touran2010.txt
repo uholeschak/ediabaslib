@@ -2,8 +2,8 @@
 ; ecu address, tel. address
 
 ; mot_01.grp
-; ISO-TP ecu address, CAN ID
-CFG: 01 07 E0
+; ISO-TP ecu address, CAN ID, Tester ID
+CFG: 01 07 E0 07 E8
 ; Diag session control
 ; P2=50ms P2Ext=500*10ms=5s
 82 07 E0 10 03 00 : 86 07 E0 50 03 00 32 01 F4 00
