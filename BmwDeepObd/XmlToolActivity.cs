@@ -3346,8 +3346,20 @@ namespace BmwDeepObd
 
         private List<string> GetBestMatchingMwTabUds(EcuInfo ecuInfo, Android.App.ProgressDialog progress)
         {
+#if false
             List<ActivityCommon.MwTabFileEntry> wmTabList = ActivityCommon.GetMatchingVagMwTabsUds(Path.Combine(_datUkdDir, "mwtabs"), ecuInfo.Address);
             SortedSet<int> mwIds = ActivityCommon.ExtractVagMwBlocks(wmTabList);
+#else
+            SortedSet<int> mwIds = new SortedSet<int>();
+            for (int i = 0x1000; i <= 0x16FF; i++)
+            {
+                mwIds.Add(i);
+            }
+            for (int i = 0xF400; i <= 0xF4FF; i++)
+            {
+                mwIds.Add(i);
+            }
+#endif
 
             Dictionary<long, EcuMwTabEntry> mwTabEcuDict = new Dictionary<long, EcuMwTabEntry>();
             int valueCount = 0;
@@ -3461,7 +3473,7 @@ namespace BmwDeepObd
             {
                 return new List<string>();
             }
-
+#if false
             foreach (ActivityCommon.MwTabFileEntry mwTabFileEntry in wmTabList)
             {
                 int compareCount = 0;
@@ -3501,6 +3513,9 @@ namespace BmwDeepObd
                 Select(mwTabFileEntry => mwTabFileEntry.FileName).ToList();
 #else
             return wmTabListSorted.Select(mwTabFileEntry => mwTabFileEntry.FileName).ToList();
+#endif
+#else
+            return new List<string>();
 #endif
         }
 
