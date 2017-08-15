@@ -1368,6 +1368,7 @@ uint16_t uart_receive(uint8_t *buffer)
             }
             can_cfg_baud = rec_buffer[3];
             can_cfg_flags = rec_buffer[4];
+            uint16_t can_rxid_old = can_cfg_isotp_rxid;
             switch (can_cfg_protocol)
             {
                 case CAN_PROT_ISOTP:
@@ -1382,6 +1383,10 @@ uint16_t uart_receive(uint8_t *buffer)
                     can_cfg_packet_interval = rec_buffer[6];
                     can_cfg_idle_time = (uint16_t) rec_buffer[7] * 10;
                     break;
+            }
+            if (can_rxid_old != can_cfg_isotp_rxid)
+            {
+                can_init_required = true;
             }
             data_len = ((uint16_t) rec_buffer[8] << 8) + rec_buffer[9];
             if (buffer != NULL)
@@ -1458,6 +1463,7 @@ uint16_t uart_receive(uint8_t *buffer)
             }
             can_cfg_baud = rec_buffer[3];
             can_cfg_flags = rec_buffer[4];
+            uint16_t can_rxid_old = can_cfg_isotp_rxid;
             switch (can_cfg_protocol)
             {
                 case CAN_PROT_ISOTP:
@@ -1472,6 +1478,10 @@ uint16_t uart_receive(uint8_t *buffer)
                     can_cfg_packet_interval = rec_buffer[6];
                     can_cfg_idle_time = (uint16_t) rec_buffer[7] * 10;
                     break;
+            }
+            if (can_rxid_old != can_cfg_isotp_rxid)
+            {
+                can_init_required = true;
             }
             data_len = ((uint16_t) rec_buffer[11] << 8) + rec_buffer[12];
             if (buffer != NULL)
