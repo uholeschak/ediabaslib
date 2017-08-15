@@ -147,7 +147,7 @@ namespace BmwDeepObd
 
             public object InfoObject { get; set; }
 
-            public dynamic ClassObject { get; set; }
+            public object ClassObject { get; set; }
         }
 
         private readonly List<PageInfo> _pageList = new List<PageInfo>();

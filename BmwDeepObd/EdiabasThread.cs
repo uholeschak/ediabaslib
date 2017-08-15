@@ -658,19 +658,23 @@ namespace BmwDeepObd
                                     }
                                 }
                             }
-                        }
-
-                        if (executeJobMulti)
-                        {
-                            pageInfo.ClassObject.ExecuteJob(Ediabas, ref resultDict, firstRequestCall);
-                        }
-                        else if (executeJob)
-                        {
-                            Dictionary<string, EdiabasNet.ResultData> resultDictLocal = null;
-                            pageInfo.ClassObject.ExecuteJob(Ediabas, ref resultDictLocal, firstRequestCall);
-                            if (resultDictLocal != null)
+                            if (executeJobMulti)
                             {
-                                MergeResultDictionarys(ref resultDict, resultDictLocal);
+                                object[] args = { Ediabas, null, firstRequestCall };
+                                methodInfoJob.Invoke(pageInfo.ClassObject, args);
+                                resultDict = args[1] as MultiMap<string, EdiabasNet.ResultData>;
+                                //pageInfo.ClassObject.ExecuteJob(Ediabas, ref resultDict, firstRequestCall);
+                            }
+                            else if (executeJob)
+                            {
+                                object[] args = { Ediabas, null, firstRequestCall };
+                                methodInfoJob.Invoke(pageInfo.ClassObject, args);
+                                Dictionary<string, EdiabasNet.ResultData> resultDictLocal = args[1] as Dictionary<string, EdiabasNet.ResultData>;
+                                //pageInfo.ClassObject.ExecuteJob(Ediabas, ref resultDictLocal, firstRequestCall);
+                                if (resultDictLocal != null)
+                                {
+                                    MergeResultDictionarys(ref resultDict, resultDictLocal);
+                                }
                             }
                         }
                     }
