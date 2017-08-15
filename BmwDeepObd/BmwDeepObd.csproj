@@ -30,9 +30,9 @@
     <ConsolePause>false</ConsolePause>
     <MandroidI18n>West</MandroidI18n>
     <AndroidLinkMode>None</AndroidLinkMode>
-    <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <AndroidLinkSkip />
-    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <BundleAssemblies>false</BundleAssemblies>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
     <AndroidSupportedAbis>armeabi,armeabi-v7a,x86</AndroidSupportedAbis>
