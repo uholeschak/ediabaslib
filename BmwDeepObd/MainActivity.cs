@@ -1454,21 +1454,21 @@ namespace BmwDeepObd
                         _commErrorsOccured = true;
                     }
 
-                    bool formatResult = false;
-                    bool formatResultColor = false;
-                    bool formatResultMulti = false;
-                    bool formatErrorResult = false;
-                    bool updateResult = false;
-                    bool updateResultMulti = false;
+                    MethodInfo formatResult = null;
+                    MethodInfo formatResultColor = null;
+                    MethodInfo formatResultMulti = null;
+                    MethodInfo formatErrorResult = null;
+                    MethodInfo updateResult = null;
+                    MethodInfo updateResultMulti = null;
                     if (pageInfo.ClassObject != null)
                     {
                         Type pageType = pageInfo.ClassObject.GetType();
-                        formatResult = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary< string, EdiabasNet.ResultData >), typeof(string) }) != null;
-                        formatResultColor = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() }) != null;
-                        formatResultMulti = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() }) != null;
-                        formatErrorResult = pageType.GetMethod("FormatErrorResult") != null;
-                        updateResult = pageType.GetMethod("UpdateResultList", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(List<TableResultItem>) } ) != null;
-                        updateResultMulti = pageType.GetMethod("UpdateResultList", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(List<TableResultItem>) }) != null;
+                        formatResult = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary< string, EdiabasNet.ResultData >), typeof(string) });
+                        formatResultColor = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() });
+                        formatResultMulti = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() });
+                        formatErrorResult = pageType.GetMethod("FormatErrorResult");
+                        updateResult = pageType.GetMethod("UpdateResultList", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(List<TableResultItem>) } );
+                        updateResultMulti = pageType.GetMethod("UpdateResultList", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(List<TableResultItem>) });
                     }
                     string currDateTime = string.Empty;
                     if (_dataLogActive)
@@ -1647,11 +1647,13 @@ namespace BmwDeepObd
                                     }
                                 }
                                 string message = srMessage.ToString();
-                                if (formatErrorResult)
+                                if (formatErrorResult != null)
                                 {
                                     try
                                     {
-                                        message = pageInfo.ClassObject.FormatErrorResult(pageInfo, errorReport, message);
+                                        object[] args = { pageInfo, errorReport, message };
+                                        message = formatErrorResult.Invoke(pageInfo.ClassObject, args) as string;
+                                        //message = pageInfo.ClassObject.FormatErrorResult(pageInfo, errorReport, message);
                                     }
                                     catch (Exception)
                                     {
@@ -1747,17 +1749,25 @@ namespace BmwDeepObd
                                 {
                                     try
                                     {
-                                        if (formatResultMulti)
+                                        if (formatResultMulti != null)
                                         {
-                                            result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result, ref textColor);
+                                            object[] args = { pageInfo, resultDict, displayInfo.Result, null };
+                                            result = formatResultMulti.Invoke(pageInfo.ClassObject, args) as string;
+                                            textColor = args[3] as Android.Graphics.Color?;
+                                            //result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result, ref textColor);
                                         }
-                                        else if (formatResultColor)
+                                        else if (formatResultColor != null)
                                         {
-                                            result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict.ToDictionary(), displayInfo.Result, ref textColor);
+                                            object[] args = { pageInfo, resultDict.ToDictionary(), displayInfo.Result, null };
+                                            result = formatResultColor.Invoke(pageInfo.ClassObject, args) as string;
+                                            textColor = args[3] as Android.Graphics.Color?;
+                                            //result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict.ToDictionary(), displayInfo.Result, ref textColor);
                                         }
-                                        else if (formatResult)
+                                        else if (formatResult != null)
                                         {
-                                            result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict.ToDictionary(), displayInfo.Result);
+                                            object[] args = { pageInfo, resultDict.ToDictionary(), displayInfo.Result };
+                                            result = formatResult.Invoke(pageInfo.ClassObject, args) as string;
+                                            //result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict.ToDictionary(), displayInfo.Result);
                                         }
                                     }
                                     catch (Exception)
@@ -1798,13 +1808,17 @@ namespace BmwDeepObd
                         }
                     }
 
-                    if (updateResultMulti)
+                    if (updateResultMulti != null)
                     {
-                        pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict, tempResultList);
+                        object[] args = { pageInfo, resultDict, tempResultList };
+                        updateResultMulti.Invoke(pageInfo.ClassObject, args);
+                        //pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict, tempResultList);
                     }
-                    else if (updateResult)
+                    else if (updateResult != null)
                     {
-                        pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict?.ToDictionary(), tempResultList);
+                        object[] args = { pageInfo, resultDict?.ToDictionary(), tempResultList };
+                        updateResult.Invoke(pageInfo.ClassObject, args);
+                        //pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict?.ToDictionary(), tempResultList);
                     }
 
                     // check if list has changed
@@ -1854,9 +1868,12 @@ namespace BmwDeepObd
                     try
                     {
                         Type pageType = pageInfo.ClassObject.GetType();
-                        if (pageType.GetMethod("UpdateLayout") != null)
+                        MethodInfo updateLayout = pageType.GetMethod("UpdateLayout");
+                        if (updateLayout != null)
                         {
-                            pageInfo.ClassObject.UpdateLayout(pageInfo, dynamicValid, _ediabasThread != null);
+                            object[] args = { pageInfo, dynamicValid, _ediabasThread != null };
+                            updateLayout.Invoke(pageInfo.ClassObject, args);
+                            //pageInfo.ClassObject.UpdateLayout(pageInfo, dynamicValid, _ediabasThread != null);
                         }
                     }
                     catch (Exception)
@@ -2176,7 +2193,7 @@ namespace BmwDeepObd
                                 using System.Threading;"
                                 + infoLocal.ClassCode;
                             evaluator.Compile(classCode);
-                            dynamic classObject = evaluator.Evaluate("new PageClass()");
+                            object classObject = evaluator.Evaluate("new PageClass()");
                             if (((infoLocal.JobsInfo == null) || (infoLocal.JobsInfo.JobList.Count == 0)) &&
                                 ((infoLocal.ErrorsInfo == null) || (infoLocal.ErrorsInfo.EcuList.Count == 0)))
                             {
@@ -3154,10 +3171,13 @@ namespace BmwDeepObd
                             try
                             {
                                 Type pageType = pageInfo.ClassObject.GetType();
-                                if (pageType.GetMethod("CreateLayout") != null)
+                                MethodInfo createLayout = pageType.GetMethod("CreateLayout");
+                                if (createLayout != null)
                                 {
                                     LinearLayout pageLayout = view.FindViewById<LinearLayout>(Resource.Id.listLayout);
-                                    pageInfo.ClassObject.CreateLayout(activityMain, pageInfo, pageLayout);
+                                    object[] args = { activityMain, pageInfo, pageLayout };
+                                    createLayout.Invoke(pageInfo.ClassObject, args);
+                                    //pageInfo.ClassObject.CreateLayout(activityMain, pageInfo, pageLayout);
                                 }
                             }
                             catch (Exception)
@@ -3188,9 +3208,12 @@ namespace BmwDeepObd
                         try
                         {
                             Type pageType = pageInfo.ClassObject.GetType();
-                            if (pageType.GetMethod("DestroyLayout") != null)
+                            MethodInfo destroyLayout = pageType.GetMethod("DestroyLayout");
+                            if (destroyLayout != null)
                             {
-                                pageInfo.ClassObject.DestroyLayout(pageInfo);
+                                object[] args = { pageInfo };
+                                destroyLayout.Invoke(pageInfo.ClassObject, args);
+                                //pageInfo.ClassObject.DestroyLayout(pageInfo);
                             }
                         }
                         catch (Exception)
