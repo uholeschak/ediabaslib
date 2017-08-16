@@ -2297,7 +2297,7 @@ namespace BmwDeepObd
             _downloadProgress.Progress = 0;
             _downloadProgress.Max = 100;
             _downloadProgress.Show();
-            _downloadProgress.GetButton((int)DialogButtonType.Negative).Enabled = true;
+            _downloadProgress.GetButton((int)DialogButtonType.Negative).Enabled = false;    // early abort crashes!
             _downloadFileSize = fileSize;
             _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
             _activityCommon.SetPreferredNetworkInterface();
@@ -2462,6 +2462,10 @@ namespace BmwDeepObd
                     else
                     {
                         _downloadProgress.Progress = e.ProgressPercentage;
+                    }
+                    if (_webClient.IsBusy)
+                    {
+                        _downloadProgress.GetButton((int)DialogButtonType.Negative).Enabled = true;
                     }
                 }
             });
