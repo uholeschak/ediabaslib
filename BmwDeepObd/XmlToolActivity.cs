@@ -2541,7 +2541,7 @@ namespace BmwDeepObd
                                 }
                             }
                         }
-                        if (thisEcuInfo != null)
+                        if (ActivityCommon.CollectDebugInfo && thisEcuInfo != null)
                         {
                             // get more ecu infos
                             string readCommand = GetReadCommand(thisEcuInfo);

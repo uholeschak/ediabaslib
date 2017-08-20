@@ -1055,6 +1055,7 @@ namespace BmwDeepObd
                     _dataLogAppend = prefs.GetBoolean("DataLogAppend", _dataLogAppend);
                 }
                 ActivityCommon.DoubleClickForAppExit = prefs.GetBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
+                ActivityCommon.CollectDebugInfo = prefs.GetBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
             }
             catch (Exception)
             {
@@ -1086,6 +1087,7 @@ namespace BmwDeepObd
                 prefsEdit.PutBoolean("DataLogActive", _dataLogActive);
                 prefsEdit.PutBoolean("DataLogAppend", _dataLogAppend);
                 prefsEdit.PutBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
+                prefsEdit.PutBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
                 prefsEdit.Commit();
             }
             catch (Exception)
