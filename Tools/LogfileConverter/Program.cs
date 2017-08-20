@@ -13,6 +13,7 @@ namespace LogfileConverter
         private static bool _responseFile;
         private static bool _cFormat;
         private static bool _edicCanMode;
+        private static bool _edicCanIsoTpMode;
         private static int _edicCanAddr;
         private static int _edicCanTesterAddr;
         private static int _edicCanEcuAddr;
@@ -143,6 +144,7 @@ namespace LogfileConverter
         private static void ConvertPortLogFile(string inputFile, StreamWriter streamWriter)
         {
             _edicCanMode = false;
+            _edicCanIsoTpMode = false;
             using (StreamReader streamReader = new StreamReader(inputFile))
             {
                 string line;
@@ -244,6 +246,7 @@ namespace LogfileConverter
         private static void ConvertTraceFile(string inputFile, StreamWriter streamWriter)
         {
             _edicCanMode = false;
+            _edicCanIsoTpMode = false;
             using (StreamReader streamReader = new StreamReader(inputFile))
             {
                 string line;
@@ -256,6 +259,7 @@ namespace LogfileConverter
                         if (Regex.IsMatch(line, @"^ \(EDIC CommParameter"))
                         {
                             _edicCanMode = false;
+                            _edicCanIsoTpMode = false;
                         }
 
                         MatchCollection canEdicMatches = Regex.Matches(line, @"^EDIC CAN: (..), Tester: (..), Ecu: (..)");
@@ -269,6 +273,26 @@ namespace LogfileConverter
                                     _edicCanTesterAddr = Convert.ToInt32(canEdicMatches[0].Groups[2].Value, 16);
                                     _edicCanEcuAddr = Convert.ToInt32(canEdicMatches[0].Groups[3].Value, 16);
                                     _edicCanMode = true;
+                                    _edicCanIsoTpMode = false;
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
+                        }
+                        MatchCollection canEdicIsoTpMatches = Regex.Matches(line, @"^EDIC ISO-TP: Tester: (...), Ecu: (...)");
+                        if (canEdicIsoTpMatches.Count == 1)
+                        {
+                            if (canEdicIsoTpMatches[0].Groups.Count == 3)
+                            {
+                                try
+                                {
+                                    _edicCanAddr = 0;
+                                    _edicCanTesterAddr = Convert.ToInt32(canEdicIsoTpMatches[0].Groups[1].Value, 16);
+                                    _edicCanEcuAddr = Convert.ToInt32(canEdicIsoTpMatches[0].Groups[2].Value, 16);
+                                    _edicCanMode = false;
+                                    _edicCanIsoTpMode = true;
                                 }
                                 catch (Exception)
                                 {
@@ -286,6 +310,27 @@ namespace LogfileConverter
                             {
                                 if (send)
                                 {
+                                    if (_edicCanIsoTpMode)
+                                    {
+                                        // convert to KWP2000 format
+                                        int dataLength = lineValues.Count;
+                                        if (dataLength < 0x3F)
+                                        {
+                                            lineValues.Insert(0, (byte) (0x80 + dataLength));
+                                            lineValues.Insert(1, (byte)(_edicCanEcuAddr >> 8));
+                                            lineValues.Insert(2, (byte)(_edicCanEcuAddr & 0xFF));
+                                        }
+                                        else
+                                        {
+                                            lineValues.Insert(0, 0x80);
+                                            lineValues.Insert(1, (byte)(_edicCanEcuAddr >> 8));
+                                            lineValues.Insert(2, (byte)(_edicCanEcuAddr & 0xFF));
+                                            lineValues.Insert(3, (byte) dataLength);
+                                        }
+                                        byte checksum = CalcChecksumBmwFast(lineValues, 0, lineValues.Count);
+                                        lineValues.Add(checksum);
+                                        line = List2NumberString(lineValues);
+                                    }
                                     int sendLength = TelLengthBmwFast(lineValues, 0);
                                     if (sendLength > 0 && sendLength == lineValues.Count)
                                     {
@@ -340,6 +385,40 @@ namespace LogfileConverter
                                         if (lineValues.Count == 6 && lineValues[1] == 0xF1 && lineValues[2] == 0xF1)
                                         {   // filter adapter responses
                                             addResponse = false;
+                                        }
+                                    }
+                                    if (_edicCanIsoTpMode)
+                                    {
+                                        addResponse = false;
+                                        if (lineValues.Count >= 4 && lineValues[0] == 0x01)
+                                        {   // standard response
+                                            int dataLength = (lineValues[1] << 8) + lineValues[2];
+                                            if (dataLength + 4 == lineValues.Count)
+                                            {
+                                                addResponse = true;
+                                                // convert to KWP2000 format
+                                                lineValues.RemoveAt(lineValues.Count - 1);
+                                                lineValues.RemoveAt(0);
+                                                lineValues.RemoveAt(0);
+                                                lineValues.RemoveAt(0);
+
+                                                if (dataLength < 0x3F)
+                                                {
+                                                    lineValues.Insert(0, (byte)(0x80 + dataLength));
+                                                    lineValues.Insert(1, (byte)(_edicCanEcuAddr >> 8));
+                                                    lineValues.Insert(2, (byte)(_edicCanEcuAddr & 0xFF));
+                                                }
+                                                else
+                                                {
+                                                    lineValues.Insert(0, 0x80);
+                                                    lineValues.Insert(1, (byte)(_edicCanEcuAddr >> 8));
+                                                    lineValues.Insert(2, (byte)(_edicCanEcuAddr & 0xFF));
+                                                    lineValues.Insert(3, (byte)dataLength);
+                                                }
+                                                byte checksum = CalcChecksumBmwFast(lineValues, 0, lineValues.Count);
+                                                lineValues.Add(checksum);
+                                                line = List2NumberString(lineValues);
+                                            }
                                         }
                                     }
                                     if (addResponse)
@@ -835,7 +914,7 @@ namespace LogfileConverter
             {
                 return false;
             }
-            if (!broadcast && !_edicCanMode)
+            if (!broadcast && !_edicCanMode && !_edicCanIsoTpMode)
             {
                 if (request[1] != response[2])
                 {
