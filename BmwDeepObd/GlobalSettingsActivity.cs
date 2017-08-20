@@ -33,6 +33,7 @@ namespace BmwDeepObd
         private CheckBox _checkBoxStoreDataLogSettings;
         private CheckBox _checkBoxDoubleClickForAppExit;
         private Button _buttonStorageLocation;
+        private CheckBox _checkBoxCollectDebugInfo;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -72,6 +73,8 @@ namespace BmwDeepObd
             {
                 SelectMedia();
             };
+
+            _checkBoxCollectDebugInfo = FindViewById<CheckBox>(Resource.Id.checkBoxCollectDebugInfo);
 
             ReadSettings();
             CheckSelection(_selection);
@@ -154,6 +157,7 @@ namespace BmwDeepObd
 
             _checkBoxStoreDataLogSettings.Checked = ActivityCommon.StoreDataLogSettings;
             _checkBoxDoubleClickForAppExit.Checked = ActivityCommon.DoubleClickForAppExit;
+            _checkBoxCollectDebugInfo.Checked = ActivityCommon.CollectDebugInfo;
             UpdateDisplay();
         }
 
@@ -216,6 +220,7 @@ namespace BmwDeepObd
 
             ActivityCommon.StoreDataLogSettings = _checkBoxStoreDataLogSettings.Checked;
             ActivityCommon.DoubleClickForAppExit = _checkBoxDoubleClickForAppExit.Checked;
+            ActivityCommon.CollectDebugInfo = _checkBoxCollectDebugInfo.Checked;
         }
 
         private void UpdateDisplay()
