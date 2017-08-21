@@ -33,15 +33,15 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:
+\n- Добавлен VAG ISO-TP / UDS протокол (требуется обновление прошивки адаптера)
 \n- улучшена стабильность</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.8.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 (Автомобили до 4.2012) протоколы.</string>
 
   <!-- Error codes -->
-  <!-- Translate! -->
-  <string name="error_code_error_temporary">Error temporary</string>
-  <string name="error_code_error_present">Error present</string>
-  <string name="error_code_error_stored">Error stored</string>
+  <string name="error_code_error_temporary">Ошибка в наличии, но не сохранена</string>
+  <string name="error_code_error_present">Ошибка в наличии</string>
+  <string name="error_code_error_stored">Ошибка сохранена</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Информация</string>
@@ -205,9 +205,8 @@
   <string name="settings_caption_app_exit">Выход из приложения</string>
   <string name="settings_double_click_for_app_exit">Для выхода из приложения требуется двойное нажатие</string>
   <string name="settings_caption_storage">Носитель памяти</string>
-  <!--Translate-->
-  <string name="settings_caption_debug">Debugging</string>
-  <string name="settings_collect_debug_info">Collect debug information for trace files</string>
+  <string name="settings_caption_debug">Отладить</string>
+  <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>
