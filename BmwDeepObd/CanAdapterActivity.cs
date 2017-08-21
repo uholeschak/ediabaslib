@@ -469,7 +469,7 @@ namespace BmwDeepObd
                     {
                         versionText += "--";
                     }
-                    fwUpdateEnabled = fwUpdateVersion >= 0 && _fwVersion != fwUpdateVersion;
+                    fwUpdateEnabled = fwUpdateVersion >= 0 && ((_fwVersion != fwUpdateVersion) || ActivityCommon.CollectDebugInfo);
                 }
                 _textViewFwVersion.Text = versionText;
 
