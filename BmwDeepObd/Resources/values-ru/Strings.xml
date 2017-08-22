@@ -39,7 +39,7 @@
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.8.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 (Автомобили до 4.2012) протоколы.</string>
 
   <!-- Error codes -->
-  <string name="error_code_error_temporary">Ошибка в наличии, но не сохранена</string>
+  <string name="error_code_error_temporary">Временная ошибка</string>
   <string name="error_code_error_present">Ошибка в наличии</string>
   <string name="error_code_error_stored">Ошибка сохранена</string>
 
