@@ -215,6 +215,8 @@
   <string name="tool_job_jobs">Jobs:</string>
   <string name="tool_job_job">Job:</string>
   <string name="tool_job_arguments">Аргументы:</string>
+  <!--Translate-->
+  <string name="tool_job_bin_args">Data (Hex values optionally separated with space)</string>
   <string name="tool_job_arguments_error_detail">Без аргументов будут считаны все ошибки</string>
   <string name="tool_job_results">Результаты:</string>
   <string name="tool_job_result">Результат:</string>

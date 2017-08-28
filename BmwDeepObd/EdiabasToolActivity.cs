@@ -99,6 +99,7 @@ namespace BmwDeepObd
         private ToggleButton _buttonConnect;
         private Spinner _spinnerJobs;
         private JobListAdapter _jobListAdapter;
+        private CheckBox _checkBoxBinArgs;
         private EditText _editTextArgs;
         private Spinner _spinnerResults;
         private ResultSelectListAdapter _resultSelectListAdapter;
@@ -186,6 +187,9 @@ namespace BmwDeepObd
 
             _editTextArgs = FindViewById<EditText>(Resource.Id.editTextArgs);
             _editTextArgs.SetOnTouchListener(this);
+
+            _checkBoxBinArgs = FindViewById<CheckBox>(Resource.Id.checkBoxBinArgs);
+            _checkBoxBinArgs.SetOnTouchListener(this);
 
             _spinnerResults = FindViewById<Spinner>(Resource.Id.spinnerResults);
             _resultSelectListAdapter = new ResultSelectListAdapter(this);
@@ -615,7 +619,7 @@ namespace BmwDeepObd
                     {
                         DisplayJobResult();
                     }
-                    else if (v == _editTextArgs)
+                    else if (v == _checkBoxBinArgs || v == _editTextArgs)
                     {
                         DisplayJobArguments();
                         break;
@@ -779,6 +783,7 @@ namespace BmwDeepObd
             }
             _spinnerJobs.Enabled = inputsEnabled;
             _editTextArgs.Enabled = inputsEnabled;
+            _checkBoxBinArgs.Enabled = inputsEnabled;
             _spinnerResults.Enabled = inputsEnabled;
 
             HideKeyboard();
@@ -955,6 +960,7 @@ namespace BmwDeepObd
             _resultSelectListAdapter.NotifyDataSetChanged();
             _resultSelectLastItem = 0;
             _editTextArgs.Text = defaultArgs;
+            _checkBoxBinArgs.Checked = false;
         }
 
         private void DisplayJobComments()
@@ -1531,6 +1537,7 @@ namespace BmwDeepObd
 
             string jobName = jobInfo.Name;
             string jobArgs = _editTextArgs.Text;
+            bool jobBinArgs = _checkBoxBinArgs.Checked;
             StringBuilder stringBuilderResults = new StringBuilder();
             foreach (ExtraInfo info in jobInfo.Results)
             {
@@ -1632,7 +1639,38 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            _ediabas.ArgString = jobArgs;
+                            if (jobBinArgs)
+                            {
+                                jobArgs = jobArgs.Trim();
+                                string[] argArray = jobArgs.Split(' ', ';', ',');
+                                if (argArray.Length > 1)
+                                {
+                                    try
+                                    {
+                                        List<byte> binList = new List<byte>();
+                                        foreach (string arg in argArray)
+                                        {
+                                            if (!string.IsNullOrEmpty(arg))
+                                            {
+                                                binList.Add(Convert.ToByte(arg, 16));
+                                            }
+                                        }
+                                        _ediabas.ArgBinary = binList.ToArray();
+                                    }
+                                    catch (Exception)
+                                    {
+                                        _ediabas.ArgBinary = new byte[0];
+                                    }
+                                }
+                                else
+                                {
+                                    _ediabas.ArgBinary = EdiabasNet.HexToByteArray(jobArgs);
+                                }
+                            }
+                            else
+                            {
+                                _ediabas.ArgString = jobArgs;
+                            }
                             _ediabas.ArgBinaryStd = null;
                             _ediabas.ResultsRequests = jobResults;
                             _ediabas.ExecuteJob(jobName);
