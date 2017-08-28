@@ -23,6 +23,11 @@
         android:layout_height="wrap_content"
         android:background="#666"
         android:textColor="#fff" />
+    <CheckBox
+      android:id="@+id/checkBoxBinArgs"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/tool_job_bin_args" />
     <EditText
         android:id="@+id/editTextArgs"
         android:layout_width="fill_parent"

@@ -215,6 +215,7 @@
   <string name="tool_job_jobs">Jobs:</string>
   <string name="tool_job_job">Job:</string>
   <string name="tool_job_arguments">Argumente:</string>
+  <string name="tool_job_bin_args">Daten (Hexwerte optional mit Leerzeichen getrennt)</string>
   <string name="tool_job_arguments_error_detail">Ohne Argumente werden alle Fehler gelesen</string>
   <string name="tool_job_results">Ergebnisse:</string>
   <string name="tool_job_result">Ergebnis:</string>
