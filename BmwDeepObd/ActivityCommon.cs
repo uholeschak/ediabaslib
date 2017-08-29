@@ -523,12 +523,12 @@ namespace BmwDeepObd
             _bcReceiverUpdateDisplayHandler = bcReceiverUpdateDisplayHandler;
             _bcReceiverReceivedHandler = bcReceiverReceivedHandler;
             Emulator = IsEmulator();
-            _clipboardManager = activity.GetSystemService(Context.ClipboardService);
+            _clipboardManager = activity?.GetSystemService(Context.ClipboardService);
             _btAdapter = BluetoothAdapter.DefaultAdapter;
-            _maWifi = (WifiManager)activity.GetSystemService(Context.WifiService);
-            _maConnectivity = (ConnectivityManager)activity.GetSystemService(Context.ConnectivityService);
-            _usbManager = activity.GetSystemService(Context.UsbService) as UsbManager;
-            _powerManager = activity.GetSystemService(Context.PowerService) as PowerManager;
+            _maWifi = (WifiManager)activity?.GetSystemService(Context.WifiService);
+            _maConnectivity = (ConnectivityManager)activity?.GetSystemService(Context.ConnectivityService);
+            _usbManager = activity?.GetSystemService(Context.UsbService) as UsbManager;
+            _powerManager = activity?.GetSystemService(Context.PowerService) as PowerManager;
             if (_powerManager != null)
             {
                 _wakeLockScreenBright = _powerManager.NewWakeLock(WakeLockFlags.ScreenBright | WakeLockFlags.OnAfterRelease, "ScreenBrightLock");
@@ -543,9 +543,10 @@ namespace BmwDeepObd
             _selectedInterface = InterfaceType.None;
             _yandexTransDict = cacheActivity?._yandexTransDict ?? new Dictionary<string, Dictionary<string, string>>();
 
-            if ((_bcReceiverUpdateDisplayHandler != null) || (_bcReceiverReceivedHandler != null))
+            if (activity != null && ((_bcReceiverUpdateDisplayHandler != null) || (_bcReceiverReceivedHandler != null)))
             {
                 _bcReceiver = new Receiver(this);
+                activity.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
                 activity.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
                 activity.RegisterReceiver(_bcReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
                 if (UsbSupport)
@@ -739,6 +740,22 @@ namespace BmwDeepObd
                 }
             }
             return false;
+        }
+
+        public bool StartForegroundService()
+        {
+            Intent startServiceIntent = new Intent(_activity, typeof(ForegroundService));
+            startServiceIntent.SetAction(ForegroundService.ActionStartService);
+            _activity.StartService(startServiceIntent);
+            return true;
+        }
+
+        public bool StopForegroundService()
+        {
+            Intent stopServiceIntent = new Intent(_activity, typeof(ForegroundService));
+            stopServiceIntent.SetAction(ForegroundService.ActionStopService);
+            _activity.StopService(stopServiceIntent);
+            return true;
         }
 
         public bool RegisterInternetCellular()

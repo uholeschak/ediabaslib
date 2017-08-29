@@ -123,6 +123,7 @@
   <ItemGroup>
     <Compile Include="ActivityCommon.cs" />
     <Compile Include="CanAdapterActivity.cs" />
+    <Compile Include="ForegroundService.cs" />
     <Compile Include="EdiabasThread.cs" />
     <Compile Include="EdiabasToolActivity.cs" />
     <Compile Include="FilePicker\FileListAdapter.cs" />
@@ -354,6 +355,18 @@
     <AndroidResource Include="Resources\values-ru\Strings.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\app_status.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-ldpi\app_status.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\app_status.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\app_status.png" />
   </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

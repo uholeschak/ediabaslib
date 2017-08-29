@@ -49,6 +49,11 @@
   <string name="alert_title_error">Ошибка</string>
   <string name="alert_title_question">Вопрос</string>
 
+  <!-- Service -->
+  <!--Translate-->
+  <string name="service_notification">The communication is active</string>
+  <string name="service_stop">Stop communication</string>
+
   <!-- Compile -->
   <string name="compile_start">Компилировать код пользователя</string>
   <string name="compile_crash">Сбой приложения при компиляции кода пользователя.\nСуществует известная ошибка компилятора:\nне используйте сложно инициализированные структуры или массивы в коде,\nинициализируйте их в конструкторе.</string>

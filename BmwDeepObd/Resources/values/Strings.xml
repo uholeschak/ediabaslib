@@ -49,6 +49,10 @@
   <string name="alert_title_error">Error</string>
   <string name="alert_title_question">Question</string>
 
+  <!-- Service -->
+  <string name="service_notification">The communication is active</string>
+  <string name="service_stop">Stop communication</string>
+
   <!-- Compile -->
   <string name="compile_start">Compiling user code</string>
   <string name="compile_crash">The app crashed during compilation of the user code.\nThere is a known compiler bug:\nDon\'t use complex initialized structures or arrays in the code,\ninitialize them in the constructor.</string>
