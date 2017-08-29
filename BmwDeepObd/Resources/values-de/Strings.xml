@@ -49,6 +49,10 @@
   <string name="alert_title_error">Fehler</string>
   <string name="alert_title_question">Frage</string>
 
+  <!-- Service -->
+  <string name="service_notification">Die Kommunikation ist aktiv</string>
+  <string name="service_stop">Kommunikation beenden</string>
+
   <!-- Compile -->
   <string name="compile_start">Anwendercode kompilieren</string>
   <string name="compile_crash">Die App ist beim Kompilieren des Anwerdercodes abgestürzt.\nEs gibt einen bekannten Compilerfehler:\nVerwenden Sie keine komplexen initialisierten Strukturen oder Arrays, initialisieren Sie diese im Konstruktor.</string>

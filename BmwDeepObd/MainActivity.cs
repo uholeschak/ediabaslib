@@ -970,6 +970,7 @@ namespace BmwDeepObd
                             break;
                     }
                     _ediabasThread.StartThread(portName, connectParameter, _traceDir, _traceAppend, pageInfo, true);
+                    _activityCommon.StartForegroundService();
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (_dataLogActive)
                     {
@@ -996,6 +997,7 @@ namespace BmwDeepObd
                 try
                 {
                     _ediabasThread.StopThread(wait);
+                    _activityCommon.StopForegroundService();
                     if (wait)
                     {
                         _ediabasThread.DataUpdated -= DataUpdated;
@@ -1215,6 +1217,16 @@ namespace BmwDeepObd
             string action = intent.Action;
             switch (action)
             {
+                case ForegroundService.NotificationBroadcastAction:
+                {
+                    string request = intent.GetStringExtra(ForegroundService.BroadcastMessageKey);
+                    if (request.Equals(ForegroundService.BroadcastStopComm))
+                    {
+                        StopEdiabasThread(false);
+                    }
+                    break;
+                }
+
                 case UsbManager.ActionUsbDeviceAttached:
                     {
                         UsbDevice usbDevice = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;
