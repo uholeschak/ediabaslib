@@ -283,6 +283,11 @@ namespace BmwDeepObd
             _webClient = new WebClient();
             _webClient.DownloadProgressChanged += DownloadProgressChanged;
             _webClient.DownloadFileCompleted += DownloadCompleted;
+
+            if (ActivityCommon.CommActive)
+            {
+                ConnectEdiabasEvents();
+            }
         }
 
         void CreateActionBarTabs()
@@ -378,6 +383,7 @@ namespace BmwDeepObd
             {
                 StopEdiabasThread(true);
             }
+            DisconnectEdiabasEvents();
             StoreSettings();
             if (_activityCommon != null)
             {
@@ -923,8 +929,7 @@ namespace BmwDeepObd
                 if (ActivityCommon.EdiabasThread == null)
                 {
                     ActivityCommon.EdiabasThread = new EdiabasThread(string.IsNullOrEmpty(ActivityCommon.JobReader.EcuPath) ? _ecuPath : ActivityCommon.JobReader.EcuPath, _activityCommon);
-                    ActivityCommon.EdiabasThread.DataUpdated += DataUpdated;
-                    ActivityCommon.EdiabasThread.ThreadTerminated += ThreadTerminated;
+                    ConnectEdiabasEvents();
                 }
                 string logDir = string.Empty;
                 if (!string.IsNullOrEmpty(ActivityCommon.JobReader.LogPath))
@@ -1015,8 +1020,7 @@ namespace BmwDeepObd
                     _activityCommon.StopForegroundService();
                     if (wait)
                     {
-                        ActivityCommon.EdiabasThread.DataUpdated -= DataUpdated;
-                        ActivityCommon.EdiabasThread.ThreadTerminated -= ThreadTerminated;
+                        DisconnectEdiabasEvents();
                         ActivityCommon.EdiabasThread.Dispose();
                         ActivityCommon.EdiabasThread = null;
                     }
@@ -1029,6 +1033,24 @@ namespace BmwDeepObd
             _activityCommon?.SetLock(ActivityCommon.LockType.None);
             CloseDataLog();
             SupportInvalidateOptionsMenu();
+        }
+
+        private void ConnectEdiabasEvents()
+        {
+            if (ActivityCommon.EdiabasThread != null)
+            {
+                ActivityCommon.EdiabasThread.DataUpdated += DataUpdated;
+                ActivityCommon.EdiabasThread.ThreadTerminated += ThreadTerminated;
+            }
+        }
+
+        private void DisconnectEdiabasEvents()
+        {
+            if (ActivityCommon.EdiabasThread != null)
+            {
+                ActivityCommon.EdiabasThread.DataUpdated -= DataUpdated;
+                ActivityCommon.EdiabasThread.ThreadTerminated -= ThreadTerminated;
+            }
         }
 
         private void CloseDataLog()
