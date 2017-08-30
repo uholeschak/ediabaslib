@@ -196,36 +196,12 @@
 
         public void DestroyLayout(JobReader.PageInfo pageInfo)
         {
-            if (buttonBlockSize != null)
-            {
-                buttonBlockSize.Dispose();
-                buttonBlockSize = null;
-            }
-            if (buttonSepTime0 != null)
-            {
-                buttonSepTime0.Dispose();
-                buttonSepTime0 = null;
-            }
-            if (buttonSepTime1 != null)
-            {
-                buttonSepTime1.Dispose();
-                buttonSepTime1 = null;
-            }
-            if (buttonCan500 != null)
-            {
-                buttonCan500.Dispose();
-                buttonCan500 = null;
-            }
-            if (buttonCan100 != null)
-            {
-                buttonCan100.Dispose();
-                buttonCan100 = null;
-            }
-            if (buttonCanOff != null)
-            {
-                buttonCanOff.Dispose();
-                buttonCanOff = null;
-            }
+            buttonBlockSize = null;
+            buttonSepTime0 = null;
+            buttonSepTime1 = null;
+            buttonCan500 = null;
+            buttonCan100 = null;
+            buttonCanOff = null;
             //Android.Util.Log.Info("Custom", "Destroyed");
         }
 

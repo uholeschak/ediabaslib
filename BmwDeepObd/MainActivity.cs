@@ -262,6 +262,7 @@ namespace BmwDeepObd
             _tabLayout.AddOnTabSelectedListener(this);
             _tabLayout.Visibility = ViewStates.Gone;
 
+            ActivityCommon.ActivityMainCurrent = this;
             _activityCommon = new ActivityCommon(this, () =>
             {
                 if (_activityActive)
@@ -379,7 +380,7 @@ namespace BmwDeepObd
         {
             base.OnDestroy();
 
-            //if (!UseCommService())
+            if (!UseCommService())
             {
                 StopEdiabasThread(true);
             }
@@ -3267,7 +3268,8 @@ namespace BmwDeepObd
                 base.OnDestroyView();
 
                 ActivityMain activityMain = Activity as ActivityMain;
-                if (activityMain != null && _pageInfoIndex >= 0 && _pageInfoIndex < ActivityCommon.JobReader.PageList.Count)
+                if (activityMain != null && activityMain == ActivityCommon.ActivityMainCurrent &&
+                    _pageInfoIndex >= 0 && _pageInfoIndex < ActivityCommon.JobReader.PageList.Count)
                 {
                     JobReader.PageInfo pageInfo = ActivityCommon.JobReader.PageList[_pageInfoIndex];
                     if (pageInfo.ClassObject != null)
