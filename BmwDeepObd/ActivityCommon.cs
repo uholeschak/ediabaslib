@@ -24,6 +24,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Android.Content.PM;
 using Android.Text.Method;
+// ReSharper disable InlineOutVariableDeclaration
 
 namespace BmwDeepObd
 {
@@ -423,14 +424,8 @@ namespace BmwDeepObd
 
         public string CustomStorageMedia
         {
-            get
-            {
-                return _customStorageMedia;
-            }
-            set
-            {
-                _customStorageMedia = IsWritable(value) ? value : null;
-            }
+            get => _customStorageMedia;
+            set => _customStorageMedia = IsWritable(value) ? value : null;
         }
 
         public static string AppId
@@ -443,10 +438,7 @@ namespace BmwDeepObd
                 }
                 return _appId;
             }
-            set
-            {
-                _appId = value;
-            }
+            set => _appId = value;
         }
 
         public static ManufacturerType SelectedManufacturer { get; set; }
@@ -471,12 +463,13 @@ namespace BmwDeepObd
 
         public static bool EnableTranslateRequested { get; set; }
 
+        public static EdiabasThread EdiabasThread { get; set; }
+
+        public static JobReader JobReader { get; }
+
         public InterfaceType SelectedInterface
         {
-            get
-            {
-                return _selectedInterface;
-            }
+            get => _selectedInterface;
             set
             {
                 if (_selectedInterface != value)
@@ -490,14 +483,8 @@ namespace BmwDeepObd
 
         public string SelectedEnetIp
         {
-            get
-            {
-                return _selectedEnetIp;
-            }
-            set
-            {
-                _selectedEnetIp = value;
-            }
+            get => _selectedEnetIp;
+            set => _selectedEnetIp = value;
         }
 
         public Java.Lang.Object ClipboardManager => _clipboardManager;
@@ -515,6 +502,11 @@ namespace BmwDeepObd
         public Receiver BcReceiver => _bcReceiver;
 
         public XDocument XmlDocDtcCodes { get; set; }
+
+        static ActivityCommon()
+        {
+            JobReader = new JobReader();
+        }
 
         public ActivityCommon(Android.App.Activity activity, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null,
             BcReceiverReceivedDelegate bcReceiverReceivedHandler = null, ActivityCommon cacheActivity = null)
@@ -637,6 +629,8 @@ namespace BmwDeepObd
                 _disposed = true;
             }
         }
+
+        public static bool CommActive => EdiabasThread != null && EdiabasThread.ThreadRunning();
 
         public string InterfaceName()
         {
@@ -1861,6 +1855,7 @@ namespace BmwDeepObd
         {
             try
             {
+                // ReSharper disable once UsePatternMatching
                 ClipboardManager clipboardManagerNew = _clipboardManager as ClipboardManager;
                 if (clipboardManagerNew != null)
                 {
@@ -1873,6 +1868,7 @@ namespace BmwDeepObd
                 else
                 {
 #pragma warning disable 618
+                    // ReSharper disable once UsePatternMatching
                     Android.Text.ClipboardManager clipboardManagerOld = _clipboardManager as Android.Text.ClipboardManager;
 #pragma warning restore 618
                     if (clipboardManagerOld != null)
@@ -1893,6 +1889,7 @@ namespace BmwDeepObd
             try
             {
                 string clipText = null;
+                // ReSharper disable once UsePatternMatching
                 ClipboardManager clipboardManagerNew = _clipboardManager as ClipboardManager;
                 if (clipboardManagerNew != null)
                 {
@@ -2090,7 +2087,7 @@ namespace BmwDeepObd
                         BodyEncoding = Encoding.UTF8
                     };
 
-                    if (File.Exists(traceFile))
+                    if (!string.IsNullOrEmpty(traceFile) && File.Exists(traceFile))
                     {
                         mail.Attachments.Add(new Attachment(traceFile));
                     }
@@ -3340,6 +3337,7 @@ namespace BmwDeepObd
                                         {
                                             responseText = reader.ReadToEnd();
                                         }
+                                        // ReSharper disable once NotAccessedVariable
                                         int errorCode;
                                         errorMessage = GetTranslationError(responseText, out errorCode);
                                     }

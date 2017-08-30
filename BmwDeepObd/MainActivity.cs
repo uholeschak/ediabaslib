@@ -30,6 +30,9 @@ using BmwDeepObd.FilePicker;
 using EdiabasLib;
 using Java.Interop;
 using Mono.CSharp;
+// ReSharper disable InlineOutVariableDeclaration
+// ReSharper disable MergeCastWithTypeCheck
+// ReSharper disable UsePatternMatching
 
 #if APP_USB_FILTER
 [assembly: Android.App.UsesFeature("android.hardware.usb.host")]
@@ -159,9 +162,7 @@ namespace BmwDeepObd
         private bool _vagInfoShown;
         private bool _btInitiallyEnabled;
         private ActivityCommon _activityCommon;
-        private JobReader _jobReader;
         private Handler _updateHandler;
-        private EdiabasThread _ediabasThread;
         private StreamWriter _swDataLog;
         private string _dataLogDir;
         private string _traceDir;
@@ -276,7 +277,6 @@ namespace BmwDeepObd
             StoreLastAppState(LastAppState.Init);
 
             _updateHandler = new Handler();
-            _jobReader = new JobReader();
 
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
 
@@ -298,7 +298,7 @@ namespace BmwDeepObd
             _tabLayout.Visibility = ViewStates.Gone;
 
             int index = 0;
-            foreach (JobReader.PageInfo pageInfo in _jobReader.PageList)
+            foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
             {
                 int resourceId = Resource.Layout.tab_list;
                 if (pageInfo.ErrorsInfo != null)
@@ -315,7 +315,7 @@ namespace BmwDeepObd
                 _fragmentPagerAdapter.AddPage(fragmentPage, GetPageString(pageInfo, pageInfo.Name));
                 index++;
             }
-            _tabLayout.Visibility = (_jobReader.PageList.Count > 0) ? ViewStates.Visible : ViewStates.Gone;
+            _tabLayout.Visibility = (ActivityCommon.JobReader.PageList.Count > 0) ? ViewStates.Visible : ViewStates.Gone;
             _fragmentPagerAdapter.NotifyDataSetChanged();
             if (_tabLayout.TabCount > 0)
             {
@@ -364,22 +364,7 @@ namespace BmwDeepObd
             base.OnPause();
 
             _activityActive = false;
-            bool stop = false;
-            if (_swDataLog == null)
-            {
-                if (ActivityCommon.LockTypeCommunication == ActivityCommon.LockType.None)
-                {
-                    stop = true;
-                }
-            }
-            else
-            {
-                if (ActivityCommon.LockTypeLogging == ActivityCommon.LockType.None)
-                {
-                    stop = true;
-                }
-            }
-            if (stop)
+            if (!UseCommService())
             {
                 StopEdiabasThread(false);
             }
@@ -389,12 +374,16 @@ namespace BmwDeepObd
         {
             base.OnDestroy();
 
-            StopEdiabasThread(true);
+            //if (!UseCommService())
+            {
+                StopEdiabasThread(true);
+            }
             StoreSettings();
             if (_activityCommon != null)
             {
                 if (!_btInitiallyEnabled && ActivityCommon.BtDisableHandling == ActivityCommon.BtDisableType.DisableIfByApp &&
-                    ActivityCommon.IsBluetoothEnabledByApp() && !_activityCommon.IsBluetoothConnected())
+                    ActivityCommon.IsBluetoothEnabledByApp() && !_activityCommon.IsBluetoothConnected() &&
+                    !ActivityCommon.CommActive)
                 {
                     _activityCommon.BluetoothDisable();
                 }
@@ -412,7 +401,10 @@ namespace BmwDeepObd
                 _webClient.Dispose();
                 _webClient = null;
             }
-            MemoryStreamReader.CleanUp();
+            if (!ActivityCommon.CommActive)
+            {
+                MemoryStreamReader.CleanUp();
+            }
             StoreLastAppState(LastAppState.Terminated);
         }
 
@@ -533,7 +525,7 @@ namespace BmwDeepObd
 
         public override bool OnPrepareOptionsMenu(IMenu menu)
         {
-            bool commActive = _ediabasThread != null && _ediabasThread.ThreadRunning();
+            bool commActive = ActivityCommon.CommActive;
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
 
             IMenuItem actionProviderConnect = menu.FindItem(Resource.Id.menu_action_provider_connect);
@@ -804,7 +796,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (_ediabasThread != null && _ediabasThread.ThreadRunning())
+            if (ActivityCommon.CommActive)
             {
                 StopEdiabasThread(false);
             }
@@ -821,18 +813,18 @@ namespace BmwDeepObd
         [Export("onActiveClick")]
         public void OnActiveClick(View v)
         {
-            if (_ediabasThread == null)
+            if (ActivityCommon.EdiabasThread == null)
             {
                 return;
             }
             ToggleButton button = v.FindViewById<ToggleButton>(Resource.Id.button_active);
-            _ediabasThread.CommActive = button.Checked;
+            ActivityCommon.EdiabasThread.CommActive = button.Checked;
         }
 
         [Export("onErrorResetClick")]
         public void OnErrorResetClick(View v)
         {
-            if ((_ediabasThread == null) || !_ediabasThread.ThreadRunning())
+            if (!ActivityCommon.CommActive)
             {
                 return;
             }
@@ -849,7 +841,7 @@ namespace BmwDeepObd
                         select ecuName).ToList();
                 lock (EdiabasThread.DataLock)
                 {
-                    _ediabasThread.ErrorResetList = errorResetList;
+                    ActivityCommon.EdiabasThread.ErrorResetList = errorResetList;
                 }
             }
         }
@@ -857,7 +849,7 @@ namespace BmwDeepObd
         [Export("onCopyErrorsClick")]
         public void OnCopyErrorsClick(View v)
         {
-            if ((_ediabasThread == null) || !_ediabasThread.ThreadRunning())
+            if (!ActivityCommon.CommActive)
             {
                 return;
             }
@@ -902,22 +894,42 @@ namespace BmwDeepObd
             }
         }
 
+        private bool UseCommService()
+        {
+            bool useService = true;
+            if (_swDataLog == null)
+            {
+                if (ActivityCommon.LockTypeCommunication == ActivityCommon.LockType.None)
+                {
+                    useService = false;
+                }
+            }
+            else
+            {
+                if (ActivityCommon.LockTypeLogging == ActivityCommon.LockType.None)
+                {
+                    useService = false;
+                }
+            }
+            return useService;
+        }
+
         private bool StartEdiabasThread()
         {
             _autoStart = false;
             _commErrorsOccured = false;
             try
             {
-                if (_ediabasThread == null)
+                if (ActivityCommon.EdiabasThread == null)
                 {
-                    _ediabasThread = new EdiabasThread(string.IsNullOrEmpty(_jobReader.EcuPath) ? _ecuPath : _jobReader.EcuPath, _activityCommon);
-                    _ediabasThread.DataUpdated += DataUpdated;
-                    _ediabasThread.ThreadTerminated += ThreadTerminated;
+                    ActivityCommon.EdiabasThread = new EdiabasThread(string.IsNullOrEmpty(ActivityCommon.JobReader.EcuPath) ? _ecuPath : ActivityCommon.JobReader.EcuPath, _activityCommon);
+                    ActivityCommon.EdiabasThread.DataUpdated += DataUpdated;
+                    ActivityCommon.EdiabasThread.ThreadTerminated += ThreadTerminated;
                 }
                 string logDir = string.Empty;
-                if (!string.IsNullOrEmpty(_jobReader.LogPath))
+                if (!string.IsNullOrEmpty(ActivityCommon.JobReader.LogPath))
                 {
-                    logDir = Path.IsPathRooted(_jobReader.LogPath) ? _jobReader.LogPath : Path.Combine(_appDataPath, _jobReader.LogPath);
+                    logDir = Path.IsPathRooted(ActivityCommon.JobReader.LogPath) ? ActivityCommon.JobReader.LogPath : Path.Combine(_appDataPath, ActivityCommon.JobReader.LogPath);
                     try
                     {
                         Directory.CreateDirectory(logDir);
@@ -969,8 +981,11 @@ namespace BmwDeepObd
                             connectParameter = new EdFtdiInterface.ConnectParameterType(this, _activityCommon.UsbManager);
                             break;
                     }
-                    _ediabasThread.StartThread(portName, connectParameter, _traceDir, _traceAppend, pageInfo, true);
-                    _activityCommon.StartForegroundService();
+                    ActivityCommon.EdiabasThread.StartThread(portName, connectParameter, _traceDir, _traceAppend, pageInfo, true);
+                    if (UseCommService())
+                    {
+                        _activityCommon.StartForegroundService();
+                    }
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (_dataLogActive)
                     {
@@ -992,18 +1007,18 @@ namespace BmwDeepObd
 
         private void StopEdiabasThread(bool wait)
         {
-            if (_ediabasThread != null)
+            if (ActivityCommon.EdiabasThread != null)
             {
                 try
                 {
-                    _ediabasThread.StopThread(wait);
+                    ActivityCommon.EdiabasThread.StopThread(wait);
                     _activityCommon.StopForegroundService();
                     if (wait)
                     {
-                        _ediabasThread.DataUpdated -= DataUpdated;
-                        _ediabasThread.ThreadTerminated -= ThreadTerminated;
-                        _ediabasThread.Dispose();
-                        _ediabasThread = null;
+                        ActivityCommon.EdiabasThread.DataUpdated -= DataUpdated;
+                        ActivityCommon.EdiabasThread.ThreadTerminated -= ThreadTerminated;
+                        ActivityCommon.EdiabasThread.Dispose();
+                        ActivityCommon.EdiabasThread = null;
                     }
                 }
                 catch (Exception)
@@ -1272,7 +1287,7 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool SendTraceFileAlways(EventHandler<EventArgs> handler)
         {
-            if (_ediabasThread != null && _ediabasThread.ThreadRunning())
+            if (ActivityCommon.CommActive)
             {
                 return false;
             }
@@ -1287,16 +1302,16 @@ namespace BmwDeepObd
         {
             JobReader.PageInfo pageInfo = null;
             int index = _tabLayout.SelectedTabPosition;
-            if (index >= 0 && index < (_jobReader.PageList.Count))
+            if (index >= 0 && index < (ActivityCommon.JobReader.PageList.Count))
             {
-                pageInfo = _jobReader.PageList[index];
+                pageInfo = ActivityCommon.JobReader.PageList[index];
             }
             return pageInfo;
         }
 
         private void UpdateSelectedPage()
         {
-            if ((_ediabasThread == null) || !_ediabasThread.ThreadRunning())
+            if (!ActivityCommon.CommActive)
             {
                 return;
             }
@@ -1307,19 +1322,19 @@ namespace BmwDeepObd
                 return;
             }
             bool newCommActive = !newPageInfo.JobActivate;
-            if (_ediabasThread.JobPageInfo != newPageInfo)
+            if (ActivityCommon.EdiabasThread.JobPageInfo != newPageInfo)
             {
-                _ediabasThread.CommActive = newCommActive;
-                _ediabasThread.JobPageInfo = newPageInfo;
+                ActivityCommon.EdiabasThread.CommActive = newCommActive;
+                ActivityCommon.EdiabasThread.JobPageInfo = newPageInfo;
                 CloseDataLog();
             }
         }
 
         private void ClearPage(int index)
         {
-            if (index >= 0 && index < (_jobReader.PageList.Count))
+            if (index >= 0 && index < (ActivityCommon.JobReader.PageList.Count))
             {
-                JobReader.PageInfo pageInfo = _jobReader.PageList[index];
+                JobReader.PageInfo pageInfo = ActivityCommon.JobReader.PageList[index];
                 Fragment dynamicFragment = (Fragment)pageInfo.InfoObject;
                 if (dynamicFragment?.View != null)
                 {
@@ -1344,9 +1359,9 @@ namespace BmwDeepObd
             bool threadRunning = false;
 
             _connectButtonInfo.Enabled = true;
-            if (_ediabasThread != null && _ediabasThread.ThreadRunning())
+            if (ActivityCommon.CommActive)
             {
-                if (_ediabasThread.ThreadStopping())
+                if (ActivityCommon.EdiabasThread.ThreadStopping())
                 {
                     _connectButtonInfo.Enabled = false;
                 }
@@ -1354,7 +1369,7 @@ namespace BmwDeepObd
                 {
                     threadRunning = true;
                 }
-                if (_ediabasThread.CommActive)
+                if (ActivityCommon.EdiabasThread.CommActive)
                 {
                     dynamicValid = true;
                 }
@@ -1417,7 +1432,7 @@ namespace BmwDeepObd
                             string fileName = Path.Combine(_dataLogDir, logFileName);
                             if (File.Exists(fileName))
                             {
-                                fileMode = (_dataLogAppend || _jobReader.AppendLog) ? FileMode.Append : FileMode.Create;
+                                fileMode = (_dataLogAppend || ActivityCommon.JobReader.AppendLog) ? FileMode.Append : FileMode.Create;
                             }
                             else
                             {
@@ -1457,10 +1472,10 @@ namespace BmwDeepObd
                     string errorMessage = string.Empty;
                     lock (EdiabasThread.DataLock)
                     {
-                        if (_ediabasThread.ResultPageInfo == pageInfo)
+                        if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfo)
                         {
-                            resultDict = _ediabasThread.EdiabasResultDict;
-                            errorMessage = _ediabasThread.EdiabasErrorMessage;
+                            resultDict = ActivityCommon.EdiabasThread.EdiabasResultDict;
+                            errorMessage = ActivityCommon.EdiabasThread.EdiabasErrorMessage;
                         }
                     }
                     if (ActivityCommon.IsCommunicationError(errorMessage))
@@ -1498,11 +1513,11 @@ namespace BmwDeepObd
                         int updateProgress;
                         lock (EdiabasThread.DataLock)
                         {
-                            if (_ediabasThread.ResultPageInfo == pageInfo)
+                            if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfo)
                             {
-                                errorReportList = _ediabasThread.EdiabasErrorReportList;
+                                errorReportList = ActivityCommon.EdiabasThread.EdiabasErrorReportList;
                             }
-                            updateProgress = _ediabasThread.UpdateProgress;
+                            updateProgress = ActivityCommon.EdiabasThread.UpdateProgress;
                         }
                         if (errorReportList == null)
                         {
@@ -1554,6 +1569,7 @@ namespace BmwDeepObd
                                         bool saeMode = false;
                                         if (errorReport.ErrorDict.TryGetValue("OBJECT", out resultData))
                                         {
+                                            // ReSharper disable once UsePatternMatching
                                             string objectName = resultData.OpData as string;
                                             if (objectName != null)
                                             {
@@ -1885,9 +1901,9 @@ namespace BmwDeepObd
                         MethodInfo updateLayout = pageType.GetMethod("UpdateLayout");
                         if (updateLayout != null)
                         {
-                            object[] args = { pageInfo, dynamicValid, _ediabasThread != null };
+                            object[] args = { pageInfo, dynamicValid, ActivityCommon.EdiabasThread != null };
                             updateLayout.Invoke(pageInfo.ClassObject, args);
-                            //pageInfo.ClassObject.UpdateLayout(pageInfo, dynamicValid, _ediabasThread != null);
+                            //pageInfo.ClassObject.UpdateLayout(pageInfo, dynamicValid, ActivityCommon.EdiabasThread != null);
                         }
                     }
                     catch (Exception)
@@ -1898,10 +1914,10 @@ namespace BmwDeepObd
 
                 if (buttonActive != null)
                 {
-                    if (_ediabasThread != null && _ediabasThread.ThreadRunning())
+                    if (ActivityCommon.CommActive)
                     {
                         buttonActive.Enabled = true;
-                        buttonActive.Checked = _ediabasThread.CommActive;
+                        buttonActive.Checked = ActivityCommon.EdiabasThread.CommActive;
                     }
                     else
                     {
@@ -2126,15 +2142,15 @@ namespace BmwDeepObd
 
         private void ReadConfigFile()
         {
-            _jobReader.Clear();
+            ActivityCommon.JobReader.Clear();
             if (_lastAppState != LastAppState.Compile)
             {
-                _jobReader.ReadXml(_configFileName);
+                ActivityCommon.JobReader.ReadXml(_configFileName);
             }
-            if (_jobReader.PageList.Count > 0)
+            if (ActivityCommon.JobReader.PageList.Count > 0)
             {
-                ActivityCommon.SelectedManufacturer = _jobReader.Manufacturer;
-                _activityCommon.SelectedInterface = _jobReader.Interface;
+                ActivityCommon.SelectedManufacturer = ActivityCommon.JobReader.Manufacturer;
+                _activityCommon.SelectedInterface = ActivityCommon.JobReader.Interface;
             }
             else
             {
@@ -2156,7 +2172,7 @@ namespace BmwDeepObd
                 return;
             }
             _compileCodePending = false;
-            if (_jobReader.PageList.Count == 0)
+            if (ActivityCommon.JobReader.PageList.Count == 0)
             {
                 _updateHandler.Post(CreateActionBarTabs);
                 return;
@@ -2171,7 +2187,7 @@ namespace BmwDeepObd
             {
                 List<string> compileResultList = new List<string>();
                 List<Thread> threadList = new List<Thread>();
-                foreach (JobReader.PageInfo pageInfo in _jobReader.PageList)
+                foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                 {
                     if (pageInfo.ClassCode == null) continue;
                     // limit number of active tasks
@@ -2859,7 +2875,7 @@ namespace BmwDeepObd
                 {
                     _activityCommon.SelectedInterface = ActivityCommon.InterfaceType.Bluetooth;
                 }
-                _jobReader.Clear();
+                ActivityCommon.JobReader.Clear();
                 _configFileName = null;
                 CreateActionBarTabs();
                 UpdateDirectories();
@@ -2894,7 +2910,7 @@ namespace BmwDeepObd
                 };
                 return;
             }
-            if (_jobReader.PageList.Count > 0)
+            if (ActivityCommon.JobReader.PageList.Count > 0)
             {
                 return;
             }
@@ -3181,9 +3197,9 @@ namespace BmwDeepObd
                 ActivityMain activityMain = Activity as ActivityMain;
                 if (activityMain != null)
                 {
-                    if (_pageInfoIndex >= 0 && _pageInfoIndex < activityMain._jobReader.PageList.Count)
+                    if (_pageInfoIndex >= 0 && _pageInfoIndex < ActivityCommon.JobReader.PageList.Count)
                     {
-                        JobReader.PageInfo pageInfo = activityMain._jobReader.PageList[_pageInfoIndex];
+                        JobReader.PageInfo pageInfo = ActivityCommon.JobReader.PageList[_pageInfoIndex];
                         if (pageInfo.ClassObject != null)
                         {
                             try
@@ -3218,9 +3234,9 @@ namespace BmwDeepObd
                 base.OnDestroyView();
 
                 ActivityMain activityMain = Activity as ActivityMain;
-                if (activityMain != null && _pageInfoIndex >= 0 && _pageInfoIndex < activityMain._jobReader.PageList.Count)
+                if (activityMain != null && _pageInfoIndex >= 0 && _pageInfoIndex < ActivityCommon.JobReader.PageList.Count)
                 {
-                    JobReader.PageInfo pageInfo = activityMain._jobReader.PageList[_pageInfoIndex];
+                    JobReader.PageInfo pageInfo = ActivityCommon.JobReader.PageList[_pageInfoIndex];
                     if (pageInfo.ClassObject != null)
                     {
                         try
