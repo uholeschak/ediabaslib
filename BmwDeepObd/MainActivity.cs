@@ -2166,6 +2166,7 @@ namespace BmwDeepObd
         {
             if (ActivityCommon.CommActive)
             {
+                UpdateJobReaderSettings();
                 _updateHandler.Post(CreateActionBarTabs);
                 return;
             }
@@ -2174,6 +2175,17 @@ namespace BmwDeepObd
             {
                 ActivityCommon.JobReader.ReadXml(_configFileName);
             }
+            UpdateJobReaderSettings();
+            _activityCommon.ClearTranslationCache();
+            _translationList = null;
+            _translatedList = null;
+            UpdateDirectories();
+            RequestConfigSelect();
+            CompileCode();
+        }
+
+        private void UpdateJobReaderSettings()
+        {
             if (ActivityCommon.JobReader.PageList.Count > 0)
             {
                 ActivityCommon.SelectedManufacturer = ActivityCommon.JobReader.Manufacturer;
@@ -2183,12 +2195,6 @@ namespace BmwDeepObd
             {
                 _activityCommon.SelectedInterface = ActivityCommon.InterfaceType.None;
             }
-            _activityCommon.ClearTranslationCache();
-            _translationList = null;
-            _translatedList = null;
-            UpdateDirectories();
-            RequestConfigSelect();
-            CompileCode();
         }
 
         private void CompileCode()
