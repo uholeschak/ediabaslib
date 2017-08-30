@@ -463,6 +463,8 @@ namespace BmwDeepObd
 
         public static bool EnableTranslateRequested { get; set; }
 
+        public static ActivityMain ActivityMainCurrent { get; set; }
+
         public static EdiabasThread EdiabasThread { get; set; }
 
         public static JobReader JobReader { get; }
