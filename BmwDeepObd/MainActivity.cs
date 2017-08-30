@@ -2142,6 +2142,11 @@ namespace BmwDeepObd
 
         private void ReadConfigFile()
         {
+            if (ActivityCommon.CommActive)
+            {
+                _updateHandler.Post(CreateActionBarTabs);
+                return;
+            }
             ActivityCommon.JobReader.Clear();
             if (_lastAppState != LastAppState.Compile)
             {
