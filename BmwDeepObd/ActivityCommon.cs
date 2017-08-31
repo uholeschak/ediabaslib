@@ -476,7 +476,7 @@ namespace BmwDeepObd
             {
                 if (_selectedInterface != value)
                 {
-                    _lastEnetSsid = string.Empty;
+                    _lastEnetSsid = CommActive ? null : string.Empty;
                 }
                 _selectedInterface = value;
                 SetPreferredNetworkInterface();
@@ -1109,6 +1109,10 @@ namespace BmwDeepObd
                     {
                         enetSsid = wifiInfo.SSID;
                     }
+                }
+                if (_lastEnetSsid == null)
+                {
+                    _lastEnetSsid = enetSsid;
                 }
                 if (string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
                 {
