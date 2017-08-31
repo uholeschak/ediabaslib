@@ -122,7 +122,7 @@ namespace BmwDeepObd
         {
             var notificationIntent = new Intent(this, typeof(ActivityMain));
             notificationIntent.SetAction(ActionMainActivity);
-            notificationIntent.SetFlags(ActivityFlags.SingleTop /*| ActivityFlags.ClearTask*/);
+            //notificationIntent.SetFlags(ActivityFlags.SingleTop /*| ActivityFlags.ClearTask*/);
             notificationIntent.PutExtra(ServiceStartedKey, true);
 
             var pendingIntent = Android.App.PendingIntent.GetActivity(this, 0, notificationIntent, Android.App.PendingIntentFlags.UpdateCurrent);
