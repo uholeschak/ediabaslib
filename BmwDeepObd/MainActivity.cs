@@ -299,6 +299,21 @@ namespace BmwDeepObd
                 return;
             }
             _createTabsPending = false;
+            int pageIndex = 0;
+            if (ActivityCommon.CommActive)
+            {
+                // get last active tab
+                int i = 0;
+                foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                {
+                    if (pageInfo == ActivityCommon.EdiabasThread.JobPageInfo)
+                    {
+                        pageIndex = i;
+                        break;
+                    }
+                    i++;
+                }
+            }
             _fragmentPagerAdapter.ClearPages();
             _fragmentPagerAdapter.NotifyDataSetChanged();
             _tabLayout.Visibility = ViewStates.Gone;
@@ -323,9 +338,9 @@ namespace BmwDeepObd
             }
             _tabLayout.Visibility = (ActivityCommon.JobReader.PageList.Count > 0) ? ViewStates.Visible : ViewStates.Gone;
             _fragmentPagerAdapter.NotifyDataSetChanged();
-            if (_tabLayout.TabCount > 0)
+            if (_tabLayout.TabCount > pageIndex)
             {
-                _tabLayout.GetTabAt(0).Select();
+                _tabLayout.GetTabAt(pageIndex).Select();
             }
             UpdateDisplay();
             StoreLastAppState(LastAppState.TabsCreated);
@@ -3229,7 +3244,7 @@ namespace BmwDeepObd
             {
                 View view = inflater.Inflate(_resourceId, null);
                 ActivityMain activityMain = Activity as ActivityMain;
-                if (activityMain != null)
+                if (activityMain != null && activityMain == ActivityCommon.ActivityMainCurrent)
                 {
                     if (_pageInfoIndex >= 0 && _pageInfoIndex < ActivityCommon.JobReader.PageList.Count)
                     {
