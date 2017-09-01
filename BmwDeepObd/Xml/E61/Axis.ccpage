@@ -112,10 +112,6 @@
                 ViewGroup.LayoutParams.MatchParent,
                 ViewGroup.LayoutParams.WrapContent);
             pageLayout.AddView(buttonLayout, layoutParams);
-
-            updateStep = 0;
-            opMode = OpModeStatus;
-            currentSpeed = 0;
         }
 
         public void DestroyLayout(JobReader.PageInfo pageInfo)
