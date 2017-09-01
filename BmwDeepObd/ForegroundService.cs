@@ -3,10 +3,11 @@ using Android.Content;
 using Android.OS;
 using Android.Support.V4.Content;
 using Android.Util;
+using System;
 
 namespace BmwDeepObd
 {
-    [Android.App.Service]
+    [Android.App.Service(Label = "@string/app_name")]
     public class ForegroundService : Android.App.Service
     {
         static readonly string Tag = typeof(ForegroundService).FullName;
@@ -20,8 +21,10 @@ namespace BmwDeepObd
         public const string ActionStopCommunication = "ForegroundService.action.STOP_COMM";
         public const string ActionMainActivity = "ForegroundService.action.MAIN_ACTIVITY";
 
-        private ActivityCommon _activityCommon;
         bool _isStarted;
+        private ActivityCommon _activityCommon;
+        private PowerManager _powerManager;
+        private PowerManager.WakeLock _wakeLockCpu;
 
         public override void OnCreate()
         {
@@ -31,6 +34,13 @@ namespace BmwDeepObd
 #endif
 
             _activityCommon = new ActivityCommon(null);
+            _powerManager = GetSystemService(PowerService) as PowerManager;
+            if (_powerManager != null)
+            {
+                _wakeLockCpu = _powerManager.NewWakeLock(WakeLockFlags.Partial, "PartialLock");
+                _wakeLockCpu.SetReferenceCounted(false);
+                _wakeLockCpu.Acquire();
+            }
         }
 
         public override Android.App.StartCommandResult OnStartCommand(Intent intent, Android.App.StartCommandFlags flags, int startId)
@@ -96,6 +106,20 @@ namespace BmwDeepObd
             // Remove the notification from the status bar.
             NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
             notificationManager.Cancel(ServiceRunningNotificationId);
+
+            if (_wakeLockCpu != null)
+            {
+                try
+                {
+                    _wakeLockCpu.Release();
+                    _wakeLockCpu.Dispose();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                _wakeLockCpu = null;
+            }
 
             _activityCommon.Dispose();
             _activityCommon = null;
