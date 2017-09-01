@@ -1,6 +1,7 @@
 ﻿using Android.Support.V4.App;
 using Android.Content;
 using Android.OS;
+using Android.Support.V4.Content;
 using Android.Util;
 
 namespace BmwDeepObd
@@ -74,8 +75,7 @@ namespace BmwDeepObd
 
                 Intent broadcastIntent = new Intent(NotificationBroadcastAction);
                 broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastStopComm);
-                SendBroadcast(broadcastIntent);
-                //LocalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
+                LocalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
             }
 
             // This tells Android not to restart the service if it is killed to reclaim resources.

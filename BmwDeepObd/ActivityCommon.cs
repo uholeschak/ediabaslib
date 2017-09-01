@@ -23,6 +23,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using Android.Content.PM;
+using Android.Support.V4.Content;
 using Android.Text.Method;
 // ReSharper disable InlineOutVariableDeclaration
 
@@ -548,7 +549,7 @@ namespace BmwDeepObd
             if (activity != null && ((_bcReceiverUpdateDisplayHandler != null) || (_bcReceiverReceivedHandler != null)))
             {
                 _bcReceiver = new Receiver(this);
-                activity.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
+                LocalBroadcastManager.GetInstance(activity).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
                 activity.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
                 activity.RegisterReceiver(_bcReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
                 if (UsbSupport)
@@ -591,6 +592,7 @@ namespace BmwDeepObd
                     }
                     if (_activity != null && _bcReceiver != null)
                     {
+                        LocalBroadcastManager.GetInstance(_activity).UnregisterReceiver(_bcReceiver);
                         _activity.UnregisterReceiver(_bcReceiver);
                         _bcReceiver = null;
                     }
