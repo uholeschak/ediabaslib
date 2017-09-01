@@ -2559,7 +2559,7 @@ namespace BmwDeepObd
         {
             RunOnUiThread(() =>
             {
-                if (_downloadProgress != null)
+                if (_downloadProgress != null && e != null)
                 {
                     if (e.TotalBytesToReceive < 0 && _downloadFileSize > 0)
                     {
