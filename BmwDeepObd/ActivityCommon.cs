@@ -359,6 +359,8 @@ namespace BmwDeepObd
         private readonly BcReceiverUpdateDisplayDelegate _bcReceiverUpdateDisplayHandler;
         private readonly BcReceiverReceivedDelegate _bcReceiverReceivedHandler;
         private bool? _usbSupport;
+        private static object _lockObject = new object();
+        private static int _instanceCount;
         private static string _externalPath;
         private static string _externalWritePath;
         private static string _customStorageMedia;
@@ -513,6 +515,10 @@ namespace BmwDeepObd
         public ActivityCommon(Android.App.Activity activity, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null,
             BcReceiverReceivedDelegate bcReceiverReceivedHandler = null, ActivityCommon cacheActivity = null)
         {
+            lock (_lockObject)
+            {
+                _instanceCount++;
+            }
             _activity = activity;
             _bcReceiverUpdateDisplayHandler = bcReceiverUpdateDisplayHandler;
             _bcReceiverReceivedHandler = bcReceiverReceivedHandler;
@@ -624,6 +630,14 @@ namespace BmwDeepObd
                             // ignored
                         }
                         _wakeLockCpu = null;
+                    }
+                    lock (_lockObject)
+                    {
+                        _instanceCount--;
+                        if (_instanceCount == 0)
+                        {
+                            MemoryStreamReader.CleanUp();
+                        }
                     }
                 }
 
