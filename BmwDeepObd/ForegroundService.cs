@@ -10,7 +10,6 @@ namespace BmwDeepObd
     {
         static readonly string Tag = typeof(ForegroundService).FullName;
         public const int ServiceRunningNotificationId = 10000;
-        public const string ServiceStartedKey = "has_service_been_started";
         public const string BroadcastMessageKey = "broadcast_message";
         public const string BroadcastStopComm = "stop_communication";
         public const string NotificationBroadcastAction = "de.holeschak.bmw_deep_obd.Notification.Action";
@@ -67,6 +66,12 @@ namespace BmwDeepObd
 #if DEBUG
                 Log.Info(Tag, "OnStartCommand: Stop communication");
 #endif
+                Intent startIntent = new Intent(this, typeof(ActivityMain));
+                startIntent.SetAction(ActionMainActivity);
+                startIntent.SetFlags(ActivityFlags.NewTask);
+                startIntent.PutExtra(ActivityMain.ExtraStopComm, true);
+                StartActivity(startIntent);
+
                 Intent broadcastIntent = new Intent(NotificationBroadcastAction);
                 broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastStopComm);
                 SendBroadcast(broadcastIntent);
@@ -123,7 +128,8 @@ namespace BmwDeepObd
             var notificationIntent = new Intent(this, typeof(ActivityMain));
             notificationIntent.SetAction(ActionMainActivity);
             //notificationIntent.SetFlags(ActivityFlags.SingleTop /*| ActivityFlags.ClearTask*/);
-            notificationIntent.PutExtra(ServiceStartedKey, true);
+            notificationIntent.SetFlags(ActivityFlags.NewTask);
+            notificationIntent.PutExtra(ActivityMain.ExtraStopComm, false);
 
             var pendingIntent = Android.App.PendingIntent.GetActivity(this, 0, notificationIntent, Android.App.PendingIntentFlags.UpdateCurrent);
             return pendingIntent;
