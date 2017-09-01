@@ -158,6 +158,7 @@ namespace BmwDeepObd
         private bool _onResumeExecuted;
         private bool _storageAccessGranted;
         private bool _createTabsPending;
+        private bool _ignoreTabsChange;
         private bool _compileCodePending;
         private bool _autoStart;
         private bool _vagInfoShown;
@@ -241,6 +242,10 @@ namespace BmwDeepObd
 
         public void OnTabSelected(TabLayout.Tab tab)
         {
+            if (_ignoreTabsChange)
+            {
+                return;
+            }
             UpdateSelectedPage();
         }
 
@@ -303,6 +308,7 @@ namespace BmwDeepObd
             int pageIndex = 0;
             if (ActivityCommon.CommActive)
             {
+                _ignoreTabsChange = true;
                 // get last active tab
                 int i = 0;
                 foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
@@ -343,6 +349,7 @@ namespace BmwDeepObd
             {
                 _tabLayout.GetTabAt(pageIndex).Select();
             }
+            _ignoreTabsChange = false;
             UpdateDisplay();
             StoreLastAppState(LastAppState.TabsCreated);
         }
