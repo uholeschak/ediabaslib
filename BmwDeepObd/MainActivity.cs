@@ -137,8 +137,10 @@ namespace BmwDeepObd
             Android.Manifest.Permission.WriteExternalStorage
         };
 
+        public const string ExtraStopComm = "stop_communication";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         private LastAppState _lastAppState = LastAppState.Init;
+        private bool _stopCommRequest;
         private bool _backPressed;
         private long _lastBackPressesTime;
         private string _deviceName = string.Empty;
@@ -291,6 +293,7 @@ namespace BmwDeepObd
             _webClient.DownloadProgressChanged += DownloadProgressChanged;
             _webClient.DownloadFileCompleted += DownloadCompleted;
 
+            _stopCommRequest = Intent.GetBooleanExtra(ExtraStopComm, false);
             if (ActivityCommon.CommActive)
             {
                 ConnectEdiabasEvents();
@@ -352,6 +355,14 @@ namespace BmwDeepObd
             _ignoreTabsChange = false;
             UpdateDisplay();
             StoreLastAppState(LastAppState.TabsCreated);
+            if (_stopCommRequest)
+            {
+                _stopCommRequest = false;
+                if (ActivityCommon.CommActive)
+                {
+                    StopEdiabasThread(false);
+                }
+            }
         }
 
         protected override void OnStop()
