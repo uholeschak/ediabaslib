@@ -341,6 +341,10 @@ namespace BmwDeepObd
             {
                 return false;
             }
+            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+            {
+                return false;
+            }
             if (ecuInfo.Sgbd.Contains("7000"))
             {
                 return string.Compare(job.Name, XmlToolActivity.JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0;
