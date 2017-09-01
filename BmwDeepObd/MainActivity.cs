@@ -431,10 +431,6 @@ namespace BmwDeepObd
                 _webClient.Dispose();
                 _webClient = null;
             }
-            if (!ActivityCommon.CommActive)
-            {
-                MemoryStreamReader.CleanUp();
-            }
             StoreLastAppState(LastAppState.Terminated);
         }
 
@@ -1040,8 +1036,8 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    ActivityCommon.EdiabasThread.StopThread(wait);
                     _activityCommon.StopForegroundService();
+                    ActivityCommon.EdiabasThread.StopThread(wait);
                     if (wait)
                     {
                         DisconnectEdiabasEvents();
