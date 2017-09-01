@@ -1022,15 +1022,6 @@ namespace BmwDeepObd
                     {
                         _activityCommon.StartForegroundService();
                     }
-                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                    if (_dataLogActive)
-                    {
-                        _activityCommon.SetLock(ActivityCommon.LockTypeLogging);
-                    }
-                    else
-                    {
-                        _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
-                    }
                 }
             }
             catch (Exception)
@@ -1047,7 +1038,7 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    _activityCommon.StopForegroundService();
+                    _activityCommon?.StopForegroundService();
                     lock (ActivityCommon.GlobalLockObject)
                     {
                         if (ActivityCommon.EdiabasThread != null)
@@ -1073,7 +1064,6 @@ namespace BmwDeepObd
                     return;
                 }
             }
-            _activityCommon?.SetLock(ActivityCommon.LockType.None);
             CloseDataLog();
             SupportInvalidateOptionsMenu();
         }
@@ -1084,6 +1074,15 @@ namespace BmwDeepObd
             {
                 ActivityCommon.EdiabasThread.DataUpdated += DataUpdated;
                 ActivityCommon.EdiabasThread.ThreadTerminated += ThreadTerminated;
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                if (_dataLogActive)
+                {
+                    _activityCommon?.SetLock(ActivityCommon.LockTypeLogging);
+                }
+                else
+                {
+                    _activityCommon?.SetLock(ActivityCommon.LockTypeCommunication);
+                }
             }
         }
 
@@ -1094,6 +1093,7 @@ namespace BmwDeepObd
                 ActivityCommon.EdiabasThread.DataUpdated -= DataUpdated;
                 ActivityCommon.EdiabasThread.ThreadTerminated -= ThreadTerminated;
             }
+            _activityCommon?.SetLock(ActivityCommon.LockType.None);
         }
 
         private void CloseDataLog()
