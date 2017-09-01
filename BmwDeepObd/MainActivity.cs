@@ -1037,12 +1037,24 @@ namespace BmwDeepObd
                 try
                 {
                     _activityCommon.StopForegroundService();
-                    ActivityCommon.EdiabasThread.StopThread(wait);
+                    lock (ActivityCommon.GlobalLockObject)
+                    {
+                        if (ActivityCommon.EdiabasThread != null)
+                        {
+                            ActivityCommon.EdiabasThread.StopThread(wait);
+                        }
+                    }
                     if (wait)
                     {
                         DisconnectEdiabasEvents();
-                        ActivityCommon.EdiabasThread.Dispose();
-                        ActivityCommon.EdiabasThread = null;
+                        lock (ActivityCommon.GlobalLockObject)
+                        {
+                            if (ActivityCommon.EdiabasThread != null)
+                            {
+                                ActivityCommon.EdiabasThread.Dispose();
+                                ActivityCommon.EdiabasThread = null;
+                            }
+                        }
                     }
                 }
                 catch (Exception)

@@ -359,7 +359,7 @@ namespace BmwDeepObd
         private readonly BcReceiverUpdateDisplayDelegate _bcReceiverUpdateDisplayHandler;
         private readonly BcReceiverReceivedDelegate _bcReceiverReceivedHandler;
         private bool? _usbSupport;
-        private static object _lockObject = new object();
+        private static readonly object LockObject = new object();
         private static int _instanceCount;
         private static string _externalPath;
         private static string _externalWritePath;
@@ -419,6 +419,8 @@ namespace BmwDeepObd
                 return _usbSupport??false;
             }
         }
+
+        public static object GlobalLockObject => LockObject;
 
         public string ExternalPath => _externalPath;
 
@@ -515,7 +517,7 @@ namespace BmwDeepObd
         public ActivityCommon(Android.App.Activity activity, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null,
             BcReceiverReceivedDelegate bcReceiverReceivedHandler = null, ActivityCommon cacheActivity = null)
         {
-            lock (_lockObject)
+            lock (LockObject)
             {
                 _instanceCount++;
             }
@@ -631,11 +633,20 @@ namespace BmwDeepObd
                         }
                         _wakeLockCpu = null;
                     }
-                    lock (_lockObject)
+                    lock (LockObject)
                     {
                         _instanceCount--;
                         if (_instanceCount == 0)
                         {
+                            lock (LockObject)
+                            {
+                                if (EdiabasThread != null)
+                                {
+                                    EdiabasThread.StopThread(true);
+                                    EdiabasThread.Dispose();
+                                    EdiabasThread = null;
+                                }
+                            }
                             MemoryStreamReader.CleanUp();
                         }
                     }
