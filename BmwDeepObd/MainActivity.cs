@@ -2569,7 +2569,7 @@ namespace BmwDeepObd
                     {
                         _downloadProgress.Progress = e.ProgressPercentage;
                     }
-                    if (_webClient.IsBusy)
+                    if (_webClient != null && _webClient.IsBusy)
                     {
                         _downloadProgress.GetButton((int)DialogButtonType.Negative).Enabled = true;
                     }
