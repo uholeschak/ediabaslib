@@ -383,6 +383,7 @@ namespace BmwDeepObd
                 RequestStoragePermissions();
             }
             _activityActive = true;
+            UpdateLockState();
             if (_compileCodePending)
             {
                 _updateHandler.Post(CompileCode);
@@ -404,6 +405,7 @@ namespace BmwDeepObd
             base.OnPause();
 
             _activityActive = false;
+            UpdateLockState();
             if (!UseCommService())
             {
                 StopEdiabasThread(false);
@@ -1028,6 +1030,7 @@ namespace BmwDeepObd
             {
                 return false;
             }
+            UpdateLockState();
             SupportInvalidateOptionsMenu();
             return true;
         }
@@ -1064,6 +1067,7 @@ namespace BmwDeepObd
                     return;
                 }
             }
+            UpdateLockState();
             CloseDataLog();
             SupportInvalidateOptionsMenu();
         }
@@ -1074,15 +1078,6 @@ namespace BmwDeepObd
             {
                 ActivityCommon.EdiabasThread.DataUpdated += DataUpdated;
                 ActivityCommon.EdiabasThread.ThreadTerminated += ThreadTerminated;
-                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (_dataLogActive)
-                {
-                    _activityCommon?.SetLock(ActivityCommon.LockTypeLogging);
-                }
-                else
-                {
-                    _activityCommon?.SetLock(ActivityCommon.LockTypeCommunication);
-                }
             }
         }
 
@@ -1093,7 +1088,29 @@ namespace BmwDeepObd
                 ActivityCommon.EdiabasThread.DataUpdated -= DataUpdated;
                 ActivityCommon.EdiabasThread.ThreadTerminated -= ThreadTerminated;
             }
-            _activityCommon?.SetLock(ActivityCommon.LockType.None);
+        }
+
+        private void UpdateLockState()
+        {
+            if (!ActivityCommon.CommActive)
+            {
+                _activityCommon?.SetLock(ActivityCommon.LockType.None);
+            }
+            else
+            {
+                ActivityCommon.LockType lockType = _dataLogActive ? ActivityCommon.LockTypeLogging : ActivityCommon.LockTypeCommunication;
+                if (!_activityActive)
+                {
+                    switch (lockType)
+                    {
+                        case ActivityCommon.LockType.ScreenDim:
+                        case ActivityCommon.LockType.ScreenBright:
+                            lockType = ActivityCommon.LockType.Cpu;
+                            break;
+                    }
+                }
+                _activityCommon?.SetLock(lockType);
+            }
         }
 
         private void CloseDataLog()
