@@ -45,47 +45,52 @@ namespace BmwDeepObd
 
         public override Android.App.StartCommandResult OnStartCommand(Intent intent, Android.App.StartCommandFlags flags, int startId)
         {
-            if (intent.Action.Equals(ActionStartService))
+            switch (intent.Action)
             {
-                if (_isStarted)
+                case ActionStartService:
+                    if (_isStarted)
+                    {
+#if DEBUG
+                        Log.Info(Tag, "OnStartCommand: The service is already running.");
+#endif
+                    }
+                    else
+                    {
+#if DEBUG
+                        Log.Info(Tag, "OnStartCommand: The service is starting.");
+#endif
+                        RegisterForegroundService();
+                        _isStarted = true;
+                    }
+                    break;
+
+                case ActionStopCommunication:
                 {
 #if DEBUG
-                    Log.Info(Tag, "OnStartCommand: The service is already running.");
+                    Log.Info(Tag, "OnStartCommand: Stop communication");
 #endif
+                    Intent startIntent = new Intent(this, typeof(ActivityMain));
+                    startIntent.SetAction(ActionMainActivity);
+                    startIntent.SetFlags(ActivityFlags.NewTask);
+                    startIntent.PutExtra(ActivityMain.ExtraStopComm, true);
+                    StartActivity(startIntent);
+
+                    SendStopCommBroadcast();
+                    break;
                 }
-                else
+
+                case ActionStopService:
                 {
 #if DEBUG
-                    Log.Info(Tag, "OnStartCommand: The service is starting.");
+                    Log.Info(Tag, "OnStartCommand: The service is stopping.");
 #endif
-                    RegisterForegroundService();
-                    _isStarted = true;
+                    SendStopCommBroadcast();
+
+                    StopForeground(true);
+                    StopSelf();
+                    _isStarted = false;
+                    break;
                 }
-            }
-            else if (intent.Action.Equals(ActionStopService))
-            {
-#if DEBUG
-                Log.Info(Tag, "OnStartCommand: The service is stopping.");
-#endif
-                StopForeground(true);
-                StopSelf();
-                _isStarted = false;
-
-            }
-            else if (intent.Action.Equals(ActionStopCommunication))
-            {
-#if DEBUG
-                Log.Info(Tag, "OnStartCommand: Stop communication");
-#endif
-                Intent startIntent = new Intent(this, typeof(ActivityMain));
-                startIntent.SetAction(ActionMainActivity);
-                startIntent.SetFlags(ActivityFlags.NewTask);
-                startIntent.PutExtra(ActivityMain.ExtraStopComm, true);
-                StartActivity(startIntent);
-
-                Intent broadcastIntent = new Intent(NotificationBroadcastAction);
-                broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastStopComm);
-                LocalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
             }
 
             // This tells Android not to restart the service if it is killed to reclaim resources.
@@ -127,7 +132,7 @@ namespace BmwDeepObd
             base.OnDestroy();
         }
 
-        void RegisterForegroundService()
+        private void RegisterForegroundService()
         {
             var notification = new NotificationCompat.Builder(this)
                 .SetContentTitle(Resources.GetString(Resource.String.app_name))
@@ -135,11 +140,19 @@ namespace BmwDeepObd
                 .SetSmallIcon(Resource.Drawable.ic_stat_obd)
                 .SetContentIntent(BuildIntentToShowMainActivity())
                 .SetOngoing(true)
-                .AddAction(BuildStopCommAction())
+                //.AddAction(BuildStopCommAction())
+                .AddAction(BuildStopServiceAction())
                 .Build();
 
             // Enlist this instance of the service as a foreground service
             StartForeground(ServiceRunningNotificationId, notification);
+        }
+
+        private void SendStopCommBroadcast()
+        {
+            Intent broadcastIntent = new Intent(NotificationBroadcastAction);
+            broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastStopComm);
+            LocalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
         }
 
         /// <summary>
@@ -147,7 +160,7 @@ namespace BmwDeepObd
         /// user taps on the notification; it will take them to the main activity of the app.
         /// </summary>
         /// <returns>The content intent.</returns>
-        Android.App.PendingIntent BuildIntentToShowMainActivity()
+        private Android.App.PendingIntent BuildIntentToShowMainActivity()
         {
             var notificationIntent = new Intent(this, typeof(ActivityMain));
             notificationIntent.SetAction(ActionMainActivity);
@@ -164,15 +177,14 @@ namespace BmwDeepObd
         /// notification in the status bar
         /// </summary>
         /// <returns>The stop service action.</returns>
-        // ReSharper disable once UnusedMember.Local
-        NotificationCompat.Action BuildStopServiceAction()
+        private NotificationCompat.Action BuildStopServiceAction()
         {
             var stopServiceIntent = new Intent(this, GetType());
             stopServiceIntent.SetAction(ActionStopService);
             var stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, 0);
 
-            var builder = new NotificationCompat.Action.Builder(Android.Resource.Drawable.IcMediaPause,
-                GetText(Resource.String.service_stop),
+            var builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel,
+                GetText(Resource.String.service_stop_comm),
                 stopServicePendingIntent);
             return builder.Build();
         }
@@ -182,14 +194,14 @@ namespace BmwDeepObd
         /// notification in the status bar
         /// </summary>
         /// <returns>The stop service action.</returns>
-        NotificationCompat.Action BuildStopCommAction()
+        private NotificationCompat.Action BuildStopCommAction()
         {
             var stopServiceIntent = new Intent(this, GetType());
             stopServiceIntent.SetAction(ActionStopCommunication);
             var stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, 0);
 
             var builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel,
-                GetText(Resource.String.service_stop),
+                GetText(Resource.String.service_stop_comm_app),
                 stopServicePendingIntent);
             return builder.Build();
         }

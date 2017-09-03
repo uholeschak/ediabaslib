@@ -52,7 +52,8 @@
   <!-- Service -->
   <!--Translate-->
   <string name="service_notification">The communication is active</string>
-  <string name="service_stop">Stop communication</string>
+  <string name="service_stop_comm_app">Open App and stop communication</string>
+  <string name="service_stop_comm">Stop communication</string>
 
   <!-- Compile -->
   <string name="compile_start">Компилировать код пользователя</string>
