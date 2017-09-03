@@ -171,7 +171,7 @@ namespace BmwDeepObd
             stopServiceIntent.SetAction(ActionStopService);
             var stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, 0);
 
-            var builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel,
+            var builder = new NotificationCompat.Action.Builder(Android.Resource.Drawable.IcMediaPause,
                 GetText(Resource.String.service_stop),
                 stopServicePendingIntent);
             return builder.Build();
@@ -188,7 +188,7 @@ namespace BmwDeepObd
             stopServiceIntent.SetAction(ActionStopCommunication);
             var stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, 0);
 
-            var builder = new NotificationCompat.Action.Builder(Android.Resource.Drawable.IcMediaPause,
+            var builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel,
                 GetText(Resource.String.service_stop),
                 stopServicePendingIntent);
             return builder.Build();
