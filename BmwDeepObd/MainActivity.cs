@@ -1092,9 +1092,18 @@ namespace BmwDeepObd
 
         private void UpdateLockState()
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
             if (!ActivityCommon.CommActive)
             {
-                _activityCommon?.SetLock(ActivityCommon.LockType.None);
+                ActivityCommon.LockType lockType = ActivityCommon.LockType.None;
+                if (_downloadProgress != null)
+                {
+                    lockType = ActivityCommon.LockType.Cpu;
+                }
+                _activityCommon.SetLock(lockType);
             }
             else
             {
@@ -1109,7 +1118,11 @@ namespace BmwDeepObd
                             break;
                     }
                 }
-                _activityCommon?.SetLock(lockType);
+                if (_activityCommon.GetLock() != lockType)
+                {   // unlock first
+                    _activityCommon.SetLock(ActivityCommon.LockType.None);
+                }
+                _activityCommon.SetLock(lockType);
             }
         }
 
@@ -2411,7 +2424,7 @@ namespace BmwDeepObd
                 _downloadProgress.DismissEvent += (sender, args) =>
                 {
                     _downloadProgress = null;
-                    _activityCommon.SetLock(ActivityCommon.LockType.None);
+                    UpdateLockState();
                 };
                 _downloadUrlInfoList = null;
             }
@@ -2422,7 +2435,7 @@ namespace BmwDeepObd
             _downloadProgress.Show();
             _downloadProgress.GetButton((int)DialogButtonType.Negative).Enabled = false;    // early abort crashes!
             _downloadFileSize = fileSize;
-            _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
+            UpdateLockState();
             _activityCommon.SetPreferredNetworkInterface();
 
             Thread downloadThread = new Thread(() =>
@@ -2456,7 +2469,7 @@ namespace BmwDeepObd
                             _downloadProgress.Hide();
                             _downloadProgress.Dispose();
                             _downloadProgress = null;
-                            _activityCommon.SetLock(ActivityCommon.LockType.None);
+                            UpdateLockState();
                         }
                         _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
                     });
@@ -2532,7 +2545,7 @@ namespace BmwDeepObd
                     _downloadProgress.Hide();
                     _downloadProgress.Dispose();
                     _downloadProgress = null;
-                    _activityCommon.SetLock(ActivityCommon.LockType.None);
+                    UpdateLockState();
                     _downloadUrlInfoList = null;
                     if ((!e.Cancelled && e.Error != null) || error)
                     {
@@ -2651,7 +2664,7 @@ namespace BmwDeepObd
                 _downloadProgress = new Android.App.ProgressDialog(this);
                 _downloadProgress.SetCancelable(false);
                 _downloadProgress.DismissEvent += (sender, args) => { _downloadProgress = null; };
-                _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
+                UpdateLockState();
             }
             _downloadProgress.SetMessage(GetString(Resource.String.extract_cleanup));
             _downloadProgress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
@@ -2742,7 +2755,7 @@ namespace BmwDeepObd
                         _downloadProgress.Hide();
                         _downloadProgress.Dispose();
                         _downloadProgress = null;
-                        _activityCommon.SetLock(ActivityCommon.LockType.None);
+                        UpdateLockState();
                     }
                     if (extractFailed)
                     {
