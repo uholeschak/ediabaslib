@@ -132,7 +132,7 @@ namespace BmwDeepObd
             var notification = new NotificationCompat.Builder(this)
                 .SetContentTitle(Resources.GetString(Resource.String.app_name))
                 .SetContentText(Resources.GetString(Resource.String.service_notification))
-                .SetSmallIcon(Resource.Drawable.app_status)
+                .SetSmallIcon(Resource.Drawable.ic_stat_obd)
                 .SetContentIntent(BuildIntentToShowMainActivity())
                 .SetOngoing(true)
                 .AddAction(BuildStopCommAction())
@@ -171,7 +171,7 @@ namespace BmwDeepObd
             stopServiceIntent.SetAction(ActionStopService);
             var stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, 0);
 
-            var builder = new NotificationCompat.Action.Builder(Android.Resource.Drawable.IcMediaPause,
+            var builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel,
                 GetText(Resource.String.service_stop),
                 stopServicePendingIntent);
             return builder.Build();

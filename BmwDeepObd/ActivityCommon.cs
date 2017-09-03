@@ -376,6 +376,7 @@ namespace BmwDeepObd
         private PowerManager.WakeLock _wakeLockScreenBright;
         private PowerManager.WakeLock _wakeLockScreenDim;
         private PowerManager.WakeLock _wakeLockCpu;
+        private readonly Tuple<LockType, PowerManager.WakeLock>[] _lockArray;
         private CellularCallback _cellularCallback;
         private Network _mobileNetwork;
         private Timer _usbCheckTimer;
@@ -542,6 +543,12 @@ namespace BmwDeepObd
 
                 _wakeLockCpu = _powerManager.NewWakeLock(WakeLockFlags.Partial, "PartialLock");
                 _wakeLockCpu.SetReferenceCounted(false);
+                _lockArray = new []
+                    {
+                        new Tuple<LockType, PowerManager.WakeLock>(LockType.Cpu, _wakeLockCpu),
+                        new Tuple<LockType, PowerManager.WakeLock>(LockType.ScreenDim, _wakeLockScreenDim),
+                        new Tuple<LockType, PowerManager.WakeLock>(LockType.ScreenBright, _wakeLockScreenBright)
+                    };
             }
             _selectedInterface = InterfaceType.None;
             _yandexTransDict = cacheActivity?._yandexTransDict ?? new Dictionary<string, Dictionary<string, string>>();
@@ -1813,10 +1820,21 @@ namespace BmwDeepObd
             }
         }
 
+        public LockType GetLock()
+        {
+            foreach (Tuple<LockType, PowerManager.WakeLock> tempLock in _lockArray)
+            {
+                if (tempLock.Item2.IsHeld)
+                {
+                    return tempLock.Item1;
+                }
+            }
+            return LockType.None;
+        }
+
         public bool SetLock(LockType lockType)
         {
             bool result = true;
-            PowerManager.WakeLock[] lockArray = { _wakeLockCpu, _wakeLockScreenDim, _wakeLockScreenBright };
             PowerManager.WakeLock wakeLock = null;
             switch (lockType)
             {
@@ -1836,19 +1854,11 @@ namespace BmwDeepObd
                     break;
             }
 
-            bool lockHeld = false;
-            foreach (PowerManager.WakeLock tempLock in lockArray)
-            {
-                if (tempLock.IsHeld)
-                {
-                    lockHeld = true;
-                    break;
-                }
-            }
+            LockType currentLock = GetLock();
 
             if (wakeLock != null)
             {
-                if (lockHeld)
+                if (currentLock != LockType.None)
                 {
                     result = false;
                 }
@@ -1866,13 +1876,13 @@ namespace BmwDeepObd
             }
             else
             {
-                foreach (PowerManager.WakeLock tempLock in lockArray)
+                foreach (Tuple<LockType, PowerManager.WakeLock> tempLock in _lockArray)
                 {
                     try
                     {
-                        if (tempLock.IsHeld)
+                        if (tempLock.Item2.IsHeld)
                         {
-                            tempLock.Release();
+                            tempLock.Item2.Release();
                         }
                     }
                     catch (Exception)
