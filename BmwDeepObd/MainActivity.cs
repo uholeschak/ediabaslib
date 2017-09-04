@@ -30,7 +30,6 @@ using BmwDeepObd.FilePicker;
 using EdiabasLib;
 using Java.Interop;
 using Mono.CSharp;
-// ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable MergeCastWithTypeCheck
 // ReSharper disable UsePatternMatching
 
@@ -1578,18 +1577,12 @@ namespace BmwDeepObd
                         _commErrorsOccured = true;
                     }
 
-                    MethodInfo formatResult = null;
-                    MethodInfo formatResultColor = null;
-                    MethodInfo formatResultMulti = null;
                     MethodInfo formatErrorResult = null;
                     MethodInfo updateResult = null;
                     MethodInfo updateResultMulti = null;
                     if (pageInfo.ClassObject != null)
                     {
                         Type pageType = pageInfo.ClassObject.GetType();
-                        formatResult = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary< string, EdiabasNet.ResultData >), typeof(string) });
-                        formatResultColor = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() });
-                        formatResultMulti = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() });
                         formatErrorResult = pageType.GetMethod("FormatErrorResult");
                         updateResult = pageType.GetMethod("UpdateResultList", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(List<TableResultItem>) } );
                         updateResultMulti = pageType.GetMethod("UpdateResultList", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(List<TableResultItem>) });
@@ -1638,8 +1631,7 @@ namespace BmwDeepObd
                                     if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                                     {
                                         Int64 errorCode = 0;
-                                        EdiabasNet.ResultData resultData;
-                                        if (errorReport.ErrorDict.TryGetValue("FNR_WERT", out resultData))
+                                        if (errorReport.ErrorDict.TryGetValue("FNR_WERT", out EdiabasNet.ResultData resultData))
                                         {
                                             if (resultData.OpData is Int64)
                                             {
@@ -1866,45 +1858,7 @@ namespace BmwDeepObd
                         bool logDataPresent = false;
                         foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                         {
-                            string result = string.Empty;
-                            Android.Graphics.Color? textColor = null;
-                            if (displayInfo.Format == null)
-                            {
-                                if (resultDict != null)
-                                {
-                                    try
-                                    {
-                                        if (formatResultMulti != null)
-                                        {
-                                            object[] args = { pageInfo, resultDict, displayInfo.Result, null };
-                                            result = formatResultMulti.Invoke(pageInfo.ClassObject, args) as string;
-                                            textColor = args[3] as Android.Graphics.Color?;
-                                            //result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result, ref textColor);
-                                        }
-                                        else if (formatResultColor != null)
-                                        {
-                                            object[] args = { pageInfo, resultDict.ToDictionary(), displayInfo.Result, null };
-                                            result = formatResultColor.Invoke(pageInfo.ClassObject, args) as string;
-                                            textColor = args[3] as Android.Graphics.Color?;
-                                            //result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict.ToDictionary(), displayInfo.Result, ref textColor);
-                                        }
-                                        else if (formatResult != null)
-                                        {
-                                            object[] args = { pageInfo, resultDict.ToDictionary(), displayInfo.Result };
-                                            result = formatResult.Invoke(pageInfo.ClassObject, args) as string;
-                                            //result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict.ToDictionary(), displayInfo.Result);
-                                        }
-                                    }
-                                    catch (Exception)
-                                    {
-                                        // ignored
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                result = FormatResultEdiabas(resultDict, displayInfo.Result, displayInfo.Format);
-                            }
+                            string result = ActivityCommon.FormatResult(pageInfo, displayInfo, resultDict, out Android.Graphics.Color? textColor);
                             if (result != null)
                             {
                                 tempResultList.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result, null, false, false, textColor));
@@ -2058,8 +2012,7 @@ namespace BmwDeepObd
 
         public static String FormatResultDouble(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, string format, int index = 0)
         {
-            bool found;
-            double value = GetResultDouble(resultDict, dataName, index, out found);
+            double value = GetResultDouble(resultDict, dataName, index, out bool found);
             if (found)
             {
                 return string.Format(Culture, format, value);
@@ -2074,8 +2027,7 @@ namespace BmwDeepObd
 
         public static String FormatResultInt64(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, string format, int index = 0)
         {
-            bool found;
-            Int64 value = GetResultInt64(resultDict, dataName, index, out found);
+            Int64 value = GetResultInt64(resultDict, dataName, index, out bool found);
             if (found)
             {
                 return string.Format(Culture, format, value);
@@ -2090,46 +2042,12 @@ namespace BmwDeepObd
 
         public static String FormatResultString(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, string format, int index = 0)
         {
-            bool found;
-            string value = GetResultString(resultDict, dataName, index, out found);
+            string value = GetResultString(resultDict, dataName, index, out bool found);
             if (found)
             {
                 return string.Format(Culture, format, value);
             }
             return string.Empty;
-        }
-
-        public static String FormatResultEdiabas(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
-        {
-            StringBuilder sbResult = new StringBuilder();
-            IList<EdiabasNet.ResultData> resultDataList;
-            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultDataList))
-            {
-                foreach (EdiabasNet.ResultData resultData in resultDataList)
-                {
-                    string result;
-                    if (resultData.OpData.GetType() == typeof(byte[]))
-                    {
-                        StringBuilder sb = new StringBuilder();
-                        byte[] data = (byte[])resultData.OpData;
-                        foreach (byte value in data)
-                        {
-                            sb.Append(string.Format(Culture, "{0:X02} ", value));
-                        }
-                        result = sb.ToString();
-                    }
-                    else
-                    {
-                        result = EdiabasNet.FormatResult(resultData, format) ?? "?";
-                    }
-                    if (sbResult.Length > 0)
-                    {
-                        sbResult.Append("\r\n");
-                    }
-                    sbResult.Append(result);
-                }
-            }
-            return sbResult.ToString();
         }
 
         public static Int64 GetResultInt64(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
@@ -2140,8 +2058,7 @@ namespace BmwDeepObd
         public static Int64 GetResultInt64(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, int index, out bool found)
         {
             found = false;
-            IList<EdiabasNet.ResultData> resultDataList;
-            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultDataList))
+            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out IList<EdiabasNet.ResultData> resultDataList))
             {
                 if (index >= 0 && index < resultDataList.Count)
                 {
@@ -2164,8 +2081,7 @@ namespace BmwDeepObd
         public static Double GetResultDouble(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, int index, out bool found)
         {
             found = false;
-            IList<EdiabasNet.ResultData> resultDataList;
-            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultDataList))
+            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out IList<EdiabasNet.ResultData> resultDataList))
             {
                 if (index >= 0 && index < resultDataList.Count)
                 {
@@ -2188,8 +2104,7 @@ namespace BmwDeepObd
         public static String GetResultString(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, int index, out bool found)
         {
             found = false;
-            IList<EdiabasNet.ResultData> resultDataList;
-            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultDataList))
+            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out IList<EdiabasNet.ResultData> resultDataList))
             {
                 if (index >= 0 && index < resultDataList.Count)
                 {

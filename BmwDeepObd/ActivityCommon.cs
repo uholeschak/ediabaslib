@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -2007,6 +2008,98 @@ namespace BmwDeepObd
                 connectParameter = new EdInterfaceEnet.ConnectParameterType(_activity, _maConnectivity);
             }
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
+        }
+
+        public static string FormatResult(JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, out Android.Graphics.Color? textColor)
+        {
+            textColor = null;
+            if (pageInfo == null)
+            {
+                return string.Empty;
+            }
+
+            MethodInfo formatResult = null;
+            MethodInfo formatResultColor = null;
+            MethodInfo formatResultMulti = null;
+            if (pageInfo.ClassObject != null)
+            {
+                Type pageType = pageInfo.ClassObject.GetType();
+                formatResult = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(string) });
+                formatResultColor = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() });
+                formatResultMulti = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() });
+            }
+            string result = string.Empty;
+            if (displayInfo.Format == null)
+            {
+                if (resultDict != null)
+                {
+                    try
+                    {
+                        if (formatResultMulti != null)
+                        {
+                            object[] args = { pageInfo, resultDict, displayInfo.Result, null };
+                            result = formatResultMulti.Invoke(pageInfo.ClassObject, args) as string;
+                            textColor = args[3] as Android.Graphics.Color?;
+                            //result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result, ref textColor);
+                        }
+                        else if (formatResultColor != null)
+                        {
+                            object[] args = { pageInfo, resultDict.ToDictionary(), displayInfo.Result, null };
+                            result = formatResultColor.Invoke(pageInfo.ClassObject, args) as string;
+                            textColor = args[3] as Android.Graphics.Color?;
+                            //result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict.ToDictionary(), displayInfo.Result, ref textColor);
+                        }
+                        else if (formatResult != null)
+                        {
+                            object[] args = { pageInfo, resultDict.ToDictionary(), displayInfo.Result };
+                            result = formatResult.Invoke(pageInfo.ClassObject, args) as string;
+                            //result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict.ToDictionary(), displayInfo.Result);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+            }
+            else
+            {
+                result = FormatResultEdiabas(resultDict, displayInfo.Result, displayInfo.Format);
+            }
+            return result;
+        }
+
+        public static String FormatResultEdiabas(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
+        {
+            StringBuilder sbResult = new StringBuilder();
+            IList<EdiabasNet.ResultData> resultDataList;
+            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultDataList))
+            {
+                foreach (EdiabasNet.ResultData resultData in resultDataList)
+                {
+                    string result;
+                    if (resultData.OpData.GetType() == typeof(byte[]))
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        byte[] data = (byte[])resultData.OpData;
+                        foreach (byte value in data)
+                        {
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02} ", value));
+                        }
+                        result = sb.ToString();
+                    }
+                    else
+                    {
+                        result = EdiabasNet.FormatResult(resultData, format) ?? "?";
+                    }
+                    if (sbResult.Length > 0)
+                    {
+                        sbResult.Append("\r\n");
+                    }
+                    sbResult.Append(result);
+                }
+            }
+            return sbResult.ToString();
         }
 
         public static bool IsTraceFilePresent(string traceDir)

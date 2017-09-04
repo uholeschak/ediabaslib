@@ -364,8 +364,7 @@ namespace BmwDeepObd
                             {
                                 if (resultSets.Count > 0)
                                 {
-                                    EdiabasNet.ResultData resultData;
-                                    if (resultSets[0].TryGetValue("JOBSTATUS", out resultData))
+                                    if (resultSets[0].TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
                                     {
                                         if (resultData.OpData is string)
                                         {
@@ -389,8 +388,7 @@ namespace BmwDeepObd
                                         resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
                                         if (resultSets.Count > 0)
                                         {
-                                            EdiabasNet.ResultData resultData;
-                                            if (resultSets[0].TryGetValue("JOBSTATUS", out resultData))
+                                            if (resultSets[0].TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
                                             {
                                                 if (resultData.OpData is string)
                                                 {
@@ -415,8 +413,7 @@ namespace BmwDeepObd
                             {
                                 if (resultSets.Count > 1)
                                 {
-                                    EdiabasNet.ResultData resultData;
-                                    if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
+                                    if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out EdiabasNet.ResultData resultData))
                                     {
                                         if (resultData.OpData is string)
                                         {
@@ -669,6 +666,7 @@ namespace BmwDeepObd
                             {
                                 object[] args = { Ediabas, null, firstRequestCall };
                                 methodInfoJob.Invoke(pageInfo.ClassObject, args);
+                                // ReSharper disable once UsePatternMatching
                                 Dictionary<string, EdiabasNet.ResultData> resultDictLocal = args[1] as Dictionary<string, EdiabasNet.ResultData>;
                                 //pageInfo.ClassObject.ExecuteJob(Ediabas, ref resultDictLocal, firstRequestCall);
                                 if (resultDictLocal != null)
