@@ -32,7 +32,6 @@ namespace BmwDeepObd
 #if DEBUG
             Log.Info(Tag, "OnCreate: the service is initializing.");
 #endif
-
             _activityCommon = new ActivityCommon(null);
             _powerManager = GetSystemService(PowerService) as PowerManager;
             if (_powerManager != null)
@@ -194,6 +193,7 @@ namespace BmwDeepObd
         /// notification in the status bar
         /// </summary>
         /// <returns>The stop service action.</returns>
+        // ReSharper disable once UnusedMember.Local
         private NotificationCompat.Action BuildStopCommAction()
         {
             var stopServiceIntent = new Intent(this, GetType());
