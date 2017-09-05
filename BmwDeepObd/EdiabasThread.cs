@@ -262,6 +262,7 @@ namespace BmwDeepObd
                         // add header
                         StringBuilder sbLog = new StringBuilder();
                         //sbLog.Append(GetString(Resource.String.datalog_date));
+                        sbLog.Append("Date");
                         foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                         {
                             if (!string.IsNullOrEmpty(displayInfo.LogTag))
