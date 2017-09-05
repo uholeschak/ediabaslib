@@ -118,7 +118,6 @@ namespace BmwDeepObd
         }
 
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
-        private const char DataLogSeparator = '\t';
         private const string SharedAppName = "de.holeschak.bmw_deep_obd";
         private const string AppFolderName = "de.holeschak.bmw_deep_obd";
         private const string EcuDirNameBmw = "Ecu";
@@ -166,7 +165,6 @@ namespace BmwDeepObd
         private bool _btInitiallyEnabled;
         private ActivityCommon _activityCommon;
         private Handler _updateHandler;
-        private StreamWriter _swDataLog;
         private string _dataLogDir;
         private string _traceDir;
         private TabLayout _tabLayout;
@@ -935,7 +933,7 @@ namespace BmwDeepObd
         private bool UseCommService()
         {
             bool useService = true;
-            if (_swDataLog == null)
+            if (_dataLogActive)
             {
                 if (ActivityCommon.LockTypeCommunication == ActivityCommon.LockType.None)
                 {
@@ -964,7 +962,7 @@ namespace BmwDeepObd
                     ConnectEdiabasEvents();
                 }
                 string logDir = string.Empty;
-                if (!string.IsNullOrEmpty(ActivityCommon.JobReader.LogPath))
+                if (_dataLogActive && !string.IsNullOrEmpty(ActivityCommon.JobReader.LogPath))
                 {
                     logDir = Path.IsPathRooted(ActivityCommon.JobReader.LogPath) ? ActivityCommon.JobReader.LogPath : Path.Combine(_appDataPath, ActivityCommon.JobReader.LogPath);
                     try
@@ -1018,7 +1016,7 @@ namespace BmwDeepObd
                             connectParameter = new EdFtdiInterface.ConnectParameterType(this, _activityCommon.UsbManager);
                             break;
                     }
-                    ActivityCommon.EdiabasThread.StartThread(portName, connectParameter, _traceDir, _traceAppend, pageInfo, true);
+                    ActivityCommon.EdiabasThread.StartThread(portName, connectParameter, pageInfo, true, _traceDir, _traceAppend, _dataLogDir, _dataLogAppend);
                     if (UseCommService())
                     {
                         _activityCommon.StartForegroundService();
@@ -1067,7 +1065,6 @@ namespace BmwDeepObd
                 }
             }
             UpdateLockState();
-            CloseDataLog();
             SupportInvalidateOptionsMenu();
         }
 
@@ -1122,15 +1119,6 @@ namespace BmwDeepObd
                     _activityCommon.SetLock(ActivityCommon.LockType.None);
                 }
                 _activityCommon.SetLock(lockType);
-            }
-        }
-
-        private void CloseDataLog()
-        {
-            if (_swDataLog != null)
-            {
-                _swDataLog.Dispose();
-                _swDataLog = null;
             }
         }
 
@@ -1262,7 +1250,6 @@ namespace BmwDeepObd
 
         private void UpdateDirectories()
         {
-            CloseDataLog();
             _appDataPath = string.Empty;
             _ecuPath = string.Empty;
             _userEcuFiles = false;
@@ -1420,7 +1407,6 @@ namespace BmwDeepObd
             {
                 ActivityCommon.EdiabasThread.CommActive = newCommActive;
                 ActivityCommon.EdiabasThread.JobPageInfo = newPageInfo;
-                CloseDataLog();
             }
         }
 
@@ -1450,7 +1436,6 @@ namespace BmwDeepObd
                 return;
             }
             bool dynamicValid = false;
-            bool threadRunning = false;
 
             _connectButtonInfo.Enabled = true;
             if (ActivityCommon.CommActive)
@@ -1458,10 +1443,6 @@ namespace BmwDeepObd
                 if (ActivityCommon.EdiabasThread.ThreadStopping())
                 {
                     _connectButtonInfo.Enabled = false;
-                }
-                else
-                {
-                    threadRunning = true;
                 }
                 if (ActivityCommon.EdiabasThread.CommActive)
                 {
@@ -1514,54 +1495,6 @@ namespace BmwDeepObd
 
                 if (dynamicValid)
                 {
-                    if (_dataLogActive && threadRunning && _swDataLog == null &&
-                        !string.IsNullOrEmpty(_dataLogDir) && !string.IsNullOrEmpty(pageInfo.LogFile))
-                    {
-                        try
-                        {
-                            FileMode fileMode;
-                            string logFileName = pageInfo.LogFile;
-                            logFileName = logFileName.Replace("{D}", DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", Culture));
-
-                            string fileName = Path.Combine(_dataLogDir, logFileName);
-                            if (File.Exists(fileName))
-                            {
-                                fileMode = (_dataLogAppend || ActivityCommon.JobReader.AppendLog) ? FileMode.Append : FileMode.Create;
-                            }
-                            else
-                            {
-                                fileMode = FileMode.Create;
-                            }
-                            _swDataLog = new StreamWriter(new FileStream(fileName, fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding.UTF8);
-                            if (fileMode == FileMode.Create)
-                            {
-                                // add header
-                                StringBuilder sbLog = new StringBuilder();
-                                sbLog.Append(GetString(Resource.String.datalog_date));
-                                foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
-                                {
-                                    if (!string.IsNullOrEmpty(displayInfo.LogTag))
-                                    {
-                                        sbLog.Append(DataLogSeparator);
-                                        sbLog.Append(displayInfo.LogTag.Replace(DataLogSeparator, ' '));
-                                    }
-                                }
-                                try
-                                {
-                                    sbLog.Append("\r\n");
-                                    _swDataLog.Write(sbLog.ToString());
-                                }
-                                catch (Exception)
-                                {
-                                    // ignored
-                                }
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                    }
                     MultiMap<string, EdiabasNet.ResultData> resultDict = null;
                     string errorMessage = string.Empty;
                     lock (EdiabasThread.DataLock)
@@ -1586,11 +1519,6 @@ namespace BmwDeepObd
                         formatErrorResult = pageType.GetMethod("FormatErrorResult");
                         updateResult = pageType.GetMethod("UpdateResultList", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(List<TableResultItem>) } );
                         updateResultMulti = pageType.GetMethod("UpdateResultList", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(List<TableResultItem>) });
-                    }
-                    string currDateTime = string.Empty;
-                    if (_dataLogActive)
-                    {
-                        currDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", Culture);
                     }
 
                     List<TableResultItem> tempResultList = new List<TableResultItem>();
@@ -1853,36 +1781,12 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        StringBuilder sbLog = new StringBuilder();
-                        sbLog.Append(currDateTime);
-                        bool logDataPresent = false;
                         foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                         {
                             string result = ActivityCommon.FormatResult(pageInfo, displayInfo, resultDict, out Android.Graphics.Color? textColor);
                             if (result != null)
                             {
                                 tempResultList.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result, null, false, false, textColor));
-                                if (!string.IsNullOrEmpty(displayInfo.LogTag) && _dataLogActive && _swDataLog != null)
-                                {
-                                    if (!string.IsNullOrWhiteSpace(result))
-                                    {
-                                        logDataPresent = true;
-                                    }
-                                    sbLog.Append(DataLogSeparator);
-                                    sbLog.Append(result.Replace(DataLogSeparator, ' '));
-                                }
-                            }
-                        }
-                        if (logDataPresent && _dataLogActive && _swDataLog != null)
-                        {
-                            try
-                            {
-                                sbLog.Append("\r\n");
-                                _swDataLog.Write(sbLog.ToString());
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
                             }
                         }
                     }
@@ -3008,10 +2912,6 @@ namespace BmwDeepObd
                             _dataLogAppend = value;
                             break;
                     }
-                }
-                if (!_dataLogActive)
-                {
-                    CloseDataLog();
                 }
                 SupportInvalidateOptionsMenu();
             });

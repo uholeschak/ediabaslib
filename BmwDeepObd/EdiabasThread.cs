@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using EdiabasLib;
 
@@ -95,6 +98,7 @@ namespace BmwDeepObd
 
         public static readonly Object DataLock = new Object();
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
+        private const char DataLogSeparator = '\t';
 
         private bool _disposed;
         private volatile bool _stopThread;
@@ -104,6 +108,10 @@ namespace BmwDeepObd
         private bool _ediabasJobAbort;
         private JobReader.PageInfo _lastPageInfo;
         private long _lastUpdateTime;
+        private string _logDir;
+        private bool _appendLog;
+        private StreamWriter _swDataLog;
+
 
         public EdiabasThread(string ecuPath, ActivityCommon activityCommon)
         {
@@ -117,7 +125,7 @@ namespace BmwDeepObd
             };
             Ediabas.SetConfigProperty("EcuPath", ecuPath);
 
-            InitProperties();
+            InitProperties(null);
         }
 
         public void Dispose()
@@ -143,6 +151,7 @@ namespace BmwDeepObd
                     // Dispose managed resources.
                     Ediabas.Dispose();
                     Ediabas = null;
+                    CloseDataLog();
                 }
 
                 // Note disposing has been done.
@@ -150,7 +159,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool StartThread(string comPort, object connectParameter, string traceDir, bool traceAppend, JobReader.PageInfo pageInfo, bool commActive)
+        public bool StartThread(string comPort, object connectParameter, JobReader.PageInfo pageInfo, bool commActive, string traceDir, bool traceAppend, string logDir, bool appendLog)
         {
             if (_workerThread != null)
             {
@@ -183,11 +192,13 @@ namespace BmwDeepObd
                 {
                     Ediabas.SetConfigProperty("IfhTrace", "0");
                 }
-                InitProperties();
                 CommActive = commActive;
                 JobPageInfo = pageInfo;
                 _lastPageInfo = null;
                 _lastUpdateTime = Stopwatch.GetTimestamp();
+                _logDir = logDir;
+                _appendLog = appendLog;
+                InitProperties(pageInfo);
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
                 _workerThread.Start();
@@ -225,6 +236,109 @@ namespace BmwDeepObd
             return _stopThread;
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool OpenDataLog(JobReader.PageInfo pageInfo)
+        {
+            if (_swDataLog == null && pageInfo != null && !string.IsNullOrEmpty(_logDir) && !string.IsNullOrEmpty(pageInfo.LogFile))
+            {
+                try
+                {
+                    FileMode fileMode;
+                    string logFileName = pageInfo.LogFile;
+                    logFileName = logFileName.Replace("{D}", DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture));
+
+                    string fileName = Path.Combine(_logDir, logFileName);
+                    if (File.Exists(fileName))
+                    {
+                        fileMode = (_appendLog || ActivityCommon.JobReader.AppendLog) ? FileMode.Append : FileMode.Create;
+                    }
+                    else
+                    {
+                        fileMode = FileMode.Create;
+                    }
+                    _swDataLog = new StreamWriter(new FileStream(fileName, fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding.UTF8);
+                    if (fileMode == FileMode.Create)
+                    {
+                        // add header
+                        StringBuilder sbLog = new StringBuilder();
+                        //sbLog.Append(GetString(Resource.String.datalog_date));
+                        foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
+                        {
+                            if (!string.IsNullOrEmpty(displayInfo.LogTag))
+                            {
+                                sbLog.Append(DataLogSeparator);
+                                sbLog.Append(displayInfo.LogTag.Replace(DataLogSeparator, ' '));
+                            }
+                        }
+                        try
+                        {
+                            sbLog.Append("\r\n");
+                            _swDataLog.Write(sbLog.ToString());
+                        }
+                        catch (Exception)
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        private void CloseDataLog()
+        {
+            if (_swDataLog != null)
+            {
+                _swDataLog.Dispose();
+                _swDataLog = null;
+            }
+        }
+
+        private void LogData(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
+        {
+            if (_swDataLog == null)
+            {
+                return;
+            }
+            StringBuilder sbLog = new StringBuilder();
+            string currDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            sbLog.Append(currDateTime);
+            bool logDataPresent = false;
+            foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
+            {
+                string result = ActivityCommon.FormatResult(pageInfo, displayInfo, resultDict, out Android.Graphics.Color? _);
+                if (result != null)
+                {
+                    if (!string.IsNullOrEmpty(displayInfo.LogTag))
+                    {
+                        if (!string.IsNullOrWhiteSpace(result))
+                        {
+                            logDataPresent = true;
+                        }
+                        sbLog.Append(DataLogSeparator);
+                        sbLog.Append(result.Replace(DataLogSeparator, ' '));
+                    }
+                }
+            }
+            if (logDataPresent)
+            {
+                try
+                {
+                    sbLog.Append("\r\n");
+                    _swDataLog.Write(sbLog.ToString());
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+        }
+
         private void ThreadFunc()
         {
             DataUpdatedEvent();
@@ -242,7 +356,7 @@ namespace BmwDeepObd
                     if (_lastPageInfo != copyPageInfo)
                     {
                         _lastPageInfo = copyPageInfo;
-                        InitProperties(true);
+                        InitProperties(copyPageInfo, true);
                     }
 
                     bool result = CommEdiabas(copyPageInfo);
@@ -697,6 +811,8 @@ namespace BmwDeepObd
                 return false;
             }
 
+            LogData(pageInfo, resultDict);
+
             lock (DataLock)
             {
                 EdiabasResultDict = resultDict;
@@ -756,13 +872,13 @@ namespace BmwDeepObd
             return false;
         }
 
-        private void InitProperties(bool deviceChange = false)
+        private void InitProperties(JobReader.PageInfo pageInfo, bool deviceChange = false)
         {
             if (!deviceChange)
             {
                 Connected = false;
             }
-
+            CloseDataLog();
             EdiabasResultDict = null;
             EdiabasErrorMessage = string.Empty;
             EdiabasErrorReportList = null;
@@ -772,6 +888,7 @@ namespace BmwDeepObd
 
             _ediabasInitReq = true;
             _ediabasJobAbort = deviceChange;
+            OpenDataLog(pageInfo);
         }
 
         private void DataUpdatedEvent()
