@@ -192,13 +192,14 @@ namespace BmwDeepObd
                 {
                     Ediabas.SetConfigProperty("IfhTrace", "0");
                 }
+                CloseDataLog();
                 CommActive = commActive;
                 JobPageInfo = pageInfo;
                 _lastPageInfo = null;
                 _lastUpdateTime = Stopwatch.GetTimestamp();
                 _logDir = logDir;
                 _appendLog = appendLog;
-                InitProperties(pageInfo);
+                InitProperties(null);
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
                 _workerThread.Start();
@@ -375,6 +376,7 @@ namespace BmwDeepObd
             }
             _threadRunning = false;
             DataUpdatedEvent();
+            CloseDataLog();
             ThreadTerminatedEvent();
         }
 
