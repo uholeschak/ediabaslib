@@ -16,6 +16,9 @@ For testing there is a console application [EdiabasTest](docs/EdiabasTest_parame
 
 **More informations could be found in the [Documentation](docs/Documentation.md) section.**
 
+If you want to support the developement you could donate a small amount.
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ)
+
 # Binary Compatibility
 A binary compatible api32.dll wrapper is existing, it's possible to replace the existing EDIABAS api32.dll with the EdiabasLib api32.dll and the applications are still working (The dll requires [.NET framework 4.0](https://www.microsoft.com/de-de/download/details.aspx?id=17718) or higher and [VS2015 C++ runtime](https://www.microsoft.com/de-de/download/details.aspx?id=48145) to be installed)!  
 This has been tested with Tool32, INPA and Rheingold. Since EdiabasNet is ignoring the EDIABAS.INI file you have to put your own EdiabasLib.config in the api32.dll directory.
