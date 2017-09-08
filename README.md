@@ -16,7 +16,7 @@ For testing there is a console application [EdiabasTest](docs/EdiabasTest_parame
 
 **More informations could be found in the [Documentation](docs/Documentation.md) section.**
 
-If you want to support the developement you could donate a small amount.
+If you want to support the developement you could donate a small amount.  
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ)
 
 # Binary Compatibility
