@@ -951,7 +951,7 @@ namespace BmwDeepObd
             {
                 if (ActivityCommon.EdiabasThread == null)
                 {
-                    ActivityCommon.EdiabasThread = new EdiabasThread(string.IsNullOrEmpty(ActivityCommon.JobReader.EcuPath) ? _ecuPath : ActivityCommon.JobReader.EcuPath, _activityCommon);
+                    ActivityCommon.EdiabasThread = new EdiabasThread(string.IsNullOrEmpty(ActivityCommon.JobReader.EcuPath) ? _ecuPath : ActivityCommon.JobReader.EcuPath, _activityCommon, Resources);
                     ConnectEdiabasEvents();
                 }
                 string logDir = string.Empty;
