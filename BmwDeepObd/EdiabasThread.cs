@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using Android.Content.Res;
 using EdiabasLib;
 
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
@@ -99,6 +100,7 @@ namespace BmwDeepObd
         public static readonly Object DataLock = new Object();
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const char DataLogSeparator = '\t';
+        private readonly string _resourceDatalogDate;
 
         private bool _disposed;
         private volatile bool _stopThread;
@@ -113,8 +115,9 @@ namespace BmwDeepObd
         private StreamWriter _swDataLog;
 
 
-        public EdiabasThread(string ecuPath, ActivityCommon activityCommon)
+        public EdiabasThread(string ecuPath, ActivityCommon activityCommon, Resources resources)
         {
+            _resourceDatalogDate = resources.GetString(Resource.String.datalog_date);
             _stopThread = false;
             _threadRunning = false;
             _workerThread = null;
@@ -262,8 +265,7 @@ namespace BmwDeepObd
                     {
                         // add header
                         StringBuilder sbLog = new StringBuilder();
-                        //sbLog.Append(GetString(Resource.String.datalog_date));
-                        sbLog.Append("Date");
+                        sbLog.Append(_resourceDatalogDate);
                         foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                         {
                             if (!string.IsNullOrEmpty(displayInfo.LogTag))
