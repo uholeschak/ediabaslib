@@ -162,7 +162,6 @@ namespace BmwDeepObd
         private bool _compileCodePending;
         private bool _autoStart;
         private bool _vagInfoShown;
-        private bool _btInitiallyEnabled;
         private ActivityCommon _activityCommon;
         private Handler _updateHandler;
         private string _dataLogDir;
@@ -277,7 +276,7 @@ namespace BmwDeepObd
                 }
             }, BroadcastReceived);
             _activityCommon.RegisterInternetCellular();
-            _btInitiallyEnabled = _activityCommon.IsBluetoothEnabled();
+            ActivityCommon.BtInitiallyEnabled = _activityCommon.IsBluetoothEnabled();
 
             GetSettings();
             StoreLastAppState(LastAppState.Init);
@@ -421,12 +420,6 @@ namespace BmwDeepObd
             StoreSettings();
             if (_activityCommon != null)
             {
-                if (!_btInitiallyEnabled && ActivityCommon.BtDisableHandling == ActivityCommon.BtDisableType.DisableIfByApp &&
-                    ActivityCommon.IsBluetoothEnabledByApp() && !_activityCommon.IsBluetoothConnected() &&
-                    !ActivityCommon.CommActive)
-                {
-                    _activityCommon.BluetoothDisable();
-                }
                 _activityCommon.UnRegisterInternetCellular();
                 _activityCommon.Dispose();
                 _activityCommon = null;
