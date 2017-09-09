@@ -448,6 +448,8 @@ namespace BmwDeepObd
             set => _appId = value;
         }
 
+        public static bool BtInitiallyEnabled { get; set; }
+
         public static ManufacturerType SelectedManufacturer { get; set; }
 
         public static BtEnableType BtEnbaleHandling { get; set; }
@@ -650,6 +652,7 @@ namespace BmwDeepObd
                         {
                             lock (LockObject)
                             {
+                                BluetoothDisableAtExit();
                                 if (EdiabasThread != null)
                                 {
                                     EdiabasThread.StopThread(true);
@@ -1660,6 +1663,17 @@ namespace BmwDeepObd
             {
                 return false;
             }
+        }
+
+        public bool BluetoothDisableAtExit()
+        {
+            if (!BtInitiallyEnabled && BtDisableHandling == BtDisableType.DisableIfByApp &&
+                IsBluetoothEnabledByApp() && !IsBluetoothConnected() &&
+                !CommActive)
+            {
+                return BluetoothDisable();
+            }
+            return false;
         }
 
         public bool RequestBluetoothDeviceSelect(int requestCode, string appDataDir, EventHandler<DialogClickEventArgs> handler)
