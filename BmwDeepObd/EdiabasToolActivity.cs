@@ -1195,23 +1195,30 @@ namespace BmwDeepObd
 
         private void ResetTranslations()
         {
-            foreach (JobInfo jobInfo in _jobList)
+            try
             {
-                jobInfo.CommentsTrans = null;
-                if (jobInfo.Arguments != null)
+                foreach (JobInfo jobInfo in _jobList)
                 {
-                    foreach (ExtraInfo extraInfo in jobInfo.Arguments)
+                    jobInfo.CommentsTrans = null;
+                    if (jobInfo.Arguments != null)
                     {
-                        extraInfo.CommentListTrans = null;
+                        foreach (ExtraInfo extraInfo in jobInfo.Arguments)
+                        {
+                            extraInfo.CommentListTrans = null;
+                        }
+                    }
+                    if (jobInfo.Results != null)
+                    {
+                        foreach (ExtraInfo extraInfo in jobInfo.Results)
+                        {
+                            extraInfo.CommentListTrans = null;
+                        }
                     }
                 }
-                if (jobInfo.Results != null)
-                {
-                    foreach (ExtraInfo extraInfo in jobInfo.Results)
-                    {
-                        extraInfo.CommentListTrans = null;
-                    }
-                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
         }
 
