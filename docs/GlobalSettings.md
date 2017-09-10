@@ -21,5 +21,7 @@ This page allows to change some global app settings.
 * _Storage media_ options:
   * _Default or storage location_: If the default storage media for the ECU files is not appropriate, a different media could be selected here.  
   The application storage directory on the media will be always fixed to _de.holeschak.bmw_deep_obd_.
+* _Debug_ options:
+  * _Collect debug information for trace files_: More data is collected while reading vehicle information to improve trace files.
 
 ![Global settings](GlobalSettings_AppGlobalSettingsSmall.png)

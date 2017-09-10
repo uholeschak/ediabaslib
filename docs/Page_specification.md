@@ -619,7 +619,7 @@ Now all `*.page` or `*.pages` can be added to a configuration file `*.cccfg`. Th
 </fragment>
 ```
 # Broadcasts
-The received OBD data could be broadcasted to other apps. This way it's possible to display or process data individually.  
+The received OBD data is be broadcasted to other apps if broadcast sending is enabled in the [global settings](GlobalSettings.md). This way it's possible to display or process data individually.  
 The broadcast name is `de.holeschak.bmw_deep_obd.Notification.Info`. It contains the following intent data:
 * `action` (string): Change of operation status:
   * `connect`: OBD connection is connected.
@@ -641,7 +641,6 @@ The broadcast name is `de.holeschak.bmw_deep_obd.Notification.Info`. It contains
             "Result":"<job result name 2>",
             "Value":"<display value 2>"
         },
-    ...
     ]
 }
 ```
