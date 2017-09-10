@@ -16,6 +16,8 @@ This page allows to change some global app settings.
   * _Store log data settings_: Store log data settings (not trace seetings) from the main menu and restore them at app restart.
 * _App exit_ options:
   * _Double click required for app exit_: A double click on the back button is required to exit the app.
+* _Broadcast_ options:
+  * _Send data broadcasts_: Data is broadcasted to other apps (see [Broadcasts](Page_specification.md#broadcasts)).
 * _Storage media_ options:
   * _Default or storage location_: If the default storage media for the ECU files is not appropriate, a different media could be selected here.  
   The application storage directory on the media will be always fixed to _de.holeschak.bmw_deep_obd_.

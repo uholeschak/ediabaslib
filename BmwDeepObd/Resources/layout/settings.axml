@@ -136,6 +136,18 @@
             android:layout_height="wrap_content"
             android:text="@string/settings_double_click_for_app_exit" />
         <TextView
+            android:text="@+string/settings_caption_broadcast"
+            android:id="@+id/textViewCaptionBroadcast"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <CheckBox
+            android:id="@+id/checkBoxSendDataBroadcast"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_send_data_broadcast" />
+        <TextView
             android:text="@+string/settings_caption_storage"
             android:id="@+id/textViewCaptionStorage"
             android:layout_width="match_parent"
@@ -147,16 +159,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
-          android:text="@+string/settings_caption_debug"
-          android:id="@+id/textViewCaptionDebug"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:background="#666"
-          android:textColor="#fff" />
+            android:text="@+string/settings_caption_debug"
+            android:id="@+id/textViewCaptionDebug"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
         <CheckBox
-          android:id="@+id/checkBoxCollectDebugInfo"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:text="@string/settings_collect_debug_info" />
+            android:id="@+id/checkBoxCollectDebugInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_collect_debug_info" />
     </LinearLayout>
 </ScrollView>

@@ -397,6 +397,10 @@ namespace BmwDeepObd
 
         private void SendActionBroadcast(string action)
         {
+            if (!ActivityCommon.SendDataBroadcast)
+            {
+                return;
+            }
             //Android.Util.Log.Debug("Broadcast", action);
             Intent broadcastIntent = new Intent(NotificationBroadcastInfo);
             broadcastIntent.PutExtra("action", action);
@@ -406,6 +410,10 @@ namespace BmwDeepObd
 
         private void SendInfoBroadcast(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
         {
+            if (!ActivityCommon.SendDataBroadcast)
+            {
+                return;
+            }
             BroadcastFrame broadcastFrame = new BroadcastFrame
             {
                 PageName = pageInfo.Name
