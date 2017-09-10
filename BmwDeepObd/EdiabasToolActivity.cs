@@ -1337,8 +1337,7 @@ namespace BmwDeepObd
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
                             for (int i = 0; ; i++)
                             {
-                                EdiabasNet.ResultData resultData;
-                                if (resultDict.TryGetValue("JOBCOMMENT" + i.ToString(Culture), out resultData))
+                                if (resultDict.TryGetValue("JOBCOMMENT" + i.ToString(Culture), out EdiabasNet.ResultData resultData))
                                 {
                                     if (resultData.OpData is string)
                                     {
@@ -1372,11 +1371,10 @@ namespace BmwDeepObd
                                     dictIndex++;
                                     continue;
                                 }
-                                EdiabasNet.ResultData resultData;
                                 string arg = string.Empty;
                                 string argType = string.Empty;
                                 List<string> argCommentList = new List<string>();
-                                if (resultDict.TryGetValue("ARG", out resultData))
+                                if (resultDict.TryGetValue("ARG", out EdiabasNet.ResultData resultData))
                                 {
                                     if (resultData.OpData is string)
                                     {
@@ -1429,11 +1427,10 @@ namespace BmwDeepObd
                                     dictIndex++;
                                     continue;
                                 }
-                                EdiabasNet.ResultData resultData;
                                 string result = string.Empty;
                                 string resultType = string.Empty;
                                 List<string> resultCommentList = new List<string>();
-                                if (resultDict.TryGetValue("RESULT", out resultData))
+                                if (resultDict.TryGetValue("RESULT", out EdiabasNet.ResultData resultData))
                                 {
                                     if (resultData.OpData is string)
                                     {
@@ -1582,8 +1579,7 @@ namespace BmwDeepObd
                             bool jobOk = false;
                             if (resultSets != null && resultSets.Count > 1)
                             {
-                                EdiabasNet.ResultData resultData;
-                                if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out resultData))
+                                if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out EdiabasNet.ResultData resultData))
                                 {
                                     if (resultData.OpData is string)
                                     {
@@ -1608,8 +1604,7 @@ namespace BmwDeepObd
                                         continue;
                                     }
 
-                                    EdiabasNet.ResultData resultData;
-                                    if (resultDictLocal.TryGetValue("F_ORT_NR", out resultData))
+                                    if (resultDictLocal.TryGetValue("F_ORT_NR", out EdiabasNet.ResultData resultData))
                                     {
                                         if (resultData.OpData is Int64)
                                         {
