@@ -32,6 +32,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonLogLockBright;
         private CheckBox _checkBoxStoreDataLogSettings;
         private CheckBox _checkBoxDoubleClickForAppExit;
+        private CheckBox _checkBoxSendDataBroadcast;
         private Button _buttonStorageLocation;
         private CheckBox _checkBoxCollectDebugInfo;
 
@@ -67,6 +68,7 @@ namespace BmwDeepObd
 
             _checkBoxStoreDataLogSettings = FindViewById<CheckBox>(Resource.Id.checkBoxStoreDataLogSettings);
             _checkBoxDoubleClickForAppExit = FindViewById<CheckBox>(Resource.Id.checkBoxDoubleClickForAppExit);
+            _checkBoxSendDataBroadcast = FindViewById<CheckBox>(Resource.Id.checkBoxSendDataBroadcast);
 
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
             _buttonStorageLocation.Click += (sender, args) =>
@@ -157,6 +159,7 @@ namespace BmwDeepObd
 
             _checkBoxStoreDataLogSettings.Checked = ActivityCommon.StoreDataLogSettings;
             _checkBoxDoubleClickForAppExit.Checked = ActivityCommon.DoubleClickForAppExit;
+            _checkBoxSendDataBroadcast.Checked = ActivityCommon.SendDataBroadcast;
             _checkBoxCollectDebugInfo.Checked = ActivityCommon.CollectDebugInfo;
             UpdateDisplay();
         }
@@ -220,6 +223,7 @@ namespace BmwDeepObd
 
             ActivityCommon.StoreDataLogSettings = _checkBoxStoreDataLogSettings.Checked;
             ActivityCommon.DoubleClickForAppExit = _checkBoxDoubleClickForAppExit.Checked;
+            ActivityCommon.SendDataBroadcast = _checkBoxSendDataBroadcast.Checked;
             ActivityCommon.CollectDebugInfo = _checkBoxCollectDebugInfo.Checked;
         }
 
