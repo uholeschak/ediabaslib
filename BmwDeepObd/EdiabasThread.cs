@@ -256,6 +256,7 @@ namespace BmwDeepObd
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
                 _workerThread.Start();
+                SendActionBroadcast("connect");
             }
             catch (Exception)
             {
@@ -272,6 +273,7 @@ namespace BmwDeepObd
                 _stopThread = true;
                 if (wait)
                 {
+                    SendActionBroadcast("disconnect");
                     _workerThread.Join();
                     _workerThread = null;
                 }
@@ -391,6 +393,15 @@ namespace BmwDeepObd
                     // ignored
                 }
             }
+        }
+
+        private void SendActionBroadcast(string action)
+        {
+            //Android.Util.Log.Debug("Broadcast", action);
+            Intent broadcastIntent = new Intent(NotificationBroadcastInfo);
+            broadcastIntent.PutExtra("action", action);
+            Context activeContext = ActiveContext;
+            activeContext?.SendBroadcast(broadcastIntent);
         }
 
         private void SendInfoBroadcast(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
@@ -982,6 +993,10 @@ namespace BmwDeepObd
             _ediabasInitReq = true;
             _ediabasJobAbort = deviceChange;
             OpenDataLog(pageInfo);
+            if (pageInfo != null)
+            {
+                SendActionBroadcast("page_change");
+            }
         }
 
         private void DataUpdatedEvent()
