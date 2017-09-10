@@ -40,6 +40,14 @@ namespace BmwDeepObd
                 _wakeLockCpu.SetReferenceCounted(false);
                 _wakeLockCpu.Acquire();
             }
+            lock (ActivityCommon.GlobalLockObject)
+            {
+                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                if (ediabasThread != null)
+                {
+                    ediabasThread.ActiveContext = this;
+                }
+            }
         }
 
         public override Android.App.StartCommandResult OnStartCommand(Intent intent, Android.App.StartCommandFlags flags, int startId)
@@ -123,6 +131,14 @@ namespace BmwDeepObd
                     // ignored
                 }
                 _wakeLockCpu = null;
+            }
+            lock (ActivityCommon.GlobalLockObject)
+            {
+                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                if (ediabasThread != null)
+                {
+                    ediabasThread.ActiveContext = null;
+                }
             }
 
             _activityCommon.Dispose();

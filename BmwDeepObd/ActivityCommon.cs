@@ -651,15 +651,12 @@ namespace BmwDeepObd
                         _instanceCount--;
                         if (_instanceCount == 0)
                         {
-                            lock (LockObject)
+                            BluetoothDisableAtExit();
+                            if (EdiabasThread != null)
                             {
-                                BluetoothDisableAtExit();
-                                if (EdiabasThread != null)
-                                {
-                                    EdiabasThread.StopThread(true);
-                                    EdiabasThread.Dispose();
-                                    EdiabasThread = null;
-                                }
+                                EdiabasThread.StopThread(true);
+                                EdiabasThread.Dispose();
+                                EdiabasThread = null;
                             }
                             MemoryStreamReader.CleanUp();
                         }

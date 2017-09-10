@@ -5,9 +5,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading;
-using Android.Content.Res;
+using Android.Content;
 using EdiabasLib;
 
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
@@ -40,10 +42,56 @@ namespace BmwDeepObd
             public string ExecptionText { get; }
         }
 
+        [DataContract]
+        private class BroadcastItem
+        {
+            [DataMember]
+            internal string Name;
+
+            [DataMember]
+            internal string Result;
+
+            [DataMember]
+            internal string Value;
+        }
+
+        [DataContract]
+        private class BroadcastFrame
+        {
+            public BroadcastFrame()
+            {
+                ObdData = new List<BroadcastItem>();
+            }
+
+            [DataMember]
+            internal string PageName;
+
+            [DataMember]
+            internal List<BroadcastItem> ObdData;
+        }
+
         public delegate void DataUpdatedEventHandler(object sender, EventArgs e);
         public event DataUpdatedEventHandler DataUpdated;
         public delegate void ThreadTerminatedEventHandler(object sender, EventArgs e);
         public event ThreadTerminatedEventHandler ThreadTerminated;
+
+        public Context ActiveContext
+        {
+            get
+            {
+                lock (DataLock)
+                {
+                    return _context;
+                }
+            }
+            set
+            {
+                lock (DataLock)
+                {
+                    _context = value;
+                }
+            }
+        }
 
         public JobReader.PageInfo JobPageInfo
         {
@@ -100,9 +148,11 @@ namespace BmwDeepObd
         public static readonly Object DataLock = new Object();
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const char DataLogSeparator = '\t';
+        public const string NotificationBroadcastInfo = ActivityCommon.AppNameSpace + ".Notification.Info";
         private readonly string _resourceDatalogDate;
 
         private bool _disposed;
+        private Context _context;
         private volatile bool _stopThread;
         private bool _threadRunning;
         private Thread _workerThread;
@@ -114,10 +164,10 @@ namespace BmwDeepObd
         private bool _appendLog;
         private StreamWriter _swDataLog;
 
-
-        public EdiabasThread(string ecuPath, ActivityCommon activityCommon, Resources resources)
+        public EdiabasThread(string ecuPath, ActivityCommon activityCommon, Context context)
         {
-            _resourceDatalogDate = resources.GetString(Resource.String.datalog_date);
+            _resourceDatalogDate = context.GetString(Resource.String.datalog_date);
+            _context = context;
             _stopThread = false;
             _threadRunning = false;
             _workerThread = null;
@@ -339,6 +389,43 @@ namespace BmwDeepObd
                 catch (Exception)
                 {
                     // ignored
+                }
+            }
+        }
+
+        private void SendInfoBroadcast(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
+        {
+            BroadcastFrame broadcastFrame = new BroadcastFrame
+            {
+                PageName = pageInfo.Name
+            };
+            foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
+            {
+                string result = ActivityCommon.FormatResult(pageInfo, displayInfo, resultDict, out Android.Graphics.Color? _);
+                if (result != null)
+                {
+                    BroadcastItem broadcastItem = new BroadcastItem
+                    {
+                        Name = displayInfo.Name,
+                        Result = displayInfo.Result,
+                        Value = result
+                    };
+                    broadcastFrame.ObdData.Add(broadcastItem);
+                }
+            }
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(BroadcastFrame));
+            using (MemoryStream ms = new MemoryStream())
+            {
+                serializer.WriteObject(ms, broadcastFrame);
+                ms.Position = 0;
+                using (StreamReader sr = new StreamReader(ms))
+                {
+                    string jsonData = sr.ReadToEnd();
+                    //Android.Util.Log.Debug("Broadcast", jsonData);
+                    Intent broadcastIntent = new Intent(NotificationBroadcastInfo);
+                    broadcastIntent.PutExtra("obd_data", jsonData);
+                    Context activeContext = ActiveContext;
+                    activeContext?.SendBroadcast(broadcastIntent);
                 }
             }
         }
@@ -817,6 +904,7 @@ namespace BmwDeepObd
             }
 
             LogData(pageInfo, resultDict);
+            SendInfoBroadcast(pageInfo, resultDict);
 
             lock (DataLock)
             {
