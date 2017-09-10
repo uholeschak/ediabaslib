@@ -11,6 +11,7 @@ Table of contents:
 	* [Adding controls to the layout](#adding-controls-to-the-layout)
 * [Grouping pages](#grouping-pages)
 * [The configuration file](#the-configuration-file)
+* [Broadcasts](#broadcasts)
 
 ## Simple jobs
 If only some EDIABAS jobs with fixed arguments are required for one display page, the XML code is relative simple. Below is the example code to display climate data for a E61 vehicle:
@@ -616,4 +617,31 @@ Now all `*.page` or `*.pages` can be added to a configuration file `*.cccfg`. Th
   <global ecu_path="../Ecu" log_path="Log" append_log="true" manufacturer="BMW" interface="BLUETOOTH" />
   <include filename="E61.ccpages"/>
 </fragment>
+```
+# Broadcasts
+The received OBD data could be broadcasted to other apps. This way it's possible to display or process data individually.  
+The broadcast name is `de.holeschak.bmw_deep_obd.Notification.Info`. It contains the following intent data:
+* `action` (string): Change of operation status:
+  * `connect`: OBD connection is connected.
+  * `disconnect`: OBD connection is disconnected.
+  * `page_change`: The current display page changes.
+* `obd_data` (string): JSON object that contains the current OBD data. It has the following format:
+``` json
+{
+    "PageName":"<tab_name>",
+    "ObdData":
+    [
+        {
+            "Name":"<label_name 1>",
+            "Result":"<job result name 1>",
+            "Value":"<display value 1>"
+        },
+        {
+            "Name":"<label_name 2>",
+            "Result":"<job result name 2>",
+            "Value":"<display value 2>"
+        },
+    ...
+    ]
+}
 ```
