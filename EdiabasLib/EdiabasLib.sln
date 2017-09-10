@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLib", "EdiabasLib\EdiabasLib.csproj", "{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}"
 EndProject
@@ -82,6 +82,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7B9636BF-0
 		..\docs\Replacement_firmware_for_ELM327_BluetoothAdapterBottomSmall.png = ..\docs\Replacement_firmware_for_ELM327_BluetoothAdapterBottomSmall.png
 		..\docs\Replacement_firmware_for_ELM327_BluetoothAdapterTopSmall.png = ..\docs\Replacement_firmware_for_ELM327_BluetoothAdapterTopSmall.png
 		..\docs\Replacement_firmware_for_ELM327_ConfigToolBluetoothSmall.png = ..\docs\Replacement_firmware_for_ELM327_ConfigToolBluetoothSmall.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{587F8C62-6BF6-407E-A597-E22748E115A8}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Global
@@ -368,5 +373,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {20846ABE-35AA-4495-BF76-DBE1D74077D6}
 	EndGlobalSection
 EndGlobal
