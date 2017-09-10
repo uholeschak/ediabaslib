@@ -118,8 +118,8 @@ namespace BmwDeepObd
         }
 
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
-        private const string SharedAppName = "de.holeschak.bmw_deep_obd";
-        private const string AppFolderName = "de.holeschak.bmw_deep_obd";
+        private const string SharedAppName = ActivityCommon.AppNameSpace;
+        private const string AppFolderName = ActivityCommon.AppNameSpace;
         private const string EcuDirNameBmw = "Ecu";
         private const string EcuDirNameVag = "EcuVag";
         private const string EcuDownloadUrlBmw = @"http://www.holeschak.de/BmwDeepObd/Ecu3.xml";
