@@ -194,7 +194,8 @@ namespace BmwDeepObd
         public const string EmulatorEnetIp = "192.168.10.244";
         public const string AdapterSsid = "Deep OBD BMW";
         public const string DownloadDir = "Download";
-        public const string ActionUsbPermission = "de.holeschak.bmw_deep_obd.USB_PERMISSION";
+        public const string AppNameSpace = "de.holeschak.bmw_deep_obd";
+        public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
         private const string MailInfoDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Mail.xml";
 
         private static readonly Dictionary<long, string> VagDtcSaeDict = new Dictionary<long, string>

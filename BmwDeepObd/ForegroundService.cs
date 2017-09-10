@@ -14,7 +14,7 @@ namespace BmwDeepObd
         public const int ServiceRunningNotificationId = 10000;
         public const string BroadcastMessageKey = "broadcast_message";
         public const string BroadcastStopComm = "stop_communication";
-        public const string NotificationBroadcastAction = "de.holeschak.bmw_deep_obd.Notification.Action";
+        public const string NotificationBroadcastAction = ActivityCommon.AppNameSpace + ".Notification.Action";
 
         public const string ActionStartService = "ForegroundService.action.START_SERVICE";
         public const string ActionStopService = "ForegroundService.action.STOP_SERVICE";
