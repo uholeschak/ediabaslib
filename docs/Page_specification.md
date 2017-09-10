@@ -626,7 +626,7 @@ The broadcast name is `de.holeschak.bmw_deep_obd.Notification.Info`. It contains
   * `disconnect`: OBD connection is disconnected.
   * `page_change`: The current display page changes.
 * `obd_data` (string): JSON object that contains the current OBD data. It has the following format:
-``` JSON
+``` json5
 {
     "PageName":"<tab_name>",
     "ObdData":
