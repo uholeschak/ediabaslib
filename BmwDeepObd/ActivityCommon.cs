@@ -792,6 +792,75 @@ namespace BmwDeepObd
             return true;
         }
 
+        public static int[] GetCpuUsageStatistic()
+        {
+            try
+            {
+                string tempString = ExecuteTop();
+                if (tempString == null)
+                {
+                    return new int[0];
+                }
+
+                tempString = tempString.Replace(",", "");
+                tempString = tempString.Replace("User", "");
+                tempString = tempString.Replace("System", "");
+                tempString = tempString.Replace("IOW", "");
+                tempString = tempString.Replace("IRQ", "");
+                tempString = tempString.Replace("%", "");
+                for (int i = 0; i < 10; i++)
+                {
+                    tempString = tempString.Replace("  ", " ");
+                }
+                tempString = tempString.Trim();
+                string[] myString = tempString.Split(' ');
+                int[] cpuUsageAsInt = new int[myString.Length];
+                for (int i = 0; i < myString.Length; i++)
+                {
+                    myString[i] = myString[i].Trim();
+                    cpuUsageAsInt[i] = Java.Lang.Integer.ParseInt(myString[i]);
+                }
+                return cpuUsageAsInt;
+            }
+            catch (Exception)
+            {
+                return new int[0];
+            }
+        }
+
+        private static string ExecuteTop()
+        {
+            Java.Lang.Process process = null;
+            Java.IO.BufferedReader input = null;
+            try
+            {
+                string returnString = null;
+                process = Java.Lang.Runtime.GetRuntime().Exec("top -n 1");
+                input = new Java.IO.BufferedReader(new Java.IO.InputStreamReader(process.InputStream));
+                if (process.WaitFor() == 0)
+                {
+                    returnString = input.ReadLine();
+                }
+                return returnString;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            finally
+            {
+                try
+                {
+                    input?.Close();
+                    process?.Destroy();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+        }
+
         public bool RegisterInternetCellular()
         {
             if (_maConnectivity == null)
