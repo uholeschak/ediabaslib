@@ -794,17 +794,21 @@ namespace BmwDeepObd
 
         public static List<int> GetCpuUsageStatistic()
         {
-            List<int> resultList = new List<int>();
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+            {
+                return null;
+            }
             string tempString = ExecuteTop();
             if (tempString == null)
             {
-                return resultList;
+                return null;
             }
             MatchCollection matches = Regex.Matches(tempString, "User +(\\d+)%, +System +(\\d+)%, +IOW +(\\d+)%, +IRQ +(\\d+)%", RegexOptions.IgnoreCase);
             if ((matches.Count != 1) || (matches[0].Groups.Count != 5))
             {
-                return resultList;
+                return null;
             }
+            List<int> resultList = new List<int>();
             int index = 0;
             foreach (Group group in matches[0].Groups)
             {
