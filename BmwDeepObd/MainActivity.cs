@@ -2100,13 +2100,55 @@ namespace BmwDeepObd
             StoreLastAppState(LastAppState.Compile);
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
             progress.SetCancelable(false);
-            progress.SetMessage(GetString(Resource.String.compile_start));
+            progress.SetMessage(GetString(Resource.String.compile_cpu_usage));
+            progress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
+            progress.Progress = 0;
+            progress.Max = 100;
             progress.Show();
 
             Thread compileThreadWrapper = new Thread(() =>
             {
+                // check CPU idle usage
+                GC.Collect();
+                long startTime = 0;
+                int cpuUsage = -1;
+                int count = 0;
+                int maxCount = 5;
+                int cpuLoadHigh = 70;
+                for (int i = 0; i < maxCount; i++)
+                {
+                    List<int> cpuUsageList = ActivityCommon.GetCpuUsageStatistic();
+                    if (cpuUsageList == null)
+                    {
+                        break;
+                    }
+                    if (cpuUsageList.Count == 4)
+                    {
+                        count++;
+                        int usage = cpuUsageList[0] + cpuUsageList[1];
+                        cpuUsage = usage;
+                        int localCount = count;
+                        RunOnUiThread(() =>
+                        {
+                            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                            if (progress != null)
+                            {
+                                string message = string.Format(GetString(Resource.String.compile_cpu_usage_value), usage);
+                                progress.SetMessage(message);
+                                progress.Progress = 100 * localCount / maxCount;
+                                startTime = Stopwatch.GetTimestamp();
+                            }
+                        });
+                        if (usage < cpuLoadHigh && count >= 2)
+                        {
+                            break;
+                        }
+                    }
+                }
+
                 List<string> compileResultList = new List<string>();
                 List<Thread> threadList = new List<Thread>();
+                int index = 0;
                 foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                 {
                     if (pageInfo.ClassCode == null) continue;
@@ -2120,6 +2162,20 @@ namespace BmwDeepObd
                         }
                         Thread.Sleep(200);
                     }
+
+                    int localIndex = index;
+                    RunOnUiThread(() =>
+                    {
+                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                        if (progress != null)
+                        {
+                            if (cpuUsage >= 0 && Stopwatch.GetTimestamp() - startTime > 1000 * TickResolMs)
+                            {
+                                progress.SetMessage(GetString(Resource.String.compile_start));
+                                progress.Progress = 100 * localIndex / ActivityCommon.JobReader.PageList.Count;
+                            }
+                        }
+                    });
 
                     JobReader.PageInfo infoLocal = pageInfo;
                     Thread compileThread = new Thread(() =>
@@ -2184,6 +2240,7 @@ namespace BmwDeepObd
                     });
                     compileThread.Start();
                     threadList.Add(compileThread);
+                    index++;
                 }
 
                 foreach (Thread compileThread in threadList)
@@ -2202,6 +2259,10 @@ namespace BmwDeepObd
                     CreateActionBarTabs();
                     progress.Hide();
                     progress.Dispose();
+                    if (cpuUsage >= cpuLoadHigh)
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.compile_cpu_usage_high), Resource.String.alert_title_warning);
+                    }
                 });
             });
             compileThreadWrapper.Start();
