@@ -792,40 +792,36 @@ namespace BmwDeepObd
             return true;
         }
 
-        public static int[] GetCpuUsageStatistic()
+        public static List<int> GetCpuUsageStatistic()
         {
-            try
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
             {
-                string tempString = ExecuteTop();
-                if (tempString == null)
-                {
-                    return new int[0];
-                }
-
-                tempString = tempString.Replace(",", "");
-                tempString = tempString.Replace("User", "");
-                tempString = tempString.Replace("System", "");
-                tempString = tempString.Replace("IOW", "");
-                tempString = tempString.Replace("IRQ", "");
-                tempString = tempString.Replace("%", "");
-                for (int i = 0; i < 10; i++)
-                {
-                    tempString = tempString.Replace("  ", " ");
-                }
-                tempString = tempString.Trim();
-                string[] myString = tempString.Split(' ');
-                int[] cpuUsageAsInt = new int[myString.Length];
-                for (int i = 0; i < myString.Length; i++)
-                {
-                    myString[i] = myString[i].Trim();
-                    cpuUsageAsInt[i] = Java.Lang.Integer.ParseInt(myString[i]);
-                }
-                return cpuUsageAsInt;
+                return null;
             }
-            catch (Exception)
+            string tempString = ExecuteTop();
+            if (tempString == null)
             {
-                return new int[0];
+                return null;
             }
+            MatchCollection matches = Regex.Matches(tempString, "User +(\\d+)%, +System +(\\d+)%, +IOW +(\\d+)%, +IRQ +(\\d+)%", RegexOptions.IgnoreCase);
+            if ((matches.Count != 1) || (matches[0].Groups.Count != 5))
+            {
+                return null;
+            }
+            List<int> resultList = new List<int>();
+            int index = 0;
+            foreach (Group group in matches[0].Groups)
+            {
+                if (index > 0)
+                {
+                    if (Int32.TryParse(group.Value, out int value))
+                    {
+                        resultList.Add(value);
+                    }
+                }
+                index++;
+            }
+            return resultList;
         }
 
         private static string ExecuteTop()
@@ -839,7 +835,14 @@ namespace BmwDeepObd
                 input = new Java.IO.BufferedReader(new Java.IO.InputStreamReader(process.InputStream));
                 if (process.WaitFor() == 0)
                 {
-                    returnString = input.ReadLine();
+                    for (;;)
+                    {
+                        returnString = input.ReadLine();
+                        if ((returnString == null) || (returnString.Length > 0))
+                        {
+                            break;
+                        }
+                    }
                 }
                 return returnString;
             }
