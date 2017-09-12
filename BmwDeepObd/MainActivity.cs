@@ -2261,7 +2261,7 @@ namespace BmwDeepObd
                     progress.Dispose();
                     if (cpuUsage >= cpuLoadHigh)
                     {
-                        _activityCommon.ShowAlert(GetString(Resource.String.compile_cpu_usage_high), Resource.String.alert_title_warning);
+                        _activityCommon.ShowAlert(string.Format(GetString(Resource.String.compile_cpu_usage_high), cpuUsage), Resource.String.alert_title_warning);
                     }
                 });
             });
