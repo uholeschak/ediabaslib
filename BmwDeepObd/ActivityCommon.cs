@@ -1224,7 +1224,7 @@ namespace BmwDeepObd
                 {
                     _lastEnetSsid = enetSsid;
                 }
-                if (string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
+                if (!IsEmulator() && string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
                 {
                     _lastEnetSsid = enetSsid;
                     if (!enetSsid.Contains(AdapterSsid))
