@@ -130,6 +130,7 @@ namespace BmwDeepObd
         private const long EcuZipSizeVag = 53000000;            // VAG ecu zip file size
         private const long EcuExtractSizeVag = 910000000;       // VAG extracted ecu files size
         private const int RequestPermissionExternalStorage = 0;
+        private const int CpuLoadCritical = 70;
         private readonly string[] _permissionsExternalStorage =
         {
             Android.Manifest.Permission.WriteExternalStorage
@@ -154,6 +155,7 @@ namespace BmwDeepObd
         private bool _dataLogActive;
         private bool _dataLogAppend;
         private bool _commErrorsOccured;
+        private bool _checkCpuLoad;
         private bool _activityActive;
         private bool _onResumeExecuted;
         private bool _storageAccessGranted;
@@ -379,6 +381,7 @@ namespace BmwDeepObd
                 RequestStoragePermissions();
             }
             _activityActive = true;
+            _checkCpuLoad = true;
             UpdateLockState();
             if (_compileCodePending)
             {
@@ -2108,40 +2111,43 @@ namespace BmwDeepObd
 
             Thread compileThreadWrapper = new Thread(() =>
             {
-                // check CPU idle usage
-                GC.Collect();
-                long startTime = 0;
                 int cpuUsage = -1;
-                int count = 0;
-                int maxCount = 5;
-                int cpuLoadHigh = 70;
-                for (int i = 0; i < maxCount; i++)
+                long startTime = Stopwatch.GetTimestamp();
+                if (_checkCpuLoad)
                 {
-                    List<int> cpuUsageList = ActivityCommon.GetCpuUsageStatistic();
-                    if (cpuUsageList == null)
+                    // check CPU idle usage
+                    _checkCpuLoad = false;
+                    GC.Collect();
+                    int count = 0;
+                    int maxCount = 5;
+                    for (int i = 0; i < maxCount; i++)
                     {
-                        break;
-                    }
-                    if (cpuUsageList.Count == 4)
-                    {
-                        count++;
-                        int usage = cpuUsageList[0] + cpuUsageList[1];
-                        cpuUsage = usage;
-                        int localCount = count;
-                        RunOnUiThread(() =>
-                        {
-                            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                            if (progress != null)
-                            {
-                                string message = string.Format(GetString(Resource.String.compile_cpu_usage_value), usage);
-                                progress.SetMessage(message);
-                                progress.Progress = 100 * localCount / maxCount;
-                                startTime = Stopwatch.GetTimestamp();
-                            }
-                        });
-                        if (usage < cpuLoadHigh && count >= 2)
+                        List<int> cpuUsageList = ActivityCommon.GetCpuUsageStatistic();
+                        if (cpuUsageList == null)
                         {
                             break;
+                        }
+                        if (cpuUsageList.Count == 4)
+                        {
+                            count++;
+                            int usage = cpuUsageList[0] + cpuUsageList[1];
+                            cpuUsage = usage;
+                            int localCount = count;
+                            RunOnUiThread(() =>
+                            {
+                                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                                if (progress != null)
+                                {
+                                    string message = string.Format(GetString(Resource.String.compile_cpu_usage_value), usage);
+                                    progress.SetMessage(message);
+                                    progress.Progress = 100 * localCount / maxCount;
+                                    startTime = Stopwatch.GetTimestamp();
+                                }
+                            });
+                            if (usage < CpuLoadCritical && count >= 2)
+                            {
+                                break;
+                            }
                         }
                     }
                 }
@@ -2259,7 +2265,7 @@ namespace BmwDeepObd
                     CreateActionBarTabs();
                     progress.Hide();
                     progress.Dispose();
-                    if (cpuUsage >= cpuLoadHigh)
+                    if (cpuUsage >= CpuLoadCritical)
                     {
                         _activityCommon.ShowAlert(string.Format(GetString(Resource.String.compile_cpu_usage_high), cpuUsage), Resource.String.alert_title_warning);
                     }
