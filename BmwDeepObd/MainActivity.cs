@@ -278,7 +278,6 @@ namespace BmwDeepObd
                 }
             }, BroadcastReceived);
             _activityCommon.RegisterInternetCellular();
-            ActivityCommon.BtInitiallyEnabled = _activityCommon.IsBluetoothEnabled();
 
             GetSettings();
             StoreLastAppState(LastAppState.Init);
@@ -295,6 +294,10 @@ namespace BmwDeepObd
             if (ActivityCommon.CommActive)
             {
                 ConnectEdiabasEvents();
+            }
+            else
+            {
+                ActivityCommon.BtInitiallyEnabled = _activityCommon.IsBluetoothEnabled();
             }
         }
 
