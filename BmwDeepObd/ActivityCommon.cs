@@ -653,13 +653,13 @@ namespace BmwDeepObd
                         _instanceCount--;
                         if (_instanceCount == 0)
                         {
-                            BluetoothDisableAtExit();
                             if (EdiabasThread != null)
                             {
                                 EdiabasThread.StopThread(true);
                                 EdiabasThread.Dispose();
                                 EdiabasThread = null;
                             }
+                            BluetoothDisableAtExit();
                             MemoryStreamReader.CleanUp();
                         }
                     }
