@@ -701,9 +701,7 @@ namespace BmwDeepObd
             if (textView != null)
             {
                 string info = textView.Text;
-                string name;
-                string address;
-                if (!ExtractDeviceInfo(info, out name, out address))
+                if (!ExtractDeviceInfo(info, out string name, out string address))
                 {
                     return;
                 }
@@ -800,9 +798,7 @@ namespace BmwDeepObd
                                     for (int i = 0; i < _newDevicesArrayAdapter.Count; i++)
                                     {
                                         string item = _newDevicesArrayAdapter.GetItem(i);
-                                        string name;
-                                        string address;
-                                        if (!ExtractDeviceInfo(_newDevicesArrayAdapter.GetItem(i), out name, out address))
+                                        if (!ExtractDeviceInfo(_newDevicesArrayAdapter.GetItem(i), out string _, out string address))
                                         {
                                             return;
                                         }

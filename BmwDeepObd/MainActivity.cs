@@ -155,7 +155,7 @@ namespace BmwDeepObd
         private bool _dataLogActive;
         private bool _dataLogAppend;
         private bool _commErrorsOccured;
-        private bool _checkCpuLoad;
+        private bool _checkCpuLoad = true;
         private bool _activityActive;
         private bool _onResumeExecuted;
         private bool _storageAccessGranted;
@@ -381,7 +381,6 @@ namespace BmwDeepObd
                 RequestStoragePermissions();
             }
             _activityActive = true;
-            _checkCpuLoad = true;
             UpdateLockState();
             if (_compileCodePending)
             {
@@ -445,6 +444,7 @@ namespace BmwDeepObd
             if (!ActivityCommon.DoubleClickForAppExit)
             {
                 _backPressed = false;
+                _checkCpuLoad = true;
                 base.OnBackPressed();
                 return;
             }
@@ -453,6 +453,7 @@ namespace BmwDeepObd
                 _backPressed = false;
                 if (Stopwatch.GetTimestamp() - _lastBackPressesTime < 2000 * TickResolMs)
                 {
+                    _checkCpuLoad = true;
                     base.OnBackPressed();
                     return;
                 }
@@ -2152,6 +2153,7 @@ namespace BmwDeepObd
                     }
                 }
 
+                bool progressUpdated = false;
                 List<string> compileResultList = new List<string>();
                 List<Thread> threadList = new List<Thread>();
                 int index = 0;
@@ -2177,6 +2179,7 @@ namespace BmwDeepObd
                         {
                             if (cpuUsage >= 0 && Stopwatch.GetTimestamp() - startTime > 1000 * TickResolMs)
                             {
+                                progressUpdated = true;
                                 progress.SetMessage(GetString(Resource.String.compile_start));
                                 progress.Progress = 100 * localIndex / ActivityCommon.JobReader.PageList.Count;
                             }
@@ -2252,6 +2255,11 @@ namespace BmwDeepObd
                 foreach (Thread compileThread in threadList)
                 {
                     compileThread.Join();
+                }
+
+                if (cpuUsage >= 0 && !progressUpdated)
+                {
+                    Thread.Sleep(1000);
                 }
 
                 foreach (string compileResult in compileResultList)
