@@ -2105,14 +2105,14 @@ namespace BmwDeepObd
                 return;
             }
             _compileCodePending = false;
-            if (ActivityCommon.JobReader.PageList.Count == 0)
-            {
-                _updateHandler.Post(CreateActionBarTabs);
-                return;
-            }
             if (!ActivityCommon.IsCpuStatisticsSupported() || !ActivityCommon.CheckCpuUsage)
             {
                 _checkCpuUsage = false;
+            }
+            if (ActivityCommon.JobReader.PageList.Count == 0 && !_checkCpuUsage)
+            {
+                _updateHandler.Post(CreateActionBarTabs);
+                return;
             }
             StoreLastAppState(LastAppState.Compile);
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
