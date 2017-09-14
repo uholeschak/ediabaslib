@@ -213,10 +213,12 @@
   <string name="settings_store_data_log_settings">Сохранять настройки записи данных</string>
   <string name="settings_caption_app_exit">Выход из приложения</string>
   <string name="settings_double_click_for_app_exit">Для выхода из приложения требуется двойное нажатие</string>
-  <string name="settings_caption_storage">Носитель памяти</string>
   <!--Translate-->
   <string name="settings_caption_broadcast">Broadcast</string>
   <string name="settings_send_data_broadcast">Send data broadcast</string>
+  <string name="settings_caption_cpu_usage">CPU usage</string>
+  <string name="settings_check_cpu_usage">Check CPU usage at start</string>
+  <string name="settings_caption_storage">Носитель памяти</string>
   <string name="settings_caption_debug">Отладить</string>
   <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>
 

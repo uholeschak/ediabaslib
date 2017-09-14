@@ -213,9 +213,11 @@
   <string name="settings_store_data_log_settings">Speichern der Logdaten-Einstellungen</string>
   <string name="settings_caption_app_exit">App beenden</string>
   <string name="settings_double_click_for_app_exit">Doppelklick notwendig um App zu beenden</string>
-  <string name="settings_caption_storage">Speichermedium</string>
   <string name="settings_caption_broadcast">Broadcast</string>
   <string name="settings_send_data_broadcast">Daten-Broadcasts senden</string>
+  <string name="settings_caption_cpu_usage">CPU Auslastung</string>
+  <string name="settings_check_cpu_usage">CPU Auslastung am Start prüfen</string>
+  <string name="settings_caption_storage">Speichermedium</string>
   <string name="settings_caption_debug">Debuggen</string>
   <string name="settings_collect_debug_info">Debug-Informationen für Trace-Datei sammeln</string>
 

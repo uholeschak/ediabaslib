@@ -214,9 +214,11 @@
   <string name="settings_store_data_log_settings">Store log data settings</string>
   <string name="settings_caption_app_exit">App exit</string>
   <string name="settings_double_click_for_app_exit">Double click required for app exit</string>
-  <string name="settings_caption_storage">Storage media</string>
   <string name="settings_caption_broadcast">Broadcast</string>
   <string name="settings_send_data_broadcast">Send data broadcast</string>
+  <string name="settings_caption_cpu_usage">CPU usage</string>
+  <string name="settings_check_cpu_usage">Check CPU usage at start</string>
+  <string name="settings_caption_storage">Storage media</string>
   <string name="settings_caption_debug">Debugging</string>
   <string name="settings_collect_debug_info">Collect debug information for trace files</string>
 

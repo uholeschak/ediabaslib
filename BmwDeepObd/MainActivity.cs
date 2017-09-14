@@ -155,7 +155,7 @@ namespace BmwDeepObd
         private bool _dataLogActive;
         private bool _dataLogAppend;
         private bool _commErrorsOccured;
-        private bool _checkCpuLoad = true;
+        private bool _checkCpuUsage = true;
         private bool _activityActive;
         private bool _onResumeExecuted;
         private bool _storageAccessGranted;
@@ -451,7 +451,7 @@ namespace BmwDeepObd
             if (!ActivityCommon.DoubleClickForAppExit)
             {
                 _backPressed = false;
-                _checkCpuLoad = true;
+                _checkCpuUsage = true;
                 base.OnBackPressed();
                 return;
             }
@@ -460,7 +460,7 @@ namespace BmwDeepObd
                 _backPressed = false;
                 if (Stopwatch.GetTimestamp() - _lastBackPressesTime < 2000 * TickResolMs)
                 {
-                    _checkCpuLoad = true;
+                    _checkCpuUsage = true;
                     base.OnBackPressed();
                     return;
                 }
@@ -1159,6 +1159,7 @@ namespace BmwDeepObd
                 }
                 ActivityCommon.DoubleClickForAppExit = prefs.GetBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
                 ActivityCommon.SendDataBroadcast = prefs.GetBoolean("SendDataBroadcast", ActivityCommon.SendDataBroadcast);
+                ActivityCommon.CheckCpuUsage = prefs.GetBoolean("CheckCpuUsage", true);
                 ActivityCommon.CollectDebugInfo = prefs.GetBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
             }
             catch (Exception)
@@ -1192,6 +1193,7 @@ namespace BmwDeepObd
                 prefsEdit.PutBoolean("DataLogAppend", _dataLogAppend);
                 prefsEdit.PutBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
                 prefsEdit.PutBoolean("SendDataBroadcast", ActivityCommon.SendDataBroadcast);
+                prefsEdit.PutBoolean("CheckCpuUsage", ActivityCommon.CheckCpuUsage);
                 prefsEdit.PutBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
                 prefsEdit.Commit();
             }
@@ -2108,14 +2110,14 @@ namespace BmwDeepObd
                 _updateHandler.Post(CreateActionBarTabs);
                 return;
             }
-            if (!ActivityCommon.IsCpuStatisticsSupported())
+            if (!ActivityCommon.IsCpuStatisticsSupported() || !ActivityCommon.CheckCpuUsage)
             {
-                _checkCpuLoad = false;
+                _checkCpuUsage = false;
             }
             StoreLastAppState(LastAppState.Compile);
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
             progress.SetCancelable(false);
-            progress.SetMessage(GetString(_checkCpuLoad ? Resource.String.compile_cpu_usage : Resource.String.compile_start));
+            progress.SetMessage(GetString(_checkCpuUsage ? Resource.String.compile_cpu_usage : Resource.String.compile_start));
             progress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
             progress.Progress = 0;
             progress.Max = 100;
@@ -2125,10 +2127,10 @@ namespace BmwDeepObd
             {
                 int cpuUsage = -1;
                 long startTime = Stopwatch.GetTimestamp();
-                if (_checkCpuLoad)
+                if (_checkCpuUsage)
                 {
                     // check CPU idle usage
-                    _checkCpuLoad = false;
+                    _checkCpuUsage = false;
                     GC.Collect();
                     int count = 0;
                     int maxCount = 5;

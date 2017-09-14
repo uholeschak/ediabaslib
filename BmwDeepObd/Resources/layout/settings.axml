@@ -148,6 +148,18 @@
             android:layout_height="wrap_content"
             android:text="@string/settings_send_data_broadcast" />
         <TextView
+            android:text="@+string/settings_caption_cpu_usage"
+            android:id="@+id/textViewCaptionCpuUsage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <CheckBox
+            android:id="@+id/checkBoxCheckCpuUsage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_check_cpu_usage" />
+        <TextView
             android:text="@+string/settings_caption_storage"
             android:id="@+id/textViewCaptionStorage"
             android:layout_width="match_parent"
