@@ -175,6 +175,7 @@ namespace BmwDeepObd
         private ImageView _imageBackground;
         private WebClient _webClient;
         private Android.App.ProgressDialog _downloadProgress;
+        private Android.App.ProgressDialog _compileProgress;
         private long _downloadFileSize;
         private List<DownloadUrlInfo> _downloadUrlInfoList;
         private AlertDialog _startAlertDialog;
@@ -1099,7 +1100,7 @@ namespace BmwDeepObd
             if (!ActivityCommon.CommActive)
             {
                 ActivityCommon.LockType lockType = ActivityCommon.LockType.None;
-                if (_downloadProgress != null)
+                if (_downloadProgress != null || _compileProgress != null)
                 {
                     lockType = ActivityCommon.LockType.Cpu;
                 }
@@ -2099,7 +2100,7 @@ namespace BmwDeepObd
 
         private void CompileCode()
         {
-            if (!_activityActive)
+            if (!_activityActive || _compileProgress != null)
             {
                 _compileCodePending = true;
                 return;
@@ -2115,13 +2116,14 @@ namespace BmwDeepObd
                 return;
             }
             StoreLastAppState(LastAppState.Compile);
-            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
-            progress.SetCancelable(false);
-            progress.SetMessage(GetString(_checkCpuUsage ? Resource.String.compile_cpu_usage : Resource.String.compile_start));
-            progress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
-            progress.Progress = 0;
-            progress.Max = 100;
-            progress.Show();
+            _compileProgress = new Android.App.ProgressDialog(this);
+            _compileProgress.SetCancelable(false);
+            _compileProgress.SetMessage(GetString(_checkCpuUsage ? Resource.String.compile_cpu_usage : Resource.String.compile_start));
+            _compileProgress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
+            _compileProgress.Progress = 0;
+            _compileProgress.Max = 100;
+            _compileProgress.Show();
+            UpdateLockState();
 
             Thread compileThreadWrapper = new Thread(() =>
             {
@@ -2150,11 +2152,11 @@ namespace BmwDeepObd
                             RunOnUiThread(() =>
                             {
                                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                                if (progress != null)
+                                if (_compileProgress != null)
                                 {
                                     string message = string.Format(GetString(Resource.String.compile_cpu_usage_value), usage);
-                                    progress.SetMessage(message);
-                                    progress.Progress = 100 * localCount / maxCount;
+                                    _compileProgress.SetMessage(message);
+                                    _compileProgress.Progress = 100 * localCount / maxCount;
                                     startTime = Stopwatch.GetTimestamp();
                                 }
                             });
@@ -2188,13 +2190,13 @@ namespace BmwDeepObd
                     RunOnUiThread(() =>
                     {
                         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                        if (progress != null)
+                        if (_compileProgress != null)
                         {
                             if (cpuUsage >= 0 && Stopwatch.GetTimestamp() - startTime > 1000 * TickResolMs)
                             {
                                 progressUpdated = true;
-                                progress.SetMessage(GetString(Resource.String.compile_start));
-                                progress.Progress = 100 * localIndex / ActivityCommon.JobReader.PageList.Count;
+                                _compileProgress.SetMessage(GetString(Resource.String.compile_start));
+                                _compileProgress.Progress = 100 * localIndex / ActivityCommon.JobReader.PageList.Count;
                             }
                         }
                     });
@@ -2284,8 +2286,10 @@ namespace BmwDeepObd
                 RunOnUiThread(() =>
                 {
                     CreateActionBarTabs();
-                    progress.Hide();
-                    progress.Dispose();
+                    _compileProgress.Hide();
+                    _compileProgress.Dispose();
+                    _compileProgress = null;
+                    UpdateLockState();
                     if (cpuUsage >= CpuLoadCritical)
                     {
                         _activityCommon.ShowAlert(string.Format(GetString(Resource.String.compile_cpu_usage_high), cpuUsage), Resource.String.alert_title_warning);
