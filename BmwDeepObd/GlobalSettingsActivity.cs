@@ -33,6 +33,8 @@ namespace BmwDeepObd
         private CheckBox _checkBoxStoreDataLogSettings;
         private CheckBox _checkBoxDoubleClickForAppExit;
         private CheckBox _checkBoxSendDataBroadcast;
+        private TextView _textViewCaptionCpuUsage;
+        private CheckBox _checkBoxCheckCpuUsage;
         private Button _buttonStorageLocation;
         private CheckBox _checkBoxCollectDebugInfo;
 
@@ -69,6 +71,12 @@ namespace BmwDeepObd
             _checkBoxStoreDataLogSettings = FindViewById<CheckBox>(Resource.Id.checkBoxStoreDataLogSettings);
             _checkBoxDoubleClickForAppExit = FindViewById<CheckBox>(Resource.Id.checkBoxDoubleClickForAppExit);
             _checkBoxSendDataBroadcast = FindViewById<CheckBox>(Resource.Id.checkBoxSendDataBroadcast);
+
+            _textViewCaptionCpuUsage = FindViewById<TextView>(Resource.Id.textViewCaptionCpuUsage);
+            _checkBoxCheckCpuUsage = FindViewById<CheckBox>(Resource.Id.checkBoxCheckCpuUsage);
+            ViewStates viewStateCpuUsage = ActivityCommon.IsCpuStatisticsSupported() ? ViewStates.Visible : ViewStates.Gone;
+            _textViewCaptionCpuUsage.Visibility = viewStateCpuUsage;
+            _checkBoxCheckCpuUsage.Visibility = viewStateCpuUsage;
 
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
             _buttonStorageLocation.Click += (sender, args) =>
@@ -160,6 +168,7 @@ namespace BmwDeepObd
             _checkBoxStoreDataLogSettings.Checked = ActivityCommon.StoreDataLogSettings;
             _checkBoxDoubleClickForAppExit.Checked = ActivityCommon.DoubleClickForAppExit;
             _checkBoxSendDataBroadcast.Checked = ActivityCommon.SendDataBroadcast;
+            _checkBoxCheckCpuUsage.Checked = ActivityCommon.CheckCpuUsage;
             _checkBoxCollectDebugInfo.Checked = ActivityCommon.CollectDebugInfo;
             UpdateDisplay();
         }
@@ -224,6 +233,7 @@ namespace BmwDeepObd
             ActivityCommon.StoreDataLogSettings = _checkBoxStoreDataLogSettings.Checked;
             ActivityCommon.DoubleClickForAppExit = _checkBoxDoubleClickForAppExit.Checked;
             ActivityCommon.SendDataBroadcast = _checkBoxSendDataBroadcast.Checked;
+            ActivityCommon.CheckCpuUsage = _checkBoxCheckCpuUsage.Checked;
             ActivityCommon.CollectDebugInfo = _checkBoxCollectDebugInfo.Checked;
         }
 

@@ -467,6 +467,8 @@ namespace BmwDeepObd
 
         public static bool SendDataBroadcast { get; set; }
 
+        public static bool CheckCpuUsage { get; set; }
+
         public static bool CollectDebugInfo { get; set; }
 
         public static string YandexApiKey { get; set; }
