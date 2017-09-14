@@ -792,9 +792,18 @@ namespace BmwDeepObd
             return true;
         }
 
-        public static List<int> GetCpuUsageStatistic()
+        public static bool IsCpuStatisticsSupported()
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static List<int> GetCpuUsageStatistic()
+        {
+            if (!IsCpuStatisticsSupported())
             {
                 return null;
             }

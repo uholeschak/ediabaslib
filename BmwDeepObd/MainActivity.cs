@@ -436,6 +436,10 @@ namespace BmwDeepObd
             }
             if (_webClient != null)
             {
+                if (_webClient.IsBusy)
+                {
+                    _webClient.CancelAsync();
+                }
                 _webClient.Dispose();
                 _webClient = null;
             }
@@ -2104,10 +2108,14 @@ namespace BmwDeepObd
                 _updateHandler.Post(CreateActionBarTabs);
                 return;
             }
+            if (!ActivityCommon.IsCpuStatisticsSupported())
+            {
+                _checkCpuLoad = false;
+            }
             StoreLastAppState(LastAppState.Compile);
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
             progress.SetCancelable(false);
-            progress.SetMessage(GetString(Resource.String.compile_cpu_usage));
+            progress.SetMessage(GetString(_checkCpuLoad ? Resource.String.compile_cpu_usage : Resource.String.compile_start));
             progress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
             progress.Progress = 0;
             progress.Max = 100;
