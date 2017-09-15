@@ -10,6 +10,8 @@
   <string name="button_select">Выбрать</string>
   <string name="button_generate">Генерировать</string>
   <string name="button_copy">Копировать</string>
+  <!--Translate-->
+  <string name="button_donate">Donate</string>
   <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения</string>

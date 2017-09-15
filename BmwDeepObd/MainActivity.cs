@@ -1241,8 +1241,14 @@ namespace BmwDeepObd
             if (_startAlertDialog == null && _currentVersionCode != _lastVersionCode)
             {
                 _startAlertDialog = new AlertDialog.Builder(this)
-                    .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
-                    .SetCancelable(true)
+                    .SetNeutralButton(Resource.String.button_donate, (sender, args) =>
+                    {
+                        StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ")));
+                    })
+                    .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                    {
+                    })
+                    .SetCancelable(false)
                     .SetMessage(Resource.String.version_change_info_message)
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
