@@ -10,8 +10,7 @@
   <string name="button_select">Выбрать</string>
   <string name="button_generate">Генерировать</string>
   <string name="button_copy">Копировать</string>
-  <!--Translate-->
-  <string name="button_donate">Donate</string>
+  <string name="button_donate">Пожертвовать</string>
   <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения</string>
@@ -35,6 +34,8 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:
+\n- Использование сервиса для соединения
+\n- Возможность отправлять Broadcasts
 \n- улучшена стабильность</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.8.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 (Автомобили до 4.2012) протоколы.</string>
@@ -51,16 +52,14 @@
   <string name="alert_title_question">Вопрос</string>
 
   <!-- Service -->
-  <!--Translate-->
-  <string name="service_notification">The communication is active</string>
-  <string name="service_stop_comm_app">Open App and stop communication</string>
-  <string name="service_stop_comm">Stop communication</string>
+  <string name="service_notification">Соединение активно</string>
+  <string name="service_stop_comm_app">Открыть приложение и прервать соединение</string>
+  <string name="service_stop_comm">Прервать соединение</string>
 
   <!-- Compile -->
-  <!--Translate-->
-  <string name="compile_cpu_usage">Checking CPU usage</string>
-  <string name="compile_cpu_usage_value">CPU usage: {0}%</string>
-  <string name="compile_cpu_usage_high">The CPU idle usage is very high ({0}%), this could cause communication problems.\nPlease terminate background Apps that consume too much CPU power.</string>
+  <string name="compile_cpu_usage">Проверка загрузки процессора</string>
+  <string name="compile_cpu_usage_value">Загрузка процессора: {0}%</string>
+  <string name="compile_cpu_usage_high">Загрузка процессора на холостом ходу очень высокая ({0}%), это может привести к проблемам в соединении.\nПожалуйста, закройте фоновые приложения, которые слишком загружают процессор.</string>
   <string name="compile_start">Компилировать код пользователя</string>
   <string name="compile_crash">Сбой приложения при компиляции кода пользователя.\nСуществует известная ошибка компилятора:\nне используйте сложно инициализированные структуры или массивы в коде,\nинициализируйте их в конструкторе.</string>
 
@@ -231,8 +230,7 @@
   <string name="tool_job_jobs">Jobs:</string>
   <string name="tool_job_job">Job:</string>
   <string name="tool_job_arguments">Аргументы:</string>
-  <!--Translate-->
-  <string name="tool_job_bin_args">Data (Hex optionally with space)</string>
+  <string name="tool_job_bin_args">Данные (шеснадцатиричные по желаанию с пробелами)</string>
   <string name="tool_job_arguments_error_detail">Без аргументов будут считаны все ошибки</string>
   <string name="tool_job_results">Результаты:</string>
   <string name="tool_job_result">Результат:</string>
