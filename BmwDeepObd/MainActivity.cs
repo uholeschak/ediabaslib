@@ -2139,8 +2139,9 @@ namespace BmwDeepObd
                     for (int i = 0; i < maxCount; i++)
                     {
                         List<int> cpuUsageList = ActivityCommon.GetCpuUsageStatistic();
-                        if (cpuUsageList == null)
+                        if (cpuUsageList == null || !_activityActive)
                         {
+                            cpuUsage = -1;
                             break;
                         }
                         if (cpuUsageList.Count == 4)
@@ -2151,7 +2152,6 @@ namespace BmwDeepObd
                             int localCount = count;
                             RunOnUiThread(() =>
                             {
-                                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                                 if (_compileProgress != null)
                                 {
                                     string message = string.Format(GetString(Resource.String.compile_cpu_usage_value), usage);
@@ -2166,6 +2166,13 @@ namespace BmwDeepObd
                             }
                         }
                     }
+                    RunOnUiThread(() =>
+                    {
+                        if (_compileProgress != null)
+                        {
+                            _compileProgress.Progress = 100;
+                        }
+                    });
                 }
 
                 bool progressUpdated = false;
