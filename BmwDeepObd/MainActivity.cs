@@ -176,6 +176,7 @@ namespace BmwDeepObd
         private WebClient _webClient;
         private Android.App.ProgressDialog _downloadProgress;
         private Android.App.ProgressDialog _compileProgress;
+        private bool _extractZipCanceled;
         private long _downloadFileSize;
         private List<DownloadUrlInfo> _downloadUrlInfoList;
         private AlertDialog _startAlertDialog;
@@ -423,6 +424,16 @@ namespace BmwDeepObd
                 StopEdiabasThread(true);
             }
             DisconnectEdiabasEvents();
+            if (_webClient != null)
+            {
+                if (_webClient.IsBusy)
+                {
+                    _webClient.CancelAsync();
+                }
+                _webClient.Dispose();
+                _webClient = null;
+            }
+            _extractZipCanceled = true;
             StoreSettings();
             if (_activityCommon != null)
             {
@@ -434,15 +445,6 @@ namespace BmwDeepObd
             {
                 _updateHandler.Dispose();
                 _updateHandler = null;
-            }
-            if (_webClient != null)
-            {
-                if (_webClient.IsBusy)
-                {
-                    _webClient.CancelAsync();
-                }
-                _webClient.Dispose();
-                _webClient = null;
             }
             StoreLastAppState(LastAppState.Terminated);
         }
@@ -2571,7 +2573,7 @@ namespace BmwDeepObd
 
         private void ExtractZipFile(string fileName, string targetDirectory, XElement infoXml, bool removeFile = false)
         {
-            bool extractCanceled = false;
+            _extractZipCanceled = false;
             if (_downloadProgress == null)
             {
                 _downloadProgress = new Android.App.ProgressDialog(this);
@@ -2584,7 +2586,7 @@ namespace BmwDeepObd
             _downloadProgress.Progress = 0;
             _downloadProgress.Max = 100;
             _downloadProgress.SetButton((int)DialogButtonType.Negative, GetString(Resource.String.button_abort),
-                (sender, args) => { extractCanceled = true; });
+                (sender, args) => { _extractZipCanceled = true; });
             _downloadProgress.Show();
             _downloadProgress.GetButton((int)DialogButtonType.Negative).Enabled = false;
 
@@ -2635,7 +2637,7 @@ namespace BmwDeepObd
                                     _downloadProgress.Progress = percent;
                                 }
                             });
-                            return extractCanceled;
+                            return _extractZipCanceled;
                         });
                     infoXml?.Save(Path.Combine(targetDirectory, InfoXmlName));
                 }
