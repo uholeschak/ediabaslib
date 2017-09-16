@@ -341,7 +341,7 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
             {
                 return false;
             }
