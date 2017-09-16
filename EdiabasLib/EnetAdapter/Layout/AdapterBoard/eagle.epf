@@ -347,7 +347,6 @@ UsedLibrary="C:/Programs/EAGLE-7.7.0/lbr/xilinx-xcv.lbr"
 UsedLibrary="C:/Programs/EAGLE-7.7.0/lbr/zetex.lbr"
 UsedLibrary="C:/Programs/EAGLE-7.7.0/lbr/zilog.lbr"
 UsedLibrary="D:/Projects/EdiabasLib/EdiabasLib/EnetAdapter/Layout/Libraries/obd_special.lbr"
-UsedLibrary="D:/Downloads/Eagle/Libraries/pinhead/pinhead.lbr"
 UsedLibrary="D:/Downloads/Eagle/Libraries/SparkFun-Eagle-Libraries-master/LilyPad-Wearables.lbr"
 UsedLibrary="D:/Downloads/Eagle/Libraries/SparkFun-Eagle-Libraries-master/SparkFun-Aesthetics.lbr"
 UsedLibrary="D:/Downloads/Eagle/Libraries/SparkFun-Eagle-Libraries-master/SparkFun-Batteries.lbr"
@@ -379,8 +378,6 @@ UsedLibrary="D:/Downloads/Eagle/Libraries/SparkFun-Eagle-Libraries-master/SparkF
 UsedLibrary="D:/Downloads/Eagle/Libraries/SparkFun-Eagle-Libraries-master/SparkFun-Sensors.lbr"
 UsedLibrary="D:/Downloads/Eagle/Libraries/SparkFun-Eagle-Libraries-master/SparkFun-Switches.lbr"
 UsedLibrary="D:/Downloads/Eagle/Libraries/SparkFun-Eagle-Libraries-master/User-Submitted.lbr"
-UsedLibrary="D:/Downloads/Eagle/Libraries/Molex_Library/Molex_By_element14_Batch_1.lbr"
-UsedLibrary="D:/Downloads/Eagle/Libraries/FCI/FCI_By_element14_Batch_1.lbr"
 
 [Win_1]
 Type="Control Panel"
