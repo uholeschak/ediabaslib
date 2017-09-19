@@ -52,6 +52,10 @@ namespace BmwDeepObd
 
         public override Android.App.StartCommandResult OnStartCommand(Intent intent, Android.App.StartCommandFlags flags, int startId)
         {
+            if (intent?.Action == null)
+            {
+                return Android.App.StartCommandResult.Sticky;
+            }
             switch (intent.Action)
             {
                 case ActionStartService:
