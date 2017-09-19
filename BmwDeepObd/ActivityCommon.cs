@@ -794,6 +794,43 @@ namespace BmwDeepObd
             return true;
         }
 
+        public bool ConfigHciSnoopLog(bool enable)
+        {
+            try
+            {
+                // ReSharper disable once UseNullPropagation
+                if (_btAdapter == null)
+                {
+                    return false;
+                }
+                Java.Lang.Reflect.Method configHciSnoopLog = _btAdapter.Class.GetMethod("configHciSnoopLog", Java.Lang.Boolean.Type);
+                // ReSharper disable once UseNullPropagation
+                if (configHciSnoopLog == null)
+                {
+                    return false;
+                }
+                try
+                {
+                    Android.Provider.Settings.Secure.PutInt(_activity.ContentResolver, "bluetooth_hci_log", 1);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                // ReSharper disable once UsePatternMatching
+                Java.Lang.Boolean result = configHciSnoopLog.Invoke(_btAdapter, new Java.Lang.Boolean(enable)) as Java.Lang.Boolean;
+                if (result == null || result == Java.Lang.Boolean.False)
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static bool IsCpuStatisticsSupported()
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
