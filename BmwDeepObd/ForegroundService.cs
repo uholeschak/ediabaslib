@@ -2,7 +2,6 @@
 using Android.Content;
 using Android.OS;
 using Android.Support.V4.Content;
-using Android.Util;
 using System;
 
 namespace BmwDeepObd
@@ -10,7 +9,9 @@ namespace BmwDeepObd
     [Android.App.Service(Label = "@string/app_name")]
     public class ForegroundService : Android.App.Service
     {
+#if DEBUG
         static readonly string Tag = typeof(ForegroundService).FullName;
+#endif
         public const int ServiceRunningNotificationId = 10000;
         public const string BroadcastMessageKey = "broadcast_message";
         public const string BroadcastStopComm = "stop_communication";
@@ -30,7 +31,7 @@ namespace BmwDeepObd
         {
             base.OnCreate();
 #if DEBUG
-            Log.Info(Tag, "OnCreate: the service is initializing.");
+            Android.Util.Log.Info(Tag, "OnCreate: the service is initializing.");
 #endif
             _activityCommon = new ActivityCommon(null);
             _powerManager = GetSystemService(PowerService) as PowerManager;
@@ -62,13 +63,13 @@ namespace BmwDeepObd
                     if (_isStarted)
                     {
 #if DEBUG
-                        Log.Info(Tag, "OnStartCommand: The service is already running.");
+                        Android.Util.Log.Info(Tag, "OnStartCommand: The service is already running.");
 #endif
                     }
                     else
                     {
 #if DEBUG
-                        Log.Info(Tag, "OnStartCommand: The service is starting.");
+                        Android.Util.Log.Info(Tag, "OnStartCommand: The service is starting.");
 #endif
                         RegisterForegroundService();
                         _isStarted = true;
@@ -78,7 +79,7 @@ namespace BmwDeepObd
                 case ActionStopCommunication:
                 {
 #if DEBUG
-                    Log.Info(Tag, "OnStartCommand: Stop communication");
+                    Android.Util.Log.Info(Tag, "OnStartCommand: Stop communication");
 #endif
                     Intent startIntent = new Intent(this, typeof(ActivityMain));
                     startIntent.SetAction(ActionMainActivity);
@@ -93,7 +94,7 @@ namespace BmwDeepObd
                 case ActionStopService:
                 {
 #if DEBUG
-                    Log.Info(Tag, "OnStartCommand: The service is stopping.");
+                    Android.Util.Log.Info(Tag, "OnStartCommand: The service is stopping.");
 #endif
                     SendStopCommBroadcast();
 
