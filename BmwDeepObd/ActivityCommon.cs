@@ -2461,7 +2461,14 @@ namespace BmwDeepObd
                         progress.CancelEvent += (sender, args) =>
                         {
                             cancelled = true;   // cancel flag in event seems to be missing
-                            smtpClient.SendAsyncCancel();
+                            try
+                            {
+                                smtpClient.SendAsyncCancel();
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                         };
                         progress.SetCancelable(true);
                     });
