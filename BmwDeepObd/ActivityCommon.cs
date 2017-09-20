@@ -794,6 +794,50 @@ namespace BmwDeepObd
             return true;
         }
 
+        public static bool ReadHciSnoopLogSettings(out bool enabled, out string logFileName)
+        {
+            enabled = false;
+            logFileName = null;
+            try
+            {
+                string confFileName = @"/etc/bluetooth/bt_stack.conf";
+                if (!File.Exists(confFileName))
+                {
+                    return false;
+                }
+                bool? enabledLocal = null;
+                using (StreamReader file = new StreamReader(confFileName))
+                {
+                    string line;
+                    Regex regexLogOutput = new Regex("^BtSnoopLogOutput\\s*=\\s*(true|false)\\s*$", RegexOptions.IgnoreCase);
+                    Regex regexFileName = new Regex("^BtSnoopFileName\\s*=\\s*(.*)$", RegexOptions.IgnoreCase);
+                    while ((line = file.ReadLine()) != null)
+                    {
+                        MatchCollection matchesLogOutput = regexLogOutput.Matches(line);
+                        if ((matchesLogOutput.Count == 1) && (matchesLogOutput[0].Groups.Count == 2))
+                        {
+                            enabledLocal = string.Compare(matchesLogOutput[0].Groups[1].Value, "true", StringComparison.OrdinalIgnoreCase) == 0;
+                        }
+                        MatchCollection matchesFile = regexFileName.Matches(line);
+                        if ((matchesFile.Count == 1) && (matchesFile[0].Groups.Count == 2))
+                        {
+                            logFileName = matchesFile[0].Groups[1].Value;
+                        }
+                    }
+                }
+                if (!enabledLocal.HasValue || string.IsNullOrEmpty(logFileName))
+                {
+                    return false;
+                }
+                enabled = enabledLocal.Value;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public bool ConfigHciSnoopLog(bool enable)
         {
             try
