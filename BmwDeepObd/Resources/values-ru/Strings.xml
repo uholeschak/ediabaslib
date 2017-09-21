@@ -222,6 +222,9 @@
   <string name="settings_caption_storage">Носитель памяти</string>
   <string name="settings_caption_debug">Отладить</string>
   <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>
+  <!--Translate-->
+  <string name="settings_hci_snoop_log">Bluetooth HCI snoop log file:\n{0}</string>
+  <string name="settings_hci_snoop_log_config">Configure snoop log</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>
