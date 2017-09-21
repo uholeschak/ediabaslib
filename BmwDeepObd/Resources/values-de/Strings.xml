@@ -221,6 +221,8 @@
   <string name="settings_caption_storage">Speichermedium</string>
   <string name="settings_caption_debug">Debuggen</string>
   <string name="settings_collect_debug_info">Debug-Informationen für Trace-Datei sammeln</string>
+  <string name="settings_hci_snoop_log">Bluetooth HCI Snoop Log Datei:\n{0}</string>
+  <string name="settings_hci_snoop_log_config">Snoop Log Konfigurieren</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas Tool</string>

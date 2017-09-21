@@ -196,6 +196,7 @@ namespace BmwDeepObd
         public const string DownloadDir = "Download";
         public const string AppNameSpace = "de.holeschak.bmw_deep_obd";
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
+        public const string SettingBluetoothHciLog = "bluetooth_hci_log";
         private const string MailInfoDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Mail.xml";
 
         private static readonly Dictionary<long, string> VagDtcSaeDict = new Dictionary<long, string>
@@ -838,7 +839,22 @@ namespace BmwDeepObd
             }
         }
 
-        public bool ConfigHciSnoopLog(bool enable)
+        public bool GetConfigHciSnoopLog(out bool enable)
+        {
+            enable = false;
+            try
+            {
+                int value = Android.Provider.Settings.Secure.GetInt(_activity.ContentResolver, SettingBluetoothHciLog, 0);
+                enable = value != 0;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool SetConfigHciSnoopLog(bool enable)
         {
             try
             {
@@ -853,16 +869,30 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                try
+                if (enable)
                 {
-                    Android.Provider.Settings.Secure.PutInt(_activity.ContentResolver, "bluetooth_hci_log", 1);
-                }
-                catch (Exception)
-                {
-                    // ignored
+                    try
+                    {
+                        Android.Provider.Settings.Secure.PutInt(_activity.ContentResolver, SettingBluetoothHciLog, 1);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
                 // ReSharper disable once UsePatternMatching
                 Java.Lang.Boolean result = configHciSnoopLog.Invoke(_btAdapter, new Java.Lang.Boolean(enable)) as Java.Lang.Boolean;
+                if (!enable)
+                {
+                    try
+                    {
+                        Android.Provider.Settings.Secure.PutInt(_activity.ContentResolver, SettingBluetoothHciLog, 0);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
                 if (result == null || result == Java.Lang.Boolean.False)
                 {
                     return false;

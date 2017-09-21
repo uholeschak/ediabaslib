@@ -1,4 +1,6 @@
-﻿using Android.OS;
+﻿using System;
+using Android.Content;
+using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
@@ -15,6 +17,11 @@ namespace BmwDeepObd
         // Intent extra
         public const string ExtraSelection = "selection";
         public const string SelectionStorageLocation = "storage_location";
+
+        private enum ActivityRequest
+        {
+            RequestDevelopmentSettings,
+        }
 
         private string _selection;
         private ActivityCommon _activityCommon;
@@ -37,6 +44,8 @@ namespace BmwDeepObd
         private CheckBox _checkBoxCheckCpuUsage;
         private Button _buttonStorageLocation;
         private CheckBox _checkBoxCollectDebugInfo;
+        private CheckBox _checkBoxHciSnoopLog;
+        private Button _buttonHciSnoopLog;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -86,6 +95,18 @@ namespace BmwDeepObd
 
             _checkBoxCollectDebugInfo = FindViewById<CheckBox>(Resource.Id.checkBoxCollectDebugInfo);
 
+            ViewStates viewStateSnoopLog = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ? ViewStates.Visible : ViewStates.Gone;
+            _checkBoxHciSnoopLog = FindViewById<CheckBox>(Resource.Id.checkBoxHciSnoopLog);
+            _checkBoxHciSnoopLog.Visibility = viewStateSnoopLog;
+            _checkBoxHciSnoopLog.Enabled = false;
+
+            _buttonHciSnoopLog = FindViewById<Button>(Resource.Id.buttonHciSnoopLog);
+            _buttonHciSnoopLog.Visibility = viewStateSnoopLog;
+            _buttonHciSnoopLog.Click += (sender, args) =>
+            {
+                ShowDevelopmentSettings();
+            };
+
             ReadSettings();
             CheckSelection(_selection);
         }
@@ -107,6 +128,16 @@ namespace BmwDeepObd
                     return true;
             }
             return base.OnOptionsItemSelected(item);
+        }
+
+        protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
+        {
+            switch ((ActivityRequest) requestCode)
+            {
+                case ActivityRequest.RequestDevelopmentSettings:
+                    UpdateDisplay();
+                    break;
+            }
         }
 
         private void ReadSettings()
@@ -246,6 +277,21 @@ namespace BmwDeepObd
                 displayName = "..." + displayName.Substring(displayName.Length - maxLength);
             }
             _buttonStorageLocation.Text = displayName;
+
+            bool snoopLogEnabled = false;
+            if (_activityCommon.GetConfigHciSnoopLog(out bool enabledConfig))
+            {
+                snoopLogEnabled = enabledConfig;
+            }
+            if (ActivityCommon.ReadHciSnoopLogSettings(out bool enabledSettings, out string logFileName))
+            {
+                if (!enabledSettings)
+                {
+                    snoopLogEnabled = false;
+                }
+            }
+            _checkBoxHciSnoopLog.Checked = snoopLogEnabled;
+            _checkBoxHciSnoopLog.Text = string.Format(GetString(Resource.String.settings_hci_snoop_log), logFileName ?? "-");
         }
 
         private void SelectMedia()
@@ -270,5 +316,19 @@ namespace BmwDeepObd
             }
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool ShowDevelopmentSettings()
+        {
+            try
+            {
+                Intent intent = new Intent(Android.Provider.Settings.ActionApplicationDevelopmentSettings);
+                StartActivityForResult(intent, (int)ActivityRequest.RequestDevelopmentSettings);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }
