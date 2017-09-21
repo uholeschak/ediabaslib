@@ -801,8 +801,23 @@ namespace BmwDeepObd
             logFileName = null;
             try
             {
-                string confFileName = @"/etc/bluetooth/bt_stack.conf";
-                if (!File.Exists(confFileName))
+                string[] confFileList =
+                {
+                    @"/etc/bluetooth/bt_stack.conf",
+                    @"/vendor/etc/bluetooth/bt_stack.conf",
+                    @"/system/etc/bluetooth/bt_stack.conf",
+                };
+
+                string confFileName = null;
+                foreach (string file in confFileList)
+                {
+                    if (File.Exists(file))
+                    {
+                        confFileName = file;
+                        break;
+                    }
+                }
+                if (string.IsNullOrEmpty(confFileName))
                 {
                     return false;
                 }
