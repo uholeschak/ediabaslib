@@ -808,6 +808,11 @@ namespace BmwDeepObd
                     @"/system/etc/bluetooth/bt_stack.conf",
                 };
 
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                {
+                    return false;
+                }
+
                 string confFileName = null;
                 foreach (string file in confFileList)
                 {
@@ -859,6 +864,10 @@ namespace BmwDeepObd
             enable = false;
             try
             {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                {
+                    return false;
+                }
                 int value = Android.Provider.Settings.Secure.GetInt(_activity.ContentResolver, SettingBluetoothHciLog, 0);
                 enable = value != 0;
             }
@@ -873,6 +882,10 @@ namespace BmwDeepObd
         {
             try
             {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                {
+                    return false;
+                }
                 // ReSharper disable once UseNullPropagation
                 if (_btAdapter == null)
                 {

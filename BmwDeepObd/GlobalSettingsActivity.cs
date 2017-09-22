@@ -95,7 +95,7 @@ namespace BmwDeepObd
 
             _checkBoxCollectDebugInfo = FindViewById<CheckBox>(Resource.Id.checkBoxCollectDebugInfo);
 
-            ViewStates viewStateSnoopLog = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ? ViewStates.Visible : ViewStates.Gone;
+            ViewStates viewStateSnoopLog = _activityCommon.GetConfigHciSnoopLog(out bool _) ? ViewStates.Visible : ViewStates.Gone;
             _checkBoxHciSnoopLog = FindViewById<CheckBox>(Resource.Id.checkBoxHciSnoopLog);
             _checkBoxHciSnoopLog.Visibility = viewStateSnoopLog;
             _checkBoxHciSnoopLog.Enabled = false;
