@@ -986,7 +986,7 @@ namespace BmwDeepObd
                 _traceDir = null;
                 if (_traceActive && !string.IsNullOrEmpty(_configFileName))
                 {
-                    _traceDir = logDir;
+                    _traceDir = Path.Combine(_appDataPath, "Log");
                 }
                 _translationList = null;
                 _translatedList = null;
