@@ -2464,6 +2464,14 @@ namespace BmwDeepObd
                         mail.Attachments.Add(new Attachment(traceFile));
                     }
 
+                    if (GetConfigHciSnoopLog(out bool enabledConfig) && ReadHciSnoopLogSettings(out bool enabledSettings, out string logFileName))
+                    {
+                        if (enabledConfig && enabledSettings && !string.IsNullOrEmpty(logFileName) && File.Exists(logFileName))
+                        {
+                            mail.Attachments.Add(new Attachment(logFileName));
+                        }
+                    }
+
                     string downloadDir = Path.Combine(appDataDir, DownloadDir);
                     string mailInfoFile = Path.Combine(downloadDir, "Mail.xml");
                     Directory.CreateDirectory(downloadDir);
@@ -2482,6 +2490,10 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nLanguage: {0}", GetCurrentLanguage()));
                     sb.Append(string.Format("\nAndroid version: {0}", Build.VERSION.Sdk));
                     sb.Append(string.Format("\nAndroid model: {0}", Build.Model));
+                    sb.Append(string.Format("\nAndroid product: {0}", Build.Product));
+                    sb.Append(string.Format("\nAndroid device: {0}", Build.Device));
+                    sb.Append(string.Format("\nAndroid board: {0}", Build.Board));
+                    sb.Append(string.Format("\nAndroid brand: {0}", Build.Brand));
                     sb.Append(string.Format("\nApp version name: {0}", packageInfo.VersionName));
                     sb.Append(string.Format("\nApp version code: {0}", packageInfo.VersionCode));
                     sb.Append(string.Format("\nApp id: {0}", AppId));
