@@ -1901,22 +1901,29 @@ namespace BmwDeepObd
                         if (ecuListBest == null)
                         {
                             _commErrorsOccured = true;
-                            AlertDialog altertDialog = new AlertDialog.Builder(this)
-                                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                                {
-                                    SelectConfigTypeRequest();
-                                })
-                                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                                {
-                                })
-                                .SetCancelable(true)
-                                .SetMessage(Resource.String.xml_tool_no_response_manual)
-                                .SetTitle(Resource.String.alert_title_warning)
-                                .Show();
-                            TextView messageView = altertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                            if (messageView != null)
+                            if (!ActivityCommon.IsBtReliable())
                             {
-                                messageView.MovementMethod = new LinkMovementMethod();
+                                _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_not_reliable), Resource.String.alert_title_error);
+                            }
+                            else
+                            {
+                                AlertDialog altertDialog = new AlertDialog.Builder(this)
+                                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                    {
+                                        SelectConfigTypeRequest();
+                                    })
+                                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                    {
+                                    })
+                                    .SetCancelable(true)
+                                    .SetMessage(Resource.String.xml_tool_no_response_manual)
+                                    .SetTitle(Resource.String.alert_title_warning)
+                                    .Show();
+                                TextView messageView = altertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                                if (messageView != null)
+                                {
+                                    messageView.MovementMethod = new LinkMovementMethod();
+                                }
                             }
                         }
                         else

@@ -933,6 +933,16 @@ namespace BmwDeepObd
             return true;
         }
 
+        public static bool IsBtReliable()
+        {
+            if (Build.VERSION.SdkInt == BuildVersionCodes.M &&
+                string.Compare(Build.Model, "px5", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static bool IsCpuStatisticsSupported()
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
@@ -2464,11 +2474,14 @@ namespace BmwDeepObd
                         mail.Attachments.Add(new Attachment(traceFile));
                     }
 
-                    if (GetConfigHciSnoopLog(out bool enabledConfig) && ReadHciSnoopLogSettings(out bool enabledSettings, out string logFileName))
+                    if (SelectedInterface == InterfaceType.Bluetooth)
                     {
-                        if (enabledConfig && enabledSettings && !string.IsNullOrEmpty(logFileName) && File.Exists(logFileName))
+                        if (GetConfigHciSnoopLog(out bool enabledConfig) && ReadHciSnoopLogSettings(out bool enabledSettings, out string logFileName))
                         {
-                            mail.Attachments.Add(new Attachment(logFileName));
+                            if (enabledConfig && enabledSettings && !string.IsNullOrEmpty(logFileName) && File.Exists(logFileName))
+                            {
+                                mail.Attachments.Add(new Attachment(logFileName));
+                            }
                         }
                     }
 
@@ -2488,12 +2501,20 @@ namespace BmwDeepObd
                     sb.Append("Deep OBD Trace info");
                     sb.Append(string.Format("\nDate: {0:u}", DateTime.Now));
                     sb.Append(string.Format("\nLanguage: {0}", GetCurrentLanguage()));
-                    sb.Append(string.Format("\nAndroid version: {0}", Build.VERSION.Sdk));
-                    sb.Append(string.Format("\nAndroid model: {0}", Build.Model));
-                    sb.Append(string.Format("\nAndroid product: {0}", Build.Product));
-                    sb.Append(string.Format("\nAndroid device: {0}", Build.Device));
-                    sb.Append(string.Format("\nAndroid board: {0}", Build.Board));
-                    sb.Append(string.Format("\nAndroid brand: {0}", Build.Brand));
+                    sb.Append(string.Format("\nAndroid version: {0}", Build.VERSION.Sdk ?? string.Empty));
+                    sb.Append(string.Format("\nAndroid id: {0}", Build.Id ?? string.Empty));
+                    sb.Append(string.Format("\nAndroid display: {0}", Build.Display ?? string.Empty));
+                    sb.Append(string.Format("\nAndroid fingerprint: {0}", Build.Fingerprint ?? string.Empty));
+                    sb.Append(string.Format("\nAndroid type: {0}", Build.Type ?? string.Empty));
+                    sb.Append(string.Format("\nAndroid tags: {0}", Build.Tags ?? string.Empty));
+                    sb.Append(string.Format("\nAndroid manufacturer: {0}", Build.Manufacturer ?? string.Empty));
+                    sb.Append(string.Format("\nAndroid model: {0}", Build.Model ?? string.Empty));
+                    sb.Append(string.Format("\nAndroid product: {0}", Build.Product ?? string.Empty));
+                    sb.Append(string.Format("\nAndroid device: {0}", Build.Device ?? string.Empty));
+                    sb.Append(string.Format("\nAndroid board: {0}", Build.Board ?? string.Empty));
+                    sb.Append(string.Format("\nAndroid brand: {0}", Build.Brand ?? string.Empty));
+                    sb.Append(string.Format("\nAndroid hardware: {0}", Build.Hardware ?? string.Empty));
+                    sb.Append(string.Format("\nAndroid user: {0}", Build.User ?? string.Empty));
                     sb.Append(string.Format("\nApp version name: {0}", packageInfo.VersionName));
                     sb.Append(string.Format("\nApp version code: {0}", packageInfo.VersionCode));
                     sb.Append(string.Format("\nApp id: {0}", AppId));
