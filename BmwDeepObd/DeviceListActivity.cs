@@ -340,6 +340,12 @@ namespace BmwDeepObd
 
                         case AdapterType.Unknown:
                         {
+                            if (!ActivityCommon.IsBtReliable())
+                            {
+                                _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_not_reliable), Resource.String.alert_title_error);
+                                break;
+                            }
+
                             bool yesSelected = false;
                             _altertInfoDialog = new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
