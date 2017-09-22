@@ -1901,7 +1901,7 @@ namespace BmwDeepObd
                         if (ecuListBest == null)
                         {
                             _commErrorsOccured = true;
-                            if (!ActivityCommon.IsBtReliable())
+                            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth && !ActivityCommon.IsBtReliable())
                             {
                                 _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_not_reliable), Resource.String.alert_title_error);
                             }
