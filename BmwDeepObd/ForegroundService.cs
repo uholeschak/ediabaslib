@@ -1,4 +1,5 @@
-﻿using Android.Support.V4.App;
+﻿using System;
+using Android.Support.V4.App;
 using Android.Content;
 using Android.OS;
 using Android.Support.V4.Content;
@@ -15,6 +16,7 @@ namespace BmwDeepObd
         public const string BroadcastMessageKey = "broadcast_message";
         public const string BroadcastStopComm = "stop_communication";
         public const string NotificationBroadcastAction = ActivityCommon.AppNameSpace + ".Notification.Action";
+        public const string ActionBroadcastCommand = ActivityCommon.AppNameSpace + ".Action.Command";
 
         public const string ActionStartService = "ForegroundService.action.START_SERVICE";
         public const string ActionStopService = "ForegroundService.action.STOP_SERVICE";
@@ -30,7 +32,7 @@ namespace BmwDeepObd
 #if DEBUG
             Android.Util.Log.Info(Tag, "OnCreate: the service is initializing.");
 #endif
-            _activityCommon = new ActivityCommon(this);
+            _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
             lock (ActivityCommon.GlobalLockObject)
             {
@@ -203,6 +205,66 @@ namespace BmwDeepObd
                 GetText(Resource.String.service_stop_comm_app),
                 stopServicePendingIntent);
             return builder.Build();
+        }
+
+        private void BroadcastReceived(Context context, Intent intent)
+        {
+            if (intent == null)
+            {
+                return;
+            }
+            string action = intent.Action;
+            switch (action)
+            {
+                case ActionBroadcastCommand:
+                {
+                    string request = intent.GetStringExtra("action");
+                    if (string.IsNullOrEmpty(request))
+                    {
+                        break;
+                    }
+                    string[] requestList  = request.Split(':');
+                    if (requestList.Length < 1)
+                    {
+                        break;
+                    }
+                    if (string.Compare(requestList[0], "new_page", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        if (requestList.Length < 2)
+                        {
+                            break;
+                        }
+                        JobReader.PageInfo pageInfoSel = null;
+                        foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                        {
+                            if (string.Compare(pageInfo.Name, requestList[1], StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                pageInfoSel = pageInfo;
+                                break;
+                            }
+                        }
+                        if (pageInfoSel == null)
+                        {
+                            break;
+                        }
+                        if (!ActivityCommon.CommActive)
+                        {
+                            break;
+                        }
+                        EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                        if (ediabasThread == null)
+                        {
+                            break;
+                        }
+                        if (ediabasThread.JobPageInfo != pageInfoSel)
+                        {
+                            ActivityCommon.EdiabasThread.CommActive = true;
+                            ediabasThread.JobPageInfo = pageInfoSel;
+                        }
+                    }
+                    break;
+                }
+            }
         }
     }
 }

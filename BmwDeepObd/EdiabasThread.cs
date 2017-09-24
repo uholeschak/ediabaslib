@@ -72,6 +72,8 @@ namespace BmwDeepObd
 
         public delegate void DataUpdatedEventHandler(object sender, EventArgs e);
         public event DataUpdatedEventHandler DataUpdated;
+        public delegate void PageChangedEventHandler(object sender, EventArgs e);
+        public event PageChangedEventHandler PageChanged;
         public delegate void ThreadTerminatedEventHandler(object sender, EventArgs e);
         public event ThreadTerminatedEventHandler ThreadTerminated;
 
@@ -93,10 +95,19 @@ namespace BmwDeepObd
             }
         }
 
+        private JobReader.PageInfo _jobPageInfo;
         public JobReader.PageInfo JobPageInfo
         {
-            get;
-            set;
+            get => _jobPageInfo;
+            set
+            {
+                bool changed = _jobPageInfo != value;
+                _jobPageInfo = value;
+                if (changed)
+                {
+                    PageChangedEvent();
+                }
+            }
         }
 
         public bool CommActive
@@ -1019,6 +1030,11 @@ namespace BmwDeepObd
             }
             _lastUpdateTime = Stopwatch.GetTimestamp();
             DataUpdated?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void PageChangedEvent()
+        {
+            PageChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void ThreadTerminatedEvent()
