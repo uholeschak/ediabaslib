@@ -1080,6 +1080,7 @@ namespace BmwDeepObd
             if (ActivityCommon.EdiabasThread != null)
             {
                 ActivityCommon.EdiabasThread.DataUpdated += DataUpdated;
+                ActivityCommon.EdiabasThread.PageChanged += PageChanged;
                 ActivityCommon.EdiabasThread.ThreadTerminated += ThreadTerminated;
             }
         }
@@ -1089,6 +1090,7 @@ namespace BmwDeepObd
             if (ActivityCommon.EdiabasThread != null)
             {
                 ActivityCommon.EdiabasThread.DataUpdated -= DataUpdated;
+                ActivityCommon.EdiabasThread.PageChanged -= PageChanged;
                 ActivityCommon.EdiabasThread.ThreadTerminated -= ThreadTerminated;
             }
         }
@@ -1357,6 +1359,30 @@ namespace BmwDeepObd
         private void DataUpdated(object sender, EventArgs e)
         {
             RunOnUiThread(UpdateDisplay);
+        }
+
+        private void PageChanged(object sender, EventArgs e)
+        {
+            RunOnUiThread(() =>
+            {
+                try
+                {
+                    JobReader.PageInfo pageInfo = ActivityCommon.EdiabasThread?.JobPageInfo;
+                    if (pageInfo != null)
+                    {
+                        int pageIndex = ActivityCommon.JobReader.PageList.IndexOf(pageInfo);
+                        if (pageIndex >= 0 && pageIndex < _tabLayout.TabCount && _tabLayout.SelectedTabPosition != pageIndex)
+                        {
+                            _tabLayout.GetTabAt(pageIndex).Select();
+                        }
+                    }
+
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            });
         }
 
         private void ThreadTerminated(object sender, EventArgs e)
