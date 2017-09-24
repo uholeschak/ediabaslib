@@ -359,6 +359,7 @@ namespace BmwDeepObd
         };
 
         private bool _disposed;
+        private readonly Context _context;
         private readonly Android.App.Activity _activity;
         private readonly BcReceiverUpdateDisplayDelegate _bcReceiverUpdateDisplayHandler;
         private readonly BcReceiverReceivedDelegate _bcReceiverReceivedHandler;
@@ -525,23 +526,24 @@ namespace BmwDeepObd
             JobReader = new JobReader();
         }
 
-        public ActivityCommon(Android.App.Activity activity, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null,
+        public ActivityCommon(Context context, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null,
             BcReceiverReceivedDelegate bcReceiverReceivedHandler = null, ActivityCommon cacheActivity = null)
         {
             lock (LockObject)
             {
                 _instanceCount++;
             }
-            _activity = activity;
+            _context = context;
+            _activity = context as Android.App.Activity;
             _bcReceiverUpdateDisplayHandler = bcReceiverUpdateDisplayHandler;
             _bcReceiverReceivedHandler = bcReceiverReceivedHandler;
             Emulator = IsEmulator();
-            _clipboardManager = activity?.GetSystemService(Context.ClipboardService);
+            _clipboardManager = context?.GetSystemService(Context.ClipboardService);
             _btAdapter = BluetoothAdapter.DefaultAdapter;
-            _maWifi = (WifiManager)activity?.GetSystemService(Context.WifiService);
-            _maConnectivity = (ConnectivityManager)activity?.GetSystemService(Context.ConnectivityService);
-            _usbManager = activity?.GetSystemService(Context.UsbService) as UsbManager;
-            _powerManager = activity?.GetSystemService(Context.PowerService) as PowerManager;
+            _maWifi = (WifiManager)context?.GetSystemService(Context.WifiService);
+            _maConnectivity = (ConnectivityManager)context?.GetSystemService(Context.ConnectivityService);
+            _usbManager = context?.GetSystemService(Context.UsbService) as UsbManager;
+            _powerManager = context?.GetSystemService(Context.PowerService) as PowerManager;
             if (_powerManager != null)
             {
                 _wakeLockScreenBright = _powerManager.NewWakeLock(WakeLockFlags.ScreenBright | WakeLockFlags.OnAfterRelease, "ScreenBrightLock");
@@ -562,17 +564,17 @@ namespace BmwDeepObd
             _selectedInterface = InterfaceType.None;
             _yandexTransDict = cacheActivity?._yandexTransDict ?? new Dictionary<string, Dictionary<string, string>>();
 
-            if (activity != null && ((_bcReceiverUpdateDisplayHandler != null) || (_bcReceiverReceivedHandler != null)))
+            if (context != null && ((_bcReceiverUpdateDisplayHandler != null) || (_bcReceiverReceivedHandler != null)))
             {
                 _bcReceiver = new Receiver(this);
-                LocalBroadcastManager.GetInstance(activity).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
-                activity.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
-                activity.RegisterReceiver(_bcReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
+                LocalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
+                context.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
+                context.RegisterReceiver(_bcReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
                 if (UsbSupport)
                 {   // usb handling
-                    activity.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
-                    activity.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceAttached));
-                    activity.RegisterReceiver(_bcReceiver, new IntentFilter(ActionUsbPermission));
+                    context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
+                    context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceAttached));
+                    context.RegisterReceiver(_bcReceiver, new IntentFilter(ActionUsbPermission));
                     if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
                     {   // attached event fails
                         _usbCheckTimer = new Timer(UsbCheckEvent, null, 1000, 1000);
@@ -606,10 +608,10 @@ namespace BmwDeepObd
                         _usbCheckTimer.Dispose();
                         _usbCheckTimer = null;
                     }
-                    if (_activity != null && _bcReceiver != null)
+                    if (_context != null && _bcReceiver != null)
                     {
-                        LocalBroadcastManager.GetInstance(_activity).UnregisterReceiver(_bcReceiver);
-                        _activity.UnregisterReceiver(_bcReceiver);
+                        LocalBroadcastManager.GetInstance(_context).UnregisterReceiver(_bcReceiver);
+                        _context.UnregisterReceiver(_bcReceiver);
                         _bcReceiver = null;
                     }
                     if (_wakeLockScreenBright != null)
@@ -680,16 +682,16 @@ namespace BmwDeepObd
             switch (_selectedInterface)
             {
                 case InterfaceType.Bluetooth:
-                    return _activity.GetString(Resource.String.select_interface_bt);
+                    return _context.GetString(Resource.String.select_interface_bt);
 
                 case InterfaceType.Enet:
-                    return _activity.GetString(Resource.String.select_interface_enet);
+                    return _context.GetString(Resource.String.select_interface_enet);
 
                 case InterfaceType.ElmWifi:
-                    return _activity.GetString(Resource.String.select_interface_elmwifi);
+                    return _context.GetString(Resource.String.select_interface_elmwifi);
 
                 case InterfaceType.Ftdi:
-                    return _activity.GetString(Resource.String.select_interface_ftdi);
+                    return _context.GetString(Resource.String.select_interface_ftdi);
             }
             return string.Empty;
         }
@@ -699,19 +701,19 @@ namespace BmwDeepObd
             switch (SelectedManufacturer)
             {
                 case ManufacturerType.Bmw:
-                    return _activity.GetString(Resource.String.select_manufacturer_bmw);
+                    return _context.GetString(Resource.String.select_manufacturer_bmw);
 
                 case ManufacturerType.Audi:
-                    return _activity.GetString(Resource.String.select_manufacturer_audi);
+                    return _context.GetString(Resource.String.select_manufacturer_audi);
 
                 case ManufacturerType.Seat:
-                    return _activity.GetString(Resource.String.select_manufacturer_seat);
+                    return _context.GetString(Resource.String.select_manufacturer_seat);
 
                 case ManufacturerType.Skoda:
-                    return _activity.GetString(Resource.String.select_manufacturer_skoda);
+                    return _context.GetString(Resource.String.select_manufacturer_skoda);
 
                 case ManufacturerType.Vw:
-                    return _activity.GetString(Resource.String.select_manufacturer_vw);
+                    return _context.GetString(Resource.String.select_manufacturer_vw);
 
             }
             return string.Empty;
@@ -781,17 +783,17 @@ namespace BmwDeepObd
 
         public bool StartForegroundService()
         {
-            Intent startServiceIntent = new Intent(_activity, typeof(ForegroundService));
+            Intent startServiceIntent = new Intent(_context, typeof(ForegroundService));
             startServiceIntent.SetAction(ForegroundService.ActionStartService);
-            _activity.StartService(startServiceIntent);
+            _context.StartService(startServiceIntent);
             return true;
         }
 
         public bool StopForegroundService()
         {
-            Intent stopServiceIntent = new Intent(_activity, typeof(ForegroundService));
+            Intent stopServiceIntent = new Intent(_context, typeof(ForegroundService));
             stopServiceIntent.SetAction(ForegroundService.ActionStopService);
-            _activity.StopService(stopServiceIntent);
+            _context.StopService(stopServiceIntent);
             return true;
         }
 
@@ -868,7 +870,7 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                int value = Android.Provider.Settings.Secure.GetInt(_activity.ContentResolver, SettingBluetoothHciLog, 0);
+                int value = Android.Provider.Settings.Secure.GetInt(_context.ContentResolver, SettingBluetoothHciLog, 0);
                 enable = value != 0;
             }
             catch (Exception)
@@ -901,7 +903,7 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        Android.Provider.Settings.Secure.PutInt(_activity.ContentResolver, SettingBluetoothHciLog, 1);
+                        Android.Provider.Settings.Secure.PutInt(_context.ContentResolver, SettingBluetoothHciLog, 1);
                     }
                     catch (Exception)
                     {
@@ -914,7 +916,7 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        Android.Provider.Settings.Secure.PutInt(_activity.ContentResolver, SettingBluetoothHciLog, 0);
+                        Android.Provider.Settings.Secure.PutInt(_context.ContentResolver, SettingBluetoothHciLog, 0);
                     }
                     catch (Exception)
                     {
@@ -1272,14 +1274,14 @@ namespace BmwDeepObd
                 string adapterIp = GetEnetAdapterIp();
                 if (!string.IsNullOrEmpty(adapterIp))
                 {
-                    new AlertDialog.Builder(_activity)
+                    new AlertDialog.Builder(_context)
                     .SetMessage(Resource.String.enet_adapter_web_info)
                     .SetTitle(Resource.String.alert_title_info)
                     .SetNeutralButton(Resource.String.button_ok, (s, e) =>
                     {
                         try
                         {
-                            _activity.StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"http://" + adapterIp)));
+                            _context.StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"http://" + adapterIp)));
                         }
                         catch (Exception)
                         {
@@ -1313,7 +1315,7 @@ namespace BmwDeepObd
                 handler();
                 return true;
             }
-            new AlertDialog.Builder(_activity)
+            new AlertDialog.Builder(_context)
             .SetMessage(Resource.String.connected_with_wifi_adapter)
             .SetTitle(Resource.String.alert_title_warning)
             .SetPositiveButton(Resource.String.button_yes, (s, e) =>
@@ -1345,7 +1347,7 @@ namespace BmwDeepObd
                     return false;
                 }
                 bool ignoreDismiss = false;
-                AlertDialog alertDialog = new AlertDialog.Builder(_activity)
+                AlertDialog alertDialog = new AlertDialog.Builder(_context)
                 .SetMessage(Resource.String.elmwifi_adapter_warn)
                 .SetTitle(Resource.String.alert_title_warning)
                 .SetPositiveButton(Resource.String.button_yes, (s, e) =>
@@ -1390,7 +1392,7 @@ namespace BmwDeepObd
                     if (!enetSsid.Contains(AdapterSsid))
                     {
                         bool ignoreDismiss = false;
-                        AlertDialog alertDialog = new AlertDialog.Builder(_activity)
+                        AlertDialog alertDialog = new AlertDialog.Builder(_context)
                         .SetMessage(Resource.String.enet_adapter_ssid_warn)
                         .SetTitle(Resource.String.alert_title_warning)
                         .SetPositiveButton(Resource.String.button_yes, (s, e) =>
@@ -1423,7 +1425,7 @@ namespace BmwDeepObd
         {
             if (_selectedInterface == InterfaceType.Enet)
             {
-                AlertDialog alterDialog = new AlertDialog.Builder(_activity)
+                AlertDialog alterDialog = new AlertDialog.Builder(_context)
                 .SetMessage(Resource.String.enet_adapter_wifi_info)
                 .SetTitle(Resource.String.alert_title_info)
                 .SetNeutralButton(Resource.String.button_ok, (s, e) =>
@@ -1434,7 +1436,7 @@ namespace BmwDeepObd
                         {
                             _maWifi.SetWifiEnabled(true);
                         }
-                        _activity.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
+                        _context.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
                     }
                     catch (Exception)
                     {
@@ -1451,7 +1453,7 @@ namespace BmwDeepObd
                 {
                     _maWifi.SetWifiEnabled(true);
                 }
-                _activity.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
+                _context.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
             }
             catch (Exception)
             {
@@ -1462,7 +1464,7 @@ namespace BmwDeepObd
 
         public void ShowAlert(string message, int titleId)
         {
-            new AlertDialog.Builder(_activity)
+            new AlertDialog.Builder(_context)
             .SetMessage(message)
             .SetTitle(titleId)
             .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
@@ -1475,9 +1477,9 @@ namespace BmwDeepObd
             {
                 return;
             }
-            AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
+            AlertDialog.Builder builder = new AlertDialog.Builder(_context);
             builder.SetTitle(Resource.String.select_media);
-            ListView listView = new ListView(_activity);
+            ListView listView = new ListView(_context);
 
             List<string> mediaNames = GetAllStorageMedia();
             int mediaIndex = 0;
@@ -1503,7 +1505,7 @@ namespace BmwDeepObd
                 {
                     FileSystemBlockInfo blockInfo = GetFileSystemBlockInfo(name);
                     displayName = String.Format(new FileSizeFormatProvider(), "{0} ({1:fs1}/{2:fs1} {3})",
-                        name, blockInfo.AvailableSizeBytes, blockInfo.TotalSizeBytes, _activity.GetString(Resource.String.free_space));
+                        name, blockInfo.AvailableSizeBytes, blockInfo.TotalSizeBytes, _context.GetString(Resource.String.free_space));
                     if (displayName.Length > maxLength)
                     {
                         displayName = "..." + displayName.Substring(displayName.Length - maxLength);
@@ -1515,9 +1517,9 @@ namespace BmwDeepObd
                 }
                 displayNames.Add(displayName);
             }
-            displayNames.Insert(0, _activity.GetString(Resource.String.default_media));
+            displayNames.Insert(0, _context.GetString(Resource.String.default_media));
 
-            ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity,
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(_context,
                 Android.Resource.Layout.SimpleListItemSingleChoice, displayNames);
             listView.Adapter = adapter;
             listView.ChoiceMode = ChoiceMode.Single;
@@ -1551,24 +1553,24 @@ namespace BmwDeepObd
             {
                 return;
             }
-            AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
+            AlertDialog.Builder builder = new AlertDialog.Builder(_context);
             builder.SetTitle(Resource.String.select_interface);
-            ListView listView = new ListView(_activity);
+            ListView listView = new ListView(_context);
 
             List<string> interfaceNames = new List<string>
             {
-                _activity.GetString(Resource.String.select_interface_bt),
+                _context.GetString(Resource.String.select_interface_bt),
             };
             if (SelectedManufacturer == ManufacturerType.Bmw)
             {
-                interfaceNames.Add(_activity.GetString(Resource.String.select_interface_enet));
-                interfaceNames.Add(_activity.GetString(Resource.String.select_interface_elmwifi));
+                interfaceNames.Add(_context.GetString(Resource.String.select_interface_enet));
+                interfaceNames.Add(_context.GetString(Resource.String.select_interface_elmwifi));
                 if (UsbSupport)
                 {
-                    interfaceNames.Add(_activity.GetString(Resource.String.select_interface_ftdi));
+                    interfaceNames.Add(_context.GetString(Resource.String.select_interface_ftdi));
                 }
             }
-            ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity,
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(_context,
                 Android.Resource.Layout.SimpleListItemSingleChoice, interfaceNames.ToArray());
             listView.Adapter = adapter;
             listView.ChoiceMode = ChoiceMode.Single;
@@ -1629,19 +1631,19 @@ namespace BmwDeepObd
             {
                 return;
             }
-            AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
+            AlertDialog.Builder builder = new AlertDialog.Builder(_context);
             builder.SetTitle(Resource.String.select_manufacturer);
-            ListView listView = new ListView(_activity);
+            ListView listView = new ListView(_context);
 
             List<string> manufacturerNames = new List<string>
             {
-                _activity.GetString(Resource.String.select_manufacturer_bmw),
-                _activity.GetString(Resource.String.select_manufacturer_audi),
-                _activity.GetString(Resource.String.select_manufacturer_seat),
-                _activity.GetString(Resource.String.select_manufacturer_skoda),
-                _activity.GetString(Resource.String.select_manufacturer_vw),
+                _context.GetString(Resource.String.select_manufacturer_bmw),
+                _context.GetString(Resource.String.select_manufacturer_audi),
+                _context.GetString(Resource.String.select_manufacturer_seat),
+                _context.GetString(Resource.String.select_manufacturer_skoda),
+                _context.GetString(Resource.String.select_manufacturer_vw),
             };
-            ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity,
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(_context,
                 Android.Resource.Layout.SimpleListItemSingleChoice, manufacturerNames.ToArray());
             listView.Adapter = adapter;
             listView.ChoiceMode = ChoiceMode.Single;
@@ -1712,7 +1714,7 @@ namespace BmwDeepObd
                 case InterfaceType.Bluetooth:
                     if (_btAdapter == null)
                     {
-                        Toast.MakeText(_activity, Resource.String.bt_not_available, ToastLength.Long).Show();
+                        Toast.MakeText(_context, Resource.String.bt_not_available, ToastLength.Long).Show();
                         break;
                     }
                     if (!_btAdapter.IsEnabled)
@@ -1735,7 +1737,7 @@ namespace BmwDeepObd
                 case InterfaceType.ElmWifi:
                     if (_maWifi == null)
                     {
-                        Toast.MakeText(_activity, Resource.String.wifi_not_available, ToastLength.Long).Show();
+                        Toast.MakeText(_context, Resource.String.wifi_not_available, ToastLength.Long).Show();
                         break;
                     }
                     if (!_maWifi.IsWifiEnabled)
@@ -1784,7 +1786,7 @@ namespace BmwDeepObd
                         default:
                             return false;
                     }
-                    _activateAlertDialog = new AlertDialog.Builder(_activity)
+                    _activateAlertDialog = new AlertDialog.Builder(_context)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
                             EnableInterface();
@@ -1800,7 +1802,7 @@ namespace BmwDeepObd
 
                 case InterfaceType.Enet:
                 case InterfaceType.ElmWifi:
-                    _activateAlertDialog = new AlertDialog.Builder(_activity)
+                    _activateAlertDialog = new AlertDialog.Builder(_context)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
                             EnableInterface();
@@ -1918,7 +1920,7 @@ namespace BmwDeepObd
             {
                 return true;
             }
-            new AlertDialog.Builder(_activity)
+            new AlertDialog.Builder(_context)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
                     if (SelectBluetoothDevice(requestCode, appDataDir))
@@ -1946,17 +1948,17 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            Intent serverIntent = new Intent(_activity, typeof(DeviceListActivity));
+            Intent serverIntent = new Intent(_context, typeof(DeviceListActivity));
             serverIntent.PutExtra(XmlToolActivity.ExtraAppDataDir, appDataDir);
-            _activity.StartActivityForResult(serverIntent, requestCode);
+            _activity?.StartActivityForResult(serverIntent, requestCode);
             return true;
         }
 
         public bool SelectEnetIp(EventHandler<DialogClickEventArgs> handler)
         {
-            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_activity);
+            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_context);
             progress.SetCancelable(false);
-            progress.SetMessage(_activity.GetString(Resource.String.select_enet_ip_search));
+            progress.SetMessage(_context.GetString(Resource.String.select_enet_ip_search));
             progress.Show();
             SetLock(LockTypeCommunication);
 
@@ -1964,11 +1966,11 @@ namespace BmwDeepObd
             {
                 EdInterfaceEnet edInterface = new EdInterfaceEnet
                 {
-                    ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_activity, _maConnectivity)
+                    ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_context, _maConnectivity)
                 };
                 List<IPAddress> detectedVehicles = edInterface.DetectedVehicles("auto:all");
                 edInterface.Dispose();
-                _activity.RunOnUiThread(() =>
+                _activity?.RunOnUiThread(() =>
                 {
                     if (progress != null)
                     {
@@ -1977,13 +1979,13 @@ namespace BmwDeepObd
                         progress = null;
                         SetLock(LockType.None);
                     }
-                    AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(_context);
                     builder.SetTitle(Resource.String.select_enet_ip);
-                    ListView listView = new ListView(_activity);
+                    ListView listView = new ListView(_context);
 
                     List<string> interfaceNames = new List<string>
                     {
-                        _activity.GetString(Resource.String.select_enet_ip_auto)
+                        _context.GetString(Resource.String.select_enet_ip_auto)
                     };
                     int selIndex = 0;
                     int index = 0;
@@ -2000,7 +2002,7 @@ namespace BmwDeepObd
                             index++;
                         }
                     }
-                    ArrayAdapter<string> adapter = new ArrayAdapter<string>(_activity,
+                    ArrayAdapter<string> adapter = new ArrayAdapter<string>(_context,
                         Android.Resource.Layout.SimpleListItemSingleChoice, interfaceNames.ToArray());
                     listView.Adapter = adapter;
                     listView.ChoiceMode = ChoiceMode.Single;
@@ -2055,7 +2057,7 @@ namespace BmwDeepObd
             }
             if (usbDevice != null)
             {
-                Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_activity, 0, new Intent(ActionUsbPermission), 0);
+                Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_context, 0, new Intent(ActionUsbPermission), 0);
                 try
                 {
                     _usbManager.RequestPermission(usbDevice, intent);
@@ -2189,7 +2191,7 @@ namespace BmwDeepObd
                         if (item != null)
                         {
                             clipText = clipboardManagerNew.PrimaryClipDescription.HasMimeType(ClipDescription.MimetypeTextPlain) ?
-                                item.Text : item.CoerceToText(_activity);
+                                item.Text : item.CoerceToText(_context);
                         }
                     }
                 }
@@ -2231,12 +2233,12 @@ namespace BmwDeepObd
                 if (SelectedInterface == InterfaceType.Ftdi)
                 {
                     ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "FTDI0";
-                    connectParameter = new EdFtdiInterface.ConnectParameterType(_activity, _usbManager);
+                    connectParameter = new EdFtdiInterface.ConnectParameterType(_context, _usbManager);
                 }
                 else if (SelectedInterface == InterfaceType.ElmWifi)
                 {
                     ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "ELM327WIFI";
-                    connectParameter = new EdElmWifiInterface.ConnectParameterType(_activity, _maConnectivity);
+                    connectParameter = new EdElmWifiInterface.ConnectParameterType(_context, _maConnectivity);
                 }
                 else
                 {
@@ -2251,7 +2253,7 @@ namespace BmwDeepObd
                     remoteHost = EmulatorEnetIp;
                 }
                 ((EdInterfaceEnet)ediabas.EdInterfaceClass).RemoteHost = remoteHost;
-                connectParameter = new EdInterfaceEnet.ConnectParameterType(_activity, _maConnectivity);
+                connectParameter = new EdInterfaceEnet.ConnectParameterType(_context, _maConnectivity);
             }
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }
@@ -2368,8 +2370,8 @@ namespace BmwDeepObd
                     return false;
                 }
                 FileInfo fileInfo = new FileInfo(traceFile);
-                string message = string.Format(new FileSizeFormatProvider(), _activity.GetString(Resource.String.send_trace_file_request), fileInfo.Length);
-                new AlertDialog.Builder(_activity)
+                string message = string.Format(new FileSizeFormatProvider(), _context.GetString(Resource.String.send_trace_file_request), fileInfo.Length);
+                new AlertDialog.Builder(_context)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
                         SendTraceFile(appDataDir, traceFile, null, packageInfo, classType, handler, true);
@@ -2416,7 +2418,7 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                new AlertDialog.Builder(_activity)
+                new AlertDialog.Builder(_context)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
                         SendTraceFile(appDataDir, null, message, packageInfo, classType, handler);
@@ -2444,9 +2446,9 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_activity);
+            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_context);
             progress.SetCancelable(false);
-            progress.SetMessage(_activity.GetString(Resource.String.send_trace_file));
+            progress.SetMessage(_context.GetString(Resource.String.send_trace_file));
             progress.Show();
             SetLock(LockTypeCommunication);
             SetPreferredNetworkInterface();
@@ -2582,7 +2584,7 @@ namespace BmwDeepObd
                     mail.To.Add(new MailAddress(mailTo));
                     smtpClient.SendCompleted += (s, e) =>
                     {
-                        _activity.RunOnUiThread(() =>
+                        _activity?.RunOnUiThread(() =>
                         {
                             if (progress != null)
                             {
@@ -2597,7 +2599,7 @@ namespace BmwDeepObd
                             }
                             if (e.Error != null)
                             {
-                                new AlertDialog.Builder(_activity)
+                                new AlertDialog.Builder(_context)
                                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                     {
                                         SendTraceFile(appDataDir, traceFile, message, packageInfo, classType, handler, deleteFile);
@@ -2628,7 +2630,7 @@ namespace BmwDeepObd
                             handler?.Invoke(this, new EventArgs());
                         });
                     };
-                    _activity.RunOnUiThread(() =>
+                    _activity?.RunOnUiThread(() =>
                     {
                         progress.CancelEvent += (sender, args) =>
                         {
@@ -2648,7 +2650,7 @@ namespace BmwDeepObd
                 }
                 catch (Exception)
                 {
-                    _activity.RunOnUiThread(() =>
+                    _activity?.RunOnUiThread(() =>
                     {
                         if (progress != null)
                         {
@@ -2657,7 +2659,7 @@ namespace BmwDeepObd
                             progress = null;
                             SetLock(LockType.None);
                         }
-                        new AlertDialog.Builder(_activity)
+                        new AlertDialog.Builder(_context)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                             {
                                 SendTraceFile(appDataDir, traceFile, message, packageInfo, classType, handler, deleteFile);
@@ -2902,18 +2904,18 @@ namespace BmwDeepObd
                     {
                         if (typeList[3] != 0)
                         {
-                            textList.Add(_activity.GetString(Resource.String.error_code_error_present));
+                            textList.Add(_context.GetString(Resource.String.error_code_error_present));
                         }
                         else
                         {
                             if (typeList[2] != 0)
                             {
-                                textList.Add(_activity.GetString(Resource.String.error_code_error_temporary));
+                                textList.Add(_context.GetString(Resource.String.error_code_error_temporary));
                             }
                         }
                         if (typeList[5] != 0)
                         {
-                            textList.Add(_activity.GetString(Resource.String.error_code_error_stored));
+                            textList.Add(_context.GetString(Resource.String.error_code_error_stored));
                         }
                     }
 
@@ -3541,7 +3543,7 @@ namespace BmwDeepObd
                     return false;
                 }
                 EnableTranslateRequested = true;
-                AlertDialog alertDialog = new AlertDialog.Builder(_activity)
+                AlertDialog alertDialog = new AlertDialog.Builder(_context)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
                         EnableTranslation = true;
@@ -3611,10 +3613,10 @@ namespace BmwDeepObd
                     return true;
                 }
 
-                _translateProgress = new Android.App.ProgressDialog(_activity);
-                _translateProgress.SetMessage(_activity.GetString(Resource.String.translate_text));
+                _translateProgress = new Android.App.ProgressDialog(_context);
+                _translateProgress.SetMessage(_context.GetString(Resource.String.translate_text));
                 _translateProgress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
-                _translateProgress.SetButton((int)DialogButtonType.Negative, _activity.GetString(Resource.String.button_abort), (sender, args) =>
+                _translateProgress.SetButton((int)DialogButtonType.Negative, _context.GetString(Resource.String.button_abort), (sender, args) =>
                 {
                     if (_translateWebClient != null && _translateWebClient.IsBusy)
                     {
@@ -3681,7 +3683,7 @@ namespace BmwDeepObd
                                 _yandexLangList = GetLanguages(args.Result);
                                 if (_yandexLangList != null)
                                 {
-                                    _activity.RunOnUiThread(() =>
+                                    _activity?.RunOnUiThread(() =>
                                     {
                                         TranslateStrings(stringList, handler, disableCache);
                                     });
@@ -3703,7 +3705,7 @@ namespace BmwDeepObd
                                     }
                                     if (_yandexTransList.Count < _yandexReducedStringList.Count)
                                     {
-                                        _activity.RunOnUiThread(() =>
+                                        _activity?.RunOnUiThread(() =>
                                         {
                                             TranslateStrings(stringList, handler, disableCache);
                                         });
@@ -3722,7 +3724,7 @@ namespace BmwDeepObd
                             // error
                             _yandexTransList = null;
                         }
-                        _activity.RunOnUiThread(() =>
+                        _activity?.RunOnUiThread(() =>
                         {
                             if (_translateProgress != null)
                             {
@@ -3756,9 +3758,9 @@ namespace BmwDeepObd
                                 }
 
                                 string message = string.IsNullOrEmpty(errorMessage) ?
-                                    _activity.GetString(Resource.String.translate_failed) : string.Format(_activity.GetString(Resource.String.translate_failed_message), errorMessage);
+                                    _context.GetString(Resource.String.translate_failed) : string.Format(_context.GetString(Resource.String.translate_failed_message), errorMessage);
                                 bool yesSelected = false;
-                                AlertDialog altertDialog = new AlertDialog.Builder(_activity)
+                                AlertDialog altertDialog = new AlertDialog.Builder(_context)
                                     .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                                     {
                                         yesSelected = true;
@@ -3821,7 +3823,7 @@ namespace BmwDeepObd
                             }
                         });
                     };
-                    _activity.RunOnUiThread(() =>
+                    _activity?.RunOnUiThread(() =>
                     {
                         if (_translateProgress != null)
                         {
@@ -3834,7 +3836,7 @@ namespace BmwDeepObd
                 }
                 catch (Exception)
                 {
-                    _activity.RunOnUiThread(() =>
+                    _activity?.RunOnUiThread(() =>
                     {
                         if (_translateProgress != null)
                         {
@@ -3848,7 +3850,7 @@ namespace BmwDeepObd
                             }
                         }
                         bool yesSelected = false;
-                        AlertDialog altertDialog = new AlertDialog.Builder(_activity)
+                        AlertDialog altertDialog = new AlertDialog.Builder(_context)
                             .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                             {
                                 yesSelected = true;
@@ -4547,12 +4549,12 @@ namespace BmwDeepObd
             {
                 return;
             }
-            _activity.RunOnUiThread(() =>
+            _activity?.RunOnUiThread(() =>
             {
                 List<IUsbSerialDriver> availableDrivers = EdFtdiInterface.GetDriverList(_usbManager);
                 if (availableDrivers.Count > _usbDeviceDetectCount)
                 {   // device attached
-                    _bcReceiverReceivedHandler?.Invoke(_activity, null);
+                    _bcReceiverReceivedHandler?.Invoke(_context, null);
                     _bcReceiverUpdateDisplayHandler?.Invoke();
                 }
                 _usbDeviceDetectCount = availableDrivers.Count;

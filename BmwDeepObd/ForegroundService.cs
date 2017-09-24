@@ -24,8 +24,6 @@ namespace BmwDeepObd
 
         bool _isStarted;
         private ActivityCommon _activityCommon;
-        private PowerManager _powerManager;
-        private PowerManager.WakeLock _wakeLockCpu;
 
         public override void OnCreate()
         {
@@ -33,14 +31,8 @@ namespace BmwDeepObd
 #if DEBUG
             Android.Util.Log.Info(Tag, "OnCreate: the service is initializing.");
 #endif
-            _activityCommon = new ActivityCommon(null);
-            _powerManager = GetSystemService(PowerService) as PowerManager;
-            if (_powerManager != null)
-            {
-                _wakeLockCpu = _powerManager.NewWakeLock(WakeLockFlags.Partial, "PartialLock");
-                _wakeLockCpu.SetReferenceCounted(false);
-                _wakeLockCpu.Acquire();
-            }
+            _activityCommon = new ActivityCommon(this);
+            _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
             lock (ActivityCommon.GlobalLockObject)
             {
                 EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
@@ -123,20 +115,7 @@ namespace BmwDeepObd
             // Remove the notification from the status bar.
             NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
             notificationManager.Cancel(ServiceRunningNotificationId);
-
-            if (_wakeLockCpu != null)
-            {
-                try
-                {
-                    _wakeLockCpu.Release();
-                    _wakeLockCpu.Dispose();
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-                _wakeLockCpu = null;
-            }
+            _activityCommon.SetLock(ActivityCommon.LockType.None);
             lock (ActivityCommon.GlobalLockObject)
             {
                 EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
