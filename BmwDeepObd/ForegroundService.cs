@@ -220,7 +220,7 @@ namespace BmwDeepObd
                 case ActionBroadcastCommand:
                 {
                     HandleActionBroadcast(intent);
-                    HandleCustomBroadcast(intent);
+                    HandleCustomBroadcast(context, intent);
                     break;
                 }
             }
@@ -274,15 +274,10 @@ namespace BmwDeepObd
             }
         }
 
-        private void HandleCustomBroadcast(Intent intent)
+        private void HandleCustomBroadcast(Context context, Intent intent)
         {
             try
             {
-                string request = intent.GetStringExtra("custom");
-                if (string.IsNullOrEmpty(request))
-                {
-                    return;
-                }
                 EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
                 // ReSharper disable once UseNullPropagation
                 if (ediabasThread == null)
@@ -295,13 +290,13 @@ namespace BmwDeepObd
                     return;
                 }
                 Type pageType = pageInfo.ClassObject.GetType();
-                MethodInfo customBroadcast = pageType.GetMethod("CustomBroadcast", new[] { typeof(JobReader.PageInfo), typeof(string) });
-                if (customBroadcast == null)
+                MethodInfo broadcastReceived = pageType.GetMethod("BroadcastReceived", new[] { typeof(Context), typeof(Intent) });
+                if (broadcastReceived == null)
                 {
                     return;
                 }
-                object[] args = { pageInfo, request };
-                customBroadcast.Invoke(pageInfo.ClassObject, args);
+                object[] args = { pageInfo, context, intent };
+                broadcastReceived.Invoke(pageInfo.ClassObject, args);
             }
             catch (Exception)
             {
