@@ -76,8 +76,7 @@ namespace CarSimulator
             }
             try
             {
-                UInt32 iBuffer;
-                TPCANStatus stsResult = PCANBasic.GetValue(PCANBasic.PCAN_USBBUS1, TPCANParameter.PCAN_CHANNEL_CONDITION, out iBuffer, sizeof(UInt32));
+                TPCANStatus stsResult = PCANBasic.GetValue(PCANBasic.PCAN_USBBUS1, TPCANParameter.PCAN_CHANNEL_CONDITION, out UInt32 _, sizeof(UInt32));
                 //if ((stsResult == TPCANStatus.PCAN_ERROR_OK) && (iBuffer == PCANBasic.PCAN_CHANNEL_AVAILABLE))
                 if (stsResult == TPCANStatus.PCAN_ERROR_OK)
                 {
@@ -562,8 +561,7 @@ namespace CarSimulator
             try
             {
                 TreeNode node = e.Node;
-                string path = node.Tag as string;
-                if (path != null)
+                if (node.Tag is string path)
                 {
                     _responseDir = path;
                     UpdateResponseFiles(path);
