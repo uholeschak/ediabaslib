@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Android.Support.V4.App;
 using Android.Content;
 using Android.OS;
@@ -218,52 +219,93 @@ namespace BmwDeepObd
             {
                 case ActionBroadcastCommand:
                 {
-                    string request = intent.GetStringExtra("action");
-                    if (string.IsNullOrEmpty(request))
-                    {
-                        break;
-                    }
-                    string[] requestList  = request.Split(':');
-                    if (requestList.Length < 1)
-                    {
-                        break;
-                    }
-                    if (string.Compare(requestList[0], "new_page", StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        if (requestList.Length < 2)
-                        {
-                            break;
-                        }
-                        JobReader.PageInfo pageInfoSel = null;
-                        foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
-                        {
-                            if (string.Compare(pageInfo.Name, requestList[1], StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                pageInfoSel = pageInfo;
-                                break;
-                            }
-                        }
-                        if (pageInfoSel == null)
-                        {
-                            break;
-                        }
-                        if (!ActivityCommon.CommActive)
-                        {
-                            break;
-                        }
-                        EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                        if (ediabasThread == null)
-                        {
-                            break;
-                        }
-                        if (ediabasThread.JobPageInfo != pageInfoSel)
-                        {
-                            ActivityCommon.EdiabasThread.CommActive = true;
-                            ediabasThread.JobPageInfo = pageInfoSel;
-                        }
-                    }
+                    HandleActionBroadcast(intent);
+                    HandleCustomBroadcast(intent);
                     break;
                 }
+            }
+        }
+
+        private void HandleActionBroadcast(Intent intent)
+        {
+            string request = intent.GetStringExtra("action");
+            if (string.IsNullOrEmpty(request))
+            {
+                return;
+            }
+            string[] requestList = request.Split(':');
+            if (requestList.Length < 1)
+            {
+                return;
+            }
+            if (string.Compare(requestList[0], "new_page", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                if (requestList.Length < 2)
+                {
+                    return;
+                }
+                JobReader.PageInfo pageInfoSel = null;
+                foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                {
+                    if (string.Compare(pageInfo.Name, requestList[1], StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        pageInfoSel = pageInfo;
+                        break;
+                    }
+                }
+                if (pageInfoSel == null)
+                {
+                    return;
+                }
+                if (!ActivityCommon.CommActive)
+                {
+                    return;
+                }
+                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                if (ediabasThread == null)
+                {
+                    return;
+                }
+                if (ediabasThread.JobPageInfo != pageInfoSel)
+                {
+                    ActivityCommon.EdiabasThread.CommActive = true;
+                    ediabasThread.JobPageInfo = pageInfoSel;
+                }
+            }
+        }
+
+        private void HandleCustomBroadcast(Intent intent)
+        {
+            try
+            {
+                string request = intent.GetStringExtra("custom");
+                if (string.IsNullOrEmpty(request))
+                {
+                    return;
+                }
+                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                // ReSharper disable once UseNullPropagation
+                if (ediabasThread == null)
+                {
+                    return;
+                }
+                JobReader.PageInfo pageInfo = ediabasThread.JobPageInfo;
+                if (pageInfo.ClassObject == null)
+                {
+                    return;
+                }
+                Type pageType = pageInfo.ClassObject.GetType();
+                MethodInfo customBroadcast = pageType.GetMethod("CustomBroadcast", new[] { typeof(JobReader.PageInfo), typeof(string) });
+                if (customBroadcast == null)
+                {
+                    return;
+                }
+                object[] args = { pageInfo, request };
+                customBroadcast.Invoke(pageInfo.ClassObject, args);
+            }
+            catch (Exception)
+            {
+                // ignored
             }
         }
     }
