@@ -290,7 +290,7 @@ namespace BmwDeepObd
                     return;
                 }
                 Type pageType = pageInfo.ClassObject.GetType();
-                MethodInfo broadcastReceived = pageType.GetMethod("BroadcastReceived", new[] { typeof(Context), typeof(Intent) });
+                MethodInfo broadcastReceived = pageType.GetMethod("BroadcastReceived", new[] { typeof(JobReader.PageInfo), typeof(Context), typeof(Intent) });
                 if (broadcastReceived == null)
                 {
                     return;

@@ -378,6 +378,30 @@
             }
             return result;
         }
+
+        public void BroadcastReceived(JobReader.PageInfo pageInfo, Android.Content.Context context, Android.Content.Intent intent)
+        {
+            string request = intent.GetStringExtra("custom_action");
+            if (string.IsNullOrEmpty(request))
+            {
+                return;
+            }
+            request = request.ToLowerInvariant();
+            switch (request)
+            {
+                case "mode_status":
+                    opMode = OpModeStatus;
+                    break;
+
+                case "mode_up":
+                    opMode = OpModeUp;
+                    break;
+
+                case "mode_down":
+                    opMode = OpModeDown;
+                    break;
+            }
+        }
     }
       ]]>
     </code>
