@@ -4444,9 +4444,16 @@ namespace BmwDeepObd
                 }
                 finally
                 {
-                    if (File.Exists(testPath))
+                    try
                     {
-                        File.Delete(testPath);
+                        if (File.Exists(testPath))
+                        {
+                            File.Delete(testPath);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
                     }
                 }
             }
