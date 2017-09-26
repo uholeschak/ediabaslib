@@ -588,6 +588,42 @@ The resulting page will look like this:
 
 ![Adapter page](Page_specification_AdapterConfigSmall.png)
 
+## Receiving broadcasts (BroadcastReceived)
+For interaction of the user code with other apps the broadcast `de.holeschak.bmw_deep_obd.Action.Command` could by processed by the function `BroadcastReceived`.  
+Here is an example from the axis page, that changes the axis direction with the broadcast.
+``` xml
+    <code show_warnigs="true">
+      <![CDATA[
+    class PageClass
+    {
+        public void BroadcastReceived(JobReader.PageInfo pageInfo, Android.Content.Context context, Android.Content.Intent intent)
+        {
+            string request = intent.GetStringExtra("custom_action");
+            if (string.IsNullOrEmpty(request))
+            {
+                return;
+            }
+            request = request.ToLowerInvariant();
+            switch (request)
+            {
+                case "mode_status":
+                    opMode = OpModeStatus;
+                    break;
+
+                case "mode_up":
+                    opMode = OpModeUp;
+                    break;
+
+                case "mode_down":
+                    opMode = OpModeDown;
+                    break;
+            }
+        }
+    }
+      ]]>
+  </code>
+```
+
 # Grouping pages
 If the same of pages are required in multiple configuration, it's useful to group the together. This could be done with `*.ccpages` files. Simply include the `*.ccpage` files withing the `pages` node. The specifified path is relative to the `*.ccpages` file location. The file has the following layout:
 ``` xml
@@ -619,7 +655,7 @@ Now all `*.page` or `*.pages` can be added to a configuration file `*.cccfg`. Th
 </fragment>
 ```
 # Broadcasts
-The received OBD data is be broadcasted to other apps if broadcast sending is enabled in the [global settings](GlobalSettings.md). This way it's possible to display or process data individually.  
+The received OBD data could be broadcasted to other apps if broadcast sending is enabled in the [global settings](GlobalSettings.md). This way it's possible to display or process data individually.  
 The broadcast name is `de.holeschak.bmw_deep_obd.Notification.Info`. It contains the following intent data:
 * `action` (string): Change of operation status:
   * `connect`: OBD connection is connected.
@@ -644,3 +680,9 @@ The broadcast name is `de.holeschak.bmw_deep_obd.Notification.Info`. It contains
     ]
 }
 ```
+Additionally the broadcast `de.holeschak.bmw_deep_obd.Action.Command` could be received by the App.  
+The following intent data is defined:
+* `action` (string): Action to be processed by the app:
+  * `new_page:<page_name>`: Switches to the new page (configuration) with the name `<page_name>`. `<page_name>` is the name in the node `<page name ="page_name">`.
+
+The broadcast could be also received by the [`BroadcastReceived`](#receiving-broadcasts-broadcastreceived) user function.
