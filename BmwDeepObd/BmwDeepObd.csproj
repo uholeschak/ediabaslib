@@ -170,7 +170,9 @@
     <None Include="Properties\AndroidManifest.xml" />
     <AndroidResource Include="Resources\layout\file_picker.axml" />
     <AndroidResource Include="Resources\layout\file_picker_list_item.axml" />
-    <AndroidResource Include="Resources\layout\ediabas_tool.axml" />
+    <AndroidResource Include="Resources\layout\ediabas_tool.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <AndroidResource Include="Resources\layout\job_list.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
@@ -309,9 +311,17 @@
     <None Include="Xml\E61\Test.ccpage" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\CustomGaugeBinding\CustomGaugeBinding.csproj">
+      <Project>{6372b7dd-e31c-48f5-8c47-f6fa2bb37070}</Project>
+      <Name>CustomGaugeBinding</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\EdiabasLibAndroid.csproj">
       <Project>{fedd5f23-f769-44d2-9f06-39d532008197}</Project>
       <Name>EdiabasLibAndroid</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\GaugeViewBinding\GaugeViewBinding.csproj">
+      <Project>{fa79b07e-02aa-4db1-b8a9-c49cb7d48074}</Project>
+      <Name>GaugeViewBinding</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\UsbSerialBinding\UsbSerialBinding.csproj">
       <Project>{c70078ec-34d9-46a7-a04a-4412cfe27509}</Project>
