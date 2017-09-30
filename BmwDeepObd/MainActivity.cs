@@ -1517,12 +1517,38 @@ namespace BmwDeepObd
 
             if (dynamicFragment?.View != null)
             {
+                bool gridMode = false;//pageInfo.Name == "tab_motor" || pageInfo.Name == "tab_motor_rot_irregular";
+                ResultListAdapter resultListAdapter = null;
                 ListView listViewResult = dynamicFragment.View.FindViewById<ListView>(Resource.Id.resultList);
-                if (listViewResult.Adapter == null)
+                if (listViewResult != null)
                 {
-                    listViewResult.Adapter = new ResultListAdapter(this, pageInfo.Weight, pageInfo.TextResId, pageInfo.ErrorsInfo != null);
+                    if (listViewResult.Adapter == null)
+                    {
+                        listViewResult.Adapter = new ResultListAdapter(this, pageInfo.Weight, pageInfo.TextResId, pageInfo.ErrorsInfo != null);
+                    }
+                    resultListAdapter = listViewResult.Adapter as ResultListAdapter;
                 }
-                ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult.Adapter;
+
+                ResultGridAdapter resultGridAdapter = null;
+                GridView gridViewResult = dynamicFragment.View.FindViewById<GridView>(Resource.Id.resultGrid);
+                if (gridMode && gridViewResult != null)
+                {
+                    if (gridViewResult.Adapter == null)
+                    {
+                        gridViewResult.Adapter = new ResultGridAdapter(this, Resource.Layout.result_customgauge);
+                    }
+                    resultGridAdapter = gridViewResult.Adapter as ResultGridAdapter;
+                }
+
+                if (listViewResult != null)
+                {
+                    listViewResult.Visibility = resultGridAdapter != null ? ViewStates.Gone : ViewStates.Visible;
+                }
+                if (gridViewResult != null)
+                {
+                    gridViewResult.Visibility = resultGridAdapter != null ? ViewStates.Visible : ViewStates.Gone;
+                }
+
                 ToggleButton buttonActive = null;
                 if (pageInfo.JobActivate)
                 {
@@ -1536,7 +1562,7 @@ namespace BmwDeepObd
                     buttonErrorCopy = dynamicFragment.View.FindViewById<Button>(Resource.Id.button_copy);
                 }
 
-                if (dynamicValid)
+                if (dynamicValid && resultListAdapter != null)
                 {
                     MultiMap<string, EdiabasNet.ResultData> resultDict = null;
                     string errorMessage = string.Empty;
@@ -1565,6 +1591,7 @@ namespace BmwDeepObd
                     }
 
                     List<TableResultItem> tempResultList = new List<TableResultItem>();
+                    List<GridResultItem> tempResultGrid = new List<GridResultItem>();
                     if (pageInfo.ErrorsInfo != null)
                     {   // read errors
                         List<string> stringList = new List<string>();
@@ -1829,62 +1856,120 @@ namespace BmwDeepObd
                             string result = ActivityCommon.FormatResult(pageInfo, displayInfo, resultDict, out Android.Graphics.Color? textColor);
                             if (result != null)
                             {
-                                tempResultList.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result, null, false, false, textColor));
+                                if (resultGridAdapter != null)
+                                {
+                                    double value = GetResultDouble(resultDict, displayInfo.Result, 0, out bool foundDouble);
+                                    if (!foundDouble)
+                                    {
+                                        Int64 valueInt64 = GetResultInt64(resultDict, displayInfo.Result, 0, out bool foundInt64);
+                                        if (foundInt64)
+                                        {
+                                            value = valueInt64;
+                                        }
+                                    }
+
+                                    tempResultGrid.Add(new GridResultItem(GetPageString(pageInfo, displayInfo.Name), result, 0, 100, value));
+                                }
+                                else
+                                {
+                                    tempResultList.Add(new TableResultItem(GetPageString(pageInfo, displayInfo.Name), result, null, false, false, textColor));
+                                }
                             }
                         }
                     }
 
-                    if (updateResultMulti != null)
+                    if (resultGridAdapter != null)
                     {
-                        object[] args = { pageInfo, resultDict, tempResultList };
-                        updateResultMulti.Invoke(pageInfo.ClassObject, args);
-                        //pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict, tempResultList);
-                    }
-                    else if (updateResult != null)
-                    {
-                        object[] args = { pageInfo, resultDict?.ToDictionary(), tempResultList };
-                        updateResult.Invoke(pageInfo.ClassObject, args);
-                        //pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict?.ToDictionary(), tempResultList);
-                    }
-
-                    // check if list has changed
-                    bool resultChanged = false;
-                    if (tempResultList.Count != resultListAdapter.Items.Count)
-                    {
-                        resultChanged = true;
+                        // check if list has changed
+                        bool resultChanged = false;
+                        if (tempResultGrid.Count != resultGridAdapter.Items.Count)
+                        {
+                            resultChanged = true;
+                        }
+                        else
+                        {
+                            for (int i = 0; i < tempResultGrid.Count; i++)
+                            {
+                                GridResultItem resultNew = tempResultGrid[i];
+                                GridResultItem resultOld = resultGridAdapter.Items[i];
+                                if (string.CompareOrdinal(resultNew.Name ?? string.Empty, resultOld.Name ?? string.Empty) != 0)
+                                {
+                                    resultChanged = true;
+                                    break;
+                                }
+                                if (Math.Abs(resultNew.Value - resultOld.Value) > 0.000001)
+                                {
+                                    resultChanged = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (resultChanged)
+                        {
+                            resultGridAdapter.Items.Clear();
+                            foreach (GridResultItem resultItem in tempResultGrid)
+                            {
+                                resultGridAdapter.Items.Add(resultItem);
+                            }
+                            resultGridAdapter.NotifyDataSetChanged();
+                        }
                     }
                     else
                     {
-                        for (int i = 0; i < tempResultList.Count; i++)
+                        if (updateResultMulti != null)
                         {
-                            TableResultItem resultNew = tempResultList[i];
-                            TableResultItem resultOld = resultListAdapter.Items[i];
-                            if (string.CompareOrdinal(resultNew.Text1 ?? string.Empty, resultOld.Text1 ?? string.Empty) != 0)
+                            object[] args = {pageInfo, resultDict, tempResultList};
+                            updateResultMulti.Invoke(pageInfo.ClassObject, args);
+                            //pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict, tempResultList);
+                        }
+                        else if (updateResult != null)
+                        {
+                            object[] args = {pageInfo, resultDict?.ToDictionary(), tempResultList};
+                            updateResult.Invoke(pageInfo.ClassObject, args);
+                            //pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict?.ToDictionary(), tempResultList);
+                        }
+
+                        // check if list has changed
+                        bool resultChanged = false;
+                        if (tempResultList.Count != resultListAdapter.Items.Count)
+                        {
+                            resultChanged = true;
+                        }
+                        else
+                        {
+                            for (int i = 0; i < tempResultList.Count; i++)
                             {
-                                resultChanged = true;
-                                break;
-                            }
-                            if (string.CompareOrdinal(resultNew.Text2 ?? string.Empty, resultOld.Text2 ?? string.Empty) != 0)
-                            {
-                                resultChanged = true;
-                                break;
+                                TableResultItem resultNew = tempResultList[i];
+                                TableResultItem resultOld = resultListAdapter.Items[i];
+                                if (string.CompareOrdinal(resultNew.Text1 ?? string.Empty, resultOld.Text1 ?? string.Empty) != 0)
+                                {
+                                    resultChanged = true;
+                                    break;
+                                }
+                                if (string.CompareOrdinal(resultNew.Text2 ?? string.Empty, resultOld.Text2 ?? string.Empty) != 0)
+                                {
+                                    resultChanged = true;
+                                    break;
+                                }
                             }
                         }
-                    }
-                    if (resultChanged)
-                    {
-                        resultListAdapter.Items.Clear();
-                        foreach (TableResultItem resultItem in tempResultList)
+                        if (resultChanged)
                         {
-                            resultListAdapter.Items.Add(resultItem);
+                            resultListAdapter.Items.Clear();
+                            foreach (TableResultItem resultItem in tempResultList)
+                            {
+                                resultListAdapter.Items.Add(resultItem);
+                            }
+                            resultListAdapter.NotifyDataSetChanged();
                         }
-                        resultListAdapter.NotifyDataSetChanged();
                     }
                 }
                 else
                 {
-                    resultListAdapter.Items.Clear();
-                    resultListAdapter.NotifyDataSetChanged();
+                    resultListAdapter?.Items.Clear();
+                    resultListAdapter?.NotifyDataSetChanged();
+                    resultGridAdapter?.Items.Clear();
+                    resultGridAdapter?.NotifyDataSetChanged();
                     UpdateButtonErrorReset(buttonErrorReset, null);
                     UpdateButtonErrorCopy(buttonErrorCopy, null);
                 }

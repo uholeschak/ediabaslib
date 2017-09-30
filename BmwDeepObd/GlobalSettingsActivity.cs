@@ -5,7 +5,6 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using IO.Sule.Gaugelibrary;
-using Pl.Pawelkleczkowski.CGauge;
 
 namespace BmwDeepObd
 {
@@ -62,13 +61,6 @@ namespace BmwDeepObd
             _selection = Intent.GetStringExtra(ExtraSelection);
 
             _activityCommon = new ActivityCommon(this);
-
-            CustomGauge customGauge = FindViewById<CustomGauge>(Resource.Id.gauge1);
-            TextView textViewGauge1 = FindViewById<TextView>(Resource.Id.textViewGauge1);
-            customGauge.Value = 50;
-            textViewGauge1.Text = customGauge.Value.ToString();
-            customGauge.Visibility = ViewStates.Gone;
-            textViewGauge1.Visibility = ViewStates.Gone;
 
             GaugeView gaugeView = FindViewById<GaugeView>(Resource.Id.gauge_view1);
             gaugeView.SetTargetValue(50);

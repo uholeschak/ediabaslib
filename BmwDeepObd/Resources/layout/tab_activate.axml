@@ -16,6 +16,17 @@
             android:divider="#000"
             android:dividerHeight="0px"
             android:layout_weight="1" />
+        <GridView
+            android:id="@+id/resultGrid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:columnWidth="240dp"
+            android:numColumns="auto_fit"
+            android:verticalSpacing="20dp"
+            android:horizontalSpacing="20dp"
+            android:stretchMode="columnWidth"
+            android:gravity="center"
+            android:layout_weight="1" />
     </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"
