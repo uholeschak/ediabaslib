@@ -49,7 +49,9 @@ namespace BmwDeepObd
 
         public class EcuInfo
         {
-            public EcuInfo(string name, Int64 address, string description, string sgbd, string grp, DisplayFontSize fontSize = DisplayFontSize.Small, string mwTabFileName = null, Dictionary<long, EcuMwTabEntry> mwTabEcuDict = null)
+            public EcuInfo(string name, Int64 address, string description, string sgbd, string grp,
+                JobReader.PageInfo.DisplayModeType displayMode = JobReader.PageInfo.DisplayModeType.List,
+                DisplayFontSize fontSize = DisplayFontSize.Small, string mwTabFileName = null, Dictionary<long, EcuMwTabEntry> mwTabEcuDict = null)
             {
                 Name = name;
                 Address = address;
@@ -61,6 +63,7 @@ namespace BmwDeepObd
                 Vin = null;
                 PageName = name;
                 EcuName = name;
+                DisplayMode = displayMode;
                 FontSize = fontSize;
                 JobList = null;
                 MwTabFileName = mwTabFileName;
@@ -88,6 +91,8 @@ namespace BmwDeepObd
             public string PageName { get; set; }
 
             public string EcuName { get; set; }
+
+            public JobReader.PageInfo.DisplayModeType DisplayMode { get; set; }
 
             public DisplayFontSize FontSize { get; set; }
 
@@ -3756,6 +3761,15 @@ namespace BmwDeepObd
                 return;
             }
 
+            XAttribute displayModeAttr = pageNode.Attribute("display-mode");
+            if (displayModeAttr != null)
+            {
+                if (Enum.TryParse(displayModeAttr.Value, true, out JobReader.PageInfo.DisplayModeType displayMode))
+                {
+                    ecuInfo.DisplayMode = displayMode;
+                }
+            }
+
             XAttribute fontSizeAttr = pageNode.Attribute("fontsize");
             if (fontSizeAttr != null)
             {
@@ -3826,8 +3840,10 @@ namespace BmwDeepObd
             }
         }
 
-        private string ReadPageSgbd(XDocument document, out DisplayFontSize fontSize, out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict)
+        private string ReadPageSgbd(XDocument document, out JobReader.PageInfo.DisplayModeType displayMode, out DisplayFontSize fontSize,
+            out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict)
         {
+            displayMode = JobReader.PageInfo.DisplayModeType.List;
             fontSize = DisplayFontSize.Small;
             mwTabFileName = null;
             mwTabEcuDict = null;
@@ -3840,6 +3856,14 @@ namespace BmwDeepObd
             if (pageNode == null)
             {
                 return null;
+            }
+            XAttribute displayModeAttr = pageNode.Attribute("display-mode");
+            if (displayModeAttr != null)
+            {
+                if (!Enum.TryParse(displayModeAttr.Value, true, out displayMode))
+                {
+                    displayMode = JobReader.PageInfo.DisplayModeType.List;
+                }
             }
             XAttribute fontSizeAttr = pageNode.Attribute("fontsize");
             if (fontSizeAttr != null)
@@ -3904,17 +3928,31 @@ namespace BmwDeepObd
                     return null;
                 }
                 XNamespace ns = document.Root.GetDefaultNamespace();
+
                 XElement pageNode = document.Root.Element(ns + "page");
                 if (pageNode == null)
                 {
                     pageNode = new XElement(ns + "page");
                     document.Root.Add(pageNode);
                 }
+
                 XAttribute pageNameAttr = pageNode.Attribute("name");
                 if (pageNameAttr == null)
                 {
                     pageNode.Add(new XAttribute("name", DisplayNamePage));
                 }
+
+                string displayModeName = ecuInfo.DisplayMode.ToString().ToLowerInvariant();
+                XAttribute displayModeAttr = pageNode.Attribute("display-mode");
+                if (displayModeAttr == null)
+                {
+                    pageNode.Add(new XAttribute("display-mode", displayModeName));
+                }
+                else
+                {
+                    displayModeAttr.Value = displayModeName;
+                }
+
                 string fontSizeName = ecuInfo.FontSize.ToString().ToLowerInvariant();
                 XAttribute pageFontSizeAttr = pageNode.Attribute("fontsize");
                 if (pageFontSizeAttr == null)
@@ -3925,6 +3963,7 @@ namespace BmwDeepObd
                 {
                     pageFontSizeAttr.Value = fontSizeName;
                 }
+
                 XAttribute pageLogFileAttr = pageNode.Attribute("logfile");
                 if (pageLogFileAttr == null)
                 {
@@ -4162,7 +4201,8 @@ namespace BmwDeepObd
                     bool ecuFound = _ecuList.Any(ecuInfo => string.Compare(sgbdName, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) == 0);
                     if (!ecuFound)
                     {
-                        EcuInfo ecuInfo = new EcuInfo(sgbdName.ToUpperInvariant(), -1, string.Empty, sgbdName, string.Empty, DisplayFontSize.Small, string.Empty)
+                        EcuInfo ecuInfo = new EcuInfo(sgbdName.ToUpperInvariant(), -1, string.Empty, sgbdName, string.Empty,
+                            JobReader.PageInfo.DisplayModeType.List, DisplayFontSize.Small, string.Empty)
                         {
                             PageName = string.Empty,
                             EcuName = string.Empty
@@ -4308,10 +4348,11 @@ namespace BmwDeepObd
                     }
                     try
                     {
-                        string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out DisplayFontSize fontSize, out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict);
+                        string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out JobReader.PageInfo.DisplayModeType displayMode, out DisplayFontSize fontSize,
+                            out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict);
                         if (!string.IsNullOrEmpty(sgbdName))
                         {
-                            _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, fontSize, mwTabFileName, mwTabEcuDict)
+                            _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, displayMode, fontSize, mwTabFileName, mwTabEcuDict)
                             {
                                 Selected = true
                             });
@@ -4363,10 +4404,11 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out DisplayFontSize fontSize, out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict);
+                                string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out JobReader.PageInfo.DisplayModeType displayMode, out DisplayFontSize fontSize,
+                                    out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict);
                                 if (!string.IsNullOrEmpty(sgbdName))
                                 {
-                                    _ecuList.Insert(0, new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, fontSize, mwTabFileName, mwTabEcuDict)
+                                    _ecuList.Insert(0, new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, displayMode, fontSize, mwTabFileName, mwTabEcuDict)
                                     {
                                         Selected = true
                                     });
