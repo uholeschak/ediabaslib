@@ -3820,6 +3820,42 @@ namespace BmwDeepObd
                             {
                                 result.Format = formatAttr.Value;
                             }
+
+                            XAttribute gridTypeAttr = displayNode.Attribute("grid-type");
+                            if (gridTypeAttr != null)
+                            {
+                                if (Enum.TryParse(gridTypeAttr.Value.Replace("-", "_"), true, out JobReader.DisplayInfo.GridModeType gridType))
+                                {
+                                    result.GridType = gridType;
+                                }
+                            }
+
+                            XAttribute minValueAttr = displayNode.Attribute("min-value");
+                            if (minValueAttr != null)
+                            {
+                                try
+                                {
+                                    result.MinValue = XmlConvert.ToDouble(minValueAttr.Value);
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
+
+                            XAttribute maxValueAttr = displayNode.Attribute("max-value");
+                            if (maxValueAttr != null)
+                            {
+                                try
+                                {
+                                    result.MaxValue = XmlConvert.ToDouble(maxValueAttr.Value);
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
+
                             XAttribute logTagAttr = displayNode.Attribute("log_tag");
                             if (logTagAttr != null)
                             {
@@ -4102,7 +4138,8 @@ namespace BmwDeepObd
                             if (displayNodeOld != null)
                             {
                                 displayNodeNew.ReplaceAttributes(from el in displayNodeOld.Attributes()
-                                                                 where el.Name != "result" && el.Name != "format" && el.Name != "log_tag"
+                                                                 where el.Name != "result" && el.Name != "format" && el.Name != "grid-type" &&
+                                                                 el.Name != "min-value" && el.Name != "max-value" && el.Name != "log_tag"
                                                                  select new XAttribute(el));
                             }
                         }
@@ -4127,10 +4164,13 @@ namespace BmwDeepObd
                         }
                         displayNodeNew.Add(new XAttribute("result", resultName));
                         displayNodeNew.Add(new XAttribute("format", result.Format));
+                        displayNodeNew.Add(new XAttribute("grid-type", result.GridType.ToString().ToLowerInvariant().Replace("_", "-")));
                         if (!string.IsNullOrEmpty(result.LogTag))
                         {
                             displayNodeNew.Add(new XAttribute("log_tag", result.LogTag));
                         }
+                        displayNodeNew.Add(new XAttribute("min-value", result.MinValue));
+                        displayNodeNew.Add(new XAttribute("max-value", result.MaxValue));
 
                         XElement stringNode = new XElement(ns + "string", result.DisplayText);
                         stringNode.Add(new XAttribute("name", displayTag));

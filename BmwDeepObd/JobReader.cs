@@ -562,8 +562,7 @@ namespace BmwDeepObd
                     attrib = xmlNode.Attributes["grid-type"];
                     if (attrib != null)
                     {
-                        string valueName = attrib.Value.Replace("-", "_");
-                        if (!Enum.TryParse(valueName, true, out gridType))
+                        if (!Enum.TryParse(attrib.Value.Replace("-", "_"), true, out gridType))
                         {
                             gridType = DisplayInfo.GridModeType.Hidden;
                         }
