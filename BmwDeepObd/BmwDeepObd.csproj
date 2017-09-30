@@ -137,6 +137,7 @@
     <Compile Include="JobReader.cs" />
     <Compile Include="MultiMap.cs" />
     <Compile Include="PicBootloader.cs" />
+    <Compile Include="ResultGridAdapter.cs" />
     <Compile Include="StringAdapter.cs" />
     <Compile Include="StringObjAdapter.cs" />
     <Compile Include="VehicleInfo.cs" />
@@ -216,6 +217,9 @@
     <AndroidResource Include="Resources\layout\settings.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\result_customgauge.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <None Include="Xml\AdapterCustom.ccpage">
       <SubType>Designer</SubType>
     </None>
@@ -260,8 +264,12 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\result_list.axml" />
-    <AndroidResource Include="Resources\layout\tab_list.axml" />
-    <AndroidResource Include="Resources\layout\tab_activate.axml" />
+    <AndroidResource Include="Resources\layout\tab_list.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\tab_activate.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <AndroidResource Include="Resources\layout\main.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
