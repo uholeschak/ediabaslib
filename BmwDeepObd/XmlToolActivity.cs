@@ -1634,6 +1634,7 @@ namespace BmwDeepObd
                                 string ecuSgbd = string.Empty;
                                 string ecuGroup = string.Empty;
                                 Int64 dateYear = 0;
+                                // ReSharper disable once InlineOutVariableDeclaration
                                 EdiabasNet.ResultData resultData;
                                 if (resultDict.TryGetValue("ECU_GROBNAME", out resultData))
                                 {
@@ -1810,6 +1811,7 @@ namespace BmwDeepObd
                                 }
                                 Int64 ecuAdr = -1;
                                 string ecuVin = string.Empty;
+                                // ReSharper disable once InlineOutVariableDeclaration
                                 EdiabasNet.ResultData resultData;
                                 if (resultDict.TryGetValue("ID_SG_ADR", out resultData))
                                 {
@@ -1868,8 +1870,7 @@ namespace BmwDeepObd
                 bool pin78ConnRequire = false;
                 if (!_ediabasJobAbort && ecuListBest == null)
                 {
-                    string detectedVin;
-                    ecuListBest = DetectVehicleByEws(progress, out detectedVin, out pin78ConnRequire);
+                    ecuListBest = DetectVehicleByEws(progress, out string detectedVin, out pin78ConnRequire);
                     if (ecuListBest != null)
                     {
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
@@ -1977,8 +1978,7 @@ namespace BmwDeepObd
                     if (resultSets != null && resultSets.Count >= 2)
                     {
                         Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                        EdiabasNet.ResultData resultData;
-                        if (resultDict.TryGetValue("KD_DATEN_TEXT", out resultData))
+                        if (resultDict.TryGetValue("KD_DATEN_TEXT", out EdiabasNet.ResultData resultData))
                         {
                             if (resultData.OpData is string)
                             {
@@ -1997,8 +1997,7 @@ namespace BmwDeepObd
                     if (resultSets != null && resultSets.Count >= 2)
                     {
                         Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                        EdiabasNet.ResultData resultData;
-                        if (resultDict.TryGetValue("KD_DATEN_TEXT", out resultData))
+                        if (resultDict.TryGetValue("KD_DATEN_TEXT", out EdiabasNet.ResultData resultData))
                         {
                             if (resultData.OpData is string)
                             {
@@ -2020,8 +2019,7 @@ namespace BmwDeepObd
                         if (resultSets != null && resultSets.Count >= 2)
                         {
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                            EdiabasNet.ResultData resultData;
-                            if (resultDict.TryGetValue("GRUPPENDATEI", out resultData))
+                            if (resultDict.TryGetValue("GRUPPENDATEI", out EdiabasNet.ResultData resultData))
                             {
                                 if (resultData.OpData is string)
                                 {
@@ -2071,8 +2069,7 @@ namespace BmwDeepObd
                             if (resultSets != null && resultSets.Count >= 2)
                             {
                                 Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                                EdiabasNet.ResultData resultData;
-                                if (resultDict.TryGetValue(job.Item3, out resultData))
+                                if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
                                 {
                                     string vin = resultData.OpData as string;
                                     if (!string.IsNullOrEmpty(vin) && _vinRegex.IsMatch(vin))
@@ -2120,8 +2117,7 @@ namespace BmwDeepObd
                             if (resultSets != null && resultSets.Count >= 2)
                             {
                                 Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                                EdiabasNet.ResultData resultData;
-                                if (resultDict.TryGetValue("JOB_STATUS", out resultData))
+                                if (resultDict.TryGetValue("JOB_STATUS", out EdiabasNet.ResultData resultData))
                                 {
                                     if (resultData.OpData is string)
                                     {
@@ -2166,8 +2162,7 @@ namespace BmwDeepObd
                             if (resultSets != null && resultSets.Count >= 2)
                             {
                                 Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                                EdiabasNet.ResultData resultData;
-                                if (resultDict.TryGetValue(job.Item3, out resultData))
+                                if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
                                 {
                                     string detectedType = resultData.OpData as string;
                                     if (!string.IsNullOrEmpty(vehicleType) &&
@@ -2351,8 +2346,7 @@ namespace BmwDeepObd
                                             continue;
                                         }
                                         string ecuVin = string.Empty;
-                                        EdiabasNet.ResultData resultData;
-                                        if (resultDict.TryGetValue("AIF_FG_NR", out resultData))
+                                        if (resultDict.TryGetValue("AIF_FG_NR", out EdiabasNet.ResultData resultData))
                                         {
                                             if (resultData.OpData is string)
                                             {
@@ -2516,8 +2510,7 @@ namespace BmwDeepObd
                         if (resultSets != null && resultSets.Count >= 2)
                         {
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
-                            EdiabasNet.ResultData resultData;
-                            if (resultDict.TryGetValue("JOBSTATUS", out resultData))
+                            if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
                             {
                                 if (resultData.OpData is string)
                                 {
@@ -2532,8 +2525,7 @@ namespace BmwDeepObd
                                         }
                                         if (thisEcuInfo == null)
                                         {
-                                            string displayName;
-                                            if ((ecuNameDict == null) || !ecuNameDict.TryGetValue(ecuEntry.Address, out displayName))
+                                            if ((ecuNameDict == null) || !ecuNameDict.TryGetValue(ecuEntry.Address, out string displayName))
                                             {
                                                 displayName = ecuName;
                                             }
@@ -2679,8 +2671,7 @@ namespace BmwDeepObd
                                 dictIndex++;
                                 continue;
                             }
-                            EdiabasNet.ResultData resultData;
-                            if (resultDict.TryGetValue("JOBNAME", out resultData))
+                            if (resultDict.TryGetValue("JOBNAME", out EdiabasNet.ResultData resultData))
                             {
                                 if (resultData.OpData is string)
                                 {
@@ -2705,8 +2696,7 @@ namespace BmwDeepObd
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
                             for (int i = 0; ; i++)
                             {
-                                EdiabasNet.ResultData resultData;
-                                if (resultDict.TryGetValue("JOBCOMMENT" + i.ToString(Culture), out resultData))
+                                if (resultDict.TryGetValue("JOBCOMMENT" + i.ToString(Culture), out EdiabasNet.ResultData resultData))
                                 {
                                     if (resultData.OpData is string)
                                     {
@@ -2739,9 +2729,8 @@ namespace BmwDeepObd
                                     dictIndex++;
                                     continue;
                                 }
-                                EdiabasNet.ResultData resultData;
                                 uint argCount = 0;
-                                if (resultDict.TryGetValue("ARG", out resultData))
+                                if (resultDict.TryGetValue("ARG", out EdiabasNet.ResultData resultData))
                                 {
                                     if (resultData.OpData is string)
                                     {
@@ -2970,6 +2959,7 @@ namespace BmwDeepObd
                             dictIndex++;
                             continue;
                         }
+                        // ReSharper disable once InlineOutVariableDeclaration
                         EdiabasNet.ResultData resultData;
                         string result = string.Empty;
                         string resultType = string.Empty;
@@ -3225,6 +3215,7 @@ namespace BmwDeepObd
                                         continue;
                                     }
                                     string valueType = string.Empty;
+                                    // ReSharper disable once InlineOutVariableDeclaration
                                     EdiabasNet.ResultData resultData;
                                     if (resultDict.TryGetValue("MW_WERT", out resultData))
                                     {
@@ -3307,8 +3298,7 @@ namespace BmwDeepObd
                         continue;
                     }
                     long key = (mwTabEntry.BlockNumber << 16) + mwTabEntry.ValueIndex.Value;
-                    EcuMwTabEntry ecuMwTabEntry;
-                    if (mwTabEcuDict.TryGetValue(key, out ecuMwTabEntry))
+                    if (mwTabEcuDict.TryGetValue(key, out EcuMwTabEntry ecuMwTabEntry))
                     {
                         existCount++;
                         if (string.IsNullOrEmpty(ecuMwTabEntry.ValueUnit))
@@ -3419,6 +3409,7 @@ namespace BmwDeepObd
                             if (resultSets != null && resultSets.Count >= 2)
                             {
                                 Dictionary<string, EdiabasNet.ResultData> resultDict0 = resultSets[0];
+                                // ReSharper disable once InlineOutVariableDeclaration
                                 EdiabasNet.ResultData resultData;
                                 bool resultOk = false;
                                 if (resultDict0.TryGetValue("JOBSTATUS", out resultData))
@@ -3673,8 +3664,7 @@ namespace BmwDeepObd
                     }
                     for (int i = 0; ; i++)
                     {
-                        EdiabasNet.ResultData resultData;
-                        if (resultDict.TryGetValue("ECUCOMMENT" + i.ToString(Culture), out resultData))
+                        if (resultDict.TryGetValue("ECUCOMMENT" + i.ToString(Culture), out EdiabasNet.ResultData resultData))
                         {
                             if (resultData.OpData is string)
                             {
@@ -3769,8 +3759,7 @@ namespace BmwDeepObd
             XAttribute fontSizeAttr = pageNode.Attribute("fontsize");
             if (fontSizeAttr != null)
             {
-                DisplayFontSize fontSize;
-                if (Enum.TryParse(fontSizeAttr.Value, true, out fontSize))
+                if (Enum.TryParse(fontSizeAttr.Value, true, out DisplayFontSize fontSize))
                 {
                     ecuInfo.FontSize = fontSize;
                 }
@@ -4319,10 +4308,7 @@ namespace BmwDeepObd
                     }
                     try
                     {
-                        DisplayFontSize fontSize;
-                        string mwTabFileName;
-                        Dictionary<long, EcuMwTabEntry> mwTabEcuDict;
-                        string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out fontSize, out mwTabFileName, out mwTabEcuDict);
+                        string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out DisplayFontSize fontSize, out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict);
                         if (!string.IsNullOrEmpty(sgbdName))
                         {
                             _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, fontSize, mwTabFileName, mwTabEcuDict)
@@ -4377,10 +4363,7 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                DisplayFontSize fontSize;
-                                string mwTabFileName;
-                                Dictionary<long, EcuMwTabEntry> mwTabEcuDict;
-                                string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out fontSize, out mwTabFileName, out mwTabEcuDict);
+                                string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out DisplayFontSize fontSize, out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict);
                                 if (!string.IsNullOrEmpty(sgbdName))
                                 {
                                     _ecuList.Insert(0, new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, fontSize, mwTabFileName, mwTabEcuDict)
