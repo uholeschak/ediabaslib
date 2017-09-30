@@ -25,6 +25,8 @@ namespace BmwDeepObd
             {
                 Hidden,
                 SimpleGaugeSquare,
+                SimpleGaugeRound,
+                SimpleGaugeDot,
             }
 
             public string Name { get; }

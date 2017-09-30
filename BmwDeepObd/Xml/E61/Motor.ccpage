@@ -67,7 +67,7 @@
         <display name="label_motor_temp" result="STAT_CTSCD_tClntLin_WERT" format="6.2R" grid-type="simple-gauge-square" min-value="-100" max-value="100" />
         <display name="label_motor_air_mass" result="STAT_LUFTMASSE_WERT" format="7.2R" />
         <display name="label_motor_intake_air_temp" result="STAT_LADELUFTTEMPERATUR_WERT" format="6.2R" />
-        <display name="label_motor_ambient_temp" result="STAT_UMGEBUNGSTEMPERATUR_WERT" format="6.2R" grid-type="simple-gauge-square" min-value="-50" max-value="50" />
+        <display name="label_motor_ambient_temp" result="STAT_UMGEBUNGSTEMPERATUR_WERT" format="6.2R" grid-type="simple-gauge-round" min-value="-50" max-value="50" />
         <display name="label_motor_boost_press_set" result="STAT_LADEDRUCK_SOLL_WERT" format="6.2R" />
         <display name="label_motor_boost_press_act" result="STAT_LADEDRUCK_WERT" format="6.2R" />
         <display name="label_motor_rail_press_set" result="STAT_RAILDRUCK_SOLL_WERT" format="6.2R" />
@@ -75,7 +75,7 @@
         <display name="label_motor_air_mass_set" result="STAT_LUFTMASSE_SOLL_WERT" format="6.2R" />
         <display name="label_motor_air_mass_act" result="STAT_LUFTMASSE_PRO_HUB_WERT" format="6.2R" />
         <display name="label_motor_ambient_press" result="STAT_UMGEBUNGSDRUCK_WERT" format="6.2R" />
-        <display name="label_motor_fuel_temp" result="STAT_KRAFTSTOFFTEMPERATURK_WERT" format="6.2R" grid-type="simple-gauge-square" min-value="-50" max-value="50" />
+        <display name="label_motor_fuel_temp" result="STAT_KRAFTSTOFFTEMPERATURK_WERT" format="6.2R" grid-type="simple-gauge-dot" min-value="-50" max-value="50" />
         <display name="label_motor_temp_before_filter" result="STAT_ABGASTEMPERATUR_VOR_PARTIKELFILTER_1_WERT" format="6.2R" />
         <display name="label_motor_temp_before_cat" result="STAT_ABGASTEMPERATUR_VOR_KATALYSATOR_WERT" format="6.2R" />
         <display name="label_motor_part_filt_dist_since_regen" result="STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT" log_tag="part_filt_dist" />

@@ -3652,46 +3652,52 @@ namespace BmwDeepObd
 			public const int notification_template_part_time = 2130903110;
 			
 			// aapt resource value: 0x7f030047
-			public const int result_customgauge = 2130903111;
+			public const int result_customgauge_dot = 2130903111;
 			
 			// aapt resource value: 0x7f030048
-			public const int result_list = 2130903112;
+			public const int result_customgauge_round = 2130903112;
 			
 			// aapt resource value: 0x7f030049
-			public const int select_dialog_item_material = 2130903113;
+			public const int result_customgauge_square = 2130903113;
 			
 			// aapt resource value: 0x7f03004a
-			public const int select_dialog_multichoice_material = 2130903114;
+			public const int result_list = 2130903114;
 			
 			// aapt resource value: 0x7f03004b
-			public const int select_dialog_singlechoice_material = 2130903115;
+			public const int select_dialog_item_material = 2130903115;
 			
 			// aapt resource value: 0x7f03004c
-			public const int settings = 2130903116;
+			public const int select_dialog_multichoice_material = 2130903116;
 			
 			// aapt resource value: 0x7f03004d
-			public const int string_list = 2130903117;
+			public const int select_dialog_singlechoice_material = 2130903117;
 			
 			// aapt resource value: 0x7f03004e
-			public const int support_simple_spinner_dropdown_item = 2130903118;
+			public const int settings = 2130903118;
 			
 			// aapt resource value: 0x7f03004f
-			public const int tab_activate = 2130903119;
+			public const int string_list = 2130903119;
 			
 			// aapt resource value: 0x7f030050
-			public const int tab_errors = 2130903120;
+			public const int support_simple_spinner_dropdown_item = 2130903120;
 			
 			// aapt resource value: 0x7f030051
-			public const int tab_list = 2130903121;
+			public const int tab_activate = 2130903121;
 			
 			// aapt resource value: 0x7f030052
-			public const int xml_tool = 2130903122;
+			public const int tab_errors = 2130903122;
 			
 			// aapt resource value: 0x7f030053
-			public const int xml_tool_ecu = 2130903123;
+			public const int tab_list = 2130903123;
 			
 			// aapt resource value: 0x7f030054
-			public const int yandex_key_select = 2130903124;
+			public const int xml_tool = 2130903124;
+			
+			// aapt resource value: 0x7f030055
+			public const int xml_tool_ecu = 2130903125;
+			
+			// aapt resource value: 0x7f030056
+			public const int yandex_key_select = 2130903126;
 			
 			static Layout()
 			{

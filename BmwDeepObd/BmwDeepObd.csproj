@@ -217,7 +217,13 @@
     <AndroidResource Include="Resources\layout\settings.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\result_customgauge.axml">
+    <AndroidResource Include="Resources\layout\result_customgauge_square.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\result_customgauge_round.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\result_customgauge_dot.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <None Include="Xml\AdapterCustom.ccpage">
