@@ -1517,7 +1517,7 @@ namespace BmwDeepObd
 
             if (dynamicFragment?.View != null)
             {
-                bool gridMode = false;//pageInfo.Name == "tab_motor" || pageInfo.Name == "tab_motor_rot_irregular";
+                bool gridMode = pageInfo.DisplayMode == JobReader.PageInfo.DisplayModeType.Grid;
                 ResultListAdapter resultListAdapter = null;
                 ListView listViewResult = dynamicFragment.View.FindViewById<ListView>(Resource.Id.resultList);
                 if (listViewResult != null)
@@ -1858,17 +1858,20 @@ namespace BmwDeepObd
                             {
                                 if (resultGridAdapter != null)
                                 {
-                                    double value = GetResultDouble(resultDict, displayInfo.Result, 0, out bool foundDouble);
-                                    if (!foundDouble)
+                                    if (displayInfo.GridType != JobReader.DisplayInfo.GridModeType.Hidden)
                                     {
-                                        Int64 valueInt64 = GetResultInt64(resultDict, displayInfo.Result, 0, out bool foundInt64);
-                                        if (foundInt64)
+                                        double value = GetResultDouble(resultDict, displayInfo.Result, 0, out bool foundDouble);
+                                        if (!foundDouble)
                                         {
-                                            value = valueInt64;
+                                            Int64 valueInt64 = GetResultInt64(resultDict, displayInfo.Result, 0, out bool foundInt64);
+                                            if (foundInt64)
+                                            {
+                                                value = valueInt64;
+                                            }
                                         }
-                                    }
 
-                                    tempResultGrid.Add(new GridResultItem(GetPageString(pageInfo, displayInfo.Name), result, 0, 100, value));
+                                        tempResultGrid.Add(new GridResultItem(GetPageString(pageInfo, displayInfo.Name), result, displayInfo.MinValue, displayInfo.MaxValue, value));
+                                    }
                                 }
                                 else
                                 {
