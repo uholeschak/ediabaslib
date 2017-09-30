@@ -12,13 +12,10 @@ namespace BmwDeepObd
         private readonly List<GridResultItem> _items;
         public List<GridResultItem> Items => _items;
         private readonly Activity _context;
-        private readonly int _resourceId;
-        private const int GaugeScale = 100;
 
-        public ResultGridAdapter(Activity context, int resourceId)
+        public ResultGridAdapter(Activity context)
         {
             _context = context;
-            _resourceId = resourceId;
             _items = new List<GridResultItem>();
         }
 
@@ -40,27 +37,31 @@ namespace BmwDeepObd
         {
             var item = _items[position];
 
-            View view = convertView ?? _context.LayoutInflater.Inflate(_resourceId, null);
+            View view = convertView;
+            if (convertView == null || convertView.Id != item.ResourceId)
+            {
+                view = _context.LayoutInflater.Inflate(item.ResourceId, null);
+                view.Id = item.ResourceId;
+            }
 
             CustomGauge customGauge = view.FindViewById<CustomGauge>(Resource.Id.custom_gauge);
             if (customGauge != null)
             {
                 try
                 {
-                    customGauge.StartValue = 0;
-                    customGauge.EndValue = GaugeScale;
+                    int gaugeScale = customGauge.EndValue;
                     double range = item.MaxValue - item.MinValue;
                     int gaugeValue = 0;
                     if (Math.Abs(range) > 0.00001)
                     {
-                        gaugeValue = (int)((item.Value - item.MinValue) / range * GaugeScale);
+                        gaugeValue = (int)((item.Value - item.MinValue) / range * gaugeScale);
                         if (gaugeValue < 0)
                         {
                             gaugeValue = 0;
                         }
-                        else if (gaugeValue > GaugeScale)
+                        else if (gaugeValue > gaugeScale)
                         {
-                            gaugeValue = GaugeScale;
+                            gaugeValue = gaugeScale;
                         }
                     }
                     customGauge.Value = gaugeValue;
@@ -103,14 +104,17 @@ namespace BmwDeepObd
 
     public class GridResultItem
     {
-        public GridResultItem(string name, string valueText, double minValue, double maxValue, double value)
+        public GridResultItem(int resourceId, string name, string valueText, double minValue, double maxValue, double value)
         {
+            ResourceId = resourceId;
             Name = name;
             ValueText = valueText;
             MinValue = minValue;
             MaxValue = maxValue;
             Value = value;
         }
+
+        public int ResourceId { get; }
 
         public string Name { get; }
 

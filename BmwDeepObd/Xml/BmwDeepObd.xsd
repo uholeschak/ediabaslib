@@ -136,6 +136,20 @@
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
+      <xs:enumeration value="simple-gauge-round">
+        <xs:annotation>
+          <xs:documentation>
+            Displays simple gauge round type
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="simple-gauge-dot">
+        <xs:annotation>
+          <xs:documentation>
+            Displays simple gauge dot type
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
     </xs:restriction>
   </xs:simpleType>
 

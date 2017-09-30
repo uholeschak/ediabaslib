@@ -1535,7 +1535,7 @@ namespace BmwDeepObd
                 {
                     if (gridViewResult.Adapter == null)
                     {
-                        gridViewResult.Adapter = new ResultGridAdapter(this, Resource.Layout.result_customgauge);
+                        gridViewResult.Adapter = new ResultGridAdapter(this);
                     }
                     resultGridAdapter = gridViewResult.Adapter as ResultGridAdapter;
                 }
@@ -1870,7 +1870,22 @@ namespace BmwDeepObd
                                             }
                                         }
 
-                                        tempResultGrid.Add(new GridResultItem(GetPageString(pageInfo, displayInfo.Name), result, displayInfo.MinValue, displayInfo.MaxValue, value));
+                                        int resourceId = Resource.Layout.result_customgauge_square;
+                                        switch (displayInfo.GridType)
+                                        {
+                                            case JobReader.DisplayInfo.GridModeType.SimpleGaugeSquare:
+                                                resourceId = Resource.Layout.result_customgauge_square;
+                                                break;
+
+                                            case JobReader.DisplayInfo.GridModeType.SimpleGaugeRound:
+                                                resourceId = Resource.Layout.result_customgauge_round;
+                                                break;
+
+                                            case JobReader.DisplayInfo.GridModeType.SimpleGaugeDot:
+                                                resourceId = Resource.Layout.result_customgauge_dot;
+                                                break;
+                                        }
+                                        tempResultGrid.Add(new GridResultItem(resourceId, GetPageString(pageInfo, displayInfo.Name), result, displayInfo.MinValue, displayInfo.MaxValue, value));
                                     }
                                 }
                                 else
