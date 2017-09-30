@@ -1873,15 +1873,15 @@ namespace BmwDeepObd
                                         int resourceId = Resource.Layout.result_customgauge_square;
                                         switch (displayInfo.GridType)
                                         {
-                                            case JobReader.DisplayInfo.GridModeType.SimpleGaugeSquare:
+                                            case JobReader.DisplayInfo.GridModeType.Simple_Gauge_Square:
                                                 resourceId = Resource.Layout.result_customgauge_square;
                                                 break;
 
-                                            case JobReader.DisplayInfo.GridModeType.SimpleGaugeRound:
+                                            case JobReader.DisplayInfo.GridModeType.Simple_Gauge_Round:
                                                 resourceId = Resource.Layout.result_customgauge_round;
                                                 break;
 
-                                            case JobReader.DisplayInfo.GridModeType.SimpleGaugeDot:
+                                            case JobReader.DisplayInfo.GridModeType.Simple_Gauge_Dot:
                                                 resourceId = Resource.Layout.result_customgauge_dot;
                                                 break;
                                         }
