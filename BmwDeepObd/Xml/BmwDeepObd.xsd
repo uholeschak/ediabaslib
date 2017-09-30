@@ -101,6 +101,44 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:simpleType name="display-mode-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="list">
+        <xs:annotation>
+          <xs:documentation>
+            Display text list
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="grid">
+        <xs:annotation>
+          <xs:documentation>
+            Display data elements as grid
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="grid-mode-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="hidden">
+        <xs:annotation>
+          <xs:documentation>
+            This entry is not shown
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="simple-gauge-square">
+        <xs:annotation>
+          <xs:documentation>
+            Displays simple gauge square type
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:simpleType name="fontsize-type">
     <xs:restriction base="xs:string">
       <xs:enumeration value="small">
@@ -203,6 +241,30 @@
           Format of the output value.
           The format specifier must have an EDIABAS apiResultText format.
           If ommited the function FormatResult() will be called.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="grid-type" type="grid-mode-type" default="hidden" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Type of display element in grid mode.
+          If ommited the entry is hidden.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="min-value" type="xs:double" default="0" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Minimum value for gauge display.
+          If ommited the default value is 0.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="max-value" type="xs:double" default="100" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Maximum value for gauge display.
+          If ommited the default value is 100.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -444,6 +506,14 @@
         <xs:documentation>
           Weight to control with width of the result colum.
           A value of 1 indicates 50% of the page width.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="display-mode" type="display-mode-type" default="list" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Display mode, the default mode is list.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>

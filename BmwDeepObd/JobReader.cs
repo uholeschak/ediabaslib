@@ -10,12 +10,21 @@ namespace BmwDeepObd
     {
         public class DisplayInfo
         {
-            public DisplayInfo(string name, string result, string format, string logTag)
+            public DisplayInfo(string name, string result, string format, GridModeType gridType, double minValue, double maxValue, string logTag)
             {
                 Name = name;
                 Result = result;
                 Format = format;
+                GridType = gridType;
+                MinValue = minValue;
+                MaxValue = maxValue;
                 LogTag = logTag;
+            }
+
+            public enum GridModeType
+            {
+                Hidden,
+                SimpleGaugeSquare,
             }
 
             public string Name { get; }
@@ -23,6 +32,12 @@ namespace BmwDeepObd
             public string Result { get; }
 
             public string Format { get; }
+
+            public GridModeType GridType { get; }
+
+            public double MinValue { get; }
+
+            public double MaxValue { get; }
 
             public string LogTag { get; }
         }
@@ -106,10 +121,11 @@ namespace BmwDeepObd
 
         public class PageInfo
         {
-            public PageInfo(string name, float weight, int textResId, string logFile, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, ErrorsInfo errorsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
+            public PageInfo(string name, float weight, DisplayModeType displayMode, int textResId, string logFile, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, ErrorsInfo errorsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
             {
                 Name = name;
                 Weight = weight;
+                DisplayMode = displayMode;
                 TextResId = textResId;
                 LogFile = logFile;
                 JobActivate = jobActivate;
@@ -123,9 +139,17 @@ namespace BmwDeepObd
                 ClassObject = null;
             }
 
+            public enum DisplayModeType
+            {
+                List,
+                Grid,
+            }
+
             public string Name { get; }
 
             public float Weight { get; }
+
+            public DisplayModeType DisplayMode { get; }
 
             public int TextResId { get; }
 
@@ -215,8 +239,7 @@ namespace BmwDeepObd
                 if (xNav.MoveToFollowing(XPathNodeType.Element))
                 {
                     IDictionary<string, string> localNamespaces = xNav.GetNamespacesInScope(XmlNamespaceScope.Local);
-                    string nameSpace;
-                    if (localNamespaces.TryGetValue("", out nameSpace))
+                    if (localNamespaces.TryGetValue("", out string nameSpace))
                     {
                         namespaceManager.AddNamespace("carcontrol", nameSpace);
                         prefix = "carcontrol:";
@@ -315,6 +338,7 @@ namespace BmwDeepObd
                         string pageName = string.Empty;
                         float pageWeight = -1;
                         int textResId = 0;
+                        PageInfo.DisplayModeType displayMode = PageInfo.DisplayModeType.List;
                         string logFile = string.Empty;
                         bool jobActivate = false;
                         if (xnodePage.Attributes != null)
@@ -331,6 +355,14 @@ namespace BmwDeepObd
                                 catch
                                 {
                                     // ignored
+                                }
+                            }
+                            attrib = xnodePage.Attributes["display-mode"];
+                            if (attrib != null)
+                            {
+                                if (!Enum.TryParse(attrib.Value, true, out displayMode))
+                                {
+                                    displayMode = PageInfo.DisplayModeType.List;
                                 }
                             }
                             attrib = xnodePage.Attributes["fontsize"];
@@ -355,7 +387,17 @@ namespace BmwDeepObd
                             attrib = xnodePage.Attributes["logfile"];
                             if (attrib != null) logFile = attrib.Value;
                             attrib = xnodePage.Attributes["activate"];
-                            if (attrib != null) jobActivate = XmlConvert.ToBoolean(attrib.Value);
+                            if (attrib != null)
+                            {
+                                try
+                                {
+                                    jobActivate = XmlConvert.ToBoolean(attrib.Value);
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
                         }
 
                         JobsInfo jobsInfo = null;
@@ -466,14 +508,24 @@ namespace BmwDeepObd
                             {
                                 classCode = xnodePageChild.InnerText;
                                 attrib = xnodePageChild.Attributes["show_warnigs"];
-                                if (attrib != null) codeShowWarnings = XmlConvert.ToBoolean(attrib.Value);
+                                if (attrib != null)
+                                {
+                                    try
+                                    {
+                                        codeShowWarnings = XmlConvert.ToBoolean(attrib.Value);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // ignored
+                                    }
+                                }
                             }
                         }
                         if (!logEnabled) logFile = string.Empty;
                         if (string.IsNullOrEmpty(pageName)) continue;
                         if (string.IsNullOrWhiteSpace(classCode)) classCode = null;
 
-                        _pageList.Add(new PageInfo(pageName, pageWeight, textResId, logFile, jobActivate, classCode, codeShowWarnings, jobsInfo, errorsInfo, displayList, stringList));
+                        _pageList.Add(new PageInfo(pageName, pageWeight, displayMode, textResId, logFile, jobActivate, classCode, codeShowWarnings, jobsInfo, errorsInfo, displayList, stringList));
                     }
                 }
                 return true;
@@ -491,6 +543,9 @@ namespace BmwDeepObd
                 string name = string.Empty;
                 string result = string.Empty;
                 string format = null;
+                DisplayInfo.GridModeType gridType = DisplayInfo.GridModeType.Hidden;
+                double minValue = 0;
+                double maxValue = 100;
                 string logTag = string.Empty;
                 if (xmlNode.Attributes != null)
                 {
@@ -500,6 +555,40 @@ namespace BmwDeepObd
                     if (attrib != null) result = attrib.Value;
                     attrib = xmlNode.Attributes["format"];
                     if (attrib != null) format = attrib.Value;
+                    attrib = xmlNode.Attributes["grid-type"];
+                    if (attrib != null)
+                    {
+                        string valueName = attrib.Value.Replace("-", "");
+                        if (!Enum.TryParse(valueName, true, out gridType))
+                        {
+                            gridType = DisplayInfo.GridModeType.Hidden;
+                        }
+                    }
+
+                    attrib = xmlNode.Attributes["min-value"];
+                    if (attrib != null)
+                    {
+                        try
+                        {
+                            minValue = XmlConvert.ToDouble(attrib.Value);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                    attrib = xmlNode.Attributes["max-value"];
+                    if (attrib != null)
+                    {
+                        try
+                        {
+                            maxValue = XmlConvert.ToDouble(attrib.Value);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
                     attrib = xmlNode.Attributes["log_tag"];
                     if (attrib != null) logTag = attrib.Value;
                     if (!string.IsNullOrEmpty(logTag)) logEnabled = true;
@@ -509,7 +598,7 @@ namespace BmwDeepObd
                     {
                         result = prefix + result;
                     }
-                    displayList.Add(new DisplayInfo(name, result, format, logTag));
+                    displayList.Add(new DisplayInfo(name, result, format, gridType, minValue, maxValue, logTag));
                 }
             }
         }
