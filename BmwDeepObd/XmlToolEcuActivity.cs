@@ -32,6 +32,9 @@ namespace BmwDeepObd
                 MwTabEntry = mwTabEntry;
                 Selected = false;
                 Format = string.Empty;
+                GridType = JobReader.DisplayInfo.GridModeType.Hidden;
+                MinValue = 0;
+                MaxValue = 100;
                 DisplayText = displayName;
                 LogTag = name;
             }
@@ -51,6 +54,12 @@ namespace BmwDeepObd
             public bool Selected { get; set; }
 
             public string Format { get; set; }
+
+            public JobReader.DisplayInfo.GridModeType GridType { get; set; }
+
+            public double MinValue { get; set; }
+
+            public double MaxValue { get; set; }
 
             public string DisplayText { get; set; }
 
