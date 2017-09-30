@@ -24,9 +24,11 @@ namespace BmwDeepObd
             public enum GridModeType
             {
                 Hidden,
-                SimpleGaugeSquare,
-                SimpleGaugeRound,
-                SimpleGaugeDot,
+                // ReSharper disable InconsistentNaming
+                Simple_Gauge_Square,
+                Simple_Gauge_Round,
+                Simple_Gauge_Dot,
+                // ReSharper restore InconsistentNaming
             }
 
             public string Name { get; }
@@ -560,7 +562,7 @@ namespace BmwDeepObd
                     attrib = xmlNode.Attributes["grid-type"];
                     if (attrib != null)
                     {
-                        string valueName = attrib.Value.Replace("-", "");
+                        string valueName = attrib.Value.Replace("-", "_");
                         if (!Enum.TryParse(valueName, true, out gridType))
                         {
                             gridType = DisplayInfo.GridModeType.Hidden;
