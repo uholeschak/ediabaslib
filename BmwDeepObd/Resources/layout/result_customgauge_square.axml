@@ -34,6 +34,9 @@
         android:layout_alignBottom="@+id/custom_gauge"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="80dp"
+        android:maxLines="1"
+        android:maxLength="8"
+        android:ellipsize="end"
         android:text="0"
         android:textSize="30dp"
         android:textStyle="bold" />
@@ -44,6 +47,8 @@
         android:layout_below="@+id/custom_gauge"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="-30dp"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:text="name"
         android:textSize="20dp" />
 </RelativeLayout>
