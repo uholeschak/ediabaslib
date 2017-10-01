@@ -56,6 +56,7 @@
             this.listViewDevices.View = System.Windows.Forms.View.Details;
             this.listViewDevices.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.listViewDevices_ColumnWidthChanging);
             this.listViewDevices.SelectedIndexChanged += new System.EventHandler(this.listViewDevices_SelectedIndexChanged);
+            this.listViewDevices.DoubleClick += new System.EventHandler(this.listViewDevices_DoubleClick);
             // 
             // buttonCancel
             // 

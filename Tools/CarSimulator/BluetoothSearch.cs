@@ -261,5 +261,17 @@ namespace CarSimulator
             UpdateButtonStatus();
             PerformSearch();
         }
+
+        private void listViewDevices_DoubleClick(object sender, EventArgs e)
+        {
+            if (listViewDevices.SelectedItems.Count == 1)
+            {
+                if (buttonOk.Enabled)
+                {
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+            }
+        }
     }
 }
