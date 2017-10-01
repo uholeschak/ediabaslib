@@ -150,6 +150,7 @@ namespace EdiabasLibConfigTool
                 ApplyResources(resources, ctl.Controls);
             }
         }
+
         private bool IsWinVistaOrHigher()
         {
             OperatingSystem os = Environment.OSVersion;
