@@ -33,6 +33,18 @@
             android:inputType="text"
             android:maxLines="1" />
         <TextView
+            android:id="@+id/textViewDisplayType"
+            android:text="@+string/xml_tool_ecu_display_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <CheckBox
+            android:id="@+id/checkBoxDisplayTypeGrid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/xml_tool_ecu_display_type_grid" />
+        <TextView
             android:id="@+id/textViewFontSizeTitle"
             android:text="@+string/xml_tool_ecu_font_size"
             android:layout_width="match_parent"
@@ -108,6 +120,63 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:maxLines="1" />
+            <TextView
+                android:id="@+id/textViewGridType"
+                android:text="@+string/xml_tool_ecu_grid_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#666"
+                android:textColor="#fff" />
+            <LinearLayout
+                android:id="@+id/layoutGridType"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <Spinner
+                    android:id="@+id/spinnerGridType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:id="@+id/layoutMinValue"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical">
+                    <TextView
+                        android:id="@+id/textViewMinValue"
+                        android:text="@+string/xml_tool_ecu_min_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical" />
+                    <EditText
+                        android:id="@+id/editTextMinValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:inputType="number|numberDecimal|numberSigned"
+                        android:maxLines="1" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/layoutMaxValue"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical">
+                    <TextView
+                        android:id="@+id/textViewMaxValue"
+                        android:text="@+string/xml_tool_ecu_max_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical" />
+                    <EditText
+                        android:id="@+id/editTextMaxValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:inputType="number|numberDecimal|numberSigned"
+                        android:maxLines="1" />
+                </LinearLayout>
+            </LinearLayout>
             <TextView
                 android:id="@+id/textViewLogTagTitle"
                 android:text="@+string/xml_tool_ecu_log_tag"

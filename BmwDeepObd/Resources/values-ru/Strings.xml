@@ -312,6 +312,9 @@
   <string name="xml_tool_ecu_format_left">Влево</string>
   <string name="xml_tool_ecu_page_name">Название страницы</string>
   <string name="xml_tool_ecu_ecu_name">Название ECU</string>
+  <!--Translate-->
+  <string name="xml_tool_ecu_display_type">Display type</string>
+  <string name="xml_tool_ecu_display_type_grid">Graphical display</string>
   <string name="xml_tool_ecu_font_size">Размер шрифта</string>
   <string name="xml_tool_ecu_font_size_small">Мелкий</string>
   <string name="xml_tool_ecu_font_size_medium">Средний</string>
@@ -321,6 +324,14 @@
   <string name="xml_tool_ecu_show_all_results">Показывать все результаты</string>
   <string name="xml_tool_ecu_display_text">Выведенный текст</string>
   <string name="xml_tool_ecu_log_tag">Тег для протоколированных данных</string>
+  <!--Translate-->
+  <string name="xml_tool_ecu_grid_type">Grahical design</string>
+  <string name="xml_tool_ecu_grid_type_hidden">Hidden</string>
+  <string name="xml_tool_ecu_grid_type_simple_square">Simple gauge square</string>
+  <string name="xml_tool_ecu_grid_type_simple_round">Simple gauge round</string>
+  <string name="xml_tool_ecu_grid_type_simple_dot">Simple gauge with dot</string>
+  <string name="xml_tool_ecu_min_value">Min Value</string>
+  <string name="xml_tool_ecu_max_value">Max Value</string>
   <string name="xml_tool_ecu_test_format">Тестировать формат</string>
   <string name="xml_tool_button_test_format">Считать</string>
   <string name="xml_tool_ecu_add_functions">Дополнительные функции</string>

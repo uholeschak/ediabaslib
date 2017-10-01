@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Text;
@@ -111,6 +112,7 @@ namespace BmwDeepObd
         private View _contentView;
         private EditText _editTextPageName;
         private EditText _editTextEcuName;
+        private CheckBox _checkBoxDisplayTypeGrid;
         private Spinner _spinnerFontSize;
         private StringObjAdapter _spinnerFontSizeAdapter;
         private Spinner _spinnerJobs;
@@ -124,6 +126,13 @@ namespace BmwDeepObd
         private TextView _textViewResultCommentsTitle;
         private TextView _textViewResultComments;
         private EditText _editTextDisplayText;
+        private TextView _textViewGridType;
+        private Spinner _spinnerGridType;
+        private StringObjAdapter _spinnerGridTypeAdapter;
+        private TextView _textViewMinValue;
+        private EditText _editTextMinValue;
+        private TextView _textViewMaxValue;
+        private EditText _editTextMaxValue;
         private EditText _editTextLogTag;
         private TextView _textViewFormatDot;
         private EditText _editTextFormat;
@@ -170,6 +179,13 @@ namespace BmwDeepObd
 
             _editTextEcuName = FindViewById<EditText>(Resource.Id.editTextEcuName);
             _editTextEcuName.Text = _ecuInfo.EcuName;
+
+            _checkBoxDisplayTypeGrid = FindViewById<CheckBox>(Resource.Id.checkBoxDisplayTypeGrid);
+            _checkBoxDisplayTypeGrid.Checked = _ecuInfo.DisplayMode == JobReader.PageInfo.DisplayModeType.Grid;
+            _checkBoxDisplayTypeGrid.CheckedChange += (sender, args) =>
+            {
+                DisplayTypeSelected();
+            };
 
             _spinnerFontSize = FindViewById<Spinner>(Resource.Id.spinnerFontSize);
             _spinnerFontSizeAdapter = new StringObjAdapter(this);
@@ -241,6 +257,23 @@ namespace BmwDeepObd
             _textViewResultCommentsTitle = FindViewById<TextView>(Resource.Id.textViewResultCommentsTitle);
             _textViewResultComments = FindViewById<TextView>(Resource.Id.textViewResultComments);
             _editTextDisplayText = FindViewById<EditText>(Resource.Id.editTextDisplayText);
+
+            _textViewGridType = FindViewById<TextView>(Resource.Id.textViewGridType);
+
+            _spinnerGridType = FindViewById<Spinner>(Resource.Id.spinnerGridType);
+            _spinnerGridTypeAdapter = new StringObjAdapter(this);
+            _spinnerGridType.Adapter = _spinnerGridTypeAdapter;
+            _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_hidden), JobReader.DisplayInfo.GridModeType.Hidden));
+            _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_simple_square), JobReader.DisplayInfo.GridModeType.Simple_Gauge_Square));
+            _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_simple_round), JobReader.DisplayInfo.GridModeType.Simple_Gauge_Round));
+            _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_simple_dot), JobReader.DisplayInfo.GridModeType.Simple_Gauge_Dot));
+            _spinnerGridTypeAdapter.NotifyDataSetChanged();
+
+            _textViewMinValue = FindViewById<TextView>(Resource.Id.textViewMinValue);
+            _editTextMinValue = FindViewById<EditText>(Resource.Id.editTextMinValue);
+            _textViewMaxValue = FindViewById<TextView>(Resource.Id.textViewMaxValue);
+            _editTextMaxValue = FindViewById<EditText>(Resource.Id.editTextMaxValue);
+
             _editTextLogTag = FindViewById<EditText>(Resource.Id.editTextLogTag);
 
             _textViewFormatDot = FindViewById<TextView>(Resource.Id.textViewFormatDot);
@@ -303,6 +336,7 @@ namespace BmwDeepObd
 
             _layoutJobConfig.Visibility = ViewStates.Gone;
             UpdateDisplay();
+            DisplayTypeSelected();
             ResetTestResult();
         }
 
@@ -698,6 +732,18 @@ namespace BmwDeepObd
             if (resultInfo != null)
             {
                 resultInfo.DisplayText = _editTextDisplayText.Text;
+                if (_spinnerGridType.SelectedItemPosition >= 0)
+                {
+                    _selectedResult.GridType = (JobReader.DisplayInfo.GridModeType)_spinnerGridTypeAdapter.Items[_spinnerGridType.SelectedItemPosition].Data;
+                }
+                if (Double.TryParse(_editTextMinValue.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double minValue))
+                {
+                    resultInfo.MinValue = minValue;
+                }
+                if (Double.TryParse(_editTextMaxValue.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double maxValue))
+                {
+                    resultInfo.MaxValue = maxValue;
+                }
                 resultInfo.LogTag = _editTextLogTag.Text;
             }
             UpdateFormatString(resultInfo);
@@ -724,6 +770,7 @@ namespace BmwDeepObd
             UpdateResultSettings(_selectedResult);
             _ecuInfo.PageName = _editTextPageName.Text;
             _ecuInfo.EcuName = _editTextEcuName.Text;
+            _ecuInfo.DisplayMode = _checkBoxDisplayTypeGrid.Checked ? JobReader.PageInfo.DisplayModeType.Grid : JobReader.PageInfo.DisplayModeType.List;
 
             XmlToolActivity.DisplayFontSize fontSize = XmlToolActivity.DisplayFontSize.Small;
             if (_spinnerFontSize.SelectedItemPosition >= 0)
@@ -731,6 +778,18 @@ namespace BmwDeepObd
                 fontSize = (XmlToolActivity.DisplayFontSize)_spinnerFontSizeAdapter.Items[_spinnerFontSize.SelectedItemPosition].Data;
             }
             _ecuInfo.FontSize = fontSize;
+        }
+
+        private void DisplayTypeSelected()
+        {
+            HideKeyboard();
+            ViewStates viewState = _checkBoxDisplayTypeGrid.Checked ? ViewStates.Visible : ViewStates.Gone;
+            _textViewGridType.Visibility = viewState;
+            _spinnerGridType.Visibility = viewState;
+            _textViewMinValue.Visibility = viewState;
+            _editTextMinValue.Visibility = viewState;
+            _textViewMaxValue.Visibility = viewState;
+            _editTextMaxValue.Visibility = viewState;
         }
 
         private void FontItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
@@ -890,6 +949,19 @@ namespace BmwDeepObd
                 }
                 _textViewResultComments.Text = stringBuilderComments.ToString();
                 _editTextDisplayText.Text = _selectedResult.DisplayText;
+
+                int gridSelection = 0;
+                for (int i = 0; i < _spinnerGridTypeAdapter.Count; i++)
+                {
+                    if ((JobReader.DisplayInfo.GridModeType)_spinnerGridTypeAdapter.Items[i].Data == _selectedResult.GridType)
+                    {
+                        gridSelection = i;
+                    }
+                }
+                _spinnerGridType.SetSelection(gridSelection);
+
+                _editTextMinValue.Text = _selectedResult.MinValue.ToString(CultureInfo.InvariantCulture);
+                _editTextMaxValue.Text = _selectedResult.MaxValue.ToString(CultureInfo.InvariantCulture);
                 _editTextLogTag.Text = _selectedResult.LogTag;
 
                 UpdateFormatFields(_selectedResult, false, true);
