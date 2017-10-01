@@ -5,6 +5,7 @@
   <pages>
     <include filename="Axis.ccpage"/>
     <include filename="Motor.ccpage"/>
+    <include filename="MotorGrid.ccpage"/>
     <include filename="MotorUneven.ccpage"/>
     <include filename="MotorIrregular.ccpage"/>
     <include filename="MotorPm.ccpage"/>
