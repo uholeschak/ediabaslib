@@ -4164,13 +4164,16 @@ namespace BmwDeepObd
                         }
                         displayNodeNew.Add(new XAttribute("result", resultName));
                         displayNodeNew.Add(new XAttribute("format", result.Format));
-                        displayNodeNew.Add(new XAttribute("grid-type", result.GridType.ToString().ToLowerInvariant().Replace("_", "-")));
+                        if (result.GridType != JobReader.DisplayInfo.GridModeType.Hidden)
+                        {
+                            displayNodeNew.Add(new XAttribute("grid-type", result.GridType.ToString().ToLowerInvariant().Replace("_", "-")));
+                            displayNodeNew.Add(new XAttribute("min-value", result.MinValue));
+                            displayNodeNew.Add(new XAttribute("max-value", result.MaxValue));
+                        }
                         if (!string.IsNullOrEmpty(result.LogTag))
                         {
                             displayNodeNew.Add(new XAttribute("log_tag", result.LogTag));
                         }
-                        displayNodeNew.Add(new XAttribute("min-value", result.MinValue));
-                        displayNodeNew.Add(new XAttribute("max-value", result.MaxValue));
 
                         XElement stringNode = new XElement(ns + "string", result.DisplayText);
                         stringNode.Add(new XAttribute("name", displayTag));

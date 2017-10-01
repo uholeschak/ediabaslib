@@ -310,6 +310,8 @@
   <string name="xml_tool_ecu_format_left">Links</string>
   <string name="xml_tool_ecu_page_name">Seitenname</string>
   <string name="xml_tool_ecu_ecu_name">ECU Name</string>
+  <string name="xml_tool_ecu_display_type">Anzeigeart</string>
+  <string name="xml_tool_ecu_display_type_grid">Graphische Anzeige</string>
   <string name="xml_tool_ecu_font_size">Schriftgröße</string>
   <string name="xml_tool_ecu_font_size_small">Klein</string>
   <string name="xml_tool_ecu_font_size_medium">Mittel</string>
@@ -319,6 +321,13 @@
   <string name="xml_tool_ecu_show_all_results">Alle Ergebnisse anzeigen</string>
   <string name="xml_tool_ecu_display_text">Anzeigetext</string>
   <string name="xml_tool_ecu_log_tag">Tag für Datenaufzeichnung</string>
+  <string name="xml_tool_ecu_grid_type">Graphische Darstellung</string>
+  <string name="xml_tool_ecu_grid_type_hidden">Verborgen</string>
+  <string name="xml_tool_ecu_grid_type_simple_square">Einfache eckige Anzeige</string>
+  <string name="xml_tool_ecu_grid_type_simple_round">Einfache runde Anzeige</string>
+  <string name="xml_tool_ecu_grid_type_simple_dot">Einfache Anzeige mit Punkt</string>
+  <string name="xml_tool_ecu_min_value">Min Wert</string>
+  <string name="xml_tool_ecu_max_value">Max Wert</string>
   <string name="xml_tool_ecu_test_format">Format testen</string>
   <string name="xml_tool_button_test_format">Lesen</string>
   <string name="xml_tool_ecu_add_functions">Zusätzliche Funtionen</string>
